@@ -1,0 +1,70 @@
+#roundedborder {
+    border: none;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+.vhtable {
+     font-family: "nta", Arial, sans-serif; 
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-weight: bold;
+    font-size: 18px;
+    line-height: 1;
+    color: #0b0c0c;
+    width: 100%;
+    margin-bottom: 10px;
+    border-spacing: 5;
+    border-collapse: collapse;
+  }
+ 
+ .vhtable-cell {
+    font-weight: 200;
+}
+
+.rowbottom {
+    border-bottom: 1px solid #bfc1c3;
+    text-align: left;
+}
+
+.vh-row{
+    margin-top: 10px;
+}
+
+.vh-lb{
+    display: inline-block;
+}
+
+.vh-mr20{
+    margin-right: 20px;
+}
+
+.vh-top{
+    margin-top: 10px;
+}
+
+.vh-r{
+    float: right;
+    margin-bottom: 5px;
+    margin-right: 10px;
+}
+
+.vh-ib{
+    display: inline-block;
+    margin: 0 15px;
+    width: 100px !important;
+}
+
+.vh-date{
+    float: right;
+}
+  
+.vh-wrap{
+    padding: 0;
+    margin-right: 0;
+    margin-left: 0;
+    overflow-wrap: break-word;
+    -ms-hyphens: auto;
+    -moz-hyphens: auto;
+    -webkit-hyphens: auto;
+    hyphens: auto;
+}

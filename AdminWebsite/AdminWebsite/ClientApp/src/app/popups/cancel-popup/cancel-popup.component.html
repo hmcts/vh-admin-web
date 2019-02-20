@@ -1,0 +1,14 @@
+<div id="cancelPopup" class="popup-overlay">
+    <div class="popup popup-small" style="text-align: center;">
+        <h1 class="govuk-heading-m">You have unsaved changes</h1>
+        <div class="content">
+            <h1 class="govuk-heading-m"> You will lose all your booking details if you continue</h1>
+            <div class="govuk-grid-row">
+                <div class="vh-top">
+                    <input id="btncancel" class="govuk-button vh-btncancel vh-mr" type="submit" value="Continue with booking" (click)="continueAddParticipant()">
+                    <input id="btnsubmit" class="govuk-button" type="submit" value="Discard booking" (click)="cancelBookingHearing()">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

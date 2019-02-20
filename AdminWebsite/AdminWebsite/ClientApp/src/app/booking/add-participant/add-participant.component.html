@@ -1,0 +1,175 @@
+<app-breadcrumb [canNavigate]="canNavigate"></app-breadcrumb>
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-one-half">
+    <h1 class="govuk-heading-l">{{ constants.BookHearingTitle }}</h1>
+  </div>
+</div>
+<div class="govuk-grid-row">
+
+  <div class="govuk-grid-column-one-half">
+
+    <h2 class="govuk-heading-m">Add a participant</h2>
+
+    <div *ngIf="isShowErrorSummary || displayErrorNoParticipants" class="govuk-error-summary" aria-labelledby="error-summary-title"
+      role="alert" data-module="error-summary">
+      <h2 class="govuk-error-summary__title" id="error-summary-title">
+        Please complete the missing information
+      </h2>
+      <div class="govuk-error-summary__body">
+        <ul class="govuk-list govuk-error-summary__list">
+          <li *ngIf="searchEmail.isValidEmail">
+            <a (click)="goToDiv('email-error')" href="javascript: void(0)">{{constants.Error.EmailErrorMsg}}</a>
+          </li>
+          <li *ngIf="role.invalid || !isRoleSelected">
+            <a (click)="goToDiv('role-error')" href="javascript: void(0)">{{constants.Error.RoleErrorMsg}}</a>
+          </li>
+          <li *ngIf="firstName.invalid">
+            <a (click)="goToDiv('firstName-error')"href="javascript: void(0)">{{constants.Error.FirstNameErrorMsg}}</a>
+          </li>
+          <li *ngIf="lastName.invalid">
+            <a (click)="goToDiv('lastName-error')"href="javascript: void(0)">{{constants.Error.LastNameErrorMsg}}</a>
+          </li>
+          <li *ngIf="phone.invalid">
+            <a (click)="goToDiv('phone-error')"href="javascript: void(0)">{{constants.Error.PhoneErrorMsg}}</a>
+          </li>
+          <li *ngIf="displayName.invalid">
+            <a (click)="goToDiv('display-name-error')"href="javascript: void(0)">{{constants.Error.DisplaNameErrorMsg}}</a>
+          </li>
+          <li *ngIf="displayErrorNoParticipants">
+            <a href="javascript: void(0)">{{constants.Error.NoParticipantsErrorMsg}}</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+
+    <app-search-email (findParticipant)="getParticipant($event)" (participantsNotFound)="notFoundParticipant()"
+      (emailChanged)="emailChanged()">
+    </app-search-email>
+
+    <form [formGroup]="participantForm" (ngSubmit)="saveParticipant()" autocomplete="off">
+
+      <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error': roleInvalid || !isRoleSelected}">
+        <legend id="role-error" *ngIf="roleInvalid || !isRoleSelected">
+          <span  class="govuk-error-message">
+            {{constants.Error.RoleErrorMsg}}
+          </span>
+        </legend>
+        <label class="govuk-label" for="role">
+          Role
+        </label>
+        <select id="role" formControlName="role" (change)="roleSelected()" class="govuk-select vh-input-w390">
+          <option *ngFor="let ro of roleList" [ngValue]="ro.name">
+            {{ro.name}}
+          </option>
+        </select>
+      </div>
+
+
+
+      <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error': titleInvalid || !isTitleSelected}">
+        <legend id="role-error" *ngIf="titleInvalid || !isTitleSelected">
+          <span  class="govuk-error-message">
+            {{constants.Error.TitleErrorMsg}}
+          </span>
+        </legend>
+        <label class="govuk-label" for="title">
+          Title
+        </label>
+        <select id="title" formControlName="title" class="govuk-select vh-input-w390">
+          <option *ngFor="let tit of titleList" [ngValue]="tit.value">
+            {{tit.value}}
+          </option>
+        </select>
+      </div>
+
+      <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':firstNameInvalid}">
+
+        <legend id="firstName-error" *ngIf="firstNameInvalid">
+          <span  class="govuk-error-message">
+            {{constants.Error.FirstNameErrorMsg}}
+          </span>
+        </legend>
+        <label class="govuk-label" for="firstName">
+          First name
+        </label>
+        <input id="firstName" formControlName="firstName" class="govuk-input govuk-input--width-20" type="text" />
+
+      </div>
+
+      <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':lastNameInvalid}">
+        <legend id="lastName-error" *ngIf="lastNameInvalid">
+          <span class="govuk-error-message">
+            {{constants.Error.LastNameErrorMsg}}
+          </span>
+        </legend>
+        <label class="govuk-label" for="lastName">
+          Last name
+        </label>
+        <input id="lastName" formControlName="lastName" class="govuk-input govuk-input--width-20" type="text" />
+      </div>
+
+      <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':phoneInvalid}">
+        <legend id="phone-error" *ngIf="phoneInvalid">
+          <span class="govuk-error-message">
+            {{constants.Error.PhoneErrorMsg}}
+          </span>
+        </legend>
+        <label class="govuk-label" for="phone">
+          Telephone
+        </label>
+        <input id="phone" formControlName="phone" class="govuk-input govuk-input--width-20" type="text" />
+      </div>
+
+      <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':displayNameInvalid}">
+
+        <legend id="display-name-error" *ngIf="displayNameInvalid">
+          <span  class="govuk-error-message">
+            {{constants.Error.DisplaNameErrorMsg}}
+          </span>
+        </legend>
+        <label class="govuk-label" for="displayName">
+          Display Name
+        </label>
+        <input id="displayName" formControlName="displayName" class="govuk-input govuk-input--width-20" type="text" />
+
+      </div>
+
+      <div class="govuk-grid-row">
+        <div class="govuk-grid-column-one-half" *ngIf="displayAddButton">
+          <img src="assets/images/AddIcon.png" alt="Add icon with sign plus" />
+          <span class="vh-vert-top-m15">
+            <a href="javascript:void(0)" (click)="saveParticipant()" type="submit" id="addParticipantBtn" class="govuk-link govuk-body">
+              Add participant
+            </a>
+          </span>
+        </div>
+        <div class="govuk-grid-column-one-half" *ngIf="displayClearButton">
+          <img src="assets/images/ClearIcon.png" alt="Clear fiealds icon" />
+          <span class="vh-vert-top-m15">
+            <a href="javascript:void(0)" id="clearFormBtn" class="govuk-link govuk-body" (click)="clearForm()">
+              Clear details
+            </a>
+          </span>
+        </div>
+      </div>
+    </form>
+    <div class="vh-top">
+      <input *ngIf="displayNextButton" id="nextBtn" type="button" class="govuk-button vh-mr25" role="button" value="Next"
+        (click)="next()" />
+      <input id="cancelBtn" type="button" class="govuk-button vh-cancel-btn" role="button" value="Cancel" (click)="addParticipantCancel()" />
+    </div>
+  </div>
+
+  <div class="govuk-grid-column-one-half" style="margin: 0;">
+    <app-participants-list [participants]="participants"></app-participants-list>
+  </div>
+</div>
+
+<div *ngIf="showCancelPopup">
+  <app-cancel-popup (continueBooking)="handleContinueBooking($event)" (cancelBooking)="handleCancelBooking($event)"></app-cancel-popup>
+</div>
+
+<div *ngIf="showConfirmationPopup">
+  <app-confirmation-popup (ok)="handleConfirmation()" [message]="confirmationMessage"></app-confirmation-popup>
+</div>

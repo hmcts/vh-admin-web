@@ -1,0 +1,93 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net.Http;
+using System.Reflection;
+using AdminWebsite.Configuration;
+using AdminWebsite.Helper;
+using AdminWebsite.Security;
+using AdminWebsite.Services;
+using AdminWebsite.Swagger;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
+using Swashbuckle.AspNetCore.Swagger;
+
+namespace AdminWebsite.Extensions
+{
+    public static class ConfigureServicesExtensions
+    {
+        public static IServiceCollection AddSwagger(this IServiceCollection serviceCollection)
+        {
+            serviceCollection.AddSwaggerGen(c =>
+            {
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
+                
+                c.SwaggerDoc("v1", new Info {Title = "Book A Hearing Client", Version = "v1"});
+                c.EnableAnnotations();
+                
+                c.OperationFilter<AuthResponsesOperationFilter>();
+                
+                c.AddSecurityDefinition("Bearer", new ApiKeyScheme { In = "header", Description = "Please enter JWT with Bearer into field", Name = "Authorization", Type = "apiKey" });
+                c.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>> {
+                    { "Bearer", Enumerable.Empty<string>() },
+                });
+            });
+
+            return serviceCollection;
+        }
+        
+        public static IServiceCollection AddCustomTypes(this IServiceCollection serviceCollection)
+        {
+            serviceCollection.AddMemoryCache();
+            serviceCollection.AddTransient<HearingApiTokenHandler>();
+            serviceCollection.AddScoped<ITokenProvider, TokenProvider>();
+            serviceCollection.AddScoped<IActiveDirectoryGroup, ActiveDirectoryGroup>();
+            serviceCollection.AddScoped<IUserAccountService, UserAccountService>();
+            serviceCollection.AddScoped<SecuritySettings>();
+            serviceCollection.AddScoped<AppConfigSettings>();
+            serviceCollection.AddScoped<UserManager>();
+
+            // Build the hearings api client using a reusable HttpClient factory and predefined base url
+            var container = serviceCollection.BuildServiceProvider();
+            var settings = container.GetService<IOptions<ServiceSettings>>().Value;
+            
+            serviceCollection.AddHttpClient<IHearingApiClient, HearingApiClient>()
+                .AddHttpMessageHandler(() => container.GetService<HearingApiTokenHandler>())
+                .AddTypedClient(httpClient => BuildHearingApiClient(httpClient, settings));
+            
+            serviceCollection.AddTransient<IUserIdentity, UserIdentity>((ctx) =>
+            {
+                var userAccountService = ctx.GetService<IUserAccountService>();
+                var userPrincipal = ctx.GetService<IHttpContextAccessor>().HttpContext.User;
+                return new UserIdentity(userPrincipal, userAccountService);
+            });
+            
+            return serviceCollection;
+        }
+        
+        private static IHearingApiClient BuildHearingApiClient(HttpClient httpClient, ServiceSettings serviceSettings)
+        {
+            return new HearingApiClient(httpClient) { BaseUrl = serviceSettings.HearingsApiUrl };
+        }
+        
+        public static IServiceCollection AddJsonOptions(this IServiceCollection serviceCollection)
+        {
+            var contractResolver = new DefaultContractResolver
+            {
+                NamingStrategy = new SnakeCaseNamingStrategy()
+            };
+
+            serviceCollection.AddMvc()
+                .AddJsonOptions(options => options.SerializerSettings.ContractResolver = contractResolver)
+                .AddJsonOptions(options => options.SerializerSettings.Converters.Add(new StringEnumConverter()));
+
+            return serviceCollection;
+        }
+    }
+}

@@ -1,0 +1,23 @@
+.vh-li-email{
+ margin-top: 3px;
+width: 345px !important;
+list-style: none;
+border: 1px solid;
+font-size: 18px;
+text-decoration: none;
+} 
+
+.vh-a-email{
+    color: #0b0c0c !important;
+    text-decoration: none;
+}
+
+.vh-a-email:focus{
+font-size:20px;
+color: #1d8feb;
+font-weight: bold;
+}
+
+.vk-showlist-m30{
+margin-left: -30px;
+}

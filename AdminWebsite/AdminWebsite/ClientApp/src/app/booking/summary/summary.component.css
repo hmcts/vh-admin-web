@@ -1,0 +1,27 @@
+.vhtable {
+    font-family: "nta", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 1;
+    color: #0b0c0c;
+    width: 100%;
+    margin-bottom: 20px;
+    border-spacing: 0;
+    border-collapse: collapse;
+  }
+  .vhlink:link {
+    color: #005ea5;
+    text-decoration: none;
+    font-weight: 500;
+    margin-left: 10px;
+ }
+
+.vh-row{
+    margin-top: 10px;
+}
+
+.remove-header-padding {
+    margin-bottom: 0px;
+}

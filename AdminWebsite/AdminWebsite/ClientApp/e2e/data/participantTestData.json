@@ -1,0 +1,31 @@
+{
+    "Participants": [
+        {
+            "Email": "test_1@participant.com",
+            "Role": "Professional",
+            "Title": "Mrs",
+            "Firstname": "test01",
+            "Lastname": "participant01",
+            "Telephone": "01234567890"
+        },
+        {
+            "Email": "test_2@participant.com",
+            "Role": "Citizen",
+            "Title": "Mr",
+            "Firstname": "test02",
+            "Lastname": "participant02",
+            "Telephone": "01234567891"
+        }
+    ],
+    "AddParticipantPageTitle": "Add a participant",
+    "ExistingParticipant": [
+        {
+            "Email": "email2@go.couk",
+            "Role": "Citizen",
+            "Title": "Mrs",
+            "Firstname": "Rob",
+            "Lastname": "Smith",
+            "Telephone": "455576867876"
+        }
+    ]
+}

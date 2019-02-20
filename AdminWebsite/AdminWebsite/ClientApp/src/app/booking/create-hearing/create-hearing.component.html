@@ -1,0 +1,117 @@
+<app-breadcrumb [canNavigate]="hearingForm.valid && hasSaved"></app-breadcrumb>
+<h2 class="govuk-heading-l">Book a video hearing</h2>
+
+<h3 class="govuk-heading-m">Hearing details</h3>
+
+<div *ngIf="failedSubmission && hearingForm.invalid" class="govuk-error-summary govuk-!-width-one-half" aria-labelledby="error-summary-title" role="alert" tabindex="-1"
+  data-module="error-summary">
+  <h2 class="govuk-error-summary__title" id="error-summary-title">
+    Please complete the missing information
+  </h2>
+  <div class="govuk-error-summary__body">
+    <ul class="govuk-list govuk-error-summary__list">
+      <li *ngIf="caseNumber.invalid">
+        <a (click)="goToDiv('caseNumber-error')">Please enter a case number</a>
+      </li>
+      <li *ngIf="caseName.invalid">
+        <a (click)="goToDiv('caseName-error')">Please enter a case name</a>
+      </li>
+      <li *ngIf="caseType.invalid">
+        <a (click)="goToDiv('caseType-error')">Please enter a case type</a>
+      </li>
+      <li *ngIf="hearingType.invalid">
+        <a (click)="goToDiv('hearingType-error')">Please enter a hearing type</a>
+      </li>
+      <li *ngIf="hearingMethod.invalid">
+        <a (click)="goToDiv('hearingMethod-error')">Please enter a hearing channel</a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<form [formGroup]="hearingForm" class="govuk-form-group" (ngSubmit)="saveHearingDetails()">
+  <div [ngClass]="caseNumberInvalid ? 'govuk-form-group--error' : 'govuk-form-group'">
+    <label class="govuk-label govuk-!-width-one-half" for="caseNumber">
+      Case Number
+    </label>
+    <input id="caseNumber" class="govuk-input govuk-!-width-one-half" type="text" formControlName="caseNumber"
+      required>
+    <div *ngIf="caseNumberInvalid" class="alert alert-danger">
+      <span id="caseNumber-error" class="govuk-error-message">
+        Please enter a case number
+      </span>
+    </div>
+  </div>
+
+  <div [ngClass]="caseNameInvalid ? 'govuk-form-group--error' : 'govuk-form-group'">
+    <label class="govuk-label govuk-!-width-one-half" for="caseName">
+      Case Name
+    </label>
+    <input id="caseName" placeholder="e.g. Ms A Smith vs HMRC" class="govuk-input govuk-!-width-one-half" type="text"
+      formControlName="caseName" required>
+    <div *ngIf="caseNameInvalid" class="alert alert-danger">
+      <span id="caseName-error" class="govuk-error-message">
+        Please enter a case name
+      </span>
+    </div>
+  </div>
+
+  <div *ngIf="availableCaseTypes.length === 1">
+    <h2 class="govuk-heading-s"> Case type: {{selectedCaseType}}</h2>
+  </div>
+
+  <div *ngIf="availableCaseTypes.length !== 1" [ngClass]="caseTypeInvalid ? 'govuk-form-group--error' : 'govuk-form-group'">
+    <label class="govuk-label govuk-!-width-one-half" for="caseType">
+      Case type
+    </label>
+    <select class="govuk-select govuk-!-width-one-half" id="caseType" formControlName="caseType">
+      <option *ngFor="let availableCaseType of availableCaseTypes" [ngValue]="availableCaseType">{{availableCaseType}}</option>
+    </select>
+    <div *ngIf="caseTypeInvalid" class="alert alert-danger">
+      <span id="caseType-error" class="govuk-error-message">
+        Please select a case type
+      </span>
+    </div>
+  </div>
+
+  <div [ngClass]="hearingTypeInvalid ? 'govuk-form-group--error' : 'govuk-form-group'">
+    <label class="govuk-label govuk-!-width-one-half" for="hearingType">
+      Hearing type
+    </label>
+    <select class="govuk-select govuk-!-width-one-half" id="hearingType" formControlName="hearingType">
+      <option *ngFor="let availableHearingType of filteredHearingTypes" [ngValue]="availableHearingType.id">{{availableHearingType.name}}</option>
+    </select>
+    <div *ngIf="hearingTypeInvalid" class="alert alert-danger">
+      <span id="hearingType-error" class="govuk-error-message">
+        Please select a hearing type
+      </span>
+    </div>
+  </div>
+
+  <div [ngClass]="hearingMethodInvalid ? 'govuk-form-group--error' : 'govuk-form-group'">
+    <label class="govuk-label govuk-!-width-one-half" for="hearingMethod">
+      Hearing channel
+    </label>
+    <select class="govuk-select govuk-!-width-one-half" id="hearingMethod" formControlName="hearingMethod">
+      <option *ngFor="let hearingMedium of filteredHearingMediums" [ngValue]="hearingMedium.id">{{hearingMedium.name}}</option>
+    </select>
+    <div *ngIf="hearingMethodInvalid" class="alert alert-danger">
+      <span id="hearingMethod-error" class="govuk-error-message">
+        Please select a hearing channel
+      </span>
+    </div>
+  </div>
+
+  <div class="sk-top">
+    <input type="button" id="nextButton" class="govuk-button" role="button" value="Next" style="margin-right:25px;"
+      (click)="saveHearingDetails()" alt="Save hearing details and view hearings schedule" />
+    <input type="button" id="cancelButton" class="govuk-button hmcts-button--secondary" role="button" value="Cancel" 
+    (click)="confirmCancelBooking()" alt="Confirm cancellation of new booking and return to dashboard" />
+  </div>
+
+</form>
+
+<div *ngIf="attemptingCancellation">
+  <app-cancel-popup (continueBooking)="continueBooking($event)"
+  (cancelBooking)="cancelBooking($event)"></app-cancel-popup>
+</div>

@@ -1,0 +1,284 @@
+// global styles for <a> and <p> tags
+$govuk-global-styles: true;
+
+.govuk-error-summary__list a {
+    color: #b10e1e;
+    text-decoration: underline;
+}
+
+.vhpanel {
+    font-family: "nta", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1.25;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    height:190px;
+    width: 300px;
+    margin-bottom: 15px;
+    padding: 25px 10px;
+    border: 5px solid transparent;
+    text-align: center;
+}
+
+.vhpanel-title {
+    font-family: "nta", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-weight: 700;
+    font-size: 24px;
+}
+
+.vhpanel-xltext {
+    margin-top: 0;
+    font-family: "nta", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-weight: 700;
+    font-size: 72px;
+}
+  
+.vhpanel-body {
+    font-family: "nta", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-weight: 400;
+    font-size: 24px;
+    line-height: 1.04167;
+}
+
+.vhpanel:hover {
+    box-shadow: 0 7px 17px 0 rgba(0, 0, 0, 0.4)
+}
+
+#vhpanel-green {
+    color: #ffffff;
+    background: #00823B;
+}
+
+#vhpanel-blue {
+    color: #ffffff;
+    background: #005ea5;
+}
+
+#vhpanel-red {
+    color: #ffffff;
+    background: #b10e1e;
+}
+
+.vhpanel-link:link {
+      text-decoration: none;
+}
+
+.vhpanel-link:visited {
+    text-decoration: none;
+}
+
+.vhpanel-link:hover {
+    text-decoration: none;
+}
+
+.vhlink:link {
+   color: #005ea5;
+   text-decoration: none;
+   font-weight: 500;
+}
+
+.vhlink:visited {
+    color: #005ea5;
+}
+
+.vhlink:hover {
+    color: #005ea5;
+    text-decoration: underline;
+}
+
+.vhtable {
+  font-family: "nta", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 1;
+  color: #0b0c0c;
+  width: 100%;
+  margin-bottom: 10px;
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+
+/*tr:hover {
+    background-color:#f8f8f8;
+}*/
+
+.vhtable-header {
+    font-weight: 700;
+    padding: 20px 5px 5px 0px;
+    text-align: left;
+}
+
+.vhtable-cell {
+    font-size: 18px;
+    padding: 5px 5px 5px 0px;
+    text-align: left;
+}
+
+#rowbottom {
+    border-bottom: 1px solid #bfc1c3;
+    text-align: left;
+}
+
+#rowtop {
+    padding-top: 5px;
+}
+
+#cellbig {
+    font-weight: 700;
+}
+
+#cellsmall {
+    font-size: 14px;
+    color: #6f777b;
+    font-weight: 400;
+}
+
+#cellred {
+    font-size: 14px;
+    color: #b10e1e;
+    font-weight: 400;
+}
+
+h1.vhheading {
+    font-family: "nta", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-weight: 700;
+    font-size: 44px;
+    line-height: 1.25;
+}
+
+h2.vhheading {
+    font-family: "nta", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-weight: 700;
+    font-size: 36px;
+    line-height: 1.25;
+}
+
+h3.vhheading {
+    font-family: "nta", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-weight: 400;
+    font-size: 24px;
+    color: #6f777b;
+}
+
+#roundedborder {
+    border-color: #cccccc;
+    border-width:  1px;
+    border-style:  solid;
+    border-radius: 11px;
+    padding: 30px;
+}
+
+#vhredbutton {
+  background-color: #b10e1e;
+  -webkit-box-shadow: 0 2px 0 #360000;
+  box-shadow: 0 2px 0 #360000;
+  margin-bottom: 0px;
+  padding: 7px 17px 4px 17px;
+  font-size: 16px;
+}
+
+#vhredbutton:hover {
+    background-color: #8b0c18;
+}
+
+.vh2button {
+    background-color: #dee0e2;
+    -webkit-box-shadow: 0 2px 0 #888888;
+    box-shadow: 0 2px 0 #6f777b;
+    color: #0b0c0c;
+}
+  
+#vh2button:hover {
+    background-color: #bfc1c3;
+}
+
+.sk-top{
+    margin-top: 15px;
+}
+
+.sk-add-btn{
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    font-size: 30px !important;
+    text-align: center !important;
+}
+
+.sk-add-btn:focus{
+    outline: none !important;
+}
+
+
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+    display: none !important;
+  }
+  
+  .vh-breadcrumbs {
+    display: inline-block;
+    position: relative;
+    margin-bottom: 15px;
+    margin-left: 10px;
+    margin-top: 0;
+    padding-left: 15.655px;
+    float: left;
+    list-style-type: none;
+    font-size: 18px;
+    
+  }
+  .vh-breadcrumbs:after {
+    content: "";
+    display: block;
+    clear: both;
+  }
+  .vh-breadcrumbs:before {
+    content: "";
+    display: block;
+    position: absolute;
+    top: -1px;
+    bottom: 1px;
+    left: -3.31px;
+    width: 7px;
+    height: 7px;
+    margin: auto 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+    border: solid;
+    border-width: 1px 1px 0 0;
+    border-color: #6f777b;
+  }
+
+  .vh-breadcrumbs:first-child:before {
+    content: none;
+    display: none;
+    margin-left: 0 !important;
+  }
+
+  .vh-active{
+      color:#1d8feb !important;
+  }
+  .vh-notactive{
+      color: #0b0c0c !important;
+  }
+
+  .vh-current{
+    color:#1d8feb !important;
+    font-weight: bold;
+  }
