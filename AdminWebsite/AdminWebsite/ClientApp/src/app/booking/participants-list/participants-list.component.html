@@ -1,0 +1,43 @@
+<div id="roundedborder">
+  <h3 class="govuk-heading-m">Participants added</h3>
+  <div class="vhtable">
+
+    <div *ngFor="let pat of participants">
+
+      <div class="govuk-grid-row vh-row" *ngIf="pat.role === 'Judge'">
+        <div class="govuk-grid-column-one-third vhtable-header vh-image-15">
+          <img src="/assets/images/govuk-crest.png" height="40" width="40" class="govuk-header__logotype-crest"
+            alt="HM Courts &amp; Tribunals Service crest" />
+        </div>
+        <div class="govuk-grid-column-one-half vhtable-header vh-image-50">
+          {{pat.title}} {{pat.first_name}} {{pat.last_name}}
+          <div>
+            <strong>{{pat.role}}</strong>
+          </div>
+        </div>
+        <div class="govuk-grid-column-one-third vhtable-cell">
+          <a [routerLink]="['/assign-judge']" class="vhlink">Change</a>
+        </div>
+      </div>
+
+      <div class="govuk-grid-row vh-row" *ngIf="pat.role !== 'Judge'">
+        <div class="govuk-grid-column-two-thirds vhtable-header">
+          {{pat.title}} {{pat.first_name}} {{pat.last_name}}
+          <div>
+            <strong>{{pat.role}}</strong>
+          </div>
+        </div>
+        <div class="govuk-grid-column-one-third vhtable-cell">
+          <a class="vhlink" href="javascript:void(0)">Edit</a>
+          <a class="vhlink" href="javascript:void(0)">Remove</a>
+        </div>
+      </div>
+
+      <div class="govuk-grid-row vh-row">
+        <div id="rowbottom"></div>
+      </div>
+
+    </div>
+
+  </div>
+</div>

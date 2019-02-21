@@ -1,0 +1,31 @@
+<div class="govuk-width-container">
+
+
+  <main class="govuk-main-wrapper">
+
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-one-third" *ngIf="showBooking">
+      <a class="vhpanel-link" [routerLink]="['/book-hearing']">
+        <div class="vhpanel" id="vhpanel-green">
+          <h1 class="vhpanel-title">Book a video hearing</h1>
+          <div>
+          <img alt="Begin booking a new hearing" src="assets/images/bookicon.png" style="width:64px">
+          </div>
+        </div>
+        </a>
+      </div>
+      <div class="govuk-grid-column-one-third" *ngIf="showCheckList">
+        <a class="vhpanel-link" [routerLink]="['/checklists']">
+          <div class="vhpanel" id="vhpanel-blue">
+            <h1 class="vhpanel-title">Questionnaire results</h1>
+            <div>
+            <img alt="Begin booking a new hearing" src="assets/images/bookicon.png" style="width:64px">
+            </div>
+          </div>
+          </a>
+        </div>
+
+    </div>
+
+  </main>
+</div>
