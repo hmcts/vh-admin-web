@@ -16,6 +16,7 @@ namespace AdminWebsite.Services
         public UserManager(IUserAccountService userAccountService)
         {
             _userAccountService = userAccountService;
+            _temporaryPassword = _userAccountService.TemporaryPassword;
         }
 
         /// <summary>
@@ -145,6 +146,15 @@ namespace AdminWebsite.Services
                 throw new UserServiceException($"Group {groupName} does not exist", "Invalid group name");
             }
             _userAccountService.AddUserToGroup(new User {Id = userId}, group);
+        }
+
+        public FeedRequest AddAdministrator()
+        {
+            var participantRequest = _userAccountService.GetAdministrator();
+
+            FeedRequest feedRequest = new FeedRequest { Location = "Administrator", Participants = new List<ParticipantRequest>() };
+            feedRequest.Participants.Add(participantRequest);
+            return feedRequest;
         }
     }
 }
