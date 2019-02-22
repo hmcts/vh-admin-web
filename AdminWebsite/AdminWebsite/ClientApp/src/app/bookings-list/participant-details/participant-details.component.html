@@ -1,0 +1,18 @@
+﻿<div class="govuk-grid-row vh-row">
+    <div class="govuk-grid-column-full">
+        {{participant?.fullName}}
+        <div id="participant_role">
+            <strong>{{participant?.Role}}</strong>
+        </div>
+        <div id="participant_userName">
+            {{participant?.UserName}}
+        </div>
+        <div id="participant_email">
+            {{participant?.Email}}
+        </div>
+    </div>
+</div>
+<div class="govuk-grid-row vh-row" *ngIf="!participant?.Flag">
+    <div id="rowbottom"></div>
+</div>
+

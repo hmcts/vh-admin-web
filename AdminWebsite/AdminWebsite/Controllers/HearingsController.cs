@@ -89,6 +89,34 @@ namespace AdminWebsite.Controllers
         }
 
         /// <summary>
+        /// Gets bookings hearing by Id.
+        /// </summary>
+        /// <param name="hearingId">The unique sequential value of hearing ID.</param>
+        /// <returns> The hearing</returns>
+        [HttpGet("{hearingId}")]
+        [SwaggerOperation(OperationId = "GetHearingById")]
+        [ProducesResponseType(typeof(HearingResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public ActionResult GetHearingById(long hearingId)
+        {
+            try
+            {
+                var hearingResponse = _hearingApiClient.GetHearingById(hearingId);
+                return Ok(hearingResponse);
+            }
+            catch (HearingApiException e)
+            {
+                if (e.StatusCode == (int)HttpStatusCode.BadRequest)
+                {
+                    return BadRequest(e.Response);
+                }
+
+                throw;
+            }
+        }
+
+        /// <summary>
         /// Gets the all upcoming bookings hearing by the given case types for a hearing administrator.
         /// </summary>
         /// <param name="cursor">The unique sequential value of hearing ID.</param>

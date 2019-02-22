@@ -1,8 +1,13 @@
-﻿import { NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 
 import { SharedModule } from '../shared/shared.module';
 import { BookingsListComponent } from './bookings-list/bookings-list.component';
 import { BookingsListRoutingModule } from './bookings-list-routing.module';
+import { BookingDetailsComponent } from './booking-details/booking-details.component';
+import { ParticipantDetailsComponent } from './participant-details/participant-details.component';
+import { BookingParticipantListComponent } from './booking-participant-list/booking-participant-list.component';
+import { HearingDetailsComponent } from './hearing-details/hearing-details.component';
+
 
 @NgModule({
   imports: [
@@ -11,9 +16,17 @@ import { BookingsListRoutingModule } from './bookings-list-routing.module';
   ],
   declarations: [
     BookingsListComponent,
+    BookingDetailsComponent,
+    ParticipantDetailsComponent,
+    BookingParticipantListComponent,
+    HearingDetailsComponent,
   ],
   exports: [
-    BookingsListComponent
+    BookingsListComponent,
+    BookingDetailsComponent,
+    ParticipantDetailsComponent,
+    BookingParticipantListComponent,
+    HearingDetailsComponent,
   ]
 })
 export class BookingsListModule { }
