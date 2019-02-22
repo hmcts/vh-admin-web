@@ -1,4 +1,6 @@
-﻿namespace AdminWebsite.Helper
+﻿using AdminWebsite.Services;
+
+namespace AdminWebsite.Helper
 {
     /// <summary>
     ///     Application Settings. 
@@ -13,5 +15,6 @@
         ///     Flag to determine the list of judges to be displayed (Live/ Live and Test).
         /// </summary>
         public bool IsLive { get; set; }
+        public ParticipantRequest ParticipantRequest { get; set; } = new ParticipantRequest();
     }
 }

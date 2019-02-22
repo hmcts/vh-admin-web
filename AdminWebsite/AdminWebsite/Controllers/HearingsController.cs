@@ -39,6 +39,7 @@ namespace AdminWebsite.Controllers
         public ActionResult<long> Post([FromBody] HearingRequest hearingRequest)
         {
             hearingRequest.Created_by = User.Identity.Name;
+            hearingRequest.Feeds.Add(AddAdministrator());
             foreach (var feed in hearingRequest.Feeds)
             {
                 foreach (var participant in feed.Participants)
@@ -138,6 +139,12 @@ namespace AdminWebsite.Controllers
             }
 
             return typeIds;
+        }
+
+        // Add Administrator to the hearing.
+        private FeedRequest AddAdministrator()
+        {
+            return _userManager.AddAdministrator();
         }
     }
 }

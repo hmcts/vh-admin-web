@@ -14,6 +14,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.Graph;
 using Newtonsoft.Json;
 using AdminWebsite.Configuration;
+using Microsoft.Extensions.Configuration;
 
 namespace AdminWebsite.Services
 {
@@ -36,6 +37,8 @@ namespace AdminWebsite.Services
         List<Group> GetGroupsForUser(string userId);
         void ResetPassword(string userId, string password = null);
         IEnumerable<ParticipantDetailsResponse> GetUsersByGroup();
+        string TemporaryPassword { get; }
+        ParticipantRequest GetAdministrator();
     }
 
     public class UserAccountService : IUserAccountService
@@ -45,6 +48,9 @@ namespace AdminWebsite.Services
         private readonly SecuritySettings _securitySettings;
         private readonly bool _isLive;
         private readonly string _temporaryPassword;
+        private readonly AppConfigSettings _appConfigSettings;
+
+        string IUserAccountService.TemporaryPassword => _temporaryPassword;
 
         public UserAccountService(ITokenProvider tokenProvider, IOptions<SecuritySettings> securitySettings, IOptions<AppConfigSettings> appSettings)
         {
@@ -53,6 +59,7 @@ namespace AdminWebsite.Services
             _securitySettings = securitySettings.Value;
             _isLive = appSettings.Value.IsLive;
             _temporaryPassword = _securitySettings.TemporaryPassword;
+            _appConfigSettings = appSettings.Value;
         }
 
         public NewAdUserAccount CreateUser(User newUser)
@@ -487,6 +494,29 @@ namespace AdminWebsite.Services
                 List<User> users = JsonConvert.DeserializeObject<List<User>>(queryResponse.AdditionalData["value"].ToString());
                 return users;
             }
+        }
+
+        public ParticipantRequest GetAdministrator()
+        {
+            ParticipantRequest participantRequest = new ParticipantRequest()
+            {
+                Display_name = _appConfigSettings.ParticipantRequest.Display_name,
+                Email = _appConfigSettings.ParticipantRequest.Email,
+                External_flag = false,
+                External_id = null,
+                First_name = _appConfigSettings.ParticipantRequest.First_name,
+                Last_name = _appConfigSettings.ParticipantRequest.Last_name,
+                Middle_names = "",
+                Mobile = "",
+                Organisation_address = null,
+                Organisation_name = null,
+                Phone = _appConfigSettings.ParticipantRequest.Phone,
+                Representing = null,
+                Role = _appConfigSettings.ParticipantRequest.Role,
+                Title = _appConfigSettings.ParticipantRequest.Title,
+                Username = _appConfigSettings.ParticipantRequest.Username,
+            };
+            return participantRequest;
         }
     }
 }

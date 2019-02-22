@@ -12,10 +12,6 @@
         public string RedirectUri { get; set; }
         public string PostLogoutRedirectUri { get; set; }
         public string GraphApiBaseUri { get; set; }
-        //public string AppInsightsKey { get; set; }
-        //public string HearingsApiResourceId { get; set; }
-        //public string BookHearingUIClientId { get; set; }
-        //public string BookHearingUIClientSecret { get; set; }
         /// <summary>
         ///     Temporary Password for newly created user accounts.
         /// </summary>
