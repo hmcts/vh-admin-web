@@ -44,14 +44,17 @@ namespace AdminWebsite.Controllers
             {
                 foreach (var participant in feed.Participants)
                 {
-                    // judge and admins are managed internally since the number of users is small
-                    if (participant.Role == "Judge" || participant.Role == "Administrator")
+                    if (participant != null)
                     {
-                        participant.Username = participant.Email;
-                    }
-                    else
-                    {
-                        CreateAdAccountIfRequired(participant);
+                        // judge and admins are managed internally since the number of users is small
+                        if (participant.Role == "Judge" || participant.Role == "Administrator")
+                        {
+                            participant.Username = participant.Email;
+                        }
+                        else
+                        {
+                            CreateAdAccountIfRequired(participant);
+                        }
                     }
                 }
             }
