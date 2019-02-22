@@ -20,6 +20,8 @@ namespace AdminWebsite.UnitTests
         private Mock<UserManager> _userManagerMock;
         private HearingsController _controller;
         private Mock<IUserIdentity> _userIdentity;
+
+        private FeedRequest feedRequest;
         
         [SetUp]
         public void SetUp()
@@ -53,6 +55,20 @@ namespace AdminWebsite.UnitTests
             {
                 ControllerContext = context
             };
+
+            var participantRequest = new ParticipantRequest()
+            {
+                Display_name = "displayname",
+                Email = "email@domain.com",
+                First_name = "firstname",
+                Last_name = "lastname",
+                Phone = "1234567890",
+                Role = "administrator",
+                Title = "ms",
+                Username = "username@doamin.com"
+            };
+            feedRequest = new FeedRequest { Location = "Administrator", Participants = new List<ParticipantRequest>() };
+            feedRequest.Participants.Add(participantRequest);
         }
 
         [Test]
@@ -60,6 +76,7 @@ namespace AdminWebsite.UnitTests
         {
             var request = CreateBaseHearingRequest();
             request = AddJudgeAndAdminToRequest(request);
+            _userManagerMock.Setup(x => x.AddAdministrator()).Returns(feedRequest);
             _controller.Post(request);
             _userManagerMock.Verify(x => x.GetUsernameForUserWithRecoveryEmail("judge@personal.com"),
                 Times.Never);
@@ -77,7 +94,6 @@ namespace AdminWebsite.UnitTests
             var participant = request.Feeds[0].Participants[0];
             var username = "chris.green@hearings.reform.hmcts.net";
 
-            
             _userManagerMock.Setup(x => x.GetUsernameForUserWithRecoveryEmail(participant.Email))
                 .Returns((string) null);
 
@@ -85,6 +101,8 @@ namespace AdminWebsite.UnitTests
                     x.CreateAdAccount(participant.First_name, participant.Last_name, participant.Email,
                         participant.Role))
                 .Returns(username);
+
+            _userManagerMock.Setup(x => x.AddAdministrator()).Returns(feedRequest);
             
             _controller.Post(request);
 
@@ -103,6 +121,8 @@ namespace AdminWebsite.UnitTests
             
             _userManagerMock.Setup(x => x.GetUsernameForUserWithRecoveryEmail(participant.Email))
                 .Returns(existingUsername);
+
+            _userManagerMock.Setup(x => x.AddAdministrator()).Returns(feedRequest);
 
             _controller.Post(request);
             
@@ -178,6 +198,7 @@ namespace AdminWebsite.UnitTests
             };
             return request;
         }
+
         private HearingRequest CreateBaseHearingRequest()
         {
             return new HearingRequest
