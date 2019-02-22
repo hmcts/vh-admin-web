@@ -3,17 +3,29 @@ import { async, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AdalService } from 'adal-angular4';
+import { Component, EventEmitter } from '@angular/core';
 
 import { AppComponent } from './app.component';
 import { ClientSettingsResponse } from './services/clients/api-client';
 import { ConfigService } from './services/config.service';
 import { FooterStubComponent } from './testing/stubs/footer-stub';
-import { HeaderStubComponent } from './testing/stubs/header-stub';
+import { SignOutPopupStubComponent } from './testing/stubs/sign-out-popup-stub';
+import { VideoHearingsService } from './services/video-hearings.service';
+
+@Component({ selector: 'app-header', template: '' })
+export class HeaderComponent {
+  $confirmLogout: EventEmitter<any> = new EventEmitter();
+  get confirmLogout() {
+    return this.$confirmLogout;
+  }
+}
 
 describe('AppComponent', () => {
   const router = {
     navigate: jasmine.createSpy('navigate')
   };
+
+  const videoHearingServiceSpy = jasmine.createSpyObj('VideoHearingsService', ['hasUnsavedChanges']);
 
   let configServiceSpy: jasmine.SpyObj<ConfigService>;
   let adalServiceSpy: jasmine.SpyObj<AdalService>;
@@ -41,14 +53,17 @@ describe('AppComponent', () => {
       imports: [HttpClientModule, RouterTestingModule],
       declarations: [
         AppComponent,
-        HeaderStubComponent,
+        HeaderComponent,
         FooterStubComponent,
+        SignOutPopupStubComponent,
       ],
       providers:
         [
           { provide: AdalService, useValue: adalServiceSpy },
           { provide: ConfigService, useValue: configServiceSpy },
-          { provide: Router, useValue: router }
+          { provide: Router, useValue: router },
+          { provide: VideoHearingsService, useValue: videoHearingServiceSpy }
+
         ],
     }).compileComponents();
   }));
@@ -64,7 +79,6 @@ describe('AppComponent', () => {
   }));
   it('should a tag Skip to main content', async(() => {
     const fixture = TestBed.createComponent(AppComponent);
-    fixture.detectChanges();
     const compiled = fixture.debugElement.nativeElement;
     expect(compiled.querySelector('a').textContent).toContain('Skip to main content');
   }));

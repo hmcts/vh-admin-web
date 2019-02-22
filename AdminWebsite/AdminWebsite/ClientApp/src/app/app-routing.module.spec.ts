@@ -23,6 +23,7 @@ import { FooterStubComponent } from './testing/stubs/footer-stub';
 import { HeaderStubComponent } from './testing/stubs/header-stub';
 import { PaginationStubComponent } from './testing/stubs/pagination-stub';
 import { UnauthorisedComponent } from './error/unauthorised.component';
+import { SignOutPopupComponent } from './popups/sign-out-popup/sign-out-popup.component';
 
 describe('app routing', () => {
   let location: Location;
@@ -43,7 +44,8 @@ describe('app routing', () => {
         FooterStubComponent,
         ContactUsStubComponent,
         PaginationStubComponent,
-        UnauthorisedComponent
+        UnauthorisedComponent,
+        SignOutPopupComponent
       ],
       providers: [
         AuthGuard,

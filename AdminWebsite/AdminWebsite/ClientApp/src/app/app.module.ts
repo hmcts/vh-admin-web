@@ -23,6 +23,7 @@ import { UserIdentityService } from './services/user-identity.service';
 import { UnauthorisedComponent } from './error/unauthorised.component';
 
 import { SharedModule } from './shared/shared.module';
+import { PopupModule } from './popups/popup.module';
 
 export function getSettings(configService: ConfigService) {
   return () => configService.loadConfig();
@@ -42,7 +43,8 @@ export function getSettings(configService: ConfigService) {
     BookingsListModule,
     BrowserModule,
     AppRoutingModule,
-    SharedModule
+    SharedModule,
+    PopupModule,
   ],
   providers: [
     HttpClientModule,

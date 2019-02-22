@@ -34,6 +34,10 @@ export class VideoHearingsService {
     }
   }
 
+  hasUnsavedChanges() {
+    return sessionStorage.getItem(this.newRequestKey) !== null;
+  }
+
   getHearingMediums(): Observable<HearingMediumResponse[]> {
     return this.bhClient.getHearingMediums();
   }

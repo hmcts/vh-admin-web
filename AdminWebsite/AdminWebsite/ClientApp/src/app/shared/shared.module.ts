@@ -9,6 +9,7 @@ import { HeaderComponent } from './header/header.component';
 import { PaginationComponent } from './pagination/pagination.component';
 import { SharedRoutingModule } from './shared-routing.module';
 import { ScrollableDirective } from './directives/scroll.directive';
+import { SignOutComponent } from './sign-out/sign-out.component';
 
 @NgModule({
   imports: [
@@ -24,6 +25,7 @@ import { ScrollableDirective } from './directives/scroll.directive';
     ContactUsComponent,
     PaginationComponent,
     ScrollableDirective,
+    SignOutComponent,
   ],
   exports: [
     HeaderComponent,
@@ -35,6 +37,7 @@ import { ScrollableDirective } from './directives/scroll.directive';
     ReactiveFormsModule,
     HttpClientModule,
     ScrollableDirective,
+    SignOutComponent,
   ]
 })
 export class SharedModule { }
