@@ -70,11 +70,12 @@ describe('SummaryComponent with valid request', () => {
             ['getCourts']);
         referenceDataServiceServiceSpy.getCourts.and.returnValue(of(MockValues.Courts));
         videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',
-            ['getHearingMediums', 'getHearingTypes', 'getCurrentRequest', 'updateHearingRequest', 'saveHearing']);
+          ['getHearingMediums', 'getHearingTypes', 'getCurrentRequest', 'updateHearingRequest', 'saveHearing', 'getOtherInformation']);
 
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
         videoHearingsServiceSpy.getHearingMediums.and.returnValue(of(MockValues.HearingMediums));
         videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
+      videoHearingsServiceSpy.getOtherInformation.and.returnValue('other info');
 
         TestBed.configureTestingModule({
             providers: [
@@ -122,7 +123,7 @@ describe('SummaryComponent  with invalid request', () => {
             ['getCourts']);
         referenceDataServiceServiceSpy.getCourts.and.returnValue(of(MockValues.Courts));
         videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',
-            ['getHearingMediums', 'getHearingTypes', 'getCurrentRequest', 'updateHearingRequest', 'saveHearing']);
+            ['getHearingMediums', 'getHearingTypes', 'getCurrentRequest', 'updateHearingRequest', 'saveHearing', 'getOtherInformation']);
 
         const existingRequest = initBadHearingRequest();
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
