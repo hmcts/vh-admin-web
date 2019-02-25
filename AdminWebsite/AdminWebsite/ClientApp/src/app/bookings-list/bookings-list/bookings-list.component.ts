@@ -83,7 +83,7 @@ export class BookingsListComponent implements OnInit {
   closeHearingDetails() {
     this.showDetails = false;
     setTimeout(() => {
-      this.selectedElement = document.getElementById(this.selectedGroupIndex + '_' + this.selectedItemIndex) as HTMLElement;
+      this.selectedElement = document.getElementById(this.selectedGroupIndex + '_' + this.selectedItemIndex);
       this.selectedElement.scrollIntoView(false);
     }, 500);
   }
