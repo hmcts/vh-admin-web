@@ -1,4 +1,4 @@
-﻿import { Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { BookingsDetailsModel } from '../common/model/bookings-list.model';
 import { ParticipantDetailsModel } from '../common/model/participant-details.model';
 import { HearingResponse } from '../services/clients/api-client';
@@ -32,7 +32,7 @@ export class BookingDetailsService {
     let participants: Array<ParticipantDetailsModel> = [];
     let judges: Array<ParticipantDetailsModel> = [];
     if (hearingResponse.participants && hearingResponse.participants.length > 0) {
-      hearingResponse.participants.map(p => {
+      hearingResponse.participants.forEach(p => {
         let model = new ParticipantDetailsModel(p.id, p.title, p.first_name, p.last_name, p.participant_role, p.username, p.email);
         if (p.participant_role == this.JUDGE) {
           judges.push(model);
