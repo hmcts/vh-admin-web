@@ -5,20 +5,18 @@ namespace AdminWebsite.AcceptanceTests.Helpers
     public class TestConfigSettings
     {
 
-        public string JudgeEmail { get; set; }
-        public string AdminEmail { get; set; }
-        public string ClerkEmail { get; set; }
-        public string Citizen1Email { get; set; }
-        public string Professional1Email { get; set; }
-        public string Citizen2Email { get; set; }
-        public string Professional2Email { get; set; }
-        public string Password { get; set; }
-
+        public string VhOfficerUsername { get; set; }
+        public string VhOfficerFinRemedy { get; set; }
+        public string VhOfficerCivilMoneyclaims { get; set; }
+        public string VhOfficerFinRemedyCivilMoneyclaims { get; set; }
+        public string CaseAdminFinRemedy { get; set; }
+        public string CaseAdminCivilMoneyClaims { get; set; }
+        public string CaseAdminFinRemedyCivilMoneyClaims { get; set; }
+        public string NonAdmin { get; set; }
+        public string UserPassword { get; set; }
         public string WebsiteUrl { get; set; }
-        public string HearingCaseName { get; set; }
-        public string VideoAppUrl { get; set; }
 
-        public static TestConfigSettings GetSettings(string userSecretsKey)
+        public static TestConfigSettings GetSettings(string userSecretsKey = "f99a3fe8-cf72-486a-b90f-b65c27da84ee")
         {
             var config = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", false, true)
@@ -28,7 +26,7 @@ namespace AdminWebsite.AcceptanceTests.Helpers
 
             var settings = new TestConfigSettings();
             config.GetSection("TestUserSecrets").Bind(settings);
-            config.Bind(settings); ;
+            config.Bind(settings);
 
             return settings;
         }

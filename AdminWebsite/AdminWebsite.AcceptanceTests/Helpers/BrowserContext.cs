@@ -61,7 +61,7 @@ namespace AdminWebsite.AcceptanceTests.Helpers
             }
 
             Console.WriteLine($"Navigating to {_baseUrl}");
-            NgDriver.Navigate().GoToUrl(_baseUrl);
+            NgDriver.WrappedDriver.Navigate().GoToUrl(_baseUrl);
         }
 
         internal void Retry(Action action, int times = 4)
