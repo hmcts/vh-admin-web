@@ -1,0 +1,18 @@
+.vh-mt50 {
+  margin-top: 50px;
+}
+
+.vh-mr25 {
+  margin-right: 25px;
+}
+
+.vh-cancel-btn {
+  background-color: #dee0e2;
+  -webkit-box-shadow: 0 2px 0 #888888;
+  box-shadow: 0 2px 0 #6f777b;
+  color: #0b0c0c;
+}
+
+.vh-text-h {
+  min-height: 130px;
+}
