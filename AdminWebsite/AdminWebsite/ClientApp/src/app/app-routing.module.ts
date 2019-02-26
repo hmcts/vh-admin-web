@@ -8,7 +8,7 @@ import { LoginComponent } from './security/login.component';
 import { LogoutComponent } from './security/logout.component';
 import { VhOfficerAdminGuard } from './security/vh-officer-admin.guard';
 import { UnauthorisedComponent } from './error/unauthorised.component';
-
+import { ErrorComponent } from './error/error.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
@@ -17,6 +17,7 @@ export const routes: Routes = [
     { path: 'logout', component: LogoutComponent },
     { path: 'checklists', component: CheckListComponent, canActivate: [VhOfficerAdminGuard] },
     { path: 'unauthorised', component: UnauthorisedComponent },
+    { path: 'error', component: ErrorComponent },
     { path: '**', redirectTo: 'dashboard', pathMatch: 'full', canActivate: [AuthGuard] }
 ];
 

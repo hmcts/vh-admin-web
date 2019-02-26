@@ -8,6 +8,7 @@ import { CanDeactiveComponent } from '../../common/guards/changes.guard';
 import { CourtResponse, HearingRequest } from '../../services/clients/api-client';
 import { ReferenceDataService } from '../../services/reference-data.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
+import { ErrorService } from 'src/app/services/error.service';
 
 @Component({
   selector: 'app-hearing-schedule',
@@ -26,7 +27,7 @@ export class HearingScheduleComponent implements OnInit, CanDeactiveComponent {
   canNavigate = true;
 
   constructor(private refDataService: ReferenceDataService, private hearingService: VideoHearingsService,
-    private fb: FormBuilder, private router: Router, private datePipe: DatePipe) {
+    private fb: FormBuilder, private router: Router, private datePipe: DatePipe, private errorService: ErrorService) {
     this.attemptingCancellation = false;
     this.hasSaved = false;
   }
@@ -122,7 +123,8 @@ export class HearingScheduleComponent implements OnInit, CanDeactiveComponent {
           pleaseSelect.id = -1;
           this.availableCourts.unshift(pleaseSelect);
         },
-        error => console.error(error)
+        // error => console.error(error)
+        error => this.errorService.handleError(error)
       );
   }
 

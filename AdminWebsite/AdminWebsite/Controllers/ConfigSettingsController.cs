@@ -35,7 +35,8 @@ namespace AdminWebsite.Controllers
                 ClientId = _securitySettings.ClientId,
                 TenantId = _securitySettings.TenantId,
                 RedirectUri = _securitySettings.RedirectUri,
-                PostLogoutRedirectUri = _securitySettings.PostLogoutRedirectUri
+                PostLogoutRedirectUri = _securitySettings.PostLogoutRedirectUri,
+                InstrumentationKey = _securitySettings.InstrumentationKey
             };
 
             return Ok(clientSettings);

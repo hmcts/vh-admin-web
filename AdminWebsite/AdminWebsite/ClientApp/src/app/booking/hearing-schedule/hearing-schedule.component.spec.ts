@@ -14,6 +14,7 @@ import { ReferenceDataService } from '../../services/reference-data.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { MockValues } from '../../testing/data/test-objects';
 import { HearingScheduleComponent } from './hearing-schedule.component';
+import { ErrorService } from 'src/app/services/error.service';
 
 function initHearingRequest(): HearingRequest {
   const initRequest = {
@@ -69,6 +70,7 @@ describe('HearingScheduleComponent first visit', () => {
   let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
   let referenceDataServiceServiceSpy: jasmine.SpyObj<ReferenceDataService>;
   let routerSpy: jasmine.SpyObj<Router>;
+  let errorService: jasmine.SpyObj<ErrorService> = jasmine.createSpyObj('ErrorService', ['handleError']);
 
   beforeEach(async(() => {
     routerSpy = jasmine.createSpyObj('Router', ['navigate']);
@@ -87,6 +89,7 @@ describe('HearingScheduleComponent first visit', () => {
         { provide: ReferenceDataService, useValue: referenceDataServiceServiceSpy },
         { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
         { provide: Router, useValue: routerSpy },
+        { provide: ErrorService, useValue: errorService },
         DatePipe
       ],
       declarations: [HearingScheduleComponent, BreadcrumbStubComponent, CancelPopupComponent]
@@ -202,6 +205,7 @@ describe('HearingScheduleComponent returning to page', () => {
   let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
   let referenceDataServiceServiceSpy: jasmine.SpyObj<ReferenceDataService>;
   let routerSpy: jasmine.SpyObj<Router>;
+  let errorService: jasmine.SpyObj<ErrorService> = jasmine.createSpyObj('ErrorService', ['handleError']);
 
   beforeEach(async(() => {
     routerSpy = jasmine.createSpyObj('Router', ['navigate']);
@@ -220,6 +224,7 @@ describe('HearingScheduleComponent returning to page', () => {
         { provide: ReferenceDataService, useValue: referenceDataServiceServiceSpy },
         { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
         { provide: Router, useValue: routerSpy },
+        { provide: ErrorService, useValue: errorService },
         DatePipe
       ],
       declarations: [HearingScheduleComponent, BreadcrumbStubComponent, CancelPopupComponent]

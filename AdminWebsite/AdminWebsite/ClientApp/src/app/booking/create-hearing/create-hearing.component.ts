@@ -11,6 +11,7 @@ import {
   HearingTypeResponse,
 } from '../../services/clients/api-client';
 import { VideoHearingsService } from '../../services/video-hearings.service';
+import { ErrorService } from 'src/app/services/error.service';
 
 @Component({
   selector: 'app-create-hearing',
@@ -32,7 +33,7 @@ export class CreateHearingComponent implements OnInit, CanDeactiveComponent {
   filteredHearingMediums: HearingMediumResponse[];
   hasSaved: boolean;
 
-  constructor(private hearingService: VideoHearingsService, private fb: FormBuilder, private router: Router) {
+  constructor(private hearingService: VideoHearingsService, private fb: FormBuilder, private router: Router, private errorService: ErrorService) {
     this.attemptingCancellation = false;
     this.availableCaseTypes = [];
   }
@@ -149,7 +150,8 @@ export class CreateHearingComponent implements OnInit, CanDeactiveComponent {
           this.setupCaseTypeAndHearingTypes(data);
           this.filterHearingTypes();
         },
-        error => console.error(error)
+        // error => console.error(error)
+        error => this.errorService.handleError(error)
       );
   }
 
@@ -160,7 +162,8 @@ export class CreateHearingComponent implements OnInit, CanDeactiveComponent {
         this.availableHearingMediums.sort(this.dynamicSort('name'));
         this.filterHearingMethod();
       },
-        error => console.error(error)
+        // error => console.error(error)
+        error => this.errorService.handleError(error)
       );
   }
 
