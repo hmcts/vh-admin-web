@@ -4,6 +4,7 @@ import { CanDeactiveComponent } from '../../common/guards/changes.guard';
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import { VideoHearingsService } from '../../services/video-hearings.service';
+import { HearingModel } from '../../common/model/hearing.model';
 
 @Component({
   selector: 'app-other-information',
@@ -11,6 +12,7 @@ import { VideoHearingsService } from '../../services/video-hearings.service';
   styleUrls: ['./other-information.component.css']
 })
 export class OtherInformationComponent implements OnInit, CanDeactiveComponent {
+  hearing: HearingModel;
   attemptingCancellation: boolean;
   canNavigate = true;
   otherInformationForm: FormGroup;
@@ -32,11 +34,13 @@ export class OtherInformationComponent implements OnInit, CanDeactiveComponent {
   }
 
   private checkForExistingRequest() {
-    this.otherInformationText = this.videoHearingService.getOtherInformation()
+    this.hearing = this.videoHearingService.getCurrentRequest();
+    this.otherInformationText = this.hearing.other_information;
   }
 
   next() {
-    this.videoHearingService.setOtherInformation(this.otherInformationForm.value.otherInformation);
+    this.hearing.other_information = this.otherInformationForm.value.otherInformation;
+    this.videoHearingService.updateHearingRequest(this.hearing);
     this.otherInformationForm.markAsPristine();
     this.router.navigate(['/summary']);
   }
@@ -45,7 +49,6 @@ export class OtherInformationComponent implements OnInit, CanDeactiveComponent {
     this.attemptingCancellation = false;
     this.videoHearingService.cancelRequest();
     this.otherInformationForm.reset();
-    this.videoHearingService.removeOtherInformation();
     this.router.navigate(['/dashboard']);
   }
 

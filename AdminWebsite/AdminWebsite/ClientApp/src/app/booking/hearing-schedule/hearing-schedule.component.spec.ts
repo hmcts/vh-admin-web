@@ -14,26 +14,27 @@ import { ReferenceDataService } from '../../services/reference-data.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { MockValues } from '../../testing/data/test-objects';
 import { HearingScheduleComponent } from './hearing-schedule.component';
+import { HearingModel } from '../../common/model/hearing.model';
 
-function initHearingRequest(): HearingRequest {
-  const initRequest = {
-    cases: [],
-    feeds: [],
-    hearing_type_id: -1,
-    hearing_medium_id: -1,
-    court_id: -1,
-    scheduled_date_time: null,
-    scheduled_duration: 0,
-  };
-  const newHearing = new HearingRequest(initRequest);
+function initHearingRequest(): HearingModel {
+  //const initRequest = {
+  //  cases: [],
+  //  feeds: [],
+  //  hearing_type_id: -1,
+  //  hearing_medium_id: -1,
+  //  court_id: -1,
+  //  scheduled_date_time: null,
+  //  scheduled_duration: 0,
+  //};
+  const newHearing = new HearingModel();
   return newHearing;
 }
 
-function initExistingHearingRequest(): HearingRequest {
+function initExistingHearingRequest(): HearingModel {
   const today = new Date();
   today.setHours(10, 30);
 
-  const existingRequest = new HearingRequest();
+  const existingRequest = new HearingModel();
   existingRequest.hearing_type_id = 2;
   existingRequest.hearing_medium_id = 1;
   existingRequest.feeds = [];
@@ -197,7 +198,7 @@ describe('HearingScheduleComponent returning to page', () => {
   let component: HearingScheduleComponent;
   let fixture: ComponentFixture<HearingScheduleComponent>;
 
-  const existingRequest: HearingRequest = initExistingHearingRequest();
+  const existingRequest: HearingModel = initExistingHearingRequest();
 
   let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
   let referenceDataServiceServiceSpy: jasmine.SpyObj<ReferenceDataService>;

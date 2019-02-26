@@ -4,68 +4,74 @@ import { CancelPopupComponent } from 'src/app/popups/cancel-popup/cancel-popup.c
 import { SharedModule } from 'src/app/shared/shared.module';
 import { BreadcrumbStubComponent } from 'src/app/testing/stubs/breadcrumb-stub';
 
-import { HearingRequest, FeedRequest, ParticipantRequest } from '../../services/clients/api-client';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { AssignJudgeComponent } from './assign-judge.component';
 import { of } from 'rxjs';
 import { MockValues } from '../../testing/data/test-objects';
 import { JudgeDataService } from '../services/judge-data.service';
 import { ParticipantsListComponent } from '../participants-list/participants-list.component';
+import { HearingModel, FeedModel, ParticipantModel } from '../../common/model/hearing.model';
 
-function initHearingRequest(): HearingRequest {
-  const initRequest = {
-    cases: [],
-    feeds: [
-      new FeedRequest({
-        location: 'Judge',
-        participants: [
-          new ParticipantRequest({
-            display_name: 'display name1',
-            email: 'test1@TestBed.com',
-            first_name: 'first',
-            last_name: 'last',
-            role: 'Judge',
-            title: 'Mr.'
-          }),
-          new ParticipantRequest({
-            display_name: 'display name2',
-            email: 'test2@TestBed.com',
-            first_name: 'first2',
-            last_name: 'last2',
-            role: 'Judge',
-            title: 'Mr.'
-          })
-        ]
-      }),
-      new FeedRequest({
-        location: 'Professional',
-        participants: [
-          new ParticipantRequest({
-            display_name: 'display name3',
-            email: 'test3@TestBed.com',
-            first_name: 'first3',
-            last_name: 'last3',
-            role: 'Judge',
-            title: 'Mr.'
-          }),
-          new ParticipantRequest({
-            display_name: 'display name3',
-            email: 'test3@TestBed.com',
-            first_name: 'first3',
-            last_name: 'last3',
-            role: 'Judge',
-            title: 'Mr.'
-          })
-        ]
-      }),
-    ],
-    hearing_type_id: -1,
-    hearing_medium_id: -1,
-    court_id: -1,
-    scheduled_date_time: null,
-    scheduled_duration: 0,
-  };
-  const newHearing = new HearingRequest(initRequest);
+function initHearingRequest(): HearingModel {
+
+  let f1 = new FeedModel('Judge');
+
+  let participants: ParticipantModel[] = [];
+  let p1 = new ParticipantModel();
+  p1.display_name = 'display name1';
+  p1.email = 'test1@TestBed.com';
+  p1.first_name = 'first';
+  p1.last_name = 'last';
+  p1.role = 'Judge';
+  p1.title = 'Mr.';
+
+  let p2 = new ParticipantModel();
+  p2.display_name = 'display name2';
+  p2.email = 'test2@TestBed.com';
+  p2.first_name = 'first2';
+  p2.last_name = 'last2';
+  p2.role = 'Judge';
+  p2.title = 'Mr.';
+
+  participants.push(p1);
+  participants.push(p2);
+
+  let f2 = new FeedModel('Professional');
+
+  let participants1: ParticipantModel[] = [];
+  let p3 = new ParticipantModel();
+  p3.display_name = 'display name3';
+  p3.email = 'test3@TestBed.com';
+  p3.first_name = 'first3';
+  p3.last_name = 'last3';
+  p3.role = 'Judge';
+  p3.title = 'Mr.';
+
+  let p4 = new ParticipantModel();
+  p4.display_name = 'display name3';
+  p4.email = 'test3@TestBed.com';
+  p4.first_name = 'first3';
+  p4.last_name = 'last3';
+  p4.role = 'Judge';
+  p4.title = 'Mr.';
+
+  participants1.push(p3);
+  participants1.push(p4);
+  f1.participants = participants;
+  f2.participants = participants1;
+
+  let newHearing = new HearingModel();
+  newHearing.cases = [];
+  newHearing.feeds = [];
+  newHearing.feeds.push(f1);
+  newHearing.feeds.push(f2);
+
+  newHearing.hearing_type_id = -1;
+  newHearing.hearing_medium_id = -1;
+  newHearing.court_id = -1;
+  newHearing.scheduled_date_time = null;
+  newHearing.scheduled_duration = 0;
+
   return newHearing;
 }
 

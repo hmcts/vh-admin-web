@@ -4,12 +4,8 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 
 import { CanDeactiveComponent } from '../../common/guards/changes.guard';
-import {
-  CaseRequest,
-  HearingMediumResponse,
-  HearingRequest,
-  HearingTypeResponse,
-} from '../../services/clients/api-client';
+import { HearingMediumResponse, HearingTypeResponse } from '../../services/clients/api-client';
+import { CaseModel, HearingModel } from '../../common/model/hearing.model';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 
 @Component({
@@ -22,7 +18,7 @@ export class CreateHearingComponent implements OnInit, CanDeactiveComponent {
   private existingCaseTypeKey = 'selectedCaseType';
   attemptingCancellation: boolean;
   failedSubmission: boolean;
-  hearing: HearingRequest;
+  hearing: HearingModel;
   hearingForm: FormGroup;
   availableHearingTypes: HearingTypeResponse[];
   availableCaseTypes: string[];
@@ -65,7 +61,7 @@ export class CreateHearingComponent implements OnInit, CanDeactiveComponent {
   private initForm() {
     let firstCase = this.hearing.cases[0];
     if (!firstCase) {
-      firstCase = new CaseRequest();
+      firstCase = new CaseModel();
     }
     this.hearingForm = this.fb.group({
       caseName: [firstCase.name, Validators.required],
@@ -135,7 +131,7 @@ export class CreateHearingComponent implements OnInit, CanDeactiveComponent {
     this.hearing.hearing_type_id = this.hearingForm.value.hearingType;
     this.hearing.hearing_medium_id = this.hearingForm.value.hearingMethod;
 
-    const hearingCase = new CaseRequest();
+    const hearingCase = new CaseModel();
     hearingCase.name = this.hearingForm.value.caseName;
     hearingCase.number = this.hearingForm.value.caseNumber;
     this.hearing.cases[0] = hearingCase;

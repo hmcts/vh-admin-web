@@ -5,7 +5,8 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 
 import { CanDeactiveComponent } from '../../common/guards/changes.guard';
-import { CourtResponse, HearingRequest } from '../../services/clients/api-client';
+import { CourtResponse} from '../../services/clients/api-client';
+import { HearingModel } from '../../common/model/hearing.model';
 import { ReferenceDataService } from '../../services/reference-data.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 
@@ -16,7 +17,7 @@ import { VideoHearingsService } from '../../services/video-hearings.service';
 })
 export class HearingScheduleComponent implements OnInit, CanDeactiveComponent {
 
-  hearing: HearingRequest;
+  hearing: HearingModel;
   availableCourts: CourtResponse[];
   schedulingForm: FormGroup;
   failedSubmission: boolean;
@@ -142,6 +143,7 @@ export class HearingScheduleComponent implements OnInit, CanDeactiveComponent {
 
   private updateHearingRequest() {
     this.hearing.court_id = this.schedulingForm.value.courtAddress;
+    this.hearing.court_room = this.schedulingForm.value.courtRoom;
     const hearingDate = new Date(this.schedulingForm.value.hearingDate);
 
     hearingDate.setHours(
