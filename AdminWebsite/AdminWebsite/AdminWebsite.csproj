@@ -44,6 +44,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Services\BookingsApiClient.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="ClientApp\e2e\features\contactUs.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>
       <LastGenOutput>contactUs.feature.cs</LastGenOutput>
