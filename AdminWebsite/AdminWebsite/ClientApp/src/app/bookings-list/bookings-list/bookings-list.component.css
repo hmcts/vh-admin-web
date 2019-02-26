@@ -21,8 +21,17 @@
     overflow-y: scroll;
     overflow-x: hidden;
     max-height: 500px;
-    overflow-wrap:break-word;
-    word-wrap:break-word;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+}
+
+.vh-row-selected {
+    background-color: aliceblue;
+    padding-top: 3px;
+}
+
+.vh-a{
+  cursor:pointer;
 }
 
 .rowbottom {

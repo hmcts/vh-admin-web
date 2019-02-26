@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import {
   HearingTypeResponse, BHClient, HearingRequest,
-  HearingMediumResponse, ParticipantRoleResponse
+  HearingMediumResponse, ParticipantRoleResponse, HearingResponse
 } from '../services/clients/api-client';
 
 @Injectable({
@@ -63,5 +63,9 @@ export class VideoHearingsService {
 
   saveHearing(newRequest: HearingRequest): Observable<number> {
     return this.bhClient.bookNewHearing(newRequest);
+  }
+
+ getHearingById(hearingId: number): Observable<HearingResponse> {
+    return this.bhClient.getHearingById(hearingId);
   }
 }
