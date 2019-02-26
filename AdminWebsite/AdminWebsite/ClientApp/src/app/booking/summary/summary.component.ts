@@ -66,7 +66,7 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
         this.getCourtRoomAndAddress(this.hearing.court_id);
         this.hearingDuration = this.getHearingDuration(this.hearing.scheduled_duration);
         this.participants = this.getAllParticipants();
-        this.otherInformation = 'None';
+        this.otherInformation = this.hearingService.getOtherInformation();
     }
 
     private getAllParticipants(): ParticipantRequest[] {

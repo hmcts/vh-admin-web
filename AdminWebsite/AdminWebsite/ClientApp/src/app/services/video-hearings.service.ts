@@ -12,9 +12,11 @@ export class VideoHearingsService {
 
   private newRequestKey: string;
   private newHearing: HearingRequest;
+  private otherInformationKey: string;
 
   constructor(private bhClient: BHClient) {
     this.newRequestKey = 'bh-newRequest';
+    this.otherInformationKey = 'otherInformation';
   }
 
   private checkForExistingHearing() {
@@ -67,5 +69,17 @@ export class VideoHearingsService {
 
  getHearingById(hearingId: number): Observable<HearingResponse> {
     return this.bhClient.getHearingById(hearingId);
+  }
+
+  getOtherInformation() {
+    return sessionStorage.getItem(this.otherInformationKey);
+  }
+
+  setOtherInformation(value: string) {
+    return sessionStorage.setItem(this.otherInformationKey, value);
+  }
+
+  removeOtherInformation() {
+    sessionStorage.removeItem(this.otherInformationKey);
   }
 }
