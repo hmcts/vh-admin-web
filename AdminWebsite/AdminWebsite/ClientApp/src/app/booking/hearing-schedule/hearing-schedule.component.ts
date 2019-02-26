@@ -74,6 +74,7 @@ export class HearingScheduleComponent implements OnInit, CanDeactiveComponent {
       hearingDurationHour: [durationHour, [Validators.required, Validators.min(0), Validators.max(23)]],
       hearingDurationMinute: [durationMinute, [Validators.required, Validators.min(0), Validators.max(59)]],
       courtAddress: [this.hearing.court_id, [Validators.required, Validators.min(1)]],
+      courtRoom: [''],
     });
   }
 
@@ -83,6 +84,7 @@ export class HearingScheduleComponent implements OnInit, CanDeactiveComponent {
   get hearingDurationHour() { return this.schedulingForm.get('hearingDurationHour'); }
   get hearingDurationMinute() { return this.schedulingForm.get('hearingDurationMinute'); }
   get courtAddress() { return this.schedulingForm.get('courtAddress'); }
+  get courtRoom() { return this.schedulingForm.get('courtRoom'); }
 
   get hearingDateInvalid() {
     return this.hearingDate.invalid && (this.hearingDate.dirty || this.hearingDate.touched || this.failedSubmission);
