@@ -1,4 +1,4 @@
-﻿import { routes } from './bookings-list-routing.module';
+import { routes } from './bookings-list-routing.module';
 import { Location } from '@angular/common';
 import { TestBed, fakeAsync, tick, ComponentFixture } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -12,6 +12,11 @@ import { MockAdalService } from '../testing/mocks/MockAdalService';
 import { MockAdminGuard } from '../testing/mocks/MockAdminGuard';
 
 import { BookingsListComponent } from './bookings-list/bookings-list.component';
+import { BookingDetailsComponent } from './booking-details/booking-details.component';
+import { BookingParticipantListComponent } from './booking-participant-list/booking-participant-list.component';
+import { ParticipantDetailsComponent } from './participant-details/participant-details.component';
+import { HearingDetailsComponent } from './hearing-details/hearing-details.component';
+
 
 describe('app routing', () => {
   let location: Location;
@@ -26,6 +31,10 @@ describe('app routing', () => {
       imports: [RouterTestingModule.withRoutes(routes)],
       declarations: [
         BookingsListComponent,
+        BookingDetailsComponent,
+        BookingParticipantListComponent,
+        ParticipantDetailsComponent,
+        HearingDetailsComponent,
       ],
       providers: [
         AuthGuard,

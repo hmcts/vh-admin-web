@@ -23,7 +23,7 @@ export class BHClient {
 
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(BH_API_BASE_URL) baseUrl?: string) {
         this.http = http;
-        this.baseUrl = baseUrl ? baseUrl : "https://localhost:5300";
+        this.baseUrl = baseUrl ? baseUrl : "https://localhost:5671";
     }
 
     /**
@@ -79,17 +79,11 @@ export class BHClient {
             }));
         } else if (status === 404) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result404: any = null;
-            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result404 = resultData404 ? ProblemDetails.fromJS(resultData404) : new ProblemDetails();
-            return throwException("A server error occurred.", status, _responseText, _headers, result404);
+            return throwException("A server error occurred.", status, _responseText, _headers);
             }));
         } else if (status === 400) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result400: any = null;
-            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result400 = resultData400 ? ProblemDetails.fromJS(resultData400) : new ProblemDetails();
-            return throwException("A server error occurred.", status, _responseText, _headers, result400);
+            return throwException("A server error occurred.", status, _responseText, _headers);
             }));
         } else if (status === 401) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
@@ -207,17 +201,11 @@ export class BHClient {
             }));
         } else if (status === 404) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result404: any = null;
-            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result404 = resultData404 ? ProblemDetails.fromJS(resultData404) : new ProblemDetails();
-            return throwException("A server error occurred.", status, _responseText, _headers, result404);
+            return throwException("A server error occurred.", status, _responseText, _headers);
             }));
         } else if (status === 400) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result400: any = null;
-            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result400 = resultData400 ? ProblemDetails.fromJS(resultData400) : new ProblemDetails();
-            return throwException("A server error occurred.", status, _responseText, _headers, result400);
+            return throwException("A server error occurred.", status, _responseText, _headers);
             }));
         } else if (status === 401) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
@@ -282,10 +270,7 @@ export class BHClient {
             }));
         } else if (status === 400) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result400: any = null;
-            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result400 = resultData400 ? ProblemDetails.fromJS(resultData400) : new ProblemDetails();
-            return throwException("A server error occurred.", status, _responseText, _headers, result400);
+            return throwException("A server error occurred.", status, _responseText, _headers);
             }));
         } else if (status === 401) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
@@ -297,6 +282,74 @@ export class BHClient {
             }));
         }
         return _observableOf<number>(<any>null);
+    }
+
+    /**
+     * Gets bookings hearing by Id.
+     * @param hearingId The unique sequential value of hearing ID.
+     * @return Success
+     */
+    getHearingById(hearingId: number): Observable<HearingResponse> {
+        let url_ = this.baseUrl + "/api/hearings/{hearingId}";
+        if (hearingId === undefined || hearingId === null)
+            throw new Error("The parameter 'hearingId' must be defined.");
+        url_ = url_.replace("{hearingId}", encodeURIComponent("" + hearingId)); 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetHearingById(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetHearingById(<any>response_);
+                } catch (e) {
+                    return <Observable<HearingResponse>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<HearingResponse>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetHearingById(response: HttpResponseBase): Observable<HearingResponse> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? HearingResponse.fromJS(resultData200) : new HearingResponse();
+            return _observableOf(result200);
+            }));
+        } else if (status === 404) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("A server error occurred.", status, _responseText, _headers);
+            }));
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("A server error occurred.", status, _responseText, _headers);
+            }));
+        } else if (status === 401) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("A server error occurred.", status, _responseText, _headers);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<HearingResponse>(<any>null);
     }
 
     /**
@@ -349,10 +402,7 @@ export class BHClient {
             }));
         } else if (status === 404) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result404: any = null;
-            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result404 = resultData404 ? ProblemDetails.fromJS(resultData404) : new ProblemDetails();
-            return throwException("A server error occurred.", status, _responseText, _headers, result404);
+            return throwException("A server error occurred.", status, _responseText, _headers);
             }));
         } else if (status === 401) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
@@ -416,10 +466,7 @@ export class BHClient {
             }));
         } else if (status === 404) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result404: any = null;
-            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result404 = resultData404 ? ProblemDetails.fromJS(resultData404) : new ProblemDetails();
-            return throwException("A server error occurred.", status, _responseText, _headers, result404);
+            return throwException("A server error occurred.", status, _responseText, _headers);
             }));
         } else if (status === 401) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
@@ -483,10 +530,7 @@ export class BHClient {
             }));
         } else if (status === 404) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result404: any = null;
-            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result404 = resultData404 ? ProblemDetails.fromJS(resultData404) : new ProblemDetails();
-            return throwException("A server error occurred.", status, _responseText, _headers, result404);
+            return throwException("A server error occurred.", status, _responseText, _headers);
             }));
         } else if (status === 401) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
@@ -550,10 +594,7 @@ export class BHClient {
             }));
         } else if (status === 404) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result404: any = null;
-            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result404 = resultData404 ? ProblemDetails.fromJS(resultData404) : new ProblemDetails();
-            return throwException("A server error occurred.", status, _responseText, _headers, result404);
+            return throwException("A server error occurred.", status, _responseText, _headers);
             }));
         } else if (status === 401) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
@@ -1027,58 +1068,6 @@ export interface ICaseResponse {
     number?: string | undefined;
     /** The case name */
     name?: string | undefined;
-}
-
-export class ProblemDetails implements IProblemDetails {
-    type?: string | undefined;
-    title?: string | undefined;
-    status?: number | undefined;
-    detail?: string | undefined;
-    instance?: string | undefined;
-
-    constructor(data?: IProblemDetails) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.type = data["type"];
-            this.title = data["title"];
-            this.status = data["status"];
-            this.detail = data["detail"];
-            this.instance = data["instance"];
-        }
-    }
-
-    static fromJS(data: any): ProblemDetails {
-        data = typeof data === 'object' ? data : {};
-        let result = new ProblemDetails();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["type"] = this.type;
-        data["title"] = this.title;
-        data["status"] = this.status;
-        data["detail"] = this.detail;
-        data["instance"] = this.instance;
-        return data; 
-    }
-}
-
-export interface IProblemDetails {
-    type?: string | undefined;
-    title?: string | undefined;
-    status?: number | undefined;
-    detail?: string | undefined;
-    instance?: string | undefined;
 }
 
 /** Configuration to initialise the UI application */
@@ -1709,6 +1698,518 @@ export interface IBookingsHearingResponse {
     hearing_date?: Date | undefined;
 }
 
+/** A hearing */
+export class HearingResponse implements IHearingResponse {
+    /** List of cases associated to the hearing */
+    cases?: CaseResponse[] | undefined;
+    /** The date and time for a hearing */
+    scheduled_date_time?: Date | undefined;
+    /** The duration of a hearing (number of minutes) */
+    scheduled_duration?: number | undefined;
+    /** The type of hearing (e.g. Civil Money Claims) */
+    hearing_type?: string | undefined;
+    /** The medium over which the hearing will be conducted (e.g. Video, Audio, Mixed) */
+    hearing_medium?: string | undefined;
+    /** The hearing status (e.g. Created, Live). */
+    status?: string | undefined;
+    /** The unique identifier for the hearing. */
+    id?: number | undefined;
+    /** The meeting Url for the video hearing */
+    meeting_url?: string | undefined;
+    /** The joining Url for the video hearing */
+    joining_url?: string | undefined;
+    /** The expiry time for the meeting url */
+    meeting_url_expiry_time?: Date | undefined;
+    /** List of participants associated with hearing */
+    participants?: ParticipantResponse[] | undefined;
+    /** Court */
+    court?: CourtResponse | undefined;
+    /** Gets or sets the name of person who created the hearing. */
+    created_by?: string | undefined;
+    /** Gets or sets created hearing date. */
+    created_date?: Date | undefined;
+    /** Gets or sets the name of person who update the hearing. */
+    updated_by?: string | undefined;
+    /** Gets or sets updated hearing date. */
+    updated_date?: Date | undefined;
+
+    constructor(data?: IHearingResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["cases"] && data["cases"].constructor === Array) {
+                this.cases = [] as any;
+                for (let item of data["cases"])
+                    this.cases!.push(CaseResponse.fromJS(item));
+            }
+            this.scheduled_date_time = data["scheduled_date_time"] ? new Date(data["scheduled_date_time"].toString()) : <any>undefined;
+            this.scheduled_duration = data["scheduled_duration"];
+            this.hearing_type = data["hearing_type"];
+            this.hearing_medium = data["hearing_medium"];
+            this.status = data["status"];
+            this.id = data["id"];
+            this.meeting_url = data["meeting_url"];
+            this.joining_url = data["joining_url"];
+            this.meeting_url_expiry_time = data["meeting_url_expiry_time"] ? new Date(data["meeting_url_expiry_time"].toString()) : <any>undefined;
+            if (data["participants"] && data["participants"].constructor === Array) {
+                this.participants = [] as any;
+                for (let item of data["participants"])
+                    this.participants!.push(ParticipantResponse.fromJS(item));
+            }
+            this.court = data["court"] ? CourtResponse.fromJS(data["court"]) : <any>undefined;
+            this.created_by = data["created_by"];
+            this.created_date = data["created_date"] ? new Date(data["created_date"].toString()) : <any>undefined;
+            this.updated_by = data["updated_by"];
+            this.updated_date = data["updated_date"] ? new Date(data["updated_date"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): HearingResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new HearingResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.cases && this.cases.constructor === Array) {
+            data["cases"] = [];
+            for (let item of this.cases)
+                data["cases"].push(item.toJSON());
+        }
+        data["scheduled_date_time"] = this.scheduled_date_time ? this.scheduled_date_time.toISOString() : <any>undefined;
+        data["scheduled_duration"] = this.scheduled_duration;
+        data["hearing_type"] = this.hearing_type;
+        data["hearing_medium"] = this.hearing_medium;
+        data["status"] = this.status;
+        data["id"] = this.id;
+        data["meeting_url"] = this.meeting_url;
+        data["joining_url"] = this.joining_url;
+        data["meeting_url_expiry_time"] = this.meeting_url_expiry_time ? this.meeting_url_expiry_time.toISOString() : <any>undefined;
+        if (this.participants && this.participants.constructor === Array) {
+            data["participants"] = [];
+            for (let item of this.participants)
+                data["participants"].push(item.toJSON());
+        }
+        data["court"] = this.court ? this.court.toJSON() : <any>undefined;
+        data["created_by"] = this.created_by;
+        data["created_date"] = this.created_date ? this.created_date.toISOString() : <any>undefined;
+        data["updated_by"] = this.updated_by;
+        data["updated_date"] = this.updated_date ? this.updated_date.toISOString() : <any>undefined;
+        return data; 
+    }
+}
+
+/** A hearing */
+export interface IHearingResponse {
+    /** List of cases associated to the hearing */
+    cases?: CaseResponse[] | undefined;
+    /** The date and time for a hearing */
+    scheduled_date_time?: Date | undefined;
+    /** The duration of a hearing (number of minutes) */
+    scheduled_duration?: number | undefined;
+    /** The type of hearing (e.g. Civil Money Claims) */
+    hearing_type?: string | undefined;
+    /** The medium over which the hearing will be conducted (e.g. Video, Audio, Mixed) */
+    hearing_medium?: string | undefined;
+    /** The hearing status (e.g. Created, Live). */
+    status?: string | undefined;
+    /** The unique identifier for the hearing. */
+    id?: number | undefined;
+    /** The meeting Url for the video hearing */
+    meeting_url?: string | undefined;
+    /** The joining Url for the video hearing */
+    joining_url?: string | undefined;
+    /** The expiry time for the meeting url */
+    meeting_url_expiry_time?: Date | undefined;
+    /** List of participants associated with hearing */
+    participants?: ParticipantResponse[] | undefined;
+    /** Court */
+    court?: CourtResponse | undefined;
+    /** Gets or sets the name of person who created the hearing. */
+    created_by?: string | undefined;
+    /** Gets or sets created hearing date. */
+    created_date?: Date | undefined;
+    /** Gets or sets the name of person who update the hearing. */
+    updated_by?: string | undefined;
+    /** Gets or sets updated hearing date. */
+    updated_date?: Date | undefined;
+}
+
+/** Participant details */
+export class ParticipantResponse implements IParticipantResponse {
+    /** Participant Id. */
+    id?: number | undefined;
+    /** Participant Title. */
+    title?: string | undefined;
+    /** Participant first name. */
+    first_name?: string | undefined;
+    /** Participant middle name. */
+    middle_names?: string | undefined;
+    /** Participant last name. */
+    last_name?: string | undefined;
+    /** Participant display name. */
+    display_name?: string | undefined;
+    /** Participant username */
+    username?: string | undefined;
+    /** Participant username */
+    email?: string | undefined;
+    /** Participant external Id. */
+    external_id?: string | undefined;
+    /** Flag to indicate that the participant is an external user. */
+    external_flag?: boolean | undefined;
+    /** Participant landline phone number. */
+    phone?: string | undefined;
+    /** Participant mobile phone number. */
+    mobile_phone?: string | undefined;
+    /** name of the organisation that participant belongs. */
+    organisation_name?: string | undefined;
+    /** Organisation address. */
+    organisation_address?: string | undefined;
+    /** Name of a person who represents the participant. */
+    representing?: string | undefined;
+    /** Participant feed Id. */
+    feed_id?: number | undefined;
+    /** Participant location(end point). */
+    location?: string | undefined;
+    /** Participant role. */
+    participant_role?: string | undefined;
+    /** Participant's current status. */
+    current_status?: ParticipantStatusResponse | undefined;
+    /** List of participant notifications */
+    notifications?: ParticipantNotificationResponse[] | undefined;
+
+    constructor(data?: IParticipantResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.title = data["title"];
+            this.first_name = data["first_name"];
+            this.middle_names = data["middle_names"];
+            this.last_name = data["last_name"];
+            this.display_name = data["display_name"];
+            this.username = data["username"];
+            this.email = data["email"];
+            this.external_id = data["external_id"];
+            this.external_flag = data["external_flag"];
+            this.phone = data["phone"];
+            this.mobile_phone = data["mobile_phone"];
+            this.organisation_name = data["organisation_name"];
+            this.organisation_address = data["organisation_address"];
+            this.representing = data["representing"];
+            this.feed_id = data["feed_id"];
+            this.location = data["location"];
+            this.participant_role = data["participant_role"];
+            this.current_status = data["current_status"] ? ParticipantStatusResponse.fromJS(data["current_status"]) : <any>undefined;
+            if (data["notifications"] && data["notifications"].constructor === Array) {
+                this.notifications = [] as any;
+                for (let item of data["notifications"])
+                    this.notifications!.push(ParticipantNotificationResponse.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): ParticipantResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new ParticipantResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["title"] = this.title;
+        data["first_name"] = this.first_name;
+        data["middle_names"] = this.middle_names;
+        data["last_name"] = this.last_name;
+        data["display_name"] = this.display_name;
+        data["username"] = this.username;
+        data["email"] = this.email;
+        data["external_id"] = this.external_id;
+        data["external_flag"] = this.external_flag;
+        data["phone"] = this.phone;
+        data["mobile_phone"] = this.mobile_phone;
+        data["organisation_name"] = this.organisation_name;
+        data["organisation_address"] = this.organisation_address;
+        data["representing"] = this.representing;
+        data["feed_id"] = this.feed_id;
+        data["location"] = this.location;
+        data["participant_role"] = this.participant_role;
+        data["current_status"] = this.current_status ? this.current_status.toJSON() : <any>undefined;
+        if (this.notifications && this.notifications.constructor === Array) {
+            data["notifications"] = [];
+            for (let item of this.notifications)
+                data["notifications"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+/** Participant details */
+export interface IParticipantResponse {
+    /** Participant Id. */
+    id?: number | undefined;
+    /** Participant Title. */
+    title?: string | undefined;
+    /** Participant first name. */
+    first_name?: string | undefined;
+    /** Participant middle name. */
+    middle_names?: string | undefined;
+    /** Participant last name. */
+    last_name?: string | undefined;
+    /** Participant display name. */
+    display_name?: string | undefined;
+    /** Participant username */
+    username?: string | undefined;
+    /** Participant username */
+    email?: string | undefined;
+    /** Participant external Id. */
+    external_id?: string | undefined;
+    /** Flag to indicate that the participant is an external user. */
+    external_flag?: boolean | undefined;
+    /** Participant landline phone number. */
+    phone?: string | undefined;
+    /** Participant mobile phone number. */
+    mobile_phone?: string | undefined;
+    /** name of the organisation that participant belongs. */
+    organisation_name?: string | undefined;
+    /** Organisation address. */
+    organisation_address?: string | undefined;
+    /** Name of a person who represents the participant. */
+    representing?: string | undefined;
+    /** Participant feed Id. */
+    feed_id?: number | undefined;
+    /** Participant location(end point). */
+    location?: string | undefined;
+    /** Participant role. */
+    participant_role?: string | undefined;
+    /** Participant's current status. */
+    current_status?: ParticipantStatusResponse | undefined;
+    /** List of participant notifications */
+    notifications?: ParticipantNotificationResponse[] | undefined;
+}
+
+/** Court Response */
+export class CourtResponse implements ICourtResponse {
+    /** Court ID */
+    id?: number | undefined;
+    /** Court room */
+    room?: string | undefined;
+    /** Court address */
+    address?: string | undefined;
+
+    constructor(data?: ICourtResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.room = data["room"];
+            this.address = data["address"];
+        }
+    }
+
+    static fromJS(data: any): CourtResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new CourtResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["room"] = this.room;
+        data["address"] = this.address;
+        return data; 
+    }
+}
+
+/** Court Response */
+export interface ICourtResponse {
+    /** Court ID */
+    id?: number | undefined;
+    /** Court room */
+    room?: string | undefined;
+    /** Court address */
+    address?: string | undefined;
+}
+
+/** Participant current status response */
+export class ParticipantStatusResponse implements IParticipantStatusResponse {
+    /** Gets or sets the ID. */
+    id?: number | undefined;
+    /** Gets or sets the hearing Id. */
+    hearing_id?: number | undefined;
+    /** Gets or sets the participant Id. */
+    participant_id?: number | undefined;
+    /** Gets or sets the current status Id. */
+    status_id?: number | undefined;
+    /** Gets or sets the current status. */
+    status_name?: string | undefined;
+    /** Gets or sets the current status additional info. */
+    additional_info?: string | undefined;
+    /** Gets or sets the created date and time of status. */
+    created_date?: Date | undefined;
+
+    constructor(data?: IParticipantStatusResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.hearing_id = data["hearing_id"];
+            this.participant_id = data["participant_id"];
+            this.status_id = data["status_id"];
+            this.status_name = data["status_name"];
+            this.additional_info = data["additional_info"];
+            this.created_date = data["created_date"] ? new Date(data["created_date"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): ParticipantStatusResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new ParticipantStatusResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["hearing_id"] = this.hearing_id;
+        data["participant_id"] = this.participant_id;
+        data["status_id"] = this.status_id;
+        data["status_name"] = this.status_name;
+        data["additional_info"] = this.additional_info;
+        data["created_date"] = this.created_date ? this.created_date.toISOString() : <any>undefined;
+        return data; 
+    }
+}
+
+/** Participant current status response */
+export interface IParticipantStatusResponse {
+    /** Gets or sets the ID. */
+    id?: number | undefined;
+    /** Gets or sets the hearing Id. */
+    hearing_id?: number | undefined;
+    /** Gets or sets the participant Id. */
+    participant_id?: number | undefined;
+    /** Gets or sets the current status Id. */
+    status_id?: number | undefined;
+    /** Gets or sets the current status. */
+    status_name?: string | undefined;
+    /** Gets or sets the current status additional info. */
+    additional_info?: string | undefined;
+    /** Gets or sets the created date and time of status. */
+    created_date?: Date | undefined;
+}
+
+/** Notification for a participant in a hearing */
+export class ParticipantNotificationResponse implements IParticipantNotificationResponse {
+    /** Unique identified for the notification */
+    id?: number | undefined;
+    /** Type of event that occured or notification that was raised */
+    notification_type?: string | undefined;
+    /** Data stored for the notification */
+    log_information?: string | undefined;
+    /** Whether the notification/event was successful or not */
+    result?: string | undefined;
+    /** Time the notification was created */
+    create_time?: Date | undefined;
+    /** If the notification has been seen by administrators or not */
+    is_seen?: boolean | undefined;
+    /** If the notification has been handled/dismissed by administrators */
+    is_dismissed?: boolean | undefined;
+
+    constructor(data?: IParticipantNotificationResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.notification_type = data["notification_type"];
+            this.log_information = data["log_information"];
+            this.result = data["result"];
+            this.create_time = data["create_time"] ? new Date(data["create_time"].toString()) : <any>undefined;
+            this.is_seen = data["is_seen"];
+            this.is_dismissed = data["is_dismissed"];
+        }
+    }
+
+    static fromJS(data: any): ParticipantNotificationResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new ParticipantNotificationResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["notification_type"] = this.notification_type;
+        data["log_information"] = this.log_information;
+        data["result"] = this.result;
+        data["create_time"] = this.create_time ? this.create_time.toISOString() : <any>undefined;
+        data["is_seen"] = this.is_seen;
+        data["is_dismissed"] = this.is_dismissed;
+        return data; 
+    }
+}
+
+/** Notification for a participant in a hearing */
+export interface IParticipantNotificationResponse {
+    /** Unique identified for the notification */
+    id?: number | undefined;
+    /** Type of event that occured or notification that was raised */
+    notification_type?: string | undefined;
+    /** Data stored for the notification */
+    log_information?: string | undefined;
+    /** Whether the notification/event was successful or not */
+    result?: string | undefined;
+    /** Time the notification was created */
+    create_time?: Date | undefined;
+    /** If the notification has been seen by administrators or not */
+    is_seen?: boolean | undefined;
+    /** If the notification has been handled/dismissed by administrators */
+    is_dismissed?: boolean | undefined;
+}
+
 export class HearingTypeResponse implements IHearingTypeResponse {
     code?: string | undefined;
     group?: string | undefined;
@@ -1835,58 +2336,6 @@ export class ParticipantRoleResponse implements IParticipantRoleResponse {
 export interface IParticipantRoleResponse {
     /** The name of the role */
     name?: string | undefined;
-}
-
-/** Court Response */
-export class CourtResponse implements ICourtResponse {
-    /** Court ID */
-    id?: number | undefined;
-    /** Court room */
-    room?: string | undefined;
-    /** Court address */
-    address?: string | undefined;
-
-    constructor(data?: ICourtResponse) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.room = data["room"];
-            this.address = data["address"];
-        }
-    }
-
-    static fromJS(data: any): CourtResponse {
-        data = typeof data === 'object' ? data : {};
-        let result = new CourtResponse();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["room"] = this.room;
-        data["address"] = this.address;
-        return data; 
-    }
-}
-
-/** Court Response */
-export interface ICourtResponse {
-    /** Court ID */
-    id?: number | undefined;
-    /** Court room */
-    room?: string | undefined;
-    /** Court address */
-    address?: string | undefined;
 }
 
 export class ParticipantDetailsResponse implements IParticipantDetailsResponse {

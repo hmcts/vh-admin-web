@@ -44,14 +44,17 @@ namespace AdminWebsite.Controllers
             {
                 foreach (var participant in feed.Participants)
                 {
-                    // judge and admins are managed internally since the number of users is small
-                    if (participant.Role == "Judge" || participant.Role == "Administrator")
+                    if (participant != null)
                     {
-                        participant.Username = participant.Email;
-                    }
-                    else
-                    {
-                        CreateAdAccountIfRequired(participant);
+                        // judge and admins are managed internally since the number of users is small
+                        if (participant.Role == "Judge" || participant.Role == "Administrator")
+                        {
+                            participant.Username = participant.Email;
+                        }
+                        else
+                        {
+                            CreateAdAccountIfRequired(participant);
+                        }
                     }
                 }
             }
@@ -85,6 +88,34 @@ namespace AdminWebsite.Controllers
             {
                 participant.Username = existingParticipantUsername;
                 _userManager.AddToGroupsByUsername(participant.Username, participant.Role);
+            }
+        }
+
+        /// <summary>
+        /// Gets bookings hearing by Id.
+        /// </summary>
+        /// <param name="hearingId">The unique sequential value of hearing ID.</param>
+        /// <returns> The hearing</returns>
+        [HttpGet("{hearingId}")]
+        [SwaggerOperation(OperationId = "GetHearingById")]
+        [ProducesResponseType(typeof(HearingResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public ActionResult GetHearingById(long hearingId)
+        {
+            try
+            {
+                var hearingResponse = _hearingApiClient.GetHearingById(hearingId);
+                return Ok(hearingResponse);
+            }
+            catch (HearingApiException e)
+            {
+                if (e.StatusCode == (int)HttpStatusCode.BadRequest)
+                {
+                    return BadRequest(e.Response);
+                }
+
+                throw;
             }
         }
 
