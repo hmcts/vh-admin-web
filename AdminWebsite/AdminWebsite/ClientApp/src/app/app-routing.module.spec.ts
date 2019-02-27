@@ -23,6 +23,8 @@ import { FooterStubComponent } from './testing/stubs/footer-stub';
 import { HeaderStubComponent } from './testing/stubs/header-stub';
 import { PaginationStubComponent } from './testing/stubs/pagination-stub';
 import { UnauthorisedComponent } from './error/unauthorised.component';
+import { ErrorComponent } from './error/error.component';
+import { ErrorService } from './services/error.service';
 
 describe('app routing', () => {
   let location: Location;
@@ -43,13 +45,15 @@ describe('app routing', () => {
         FooterStubComponent,
         ContactUsStubComponent,
         PaginationStubComponent,
-        UnauthorisedComponent
+        UnauthorisedComponent,
+        ErrorComponent
       ],
       providers: [
         AuthGuard,
         AdminGuard,
         { provide: AdalService, useClass: MockAdalService },
-        { provide: ChangesGuard, useClass: MockChangesGuard }, HttpClient, HttpHandler
+        { provide: ChangesGuard, useClass: MockChangesGuard }, HttpClient, HttpHandler,
+        ErrorService
       ],
     }).compileComponents();
 

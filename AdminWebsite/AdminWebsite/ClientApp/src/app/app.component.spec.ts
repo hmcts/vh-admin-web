@@ -9,6 +9,7 @@ import { ClientSettingsResponse } from './services/clients/api-client';
 import { ConfigService } from './services/config.service';
 import { FooterStubComponent } from './testing/stubs/footer-stub';
 import { HeaderStubComponent } from './testing/stubs/header-stub';
+import { PageTrackerService } from './services/page-tracker.service';
 
 describe('AppComponent', () => {
   const router = {
@@ -17,6 +18,7 @@ describe('AppComponent', () => {
 
   let configServiceSpy: jasmine.SpyObj<ConfigService>;
   let adalServiceSpy: jasmine.SpyObj<AdalService>;
+  let pageTracker: jasmine.SpyObj<PageTrackerService>;
 
   const clientSettings = new ClientSettingsResponse({
     tenant_id: 'tenantid',
@@ -37,6 +39,9 @@ describe('AppComponent', () => {
 
     adalServiceSpy = jasmine.createSpyObj<AdalService>('AdalService', ['init', 'handleWindowCallback', 'userInfo']);
     adalServiceSpy.userInfo.and.returnValue(userInfo);
+
+    pageTracker = jasmine.createSpyObj('PageTrackerService', ['trackNavigation', 'trackPreviousPage']);
+
     TestBed.configureTestingModule({
       imports: [HttpClientModule, RouterTestingModule],
       declarations: [
@@ -48,7 +53,8 @@ describe('AppComponent', () => {
         [
           { provide: AdalService, useValue: adalServiceSpy },
           { provide: ConfigService, useValue: configServiceSpy },
-          { provide: Router, useValue: router }
+          { provide: Router, useValue: router },
+          { provide: PageTrackerService, useValue: pageTracker },
         ],
     }).compileComponents();
   }));
