@@ -49,11 +49,11 @@ export class OtherInformationComponent extends BookingBaseComponent implements O
     this.otherInformationForm.markAsPristine();
     if (this.editMode) {
       this.resetEditMode();
-    } 
+    }
     this.router.navigate(['/summary']);
   }
 
-  otherInformationCancel() {
+  cancelBooking() {
     this.attemptingCancellation = false;
     this.videoHearingService.cancelRequest();
     this.otherInformationForm.reset();
@@ -65,7 +65,11 @@ export class OtherInformationComponent extends BookingBaseComponent implements O
   }
 
   confirmCancelBooking() {
-    this.attemptingCancellation = true;
+    if (this.editMode) {
+      this.navigateToSummary();
+    } else {
+      this.attemptingCancellation = true;
+    }
   }
 
   hasChanges(): Observable<boolean> | boolean {

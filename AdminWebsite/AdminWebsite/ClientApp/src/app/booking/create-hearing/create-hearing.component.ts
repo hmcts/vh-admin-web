@@ -128,7 +128,12 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
   }
 
   confirmCancelBooking() {
-    this.attemptingCancellation = true;
+    if (this.editMode) {
+      this.navigateToSummary();
+    }
+    else {
+      this.attemptingCancellation = true;
+    }
   }
 
   cancelBooking() {

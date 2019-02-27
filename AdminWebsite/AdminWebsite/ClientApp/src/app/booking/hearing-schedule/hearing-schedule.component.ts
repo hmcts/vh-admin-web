@@ -177,7 +177,11 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
   }
 
   confirmCancelBooking() {
-    this.attemptingCancellation = true;
+    if (this.editMode) {
+      this.navigateToSummary();
+    } else {
+      this.attemptingCancellation = true;
+    }
   }
 
   cancelBooking() {
