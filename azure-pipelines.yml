@@ -2,6 +2,7 @@
 variables:
   cleanChekout: 'false'
   solutionType: angularDotNetCore # angularDotNetCore, dotNetCore
+  apiDirectory: 'AdminWebsite/AdminWebsite'
   sonarCloudPrepareExtraProperties: |  
     sonar.exclusions=**/node_modules/**,**/*.spec.ts,*.spec.ts,**/ClientApp/src/*,**/ClientApp/coverage/**/*
     sonar.typescript.lcov.reportPaths=$(System.DefaultWorkingDirectory)/*/ClientApp/coverage/lcov.info,**/lcov.info
@@ -21,7 +22,6 @@ resources:
   repositories:
   - repository: azureDevOpsTemplates
     type: github
-    ref: revert_breaking_changes
     name: hmcts/azure-devops-templates
     endpoint: 'GitHub connection 1'
 
