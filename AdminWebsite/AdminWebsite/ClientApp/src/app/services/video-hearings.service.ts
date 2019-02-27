@@ -12,6 +12,7 @@ export class VideoHearingsService {
 
   private newRequestKey: string;
   private newHearing: HearingRequest;
+  private hearingsMedium: Observable<HearingMediumResponse[]>;
 
   constructor(private bhClient: BHClient) {
     this.newRequestKey = 'bh-newRequest';
