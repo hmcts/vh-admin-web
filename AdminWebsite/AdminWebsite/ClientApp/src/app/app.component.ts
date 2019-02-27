@@ -70,8 +70,9 @@ export class AppComponent implements OnInit {
   @HostListener('window:beforeunload', ['$event'])
   public beforeunloadHandler($event: any) {
     if (this.videoHearingsService.hasUnsavedChanges()) {
-       // show default confirmation popup of browser to leave page.
+       // show default confirmation pop up of browser to leave page.
       $event.preventDefault();
+      // return value should not be empty to show browser leave pop up
       $event.returnValue = 'save';
     }
   }
