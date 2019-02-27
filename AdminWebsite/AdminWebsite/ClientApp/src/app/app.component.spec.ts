@@ -10,6 +10,7 @@ import { ConfigService } from './services/config.service';
 import { FooterStubComponent } from './testing/stubs/footer-stub';
 import { HeaderStubComponent } from './testing/stubs/header-stub';
 import { PageTrackerService } from './services/page-tracker.service';
+import { WindowRef } from './security/window-ref';
 
 describe('AppComponent', () => {
   const router = {
@@ -55,6 +56,7 @@ describe('AppComponent', () => {
           { provide: ConfigService, useValue: configServiceSpy },
           { provide: Router, useValue: router },
           { provide: PageTrackerService, useValue: pageTracker },
+          WindowRef
         ],
     }).compileComponents();
   }));
