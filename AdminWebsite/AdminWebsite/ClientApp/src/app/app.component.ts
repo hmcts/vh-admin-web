@@ -4,6 +4,7 @@ import { AdalService } from 'adal-angular4';
 
 import { ConfigService } from './services/config.service';
 import { PageTrackerService } from './services/page-tracker.service';
+import { WindowRef } from './security/window-ref';
 
 @Component({
   selector: 'app-root',
@@ -25,6 +26,7 @@ export class AppComponent implements OnInit {
   constructor(private adalSvc: AdalService,
     private configService: ConfigService,
     private router: Router,
+    private window: WindowRef,
     pageTracker: PageTrackerService) {
     this.config.tenant = this.configService.clientSettings.tenant_id;
     this.config.clientId = this.configService.clientSettings.client_id;
@@ -37,7 +39,7 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
-    const currentUrl = window.location.href;
+    const currentUrl = this.window.getLocation().href;
     this.adalSvc.handleWindowCallback();
     this.loggedIn = this.adalSvc.userInfo.authenticated;
 

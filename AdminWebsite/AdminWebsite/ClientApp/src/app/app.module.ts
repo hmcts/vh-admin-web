@@ -29,6 +29,7 @@ import { LoggerService } from './services/logger.service';
 import { PageTrackerService } from './services/page-tracker.service';
 import { AppInsightsLogger } from './services/app-insights-logger.service';
 import { Config } from '../app/common/model/config';
+import { WindowRef } from './security/window-ref';
 
 export function getSettings(configService: ConfigService) {
   return () => configService.loadConfig();
@@ -72,6 +73,7 @@ export function getSettings(configService: ConfigService) {
     ErrorService,
     PageTrackerService,
     AppInsightsLogger,
+    WindowRef,
     { provide: Config, useFactory: () => ENVIRONMENT_CONFIG },
   ],
   bootstrap: [AppComponent]
