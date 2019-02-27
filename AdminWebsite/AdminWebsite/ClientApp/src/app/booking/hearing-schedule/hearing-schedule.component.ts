@@ -48,6 +48,7 @@ export class HearingScheduleComponent implements OnInit, CanDeactiveComponent {
     let startTimeMinute = null;
     let durationHour = null;
     let durationMinute = null;
+    let room = '';
 
     if (this.hearing && this.hearing.scheduled_date_time) {
       const date = new Date(this.hearing.scheduled_date_time);
@@ -68,6 +69,10 @@ export class HearingScheduleComponent implements OnInit, CanDeactiveComponent {
       this.hasSaved = true;
     }
 
+    if (this.hearing && this.hearing.court_room) {
+      room = this.hearing.court_room;
+    }
+
     this.schedulingForm = this.fb.group({
       hearingDate: [hearingDateParsed, Validators.required],
       hearingStartTimeHour: [startTimeHour, [Validators.required, Validators.min(0), Validators.max(23)]],
@@ -75,7 +80,7 @@ export class HearingScheduleComponent implements OnInit, CanDeactiveComponent {
       hearingDurationHour: [durationHour, [Validators.required, Validators.min(0), Validators.max(23)]],
       hearingDurationMinute: [durationMinute, [Validators.required, Validators.min(0), Validators.max(59)]],
       courtAddress: [this.hearing.court_id, [Validators.required, Validators.min(1)]],
-      courtRoom: [''],
+      courtRoom: [room],
     });
   }
 
