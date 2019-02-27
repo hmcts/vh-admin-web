@@ -123,7 +123,6 @@ export class HearingScheduleComponent implements OnInit, CanDeactiveComponent {
           pleaseSelect.id = -1;
           this.availableCourts.unshift(pleaseSelect);
         },
-        // error => console.error(error)
         error => this.errorService.handleError(error)
       );
   }

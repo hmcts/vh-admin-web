@@ -88,7 +88,6 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
           const selectedHearingType = data.filter(h => h.id === hearing_type_id);
           this.caseHearingType = selectedHearingType[0].name;
         },
-        // error => console.error(error)
         error => this.errorService.handleError(error)
       );
   }
@@ -100,7 +99,6 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
           const selectedCourtRoom = data.filter(c => c.id === courtId);
           this.courtRoomAddress = selectedCourtRoom[0].address + ', ' + selectedCourtRoom[0].room;
         },
-        // error => console.error(error)
         error => this.errorService.handleError(error)
       );
   }

@@ -53,16 +53,16 @@ function initBadHearingRequest(): HearingRequest {
   return existingRequest;
 }
 
+let component: SummaryComponent;
+let fixture: ComponentFixture<SummaryComponent>;
+let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
+let referenceDataServiceServiceSpy: jasmine.SpyObj<ReferenceDataService>;
+let routerSpy: jasmine.SpyObj<Router>;
+let errorService: jasmine.SpyObj<ErrorService> = jasmine.createSpyObj('ErrorService', ['handleError']);
+
 describe('SummaryComponent with valid request', () => {
-  let component: SummaryComponent;
-  let fixture: ComponentFixture<SummaryComponent>;
 
   const existingRequest = initExistingHearingRequest();
-
-  let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
-  let referenceDataServiceServiceSpy: jasmine.SpyObj<ReferenceDataService>;
-  let routerSpy: jasmine.SpyObj<Router>;
-  let errorService: jasmine.SpyObj<ErrorService> = jasmine.createSpyObj('ErrorService', ['handleError']);
 
   beforeEach(async(() => {
     initExistingHearingRequest();
@@ -97,7 +97,7 @@ describe('SummaryComponent with valid request', () => {
     fixture.detectChanges();
   });
 
-  it('should display sumary data from exisitng hearing', () => {
+  it('should display summary data from exisitng hearing', () => {
     expect(component.caseNumber).toEqual(existingRequest.cases[0].number);
     expect(component.caseName).toEqual(existingRequest.cases[0].name);
     const hearingstring = MockValues.HearingTypesList.find(c => c.id === existingRequest.hearing_type_id).name;
@@ -110,13 +110,8 @@ describe('SummaryComponent with valid request', () => {
 });
 
 describe('SummaryComponent  with invalid request', () => {
-  let component: SummaryComponent;
-  let fixture: ComponentFixture<SummaryComponent>;
 
-  let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
-  let referenceDataServiceServiceSpy: jasmine.SpyObj<ReferenceDataService>;
-  let routerSpy: jasmine.SpyObj<Router>;
-  let errorService: jasmine.SpyObj<ErrorService> = jasmine.createSpyObj('ErrorService', ['handleError']);
+  const existingRequest = initBadHearingRequest();
 
   beforeEach(async(() => {
     initExistingHearingRequest();
@@ -128,7 +123,7 @@ describe('SummaryComponent  with invalid request', () => {
     videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',
       ['getHearingMediums', 'getHearingTypes', 'getCurrentRequest', 'updateHearingRequest', 'saveHearing']);
 
-    const existingRequest = initBadHearingRequest();
+
     videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
     videoHearingsServiceSpy.getHearingMediums.and.returnValue(of(MockValues.HearingMediums));
     videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));

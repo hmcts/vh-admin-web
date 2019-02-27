@@ -150,7 +150,6 @@ export class CreateHearingComponent implements OnInit, CanDeactiveComponent {
           this.setupCaseTypeAndHearingTypes(data);
           this.filterHearingTypes();
         },
-        // error => console.error(error)
         error => this.errorService.handleError(error)
       );
   }
@@ -162,7 +161,6 @@ export class CreateHearingComponent implements OnInit, CanDeactiveComponent {
         this.availableHearingMediums.sort(this.dynamicSort('name'));
         this.filterHearingMethod();
       },
-        // error => console.error(error)
         error => this.errorService.handleError(error)
       );
   }
