@@ -18,6 +18,10 @@
     <UserSecretsId>f99a3fe8-cf72-486a-b90f-b65c27da84ee</UserSecretsId>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>obj\Release\netcoreapp2.2\AdminWebsite.xml</DocumentationFile>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Hearings.Common" Version="1.1.3137" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.6.1" />
