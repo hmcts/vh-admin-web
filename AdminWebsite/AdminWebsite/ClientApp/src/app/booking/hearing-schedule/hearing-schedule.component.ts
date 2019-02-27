@@ -5,7 +5,8 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 
 import { CanDeactiveComponent } from '../../common/guards/changes.guard';
-import { CourtResponse, HearingRequest } from '../../services/clients/api-client';
+import { CourtResponse} from '../../services/clients/api-client';
+import { HearingModel } from '../../common/model/hearing.model';
 import { ReferenceDataService } from '../../services/reference-data.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 
@@ -16,7 +17,7 @@ import { VideoHearingsService } from '../../services/video-hearings.service';
 })
 export class HearingScheduleComponent implements OnInit, CanDeactiveComponent {
 
-  hearing: HearingRequest;
+  hearing: HearingModel;
   availableCourts: CourtResponse[];
   schedulingForm: FormGroup;
   failedSubmission: boolean;
@@ -74,6 +75,7 @@ export class HearingScheduleComponent implements OnInit, CanDeactiveComponent {
       hearingDurationHour: [durationHour, [Validators.required, Validators.min(0), Validators.max(23)]],
       hearingDurationMinute: [durationMinute, [Validators.required, Validators.min(0), Validators.max(59)]],
       courtAddress: [this.hearing.court_id, [Validators.required, Validators.min(1)]],
+      courtRoom: [''],
     });
   }
 
@@ -83,6 +85,7 @@ export class HearingScheduleComponent implements OnInit, CanDeactiveComponent {
   get hearingDurationHour() { return this.schedulingForm.get('hearingDurationHour'); }
   get hearingDurationMinute() { return this.schedulingForm.get('hearingDurationMinute'); }
   get courtAddress() { return this.schedulingForm.get('courtAddress'); }
+  get courtRoom() { return this.schedulingForm.get('courtRoom'); }
 
   get hearingDateInvalid() {
     return this.hearingDate.invalid && (this.hearingDate.dirty || this.hearingDate.touched || this.failedSubmission);
@@ -140,6 +143,7 @@ export class HearingScheduleComponent implements OnInit, CanDeactiveComponent {
 
   private updateHearingRequest() {
     this.hearing.court_id = this.schedulingForm.value.courtAddress;
+    this.hearing.court_room = this.schedulingForm.value.courtRoom;
     const hearingDate = new Date(this.schedulingForm.value.hearingDate);
 
     hearingDate.setHours(

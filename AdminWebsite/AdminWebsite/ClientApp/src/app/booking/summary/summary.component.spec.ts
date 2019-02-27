@@ -4,154 +4,154 @@ import { of, throwError } from 'rxjs';
 import { CancelPopupComponent } from 'src/app/popups/cancel-popup/cancel-popup.component';
 import { BreadcrumbStubComponent } from 'src/app/testing/stubs/breadcrumb-stub';
 
-import { CaseRequest, HearingRequest } from '../../services/clients/api-client';
 import { ReferenceDataService } from '../../services/reference-data.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { MockValues } from '../../testing/data/test-objects';
 import { ParticipantsListComponent } from '../participants-list/participants-list.component';
 import { SummaryComponent } from './summary.component';
 import { RouterTestingModule } from '@angular/router/testing';
+import { HearingModel} from '../../common/model/hearing.model';
+import { CaseModel } from '../../common/model/case.model';
 
-function initExistingHearingRequest(): HearingRequest {
-    const today = new Date();
-    today.setHours(14, 30);
+function initExistingHearingRequest(): HearingModel {
+  const today = new Date();
+  today.setHours(14, 30);
 
-    const newCaseRequest = new CaseRequest();
-    newCaseRequest.name = 'Mr. Test User vs HMRC';
-    newCaseRequest.number = 'TX/12345/2018';
+  const newCaseRequest = new CaseModel();
+  newCaseRequest.name = 'Mr. Test User vs HMRC';
+  newCaseRequest.number = 'TX/12345/2018';
 
-    const existingRequest = new HearingRequest();
-    existingRequest.hearing_type_id = 2;
-    existingRequest.hearing_medium_id = 1;
-    existingRequest.feeds = [];
-    existingRequest.cases = [];
-    existingRequest.cases.push(newCaseRequest);
-    existingRequest.court_id = 2;
-    existingRequest.scheduled_date_time = today;
-    existingRequest.scheduled_duration = 80;
-    return existingRequest;
+  const existingRequest = new HearingModel();
+  existingRequest.hearing_type_id = 2;
+  existingRequest.hearing_medium_id = 1;
+  existingRequest.cases.push(newCaseRequest);
+  existingRequest.court_id = 2;
+  existingRequest.scheduled_date_time = today;
+  existingRequest.scheduled_duration = 80;
+  existingRequest.other_information = 'some notes';
+  existingRequest.court_room = '123W';
+  return existingRequest;
 }
 
-function initBadHearingRequest(): HearingRequest {
-    const today = new Date();
-    today.setHours(14, 30);
+function initBadHearingRequest(): HearingModel {
+  const today = new Date();
+  today.setHours(14, 30);
 
-    const newCaseRequest = new CaseRequest();
-    newCaseRequest.name = 'Mr. Test User vs HMRC';
-    newCaseRequest.number = 'TX/12345/2018';
+  const newCaseRequest = new CaseModel();
+  newCaseRequest.name = 'Mr. Test User vs HMRC';
+  newCaseRequest.number = 'TX/12345/2018';
 
-    const existingRequest = new HearingRequest();
-    existingRequest.hearing_type_id = 2;
-    existingRequest.hearing_medium_id = 1;
-    existingRequest.feeds = [];
-    existingRequest.cases = [];
-    existingRequest.cases.push(newCaseRequest);
-    existingRequest.court_id = 2;
-    existingRequest.scheduled_date_time = today;
-    existingRequest.scheduled_duration = 80;
-    return existingRequest;
+  const existingRequest = new HearingModel();
+  existingRequest.hearing_type_id = 2;
+  existingRequest.hearing_medium_id = 1;
+  existingRequest.cases.push(newCaseRequest);
+  existingRequest.court_id = 2;
+  existingRequest.scheduled_date_time = today;
+  existingRequest.scheduled_duration = 80;
+  return existingRequest;
 }
 
 describe('SummaryComponent with valid request', () => {
-    let component: SummaryComponent;
-    let fixture: ComponentFixture<SummaryComponent>;
+  let component: SummaryComponent;
+  let fixture: ComponentFixture<SummaryComponent>;
 
-    const existingRequest = initExistingHearingRequest();
+  const existingRequest = initExistingHearingRequest();
 
-    let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
-    let referenceDataServiceServiceSpy: jasmine.SpyObj<ReferenceDataService>;
-    let routerSpy: jasmine.SpyObj<Router>;
+  let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
+  let referenceDataServiceServiceSpy: jasmine.SpyObj<ReferenceDataService>;
+  let routerSpy: jasmine.SpyObj<Router>;
 
-    beforeEach(async(() => {
-        initExistingHearingRequest();
-        routerSpy = jasmine.createSpyObj('Router', ['navigate']);
+  beforeEach(async(() => {
+    initExistingHearingRequest();
+    routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
-        referenceDataServiceServiceSpy = jasmine.createSpyObj<ReferenceDataService>('ReferenceDataService',
-            ['getCourts']);
-        referenceDataServiceServiceSpy.getCourts.and.returnValue(of(MockValues.Courts));
-        videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',
-            ['getHearingMediums', 'getHearingTypes', 'getCurrentRequest', 'updateHearingRequest', 'saveHearing']);
+    referenceDataServiceServiceSpy = jasmine.createSpyObj<ReferenceDataService>('ReferenceDataService',
+      ['getCourts']);
+    referenceDataServiceServiceSpy.getCourts.and.returnValue(of(MockValues.Courts));
+    videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',
+      ['getHearingMediums', 'getHearingTypes', 'getCurrentRequest', 'updateHearingRequest', 'saveHearing']);
 
-        videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
-        videoHearingsServiceSpy.getHearingMediums.and.returnValue(of(MockValues.HearingMediums));
-        videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
+    videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
+    videoHearingsServiceSpy.getHearingMediums.and.returnValue(of(MockValues.HearingMediums));
+    videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
 
-        TestBed.configureTestingModule({
-            providers: [
-                { provide: ReferenceDataService, useValue: referenceDataServiceServiceSpy },
-                { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
-                { provide: Router, useValue: routerSpy }
-            ],
-            declarations: [SummaryComponent, BreadcrumbStubComponent, CancelPopupComponent, ParticipantsListComponent],
-            imports: [RouterTestingModule],
-        })
-            .compileComponents();
-    }));
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: ReferenceDataService, useValue: referenceDataServiceServiceSpy },
+        { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
+        { provide: Router, useValue: routerSpy }
+      ],
+      declarations: [SummaryComponent, BreadcrumbStubComponent, CancelPopupComponent, ParticipantsListComponent],
+      imports: [RouterTestingModule],
+    })
+      .compileComponents();
+  }));
 
-    beforeEach(() => {
-        fixture = TestBed.createComponent(SummaryComponent);
-        component = fixture.componentInstance;
-        fixture.detectChanges();
-    });
+  beforeEach(() => {
+    fixture = TestBed.createComponent(SummaryComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
 
-    it('should display sumary data from exisitng hearing', () => {
-        expect(component.caseNumber).toEqual(existingRequest.cases[0].number);
-        expect(component.caseName).toEqual(existingRequest.cases[0].name);
-        const hearingstring = MockValues.HearingTypesList.find(c => c.id === existingRequest.hearing_type_id).name;
-        expect(component.caseHearingType).toEqual(hearingstring);
-        expect(component.hearingDate).toEqual(existingRequest.scheduled_date_time);
-        const courtString = MockValues.Courts.find(c => c.id === existingRequest.court_id);
-        expect(component.courtRoomAddress).toEqual(courtString.address + ', ' + courtString.room);
-        const durationText = 'listed for ' + existingRequest.scheduled_duration + ' minutes';
-    });
+  it('should display summary data from existing hearing', () => {
+    expect(component.caseNumber).toEqual(existingRequest.cases[0].number);
+    expect(component.caseName).toEqual(existingRequest.cases[0].name);
+    expect(component.otherInformation).toEqual(existingRequest.other_information);
+    const hearingstring = MockValues.HearingTypesList.find(c => c.id === existingRequest.hearing_type_id).name;
+    expect(component.caseHearingType).toEqual(hearingstring);
+    expect(component.hearingDate).toEqual(existingRequest.scheduled_date_time);
+    const courtString = MockValues.Courts.find(c => c.id === existingRequest.court_id);
+    expect(component.courtRoomAddress).toEqual(courtString.address + ', ' + existingRequest.court_room);
+    const durationText = 'listed for ' + existingRequest.scheduled_duration + ' minutes';
+  });
 });
 
 describe('SummaryComponent  with invalid request', () => {
-    let component: SummaryComponent;
-    let fixture: ComponentFixture<SummaryComponent>;
+  let component: SummaryComponent;
+  let fixture: ComponentFixture<SummaryComponent>;
 
-    let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
-    let referenceDataServiceServiceSpy: jasmine.SpyObj<ReferenceDataService>;
-    let routerSpy: jasmine.SpyObj<Router>;
+  let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
+  let referenceDataServiceServiceSpy: jasmine.SpyObj<ReferenceDataService>;
+  let routerSpy: jasmine.SpyObj<Router>;
 
-    beforeEach(async(() => {
-        initExistingHearingRequest();
-        routerSpy = jasmine.createSpyObj('Router', ['navigate']);
+  beforeEach(async(() => {
+    initExistingHearingRequest();
+    routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
-        referenceDataServiceServiceSpy = jasmine.createSpyObj<ReferenceDataService>('ReferenceDataService',
-            ['getCourts']);
-        referenceDataServiceServiceSpy.getCourts.and.returnValue(of(MockValues.Courts));
-        videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',
-            ['getHearingMediums', 'getHearingTypes', 'getCurrentRequest', 'updateHearingRequest', 'saveHearing']);
+    referenceDataServiceServiceSpy = jasmine.createSpyObj<ReferenceDataService>('ReferenceDataService',
+      ['getCourts']);
+    referenceDataServiceServiceSpy.getCourts.and.returnValue(of(MockValues.Courts));
+    videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',
+      ['getHearingMediums', 'getHearingTypes', 'getCurrentRequest', 'updateHearingRequest', 'saveHearing', 'getOtherInformation']);
 
-        const existingRequest = initBadHearingRequest();
-        videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
-        videoHearingsServiceSpy.getHearingMediums.and.returnValue(of(MockValues.HearingMediums));
-        videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
-        videoHearingsServiceSpy.saveHearing.and.callFake(() => {
-            return throwError(new Error('Fake error'));
-        });
-
-        TestBed.configureTestingModule({
-            providers: [
-                { provide: ReferenceDataService, useValue: referenceDataServiceServiceSpy },
-                { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
-                { provide: Router, useValue: routerSpy }
-            ],
-            imports: [RouterTestingModule],
-            declarations: [SummaryComponent, BreadcrumbStubComponent, CancelPopupComponent, ParticipantsListComponent]
-        })
-            .compileComponents();
-    }));
-
-    beforeEach(() => {
-        fixture = TestBed.createComponent(SummaryComponent);
-        component = fixture.componentInstance;
-        fixture.detectChanges();
+    const existingRequest = initBadHearingRequest();
+    videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
+    videoHearingsServiceSpy.getHearingMediums.and.returnValue(of(MockValues.HearingMediums));
+    videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
+    videoHearingsServiceSpy.saveHearing.and.callFake(() => {
+      return throwError(new Error('Fake error'));
     });
 
-    it('should display save failed message', () => {
-        component.bookHearing();
-        expect(component.saveFailed).toBeTruthy();
-    });
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: ReferenceDataService, useValue: referenceDataServiceServiceSpy },
+        { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
+        { provide: Router, useValue: routerSpy }
+      ],
+      imports: [RouterTestingModule],
+      declarations: [SummaryComponent, BreadcrumbStubComponent, CancelPopupComponent, ParticipantsListComponent]
+    })
+      .compileComponents();
+  }));
+
+  beforeEach(() => {
+    fixture = TestBed.createComponent(SummaryComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should display save failed message', () => {
+    component.bookHearing();
+    expect(component.saveFailed).toBeTruthy();
+  });
 });

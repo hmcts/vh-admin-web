@@ -8,12 +8,12 @@ import { Constants } from '../../common/constants';
 import { CanDeactiveComponent } from '../../common/guards/changes.guard';
 import { IDropDownModel } from '../../common/model/drop-down.model';
 import {
-  FeedRequest,
-  HearingRequest,
   IParticipantRoleResponse,
-  ParticipantRequest,
   ParticipantRoleResponse,
 } from '../../services/clients/api-client';
+import { HearingModel, FeedModel } from '../../common/model/hearing.model';
+import {ParticipantModel} from '../../common/model/participant.model';
+
 import { SearchService } from '../../services/search.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { SearchEmailComponent } from '../search-email/search-email.component';
@@ -27,10 +27,10 @@ export class AddParticipantComponent implements OnInit, CanDeactiveComponent {
   canNavigate = true;
   constants = Constants;
 
-  participantDetails: ParticipantRequest;
+  participantDetails: ParticipantModel;
   notFound: boolean;
-  hearing: HearingRequest;
-  participants: ParticipantRequest[] = [];
+  hearing: HearingModel;
+  participants: ParticipantModel[] = [];
   titleList: IDropDownModel[] = [];
   roleList: IParticipantRoleResponse[];
   participantForm: FormGroup;
@@ -221,7 +221,7 @@ export class AddParticipantComponent implements OnInit, CanDeactiveComponent {
     this.phone.markAsTouched();
     if (this.participantForm.valid && validEmail && this.isRoleSelected && this.isTitleSelected) {
       this.isShowErrorSummary = false;
-      const newParticipant = new ParticipantRequest();
+      const newParticipant = new ParticipantModel();
       newParticipant.first_name = this.firstName.value;
       newParticipant.last_name = this.lastName.value;
       newParticipant.phone = this.phone.value;
@@ -249,10 +249,7 @@ export class AddParticipantComponent implements OnInit, CanDeactiveComponent {
     if (participantFeed) {
       participantFeed.participants = [];
     } else {
-      participantFeed = new FeedRequest({
-        location: newParticipant.email,
-        participants: []
-      });
+      participantFeed = new FeedModel(newParticipant.email);
       if (this.hearing.feeds) {
         this.hearing.feeds.push(participantFeed);
       }
@@ -261,7 +258,7 @@ export class AddParticipantComponent implements OnInit, CanDeactiveComponent {
     this.videoHearingService.updateHearingRequest(this.hearing);
   }
 
-  private getExistingFeedWith(email: string): FeedRequest {
+  private getExistingFeedWith(email: string): FeedModel {
     return this.hearing.feeds ?
       this.hearing.feeds.find(x => x.participants.filter(y => y.email.toLowerCase() === email.toLowerCase()).length > 0)
       : null;
@@ -334,10 +331,10 @@ export class AddParticipantComponent implements OnInit, CanDeactiveComponent {
     window.document.getElementById(fragment).parentElement.parentElement.scrollIntoView();
   }
 
-  public getAllParticipants(): ParticipantRequest[] {
+  public getAllParticipants(): ParticipantModel[] {
     console.debug('getting all participants...');
     console.debug(this.hearing.feeds);
-    let participants: ParticipantRequest[] = [];
+    let participants: ParticipantModel[] = [];
     this.hearing.feeds.forEach(x => {
       if (x.participants && x.participants.length >= 1) {
         participants = participants.concat(x.participants);
