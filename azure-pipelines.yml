@@ -21,6 +21,7 @@ resources:
   repositories:
   - repository: azureDevOpsTemplates
     type: github
+    ref: revert_breaking_changes
     name: hmcts/azure-devops-templates
     endpoint: 'GitHub connection 1'
 
