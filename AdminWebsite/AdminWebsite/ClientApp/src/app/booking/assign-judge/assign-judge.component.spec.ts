@@ -10,7 +10,8 @@ import { of } from 'rxjs';
 import { MockValues } from '../../testing/data/test-objects';
 import { JudgeDataService } from '../services/judge-data.service';
 import { ParticipantsListComponent } from '../participants-list/participants-list.component';
-import { HearingModel, FeedModel, ParticipantModel } from '../../common/model/hearing.model';
+import { HearingModel, FeedModel } from '../../common/model/hearing.model';
+import { ParticipantModel } from '../../common/model/participant.model';
 
 function initHearingRequest(): HearingModel {
 

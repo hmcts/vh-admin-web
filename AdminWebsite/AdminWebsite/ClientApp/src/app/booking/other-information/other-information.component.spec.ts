@@ -53,12 +53,12 @@ describe('OtherInformationComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
-  it('should set initiall values for field', () => {
+  it('should set initial values for field', () => {
     component.ngOnInit();
     expect(otherInformation.value).toBe('some text');
     expect(component.otherInformationText).toBe('some text');
   });
-  it('if press next button should save other information in storage and navigat to summary page.', () => {
+  it('if press next button should save other information in storage and navigate to summary page.', () => {
     component.ngOnInit();
     component.next();
     expect(routerSpy.navigate).toHaveBeenCalledWith(['/summary']);
@@ -66,7 +66,7 @@ describe('OtherInformationComponent', () => {
     expect(videoHearingsServiceSpy.updateHearingRequest).toHaveBeenCalled();
 
   });
-  it('if press cancel button should remove other information from storage and navigat to dushboard page.', () => {
+  it('if press cancel button should remove other information from storage and navigate to dashboard page.', () => {
     component.ngOnInit();
     component.otherInformationCancel();
     expect(routerSpy.navigate).toHaveBeenCalledWith(['/dashboard']);

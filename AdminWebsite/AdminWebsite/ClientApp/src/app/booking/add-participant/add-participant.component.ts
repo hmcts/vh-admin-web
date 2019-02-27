@@ -11,7 +11,9 @@ import {
   IParticipantRoleResponse,
   ParticipantRoleResponse,
 } from '../../services/clients/api-client';
-import { HearingModel, ParticipantModel, FeedModel } from '../../common/model/hearing.model';
+import { HearingModel, FeedModel } from '../../common/model/hearing.model';
+import {ParticipantModel} from '../../common/model/participant.model';
+
 import { SearchService } from '../../services/search.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { SearchEmailComponent } from '../search-email/search-email.component';

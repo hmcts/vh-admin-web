@@ -7,17 +7,15 @@ import { of } from 'rxjs';
 import { CancelPopupComponent } from 'src/app/popups/cancel-popup/cancel-popup.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 
-import { CaseRequest, HearingRequest, ICaseRequest } from '../../services/clients/api-client';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { MockValues } from '../../testing/data/test-objects';
 import { BreadcrumbComponent } from '../breadcrumb/breadcrumb.component';
 import { CreateHearingComponent } from './create-hearing.component';
 import { HearingModel } from '../../common/model/hearing.model';
+import { CaseModel } from '../../common/model/case.model';
 
 function initHearingRequest(): HearingModel {
   let newHearing = new HearingModel();
-  newHearing.cases = [];
-  newHearing.feeds = [];
   newHearing.hearing_type_id = -1;
   newHearing.hearing_medium_id = -1;
   newHearing.court_id = -1;
@@ -29,8 +27,6 @@ function initExistingHearingRequest(): HearingModel {
   const existingRequest = new HearingModel();
   existingRequest.hearing_type_id = 2;
   existingRequest.hearing_medium_id = 1;
-  existingRequest.feeds = [];
-  existingRequest.cases = [];
   return existingRequest;
 }
 
@@ -221,12 +217,13 @@ describe('CreateHearingComponent with existing request in session', () => {
       declarations: [CreateHearingComponent, BreadcrumbComponent, CancelPopupComponent]
     }).compileComponents();
 
-    const iCaseRequest: ICaseRequest = { name: 'Captain America Vs. The World', number: '1234' };
-    const existingCase = new CaseRequest(iCaseRequest);
+    let existingCase = new CaseModel();
+    existingCase.name = 'Captain America Vs. The World';
+    existingCase.number = '1234';
     existingRequest.cases.push(existingCase);
 
     const newRequestKey = 'bh-newRequest';
-    const jsonRequest = existingCase.toJSON();
+    let jsonRequest = JSON.stringify(existingRequest);
     sessionStorage.setItem(newRequestKey, jsonRequest);
 
     fixture = TestBed.createComponent(CreateHearingComponent);

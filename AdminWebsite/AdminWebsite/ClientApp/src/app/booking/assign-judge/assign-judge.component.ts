@@ -4,7 +4,9 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { CanDeactiveComponent } from 'src/app/common/guards/changes.guard';
 import { ParticipantDetailsResponse } from '../../services/clients/api-client';
-import { FeedModel, HearingModel, ParticipantModel } from '../../common/model/hearing.model';
+import { FeedModel, HearingModel} from '../../common/model/hearing.model';
+import { ParticipantModel } from '../../common/model/participant.model';
+
 import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 import { Constants } from 'src/app/common/constants';
 import { JudgeDataService } from 'src/app/booking/services/judge-data.service';

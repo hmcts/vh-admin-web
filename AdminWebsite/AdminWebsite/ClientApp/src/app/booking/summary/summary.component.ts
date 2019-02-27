@@ -7,11 +7,13 @@ import { Constants } from '../../common/constants';
 import { CanDeactiveComponent } from '../../common/guards/changes.guard';
 import {
   CourtResponse,
-  HearingRequest,
+  //HearingRequest,
   HearingTypeResponse,
-  ParticipantRequest,
+ // ParticipantRequest,
 } from '../../services/clients/api-client';
-import { CaseModel, HearingModel, ParticipantModel } from '../../common/model/hearing.model';
+import { HearingModel} from '../../common/model/hearing.model';
+import {ParticipantModel } from '../../common/model/participant.model';
+
 import { ReferenceDataService } from '../../services/reference-data.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 
@@ -25,7 +27,7 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
 
   constants = Constants;
   hearing: HearingModel;
-  newhearing: HearingRequest;
+ // newhearing: HearingRequest;
   attemptingCancellation: boolean;
   canNavigate = true;
   hearingForm: FormGroup;
@@ -42,7 +44,7 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
   errors: any;
 
   selectedHearingTypeName: HearingTypeResponse[];
-  newparticipants: ParticipantRequest[] = [];
+ // newparticipants: ParticipantRequest[] = [];
   participants: ParticipantModel[] = [];
   selectedHearingType: HearingTypeResponse[];
   saveFailed: boolean;

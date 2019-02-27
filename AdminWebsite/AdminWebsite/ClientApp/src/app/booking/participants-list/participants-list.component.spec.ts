@@ -2,7 +2,7 @@ import { DebugElement } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 
-import { ParticipantRequest } from '../../services/clients/api-client';
+import { ParticipantModel } from '../../common/model/participant.model';
 import { ParticipantsListComponent } from './participants-list.component';
 import { RouterTestingModule } from '@angular/router/testing';
 
@@ -11,10 +11,10 @@ describe('ParticipantsListComponent', () => {
   let fixture: ComponentFixture<ParticipantsListComponent>;
   let debugElement: DebugElement;
 
-  const pat1 = new ParticipantRequest();
+  const pat1 = new ParticipantModel();
   pat1.title = 'Mrs';
   pat1.first_name = 'Sam';
-  const participants: ParticipantRequest[] = [
+  const participants: ParticipantModel[] = [
     pat1, pat1
   ];
 

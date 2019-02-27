@@ -14,7 +14,8 @@ import { SearchService } from '../../services/search.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { SearchEmailComponent } from '../search-email/search-email.component';
 import { AddParticipantComponent } from './add-participant.component';
-import { HearingModel, FeedModel, ParticipantModel } from '../../common/model/hearing.model';
+import { HearingModel, FeedModel } from '../../common/model/hearing.model';
+import { ParticipantModel } from '../../common/model/participant.model';
 
 let component: AddParticipantComponent;
 let fixture: ComponentFixture<AddParticipantComponent>;

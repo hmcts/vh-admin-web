@@ -4,14 +4,14 @@ import { of, throwError } from 'rxjs';
 import { CancelPopupComponent } from 'src/app/popups/cancel-popup/cancel-popup.component';
 import { BreadcrumbStubComponent } from 'src/app/testing/stubs/breadcrumb-stub';
 
-import { CaseRequest, HearingRequest } from '../../services/clients/api-client';
 import { ReferenceDataService } from '../../services/reference-data.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { MockValues } from '../../testing/data/test-objects';
 import { ParticipantsListComponent } from '../participants-list/participants-list.component';
 import { SummaryComponent } from './summary.component';
 import { RouterTestingModule } from '@angular/router/testing';
-import { HearingModel, CaseModel } from '../../common/model/hearing.model';
+import { HearingModel} from '../../common/model/hearing.model';
+import { CaseModel } from '../../common/model/case.model';
 
 function initExistingHearingRequest(): HearingModel {
   const today = new Date();
@@ -24,8 +24,6 @@ function initExistingHearingRequest(): HearingModel {
   const existingRequest = new HearingModel();
   existingRequest.hearing_type_id = 2;
   existingRequest.hearing_medium_id = 1;
-  existingRequest.feeds = [];
-  existingRequest.cases = [];
   existingRequest.cases.push(newCaseRequest);
   existingRequest.court_id = 2;
   existingRequest.scheduled_date_time = today;
@@ -46,8 +44,6 @@ function initBadHearingRequest(): HearingModel {
   const existingRequest = new HearingModel();
   existingRequest.hearing_type_id = 2;
   existingRequest.hearing_medium_id = 1;
-  existingRequest.feeds = [];
-  existingRequest.cases = [];
   existingRequest.cases.push(newCaseRequest);
   existingRequest.court_id = 2;
   existingRequest.scheduled_date_time = today;
@@ -97,7 +93,7 @@ describe('SummaryComponent with valid request', () => {
     fixture.detectChanges();
   });
 
-  it('should display summary data from exisitng hearing', () => {
+  it('should display summary data from existing hearing', () => {
     expect(component.caseNumber).toEqual(existingRequest.cases[0].number);
     expect(component.caseName).toEqual(existingRequest.cases[0].name);
     expect(component.otherInformation).toEqual(existingRequest.other_information);

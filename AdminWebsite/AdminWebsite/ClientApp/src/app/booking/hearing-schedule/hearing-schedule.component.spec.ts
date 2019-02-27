@@ -9,26 +9,14 @@ import { CancelPopupComponent } from 'src/app/popups/cancel-popup/cancel-popup.c
 import { SharedModule } from 'src/app/shared/shared.module';
 import { BreadcrumbStubComponent } from 'src/app/testing/stubs/breadcrumb-stub';
 
-import { HearingRequest } from '../../services/clients/api-client';
 import { ReferenceDataService } from '../../services/reference-data.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { MockValues } from '../../testing/data/test-objects';
 import { HearingScheduleComponent } from './hearing-schedule.component';
 import { HearingModel } from '../../common/model/hearing.model';
 
-function initHearingRequest(): HearingModel {
-  //const initRequest = {
-  //  cases: [],
-  //  feeds: [],
-  //  hearing_type_id: -1,
-  //  hearing_medium_id: -1,
-  //  court_id: -1,
-  //  scheduled_date_time: null,
-  //  scheduled_duration: 0,
-  //};
-  const newHearing = new HearingModel();
-  return newHearing;
-}
+
+const newHearing = new HearingModel();
 
 function initExistingHearingRequest(): HearingModel {
   const today = new Date();
@@ -37,10 +25,8 @@ function initExistingHearingRequest(): HearingModel {
   const existingRequest = new HearingModel();
   existingRequest.hearing_type_id = 2;
   existingRequest.hearing_medium_id = 1;
-  existingRequest.feeds = [];
-  existingRequest.cases = [];
   existingRequest.court_id = 1,
-    existingRequest.scheduled_date_time = today;
+  existingRequest.scheduled_date_time = today;
   existingRequest.scheduled_duration = 80;
   return existingRequest;
 }
@@ -64,8 +50,6 @@ function initFormControls(component: HearingScheduleComponent) {
 describe('HearingScheduleComponent first visit', () => {
   let component: HearingScheduleComponent;
   let fixture: ComponentFixture<HearingScheduleComponent>;
-
-  const newHearing = initHearingRequest();
 
   let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
   let referenceDataServiceServiceSpy: jasmine.SpyObj<ReferenceDataService>;
@@ -242,9 +226,9 @@ describe('HearingScheduleComponent returning to page', () => {
     const durationDate = new Date(0, 0, 0, 0, 0, 0, 0);
     durationDate.setMinutes(existingRequest.scheduled_duration);
 
-    const expectedStartHour =  dateTransfomer.transform(existingRequest.scheduled_date_time, 'HH');
+    const expectedStartHour = dateTransfomer.transform(existingRequest.scheduled_date_time, 'HH');
     const expectedStartMinute = dateTransfomer.transform(existingRequest.scheduled_date_time, 'mm');
-    const expectedDurationHour =  dateTransfomer.transform(durationDate, 'HH');
+    const expectedDurationHour = dateTransfomer.transform(durationDate, 'HH');
     const expectedDurationMinute = dateTransfomer.transform(durationDate, 'mm');
 
     expect(component.hearingDate.value).toBe(dateString);

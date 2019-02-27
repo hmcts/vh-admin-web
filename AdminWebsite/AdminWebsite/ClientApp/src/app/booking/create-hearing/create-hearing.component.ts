@@ -5,7 +5,8 @@ import { Observable } from 'rxjs';
 
 import { CanDeactiveComponent } from '../../common/guards/changes.guard';
 import { HearingMediumResponse, HearingTypeResponse } from '../../services/clients/api-client';
-import { CaseModel, HearingModel } from '../../common/model/hearing.model';
+import { HearingModel } from '../../common/model/hearing.model';
+import { CaseModel } from '../../common/model/case.model';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 
 @Component({

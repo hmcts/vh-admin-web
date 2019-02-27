@@ -4,7 +4,8 @@ import {
   HearingTypeResponse, BHClient, HearingRequest,
   HearingMediumResponse, ParticipantRoleResponse, HearingResponse, CaseRequest, FeedRequest, ParticipantRequest, ParticipantDetailsResponse
 } from '../services/clients/api-client';
-import { HearingModel, ParticipantModel } from '../common/model/hearing.model';
+import { HearingModel } from '../common/model/hearing.model';
+import {ParticipantModel } from '../common/model/participant.model';
 
 @Injectable({
   providedIn: 'root'

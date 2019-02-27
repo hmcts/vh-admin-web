@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 
-import { ParticipantRequest } from '../../services/clients/api-client';
+import { ParticipantModel } from '../../common/model/participant.model';
 
 @Component({
   selector: 'app-participants-list',
@@ -10,7 +10,7 @@ import { ParticipantRequest } from '../../services/clients/api-client';
 export class ParticipantsListComponent {
 
   @Input()
-  participants: ParticipantRequest[];
+  participants: ParticipantModel[];
 
   constructor() {
   }
