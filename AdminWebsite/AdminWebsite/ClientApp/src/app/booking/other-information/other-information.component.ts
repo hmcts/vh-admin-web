@@ -45,13 +45,13 @@ export class OtherInformationComponent implements OnInit, CanDeactiveComponent {
     this.router.navigate(['/summary']);
   }
 
-  otherInformationCancel() {
+  cancelBooking() {
     this.attemptingCancellation = false;
     this.videoHearingService.cancelRequest();
     this.otherInformationForm.reset();
     this.router.navigate(['/dashboard']);
   }
-
+  
   continueBooking() {
     this.attemptingCancellation = false;
   }

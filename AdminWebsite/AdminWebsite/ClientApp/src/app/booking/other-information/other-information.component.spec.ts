@@ -68,7 +68,7 @@ describe('OtherInformationComponent', () => {
   });
   it('if press cancel button should remove other information from storage and navigate to dashboard page.', () => {
     component.ngOnInit();
-    component.otherInformationCancel();
+    component.cancelBooking();
     expect(routerSpy.navigate).toHaveBeenCalledWith(['/dashboard']);
     expect(videoHearingsServiceSpy.cancelRequest).toHaveBeenCalled();
   });
