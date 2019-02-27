@@ -7,9 +7,7 @@ import { Constants } from '../../common/constants';
 import { CanDeactiveComponent } from '../../common/guards/changes.guard';
 import {
   CourtResponse,
-  //HearingRequest,
   HearingTypeResponse,
- // ParticipantRequest,
 } from '../../services/clients/api-client';
 import { HearingModel} from '../../common/model/hearing.model';
 import {ParticipantModel } from '../../common/model/participant.model';

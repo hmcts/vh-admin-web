@@ -21,9 +21,10 @@
         </fieldset>
 
         <div class="vh-mt50">
-          <input id="nextButton" type="button" class="govuk-button vh-mr25" role="button" value="Next"
-                 (click)="next()" />
-          <input id="cancelButton" type="button"  class="govuk-button hmcts-button--secondary" role="button" value="Cancel" (click)="otherInformationCancel()" />
+          <input id="nextButton" type="button" class="govuk-button vh-mr25" role="button" value="{{buttonAction}}"
+                 (click)="next()" alt="Save hearing other information and go to summary" />
+          <input id="cancelButton" type="button"  class="govuk-button hmcts-button--secondary"
+                 role="button" value="Cancel" (click)="otherInformationCancel()" alt="Confirm cancellation of new booking and return to dashboard"/>
         </div>
 
       </form>

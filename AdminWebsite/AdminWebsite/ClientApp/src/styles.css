@@ -11,3 +11,29 @@
 .vh-mr25 {
   margin-right: 25px;
 }
+
+.vhlink:link {
+  color: #005ea5;
+  text-decoration: none;
+  font-weight: 500;
+  margin-left: 10px;
+  font-family: "nta", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 18px;
+  line-height: 1;
+  float:left;
+}
+
+.vhlink:visited {
+  color: #005ea5;
+}
+
+.vhlink:hover {
+  color: #005ea5;
+  text-decoration: underline;
+}
+
+.remove-header-padding {
+  margin-bottom: 0px !important;
+}

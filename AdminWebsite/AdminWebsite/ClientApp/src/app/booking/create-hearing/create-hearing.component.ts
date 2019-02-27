@@ -8,13 +8,15 @@ import { HearingMediumResponse, HearingTypeResponse } from '../../services/clien
 import { HearingModel } from '../../common/model/hearing.model';
 import { CaseModel } from '../../common/model/case.model';
 import { VideoHearingsService } from '../../services/video-hearings.service';
+import { BookingBaseComponent } from '../booking-base/booking-base.component';
+import { BookingService } from '../../services/booking.service';
 
 @Component({
   selector: 'app-create-hearing',
   templateUrl: './create-hearing.component.html',
   styleUrls: ['./create-hearing.component.scss']
 })
-export class CreateHearingComponent implements OnInit, CanDeactiveComponent {
+export class CreateHearingComponent extends BookingBaseComponent implements OnInit, CanDeactiveComponent {
 
   private existingCaseTypeKey = 'selectedCaseType';
   attemptingCancellation: boolean;
@@ -29,12 +31,17 @@ export class CreateHearingComponent implements OnInit, CanDeactiveComponent {
   filteredHearingMediums: HearingMediumResponse[];
   hasSaved: boolean;
 
-  constructor(private hearingService: VideoHearingsService, private fb: FormBuilder, private router: Router) {
+  constructor(private hearingService: VideoHearingsService,
+    private fb: FormBuilder,
+    protected router: Router,
+    protected bookingService: BookingService) {
+    super(bookingService, router);
     this.attemptingCancellation = false;
     this.availableCaseTypes = [];
   }
 
   ngOnInit() {
+    super.ngOnInit();
     this.failedSubmission = false;
     this.checkForExistingRequest();
     this.initForm();
@@ -106,7 +113,11 @@ export class CreateHearingComponent implements OnInit, CanDeactiveComponent {
       sessionStorage.setItem(this.existingCaseTypeKey, this.selectedCaseType);
       this.hearingForm.markAsPristine();
       this.hasSaved = true;
-      this.router.navigate(['/hearing-schedule']);
+      if (this.editMode) {
+        this.navigateToSummary();
+      } else {
+        this.router.navigate(['/hearing-schedule']);
+      }
     } else {
       this.failedSubmission = true;
     }

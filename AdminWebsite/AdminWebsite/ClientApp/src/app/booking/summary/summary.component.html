@@ -6,42 +6,45 @@
 </div>
 
 <div class="govuk-grid-row">
-    <div class="govuk-grid-column-one-half">
+  <div class="govuk-grid-column-one-half">
 
-        <h2 class="govuk-heading-m" id="hearingSummary">Hearing summary</h2>
-
-        <h3 class="govuk-heading-s remove-header-padding" id="hearingDetailsTitle">Hearing details</h3>
-        <div class="govuk-form-group vhtable">
-            <div class="vhtable-header" id="caseNumber">{{ caseNumber }}</div>
-            <div class="vhtable-header" id="caseName">{{ caseName }}</div>
-            <div class="vhtable-header" id="caseHearingType">{{ caseHearingType }}</div>
-        </div>
-
-        <h3 class="govuk-heading-s remove-header-padding" id="hearingScheduleTitle">Hearing schedule</h3>
-        <div class="govuk-form-group vhtable">
-            <div class="vhtable-header" id="hearingDate">{{ hearingDate | date:"EEEE dd MMMM yyyy ',' HH:mm" }}</div>
-            <div class="vhtable-header" id="courtAddress">{{ courtRoomAddress }}</div>
-            <div class="vhtable-header" id="hearingDuration">{{ hearingDuration }}</div>
-        </div>
-
-        <h3 class="govuk-heading-s remove-header-padding" id="otherInformationTitle">Other information</h3>
-        <div class="govuk-form-group vhtable">
-            <div class="vhtable-header" id="otherInformation">{{ otherInformation }}</div>
-        </div>
-
-        <div class="sk-top">
-            <input type="button" id="bookButton" class="govuk-button" role="button" value="Book" style="margin-right:25px;"
-                (click)="bookHearing()" alt="Book a Hearing" [disabled]="bookingsSaving"/> 
-            <input type="button" id="cancelButton" class="govuk-button hmcts-button--secondary" role="button" value="Cancel"
-                (click)="confirmCancelBooking()" alt="Confirm cancellation of new booking and return to dashboard" />
-        </div>
-
-        <div *ngIf="saveFailed" class="alert alert-danger">
-            <span id="save-error" class="govuk-error-message">
-                Error! Save hearing unsuccessful.
-            </span>
-        </div>
+    <h2 class="govuk-heading-m" id="hearingSummary">Hearing summary</h2>
+    <app-booking-edit [title]="'Hearing details'" [editLink]="'book-hearing'"></app-booking-edit>
+    <!--<h3 class="govuk-heading-s remove-header-padding" id="hearingDetailsTitle">Hearing details</h3>-->
+    <div class="govuk-form-group vhtable">
+      <div class="vhtable-header" id="caseNumber">{{ caseNumber }}</div>
+      <div class="vhtable-header" id="caseName">{{ caseName }}</div>
+      <div class="vhtable-header" id="caseHearingType">{{ caseHearingType }}</div>
     </div>
+
+    <!--<h3 class="govuk-heading-s remove-header-padding" id="hearingScheduleTitle">Hearing schedule</h3>-->
+    <app-booking-edit [title]="'Hearing schedule'" [editLink]="'hearing-schedule'"></app-booking-edit>
+    <div class="govuk-form-group vhtable">
+      <div class="vhtable-header" id="hearingDate">{{ hearingDate | date:"EEEE dd MMMM yyyy ',' HH:mm" }}</div>
+      <div class="vhtable-header" id="courtAddress">{{ courtRoomAddress }}</div>
+      <div class="vhtable-header" id="hearingDuration">{{ hearingDuration }}</div>
+    </div>
+
+    <!--<h3 class="govuk-heading-s remove-header-padding" id="otherInformationTitle">Other information</h3>-->
+    <app-booking-edit [title]="'Other information'" [editLink]="'other-information'"></app-booking-edit>
+
+    <div class="govuk-form-group vhtable">
+      <div class="vhtable-header" id="otherInformation">{{ otherInformation }}</div>
+    </div>
+
+    <div class="sk-top">
+      <input type="button" id="bookButton" class="govuk-button" role="button" value="Book" style="margin-right:25px;"
+             (click)="bookHearing()" alt="Book a Hearing" [disabled]="bookingsSaving" />
+      <input type="button" id="cancelButton" class="govuk-button hmcts-button--secondary" role="button" value="Cancel"
+             (click)="confirmCancelBooking()" alt="Confirm cancellation of new booking and return to dashboard" />
+    </div>
+
+    <div *ngIf="saveFailed" class="alert alert-danger">
+      <span id="save-error" class="govuk-error-message">
+        Error! Save hearing unsuccessful.
+      </span>
+    </div>
+  </div>
 
     <div class="govuk-grid-column-one-half" style="margin: 0;">
         <app-participants-list [participants]="participants"></app-participants-list>
