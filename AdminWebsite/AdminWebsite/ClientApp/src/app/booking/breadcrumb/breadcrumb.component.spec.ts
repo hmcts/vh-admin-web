@@ -30,6 +30,7 @@ import { BreadcrumbComponent } from './breadcrumb.component';
 import { BreadcrumbItemModel } from './breadcrumbItem.model';
 import { ContactUsStubComponent } from 'src/app/testing/stubs/contact-us-stub';
 import { UnauthorisedComponent } from '../../error/unauthorised.component';
+import { ErrorComponent } from '../../error/error.component';
 
 describe('BreadcrumbComponent', () => {
   const videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',
@@ -64,7 +65,8 @@ describe('BreadcrumbComponent', () => {
         SummaryComponent,
         BookingConfirmationComponent,
         CheckListComponent,
-        UnauthorisedComponent
+        UnauthorisedComponent,
+        ErrorComponent
       ],
       providers: [
         { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
