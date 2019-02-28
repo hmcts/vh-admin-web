@@ -18,8 +18,8 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             HearingDetailsPage();
             InputCaseNumber();
-            InputCaseName();
             SelectHearingType();
+            InputCaseName();            
             SelectHearingChannel();
         }
 

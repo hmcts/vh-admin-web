@@ -2,6 +2,7 @@
 using OpenQA.Selenium;
 using System.Collections.Generic;
 using FluentAssertions;
+using System.Linq;
 
 namespace AdminWebsite.AcceptanceTests.Pages
 {
@@ -42,6 +43,7 @@ namespace AdminWebsite.AcceptanceTests.Pages
         protected void SelectOption(By elements, string option)
         {
             var getListOfElements = GetListOfElements(elements);
+            _browserContext.Retry(() => getListOfElements.ToArray().Count().Should().BeGreaterThan(0, "List is not populated"));
             foreach (var element in getListOfElements)
             {
                 if (option == element.Text.Trim())
