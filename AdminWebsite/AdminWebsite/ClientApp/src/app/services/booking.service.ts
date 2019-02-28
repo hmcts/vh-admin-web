@@ -6,8 +6,10 @@ import { Injectable } from '@angular/core';
 })
 export class BookingService {
   private bookingEditKey: string;
+  private participantEmailKey: string;
   constructor() {
-    this.bookingEditKey='bookingEditKey';
+    this.bookingEditKey = 'bookingEditKey';
+    this.participantEmailKey = 'participantEmailKey';
   }
 
   setEditMode() {
@@ -22,4 +24,17 @@ export class BookingService {
     let editMode = sessionStorage.getItem(this.bookingEditKey);
     return editMode === this.bookingEditKey;
   }
+
+  setParticipantEmail(participantEmail:string) {
+    sessionStorage.setItem(this.participantEmailKey, participantEmail);
+  }
+
+  getParticipantEmail() {
+    return sessionStorage.getItem(this.participantEmailKey);
+  }
+
+  removeParticipantEmail() {
+    sessionStorage.removeItem(this.participantEmailKey);
+  }
+
 }

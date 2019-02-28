@@ -35,7 +35,8 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
   constructor(private hearingService: VideoHearingsService,
     private fb: FormBuilder,
     protected router: Router,
-    protected bookingService: BookingService) {
+    protected bookingService: BookingService,
+    private errorService: ErrorService) {
     super(bookingService, router);
     this.attemptingCancellation = false;
     this.availableCaseTypes = [];

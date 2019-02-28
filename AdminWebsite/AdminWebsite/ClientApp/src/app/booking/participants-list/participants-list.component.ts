@@ -1,21 +1,47 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit, EventEmitter } from '@angular/core';
 import { BookingService } from '../../services/booking.service';
 import { ParticipantModel } from '../../common/model/participant.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-participants-list',
   templateUrl: './participants-list.component.html',
   styleUrls: ['./participants-list.component.css']
 })
-export class ParticipantsListComponent {
+export class ParticipantsListComponent implements OnInit{
 
   @Input()
   participants: ParticipantModel[];
+ 
+  $selectedForEdit: EventEmitter<string>;
 
-  constructor(private bookingService:BookingService) {
+  isSummaryPage: boolean = false;
+  isEditRemoveVisible: boolean = true;
+
+  constructor(private bookingService: BookingService, private router: Router) {
+    this.$selectedForEdit = new EventEmitter<string>();
   }
 
-  edit() {
+  ngOnInit() {
+    this.isSummaryPage = this.router.url.includes('summary');
+    this.isEditRemoveVisible = !this.router.url.includes('assign-judge')
+  }
+  editJudge() {
     this.bookingService.setEditMode();
+  }
+
+  editParticipant(participantEmail:string) {
+    this.bookingService.setEditMode();
+    if (this.isSummaryPage) {
+      this.bookingService.setParticipantEmail(participantEmail);
+      this.router.navigate(['/add-participants']);
+    } else {
+      //we are om the add participant page
+      this.$selectedForEdit.emit(participantEmail);
+    }
+  }
+
+  get selectedParticipant() {
+    return this.$selectedForEdit;
   }
 }

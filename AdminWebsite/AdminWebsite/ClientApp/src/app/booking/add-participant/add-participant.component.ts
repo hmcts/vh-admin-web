@@ -12,18 +12,21 @@ import {
   ParticipantRoleResponse,
 } from '../../services/clients/api-client';
 import { HearingModel, FeedModel } from '../../common/model/hearing.model';
-import {ParticipantModel} from '../../common/model/participant.model';
+import { ParticipantModel } from '../../common/model/participant.model';
 
 import { SearchService } from '../../services/search.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { SearchEmailComponent } from '../search-email/search-email.component';
+import { ParticipantsListComponent } from '../participants-list/participants-list.component';
+import { BookingBaseComponent } from '../booking-base/booking-base.component';
+import { BookingService } from '../../services/booking.service';
 
 @Component({
   selector: 'app-add-participant',
   templateUrl: './add-participant.component.html',
   styleUrls: ['./add-participant.component.css'],
 })
-export class AddParticipantComponent implements OnInit, CanDeactiveComponent {
+export class AddParticipantComponent extends BookingBaseComponent implements OnInit, CanDeactiveComponent {
   canNavigate = true;
   constants = Constants;
 
@@ -33,6 +36,7 @@ export class AddParticipantComponent implements OnInit, CanDeactiveComponent {
   participants: ParticipantModel[] = [];
   titleList: IDropDownModel[] = [];
   roleList: IParticipantRoleResponse[];
+  selectedParticipantEmail: string = null;
   participantForm: FormGroup;
   private role: FormControl;
   private title: FormControl;
@@ -59,14 +63,25 @@ export class AddParticipantComponent implements OnInit, CanDeactiveComponent {
   @ViewChild(CancelPopupComponent)
   cancelPopup: CancelPopupComponent;
 
+  @ViewChild(ParticipantsListComponent)
+  participantsListComponent: ParticipantsListComponent;
+
   constructor(
     private searchService: SearchService,
     private videoHearingService: VideoHearingsService,
-    private router: Router) {
-
+    protected router: Router,
+    protected bookingService: BookingService) {
+    super(bookingService, router);
     this.checkForExistingRequest();
     this.retrieveRoles();
     this.titleList = searchService.TitleList;
+  }
+
+  private repopulateParticipantToEdit() {
+    let selectedParticipant = this.participants.find(s => s.email === this.selectedParticipantEmail);
+    this.getParticipant(selectedParticipant);
+    this.searchEmail.email = selectedParticipant.email;
+    this.searchEmail.isValidEmail = true;
   }
 
   private checkForExistingRequest() {
@@ -117,7 +132,25 @@ export class AddParticipantComponent implements OnInit, CanDeactiveComponent {
   }
 
   ngOnInit() {
+    super.ngOnInit();
     this.hearing = this.videoHearingService.getCurrentRequest();
+    if (this.hearing) {
+      this.participants = this.getAllParticipants();
+    }
+    this.initializeForm();
+    if (this.editMode) {
+      this.selectedParticipantEmail = this.bookingService.getParticipantEmail();
+      this.repopulateParticipantToEdit();
+      this.displayNext();
+    }
+
+    this.participantsListComponent.selectedParticipant.subscribe((participantEmail) => {
+      this.selectedParticipantEmail = participantEmail;
+      this.repopulateParticipantToEdit();
+    });
+  }
+
+  initializeForm() {
     this.role = new FormControl(this.constants.PleaseSelect, [
       Validators.required,
       Validators.pattern(this.constants.PleaseSelectPattern)
@@ -140,12 +173,12 @@ export class AddParticipantComponent implements OnInit, CanDeactiveComponent {
     });
     this.participantForm.valueChanges.subscribe(
       result => {
-        if (this.role.value === this.constants.PleaseSelect &&
+        if ((this.role.value === this.constants.PleaseSelect &&
           this.title.value === this.constants.PleaseSelect &&
           this.firstName.value === '' &&
           this.lastName.value === '' &&
           this.phone.value === '' &&
-          this.displayName.value === '') {
+          this.displayName.value === '') || this.editMode) {
           this.displayNext();
         } else if (this.participantForm.valid && this.searchEmail.validateEmail()) {
           this.displayAdd();
@@ -221,6 +254,39 @@ export class AddParticipantComponent implements OnInit, CanDeactiveComponent {
     this.phone.markAsTouched();
     if (this.participantForm.valid && validEmail && this.isRoleSelected && this.isTitleSelected) {
       this.isShowErrorSummary = false;
+      const newParticipant = new ParticipantModel();
+      newParticipant.first_name = this.firstName.value;
+      newParticipant.last_name = this.lastName.value;
+      newParticipant.phone = this.phone.value;
+      newParticipant.title = this.title.value;
+      newParticipant.role = this.role.value;
+      newParticipant.email = this.searchEmail.email;
+      newParticipant.display_name = this.displayName.value;
+      if (!this.checkDuplication(newParticipant.email)) {
+        this.participants.push(newParticipant);
+        this.addToFeed(newParticipant);
+        this.clearForm();
+        this.displayNext();
+        this.participantForm.markAsPristine();
+      } else {
+        this.showConfirmationPopup = true;
+        this.confirmationMessage = `You have already added ${newParticipant.first_name} ${newParticipant.last_name} to this hearing`;
+      }
+    } else {
+      this.isShowErrorSummary = true;
+    }
+  }
+
+  updateParticipant() {
+    const validEmail = this.searchEmail.validateEmail();
+    this.roleSelected();
+    this.role.markAsTouched();
+    this.firstName.markAsTouched();
+    this.lastName.markAsTouched();
+    this.phone.markAsTouched();
+    if (this.participantForm.valid && validEmail && this.isRoleSelected && this.isTitleSelected) {
+      this.isShowErrorSummary = false;
+
       const newParticipant = new ParticipantModel();
       newParticipant.first_name = this.firstName.value;
       newParticipant.last_name = this.lastName.value;

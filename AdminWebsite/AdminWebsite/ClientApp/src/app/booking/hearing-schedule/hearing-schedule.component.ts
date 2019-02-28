@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 
 import { CanDeactiveComponent } from '../../common/guards/changes.guard';
-import { CourtResponse} from '../../services/clients/api-client';
+import { CourtResponse } from '../../services/clients/api-client';
 import { HearingModel } from '../../common/model/hearing.model';
 import { ReferenceDataService } from '../../services/reference-data.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
@@ -31,7 +31,8 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
 
   constructor(private refDataService: ReferenceDataService, private hearingService: VideoHearingsService,
     private fb: FormBuilder, protected router: Router,
-    private datePipe: DatePipe, protected bookingService: BookingService) {
+    private datePipe: DatePipe, protected bookingService: BookingService,
+    private errorService: ErrorService) {
     super(bookingService, router);
     this.attemptingCancellation = false;
     this.hasSaved = false;
