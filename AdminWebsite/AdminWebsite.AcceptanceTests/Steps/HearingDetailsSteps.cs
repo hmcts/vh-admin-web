@@ -44,9 +44,9 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _hearingDetails.CaseTypes(caseType);
         }
         [When(@"Select hearing type")]
-        public void SelectHearingType(string hearingType = "Application to Set Judgment Aside")
+        public void SelectHearingType()
         {
-            _hearingDetails.HearingType(hearingType);
+            _hearingDetails.HearingType();
         }
         [When(@"Select hearing channel")]
         public void SelectHearingChannel(string hearingChannel = "Fully Video")

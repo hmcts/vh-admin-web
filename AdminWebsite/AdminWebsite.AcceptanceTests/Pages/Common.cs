@@ -50,6 +50,12 @@ namespace AdminWebsite.AcceptanceTests.Pages
                     _browserContext.NgDriver.WaitUntilElementClickable(element).Click();
             }
         }
+        protected void SelectOption(By elements)
+        {
+            var getListOfElements = GetListOfElements(elements);
+            _browserContext.Retry(() => getListOfElements.ToArray().Count().Should().BeGreaterThan(0, "List is not populated"));
+            _browserContext.NgDriver.WaitUntilElementClickable(getListOfElements.ToArray().First()).Click();
+        }
 
         public void PageUrl(string url)
         {

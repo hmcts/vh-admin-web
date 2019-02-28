@@ -16,7 +16,7 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public void CaseName(string value) => InputValues(_caseName, value);
         public void CaseTypes(string option) => SelectOption(CommonLocator.List("caseType"), option);
         public string CaseType() => GetElementText(_caseType);
-        public void HearingType(string option) => SelectOption(CommonLocator.List("hearingType"), option);
+        public void HearingType() => SelectOption(CommonLocator.List("hearingType"));
         public void HearingChannel(string option) => SelectOption(CommonLocator.List("hearingMethod"), option);
     }
 }

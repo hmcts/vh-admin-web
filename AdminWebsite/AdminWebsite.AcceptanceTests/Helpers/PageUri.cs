@@ -11,4 +11,4 @@
         public const string OtherInformationPage = "/other-information";
         public const string SummaryPage = "/summary";
     }
-}
+}                   
