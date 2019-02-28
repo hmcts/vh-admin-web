@@ -25,7 +25,6 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
 
   constants = Constants;
   hearing: HearingModel;
- // newhearing: HearingRequest;
   attemptingCancellation: boolean;
   canNavigate = true;
   hearingForm: FormGroup;
@@ -42,7 +41,6 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
   errors: any;
 
   selectedHearingTypeName: HearingTypeResponse[];
- // newparticipants: ParticipantRequest[] = [];
   participants: ParticipantModel[] = [];
   selectedHearingType: HearingTypeResponse[];
   saveFailed: boolean;

@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { CancelPopupComponent } from 'src/app/popups/cancel-popup/cancel-popup.component';
 import { BreadcrumbStubComponent } from 'src/app/testing/stubs/breadcrumb-stub';
-
+import { BookingEditStubComponent } from '../../testing/stubs/booking-edit-stub';
 import { ReferenceDataService } from '../../services/reference-data.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { MockValues } from '../../testing/data/test-objects';
@@ -81,7 +81,8 @@ describe('SummaryComponent with valid request', () => {
         { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
         { provide: Router, useValue: routerSpy }
       ],
-      declarations: [SummaryComponent, BreadcrumbStubComponent, CancelPopupComponent, ParticipantsListComponent],
+      declarations: [SummaryComponent, BreadcrumbStubComponent,
+        CancelPopupComponent, ParticipantsListComponent, BookingEditStubComponent],
       imports: [RouterTestingModule],
     })
       .compileComponents();
@@ -139,7 +140,8 @@ describe('SummaryComponent  with invalid request', () => {
         { provide: Router, useValue: routerSpy }
       ],
       imports: [RouterTestingModule],
-      declarations: [SummaryComponent, BreadcrumbStubComponent, CancelPopupComponent, ParticipantsListComponent]
+      declarations: [SummaryComponent, BreadcrumbStubComponent, CancelPopupComponent,
+        ParticipantsListComponent, BookingEditStubComponent]
     })
       .compileComponents();
   }));

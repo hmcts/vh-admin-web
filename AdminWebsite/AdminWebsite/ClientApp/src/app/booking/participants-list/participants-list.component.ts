@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-
+import { BookingService } from '../../services/booking.service';
 import { ParticipantModel } from '../../common/model/participant.model';
 
 @Component({
@@ -12,6 +12,10 @@ export class ParticipantsListComponent {
   @Input()
   participants: ParticipantModel[];
 
-  constructor() {
+  constructor(private bookingService:BookingService) {
+  }
+
+  edit() {
+    this.bookingService.setEditMode();
   }
 }
