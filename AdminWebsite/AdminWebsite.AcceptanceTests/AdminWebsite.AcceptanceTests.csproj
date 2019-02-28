@@ -34,10 +34,34 @@
     <Compile Update="Hooks\Browser.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Hooks\SaucelabsResult.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Steps\AddParticipantsSteps.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Steps\AssignJudgeSteps.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Steps\CommonSteps.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Steps\DashboardSteps.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Steps\HearingDetailsSteps.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Steps\HearingScheduleSteps.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Steps\LoginSteps.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Steps\OtherInformationSteps.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Steps\SummarySteps.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
@@ -45,6 +69,9 @@
   <ItemGroup>
     <None Update="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Features\CreateHearing.feature">
+      <Generator></Generator>
     </None>
     <None Update="Features\Login.feature">
       <Generator></Generator>
