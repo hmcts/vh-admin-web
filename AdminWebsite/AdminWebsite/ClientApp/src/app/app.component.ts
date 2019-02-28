@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { AdalService } from 'adal-angular4';
 
 import { ConfigService } from './services/config.service';
+import { PageTrackerService } from './services/page-tracker.service';
 
 @Component({
   selector: 'app-root',
@@ -23,12 +24,16 @@ export class AppComponent implements OnInit {
   loggedIn: boolean;
   constructor(private adalSvc: AdalService,
     private configService: ConfigService,
-    private router: Router) {
+    private router: Router,
+    pageTracker: PageTrackerService) {
     this.config.tenant = this.configService.clientSettings.tenant_id;
     this.config.clientId = this.configService.clientSettings.client_id;
     this.config.redirectUri = this.configService.clientSettings.redirect_uri;
     this.config.postLogoutRedirectUri = this.configService.clientSettings.post_logout_redirect_uri;
     this.adalSvc.init(this.config);
+
+    pageTracker.trackNavigation(router);
+    pageTracker.trackPreviousPage(router);
   }
 
   ngOnInit() {

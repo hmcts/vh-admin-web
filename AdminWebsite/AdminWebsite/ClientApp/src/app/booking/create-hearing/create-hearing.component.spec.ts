@@ -13,6 +13,8 @@ import { BreadcrumbComponent } from '../breadcrumb/breadcrumb.component';
 import { CreateHearingComponent } from './create-hearing.component';
 import { HearingModel } from '../../common/model/hearing.model';
 import { CaseModel } from '../../common/model/case.model';
+import { ErrorService } from 'src/app/services/error.service';
+
 
 function initHearingRequest(): HearingModel {
   let newHearing = new HearingModel();
@@ -42,6 +44,7 @@ describe('CreateHearingComponent with multiple case types', () => {
 
   let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
   let routerSpy: jasmine.SpyObj<Router>;
+  let errorService: jasmine.SpyObj<ErrorService> = jasmine.createSpyObj('ErrorService', ['handleError']);
 
   beforeEach(() => {
     videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',
@@ -56,7 +59,8 @@ describe('CreateHearingComponent with multiple case types', () => {
       imports: [SharedModule, RouterTestingModule],
       providers: [
         { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
-        { provide: Router, useValue: routerSpy }
+        { provide: Router, useValue: routerSpy },
+        { provide: ErrorService, useValue: errorService },
       ],
       declarations: [CreateHearingComponent, BreadcrumbComponent, CancelPopupComponent]
     })
@@ -155,6 +159,7 @@ describe('CreateHearingComponent with single case type', () => {
 
   let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
   let routerSpy: jasmine.SpyObj<Router>;
+  let errorService: jasmine.SpyObj<ErrorService> = jasmine.createSpyObj('ErrorService', ['handleError']);
 
   beforeEach(() => {
     videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',
@@ -169,7 +174,8 @@ describe('CreateHearingComponent with single case type', () => {
       imports: [HttpClientModule, ReactiveFormsModule, RouterTestingModule],
       providers: [
         { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
-        { provide: Router, useValue: routerSpy }
+        { provide: Router, useValue: routerSpy },
+        { provide: ErrorService, useValue: errorService },
       ],
       declarations: [CreateHearingComponent, BreadcrumbComponent, CancelPopupComponent]
     })
@@ -198,6 +204,7 @@ describe('CreateHearingComponent with existing request in session', () => {
 
   let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
   let routerSpy: jasmine.SpyObj<Router>;
+  let errorService: jasmine.SpyObj<ErrorService> = jasmine.createSpyObj('ErrorService', ['handleError']);
 
   beforeEach(() => {
     videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',
@@ -212,7 +219,8 @@ describe('CreateHearingComponent with existing request in session', () => {
       imports: [HttpClientModule, ReactiveFormsModule, RouterTestingModule],
       providers: [
         { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
-        { provide: Router, useValue: routerSpy }
+        { provide: Router, useValue: routerSpy },
+        { provide: ErrorService, useValue: errorService },
       ],
       declarations: [CreateHearingComponent, BreadcrumbComponent, CancelPopupComponent]
     }).compileComponents();
@@ -236,7 +244,7 @@ describe('CreateHearingComponent with existing request in session', () => {
     sessionStorage.clear();
   });
 
-  it('should prepopulate form with existing request', fakeAsync(() => {
+  it('should repopulate form with existing request', fakeAsync(() => {
     expect(component.caseNumber.value).toBe(existingRequest.cases[0].number);
     expect(component.caseName.value).toBe(existingRequest.cases[0].name);
     expect(component.hearingType.value).toBe(existingRequest.hearing_type_id);

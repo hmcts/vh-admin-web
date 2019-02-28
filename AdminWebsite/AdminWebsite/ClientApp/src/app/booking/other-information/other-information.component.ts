@@ -59,7 +59,7 @@ export class OtherInformationComponent extends BookingBaseComponent implements O
     this.otherInformationForm.reset();
     this.router.navigate(['/dashboard']);
   }
-
+  
   continueBooking() {
     this.attemptingCancellation = false;
   }

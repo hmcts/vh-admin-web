@@ -27,6 +27,7 @@ import { ParticipantsListComponent } from './participants-list/participants-list
 import { CancelPopupComponent } from '../popups/cancel-popup/cancel-popup.component';
 import { ConfirmationPopupComponent } from '../popups/confirmation-popup/confirmation-popup.component';
 import { BookingEditComponent } from '../shared/booking-edit/booking-edit.component';
+import { ErrorService } from '../services/error.service';
 
 describe('app routing', () => {
   let location: Location;
@@ -36,6 +37,7 @@ describe('app routing', () => {
   let changesGuard;
   let adalSvc;
   let bookingGuard;
+  let errorService: jasmine.SpyObj<ErrorService> = jasmine.createSpyObj('ErrorService', ['handleError']);
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -59,7 +61,8 @@ describe('app routing', () => {
         AuthGuard,
         { provide: AdminGuard, useClass: MockAdminGuard },
         { provide: AdalService, useClass: MockAdalService },
-        { provide: ChangesGuard, useClass: MockChangesGuard }, HttpClient, HttpHandler
+        { provide: ChangesGuard, useClass: MockChangesGuard }, HttpClient, HttpHandler,
+        { provide: ErrorService, useValue: errorService },
       ],
     }).compileComponents();
 

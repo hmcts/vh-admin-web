@@ -10,6 +10,7 @@ import { CaseModel } from '../../common/model/case.model';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { BookingBaseComponent } from '../booking-base/booking-base.component';
 import { BookingService } from '../../services/booking.service';
+import { ErrorService } from 'src/app/services/error.service';
 
 @Component({
   selector: 'app-create-hearing',
@@ -162,7 +163,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
           this.setupCaseTypeAndHearingTypes(data);
           this.filterHearingTypes();
         },
-        error => console.error(error)
+        error => this.errorService.handleError(error)
       );
   }
 
@@ -173,7 +174,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
         this.availableHearingMediums.sort(this.dynamicSort('name'));
         this.filterHearingMethod();
       },
-        error => console.error(error)
+        error => this.errorService.handleError(error)
       );
   }
 

@@ -24,5 +24,10 @@
         /// The Uri to redirect back to after a successful logout
         /// </summary>
         public string PostLogoutRedirectUri { get; set; }
+
+        /// <summary>
+        /// The Application Insight Instrumentation Key
+        /// </summary>
+        public string InstrumentationKey { get; set; }
     }
 }
