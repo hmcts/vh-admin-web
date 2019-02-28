@@ -2,34 +2,36 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { OnInit, Component, Injectable } from '@angular/core';
 import { AdalService } from 'adal-angular4';
 import { ReturnUrlService } from '../services/return-url.service';
+import { LoggerService } from '../services/logger.service';
 
 @Component({
-    selector: 'app-login',
-    templateUrl: './login.component.html'
+  selector: 'app-login',
+  templateUrl: './login.component.html'
 })
 
 @Injectable()
 export class LoginComponent implements OnInit {
-    constructor(private adalSvc: AdalService,
-        private route: ActivatedRoute,
-        private router: Router,
-        private returnUrlService: ReturnUrlService) {
-    }
+  constructor(private adalSvc: AdalService,
+    private route: ActivatedRoute,
+    private router: Router,
+    private logger: LoggerService,
+    private returnUrlService: ReturnUrlService) {
+  }
 
-    ngOnInit() {
-        if (this.adalSvc.userInfo.authenticated) {
-            const returnUrl = this.returnUrlService.popUrl() || '/';
-            this.router.navigate(['/dashboard']);
-            try {
-                this.router.navigateByUrl(returnUrl);
-            } catch (e) {
-                console.error('Failed to navigate to redirect url, possibly stored url is invalid: ' + returnUrl);
-                this.router.navigate(['/']);
-            }
-        } else {
-            const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
-            this.returnUrlService.setUrl(returnUrl);
-            this.adalSvc.login();
-        }
+  ngOnInit() {
+    if (this.adalSvc.userInfo.authenticated) {
+      const returnUrl = this.returnUrlService.popUrl() || '/';
+      try {
+        console.log(`return url = ${returnUrl}`);
+        this.router.navigateByUrl(returnUrl);
+      } catch (err) {
+        this.logger.error('Failed to navigate to redirect url, possibly stored url is invalid', err, returnUrl);
+        this.router.navigate(['/']);
+      }
+    } else {
+      const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+      this.returnUrlService.setUrl(returnUrl);
+      this.adalSvc.login();
     }
+  }
 }

@@ -1,5 +1,5 @@
 import { HttpClientModule } from '@angular/common/http';
-import { async, TestBed } from '@angular/core/testing';
+import { async, TestBed, fakeAsync } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AdalService } from 'adal-angular4';
@@ -9,6 +9,14 @@ import { ClientSettingsResponse } from './services/clients/api-client';
 import { ConfigService } from './services/config.service';
 import { FooterStubComponent } from './testing/stubs/footer-stub';
 import { HeaderStubComponent } from './testing/stubs/header-stub';
+import { PageTrackerService } from './services/page-tracker.service';
+import { WindowRef, WindowLocation } from './security/window-ref';
+
+const adalService = {
+  init: jasmine.createSpy('init'),
+  handleWindowCallback: jasmine.createSpy('handleWindowCallback'),
+  userInfo: jasmine.createSpy('userInfo')
+};
 
 describe('AppComponent', () => {
   const router = {
@@ -16,7 +24,8 @@ describe('AppComponent', () => {
   };
 
   let configServiceSpy: jasmine.SpyObj<ConfigService>;
-  let adalServiceSpy: jasmine.SpyObj<AdalService>;
+  let pageTracker: jasmine.SpyObj<PageTrackerService>;
+  let window: jasmine.SpyObj<WindowRef>;
 
   const clientSettings = new ClientSettingsResponse({
     tenant_id: 'tenantid',
@@ -25,18 +34,15 @@ describe('AppComponent', () => {
     redirect_uri: '/dashboard'
   });
 
-  const userInfo = {
-    authenticated: false,
-    userName: 'test@automated.com',
-    token: 'token'
-  };
-
   beforeEach(async(() => {
     configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['clientSettings', 'getClientSettings', 'loadConfig']);
     configServiceSpy.clientSettings.and.returnValue(clientSettings);
 
-    adalServiceSpy = jasmine.createSpyObj<AdalService>('AdalService', ['init', 'handleWindowCallback', 'userInfo']);
-    adalServiceSpy.userInfo.and.returnValue(userInfo);
+    window = jasmine.createSpyObj('WindowRef', ['getLocation']);
+    window.getLocation.and.returnValue(new WindowLocation('/url'));
+
+    pageTracker = jasmine.createSpyObj('PageTrackerService', ['trackNavigation', 'trackPreviousPage']);
+
     TestBed.configureTestingModule({
       imports: [HttpClientModule, RouterTestingModule],
       declarations: [
@@ -46,9 +52,11 @@ describe('AppComponent', () => {
       ],
       providers:
         [
-          { provide: AdalService, useValue: adalServiceSpy },
+          { provide: AdalService, useValue: adalService },
           { provide: ConfigService, useValue: configServiceSpy },
-          { provide: Router, useValue: router }
+          { provide: Router, useValue: router },
+          { provide: PageTrackerService, useValue: pageTracker },
+          { provide: WindowRef, useValue: window },
         ],
     }).compileComponents();
   }));
@@ -67,5 +75,23 @@ describe('AppComponent', () => {
     fixture.detectChanges();
     const compiled = fixture.debugElement.nativeElement;
     expect(compiled.querySelector('a').textContent).toContain('Skip to main content');
+  }));
+
+  it('should redirect to login with current url as return url if not authenticated', fakeAsync(() => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const component = fixture.componentInstance;
+
+    adalService.userInfo.and.returnValue({ authenticated: false });
+    window.getLocation.and.returnValue(new WindowLocation('/url', '?search', '#hash'));
+
+    component.ngOnInit();
+
+    const lastRouterCall = router.navigate.calls.mostRecent();
+    const lastRoutingArgs = {
+      url: lastRouterCall.args[0][0],
+      queryParams: lastRouterCall.args[1].queryParams
+    };
+    expect(lastRoutingArgs.url).toEqual('/login');
+    expect(lastRoutingArgs.queryParams.returnUrl).toEqual('/url?search#hash');
   }));
 });
