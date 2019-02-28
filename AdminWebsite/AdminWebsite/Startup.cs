@@ -37,7 +37,6 @@ namespace AdminWebsite
             RegisterAuth(services);
             
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-            services.AddApplicationInsightsTelemetry(Configuration["AzureAd:InstrumentationKey"]);
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/dist"; });
         }
