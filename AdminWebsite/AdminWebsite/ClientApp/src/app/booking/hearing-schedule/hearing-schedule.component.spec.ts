@@ -14,7 +14,7 @@ import { VideoHearingsService } from '../../services/video-hearings.service';
 import { MockValues } from '../../testing/data/test-objects';
 import { HearingScheduleComponent } from './hearing-schedule.component';
 import { HearingModel } from '../../common/model/hearing.model';
-
+import { ErrorService } from 'src/app/services/error.service';
 
 const newHearing = new HearingModel();
 
@@ -54,6 +54,7 @@ describe('HearingScheduleComponent first visit', () => {
   let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
   let referenceDataServiceServiceSpy: jasmine.SpyObj<ReferenceDataService>;
   let routerSpy: jasmine.SpyObj<Router>;
+  let errorService: jasmine.SpyObj<ErrorService> = jasmine.createSpyObj('ErrorService', ['handleError']);
 
   beforeEach(async(() => {
     routerSpy = jasmine.createSpyObj('Router', ['navigate']);
@@ -72,6 +73,7 @@ describe('HearingScheduleComponent first visit', () => {
         { provide: ReferenceDataService, useValue: referenceDataServiceServiceSpy },
         { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
         { provide: Router, useValue: routerSpy },
+        { provide: ErrorService, useValue: errorService },
         DatePipe
       ],
       declarations: [HearingScheduleComponent, BreadcrumbStubComponent, CancelPopupComponent]
@@ -87,7 +89,7 @@ describe('HearingScheduleComponent first visit', () => {
     initFormControls(component);
   });
 
-  it('should create and initalise to blank form', () => {
+  it('should create and initialize to blank form', () => {
     expect(component).toBeTruthy();
     expect(component.hearingDate.value).toBeNull();
     expect(component.hearingStartTimeHour.value).toBeNull();
@@ -101,7 +103,7 @@ describe('HearingScheduleComponent first visit', () => {
     expect(component.schedulingForm.invalid).toBeTruthy();
   });
 
-  it('should fail subimission when form is invalid', () => {
+  it('should fail submission when form is invalid', () => {
     expect(component.failedSubmission).toBeFalsy();
     component.saveScheduleAndLocation();
     expect(component.failedSubmission).toBeTruthy();
@@ -187,6 +189,7 @@ describe('HearingScheduleComponent returning to page', () => {
   let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
   let referenceDataServiceServiceSpy: jasmine.SpyObj<ReferenceDataService>;
   let routerSpy: jasmine.SpyObj<Router>;
+  let errorService: jasmine.SpyObj<ErrorService> = jasmine.createSpyObj('ErrorService', ['handleError']);
 
   beforeEach(async(() => {
     routerSpy = jasmine.createSpyObj('Router', ['navigate']);
@@ -205,6 +208,7 @@ describe('HearingScheduleComponent returning to page', () => {
         { provide: ReferenceDataService, useValue: referenceDataServiceServiceSpy },
         { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
         { provide: Router, useValue: routerSpy },
+        { provide: ErrorService, useValue: errorService },
         DatePipe
       ],
       declarations: [HearingScheduleComponent, BreadcrumbStubComponent, CancelPopupComponent]
@@ -220,7 +224,7 @@ describe('HearingScheduleComponent returning to page', () => {
     initFormControls(component);
   });
 
-  it('should prepopulate form', () => {
+  it('should repopulate form', () => {
     const dateTransfomer = new DatePipe('en-GB');
     const dateString = dateTransfomer.transform(existingRequest.scheduled_date_time, 'yyyy-MM-dd');
     const durationDate = new Date(0, 0, 0, 0, 0, 0, 0);
