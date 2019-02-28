@@ -27,9 +27,9 @@ namespace AdminWebsite.AcceptanceTests.Steps
         }
 
         [When(@"select judge")]
-        public void SelectJudge(string judge = "Judge Bever")
+        public void SelectJudge()
         {
-            _assignJudge.Judge(judge);
+            _assignJudge.Judge();
         }
     }
 }

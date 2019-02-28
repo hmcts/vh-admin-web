@@ -43,6 +43,6 @@ namespace AdminWebsite.AcceptanceTests.Pages
                 duration[i].SendKeys(hearingduration[i]);
             }
         }
-        public void CourtAddress(string option) => SelectOption(CommonLocator.List("courtAddress"), option);
+        public void CourtAddress() => SelectOption(CommonLocator.List("courtAddress"));
     }
 }

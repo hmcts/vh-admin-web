@@ -42,9 +42,9 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _addParticipant.Role(role);
         }
         [When(@"select a title")]
-        public void SelectTitle(string title = "Mr")
+        public void SelectTitle()
         {
-            _addParticipant.Title(title);
+            _addParticipant.Title();
         }
         [When(@"input firstname")]
         public void InputFirstname(string firstname = "Dummy")

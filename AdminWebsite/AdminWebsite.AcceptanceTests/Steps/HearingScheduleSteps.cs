@@ -43,9 +43,9 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _hearingSchedule.HearingDuration(duration);
         }
         [When(@"Select court address")]
-        public void SelectCourtAddress(string courtAddress = "Manchester Civil and Family Justice Centre Room 1")
+        public void SelectCourtAddress()
         {
-            _hearingSchedule.CourtAddress(courtAddress);
+            _hearingSchedule.CourtAddress();
         }
     }
 }

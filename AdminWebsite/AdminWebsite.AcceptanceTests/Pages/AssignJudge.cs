@@ -7,6 +7,6 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public AssignJudge(BrowserContext browserContext) : base(browserContext)
         {
         }
-        public void Judge(string option) => SelectOption(CommonLocator.List("judgeName"), option);
+        public void Judge() => SelectOption(CommonLocator.List("judgeName"));
     }
 }

@@ -49,9 +49,9 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _hearingDetails.HearingType();
         }
         [When(@"Select hearing channel")]
-        public void SelectHearingChannel(string hearingChannel = "Fully Video")
+        public void SelectHearingChannel()
         {
-            _hearingDetails.HearingChannel(hearingChannel);
+            _hearingDetails.HearingChannel();
         }
     }
 }
