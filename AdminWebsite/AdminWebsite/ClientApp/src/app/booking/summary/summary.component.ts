@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -11,7 +11,7 @@ import {
 } from '../../services/clients/api-client';
 import { HearingModel} from '../../common/model/hearing.model';
 import {ParticipantModel } from '../../common/model/participant.model';
-
+import { ParticipantsListComponent } from '../participants-list/participants-list.component';
 import { ReferenceDataService } from '../../services/reference-data.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 
@@ -44,6 +44,10 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
   participants: ParticipantModel[] = [];
   selectedHearingType: HearingTypeResponse[];
   saveFailed: boolean;
+  showConfirmationRemoveParticipant: boolean = false;
+
+  @ViewChild(ParticipantsListComponent)
+  participantsListComponent: ParticipantsListComponent;
 
   constructor(private hearingService: VideoHearingsService, private router: Router, private referenceDataService: ReferenceDataService) {
     this.attemptingCancellation = false;
@@ -53,6 +57,10 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
   ngOnInit() {
     this.checkForExistingRequest();
     this.retrieveHearingSummary();
+
+    this.participantsListComponent.selectedParticipantToRemove.subscribe((participantEmail) => {
+     
+    });
   }
 
   private checkForExistingRequest() {

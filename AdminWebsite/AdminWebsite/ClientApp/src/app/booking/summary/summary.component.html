@@ -51,3 +51,7 @@
 <div *ngIf="attemptingCancellation">
     <app-cancel-popup (continueBooking)="continueBooking($event)" (cancelBooking)="cancelBooking($event)"></app-cancel-popup>
 </div>
+
+<div *ngIf="showConfirmationRemoveParticipant">
+  <app-remove-popup (continueRemove)="handleContinueRemove()" (cancelRemove)="handleCancelRemove()" [fullName]="removerFullName"></app-remove-popup>
+</div>
