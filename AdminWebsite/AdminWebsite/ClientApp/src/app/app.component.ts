@@ -53,8 +53,9 @@ export class AppComponent implements OnInit {
     if (!this.loggedIn) {
       this.router.navigate(['/login'], { queryParams: { returnUrl: currentUrl } });
     }
-
-    this.headerComponent.confirmLogout.subscribe(() => { this.showConfirmation(); });
+    if (this.headerComponent) {
+      this.headerComponent.confirmLogout.subscribe(() => { this.showConfirmation(); });
+    }
   }
 
   showConfirmation() {

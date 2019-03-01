@@ -16,7 +16,7 @@ import { VideoHearingsService } from './services/video-hearings.service';
 
 @Component({ selector: 'app-header', template: '' })
 export class HeaderComponent {
-  $confirmLogout: EventEmitter<any> = new EventEmitter();
+  $confirmLogout: EventEmitter<any> = new EventEmitter<any>();
   get confirmLogout() {
     return this.$confirmLogout;
   }
@@ -70,7 +70,7 @@ describe('AppComponent', () => {
           { provide: Router, useValue: router },
           { provide: PageTrackerService, useValue: pageTracker },
           { provide: WindowRef, useValue: window },
-           { provide: VideoHearingsService, useValue: videoHearingServiceSpy }
+          { provide: VideoHearingsService, useValue: videoHearingServiceSpy }
         ],
     }).compileComponents();
   }));
