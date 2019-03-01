@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import {Component, Input, NgModule} from '@angular/core';
 
 @Component({ selector: 'app-booking-edit', template: '' })
 export class BookingEditStubComponent {
@@ -12,3 +12,10 @@ export class BookingEditStubComponent {
     return this._editLink;
   }
 }
+
+@NgModule({
+  declarations: [
+    BookingEditStubComponent
+  ]
+})
+export class BookingEditStubModule {}
