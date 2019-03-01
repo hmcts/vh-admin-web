@@ -21,7 +21,7 @@ namespace AdminWebsite.UnitTests
         {
             _checklistService = new Mock<IBookingsApiClient>();
             _userIdentity = new Mock<IUserIdentity>();
-            _controller = new ChecklistsController(_checklistService.Object, _userIdentity.Object);
+            _controller = new ChecklistsController(_userIdentity.Object);
         }
 
         //[Test]

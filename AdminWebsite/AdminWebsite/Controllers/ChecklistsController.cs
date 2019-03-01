@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using AdminWebsite.Models;
 using AdminWebsite.Security;
-using AdminWebsite.Services;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -16,12 +15,10 @@ namespace AdminWebsite.Controllers
     [ApiController]
     public class ChecklistsController : ControllerBase
     {
-        private readonly IBookingsApiClient _bookingsApiClient;
         private readonly IUserIdentity _userIdentity;
 
-        public ChecklistsController(IBookingsApiClient bookingsApiClient, IUserIdentity userIdentity)
+        public ChecklistsController(IUserIdentity userIdentity)
         {
-            _bookingsApiClient = bookingsApiClient;
             _userIdentity = userIdentity;
         }
         
@@ -37,12 +34,12 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType(typeof(ChecklistsResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> GetAllParticipantsChecklists(int pageSize = 5, int page = 1)
+        public IActionResult GetAllParticipantsChecklists(int pageSize = 5, int page = 1)
         {
             if (!_userIdentity.IsVhOfficerAdministratorRole())
                 return Unauthorized();
 
-            var response = new ChecklistsResponse(); // await _bookingsApiClient.GetAllParticipantsChecklistsAsync(pageSize, page);
+            var response = new ChecklistsResponse();
             return Ok(response);
         }
     }

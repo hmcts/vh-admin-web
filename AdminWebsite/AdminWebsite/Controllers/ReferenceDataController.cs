@@ -35,24 +35,21 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
         public async Task<ActionResult<IList<HearingTypeResponse>>> GetHearingTypes()
         {
-            var userGroups = _userIdentity.GetGroupDisplayNames();
-            // var hearingTypes = await _bookingsApiClient.GetHearingRolesForCaseRoleAsync();
-            var caseTypes = new List<HearingTypeResponse>();
-            caseTypes.Add(new HearingTypeResponse
+            var caseTypes = new List<HearingTypeResponse>
             {
-                Code = "SAJ",
-                Group = "Civil Money Claims",
-                Id = 2,
-                Name = "Application to Set Judgment Aside"
-            });
-            caseTypes.Add(new HearingTypeResponse
-            {
-                Code = "FDAH",
-                Group = "Financial Remedy",
-                Id = 3,
-                Name = "First Directions Appointment"
-            });
-            // var response = hearingTypes.Where(x => userGroups.Contains(x.Name));
+                new HearingTypeResponse
+                {
+                    Code = "SAJ",
+                    Group = "Civil Money Claims",
+                    Id = 2,
+                    Name = "Application to Set Judgment Aside"
+                },
+                new HearingTypeResponse
+                {
+                    Code = "FDAH", Group = "Financial Remedy", Id = 3, Name = "First Directions Appointment"
+                }
+            };
+
             return Ok(caseTypes);
         }
 

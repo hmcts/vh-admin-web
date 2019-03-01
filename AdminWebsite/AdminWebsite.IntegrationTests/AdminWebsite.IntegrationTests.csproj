@@ -12,7 +12,7 @@
     <PackageReference Include="Faker.Net" Version="1.1.1" />
     <PackageReference Include="FluentAssertions" Version="5.6.0" />
     <PackageReference Include="Hearings.Common" Version="1.1.6088" />
-    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.2.2" />
+    <PackageReference Include="Microsoft.AspNetCore.All" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.2.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.2" />

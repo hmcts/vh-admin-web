@@ -14,7 +14,7 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DocumentationFile>obj\Debug\netcoreapp2.2\AdminWebsite.xml</DocumentationFile>
-    <NoWarn>1701;1702;1591</NoWarn>
+    <NoWarn>1701;1702</NoWarn>
     <UserSecretsId>f99a3fe8-cf72-486a-b90f-b65c27da84ee</UserSecretsId>
   </PropertyGroup>
 
@@ -25,7 +25,7 @@
   <ItemGroup>
     <PackageReference Include="Hearings.Common" Version="1.1.6088" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.6.1" />
-    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.2.2" />
+    <PackageReference Include="Microsoft.AspNetCore.All" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="2.2.0" />

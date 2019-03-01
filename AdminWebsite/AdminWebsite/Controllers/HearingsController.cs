@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using AdminWebsite.Models;
-using AdminWebsite.Security;
 using AdminWebsite.Services;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
@@ -19,14 +17,10 @@ namespace AdminWebsite.Controllers
     public class HearingsController : ControllerBase
     {
         private readonly IBookingsApiClient _bookingsApiClient;
-        private readonly UserManager _userManager;
-        private readonly IUserIdentity _userIdentity;
 
-        public HearingsController(IBookingsApiClient bookingsApiClient, UserManager userManager, IUserIdentity userIdentity)
+        public HearingsController(IBookingsApiClient bookingsApiClient)
         {
             _bookingsApiClient = bookingsApiClient;
-            _userManager = userManager;
-            _userIdentity = userIdentity;
         }
 
         /// <summary>
@@ -40,26 +34,6 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public ActionResult<long> Post([FromBody] BookNewHearingRequest hearingRequest)
         {
-            //hearingRequest.Created_by = User.Identity.Name;
-            //hearingRequest.Feeds.Add(AddAdministrator());
-            //foreach (var feed in hearingRequest.Feeds)
-            //{
-            //    foreach (var participant in feed.Participants)
-            //    {
-            //        if (participant != null)
-            //        {
-            //            // judge and admins are managed internally since the number of users is small
-            //            if (participant.Role == "Judge" || participant.Role == "Administrator")
-            //            {
-            //                participant.Username = participant.Email;
-            //            }
-            //            else
-            //            {
-            //                CreateAdAccountIfRequired(participant);
-            //            }
-            //        }
-            //    }
-            //}
             try
             {
                 var hearingId = _bookingsApiClient.BookNewHearingAsync(hearingRequest);
@@ -74,24 +48,6 @@ namespace AdminWebsite.Controllers
                 throw;
             }
         }
-
-        //private void CreateAdAccountIfRequired(Models.ParticipantRequest participant)
-        //{
-        //    var existingParticipantUsername =
-        //        _userManager.GetUsernameForUserWithRecoveryEmail(participant.Email);
-
-        //    if (string.IsNullOrWhiteSpace(existingParticipantUsername))
-        //    {
-        //        var username = _userManager.CreateAdAccount(participant.First_name, participant.Last_name,
-        //            participant.Email, participant.Role);
-        //        participant.Username = username;
-        //    }
-        //    else
-        //    {
-        //        participant.Username = existingParticipantUsername;
-        //        _userManager.AddToGroupsByUsername(participant.Username, participant.Role);
-        //    }
-        //}
 
         /// <summary>
         /// Gets bookings hearing by Id.
@@ -134,22 +90,16 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public ActionResult GetBookingsList(string cursor, int limit = 100)
         {
-            IEnumerable<string> caseTypes;
-            if (_userIdentity.IsAdministratorRole())
-            {
-                caseTypes = _userIdentity.GetGroupDisplayNames();
-            }
-            else
-            {
-                return Unauthorized();
-            }
-
             try
-            {
-                var types = caseTypes ?? Enumerable.Empty<string>();
-                var hearingTypesIds = GetHearingTypesId(types);
-                // var bookingsResponse =_bookingsApiClient.GetHearingsByTypes(hearingTypesIds, cursor, limit);
-                var bookingsResponse = new BookingsResponse();
+            {   
+                var bookingsResponse = new BookingsResponse
+                {
+                    Hearings = new List<BookingsByDateResponse>(),
+                    Next_cursor = "-1",
+                    Limit = limit,
+                    Next_page_url = null,
+                    Prev_page_url = null
+                };
                 return Ok(bookingsResponse);
             }
             catch (BookingsApiException e)
@@ -162,23 +112,5 @@ namespace AdminWebsite.Controllers
                 throw;
             }
         }
-
-        private List<int> GetHearingTypesId(IEnumerable<string> caseTypes)
-        {
-            var typeIds = new List<int>();
-            var hearingTypes = new List<HearingTypeResponse>(); // _bookingsApiClient.GetHearingTypes();
-            if (hearingTypes != null && hearingTypes.Any())
-            {
-                typeIds = hearingTypes.Where(s => caseTypes.Any(x => x == s.Group)).Select(s => s.Id.Value).ToList();
-            }
-
-            return typeIds;
-        }
-
-        // Add Administrator to the hearing.
-        //private Contracts.Requests.ParticipantRequest AddAdministrator()
-        //{
-        //    return _userManager.AddAdministrator();
-        //}
     }
 }
