@@ -73,7 +73,7 @@ namespace AdminWebsite.Extensions
         
         private static IBookingsApiClient BuildHearingApiClient(HttpClient httpClient, ServiceSettings serviceSettings)
         {
-            return new BookingsApiClient(httpClient) { BaseUrl = serviceSettings.HearingsApiUrl };
+            return new BookingsApiClient(httpClient) { BaseUrl = serviceSettings.BookingsApiUrl };
         }
         
         public static IServiceCollection AddJsonOptions(this IServiceCollection serviceCollection)
