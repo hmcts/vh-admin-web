@@ -9,6 +9,7 @@ import { HeaderComponent } from './header/header.component';
 import { PaginationComponent } from './pagination/pagination.component';
 import { SharedRoutingModule } from './shared-routing.module';
 import { ScrollableDirective } from './directives/scroll.directive';
+import { SignOutComponent } from './sign-out/sign-out.component';
 import { BookingEditComponent } from './booking-edit/booking-edit.component';
 
 @NgModule({
@@ -26,6 +27,7 @@ import { BookingEditComponent } from './booking-edit/booking-edit.component';
     PaginationComponent,
     ScrollableDirective,
     BookingEditComponent,
+    SignOutComponent,
   ],
   exports: [
     HeaderComponent,
@@ -38,6 +40,7 @@ import { BookingEditComponent } from './booking-edit/booking-edit.component';
     ReactiveFormsModule,
     HttpClientModule,
     ScrollableDirective,
+    SignOutComponent,
   ]
 })
 export class SharedModule { }

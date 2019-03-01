@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { SharedModule } from '../shared/shared.module';
 import { CancelPopupComponent } from './cancel-popup/cancel-popup.component';
 import { ConfirmationPopupComponent } from './confirmation-popup/confirmation-popup.component';
-import { RemovePopupComponent } from './remove-popup/remove-popup.component';
+import { SignOutPopupComponent } from './sign-out-popup/sign-out-popup.component';
 
 @NgModule({
   imports: [
@@ -12,12 +12,12 @@ import { RemovePopupComponent } from './remove-popup/remove-popup.component';
   declarations: [
     CancelPopupComponent,
     ConfirmationPopupComponent,
-    RemovePopupComponent,
+    SignOutPopupComponent,
   ],
   exports: [
     CancelPopupComponent,
     ConfirmationPopupComponent,
-    RemovePopupComponent,
+    SignOutPopupComponent
   ]
 })
 export class PopupModule { }

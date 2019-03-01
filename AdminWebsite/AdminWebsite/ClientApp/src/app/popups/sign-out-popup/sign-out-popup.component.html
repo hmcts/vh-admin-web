@@ -1,0 +1,14 @@
+<div id="sign-out-popoup" class="popup-overlay">
+  <div class="popup popup-small">
+    <h1 class="govuk-heading-m">You have unsaved changes.</h1>
+    <div class="content">
+      <h1 class="govuk-heading-m"> You will lose all your booking details if you sign out.</h1>
+      <div class="govuk-grid-row">
+        <div class="vh-top">
+          <input id="btn-signout" class="govuk-button vh-mr" type="submit" value="Sign out" (click)="logout()">
+          <input id="btn-cancel" class="govuk-button vh-btncancel " type="submit" value="Continue" (click)="continueBooking()">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

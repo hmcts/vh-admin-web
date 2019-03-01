@@ -29,6 +29,9 @@ namespace AdminWebsite.AcceptanceTests.Helpers
 
         private IWebDriver InitSauceLabsDriver()
         {
+#pragma warning disable 618
+// disable warning of using desired capabilities
+
             var caps = new DesiredCapabilities();
             switch (_targetBrowser)
             {
@@ -70,6 +73,7 @@ namespace AdminWebsite.AcceptanceTests.Helpers
 
             caps.SetCapability("name", _scenario.Title);
             caps.SetCapability("build", Environment.GetEnvironmentVariable("BUILD_BUILDNUMBER"));
+#pragma warning restore 618
 
             // It can take quite a bit of time for some commands to execute remotely so this is higher than default
             var commandTimeout = TimeSpan.FromMinutes(3);
