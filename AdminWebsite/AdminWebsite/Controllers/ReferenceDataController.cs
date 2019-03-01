@@ -43,10 +43,6 @@ namespace AdminWebsite.Controllers
                     Group = "Civil Money Claims",
                     Id = 2,
                     Name = "Application to Set Judgment Aside"
-                },
-                new HearingTypeResponse
-                {
-                    Code = "FDAH", Group = "Financial Remedy", Id = 3, Name = "First Directions Appointment"
                 }
             };
 
