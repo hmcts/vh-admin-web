@@ -2,6 +2,7 @@
 variables:
   cleanChekout: 'false'
   solutionType: angularDotNetCore # angularDotNetCore, dotNetCore
+  apiDirectory: 'AdminWebsite/AdminWebsite'
   sonarCloudPrepareExtraProperties: |  
     sonar.exclusions=**/node_modules/**,**/*.spec.ts,*.spec.ts,**/ClientApp/src/*,**/ClientApp/coverage/**/*
     sonar.typescript.lcov.reportPaths=$(System.DefaultWorkingDirectory)/*/ClientApp/coverage/lcov.info,**/lcov.info
@@ -35,6 +36,7 @@ jobs:
     cleanCheckout: $(cleanCheckout)
     sonarCloudExtraProperties: $(sonarCloudPrepareExtraProperties)
     KeyVaultName: $(KeyVaultName)
+    apiDirectory: $(apiDirectory)
     SecretsFilter: $(SecretsFilter)
     solutionType: $(solutionType)
     integrationTestsAppSettingsTransform: $(integrationTestsAppSettingsTransform)
