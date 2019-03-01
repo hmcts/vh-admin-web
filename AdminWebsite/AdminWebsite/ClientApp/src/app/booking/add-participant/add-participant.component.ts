@@ -127,7 +127,11 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
   emailChanged() {
     if (this.participantForm.valid && this.searchEmail.validateEmail()) {
-      this.displayAdd();
+      if (this.editMode) {
+        this.displayNext();
+      } else {
+        this.displayAdd();
+      }
     }
   }
 
@@ -255,13 +259,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     if (this.participantForm.valid && validEmail && this.isRoleSelected && this.isTitleSelected) {
       this.isShowErrorSummary = false;
       const newParticipant = new ParticipantModel();
-      newParticipant.first_name = this.firstName.value;
-      newParticipant.last_name = this.lastName.value;
-      newParticipant.phone = this.phone.value;
-      newParticipant.title = this.title.value;
-      newParticipant.role = this.role.value;
-      newParticipant.email = this.searchEmail.email;
-      newParticipant.display_name = this.displayName.value;
+      this.mapParticipant(newParticipant);
       if (!this.checkDuplication(newParticipant.email)) {
         this.participants.push(newParticipant);
         this.addToFeed(newParticipant);
@@ -286,34 +284,36 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     this.phone.markAsTouched();
     if (this.participantForm.valid && validEmail && this.isRoleSelected && this.isTitleSelected) {
       this.isShowErrorSummary = false;
-
-      const newParticipant = new ParticipantModel();
-      newParticipant.first_name = this.firstName.value;
-      newParticipant.last_name = this.lastName.value;
-      newParticipant.phone = this.phone.value;
-      newParticipant.title = this.title.value;
-      newParticipant.role = this.role.value;
-      newParticipant.email = this.searchEmail.email;
-      newParticipant.display_name = this.displayName.value;
-      if (!this.checkDuplication(newParticipant.email)) {
-        this.participants.push(newParticipant);
-        this.addToFeed(newParticipant);
-        this.clearForm();
-        this.displayNext();
-        this.participantForm.markAsPristine();
-      } else {
-        this.showConfirmationPopup = true;
-        this.confirmationMessage = `You have already added ${newParticipant.first_name} ${newParticipant.last_name} to this hearing`;
-      }
-    } else {
+      console.log('update participant');
+      this.participants.forEach(newParticipant => {
+        if (newParticipant.email === this.selectedParticipantEmail) {
+          this.mapParticipant(newParticipant);
+          this.addToFeed(newParticipant);
+        }
+      });
+      this.clearForm();
+      this.participantForm.markAsPristine();
+    }
+    else {
       this.isShowErrorSummary = true;
     }
+  }
+
+  mapParticipant(newParticipant: ParticipantModel) {
+    newParticipant.first_name = this.firstName.value;
+    newParticipant.last_name = this.lastName.value;
+    newParticipant.phone = this.phone.value;
+    newParticipant.title = this.title.value;
+    newParticipant.role = this.role.value;
+    newParticipant.email = this.searchEmail.email;
+    newParticipant.display_name = this.displayName.value;
   }
 
   addToFeed(newParticipant) {
     let participantFeed = this.getExistingFeedWith(newParticipant.email);
     if (participantFeed) {
       participantFeed.participants = [];
+      participantFeed.location = newParticipant.email;
     } else {
       participantFeed = new FeedModel(newParticipant.email);
       if (this.hearing.feeds) {
@@ -342,7 +342,11 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   }
 
   addParticipantCancel() {
-    this.showCancelPopup = true;
+    if (this.editMode) {
+      this.navigateToSummary();
+    } else {
+      this.showCancelPopup = true;
+    }
   }
 
   handleContinueBooking(event: any) {
@@ -380,7 +384,15 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
   next() {
     if (this.participants && this.participants.length > 0) {
-      this.router.navigate(['/other-information']);
+      if (this.editMode) {
+        this.updateParticipant();
+        if (this.isShowErrorSummary) {
+          return;
+        }
+        this.navigateToSummary();
+      } else {
+        this.router.navigate(['/other-information']);
+      }
     } else {
       this.displayErrorNoParticipants = true;
     }
