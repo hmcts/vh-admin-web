@@ -501,18 +501,12 @@ namespace AdminWebsite.Services
             ParticipantRequest participantRequest = new ParticipantRequest()
             {
                 Display_name = _appConfigSettings.ParticipantRequest.Display_name,
-                Email = _appConfigSettings.ParticipantRequest.Email,
-                External_flag = false,
-                External_id = null,
+                Contact_email = _appConfigSettings.ParticipantRequest.Contact_email,
                 First_name = _appConfigSettings.ParticipantRequest.First_name,
                 Last_name = _appConfigSettings.ParticipantRequest.Last_name,
                 Middle_names = "",
-                Mobile = "",
-                Organisation_address = null,
-                Organisation_name = null,
-                Phone = _appConfigSettings.ParticipantRequest.Phone,
-                Representing = null,
-                Role = _appConfigSettings.ParticipantRequest.Role,
+                Telephone_number = _appConfigSettings.ParticipantRequest.Telephone_number,
+                Hearing_role_name = _appConfigSettings.ParticipantRequest.Hearing_role_name,
                 Title = _appConfigSettings.ParticipantRequest.Title,
                 Username = _appConfigSettings.ParticipantRequest.Username,
             };

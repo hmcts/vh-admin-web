@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -16,13 +18,13 @@ namespace AdminWebsite.Controllers
     [ApiController]
     public class HearingsController : ControllerBase
     {
-        private readonly IHearingApiClient _hearingApiClient;
+        private readonly IBookingsApiClient _bookingsApiClient;
         private readonly UserManager _userManager;
         private readonly IUserIdentity _userIdentity;
 
-        public HearingsController(IHearingApiClient hearingApiClient, UserManager userManager, IUserIdentity userIdentity)
+        public HearingsController(IBookingsApiClient bookingsApiClient, UserManager userManager, IUserIdentity userIdentity)
         {
-            _hearingApiClient = hearingApiClient;
+            _bookingsApiClient = bookingsApiClient;
             _userManager = userManager;
             _userIdentity = userIdentity;
         }
@@ -36,34 +38,34 @@ namespace AdminWebsite.Controllers
         [SwaggerOperation(OperationId = "BookNewHearing")]
         [ProducesResponseType(typeof(long), (int)HttpStatusCode.Created)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public ActionResult<long> Post([FromBody] HearingRequest hearingRequest)
+        public ActionResult<long> Post([FromBody] BookNewHearingRequest hearingRequest)
         {
-            hearingRequest.Created_by = User.Identity.Name;
-            hearingRequest.Feeds.Add(AddAdministrator());
-            foreach (var feed in hearingRequest.Feeds)
-            {
-                foreach (var participant in feed.Participants)
-                {
-                    if (participant != null)
-                    {
-                        // judge and admins are managed internally since the number of users is small
-                        if (participant.Role == "Judge" || participant.Role == "Administrator")
-                        {
-                            participant.Username = participant.Email;
-                        }
-                        else
-                        {
-                            CreateAdAccountIfRequired(participant);
-                        }
-                    }
-                }
-            }
+            //hearingRequest.Created_by = User.Identity.Name;
+            //hearingRequest.Feeds.Add(AddAdministrator());
+            //foreach (var feed in hearingRequest.Feeds)
+            //{
+            //    foreach (var participant in feed.Participants)
+            //    {
+            //        if (participant != null)
+            //        {
+            //            // judge and admins are managed internally since the number of users is small
+            //            if (participant.Role == "Judge" || participant.Role == "Administrator")
+            //            {
+            //                participant.Username = participant.Email;
+            //            }
+            //            else
+            //            {
+            //                CreateAdAccountIfRequired(participant);
+            //            }
+            //        }
+            //    }
+            //}
             try
             {
-                var hearingId = _hearingApiClient.CreateHearing(hearingRequest);
+                var hearingId = _bookingsApiClient.BookNewHearingAsync(hearingRequest);
                 return Created("", hearingId);
             }
-            catch (HearingApiException e)
+            catch (BookingsApiException e)
             {
                 if (e.StatusCode == (int)HttpStatusCode.BadRequest)
                 {
@@ -73,23 +75,23 @@ namespace AdminWebsite.Controllers
             }
         }
 
-        private void CreateAdAccountIfRequired(ParticipantRequest participant)
-        {
-            var existingParticipantUsername =
-                _userManager.GetUsernameForUserWithRecoveryEmail(participant.Email);
+        //private void CreateAdAccountIfRequired(Models.ParticipantRequest participant)
+        //{
+        //    var existingParticipantUsername =
+        //        _userManager.GetUsernameForUserWithRecoveryEmail(participant.Email);
 
-            if (string.IsNullOrWhiteSpace(existingParticipantUsername))
-            {
-                var username = _userManager.CreateAdAccount(participant.First_name, participant.Last_name,
-                    participant.Email, participant.Role);
-                participant.Username = username;
-            }
-            else
-            {
-                participant.Username = existingParticipantUsername;
-                _userManager.AddToGroupsByUsername(participant.Username, participant.Role);
-            }
-        }
+        //    if (string.IsNullOrWhiteSpace(existingParticipantUsername))
+        //    {
+        //        var username = _userManager.CreateAdAccount(participant.First_name, participant.Last_name,
+        //            participant.Email, participant.Role);
+        //        participant.Username = username;
+        //    }
+        //    else
+        //    {
+        //        participant.Username = existingParticipantUsername;
+        //        _userManager.AddToGroupsByUsername(participant.Username, participant.Role);
+        //    }
+        //}
 
         /// <summary>
         /// Gets bookings hearing by Id.
@@ -98,17 +100,17 @@ namespace AdminWebsite.Controllers
         /// <returns> The hearing</returns>
         [HttpGet("{hearingId}")]
         [SwaggerOperation(OperationId = "GetHearingById")]
-        [ProducesResponseType(typeof(HearingResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(HearingDetailsResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public ActionResult GetHearingById(long hearingId)
+        public ActionResult GetHearingById(Guid hearingId)
         {
             try
             {
-                var hearingResponse = _hearingApiClient.GetHearingById(hearingId);
+                var hearingResponse = _bookingsApiClient.GetHearingDetailsById(hearingId);
                 return Ok(hearingResponse);
             }
-            catch (HearingApiException e)
+            catch (BookingsApiException e)
             {
                 if (e.StatusCode == (int)HttpStatusCode.BadRequest)
                 {
@@ -146,10 +148,11 @@ namespace AdminWebsite.Controllers
             {
                 var types = caseTypes ?? Enumerable.Empty<string>();
                 var hearingTypesIds = GetHearingTypesId(types);
-                var bookingsResponse =_hearingApiClient.GetHearingsByTypes(hearingTypesIds, cursor, limit);
+                // var bookingsResponse =_bookingsApiClient.GetHearingsByTypes(hearingTypesIds, cursor, limit);
+                var bookingsResponse = new BookingsResponse();
                 return Ok(bookingsResponse);
             }
-            catch (HearingApiException e)
+            catch (BookingsApiException e)
             {
                 if (e.StatusCode == (int)HttpStatusCode.BadRequest)
                 {
@@ -163,7 +166,7 @@ namespace AdminWebsite.Controllers
         private List<int> GetHearingTypesId(IEnumerable<string> caseTypes)
         {
             var typeIds = new List<int>();
-            var hearingTypes = _hearingApiClient.GetHearingTypes();
+            var hearingTypes = new List<HearingTypeResponse>(); // _bookingsApiClient.GetHearingTypes();
             if (hearingTypes != null && hearingTypes.Any())
             {
                 typeIds = hearingTypes.Where(s => caseTypes.Any(x => x == s.Group)).Select(s => s.Id.Value).ToList();
@@ -173,9 +176,9 @@ namespace AdminWebsite.Controllers
         }
 
         // Add Administrator to the hearing.
-        private FeedRequest AddAdministrator()
-        {
-            return _userManager.AddAdministrator();
-        }
+        //private FeedRequest AddAdministrator()
+        //{
+        //    return _userManager.AddAdministrator();
+        //}
     }
 }

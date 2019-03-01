@@ -53,6 +53,7 @@
     <Compile Remove="Contracts\Responses\GroupsResponse.cs" />
     <Compile Remove="Contracts\Responses\NewUserResponse.cs" />
     <Compile Remove="Contracts\Responses\UserDetailsResponse.cs" />
+    <Compile Remove="Services\HearingApiClient.cs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
+using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -15,12 +16,12 @@ namespace AdminWebsite.Controllers
     [ApiController]
     public class ChecklistsController : ControllerBase
     {
-        private readonly IHearingApiClient _hearingApiClient;
+        private readonly IBookingsApiClient _bookingsApiClient;
         private readonly IUserIdentity _userIdentity;
 
-        public ChecklistsController(IHearingApiClient hearingApiClient, IUserIdentity userIdentity)
+        public ChecklistsController(IBookingsApiClient bookingsApiClient, IUserIdentity userIdentity)
         {
-            _hearingApiClient = hearingApiClient;
+            _bookingsApiClient = bookingsApiClient;
             _userIdentity = userIdentity;
         }
         
@@ -41,7 +42,7 @@ namespace AdminWebsite.Controllers
             if (!_userIdentity.IsVhOfficerAdministratorRole())
                 return Unauthorized();
 
-            var response = await _hearingApiClient.GetAllParticipantsChecklistsAsync(pageSize, page);
+            var response = new ChecklistsResponse(); // await _bookingsApiClient.GetAllParticipantsChecklistsAsync(pageSize, page);
             return Ok(response);
         }
     }
