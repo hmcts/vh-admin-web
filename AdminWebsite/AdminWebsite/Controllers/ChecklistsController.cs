@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 using AdminWebsite.Models;
 using AdminWebsite.Security;
@@ -39,7 +40,16 @@ namespace AdminWebsite.Controllers
             if (!_userIdentity.IsVhOfficerAdministratorRole())
                 return Unauthorized();
 
-            var response = new ChecklistsResponse();
+            var response = new ChecklistsResponse
+            {
+                Checklists = new List<HearingParticipantCheckListResponse>(),
+                Current_page = 0,
+                Hearings = new List<ChecklistsHearingResponse>(),
+                Next_page_url = null,
+                Prev_page_url = null,
+                Total_pages = 1,
+                Page_size = pageSize
+            };
             return Ok(response);
         }
     }
