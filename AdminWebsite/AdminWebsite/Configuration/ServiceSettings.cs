@@ -8,7 +8,7 @@
         /// <summary>
         ///     The bookings api url.
         /// </summary>
-        public string BookingsApiUrl => "http://localhost:5000";
+        public string BookingsApiUrl { get; set; }
         /// <summary>
         ///     The bookings api resource id
         /// </summary>

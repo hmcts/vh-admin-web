@@ -40,13 +40,6 @@ namespace AdminWebsite.Controllers
             var caseTypes = new List<HearingTypeResponse>();
             caseTypes.Add(new HearingTypeResponse
             {
-                Code = "BTA",
-                Group = "Tax",
-                Id = 1,
-                Name = "Basic Tax Appeals"
-            });
-            caseTypes.Add(new HearingTypeResponse
-            {
                 Code = "SAJ",
                 Group = "Civil Money Claims",
                 Id = 2,
@@ -70,10 +63,13 @@ namespace AdminWebsite.Controllers
         [HttpGet("participantroles", Name = "GetParticipantRoles")]
         [ProducesResponseType(typeof(IList<CaseRoleResponse>), (int) HttpStatusCode.OK)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
-        public async Task<ActionResult<IList<CaseRoleResponse>>> GetParticipantRoles(string caseTypeName)
+        public async Task<ActionResult<IList<CaseRoleResponse>>> GetParticipantRoles()
         {
-            var response = await _bookingsApiClient.GetCaseRolesForCaseTypeAsync(caseTypeName);
-            return Ok(response);
+            var caseRoles = new List<CaseRoleResponse>
+            {
+                new CaseRoleResponse {Name = "Citizen"}, new CaseRoleResponse {Name = "Professional"}
+            };
+            return Ok(caseRoles);
         }
 
         /// <summary>

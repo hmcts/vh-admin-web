@@ -40,6 +40,7 @@ describe('CreateHearingComponent with multiple case types', () => {
   let caseTypeControl: AbstractControl;
   let hearingMethodControl: AbstractControl;
   let hearingTypeControl: AbstractControl;
+
   const newHearing = initHearingRequest();
 
   let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
@@ -130,22 +131,14 @@ describe('CreateHearingComponent with multiple case types', () => {
     expect(hearingTypeControl.valid).toBeTruthy();
   });
 
-  it('should validate hearing medium', () => {
-    expect(hearingMethodControl.valid).toBeFalsy();
-    hearingMethodControl.setValue(1);
-    expect(hearingMethodControl.valid).toBeTruthy();
-  });
-
   it('should update hearing request when form is valid', () => {
     expect(component.hearingForm.valid).toBeFalsy();
     caseNameControl.setValue('Captain America vs The World');
     caseNumberControl.setValue('12345');
     caseTypeControl.setValue('Tax');
     hearingTypeControl.setValue(2);
-    hearingMethodControl.setValue(3);
     expect(component.hearingForm.valid).toBeTruthy();
     component.saveHearingDetails();
-    expect(component.hearing.hearing_medium_id).toBe(3);
     expect(component.hearing.hearing_type_id).toBe(2);
     expect(component.hearing.cases.length).toBe(1);
   });
