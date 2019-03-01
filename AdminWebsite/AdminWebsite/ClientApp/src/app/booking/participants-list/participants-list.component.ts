@@ -14,12 +14,14 @@ export class ParticipantsListComponent implements OnInit{
   participants: ParticipantModel[];
  
   $selectedForEdit: EventEmitter<string>;
+  $selectedForRemove: EventEmitter<string>;
 
   isSummaryPage: boolean = false;
   isEditRemoveVisible: boolean = true;
 
   constructor(private bookingService: BookingService, private router: Router) {
     this.$selectedForEdit = new EventEmitter<string>();
+    this.$selectedForRemove = new EventEmitter<string>();
   }
 
   ngOnInit() {
@@ -41,7 +43,15 @@ export class ParticipantsListComponent implements OnInit{
     }
   }
 
+  removeParticipant(participantEmail: string) {
+    this.$selectedForRemove.emit(participantEmail);
+  }
+
   get selectedParticipant() {
     return this.$selectedForEdit;
+  }
+
+  get selectedParticipantToRemove() {
+    return this.$selectedForRemove;
   }
 }

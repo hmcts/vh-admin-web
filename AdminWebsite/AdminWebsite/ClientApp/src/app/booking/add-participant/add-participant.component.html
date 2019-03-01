@@ -173,3 +173,7 @@
 <div *ngIf="showConfirmationPopup">
   <app-confirmation-popup (ok)="handleConfirmation()" [message]="confirmationMessage"></app-confirmation-popup>
 </div>
+
+<div *ngIf="showConfirmationRemoveParticipant">
+  <app-remove-popup (continueRemove)="handleContinueRemove()" (cancelRemove)="handleCancelRemove()" [fullName]="removerFullName"></app-remove-popup>
+</div>

@@ -3,7 +3,6 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { CancelPopupComponent } from 'src/app/popups/cancel-popup/cancel-popup.component';
-
 import { Constants } from '../../common/constants';
 import { CanDeactiveComponent } from '../../common/guards/changes.guard';
 import { IDropDownModel } from '../../common/model/drop-down.model';
@@ -51,6 +50,8 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   showCancelPopup = false;
   showConfirmationPopup = false;
   confirmationMessage: string;
+  showConfirmationRemoveParticipant = false;
+  removerFullName: string;
 
   displayNextButton = true;
   displayAddButton = false;
@@ -71,6 +72,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     private videoHearingService: VideoHearingsService,
     protected router: Router,
     protected bookingService: BookingService) {
+
     super(bookingService, router);
     this.checkForExistingRequest();
     this.retrieveRoles();
@@ -151,6 +153,11 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     this.participantsListComponent.selectedParticipant.subscribe((participantEmail) => {
       this.selectedParticipantEmail = participantEmail;
       this.repopulateParticipantToEdit();
+    });
+
+    this.participantsListComponent.selectedParticipantToRemove.subscribe((participantEmail) => {
+      this.selectedParticipantEmail = participantEmail;
+      this.confirmRemoveParticipant();
     });
   }
 
@@ -299,6 +306,21 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     }
   }
 
+  confirmRemoveParticipant() {
+    let participant =  this.participants.find(x => x.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase());
+    this.removerFullName = participant ? `${participant.title} ${participant.first_name} ${participant.last_name}` : '';
+    this.showConfirmationRemoveParticipant = true;
+  }
+
+  removeParticipant() {
+    let indexOfParticipant = this.participants.findIndex(x => x.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase());
+    if (indexOfParticipant > -1) {
+      this.participants.splice(indexOfParticipant, 1);
+    }
+    this.removeFromFeed();
+    this.videoHearingService.updateHearingRequest(this.hearing);
+  }
+
   mapParticipant(newParticipant: ParticipantModel) {
     newParticipant.first_name = this.firstName.value;
     newParticipant.last_name = this.lastName.value;
@@ -322,6 +344,13 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     }
     participantFeed.participants.push(newParticipant);
     this.videoHearingService.updateHearingRequest(this.hearing);
+  }
+
+  removeFromFeed() {
+      let indexOfParticipant = this.hearing.feeds.findIndex(x => x.participants.filter(y => y.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase()).length > 0);
+      if (indexOfParticipant > -1) {
+        this.hearing.feeds.splice(indexOfParticipant, 1);
+      }
   }
 
   private getExistingFeedWith(email: string): FeedModel {
@@ -361,6 +390,16 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
   handleConfirmation() {
     this.showConfirmationPopup = false;
+  }
+
+  handleContinueRemove() {
+    this.showConfirmationRemoveParticipant = false;
+    this.removeParticipant();
+  }
+
+  handleCancelRemove() {
+    this.showConfirmationRemoveParticipant = false;
+    this.participants = this.getAllParticipants();
   }
 
   clearForm() {

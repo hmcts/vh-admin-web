@@ -29,7 +29,7 @@
         </div>
         <div class="govuk-grid-column-one-third vhtable-cell" *ngIf="isEditRemoveVisible">
           <a class="vhlink" href="javascript:void(0)" (click)="editParticipant(pat.email)">Edit</a>
-          <a class="vhlink" href="javascript:void(0)">Remove</a>
+          <a class="vhlink" href="javascript:void(0)" (click)="removeParticipant(pat.email)">Remove</a>
         </div>
       </div>
 
