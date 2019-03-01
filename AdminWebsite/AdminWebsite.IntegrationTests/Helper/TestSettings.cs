@@ -9,7 +9,7 @@ namespace AdminWebsite.IntegrationTests.Helper
         {
             var configRootBuilder = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json")
-                .AddUserSecrets<Startup>();
+                .AddUserSecrets("f99a3fe8-cf72-486a-b90f-b65c27da84ee");
 
             Security = new SecuritySettings();
 
