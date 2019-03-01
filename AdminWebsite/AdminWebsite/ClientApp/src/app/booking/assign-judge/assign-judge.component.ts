@@ -153,11 +153,9 @@ export class AssignJudgeComponent implements OnInit, CanDeactiveComponent {
 
   private loadJudges() {
     if (this.availableJudges) { return; }
-    console.debug('No judges found, retrieving list from AD');
     this.judgeService.getJudges()
       .subscribe(
         (data: ParticipantDetailsResponse[]) => {
-          console.debug(data);
           this.availableJudges = data.filter(x => x.first_name && x.last_name);
             const userResponse = new ParticipantDetailsResponse();
           userResponse.display_name = 'Please Select';

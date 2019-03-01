@@ -1,4 +1,4 @@
-﻿export class ParticipantDetailsModel {
+export class ParticipantDetailsModel {
   constructor(participantId: number, title: string, firstName: string, lastName: string,
     role: string, userName: string, email: string) {
     this.ParticipantId = participantId;
@@ -19,8 +19,8 @@
   UserName: string;
   Email: string;
 
-  //flag to indicate if participant is the last in the list and don't need decoration bottom line
-  Flag: boolean
+  // flag to indicate if participant is the last in the list and don't need decoration bottom line
+  Flag: boolean;
 
   get fullName(): string {
     return `${this.Title} ${this.FirstName} ${this.LastName}`;

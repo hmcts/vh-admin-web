@@ -33,7 +33,10 @@ export class CreateHearingComponent implements OnInit, CanDeactiveComponent {
   filteredHearingMediums: HearingMediumResponse[];
   hasSaved: boolean;
 
-  constructor(private hearingService: VideoHearingsService, private fb: FormBuilder, private router: Router, private errorService: ErrorService) {
+  constructor(private hearingService: VideoHearingsService,
+              private fb: FormBuilder,
+              private router: Router,
+              private errorService: ErrorService) {
     this.attemptingCancellation = false;
     this.availableCaseTypes = [];
   }

@@ -58,7 +58,7 @@ let fixture: ComponentFixture<SummaryComponent>;
 let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
 let referenceDataServiceServiceSpy: jasmine.SpyObj<ReferenceDataService>;
 let routerSpy: jasmine.SpyObj<Router>;
-let errorService: jasmine.SpyObj<ErrorService> = jasmine.createSpyObj('ErrorService', ['handleError']);
+const errorService: jasmine.SpyObj<ErrorService> = jasmine.createSpyObj('ErrorService', ['handleError']);
 
 describe('SummaryComponent with valid request', () => {
 

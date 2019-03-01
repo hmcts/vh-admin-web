@@ -36,7 +36,7 @@ describe('app routing', () => {
   let changesGuard;
   let adalSvc;
   let bookingGuard;
-  let errorService: jasmine.SpyObj<ErrorService> = jasmine.createSpyObj('ErrorService', ['handleError']);
+  const errorService: jasmine.SpyObj<ErrorService> = jasmine.createSpyObj('ErrorService', ['handleError']);
 
   beforeEach(() => {
     TestBed.configureTestingModule({

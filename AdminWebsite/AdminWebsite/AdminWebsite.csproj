@@ -43,8 +43,11 @@
   <ItemGroup>
     <!-- Don't publish the SPA source files, but do show them in the project files list -->
     <Content Remove="$(SpaRoot)**" />
+    <Content Include="ClientApp\src\app\services\console-logger.ts" />
     <None Remove="$(SpaRoot)**" />
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
+    <None Remove="ClientApp\e2e\**" />
+    <Content Remove="ClientApp\e2e\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -53,6 +56,7 @@
     <Compile Remove="Contracts\Responses\GroupsResponse.cs" />
     <Compile Remove="Contracts\Responses\NewUserResponse.cs" />
     <Compile Remove="Contracts\Responses\UserDetailsResponse.cs" />
+    <Compile Remove="ClientApp\e2e\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -72,6 +76,10 @@
       <Generator>SpecFlowSingleFileGenerator</Generator>
       <LastGenOutput>participant.feature.cs</LastGenOutput>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Remove="ClientApp\e2e\**" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

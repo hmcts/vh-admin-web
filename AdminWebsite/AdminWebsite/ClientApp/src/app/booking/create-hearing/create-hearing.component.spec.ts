@@ -48,7 +48,7 @@ describe('CreateHearingComponent with multiple case types', () => {
 
   let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
   let routerSpy: jasmine.SpyObj<Router>;
-  let errorService: jasmine.SpyObj<ErrorService> = jasmine.createSpyObj('ErrorService', ['handleError']);
+  const errorService: jasmine.SpyObj<ErrorService> = jasmine.createSpyObj('ErrorService', ['handleError']);
 
   beforeEach(() => {
     videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',
@@ -163,7 +163,7 @@ describe('CreateHearingComponent with single case type', () => {
 
   let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
   let routerSpy: jasmine.SpyObj<Router>;
-  let errorService: jasmine.SpyObj<ErrorService> = jasmine.createSpyObj('ErrorService', ['handleError']);
+  const errorService: jasmine.SpyObj<ErrorService> = jasmine.createSpyObj('ErrorService', ['handleError']);
 
   beforeEach(() => {
     videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',
@@ -208,7 +208,7 @@ describe('CreateHearingComponent with existing request in session', () => {
 
   let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
   let routerSpy: jasmine.SpyObj<Router>;
-  let errorService: jasmine.SpyObj<ErrorService> = jasmine.createSpyObj('ErrorService', ['handleError']);
+  const errorService: jasmine.SpyObj<ErrorService> = jasmine.createSpyObj('ErrorService', ['handleError']);
 
   beforeEach(() => {
     videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',

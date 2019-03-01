@@ -8,39 +8,38 @@ export class BookingDetailsService {
 
   booking: BookingsDetailsModel;
   participants: Array<ParticipantDetailsModel> = [];
-  JUDGE: string = 'Judge';
+  JUDGE = 'Judge';
 
   mapBooking(hearingResponse: HearingResponse): BookingsDetailsModel {
     return new BookingsDetailsModel(
       hearingResponse.id,
       hearingResponse.scheduled_date_time,
       hearingResponse.scheduled_duration,
-      hearingResponse.cases && hearingResponse.cases.length > 0 ? hearingResponse.cases[0].number : "",
-      hearingResponse.cases && hearingResponse.cases.length > 0 ? hearingResponse.cases[0].name : "",
+      hearingResponse.cases && hearingResponse.cases.length > 0 ? hearingResponse.cases[0].number : '',
+      hearingResponse.cases && hearingResponse.cases.length > 0 ? hearingResponse.cases[0].name : '',
       hearingResponse.hearing_type,
-      "",
-      hearingResponse.court ? hearingResponse.court.room : "",
-      hearingResponse.court ? hearingResponse.court.address : "",
-      hearingResponse.created_by ? hearingResponse.created_by : "",
+      '',
+      hearingResponse.court ? hearingResponse.court.room : '',
+      hearingResponse.court ? hearingResponse.court.address : '',
+      hearingResponse.created_by ? hearingResponse.created_by : '',
       hearingResponse.created_date,
-      hearingResponse.updated_by ? hearingResponse.updated_by : "",
+      hearingResponse.updated_by ? hearingResponse.updated_by : '',
       hearingResponse.updated_date,
     );
   }
 
   mapBookingParticipants(hearingResponse: HearingResponse) {
-    let participants: Array<ParticipantDetailsModel> = [];
-    let judges: Array<ParticipantDetailsModel> = [];
+    const participants: Array<ParticipantDetailsModel> = [];
+    const judges: Array<ParticipantDetailsModel> = [];
     if (hearingResponse.participants && hearingResponse.participants.length > 0) {
       hearingResponse.participants.forEach(p => {
-        let model = new ParticipantDetailsModel(p.id, p.title, p.first_name, p.last_name, p.participant_role, p.username, p.email);
-        if (p.participant_role == this.JUDGE) {
+        const model = new ParticipantDetailsModel(p.id, p.title, p.first_name, p.last_name, p.participant_role, p.username, p.email);
+        if (p.participant_role === this.JUDGE) {
           judges.push(model);
-        }
-        else {
+        } else {
           participants.push(model);
         }
-      })
+      });
     }
 
     return { judges: judges, participants: participants };

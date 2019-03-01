@@ -1,4 +1,4 @@
-﻿import { Component, OnInit, EventEmitter, Output, Input } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output, Input } from '@angular/core';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { HearingResponse } from '../../services/clients/api-client';
 import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
@@ -31,7 +31,7 @@ export class BookingDetailsComponent implements OnInit {
 
   mapHearing(hearingResponse: HearingResponse) {
     this.hearing = this.bookingDetailsService.mapBooking(hearingResponse);
-    let participants_and_judges = this.bookingDetailsService.mapBookingParticipants(hearingResponse);
+    const participants_and_judges = this.bookingDetailsService.mapBookingParticipants(hearingResponse);
     this.participants = participants_and_judges.participants;
     this.judges = participants_and_judges.judges;
   }

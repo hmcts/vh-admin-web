@@ -1,19 +1,25 @@
-import { DebugElement } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { AbstractControl } from '@angular/forms';
-import { NavigationEnd, Router } from '@angular/router';
-import { of } from 'rxjs';
-import { SharedModule } from 'src/app/shared/shared.module';
-import { BreadcrumbStubComponent } from 'src/app/testing/stubs/breadcrumb-stub';
-import { CancelPopupStubComponent } from 'src/app/testing/stubs/cancel-popup-stub';
-import { ConfirmationPopupStubComponent } from 'src/app/testing/stubs/confirmation-popup-stub';
-import { ParticipantsListStubComponent } from 'src/app/testing/stubs/participant-list-stub';
-import { SearchServiceStub } from 'src/app/testing/stubs/serice-service-stub';
-import { HearingRequest, IParticipantRequest, ParticipantRoleResponse, FeedRequest, ParticipantRequest } from '../../services/clients/api-client';
-import { SearchService } from '../../services/search.service';
-import { VideoHearingsService } from '../../services/video-hearings.service';
-import { SearchEmailComponent } from '../search-email/search-email.component';
-import { AddParticipantComponent } from './add-participant.component';
+import {DebugElement} from '@angular/core';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {AbstractControl} from '@angular/forms';
+import {NavigationEnd, Router} from '@angular/router';
+import {of} from 'rxjs';
+import {SharedModule} from 'src/app/shared/shared.module';
+import {BreadcrumbStubComponent} from 'src/app/testing/stubs/breadcrumb-stub';
+import {CancelPopupStubComponent} from 'src/app/testing/stubs/cancel-popup-stub';
+import {ConfirmationPopupStubComponent} from 'src/app/testing/stubs/confirmation-popup-stub';
+import {ParticipantsListStubComponent} from 'src/app/testing/stubs/participant-list-stub';
+import {SearchServiceStub} from 'src/app/testing/stubs/serice-service-stub';
+import {
+  FeedRequest,
+  HearingRequest,
+  IParticipantRequest,
+  ParticipantRequest,
+  ParticipantRoleResponse
+} from '../../services/clients/api-client';
+import {SearchService} from '../../services/search.service';
+import {VideoHearingsService} from '../../services/video-hearings.service';
+import {SearchEmailComponent} from '../search-email/search-email.component';
+import {AddParticipantComponent} from './add-participant.component';
 
 let component: AddParticipantComponent;
 let fixture: ComponentFixture<AddParticipantComponent>;
@@ -27,38 +33,43 @@ let displayName: AbstractControl;
 
 const roleList: ParticipantRoleResponse[] =
   [
-    new ParticipantRoleResponse({ name: 'Citizen' }),
-    new ParticipantRoleResponse({ name: 'Judge' }),
-    new ParticipantRoleResponse({ name: 'Professional' }),
+    new ParticipantRoleResponse({name: 'Citizen'}),
+    new ParticipantRoleResponse({name: 'Judge'}),
+    new ParticipantRoleResponse({name: 'Professional'}),
   ];
 
-  const feeds: FeedRequest[] =
+const feeds: FeedRequest[] =
   [
     new FeedRequest({
       location: 'Citizen',
       participants: [
-        new ParticipantRequest({ first_name: 'John', last_name: 'Doe', display_name: 'John Doe',
-          role: 'judge', title: 'mr.', email: 'test@test.com', phone: '32332' }),
-        new ParticipantRequest({ first_name: 'Jane', last_name: 'Doe', display_name: 'Jane Doe',
-          role: 'judge', title: 'mr.', email: 'test@test.com', phone: '32332' }),
-        new ParticipantRequest({ first_name: 'Chris', last_name: 'Green', display_name: 'Chris Green',
-          role: 'judge', title: 'mr.', email: 'test@test.com', phone: '32332' })
+        new ParticipantRequest({
+          first_name: 'John', last_name: 'Doe', display_name: 'John Doe',
+          role: 'judge', title: 'mr.', email: 'test@test.com', phone: '32332'
+        }),
+        new ParticipantRequest({
+          first_name: 'Jane', last_name: 'Doe', display_name: 'Jane Doe',
+          role: 'judge', title: 'mr.', email: 'test@test.com', phone: '32332'
+        }),
+        new ParticipantRequest({
+          first_name: 'Chris', last_name: 'Green', display_name: 'Chris Green',
+          role: 'judge', title: 'mr.', email: 'test@test.com', phone: '32332'
+        })
       ]
     }),
   ];
 
-  function initHearingRequest(): HearingRequest {
-    const initRequest = {
-      cases: [],
+function initHearingRequest(): HearingRequest {
+  const initRequest = {
+    cases: [],
     feeds: feeds,
-      hearing_type_id: -1,
-      hearing_medium_id: -1,
-      court_id: -1,
-      scheduled_duration: 0,
-    };
-    const newHearing = new HearingRequest(initRequest);
-    return newHearing;
-  }
+    hearing_type_id: -1,
+    hearing_medium_id: -1,
+    court_id: -1,
+    scheduled_duration: 0,
+  };
+  return new HearingRequest(initRequest);
+}
 
 const participant: IParticipantRequest = {
   email: 'email@aa.aa',
@@ -67,7 +78,7 @@ const participant: IParticipantRequest = {
   phone: '12345',
   role: 'Appellant',
   display_name: 'Sam Green',
-    title: 'Mr'
+  title: 'Mr'
 };
 
 const routerSpy = {
@@ -97,12 +108,11 @@ describe('AddParticipantComponent', () => {
         SharedModule
       ],
       providers: [
-        { provide: SearchService, useClass: SearchServiceStub },
-        { provide: Router, useValue: routerSpy },
-        { provide: VideoHearingsService, useValue: videoHearingsServiceSpy }
+        {provide: SearchService, useClass: SearchServiceStub},
+        {provide: Router, useValue: routerSpy},
+        {provide: VideoHearingsService, useValue: videoHearingsServiceSpy}
       ]
-    })
-      .compileComponents();
+    }).compileComponents();
 
     const hearing = initHearingRequest();
     videoHearingsServiceSpy.getParticipantRoles.and.returnValue(of(roleList));
@@ -124,7 +134,7 @@ describe('AddParticipantComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
-  it('should constractor set role list and title list', () => {
+  it('should set role list and title list', () => {
     component.ngOnInit();
     expect(component.roleList).toBeTruthy();
     expect(component.roleList.length).toBe(3);

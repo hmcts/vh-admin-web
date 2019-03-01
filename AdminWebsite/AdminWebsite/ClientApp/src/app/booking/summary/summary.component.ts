@@ -29,7 +29,7 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
   canNavigate = true;
   hearingForm: FormGroup;
   failedSubmission: boolean;
-  bookingsSaving: boolean = false;
+  bookingsSaving = false;
 
   caseNumber: string;
   caseName: string;

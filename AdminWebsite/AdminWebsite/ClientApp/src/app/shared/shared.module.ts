@@ -8,7 +8,7 @@ import { FooterComponent } from './footer/footer.component';
 import { HeaderComponent } from './header/header.component';
 import { PaginationComponent } from './pagination/pagination.component';
 import { SharedRoutingModule } from './shared-routing.module';
-import { ScrollableDirective } from './directives/scroll.directive';
+import { ScrollableDirective } from './directives/scrollable.directive';
 
 @NgModule({
   imports: [

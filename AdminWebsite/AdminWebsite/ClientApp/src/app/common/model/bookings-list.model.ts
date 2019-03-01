@@ -25,7 +25,7 @@ export class BookingsDetailsModel {
     this.HearingCaseNumber = hearingCaseNumber;
     this.HearingType = hearingType;
     this.JudgeName = judgeName;
-    this.CourtRoom = courtRoom
+    this.CourtRoom = courtRoom;
     this.CourtAddress = courtAddress;
     this.CreatedBy = createdBy;
     this.CreatedDate = createdDate;
@@ -50,11 +50,11 @@ export class BookingsDetailsModel {
   Selected: boolean;
 
   get DurationInHoursAndMinutes(): string {
-    let hours = Math.floor(this.Duration / 60);
-    let min = this.Duration % 60;
-    let wordHours = hours > 1 ? "hours" : "hour";
-    let strHours = hours > 0 ? `${hours} ${wordHours}` : '';
-    let wordMin = min > 0 ? `${min} minutes`: '';
+    const hours = Math.floor(this.Duration / 60);
+    const min = this.Duration % 60;
+    const wordHours = hours > 1 ? 'hours' : 'hour';
+    const strHours = hours > 0 ? `${hours} ${wordHours}` : '';
+    const wordMin = min > 0 ? `${min} minutes` : '';
     return `${strHours} ${wordMin}`.trim();
   }
 }

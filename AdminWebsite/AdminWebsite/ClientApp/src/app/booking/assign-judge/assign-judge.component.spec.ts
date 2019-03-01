@@ -92,7 +92,7 @@ describe('AssignJudgeComponent', () => {
         { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
         { provide: JudgeDataService, useValue: judgeDataServiceSpy },
       ],
-      declarations: [AssignJudgeComponent, BreadcrumbStubComponent, CancelPopupComponent, ParticipantsListComponent,]
+      declarations: [AssignJudgeComponent, BreadcrumbStubComponent, CancelPopupComponent, ParticipantsListComponent, ]
     })
       .compileComponents();
 

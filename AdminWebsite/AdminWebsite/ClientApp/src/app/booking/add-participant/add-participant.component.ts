@@ -335,8 +335,6 @@ export class AddParticipantComponent implements OnInit, CanDeactiveComponent {
   }
 
   public getAllParticipants(): ParticipantRequest[] {
-    console.debug('getting all participants...');
-    console.debug(this.hearing.feeds);
     let participants: ParticipantRequest[] = [];
     this.hearing.feeds.forEach(x => {
       if (x.participants && x.participants.length >= 1) {

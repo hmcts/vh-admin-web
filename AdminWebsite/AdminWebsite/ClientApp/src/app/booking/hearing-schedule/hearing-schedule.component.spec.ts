@@ -70,7 +70,7 @@ describe('HearingScheduleComponent first visit', () => {
   let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
   let referenceDataServiceServiceSpy: jasmine.SpyObj<ReferenceDataService>;
   let routerSpy: jasmine.SpyObj<Router>;
-  let errorService: jasmine.SpyObj<ErrorService> = jasmine.createSpyObj('ErrorService', ['handleError']);
+  const errorService: jasmine.SpyObj<ErrorService> = jasmine.createSpyObj('ErrorService', ['handleError']);
 
   beforeEach(async(() => {
     routerSpy = jasmine.createSpyObj('Router', ['navigate']);
@@ -205,7 +205,7 @@ describe('HearingScheduleComponent returning to page', () => {
   let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
   let referenceDataServiceServiceSpy: jasmine.SpyObj<ReferenceDataService>;
   let routerSpy: jasmine.SpyObj<Router>;
-  let errorService: jasmine.SpyObj<ErrorService> = jasmine.createSpyObj('ErrorService', ['handleError']);
+  const errorService: jasmine.SpyObj<ErrorService> = jasmine.createSpyObj('ErrorService', ['handleError']);
 
   beforeEach(async(() => {
     routerSpy = jasmine.createSpyObj('Router', ['navigate']);
