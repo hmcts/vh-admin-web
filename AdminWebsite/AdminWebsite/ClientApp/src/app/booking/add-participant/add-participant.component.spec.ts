@@ -9,11 +9,13 @@ import { CancelPopupStubComponent } from 'src/app/testing/stubs/cancel-popup-stu
 import { ConfirmationPopupStubComponent } from 'src/app/testing/stubs/confirmation-popup-stub';
 import { ParticipantsListStubComponent } from 'src/app/testing/stubs/participant-list-stub';
 import { SearchServiceStub } from 'src/app/testing/stubs/serice-service-stub';
-import { HearingRequest, IParticipantRequest, ParticipantRoleResponse, FeedRequest, ParticipantRequest } from '../../services/clients/api-client';
+import { ParticipantRoleResponse, ParticipantRequest } from '../../services/clients/api-client';
 import { SearchService } from '../../services/search.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { SearchEmailComponent } from '../search-email/search-email.component';
 import { AddParticipantComponent } from './add-participant.component';
+import { HearingModel, FeedModel } from '../../common/model/hearing.model';
+import { ParticipantModel } from '../../common/model/participant.model';
 
 let component: AddParticipantComponent;
 let fixture: ComponentFixture<AddParticipantComponent>;
@@ -32,43 +34,62 @@ const roleList: ParticipantRoleResponse[] =
     new ParticipantRoleResponse({ name: 'Professional' }),
   ];
 
-  const feeds: FeedRequest[] =
-  [
-    new FeedRequest({
-      location: 'Citizen',
-      participants: [
-        new ParticipantRequest({ first_name: 'John', last_name: 'Doe', display_name: 'John Doe',
-          role: 'judge', title: 'mr.', email: 'test@test.com', phone: '32332' }),
-        new ParticipantRequest({ first_name: 'Jane', last_name: 'Doe', display_name: 'Jane Doe',
-          role: 'judge', title: 'mr.', email: 'test@test.com', phone: '32332' }),
-        new ParticipantRequest({ first_name: 'Chris', last_name: 'Green', display_name: 'Chris Green',
-          role: 'judge', title: 'mr.', email: 'test@test.com', phone: '32332' })
-      ]
-    }),
-  ];
+let feeds: FeedModel[] = [];
 
-  function initHearingRequest(): HearingRequest {
-    const initRequest = {
-      cases: [],
-    feeds: feeds,
-      hearing_type_id: -1,
-      hearing_medium_id: -1,
-      court_id: -1,
-      scheduled_duration: 0,
-    };
-    const newHearing = new HearingRequest(initRequest);
-    return newHearing;
-  }
+let f1 = new FeedModel('Citizen')
+f1.participants = [];
 
-const participant: IParticipantRequest = {
-  email: 'email@aa.aa',
-  first_name: 'Sam',
-  last_name: 'Green',
-  phone: '12345',
-  role: 'Appellant',
-  display_name: 'Sam Green',
-    title: 'Mr'
-};
+let p1 = new ParticipantModel();
+p1.first_name = 'John';
+p1.last_name = 'Doe';
+p1.display_name = 'John Doe';
+p1.role = 'judge';
+p1.title = 'mr.';
+p1.email = 'test@test.com';
+p1.phone = '32332';
+let p2 = new ParticipantModel();
+p2.first_name = 'Jane';
+p2.last_name = 'Doe';
+p2.display_name = 'Jane Doe';
+p2.role = 'judge';
+p2.title = 'mr.';
+p2.email = 'test@test.com';
+p2.phone = '32332';
+let p3 = new ParticipantRequest();
+
+p3.first_name = 'Chris';
+p3.last_name = 'Green';
+p3.display_name = 'Chris Green';
+p3.role = 'judge';
+p3.title = 'mr.';
+p3.email = 'test@test.com';
+p3.phone = '32332';
+f1.participants.push(p1);
+f1.participants.push(p2);
+f1.participants.push(p3);
+feeds.push(f1);
+
+
+function initHearingRequest(): HearingModel {
+  let newHearing = new HearingModel();
+  newHearing.cases = [];
+  newHearing.feeds = feeds;
+  newHearing.hearing_type_id = -1;
+  newHearing.hearing_medium_id = -1;
+  newHearing.court_id = -1;
+  newHearing.scheduled_duration = 0;
+  return newHearing;
+}
+
+const participant: ParticipantModel = new ParticipantModel();
+participant.email = 'email@aa.aa';
+participant.first_name = 'Sam';
+participant.last_name = 'Green';
+participant.phone = '12345';
+participant.role = 'Appellant';
+participant.display_name = 'Sam Green';
+participant.title = 'Mr';
+
 
 const routerSpy = {
   navigate: jasmine.createSpy('navigate'),

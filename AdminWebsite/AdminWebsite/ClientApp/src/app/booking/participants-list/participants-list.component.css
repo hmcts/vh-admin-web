@@ -18,21 +18,7 @@
     border-spacing: 0;
     border-collapse: collapse;
   }
-  .vhlink:link {
-    color: #005ea5;
-    text-decoration: none;
-    font-weight: 500;
-    margin-left: 10px;
- }
  
- .vhlink:visited {
-     color: #005ea5;
- }
- 
- .vhlink:hover {
-     color: #005ea5;
-     text-decoration: underline;
- }
  .vhtable-cell {
     font-size: 18px;
     padding: 5px 5px 5px 0px;

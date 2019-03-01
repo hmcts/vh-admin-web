@@ -15,8 +15,8 @@
             <strong>{{pat.role}}</strong>
           </div>
         </div>
-        <div class="govuk-grid-column-one-third vhtable-cell">
-          <a [routerLink]="['/assign-judge']" class="vhlink">Change</a>
+        <div class="govuk-grid-column-one-third vhtable-cell" *ngIf="isSummaryPage">
+          <a [routerLink]="['/assign-judge']" class="vhlink" (click)="editJudge()">Change</a>
         </div>
       </div>
 
@@ -27,9 +27,9 @@
             <strong>{{pat.role}}</strong>
           </div>
         </div>
-        <div class="govuk-grid-column-one-third vhtable-cell">
-          <a class="vhlink" href="javascript:void(0)">Edit</a>
-          <a class="vhlink" href="javascript:void(0)">Remove</a>
+        <div class="govuk-grid-column-one-third vhtable-cell" *ngIf="isEditRemoveVisible">
+          <a class="vhlink" href="javascript:void(0)" (click)="editParticipant(pat.email)">Edit</a>
+          <a class="vhlink" href="javascript:void(0)" (click)="removeParticipant(pat.email)">Remove</a>
         </div>
       </div>
 

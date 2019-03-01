@@ -7,13 +7,13 @@ import { Constants } from '../../common/constants';
 import { CanDeactiveComponent } from '../../common/guards/changes.guard';
 import {
   CourtResponse,
-  HearingRequest,
   HearingTypeResponse,
-  ParticipantRequest,
 } from '../../services/clients/api-client';
+import { HearingModel} from '../../common/model/hearing.model';
+import {ParticipantModel } from '../../common/model/participant.model';
+
 import { ReferenceDataService } from '../../services/reference-data.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
-import { ErrorService } from 'src/app/services/error.service';
 
 @Component({
   selector: 'app-summary',
@@ -24,7 +24,7 @@ import { ErrorService } from 'src/app/services/error.service';
 export class SummaryComponent implements OnInit, CanDeactiveComponent {
 
   constants = Constants;
-  hearing: HearingRequest;
+  hearing: HearingModel;
   attemptingCancellation: boolean;
   canNavigate = true;
   hearingForm: FormGroup;
@@ -41,12 +41,11 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
   errors: any;
 
   selectedHearingTypeName: HearingTypeResponse[];
-  participants: ParticipantRequest[] = [];
+  participants: ParticipantModel[] = [];
   selectedHearingType: HearingTypeResponse[];
   saveFailed: boolean;
 
-  constructor(private hearingService: VideoHearingsService, private router: Router,
-    private referenceDataService: ReferenceDataService, private errorService: ErrorService) {
+  constructor(private hearingService: VideoHearingsService, private router: Router, private referenceDataService: ReferenceDataService) {
     this.attemptingCancellation = false;
     this.saveFailed = false;
   }
@@ -68,11 +67,11 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
     this.getCourtRoomAndAddress(this.hearing.court_id);
     this.hearingDuration = this.getHearingDuration(this.hearing.scheduled_duration);
     this.participants = this.getAllParticipants();
-    this.otherInformation = 'None';
+    this.otherInformation = this.hearing.other_information;
   }
 
-  private getAllParticipants(): ParticipantRequest[] {
-    let participants: ParticipantRequest[] = [];
+  private getAllParticipants(): ParticipantModel[] {
+    let participants: ParticipantModel[] = [];
     this.hearing.feeds.forEach(x => {
       if (x.participants && x.participants.length >= 1) {
         participants = participants.concat(x.participants);
@@ -88,7 +87,7 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
           const selectedHearingType = data.filter(h => h.id === hearing_type_id);
           this.caseHearingType = selectedHearingType[0].name;
         },
-        error => this.errorService.handleError(error)
+        error => console.error(error)
       );
   }
 
@@ -96,10 +95,11 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
     this.referenceDataService.getCourts()
       .subscribe(
         (data: CourtResponse[]) => {
-          const selectedCourtRoom = data.filter(c => c.id === courtId);
-          this.courtRoomAddress = selectedCourtRoom[0].address + ', ' + selectedCourtRoom[0].room;
+          const selectedCourt = data.filter(c => c.id === courtId);
+          const selectedCourtRoom = this.hearing.court_room;
+          this.courtRoomAddress = selectedCourt[0].address + ', ' + selectedCourtRoom;
         },
-        error => this.errorService.handleError(error)
+        error => console.error(error)
       );
   }
 

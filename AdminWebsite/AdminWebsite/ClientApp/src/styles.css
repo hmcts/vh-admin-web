@@ -1,5 +1,77 @@
 /* You can add global styles to this file, and also import other style files */
-    
+
 .vh-top-m15 {
-    margin-top: 15px;
+  margin-top: 15px;
+}
+.vh-top-m30 {
+  margin-top: 30px;
+}
+
+.vh-mt50 {
+  margin-top: 50px;
+}
+
+.vh-mr25 {
+  margin-right: 25px;
+}
+
+.vh-mr70 {
+  margin-right: 70px;
+}
+
+.vh-ml70 {
+  margin-left: 70px;
+}
+
+.vhlink:link {
+  color: #005ea5;
+  font-weight: 500;
+  margin-left: 10px;
+  font-family: "nta", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 18px;
+  line-height: 1;
+  float:left;
+}
+
+.vhlink:visited {
+  color: #005ea5;
+}
+
+.vhlink:hover {
+  color: #005ea5;
+  text-decoration: underline;
+}
+
+.remove-header-padding {
+  margin-bottom: 0px !important;
+}
+
+.vh-popup {
+  margin: 70px auto;
+  padding: 30px;
+  background: #fff;
+  border-radius: 0px;
+  width: 50%;
+  position: relative;
+  transition: all 2s ease-in-out;
+  text-align:center;
+}
+
+.vh-popup-overlay {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.7);
+  transition: opacity 500ms;
+}
+
+.vh-popup-small {
+  max-width: 600px !important;
+}
+.vh-popup-xsmall {
+  max-width: 500px !important;
 }

@@ -10,7 +10,7 @@
       Date of hearing
     </label>
     <input id="hearingDate" class="govuk-input govuk-!-width-one-quarter" type="date" formControlName="hearingDate"
-      required placeholder="e.g. 30/02/2018" min="{{today | date:'yyyy-MM-dd'}}">
+           required placeholder="e.g. 30/02/2018" min="{{today | date:'yyyy-MM-dd'}}">
     <div *ngIf="hearingDateInvalid" class="alert alert-danger">
       <span id="hearingDate-error" class="govuk-error-message">
         Please enter a date in the future
@@ -27,13 +27,13 @@
         <div class="govuk-date-input__item">
           <div class="govuk-form-group">
             <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="hearingStartTimeHour" name="hearingStartTimeHour"
-              type="number" min="0" max="23" placeholder="HH" formControlName="hearingStartTimeHour">
+                   type="number" min="0" max="23" placeholder="HH" formControlName="hearingStartTimeHour">
           </div>
         </div>
         <div class="govuk-date-input__item">
           <div class="govuk-form-group">
             <input class="govuk-input govuk-date-input__input govuk-input--width-2 minutes" id="hearingStartTimeMinute" name="hearingStartTimeMinute"
-              type="number" min="0" max="59" placeholder="MM" formControlName="hearingStartTimeMinute">
+                   type="number" min="0" max="59" placeholder="MM" formControlName="hearingStartTimeMinute">
           </div>
         </div>
       </div>
@@ -59,13 +59,13 @@
         <div class="govuk-date-input__item">
           <div class="govuk-form-group">
             <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="hearingDurationHour" name="hearingDurationHour"
-              type="number" placeholder="00" min="0" max="23" formControlName="hearingDurationHour">
+                   type="number" placeholder="00" min="0" max="23" formControlName="hearingDurationHour">
           </div>
         </div>
         <div class="govuk-date-input__item">
           <div class="govuk-form-group">
             <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="hearingDurationMinute" name="hearingDurationMinute"
-              type="number" placeholder="45" min="0" max="59" formControlName="hearingDurationMinute">
+                   type="number" placeholder="45" min="0" max="59" formControlName="hearingDurationMinute">
           </div>
         </div>
       </div>
@@ -84,23 +84,31 @@
 
   <div [ngClass]="courtAddressInvalid ? 'govuk-form-group--error' : 'govuk-form-group'">
     <label class="govuk-label govuk-!-width-one-half" for="courtAddress">
-      Court address
+      Hearing venue
     </label>
     <select class="govuk-select govuk-!-width-one-half" id="courtAddress" formControlName="courtAddress">
-      <option *ngFor="let court of availableCourts" [ngValue]="court.id">{{court.address}} {{court.room}}</option>
+      <option *ngFor="let court of availableCourts" [ngValue]="court.id">{{court.address}} </option>
     </select>
     <div *ngIf="courtAddressInvalid" class="alert alert-danger">
       <span id="courtAddress-error" class="govuk-error-message">
-        Please select a court address
+        Please select a hearing venue
       </span>
     </div>
   </div>
 
+  <div class="govuk-form-group">
+    <label class="govuk-label" for="court-room">
+      Room
+    </label>
+    <input class="govuk-input govuk-!-width-one-half" id="court-room" name="coort-room" type="text" formControlName="courtRoom">
+  </div>
+  
+
   <div class="sk-top">
-    <input type="button" id="nextButton" class="govuk-button" role="button" value="Next" style="margin-right:25px;"
-      (click)="saveScheduleAndLocation()" alt="Save hearing schedule and location details and go to judge assignment" />
+    <input type="button" id="nextButton" class="govuk-button" role="button" value="{{buttonAction}}" style="margin-right:25px;"
+           (click)="saveScheduleAndLocation()" alt="Save hearing schedule and location details and go to judge assignment" />
     <input type="button" id="cancelButton" class="govuk-button hmcts-button--secondary" role="button" value="Cancel"
-      (click)="confirmCancelBooking()" alt="Confirm cancellation of new booking and return to dashboard" />
+           (click)="confirmCancelBooking()" alt="Confirm cancellation of new booking and return to dashboard" />
   </div>
 
 </form>
