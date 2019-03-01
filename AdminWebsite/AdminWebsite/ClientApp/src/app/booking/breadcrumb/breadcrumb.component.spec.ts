@@ -4,6 +4,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { Observable } from 'rxjs';
 import { CancelPopupComponent } from 'src/app/popups/cancel-popup/cancel-popup.component';
 import { ConfirmationPopupComponent } from 'src/app/popups/confirmation-popup/confirmation-popup.component';
+import { RemovePopupComponent } from '../../popups/remove-popup/remove-popup.component';
 import { BHClient, ClientSettingsResponse } from 'src/app/services/clients/api-client';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { FooterStubComponent } from 'src/app/testing/stubs/footer-stub';
@@ -66,7 +67,8 @@ describe('BreadcrumbComponent', () => {
         BookingConfirmationComponent,
         CheckListComponent,
         UnauthorisedComponent,
-        ErrorComponent
+        ErrorComponent,
+        RemovePopupComponent,
       ],
       providers: [
         { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },

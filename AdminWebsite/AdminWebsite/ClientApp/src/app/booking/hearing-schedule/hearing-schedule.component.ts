@@ -168,9 +168,10 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     );
 
     this.hearing.scheduled_date_time = hearingDate;
-    let hearingDuration = (this.schedulingForm.value.hearingDurationHour * 60);
-    hearingDuration += this.schedulingForm.value.hearingDurationMinute;
+    let hearingDuration = (parseInt(this.schedulingForm.value.hearingDurationHour, 10) * 60);
+    hearingDuration += parseInt(this.schedulingForm.value.hearingDurationMinute, 10);
     this.hearing.scheduled_duration = hearingDuration;
+    console.log('DURATION ' + this.hearing.scheduled_duration);
     this.hearingService.updateHearingRequest(this.hearing);
   }
 

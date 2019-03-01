@@ -2,16 +2,18 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { CancelPopupComponent } from 'src/app/popups/cancel-popup/cancel-popup.component';
+import { RemovePopupComponent } from '../../popups/remove-popup/remove-popup.component';
 import { BreadcrumbStubComponent } from 'src/app/testing/stubs/breadcrumb-stub';
 import { BookingEditStubComponent } from '../../testing/stubs/booking-edit-stub';
 import { ReferenceDataService } from '../../services/reference-data.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { MockValues } from '../../testing/data/test-objects';
-import { ParticipantsListComponent } from '../participants-list/participants-list.component';
+//import { ParticipantsListComponent } from '../participants-list/participants-list.component';
 import { SummaryComponent } from './summary.component';
 import { RouterTestingModule } from '@angular/router/testing';
 import { HearingModel} from '../../common/model/hearing.model';
 import { CaseModel } from '../../common/model/case.model';
+import { ParticipantsListStubComponent } from '../../testing/stubs/participant-list-stub';
 
 function initExistingHearingRequest(): HearingModel {
   const today = new Date();
@@ -63,7 +65,7 @@ describe('SummaryComponent with valid request', () => {
 
   beforeEach(async(() => {
     initExistingHearingRequest();
-    routerSpy = jasmine.createSpyObj('Router', ['navigate']);
+    routerSpy = jasmine.createSpyObj('Router', ['navigate', 'url']);
 
     referenceDataServiceServiceSpy = jasmine.createSpyObj<ReferenceDataService>('ReferenceDataService',
       ['getCourts']);
@@ -74,6 +76,7 @@ describe('SummaryComponent with valid request', () => {
     videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
     videoHearingsServiceSpy.getHearingMediums.and.returnValue(of(MockValues.HearingMediums));
     videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
+    routerSpy.url.and.returnValue
 
     TestBed.configureTestingModule({
       providers: [
@@ -82,7 +85,8 @@ describe('SummaryComponent with valid request', () => {
         { provide: Router, useValue: routerSpy }
       ],
       declarations: [SummaryComponent, BreadcrumbStubComponent,
-        CancelPopupComponent, ParticipantsListComponent, BookingEditStubComponent],
+        CancelPopupComponent, ParticipantsListStubComponent, BookingEditStubComponent,
+      RemovePopupComponent],
       imports: [RouterTestingModule],
     })
       .compileComponents();
@@ -103,7 +107,6 @@ describe('SummaryComponent with valid request', () => {
     expect(component.hearingDate).toEqual(existingRequest.scheduled_date_time);
     const courtString = MockValues.Courts.find(c => c.id === existingRequest.court_id);
     expect(component.courtRoomAddress).toEqual(courtString.address + ', ' + existingRequest.court_room);
-    const durationText = 'listed for ' + existingRequest.scheduled_duration + ' minutes';
   });
 });
 
@@ -141,7 +144,7 @@ describe('SummaryComponent  with invalid request', () => {
       ],
       imports: [RouterTestingModule],
       declarations: [SummaryComponent, BreadcrumbStubComponent, CancelPopupComponent,
-        ParticipantsListComponent, BookingEditStubComponent]
+        ParticipantsListStubComponent, BookingEditStubComponent, RemovePopupComponent]
     })
       .compileComponents();
   }));

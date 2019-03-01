@@ -44,7 +44,10 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
   participants: ParticipantModel[] = [];
   selectedHearingType: HearingTypeResponse[];
   saveFailed: boolean;
+
   showConfirmationRemoveParticipant: boolean = false;
+  selectedParticipantEmail: string;
+  removerFullName: string;
 
   @ViewChild(ParticipantsListComponent)
   participantsListComponent: ParticipantsListComponent;
@@ -57,14 +60,48 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
   ngOnInit() {
     this.checkForExistingRequest();
     this.retrieveHearingSummary();
-
-    this.participantsListComponent.selectedParticipantToRemove.subscribe((participantEmail) => {
-     
-    });
+    if (this.participantsListComponent) {
+      this.participantsListComponent.selectedParticipantToRemove.subscribe((participantEmail) => {
+        this.selectedParticipantEmail = participantEmail;
+        this.confirmRemoveParticipant();
+      });
+    }
   }
 
   private checkForExistingRequest() {
     this.hearing = this.hearingService.getCurrentRequest();
+  }
+
+  private confirmRemoveParticipant() {
+    let participant = this.participants.find(x => x.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase());
+    this.removerFullName = participant ? `${participant.title} ${participant.first_name} ${participant.last_name}` : '';
+    this.showConfirmationRemoveParticipant = true;
+  }
+
+  handleContinueRemove() {
+    this.showConfirmationRemoveParticipant = false;
+    this.removeParticipant();
+  }
+
+  handleCancelRemove() {
+    this.showConfirmationRemoveParticipant = false;
+    this.participants = this.getAllParticipants();
+  }
+
+  removeParticipant() {
+    let indexOfParticipant = this.participants.findIndex(x => x.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase());
+    if (indexOfParticipant > -1) {
+      this.participants.splice(indexOfParticipant, 1);
+    }
+    this.removeFromFeed();
+    this.hearingService.updateHearingRequest(this.hearing);
+  }
+
+  removeFromFeed() {
+    let indexOfParticipant = this.hearing.feeds.findIndex(x => x.participants.filter(y => y.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase()).length > 0);
+    if (indexOfParticipant > -1) {
+      this.hearing.feeds.splice(indexOfParticipant, 1);
+    }
   }
 
   private retrieveHearingSummary() {
@@ -112,6 +149,7 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
   }
 
   private getHearingDuration(duration: number): string {
+    console.log('DIRATION SUMMARY' + duration);
     return 'listed for ' + (duration === null ? 0 : duration) + ' minutes';
   }
 
