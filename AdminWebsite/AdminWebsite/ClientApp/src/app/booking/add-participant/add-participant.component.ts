@@ -2,7 +2,6 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { CancelPopupComponent } from 'src/app/popups/cancel-popup/cancel-popup.component';
 import { Constants } from '../../common/constants';
 import { CanDeactiveComponent } from '../../common/guards/changes.guard';
 import { IDropDownModel } from '../../common/model/drop-down.model';
@@ -60,9 +59,6 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
   @ViewChild(SearchEmailComponent)
   searchEmail: SearchEmailComponent;
-
-  @ViewChild(CancelPopupComponent)
-  cancelPopup: CancelPopupComponent;
 
   @ViewChild(ParticipantsListComponent)
   participantsListComponent: ParticipantsListComponent;
@@ -150,15 +146,17 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
       this.displayNext();
     }
 
-    this.participantsListComponent.selectedParticipant.subscribe((participantEmail) => {
-      this.selectedParticipantEmail = participantEmail;
-      this.repopulateParticipantToEdit();
-    });
+    if (this.participantsListComponent) {
+      this.participantsListComponent.selectedParticipant.subscribe((participantEmail) => {
+        this.selectedParticipantEmail = participantEmail;
+        this.repopulateParticipantToEdit();
+      });
 
-    this.participantsListComponent.selectedParticipantToRemove.subscribe((participantEmail) => {
-      this.selectedParticipantEmail = participantEmail;
-      this.confirmRemoveParticipant();
-    });
+      this.participantsListComponent.selectedParticipantToRemove.subscribe((participantEmail) => {
+        this.selectedParticipantEmail = participantEmail;
+        this.confirmRemoveParticipant();
+      });
+    }
   }
 
   initializeForm() {
