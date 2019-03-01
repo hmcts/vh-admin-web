@@ -22,9 +22,6 @@
       <li *ngIf="hearingType.invalid">
         <a (click)="goToDiv('hearingType-error')">Please enter a hearing type</a>
       </li>
-      <li *ngIf="hearingMethod.invalid">
-        <a (click)="goToDiv('hearingMethod-error')">Please enter a hearing channel</a>
-      </li>
     </ul>
   </div>
 </div>
@@ -88,19 +85,7 @@
     </div>
   </div>
 
-  <div [ngClass]="hearingMethodInvalid ? 'govuk-form-group--error' : 'govuk-form-group'">
-    <label class="govuk-label govuk-!-width-one-half" for="hearingMethod">
-      Hearing channel
-    </label>
-    <select class="govuk-select govuk-!-width-one-half" id="hearingMethod" formControlName="hearingMethod">
-      <option *ngFor="let hearingMedium of filteredHearingMediums" [ngValue]="hearingMedium.id">{{hearingMedium.name}}</option>
-    </select>
-    <div *ngIf="hearingMethodInvalid" class="alert alert-danger">
-      <span id="hearingMethod-error" class="govuk-error-message">
-        Please select a hearing channel
-      </span>
-    </div>
-  </div>
+
 
   <div class="sk-top">
     <input type="button" id="nextButton" class="govuk-button" role="button" value="{{buttonAction}}" style="margin-right:25px;"

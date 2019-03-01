@@ -4999,7 +4999,7 @@ namespace AdminWebsite.Services
     
     }
     
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "9.13.13.0 (Newtonsoft.Json v11.0.0.0)")]
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "9.13.HearingResponse13.0 (Newtonsoft.Json v11.0.0.0)")]
     public partial class UpdateHearingParticipantRequest 
     {
         /// <summary>Role for participant in given hearing</summary>

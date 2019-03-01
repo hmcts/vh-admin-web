@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using AdminWebsite.Contracts.Responses;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -30,14 +31,36 @@ namespace AdminWebsite.Controllers
         /// </summary>
         /// <returns>List of hearing types</returns>
         [HttpGet("types", Name = "GetHearingTypes")]
-        [ProducesResponseType(typeof (IList<HearingRoleResponse>), (int) HttpStatusCode.OK)]
+        [ProducesResponseType(typeof (IList<HearingTypeResponse>), (int) HttpStatusCode.OK)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
-        public async Task<ActionResult<IList<HearingRoleResponse>>> GetHearingTypes(string caseTypeName, string caseRoleName)
+        public async Task<ActionResult<IList<HearingTypeResponse>>> GetHearingTypes()
         {
             var userGroups = _userIdentity.GetGroupDisplayNames();
-            var hearingTypes = await _bookingsApiClient.GetHearingRolesForCaseRoleAsync(caseTypeName, caseRoleName);
-            var response = hearingTypes.Where(x => userGroups.Contains(x.Name));
-            return Ok(response);
+            // var hearingTypes = await _bookingsApiClient.GetHearingRolesForCaseRoleAsync();
+            var caseTypes = new List<HearingTypeResponse>();
+            caseTypes.Add(new HearingTypeResponse
+            {
+                Code = "BTA",
+                Group = "Tax",
+                Id = 1,
+                Name = "Basic Tax Appeals"
+            });
+            caseTypes.Add(new HearingTypeResponse
+            {
+                Code = "SAJ",
+                Group = "Civil Money Claims",
+                Id = 2,
+                Name = "Application to Set Judgment Aside"
+            });
+            caseTypes.Add(new HearingTypeResponse
+            {
+                Code = "FDAH",
+                Group = "Financial Remedy",
+                Id = 3,
+                Name = "First Directions Appointment"
+            });
+            // var response = hearingTypes.Where(x => userGroups.Contains(x.Name));
+            return Ok(caseTypes);
         }
 
         /// <summary>
@@ -57,7 +80,7 @@ namespace AdminWebsite.Controllers
         ///     Get available courts
         /// </summary>
         /// <returns>List of courts</returns>
-        [HttpGet("venue", Name = "GetCourts")]
+        [HttpGet("courts", Name = "GetCourts")]
         [ProducesResponseType(typeof(IList<HearingVenueResponse>), (int) HttpStatusCode.OK)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
         public async Task<ActionResult<IList<HearingVenueResponse>>> GetCourts()

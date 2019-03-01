@@ -86,7 +86,6 @@ describe('CreateHearingComponent with multiple case types', () => {
     expect(component.caseName.value).toBeNull();
     expect(component.caseType.value).toBe('Please Select');
     expect(component.hearingType.value).toBe(-1);
-    expect(component.hearingMethod.value).toBe(-1);
   });
 
   it('should not set case type when multiple items returned', () => {
@@ -248,6 +247,5 @@ describe('CreateHearingComponent with existing request in session', () => {
     expect(component.caseNumber.value).toBe(existingRequest.cases[0].number);
     expect(component.caseName.value).toBe(existingRequest.cases[0].name);
     expect(component.hearingType.value).toBe(existingRequest.hearing_type_id);
-    expect(component.hearingMethod.value).toBe(existingRequest.hearing_medium_id);
   }));
 });

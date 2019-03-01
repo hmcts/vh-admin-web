@@ -176,7 +176,7 @@ namespace AdminWebsite.Controllers
         }
 
         // Add Administrator to the hearing.
-        //private FeedRequest AddAdministrator()
+        //private Contracts.Requests.ParticipantRequest AddAdministrator()
         //{
         //    return _userManager.AddAdministrator();
         //}
