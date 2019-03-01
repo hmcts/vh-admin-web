@@ -1,4 +1,4 @@
-﻿import { Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { BookingsDetailsModel } from '../common/model/bookings-list.model';
 import { ParticipantDetailsModel } from '../common/model/participant-details.model';
 import { HearingResponse } from '../services/clients/api-client';

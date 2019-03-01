@@ -16,5 +16,6 @@
         ///     Temporary Password for newly created user accounts.
         /// </summary>
         public string TemporaryPassword { get; set; }
+        public string InstrumentationKey { get; set; }
     }
 }

@@ -2,6 +2,7 @@
 using AdminWebsite.Contracts.Responses;
 using AdminWebsite.Controllers;
 using FluentAssertions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using NUnit.Framework;
@@ -21,13 +22,24 @@ namespace AdminWebsite.UnitTests
                 Authority = "Authority",
             };
 
-            var configSettingsController = new ConfigSettingsController(Options.Create(securitySettings));
+            var httpContext = new DefaultHttpContext();
+            httpContext.Request.Scheme = "https";
+            httpContext.Request.Host = new HostString("vh-admin-web.azurewebsites.net");
+            httpContext.Request.PathBase = "";
+            var controllerContext = new ControllerContext {
+                HttpContext = httpContext
+            };
+
+            var configSettingsController = new ConfigSettingsController(Options.Create(securitySettings)) {
+                ControllerContext = controllerContext
+            };
 
             var actionResult = (OkObjectResult)configSettingsController.Get().Result;
             var clientSettings = (ClientSettingsResponse)actionResult.Value;
             
             clientSettings.ClientId.Should().Be(securitySettings.ClientId);
             clientSettings.TenantId.Should().Be(securitySettings.TenantId);
+            clientSettings.RedirectUri.Should().Be("https://vh-admin-web.azurewebsites.net/login");
         }
     }
 }

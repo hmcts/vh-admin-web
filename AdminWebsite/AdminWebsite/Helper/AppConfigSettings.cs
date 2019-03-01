@@ -15,6 +15,9 @@ namespace AdminWebsite.Helper
         ///     Flag to determine the list of judges to be displayed (Live/ Live and Test).
         /// </summary>
         public bool IsLive { get; set; }
+        /// <summary>
+        ///     Administrator data.
+        /// </summary>
         public ParticipantRequest ParticipantRequest { get; set; } = new ParticipantRequest();
     }
 }

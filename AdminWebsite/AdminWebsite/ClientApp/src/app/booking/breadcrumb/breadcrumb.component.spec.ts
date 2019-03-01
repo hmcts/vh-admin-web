@@ -27,7 +27,9 @@ import { SummaryComponent } from '../summary/summary.component';
 import { BreadcrumbComponent } from './breadcrumb.component';
 import { BreadcrumbItemModel } from './breadcrumbItem.model';
 import { UnauthorisedComponent } from '../../error/unauthorised.component';
+import { ErrorComponent } from '../../error/error.component';
 import { SignOutPopupComponent } from '../../popups/sign-out-popup/sign-out-popup.component';
+
 
 
 describe('BreadcrumbComponent', () => {
@@ -64,7 +66,8 @@ describe('BreadcrumbComponent', () => {
         BookingConfirmationComponent,
         CheckListComponent,
         UnauthorisedComponent,
-        SignOutPopupComponent
+        ErrorComponent,
+         SignOutPopupComponent
       ],
       providers: [
         { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },

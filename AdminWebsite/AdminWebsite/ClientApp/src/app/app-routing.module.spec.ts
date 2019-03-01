@@ -23,6 +23,8 @@ import { FooterStubComponent } from './testing/stubs/footer-stub';
 import { HeaderStubComponent } from './testing/stubs/header-stub';
 import { PaginationStubComponent } from './testing/stubs/pagination-stub';
 import { UnauthorisedComponent } from './error/unauthorised.component';
+import { ErrorComponent } from './error/error.component';
+import { ErrorService } from './services/error.service';
 import { SignOutPopupComponent } from './popups/sign-out-popup/sign-out-popup.component';
 
 describe('app routing', () => {
@@ -45,13 +47,15 @@ describe('app routing', () => {
         ContactUsStubComponent,
         PaginationStubComponent,
         UnauthorisedComponent,
-        SignOutPopupComponent
+        ErrorComponent,
+         SignOutPopupComponent
       ],
       providers: [
         AuthGuard,
         AdminGuard,
         { provide: AdalService, useClass: MockAdalService },
-        { provide: ChangesGuard, useClass: MockChangesGuard }, HttpClient, HttpHandler
+        { provide: ChangesGuard, useClass: MockChangesGuard }, HttpClient, HttpHandler,
+        ErrorService
       ],
     }).compileComponents();
 

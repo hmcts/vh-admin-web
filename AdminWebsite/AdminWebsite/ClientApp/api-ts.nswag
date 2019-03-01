@@ -1,5 +1,5 @@
 {
-  "runtime": "NetCore21",
+  "runtime": "NetCore22",
   "defaultVariables": null,
   "swaggerGenerator": {
     "fromSwagger": {

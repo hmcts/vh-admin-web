@@ -12,6 +12,7 @@ import { VideoHearingsService } from '../../services/video-hearings.service';
 import { MockValues } from '../../testing/data/test-objects';
 import { BreadcrumbComponent } from '../breadcrumb/breadcrumb.component';
 import { CreateHearingComponent } from './create-hearing.component';
+import { ErrorService } from 'src/app/services/error.service';
 
 function initHearingRequest(): HearingRequest {
   const initRequest = {
@@ -47,6 +48,7 @@ describe('CreateHearingComponent with multiple case types', () => {
 
   let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
   let routerSpy: jasmine.SpyObj<Router>;
+  let errorService: jasmine.SpyObj<ErrorService> = jasmine.createSpyObj('ErrorService', ['handleError']);
 
   beforeEach(() => {
     videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',
@@ -61,7 +63,8 @@ describe('CreateHearingComponent with multiple case types', () => {
       imports: [SharedModule, RouterTestingModule],
       providers: [
         { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
-        { provide: Router, useValue: routerSpy }
+        { provide: Router, useValue: routerSpy },
+        { provide: ErrorService, useValue: errorService },
       ],
       declarations: [CreateHearingComponent, BreadcrumbComponent, CancelPopupComponent]
     })
@@ -160,6 +163,7 @@ describe('CreateHearingComponent with single case type', () => {
 
   let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
   let routerSpy: jasmine.SpyObj<Router>;
+  let errorService: jasmine.SpyObj<ErrorService> = jasmine.createSpyObj('ErrorService', ['handleError']);
 
   beforeEach(() => {
     videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',
@@ -174,7 +178,8 @@ describe('CreateHearingComponent with single case type', () => {
       imports: [HttpClientModule, ReactiveFormsModule, RouterTestingModule],
       providers: [
         { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
-        { provide: Router, useValue: routerSpy }
+        { provide: Router, useValue: routerSpy },
+        { provide: ErrorService, useValue: errorService },
       ],
       declarations: [CreateHearingComponent, BreadcrumbComponent, CancelPopupComponent]
     })
@@ -203,6 +208,7 @@ describe('CreateHearingComponent with existing request in session', () => {
 
   let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
   let routerSpy: jasmine.SpyObj<Router>;
+  let errorService: jasmine.SpyObj<ErrorService> = jasmine.createSpyObj('ErrorService', ['handleError']);
 
   beforeEach(() => {
     videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',
@@ -217,7 +223,8 @@ describe('CreateHearingComponent with existing request in session', () => {
       imports: [HttpClientModule, ReactiveFormsModule, RouterTestingModule],
       providers: [
         { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
-        { provide: Router, useValue: routerSpy }
+        { provide: Router, useValue: routerSpy },
+        { provide: ErrorService, useValue: errorService },
       ],
       declarations: [CreateHearingComponent, BreadcrumbComponent, CancelPopupComponent]
     }).compileComponents();
