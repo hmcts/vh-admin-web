@@ -94,7 +94,8 @@ export class HearingScheduleComponent implements OnInit, CanDeactiveComponent {
   get courtRoom() { return this.schedulingForm.get('courtRoom'); }
 
   get hearingDateInvalid() {
-    return this.hearingDate.invalid && (this.hearingDate.dirty || this.hearingDate.touched || this.failedSubmission);
+    const todayDate = new Date(new Date().setHours(0, 0, 0, 0));
+    return this.hearingDate.invalid && (this.hearingDate.dirty || this.hearingDate.touched || this.failedSubmission) || new Date(this.hearingDate.value) < todayDate;
   }
 
   get hearingStartTimeHourInvalid() {
