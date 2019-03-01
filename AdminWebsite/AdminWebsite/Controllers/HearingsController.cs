@@ -18,6 +18,9 @@ namespace AdminWebsite.Controllers
     {
         private readonly IBookingsApiClient _bookingsApiClient;
 
+        /// <summary>
+        /// Instantiates the controller
+        /// </summary>
         public HearingsController(IBookingsApiClient bookingsApiClient)
         {
             _bookingsApiClient = bookingsApiClient;
@@ -94,7 +97,33 @@ namespace AdminWebsite.Controllers
             {   
                 var bookingsResponse = new BookingsResponse
                 {
-                    Hearings = new List<BookingsByDateResponse>(),
+                    Hearings = new List<BookingsByDateResponse>
+                    {
+                        new BookingsByDateResponse
+                        {
+                            Scheduled_date = new DateTime(2019, 04, 01),
+                            Hearings = new List<BookingsHearingResponse>
+                            {
+                                new BookingsHearingResponse
+                                {
+                                    Hearing_id = 1,
+                                    Court_room = "Room one",
+                                    Court_address = "Manchester",
+                                    Created_by = "ithc_admin@hearings.reform.hmcts.net",
+                                    Created_date = DateTime.Now.AddDays(-2),
+                                    Hearing_date = new DateTime(2019, 04, 01, 12, 0, 0),
+                                    Hearing_name = "IronMan vs Captain America",
+                                    Hearing_number = "2322122CD",
+                                    Hearing_type_name = "Application to Set Judgment Aside",
+                                    Judge_name = "Judge Lannister",
+                                    Scheduled_date_time = new DateTime(2019, 04, 01, 12, 0, 0),
+                                    Scheduled_duration = 40,
+                                    Last_edit_by = "ithc_admin@hearings.reform.hmcts.net",
+                                    Last_edit_date = DateTime.Now.AddHours(-3)
+                                }
+                            }
+                        }
+                    },
                     Next_cursor = "-1",
                     Limit = limit,
                     Next_page_url = null,

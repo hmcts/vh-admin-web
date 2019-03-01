@@ -3,7 +3,6 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using AdminWebsite.Contracts.Responses;
-using AdminWebsite.Security;
 using AdminWebsite.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,12 +17,13 @@ namespace AdminWebsite.Controllers
     public class ReferenceDataController : ControllerBase
     {
         private readonly IBookingsApiClient _bookingsApiClient;
-        private readonly IUserIdentity _userIdentity;
 
-        public ReferenceDataController(IBookingsApiClient bookingsApiClient, IUserIdentity userIdentity)
+        /// <summary>
+        /// Instantiate the controller
+        /// </summary>
+        public ReferenceDataController(IBookingsApiClient bookingsApiClient)
         {
             _bookingsApiClient = bookingsApiClient;
-            _userIdentity = userIdentity;
         }
         
         /// <summary>
@@ -33,7 +33,7 @@ namespace AdminWebsite.Controllers
         [HttpGet("types", Name = "GetHearingTypes")]
         [ProducesResponseType(typeof (IList<HearingTypeResponse>), (int) HttpStatusCode.OK)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
-        public async Task<ActionResult<IList<HearingTypeResponse>>> GetHearingTypes()
+        public ActionResult<IList<HearingTypeResponse>> GetHearingTypes()
         {
             var caseTypes = new List<HearingTypeResponse>
             {
@@ -60,7 +60,7 @@ namespace AdminWebsite.Controllers
         [HttpGet("participantroles", Name = "GetParticipantRoles")]
         [ProducesResponseType(typeof(IList<CaseRoleResponse>), (int) HttpStatusCode.OK)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
-        public async Task<ActionResult<IList<CaseRoleResponse>>> GetParticipantRoles()
+        public ActionResult<IList<CaseRoleResponse>> GetParticipantRoles()
         {
             var caseRoles = new List<CaseRoleResponse>
             {

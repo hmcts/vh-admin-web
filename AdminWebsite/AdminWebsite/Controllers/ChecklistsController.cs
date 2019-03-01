@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using AdminWebsite.Models;
@@ -18,6 +19,9 @@ namespace AdminWebsite.Controllers
     {
         private readonly IUserIdentity _userIdentity;
 
+        /// <summary>
+        /// Instantiate the controller
+        /// </summary>
         public ChecklistsController(IUserIdentity userIdentity)
         {
             _userIdentity = userIdentity;
@@ -42,9 +46,49 @@ namespace AdminWebsite.Controllers
 
             var response = new ChecklistsResponse
             {
-                Checklists = new List<HearingParticipantCheckListResponse>(),
+                Checklists = new List<HearingParticipantCheckListResponse>
+                {
+                    new HearingParticipantCheckListResponse
+                    {
+                        Completed_date = DateTime.Now.AddDays(-1),
+                        First_name = "Captain",
+                        Last_name = "America",
+                        Hearing_id = 1,
+                        Landline = "+12321321",
+                        Mobile = "12321312",
+                        Participant_id = 1,
+                        Question_answer_responses = new List<QuestionAnswerResponse>
+                        {
+                            new QuestionAnswerResponse
+                            {
+                                Answer = "Laptop",
+                                Created_at = DateTime.Now.AddDays(-1),
+                                Notes = null,
+                                Question_key = "EQUIPMENT_DEVICE"
+                            }
+                        },
+                        Role = "Professional",
+                        Title = "Mr"
+                    }
+                },
                 Current_page = 0,
-                Hearings = new List<ChecklistsHearingResponse>(),
+                Hearings = new List<ChecklistsHearingResponse>
+                {
+                    new ChecklistsHearingResponse
+                    {
+                        Cases = new List<CaseResponse>
+                        {
+                            new CaseResponse
+                            {
+                                Name = "IronMan vs Captain America",
+                                Number = "CDX2w312321"
+                            }
+                        },
+                        Hearing_id = 1,
+                        Scheduled_date_time = DateTime.Now.AddDays(3),
+                        Status = "Booked"
+                    }
+                },
                 Next_page_url = null,
                 Prev_page_url = null,
                 Total_pages = 1,
