@@ -10,57 +10,9 @@ import { ParticipantModel } from '../common/model/participant.model';
   providedIn: 'root'
 })
 export class SearchService {
-  // for testing, should be removed
 
-  ParticipantList: ParticipantModel[] =
-    [
-      {
-        email: 'vb.email1@go.couk',
-        role: 'Citizen',
-        title: 'Mrs',
-        first_name: 'Alis',
-        last_name: 'Smith',
-        phone: '1111222222',
-        display_name: 'Alis',
-      },
-      {
-        email: 'email2@go.couk',
-        role: 'Citizen',
-        title: 'Mrs',
-        first_name: 'Rob',
-        last_name: 'Smith',
-        phone: '455576867876',
-        display_name: 'Alis',
-      },
-      {
-        email: 'email3@go.couk',
-        role: 'Citizen',
-        title: 'Mrs',
-        first_name: 'Alis',
-        last_name: 'Smith',
-        phone: '1111222222',
-        display_name: 'Alis',
-      },
-      {
-        email: 'email4@go.couk',
-        role: 'Citizen',
-        title: 'Mrs',
-        first_name: 'Alis',
-        last_name: 'Smith',
-        phone: '1111222222',
-        display_name: 'Alis',
-      },
-      {
-        email: 'email5@go.couk',
-        role: 'Citizen',
-        title: 'Mrs',
-        first_name: 'Alis',
-        last_name: 'Smith',
-        phone: '1111222222',
-        display_name: 'Alis',
-      }
-    ];
-  // testing end
+  // empty since the functionality is yet to be implemented
+  ParticipantList: ParticipantModel[] = [];
 
   TitleList: IDropDownModel[] =
     [

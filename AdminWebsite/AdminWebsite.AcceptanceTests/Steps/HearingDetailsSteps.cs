@@ -19,8 +19,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             HearingDetailsPage();
             InputCaseNumber();
             SelectHearingType();
-            InputCaseName();            
-            SelectHearingChannel();
+            InputCaseName();
         }
 
         [When(@"Admin user is on hearing details page")]
