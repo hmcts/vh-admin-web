@@ -101,7 +101,17 @@ namespace AdminWebsite.AcceptanceTests.Helpers
             ChromeOptions options = new ChromeOptions();
             options.AddArgument("ignore -certificate-errors");
 
-            return new ChromeDriver(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),options);
-        }        
+            return new ChromeDriver(ChromeDriverPath, options);
+        }
+
+        private string ChromeDriverPath
+        {
+            get
+            {
+                const string osxPath = "/usr/local/bin";
+                string assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                return Directory.Exists(osxPath) ? osxPath : assemblyPath;
+            }
+        }
     }
 }
