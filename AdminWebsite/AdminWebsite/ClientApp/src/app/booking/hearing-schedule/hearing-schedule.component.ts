@@ -133,6 +133,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
       .subscribe(
         (data: CourtResponse[]) => {
           this.availableCourts = data;
+          console.log(`courts = ${JSON.stringify(data, null, 2)}`);
           const pleaseSelect = new CourtResponse();
           pleaseSelect.address = 'Please Select';
           pleaseSelect.id = -1;

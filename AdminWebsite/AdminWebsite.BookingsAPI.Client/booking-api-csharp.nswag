@@ -3,7 +3,7 @@
   "defaultVariables": null,
   "swaggerGenerator": {
     "fromSwagger": {
-      "url": "https://localhost:5300/swagger/v1/swagger.json",
+      "url": "http://localhost:5301/swagger/v1/swagger.json",
       "output": null
     }
   },
@@ -30,7 +30,7 @@
       "clientClassAccessModifier": "public",
       "typeAccessModifier": "public",
       "generateContractsOutput": false,
-      "contractsNamespace": "AdminWebsite.Services",
+      "contractsNamespace": "AdminWebsite.BookingsAPI.Client",
       "contractsOutputFilePath": "BookingsApiContracts.cs",
       "parameterDateTimeFormat": "s",
       "generateUpdateJsonSerializerSettingsMethod": true,
@@ -78,9 +78,9 @@
       "typeNameGeneratorType": null,
       "propertyNameGeneratorType": null,
       "enumNameGeneratorType": null,
-      "serviceHost": "http://localhost:5300",
+      "serviceHost": "http://localhost:5301",
       "serviceSchemes": null,
-      "output": "../AdminWebsite/Services/BookingsApiClient.cs"
+      "output": "BookingsApiClient.cs"
     }
   }
 }
