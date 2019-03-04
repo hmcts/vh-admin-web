@@ -18,6 +18,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _summary.ClickBreadcrumb("Summary");
             SummaryPage();
         }
+        [Then(@"user should be on summary page")]
         [When(@"Admin user is on summary page")]
         public void SummaryPage()
         {

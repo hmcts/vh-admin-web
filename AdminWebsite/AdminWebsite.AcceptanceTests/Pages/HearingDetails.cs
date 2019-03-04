@@ -14,7 +14,7 @@ namespace AdminWebsite.AcceptanceTests.Pages
         private By _caseType => By.XPath("//*[@class='govuk-heading-s']");
         public void CaseNumber(string value) => InputValues(_caseNumber, value);
         public void CaseName(string value) => InputValues(_caseName, value);
-        public void CaseTypes(string option) => SelectOption(CommonLocator.List("caseType"), option);
+        public void CaseTypes() => SelectOption(CommonLocator.List("caseType"));
         public string CaseType() => GetElementText(_caseType);
         public void HearingType() => SelectOption(CommonLocator.List("hearingType"));
         public void HearingChannel() => SelectOption(CommonLocator.List("hearingMethod"));

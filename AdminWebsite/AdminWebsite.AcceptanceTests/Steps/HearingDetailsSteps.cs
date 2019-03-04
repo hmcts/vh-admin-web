@@ -39,9 +39,9 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _hearingDetails.CaseName(caseName);
         }
         [When(@"Select case type")]
-        public void SelectCaseType(string caseType = "")
-        {
-            _hearingDetails.CaseTypes(caseType);
+        public void SelectCaseType()
+        {           
+            _hearingDetails.CaseTypes();
         }
         [When(@"Select hearing type")]
         public void SelectHearingType()
