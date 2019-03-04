@@ -53,11 +53,7 @@
     </div>
   </div>
 
-  <div *ngIf="availableCaseTypes.length === 1">
-    <h2 class="govuk-heading-s"> Case type: {{selectedCaseType}}</h2>
-  </div>
-
-  <div *ngIf="availableCaseTypes.length !== 1" [ngClass]="caseTypeInvalid ? 'govuk-form-group--error' : 'govuk-form-group'">
+  <div *ngIf="availableCaseTypes.length > 1" [ngClass]="caseTypeInvalid ? 'govuk-form-group--error' : 'govuk-form-group'">
     <label class="govuk-label govuk-!-width-one-half" for="caseType">
       Case type
     </label>
