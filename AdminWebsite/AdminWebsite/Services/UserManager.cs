@@ -148,13 +148,9 @@ namespace AdminWebsite.Services
             _userAccountService.AddUserToGroup(new User {Id = userId}, group);
         }
 
-        public virtual FeedRequest AddAdministrator()
+        public virtual ParticipantRequest AddAdministrator()
         {
-            var participantRequest = _userAccountService.GetAdministrator();
-
-            FeedRequest feedRequest = new FeedRequest { Location = "Administrator", Participants = new List<ParticipantRequest>() };
-            feedRequest.Participants.Add(participantRequest);
-            return feedRequest;
+            return _userAccountService.GetAdministrator();
         }
     }
 }

@@ -27,7 +27,7 @@ namespace AdminWebsite.Middleware
             {
                 await _next(httpContext);
             }
-            catch (HearingApiException apiException)
+            catch (BookingsApiException apiException)
             {
                 var properties = new Dictionary<string, string>();
                 properties.Add("response", apiException.Response);

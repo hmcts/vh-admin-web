@@ -100,7 +100,8 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
   get courtRoom() { return this.schedulingForm.get('courtRoom'); }
 
   get hearingDateInvalid() {
-    return this.hearingDate.invalid && (this.hearingDate.dirty || this.hearingDate.touched || this.failedSubmission);
+    const todayDate = new Date(new Date().setHours(0, 0, 0, 0));
+    return (this.hearingDate.invalid || new Date(this.hearingDate.value) < todayDate) && (this.hearingDate.dirty || this.hearingDate.touched || this.failedSubmission);
   }
 
   get hearingStartTimeHourInvalid() {

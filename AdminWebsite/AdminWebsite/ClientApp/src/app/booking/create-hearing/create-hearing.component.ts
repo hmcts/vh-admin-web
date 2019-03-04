@@ -48,7 +48,6 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
     this.checkForExistingRequest();
     this.initForm();
     this.retrieveHearingTypes();
-    this.retrieveHearingMediums();
   }
 
   goToDiv(fragment: string): void {
@@ -77,8 +76,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
       caseName: [firstCase.name, Validators.required],
       caseNumber: [firstCase.number, Validators.required],
       caseType: [this.selectedCaseType, [Validators.required, Validators.pattern('^((?!Please Select).)*$')]],
-      hearingType: [this.hearing.hearing_type_id, [Validators.required, Validators.min(1)]],
-      hearingMethod: [this.hearing.hearing_medium_id, [Validators.required, Validators.min(1)]]
+      hearingType: [this.hearing.hearing_type_id, [Validators.required, Validators.min(1)]]
     });
   }
 
@@ -86,7 +84,6 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
   get caseNumber() { return this.hearingForm.get('caseNumber'); }
   get caseType() { return this.hearingForm.get('caseType'); }
   get hearingType() { return this.hearingForm.get('hearingType'); }
-  get hearingMethod() { return this.hearingForm.get('hearingMethod'); }
 
   get caseNameInvalid() {
     return this.caseName.invalid && (this.caseName.dirty || this.caseName.touched || this.failedSubmission);
@@ -102,10 +99,6 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
 
   get hearingTypeInvalid() {
     return this.hearingType.invalid && (this.hearingType.dirty || this.hearingType.touched || this.failedSubmission);
-  }
-
-  get hearingMethodInvalid() {
-    return this.hearingMethod.invalid && (this.hearingMethod.dirty || this.hearingMethod.touched || this.failedSubmission);
   }
 
   saveHearingDetails() {
@@ -164,17 +157,6 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
           this.setupCaseTypeAndHearingTypes(data);
           this.filterHearingTypes();
         },
-        error => this.errorService.handleError(error)
-      );
-  }
-
-  private retrieveHearingMediums() {
-    this.hearingService.getHearingMediums()
-      .subscribe((data: HearingMediumResponse[]) => {
-        this.availableHearingMediums = data;
-        this.availableHearingMediums.sort(this.dynamicSort('name'));
-        this.filterHearingMethod();
-      },
         error => this.errorService.handleError(error)
       );
   }

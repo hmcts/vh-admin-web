@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, EventEmitter, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-
 import { TopMenuItems } from './topMenuItems';
+import { SignOutComponent } from '../sign-out/sign-out.component';
 
 @Component({
   selector: 'app-header',
@@ -9,9 +9,15 @@ import { TopMenuItems } from './topMenuItems';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit {
+  @ViewChild(SignOutComponent)
+  signoutComponent: SignOutComponent;
+
+  $confirmLogout: EventEmitter<any>;
+
   topMenuItems = [];
 
   constructor(private router: Router) {
+    this.$confirmLogout = new EventEmitter();
   }
 
   selectMenuItem(indexOfItem: number) {
@@ -24,6 +30,14 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit() {
     this.topMenuItems = TopMenuItems;
+    this.signoutComponent.confirmLogout.subscribe(() => { this.logout() });
   }
 
+  logout() {
+    this.$confirmLogout.emit();
+  }
+
+  get confirmLogout() {
+    return this.$confirmLogout;
+  }
 }

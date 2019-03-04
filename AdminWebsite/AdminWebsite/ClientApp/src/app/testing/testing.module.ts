@@ -10,6 +10,8 @@ import { HeaderStubComponent } from './stubs/header-stub';
 import { PaginationStubComponent } from './stubs/pagination-stub';
 import { ParticipantsListStubComponent } from './stubs/participant-list-stub';
 import { SearchEmailStubComponent } from './stubs/search-email-stub';
+import { SignOutStubComponent } from './stubs/sign-out-stub';
+import { SignOutPopupStubComponent } from './stubs/sign-out-popup-stub';
 import { RemovePopupStubComponent } from './stubs/remove-popup-stub';
 import { BookingEditStubComponent } from './stubs/booking-edit-stub';
 
@@ -29,7 +31,10 @@ import { BookingEditStubComponent } from './stubs/booking-edit-stub';
     ParticipantsListStubComponent,
     SearchEmailStubComponent,
     RemovePopupStubComponent,
-    BookingEditStubComponent
+    BookingEditStubComponent,
+    SearchEmailStubComponent,
+    SignOutPopupStubComponent,
+    SignOutStubComponent
   ]
 })
 export class TestingModule { }
