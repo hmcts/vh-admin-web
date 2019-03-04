@@ -13,6 +13,7 @@ import { OtherInformationComponent } from './other-information/other-information
 import { ParticipantsListComponent } from './participants-list/participants-list.component';
 import { SearchEmailComponent } from './search-email/search-email.component';
 import { SummaryComponent } from './summary/summary.component';
+import { RemovePopupComponent } from '../popups/remove-popup/remove-popup.component';
 
 @NgModule({
   imports: [
@@ -25,6 +26,7 @@ import { SummaryComponent } from './summary/summary.component';
     HearingScheduleComponent,
     AssignJudgeComponent,
     AddParticipantComponent,
+    RemovePopupComponent,
     OtherInformationComponent,
     SummaryComponent,
     BookingConfirmationComponent,

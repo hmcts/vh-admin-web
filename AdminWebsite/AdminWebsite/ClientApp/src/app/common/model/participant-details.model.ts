@@ -1,5 +1,5 @@
 ﻿export class ParticipantDetailsModel {
-  constructor(participantId: number, title: string, firstName: string, lastName: string,
+  constructor(participantId: string, title: string, firstName: string, lastName: string,
     role: string, userName: string, email: string) {
     this.ParticipantId = participantId;
     this.FirstName = firstName;
@@ -11,7 +11,7 @@
     this.Email = email;
   }
 
-  ParticipantId: number;
+  ParticipantId: string;
   Title: string;
   FirstName: string;
   LastName: string;

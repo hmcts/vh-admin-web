@@ -28,20 +28,26 @@ namespace AdminWebsite.Security
 
         public AuthenticationResult GetAuthorisationResult(string clientId, string clientSecret, string clientResource)
         {
-            AuthenticationResult result;
+            if (string.IsNullOrEmpty(clientId)) throw new ArgumentNullException(clientId, nameof(clientId));
+            if (string.IsNullOrEmpty(clientSecret)) throw new ArgumentNullException(clientSecret, nameof(clientSecret));
+            if (string.IsNullOrEmpty(clientResource)) throw new ArgumentNullException(clientResource, nameof(clientResource));
+
             var credential = new ClientCredential(clientId, clientSecret);
             var authContext = new AuthenticationContext($"{_securitySettings.Authority}");
 
             try
             {
-                result = authContext.AcquireTokenAsync(clientResource, credential).Result;
+                return authContext.AcquireTokenAsync(clientResource, credential).Result;
             }
-            catch (AdalException)
+            catch (AggregateException e)
             {
-                throw new UnauthorizedAccessException();
-            }
+                if (e.InnerException is AdalException adalException)
+                {
+                    throw new UnauthorizedAccessException($"Not authorized to access service {clientResource}, please verify client and resource settings", adalException);
+                }
 
-            return result;
+                throw;
+            }
         }
     }
 }

@@ -5,8 +5,7 @@
 
     <IsPackable>false</IsPackable>
   </PropertyGroup>
-
-
+  
   <ItemGroup>
     <PackageReference Include="DotNetSeleniumExtras.PageObjects" Version="3.11.0" />
     <PackageReference Include="DotNetSeleniumExtras.WaitHelpers" Version="3.11.0" />
@@ -34,10 +33,34 @@
     <Compile Update="Hooks\Browser.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Hooks\SaucelabsResult.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Steps\AddParticipantsSteps.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Steps\AssignJudgeSteps.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Steps\CommonSteps.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Steps\DashboardSteps.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Steps\HearingDetailsSteps.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Steps\HearingScheduleSteps.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Steps\LoginSteps.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Steps\OtherInformationSteps.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Steps\SummarySteps.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
@@ -46,20 +69,29 @@
     <None Update="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-        <None Update="parameters.runsettings">
+    <None Update="Features\HearingSchedule.feature">
+      <Generator></Generator>
+    </None>
+    <None Update="Features\OtherInformation.feature">
+      <Generator></Generator>
+    </None>
+    <None Update="parameters.runsettings">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Features\CreateHearing.feature">
+      <Generator></Generator>
     </None>
     <None Update="Features\Login.feature">
       <Generator></Generator>
     </None>
   </ItemGroup>
 
-
+  
   <Target Name="AfterUpdateFeatureFilesInProject">
     <!-- include any generated SpecFlow files in the compilation of the project if not included yet -->
     <ItemGroup>
-      <Compile Include="**\*.feature.cs" Exclude="@(Compile)" />
+        <Compile Include="**\*.feature.cs" Exclude="@(Compile)" />
     </ItemGroup>
-  </Target>
+</Target>
 
 </Project>

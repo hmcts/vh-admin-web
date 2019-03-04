@@ -11,17 +11,7 @@
     border-spacing: 0;
     border-collapse: collapse;
   }
-  .vhlink:link {
-    color: #005ea5;
-    text-decoration: none;
-    font-weight: 500;
-    margin-left: 10px;
- }
-
-.vh-row{
+  .vh-row{
     margin-top: 10px;
 }
 
-.remove-header-padding {
-    margin-bottom: 0px;
-}

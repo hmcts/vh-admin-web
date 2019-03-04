@@ -35,6 +35,10 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
            _dashboard.UnauthorisedText().Should().Be(errorMessage);
         }
-
+        [When(@"book a video hearing panel is selected")]
+        public void WhenBookAVideoHearingPanelIsSelected()
+        {
+            _dashboard.BookHearingPanel();
+        }
     }
 }

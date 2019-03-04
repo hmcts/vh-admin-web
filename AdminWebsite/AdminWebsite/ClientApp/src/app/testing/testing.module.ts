@@ -12,6 +12,8 @@ import { ParticipantsListStubComponent } from './stubs/participant-list-stub';
 import { SearchEmailStubComponent } from './stubs/search-email-stub';
 import { SignOutStubComponent } from './stubs/sign-out-stub';
 import { SignOutPopupStubComponent } from './stubs/sign-out-popup-stub';
+import { RemovePopupStubComponent } from './stubs/remove-popup-stub';
+import { BookingEditStubComponent } from './stubs/booking-edit-stub';
 
 @NgModule({
   imports: [
@@ -27,6 +29,9 @@ import { SignOutPopupStubComponent } from './stubs/sign-out-popup-stub';
     HeaderStubComponent,
     PaginationStubComponent,
     ParticipantsListStubComponent,
+    SearchEmailStubComponent,
+    RemovePopupStubComponent,
+    BookingEditStubComponent,
     SearchEmailStubComponent,
     SignOutPopupStubComponent,
     SignOutStubComponent

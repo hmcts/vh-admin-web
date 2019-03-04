@@ -22,7 +22,7 @@ export class BookingsListComponent implements OnInit {
   selectedGroupIndex = -1;
   showDetails = false;
   selectedElement: HTMLElement;
-  selectedHearingId: number = 0;
+  selectedHearingId: string = '';
 
   constructor(private bookingsListService: BookingsListService,
     @Inject(DOCUMENT) document) { }
