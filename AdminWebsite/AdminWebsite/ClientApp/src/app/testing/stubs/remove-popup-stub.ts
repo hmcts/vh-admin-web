@@ -1,4 +1,4 @@
-import {Component, Input, Output, EventEmitter, NgModule} from '@angular/core';
+import {Component, Input, Output, EventEmitter} from '@angular/core';
 
 @Component({ selector: 'app-remove-popup', template: '' })
 export class RemovePopupStubComponent {
@@ -8,10 +8,3 @@ export class RemovePopupStubComponent {
 
   @Input() fullName: string;
 }
-
-@NgModule({
-  declarations: [
-    RemovePopupStubComponent
-  ]
-})
-export class RemovePopupStubModule {}
