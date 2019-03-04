@@ -32,7 +32,7 @@ export class ConfigService {
         this.parse(data);
         sessionStorage.setItem(this.settingsSessionKey, JSON.stringify(data));
         resolve(true);
-      }, err => resolve(err));
+      }, err => reject(err));
     });
   }
 
