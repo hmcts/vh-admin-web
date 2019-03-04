@@ -14,7 +14,6 @@ using Microsoft.Extensions.Options;
 using Microsoft.Graph;
 using Newtonsoft.Json;
 using AdminWebsite.Configuration;
-using Microsoft.Extensions.Configuration;
 
 namespace AdminWebsite.Services
 {
@@ -47,7 +46,6 @@ namespace AdminWebsite.Services
         private readonly SecuritySettings _securitySettings;
         private readonly bool _isLive;
         private readonly string _temporaryPassword;
-        private readonly AppConfigSettings _appConfigSettings;
 
         string IUserAccountService.TemporaryPassword => _temporaryPassword;
 
@@ -58,7 +56,6 @@ namespace AdminWebsite.Services
             _securitySettings = securitySettings.Value;
             _isLive = appSettings.Value.IsLive;
             _temporaryPassword = _securitySettings.TemporaryPassword;
-            _appConfigSettings = appSettings.Value;
         }
 
         public NewAdUserAccount CreateUser(User newUser)
