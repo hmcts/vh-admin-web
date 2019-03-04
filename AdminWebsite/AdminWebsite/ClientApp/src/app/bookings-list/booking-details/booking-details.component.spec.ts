@@ -4,7 +4,7 @@ import { Component, Input } from '@angular/core';
 import { BookingDetailsComponent } from './booking-details.component';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { BookingDetailsService } from '../../services/booking-details.service';
-import { HearingResponse } from '../../services/clients/api-client';
+import { HearingDetailsResponse } from '../../services/clients/api-client';
 import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
 import { ParticipantDetailsModel } from '../../common/model/participant-details.model';
 
@@ -35,7 +35,7 @@ class HearingDetailsComponentMock {
 }
 
 
-let hearingResponse = new HearingResponse();
+let hearingResponse = new HearingDetailsResponse();
 
 class VideoHearingsServiceMock {
   getHearingById() {
@@ -66,6 +66,7 @@ describe('BookingDetailsComponent', () => {
     }).compileComponents();
     fixture = TestBed.createComponent(BookingDetailsComponent);
     component = fixture.componentInstance;
+    component.hearingId = '1';
     fixture.detectChanges();
   }));
 
@@ -76,7 +77,7 @@ describe('BookingDetailsComponent', () => {
   it('should get hearings details', (() => {
     component.ngOnInit();
     expect(component.hearing).toBeTruthy();
-    expect(component.hearing.HearingId).toBe(44);
+    expect(component.hearing.HearingId).toBe('44');
     expect(component.hearing.Duration).toBe(120);
     expect(component.hearing.HearingCaseNumber).toBe('XX3456234565');
   }))
@@ -86,7 +87,7 @@ describe('BookingDetailsComponent', () => {
     expect(component.judges).toBeTruthy();
     expect(component.judges.length).toBe(1);
     expect(component.judges[0].Role).toBe('Judge');
-    expect(component.judges[0].ParticipantId).toBe(1);
+    expect(component.judges[0].ParticipantId).toBe('1');
     expect(component.judges[0].FirstName).toBe('Alan');
   }))
 
@@ -95,13 +96,13 @@ describe('BookingDetailsComponent', () => {
     expect(component.participants).toBeTruthy();
     expect(component.participants.length).toBe(2);
     expect(component.participants[0].Role).toBe('Citizen');
-    expect(component.participants[0].ParticipantId).toBe(2);
+    expect(component.participants[0].ParticipantId).toBe('2');
   }))
 });
 
 export class BookingDetailsTestData {
   getBookingsDetailsModel() {
-    return new BookingsDetailsModel(44, new Date('2019-11-22 13:58:40.3730067'),
+    return new BookingsDetailsModel('44', new Date('2019-11-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', '', '33A', 'Coronation Street',
       'Jhon Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'));
   }
@@ -109,9 +110,9 @@ export class BookingDetailsTestData {
   getParticipants() {
     let participants: Array<ParticipantDetailsModel> = [];
     let judges: Array<ParticipantDetailsModel> = [];
-    let p1 = new ParticipantDetailsModel(1, 'Mrs', 'Alan', 'Brake', 'Judge', 'email.p1@email.com', 'email1@co.uk');
-    let p2 = new ParticipantDetailsModel(2, 'Mrs', 'Roy', 'Bark', 'Citizen', 'email.p2@email.com', 'email2@co.uk');
-    let p3 = new ParticipantDetailsModel(2, 'Mrs', 'Fill', 'Green', 'Professional', 'email.p3@email.com', 'email3@co.uk');
+    let p1 = new ParticipantDetailsModel('1', 'Mrs', 'Alan', 'Brake', 'Judge', 'email.p1@email.com', 'email1@co.uk');
+    let p2 = new ParticipantDetailsModel('2', 'Mrs', 'Roy', 'Bark', 'Citizen', 'email.p2@email.com', 'email2@co.uk');
+    let p3 = new ParticipantDetailsModel('2', 'Mrs', 'Fill', 'Green', 'Professional', 'email.p3@email.com', 'email3@co.uk');
     participants.push(p2);
     participants.push(p3);
     judges.push(p1);

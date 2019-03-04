@@ -15,7 +15,7 @@ export class BookingDetailsComponent implements OnInit {
   closeDetails = new EventEmitter();
 
   @Input()
-  hearingId: number;
+  hearingId: string;
 
   hearing: BookingsDetailsModel;
   participants: Array<ParticipantDetailsModel> = [];
@@ -24,7 +24,7 @@ export class BookingDetailsComponent implements OnInit {
   constructor(private videoHearingService: VideoHearingsService, private bookingDetailsService: BookingDetailsService) { }
 
   ngOnInit() {
-    this.videoHearingService.getHearingById(this.hearingId.toString()).subscribe(data => {
+    this.videoHearingService.getHearingById(this.hearingId).subscribe(data => {
       this.mapHearing(data);
     });
   }

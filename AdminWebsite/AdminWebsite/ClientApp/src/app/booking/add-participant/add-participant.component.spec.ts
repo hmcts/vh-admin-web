@@ -11,7 +11,7 @@ import { ParticipantsListStubComponent } from 'src/app/testing/stubs/participant
 import { RemovePopupStubComponent } from '../../testing/stubs/remove-popup-stub';
 
 import { SearchServiceStub } from 'src/app/testing/stubs/serice-service-stub';
-import { ParticipantRoleResponse, ParticipantRequest } from '../../services/clients/api-client';
+import {CaseRoleResponse } from '../../services/clients/api-client';
 import { SearchService } from '../../services/search.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { ParticipantService } from '../services/participant.service';
@@ -30,11 +30,11 @@ let lastName: AbstractControl;
 let phone: AbstractControl;
 let displayName: AbstractControl;
 
-const roleList: ParticipantRoleResponse[] =
+const roleList: CaseRoleResponse[] =
   [
-    new ParticipantRoleResponse({ name: 'Citizen' }),
-    new ParticipantRoleResponse({ name: 'Judge' }),
-    new ParticipantRoleResponse({ name: 'Professional' }),
+    new CaseRoleResponse({ name: 'Citizen' }),
+    new CaseRoleResponse({ name: 'Judge' }),
+    new CaseRoleResponse({ name: 'Professional' }),
   ];
 
 let feeds: FeedModel[] = [];
@@ -58,8 +58,8 @@ p2.role = 'judge';
 p2.title = 'Mr.';
 p2.email = 'test@test.com';
 p2.phone = '32332';
-let p3 = new ParticipantRequest();
 
+let p3 = new ParticipantModel();
 p3.first_name = 'Chris';
 p3.last_name = 'Green';
 p3.display_name = 'Chris Green';
@@ -151,14 +151,14 @@ describe('AddParticipantComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
-  it('should constractor set role list and title list', () => {
+  it('should set role list and title list', () => {
     component.ngOnInit();
     expect(component.roleList).toBeTruthy();
     expect(component.roleList.length).toBe(3);
     expect(component.titleList).toBeTruthy();
     expect(component.titleList.length).toBe(2);
   });
-  it('should set initiall values for fields', () => {
+  it('should set initial values for fields', () => {
     component.ngOnInit();
     expect(role.value).toBe('Please Select');
     expect(firstName.value).toBe('');
@@ -228,6 +228,8 @@ describe('AddParticipantComponent', () => {
   });
   it('saved participant added to list of participants', () => {
     spyOn(component.searchEmail, 'validateEmail').and.returnValue(true);
+    component.searchEmail.email = 'mock@email.com';
+
     role.setValue('Appellant');
     firstName.setValue('Sam');
     lastName.setValue('Green');
@@ -240,6 +242,8 @@ describe('AddParticipantComponent', () => {
   });
   it('should see next button and hide add button after saved participant', () => {
     spyOn(component.searchEmail, 'validateEmail').and.returnValue(true);
+    component.searchEmail.email = 'mock@email.com';
+
     role.setValue('Appellant');
     firstName.setValue('Sam');
     lastName.setValue('Green');
@@ -253,19 +257,22 @@ describe('AddParticipantComponent', () => {
     expect(component.displayAddButton).toBeFalsy();
     expect(component.displayClearButton).toBeFalsy();
   });
-  it('press button cancel display popup confirmatiom dialog', () => {
+  it('press button cancel display popup confirmation dialog', () => {
     component.addParticipantCancel();
     expect(component.showCancelPopup).toBeTruthy();
   });
-  it('press button cancel on popup close popup confirmatiom dialog and navigate to dashboard', () => {
+
+  it('press button cancel on popup close popup confirmation dialog and navigate to dashboard', () => {
     component.handleCancelBooking('string');
     expect(routerSpy.navigate).toHaveBeenCalledWith(['/dashboard']);
     expect(component.showCancelPopup).toBeFalsy();
   });
-  it('press button continue on popup close popup confirmatiom dialog and return to add participant view', () => {
+
+  it('press button continue on popup close popup confirmation dialog and return to add participant view', () => {
     component.handleContinueBooking('string');
     expect(component.showCancelPopup).toBeFalsy();
   });
+
   it('initially should be visible next button, add and clear buttons are not visible', () => {
     expect(component.displayNextButton).toBeTruthy();
     expect(component.displayAddButton).toBeFalsy();

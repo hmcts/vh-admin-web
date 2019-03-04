@@ -53,7 +53,6 @@ describe('CreateHearingComponent with multiple case types', () => {
     routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
     videoHearingsServiceSpy.getCurrentRequest.and.returnValue(newHearing);
-    videoHearingsServiceSpy.getHearingMediums.and.returnValue(of(MockValues.HearingMediums));
     videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
 
     TestBed.configureTestingModule({
@@ -159,7 +158,6 @@ describe('CreateHearingComponent with single case type', () => {
     routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
     videoHearingsServiceSpy.getCurrentRequest.and.returnValue(newHearing);
-    videoHearingsServiceSpy.getHearingMediums.and.returnValue(of(MockValues.HearingMediums));
     videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesSingle));
 
     TestBed.configureTestingModule({
@@ -204,7 +202,6 @@ describe('CreateHearingComponent with existing request in session', () => {
     routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
     videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
-    videoHearingsServiceSpy.getHearingMediums.and.returnValue(of(MockValues.HearingMediums));
     videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
 
     TestBed.configureTestingModule({

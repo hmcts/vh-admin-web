@@ -74,7 +74,6 @@ describe('SummaryComponent with valid request', () => {
       ['getHearingMediums', 'getHearingTypes', 'getCurrentRequest', 'updateHearingRequest', 'saveHearing']);
 
     videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
-    videoHearingsServiceSpy.getHearingMediums.and.returnValue(of(MockValues.HearingMediums));
     videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
     routerSpy.url.and.returnValue
 
@@ -106,7 +105,7 @@ describe('SummaryComponent with valid request', () => {
     expect(component.caseHearingType).toEqual(hearingstring);
     expect(component.hearingDate).toEqual(existingRequest.scheduled_date_time);
     const courtString = MockValues.Courts.find(c => c.id === existingRequest.court_id);
-    expect(component.courtRoomAddress).toEqual(courtString.address + ', ' + existingRequest.court_room);
+    expect(component.courtRoomAddress).toEqual(courtString.name);
   });
 });
 
@@ -130,7 +129,6 @@ describe('SummaryComponent  with invalid request', () => {
 
     const existingRequest = initBadHearingRequest();
     videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
-    videoHearingsServiceSpy.getHearingMediums.and.returnValue(of(MockValues.HearingMediums));
     videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
     videoHearingsServiceSpy.saveHearing.and.callFake(() => {
       return throwError(new Error('Fake error'));

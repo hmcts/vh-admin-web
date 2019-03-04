@@ -17,7 +17,7 @@ export class BookingDetailsService {
       hearingResponse.scheduled_duration,
       hearingResponse.cases && hearingResponse.cases.length > 0 ? hearingResponse.cases[0].number : "",
       hearingResponse.cases && hearingResponse.cases.length > 0 ? hearingResponse.cases[0].name : "",
-      hearingResponse.case_type_name,
+      hearingResponse.hearing_type_name,
       "",
       "", // TODO not implemented yet
       hearingResponse.hearing_venue_name,

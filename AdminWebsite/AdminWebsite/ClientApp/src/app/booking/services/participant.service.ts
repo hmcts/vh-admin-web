@@ -10,6 +10,7 @@ export class ParticipantService {
   constructor() { }
 
   public checkDuplication(email: string, participants:ParticipantModel[]) :boolean{
+    if (!email) throw new Error(`Cannot check for duplication on undefined email`);
     let existParticipant = false;
     if (participants.length > 0) {
       const part = participants.find(s => s.email.toLowerCase() === email.toLowerCase());
@@ -59,7 +60,7 @@ export class ParticipantService {
       }
     }
     participantFeed.participants.push(newParticipant);
-    
+
   }
 
   private getExistingFeedWith(email: string, hearing:HearingModel): FeedModel {
