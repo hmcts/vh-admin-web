@@ -11,11 +11,13 @@ import {
 export class VideoHearingsService {
 
   private newRequestKey: string;
+  private bookingHasChangesKey: string;
   private newHearing: HearingRequest;
   private hearingsMedium: Observable<HearingMediumResponse[]>;
 
   constructor(private bhClient: BHClient) {
     this.newRequestKey = 'bh-newRequest';
+    this.bookingHasChangesKey = 'bookingHasChangesKey';
   }
 
   private checkForExistingHearing() {
@@ -36,7 +38,16 @@ export class VideoHearingsService {
   }
 
   hasUnsavedChanges() {
-    return sessionStorage.getItem(this.newRequestKey) !== null;
+    return sessionStorage.getItem(this.newRequestKey) !== null ||
+      sessionStorage.getItem(this.bookingHasChangesKey) !== null ;
+  }
+
+  onBookingChange(isChanged:boolean) {
+    if (isChanged) {
+      sessionStorage.setItem(this.bookingHasChangesKey, "true");
+    } else {
+      sessionStorage.removeItem(this.bookingHasChangesKey);
+    }
   }
 
   getHearingMediums(): Observable<HearingMediumResponse[]> {
@@ -64,6 +75,7 @@ export class VideoHearingsService {
 
   cancelRequest() {
     sessionStorage.removeItem(this.newRequestKey);
+    sessionStorage.removeItem(this.bookingHasChangesKey);
   }
 
   saveHearing(newRequest: HearingRequest): Observable<number> {

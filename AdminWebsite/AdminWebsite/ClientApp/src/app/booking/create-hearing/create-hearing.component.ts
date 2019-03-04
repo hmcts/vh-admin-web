@@ -44,7 +44,16 @@ export class CreateHearingComponent implements OnInit, CanDeactiveComponent {
     this.initForm();
     this.retrieveHearingTypes();
     this.retrieveHearingMediums();
+    this.onChanged();
   }
+
+  onChanged() {
+    this.hearingForm.valueChanges.subscribe(x => {
+      console.log('CHANGES HAPPENED: ' + this.hearingForm.dirty);
+        this.hearingService.onBookingChange(this.hearingForm.dirty);
+    });
+  }
+
 
   goToDiv(fragment: string): void {
     window.document.getElementById(fragment).parentElement.parentElement.scrollIntoView();
