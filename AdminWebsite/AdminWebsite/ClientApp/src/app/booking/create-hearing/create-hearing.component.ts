@@ -49,7 +49,6 @@ export class CreateHearingComponent implements OnInit, CanDeactiveComponent {
 
   onChanged() {
     this.hearingForm.valueChanges.subscribe(x => {
-      console.log('CHANGES HAPPENED: ' + this.hearingForm.dirty);
         this.hearingService.onBookingChange(this.hearingForm.dirty);
     });
   }
