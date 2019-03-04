@@ -4,12 +4,14 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { CanDeactiveComponent } from 'src/app/common/guards/changes.guard';
 import { ParticipantDetailsResponse } from '../../services/clients/api-client';
-import { FeedModel, HearingModel} from '../../common/model/hearing.model';
+import { FeedModel, HearingModel } from '../../common/model/hearing.model';
 import { ParticipantModel } from '../../common/model/participant.model';
 
 import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 import { Constants } from 'src/app/common/constants';
 import { JudgeDataService } from 'src/app/booking/services/judge-data.service';
+import { BookingService } from '../../services/booking.service';
+import { BookingBaseComponent } from '../booking-base/booking-base.component';
 
 @Component({
   selector: 'app-assign-judge',
@@ -17,7 +19,7 @@ import { JudgeDataService } from 'src/app/booking/services/judge-data.service';
   styleUrls: ['./assign-judge.component.css']
 })
 
-export class AssignJudgeComponent implements OnInit, CanDeactiveComponent {
+export class AssignJudgeComponent extends BookingBaseComponent implements OnInit, CanDeactiveComponent {
 
   hearing: HearingModel;
   judge: ParticipantDetailsResponse;
@@ -34,11 +36,15 @@ export class AssignJudgeComponent implements OnInit, CanDeactiveComponent {
 
   constructor(
     private fb: FormBuilder,
-    private router: Router,
+    protected router: Router,
     private hearingService: VideoHearingsService,
-    private judgeService: JudgeDataService) { }
+    private judgeService: JudgeDataService,
+    protected bookingService: BookingService) {
+    super(bookingService, router);
+  }
 
   ngOnInit() {
+    super.ngOnInit();
     this.failedSubmission = false;
     this.checkForExistingRequest();
     this.loadJudges();
@@ -107,49 +113,57 @@ export class AssignJudgeComponent implements OnInit, CanDeactiveComponent {
       judgeFeed.participants = [];
     } else {
       judgeFeed = new FeedModel('Judge');
-    this.hearing.feeds.push(judgeFeed);
-  }
-  judgeFeed.participants.push(this.judge);
+      this.hearing.feeds.push(judgeFeed);
+    }
+    judgeFeed.participants.push(this.judge);
     this.hearingService.updateHearingRequest(this.hearing);
-this.participants = this.getAllParticipants();
+    this.participants = this.getAllParticipants();
   }
 
-saveJudge() {
-  if (this.judge.id === null) {
-    this.isJudgeSelected = false;
-    return;
+  saveJudge() {
+    if (this.judge.id === null) {
+      this.isJudgeSelected = false;
+      return;
+    }
+    if (this.assignJudgeForm.valid) {
+      this.failedSubmission = false;
+      this.assignJudgeForm.markAsPristine();
+      this.hasSaved = true;
+      if (this.editMode) {
+        this.navigateToSummary();
+      } else {
+        this.router.navigate(['/add-participants']);
+      }
+    } else {
+      this.failedSubmission = true;
+    }
   }
-  if (this.assignJudgeForm.valid) {
-    this.failedSubmission = false;
-    this.assignJudgeForm.markAsPristine();
-    this.hasSaved = true;
-    this.router.navigate(['/add-participants']);
-  } else {
-    this.failedSubmission = true;
+
+  confirmCancelBooking() {
+    if (this.editMode) {
+      this.navigateToSummary();
+    } else {
+      this.attemptingCancellation = true;
+    }
   }
-}
 
-confirmCancelBooking() {
-  this.attemptingCancellation = true;
-}
-
-continueBooking() {
-  this.attemptingCancellation = false;
-}
-
-cancelAssignJudge() {
-  this.attemptingCancellation = false;
-  this.assignJudgeForm.reset();
-  this.hearingService.cancelRequest();
-  this.router.navigate(['/dashboard']);
-}
-
-hasChanges(): Observable<boolean> | boolean {
-  if(this.assignJudgeForm.dirty) {
-    this.confirmCancelBooking();
+  continueBooking() {
+    this.attemptingCancellation = false;
   }
+
+  cancelAssignJudge() {
+    this.attemptingCancellation = false;
+    this.assignJudgeForm.reset();
+    this.hearingService.cancelRequest();
+    this.router.navigate(['/dashboard']);
+  }
+
+  hasChanges(): Observable<boolean> | boolean {
+    if (this.assignJudgeForm.dirty) {
+      this.confirmCancelBooking();
+    }
     return this.assignJudgeForm.dirty;
-}
+  }
 
   goToDiv(fragment: string): void {
     window.document.getElementById(fragment).parentElement.parentElement.scrollIntoView();
@@ -170,7 +184,7 @@ hasChanges(): Observable<boolean> | boolean {
   }
 
   private loadJudges() {
-    if(this.availableJudges) { return; }
+    if (this.availableJudges) { return; }
     console.debug('No judges found, retrieving list from AD');
     this.judgeService.getJudges()
       .subscribe(

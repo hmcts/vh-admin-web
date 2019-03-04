@@ -5,24 +5,29 @@ import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { HearingModel } from '../../common/model/hearing.model';
+import { BookingBaseComponent } from '../booking-base/booking-base.component';
+import { BookingService } from '../../services/booking.service';
 
 @Component({
   selector: 'app-other-information',
   templateUrl: './other-information.component.html',
   styleUrls: ['./other-information.component.css']
 })
-export class OtherInformationComponent implements OnInit, CanDeactiveComponent {
+export class OtherInformationComponent extends BookingBaseComponent implements OnInit, CanDeactiveComponent {
   hearing: HearingModel;
   attemptingCancellation: boolean;
   canNavigate = true;
   otherInformationForm: FormGroup;
   otherInformationText: string;
 
-  constructor(private fb: FormBuilder, private videoHearingService: VideoHearingsService, private router: Router) {
+  constructor(private fb: FormBuilder, private videoHearingService: VideoHearingsService,
+    protected router: Router, protected bookingService: BookingService) {
+    super(bookingService, router);
     this.attemptingCancellation = false;
   }
 
   ngOnInit() {
+    super.ngOnInit();
     this.checkForExistingRequest();
     this.initForm();
   }
@@ -42,6 +47,9 @@ export class OtherInformationComponent implements OnInit, CanDeactiveComponent {
     this.hearing.other_information = this.otherInformationForm.value.otherInformation;
     this.videoHearingService.updateHearingRequest(this.hearing);
     this.otherInformationForm.markAsPristine();
+    if (this.editMode) {
+      this.resetEditMode();
+    }
     this.router.navigate(['/summary']);
   }
 
@@ -57,7 +65,11 @@ export class OtherInformationComponent implements OnInit, CanDeactiveComponent {
   }
 
   confirmCancelBooking() {
-    this.attemptingCancellation = true;
+    if (this.editMode) {
+      this.navigateToSummary();
+    } else {
+      this.attemptingCancellation = true;
+    }
   }
 
   hasChanges(): Observable<boolean> | boolean {

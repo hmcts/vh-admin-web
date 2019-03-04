@@ -5,10 +5,12 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 
 import { CanDeactiveComponent } from '../../common/guards/changes.guard';
-import { CourtResponse} from '../../services/clients/api-client';
+import { CourtResponse } from '../../services/clients/api-client';
 import { HearingModel } from '../../common/model/hearing.model';
 import { ReferenceDataService } from '../../services/reference-data.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
+import { BookingBaseComponent } from '../booking-base/booking-base.component';
+import { BookingService } from '../../services/booking.service';
 import { ErrorService } from 'src/app/services/error.service';
 
 @Component({
@@ -16,7 +18,7 @@ import { ErrorService } from 'src/app/services/error.service';
   templateUrl: './hearing-schedule.component.html',
   styleUrls: ['./hearing-schedule.component.css']
 })
-export class HearingScheduleComponent implements OnInit, CanDeactiveComponent {
+export class HearingScheduleComponent extends BookingBaseComponent implements OnInit, CanDeactiveComponent {
 
   hearing: HearingModel;
   availableCourts: CourtResponse[];
@@ -28,11 +30,15 @@ export class HearingScheduleComponent implements OnInit, CanDeactiveComponent {
   canNavigate = true;
 
   constructor(private refDataService: ReferenceDataService, private hearingService: VideoHearingsService,
-    private fb: FormBuilder, private router: Router, private datePipe: DatePipe, private errorService: ErrorService) {
+    private fb: FormBuilder, protected router: Router,
+    private datePipe: DatePipe, protected bookingService: BookingService,
+    private errorService: ErrorService) {
+    super(bookingService, router);
     this.attemptingCancellation = false;
     this.hasSaved = false;
   }
   ngOnInit() {
+    super.ngOnInit();
     this.failedSubmission = false;
     this.checkForExistingRequest();
     this.retrieveCourts();
@@ -142,7 +148,11 @@ export class HearingScheduleComponent implements OnInit, CanDeactiveComponent {
       this.updateHearingRequest();
       this.schedulingForm.markAsPristine();
       this.hasSaved = true;
-      this.router.navigate(['/assign-judge']);
+      if (this.editMode) {
+        this.navigateToSummary();
+      } else {
+        this.router.navigate(['/assign-judge']);
+      }
     } else {
       this.failedSubmission = true;
     }
@@ -159,9 +169,10 @@ export class HearingScheduleComponent implements OnInit, CanDeactiveComponent {
     );
 
     this.hearing.scheduled_date_time = hearingDate;
-    let hearingDuration = (this.schedulingForm.value.hearingDurationHour * 60);
-    hearingDuration += this.schedulingForm.value.hearingDurationMinute;
+    let hearingDuration = (parseInt(this.schedulingForm.value.hearingDurationHour, 10) * 60);
+    hearingDuration += parseInt(this.schedulingForm.value.hearingDurationMinute, 10);
     this.hearing.scheduled_duration = hearingDuration;
+    console.log('DURATION ' + this.hearing.scheduled_duration);
     this.hearingService.updateHearingRequest(this.hearing);
   }
 
@@ -170,7 +181,11 @@ export class HearingScheduleComponent implements OnInit, CanDeactiveComponent {
   }
 
   confirmCancelBooking() {
-    this.attemptingCancellation = true;
+    if (this.editMode) {
+      this.navigateToSummary();
+    } else {
+      this.attemptingCancellation = true;
+    }
   }
 
   cancelBooking() {

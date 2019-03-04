@@ -3,14 +3,24 @@ import { async, TestBed, fakeAsync } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AdalService } from 'adal-angular4';
+import { Component, EventEmitter } from '@angular/core';
 
 import { AppComponent } from './app.component';
 import { ClientSettingsResponse } from './services/clients/api-client';
 import { ConfigService } from './services/config.service';
 import { FooterStubComponent } from './testing/stubs/footer-stub';
-import { HeaderStubComponent } from './testing/stubs/header-stub';
+import { SignOutPopupStubComponent } from './testing/stubs/sign-out-popup-stub';
 import { PageTrackerService } from './services/page-tracker.service';
 import { WindowRef, WindowLocation } from './security/window-ref';
+import { VideoHearingsService } from './services/video-hearings.service';
+
+@Component({ selector: 'app-header', template: '' })
+export class HeaderComponent {
+  $confirmLogout: EventEmitter<any> = new EventEmitter<any>();
+  get confirmLogout() {
+    return this.$confirmLogout;
+  }
+}
 
 const adalService = {
   init: jasmine.createSpy('init'),
@@ -22,6 +32,8 @@ describe('AppComponent', () => {
   const router = {
     navigate: jasmine.createSpy('navigate')
   };
+
+  const videoHearingServiceSpy = jasmine.createSpyObj('VideoHearingsService', ['hasUnsavedChanges']);
 
   let configServiceSpy: jasmine.SpyObj<ConfigService>;
   let pageTracker: jasmine.SpyObj<PageTrackerService>;
@@ -47,8 +59,9 @@ describe('AppComponent', () => {
       imports: [HttpClientModule, RouterTestingModule],
       declarations: [
         AppComponent,
-        HeaderStubComponent,
+        HeaderComponent,
         FooterStubComponent,
+        SignOutPopupStubComponent,
       ],
       providers:
         [
@@ -57,6 +70,7 @@ describe('AppComponent', () => {
           { provide: Router, useValue: router },
           { provide: PageTrackerService, useValue: pageTracker },
           { provide: WindowRef, useValue: window },
+          { provide: VideoHearingsService, useValue: videoHearingServiceSpy }
         ],
     }).compileComponents();
   }));
@@ -72,7 +86,6 @@ describe('AppComponent', () => {
   }));
   it('should a tag Skip to main content', async(() => {
     const fixture = TestBed.createComponent(AppComponent);
-    fixture.detectChanges();
     const compiled = fixture.debugElement.nativeElement;
     expect(compiled.querySelector('a').textContent).toContain('Skip to main content');
   }));

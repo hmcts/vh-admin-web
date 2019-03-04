@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import {
   HearingTypeResponse, BHClient, HearingRequest,
-  HearingMediumResponse, ParticipantRoleResponse, HearingResponse, CaseRequest, FeedRequest, ParticipantRequest, ParticipantDetailsResponse
+  HearingMediumResponse, ParticipantRoleResponse, HearingResponse, CaseRequest, FeedRequest, ParticipantRequest
 } from '../services/clients/api-client';
 import { HearingModel } from '../common/model/hearing.model';
 import {ParticipantModel } from '../common/model/participant.model';
@@ -26,6 +26,10 @@ export class VideoHearingsService {
     } else {
       this.modelHearing = JSON.parse(localRequest);
     }
+  }
+
+  hasUnsavedChanges() {
+    return sessionStorage.getItem(this.newRequestKey) !== null;
   }
 
   getHearingMediums(): Observable<HearingMediumResponse[]> {

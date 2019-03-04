@@ -19,7 +19,6 @@ namespace AdminWebsite.AcceptanceTests.Pages
         private By _noButton => By.XPath("//input[contains(@data-bind,'Splitter') and (@value='No')]");
         private By _pageTitle => By.XPath("//*[@class='govuk-heading-l']");
         private By _startNowButton => By.XPath("//*[@type='button']");
-        private By _signOut => By.XPath("//*[@class='govuk-header__link']");
 
         public void Logon(string participantUsername, string password)
         {

@@ -8,6 +8,8 @@ import { BreadcrumbStubComponent } from 'src/app/testing/stubs/breadcrumb-stub';
 import { CancelPopupStubComponent } from 'src/app/testing/stubs/cancel-popup-stub';
 import { ConfirmationPopupStubComponent } from 'src/app/testing/stubs/confirmation-popup-stub';
 import { ParticipantsListStubComponent } from 'src/app/testing/stubs/participant-list-stub';
+import { RemovePopupStubComponent } from '../../testing/stubs/remove-popup-stub';
+
 import { SearchServiceStub } from 'src/app/testing/stubs/serice-service-stub';
 import { ParticipantRoleResponse, ParticipantRequest } from '../../services/clients/api-client';
 import { SearchService } from '../../services/search.service';
@@ -44,7 +46,7 @@ p1.first_name = 'John';
 p1.last_name = 'Doe';
 p1.display_name = 'John Doe';
 p1.role = 'judge';
-p1.title = 'mr.';
+p1.title = 'Mr.';
 p1.email = 'test@test.com';
 p1.phone = '32332';
 let p2 = new ParticipantModel();
@@ -52,7 +54,7 @@ p2.first_name = 'Jane';
 p2.last_name = 'Doe';
 p2.display_name = 'Jane Doe';
 p2.role = 'judge';
-p2.title = 'mr.';
+p2.title = 'Mr.';
 p2.email = 'test@test.com';
 p2.phone = '32332';
 let p3 = new ParticipantRequest();
@@ -61,7 +63,7 @@ p3.first_name = 'Chris';
 p3.last_name = 'Green';
 p3.display_name = 'Chris Green';
 p3.role = 'judge';
-p3.title = 'mr.';
+p3.title = 'Mr.';
 p3.email = 'test@test.com';
 p3.phone = '32332';
 f1.participants.push(p1);
@@ -112,7 +114,8 @@ describe('AddParticipantComponent', () => {
         SearchEmailComponent,
         ParticipantsListStubComponent,
         CancelPopupStubComponent,
-        ConfirmationPopupStubComponent
+        ConfirmationPopupStubComponent,
+        RemovePopupStubComponent
       ],
       imports: [
         SharedModule
@@ -239,7 +242,9 @@ describe('AddParticipantComponent', () => {
     lastName.setValue('Green');
     title.setValue('Mrs');
     phone.setValue('12345');
+    displayName.setValue('Sam');
     component.isRoleSelected = true;
+    component.participants = [];
     component.saveParticipant();
     expect(component.displayNextButton).toBeTruthy();
     expect(component.displayAddButton).toBeFalsy();
@@ -264,10 +269,12 @@ describe('AddParticipantComponent', () => {
     expect(component.displayClearButton).toBeFalsy();
   });
   it('if no participants added and pressed Next button then error displayed', () => {
+    component.participants = [];
     component.next();
     expect(component.displayErrorNoParticipants).toBeTruthy();
   });
   it('error that at least one participant should be added is hidden, once email is entering', () => {
+    component.participants = [];
     component.next();
     expect(component.displayErrorNoParticipants).toBeTruthy();
     component.getParticipant(participant);

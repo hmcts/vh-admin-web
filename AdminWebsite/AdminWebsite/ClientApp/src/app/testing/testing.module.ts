@@ -10,6 +10,8 @@ import { HeaderStubComponent } from './stubs/header-stub';
 import { PaginationStubComponent } from './stubs/pagination-stub';
 import { ParticipantsListStubComponent } from './stubs/participant-list-stub';
 import { SearchEmailStubComponent } from './stubs/search-email-stub';
+import { SignOutStubComponent } from './stubs/sign-out-stub';
+import { SignOutPopupStubComponent } from './stubs/sign-out-popup-stub';
 
 @NgModule({
   imports: [
@@ -25,7 +27,9 @@ import { SearchEmailStubComponent } from './stubs/search-email-stub';
     HeaderStubComponent,
     PaginationStubComponent,
     ParticipantsListStubComponent,
-    SearchEmailStubComponent
+    SearchEmailStubComponent,
+    SignOutPopupStubComponent,
+    SignOutStubComponent
   ]
 })
 export class TestingModule { }

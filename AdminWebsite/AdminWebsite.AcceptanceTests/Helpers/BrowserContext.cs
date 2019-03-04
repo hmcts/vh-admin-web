@@ -96,7 +96,6 @@ namespace AdminWebsite.AcceptanceTests.Helpers
             }
         }
         private By _pageTitle = By.XPath("//h1[@class='govuk-heading-l']");
-        public By _signOut => By.XPath("//*[@class='govuk-header__link']");
         public void ValidatePage(string url, string pageTitle, By webelement = null)
         {
             if (webelement == null)
@@ -113,7 +112,6 @@ namespace AdminWebsite.AcceptanceTests.Helpers
         {
             return (String)((IJavaScriptExecutor)NgDriver).ExecuteScript($"{script};");
         }
-        public void LogOut() => NgDriver.WaitUntilElementClickable(_signOut).Click();
     }
 
     internal class ContextItems
@@ -148,7 +146,5 @@ namespace AdminWebsite.AcceptanceTests.Helpers
             }
             return null;
         }
-
-
     }
 }

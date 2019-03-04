@@ -8,6 +8,8 @@ import { HearingMediumResponse, HearingTypeResponse } from '../../services/clien
 import { HearingModel } from '../../common/model/hearing.model';
 import { CaseModel } from '../../common/model/case.model';
 import { VideoHearingsService } from '../../services/video-hearings.service';
+import { BookingBaseComponent } from '../booking-base/booking-base.component';
+import { BookingService } from '../../services/booking.service';
 import { ErrorService } from 'src/app/services/error.service';
 
 @Component({
@@ -15,7 +17,7 @@ import { ErrorService } from 'src/app/services/error.service';
   templateUrl: './create-hearing.component.html',
   styleUrls: ['./create-hearing.component.scss']
 })
-export class CreateHearingComponent implements OnInit, CanDeactiveComponent {
+export class CreateHearingComponent extends BookingBaseComponent implements OnInit, CanDeactiveComponent {
 
   private existingCaseTypeKey = 'selectedCaseType';
   attemptingCancellation: boolean;
@@ -30,17 +32,22 @@ export class CreateHearingComponent implements OnInit, CanDeactiveComponent {
   filteredHearingMediums: HearingMediumResponse[];
   hasSaved: boolean;
 
-  constructor(private hearingService: VideoHearingsService, private fb: FormBuilder, private router: Router, private errorService: ErrorService) {
+  constructor(private hearingService: VideoHearingsService,
+    private fb: FormBuilder,
+    protected router: Router,
+    protected bookingService: BookingService,
+    private errorService: ErrorService) {
+    super(bookingService, router);
     this.attemptingCancellation = false;
     this.availableCaseTypes = [];
   }
 
   ngOnInit() {
+    super.ngOnInit();
     this.failedSubmission = false;
     this.checkForExistingRequest();
     this.initForm();
     this.retrieveHearingTypes();
-    this.retrieveHearingMediums();
   }
 
   goToDiv(fragment: string): void {
@@ -69,8 +76,7 @@ export class CreateHearingComponent implements OnInit, CanDeactiveComponent {
       caseName: [firstCase.name, Validators.required],
       caseNumber: [firstCase.number, Validators.required],
       caseType: [this.selectedCaseType, [Validators.required, Validators.pattern('^((?!Please Select).)*$')]],
-      hearingType: [this.hearing.hearing_type_id, [Validators.required, Validators.min(1)]],
-      hearingMethod: [this.hearing.hearing_medium_id, [Validators.required, Validators.min(1)]]
+      hearingType: [this.hearing.hearing_type_id, [Validators.required, Validators.min(1)]]
     });
   }
 
@@ -78,7 +84,6 @@ export class CreateHearingComponent implements OnInit, CanDeactiveComponent {
   get caseNumber() { return this.hearingForm.get('caseNumber'); }
   get caseType() { return this.hearingForm.get('caseType'); }
   get hearingType() { return this.hearingForm.get('hearingType'); }
-  get hearingMethod() { return this.hearingForm.get('hearingMethod'); }
 
   get caseNameInvalid() {
     return this.caseName.invalid && (this.caseName.dirty || this.caseName.touched || this.failedSubmission);
@@ -96,10 +101,6 @@ export class CreateHearingComponent implements OnInit, CanDeactiveComponent {
     return this.hearingType.invalid && (this.hearingType.dirty || this.hearingType.touched || this.failedSubmission);
   }
 
-  get hearingMethodInvalid() {
-    return this.hearingMethod.invalid && (this.hearingMethod.dirty || this.hearingMethod.touched || this.failedSubmission);
-  }
-
   saveHearingDetails() {
     if (this.hearingForm.valid) {
       this.failedSubmission = false;
@@ -107,7 +108,11 @@ export class CreateHearingComponent implements OnInit, CanDeactiveComponent {
       sessionStorage.setItem(this.existingCaseTypeKey, this.selectedCaseType);
       this.hearingForm.markAsPristine();
       this.hasSaved = true;
-      this.router.navigate(['/hearing-schedule']);
+      if (this.editMode) {
+        this.navigateToSummary();
+      } else {
+        this.router.navigate(['/hearing-schedule']);
+      }
     } else {
       this.failedSubmission = true;
     }
@@ -118,7 +123,12 @@ export class CreateHearingComponent implements OnInit, CanDeactiveComponent {
   }
 
   confirmCancelBooking() {
-    this.attemptingCancellation = true;
+    if (this.editMode) {
+      this.navigateToSummary();
+    }
+    else {
+      this.attemptingCancellation = true;
+    }
   }
 
   cancelBooking() {
@@ -147,17 +157,6 @@ export class CreateHearingComponent implements OnInit, CanDeactiveComponent {
           this.setupCaseTypeAndHearingTypes(data);
           this.filterHearingTypes();
         },
-        error => this.errorService.handleError(error)
-      );
-  }
-
-  private retrieveHearingMediums() {
-    this.hearingService.getHearingMediums()
-      .subscribe((data: HearingMediumResponse[]) => {
-        this.availableHearingMediums = data;
-        this.availableHearingMediums.sort(this.dynamicSort('name'));
-        this.filterHearingMethod();
-      },
         error => this.errorService.handleError(error)
       );
   }

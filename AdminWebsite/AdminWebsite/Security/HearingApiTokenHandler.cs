@@ -13,6 +13,6 @@ namespace AdminWebsite.Security
         }
 
         protected override string TokenCacheKey => "HearingApiServiceToken";
-        protected override string ClientResource => ServiceSettings.HearingsApiResourceId;
+        protected override string ClientResource => ServiceSettings.BookingsApiResourceId;
     }
 }

@@ -57,7 +57,7 @@ namespace AdminWebsite.Extensions
             var container = serviceCollection.BuildServiceProvider();
             var settings = container.GetService<IOptions<ServiceSettings>>().Value;
             
-            serviceCollection.AddHttpClient<IHearingApiClient, HearingApiClient>()
+            serviceCollection.AddHttpClient<IBookingsApiClient, BookingsApiClient>()
                 .AddHttpMessageHandler(() => container.GetService<HearingApiTokenHandler>())
                 .AddTypedClient(httpClient => BuildHearingApiClient(httpClient, settings));
             
@@ -71,9 +71,9 @@ namespace AdminWebsite.Extensions
             return serviceCollection;
         }
         
-        private static IHearingApiClient BuildHearingApiClient(HttpClient httpClient, ServiceSettings serviceSettings)
+        private static IBookingsApiClient BuildHearingApiClient(HttpClient httpClient, ServiceSettings serviceSettings)
         {
-            return new HearingApiClient(httpClient) { BaseUrl = serviceSettings.HearingsApiUrl };
+            return new BookingsApiClient(httpClient) { BaseUrl = serviceSettings.BookingsApiUrl };
         }
         
         public static IServiceCollection AddJsonOptions(this IServiceCollection serviceCollection)

@@ -54,7 +54,7 @@ namespace AdminWebsite.IntegrationTests.Controllers
             var serviceSettings = serviceSettingsOptions.Value;
             _bearerToken = new TokenProvider(securitySettingsOptions).GetClientAccessToken(
                 securitySettings.ClientId, securitySettings.ClientSecret,
-                serviceSettings.HearingsApiResourceId);
+                serviceSettings.BookingsApiResourceId);
 
             GraphApiToken = new TokenProvider(securitySettingsOptions).GetClientAccessToken(
                 securitySettings.ClientId, securitySettings.ClientSecret,
