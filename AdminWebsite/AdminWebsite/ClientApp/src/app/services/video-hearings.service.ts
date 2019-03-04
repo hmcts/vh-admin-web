@@ -12,7 +12,6 @@ export class VideoHearingsService {
 
   private newRequestKey: string;
   private bookingHasChangesKey: string;
-  private newHearing: HearingRequest;
   private modelHearing: HearingModel;
 
   constructor(private bhClient: BHClient) {

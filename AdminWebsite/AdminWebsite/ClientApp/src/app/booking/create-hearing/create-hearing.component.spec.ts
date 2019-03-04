@@ -15,14 +15,9 @@ import { HearingModel } from '../../common/model/hearing.model';
 import { CaseModel } from '../../common/model/case.model';
 import { ErrorService } from 'src/app/services/error.service';
 
-let caseNameControl: AbstractControl;
-let caseNumberControl: AbstractControl;
-let caseTypeControl: AbstractControl;
-let hearingMethodControl: AbstractControl;
-let hearingTypeControl: AbstractControl;
 
-function initHearingRequest(): HearingRequest {
-  const initRequest = {
+function initHearingRequest(): HearingModel {
+  return {
     cases: [],
     feeds: [],
     hearing_type_id: -1,
@@ -30,7 +25,7 @@ function initHearingRequest(): HearingRequest {
     court_id: -1,
     scheduled_duration: 0,
   };
-  const newHearing = new HearingRequest(initRequest);
+}
 
 
 function initExistingHearingRequest(): HearingModel {
@@ -246,4 +241,5 @@ describe('CreateHearingComponent with existing request in session', () => {
     expect(component.caseName.value).toBe(existingRequest.cases[0].name);
     expect(component.hearingType.value).toBe(existingRequest.hearing_type_id);
   }));
+
 });
