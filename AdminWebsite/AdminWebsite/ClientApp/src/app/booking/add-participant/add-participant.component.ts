@@ -18,6 +18,7 @@ import { SearchEmailComponent } from '../search-email/search-email.component';
 import { ParticipantsListComponent } from '../participants-list/participants-list.component';
 import { BookingBaseComponent } from '../booking-base/booking-base.component';
 import { BookingService } from '../../services/booking.service';
+import { ParticipantService } from '../services/participant.service';
 
 @Component({
   selector: 'app-add-participant',
@@ -66,6 +67,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   constructor(
     private searchService: SearchService,
     private videoHearingService: VideoHearingsService,
+    private participantService:ParticipantService,
     protected router: Router,
     protected bookingService: BookingService) {
 
@@ -137,7 +139,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     super.ngOnInit();
     this.hearing = this.videoHearingService.getCurrentRequest();
     if (this.hearing) {
-      this.participants = this.getAllParticipants();
+      this.participants = this.participantService.getAllParticipants(this.hearing);
     }
     this.initializeForm();
     if (this.editMode) {
@@ -256,16 +258,12 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
   saveParticipant() {
     const validEmail = this.searchEmail.validateEmail();
-    this.roleSelected();
-    this.role.markAsTouched();
-    this.firstName.markAsTouched();
-    this.lastName.markAsTouched();
-    this.phone.markAsTouched();
+    this.actionsBeforeSave();
     if (this.participantForm.valid && validEmail && this.isRoleSelected && this.isTitleSelected) {
       this.isShowErrorSummary = false;
       const newParticipant = new ParticipantModel();
       this.mapParticipant(newParticipant);
-      if (!this.checkDuplication(newParticipant.email)) {
+      if (!this.participantService.checkDuplication(newParticipant.email, this.participants)) {
         this.participants.push(newParticipant);
         this.addToFeed(newParticipant);
         this.clearForm();
@@ -282,11 +280,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
   updateParticipant() {
     const validEmail = this.searchEmail.validateEmail();
-    this.roleSelected();
-    this.role.markAsTouched();
-    this.firstName.markAsTouched();
-    this.lastName.markAsTouched();
-    this.phone.markAsTouched();
+    this.actionsBeforeSave();
     if (this.participantForm.valid && validEmail && this.isRoleSelected && this.isTitleSelected) {
       this.isShowErrorSummary = false;
       console.log('update participant');
@@ -304,6 +298,14 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     }
   }
 
+  actionsBeforeSave() {
+    this.roleSelected();
+    this.role.markAsTouched();
+    this.firstName.markAsTouched();
+    this.lastName.markAsTouched();
+    this.phone.markAsTouched();
+  }
+
   confirmRemoveParticipant() {
     let participant =  this.participants.find(x => x.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase());
     this.removerFullName = participant ? `${participant.title} ${participant.first_name} ${participant.last_name}` : '';
@@ -311,11 +313,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   }
 
   removeParticipant() {
-    let indexOfParticipant = this.participants.findIndex(x => x.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase());
-    if (indexOfParticipant > -1) {
-      this.participants.splice(indexOfParticipant, 1);
-    }
-    this.removeFromFeed();
+    this.participantService.removeParticipant(this.participants, this.hearing,this.selectedParticipantEmail);
     this.videoHearingService.updateHearingRequest(this.hearing);
   }
 
@@ -330,44 +328,10 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   }
 
   addToFeed(newParticipant) {
-    let participantFeed = this.getExistingFeedWith(newParticipant.email);
-    if (participantFeed) {
-      participantFeed.participants = [];
-      participantFeed.location = newParticipant.email;
-    } else {
-      participantFeed = new FeedModel(newParticipant.email);
-      if (this.hearing.feeds) {
-        this.hearing.feeds.push(participantFeed);
-      }
-    }
-    participantFeed.participants.push(newParticipant);
+    this.participantService.addToFeed(newParticipant, this.hearing);
     this.videoHearingService.updateHearingRequest(this.hearing);
   }
-
-  removeFromFeed() {
-      let indexOfParticipant = this.hearing.feeds.findIndex(x => x.participants.filter(y => y.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase()).length > 0);
-      if (indexOfParticipant > -1) {
-        this.hearing.feeds.splice(indexOfParticipant, 1);
-      }
-  }
-
-  private getExistingFeedWith(email: string): FeedModel {
-    return this.hearing.feeds ?
-      this.hearing.feeds.find(x => x.participants.filter(y => y.email.toLowerCase() === email.toLowerCase()).length > 0)
-      : null;
-  }
-
-  private checkDuplication(email) {
-    let existParticipant = false;
-    if (this.participants.length > 0) {
-      const part = this.participants.find(s => s.email === email);
-      if (part) {
-        existParticipant = true;
-      }
-    }
-    return existParticipant;
-  }
-
+  
   addParticipantCancel() {
     if (this.editMode) {
       this.navigateToSummary();
@@ -397,7 +361,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
   handleCancelRemove() {
     this.showConfirmationRemoveParticipant = false;
-    this.participants = this.getAllParticipants();
+    this.participants = this.participantService.getAllParticipants(this.hearing);
   }
 
   clearForm() {
@@ -444,17 +408,5 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
   goToDiv(fragment: string): void {
     window.document.getElementById(fragment).parentElement.parentElement.scrollIntoView();
-  }
-
-  public getAllParticipants(): ParticipantModel[] {
-    console.debug('getting all participants...');
-    console.debug(this.hearing.feeds);
-    let participants: ParticipantModel[] = [];
-    this.hearing.feeds.forEach(x => {
-      if (x.participants && x.participants.length >= 1) {
-        participants = participants.concat(x.participants);
-      }
-    });
-    return participants;
   }
 }
