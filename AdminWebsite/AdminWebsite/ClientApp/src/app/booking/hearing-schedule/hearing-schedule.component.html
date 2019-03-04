@@ -87,7 +87,7 @@
       Hearing venue
     </label>
     <select class="govuk-select govuk-!-width-one-half" id="courtAddress" formControlName="courtAddress">
-      <option *ngFor="let court of availableCourts" [ngValue]="court.id">{{court.address}} </option>
+      <option *ngFor="let venue of availableCourts" [ngValue]="venue.id">{{venue.name}} </option>
     </select>
     <div *ngIf="courtAddressInvalid" class="alert alert-danger">
       <span id="courtAddress-error" class="govuk-error-message">
@@ -102,7 +102,7 @@
     </label>
     <input class="govuk-input govuk-!-width-one-half" id="court-room" name="coort-room" type="text" formControlName="courtRoom">
   </div>
-  
+
 
   <div class="sk-top">
     <input type="button" id="nextButton" class="govuk-button" role="button" value="{{buttonAction}}" style="margin-right:25px;"
