@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
+using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Services;
 using Hearings.Common;
 using Hearings.Common.Helpers;

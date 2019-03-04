@@ -51,7 +51,7 @@
       "wrapResponseMethods": [],
       "generateResponseClasses": true,
       "responseClass": "BookingsApiResponse",
-      "namespace": "AdminWebsite.Services",
+      "namespace": "AdminWebsite.BookingsAPI.Client",
       "requiredPropertiesMustBeDefined": true,
       "dateType": "System.DateTime",
       "jsonConverters": null,

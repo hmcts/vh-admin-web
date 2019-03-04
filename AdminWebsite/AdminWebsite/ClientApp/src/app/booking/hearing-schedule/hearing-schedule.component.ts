@@ -5,13 +5,13 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 
 import { CanDeactiveComponent } from '../../common/guards/changes.guard';
-import { CourtResponse } from '../../services/clients/api-client';
 import { HearingModel } from '../../common/model/hearing.model';
 import { ReferenceDataService } from '../../services/reference-data.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { BookingBaseComponent } from '../booking-base/booking-base.component';
 import { BookingService } from '../../services/booking.service';
 import { ErrorService } from 'src/app/services/error.service';
+import {HearingVenueResponse} from "../../services/clients/api-client";
 
 @Component({
   selector: 'app-hearing-schedule',
@@ -21,7 +21,7 @@ import { ErrorService } from 'src/app/services/error.service';
 export class HearingScheduleComponent extends BookingBaseComponent implements OnInit, CanDeactiveComponent {
 
   hearing: HearingModel;
-  availableCourts: CourtResponse[];
+  availableCourts: HearingVenueResponse[];
   schedulingForm: FormGroup;
   failedSubmission: boolean;
   attemptingCancellation: boolean;
@@ -131,11 +131,11 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
   private retrieveCourts() {
     this.refDataService.getCourts()
       .subscribe(
-        (data: CourtResponse[]) => {
+        (data: HearingVenueResponse[]) => {
           this.availableCourts = data;
           console.log(`courts = ${JSON.stringify(data, null, 2)}`);
-          const pleaseSelect = new CourtResponse();
-          pleaseSelect.address = 'Please Select';
+          const pleaseSelect = new HearingVenueResponse();
+          pleaseSelect.name = 'Please Select';
           pleaseSelect.id = -1;
           this.availableCourts.unshift(pleaseSelect);
         },

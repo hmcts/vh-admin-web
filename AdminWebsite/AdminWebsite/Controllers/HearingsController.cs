@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
+using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Models;
-using AdminWebsite.Services;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 

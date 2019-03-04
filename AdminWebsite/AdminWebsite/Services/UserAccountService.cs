@@ -38,7 +38,6 @@ namespace AdminWebsite.Services
         void ResetPassword(string userId, string password = null);
         IEnumerable<ParticipantDetailsResponse> GetUsersByGroup();
         string TemporaryPassword { get; }
-        ParticipantRequest GetAdministrator();
     }
 
     public class UserAccountService : IUserAccountService
@@ -494,23 +493,6 @@ namespace AdminWebsite.Services
                 List<User> users = JsonConvert.DeserializeObject<List<User>>(queryResponse.AdditionalData["value"].ToString());
                 return users;
             }
-        }
-
-        public ParticipantRequest GetAdministrator()
-        {
-            ParticipantRequest participantRequest = new ParticipantRequest()
-            {
-                Display_name = _appConfigSettings.ParticipantRequest.Display_name,
-                Contact_email = _appConfigSettings.ParticipantRequest.Contact_email,
-                First_name = _appConfigSettings.ParticipantRequest.First_name,
-                Last_name = _appConfigSettings.ParticipantRequest.Last_name,
-                Middle_names = "",
-                Telephone_number = _appConfigSettings.ParticipantRequest.Telephone_number,
-                Hearing_role_name = _appConfigSettings.ParticipantRequest.Hearing_role_name,
-                Title = _appConfigSettings.ParticipantRequest.Title,
-                Username = _appConfigSettings.ParticipantRequest.Username,
-            };
-            return participantRequest;
         }
     }
 }

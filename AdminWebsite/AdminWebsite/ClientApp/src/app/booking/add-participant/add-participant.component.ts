@@ -5,11 +5,7 @@ import { Observable } from 'rxjs';
 import { Constants } from '../../common/constants';
 import { CanDeactiveComponent } from '../../common/guards/changes.guard';
 import { IDropDownModel } from '../../common/model/drop-down.model';
-import {
-  IParticipantRoleResponse,
-  ParticipantRoleResponse,
-} from '../../services/clients/api-client';
-import { HearingModel, FeedModel } from '../../common/model/hearing.model';
+import { HearingModel } from '../../common/model/hearing.model';
 import { ParticipantModel } from '../../common/model/participant.model';
 
 import { SearchService } from '../../services/search.service';
@@ -19,6 +15,7 @@ import { ParticipantsListComponent } from '../participants-list/participants-lis
 import { BookingBaseComponent } from '../booking-base/booking-base.component';
 import { BookingService } from '../../services/booking.service';
 import { ParticipantService } from '../services/participant.service';
+import {CaseRoleResponse} from "../../services/clients/api-client";
 
 @Component({
   selector: 'app-add-participant',
@@ -34,7 +31,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   hearing: HearingModel;
   participants: ParticipantModel[] = [];
   titleList: IDropDownModel[] = [];
-  roleList: IParticipantRoleResponse[];
+  roleList: CaseRoleResponse[];
   selectedParticipantEmail: string = null;
   participantForm: FormGroup;
   private role: FormControl;
@@ -91,17 +88,17 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   private retrieveRoles() {
     this.videoHearingService.getParticipantRoles()
       .subscribe(
-        (data: ParticipantRoleResponse[]) => {
+        (data: CaseRoleResponse[]) => {
           this.setupRoles(data);
         },
         error => console.error(error)
       );
   }
 
-  setupRoles(data: ParticipantRoleResponse[]) {
+  setupRoles(data: CaseRoleResponse[]) {
     const rolesToIgnore = ['Judge', 'Clerk', 'Administrator'];
     this.roleList = data.filter(x => rolesToIgnore.indexOf(x.name) === -1);
-    const firstItem = new ParticipantRoleResponse({ name: this.constants.PleaseSelect });
+    const firstItem = new CaseRoleResponse({ name: this.constants.PleaseSelect });
     this.roleList.unshift(firstItem);
   }
 
@@ -331,7 +328,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     this.participantService.addToFeed(newParticipant, this.hearing);
     this.videoHearingService.updateHearingRequest(this.hearing);
   }
-  
+
   addParticipantCancel() {
     if (this.editMode) {
       this.navigateToSummary();

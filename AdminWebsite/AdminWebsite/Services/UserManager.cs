@@ -147,10 +147,5 @@ namespace AdminWebsite.Services
             }
             _userAccountService.AddUserToGroup(new User {Id = userId}, group);
         }
-
-        public virtual ParticipantRequest AddAdministrator()
-        {
-            return _userAccountService.GetAdministrator();
-        }
     }
 }

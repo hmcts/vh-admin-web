@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
 import { Constants } from '../../common/constants';
 import { CanDeactiveComponent } from '../../common/guards/changes.guard';
 import {
-  CourtResponse,
+  HearingVenueResponse,
   HearingTypeResponse,
 } from '../../services/clients/api-client';
 import { HearingModel} from '../../common/model/hearing.model';
@@ -136,13 +136,12 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
       );
   }
 
-  private getCourtRoomAndAddress(courtId: number): void {
+  private getCourtRoomAndAddress(venueId: number): void {
     this.referenceDataService.getCourts()
       .subscribe(
-        (data: CourtResponse[]) => {
-          const selectedCourt = data.filter(c => c.id === courtId);
-          const selectedCourtRoom = this.hearing.court_room;
-          this.courtRoomAddress = selectedCourt[0].address + ', ' + selectedCourtRoom;
+        (data: HearingVenueResponse[]) => {
+          const selectedCourt = data.filter(c => c.id === venueId);
+          this.courtRoomAddress = selectedCourt[0].name;
         },
         error => console.error(error)
       );

@@ -1,9 +1,9 @@
 ﻿import { Component, OnInit, EventEmitter, Output, Input } from '@angular/core';
 import { VideoHearingsService } from '../../services/video-hearings.service';
-import { HearingResponse } from '../../services/clients/api-client';
 import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
 import { ParticipantDetailsModel } from '../../common/model/participant-details.model';
 import { BookingDetailsService } from '../../services/booking-details.service';
+import {HearingDetailsResponse} from "../../services/clients/api-client";
 
 @Component({
   selector: 'app-booking-details',
@@ -24,12 +24,12 @@ export class BookingDetailsComponent implements OnInit {
   constructor(private videoHearingService: VideoHearingsService, private bookingDetailsService: BookingDetailsService) { }
 
   ngOnInit() {
-    this.videoHearingService.getHearingById(this.hearingId).subscribe(data => {
+    this.videoHearingService.getHearingById(this.hearingId.toString()).subscribe(data => {
       this.mapHearing(data);
     });
   }
 
-  mapHearing(hearingResponse: HearingResponse) {
+  mapHearing(hearingResponse: HearingDetailsResponse) {
     this.hearing = this.bookingDetailsService.mapBooking(hearingResponse);
     let participants_and_judges = this.bookingDetailsService.mapBookingParticipants(hearingResponse);
     this.participants = participants_and_judges.participants;

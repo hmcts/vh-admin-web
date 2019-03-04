@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 
 import { CanDeactiveComponent } from '../../common/guards/changes.guard';
-import { HearingMediumResponse, HearingTypeResponse } from '../../services/clients/api-client';
+import { HearingTypeResponse } from '../../services/clients/api-client';
 import { HearingModel } from '../../common/model/hearing.model';
 import { CaseModel } from '../../common/model/case.model';
 import { VideoHearingsService } from '../../services/video-hearings.service';
@@ -28,8 +28,6 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
   availableCaseTypes: string[];
   selectedCaseType: string;
   filteredHearingTypes: HearingTypeResponse[];
-  availableHearingMediums: HearingMediumResponse[];
-  filteredHearingMediums: HearingMediumResponse[];
   hasSaved: boolean;
 
   constructor(private hearingService: VideoHearingsService,
@@ -188,15 +186,6 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
     pleaseSelect.name = 'Please Select';
     pleaseSelect.id = -1;
     this.filteredHearingTypes.unshift(pleaseSelect);
-  }
-
-  private filterHearingMethod() {
-    const pleaseSelect = new HearingMediumResponse();
-    pleaseSelect.name = 'Please Select';
-    pleaseSelect.id = -1;
-
-    this.filteredHearingMediums = this.availableHearingMediums.filter(h => h.name === 'Fully Video');
-    this.filteredHearingMediums.unshift(pleaseSelect);
   }
 
   private dynamicSort(property) {

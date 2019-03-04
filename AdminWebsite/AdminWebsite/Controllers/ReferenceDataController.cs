@@ -1,9 +1,8 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Contracts.Responses;
-using AdminWebsite.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AdminWebsite.Controllers
