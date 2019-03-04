@@ -49,7 +49,6 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _assignJudgeStep.AssignJudgeToHearing();
             _common.NextButton();
             _addParticipantsSteps.ProfessionalParticipantIsAddedToHearing();
-            _common.NextButton();
         }
     }
 }
