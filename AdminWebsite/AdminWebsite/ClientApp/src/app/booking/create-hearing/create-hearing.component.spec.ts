@@ -14,6 +14,12 @@ import { BreadcrumbComponent } from '../breadcrumb/breadcrumb.component';
 import { CreateHearingComponent } from './create-hearing.component';
 import { ErrorService } from 'src/app/services/error.service';
 
+let caseNameControl: AbstractControl;
+let caseNumberControl: AbstractControl;
+let caseTypeControl: AbstractControl;
+let hearingMethodControl: AbstractControl;
+let hearingTypeControl: AbstractControl;
+
 function initHearingRequest(): HearingRequest {
   const initRequest = {
     cases: [],
@@ -39,12 +45,7 @@ function initExistingHearingRequest(): HearingRequest {
 describe('CreateHearingComponent with multiple case types', () => {
   let component: CreateHearingComponent;
   let fixture: ComponentFixture<CreateHearingComponent>;
-  let caseNameControl: AbstractControl;
-  let caseNumberControl: AbstractControl;
-  let caseTypeControl: AbstractControl;
-  let hearingMethodControl: AbstractControl;
-  let hearingTypeControl: AbstractControl;
-  const newHearing = initHearingRequest();
+    const newHearing = initHearingRequest();
 
   let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
   let routerSpy: jasmine.SpyObj<Router>;
@@ -52,7 +53,7 @@ describe('CreateHearingComponent with multiple case types', () => {
 
   beforeEach(() => {
     videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',
-      ['getHearingMediums', 'getHearingTypes', 'getCurrentRequest', 'updateHearingRequest']);
+      ['getHearingMediums', 'getHearingTypes', 'getCurrentRequest', 'updateHearingRequest', 'onBookingChange']);
     routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
     videoHearingsServiceSpy.getCurrentRequest.and.returnValue(newHearing);

@@ -124,14 +124,14 @@ describe('AddParticipantComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
-  it('should constractor set role list and title list', () => {
+  it('should constructor set role list and title list', () => {
     component.ngOnInit();
     expect(component.roleList).toBeTruthy();
     expect(component.roleList.length).toBe(3);
     expect(component.titleList).toBeTruthy();
     expect(component.titleList.length).toBe(2);
   });
-  it('should set initiall values for fields', () => {
+  it('should set initial values for fields', () => {
     component.ngOnInit();
     expect(role.value).toBe('Please Select');
     expect(firstName.value).toBe('');
