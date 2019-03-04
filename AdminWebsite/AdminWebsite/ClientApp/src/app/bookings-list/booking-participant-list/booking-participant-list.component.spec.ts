@@ -42,7 +42,7 @@ describe('BookingParticipantListComponent', () => {
   }));
 
   it('should display participants list', (done => {
-    let pr1 = new ParticipantDetailsModel(1, 'Mrs', 'Alan', 'Brake', 'Citizen', 'email.p1@email.com', 'email1@co.uk');
+    let pr1 = new ParticipantDetailsModel('1', 'Mrs', 'Alan', 'Brake', 'Citizen', 'email.p1@email.com', 'email1@co.uk');
     let participantsList: Array<ParticipantDetailsModel> = [];
     participantsList.push(pr1);
     participantsList.push(pr1);
@@ -61,7 +61,7 @@ describe('BookingParticipantListComponent', () => {
     );
   }));
   it('should detect last item in the participants list', (done => {
-    let pr1 = new ParticipantDetailsModel(1, 'Mrs', 'Alan', 'Brake', 'Citizen', 'email.p1@email.com', 'email1@co.uk');
+    let pr1 = new ParticipantDetailsModel('1', 'Mrs', 'Alan', 'Brake', 'Citizen', 'email.p1@email.com', 'email1@co.uk');
     let participantsList: Array<ParticipantDetailsModel> = [];
     participantsList.push(pr1);
     participantsList.push(pr1);
@@ -79,7 +79,7 @@ describe('BookingParticipantListComponent', () => {
   }));
 
   it('should display judges list', (done => {
-    let pr1 = new ParticipantDetailsModel(1, 'Mrs', 'Alan', 'Brake', 'Judge', 'email.p1@email.com', 'email1@co.uk');
+    let pr1 = new ParticipantDetailsModel('1', 'Mrs', 'Alan', 'Brake', 'Judge', 'email.p1@email.com', 'email1@co.uk');
     let participantsList: Array<ParticipantDetailsModel> = [];
     participantsList.push(pr1);
     participantsList.push(pr1);

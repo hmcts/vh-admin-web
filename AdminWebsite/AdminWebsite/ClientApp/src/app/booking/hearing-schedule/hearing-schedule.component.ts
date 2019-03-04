@@ -5,20 +5,23 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 
 import { CanDeactiveComponent } from '../../common/guards/changes.guard';
-import { CourtResponse, HearingRequest } from '../../services/clients/api-client';
+import { HearingModel } from '../../common/model/hearing.model';
 import { ReferenceDataService } from '../../services/reference-data.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
+import { BookingBaseComponent } from '../booking-base/booking-base.component';
+import { BookingService } from '../../services/booking.service';
 import { ErrorService } from 'src/app/services/error.service';
+import {HearingVenueResponse} from "../../services/clients/api-client";
 
 @Component({
   selector: 'app-hearing-schedule',
   templateUrl: './hearing-schedule.component.html',
   styleUrls: ['./hearing-schedule.component.css']
 })
-export class HearingScheduleComponent implements OnInit, CanDeactiveComponent {
+export class HearingScheduleComponent extends BookingBaseComponent implements OnInit, CanDeactiveComponent {
 
-  hearing: HearingRequest;
-  availableCourts: CourtResponse[];
+  hearing: HearingModel;
+  availableCourts: HearingVenueResponse[];
   schedulingForm: FormGroup;
   failedSubmission: boolean;
   attemptingCancellation: boolean;
@@ -27,11 +30,15 @@ export class HearingScheduleComponent implements OnInit, CanDeactiveComponent {
   canNavigate = true;
 
   constructor(private refDataService: ReferenceDataService, private hearingService: VideoHearingsService,
-    private fb: FormBuilder, private router: Router, private datePipe: DatePipe, private errorService: ErrorService) {
+    private fb: FormBuilder, protected router: Router,
+    private datePipe: DatePipe, protected bookingService: BookingService,
+    private errorService: ErrorService) {
+    super(bookingService, router);
     this.attemptingCancellation = false;
     this.hasSaved = false;
   }
   ngOnInit() {
+    super.ngOnInit();
     this.failedSubmission = false;
     this.checkForExistingRequest();
     this.retrieveCourts();
@@ -48,6 +55,7 @@ export class HearingScheduleComponent implements OnInit, CanDeactiveComponent {
     let startTimeMinute = null;
     let durationHour = null;
     let durationMinute = null;
+    let room = '';
 
     if (this.hearing && this.hearing.scheduled_date_time) {
       const date = new Date(this.hearing.scheduled_date_time);
@@ -68,6 +76,10 @@ export class HearingScheduleComponent implements OnInit, CanDeactiveComponent {
       this.hasSaved = true;
     }
 
+    if (this.hearing && this.hearing.court_room) {
+      room = this.hearing.court_room;
+    }
+
     this.schedulingForm = this.fb.group({
       hearingDate: [hearingDateParsed, Validators.required],
       hearingStartTimeHour: [startTimeHour, [Validators.required, Validators.min(0), Validators.max(23)]],
@@ -75,6 +87,7 @@ export class HearingScheduleComponent implements OnInit, CanDeactiveComponent {
       hearingDurationHour: [durationHour, [Validators.required, Validators.min(0), Validators.max(23)]],
       hearingDurationMinute: [durationMinute, [Validators.required, Validators.min(0), Validators.max(59)]],
       courtAddress: [this.hearing.court_id, [Validators.required, Validators.min(1)]],
+      courtRoom: [room],
     });
   }
 
@@ -84,9 +97,11 @@ export class HearingScheduleComponent implements OnInit, CanDeactiveComponent {
   get hearingDurationHour() { return this.schedulingForm.get('hearingDurationHour'); }
   get hearingDurationMinute() { return this.schedulingForm.get('hearingDurationMinute'); }
   get courtAddress() { return this.schedulingForm.get('courtAddress'); }
+  get courtRoom() { return this.schedulingForm.get('courtRoom'); }
 
   get hearingDateInvalid() {
-    return this.hearingDate.invalid && (this.hearingDate.dirty || this.hearingDate.touched || this.failedSubmission);
+    const todayDate = new Date(new Date().setHours(0, 0, 0, 0));
+    return (this.hearingDate.invalid || new Date(this.hearingDate.value) < todayDate) && (this.hearingDate.dirty || this.hearingDate.touched || this.failedSubmission);
   }
 
   get hearingStartTimeHourInvalid() {
@@ -116,10 +131,11 @@ export class HearingScheduleComponent implements OnInit, CanDeactiveComponent {
   private retrieveCourts() {
     this.refDataService.getCourts()
       .subscribe(
-        (data: CourtResponse[]) => {
+        (data: HearingVenueResponse[]) => {
           this.availableCourts = data;
-          const pleaseSelect = new CourtResponse();
-          pleaseSelect.address = 'Please Select';
+          console.log(`courts = ${JSON.stringify(data, null, 2)}`);
+          const pleaseSelect = new HearingVenueResponse();
+          pleaseSelect.name = 'Please Select';
           pleaseSelect.id = -1;
           this.availableCourts.unshift(pleaseSelect);
         },
@@ -133,7 +149,11 @@ export class HearingScheduleComponent implements OnInit, CanDeactiveComponent {
       this.updateHearingRequest();
       this.schedulingForm.markAsPristine();
       this.hasSaved = true;
-      this.router.navigate(['/assign-judge']);
+      if (this.editMode) {
+        this.navigateToSummary();
+      } else {
+        this.router.navigate(['/assign-judge']);
+      }
     } else {
       this.failedSubmission = true;
     }
@@ -141,6 +161,7 @@ export class HearingScheduleComponent implements OnInit, CanDeactiveComponent {
 
   private updateHearingRequest() {
     this.hearing.court_id = this.schedulingForm.value.courtAddress;
+    this.hearing.court_room = this.schedulingForm.value.courtRoom;
     const hearingDate = new Date(this.schedulingForm.value.hearingDate);
 
     hearingDate.setHours(
@@ -149,9 +170,10 @@ export class HearingScheduleComponent implements OnInit, CanDeactiveComponent {
     );
 
     this.hearing.scheduled_date_time = hearingDate;
-    let hearingDuration = (this.schedulingForm.value.hearingDurationHour * 60);
-    hearingDuration += this.schedulingForm.value.hearingDurationMinute;
+    let hearingDuration = (parseInt(this.schedulingForm.value.hearingDurationHour, 10) * 60);
+    hearingDuration += parseInt(this.schedulingForm.value.hearingDurationMinute, 10);
     this.hearing.scheduled_duration = hearingDuration;
+    console.log('DURATION ' + this.hearing.scheduled_duration);
     this.hearingService.updateHearingRequest(this.hearing);
   }
 
@@ -160,7 +182,11 @@ export class HearingScheduleComponent implements OnInit, CanDeactiveComponent {
   }
 
   confirmCancelBooking() {
-    this.attemptingCancellation = true;
+    if (this.editMode) {
+      this.navigateToSummary();
+    } else {
+      this.attemptingCancellation = true;
+    }
   }
 
   cancelBooking() {

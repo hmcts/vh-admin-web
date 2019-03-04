@@ -6,12 +6,12 @@
     public class ServiceSettings
     {
         /// <summary>
-        ///     The hearings api url.
+        ///     The bookings api url.
         /// </summary>
-        public string HearingsApiUrl { get; set; }
+        public string BookingsApiUrl { get; set; }
         /// <summary>
-        ///     The hearings api resource id
+        ///     The bookings api resource id
         /// </summary>
-        public string HearingsApiResourceId { get; set; }
+        public string BookingsApiResourceId { get; set; }
     }
 }

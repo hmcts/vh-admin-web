@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
+using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Configuration;
 using AdminWebsite.Helper;
 using AdminWebsite.Security;
@@ -27,9 +28,13 @@ namespace AdminWebsite.Extensions
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 c.IncludeXmlComments(xmlPath);
-                
+
                 c.SwaggerDoc("v1", new Info {Title = "Book A Hearing Client", Version = "v1"});
                 c.EnableAnnotations();
+                
+                // Quick fix to avoid conflicts between bookings contract and the local contract
+                // this should be deleted as we introduce local modals and not expose bookings api contracts
+                c.CustomSchemaIds(i => i.FullName);
                 
                 c.OperationFilter<AuthResponsesOperationFilter>();
                 
@@ -57,7 +62,7 @@ namespace AdminWebsite.Extensions
             var container = serviceCollection.BuildServiceProvider();
             var settings = container.GetService<IOptions<ServiceSettings>>().Value;
             
-            serviceCollection.AddHttpClient<IHearingApiClient, HearingApiClient>()
+            serviceCollection.AddHttpClient<IBookingsApiClient, BookingsApiClient>()
                 .AddHttpMessageHandler(() => container.GetService<HearingApiTokenHandler>())
                 .AddTypedClient(httpClient => BuildHearingApiClient(httpClient, settings));
             
@@ -71,9 +76,9 @@ namespace AdminWebsite.Extensions
             return serviceCollection;
         }
         
-        private static IHearingApiClient BuildHearingApiClient(HttpClient httpClient, ServiceSettings serviceSettings)
+        private static IBookingsApiClient BuildHearingApiClient(HttpClient httpClient, ServiceSettings serviceSettings)
         {
-            return new HearingApiClient(httpClient) { BaseUrl = serviceSettings.HearingsApiUrl };
+            return new BookingsApiClient(httpClient) { BaseUrl = serviceSettings.BookingsApiUrl };
         }
         
         public static IServiceCollection AddJsonOptions(this IServiceCollection serviceCollection)

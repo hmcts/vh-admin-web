@@ -1,9 +1,9 @@
 ﻿{
-  "runtime": "NetCore21",
+  "runtime": "NetCore22",
   "defaultVariables": null,
   "swaggerGenerator": {
     "fromSwagger": {
-      "url": "http://localhost:5000/swagger/v1/swagger.json",
+      "url": "http://localhost:5301/swagger/v1/swagger.json",
       "output": null
     }
   },
@@ -18,7 +18,7 @@
       "disposeHttpClient": false,
       "protectedMethods": [],
       "generateExceptionClasses": true,
-      "exceptionClass": "HearingApiException",
+      "exceptionClass": "BookingsApiException",
       "wrapDtoExceptions": true,
       "useHttpClientCreationMethod": false,
       "httpClientType": "System.Net.Http.HttpClient",
@@ -30,13 +30,13 @@
       "clientClassAccessModifier": "public",
       "typeAccessModifier": "public",
       "generateContractsOutput": false,
-      "contractsNamespace": "AdminWebsite.Services",
-      "contractsOutputFilePath": "HearingApiContracts.cs",
+      "contractsNamespace": "AdminWebsite.BookingsAPI.Client",
+      "contractsOutputFilePath": "BookingsApiContracts.cs",
       "parameterDateTimeFormat": "s",
       "generateUpdateJsonSerializerSettingsMethod": true,
       "serializeTypeInformation": false,
       "queryNullValue": "",
-      "className": "HearingApiClient",
+      "className": "BookingsApiClient",
       "operationGenerationMode": "SingleClientFromOperationId",
       "additionalNamespaceUsages": [],
       "additionalContractNamespaceUsages": [],
@@ -50,8 +50,8 @@
       "wrapResponses": false,
       "wrapResponseMethods": [],
       "generateResponseClasses": true,
-      "responseClass": "HearingApiResponse",
-      "namespace": "AdminWebsite.Services",
+      "responseClass": "BookingsApiResponse",
+      "namespace": "AdminWebsite.BookingsAPI.Client",
       "requiredPropertiesMustBeDefined": true,
       "dateType": "System.DateTime",
       "jsonConverters": null,
@@ -78,9 +78,9 @@
       "typeNameGeneratorType": null,
       "propertyNameGeneratorType": null,
       "enumNameGeneratorType": null,
-      "serviceHost": "http://localhost:5000",
+      "serviceHost": "http://localhost:5301",
       "serviceSchemes": null,
-      "output": "../AdminWebsite/Services/HearingApiClient.cs"
+      "output": "BookingsApiClient.cs"
     }
   }
 }

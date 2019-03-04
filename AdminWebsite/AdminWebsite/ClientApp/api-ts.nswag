@@ -4,7 +4,7 @@
   "swaggerGenerator": {
     "fromSwagger": {
       "json": "",
-      "url": "https://localhost:5300/swagger/v1/swagger.json",
+      "url": "http://localhost:5401/swagger/v1/swagger.json",
       "output": null
     }
   },
@@ -59,7 +59,7 @@
       "typeNameGeneratorType": null,
       "propertyNameGeneratorType": null,
       "enumNameGeneratorType": null,
-      "serviceHost": "https://localhost:5300",
+      "serviceHost": "https://localhost:5400",
       "serviceSchemes": null,
       "output": "src/app/services/clients/api-client.ts"
     }

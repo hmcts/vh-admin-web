@@ -18,12 +18,12 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             AddParticipantsPage();
             InputEmailAddress();
+            SelectRole();
+            SelectTitle();
             InputFirstname();
             InputLastname();
             InputTelephone();
-            SelectRole();
             InputDisplayname();
-            SelectTitle();
             ClickAddParticipantsButton();
         }
         [When(@"Admin user is on add participant page")]
