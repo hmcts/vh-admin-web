@@ -14,6 +14,7 @@ import { SearchServiceStub } from 'src/app/testing/stubs/serice-service-stub';
 import { ParticipantRoleResponse, ParticipantRequest } from '../../services/clients/api-client';
 import { SearchService } from '../../services/search.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
+import { ParticipantService } from '../services/participant.service';
 import { SearchEmailComponent } from '../search-email/search-email.component';
 import { AddParticipantComponent } from './add-participant.component';
 import { HearingModel, FeedModel } from '../../common/model/hearing.model';
@@ -100,12 +101,14 @@ const routerSpy = {
 
 let debugElement: DebugElement;
 let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
+let participantServiceSpy: jasmine.SpyObj<ParticipantService>;
 
 describe('AddParticipantComponent', () => {
 
   videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',
     ['getParticipantRoles', 'getCurrentRequest', 'updateHearingRequest']);
-
+  participantServiceSpy = jasmine.createSpyObj<ParticipantService>('ParticipantService',
+    ['checkDuplication', 'getAllParticipants', 'removeParticipant', 'addToFeed']);
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [
