@@ -9,7 +9,7 @@ import { HearingModel } from '../common/model/hearing.model';
   providedIn: 'root'
 })
 export class VideoHearingsService {
- private modelHearing: HearingModel;
+  private modelHearing: HearingModel;
   private newRequestKey: string;
   private bookingHasChangesKey: string;
 
@@ -29,10 +29,10 @@ export class VideoHearingsService {
 
   hasUnsavedChanges() {
     return sessionStorage.getItem(this.newRequestKey) !== null ||
-      sessionStorage.getItem(this.bookingHasChangesKey) !== null ;
+      sessionStorage.getItem(this.bookingHasChangesKey) !== null;
   }
 
-  onBookingChange(isChanged:boolean) {
+  onBookingChange(isChanged: boolean) {
     if (isChanged) {
       sessionStorage.setItem(this.bookingHasChangesKey, "true");
     } else {
