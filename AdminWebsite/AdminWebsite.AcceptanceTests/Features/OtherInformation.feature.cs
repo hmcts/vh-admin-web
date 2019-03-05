@@ -31,9 +31,9 @@ namespace AdminWebsite.AcceptanceTests.Features
         public virtual void FeatureSetup()
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
-            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Case Admin adds Other information to booking hearing", "\t\tAs a Case Admin\n\t\tI want to be able to add any other information to the Video H" +
-                    "earing booking\n\t\tSo that any other details that might be relevant to the booking" +
-                    " can be included", ProgrammingLanguage.CSharp, ((string[])(null)));
+            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Case Admin adds Other information to booking hearing", "\t\tAs a Case Admin\r\n\t\tI want to be able to add any other information to the Video " +
+                    "Hearing booking\r\n\t\tSo that any other details that might be relevant to the booki" +
+                    "ng can be included", ProgrammingLanguage.CSharp, ((string[])(null)));
             testRunner.OnFeatureStart(featureInfo);
         }
         

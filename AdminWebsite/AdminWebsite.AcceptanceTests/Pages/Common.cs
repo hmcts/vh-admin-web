@@ -18,7 +18,7 @@ namespace AdminWebsite.AcceptanceTests.Pages
         private By _nextButton => By.Id(("nextButton"));
         private By _cancelButton => By.Id(("cancelButton"));
 
-        protected IEnumerable<IWebElement> GetListOfElements(By elements) => _browserContext.NgDriver.WaitUntilElementsVisible(elements);
+        protected IEnumerable<IWebElement> GetListOfElements(By elements) => _browserContext.NgDriver.FindElements(elements);
         protected string GetBreadcrumbAttribute(string breadcrumb)
         {
             var getListOfElements = GetListOfElements(_breadcrumbs);

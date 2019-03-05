@@ -40,6 +40,11 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _hearingDetailsSteps.WhenHearingDetailsFormIsFilled();
             _common.NextButton();
         }
+        [Given(@"user is on hearing details page")]
+        public void UserIsOnHearingDetailsPage()
+        {
+            _dashboardStep.WhenBookAVideoHearingPanelIsSelected();
+        }
         [Given(@"user is on other information page")]
         public void GivenUserIsOnOtherInformationPage()
         {
@@ -49,6 +54,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _assignJudgeStep.AssignJudgeToHearing();
             _common.NextButton();
             _addParticipantsSteps.ProfessionalParticipantIsAddedToHearing();
+            _common.NextButton();
         }
     }
 }
