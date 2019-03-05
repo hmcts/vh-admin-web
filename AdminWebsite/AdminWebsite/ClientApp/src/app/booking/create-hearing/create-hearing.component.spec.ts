@@ -7,45 +7,41 @@ import { of } from 'rxjs';
 import { CancelPopupComponent } from 'src/app/popups/cancel-popup/cancel-popup.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 
-import { CaseRequest, HearingRequest, ICaseRequest } from '../../services/clients/api-client';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { MockValues } from '../../testing/data/test-objects';
 import { BreadcrumbComponent } from '../breadcrumb/breadcrumb.component';
 import { CreateHearingComponent } from './create-hearing.component';
+import { HearingModel } from '../../common/model/hearing.model';
+import { CaseModel } from '../../common/model/case.model';
 import { ErrorService } from 'src/app/services/error.service';
 
-let caseNameControl: AbstractControl;
-let caseNumberControl: AbstractControl;
-let caseTypeControl: AbstractControl;
-let hearingMethodControl: AbstractControl;
-let hearingTypeControl: AbstractControl;
 
-function initHearingRequest(): HearingRequest {
-  const initRequest = {
-    cases: [],
-    feeds: [],
-    hearing_type_id: -1,
-    hearing_medium_id: -1,
-    court_id: -1,
-    scheduled_duration: 0,
-  };
-  const newHearing = new HearingRequest(initRequest);
+function initHearingRequest(): HearingModel {
+  let newHearing = new HearingModel();
+  newHearing.hearing_type_id = -1;
+  newHearing.hearing_medium_id = -1;
+  newHearing.court_id = -1;
+  newHearing.scheduled_duration = 0;
   return newHearing;
 }
 
-function initExistingHearingRequest(): HearingRequest {
-    const existingRequest = new HearingRequest();
-    existingRequest.hearing_type_id = 2;
-    existingRequest.hearing_medium_id = 1;
-    existingRequest.feeds = [];
-    existingRequest.cases = [];
-    return existingRequest;
+function initExistingHearingRequest(): HearingModel {
+  const existingRequest = new HearingModel();
+  existingRequest.hearing_type_id = 2;
+  existingRequest.hearing_medium_id = 1;
+  return existingRequest;
 }
 
 describe('CreateHearingComponent with multiple case types', () => {
   let component: CreateHearingComponent;
   let fixture: ComponentFixture<CreateHearingComponent>;
-    const newHearing = initHearingRequest();
+  let caseNameControl: AbstractControl;
+  let caseNumberControl: AbstractControl;
+  let caseTypeControl: AbstractControl;
+  let hearingMethodControl: AbstractControl;
+  let hearingTypeControl: AbstractControl;
+
+  const newHearing = initHearingRequest();
 
   let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
   let routerSpy: jasmine.SpyObj<Router>;
@@ -53,11 +49,10 @@ describe('CreateHearingComponent with multiple case types', () => {
 
   beforeEach(() => {
     videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',
-      ['getHearingMediums', 'getHearingTypes', 'getCurrentRequest', 'updateHearingRequest', 'onBookingChange']);
+      ['getHearingMediums', 'getHearingTypes', 'getCurrentRequest', 'updateHearingRequest']);
     routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
     videoHearingsServiceSpy.getCurrentRequest.and.returnValue(newHearing);
-    videoHearingsServiceSpy.getHearingMediums.and.returnValue(of(MockValues.HearingMediums));
     videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
 
     TestBed.configureTestingModule({
@@ -91,7 +86,6 @@ describe('CreateHearingComponent with multiple case types', () => {
     expect(component.caseName.value).toBeNull();
     expect(component.caseType.value).toBe('Please Select');
     expect(component.hearingType.value).toBe(-1);
-    expect(component.hearingMethod.value).toBe(-1);
   });
 
   it('should not set case type when multiple items returned', () => {
@@ -136,22 +130,14 @@ describe('CreateHearingComponent with multiple case types', () => {
     expect(hearingTypeControl.valid).toBeTruthy();
   });
 
-  it('should validate hearing medium', () => {
-    expect(hearingMethodControl.valid).toBeFalsy();
-    hearingMethodControl.setValue(1);
-    expect(hearingMethodControl.valid).toBeTruthy();
-  });
-
   it('should update hearing request when form is valid', () => {
     expect(component.hearingForm.valid).toBeFalsy();
     caseNameControl.setValue('Captain America vs The World');
     caseNumberControl.setValue('12345');
     caseTypeControl.setValue('Tax');
     hearingTypeControl.setValue(2);
-    hearingMethodControl.setValue(3);
     expect(component.hearingForm.valid).toBeTruthy();
     component.saveHearingDetails();
-    expect(component.hearing.hearing_medium_id).toBe(3);
     expect(component.hearing.hearing_type_id).toBe(2);
     expect(component.hearing.cases.length).toBe(1);
   });
@@ -172,7 +158,6 @@ describe('CreateHearingComponent with single case type', () => {
     routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
     videoHearingsServiceSpy.getCurrentRequest.and.returnValue(newHearing);
-    videoHearingsServiceSpy.getHearingMediums.and.returnValue(of(MockValues.HearingMediums));
     videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesSingle));
 
     TestBed.configureTestingModule({
@@ -217,7 +202,6 @@ describe('CreateHearingComponent with existing request in session', () => {
     routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
     videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
-    videoHearingsServiceSpy.getHearingMediums.and.returnValue(of(MockValues.HearingMediums));
     videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
 
     TestBed.configureTestingModule({
@@ -230,12 +214,13 @@ describe('CreateHearingComponent with existing request in session', () => {
       declarations: [CreateHearingComponent, BreadcrumbComponent, CancelPopupComponent]
     }).compileComponents();
 
-    const iCaseRequest: ICaseRequest = { name: 'Captain America Vs. The World', number: '1234' };
-    const existingCase = new CaseRequest(iCaseRequest);
+    let existingCase = new CaseModel();
+    existingCase.name = 'Captain America Vs. The World';
+    existingCase.number = '1234';
     existingRequest.cases.push(existingCase);
 
     const newRequestKey = 'bh-newRequest';
-    const jsonRequest = existingCase.toJSON();
+    let jsonRequest = JSON.stringify(existingRequest);
     sessionStorage.setItem(newRequestKey, jsonRequest);
 
     fixture = TestBed.createComponent(CreateHearingComponent);
@@ -248,10 +233,9 @@ describe('CreateHearingComponent with existing request in session', () => {
     sessionStorage.clear();
   });
 
-  it('should prepopulate form with existing request', fakeAsync(() => {
+  it('should repopulate form with existing request', fakeAsync(() => {
     expect(component.caseNumber.value).toBe(existingRequest.cases[0].number);
     expect(component.caseName.value).toBe(existingRequest.cases[0].name);
     expect(component.hearingType.value).toBe(existingRequest.hearing_type_id);
-    expect(component.hearingMethod.value).toBe(existingRequest.hearing_medium_id);
   }));
 });

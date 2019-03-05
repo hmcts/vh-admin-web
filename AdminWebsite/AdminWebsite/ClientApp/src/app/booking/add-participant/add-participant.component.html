@@ -155,9 +155,9 @@
       </div>
     </form>
     <div class="vh-top">
-      <input *ngIf="displayNextButton" id="nextBtn" type="button" class="govuk-button vh-mr25" role="button" value="Next"
+      <input *ngIf="displayNextButton" id="nextButton" type="button" class="govuk-button vh-mr25" role="button" value="{{buttonAction}}"
         (click)="next()" />
-      <input id="cancelBtn" type="button" class="govuk-button vh-cancel-btn" role="button" value="Cancel" (click)="addParticipantCancel()" />
+      <input id="cancelBtn" type="button"  class="govuk-button hmcts-button--secondary" role="button" value="Cancel" (click)="addParticipantCancel()" />
     </div>
   </div>
 
@@ -172,4 +172,8 @@
 
 <div *ngIf="showConfirmationPopup">
   <app-confirmation-popup (ok)="handleConfirmation()" [message]="confirmationMessage"></app-confirmation-popup>
+</div>
+
+<div *ngIf="showConfirmationRemoveParticipant">
+  <app-remove-popup (continueRemove)="handleContinueRemove()" (cancelRemove)="handleCancelRemove()" [fullName]="removerFullName"></app-remove-popup>
 </div>

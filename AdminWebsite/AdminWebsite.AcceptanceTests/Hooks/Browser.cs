@@ -2,7 +2,6 @@
 using TechTalk.SpecFlow;
 using NUnit.Framework;
 using System;
-using FluentAssertions;
 
 namespace AdminWebsite.AcceptanceTests.Hooks
 {
@@ -43,6 +42,11 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         [AfterScenario]
         public void AfterScenario()
         {
+            if (_saucelabsSettings.RunWithSaucelabs)
+            {
+                bool passed = _scenarioContext.TestError == null;
+                SaucelabsResult.LogPassed(passed, _browserContext.NgDriver);
+            }
             _browserContext.BrowserTearDown();
         }
     }

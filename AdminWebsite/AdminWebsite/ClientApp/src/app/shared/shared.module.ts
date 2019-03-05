@@ -10,6 +10,7 @@ import { PaginationComponent } from './pagination/pagination.component';
 import { SharedRoutingModule } from './shared-routing.module';
 import { ScrollableDirective } from './directives/scroll.directive';
 import { SignOutComponent } from './sign-out/sign-out.component';
+import { BookingEditComponent } from './booking-edit/booking-edit.component';
 
 @NgModule({
   imports: [
@@ -25,6 +26,7 @@ import { SignOutComponent } from './sign-out/sign-out.component';
     ContactUsComponent,
     PaginationComponent,
     ScrollableDirective,
+    BookingEditComponent,
     SignOutComponent,
   ],
   exports: [
@@ -32,6 +34,7 @@ import { SignOutComponent } from './sign-out/sign-out.component';
     FooterComponent,
     ContactUsComponent,
     PaginationComponent,
+    BookingEditComponent,
     CommonModule,
     FormsModule,
     ReactiveFormsModule,

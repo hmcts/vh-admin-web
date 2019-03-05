@@ -23,7 +23,7 @@ export class BHClient {
 
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(BH_API_BASE_URL) baseUrl?: string) {
         this.http = http;
-        this.baseUrl = baseUrl ? baseUrl : "https://localhost:5671";
+        this.baseUrl = baseUrl ? baseUrl : "https://localhost:5400";
     }
 
     /**
@@ -79,11 +79,17 @@ export class BHClient {
             }));
         } else if (status === 404) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("A server error occurred.", status, _responseText, _headers);
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = resultData404 ? ProblemDetails.fromJS(resultData404) : new ProblemDetails();
+            return throwException("A server error occurred.", status, _responseText, _headers, result404);
             }));
         } else if (status === 400) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("A server error occurred.", status, _responseText, _headers);
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = resultData400 ? ProblemDetails.fromJS(resultData400) : new ProblemDetails();
+            return throwException("A server error occurred.", status, _responseText, _headers, result400);
             }));
         } else if (status === 401) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
@@ -201,11 +207,17 @@ export class BHClient {
             }));
         } else if (status === 404) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("A server error occurred.", status, _responseText, _headers);
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = resultData404 ? ProblemDetails.fromJS(resultData404) : new ProblemDetails();
+            return throwException("A server error occurred.", status, _responseText, _headers, result404);
             }));
         } else if (status === 400) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("A server error occurred.", status, _responseText, _headers);
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = resultData400 ? ProblemDetails.fromJS(resultData400) : new ProblemDetails();
+            return throwException("A server error occurred.", status, _responseText, _headers, result400);
             }));
         } else if (status === 401) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
@@ -224,7 +236,7 @@ export class BHClient {
      * @param hearingRequest (optional) Hearing Request object
      * @return Success
      */
-    bookNewHearing(hearingRequest: HearingRequest | null | undefined): Observable<number> {
+    bookNewHearing(hearingRequest: BookNewHearingRequest | null | undefined): Observable<number> {
         let url_ = this.baseUrl + "/api/hearings";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -270,7 +282,10 @@ export class BHClient {
             }));
         } else if (status === 400) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("A server error occurred.", status, _responseText, _headers);
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = resultData400 ? ProblemDetails.fromJS(resultData400) : new ProblemDetails();
+            return throwException("A server error occurred.", status, _responseText, _headers, result400);
             }));
         } else if (status === 401) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
@@ -289,7 +304,7 @@ export class BHClient {
      * @param hearingId The unique sequential value of hearing ID.
      * @return Success
      */
-    getHearingById(hearingId: number): Observable<HearingResponse> {
+    getHearingById(hearingId: string): Observable<HearingDetailsResponse> {
         let url_ = this.baseUrl + "/api/hearings/{hearingId}";
         if (hearingId === undefined || hearingId === null)
             throw new Error("The parameter 'hearingId' must be defined.");
@@ -311,14 +326,14 @@ export class BHClient {
                 try {
                     return this.processGetHearingById(<any>response_);
                 } catch (e) {
-                    return <Observable<HearingResponse>><any>_observableThrow(e);
+                    return <Observable<HearingDetailsResponse>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<HearingResponse>><any>_observableThrow(response_);
+                return <Observable<HearingDetailsResponse>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetHearingById(response: HttpResponseBase): Observable<HearingResponse> {
+    protected processGetHearingById(response: HttpResponseBase): Observable<HearingDetailsResponse> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -329,16 +344,22 @@ export class BHClient {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? HearingResponse.fromJS(resultData200) : new HearingResponse();
+            result200 = resultData200 ? HearingDetailsResponse.fromJS(resultData200) : new HearingDetailsResponse();
             return _observableOf(result200);
             }));
         } else if (status === 404) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("A server error occurred.", status, _responseText, _headers);
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = resultData404 ? ProblemDetails.fromJS(resultData404) : new ProblemDetails();
+            return throwException("A server error occurred.", status, _responseText, _headers, result404);
             }));
         } else if (status === 400) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("A server error occurred.", status, _responseText, _headers);
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = resultData400 ? ProblemDetails.fromJS(resultData400) : new ProblemDetails();
+            return throwException("A server error occurred.", status, _responseText, _headers, result400);
             }));
         } else if (status === 401) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
@@ -349,7 +370,7 @@ export class BHClient {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<HearingResponse>(<any>null);
+        return _observableOf<HearingDetailsResponse>(<any>null);
     }
 
     /**
@@ -402,7 +423,10 @@ export class BHClient {
             }));
         } else if (status === 404) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("A server error occurred.", status, _responseText, _headers);
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = resultData404 ? ProblemDetails.fromJS(resultData404) : new ProblemDetails();
+            return throwException("A server error occurred.", status, _responseText, _headers, result404);
             }));
         } else if (status === 401) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
@@ -417,74 +441,10 @@ export class BHClient {
     }
 
     /**
-     * Gets a list of hearing mediums
-     * @return Success
-     */
-    getHearingMediums(): Observable<HearingMediumResponse[]> {
-        let url_ = this.baseUrl + "/api/reference/mediums";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetHearingMediums(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetHearingMediums(<any>response_);
-                } catch (e) {
-                    return <Observable<HearingMediumResponse[]>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<HearingMediumResponse[]>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetHearingMediums(response: HttpResponseBase): Observable<HearingMediumResponse[]> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            if (resultData200 && resultData200.constructor === Array) {
-                result200 = [] as any;
-                for (let item of resultData200)
-                    result200!.push(HearingMediumResponse.fromJS(item));
-            }
-            return _observableOf(result200);
-            }));
-        } else if (status === 404) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("A server error occurred.", status, _responseText, _headers);
-            }));
-        } else if (status === 401) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("A server error occurred.", status, _responseText, _headers);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<HearingMediumResponse[]>(<any>null);
-    }
-
-    /**
      * Get available participant roles
      * @return Success
      */
-    getParticipantRoles(): Observable<ParticipantRoleResponse[]> {
+    getParticipantRoles(): Observable<CaseRoleResponse[]> {
         let url_ = this.baseUrl + "/api/reference/participantroles";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -503,14 +463,14 @@ export class BHClient {
                 try {
                     return this.processGetParticipantRoles(<any>response_);
                 } catch (e) {
-                    return <Observable<ParticipantRoleResponse[]>><any>_observableThrow(e);
+                    return <Observable<CaseRoleResponse[]>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<ParticipantRoleResponse[]>><any>_observableThrow(response_);
+                return <Observable<CaseRoleResponse[]>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetParticipantRoles(response: HttpResponseBase): Observable<ParticipantRoleResponse[]> {
+    protected processGetParticipantRoles(response: HttpResponseBase): Observable<CaseRoleResponse[]> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -524,13 +484,16 @@ export class BHClient {
             if (resultData200 && resultData200.constructor === Array) {
                 result200 = [] as any;
                 for (let item of resultData200)
-                    result200!.push(ParticipantRoleResponse.fromJS(item));
+                    result200!.push(CaseRoleResponse.fromJS(item));
             }
             return _observableOf(result200);
             }));
         } else if (status === 404) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("A server error occurred.", status, _responseText, _headers);
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = resultData404 ? ProblemDetails.fromJS(resultData404) : new ProblemDetails();
+            return throwException("A server error occurred.", status, _responseText, _headers, result404);
             }));
         } else if (status === 401) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
@@ -541,14 +504,14 @@ export class BHClient {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<ParticipantRoleResponse[]>(<any>null);
+        return _observableOf<CaseRoleResponse[]>(<any>null);
     }
 
     /**
      * Get available courts
      * @return Success
      */
-    getCourts(): Observable<CourtResponse[]> {
+    getCourts(): Observable<HearingVenueResponse[]> {
         let url_ = this.baseUrl + "/api/reference/courts";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -567,14 +530,14 @@ export class BHClient {
                 try {
                     return this.processGetCourts(<any>response_);
                 } catch (e) {
-                    return <Observable<CourtResponse[]>><any>_observableThrow(e);
+                    return <Observable<HearingVenueResponse[]>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<CourtResponse[]>><any>_observableThrow(response_);
+                return <Observable<HearingVenueResponse[]>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetCourts(response: HttpResponseBase): Observable<CourtResponse[]> {
+    protected processGetCourts(response: HttpResponseBase): Observable<HearingVenueResponse[]> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -588,13 +551,16 @@ export class BHClient {
             if (resultData200 && resultData200.constructor === Array) {
                 result200 = [] as any;
                 for (let item of resultData200)
-                    result200!.push(CourtResponse.fromJS(item));
+                    result200!.push(HearingVenueResponse.fromJS(item));
             }
             return _observableOf(result200);
             }));
         } else if (status === 404) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("A server error occurred.", status, _responseText, _headers);
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = resultData404 ? ProblemDetails.fromJS(resultData404) : new ProblemDetails();
+            return throwException("A server error occurred.", status, _responseText, _headers, result404);
             }));
         } else if (status === 401) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
@@ -605,7 +571,7 @@ export class BHClient {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<CourtResponse[]>(<any>null);
+        return _observableOf<HearingVenueResponse[]>(<any>null);
     }
 
     /**
@@ -728,24 +694,23 @@ export class BHClient {
     }
 }
 
+/** List of checklist responses */
 export class ChecklistsResponse implements IChecklistsResponse {
-    /** Gets or sets check list for hearing and participant. */
+    /** The checklists */
     checklists?: HearingParticipantCheckListResponse[] | undefined;
-    /** A list of hearings referenced by checklist responses in HearingsApi.Contract.Responses.ChecklistsResponse.Checklists. */
+    /** Hearing details for the hearings the checklists refer to */
     hearings?: ChecklistsHearingResponse[] | undefined;
-    /** Total number of items across all pages */
+    /** Total count of checklists in the system */
     total_count?: number | undefined;
-    /** Maximum number of items returned in items */
+    /** The size of checklists requested for this page */
     page_size?: number | undefined;
-    /** The total number of pages given the current page size */
+    /** The total number of pages */
     total_pages?: number | undefined;
-    /** Numbering of this paged response, starting from 1 */
+    /** The number of this given page, starting form one */
     current_page?: number | undefined;
-    /** Absolute url to the previous page of items.
-            Will be null for the first page. */
+    /** An absolute url to the previous page, or null if first page */
     prev_page_url?: string | undefined;
-    /** Absolute url for the next page of items.
-            Will be null for the last page. */
+    /** An absolute url to the next page, or null if last page */
     next_page_url?: string | undefined;
 
     constructor(data?: IChecklistsResponse) {
@@ -807,43 +772,47 @@ export class ChecklistsResponse implements IChecklistsResponse {
     }
 }
 
+/** List of checklist responses */
 export interface IChecklistsResponse {
-    /** Gets or sets check list for hearing and participant. */
+    /** The checklists */
     checklists?: HearingParticipantCheckListResponse[] | undefined;
-    /** A list of hearings referenced by checklist responses in HearingsApi.Contract.Responses.ChecklistsResponse.Checklists. */
+    /** Hearing details for the hearings the checklists refer to */
     hearings?: ChecklistsHearingResponse[] | undefined;
-    /** Total number of items across all pages */
+    /** Total count of checklists in the system */
     total_count?: number | undefined;
-    /** Maximum number of items returned in items */
+    /** The size of checklists requested for this page */
     page_size?: number | undefined;
-    /** The total number of pages given the current page size */
+    /** The total number of pages */
     total_pages?: number | undefined;
-    /** Numbering of this paged response, starting from 1 */
+    /** The number of this given page, starting form one */
     current_page?: number | undefined;
-    /** Absolute url to the previous page of items.
-            Will be null for the first page. */
+    /** An absolute url to the previous page, or null if first page */
     prev_page_url?: string | undefined;
-    /** Absolute url for the next page of items.
-            Will be null for the last page. */
+    /** An absolute url to the next page, or null if last page */
     next_page_url?: string | undefined;
 }
 
+/** A list of checklist answers for a given participant */
 export class HearingParticipantCheckListResponse implements IHearingParticipantCheckListResponse {
+    /** Id of the hearing the checklist was answered for */
     hearing_id?: number | undefined;
+    /** The unique participant id */
     participant_id?: number | undefined;
-    /** The participants title (i.e. Mr, Ms) */
+    /** Participant title */
     title?: string | undefined;
+    /** The participants first name */
     first_name?: string | undefined;
+    /** The participants last name */
     last_name?: string | undefined;
-    /** The participant role */
+    /** The participants role in the system */
     role?: string | undefined;
     /** The date and time the checklist was submitted */
     completed_date?: Date | undefined;
-    /** Checklist answers submitted */
+    /** A list of checklist responses */
     question_answer_responses?: QuestionAnswerResponse[] | undefined;
-    /** Landline number to the participant */
+    /** The participant land line number */
     landline?: string | undefined;
-    /** Mobile phone number to the participant */
+    /** The participants mobile telephone number */
     mobile?: string | undefined;
 
     constructor(data?: IHearingParticipantCheckListResponse) {
@@ -901,30 +870,39 @@ export class HearingParticipantCheckListResponse implements IHearingParticipantC
     }
 }
 
+/** A list of checklist answers for a given participant */
 export interface IHearingParticipantCheckListResponse {
+    /** Id of the hearing the checklist was answered for */
     hearing_id?: number | undefined;
+    /** The unique participant id */
     participant_id?: number | undefined;
-    /** The participants title (i.e. Mr, Ms) */
+    /** Participant title */
     title?: string | undefined;
+    /** The participants first name */
     first_name?: string | undefined;
+    /** The participants last name */
     last_name?: string | undefined;
-    /** The participant role */
+    /** The participants role in the system */
     role?: string | undefined;
     /** The date and time the checklist was submitted */
     completed_date?: Date | undefined;
-    /** Checklist answers submitted */
+    /** A list of checklist responses */
     question_answer_responses?: QuestionAnswerResponse[] | undefined;
-    /** Landline number to the participant */
+    /** The participant land line number */
     landline?: string | undefined;
-    /** Mobile phone number to the participant */
+    /** The participants mobile telephone number */
     mobile?: string | undefined;
 }
 
-/** Hearing information for participant checklists */
+/** Checklist entry */
 export class ChecklistsHearingResponse implements IChecklistsHearingResponse {
+    /** Which hearing the checklist belongs to */
     hearing_id?: number | undefined;
+    /** Which date and time the hearing is booked for */
     scheduled_date_time?: Date | undefined;
+    /** The status of the hearing */
     status?: string | undefined;
+    /** A list of case details for the given hearing */
     cases?: CaseResponse[] | undefined;
 
     constructor(data?: IChecklistsHearingResponse) {
@@ -970,18 +948,27 @@ export class ChecklistsHearingResponse implements IChecklistsHearingResponse {
     }
 }
 
-/** Hearing information for participant checklists */
+/** Checklist entry */
 export interface IChecklistsHearingResponse {
+    /** Which hearing the checklist belongs to */
     hearing_id?: number | undefined;
+    /** Which date and time the hearing is booked for */
     scheduled_date_time?: Date | undefined;
+    /** The status of the hearing */
     status?: string | undefined;
+    /** A list of case details for the given hearing */
     cases?: CaseResponse[] | undefined;
 }
 
+/** A single checklist question response */
 export class QuestionAnswerResponse implements IQuestionAnswerResponse {
+    /** The unique key for the question answered */
     question_key?: string | undefined;
+    /** The answer */
     answer?: string | undefined;
+    /** Any additional text given to the answer */
     notes?: string | undefined;
+    /** The date and time this specific question was answered */
     created_at?: Date | undefined;
 
     constructor(data?: IQuestionAnswerResponse) {
@@ -1019,13 +1006,19 @@ export class QuestionAnswerResponse implements IQuestionAnswerResponse {
     }
 }
 
+/** A single checklist question response */
 export interface IQuestionAnswerResponse {
+    /** The unique key for the question answered */
     question_key?: string | undefined;
+    /** The answer */
     answer?: string | undefined;
+    /** Any additional text given to the answer */
     notes?: string | undefined;
+    /** The date and time this specific question was answered */
     created_at?: Date | undefined;
 }
 
+/** Case details */
 export class CaseResponse implements ICaseResponse {
     /** The case number */
     number?: string | undefined;
@@ -1063,11 +1056,64 @@ export class CaseResponse implements ICaseResponse {
     }
 }
 
+/** Case details */
 export interface ICaseResponse {
     /** The case number */
     number?: string | undefined;
     /** The case name */
     name?: string | undefined;
+}
+
+export class ProblemDetails implements IProblemDetails {
+    type?: string | undefined;
+    title?: string | undefined;
+    status?: number | undefined;
+    detail?: string | undefined;
+    instance?: string | undefined;
+
+    constructor(data?: IProblemDetails) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.type = data["type"];
+            this.title = data["title"];
+            this.status = data["status"];
+            this.detail = data["detail"];
+            this.instance = data["instance"];
+        }
+    }
+
+    static fromJS(data: any): ProblemDetails {
+        data = typeof data === 'object' ? data : {};
+        let result = new ProblemDetails();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["type"] = this.type;
+        data["title"] = this.title;
+        data["status"] = this.status;
+        data["detail"] = this.detail;
+        data["instance"] = this.instance;
+        return data; 
+    }
+}
+
+export interface IProblemDetails {
+    type?: string | undefined;
+    title?: string | undefined;
+    status?: number | undefined;
+    detail?: string | undefined;
+    instance?: string | undefined;
 }
 
 /** Configuration to initialise the UI application */
@@ -1134,26 +1180,16 @@ export interface IClientSettingsResponse {
     instrumentation_key?: string | undefined;
 }
 
-/** Hearing Request Object */
-export class HearingRequest implements IHearingRequest {
-    /** Hearing Schedule Date and Time */
+export class BookNewHearingRequest implements IBookNewHearingRequest {
     scheduled_date_time?: Date | undefined;
-    /** Duration of the hearing */
     scheduled_duration?: number | undefined;
-    /** Hearing Type Id */
-    hearing_type_id?: number | undefined;
-    /** Hearing Medium Id */
-    hearing_medium_id?: number | undefined;
-    /** Court Id where hearing will take place */
-    court_id?: number | undefined;
-    /** Associated Case */
+    hearing_venue_name?: string | undefined;
+    case_type_name?: string | undefined;
+    hearing_type_name?: string | undefined;
     cases?: CaseRequest[] | undefined;
-    /** List of related feeds for the hearing */
-    feeds?: FeedRequest[] | undefined;
-    /** User booking the hearing */
-    created_by?: string | undefined;
+    participants?: ParticipantRequest[] | undefined;
 
-    constructor(data?: IHearingRequest) {
+    constructor(data?: IBookNewHearingRequest) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -1166,26 +1202,25 @@ export class HearingRequest implements IHearingRequest {
         if (data) {
             this.scheduled_date_time = data["scheduled_date_time"] ? new Date(data["scheduled_date_time"].toString()) : <any>undefined;
             this.scheduled_duration = data["scheduled_duration"];
-            this.hearing_type_id = data["hearing_type_id"];
-            this.hearing_medium_id = data["hearing_medium_id"];
-            this.court_id = data["court_id"];
+            this.hearing_venue_name = data["hearing_venue_name"];
+            this.case_type_name = data["case_type_name"];
+            this.hearing_type_name = data["hearing_type_name"];
             if (data["cases"] && data["cases"].constructor === Array) {
                 this.cases = [] as any;
                 for (let item of data["cases"])
                     this.cases!.push(CaseRequest.fromJS(item));
             }
-            if (data["feeds"] && data["feeds"].constructor === Array) {
-                this.feeds = [] as any;
-                for (let item of data["feeds"])
-                    this.feeds!.push(FeedRequest.fromJS(item));
+            if (data["participants"] && data["participants"].constructor === Array) {
+                this.participants = [] as any;
+                for (let item of data["participants"])
+                    this.participants!.push(ParticipantRequest.fromJS(item));
             }
-            this.created_by = data["created_by"];
         }
     }
 
-    static fromJS(data: any): HearingRequest {
+    static fromJS(data: any): BookNewHearingRequest {
         data = typeof data === 'object' ? data : {};
-        let result = new HearingRequest();
+        let result = new BookNewHearingRequest();
         result.init(data);
         return result;
     }
@@ -1194,49 +1229,37 @@ export class HearingRequest implements IHearingRequest {
         data = typeof data === 'object' ? data : {};
         data["scheduled_date_time"] = this.scheduled_date_time ? this.scheduled_date_time.toISOString() : <any>undefined;
         data["scheduled_duration"] = this.scheduled_duration;
-        data["hearing_type_id"] = this.hearing_type_id;
-        data["hearing_medium_id"] = this.hearing_medium_id;
-        data["court_id"] = this.court_id;
+        data["hearing_venue_name"] = this.hearing_venue_name;
+        data["case_type_name"] = this.case_type_name;
+        data["hearing_type_name"] = this.hearing_type_name;
         if (this.cases && this.cases.constructor === Array) {
             data["cases"] = [];
             for (let item of this.cases)
                 data["cases"].push(item.toJSON());
         }
-        if (this.feeds && this.feeds.constructor === Array) {
-            data["feeds"] = [];
-            for (let item of this.feeds)
-                data["feeds"].push(item.toJSON());
+        if (this.participants && this.participants.constructor === Array) {
+            data["participants"] = [];
+            for (let item of this.participants)
+                data["participants"].push(item.toJSON());
         }
-        data["created_by"] = this.created_by;
         return data; 
     }
 }
 
-/** Hearing Request Object */
-export interface IHearingRequest {
-    /** Hearing Schedule Date and Time */
+export interface IBookNewHearingRequest {
     scheduled_date_time?: Date | undefined;
-    /** Duration of the hearing */
     scheduled_duration?: number | undefined;
-    /** Hearing Type Id */
-    hearing_type_id?: number | undefined;
-    /** Hearing Medium Id */
-    hearing_medium_id?: number | undefined;
-    /** Court Id where hearing will take place */
-    court_id?: number | undefined;
-    /** Associated Case */
+    hearing_venue_name?: string | undefined;
+    case_type_name?: string | undefined;
+    hearing_type_name?: string | undefined;
     cases?: CaseRequest[] | undefined;
-    /** List of related feeds for the hearing */
-    feeds?: FeedRequest[] | undefined;
-    /** User booking the hearing */
-    created_by?: string | undefined;
+    participants?: ParticipantRequest[] | undefined;
 }
 
 export class CaseRequest implements ICaseRequest {
-    /** Case Number */
     number?: string | undefined;
-    /** Case Name */
     name?: string | undefined;
+    is_lead_case?: boolean | undefined;
 
     constructor(data?: ICaseRequest) {
         if (data) {
@@ -1251,6 +1274,7 @@ export class CaseRequest implements ICaseRequest {
         if (data) {
             this.number = data["number"];
             this.name = data["name"];
+            this.is_lead_case = data["is_lead_case"];
         }
     }
 
@@ -1265,103 +1289,30 @@ export class CaseRequest implements ICaseRequest {
         data = typeof data === 'object' ? data : {};
         data["number"] = this.number;
         data["name"] = this.name;
+        data["is_lead_case"] = this.is_lead_case;
         return data; 
     }
 }
 
 export interface ICaseRequest {
-    /** Case Number */
     number?: string | undefined;
-    /** Case Name */
     name?: string | undefined;
+    is_lead_case?: boolean | undefined;
 }
 
-/** Feed Request Object */
-export class FeedRequest implements IFeedRequest {
-    /** Hearing Location */
-    location?: string | undefined;
-    /** List of participants in that particular location */
-    participants?: ParticipantRequest[] | undefined;
-
-    constructor(data?: IFeedRequest) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.location = data["location"];
-            if (data["participants"] && data["participants"].constructor === Array) {
-                this.participants = [] as any;
-                for (let item of data["participants"])
-                    this.participants!.push(ParticipantRequest.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): FeedRequest {
-        data = typeof data === 'object' ? data : {};
-        let result = new FeedRequest();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["location"] = this.location;
-        if (this.participants && this.participants.constructor === Array) {
-            data["participants"] = [];
-            for (let item of this.participants)
-                data["participants"].push(item.toJSON());
-        }
-        return data; 
-    }
-}
-
-/** Feed Request Object */
-export interface IFeedRequest {
-    /** Hearing Location */
-    location?: string | undefined;
-    /** List of participants in that particular location */
-    participants?: ParticipantRequest[] | undefined;
-}
-
-/** Participant class */
 export class ParticipantRequest implements IParticipantRequest {
-    /** Participant */
     title?: string | undefined;
-    /** Participant FirstName */
     first_name?: string | undefined;
-    /** Participant Last Name */
-    last_name?: string | undefined;
-    /** Participant MiddleNames */
     middle_names?: string | undefined;
-    /** Participant Diaply Name */
-    display_name?: string | undefined;
-    /** Participant Username (HMCTS login) */
+    last_name?: string | undefined;
+    contact_email?: string | undefined;
+    telephone_number?: string | undefined;
     username?: string | undefined;
-    /** Participant Email Address */
-    email?: string | undefined;
-    /** Participant External Id If Participant is an external participant */
-    external_id?: string | undefined;
-    /** Set to true If Participant is an external participant */
-    external_flag?: boolean | undefined;
-    /** Participant Role */
-    role?: string | undefined;
-    /** Participant Phone Number */
-    phone?: string | undefined;
-    /** Participant Mobile Phone Number */
-    mobile?: string | undefined;
-    /** Participant representing behalf of */
-    representing?: string | undefined;
-    /** Participant Organisation Name */
-    organisation_name?: string | undefined;
-    /** Participant Organisation Address */
-    organisation_address?: string | undefined;
+    display_name?: string | undefined;
+    case_role_name?: string | undefined;
+    hearing_role_name?: string | undefined;
+    solicitors_reference?: string | undefined;
+    representee?: string | undefined;
 
     constructor(data?: IParticipantRequest) {
         if (data) {
@@ -1376,19 +1327,16 @@ export class ParticipantRequest implements IParticipantRequest {
         if (data) {
             this.title = data["title"];
             this.first_name = data["first_name"];
-            this.last_name = data["last_name"];
             this.middle_names = data["middle_names"];
-            this.display_name = data["display_name"];
+            this.last_name = data["last_name"];
+            this.contact_email = data["contact_email"];
+            this.telephone_number = data["telephone_number"];
             this.username = data["username"];
-            this.email = data["email"];
-            this.external_id = data["external_id"];
-            this.external_flag = data["external_flag"];
-            this.role = data["role"];
-            this.phone = data["phone"];
-            this.mobile = data["mobile"];
-            this.representing = data["representing"];
-            this.organisation_name = data["organisation_name"];
-            this.organisation_address = data["organisation_address"];
+            this.display_name = data["display_name"];
+            this.case_role_name = data["case_role_name"];
+            this.hearing_role_name = data["hearing_role_name"];
+            this.solicitors_reference = data["solicitors_reference"];
+            this.representee = data["representee"];
         }
     }
 
@@ -1403,70 +1351,46 @@ export class ParticipantRequest implements IParticipantRequest {
         data = typeof data === 'object' ? data : {};
         data["title"] = this.title;
         data["first_name"] = this.first_name;
-        data["last_name"] = this.last_name;
         data["middle_names"] = this.middle_names;
-        data["display_name"] = this.display_name;
+        data["last_name"] = this.last_name;
+        data["contact_email"] = this.contact_email;
+        data["telephone_number"] = this.telephone_number;
         data["username"] = this.username;
-        data["email"] = this.email;
-        data["external_id"] = this.external_id;
-        data["external_flag"] = this.external_flag;
-        data["role"] = this.role;
-        data["phone"] = this.phone;
-        data["mobile"] = this.mobile;
-        data["representing"] = this.representing;
-        data["organisation_name"] = this.organisation_name;
-        data["organisation_address"] = this.organisation_address;
+        data["display_name"] = this.display_name;
+        data["case_role_name"] = this.case_role_name;
+        data["hearing_role_name"] = this.hearing_role_name;
+        data["solicitors_reference"] = this.solicitors_reference;
+        data["representee"] = this.representee;
         return data; 
     }
 }
 
-/** Participant class */
 export interface IParticipantRequest {
-    /** Participant */
     title?: string | undefined;
-    /** Participant FirstName */
     first_name?: string | undefined;
-    /** Participant Last Name */
-    last_name?: string | undefined;
-    /** Participant MiddleNames */
     middle_names?: string | undefined;
-    /** Participant Diaply Name */
-    display_name?: string | undefined;
-    /** Participant Username (HMCTS login) */
+    last_name?: string | undefined;
+    contact_email?: string | undefined;
+    telephone_number?: string | undefined;
     username?: string | undefined;
-    /** Participant Email Address */
-    email?: string | undefined;
-    /** Participant External Id If Participant is an external participant */
-    external_id?: string | undefined;
-    /** Set to true If Participant is an external participant */
-    external_flag?: boolean | undefined;
-    /** Participant Role */
-    role?: string | undefined;
-    /** Participant Phone Number */
-    phone?: string | undefined;
-    /** Participant Mobile Phone Number */
-    mobile?: string | undefined;
-    /** Participant representing behalf of */
-    representing?: string | undefined;
-    /** Participant Organisation Name */
-    organisation_name?: string | undefined;
-    /** Participant Organisation Address */
-    organisation_address?: string | undefined;
+    display_name?: string | undefined;
+    case_role_name?: string | undefined;
+    hearing_role_name?: string | undefined;
+    solicitors_reference?: string | undefined;
+    representee?: string | undefined;
 }
 
+/** A list of hearing bookings */
 export class BookingsResponse implements IBookingsResponse {
-    /** Gets or sets list of bookings hearings. */
+    /** List of hearings */
     hearings?: BookingsByDateResponse[] | undefined;
-    /** Gets or sets a unique sequential value to get next set of records. 
-            value is set to 0 if no records to return. */
+    /** The next cursor to continue reading the list of hearings from */
     next_cursor?: string | undefined;
-    /** Gets or sets the maximum number of items returned for the page. */
+    /** How many hearings were requested */
     limit?: number | undefined;
-    /** Absolute url to the previous page of items.
-            Will be null for the first page. */
+    /** The url to the previous page of hearings (or null if not available) */
     prev_page_url?: string | undefined;
-    /** Absolute url for the next page of items.
-            Will be null for the last page. */
+    /** The url to the next page of hearings (or null if not available) */
     next_page_url?: string | undefined;
 
     constructor(data?: IBookingsResponse) {
@@ -1514,26 +1438,25 @@ export class BookingsResponse implements IBookingsResponse {
     }
 }
 
+/** A list of hearing bookings */
 export interface IBookingsResponse {
-    /** Gets or sets list of bookings hearings. */
+    /** List of hearings */
     hearings?: BookingsByDateResponse[] | undefined;
-    /** Gets or sets a unique sequential value to get next set of records. 
-            value is set to 0 if no records to return. */
+    /** The next cursor to continue reading the list of hearings from */
     next_cursor?: string | undefined;
-    /** Gets or sets the maximum number of items returned for the page. */
+    /** How many hearings were requested */
     limit?: number | undefined;
-    /** Absolute url to the previous page of items.
-            Will be null for the first page. */
+    /** The url to the previous page of hearings (or null if not available) */
     prev_page_url?: string | undefined;
-    /** Absolute url for the next page of items.
-            Will be null for the last page. */
+    /** The url to the next page of hearings (or null if not available) */
     next_page_url?: string | undefined;
 }
 
+/** Hearings grouped by day */
 export class BookingsByDateResponse implements IBookingsByDateResponse {
-    /** The hearings grouped by date without time. */
+    /** The date bookings are grouped by */
     scheduled_date?: Date | undefined;
-    /** Gets or sets list of bookings hearings. */
+    /** List of hearings for the day */
     hearings?: BookingsHearingResponse[] | undefined;
 
     constructor(data?: IBookingsByDateResponse) {
@@ -1575,41 +1498,43 @@ export class BookingsByDateResponse implements IBookingsByDateResponse {
     }
 }
 
+/** Hearings grouped by day */
 export interface IBookingsByDateResponse {
-    /** The hearings grouped by date without time. */
+    /** The date bookings are grouped by */
     scheduled_date?: Date | undefined;
-    /** Gets or sets list of bookings hearings. */
+    /** List of hearings for the day */
     hearings?: BookingsHearingResponse[] | undefined;
 }
 
+/** A single booked hearing */
 export class BookingsHearingResponse implements IBookingsHearingResponse {
-    /** Gets or sets the hearing ID. */
+    /** Unique hearing identifier */
     hearing_id?: number | undefined;
-    /** Gets or sets the hearing number/reference. */
+    /** The lead case number */
     hearing_number?: string | undefined;
-    /** Gets or sets the hearing title/name. */
+    /** The lead case name */
     hearing_name?: string | undefined;
-    /** Gets or sets the hearing scheduled date and time. */
+    /** Scheduled date and time for the hearing */
     scheduled_date_time?: Date | undefined;
-    /** Gets or sets the hearing duration. */
+    /** The scheduled hearing duration in minutes */
     scheduled_duration?: number | undefined;
-    /** Gets or sets the hearing case type. */
+    /** Display text for the type of hearing */
     hearing_type_name?: string | undefined;
-    /** Gets or sets the cour room. */
+    /** Room name in venue */
     court_room?: string | undefined;
-    /** Gets or sets the court address. */
+    /** The venue display name */
     court_address?: string | undefined;
-    /** Gets or sets Judge name. */
+    /** Display name for lead judge */
     judge_name?: string | undefined;
-    /** Gets or sets the name/email person who create the hearing. */
+    /** Username of user that created the hearing */
     created_by?: string | undefined;
-    /** Gets or sets the created date of hearing. */
+    /** Date and time the hearing was created */
     created_date?: Date | undefined;
-    /** Gets or sets the name/email person who last edit the hearing. */
+    /** Username for user that last edited the hearing (or created if not edits has occured) */
     last_edit_by?: string | undefined;
-    /** Gets or sets the last edited date of hearing. */
+    /** The date and time when the hearing was last edited (or updated if no edits has occured) */
     last_edit_date?: Date | undefined;
-    /** Gets the scheduled date without time. */
+    /** The date and time of he hearing */
     hearing_date?: Date | undefined;
 
     constructor(data?: IBookingsHearingResponse) {
@@ -1667,73 +1592,49 @@ export class BookingsHearingResponse implements IBookingsHearingResponse {
     }
 }
 
+/** A single booked hearing */
 export interface IBookingsHearingResponse {
-    /** Gets or sets the hearing ID. */
+    /** Unique hearing identifier */
     hearing_id?: number | undefined;
-    /** Gets or sets the hearing number/reference. */
+    /** The lead case number */
     hearing_number?: string | undefined;
-    /** Gets or sets the hearing title/name. */
+    /** The lead case name */
     hearing_name?: string | undefined;
-    /** Gets or sets the hearing scheduled date and time. */
+    /** Scheduled date and time for the hearing */
     scheduled_date_time?: Date | undefined;
-    /** Gets or sets the hearing duration. */
+    /** The scheduled hearing duration in minutes */
     scheduled_duration?: number | undefined;
-    /** Gets or sets the hearing case type. */
+    /** Display text for the type of hearing */
     hearing_type_name?: string | undefined;
-    /** Gets or sets the cour room. */
+    /** Room name in venue */
     court_room?: string | undefined;
-    /** Gets or sets the court address. */
+    /** The venue display name */
     court_address?: string | undefined;
-    /** Gets or sets Judge name. */
+    /** Display name for lead judge */
     judge_name?: string | undefined;
-    /** Gets or sets the name/email person who create the hearing. */
+    /** Username of user that created the hearing */
     created_by?: string | undefined;
-    /** Gets or sets the created date of hearing. */
+    /** Date and time the hearing was created */
     created_date?: Date | undefined;
-    /** Gets or sets the name/email person who last edit the hearing. */
+    /** Username for user that last edited the hearing (or created if not edits has occured) */
     last_edit_by?: string | undefined;
-    /** Gets or sets the last edited date of hearing. */
+    /** The date and time when the hearing was last edited (or updated if no edits has occured) */
     last_edit_date?: Date | undefined;
-    /** Gets the scheduled date without time. */
+    /** The date and time of he hearing */
     hearing_date?: Date | undefined;
 }
 
-/** A hearing */
-export class HearingResponse implements IHearingResponse {
-    /** List of cases associated to the hearing */
-    cases?: CaseResponse[] | undefined;
-    /** The date and time for a hearing */
+export class HearingDetailsResponse implements IHearingDetailsResponse {
+    id?: string | undefined;
     scheduled_date_time?: Date | undefined;
-    /** The duration of a hearing (number of minutes) */
     scheduled_duration?: number | undefined;
-    /** The type of hearing (e.g. Civil Money Claims) */
-    hearing_type?: string | undefined;
-    /** The medium over which the hearing will be conducted (e.g. Video, Audio, Mixed) */
-    hearing_medium?: string | undefined;
-    /** The hearing status (e.g. Created, Live). */
-    status?: string | undefined;
-    /** The unique identifier for the hearing. */
-    id?: number | undefined;
-    /** The meeting Url for the video hearing */
-    meeting_url?: string | undefined;
-    /** The joining Url for the video hearing */
-    joining_url?: string | undefined;
-    /** The expiry time for the meeting url */
-    meeting_url_expiry_time?: Date | undefined;
-    /** List of participants associated with hearing */
+    hearing_venue_name?: string | undefined;
+    case_type_name?: string | undefined;
+    hearing_type_name?: string | undefined;
+    cases?: CaseResponse2[] | undefined;
     participants?: ParticipantResponse[] | undefined;
-    /** Court */
-    court?: CourtResponse | undefined;
-    /** Gets or sets the name of person who created the hearing. */
-    created_by?: string | undefined;
-    /** Gets or sets created hearing date. */
-    created_date?: Date | undefined;
-    /** Gets or sets the name of person who update the hearing. */
-    updated_by?: string | undefined;
-    /** Gets or sets updated hearing date. */
-    updated_date?: Date | undefined;
 
-    constructor(data?: IHearingResponse) {
+    constructor(data?: IHearingDetailsResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -1744,148 +1645,122 @@ export class HearingResponse implements IHearingResponse {
 
     init(data?: any) {
         if (data) {
+            this.id = data["id"];
+            this.scheduled_date_time = data["scheduled_date_time"] ? new Date(data["scheduled_date_time"].toString()) : <any>undefined;
+            this.scheduled_duration = data["scheduled_duration"];
+            this.hearing_venue_name = data["hearing_venue_name"];
+            this.case_type_name = data["case_type_name"];
+            this.hearing_type_name = data["hearing_type_name"];
             if (data["cases"] && data["cases"].constructor === Array) {
                 this.cases = [] as any;
                 for (let item of data["cases"])
-                    this.cases!.push(CaseResponse.fromJS(item));
+                    this.cases!.push(CaseResponse2.fromJS(item));
             }
-            this.scheduled_date_time = data["scheduled_date_time"] ? new Date(data["scheduled_date_time"].toString()) : <any>undefined;
-            this.scheduled_duration = data["scheduled_duration"];
-            this.hearing_type = data["hearing_type"];
-            this.hearing_medium = data["hearing_medium"];
-            this.status = data["status"];
-            this.id = data["id"];
-            this.meeting_url = data["meeting_url"];
-            this.joining_url = data["joining_url"];
-            this.meeting_url_expiry_time = data["meeting_url_expiry_time"] ? new Date(data["meeting_url_expiry_time"].toString()) : <any>undefined;
             if (data["participants"] && data["participants"].constructor === Array) {
                 this.participants = [] as any;
                 for (let item of data["participants"])
                     this.participants!.push(ParticipantResponse.fromJS(item));
             }
-            this.court = data["court"] ? CourtResponse.fromJS(data["court"]) : <any>undefined;
-            this.created_by = data["created_by"];
-            this.created_date = data["created_date"] ? new Date(data["created_date"].toString()) : <any>undefined;
-            this.updated_by = data["updated_by"];
-            this.updated_date = data["updated_date"] ? new Date(data["updated_date"].toString()) : <any>undefined;
         }
     }
 
-    static fromJS(data: any): HearingResponse {
+    static fromJS(data: any): HearingDetailsResponse {
         data = typeof data === 'object' ? data : {};
-        let result = new HearingResponse();
+        let result = new HearingDetailsResponse();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["scheduled_date_time"] = this.scheduled_date_time ? this.scheduled_date_time.toISOString() : <any>undefined;
+        data["scheduled_duration"] = this.scheduled_duration;
+        data["hearing_venue_name"] = this.hearing_venue_name;
+        data["case_type_name"] = this.case_type_name;
+        data["hearing_type_name"] = this.hearing_type_name;
         if (this.cases && this.cases.constructor === Array) {
             data["cases"] = [];
             for (let item of this.cases)
                 data["cases"].push(item.toJSON());
         }
-        data["scheduled_date_time"] = this.scheduled_date_time ? this.scheduled_date_time.toISOString() : <any>undefined;
-        data["scheduled_duration"] = this.scheduled_duration;
-        data["hearing_type"] = this.hearing_type;
-        data["hearing_medium"] = this.hearing_medium;
-        data["status"] = this.status;
-        data["id"] = this.id;
-        data["meeting_url"] = this.meeting_url;
-        data["joining_url"] = this.joining_url;
-        data["meeting_url_expiry_time"] = this.meeting_url_expiry_time ? this.meeting_url_expiry_time.toISOString() : <any>undefined;
         if (this.participants && this.participants.constructor === Array) {
             data["participants"] = [];
             for (let item of this.participants)
                 data["participants"].push(item.toJSON());
         }
-        data["court"] = this.court ? this.court.toJSON() : <any>undefined;
-        data["created_by"] = this.created_by;
-        data["created_date"] = this.created_date ? this.created_date.toISOString() : <any>undefined;
-        data["updated_by"] = this.updated_by;
-        data["updated_date"] = this.updated_date ? this.updated_date.toISOString() : <any>undefined;
         return data; 
     }
 }
 
-/** A hearing */
-export interface IHearingResponse {
-    /** List of cases associated to the hearing */
-    cases?: CaseResponse[] | undefined;
-    /** The date and time for a hearing */
+export interface IHearingDetailsResponse {
+    id?: string | undefined;
     scheduled_date_time?: Date | undefined;
-    /** The duration of a hearing (number of minutes) */
     scheduled_duration?: number | undefined;
-    /** The type of hearing (e.g. Civil Money Claims) */
-    hearing_type?: string | undefined;
-    /** The medium over which the hearing will be conducted (e.g. Video, Audio, Mixed) */
-    hearing_medium?: string | undefined;
-    /** The hearing status (e.g. Created, Live). */
-    status?: string | undefined;
-    /** The unique identifier for the hearing. */
-    id?: number | undefined;
-    /** The meeting Url for the video hearing */
-    meeting_url?: string | undefined;
-    /** The joining Url for the video hearing */
-    joining_url?: string | undefined;
-    /** The expiry time for the meeting url */
-    meeting_url_expiry_time?: Date | undefined;
-    /** List of participants associated with hearing */
+    hearing_venue_name?: string | undefined;
+    case_type_name?: string | undefined;
+    hearing_type_name?: string | undefined;
+    cases?: CaseResponse2[] | undefined;
     participants?: ParticipantResponse[] | undefined;
-    /** Court */
-    court?: CourtResponse | undefined;
-    /** Gets or sets the name of person who created the hearing. */
-    created_by?: string | undefined;
-    /** Gets or sets created hearing date. */
-    created_date?: Date | undefined;
-    /** Gets or sets the name of person who update the hearing. */
-    updated_by?: string | undefined;
-    /** Gets or sets updated hearing date. */
-    updated_date?: Date | undefined;
 }
 
-/** Participant details */
+export class CaseResponse2 implements ICaseResponse2 {
+    number?: string | undefined;
+    name?: string | undefined;
+    is_lead_case?: boolean | undefined;
+
+    constructor(data?: ICaseResponse2) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.number = data["number"];
+            this.name = data["name"];
+            this.is_lead_case = data["is_lead_case"];
+        }
+    }
+
+    static fromJS(data: any): CaseResponse2 {
+        data = typeof data === 'object' ? data : {};
+        let result = new CaseResponse2();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["number"] = this.number;
+        data["name"] = this.name;
+        data["is_lead_case"] = this.is_lead_case;
+        return data; 
+    }
+}
+
+export interface ICaseResponse2 {
+    number?: string | undefined;
+    name?: string | undefined;
+    is_lead_case?: boolean | undefined;
+}
+
 export class ParticipantResponse implements IParticipantResponse {
-    /** Participant Id. */
-    id?: number | undefined;
-    /** Participant Title. */
-    title?: string | undefined;
-    /** Participant first name. */
-    first_name?: string | undefined;
-    /** Participant middle name. */
-    middle_names?: string | undefined;
-    /** Participant last name. */
-    last_name?: string | undefined;
-    /** Participant display name. */
+    id?: string | undefined;
     display_name?: string | undefined;
-    /** Participant username */
+    case_role_name?: string | undefined;
+    hearing_role_name?: string | undefined;
+    user_role_name?: string | undefined;
+    title?: string | undefined;
+    first_name?: string | undefined;
+    middle_names?: string | undefined;
+    last_name?: string | undefined;
+    contact_email?: string | undefined;
+    telephone_number?: string | undefined;
     username?: string | undefined;
-    /** Participant username */
-    email?: string | undefined;
-    /** Participant external Id. */
-    external_id?: string | undefined;
-    /** Flag to indicate that the participant is an external user. */
-    external_flag?: boolean | undefined;
-    /** Participant landline phone number. */
-    phone?: string | undefined;
-    /** Participant mobile phone number. */
-    mobile_phone?: string | undefined;
-    /** name of the organisation that participant belongs. */
-    organisation_name?: string | undefined;
-    /** Organisation address. */
-    organisation_address?: string | undefined;
-    /** Name of a person who represents the participant. */
-    representing?: string | undefined;
-    /** Participant feed Id. */
-    feed_id?: number | undefined;
-    /** Participant location(end point). */
-    location?: string | undefined;
-    /** Participant role. */
-    participant_role?: string | undefined;
-    /** Participant's current status. */
-    current_status?: ParticipantStatusResponse | undefined;
-    /** List of participant notifications */
-    notifications?: ParticipantNotificationResponse[] | undefined;
 
     constructor(data?: IParticipantResponse) {
         if (data) {
@@ -1899,29 +1774,17 @@ export class ParticipantResponse implements IParticipantResponse {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
+            this.display_name = data["display_name"];
+            this.case_role_name = data["case_role_name"];
+            this.hearing_role_name = data["hearing_role_name"];
+            this.user_role_name = data["user_role_name"];
             this.title = data["title"];
             this.first_name = data["first_name"];
             this.middle_names = data["middle_names"];
             this.last_name = data["last_name"];
-            this.display_name = data["display_name"];
+            this.contact_email = data["contact_email"];
+            this.telephone_number = data["telephone_number"];
             this.username = data["username"];
-            this.email = data["email"];
-            this.external_id = data["external_id"];
-            this.external_flag = data["external_flag"];
-            this.phone = data["phone"];
-            this.mobile_phone = data["mobile_phone"];
-            this.organisation_name = data["organisation_name"];
-            this.organisation_address = data["organisation_address"];
-            this.representing = data["representing"];
-            this.feed_id = data["feed_id"];
-            this.location = data["location"];
-            this.participant_role = data["participant_role"];
-            this.current_status = data["current_status"] ? ParticipantStatusResponse.fromJS(data["current_status"]) : <any>undefined;
-            if (data["notifications"] && data["notifications"].constructor === Array) {
-                this.notifications = [] as any;
-                for (let item of data["notifications"])
-                    this.notifications!.push(ParticipantNotificationResponse.fromJS(item));
-            }
         }
     }
 
@@ -1935,285 +1798,45 @@ export class ParticipantResponse implements IParticipantResponse {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
+        data["display_name"] = this.display_name;
+        data["case_role_name"] = this.case_role_name;
+        data["hearing_role_name"] = this.hearing_role_name;
+        data["user_role_name"] = this.user_role_name;
         data["title"] = this.title;
         data["first_name"] = this.first_name;
         data["middle_names"] = this.middle_names;
         data["last_name"] = this.last_name;
-        data["display_name"] = this.display_name;
+        data["contact_email"] = this.contact_email;
+        data["telephone_number"] = this.telephone_number;
         data["username"] = this.username;
-        data["email"] = this.email;
-        data["external_id"] = this.external_id;
-        data["external_flag"] = this.external_flag;
-        data["phone"] = this.phone;
-        data["mobile_phone"] = this.mobile_phone;
-        data["organisation_name"] = this.organisation_name;
-        data["organisation_address"] = this.organisation_address;
-        data["representing"] = this.representing;
-        data["feed_id"] = this.feed_id;
-        data["location"] = this.location;
-        data["participant_role"] = this.participant_role;
-        data["current_status"] = this.current_status ? this.current_status.toJSON() : <any>undefined;
-        if (this.notifications && this.notifications.constructor === Array) {
-            data["notifications"] = [];
-            for (let item of this.notifications)
-                data["notifications"].push(item.toJSON());
-        }
         return data; 
     }
 }
 
-/** Participant details */
 export interface IParticipantResponse {
-    /** Participant Id. */
-    id?: number | undefined;
-    /** Participant Title. */
-    title?: string | undefined;
-    /** Participant first name. */
-    first_name?: string | undefined;
-    /** Participant middle name. */
-    middle_names?: string | undefined;
-    /** Participant last name. */
-    last_name?: string | undefined;
-    /** Participant display name. */
+    id?: string | undefined;
     display_name?: string | undefined;
-    /** Participant username */
+    case_role_name?: string | undefined;
+    hearing_role_name?: string | undefined;
+    user_role_name?: string | undefined;
+    title?: string | undefined;
+    first_name?: string | undefined;
+    middle_names?: string | undefined;
+    last_name?: string | undefined;
+    contact_email?: string | undefined;
+    telephone_number?: string | undefined;
     username?: string | undefined;
-    /** Participant username */
-    email?: string | undefined;
-    /** Participant external Id. */
-    external_id?: string | undefined;
-    /** Flag to indicate that the participant is an external user. */
-    external_flag?: boolean | undefined;
-    /** Participant landline phone number. */
-    phone?: string | undefined;
-    /** Participant mobile phone number. */
-    mobile_phone?: string | undefined;
-    /** name of the organisation that participant belongs. */
-    organisation_name?: string | undefined;
-    /** Organisation address. */
-    organisation_address?: string | undefined;
-    /** Name of a person who represents the participant. */
-    representing?: string | undefined;
-    /** Participant feed Id. */
-    feed_id?: number | undefined;
-    /** Participant location(end point). */
-    location?: string | undefined;
-    /** Participant role. */
-    participant_role?: string | undefined;
-    /** Participant's current status. */
-    current_status?: ParticipantStatusResponse | undefined;
-    /** List of participant notifications */
-    notifications?: ParticipantNotificationResponse[] | undefined;
 }
 
-/** Court Response */
-export class CourtResponse implements ICourtResponse {
-    /** Court ID */
-    id?: number | undefined;
-    /** Court room */
-    room?: string | undefined;
-    /** Court address */
-    address?: string | undefined;
-
-    constructor(data?: ICourtResponse) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.room = data["room"];
-            this.address = data["address"];
-        }
-    }
-
-    static fromJS(data: any): CourtResponse {
-        data = typeof data === 'object' ? data : {};
-        let result = new CourtResponse();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["room"] = this.room;
-        data["address"] = this.address;
-        return data; 
-    }
-}
-
-/** Court Response */
-export interface ICourtResponse {
-    /** Court ID */
-    id?: number | undefined;
-    /** Court room */
-    room?: string | undefined;
-    /** Court address */
-    address?: string | undefined;
-}
-
-/** Participant current status response */
-export class ParticipantStatusResponse implements IParticipantStatusResponse {
-    /** Gets or sets the ID. */
-    id?: number | undefined;
-    /** Gets or sets the hearing Id. */
-    hearing_id?: number | undefined;
-    /** Gets or sets the participant Id. */
-    participant_id?: number | undefined;
-    /** Gets or sets the current status Id. */
-    status_id?: number | undefined;
-    /** Gets or sets the current status. */
-    status_name?: string | undefined;
-    /** Gets or sets the current status additional info. */
-    additional_info?: string | undefined;
-    /** Gets or sets the created date and time of status. */
-    created_date?: Date | undefined;
-
-    constructor(data?: IParticipantStatusResponse) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.hearing_id = data["hearing_id"];
-            this.participant_id = data["participant_id"];
-            this.status_id = data["status_id"];
-            this.status_name = data["status_name"];
-            this.additional_info = data["additional_info"];
-            this.created_date = data["created_date"] ? new Date(data["created_date"].toString()) : <any>undefined;
-        }
-    }
-
-    static fromJS(data: any): ParticipantStatusResponse {
-        data = typeof data === 'object' ? data : {};
-        let result = new ParticipantStatusResponse();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["hearing_id"] = this.hearing_id;
-        data["participant_id"] = this.participant_id;
-        data["status_id"] = this.status_id;
-        data["status_name"] = this.status_name;
-        data["additional_info"] = this.additional_info;
-        data["created_date"] = this.created_date ? this.created_date.toISOString() : <any>undefined;
-        return data; 
-    }
-}
-
-/** Participant current status response */
-export interface IParticipantStatusResponse {
-    /** Gets or sets the ID. */
-    id?: number | undefined;
-    /** Gets or sets the hearing Id. */
-    hearing_id?: number | undefined;
-    /** Gets or sets the participant Id. */
-    participant_id?: number | undefined;
-    /** Gets or sets the current status Id. */
-    status_id?: number | undefined;
-    /** Gets or sets the current status. */
-    status_name?: string | undefined;
-    /** Gets or sets the current status additional info. */
-    additional_info?: string | undefined;
-    /** Gets or sets the created date and time of status. */
-    created_date?: Date | undefined;
-}
-
-/** Notification for a participant in a hearing */
-export class ParticipantNotificationResponse implements IParticipantNotificationResponse {
-    /** Unique identified for the notification */
-    id?: number | undefined;
-    /** Type of event that occured or notification that was raised */
-    notification_type?: string | undefined;
-    /** Data stored for the notification */
-    log_information?: string | undefined;
-    /** Whether the notification/event was successful or not */
-    result?: string | undefined;
-    /** Time the notification was created */
-    create_time?: Date | undefined;
-    /** If the notification has been seen by administrators or not */
-    is_seen?: boolean | undefined;
-    /** If the notification has been handled/dismissed by administrators */
-    is_dismissed?: boolean | undefined;
-
-    constructor(data?: IParticipantNotificationResponse) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.notification_type = data["notification_type"];
-            this.log_information = data["log_information"];
-            this.result = data["result"];
-            this.create_time = data["create_time"] ? new Date(data["create_time"].toString()) : <any>undefined;
-            this.is_seen = data["is_seen"];
-            this.is_dismissed = data["is_dismissed"];
-        }
-    }
-
-    static fromJS(data: any): ParticipantNotificationResponse {
-        data = typeof data === 'object' ? data : {};
-        let result = new ParticipantNotificationResponse();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["notification_type"] = this.notification_type;
-        data["log_information"] = this.log_information;
-        data["result"] = this.result;
-        data["create_time"] = this.create_time ? this.create_time.toISOString() : <any>undefined;
-        data["is_seen"] = this.is_seen;
-        data["is_dismissed"] = this.is_dismissed;
-        return data; 
-    }
-}
-
-/** Notification for a participant in a hearing */
-export interface IParticipantNotificationResponse {
-    /** Unique identified for the notification */
-    id?: number | undefined;
-    /** Type of event that occured or notification that was raised */
-    notification_type?: string | undefined;
-    /** Data stored for the notification */
-    log_information?: string | undefined;
-    /** Whether the notification/event was successful or not */
-    result?: string | undefined;
-    /** Time the notification was created */
-    create_time?: Date | undefined;
-    /** If the notification has been seen by administrators or not */
-    is_seen?: boolean | undefined;
-    /** If the notification has been handled/dismissed by administrators */
-    is_dismissed?: boolean | undefined;
-}
-
+/** Defines a type of hearing based on case */
 export class HearingTypeResponse implements IHearingTypeResponse {
+    /** The short code for the type */
     code?: string | undefined;
+    /** Which case type it belongs to */
     group?: string | undefined;
+    /** Unique identifier for this type of hearing */
     id?: number | undefined;
+    /** Hearing type display name */
     name?: string | undefined;
 
     constructor(data?: IHearingTypeResponse) {
@@ -2251,18 +1874,59 @@ export class HearingTypeResponse implements IHearingTypeResponse {
     }
 }
 
+/** Defines a type of hearing based on case */
 export interface IHearingTypeResponse {
+    /** The short code for the type */
     code?: string | undefined;
+    /** Which case type it belongs to */
     group?: string | undefined;
+    /** Unique identifier for this type of hearing */
     id?: number | undefined;
+    /** Hearing type display name */
     name?: string | undefined;
 }
 
-export class HearingMediumResponse implements IHearingMediumResponse {
+export class CaseRoleResponse implements ICaseRoleResponse {
+    name?: string | undefined;
+
+    constructor(data?: ICaseRoleResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): CaseRoleResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new CaseRoleResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface ICaseRoleResponse {
+    name?: string | undefined;
+}
+
+export class HearingVenueResponse implements IHearingVenueResponse {
     id?: number | undefined;
     name?: string | undefined;
 
-    constructor(data?: IHearingMediumResponse) {
+    constructor(data?: IHearingVenueResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -2278,9 +1942,9 @@ export class HearingMediumResponse implements IHearingMediumResponse {
         }
     }
 
-    static fromJS(data: any): HearingMediumResponse {
+    static fromJS(data: any): HearingVenueResponse {
         data = typeof data === 'object' ? data : {};
-        let result = new HearingMediumResponse();
+        let result = new HearingVenueResponse();
         result.init(data);
         return result;
     }
@@ -2293,48 +1957,8 @@ export class HearingMediumResponse implements IHearingMediumResponse {
     }
 }
 
-export interface IHearingMediumResponse {
+export interface IHearingVenueResponse {
     id?: number | undefined;
-    name?: string | undefined;
-}
-
-/** Participant Role Response */
-export class ParticipantRoleResponse implements IParticipantRoleResponse {
-    /** The name of the role */
-    name?: string | undefined;
-
-    constructor(data?: IParticipantRoleResponse) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.name = data["name"];
-        }
-    }
-
-    static fromJS(data: any): ParticipantRoleResponse {
-        data = typeof data === 'object' ? data : {};
-        let result = new ParticipantRoleResponse();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["name"] = this.name;
-        return data; 
-    }
-}
-
-/** Participant Role Response */
-export interface IParticipantRoleResponse {
-    /** The name of the role */
     name?: string | undefined;
 }
 

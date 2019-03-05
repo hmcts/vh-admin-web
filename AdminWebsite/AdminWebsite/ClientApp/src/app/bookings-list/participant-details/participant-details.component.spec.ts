@@ -32,7 +32,7 @@ describe('ParticipantDetailsComponent', () => {
   }));
 
   it('should display participant details', (done => {
-    let pr = new ParticipantDetailsModel(1, 'Mrs', 'Alan', 'Brake', 'Citizen', 'email.p1@email.com', 'email@ee.ee');
+    let pr = new ParticipantDetailsModel('1', 'Mrs', 'Alan', 'Brake', 'Citizen', 'email.p1@email.com', 'email@ee.ee');
 
     component.participant = pr;
 
