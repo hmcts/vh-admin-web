@@ -15,7 +15,6 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [Then(@"hearing summary is displayed on summary page")]
         public void ThenHearingSummaryIsDisplayedOnSummaryPage()
         {
-            _summary.ClickBreadcrumb("Summary");
             SummaryPage();
         }
         [Then(@"user should be on summary page")]

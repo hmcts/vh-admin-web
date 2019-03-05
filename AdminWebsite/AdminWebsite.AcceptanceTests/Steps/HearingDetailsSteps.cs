@@ -1,5 +1,7 @@
 ﻿using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.AcceptanceTests.Pages;
+using FluentAssertions;
+using System.Linq;
 using TechTalk.SpecFlow;
 
 namespace AdminWebsite.AcceptanceTests.Steps
@@ -8,10 +10,12 @@ namespace AdminWebsite.AcceptanceTests.Steps
     public sealed class HearingDetailsSteps
     {
         private readonly HearingDetails _hearingDetails;
+        private readonly ScenarioContext _scenarioContext;
 
-        public HearingDetailsSteps(HearingDetails hearingDetails)
+        public HearingDetailsSteps(HearingDetails hearingDetails, ScenarioContext injectedContext)
         {
             _hearingDetails = hearingDetails;
+            _scenarioContext = injectedContext;
         }
         [When(@"hearing details form is filled")]
         public void WhenHearingDetailsFormIsFilled()
@@ -21,7 +25,6 @@ namespace AdminWebsite.AcceptanceTests.Steps
             SelectHearingType();
             InputCaseName();
         }
-
         [When(@"Admin user is on hearing details page")]
         public void HearingDetailsPage()
         {
@@ -47,10 +50,19 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             _hearingDetails.HearingType();
         }
-        [When(@"Select hearing channel")]
-        public void SelectHearingChannel()
+        [Then(@"case type dropdown should be populated")]
+        [Then(@"case type dropdown should not be populated")]
+        public void ThenCaseTypeDropdownShouldNotBePopulated()
         {
-            _hearingDetails.HearingChannel();
-        }
+            switch (_scenarioContext.Get<string>("User"))
+            {
+                case "CaseAdminFinRemedyCivilMoneyClaims":
+                    _hearingDetails.CaseTypesList().ToList().Count.Should().Be(2);
+                    break;
+                case "Case Admin":
+                    _hearingDetails.CaseTypesList().Should().BeEmpty();
+                    break;
+            }
+        }        
     }
 }
