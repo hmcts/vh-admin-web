@@ -74,12 +74,10 @@ namespace AdminWebsite.AcceptanceTests.Features
         [NUnit.Framework.TestAttribute()]
         [NUnit.Framework.DescriptionAttribute("Display no dropdown on hearing details page for one case type")]
         [NUnit.Framework.CategoryAttribute("VIH-3582")]
-        [NUnit.Framework.CategoryAttribute("#0001_WIP")]
         public virtual void DisplayNoDropdownOnHearingDetailsPageForOneCaseType()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Display no dropdown on hearing details page for one case type", null, new string[] {
-                        "VIH-3582",
-                        "#0001_WIP"});
+                        "VIH-3582"});
 #line 7
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
