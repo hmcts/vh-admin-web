@@ -11,18 +11,18 @@ import { DOCUMENT } from '@angular/common';
 })
 export class BookingsListComponent implements OnInit {
   bookings: Array<BookingsListModel> = [];
-  loaded: boolean = false;
-  error: boolean = false;
-  cursor: string = "0";
-  limit: number = 100;
-  endOfData: boolean = false;
-  recordsLoaded: boolean = false;
+  loaded = false;
+  error = false;
+  cursor = '0';
+  limit = 100;
+  endOfData = false;
+  recordsLoaded = false;
 
   selectedItemIndex = -1;
   selectedGroupIndex = -1;
   showDetails = false;
   selectedElement: HTMLElement;
-  selectedHearingId: string = '';
+  selectedHearingId = '';
 
   constructor(private bookingsListService: BookingsListService,
     @Inject(DOCUMENT) document) { }
@@ -37,7 +37,7 @@ export class BookingsListComponent implements OnInit {
       this.loaded = false;
       this.error = false;
       this.bookingsListService.getBookingsList(this.cursor, this.limit)
-        .subscribe(book => { return self.loadData(book); }, err => self.handleError(err));
+        .subscribe(book => self.loadData(book), err => self.handleError(err));
     }
   }
 
@@ -51,8 +51,8 @@ export class BookingsListComponent implements OnInit {
       this.error = true;
       return;
     }
-    let bookingsModel = this.bookingsListService.mapBookingsResponse(bookingsResponse);
-    if (bookingsModel.NextCursor == "0" || bookingsModel.Hearings.length == 0) {
+    const bookingsModel = this.bookingsListService.mapBookingsResponse(bookingsResponse);
+    if (bookingsModel.NextCursor === '0' || bookingsModel.Hearings.length === 0) {
       this.endOfData = true;
       return;
     }

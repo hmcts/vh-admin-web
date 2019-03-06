@@ -8,39 +8,39 @@ export class BookingDetailsService {
 
   booking: BookingsDetailsModel;
   participants: Array<ParticipantDetailsModel> = [];
-  JUDGE: string = 'Judge';
+  JUDGE = 'Judge';
 
   mapBooking(hearingResponse: HearingDetailsResponse): BookingsDetailsModel {
     return new BookingsDetailsModel(
       hearingResponse.id,
       hearingResponse.scheduled_date_time,
       hearingResponse.scheduled_duration,
-      hearingResponse.cases && hearingResponse.cases.length > 0 ? hearingResponse.cases[0].number : "",
-      hearingResponse.cases && hearingResponse.cases.length > 0 ? hearingResponse.cases[0].name : "",
+      hearingResponse.cases && hearingResponse.cases.length > 0 ? hearingResponse.cases[0].number : '',
+      hearingResponse.cases && hearingResponse.cases.length > 0 ? hearingResponse.cases[0].name : '',
       hearingResponse.hearing_type_name,
-      "",
-      "", // TODO not implemented yet
+      '',
+      '', // TODO not implemented yet
       hearingResponse.hearing_venue_name,
-      "stub.response@hearings.reform.hmcts.net",
+      'stub.response@hearings.reform.hmcts.net',
       new Date(Date.now()),
-      "stub.response@hearings.reform.hmcts.net",
+      'stub.response@hearings.reform.hmcts.net',
       new Date(Date.now()),
     );
   }
 
   mapBookingParticipants(hearingResponse: HearingDetailsResponse) {
-    let participants: Array<ParticipantDetailsModel> = [];
-    let judges: Array<ParticipantDetailsModel> = [];
+    const participants: Array<ParticipantDetailsModel> = [];
+    const judges: Array<ParticipantDetailsModel> = [];
     if (hearingResponse.participants && hearingResponse.participants.length > 0) {
       hearingResponse.participants.forEach(p => {
-        let model = new ParticipantDetailsModel(p.id, p.title, p.first_name, p.last_name, p.hearing_role_name, p.username, p.contact_email);
-        if (p.hearing_role_name == this.JUDGE) {
+        const model = new ParticipantDetailsModel(p.id, p.title, p.first_name, p.last_name,
+          p.hearing_role_name, p.username, p.contact_email);
+        if (p.hearing_role_name === this.JUDGE) {
           judges.push(model);
-        }
-        else {
+        } else {
           participants.push(model);
         }
-      })
+      });
     }
 
     return { judges: judges, participants: participants };

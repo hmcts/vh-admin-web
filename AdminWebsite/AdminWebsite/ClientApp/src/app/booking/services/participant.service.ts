@@ -9,8 +9,8 @@ export class ParticipantService {
 
   constructor() { }
 
-  public checkDuplication(email: string, participants:ParticipantModel[]) :boolean{
-    if (!email) throw new Error(`Cannot check for duplication on undefined email`);
+  public checkDuplication(email: string, participants: ParticipantModel[]): boolean {
+    if (!email) { throw new Error(`Cannot check for duplication on undefined email`); }
     let existParticipant = false;
     if (participants.length > 0) {
       const part = participants.find(s => s.email.toLowerCase() === email.toLowerCase());
@@ -21,9 +21,7 @@ export class ParticipantService {
     return existParticipant;
   }
 
-  public getAllParticipants(hearing:HearingModel): ParticipantModel[] {
-    console.debug('getting all participants...');
-    console.debug(hearing.feeds);
+  public getAllParticipants(hearing: HearingModel): ParticipantModel[] {
     let participants: ParticipantModel[] = [];
     hearing.feeds.forEach(x => {
       if (x.participants && x.participants.length >= 1) {
@@ -33,22 +31,23 @@ export class ParticipantService {
     return participants;
   }
 
-  public removeParticipant(participants: ParticipantModel[], hearing:HearingModel, email:string) {
-    let indexOfParticipant = participants.findIndex(x => x.email.toLowerCase() === email.toLowerCase());
+  public removeParticipant(participants: ParticipantModel[], hearing: HearingModel, email: string) {
+    const indexOfParticipant = participants.findIndex(x => x.email.toLowerCase() === email.toLowerCase());
     if (indexOfParticipant > -1) {
       participants.splice(indexOfParticipant, 1);
     }
     this.removeFromFeed(hearing, email);
   }
 
-  private removeFromFeed(hearing: HearingModel, email:string) {
-    let indexOfParticipant = hearing.feeds.findIndex(x => x.participants.filter(y => y.email.toLowerCase() === email.toLowerCase()).length > 0);
+  private removeFromFeed(hearing: HearingModel, email: string) {
+    const indexOfParticipant = hearing.feeds.findIndex(x =>
+      x.participants.filter(y => y.email.toLowerCase() === email.toLowerCase()).length > 0);
     if (indexOfParticipant > -1) {
       hearing.feeds.splice(indexOfParticipant, 1);
     }
   }
 
-  public addToFeed(newParticipant: ParticipantModel, hearing:HearingModel){
+  public addToFeed(newParticipant: ParticipantModel, hearing: HearingModel) {
     let participantFeed = this.getExistingFeedWith(newParticipant.email, hearing);
     if (participantFeed) {
       participantFeed.participants = [];
@@ -63,7 +62,7 @@ export class ParticipantService {
 
   }
 
-  private getExistingFeedWith(email: string, hearing:HearingModel): FeedModel {
+  private getExistingFeedWith(email: string, hearing: HearingModel): FeedModel {
     return hearing.feeds ?
       hearing.feeds.find(x => x.participants.filter(y => y.email.toLowerCase() === email.toLowerCase()).length > 0)
       : null;

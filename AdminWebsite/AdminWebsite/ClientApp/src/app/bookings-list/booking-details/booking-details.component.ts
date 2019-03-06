@@ -3,7 +3,7 @@ import { VideoHearingsService } from '../../services/video-hearings.service';
 import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
 import { ParticipantDetailsModel } from '../../common/model/participant-details.model';
 import { BookingDetailsService } from '../../services/booking-details.service';
-import {HearingDetailsResponse} from "../../services/clients/api-client";
+import {HearingDetailsResponse} from '../../services/clients/api-client';
 
 @Component({
   selector: 'app-booking-details',

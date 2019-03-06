@@ -1,17 +1,17 @@
-import { DatePipe } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import {DatePipe} from '@angular/common';
+import {Component, OnInit} from '@angular/core';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {Router} from '@angular/router';
+import {Observable} from 'rxjs';
 
-import { CanDeactiveComponent } from '../../common/guards/changes.guard';
-import { HearingModel } from '../../common/model/hearing.model';
-import { ReferenceDataService } from '../../services/reference-data.service';
-import { VideoHearingsService } from '../../services/video-hearings.service';
-import { BookingBaseComponent } from '../booking-base/booking-base.component';
-import { BookingService } from '../../services/booking.service';
-import { ErrorService } from 'src/app/services/error.service';
-import {HearingVenueResponse} from "../../services/clients/api-client";
+import {CanDeactiveComponent} from '../../common/guards/changes.guard';
+import {HearingModel} from '../../common/model/hearing.model';
+import {ReferenceDataService} from '../../services/reference-data.service';
+import {VideoHearingsService} from '../../services/video-hearings.service';
+import {BookingBaseComponent} from '../booking-base/booking-base.component';
+import {BookingService} from '../../services/booking.service';
+import {ErrorService} from 'src/app/services/error.service';
+import {HearingVenueResponse} from '../../services/clients/api-client';
 
 @Component({
   selector: 'app-hearing-schedule',
@@ -30,13 +30,14 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
   canNavigate = true;
 
   constructor(private refDataService: ReferenceDataService, private hearingService: VideoHearingsService,
-    private fb: FormBuilder, protected router: Router,
-    private datePipe: DatePipe, protected bookingService: BookingService,
-    private errorService: ErrorService) {
+              private fb: FormBuilder, protected router: Router,
+              private datePipe: DatePipe, protected bookingService: BookingService,
+              private errorService: ErrorService) {
     super(bookingService, router);
     this.attemptingCancellation = false;
     this.hasSaved = false;
   }
+
   ngOnInit() {
     super.ngOnInit();
     this.failedSubmission = false;
@@ -91,17 +92,38 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     });
   }
 
-  get hearingDate() { return this.schedulingForm.get('hearingDate'); }
-  get hearingStartTimeHour() { return this.schedulingForm.get('hearingStartTimeHour'); }
-  get hearingStartTimeMinute() { return this.schedulingForm.get('hearingStartTimeMinute'); }
-  get hearingDurationHour() { return this.schedulingForm.get('hearingDurationHour'); }
-  get hearingDurationMinute() { return this.schedulingForm.get('hearingDurationMinute'); }
-  get courtAddress() { return this.schedulingForm.get('courtAddress'); }
-  get courtRoom() { return this.schedulingForm.get('courtRoom'); }
+  get hearingDate() {
+    return this.schedulingForm.get('hearingDate');
+  }
+
+  get hearingStartTimeHour() {
+    return this.schedulingForm.get('hearingStartTimeHour');
+  }
+
+  get hearingStartTimeMinute() {
+    return this.schedulingForm.get('hearingStartTimeMinute');
+  }
+
+  get hearingDurationHour() {
+    return this.schedulingForm.get('hearingDurationHour');
+  }
+
+  get hearingDurationMinute() {
+    return this.schedulingForm.get('hearingDurationMinute');
+  }
+
+  get courtAddress() {
+    return this.schedulingForm.get('courtAddress');
+  }
+
+  get courtRoom() {
+    return this.schedulingForm.get('courtRoom');
+  }
 
   get hearingDateInvalid() {
     const todayDate = new Date(new Date().setHours(0, 0, 0, 0));
-    return (this.hearingDate.invalid || new Date(this.hearingDate.value) < todayDate) && (this.hearingDate.dirty || this.hearingDate.touched || this.failedSubmission);
+    return (this.hearingDate.invalid || new Date(this.hearingDate.value) < todayDate)
+      && (this.hearingDate.dirty || this.hearingDate.touched || this.failedSubmission);
   }
 
   get hearingStartTimeHourInvalid() {

@@ -15,10 +15,10 @@ import { ParticipantModel } from '../../common/model/participant.model';
 
 function initHearingRequest(): HearingModel {
 
-  let f1 = new FeedModel('Judge');
+  const f1 = new FeedModel('Judge');
 
-  let participants: ParticipantModel[] = [];
-  let p1 = new ParticipantModel();
+  const participants: ParticipantModel[] = [];
+  const p1 = new ParticipantModel();
   p1.display_name = 'display name1';
   p1.email = 'test1@TestBed.com';
   p1.first_name = 'first';
@@ -26,7 +26,7 @@ function initHearingRequest(): HearingModel {
   p1.role = 'Judge';
   p1.title = 'Mr.';
 
-  let p2 = new ParticipantModel();
+  const p2 = new ParticipantModel();
   p2.display_name = 'display name2';
   p2.email = 'test2@TestBed.com';
   p2.first_name = 'first2';
@@ -37,10 +37,10 @@ function initHearingRequest(): HearingModel {
   participants.push(p1);
   participants.push(p2);
 
-  let f2 = new FeedModel('Professional');
+  const f2 = new FeedModel('Professional');
 
-  let participants1: ParticipantModel[] = [];
-  let p3 = new ParticipantModel();
+  const participants1: ParticipantModel[] = [];
+  const p3 = new ParticipantModel();
   p3.display_name = 'display name3';
   p3.email = 'test3@TestBed.com';
   p3.first_name = 'first3';
@@ -48,7 +48,7 @@ function initHearingRequest(): HearingModel {
   p3.role = 'Judge';
   p3.title = 'Mr.';
 
-  let p4 = new ParticipantModel();
+  const p4 = new ParticipantModel();
   p4.display_name = 'display name3';
   p4.email = 'test3@TestBed.com';
   p4.first_name = 'first3';
@@ -61,7 +61,7 @@ function initHearingRequest(): HearingModel {
   f1.participants = participants;
   f2.participants = participants1;
 
-  let newHearing = new HearingModel();
+  const newHearing = new HearingModel();
   newHearing.cases = [];
   newHearing.feeds = [];
   newHearing.feeds.push(f1);

@@ -56,14 +56,13 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
   }
 
   private initForm() {
-    let find_judge = this.getAllParticipants().find(x => x.role === 'Judge');
+    const find_judge = this.getAllParticipants().find(x => x.role === 'Judge');
 
     if (!find_judge) {
       this.judge = new ParticipantDetailsResponse({
         id: null
       });
-    }
-    else {
+    } else {
       this.judge = this.mapJudge(find_judge);
     }
     this.assignJudgeForm = this.fb.group({

@@ -50,7 +50,7 @@ export class SearchEmailComponent {
     this.searchTerm.subscribe(s => this.email = s);
   }
 
-  selectItemClick(result:ParticipantModel) {
+  selectItemClick(result: ParticipantModel) {
     this.email = result.email;
 
     const selectedResult = new ParticipantModel();
@@ -61,7 +61,7 @@ export class SearchEmailComponent {
     selectedResult.role = result.role;
     selectedResult.phone = result.phone;
     selectedResult.display_name = result.display_name;
-    
+
     this.isShowResult = false;
     return this.findParticipant.emit(selectedResult);
   }

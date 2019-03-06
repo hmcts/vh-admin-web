@@ -39,13 +39,11 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
   hearingDuration: string;
   otherInformation: string;
   errors: any;
-
-  selectedHearingTypeName: HearingTypeResponse[];
   participants: ParticipantModel[] = [];
   selectedHearingType: HearingTypeResponse[];
   saveFailed: boolean;
 
-  showConfirmationRemoveParticipant: boolean = false;
+  showConfirmationRemoveParticipant = false;
   selectedParticipantEmail: string;
   removerFullName: string;
 
@@ -73,7 +71,7 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
   }
 
   private confirmRemoveParticipant() {
-    let participant = this.participants.find(x => x.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase());
+    const participant = this.participants.find(x => x.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase());
     this.removerFullName = participant ? `${participant.title} ${participant.first_name} ${participant.last_name}` : '';
     this.showConfirmationRemoveParticipant = true;
   }
@@ -89,7 +87,8 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
   }
 
   removeParticipant() {
-    let indexOfParticipant = this.participants.findIndex(x => x.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase());
+    const indexOfParticipant = this.participants.findIndex(x =>
+      x.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase());
     if (indexOfParticipant > -1) {
       this.participants.splice(indexOfParticipant, 1);
     }
@@ -98,7 +97,8 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
   }
 
   removeFromFeed() {
-    let indexOfParticipant = this.hearing.feeds.findIndex(x => x.participants.filter(y => y.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase()).length > 0);
+    const indexOfParticipant = this.hearing.feeds.findIndex(x =>
+      x.participants.filter(y => y.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase()).length > 0);
     if (indexOfParticipant > -1) {
       this.hearing.feeds.splice(indexOfParticipant, 1);
     }
