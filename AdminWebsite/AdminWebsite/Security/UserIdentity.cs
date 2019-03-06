@@ -19,6 +19,11 @@ namespace AdminWebsite.Security
         bool IsVhOfficerAdministratorRole();
 
         bool IsCaseAdministratorRole();
+
+        /// <summary>
+        /// Returns a list of the case types the user is allowed to administrate
+        /// </summary>
+        IEnumerable<string> GetAdministratorCaseTypes();
     }
 
     public class UserIdentity : IUserIdentity
@@ -41,6 +46,11 @@ namespace AdminWebsite.Security
             return groupClaims.Select(x => _userAccountService.GetGroupById(x.Value).DisplayName).ToList();            
         }
 
+        public IEnumerable<string> GetAdministratorCaseTypes()
+        {
+            return GetGroupDisplayNames().Where(group => AcceptedAdministratorRoles.Contains(group));
+        }
+        
         public bool IsAdministratorRole()
         {
             var groups = GetGroupDisplayNames().ToList();
