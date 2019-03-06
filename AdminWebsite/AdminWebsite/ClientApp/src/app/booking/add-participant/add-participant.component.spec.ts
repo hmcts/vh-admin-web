@@ -1,25 +1,24 @@
-import {DebugElement} from '@angular/core';
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
-import {AbstractControl} from '@angular/forms';
-import {NavigationEnd, Router} from '@angular/router';
-import {of} from 'rxjs';
-import {SharedModule} from 'src/app/shared/shared.module';
-import {BreadcrumbStubComponent} from 'src/app/testing/stubs/breadcrumb-stub';
-import {CancelPopupStubComponent} from 'src/app/testing/stubs/cancel-popup-stub';
-import {ConfirmationPopupStubComponent} from 'src/app/testing/stubs/confirmation-popup-stub';
-import {ParticipantsListStubComponent} from 'src/app/testing/stubs/participant-list-stub';
-import {SearchServiceStub} from 'src/app/testing/stubs/serice-service-stub';
-import {
-  FeedRequest,
-  HearingRequest,
-  IParticipantRequest,
-  ParticipantRequest,
-  ParticipantRoleResponse
-} from '../../services/clients/api-client';
-import {SearchService} from '../../services/search.service';
-import {VideoHearingsService} from '../../services/video-hearings.service';
-import {SearchEmailComponent} from '../search-email/search-email.component';
-import {AddParticipantComponent} from './add-participant.component';
+import { DebugElement } from '@angular/core';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { AbstractControl } from '@angular/forms';
+import { NavigationEnd, Router } from '@angular/router';
+import { of } from 'rxjs';
+import { SharedModule } from 'src/app/shared/shared.module';
+import { BreadcrumbStubComponent } from 'src/app/testing/stubs/breadcrumb-stub';
+import { CancelPopupStubComponent } from 'src/app/testing/stubs/cancel-popup-stub';
+import { ConfirmationPopupStubComponent } from 'src/app/testing/stubs/confirmation-popup-stub';
+import { ParticipantsListStubComponent } from 'src/app/testing/stubs/participant-list-stub';
+import { RemovePopupStubComponent } from '../../testing/stubs/remove-popup-stub';
+
+import { SearchServiceStub } from 'src/app/testing/stubs/serice-service-stub';
+import {CaseRoleResponse } from '../../services/clients/api-client';
+import { SearchService } from '../../services/search.service';
+import { VideoHearingsService } from '../../services/video-hearings.service';
+import { ParticipantService } from '../services/participant.service';
+import { SearchEmailComponent } from '../search-email/search-email.component';
+import { AddParticipantComponent } from './add-participant.component';
+import { HearingModel, FeedModel } from '../../common/model/hearing.model';
+import { ParticipantModel } from '../../common/model/participant.model';
 
 let component: AddParticipantComponent;
 let fixture: ComponentFixture<AddParticipantComponent>;
@@ -31,55 +30,69 @@ let lastName: AbstractControl;
 let phone: AbstractControl;
 let displayName: AbstractControl;
 
-const roleList: ParticipantRoleResponse[] =
+const roleList: CaseRoleResponse[] =
   [
-    new ParticipantRoleResponse({name: 'Citizen'}),
-    new ParticipantRoleResponse({name: 'Judge'}),
-    new ParticipantRoleResponse({name: 'Professional'}),
+    new CaseRoleResponse({ name: 'Citizen' }),
+    new CaseRoleResponse({ name: 'Judge' }),
+    new CaseRoleResponse({ name: 'Professional' }),
   ];
 
-const feeds: FeedRequest[] =
-  [
-    new FeedRequest({
-      location: 'Citizen',
-      participants: [
-        new ParticipantRequest({
-          first_name: 'John', last_name: 'Doe', display_name: 'John Doe',
-          role: 'judge', title: 'mr.', email: 'test@test.com', phone: '32332'
-        }),
-        new ParticipantRequest({
-          first_name: 'Jane', last_name: 'Doe', display_name: 'Jane Doe',
-          role: 'judge', title: 'mr.', email: 'test@test.com', phone: '32332'
-        }),
-        new ParticipantRequest({
-          first_name: 'Chris', last_name: 'Green', display_name: 'Chris Green',
-          role: 'judge', title: 'mr.', email: 'test@test.com', phone: '32332'
-        })
-      ]
-    }),
-  ];
+let feeds: FeedModel[] = [];
 
-function initHearingRequest(): HearingRequest {
-  const initRequest = {
-    cases: [],
-    feeds: feeds,
-    hearing_type_id: -1,
-    hearing_medium_id: -1,
-    court_id: -1,
-    scheduled_duration: 0,
-  };
-  return new HearingRequest(initRequest);
+let f1 = new FeedModel('Citizen')
+f1.participants = [];
+
+let p1 = new ParticipantModel();
+p1.first_name = 'John';
+p1.last_name = 'Doe';
+p1.display_name = 'John Doe';
+p1.role = 'judge';
+p1.title = 'Mr.';
+p1.email = 'test@test.com';
+p1.phone = '32332';
+let p2 = new ParticipantModel();
+p2.first_name = 'Jane';
+p2.last_name = 'Doe';
+p2.display_name = 'Jane Doe';
+p2.role = 'judge';
+p2.title = 'Mr.';
+p2.email = 'test@test.com';
+p2.phone = '32332';
+
+let p3 = new ParticipantModel();
+p3.first_name = 'Chris';
+p3.last_name = 'Green';
+p3.display_name = 'Chris Green';
+p3.role = 'judge';
+p3.title = 'Mr.';
+p3.email = 'test@test.com';
+p3.phone = '32332';
+f1.participants.push(p1);
+f1.participants.push(p2);
+f1.participants.push(p3);
+feeds.push(f1);
+
+
+function initHearingRequest(): HearingModel {
+  let newHearing = new HearingModel();
+  newHearing.cases = [];
+  newHearing.feeds = feeds;
+  newHearing.hearing_type_id = -1;
+  newHearing.hearing_medium_id = -1;
+  newHearing.court_id = -1;
+  newHearing.scheduled_duration = 0;
+  return newHearing;
 }
 
-const participant: IParticipantRequest = {
-  email: 'email@aa.aa',
-  first_name: 'Sam',
-  last_name: 'Green',
-  phone: '12345',
-  role: 'Appellant',
-  display_name: 'Sam Green',
-  title: 'Mr'
-};
+const participant: ParticipantModel = new ParticipantModel();
+participant.email = 'email@aa.aa';
+participant.first_name = 'Sam';
+participant.last_name = 'Green';
+participant.phone = '12345';
+participant.role = 'Appellant';
+participant.display_name = 'Sam Green';
+participant.title = 'Mr';
+
 
 const routerSpy = {
   navigate: jasmine.createSpy('navigate'),
@@ -88,12 +101,14 @@ const routerSpy = {
 
 let debugElement: DebugElement;
 let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
+let participantServiceSpy: jasmine.SpyObj<ParticipantService>;
 
 describe('AddParticipantComponent', () => {
 
   videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',
     ['getParticipantRoles', 'getCurrentRequest', 'updateHearingRequest']);
-
+  participantServiceSpy = jasmine.createSpyObj<ParticipantService>('ParticipantService',
+    ['checkDuplication', 'getAllParticipants', 'removeParticipant', 'addToFeed']);
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [
@@ -102,17 +117,19 @@ describe('AddParticipantComponent', () => {
         SearchEmailComponent,
         ParticipantsListStubComponent,
         CancelPopupStubComponent,
-        ConfirmationPopupStubComponent
+        ConfirmationPopupStubComponent,
+        RemovePopupStubComponent
       ],
       imports: [
         SharedModule
       ],
       providers: [
-        {provide: SearchService, useClass: SearchServiceStub},
-        {provide: Router, useValue: routerSpy},
-        {provide: VideoHearingsService, useValue: videoHearingsServiceSpy}
+        { provide: SearchService, useClass: SearchServiceStub },
+        { provide: Router, useValue: routerSpy },
+        { provide: VideoHearingsService, useValue: videoHearingsServiceSpy }
       ]
-    }).compileComponents();
+    })
+      .compileComponents();
 
     const hearing = initHearingRequest();
     videoHearingsServiceSpy.getParticipantRoles.and.returnValue(of(roleList));
@@ -141,7 +158,7 @@ describe('AddParticipantComponent', () => {
     expect(component.titleList).toBeTruthy();
     expect(component.titleList.length).toBe(2);
   });
-  it('should set initiall values for fields', () => {
+  it('should set initial values for fields', () => {
     component.ngOnInit();
     expect(role.value).toBe('Please Select');
     expect(firstName.value).toBe('');
@@ -211,6 +228,8 @@ describe('AddParticipantComponent', () => {
   });
   it('saved participant added to list of participants', () => {
     spyOn(component.searchEmail, 'validateEmail').and.returnValue(true);
+    component.searchEmail.email = 'mock@email.com';
+
     role.setValue('Appellant');
     firstName.setValue('Sam');
     lastName.setValue('Green');
@@ -223,40 +242,49 @@ describe('AddParticipantComponent', () => {
   });
   it('should see next button and hide add button after saved participant', () => {
     spyOn(component.searchEmail, 'validateEmail').and.returnValue(true);
+    component.searchEmail.email = 'mock@email.com';
+
     role.setValue('Appellant');
     firstName.setValue('Sam');
     lastName.setValue('Green');
     title.setValue('Mrs');
     phone.setValue('12345');
+    displayName.setValue('Sam');
     component.isRoleSelected = true;
+    component.participants = [];
     component.saveParticipant();
     expect(component.displayNextButton).toBeTruthy();
     expect(component.displayAddButton).toBeFalsy();
     expect(component.displayClearButton).toBeFalsy();
   });
-  it('press button cancel display popup confirmatiom dialog', () => {
+  it('press button cancel display popup confirmation dialog', () => {
     component.addParticipantCancel();
     expect(component.showCancelPopup).toBeTruthy();
   });
-  it('press button cancel on popup close popup confirmatiom dialog and navigate to dashboard', () => {
+
+  it('press button cancel on popup close popup confirmation dialog and navigate to dashboard', () => {
     component.handleCancelBooking('string');
     expect(routerSpy.navigate).toHaveBeenCalledWith(['/dashboard']);
     expect(component.showCancelPopup).toBeFalsy();
   });
-  it('press button continue on popup close popup confirmatiom dialog and return to add participant view', () => {
+
+  it('press button continue on popup close popup confirmation dialog and return to add participant view', () => {
     component.handleContinueBooking('string');
     expect(component.showCancelPopup).toBeFalsy();
   });
+
   it('initially should be visible next button, add and clear buttons are not visible', () => {
     expect(component.displayNextButton).toBeTruthy();
     expect(component.displayAddButton).toBeFalsy();
     expect(component.displayClearButton).toBeFalsy();
   });
   it('if no participants added and pressed Next button then error displayed', () => {
+    component.participants = [];
     component.next();
     expect(component.displayErrorNoParticipants).toBeTruthy();
   });
   it('error that at least one participant should be added is hidden, once email is entering', () => {
+    component.participants = [];
     component.next();
     expect(component.displayErrorNoParticipants).toBeTruthy();
     component.getParticipant(participant);

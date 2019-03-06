@@ -1,5 +1,6 @@
 ﻿using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.AcceptanceTests.Pages;
+using FluentAssertions;
 using TechTalk.SpecFlow;
 
 namespace AdminWebsite.AcceptanceTests.Steps
@@ -13,16 +14,17 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             _otherInformation = otherInformation;
         }
-        [When(@"admin adds more information")]
-        public void AdminAddsMoreInformation()
-        {
-            _otherInformation.ClickBreadcrumb("Other information");
-            MoreInformationPage();
-        }
         [When(@"Admin user is on hmore information page")]
         public void MoreInformationPage()
         {
             _otherInformation.PageUrl(PageUri.OtherInformationPage);
+        }
+        [When(@"user adds other information to the Video Hearing booking")]
+        public void WhenUserAddsOtherInformationToBookingHearing()
+        {
+            MoreInformationPage();
+            _otherInformation.GetOtherInformationHeading().Should().Be(TestData.OtherInformation.OtherInformationText);
+            _otherInformation.AddOtherInformation(TestData.OtherInformation.OtherInformationText);
         }
     }
 }

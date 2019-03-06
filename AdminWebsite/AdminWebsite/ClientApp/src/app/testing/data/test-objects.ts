@@ -1,25 +1,6 @@
-import { HearingMediumResponse, HearingTypeResponse, CourtResponse, ParticipantDetailsResponse } from 'src/app/services/clients/api-client';
+import { HearingTypeResponse, HearingVenueResponse, ParticipantDetailsResponse } from 'src/app/services/clients/api-client';
 
 export class MockValues {
-  static HearingMediums: HearingMediumResponse[] = JSON.parse(
-    `[
-            {
-              "id": 1,
-              "name": "Video"
-            },
-            {
-              "id": 2,
-              "name": "Telephone"
-            },
-            {
-              "id": 3,
-              "name": "Physical"
-            },
-            {
-              "id": 4,
-              "name": "Mixed"
-            }
-          ]`);
 
   static HearingTypesList: HearingTypeResponse[] = JSON.parse(
     `
@@ -57,27 +38,15 @@ export class MockValues {
     ]
     `);
 
-  static Courts: CourtResponse[] = JSON.parse(
+  static Courts: HearingVenueResponse[] = JSON.parse(
     `[
         {
            "id":1,
-           "room":"Room 1",
-           "address":"Manchester Civil Justice Centre"
+           "name":"Manchester Civil Justice Centre"
         },
         {
            "id":2,
-           "room":"Room 2",
-           "address":"Manchester Civil Justice Centre"
-        },
-        {
-           "id":3,
-           "room":"Room 1",
-           "address":"Birmingham Civil Justice Centre"
-        },
-        {
-           "id":4,
-           "room":"Room 2",
-           "address":"Birmingham Civil Justice Centre"
+           "name":"Birmingham Civil Justice Centre"
         }
      ]`);
 

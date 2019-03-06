@@ -26,7 +26,9 @@ import { SearchEmailComponent } from './search-email/search-email.component';
 import { ParticipantsListComponent } from './participants-list/participants-list.component';
 import { CancelPopupComponent } from '../popups/cancel-popup/cancel-popup.component';
 import { ConfirmationPopupComponent } from '../popups/confirmation-popup/confirmation-popup.component';
+import { BookingEditComponent } from '../shared/booking-edit/booking-edit.component';
 import { ErrorService } from '../services/error.service';
+import { RemovePopupComponent } from '../popups/remove-popup/remove-popup.component';
 
 describe('app routing', () => {
   let location: Location;
@@ -54,6 +56,8 @@ describe('app routing', () => {
         CreateHearingComponent,
         SummaryComponent,
         BookingConfirmationComponent,
+        BookingEditComponent,
+        RemovePopupComponent
       ],
       providers: [
         AuthGuard,

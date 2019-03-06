@@ -21,7 +21,7 @@ import { BH_API_BASE_URL } from './services/clients/api-client';
 import { ConfigService, ENVIRONMENT_CONFIG } from './services/config.service';
 import { UserIdentityService } from './services/user-identity.service';
 import { UnauthorisedComponent } from './error/unauthorised.component';
-
+import { PopupModule } from './popups/popup.module';
 import { SharedModule } from './shared/shared.module';
 import { ErrorComponent } from './error/error.component';
 import { ErrorService } from './services/error.service';
@@ -50,7 +50,8 @@ export function getSettings(configService: ConfigService) {
     BookingsListModule,
     BrowserModule,
     AppRoutingModule,
-    SharedModule
+    SharedModule,
+    PopupModule,
   ],
   providers: [
     HttpClientModule,

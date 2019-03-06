@@ -10,7 +10,7 @@ import { ParticipantDetailsModel } from '../../common/model/participant-details.
   selector: 'app-booking-participant-details',
   template: ''
 })
-class ParticipantDetailsMockComponent {
+class ParticipantDetailsComponentMock {
   @Input()
   participant: ParticipantDetailsModel = null;
 }
@@ -23,7 +23,7 @@ describe('BookingParticipantListComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [BookingParticipantListComponent, ParticipantDetailsMockComponent],
+      declarations: [BookingParticipantListComponent, ParticipantDetailsComponentMock],
       imports: [RouterTestingModule],
     })
       .compileComponents();
@@ -42,8 +42,8 @@ describe('BookingParticipantListComponent', () => {
   }));
 
   it('should display participants list', (done => {
-    const pr1 = new ParticipantDetailsModel(1, 'Mrs', 'Alan', 'Brake', 'Citizen', 'email.p1@email.com', 'email1@co.uk');
-    const participantsList: Array<ParticipantDetailsModel> = [];
+    let pr1 = new ParticipantDetailsModel('1', 'Mrs', 'Alan', 'Brake', 'Citizen', 'email.p1@email.com', 'email1@co.uk');
+    let participantsList: Array<ParticipantDetailsModel> = [];
     participantsList.push(pr1);
     participantsList.push(pr1);
     participantsList.push(pr1);
@@ -61,8 +61,8 @@ describe('BookingParticipantListComponent', () => {
     );
   }));
   it('should detect last item in the participants list', (done => {
-    const pr1 = new ParticipantDetailsModel(1, 'Mrs', 'Alan', 'Brake', 'Citizen', 'email.p1@email.com', 'email1@co.uk');
-    const participantsList: Array<ParticipantDetailsModel> = [];
+    let pr1 = new ParticipantDetailsModel('1', 'Mrs', 'Alan', 'Brake', 'Citizen', 'email.p1@email.com', 'email1@co.uk');
+    let participantsList: Array<ParticipantDetailsModel> = [];
     participantsList.push(pr1);
     participantsList.push(pr1);
     participantsList.push(pr1);
@@ -79,8 +79,8 @@ describe('BookingParticipantListComponent', () => {
   }));
 
   it('should display judges list', (done => {
-    const pr1 = new ParticipantDetailsModel(1, 'Mrs', 'Alan', 'Brake', 'Judge', 'email.p1@email.com', 'email1@co.uk');
-    const participantsList: Array<ParticipantDetailsModel> = [];
+    let pr1 = new ParticipantDetailsModel('1', 'Mrs', 'Alan', 'Brake', 'Judge', 'email.p1@email.com', 'email1@co.uk');
+    let participantsList: Array<ParticipantDetailsModel> = [];
     participantsList.push(pr1);
     participantsList.push(pr1);
 

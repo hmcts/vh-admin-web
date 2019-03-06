@@ -1,4 +1,4 @@
-import { DebugElement } from '@angular/core';
+﻿import { DebugElement } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -32,7 +32,7 @@ describe('ParticipantDetailsComponent', () => {
   }));
 
   it('should display participant details', (done => {
-    const pr = new ParticipantDetailsModel(1, 'Mrs', 'Alan', 'Brake', 'Citizen', 'email.p1@email.com', 'email@ee.ee');
+    let pr = new ParticipantDetailsModel('1', 'Mrs', 'Alan', 'Brake', 'Citizen', 'email.p1@email.com', 'email@ee.ee');
 
     component.participant = pr;
 
@@ -42,7 +42,7 @@ describe('ParticipantDetailsComponent', () => {
         const divElementRole = debugElement.queryAll(By.css('#participant_role'));
         expect(divElementRole.length).toBeGreaterThan(0);
         expect(divElementRole.length).toBe(1);
-        const el = divElementRole[0].nativeElement as HTMLElement;
+        let el = divElementRole[0].nativeElement as HTMLElement;
         expect(el.innerHTML).toContain('Citizen');
         done();
       }

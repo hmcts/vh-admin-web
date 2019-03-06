@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
+using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Services;
 using Hearings.Common;
 using Hearings.Common.Helpers;
@@ -27,7 +28,7 @@ namespace AdminWebsite.Middleware
             {
                 await _next(httpContext);
             }
-            catch (HearingApiException apiException)
+            catch (BookingsApiException apiException)
             {
                 var properties = new Dictionary<string, string>();
                 properties.Add("response", apiException.Response);

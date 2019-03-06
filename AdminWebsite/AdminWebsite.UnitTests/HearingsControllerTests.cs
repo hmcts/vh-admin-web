@@ -15,13 +15,13 @@ namespace AdminWebsite.UnitTests
 {
     public class HearingsControllerTests
     {
-        private Mock<IHearingApiClient> _hearingServicesMock;
+        private Mock<IBookingsApiClient> _hearingServicesMock;
         private Mock<IUserAccountService> _userAccountServiceMock;
         private Mock<UserManager> _userManagerMock;
         private HearingsController _controller;
         private Mock<IUserIdentity> _userIdentity;
 
-        private FeedRequest feedRequest;
+        // private FeedRequest feedRequest;
         
         [SetUp]
         public void SetUp()
@@ -36,7 +36,7 @@ namespace AdminWebsite.UnitTests
             var claimsPrincipal = new ClaimsPrincipal(identity);
             
             
-            _hearingServicesMock = new Mock<IHearingApiClient>();
+            _hearingServicesMock = new Mock<IBookingsApiClient>();
             _userAccountServiceMock = new Mock<IUserAccountService>();
             _userManagerMock = new Mock<UserManager>(_userAccountServiceMock.Object);
             _userIdentity = new Mock<IUserIdentity>();

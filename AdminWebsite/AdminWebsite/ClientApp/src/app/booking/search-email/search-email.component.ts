@@ -2,7 +2,7 @@ import { Component, ElementRef, EventEmitter, HostListener, Output } from '@angu
 import { Subject } from 'rxjs';
 
 import { Constants } from '../../common/constants';
-import { IParticipantRequest } from '../../services/clients/api-client';
+import { ParticipantModel } from '../../common/model/participant.model';
 import { SearchService } from '../../services/search.service';
 
 @Component({
@@ -13,7 +13,7 @@ import { SearchService } from '../../services/search.service';
 })
 export class SearchEmailComponent {
   constants = Constants;
-  participantDetails: IParticipantRequest;
+  participantDetails: ParticipantModel;
   searchTerm = new Subject<string>();
   results: Object;
   isShowResult = false;
@@ -23,7 +23,7 @@ export class SearchEmailComponent {
   searchService: SearchService;
 
   @Output()
-  findParticipant = new EventEmitter<IParticipantRequest>();
+  findParticipant = new EventEmitter<ParticipantModel>();
 
   @Output()
   participantsNotFound = new EventEmitter();
@@ -50,17 +50,18 @@ export class SearchEmailComponent {
     this.searchTerm.subscribe(s => this.email = s);
   }
 
-  selectItemClick(result) {
+  selectItemClick(result:ParticipantModel) {
     this.email = result.email;
 
-    const selectedResult: IParticipantRequest = {
-      email: result.email,
-      first_name: result.firstName,
-      last_name: result.lastName,
-      title: result.title,
-      role: result.role,
-      phone: result.phone
-    };
+    const selectedResult = new ParticipantModel();
+    selectedResult.email = result.email;
+    selectedResult.first_name = result.first_name;
+    selectedResult.last_name = result.last_name;
+    selectedResult.title = result.title;
+    selectedResult.role = result.role;
+    selectedResult.phone = result.phone;
+    selectedResult.display_name = result.display_name;
+    
     this.isShowResult = false;
     return this.findParticipant.emit(selectedResult);
   }

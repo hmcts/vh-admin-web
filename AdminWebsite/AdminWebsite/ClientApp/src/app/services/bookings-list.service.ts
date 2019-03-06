@@ -53,7 +53,7 @@ export class BookingsListService {
 
   private mapBookingsDetails(hearing: BookingsHearingResponse) {
     return new BookingsDetailsModel(
-      hearing.hearing_id,
+      hearing.hearing_id.toString(),
       hearing.scheduled_date_time,
       hearing.scheduled_duration,
       hearing.hearing_number,

@@ -13,7 +13,7 @@ export class BookingsListModel {
 
 export class BookingsDetailsModel {
 
-  constructor(hearingId: number, startTime: Date, duration: number, hearingCaseNumber: string,
+  constructor(hearingId: string, startTime: Date, duration: number, hearingCaseNumber: string,
     hearingCaseName: string, hearingType: string, judgeName: string, courtRoom: string,
     courtAddress: string, createdBy: string, createdDate: Date, lastEditBy: string,
     lastEditDate: Date
@@ -34,7 +34,7 @@ export class BookingsDetailsModel {
     this.Selected = false;
   }
 
-  HearingId: number;
+  HearingId: string;
   StartTime: Date;
   Duration: number;
   HearingCaseNumber: string;

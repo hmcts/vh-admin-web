@@ -4,13 +4,12 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 
 import { CanDeactiveComponent } from '../../common/guards/changes.guard';
-import {
-  CaseRequest,
-  HearingMediumResponse,
-  HearingRequest,
-  HearingTypeResponse,
-} from '../../services/clients/api-client';
+import { HearingTypeResponse } from '../../services/clients/api-client';
+import { HearingModel } from '../../common/model/hearing.model';
+import { CaseModel } from '../../common/model/case.model';
 import { VideoHearingsService } from '../../services/video-hearings.service';
+import { BookingBaseComponent } from '../booking-base/booking-base.component';
+import { BookingService } from '../../services/booking.service';
 import { ErrorService } from 'src/app/services/error.service';
 
 @Component({
@@ -18,35 +17,35 @@ import { ErrorService } from 'src/app/services/error.service';
   templateUrl: './create-hearing.component.html',
   styleUrls: ['./create-hearing.component.scss']
 })
-export class CreateHearingComponent implements OnInit, CanDeactiveComponent {
+export class CreateHearingComponent extends BookingBaseComponent implements OnInit, CanDeactiveComponent {
 
   private existingCaseTypeKey = 'selectedCaseType';
   attemptingCancellation: boolean;
   failedSubmission: boolean;
-  hearing: HearingRequest;
+  hearing: HearingModel;
   hearingForm: FormGroup;
   availableHearingTypes: HearingTypeResponse[];
   availableCaseTypes: string[];
   selectedCaseType: string;
   filteredHearingTypes: HearingTypeResponse[];
-  availableHearingMediums: HearingMediumResponse[];
-  filteredHearingMediums: HearingMediumResponse[];
   hasSaved: boolean;
 
   constructor(private hearingService: VideoHearingsService,
-              private fb: FormBuilder,
-              private router: Router,
-              private errorService: ErrorService) {
+    private fb: FormBuilder,
+    protected router: Router,
+    protected bookingService: BookingService,
+    private errorService: ErrorService) {
+    super(bookingService, router);
     this.attemptingCancellation = false;
     this.availableCaseTypes = [];
   }
 
   ngOnInit() {
+    super.ngOnInit();
     this.failedSubmission = false;
     this.checkForExistingRequest();
     this.initForm();
     this.retrieveHearingTypes();
-    this.retrieveHearingMediums();
   }
 
   goToDiv(fragment: string): void {
@@ -69,14 +68,13 @@ export class CreateHearingComponent implements OnInit, CanDeactiveComponent {
   private initForm() {
     let firstCase = this.hearing.cases[0];
     if (!firstCase) {
-      firstCase = new CaseRequest();
+      firstCase = new CaseModel();
     }
     this.hearingForm = this.fb.group({
       caseName: [firstCase.name, Validators.required],
       caseNumber: [firstCase.number, Validators.required],
       caseType: [this.selectedCaseType, [Validators.required, Validators.pattern('^((?!Please Select).)*$')]],
-      hearingType: [this.hearing.hearing_type_id, [Validators.required, Validators.min(1)]],
-      hearingMethod: [this.hearing.hearing_medium_id, [Validators.required, Validators.min(1)]]
+      hearingType: [this.hearing.hearing_type_id, [Validators.required, Validators.min(1)]]
     });
   }
 
@@ -84,7 +82,6 @@ export class CreateHearingComponent implements OnInit, CanDeactiveComponent {
   get caseNumber() { return this.hearingForm.get('caseNumber'); }
   get caseType() { return this.hearingForm.get('caseType'); }
   get hearingType() { return this.hearingForm.get('hearingType'); }
-  get hearingMethod() { return this.hearingForm.get('hearingMethod'); }
 
   get caseNameInvalid() {
     return this.caseName.invalid && (this.caseName.dirty || this.caseName.touched || this.failedSubmission);
@@ -102,10 +99,6 @@ export class CreateHearingComponent implements OnInit, CanDeactiveComponent {
     return this.hearingType.invalid && (this.hearingType.dirty || this.hearingType.touched || this.failedSubmission);
   }
 
-  get hearingMethodInvalid() {
-    return this.hearingMethod.invalid && (this.hearingMethod.dirty || this.hearingMethod.touched || this.failedSubmission);
-  }
-
   saveHearingDetails() {
     if (this.hearingForm.valid) {
       this.failedSubmission = false;
@@ -113,7 +106,11 @@ export class CreateHearingComponent implements OnInit, CanDeactiveComponent {
       sessionStorage.setItem(this.existingCaseTypeKey, this.selectedCaseType);
       this.hearingForm.markAsPristine();
       this.hasSaved = true;
-      this.router.navigate(['/hearing-schedule']);
+      if (this.editMode) {
+        this.navigateToSummary();
+      } else {
+        this.router.navigate(['/hearing-schedule']);
+      }
     } else {
       this.failedSubmission = true;
     }
@@ -124,7 +121,12 @@ export class CreateHearingComponent implements OnInit, CanDeactiveComponent {
   }
 
   confirmCancelBooking() {
-    this.attemptingCancellation = true;
+    if (this.editMode) {
+      this.navigateToSummary();
+    }
+    else {
+      this.attemptingCancellation = true;
+    }
   }
 
   cancelBooking() {
@@ -139,7 +141,7 @@ export class CreateHearingComponent implements OnInit, CanDeactiveComponent {
     this.hearing.hearing_type_id = this.hearingForm.value.hearingType;
     this.hearing.hearing_medium_id = this.hearingForm.value.hearingMethod;
 
-    const hearingCase = new CaseRequest();
+    const hearingCase = new CaseModel();
     hearingCase.name = this.hearingForm.value.caseName;
     hearingCase.number = this.hearingForm.value.caseNumber;
     this.hearing.cases[0] = hearingCase;
@@ -153,17 +155,6 @@ export class CreateHearingComponent implements OnInit, CanDeactiveComponent {
           this.setupCaseTypeAndHearingTypes(data);
           this.filterHearingTypes();
         },
-        error => this.errorService.handleError(error)
-      );
-  }
-
-  private retrieveHearingMediums() {
-    this.hearingService.getHearingMediums()
-      .subscribe((data: HearingMediumResponse[]) => {
-        this.availableHearingMediums = data;
-        this.availableHearingMediums.sort(this.dynamicSort('name'));
-        this.filterHearingMethod();
-      },
         error => this.errorService.handleError(error)
       );
   }
@@ -195,15 +186,6 @@ export class CreateHearingComponent implements OnInit, CanDeactiveComponent {
     pleaseSelect.name = 'Please Select';
     pleaseSelect.id = -1;
     this.filteredHearingTypes.unshift(pleaseSelect);
-  }
-
-  private filterHearingMethod() {
-    const pleaseSelect = new HearingMediumResponse();
-    pleaseSelect.name = 'Please Select';
-    pleaseSelect.id = -1;
-
-    this.filteredHearingMediums = this.availableHearingMediums.filter(h => h.name === 'Fully Video');
-    this.filteredHearingMediums.unshift(pleaseSelect);
   }
 
   private dynamicSort(property) {

@@ -25,7 +25,7 @@
   <ItemGroup>
     <PackageReference Include="Hearings.Common" Version="1.1.6088" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.6.1" />
-    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.2.2" />
+    <PackageReference Include="Microsoft.AspNetCore.All" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="2.2.0" />
@@ -43,11 +43,8 @@
   <ItemGroup>
     <!-- Don't publish the SPA source files, but do show them in the project files list -->
     <Content Remove="$(SpaRoot)**" />
-    <Content Include="ClientApp\src\app\services\console-logger.ts" />
     <None Remove="$(SpaRoot)**" />
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
-    <None Remove="ClientApp\e2e\**" />
-    <Content Remove="ClientApp\e2e\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -56,7 +53,7 @@
     <Compile Remove="Contracts\Responses\GroupsResponse.cs" />
     <Compile Remove="Contracts\Responses\NewUserResponse.cs" />
     <Compile Remove="Contracts\Responses\UserDetailsResponse.cs" />
-    <Compile Remove="ClientApp\e2e\**" />
+    <Compile Remove="Services\HearingApiClient.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -79,7 +76,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Remove="ClientApp\e2e\**" />
+    <ProjectReference Include="..\AdminWebsite.BookingsAPI.Client\AdminWebsite.BookingsAPI.Client.csproj" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

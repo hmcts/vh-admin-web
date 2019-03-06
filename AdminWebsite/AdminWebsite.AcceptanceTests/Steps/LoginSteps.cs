@@ -19,6 +19,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _scenarioContext = injectedContext;
         }
 
+        [Given(@"Admin user is on microsoft login page")]
         [Given(@"Non-Admin user is on microsoft login page")]
         [Given(@"VH Officer is on microsoft login page")]
         [Given(@"Case Admin is on microsoft login page")]
@@ -30,6 +31,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             }, 10);
         }
 
+        [Given(@"(.*) logs into Vh-Admin website")]
         [When(@"(.*) logs in with valid credentials")]
         public void UserLogsInWithValidCredentials(string user)
         {
@@ -42,6 +44,11 @@ namespace AdminWebsite.AcceptanceTests.Steps
                 case "Case Admin": _loginPage.Logon(appSecrets.CaseAdminCivilMoneyClaims, password);
                     break;
                 case "Non-Admin": _loginPage.Logon(appSecrets.NonAdmin, password);
+                    break;
+                case "VhOfficerCivilMoneyclaims": _loginPage.Logon(appSecrets.VhOfficerCivilMoneyclaims, password);
+                    break;
+                case "CaseAdminFinRemedyCivilMoneyClaims":
+                    _loginPage.Logon(appSecrets.CaseAdminFinRemedyCivilMoneyClaims, password);
                     break;
             }
             _scenarioContext.Add("User", user);

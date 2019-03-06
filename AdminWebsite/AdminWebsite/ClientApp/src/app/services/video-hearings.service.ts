@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import {
-  HearingTypeResponse, BHClient, HearingRequest,
-  HearingMediumResponse, ParticipantRoleResponse, HearingResponse
-} from '../services/clients/api-client';
+  HearingTypeResponse, BHClient, BookNewHearingRequest, HearingDetailsResponse, CaseRoleResponse
+} from './clients/api-client';
+import { HearingModel } from '../common/model/hearing.model';
 
 @Injectable({
   providedIn: 'root'
@@ -11,8 +11,7 @@ import {
 export class VideoHearingsService {
 
   private newRequestKey: string;
-  private newHearing: HearingRequest;
-  private hearingsMedium: Observable<HearingMediumResponse[]>;
+  private modelHearing: HearingModel;
 
   constructor(private bhClient: BHClient) {
     this.newRequestKey = 'bh-newRequest';
@@ -21,40 +20,32 @@ export class VideoHearingsService {
   private checkForExistingHearing() {
     const localRequest = sessionStorage.getItem(this.newRequestKey);
     if (localRequest === null) {
-      const initRequest = {
-        cases: [],
-        feeds: [],
-        hearing_type_id: -1,
-        hearing_medium_id: -1,
-        court_id: -1,
-        scheduled_duration: 0,
-      };
-      this.newHearing = new HearingRequest(initRequest);
+      this.modelHearing = new HearingModel();
     } else {
-      this.newHearing = JSON.parse(localRequest);
+      this.modelHearing = JSON.parse(localRequest);
     }
   }
 
-  getHearingMediums(): Observable<HearingMediumResponse[]> {
-    return this.bhClient.getHearingMediums();
+  hasUnsavedChanges() {
+    return sessionStorage.getItem(this.newRequestKey) !== null;
   }
 
   getHearingTypes(): Observable<HearingTypeResponse[]> {
     return this.bhClient.getHearingTypes();
   }
 
-  getCurrentRequest(): HearingRequest {
+  getCurrentRequest(): HearingModel {
     this.checkForExistingHearing();
-    return this.newHearing;
+    return this.modelHearing;
   }
 
-  updateHearingRequest(updatedRequest: HearingRequest) {
-    this.newHearing = updatedRequest;
-    const localRequest = JSON.stringify(this.newHearing);
+  updateHearingRequest(updatedRequest: HearingModel) {
+    this.modelHearing = updatedRequest;
+    const localRequest = JSON.stringify(this.modelHearing);
     sessionStorage.setItem(this.newRequestKey, localRequest);
   }
 
-  getParticipantRoles(): Observable<ParticipantRoleResponse[]> {
+  getParticipantRoles(): Observable<CaseRoleResponse[]> {
     return this.bhClient.getParticipantRoles();
   }
 
@@ -62,11 +53,16 @@ export class VideoHearingsService {
     sessionStorage.removeItem(this.newRequestKey);
   }
 
-  saveHearing(newRequest: HearingRequest): Observable<number> {
-    return this.bhClient.bookNewHearing(newRequest);
+  saveHearing(newRequest: HearingModel): Observable<number> {
+    let hearingRequest = this.mapHearing(newRequest);
+    return this.bhClient.bookNewHearing(hearingRequest);
   }
 
- getHearingById(hearingId: number): Observable<HearingResponse> {
+  mapHearing(newRequest: HearingModel): BookNewHearingRequest {
+    throw new Error('Mapping of hearing request not implemented yet.');
+  }
+
+  getHearingById(hearingId: string): Observable<HearingDetailsResponse> {
     return this.bhClient.getHearingById(hearingId);
   }
 }

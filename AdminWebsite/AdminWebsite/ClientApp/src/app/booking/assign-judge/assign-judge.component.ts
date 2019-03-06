@@ -3,10 +3,15 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { CanDeactiveComponent } from 'src/app/common/guards/changes.guard';
-import { FeedRequest, HearingRequest, ParticipantRequest, ParticipantDetailsResponse } from '../../services/clients/api-client';
+import { ParticipantDetailsResponse } from '../../services/clients/api-client';
+import { FeedModel, HearingModel } from '../../common/model/hearing.model';
+import { ParticipantModel } from '../../common/model/participant.model';
+
 import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 import { Constants } from 'src/app/common/constants';
 import { JudgeDataService } from 'src/app/booking/services/judge-data.service';
+import { BookingService } from '../../services/booking.service';
+import { BookingBaseComponent } from '../booking-base/booking-base.component';
 
 @Component({
   selector: 'app-assign-judge',
@@ -14,9 +19,9 @@ import { JudgeDataService } from 'src/app/booking/services/judge-data.service';
   styleUrls: ['./assign-judge.component.css']
 })
 
-export class AssignJudgeComponent implements OnInit, CanDeactiveComponent {
+export class AssignJudgeComponent extends BookingBaseComponent implements OnInit, CanDeactiveComponent {
 
-  hearing: HearingRequest;
+  hearing: HearingModel;
   judge: ParticipantDetailsResponse;
   assignJudgeForm: FormGroup;
   failedSubmission: boolean;
@@ -25,17 +30,21 @@ export class AssignJudgeComponent implements OnInit, CanDeactiveComponent {
   canNavigate = true;
 
   constants = Constants;
-  participants: ParticipantRequest[] = [];
+  participants: ParticipantModel[] = [];
   availableJudges: ParticipantDetailsResponse[];
   isJudgeSelected = true;
 
   constructor(
     private fb: FormBuilder,
-    private router: Router,
+    protected router: Router,
     private hearingService: VideoHearingsService,
-    private judgeService: JudgeDataService) { }
+    private judgeService: JudgeDataService,
+    protected bookingService: BookingService) {
+    super(bookingService, router);
+  }
 
   ngOnInit() {
+    super.ngOnInit();
     this.failedSubmission = false;
     this.checkForExistingRequest();
     this.loadJudges();
@@ -47,11 +56,15 @@ export class AssignJudgeComponent implements OnInit, CanDeactiveComponent {
   }
 
   private initForm() {
-    this.judge = this.getAllParticipants().find(x => x.role === 'Judge');
-    if (!this.judge) {
+    let find_judge = this.getAllParticipants().find(x => x.role === 'Judge');
+
+    if (!find_judge) {
       this.judge = new ParticipantDetailsResponse({
         id: null
       });
+    }
+    else {
+      this.judge = this.mapJudge(find_judge);
     }
     this.assignJudgeForm = this.fb.group({
       judgeName: [this.judge.id, Validators.required],
@@ -63,6 +76,20 @@ export class AssignJudgeComponent implements OnInit, CanDeactiveComponent {
     });
 
     this.participants = this.getAllParticipants();
+  }
+
+  mapJudge(judge: ParticipantModel): ParticipantDetailsResponse {
+    return new ParticipantDetailsResponse({
+      id: null,
+      title: judge.title,
+      first_name: judge.first_name,
+      middle_name: judge.middle_names,
+      last_name: judge.last_name,
+      display_name: judge.display_name,
+      email: judge.email,
+      role: judge.role,
+      phone: judge.phone
+    });
   }
 
   get judgeName() { return this.assignJudgeForm.get('judgeName'); }
@@ -85,10 +112,7 @@ export class AssignJudgeComponent implements OnInit, CanDeactiveComponent {
     if (judgeFeed) {
       judgeFeed.participants = [];
     } else {
-      judgeFeed = new FeedRequest({
-        location: 'Judge',
-        participants: []
-      });
+      judgeFeed = new FeedModel('Judge');
       this.hearing.feeds.push(judgeFeed);
     }
     judgeFeed.participants.push(this.judge);
@@ -105,14 +129,22 @@ export class AssignJudgeComponent implements OnInit, CanDeactiveComponent {
       this.failedSubmission = false;
       this.assignJudgeForm.markAsPristine();
       this.hasSaved = true;
-      this.router.navigate(['/add-participants']);
+      if (this.editMode) {
+        this.navigateToSummary();
+      } else {
+        this.router.navigate(['/add-participants']);
+      }
     } else {
       this.failedSubmission = true;
     }
   }
 
   confirmCancelBooking() {
-    this.attemptingCancellation = true;
+    if (this.editMode) {
+      this.navigateToSummary();
+    } else {
+      this.attemptingCancellation = true;
+    }
   }
 
   continueBooking() {
@@ -137,8 +169,8 @@ export class AssignJudgeComponent implements OnInit, CanDeactiveComponent {
     window.document.getElementById(fragment).parentElement.parentElement.scrollIntoView();
   }
 
-  private getAllParticipants(): ParticipantRequest[] {
-    let participants: ParticipantRequest[] = [];
+  private getAllParticipants(): ParticipantModel[] {
+    let participants: ParticipantModel[] = [];
     this.hearing.feeds.forEach(x => {
       if (x.participants && x.participants.length >= 1) {
         participants = participants.concat(x.participants);
@@ -147,7 +179,7 @@ export class AssignJudgeComponent implements OnInit, CanDeactiveComponent {
     return participants;
   }
 
-  private getExistingFeedWithJudge(): FeedRequest {
+  private getExistingFeedWithJudge(): FeedModel {
     return this.hearing.feeds.find(x => x.participants.filter(y => y.role === 'Judge').length > 0);
   }
 
@@ -157,7 +189,7 @@ export class AssignJudgeComponent implements OnInit, CanDeactiveComponent {
       .subscribe(
         (data: ParticipantDetailsResponse[]) => {
           this.availableJudges = data.filter(x => x.first_name && x.last_name);
-            const userResponse = new ParticipantDetailsResponse();
+          const userResponse = new ParticipantDetailsResponse();
           userResponse.display_name = 'Please Select';
           userResponse.id = null;
           this.availableJudges.unshift(userResponse);
