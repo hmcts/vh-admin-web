@@ -46,6 +46,7 @@ namespace AdminWebsite.Security
             return groupClaims.Select(x => _userAccountService.GetGroupById(x.Value).DisplayName).ToList();            
         }
 
+        /// <inheritdoc />
         public IEnumerable<string> GetAdministratorCaseTypes()
         {
             return GetGroupDisplayNames().Where(group => AcceptedAdministratorRoles.Contains(group));
