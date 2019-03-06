@@ -7,3 +7,6 @@ This application provides the book a video hearing functionality for the video h
 # Build Status
 [![Build Status](https://hmctsreform.visualstudio.com/VirtualHearings/_apis/build/status/hmcts.vh-admin-web?branchName=master)](https://hmctsreform.visualstudio.com/VirtualHearings/_build/latest?definitionId=102&branchName=master)
 
+
+# Running accessibility linting
+In the `ClientApp` folder run `node acessability_lint.js`. Will output a json with any issues.
