@@ -31,8 +31,8 @@ namespace AdminWebsite.AcceptanceTests.Features
         public virtual void FeatureSetup()
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
-            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Case Admin and VH Officer Accessing VH-Admin Web", "\tAs a Case Admin/VH Officer\n\tI would like to login to VH-Admin Web\n\tSo that I can" +
-                    " book a hearing/view Questionnaire results", ProgrammingLanguage.CSharp, ((string[])(null)));
+            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Case Admin and VH Officer Accessing VH-Admin Web", "\tAs a Case Admin/VH Officer\r\n\tI would like to login to VH-Admin Web\r\n\tSo that I c" +
+                    "an book a hearing/view Questionnaire results", ProgrammingLanguage.CSharp, ((string[])(null)));
             testRunner.OnFeatureStart(featureInfo);
         }
         

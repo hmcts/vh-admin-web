@@ -60,7 +60,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         
         public void WhenUserProceedsToNextPage()
         {
-            //_hearingSchedule.HearingLocation().Should().BeGreaterOrEqualTo(2);
+            _hearingSchedule.HearingLocation().Should().BeGreaterOrEqualTo(2);
         }
         
         [When(@"user selects a date in the past from the calendar")]
