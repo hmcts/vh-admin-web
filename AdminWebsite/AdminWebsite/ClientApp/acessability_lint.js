@@ -36,7 +36,13 @@ const run = () => {
       const files = await getHtmlFiles();
       output(`detected ${files.length} html files to parse`);
       for (let index = 0; index < files.length; index += 1) {
-        result.push(await runPa11y(files[index]));
+        const lintErrors = await runPa11y(files[index]);
+        if (lintErrors.issues.length > 0) {
+          result.push({
+            file: lintErrors.pageUrl,
+            issues: lintErrors.issues
+          });
+        }
         const doneDegree = Math.round((index / files.length) * 100);
         output(`${doneDegree}% done, completed ${files[index]}`);
       }
