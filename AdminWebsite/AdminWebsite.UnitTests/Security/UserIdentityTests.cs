@@ -1,18 +1,16 @@
 using System.Security.Claims;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
-using AdminWebsite.UnitTests.Security;
 using FluentAssertions;
 using Microsoft.Graph;
 using Moq;
 using NUnit.Framework;
 
-namespace AdminWebsite.IntegrationTests.Security
+namespace AdminWebsite.UnitTests.Security
 {
     public class UserIdentityTests
     {
         private Mock<IUserAccountService> _userAccountService;
-        private ClaimsPrincipal _userClaim;
 
         [SetUp]
         public void Setup()
