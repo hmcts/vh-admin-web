@@ -74,14 +74,12 @@ namespace AdminWebsite.AcceptanceTests.Features
         [NUnit.Framework.TestAttribute()]
         [NUnit.Framework.DescriptionAttribute("User is not in the process of booking hearing")]
         [NUnit.Framework.CategoryAttribute("VIH-2072")]
-        [NUnit.Framework.CategoryAttribute("#001_WIP")]
         [NUnit.Framework.TestCaseAttribute("Case Admin", null)]
         [NUnit.Framework.TestCaseAttribute("VhOfficerCivilMoneyclaims", null)]
         public virtual void UserIsNotInTheProcessOfBookingHearing(string user, string[] exampleTags)
         {
             string[] @__tags = new string[] {
-                    "VIH-2072",
-                    "#001_WIP"};
+                    "VIH-2072"};
             if ((exampleTags != null))
             {
                 @__tags = System.Linq.Enumerable.ToArray(System.Linq.Enumerable.Concat(@__tags, exampleTags));
@@ -107,7 +105,6 @@ this.ScenarioInitialize(scenarioInfo);
         [NUnit.Framework.TestAttribute()]
         [NUnit.Framework.DescriptionAttribute("Case Admin signs out in the process of booking hearing")]
         [NUnit.Framework.CategoryAttribute("VIH-2072")]
-        [NUnit.Framework.CategoryAttribute("#002_WIP")]
         [NUnit.Framework.TestCaseAttribute("Hearing Details", null)]
         [NUnit.Framework.TestCaseAttribute("Hearing Schedule", null)]
         [NUnit.Framework.TestCaseAttribute("Assign Judge", null)]
@@ -119,8 +116,7 @@ this.ScenarioInitialize(scenarioInfo);
         public virtual void CaseAdminSignsOutInTheProcessOfBookingHearing(string booking, string[] exampleTags)
         {
             string[] @__tags = new string[] {
-                    "VIH-2072",
-                    "#002_WIP"};
+                    "VIH-2072"};
             if ((exampleTags != null))
             {
                 @__tags = System.Linq.Enumerable.ToArray(System.Linq.Enumerable.Concat(@__tags, exampleTags));
@@ -147,7 +143,6 @@ this.ScenarioInitialize(scenarioInfo);
         [NUnit.Framework.TestAttribute()]
         [NUnit.Framework.DescriptionAttribute("Vh Officer signs out in the process of booking hearing")]
         [NUnit.Framework.CategoryAttribute("VIH-2072")]
-        [NUnit.Framework.CategoryAttribute("#001_WIP")]
         [NUnit.Framework.TestCaseAttribute("Hearing Details", null)]
         [NUnit.Framework.TestCaseAttribute("Hearing Schedule", null)]
         [NUnit.Framework.TestCaseAttribute("Assign Judge", null)]
@@ -159,8 +154,7 @@ this.ScenarioInitialize(scenarioInfo);
         public virtual void VhOfficerSignsOutInTheProcessOfBookingHearing(string booking, string[] exampleTags)
         {
             string[] @__tags = new string[] {
-                    "VIH-2072",
-                    "#001_WIP"};
+                    "VIH-2072"};
             if ((exampleTags != null))
             {
                 @__tags = System.Linq.Enumerable.ToArray(System.Linq.Enumerable.Concat(@__tags, exampleTags));
