@@ -25,6 +25,7 @@ resources:
   - repository: azureDevOpsTemplates
     type: github
     name: hmcts/azure-devops-templates
+    branch: sonarqube_break_build
     endpoint: 'GitHub connection 1'
 
 trigger:
