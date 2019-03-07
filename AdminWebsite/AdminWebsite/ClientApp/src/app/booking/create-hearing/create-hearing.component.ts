@@ -58,7 +58,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
       this.hasSaved = true;
     }
     const existingType = sessionStorage.getItem(this.existingCaseTypeKey);
-    if (this.hearing.hearing_type_name !== undefined && existingType !== null) {
+    if (this.hearing.hearing_type_id !== undefined && existingType !== null) {
       this.selectedCaseType = existingType;
     } else {
       this.selectedCaseType = 'Please Select';
@@ -74,7 +74,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
       caseName: [firstCase.name, Validators.required],
       caseNumber: [firstCase.number, Validators.required],
       caseType: [this.selectedCaseType, [Validators.required, Validators.pattern('^((?!Please Select).)*$')]],
-      hearingType: [this.hearing.hearing_type_name, [Validators.required, Validators.min(1)]]
+      hearingType: [this.hearing.hearing_type_id, [Validators.required, Validators.min(1)]]
     });
   }
 
@@ -138,9 +138,8 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
   }
 
   private updateHearingRequest() {
-    this.hearing.hearing_type_name = this.hearingForm.value.hearingType;
+    this.hearing.hearing_type_id = this.hearingForm.value.hearingType;
     this.hearing.case_type = this.selectedCaseType;
-
     const hearingCase = new CaseModel();
     hearingCase.name = this.hearingForm.value.caseName;
     hearingCase.number = this.hearingForm.value.caseNumber;

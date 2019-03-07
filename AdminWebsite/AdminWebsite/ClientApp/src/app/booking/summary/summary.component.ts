@@ -98,9 +98,9 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
   private retrieveHearingSummary() {
     this.caseNumber = this.hearing.cases[0].number;
     this.caseName = this.hearing.cases[0].name;
-    this.caseHearingType = this.hearing.hearing_type_name;
+    this.getCaseHearingTypeName(this.hearing.hearing_type_id);
     this.hearingDate = this.hearing.scheduled_date_time;
-    this.courtRoomAddress = this.hearing.hearing_venue_name;
+    this.getCourtRoomAndAddress(this.hearing.hearing_venue_id);
     this.hearingDuration = this.getHearingDuration(this.hearing.scheduled_duration);
     this.otherInformation = this.hearing.other_information;
   }
@@ -115,27 +115,27 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
   //  return participants;
   //}
 
-  //private getCaseHearingTypeName(hearing_type_id: number): void {
-  //  this.hearingService.getHearingTypes()
-  //    .subscribe(
-  //      (data: HearingTypeResponse[]) => {
-  //        const selectedHearingType = data.filter(h => h.id === hearing_type_id);
-  //        this.caseHearingType = selectedHearingType[0].name;
-  //      },
-  //      error => console.error(error)
-  //    );
-  //}
+  private getCaseHearingTypeName(hearing_type_id: number): void {
+    this.hearingService.getHearingTypes()
+      .subscribe(
+        (data: HearingTypeResponse[]) => {
+          const selectedHearingType = data.filter(h => h.id === hearing_type_id);
+          this.caseHearingType = selectedHearingType[0].name;
+        },
+        error => console.error(error)
+      );
+  }
 
-  //private getCourtRoomAndAddress(venueId: number): void {
-  //  this.referenceDataService.getCourts()
-  //    .subscribe(
-  //      (data: HearingVenueResponse[]) => {
-  //        const selectedCourt = data.filter(c => c.id === venueId);
-  //        this.courtRoomAddress = selectedCourt[0].name;
-  //      },
-  //      error => console.error(error)
-  //    );
-  //}
+  private getCourtRoomAndAddress(venueId: number): void {
+    this.referenceDataService.getCourts()
+      .subscribe(
+        (data: HearingVenueResponse[]) => {
+          const selectedCourt = data.filter(c => c.id === venueId);
+          this.courtRoomAddress = `${selectedCourt[0].name} ${this.hearing.court_room}`;
+        },
+        error => console.error(error)
+      );
+  }
 
   private getHearingDuration(duration: number): string {
     console.log('DIRATION SUMMARY' + duration);
