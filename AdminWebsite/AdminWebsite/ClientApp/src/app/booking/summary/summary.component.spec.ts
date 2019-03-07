@@ -8,7 +8,6 @@ import { BookingEditStubComponent } from '../../testing/stubs/booking-edit-stub'
 import { ReferenceDataService } from '../../services/reference-data.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { MockValues } from '../../testing/data/test-objects';
-//import { ParticipantsListComponent } from '../participants-list/participants-list.component';
 import { SummaryComponent } from './summary.component';
 import { RouterTestingModule } from '@angular/router/testing';
 import { HearingModel} from '../../common/model/hearing.model';
@@ -75,7 +74,6 @@ describe('SummaryComponent with valid request', () => {
 
     videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
     videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
-    routerSpy.url.and.returnValue
 
     TestBed.configureTestingModule({
       providers: [

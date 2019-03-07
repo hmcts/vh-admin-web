@@ -31,9 +31,9 @@ namespace AdminWebsite.AcceptanceTests.Features
         public virtual void FeatureSetup()
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
-            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Hearing Details Section", "\tAs a Case Admin or VH-Officer\r\n\tI need to be able to add hearing details\r\n\tSo th" +
-                    "at the correct information is available to all participants who are joining the " +
-                    "hearing", ProgrammingLanguage.CSharp, ((string[])(null)));
+            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Hearing Details Section", "\tAs a Case Admin or VH-Officer\n\tI need to be able to add hearing details\n\tSo that" +
+                    " the correct information is available to all participants who are joining the he" +
+                    "aring", ProgrammingLanguage.CSharp, ((string[])(null)));
             testRunner.OnFeatureStart(featureInfo);
         }
         
@@ -74,10 +74,12 @@ namespace AdminWebsite.AcceptanceTests.Features
         [NUnit.Framework.TestAttribute()]
         [NUnit.Framework.DescriptionAttribute("Display no dropdown on hearing details page for one case type")]
         [NUnit.Framework.CategoryAttribute("VIH-3582")]
+        [NUnit.Framework.CategoryAttribute("smoketest")]
         public virtual void DisplayNoDropdownOnHearingDetailsPageForOneCaseType()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Display no dropdown on hearing details page for one case type", null, new string[] {
-                        "VIH-3582"});
+                        "VIH-3582",
+                        "smoketest"});
 #line 7
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
@@ -96,12 +98,12 @@ this.ScenarioInitialize(scenarioInfo);
         [NUnit.Framework.TestAttribute()]
         [NUnit.Framework.DescriptionAttribute("Display dropdown on hearing details page for more than one case type")]
         [NUnit.Framework.CategoryAttribute("VIH-3582")]
-        [NUnit.Framework.CategoryAttribute("Blocked")]
+        [NUnit.Framework.CategoryAttribute("smoketest")]
         public virtual void DisplayDropdownOnHearingDetailsPageForMoreThanOneCaseType()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Display dropdown on hearing details page for more than one case type", null, new string[] {
                         "VIH-3582",
-                        "Blocked"});
+                        "smoketest"});
 #line 14
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();

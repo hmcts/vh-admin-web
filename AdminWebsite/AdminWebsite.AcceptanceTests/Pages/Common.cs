@@ -3,6 +3,7 @@ using OpenQA.Selenium;
 using System.Collections.Generic;
 using FluentAssertions;
 using System.Linq;
+using System;
 
 namespace AdminWebsite.AcceptanceTests.Pages
 {
@@ -19,7 +20,20 @@ namespace AdminWebsite.AcceptanceTests.Pages
         private By _cancelButton => By.Id(("cancelButton"));
         private By _primaryNavItems => By.XPath("//*[@class='vh-primary-navigation__link']");
 
-        protected IEnumerable<IWebElement> GetListOfElements(By elements) => _browserContext.NgDriver.FindElements(elements);
+        protected IEnumerable<IWebElement> GetListOfElements(By elements)
+        {
+            IEnumerable<IWebElement> webElements = null;
+            try
+            {
+                webElements = _browserContext.NgDriver.WaitUntilElementsVisible(elements);
+            }
+            catch (Exception ex)
+            {
+                webElements = _browserContext.NgDriver.FindElements(elements);
+                Console.WriteLine(ex);
+            }
+            return webElements;
+        }
         protected string GetBreadcrumbAttribute(string breadcrumb)
         {
             var getListOfElements = GetListOfElements(_breadcrumbs);

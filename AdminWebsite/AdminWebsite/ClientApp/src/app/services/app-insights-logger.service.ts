@@ -7,7 +7,7 @@ import { Injectable } from '@angular/core';
 export class AppInsightsLogger implements Logger {
   errorInfo: any;
   constructor(config: Config) {
-    let appInsightsConfig: Microsoft.ApplicationInsights.IConfig = {
+    const appInsightsConfig: Microsoft.ApplicationInsights.IConfig = {
       instrumentationKey: config.appInsightsInstrumentationKey,
     };
 

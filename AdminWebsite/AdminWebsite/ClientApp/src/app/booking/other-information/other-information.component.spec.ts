@@ -14,7 +14,7 @@ let routerSpy: jasmine.SpyObj<Router>;
 let otherInformation: AbstractControl;
 let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
 
-let hearing = new HearingModel();
+const hearing = new HearingModel();
 hearing.other_information = 'some text';
 
 describe('OtherInformationComponent', () => {

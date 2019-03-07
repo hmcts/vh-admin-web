@@ -8,15 +8,13 @@ describe('BookingEditComponent', () => {
   let component: BookingEditComponent;
   let fixture: ComponentFixture<BookingEditComponent>;
   let debugElement: DebugElement;
-  let bookingService: BookingService;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [RouterTestingModule],
       declarations: [BookingEditComponent],
       providers: [BookingService],
-    })
-      .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {

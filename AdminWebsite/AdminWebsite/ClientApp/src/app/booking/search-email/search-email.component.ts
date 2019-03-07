@@ -50,7 +50,7 @@ export class SearchEmailComponent {
     this.searchTerm.subscribe(s => this.email = s);
   }
 
-  selectItemClick(result:ParticipantModel) {
+  selectItemClick(result: ParticipantModel) {
     this.email = result.email;
 
     const selectedResult = new ParticipantModel();
@@ -61,12 +61,14 @@ export class SearchEmailComponent {
     selectedResult.role = result.role;
     selectedResult.phone = result.phone;
     selectedResult.display_name = result.display_name;
-    
+
     this.isShowResult = false;
     return this.findParticipant.emit(selectedResult);
   }
 
   validateEmail() {
+
+    /* tslint:disable: max-line-length */
     const pattern = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     this.isValidEmail = this.email && this.email.length > 0 && pattern.test(this.email.toLowerCase());
     return this.isValidEmail;

@@ -6,9 +6,9 @@ import { BookingService } from '../../services/booking.service';
   templateUrl: './booking-edit.component.html',
 })
 export class BookingEditComponent {
-  constructor(private bookingService:BookingService) { }
+  constructor(private bookingService: BookingService) { }
 
-  private _editLink: string = '/';
+  private _editLink = '/';
   @Input()
   title: string;
 

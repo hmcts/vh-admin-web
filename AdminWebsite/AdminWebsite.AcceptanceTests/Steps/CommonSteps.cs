@@ -51,6 +51,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void UserIsOnHearingDetailsPage()
         {
             _dashboardStep.WhenBookAVideoHearingPanelIsSelected();
+            _hearingDetailsSteps.HearingDetailsPage();
         }
         [Given(@"user is on other information page")]
         public void GivenUserIsOnOtherInformationPage()
