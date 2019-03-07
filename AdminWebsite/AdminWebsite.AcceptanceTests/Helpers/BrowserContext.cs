@@ -112,6 +112,10 @@ namespace AdminWebsite.AcceptanceTests.Helpers
         {
             return (String)((IJavaScriptExecutor)NgDriver).ExecuteScript($"{script};");
         }
+        public void AcceptAlert()
+        {
+            Retry(() => NgDriver.SwitchTo().Alert().Accept());
+        }        
     }
 
     internal class ContextItems

@@ -72,19 +72,114 @@ namespace AdminWebsite.AcceptanceTests.Features
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Signout")]
+        [NUnit.Framework.DescriptionAttribute("User is not in the process of booking hearing")]
+        [NUnit.Framework.CategoryAttribute("VIH-2072")]
+        [NUnit.Framework.CategoryAttribute("#001_WIP")]
         [NUnit.Framework.TestCaseAttribute("Case Admin", null)]
         [NUnit.Framework.TestCaseAttribute("VhOfficerCivilMoneyclaims", null)]
-        public virtual void Signout(string user, string[] exampleTags)
+        public virtual void UserIsNotInTheProcessOfBookingHearing(string user, string[] exampleTags)
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Signout", null, exampleTags);
-#line 6
- this.ScenarioInitialize(scenarioInfo);
-            this.ScenarioStart();
+            string[] @__tags = new string[] {
+                    "VIH-2072",
+                    "#001_WIP"};
+            if ((exampleTags != null))
+            {
+                @__tags = System.Linq.Enumerable.ToArray(System.Linq.Enumerable.Concat(@__tags, exampleTags));
+            }
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("User is not in the process of booking hearing", null, @__tags);
 #line 7
- testRunner.Given("Admin user is on microsoft login page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
 #line 8
+ testRunner.Given("Admin user is on microsoft login page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 9
  testRunner.And(string.Format("{0} logs into Vh-Admin website", user), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 10
+ testRunner.And("user is on dashboard page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 11
+ testRunner.When("user attempts to sign out of Vh-Admin website", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 12
+ testRunner.Then("user should be navigated to sign in screen", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Case Admin signs out in the process of booking hearing")]
+        [NUnit.Framework.CategoryAttribute("VIH-2072")]
+        [NUnit.Framework.CategoryAttribute("#002_WIP")]
+        [NUnit.Framework.TestCaseAttribute("Hearing Details", null)]
+        [NUnit.Framework.TestCaseAttribute("Hearing Schedule", null)]
+        [NUnit.Framework.TestCaseAttribute("Assign Judge", null)]
+        [NUnit.Framework.TestCaseAttribute("Add Participants", null)]
+        [NUnit.Framework.TestCaseAttribute("Other Information", null)]
+        [NUnit.Framework.TestCaseAttribute("Summary", null)]
+        [NUnit.Framework.TestCaseAttribute("Dashboard", null)]
+        [NUnit.Framework.TestCaseAttribute("Bookings List", null)]
+        public virtual void CaseAdminSignsOutInTheProcessOfBookingHearing(string booking, string[] exampleTags)
+        {
+            string[] @__tags = new string[] {
+                    "VIH-2072",
+                    "#002_WIP"};
+            if ((exampleTags != null))
+            {
+                @__tags = System.Linq.Enumerable.ToArray(System.Linq.Enumerable.Concat(@__tags, exampleTags));
+            }
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Case Admin signs out in the process of booking hearing", null, @__tags);
+#line 19
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line 20
+ testRunner.Given("Admin user is on microsoft login page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 21
+ testRunner.And("Case Admin logs into Vh-Admin website", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 22
+ testRunner.And(string.Format("user is in the process of {0} Hearing", booking), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 23
+ testRunner.When("user attempts to sign out of Vh-Admin website", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 24
+ testRunner.Then("warning message should be displayed as You will lose all your booking details if " +
+                    "you sign out.", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Vh Officer signs out in the process of booking hearing")]
+        [NUnit.Framework.CategoryAttribute("VIH-2072")]
+        [NUnit.Framework.CategoryAttribute("#001_WIP")]
+        [NUnit.Framework.TestCaseAttribute("Hearing Details", null)]
+        [NUnit.Framework.TestCaseAttribute("Hearing Schedule", null)]
+        [NUnit.Framework.TestCaseAttribute("Assign Judge", null)]
+        [NUnit.Framework.TestCaseAttribute("Add Participants", null)]
+        [NUnit.Framework.TestCaseAttribute("Other Information", null)]
+        [NUnit.Framework.TestCaseAttribute("Summary", null)]
+        [NUnit.Framework.TestCaseAttribute("Dashboard", null)]
+        [NUnit.Framework.TestCaseAttribute("Bookings List", null)]
+        public virtual void VhOfficerSignsOutInTheProcessOfBookingHearing(string booking, string[] exampleTags)
+        {
+            string[] @__tags = new string[] {
+                    "VIH-2072",
+                    "#001_WIP"};
+            if ((exampleTags != null))
+            {
+                @__tags = System.Linq.Enumerable.ToArray(System.Linq.Enumerable.Concat(@__tags, exampleTags));
+            }
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Vh Officer signs out in the process of booking hearing", null, @__tags);
+#line 37
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line 38
+ testRunner.Given("Admin user is on microsoft login page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 39
+ testRunner.And("VhOfficerCivilMoneyclaims logs into Vh-Admin website", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 40
+ testRunner.And(string.Format("user is in the process of {0} Hearing", booking), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 41
+ testRunner.When("user attempts to sign out of Vh-Admin website", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 42
+ testRunner.Then("warning message should be displayed as You will lose all your booking details if " +
+                    "you sign out.", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
         }
