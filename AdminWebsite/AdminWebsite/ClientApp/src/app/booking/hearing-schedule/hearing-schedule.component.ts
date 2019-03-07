@@ -72,7 +72,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
       durationMinute = (duration.getMinutes() < 10 ? '0' : '') + duration.getMinutes();
     }
 
-    if (this.hearing && this.hearing.scheduled_date_time && this.hearing.scheduled_duration && this.hearing.court_id) {
+    if (this.hearing && this.hearing.scheduled_date_time && this.hearing.scheduled_duration && this.hearing.hearing_venue_name) {
       this.hasSaved = true;
     }
 
@@ -86,7 +86,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
       hearingStartTimeMinute: [startTimeMinute, [Validators.required, Validators.min(0), Validators.max(59)]],
       hearingDurationHour: [durationHour, [Validators.required, Validators.min(0), Validators.max(23)]],
       hearingDurationMinute: [durationMinute, [Validators.required, Validators.min(0), Validators.max(59)]],
-      courtAddress: [this.hearing.court_id, [Validators.required, Validators.min(1)]],
+      courtAddress: [this.hearing.hearing_venue_name, [Validators.required, Validators.min(1)]],
       courtRoom: [room],
     });
   }
@@ -160,7 +160,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
   }
 
   private updateHearingRequest() {
-    this.hearing.court_id = this.schedulingForm.value.courtAddress;
+    this.hearing.hearing_venue_name = this.schedulingForm.value.courtAddress;
     this.hearing.court_room = this.schedulingForm.value.courtRoom;
     const hearingDate = new Date(this.schedulingForm.value.hearingDate);
 

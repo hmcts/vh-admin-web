@@ -20,20 +20,23 @@
           <li *ngIf="searchEmail.isValidEmail">
             <a (click)="goToDiv('email-error')" href="javascript: void(0)">{{constants.Error.EmailErrorMsg}}</a>
           </li>
+          <li *ngIf="party.invalid || !isPartySelected">
+            <a (click)="goToDiv('party-error')" href="javascript: void(0)">{{constants.Error.PartyErrorMsg}}</a>
+          </li>
           <li *ngIf="role.invalid || !isRoleSelected">
             <a (click)="goToDiv('role-error')" href="javascript: void(0)">{{constants.Error.RoleErrorMsg}}</a>
           </li>
           <li *ngIf="firstName.invalid">
-            <a (click)="goToDiv('firstName-error')"href="javascript: void(0)">{{constants.Error.FirstNameErrorMsg}}</a>
+            <a (click)="goToDiv('firstName-error')" href="javascript: void(0)">{{constants.Error.FirstNameErrorMsg}}</a>
           </li>
           <li *ngIf="lastName.invalid">
-            <a (click)="goToDiv('lastName-error')"href="javascript: void(0)">{{constants.Error.LastNameErrorMsg}}</a>
+            <a (click)="goToDiv('lastName-error')" href="javascript: void(0)">{{constants.Error.LastNameErrorMsg}}</a>
           </li>
           <li *ngIf="phone.invalid">
-            <a (click)="goToDiv('phone-error')"href="javascript: void(0)">{{constants.Error.PhoneErrorMsg}}</a>
+            <a (click)="goToDiv('phone-error')" href="javascript: void(0)">{{constants.Error.PhoneErrorMsg}}</a>
           </li>
           <li *ngIf="displayName.invalid">
-            <a (click)="goToDiv('display-name-error')"href="javascript: void(0)">{{constants.Error.DisplaNameErrorMsg}}</a>
+            <a (click)="goToDiv('display-name-error')" href="javascript: void(0)">{{constants.Error.DisplaNameErrorMsg}}</a>
           </li>
           <li *ngIf="displayErrorNoParticipants">
             <a href="javascript: void(0)">{{constants.Error.NoParticipantsErrorMsg}}</a>
@@ -42,16 +45,28 @@
       </div>
     </div>
 
-
-    <app-search-email (findParticipant)="getParticipant($event)" (participantsNotFound)="notFoundParticipant()"
-      (emailChanged)="emailChanged()">
-    </app-search-email>
-
     <form [formGroup]="participantForm" (ngSubmit)="saveParticipant()" autocomplete="off">
+
+      <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error': partyInvalid || !isPartySelected}">
+        <legend id="party-error" *ngIf="partyInvalid || !isPartySelected">
+          <span class="govuk-error-message">
+            {{constants.Error.PartyErrorMsg}}
+          </span>
+        </legend>
+        <label class="govuk-label" for="party">
+          Party
+        </label>
+        <select id="party" formControlName="party" (change)="partySelected()" class="govuk-select vh-input-w390">
+          <option *ngFor="let prt of roleList" [ngValue]="prt">
+            {{prt}}
+          </option>
+        </select>
+      </div>
+
 
       <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error': roleInvalid || !isRoleSelected}">
         <legend id="role-error" *ngIf="roleInvalid || !isRoleSelected">
-          <span  class="govuk-error-message">
+          <span class="govuk-error-message">
             {{constants.Error.RoleErrorMsg}}
           </span>
         </legend>
@@ -59,17 +74,19 @@
           Role
         </label>
         <select id="role" formControlName="role" (change)="roleSelected()" class="govuk-select vh-input-w390">
-          <option *ngFor="let ro of roleList" [ngValue]="ro.name">
-            {{ro.name}}
+          <option *ngFor="let ro of hearingRoleList" [ngValue]="ro">
+            {{ro}}
           </option>
         </select>
       </div>
 
-
+      <app-search-email (findParticipant)="getParticipant($event)" (participantsNotFound)="notFoundParticipant()"
+                        (emailChanged)="emailChanged()">
+      </app-search-email>
 
       <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error': titleInvalid || !isTitleSelected}">
         <legend id="role-error" *ngIf="titleInvalid || !isTitleSelected">
-          <span  class="govuk-error-message">
+          <span class="govuk-error-message">
             {{constants.Error.TitleErrorMsg}}
           </span>
         </legend>
@@ -86,7 +103,7 @@
       <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':firstNameInvalid}">
 
         <legend id="firstName-error" *ngIf="firstNameInvalid">
-          <span  class="govuk-error-message">
+          <span class="govuk-error-message">
             {{constants.Error.FirstNameErrorMsg}}
           </span>
         </legend>
@@ -124,7 +141,7 @@
       <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':displayNameInvalid}">
 
         <legend id="display-name-error" *ngIf="displayNameInvalid">
-          <span  class="govuk-error-message">
+          <span class="govuk-error-message">
             {{constants.Error.DisplaNameErrorMsg}}
           </span>
         </legend>
@@ -162,7 +179,7 @@
   </div>
 
   <div class="govuk-grid-column-one-half" style="margin: 0;">
-    <app-participants-list [participants]="participants"></app-participants-list>
+    <app-participants-list [participants]="hearing.participants"></app-participants-list>
   </div>
 </div>
 

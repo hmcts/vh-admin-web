@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { CanDeactiveComponent } from 'src/app/common/guards/changes.guard';
 import { ParticipantDetailsResponse } from '../../services/clients/api-client';
-import { FeedModel, HearingModel } from '../../common/model/hearing.model';
+import { HearingModel } from '../../common/model/hearing.model';
 import { ParticipantModel } from '../../common/model/participant.model';
 
 import { VideoHearingsService } from 'src/app/services/video-hearings.service';
@@ -30,7 +30,6 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
   canNavigate = true;
 
   constants = Constants;
-  participants: ParticipantModel[] = [];
   availableJudges: ParticipantDetailsResponse[];
   isJudgeSelected = true;
 
@@ -56,12 +55,10 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
   }
 
   private initForm() {
-    let find_judge = this.getAllParticipants().find(x => x.role === 'Judge');
+    let find_judge = this.hearing.participants.find(x => x.is_judge === true);
 
     if (!find_judge) {
-      this.judge = new ParticipantDetailsResponse({
-        id: null
-      });
+      this.judge = new ParticipantDetailsResponse({ id: null });
     }
     else {
       this.judge = this.mapJudge(find_judge);
@@ -74,22 +71,34 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
       this.addJudge(judgeUserId);
       this.isJudgeSelected = judgeUserId !== null;
     });
-
-    this.participants = this.getAllParticipants();
   }
 
   mapJudge(judge: ParticipantModel): ParticipantDetailsResponse {
     return new ParticipantDetailsResponse({
-      id: null,
+      id: judge.id,
       title: judge.title,
       first_name: judge.first_name,
       middle_name: judge.middle_names,
       last_name: judge.last_name,
       display_name: judge.display_name,
       email: judge.email,
-      role: judge.role,
+      role: 'Judge',
       phone: judge.phone
     });
+  }
+
+  mapJudgeToModel(judge: ParticipantDetailsResponse): ParticipantModel {
+    let newParticipant = new ParticipantModel()
+    newParticipant.title = judge.title;
+    newParticipant.first_name = judge.first_name;
+    newParticipant.middle_names = judge.middle_name;
+    newParticipant.last_name = judge.last_name;
+    newParticipant.display_name = judge.display_name;
+    newParticipant.email = judge.email;
+    newParticipant.is_judge = true;
+    newParticipant.phone = judge.phone;
+    newParticipant.id = judge.id;
+    return newParticipant;
   }
 
   get judgeName() { return this.assignJudgeForm.get('judgeName'); }
@@ -108,24 +117,24 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     this.judge.role = 'Judge';
     this.judge.id = selectedJudge.id;
 
-    let judgeFeed = this.getExistingFeedWithJudge();
-    if (judgeFeed) {
-      judgeFeed.participants = [];
-    } else {
-      judgeFeed = new FeedModel('Judge');
-      this.hearing.feeds.push(judgeFeed);
+    let newJudge = this.mapJudgeToModel(this.judge);
+
+    let indexOfJudge = this.hearing.participants.findIndex(x => x.is_judge === true);
+    if (indexOfJudge > -1) {
+      this.hearing.participants.splice(indexOfJudge, 1);
     }
-    judgeFeed.participants.push(this.judge);
+    this.hearing.participants.push(newJudge);
     this.hearingService.updateHearingRequest(this.hearing);
-    this.participants = this.getAllParticipants();
   }
 
   saveJudge() {
     if (this.judge.id === null) {
+      console.log("Form INVALID XXXXXX");
       this.isJudgeSelected = false;
       return;
     }
     if (this.assignJudgeForm.valid) {
+      console.log("Form INVALID YYYYY");
       this.failedSubmission = false;
       this.assignJudgeForm.markAsPristine();
       this.hasSaved = true;
@@ -169,23 +178,8 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     window.document.getElementById(fragment).parentElement.parentElement.scrollIntoView();
   }
 
-  private getAllParticipants(): ParticipantModel[] {
-    let participants: ParticipantModel[] = [];
-    this.hearing.feeds.forEach(x => {
-      if (x.participants && x.participants.length >= 1) {
-        participants = participants.concat(x.participants);
-      }
-    });
-    return participants;
-  }
-
-  private getExistingFeedWithJudge(): FeedModel {
-    return this.hearing.feeds.find(x => x.participants.filter(y => y.role === 'Judge').length > 0);
-  }
-
   private loadJudges() {
     if (this.availableJudges) { return; }
-    console.debug('No judges found, retrieving list from AD');
     this.judgeService.getJudges()
       .subscribe(
         (data: ParticipantDetailsResponse[]) => {

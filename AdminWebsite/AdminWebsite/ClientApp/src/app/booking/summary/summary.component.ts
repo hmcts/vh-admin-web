@@ -41,7 +41,7 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
   errors: any;
 
   selectedHearingTypeName: HearingTypeResponse[];
-  participants: ParticipantModel[] = [];
+ // participants: ParticipantModel[] = [];
   selectedHearingType: HearingTypeResponse[];
   saveFailed: boolean;
 
@@ -73,7 +73,7 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
   }
 
   private confirmRemoveParticipant() {
-    let participant = this.participants.find(x => x.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase());
+    let participant = this.hearing.participants.find(x => x.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase());
     this.removerFullName = participant ? `${participant.title} ${participant.first_name} ${participant.last_name}` : '';
     this.showConfirmationRemoveParticipant = true;
   }
@@ -85,67 +85,57 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
 
   handleCancelRemove() {
     this.showConfirmationRemoveParticipant = false;
-    this.participants = this.getAllParticipants();
   }
 
   removeParticipant() {
-    let indexOfParticipant = this.participants.findIndex(x => x.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase());
+    let indexOfParticipant = this.hearing.participants.findIndex(x => x.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase());
     if (indexOfParticipant > -1) {
-      this.participants.splice(indexOfParticipant, 1);
+      this.hearing.participants.splice(indexOfParticipant, 1);
     }
-    this.removeFromFeed();
     this.hearingService.updateHearingRequest(this.hearing);
   }
-
-  removeFromFeed() {
-    let indexOfParticipant = this.hearing.feeds.findIndex(x => x.participants.filter(y => y.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase()).length > 0);
-    if (indexOfParticipant > -1) {
-      this.hearing.feeds.splice(indexOfParticipant, 1);
-    }
-  }
-
+ 
   private retrieveHearingSummary() {
     this.caseNumber = this.hearing.cases[0].number;
     this.caseName = this.hearing.cases[0].name;
-    this.getCaseHearingTypeName(this.hearing.hearing_type_id);
+    this.caseHearingType = this.hearing.hearing_type_name;
     this.hearingDate = this.hearing.scheduled_date_time;
-    this.getCourtRoomAndAddress(this.hearing.court_id);
+    this.courtRoomAddress = this.hearing.hearing_venue_name;
     this.hearingDuration = this.getHearingDuration(this.hearing.scheduled_duration);
-    this.participants = this.getAllParticipants();
     this.otherInformation = this.hearing.other_information;
   }
 
-  private getAllParticipants(): ParticipantModel[] {
-    let participants: ParticipantModel[] = [];
-    this.hearing.feeds.forEach(x => {
-      if (x.participants && x.participants.length >= 1) {
-        participants = participants.concat(x.participants);
-      }
-    });
-    return participants;
-  }
+  //private getAllParticipants(): ParticipantModel[] {
+  //  let participants: ParticipantModel[] = [];
+  //  this.hearing.feeds.forEach(x => {
+  //    if (x.participants && x.participants.length >= 1) {
+  //      participants = participants.concat(x.participants);
+  //    }
+  //  });
+  //  return participants;
+  //}
 
-  private getCaseHearingTypeName(hearing_type_id: number): void {
-    this.hearingService.getHearingTypes()
-      .subscribe(
-        (data: HearingTypeResponse[]) => {
-          const selectedHearingType = data.filter(h => h.id === hearing_type_id);
-          this.caseHearingType = selectedHearingType[0].name;
-        },
-        error => console.error(error)
-      );
-  }
+  //private getCaseHearingTypeName(hearing_type_id: number): void {
+  //  this.hearingService.getHearingTypes()
+  //    .subscribe(
+  //      (data: HearingTypeResponse[]) => {
+  //        const selectedHearingType = data.filter(h => h.id === hearing_type_id);
+  //        this.caseHearingType = selectedHearingType[0].name;
+  //      },
+  //      error => console.error(error)
+  //    );
+  //}
 
-  private getCourtRoomAndAddress(venueId: number): void {
-    this.referenceDataService.getCourts()
-      .subscribe(
-        (data: HearingVenueResponse[]) => {
-          const selectedCourt = data.filter(c => c.id === venueId);
-          this.courtRoomAddress = selectedCourt[0].name;
-        },
-        error => console.error(error)
-      );
-  }
+  //private getCourtRoomAndAddress(venueId: number): void {
+  //  this.referenceDataService.getCourts()
+  //    .subscribe(
+  //      (data: HearingVenueResponse[]) => {
+  //        const selectedCourt = data.filter(c => c.id === venueId);
+  //        this.courtRoomAddress = selectedCourt[0].name;
+  //      },
+  //      error => console.error(error)
+  //    );
+  //}
 
   private getHearingDuration(duration: number): string {
     console.log('DIRATION SUMMARY' + duration);
