@@ -1,7 +1,7 @@
 import { Router, ResolveEnd, ActivatedRouteSnapshot, NavigationEnd } from '@angular/router';
 import { AppInsightsLogger } from './app-insights-logger.service';
 import { Injectable } from '@angular/core';
-import { filter } from "rxjs/operators";
+import {filter, pairwise} from "rxjs/operators";
 
 @Injectable()
 export class PageTrackerService {
@@ -17,8 +17,10 @@ export class PageTrackerService {
   }
 
   trackPreviousPage(router: Router) {
-    router.events.filter(e => e instanceof NavigationEnd)
-      .pairwise().subscribe((e) => {
+    router.events.pipe(
+      filter(e => e instanceof NavigationEnd),
+      pairwise()
+    ).subscribe((e) => {
         sessionStorage.setItem(this.PREVIOUS_ROUTE, e[0]['url']);
         console.log('NAVIGATION PREVIOUS => ', e[0]['url']);
       });
