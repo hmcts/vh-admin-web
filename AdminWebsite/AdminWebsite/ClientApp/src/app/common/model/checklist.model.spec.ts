@@ -7,8 +7,9 @@ describe('AnswerQuestion model', () => {
     });
 
     it('should throw exception on unsupported role', () => {
+        let question: AnswerQuestion = null;
         expect(() => {
-            new AnswerQuestion('ANY_OTHER_CIRCUMSTANCES', 'no', 'Judge');
+            question = new AnswerQuestion('ANY_OTHER_CIRCUMSTANCES', 'no', 'Judge');
         }).toThrow(new Error('Cannot find question text for unsupported role: Judge'));
     });
 

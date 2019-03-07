@@ -31,10 +31,10 @@ namespace AdminWebsite.AcceptanceTests.Features
         public virtual void FeatureSetup()
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
-            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Case Admin or VH Officer enters VH schedule & location details", "\t\tAs a person who books a video hearing (e.g. Case Admin or VH Officer)\r\n\t\tI want" +
-                    " to be presented with an appropriate form for schedule & location details\r\n\t\tSo " +
-                    "that I am able to enter time, date and location of the video hearing I am reques" +
-                    "ting", ProgrammingLanguage.CSharp, ((string[])(null)));
+            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Case Admin or VH Officer enters VH schedule & location details", "\t\tAs a person who books a video hearing (e.g. Case Admin or VH Officer)\n\t\tI want " +
+                    "to be presented with an appropriate form for schedule & location details\n\t\tSo th" +
+                    "at I am able to enter time, date and location of the video hearing I am requesti" +
+                    "ng", ProgrammingLanguage.CSharp, ((string[])(null)));
             testRunner.OnFeatureStart(featureInfo);
         }
         

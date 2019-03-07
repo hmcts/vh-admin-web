@@ -26,7 +26,7 @@ export class AppComponent implements OnInit {
   @ViewChild(HeaderComponent)
   headerComponent: HeaderComponent;
 
-  showSignOutConfirmation: boolean = false;
+  showSignOutConfirmation = false;
 
   title = 'Book hearing';
   loggedIn: boolean;
@@ -34,7 +34,7 @@ export class AppComponent implements OnInit {
     private configService: ConfigService,
     private router: Router,
     private window: WindowRef,
-    pageTracker: PageTrackerService,private videoHearingsService: VideoHearingsService ) {
+    pageTracker: PageTrackerService, private videoHearingsService: VideoHearingsService ) {
     this.config.tenant = this.configService.clientSettings.tenant_id;
     this.config.clientId = this.configService.clientSettings.client_id;
     this.config.redirectUri = this.configService.clientSettings.redirect_uri;

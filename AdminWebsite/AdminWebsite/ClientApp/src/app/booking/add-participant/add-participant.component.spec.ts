@@ -37,12 +37,12 @@ const roleList: CaseRoleResponse[] =
     new CaseRoleResponse({ name: 'Professional' }),
   ];
 
-let feeds: FeedModel[] = [];
+const feeds: FeedModel[] = [];
 
-let f1 = new FeedModel('Citizen')
+const f1 = new FeedModel('Citizen');
 f1.participants = [];
 
-let p1 = new ParticipantModel();
+const p1 = new ParticipantModel();
 p1.first_name = 'John';
 p1.last_name = 'Doe';
 p1.display_name = 'John Doe';
@@ -50,7 +50,7 @@ p1.role = 'judge';
 p1.title = 'Mr.';
 p1.email = 'test@test.com';
 p1.phone = '32332';
-let p2 = new ParticipantModel();
+const p2 = new ParticipantModel();
 p2.first_name = 'Jane';
 p2.last_name = 'Doe';
 p2.display_name = 'Jane Doe';
@@ -59,7 +59,7 @@ p2.title = 'Mr.';
 p2.email = 'test@test.com';
 p2.phone = '32332';
 
-let p3 = new ParticipantModel();
+const p3 = new ParticipantModel();
 p3.first_name = 'Chris';
 p3.last_name = 'Green';
 p3.display_name = 'Chris Green';
@@ -74,7 +74,7 @@ feeds.push(f1);
 
 
 function initHearingRequest(): HearingModel {
-  let newHearing = new HearingModel();
+  const newHearing = new HearingModel();
   newHearing.cases = [];
   newHearing.feeds = feeds;
   newHearing.hearing_type_id = -1;

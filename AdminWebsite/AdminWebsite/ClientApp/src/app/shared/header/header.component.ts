@@ -30,7 +30,7 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit() {
     this.topMenuItems = TopMenuItems;
-    this.signoutComponent.confirmLogout.subscribe(() => { this.logout() });
+    this.signoutComponent.confirmLogout.subscribe(() => { this.logout(); });
   }
 
   logout() {

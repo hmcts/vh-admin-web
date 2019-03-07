@@ -1,4 +1,4 @@
-﻿import { Component, Input } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
 
 @Component({
