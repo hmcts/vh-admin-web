@@ -12,7 +12,7 @@
         <div class="govuk-grid-column-one-half vhtable-header vh-image-50">
           {{pat.title}} {{pat.first_name}} {{pat.last_name}}
           <div>
-            <strong>{{pat.role}}</strong>
+            <strong>Judge</strong>
           </div>
         </div>
         <div class="govuk-grid-column-one-third vhtable-cell" *ngIf="isSummaryPage">
@@ -20,11 +20,12 @@
         </div>
       </div>
 
-      <div class="govuk-grid-row vh-row" *ngIf="pat.role !== 'Judge'">
+      <div class="govuk-grid-row vh-row" *ngIf="!pat.is_judge">
         <div class="govuk-grid-column-two-thirds vhtable-header">
           {{pat.title}} {{pat.first_name}} {{pat.last_name}}
           <div>
-            <strong>{{pat.role}}</strong>
+            <strong>{{pat.case_role_name}}</strong>
+           
           </div>
         </div>
         <div class="govuk-grid-column-one-third vhtable-cell" *ngIf="isEditRemoveVisible">

@@ -11,7 +11,7 @@
     <h2 class="govuk-heading-m">Add a participant</h2>
 
     <div *ngIf="isShowErrorSummary || displayErrorNoParticipants" class="govuk-error-summary" aria-labelledby="error-summary-title"
-      role="alert" data-module="error-summary">
+         role="alert" data-module="error-summary">
       <h2 class="govuk-error-summary__title" id="error-summary-title">
         Please complete the missing information
       </h2>
@@ -79,77 +79,78 @@
           </option>
         </select>
       </div>
+      <div *ngIf="showDetails">
+        <app-search-email (findParticipant)="getParticipant($event)" (participantsNotFound)="notFoundParticipant()"
+                          (emailChanged)="emailChanged()">
+        </app-search-email>
 
-      <app-search-email (findParticipant)="getParticipant($event)" (participantsNotFound)="notFoundParticipant()"
-                        (emailChanged)="emailChanged()">
-      </app-search-email>
+        <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error': titleInvalid || !isTitleSelected}">
+          <legend id="role-error" *ngIf="titleInvalid || !isTitleSelected">
+            <span class="govuk-error-message">
+              {{constants.Error.TitleErrorMsg}}
+            </span>
+          </legend>
+          <label class="govuk-label" for="title">
+            Title
+          </label>
+          <select id="title" formControlName="title" class="govuk-select vh-input-w390">
+            <option *ngFor="let tit of titleList" [ngValue]="tit.value">
+              {{tit.value}}
+            </option>
+          </select>
+        </div>
 
-      <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error': titleInvalid || !isTitleSelected}">
-        <legend id="role-error" *ngIf="titleInvalid || !isTitleSelected">
-          <span class="govuk-error-message">
-            {{constants.Error.TitleErrorMsg}}
-          </span>
-        </legend>
-        <label class="govuk-label" for="title">
-          Title
-        </label>
-        <select id="title" formControlName="title" class="govuk-select vh-input-w390">
-          <option *ngFor="let tit of titleList" [ngValue]="tit.value">
-            {{tit.value}}
-          </option>
-        </select>
-      </div>
+        <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':firstNameInvalid}">
 
-      <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':firstNameInvalid}">
+          <legend id="firstName-error" *ngIf="firstNameInvalid">
+            <span class="govuk-error-message">
+              {{constants.Error.FirstNameErrorMsg}}
+            </span>
+          </legend>
+          <label class="govuk-label" for="firstName">
+            First name
+          </label>
+          <input id="firstName" formControlName="firstName" class="govuk-input govuk-input--width-20" type="text" />
 
-        <legend id="firstName-error" *ngIf="firstNameInvalid">
-          <span class="govuk-error-message">
-            {{constants.Error.FirstNameErrorMsg}}
-          </span>
-        </legend>
-        <label class="govuk-label" for="firstName">
-          First name
-        </label>
-        <input id="firstName" formControlName="firstName" class="govuk-input govuk-input--width-20" type="text" />
+        </div>
 
-      </div>
+        <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':lastNameInvalid}">
+          <legend id="lastName-error" *ngIf="lastNameInvalid">
+            <span class="govuk-error-message">
+              {{constants.Error.LastNameErrorMsg}}
+            </span>
+          </legend>
+          <label class="govuk-label" for="lastName">
+            Last name
+          </label>
+          <input id="lastName" formControlName="lastName" class="govuk-input govuk-input--width-20" type="text" />
+        </div>
 
-      <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':lastNameInvalid}">
-        <legend id="lastName-error" *ngIf="lastNameInvalid">
-          <span class="govuk-error-message">
-            {{constants.Error.LastNameErrorMsg}}
-          </span>
-        </legend>
-        <label class="govuk-label" for="lastName">
-          Last name
-        </label>
-        <input id="lastName" formControlName="lastName" class="govuk-input govuk-input--width-20" type="text" />
-      </div>
+        <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':phoneInvalid}">
+          <legend id="phone-error" *ngIf="phoneInvalid">
+            <span class="govuk-error-message">
+              {{constants.Error.PhoneErrorMsg}}
+            </span>
+          </legend>
+          <label class="govuk-label" for="phone">
+            Telephone
+          </label>
+          <input id="phone" formControlName="phone" class="govuk-input govuk-input--width-20" type="text" />
+        </div>
 
-      <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':phoneInvalid}">
-        <legend id="phone-error" *ngIf="phoneInvalid">
-          <span class="govuk-error-message">
-            {{constants.Error.PhoneErrorMsg}}
-          </span>
-        </legend>
-        <label class="govuk-label" for="phone">
-          Telephone
-        </label>
-        <input id="phone" formControlName="phone" class="govuk-input govuk-input--width-20" type="text" />
-      </div>
+        <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':displayNameInvalid}">
 
-      <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':displayNameInvalid}">
+          <legend id="display-name-error" *ngIf="displayNameInvalid">
+            <span class="govuk-error-message">
+              {{constants.Error.DisplaNameErrorMsg}}
+            </span>
+          </legend>
+          <label class="govuk-label" for="displayName">
+            Display Name
+          </label>
+          <input id="displayName" formControlName="displayName" class="govuk-input govuk-input--width-20" type="text" />
 
-        <legend id="display-name-error" *ngIf="displayNameInvalid">
-          <span class="govuk-error-message">
-            {{constants.Error.DisplaNameErrorMsg}}
-          </span>
-        </legend>
-        <label class="govuk-label" for="displayName">
-          Display Name
-        </label>
-        <input id="displayName" formControlName="displayName" class="govuk-input govuk-input--width-20" type="text" />
-
+        </div>
       </div>
 
       <div class="govuk-grid-row">
@@ -173,8 +174,8 @@
     </form>
     <div class="vh-top">
       <input *ngIf="displayNextButton" id="nextButton" type="button" class="govuk-button vh-mr25" role="button" value="{{buttonAction}}"
-        (click)="next()" />
-      <input id="cancelBtn" type="button"  class="govuk-button hmcts-button--secondary" role="button" value="Cancel" (click)="addParticipantCancel()" />
+             (click)="next()" />
+      <input id="cancelBtn" type="button" class="govuk-button hmcts-button--secondary" role="button" value="Cancel" (click)="addParticipantCancel()" />
     </div>
   </div>
 

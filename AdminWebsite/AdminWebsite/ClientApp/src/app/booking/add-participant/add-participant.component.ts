@@ -30,7 +30,6 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   participantDetails: ParticipantModel;
   notFound: boolean;
   hearing: HearingModel;
-  // participants: ParticipantModel[] = [];
   titleList: IDropDownModel[] = [];
   roleList: string[];
   hearingRoleList: string[];
@@ -48,6 +47,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   isPartySelected = true;
   isTitleSelected = true;
   isShowErrorSummary = false;
+  showDetails = false;
 
   showCancelPopup = false;
   showConfirmationPopup = false;
@@ -102,13 +102,11 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   }
 
   setupRoles(data: CaseAndHearingRolesResponse[]) {
-    console.log("CASETYPE YYYY: " + data[0].hearing_roles.length);
     this.caseAndHearingRoles = this.participantService.mapParticipantsRoles(data);
     this.roleList = this.caseAndHearingRoles.map(x => x.name);
     this.roleList.unshift(this.constants.PleaseSelect);
     this.caseAndHearingRoles.forEach(x => {
       this.setupHearingRoles(x.name);
-      console.log("CASETYPE GGGGG: " + x.hearingRoles);
     });
   }
 
@@ -265,6 +263,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
   roleSelected() {
     this.isRoleSelected = this.role.value !== this.constants.PleaseSelect;
+    this.showDetails = true;
   }
 
   titleSelected() {
@@ -296,6 +295,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         this.clearForm();
         this.displayNext();
         this.participantForm.markAsPristine();
+        this.showDetails = false;
       } else {
         this.showConfirmationPopup = true;
         this.confirmationMessage = `You have already added ${newParticipant.first_name} ${newParticipant.last_name} to this hearing`;
@@ -401,7 +401,9 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     this.lastName.markAsUntouched();
     this.phone.markAsUntouched();
     this.title.markAsUntouched();
-    this.searchEmail.clearEmail();
+    if (this.showDetails) {
+      this.searchEmail.clearEmail();
+    }
     this.displayName.markAsUntouched();
   }
 

@@ -113,7 +113,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     this.judge.last_name = selectedJudge.last_name;
     this.judge.email = selectedJudge.email;
     this.judge.display_name = selectedJudge.display_name;
-    this.judge.title = 'Judge';
+    this.judge.title = '';
     this.judge.role = 'Judge';
     this.judge.id = selectedJudge.id;
 
@@ -123,18 +123,16 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     if (indexOfJudge > -1) {
       this.hearing.participants.splice(indexOfJudge, 1);
     }
-    this.hearing.participants.push(newJudge);
+    this.hearing.participants.unshift(newJudge);
     this.hearingService.updateHearingRequest(this.hearing);
   }
 
   saveJudge() {
     if (this.judge.id === null) {
-      console.log("Form INVALID XXXXXX");
       this.isJudgeSelected = false;
       return;
     }
     if (this.assignJudgeForm.valid) {
-      console.log("Form INVALID YYYYY");
       this.failedSubmission = false;
       this.assignJudgeForm.markAsPristine();
       this.hasSaved = true;
