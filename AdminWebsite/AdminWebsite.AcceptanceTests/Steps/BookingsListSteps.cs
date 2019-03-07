@@ -15,7 +15,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [When(@"user is on bookings list page")]
         public void BookingsListPage()
         {
-            _bookingsList.PageUrl(PageUri.DashboardPage);
+            _bookingsList.PageUrl(PageUri.BookingListPage);
         }
     }
 }

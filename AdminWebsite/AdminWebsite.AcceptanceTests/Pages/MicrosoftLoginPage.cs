@@ -20,7 +20,7 @@ namespace AdminWebsite.AcceptanceTests.Pages
         private By _noButton => By.XPath("//input[contains(@data-bind,'Splitter') and (@value='No')]");
         private By _pageTitle => By.XPath("//*[@class='govuk-heading-l']");
         private By _startNowButton => By.XPath("//*[@type='button']");
-        private By _loginBanner => By.Id("loginHeader");
+        private By _loginBanner => By.Id("//*[@id='otherTileText']");
 
         public void Logon(string participantUsername, string password)
         {
@@ -49,10 +49,9 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public void NextButton() => _context.NgDriver.WaitUntilElementVisible(_next).Click();
         public void SignInButton() => _context.NgDriver.WaitUntilElementVisible(_signIn).Click();
         public void DontStaySignedIn() => _context.NgDriver.WaitUntilElementVisible(_noButton).Click();
-        public string GetLoginBannerSource()
+        public void SignInTitle()
         {
-            _context.Retry(() => _context.NgDriver.WaitUntilElementExists(_loginBanner).GetAttribute("src").Should().NotBeNullOrEmpty());
-            return _context.NgDriver.WaitUntilElementExists(_loginBanner).GetAttribute("src");
+            _context.Retry(() => _context.NgDriver.Title.Trim().Should().Be("Sign in to your account"));
         }
     }
 }

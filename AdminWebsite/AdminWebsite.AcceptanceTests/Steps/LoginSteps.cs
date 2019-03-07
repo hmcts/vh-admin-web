@@ -56,7 +56,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [Then(@"user should be navigated to sign in screen")]
         public void ThenUserShouldBeNavigatedToSignInScreen()
         {
-            _loginPage.GetLoginBannerSource().Should().Contain("Pick an account");
+            _loginPage.SignInTitle();
         }
     }
 }
