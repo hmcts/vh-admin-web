@@ -1,7 +1,7 @@
 import { Router, ResolveEnd, ActivatedRouteSnapshot, NavigationEnd } from '@angular/router';
 import { AppInsightsLogger } from './app-insights-logger.service';
 import { Injectable } from '@angular/core';
-import 'rxjs/add/operator/pairwise';
+import { filter } from "rxjs/operators";
 
 @Injectable()
 export class PageTrackerService {
@@ -11,9 +11,9 @@ export class PageTrackerService {
   constructor(private logger: AppInsightsLogger) { }
 
   trackNavigation(router: Router) {
-    router.events
-      .filter(event => event instanceof ResolveEnd)
-      .subscribe((event: ResolveEnd) => this.logPageResolved(event));
+    router.events.pipe(
+      filter(event => event instanceof ResolveEnd)
+    ).subscribe((event: ResolveEnd) => this.logPageResolved(event));
   }
 
   trackPreviousPage(router: Router) {
