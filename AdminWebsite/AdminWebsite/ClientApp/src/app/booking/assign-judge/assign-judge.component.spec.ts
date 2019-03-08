@@ -15,8 +15,6 @@ import { ParticipantModel } from '../../common/model/participant.model';
 
 function initHearingRequest(): HearingModel {
 
-  const f1 = new FeedModel('Judge');
-
   const participants: ParticipantModel[] = [];
   const p1 = new ParticipantModel();
   p1.display_name = 'display name1';
@@ -34,10 +32,6 @@ function initHearingRequest(): HearingModel {
   p2.is_judge = true;
   p2.title = 'Mr.';
 
-  participants.push(p1);
-  participants.push(p2);
-
-  const participants1: ParticipantModel[] = [];
   const p3 = new ParticipantModel();
   p3.display_name = 'display name3';
   p3.email = 'test3@TestBed.com';
@@ -51,23 +45,20 @@ function initHearingRequest(): HearingModel {
   p4.email = 'test3@TestBed.com';
   p4.first_name = 'first3';
   p4.last_name = 'last3';
-  p4.role = 'Judge';
+  p4.is_judge = true;
   p4.title = 'Mr.';
 
-  participants1.push(p3);
-  participants1.push(p4);
-  f1.participants = participants;
-  f2.participants = participants1;
+  participants.push(p1);
+  participants.push(p2);
+  participants.push(p3);
+  participants.push(p4);
 
   const newHearing = new HearingModel();
   newHearing.cases = [];
-  newHearing.feeds = [];
-  newHearing.feeds.push(f1);
-  newHearing.feeds.push(f2);
+  newHearing.participants = participants;
 
   newHearing.hearing_type_id = -1;
-  newHearing.hearing_medium_id = -1;
-  newHearing.court_id = -1;
+  newHearing.hearing_venue_id = -1;
   newHearing.scheduled_date_time = null;
   newHearing.scheduled_duration = 0;
 

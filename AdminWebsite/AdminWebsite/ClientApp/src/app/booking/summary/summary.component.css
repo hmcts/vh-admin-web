@@ -15,3 +15,8 @@
     margin-top: 10px;
 }
 
+.vh-text-break {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+

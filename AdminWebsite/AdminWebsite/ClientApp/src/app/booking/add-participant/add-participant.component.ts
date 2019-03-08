@@ -102,6 +102,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   }
 
   setupRoles(data: CaseAndHearingRolesResponse[]) {
+ 
     this.caseAndHearingRoles = this.participantService.mapParticipantsRoles(data);
     this.roleList = this.caseAndHearingRoles.map(x => x.name);
     this.roleList.unshift(this.constants.PleaseSelect);
@@ -123,8 +124,8 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
     this.participantDetails = participantDetails;
     this.participantForm.setValue({
-      role: this.participantDetails.case_role_name,
-      party: this.participantDetails.hearing_role_name,
+      role: this.participantDetails.hearing_role_name,
+      party: this.participantDetails.case_role_name,
       title: this.participantDetails.title,
       firstName: this.participantDetails.first_name,
       lastName: this.participantDetails.last_name,
@@ -139,7 +140,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   }
 
   emailChanged() {
-    if (this.participantForm.valid && this.searchEmail.validateEmail()) {
+    if (this.participantForm.valid && this.showDetails && this.searchEmail.validateEmail()) {
       if (this.editMode) {
         this.displayNext();
       } else {
@@ -207,7 +208,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
           this.phone.value === '' &&
           this.displayName.value === '') || this.editMode) {
           this.displayNext();
-        } else if (this.participantForm.valid && this.searchEmail.validateEmail()) {
+        } else if (this.participantForm.valid && this.showDetails && this.searchEmail.validateEmail()) {
           this.displayAdd();
         } else {
           this.displayClear();
@@ -283,9 +284,10 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   }
 
   saveParticipant() {
-    const validEmail = this.searchEmail.validateEmail();
     this.actionsBeforeSave();
-    if (this.participantForm.valid && validEmail && this.isRoleSelected && this.isTitleSelected) {
+    debugger;
+    const validEmail = this.showDetails ? this.searchEmail.validateEmail() : true;
+    if (this.participantForm.valid && validEmail && this.isRoleSelected && this.isPartySelected && this.isTitleSelected) {
       this.isShowErrorSummary = false;
       const newParticipant = new ParticipantModel();
       this.mapParticipant(newParticipant);
