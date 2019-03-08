@@ -19,8 +19,7 @@ import { ErrorService } from 'src/app/services/error.service';
 function initHearingRequest(): HearingModel {
   const newHearing = new HearingModel();
   newHearing.hearing_type_id = -1;
-  newHearing.hearing_medium_id = -1;
-  newHearing.court_id = -1;
+  newHearing.hearing_venue_id = -1;
   newHearing.scheduled_duration = 0;
   return newHearing;
 }
@@ -28,7 +27,7 @@ function initHearingRequest(): HearingModel {
 function initExistingHearingRequest(): HearingModel {
   const existingRequest = new HearingModel();
   existingRequest.hearing_type_id = 2;
-  existingRequest.hearing_medium_id = 1;
+  existingRequest.hearing_venue_id = 1;
   return existingRequest;
 }
 

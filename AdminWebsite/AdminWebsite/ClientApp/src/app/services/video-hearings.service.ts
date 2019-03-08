@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import {
-  HearingTypeResponse, BHClient, BookNewHearingRequest, HearingDetailsResponse, CaseRoleResponse
+  HearingTypeResponse, BHClient, BookNewHearingRequest,
+  HearingDetailsResponse, CaseAndHearingRolesResponse
 } from './clients/api-client';
 import { HearingModel } from '../common/model/hearing.model';
 
@@ -56,8 +57,8 @@ export class VideoHearingsService {
     sessionStorage.setItem(this.newRequestKey, localRequest);
   }
 
-  getParticipantRoles(): Observable<CaseRoleResponse[]> {
-    return this.bhClient.getParticipantRoles();
+  getParticipantRoles(caseTypeName: string): Observable<CaseAndHearingRolesResponse[]> {
+    return this.bhClient.getParticipantRoles(caseTypeName);
   }
 
   cancelRequest() {

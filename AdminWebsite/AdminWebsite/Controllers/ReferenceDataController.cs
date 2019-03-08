@@ -4,6 +4,7 @@ using System.Net;
 using System.Threading.Tasks;
 using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Contracts.Responses;
+using AdminWebsite.Models;
 using AdminWebsite.Security;
 using Microsoft.AspNetCore.Mvc;
 using HearingTypeResponse = AdminWebsite.Contracts.Responses.HearingTypeResponse;
@@ -56,15 +57,27 @@ namespace AdminWebsite.Controllers
         /// </summary>
         /// <returns>List of valid participant roles</returns>
         [HttpGet("participantroles", Name = "GetParticipantRoles")]
-        [ProducesResponseType(typeof(IList<CaseRoleResponse>), (int) HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(IList<CaseAndHearingRolesResponse>), (int) HttpStatusCode.OK)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
-        public ActionResult<IList<CaseRoleResponse>> GetParticipantRoles()
+        public async Task<ActionResult<IList<CaseAndHearingRolesResponse>>> GetParticipantRoles(string caseTypeName)
         {
-            var caseRoles = new List<CaseRoleResponse>
+            var response = new List<CaseAndHearingRolesResponse>();
+
+            var caseRoles = await _bookingsApiClient.GetCaseRolesForCaseTypeAsync(caseTypeName);
+            if (caseRoles.Any())
             {
-                new CaseRoleResponse {Name = "Citizen"}, new CaseRoleResponse {Name = "Professional"}
-            };
-            return Ok(caseRoles);
+                foreach (var item in caseRoles)
+                {
+                    var caseRole = new CaseAndHearingRolesResponse();
+                    caseRole.Name = item.Name;
+
+                    var hearingRoles = await _bookingsApiClient.GetHearingRolesForCaseRoleAsync(caseTypeName, item.Name);
+                    caseRole.HearingRoles = hearingRoles.Select(x => x.Name).ToList();
+                    response.Add(caseRole);
+                }
+            }
+
+            return Ok(response);
         }
 
         /// <summary>
