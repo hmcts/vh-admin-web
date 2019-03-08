@@ -31,10 +31,10 @@ namespace AdminWebsite.AcceptanceTests.Features
         public virtual void FeatureSetup()
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
-            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Case Admin or VH Officer enters VH schedule & location details", "\t\tAs a person who books a video hearing (e.g. Case Admin or VH Officer)\n\t\tI want " +
-                    "to be presented with an appropriate form for schedule & location details\n\t\tSo th" +
-                    "at I am able to enter time, date and location of the video hearing I am requesti" +
-                    "ng", ProgrammingLanguage.CSharp, ((string[])(null)));
+            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Case Admin or VH Officer enters VH schedule & location details", "\t\tAs a person who books a video hearing (e.g. Case Admin or VH Officer)\r\n\t\tI want" +
+                    " to be presented with an appropriate form for schedule & location details\r\n\t\tSo " +
+                    "that I am able to enter time, date and location of the video hearing I am reques" +
+                    "ting", ProgrammingLanguage.CSharp, ((string[])(null)));
             testRunner.OnFeatureStart(featureInfo);
         }
         
@@ -108,12 +108,14 @@ this.ScenarioInitialize(scenarioInfo);
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("User must not be able to select past date from the calendar")]
+        [NUnit.Framework.DescriptionAttribute("User to proceed until a valid date is entered")]
         [NUnit.Framework.CategoryAttribute("VIH-2619")]
-        public virtual void UserMustNotBeAbleToSelectPastDateFromTheCalendar()
+        [NUnit.Framework.CategoryAttribute("Bug-VIH-4126")]
+        public virtual void UserToProceedUntilAValidDateIsEntered()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("User must not be able to select past date from the calendar", null, new string[] {
-                        "VIH-2619"});
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("User to proceed until a valid date is entered", null, new string[] {
+                        "VIH-2619",
+                        "Bug-VIH-4126"});
 #line 20
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
@@ -126,7 +128,11 @@ this.ScenarioInitialize(scenarioInfo);
 #line 24
  testRunner.When("user selects a date in the past from the calendar", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 25
+ testRunner.And("user proceeds to next page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 26
  testRunner.Then("an error message should be displayed as Please enter a date in the future", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 27
+ testRunner.And("user should remain on hearing schedule page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             this.ScenarioCleanup();
         }

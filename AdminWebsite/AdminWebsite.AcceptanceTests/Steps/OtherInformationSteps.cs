@@ -26,5 +26,13 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _otherInformation.GetOtherInformationHeading().Should().Be(TestData.OtherInformation.OtherInformationText);
             _otherInformation.AddOtherInformation(TestData.OtherInformation.OtherInformationText);
         }
+        [When(@"user continues booking without adding other information")]
+        public void UserAddsNoOtherInformationToBookingHearing()
+        {
+            MoreInformationPage();
+            _otherInformation.GetOtherInformationHeading().Should().Be(TestData.OtherInformation.OtherInformationText);
+            _otherInformation.AddOtherInformation("");
+        }
+
     }
 }
