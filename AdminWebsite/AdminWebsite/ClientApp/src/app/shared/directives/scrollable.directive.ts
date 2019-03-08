@@ -12,7 +12,7 @@ interface ScrollPosition {
 
 // Infinite scroller directive with RxJS Observables
 @Directive({
-  selector: '[app-scrollable]'
+  selector: '[appScrollable]'
 })
 export class ScrollableDirective implements AfterViewInit {
 
@@ -20,15 +20,15 @@ export class ScrollableDirective implements AfterViewInit {
   private $userScrolledDown: Observable<any>;
   private $requestCallBack: Observable<any>;
 
-  lastPosition: number = 0;
+  lastPosition = 0;
 
-  @Output() scrollPosition = new EventEmitter()
+  @Output() scrollPosition = new EventEmitter();
 
   constructor(public el: ElementRef) { }
 
   ngAfterViewInit() {
     this.streamScrollEvents();
-    this.requestCallbackOnScroll()
+    this.requestCallbackOnScroll();
   }
 
   private streamScrollEvents() {
@@ -39,14 +39,14 @@ export class ScrollableDirective implements AfterViewInit {
         offsetHeight: this.el.nativeElement.offsetHeight,
       }))
       .pairwise()
-      .filter(positions => this.isUserScrollingDown(positions) && this.isLoadingScrollPosition(positions[1]))
+      .filter(positions => this.isUserScrollingDown(positions) && this.isLoadingScrollPosition(positions[1]));
 
   }
 
   private isUserScrollingDown = (positions) => {
     return positions[0].pageYOffset < positions[1].pageYOffset;
   }
-  
+
   private isLoadingScrollPosition = (position) => {
     return  position.offsetHeight + position.pageYOffset >= position.innerHeight;
   }
@@ -54,12 +54,12 @@ export class ScrollableDirective implements AfterViewInit {
   private requestCallbackOnScroll() {
     this.$requestCallBack = this.$userScrolledDown;
     this.$requestCallBack
-      .subscribe(() => { this.scrollPosition.emit() });
+      .subscribe(() => { this.scrollPosition.emit(); });
   }
 
   @HostListener('scroll', ['$event'])
   onScroll(event) {
-  
+
     try {
       this.$scrollEvent.next(event);
     } catch (err) { }

@@ -55,7 +55,7 @@ export class VideoHearingsService {
   }
 
   saveHearing(newRequest: HearingModel): Observable<number> {
-    let hearingRequest = this.mapHearing(newRequest);
+    const hearingRequest = this.mapHearing(newRequest);
     return this.bhClient.bookNewHearing(hearingRequest);
   }
 
