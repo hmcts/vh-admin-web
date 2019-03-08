@@ -1,0 +1,6 @@
+﻿#error Parsing error near '{'
+#error Parsing error near '"Participants": ['
+#error Parsing error near '{'
+#error Parsing error near '"Email": "test_1@participant.com",'
+#error Parsing error near '"Role": "Professional",'
+#error Parsing error near '"Title": "Mrs",'

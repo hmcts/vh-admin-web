@@ -1,0 +1,6 @@
+﻿#error Parsing error near '// Protractor configuration file, see link for more information'
+#error Parsing error near '// https://github.com/angular/protractor/blob/master/lib/config.ts'
+#error Parsing error near '//const username = process.env.SAUCE_USERNAME;'
+#error Parsing error near '//const accessKey = process.env.SAUCE_ACCESS_KEY;'
+#error Parsing error near '//const usernameBooking = process.env.Username_Booking;'
+#error Parsing error near '//const passwordBooking = procees.env.Password_Booking;'

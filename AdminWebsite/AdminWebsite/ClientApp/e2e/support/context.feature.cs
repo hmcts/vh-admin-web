@@ -1,0 +1,6 @@
+﻿#error Parsing error near 'import { browser, ProtractorBrowser } from '
+#error Parsing error near 'import { LoginPageObject } from '
+#error Parsing error near 'export class Context {'
+#error Parsing error near 'public browser: ProtractorBrowser;'
+#error Parsing error near 'public loginPage: LoginPageObject;'
+#error Parsing error near 'constructor() {'

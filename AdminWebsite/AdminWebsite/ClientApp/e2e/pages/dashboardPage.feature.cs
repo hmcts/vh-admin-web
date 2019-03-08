@@ -1,0 +1,6 @@
+﻿#error Parsing error near 'import { browser, by, element } from '
+#error Parsing error near 'import { Helpers } from '
+#error Parsing error near 'export class DashboardPage {'
+#error Parsing error near 'private dashBoard = element(by.xpath('
+#error Parsing error near 'navigateTo() {'
+#error Parsing error near 'return browser.get('

@@ -1,0 +1,6 @@
+﻿#error Parsing error near 'import { element, by } from '
+#error Parsing error near 'import { Helpers } from '
+#error Parsing error near 'export class HearingSchedulePageObject {'
+#error Parsing error near 'private hearingSchedulePageTitle = element(by.xpath('
+#error Parsing error near 'getHearingSchedulePageTitle() {'
+#error Parsing error near 'Helpers.WaitForElementDisplayed(this.hearingSchedulePageTitle);'

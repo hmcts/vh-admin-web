@@ -1,0 +1,6 @@
+﻿#error Parsing error near '// represents case role for a given hearing case type.'
+#error Parsing error near 'export class PartyModel {'
+#error Parsing error near 'constructor(name: string) {'
+#error Parsing error near 'this.name = name;'
+#error Parsing error near 'this.hearingRoles = [];'
+#error Parsing error near '}'

@@ -1,0 +1,6 @@
+﻿#error Parsing error near 'import { Given, When } from '
+#error Parsing error near 'import { browser } from '
+#error Parsing error near 'import { TestType } from '
+#error Parsing error near 'import { LoginPageObject } from '
+#error Parsing error near 'import { expect } from '
+#error Parsing error near 'const data = require('

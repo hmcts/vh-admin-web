@@ -1,0 +1,5 @@
+﻿#error Parsing error near '{'
+#error Parsing error near '"ContactUsPageTitle" : "Contact the video hearings service",'
+#error Parsing error near '"ContactUsPhoneNumber" : "0300 303 0655",'
+#error Parsing error near '"ContactUsEmailAddress" : "admin@videohearings.hmcts.net"'
+#error Parsing error near '}'
