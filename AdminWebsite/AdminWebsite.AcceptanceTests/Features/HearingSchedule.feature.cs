@@ -108,12 +108,12 @@ this.ScenarioInitialize(scenarioInfo);
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("User unable to proceed until a valid date is entered")]
+        [NUnit.Framework.DescriptionAttribute("User to proceed until a valid date is entered")]
         [NUnit.Framework.CategoryAttribute("VIH-2619")]
         [NUnit.Framework.CategoryAttribute("Bug-VIH-4126")]
-        public virtual void UserUnableToProceedUntilAValidDateIsEntered()
+        public virtual void UserToProceedUntilAValidDateIsEntered()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("User unable to proceed until a valid date is entered", null, new string[] {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("User to proceed until a valid date is entered", null, new string[] {
                         "VIH-2619",
                         "Bug-VIH-4126"});
 #line 20

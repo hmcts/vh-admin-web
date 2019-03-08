@@ -105,11 +105,10 @@ this.ScenarioInitialize(scenarioInfo);
         [NUnit.Framework.TestAttribute()]
         [NUnit.Framework.DescriptionAttribute("Case Admin signs out in the process of booking hearing")]
         [NUnit.Framework.CategoryAttribute("VIH-2072")]
-        [NUnit.Framework.TestCaseAttribute("Hearing Details", null)]
-        [NUnit.Framework.TestCaseAttribute("Hearing Schedule", null)]
-        [NUnit.Framework.TestCaseAttribute("Assign Judge", null)]
-        [NUnit.Framework.TestCaseAttribute("Add Participants", null)]
-        [NUnit.Framework.TestCaseAttribute("Other Information", null)]
+        [NUnit.Framework.TestCaseAttribute("Hearing details", null)]
+        [NUnit.Framework.TestCaseAttribute("Hearing sjudge", null)]
+        [NUnit.Framework.TestCaseAttribute("Add participants", null)]
+        [NUnit.Framework.TestCaseAttribute("Other information", null)]
         [NUnit.Framework.TestCaseAttribute("Summary", null)]
         [NUnit.Framework.TestCaseAttribute("Dashboard", null)]
         [NUnit.Framework.TestCaseAttribute("Bookings List", null)]
@@ -143,11 +142,10 @@ this.ScenarioInitialize(scenarioInfo);
         [NUnit.Framework.TestAttribute()]
         [NUnit.Framework.DescriptionAttribute("Vh Officer signs out in the process of booking hearing")]
         [NUnit.Framework.CategoryAttribute("VIH-2072")]
-        [NUnit.Framework.TestCaseAttribute("Hearing Details", null)]
-        [NUnit.Framework.TestCaseAttribute("Hearing Schedule", null)]
-        [NUnit.Framework.TestCaseAttribute("Assign Judge", null)]
-        [NUnit.Framework.TestCaseAttribute("Add Participants", null)]
-        [NUnit.Framework.TestCaseAttribute("Other Information", null)]
+        [NUnit.Framework.TestCaseAttribute("Hearing details", null)]
+        [NUnit.Framework.TestCaseAttribute("Hearing sjudge", null)]
+        [NUnit.Framework.TestCaseAttribute("Add participants", null)]
+        [NUnit.Framework.TestCaseAttribute("Other information", null)]
         [NUnit.Framework.TestCaseAttribute("Summary", null)]
         [NUnit.Framework.TestCaseAttribute("Dashboard", null)]
         [NUnit.Framework.TestCaseAttribute("Bookings List", null)]
@@ -160,18 +158,18 @@ this.ScenarioInitialize(scenarioInfo);
                 @__tags = System.Linq.Enumerable.ToArray(System.Linq.Enumerable.Concat(@__tags, exampleTags));
             }
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Vh Officer signs out in the process of booking hearing", null, @__tags);
-#line 37
+#line 36
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
-#line 38
+#line 37
  testRunner.Given("Admin user is on microsoft login page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 39
+#line 38
  testRunner.And("VhOfficerCivilMoneyclaims logs into Vh-Admin website", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 40
+#line 39
  testRunner.And(string.Format("user is in the process of {0} Hearing", booking), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 41
+#line 40
  testRunner.When("user attempts to sign out of Vh-Admin website", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 42
+#line 41
  testRunner.Then("warning message should be displayed as You will lose all your booking details if " +
                     "you sign out.", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden

@@ -24,11 +24,10 @@ Scenario Outline: Case Admin signs out in the process of booking hearing
 	Then warning message should be displayed as You will lose all your booking details if you sign out.
 Examples: 
 | Booking           |
-| Hearing Details   |
-| Hearing Schedule  |
-| Assign Judge      |
-| Add Participants  |
-| Other Information |
+| Hearing details   |
+| Hearing sjudge    |
+| Add participants  |
+| Other information |
 | Summary           |
 | Dashboard         |
 | Bookings List     |
@@ -42,11 +41,10 @@ Scenario Outline: Vh Officer signs out in the process of booking hearing
 	Then warning message should be displayed as You will lose all your booking details if you sign out.
 Examples: 
 | Booking           |
-| Hearing Details   |
-| Hearing Schedule  |
-| Assign Judge      |
-| Add Participants  |
-| Other Information |
+| Hearing details   |
+| Hearing sjudge    |
+| Add participants  |
+| Other information |
 | Summary           |
 | Dashboard         |
 | Bookings List     |

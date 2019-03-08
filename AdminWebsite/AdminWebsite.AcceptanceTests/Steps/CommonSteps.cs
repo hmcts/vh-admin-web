@@ -1,4 +1,5 @@
-﻿using AdminWebsite.AcceptanceTests.Pages;
+﻿using AdminWebsite.AcceptanceTests.Helpers;
+using AdminWebsite.AcceptanceTests.Pages;
 using TechTalk.SpecFlow;
 
 namespace AdminWebsite.AcceptanceTests.Steps
@@ -104,27 +105,27 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {           
             switch (bookingPage)
             {
-                case "Hearing Details":
+                case Breadcrumbs.HearingDetails:
                     UserIsOnHearingDetailsPage();
                     _hearingDetailsSteps.InputCaseNumber();
                     _hearingDetailsSteps.InputCaseName();
                     break;
-                case "Hearing Schedule": GivenUserIsOnHearingSchedulePage();
+                case Breadcrumbs.HearingSchedule: GivenUserIsOnHearingSchedulePage();
                     break;
-                case "Assign Judge": GivenUserIsOnAssignJudgePage();
+                case Breadcrumbs.AssignJudge: GivenUserIsOnAssignJudgePage();
                     break;
-                case "Add Participants": GivenUserIsOnAddParticipantsPage();
+                case Breadcrumbs.AddParticipants: GivenUserIsOnAddParticipantsPage();
                     break;
-                case "Other Information": GivenUserIsOnOtherInformationPage();
+                case Breadcrumbs.OtherInformation: GivenUserIsOnOtherInformationPage();
                     break;
-                case "Summary": GivenUserIsOnSummaryPage();
+                case Breadcrumbs.Summary: GivenUserIsOnSummaryPage();
                     break;
-                case "Dashboard":
+                case Breadcrumbs.Dashboard:
                     GivenUserIsOnHearingSchedulePage();
                     UserNavigatesToDashboard();
                     _dashboardStep.DashboardPage();
                     break;
-                case "Bookings List":
+                case Breadcrumbs.BookingsList:
                     GivenUserIsOnHearingSchedulePage();
                     UserNavigatesToBookingsList();
                     _bookingsListSteps.BookingsListPage();
