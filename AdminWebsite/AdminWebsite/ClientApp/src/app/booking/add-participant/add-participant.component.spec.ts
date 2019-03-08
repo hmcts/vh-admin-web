@@ -11,7 +11,6 @@ import { ParticipantsListStubComponent } from 'src/app/testing/stubs/participant
 import { RemovePopupStubComponent } from '../../testing/stubs/remove-popup-stub';
 
 import { SearchServiceStub } from 'src/app/testing/stubs/serice-service-stub';
-import {CaseRoleResponse } from '../../services/clients/api-client';
 import { SearchService } from '../../services/search.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { ParticipantService } from '../services/participant.service';
@@ -30,23 +29,13 @@ let lastName: AbstractControl;
 let phone: AbstractControl;
 let displayName: AbstractControl;
 
-const roleList: CaseRoleResponse[] =
-  [
-    new CaseRoleResponse({ name: 'Citizen' }),
-    new CaseRoleResponse({ name: 'Judge' }),
-    new CaseRoleResponse({ name: 'Professional' }),
-  ];
-
-const feeds: FeedModel[] = [];
-
-const f1 = new FeedModel('Citizen');
-f1.participants = [];
+const participants: ParticipantModel[] = [];
 
 const p1 = new ParticipantModel();
 p1.first_name = 'John';
 p1.last_name = 'Doe';
 p1.display_name = 'John Doe';
-p1.role = 'judge';
+p1.is_judge = true;
 p1.title = 'Mr.';
 p1.email = 'test@test.com';
 p1.phone = '32332';
@@ -54,7 +43,7 @@ const p2 = new ParticipantModel();
 p2.first_name = 'Jane';
 p2.last_name = 'Doe';
 p2.display_name = 'Jane Doe';
-p2.role = 'judge';
+p2.is_judge = true;
 p2.title = 'Mr.';
 p2.email = 'test@test.com';
 p2.phone = '32332';
@@ -63,33 +52,31 @@ const p3 = new ParticipantModel();
 p3.first_name = 'Chris';
 p3.last_name = 'Green';
 p3.display_name = 'Chris Green';
-p3.role = 'judge';
+p3.is_judge = true;
 p3.title = 'Mr.';
 p3.email = 'test@test.com';
 p3.phone = '32332';
-f1.participants.push(p1);
-f1.participants.push(p2);
-f1.participants.push(p3);
-feeds.push(f1);
+participants.push(p1);
+participants.push(p2);
+participants.push(p3);
 
 
 function initHearingRequest(): HearingModel {
   const newHearing = new HearingModel();
   newHearing.cases = [];
-  newHearing.feeds = feeds;
   newHearing.hearing_type_id = -1;
-  newHearing.hearing_medium_id = -1;
-  newHearing.court_id = -1;
+  newHearing.hearing_venue_id = -1
   newHearing.scheduled_duration = 0;
+  newHearing.participants = participants;
   return newHearing;
 }
 
-const participant: ParticipantModel = new ParticipantModel();
+const participant = new ParticipantModel();
 participant.email = 'email@aa.aa';
 participant.first_name = 'Sam';
 participant.last_name = 'Green';
 participant.phone = '12345';
-participant.role = 'Appellant';
+participant.is_judge = false;
 participant.display_name = 'Sam Green';
 participant.title = 'Mr';
 
@@ -108,7 +95,7 @@ describe('AddParticipantComponent', () => {
   videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',
     ['getParticipantRoles', 'getCurrentRequest', 'updateHearingRequest']);
   participantServiceSpy = jasmine.createSpyObj<ParticipantService>('ParticipantService',
-    ['checkDuplication', 'getAllParticipants', 'removeParticipant', 'addToFeed']);
+    ['checkDuplication', 'getAllParticipants', 'removeParticipant']);
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [
