@@ -24,9 +24,10 @@ namespace AdminWebsite.AcceptanceTests.Steps
             InputDateOfHearing();
             InputHearingStartTime();
             InputHearingDuration();
-            SelectCourtAddress();
+            SelectHearingVenue();
             EnterRoom();
         }
+        [Then(@"user should remain on hearing schedule page")]
         [When(@"Admin user is on hearing schedule page")]
         public void HearingSchedulePage()
         {
@@ -47,8 +48,8 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             _hearingSchedule.HearingDuration(duration);
         }
-        [When(@"Select court address")]
-        public void SelectCourtAddress()
+        [When(@"Select hearing venue")]
+        public void SelectHearingVenue()
         {
             _hearingSchedule.HearingVenue();
         }
@@ -67,7 +68,12 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void WhenUserSelectsADateInThePastFromTheCalendar()
         {
             string[] date = DateTime.Now.AddDays(-1).ToString("dd/MM/yyyy").Split('/');
-            _hearingSchedule.HearingDate(date);            
+            _hearingSchedule.HearingDate(date);
+            InputDateOfHearing();
+            InputHearingStartTime();
+            InputHearingDuration();
+            SelectHearingVenue();
+            EnterRoom();
         }
 
         [Then(@"an error message should be displayed as (.*)")]
