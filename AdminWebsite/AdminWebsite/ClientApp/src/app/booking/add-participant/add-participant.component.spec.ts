@@ -23,7 +23,7 @@ import { CaseAndHearingRolesResponse } from '../../services/clients/api-client';
 let component: AddParticipantComponent;
 let fixture: ComponentFixture<AddParticipantComponent>;
 
-const roleList: CaseAndHearingRolesResponse[] = [new CaseAndHearingRolesResponse({ name: 'Claimant', hearing_roles: ['Solicitor']})];
+const roleList: CaseAndHearingRolesResponse[] = [new CaseAndHearingRolesResponse({ name: 'Claimant', hearing_roles: ['Solicitor'] })];
 
 let role: AbstractControl;
 let party: AbstractControl;
@@ -78,7 +78,7 @@ function initHearingRequest(): HearingModel {
   const newHearing = new HearingModel();
   newHearing.cases = [];
   newHearing.hearing_type_id = -1;
-  newHearing.hearing_venue_id = -1
+  newHearing.hearing_venue_id = -1;
   newHearing.scheduled_duration = 0;
   newHearing.participants = participants;
   return newHearing;
@@ -141,7 +141,7 @@ describe('AddParticipantComponent', () => {
     component = debugElement.componentInstance;
     component.ngOnInit();
     fixture.detectChanges();
-    
+
 
     role = component.participantForm.controls['role'];
     party = component.participantForm.controls['party'];
@@ -233,8 +233,8 @@ describe('AddParticipantComponent', () => {
   it('saved participant added to list of participants', () => {
     component.showDetails = true;
     fixture.detectChanges();
-   spyOn(component.searchEmail, 'validateEmail').and.returnValue(true);
-   component.searchEmail.email = 'mock@email.com';
+    spyOn(component.searchEmail, 'validateEmail').and.returnValue(true);
+    component.searchEmail.email = 'mock@email.com';
 
     role.setValue('Appellant');
     party.setValue('CaseRole');

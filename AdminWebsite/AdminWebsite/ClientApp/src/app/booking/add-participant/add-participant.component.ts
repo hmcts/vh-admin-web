@@ -15,7 +15,7 @@ import { ParticipantsListComponent } from '../participants-list/participants-lis
 import { BookingBaseComponent } from '../booking-base/booking-base.component';
 import { BookingService } from '../../services/booking.service';
 import { ParticipantService } from '../services/participant.service';
-import { CaseAndHearingRolesResponse } from "../../services/clients/api-client";
+import { CaseAndHearingRolesResponse } from '../../services/clients/api-client';
 import { PartyModel } from '../../common/model/party.model';
 
 @Component({
@@ -80,7 +80,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   }
 
   private repopulateParticipantToEdit() {
-    let selectedParticipant = this.hearing.participants.find(s => s.email === this.selectedParticipantEmail);
+    const selectedParticipant = this.hearing.participants.find(s => s.email === this.selectedParticipantEmail);
     this.getParticipant(selectedParticipant);
     this.searchEmail.email = selectedParticipant.email;
     this.searchEmail.isValidEmail = true;
@@ -102,7 +102,6 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   }
 
   setupRoles(data: CaseAndHearingRolesResponse[]) {
- 
     this.caseAndHearingRoles = this.participantService.mapParticipantsRoles(data);
     this.roleList = this.caseAndHearingRoles.map(x => x.name);
     this.roleList.unshift(this.constants.PleaseSelect);
@@ -285,7 +284,6 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
   saveParticipant() {
     this.actionsBeforeSave();
-    debugger;
     const validEmail = this.showDetails ? this.searchEmail.validateEmail() : true;
     if (this.participantForm.valid && validEmail && this.isRoleSelected && this.isPartySelected && this.isTitleSelected) {
       this.isShowErrorSummary = false;
@@ -319,8 +317,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
       });
       this.clearForm();
       this.participantForm.markAsPristine();
-    }
-    else {
+    } else {
       this.isShowErrorSummary = true;
     }
   }
@@ -334,7 +331,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   }
 
   confirmRemoveParticipant() {
-    let participant = this.hearing.participants.find(x => x.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase());
+    const participant = this.hearing.participants.find(x => x.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase());
     this.removerFullName = participant ? `${participant.title} ${participant.first_name} ${participant.last_name}` : '';
     this.showConfirmationRemoveParticipant = true;
   }

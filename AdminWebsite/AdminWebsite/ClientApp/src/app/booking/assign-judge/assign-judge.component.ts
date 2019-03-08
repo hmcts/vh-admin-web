@@ -55,12 +55,11 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
   }
 
   private initForm() {
-    let find_judge = this.hearing.participants.find(x => x.is_judge === true);
+    const find_judge = this.hearing.participants.find(x => x.is_judge === true);
 
     if (!find_judge) {
       this.judge = new ParticipantDetailsResponse({ id: null });
-    }
-    else {
+    } else {
       this.judge = this.mapJudge(find_judge);
     }
     this.assignJudgeForm = this.fb.group({
@@ -88,7 +87,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
   }
 
   mapJudgeToModel(judge: ParticipantDetailsResponse): ParticipantModel {
-    let newParticipant = new ParticipantModel()
+    const newParticipant = new ParticipantModel();
     newParticipant.title = judge.title;
     newParticipant.first_name = judge.first_name;
     newParticipant.middle_names = judge.middle_name;

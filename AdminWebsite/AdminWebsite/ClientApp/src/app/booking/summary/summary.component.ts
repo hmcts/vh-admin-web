@@ -85,7 +85,8 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
   }
 
   removeParticipant() {
-    const indexOfParticipant = this.hearing.participants.findIndex(x => x.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase());
+    const indexOfParticipant = this.hearing.participants
+      .findIndex(x => x.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase());
     if (indexOfParticipant > -1) {
       this.hearing.participants.splice(indexOfParticipant, 1);
     }
