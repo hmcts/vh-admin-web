@@ -47,6 +47,9 @@ namespace AdminWebsite.AcceptanceTests.Steps
                     break;
                 case "VhOfficerCivilMoneyclaims": _loginPage.Logon(appSecrets.VhOfficerCivilMoneyclaims, password);
                     break;
+                case "CaseAdminFinRemedyCivilMoneyClaims":
+                    _loginPage.Logon(appSecrets.CaseAdminFinRemedyCivilMoneyClaims, password);
+                    break;
             }
             _scenarioContext.Add("User", user);
         }

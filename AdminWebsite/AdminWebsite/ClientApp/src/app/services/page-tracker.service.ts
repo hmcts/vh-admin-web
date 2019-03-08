@@ -1,24 +1,26 @@
 import { Router, ResolveEnd, ActivatedRouteSnapshot, NavigationEnd } from '@angular/router';
 import { AppInsightsLogger } from './app-insights-logger.service';
 import { Injectable } from '@angular/core';
-import 'rxjs/add/operator/pairwise';
+import {filter, pairwise} from "rxjs/operators";
 
 @Injectable()
 export class PageTrackerService {
 
-  PREVIOUS_ROUTE:string = 'PREVIOUS_ROUTE';
+  PREVIOUS_ROUTE = 'PREVIOUS_ROUTE';
 
-  constructor(private logger: AppInsightsLogger) { } //, private sessionStorage: SessionStorage) {}
+  constructor(private logger: AppInsightsLogger) { }
 
   trackNavigation(router: Router) {
-    router.events
-      .filter(event => event instanceof ResolveEnd)
-      .subscribe((event: ResolveEnd) => this.logPageResolved(event));
+    router.events.pipe(
+      filter(event => event instanceof ResolveEnd)
+    ).subscribe((event: ResolveEnd) => this.logPageResolved(event));
   }
 
   trackPreviousPage(router: Router) {
-    router.events.filter(e => e instanceof NavigationEnd)
-      .pairwise().subscribe((e) => {
+    router.events.pipe(
+      filter(e => e instanceof NavigationEnd),
+      pairwise()
+    ).subscribe((e) => {
         sessionStorage.setItem(this.PREVIOUS_ROUTE, e[0]['url']);
         console.log('NAVIGATION PREVIOUS => ', e[0]['url']);
       });
@@ -34,7 +36,7 @@ export class PageTrackerService {
       this.logger.trackPage(`${activatedComponent.name} ${this.getRouteTemplate(event.state.root)}`, event.urlAfterRedirects);
     }
   }
-  
+
   private getActivatedComponent(snapshot: ActivatedRouteSnapshot): any {
     if (snapshot.firstChild) {
       return this.getActivatedComponent(snapshot.firstChild);
@@ -42,9 +44,9 @@ export class PageTrackerService {
 
     return snapshot.component;
   }
-  
+
   private getRouteTemplate(snapshot: ActivatedRouteSnapshot): string {
-    let path = snapshot.routeConfig ? snapshot.routeConfig.path : '';
+    const path = snapshot.routeConfig ? snapshot.routeConfig.path : '';
 
     if (snapshot.firstChild) {
       return path + '/' + this.getRouteTemplate(snapshot.firstChild);

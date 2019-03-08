@@ -57,7 +57,7 @@ describe('app routing', () => {
       adalSvc.setAuthenticated(true);
       bookingGuard.setflag(true);
       bookingsList.ngOnInit();
-     
+
       router.navigate(['']);
       expect(location.path()).toBe('');
     }));

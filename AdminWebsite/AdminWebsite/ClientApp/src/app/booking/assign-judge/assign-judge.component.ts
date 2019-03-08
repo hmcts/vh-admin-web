@@ -56,14 +56,13 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
   }
 
   private initForm() {
-    let find_judge = this.getAllParticipants().find(x => x.role === 'Judge');
+    const find_judge = this.getAllParticipants().find(x => x.role === 'Judge');
 
     if (!find_judge) {
       this.judge = new ParticipantDetailsResponse({
         id: null
       });
-    }
-    else {
+    } else {
       this.judge = this.mapJudge(find_judge);
     }
     this.assignJudgeForm = this.fb.group({
@@ -185,11 +184,9 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
 
   private loadJudges() {
     if (this.availableJudges) { return; }
-    console.debug('No judges found, retrieving list from AD');
     this.judgeService.getJudges()
       .subscribe(
         (data: ParticipantDetailsResponse[]) => {
-          console.debug(data);
           this.availableJudges = data.filter(x => x.first_name && x.last_name);
           const userResponse = new ParticipantDetailsResponse();
           userResponse.display_name = 'Please Select';

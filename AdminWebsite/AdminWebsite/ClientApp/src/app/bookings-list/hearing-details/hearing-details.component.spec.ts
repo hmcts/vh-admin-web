@@ -1,4 +1,4 @@
-﻿import { DebugElement } from '@angular/core';
+import { DebugElement } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -33,7 +33,7 @@ describe('HearingDetailsComponent', () => {
   }));
 
   it('should display hearing details', (done => {
-    let h1 = new BookingsDetailsModel('1', new Date('2019-10-22 13:58:40.3730067'),
+    const h1 = new BookingsDetailsModel('1', new Date('2019-10-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JadgeGreen', '33A', 'Coronation Street',
       'Jhon Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'));
 
@@ -45,7 +45,7 @@ describe('HearingDetailsComponent', () => {
         const divElementRole = debugElement.queryAll(By.css('#hearing-name'));
         expect(divElementRole.length).toBeGreaterThan(0);
         expect(divElementRole.length).toBe(1);
-        let el = divElementRole[0].nativeElement as HTMLElement;
+        const el = divElementRole[0].nativeElement as HTMLElement;
         expect(el.innerHTML).toContain('Smith vs Donner');
         done();
       }

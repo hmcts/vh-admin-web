@@ -20,12 +20,12 @@ export class BookingService {
     sessionStorage.removeItem(this.bookingEditKey);
   }
 
-  isEditMode():boolean {
-    let editMode = sessionStorage.getItem(this.bookingEditKey);
+  isEditMode(): boolean {
+    const editMode = sessionStorage.getItem(this.bookingEditKey);
     return editMode === this.bookingEditKey;
   }
 
-  setParticipantEmail(participantEmail:string) {
+  setParticipantEmail(participantEmail: string) {
     sessionStorage.setItem(this.participantEmailKey, participantEmail);
   }
 
