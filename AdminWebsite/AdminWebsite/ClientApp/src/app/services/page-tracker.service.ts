@@ -1,7 +1,7 @@
 import { Router, ResolveEnd, ActivatedRouteSnapshot, NavigationEnd } from '@angular/router';
 import { AppInsightsLogger } from './app-insights-logger.service';
 import { Injectable } from '@angular/core';
-import {filter, pairwise} from "rxjs/operators";
+import {filter, pairwise} from 'rxjs/operators';
 
 @Injectable()
 export class PageTrackerService {
