@@ -5,9 +5,9 @@ import { DashboardComponent } from './dashboard.component';
 import { UserProfileResponse } from '../services/clients/api-client';
 import { of } from 'rxjs';
 
-let userProfileResponse: UserProfileResponse = new UserProfileResponse();
+const userProfileResponse: UserProfileResponse = new UserProfileResponse();
 
-class userIdentityServiceSpy {
+class UserIdentityServiceSpy {
   getUserInformation() {
     userProfileResponse.is_case_administrator = true;
     userProfileResponse.is_vh_officer_administrator_role = true;
@@ -24,7 +24,7 @@ describe('DashboardComponent', () => {
     TestBed.configureTestingModule({
       imports: [RouterTestingModule],
       declarations: [DashboardComponent],
-      providers: [{ provide: UserIdentityService, useClass: userIdentityServiceSpy }]
+      providers: [{ provide: UserIdentityService, useClass: UserIdentityServiceSpy }]
     })
       .compileComponents();
   }));

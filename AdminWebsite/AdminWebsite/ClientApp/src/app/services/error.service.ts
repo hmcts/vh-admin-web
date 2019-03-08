@@ -14,8 +14,8 @@ export class ErrorService extends ErrorHandler {
   }
 
   handleError(err: any) {
-    let router: Router = this.injector.get(Router);
-    let logger: LoggerService = this.injector.get(LoggerService);
+    const router: Router = this.injector.get(Router);
+    const logger: LoggerService = this.injector.get(LoggerService);
 
     err = this.unboxRejection(err);
 

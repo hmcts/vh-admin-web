@@ -13,11 +13,32 @@ import { of } from 'rxjs';
 let component: BookingDetailsComponent;
 let fixture: ComponentFixture<BookingDetailsComponent>;
 
+export class BookingDetailsTestData {
+  getBookingsDetailsModel() {
+    return new BookingsDetailsModel('44', new Date('2019-11-22 13:58:40.3730067'),
+      120, 'XX3456234565', 'Smith vs Donner', 'Tax', '', '33A', 'Coronation Street',
+      'Jhon Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'));
+  }
+
+  getParticipants() {
+    const participants: Array<ParticipantDetailsModel> = [];
+    const judges: Array<ParticipantDetailsModel> = [];
+    const p1 = new ParticipantDetailsModel('1', 'Mrs', 'Alan', 'Brake', 'Judge', 'email.p1@email.com', 'email1@co.uk');
+    const p2 = new ParticipantDetailsModel('2', 'Mrs', 'Roy', 'Bark', 'Citizen', 'email.p2@email.com', 'email2@co.uk');
+    const p3 = new ParticipantDetailsModel('2', 'Mrs', 'Fill', 'Green', 'Professional', 'email.p3@email.com', 'email3@co.uk');
+    participants.push(p2);
+    participants.push(p3);
+    judges.push(p1);
+    return { judges: judges, participants: participants };
+  }
+
+}
+
 @Component({
   selector: 'app-booking-participant-list',
   template: ''
 })
-class BookingParticipantListComponentMock {
+class BookingParticipantListMockComponent {
   @Input()
   participants: Array<ParticipantDetailsModel> = [];
 
@@ -29,17 +50,17 @@ class BookingParticipantListComponentMock {
   selector: 'app-hearing-details',
   template: ''
 })
-class HearingDetailsComponentMock {
+class HearingDetailsMockComponent {
   @Input()
-  hearing: BookingsDetailsModel
+  hearing: BookingsDetailsModel;
 }
 
 
-let hearingResponse = new HearingDetailsResponse();
+const hearingResponse = new HearingDetailsResponse();
 
 class VideoHearingsServiceMock {
   getHearingById() {
-    return of(hearingResponse)
+    return of(hearingResponse);
   }
 }
 
@@ -57,8 +78,8 @@ describe('BookingDetailsComponent', () => {
     TestBed.configureTestingModule({
       declarations: [
         BookingDetailsComponent,
-        BookingParticipantListComponentMock,
-        HearingDetailsComponentMock
+        BookingParticipantListMockComponent,
+        HearingDetailsMockComponent
       ],
       imports: [HttpClientModule],
       providers: [{ provide: VideoHearingsService, useClass: VideoHearingsServiceMock },
@@ -72,7 +93,7 @@ describe('BookingDetailsComponent', () => {
 
   it('should create component', (() => {
     expect(component).toBeTruthy();
-  }))
+  }));
 
   it('should get hearings details', (() => {
     component.ngOnInit();
@@ -80,7 +101,7 @@ describe('BookingDetailsComponent', () => {
     expect(component.hearing.HearingId).toBe('44');
     expect(component.hearing.Duration).toBe(120);
     expect(component.hearing.HearingCaseNumber).toBe('XX3456234565');
-  }))
+  }));
 
   it('should get judge details', (() => {
     component.ngOnInit();
@@ -89,7 +110,7 @@ describe('BookingDetailsComponent', () => {
     expect(component.judges[0].Role).toBe('Judge');
     expect(component.judges[0].ParticipantId).toBe('1');
     expect(component.judges[0].FirstName).toBe('Alan');
-  }))
+  }));
 
   it('should get participants details', (() => {
     component.ngOnInit();
@@ -97,26 +118,6 @@ describe('BookingDetailsComponent', () => {
     expect(component.participants.length).toBe(2);
     expect(component.participants[0].Role).toBe('Citizen');
     expect(component.participants[0].ParticipantId).toBe('2');
-  }))
+  }));
 });
 
-export class BookingDetailsTestData {
-  getBookingsDetailsModel() {
-    return new BookingsDetailsModel('44', new Date('2019-11-22 13:58:40.3730067'),
-      120, 'XX3456234565', 'Smith vs Donner', 'Tax', '', '33A', 'Coronation Street',
-      'Jhon Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'));
-  }
-
-  getParticipants() {
-    let participants: Array<ParticipantDetailsModel> = [];
-    let judges: Array<ParticipantDetailsModel> = [];
-    let p1 = new ParticipantDetailsModel('1', 'Mrs', 'Alan', 'Brake', 'Judge', 'email.p1@email.com', 'email1@co.uk');
-    let p2 = new ParticipantDetailsModel('2', 'Mrs', 'Roy', 'Bark', 'Citizen', 'email.p2@email.com', 'email2@co.uk');
-    let p3 = new ParticipantDetailsModel('2', 'Mrs', 'Fill', 'Green', 'Professional', 'email.p3@email.com', 'email3@co.uk');
-    participants.push(p2);
-    participants.push(p3);
-    judges.push(p1);
-    return { judges: judges, participants: participants };
-  }
-
-}

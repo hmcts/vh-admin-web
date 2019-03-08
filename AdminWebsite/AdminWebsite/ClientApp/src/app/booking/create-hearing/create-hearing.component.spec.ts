@@ -17,7 +17,7 @@ import { ErrorService } from 'src/app/services/error.service';
 
 
 function initHearingRequest(): HearingModel {
-  let newHearing = new HearingModel();
+  const newHearing = new HearingModel();
   newHearing.hearing_type_id = -1;
   newHearing.hearing_medium_id = -1;
   newHearing.court_id = -1;
@@ -45,7 +45,7 @@ describe('CreateHearingComponent with multiple case types', () => {
 
   let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
   let routerSpy: jasmine.SpyObj<Router>;
-  let errorService: jasmine.SpyObj<ErrorService> = jasmine.createSpyObj('ErrorService', ['handleError']);
+  const errorService: jasmine.SpyObj<ErrorService> = jasmine.createSpyObj('ErrorService', ['handleError']);
 
   beforeEach(() => {
     videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',
@@ -150,7 +150,7 @@ describe('CreateHearingComponent with single case type', () => {
 
   let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
   let routerSpy: jasmine.SpyObj<Router>;
-  let errorService: jasmine.SpyObj<ErrorService> = jasmine.createSpyObj('ErrorService', ['handleError']);
+  const errorService: jasmine.SpyObj<ErrorService> = jasmine.createSpyObj('ErrorService', ['handleError']);
 
   beforeEach(() => {
     videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',
@@ -194,7 +194,7 @@ describe('CreateHearingComponent with existing request in session', () => {
 
   let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
   let routerSpy: jasmine.SpyObj<Router>;
-  let errorService: jasmine.SpyObj<ErrorService> = jasmine.createSpyObj('ErrorService', ['handleError']);
+  const errorService: jasmine.SpyObj<ErrorService> = jasmine.createSpyObj('ErrorService', ['handleError']);
 
   beforeEach(() => {
     videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',
@@ -214,13 +214,13 @@ describe('CreateHearingComponent with existing request in session', () => {
       declarations: [CreateHearingComponent, BreadcrumbComponent, CancelPopupComponent]
     }).compileComponents();
 
-    let existingCase = new CaseModel();
+    const existingCase = new CaseModel();
     existingCase.name = 'Captain America Vs. The World';
     existingCase.number = '1234';
     existingRequest.cases.push(existingCase);
 
     const newRequestKey = 'bh-newRequest';
-    let jsonRequest = JSON.stringify(existingRequest);
+    const jsonRequest = JSON.stringify(existingRequest);
     sessionStorage.setItem(newRequestKey, jsonRequest);
 
     fixture = TestBed.createComponent(CreateHearingComponent);

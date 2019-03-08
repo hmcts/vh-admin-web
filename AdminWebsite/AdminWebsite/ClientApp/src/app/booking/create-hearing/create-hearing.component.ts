@@ -130,8 +130,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
   confirmCancelBooking() {
     if (this.editMode) {
       this.navigateToSummary();
-    }
-    else {
+    } else {
       this.attemptingCancellation = true;
     }
   }
