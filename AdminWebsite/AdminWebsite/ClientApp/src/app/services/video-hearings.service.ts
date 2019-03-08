@@ -30,12 +30,12 @@ export class VideoHearingsService {
 
   hasUnsavedChanges() {
     return sessionStorage.getItem(this.newRequestKey) !== null ||
-      sessionStorage.getItem(this.bookingHasChangesKey) !== null ;
+      sessionStorage.getItem(this.bookingHasChangesKey) !== null;
   }
 
-  onBookingChange(isChanged:boolean) {
+  onBookingChange(isChanged: boolean) {
     if (isChanged) {
-      sessionStorage.setItem(this.bookingHasChangesKey, "true");
+      sessionStorage.setItem(this.bookingHasChangesKey, 'true');
     } else {
       sessionStorage.removeItem(this.bookingHasChangesKey);
     }

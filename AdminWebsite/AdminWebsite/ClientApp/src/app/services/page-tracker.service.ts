@@ -1,6 +1,6 @@
-import { Router, ResolveEnd, ActivatedRouteSnapshot, NavigationEnd } from "@angular/router";
-import { AppInsightsLogger } from "./app-insights-logger.service";
-import { Injectable } from "@angular/core";
+import { Router, ResolveEnd, ActivatedRouteSnapshot, NavigationEnd } from '@angular/router';
+import { AppInsightsLogger } from './app-insights-logger.service';
+import { Injectable } from '@angular/core';
 import 'rxjs/add/operator/pairwise';
 
 @Injectable()
