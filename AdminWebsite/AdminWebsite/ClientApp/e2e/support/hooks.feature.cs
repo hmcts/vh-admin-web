@@ -1,6 +1,0 @@
-﻿#error Parsing error near 'import { Before, After, AfterAll, Status } from '
-#error Parsing error near 'import { browser } from '
-#error Parsing error near 'import { config } from '
-#error Parsing error near 'Before({timeout: 100 * 1000}, async (scenario) => {'
-#error Parsing error near 'console.log('
-#error Parsing error near 'await browser.waitForAngularEnabled(false);'

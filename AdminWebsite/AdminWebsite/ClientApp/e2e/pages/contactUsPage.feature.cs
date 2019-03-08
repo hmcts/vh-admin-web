@@ -1,6 +1,0 @@
-﻿#error Parsing error near 'import { element, by, ElementFinder } from '
-#error Parsing error near 'import { Helpers } from '
-#error Parsing error near 'import { LocatorHelpers } from '
-#error Parsing error near 'const data = require('
-#error Parsing error near 'export class ContactUsPageObject {'
-#error Parsing error near 'public contactUsPageTitle: ElementFinder;'

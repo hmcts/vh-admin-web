@@ -1,6 +1,0 @@
-﻿#error Parsing error near '{'
-#error Parsing error near '"HearingDetailsPageTitle": "Hearing details",'
-#error Parsing error near '"CaseNumber": 1,'
-#error Parsing error near '"CaseName": 1,'
-#error Parsing error near '"CaseType": "Tax",'
-#error Parsing error near '"HearingType": "Basic Tax Appeals",'

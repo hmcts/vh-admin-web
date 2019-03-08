@@ -1,6 +1,0 @@
-﻿#error Parsing error near 'import { element, by } from '
-#error Parsing error near 'import { Helpers } from '
-#error Parsing error near 'export class JudgePageObject {'
-#error Parsing error near 'private assignJudgeBreadcrumb = element(by.xpath('
-#error Parsing error near 'private assignJudgePageTitle = element(by.xpath('
-#error Parsing error near 'clickAssignJudgeBreadcrumb() {'

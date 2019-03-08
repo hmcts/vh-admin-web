@@ -1,5 +1,0 @@
-﻿#error Parsing error near 'export enum TestType {'
-#error Parsing error near 'Valid = "valid",'
-#error Parsing error near 'Invalid = "invalid",'
-#error Parsing error near 'Nonexistant = "nonexistant"'
-#error Parsing error near '}'

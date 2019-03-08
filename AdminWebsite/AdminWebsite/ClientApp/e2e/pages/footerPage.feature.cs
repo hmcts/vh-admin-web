@@ -1,6 +1,0 @@
-﻿#error Parsing error near 'import { element, by, ElementFinder } from '
-#error Parsing error near 'import { LocatorHelpers } from '
-#error Parsing error near 'export class FooterPageObject {'
-#error Parsing error near 'public contactUsLink: ElementFinder;'
-#error Parsing error near 'constructor() {'
-#error Parsing error near 'this.contactUsLink = element(LocatorHelpers.getLocatorFromText('

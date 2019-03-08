@@ -10,7 +10,7 @@ import { of } from 'rxjs';
 import { MockValues } from '../../testing/data/test-objects';
 import { JudgeDataService } from '../services/judge-data.service';
 import { ParticipantsListComponent } from '../participants-list/participants-list.component';
-import { HearingModel, FeedModel } from '../../common/model/hearing.model';
+import { HearingModel} from '../../common/model/hearing.model';
 import { ParticipantModel } from '../../common/model/participant.model';
 
 function initHearingRequest(): HearingModel {
@@ -23,7 +23,7 @@ function initHearingRequest(): HearingModel {
   p1.email = 'test1@TestBed.com';
   p1.first_name = 'first';
   p1.last_name = 'last';
-  p1.role = 'Judge';
+  p1.is_judge = true;
   p1.title = 'Mr.';
 
   const p2 = new ParticipantModel();
@@ -31,13 +31,11 @@ function initHearingRequest(): HearingModel {
   p2.email = 'test2@TestBed.com';
   p2.first_name = 'first2';
   p2.last_name = 'last2';
-  p2.role = 'Judge';
+  p2.is_judge = true;
   p2.title = 'Mr.';
 
   participants.push(p1);
   participants.push(p2);
-
-  const f2 = new FeedModel('Professional');
 
   const participants1: ParticipantModel[] = [];
   const p3 = new ParticipantModel();
@@ -45,7 +43,7 @@ function initHearingRequest(): HearingModel {
   p3.email = 'test3@TestBed.com';
   p3.first_name = 'first3';
   p3.last_name = 'last3';
-  p3.role = 'Judge';
+  p3.is_judge = true;
   p3.title = 'Mr.';
 
   const p4 = new ParticipantModel();

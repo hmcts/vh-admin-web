@@ -1,6 +1,0 @@
-﻿#error Parsing error near 'import { Directive, HostListener, EventEmitter, Output, ElementRef, Inject, AfterViewInit } from '
-#error Parsing error near 'import { Observable } from '
-#error Parsing error near 'import '
-#error Parsing error near 'import '
-#error Parsing error near 'import '
-#error Parsing error near 'interface ScrollPosition {'

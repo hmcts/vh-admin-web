@@ -1,6 +1,0 @@
-﻿#error Parsing error near 'import { When, Then } from '
-#error Parsing error near 'import { HearingDetailsPageObject } from '
-#error Parsing error near 'import { HearingSchedulePageObject } from '
-#error Parsing error near 'import { expect } from '
-#error Parsing error near 'const data = require('
-#error Parsing error near 'const MAX_STEP_TIMEOUT_IN_MS = 2;'
