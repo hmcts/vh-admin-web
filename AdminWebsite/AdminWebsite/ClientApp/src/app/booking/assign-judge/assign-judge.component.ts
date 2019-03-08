@@ -117,9 +117,9 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     this.judge.role = 'Judge';
     this.judge.id = selectedJudge.id;
 
-    let newJudge = this.mapJudgeToModel(this.judge);
+    const newJudge = this.mapJudgeToModel(this.judge);
 
-    let indexOfJudge = this.hearing.participants.findIndex(x => x.is_judge === true);
+    const indexOfJudge = this.hearing.participants.findIndex(x => x.is_judge === true);
     if (indexOfJudge > -1) {
       this.hearing.participants.splice(indexOfJudge, 1);
     }
@@ -181,7 +181,6 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     this.judgeService.getJudges()
       .subscribe(
         (data: ParticipantDetailsResponse[]) => {
-          console.debug(data);
           this.availableJudges = data.filter(x => x.first_name && x.last_name);
           const userResponse = new ParticipantDetailsResponse();
           userResponse.display_name = 'Please Select';
