@@ -49,7 +49,7 @@ describe('CreateHearingComponent with multiple case types', () => {
 
   beforeEach(() => {
     videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',
-      ['getHearingMediums', 'getHearingTypes', 'getCurrentRequest', 'updateHearingRequest']);
+      ['getHearingMediums', 'getHearingTypes', 'getCurrentRequest', 'updateHearingRequest', 'onBookingChange']);
     routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
     videoHearingsServiceSpy.getCurrentRequest.and.returnValue(newHearing);

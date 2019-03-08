@@ -46,6 +46,13 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
     this.checkForExistingRequest();
     this.initForm();
     this.retrieveHearingTypes();
+    this.onChanged();
+  }
+
+  onChanged() {
+    this.hearingForm.valueChanges.subscribe(x => {
+      this.hearingService.onBookingChange(this.hearingForm.dirty);
+    });
   }
 
   goToDiv(fragment: string): void {

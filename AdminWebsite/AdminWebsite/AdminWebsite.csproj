@@ -57,26 +57,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="ClientApp\e2e\features\contactUs.feature">
-      <Generator>SpecFlowSingleFileGenerator</Generator>
-      <LastGenOutput>contactUs.feature.cs</LastGenOutput>
-    </None>
-    <None Update="ClientApp\e2e\features\hearingDetails.feature">
-      <Generator>SpecFlowSingleFileGenerator</Generator>
-      <LastGenOutput>hearingDetails.feature.cs</LastGenOutput>
-    </None>
-    <None Update="ClientApp\e2e\features\login.feature">
-      <Generator>SpecFlowSingleFileGenerator</Generator>
-      <LastGenOutput>login.feature.cs</LastGenOutput>
-    </None>
-    <None Update="ClientApp\e2e\features\participant.feature">
-      <Generator>SpecFlowSingleFileGenerator</Generator>
-      <LastGenOutput>participant.feature.cs</LastGenOutput>
-    </None>
+    <ProjectReference Include="..\AdminWebsite.BookingsAPI.Client\AdminWebsite.BookingsAPI.Client.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AdminWebsite.BookingsAPI.Client\AdminWebsite.BookingsAPI.Client.csproj" />
+    <Folder Include="ClientApp\e2e\" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
