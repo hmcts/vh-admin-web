@@ -55,3 +55,7 @@
 <div *ngIf="showConfirmationRemoveParticipant">
   <app-remove-popup (continueRemove)="handleContinueRemove()" (cancelRemove)="handleCancelRemove()" [fullName]="removerFullName"></app-remove-popup>
 </div>
+
+<div *ngIf="showWaitSaving">
+  <app-wait-popup></app-wait-popup>
+</div>

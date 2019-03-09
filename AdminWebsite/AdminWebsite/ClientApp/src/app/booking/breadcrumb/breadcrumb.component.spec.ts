@@ -30,8 +30,7 @@ import { BreadcrumbItemModel } from './breadcrumbItem.model';
 import { UnauthorisedComponent } from '../../error/unauthorised.component';
 import { ErrorComponent } from '../../error/error.component';
 import { SignOutPopupComponent } from '../../popups/sign-out-popup/sign-out-popup.component';
-
-
+import { WaitPopupComponent } from '../../popups/wait-popup/wait-popup.component';
 
 describe('BreadcrumbComponent', () => {
   const videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',
@@ -70,6 +69,7 @@ describe('BreadcrumbComponent', () => {
         ErrorComponent,
         SignOutPopupComponent,
         RemovePopupComponent,
+        WaitPopupComponent,
       ],
       providers: [
         { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
@@ -117,7 +117,7 @@ describe('BreadcrumbComponent', () => {
     expect(component.currentItem.Active).toBeTruthy();
     expect(component.currentItem.Value).toBeTruthy();
   });
-  it('next items should have property Active set to false and proprty Value set to false', () => {
+  it('next items should have property Active set to false and property Value set to false', () => {
     component.ngOnInit();
     for (const item of component.breadcrumbItems) {
       if (item.Url !== component.currentItem.Url && item.Id > component.currentItem.Id) {
@@ -126,7 +126,7 @@ describe('BreadcrumbComponent', () => {
       }
     }
   });
-  it('previous items should have property Active set to true and proprty Value set to false', () => {
+  it('previous items should have property Active set to true and property Value set to false', () => {
     component.currentItem = component.breadcrumbItems[2];
     component.ngOnInit();
     for (const item of component.breadcrumbItems) {
