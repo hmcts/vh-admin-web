@@ -23,7 +23,7 @@ function initHearingRequest(): HearingModel {
   p1.email = 'test1@TestBed.com';
   p1.first_name = 'first';
   p1.last_name = 'last';
-  p1.role = 'Judge';
+  p1.is_judge = true;
   p1.title = 'Mr.';
 
   const p2 = new ParticipantModel();
@@ -31,7 +31,7 @@ function initHearingRequest(): HearingModel {
   p2.email = 'test2@TestBed.com';
   p2.first_name = 'first2';
   p2.last_name = 'last2';
-  p2.role = 'Judge';
+  p2.is_judge = true;
   p2.title = 'Mr.';
 
   participants.push(p1);
@@ -45,7 +45,7 @@ function initHearingRequest(): HearingModel {
   p3.email = 'test3@TestBed.com';
   p3.first_name = 'first3';
   p3.last_name = 'last3';
-  p3.role = 'Judge';
+  p3.is_judge = true;
   p3.title = 'Mr.';
 
   const p4 = new ParticipantModel();
@@ -53,13 +53,13 @@ function initHearingRequest(): HearingModel {
   p4.email = 'test3@TestBed.com';
   p4.first_name = 'first3';
   p4.last_name = 'last3';
-  p4.role = 'Judge';
+  p4.is_judge = true;
   p4.title = 'Mr.';
 
-  participants1.push(p3);
-  participants1.push(p4);
-  f1.participants = participants;
-  f2.participants = participants1;
+  participants.push(p1);
+  participants.push(p2);
+  participants.push(p3);
+  participants.push(p4);
 
   const newHearing = new HearingModel();
   newHearing.cases = [];
@@ -68,7 +68,6 @@ function initHearingRequest(): HearingModel {
   newHearing.feeds.push(f2);
 
   newHearing.hearing_type_id = -1;
-  //newHearing.hearing_medium_id = -1;
   newHearing.court_id = -1;
   newHearing.scheduled_date_time = null;
   newHearing.scheduled_duration = 0;

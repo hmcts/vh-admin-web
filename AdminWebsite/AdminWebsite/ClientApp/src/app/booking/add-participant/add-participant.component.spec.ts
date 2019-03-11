@@ -78,7 +78,6 @@ function initHearingRequest(): HearingModel {
   newHearing.cases = [];
   newHearing.feeds = feeds;
   newHearing.hearing_type_id = -1;
-  //newHearing.hearing_medium_id = -1;
   newHearing.court_id = -1;
   newHearing.scheduled_duration = 0;
   return newHearing;
