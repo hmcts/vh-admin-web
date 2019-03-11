@@ -24,9 +24,8 @@ function initExistingHearingRequest(): HearingModel {
 
   const existingRequest = new HearingModel();
   existingRequest.hearing_type_id = 2;
-  existingRequest.hearing_medium_id = 1;
   existingRequest.cases.push(newCaseRequest);
-  existingRequest.court_id = 2;
+  existingRequest.hearing_venue_id = 2;
   existingRequest.scheduled_date_time = today;
   existingRequest.scheduled_duration = 80;
   existingRequest.other_information = 'some notes';
@@ -44,9 +43,8 @@ function initBadHearingRequest(): HearingModel {
 
   const existingRequest = new HearingModel();
   existingRequest.hearing_type_id = 2;
-  existingRequest.hearing_medium_id = 1;
   existingRequest.cases.push(newCaseRequest);
-  existingRequest.court_id = 2;
+  existingRequest.hearing_venue_id = 2;
   existingRequest.scheduled_date_time = today;
   existingRequest.scheduled_duration = 80;
   return existingRequest;
@@ -102,8 +100,8 @@ describe('SummaryComponent with valid request', () => {
     const hearingstring = MockValues.HearingTypesList.find(c => c.id === existingRequest.hearing_type_id).name;
     expect(component.caseHearingType).toEqual(hearingstring);
     expect(component.hearingDate).toEqual(existingRequest.scheduled_date_time);
-    const courtString = MockValues.Courts.find(c => c.id === existingRequest.court_id);
-    expect(component.courtRoomAddress).toEqual(courtString.name);
+    const courtString = MockValues.Courts.find(c => c.id === existingRequest.hearing_venue_id);
+    expect(component.courtRoomAddress).toEqual(`${courtString.name} 123W`);
   });
 });
 
