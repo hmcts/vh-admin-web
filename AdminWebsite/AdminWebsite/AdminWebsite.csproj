@@ -42,8 +42,12 @@
 
   <ItemGroup>
     <!-- Don't publish the SPA source files, but do show them in the project files list -->
+    <Compile Remove="ClientApp\e2e\features\**" />
     <Content Remove="$(SpaRoot)**" />
+    <Content Remove="ClientApp\e2e\features\**" />
+    <EmbeddedResource Remove="ClientApp\e2e\features\**" />
     <None Remove="$(SpaRoot)**" />
+    <None Remove="ClientApp\e2e\features\**" />
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
   </ItemGroup>
 
@@ -57,11 +61,23 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="ClientApp\e2e\features\contactUs.feature.cs" />
+    <None Remove="ClientApp\e2e\features\hearingDetails.feature.cs" />
+    <None Remove="ClientApp\e2e\features\login.feature.cs" />
+    <None Remove="ClientApp\e2e\features\participant.feature.cs" />
+    <None Remove="ClientApp\src\app\common\model\case-request.model.ts" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\AdminWebsite.BookingsAPI.Client\AdminWebsite.BookingsAPI.Client.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="ClientApp\e2e\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <TypeScriptCompile Include="ClientApp\src\app\common\model\case-request.model.ts" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

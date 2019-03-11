@@ -9,8 +9,8 @@ import {
   HearingVenueResponse,
   HearingTypeResponse,
 } from '../../services/clients/api-client';
-import { HearingModel} from '../../common/model/hearing.model';
-import {ParticipantModel } from '../../common/model/participant.model';
+import { HearingModel } from '../../common/model/hearing.model';
+import { ParticipantModel } from '../../common/model/participant.model';
 import { ParticipantsListComponent } from '../participants-list/participants-list.component';
 import { ReferenceDataService } from '../../services/reference-data.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';

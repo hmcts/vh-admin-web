@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import {
-  HearingTypeResponse, BHClient, BookNewHearingRequest, HearingDetailsResponse, CaseRoleResponse
+  HearingTypeResponse, BHClient, BookNewHearingRequest, HearingDetailsResponse, CaseRoleResponse, CaseRequest, ParticipantRequest
 } from './clients/api-client';
 import { HearingModel } from '../common/model/hearing.model';
+import { CaseRequestModel } from '../common/model/case-request.model';
 
 @Injectable({
   providedIn: 'root'
@@ -71,7 +72,62 @@ export class VideoHearingsService {
   }
 
   mapHearing(newRequest: HearingModel): BookNewHearingRequest {
-    throw new Error('Mapping of hearing request not implemented yet.');
+    // throw new Error('Mapping of hearing request not implemented yet.');
+    let newHearingRequest = new BookNewHearingRequest();
+
+    // case
+    let cases = this.mapCases(newRequest);
+
+    newHearingRequest.case_type_name = newRequest.case_type_name;
+    newHearingRequest.hearing_type_name = newRequest.hearing_type_name;
+    // schedule
+    newHearingRequest.scheduled_date_time = newRequest.scheduled_date_time;
+    newHearingRequest.scheduled_duration = newRequest.scheduled_duration;
+    newHearingRequest.hearing_venue_name = newRequest.court_name;
+    newHearingRequest.hearing_room_name = newRequest.court_room;
+
+    // participants
+    let participants = this.mapParticipants(newRequest);
+
+    // other information
+    newHearingRequest.other_information = newRequest.other_information;
+
+    return newHearingRequest;
+  }
+
+  mapCases(newRequest: HearingModel): CaseRequest[] {
+    let cases: CaseRequest[] = [];
+    let caseRequest = new CaseRequest();
+    newRequest.cases.forEach(c => {
+      caseRequest.name = c.name;
+      caseRequest.number = c.number;
+      caseRequest.is_lead_case = false;
+
+      cases.push(caseRequest);
+    });
+    return cases;
+  }
+
+  mapParticipants(newRequest: HearingModel): ParticipantRequest[] {
+    let participants: ParticipantRequest[] = [];
+    let participant = new ParticipantRequest();
+    newRequest.participants.forEach(p => {
+      participant.title = p.title;
+      participant.first_name = p.first_name;
+      participant.middle_names = p.middle_names;
+      participant.last_name = p.last_name;
+      participant.username = p.username;
+      participant.display_name = p.display_name;
+      participant.contact_email = p.email;
+      participant.telephone_number = p.phone;
+      participant.case_role_name = p.case_role_name;
+      participant.hearing_role_name = p.hearing_role_name;
+      participant.representee = p.representee;
+      participant.solicitors_reference = p.solicitorsReference;
+
+      participants.push(participant);
+    });
+    return participants;
   }
 
   getHearingById(hearingId: string): Observable<HearingDetailsResponse> {

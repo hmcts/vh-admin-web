@@ -108,7 +108,8 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
     this.participantDetails = participantDetails;
     this.participantForm.setValue({
-      role: this.participantDetails.role,
+      role: this.participantDetails.hearing_role_name,
+      party: this.participantDetails.case_role_name,
       title: this.participantDetails.title,
       firstName: this.participantDetails.first_name,
       lastName: this.participantDetails.last_name,
@@ -318,7 +319,8 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     newParticipant.last_name = this.lastName.value;
     newParticipant.phone = this.phone.value;
     newParticipant.title = this.title.value;
-    newParticipant.role = this.role.value;
+    newParticipant.case_role_name = this.party.value;
+    newParticipant.hearing_role_name = this.role.value;
     newParticipant.email = this.searchEmail.email;
     newParticipant.display_name = this.displayName.value;
   }

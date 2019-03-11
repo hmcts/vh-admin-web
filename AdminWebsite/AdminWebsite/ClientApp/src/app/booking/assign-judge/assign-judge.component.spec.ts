@@ -68,7 +68,7 @@ function initHearingRequest(): HearingModel {
   newHearing.feeds.push(f2);
 
   newHearing.hearing_type_id = -1;
-  newHearing.hearing_medium_id = -1;
+  //newHearing.hearing_medium_id = -1;
   newHearing.court_id = -1;
   newHearing.scheduled_date_time = null;
   newHearing.scheduled_duration = 0;

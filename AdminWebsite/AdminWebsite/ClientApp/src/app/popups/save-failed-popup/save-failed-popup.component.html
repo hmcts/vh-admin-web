@@ -1,0 +1,13 @@
+<div id="saveFailedPopup" class="popup-overlay">
+  <div class="popup popup-small" style="text-align: center;">
+      <h1 class="govuk-heading-m">Your booking could not be saved. Please try again</h1>
+      <div class="content">
+          <div class="govuk-grid-row">
+              <div class="vh-top">
+                  <input id="btnTryAgain" class="govuk-button" type="submit" value="Save booking" (click)="saveBooking()">
+                  <input id="btnCancel" class="govuk-button vh-btncancel vh-mr" type="submit" value="Discard booking" (click)="cancelSave()">
+              </div>
+          </div>
+      </div>
+  </div>
+</div>

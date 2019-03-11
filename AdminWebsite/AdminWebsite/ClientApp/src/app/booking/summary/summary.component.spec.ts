@@ -24,7 +24,7 @@ function initExistingHearingRequest(): HearingModel {
 
   const existingRequest = new HearingModel();
   existingRequest.hearing_type_id = 2;
-  existingRequest.hearing_medium_id = 1;
+  //existingRequest.hearing_medium_id = 1;
   existingRequest.cases.push(newCaseRequest);
   existingRequest.court_id = 2;
   existingRequest.scheduled_date_time = today;
@@ -44,7 +44,7 @@ function initBadHearingRequest(): HearingModel {
 
   const existingRequest = new HearingModel();
   existingRequest.hearing_type_id = 2;
-  existingRequest.hearing_medium_id = 1;
+  //existingRequest.hearing_medium_id = 1;
   existingRequest.cases.push(newCaseRequest);
   existingRequest.court_id = 2;
   existingRequest.scheduled_date_time = today;
