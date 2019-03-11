@@ -14,6 +14,7 @@ namespace AdminWebsite.AcceptanceTests.Pages
         private By _phone => By.Id("phone");
         private By _displayName => By.Id("displayName");
         private By _addParticipantButton => By.Id("addParticipantBtn");
+        private By _companyName => By.Id("");
 
         public void Role(string option) => SelectOption(CommonLocator.List("role"), option);
         public void Title() => SelectOption(CommonLocator.List("title"));
@@ -23,5 +24,7 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public void Phone(string phone) => InputValues(_phone, phone);
         public void DisplayName(string displayname) => InputValues(_displayName, displayname);
         public void AddParticipantButton() => ClickElement(_addParticipantButton);
+        public void Party() => SelectOption(CommonLocator.List("party"));
+        public void Role() => SelectOption(CommonLocator.List("role"));
     }
 }
