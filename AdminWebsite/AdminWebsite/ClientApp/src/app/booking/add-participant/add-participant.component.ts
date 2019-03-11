@@ -112,7 +112,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
   setupHearingRoles(caseRoleName: string) {
     this.hearingRoleList = this.caseAndHearingRoles.find(x => x.name === caseRoleName).hearingRoles;
-    if (this.hearingRoleList) {
+    if (this.hearingRoleList && !this.hearingRoleList.find(s => s == this.constants.PleaseSelect)) {
       this.hearingRoleList.unshift(this.constants.PleaseSelect);
     }
   }
