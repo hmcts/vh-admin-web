@@ -18,6 +18,7 @@ namespace AdminWebsite.AcceptanceTests.Pages
         private By _breadcrumbs => By.XPath("//li[@class='vh-breadcrumbs']/a");
         private By _nextButton => By.Id(("nextButton"));
         private By _cancelButton => By.Id(("cancelButton"));
+        private By _primaryNavItems => By.XPath("//*[@class='vh-primary-navigation__link']");
 
         protected IEnumerable<IWebElement> GetListOfElements(By elements)
         {
@@ -77,5 +78,8 @@ namespace AdminWebsite.AcceptanceTests.Pages
         }
 
         public void ClickBreadcrumb(string breadcrumb) => SelectOption(_breadcrumbs, breadcrumb);
+        public void AcceptBrowserAlert() => _browserContext.AcceptAlert();
+        public void DashBoard() => SelectOption(_primaryNavItems, "Dashboard");
+        public void BookingsList() => SelectOption(_primaryNavItems, "Bookings list");
     }
 }
