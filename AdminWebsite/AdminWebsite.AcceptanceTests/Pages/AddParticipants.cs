@@ -14,7 +14,7 @@ namespace AdminWebsite.AcceptanceTests.Pages
         private By _phone => By.Id("phone");
         private By _displayName => By.Id("displayName");
         private By _addParticipantButton => By.Id("addParticipantBtn");
-        private By _companyName => By.Id("");
+        private By _companyName => By.Id("companyName");
 
         public void Role(string option) => SelectOption(CommonLocator.List("role"), option);
         public void Title() => SelectOption(CommonLocator.List("title"));
