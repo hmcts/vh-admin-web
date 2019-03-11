@@ -26,6 +26,7 @@ import { UnauthorisedComponent } from './error/unauthorised.component';
 import { ErrorComponent } from './error/error.component';
 import { ErrorService } from './services/error.service';
 import { SignOutPopupComponent } from './popups/sign-out-popup/sign-out-popup.component';
+import { WaitPopupComponent } from './popups/wait-popup/wait-popup.component';
 
 describe('app routing', () => {
   let location: Location;
@@ -48,7 +49,8 @@ describe('app routing', () => {
         PaginationStubComponent,
         UnauthorisedComponent,
         ErrorComponent,
-         SignOutPopupComponent
+        SignOutPopupComponent,
+        WaitPopupComponent,
       ],
       providers: [
         AuthGuard,

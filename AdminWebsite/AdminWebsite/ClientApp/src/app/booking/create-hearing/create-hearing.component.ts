@@ -145,8 +145,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
 
   private updateHearingRequest() {
     this.hearing.hearing_type_id = this.hearingForm.value.hearingType;
-    this.hearing.hearing_medium_id = this.hearingForm.value.hearingMethod;
-
+    this.hearing.case_type = this.selectedCaseType;
     const hearingCase = new CaseModel();
     hearingCase.name = this.hearingForm.value.caseName;
     hearingCase.number = this.hearingForm.value.caseNumber;

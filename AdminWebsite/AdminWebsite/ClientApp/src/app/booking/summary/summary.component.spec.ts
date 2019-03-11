@@ -10,9 +10,10 @@ import { VideoHearingsService } from '../../services/video-hearings.service';
 import { MockValues } from '../../testing/data/test-objects';
 import { SummaryComponent } from './summary.component';
 import { RouterTestingModule } from '@angular/router/testing';
-import { HearingModel} from '../../common/model/hearing.model';
+import { HearingModel } from '../../common/model/hearing.model';
 import { CaseModel } from '../../common/model/case.model';
 import { ParticipantsListStubComponent } from '../../testing/stubs/participant-list-stub';
+import { WaitPopupComponent } from '../../popups/wait-popup/wait-popup.component';
 
 function initExistingHearingRequest(): HearingModel {
   const today = new Date();
@@ -24,9 +25,8 @@ function initExistingHearingRequest(): HearingModel {
 
   const existingRequest = new HearingModel();
   existingRequest.hearing_type_id = 2;
-  existingRequest.hearing_medium_id = 1;
   existingRequest.cases.push(newCaseRequest);
-  existingRequest.court_id = 2;
+  existingRequest.hearing_venue_id = 2;
   existingRequest.scheduled_date_time = today;
   existingRequest.scheduled_duration = 80;
   existingRequest.other_information = 'some notes';
@@ -44,9 +44,8 @@ function initBadHearingRequest(): HearingModel {
 
   const existingRequest = new HearingModel();
   existingRequest.hearing_type_id = 2;
-  existingRequest.hearing_medium_id = 1;
   existingRequest.cases.push(newCaseRequest);
-  existingRequest.court_id = 2;
+  existingRequest.hearing_venue_id = 2;
   existingRequest.scheduled_date_time = today;
   existingRequest.scheduled_duration = 80;
   return existingRequest;
@@ -83,7 +82,7 @@ describe('SummaryComponent with valid request', () => {
       ],
       declarations: [SummaryComponent, BreadcrumbStubComponent,
         CancelPopupComponent, ParticipantsListStubComponent, BookingEditStubComponent,
-      RemovePopupComponent],
+        RemovePopupComponent, WaitPopupComponent],
       imports: [RouterTestingModule],
     })
       .compileComponents();
@@ -102,8 +101,11 @@ describe('SummaryComponent with valid request', () => {
     const hearingstring = MockValues.HearingTypesList.find(c => c.id === existingRequest.hearing_type_id).name;
     expect(component.caseHearingType).toEqual(hearingstring);
     expect(component.hearingDate).toEqual(existingRequest.scheduled_date_time);
-    const courtString = MockValues.Courts.find(c => c.id === existingRequest.court_id);
-    expect(component.courtRoomAddress).toEqual(courtString.name);
+    const courtString = MockValues.Courts.find(c => c.id === existingRequest.hearing_venue_id);
+    expect(component.courtRoomAddress).toEqual(`${courtString.name} 123W`);
+  });
+  it('should hide pop up that indicated process saving a booking', () => {
+    expect(component.showWaitSaving).toBeFalsy();
   });
 });
 
@@ -140,7 +142,8 @@ describe('SummaryComponent  with invalid request', () => {
       ],
       imports: [RouterTestingModule],
       declarations: [SummaryComponent, BreadcrumbStubComponent, CancelPopupComponent,
-        ParticipantsListStubComponent, BookingEditStubComponent, RemovePopupComponent]
+        ParticipantsListStubComponent, BookingEditStubComponent, RemovePopupComponent,
+        WaitPopupComponent]
     })
       .compileComponents();
   }));
@@ -154,5 +157,6 @@ describe('SummaryComponent  with invalid request', () => {
   it('should display save failed message', () => {
     component.bookHearing();
     expect(component.saveFailed).toBeTruthy();
+    expect(component.showWaitSaving).toBeFalsy();
   });
 });

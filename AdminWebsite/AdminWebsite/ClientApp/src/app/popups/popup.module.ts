@@ -4,6 +4,7 @@ import { SharedModule } from '../shared/shared.module';
 import { CancelPopupComponent } from './cancel-popup/cancel-popup.component';
 import { ConfirmationPopupComponent } from './confirmation-popup/confirmation-popup.component';
 import { SignOutPopupComponent } from './sign-out-popup/sign-out-popup.component';
+import { WaitPopupComponent } from './wait-popup/wait-popup.component';
 
 @NgModule({
   imports: [
@@ -13,11 +14,13 @@ import { SignOutPopupComponent } from './sign-out-popup/sign-out-popup.component
     CancelPopupComponent,
     ConfirmationPopupComponent,
     SignOutPopupComponent,
+    WaitPopupComponent,
   ],
   exports: [
     CancelPopupComponent,
     ConfirmationPopupComponent,
-    SignOutPopupComponent
+    SignOutPopupComponent,
+    WaitPopupComponent,
   ]
 })
 export class PopupModule { }
