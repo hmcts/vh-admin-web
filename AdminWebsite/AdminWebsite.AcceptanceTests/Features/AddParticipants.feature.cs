@@ -18,22 +18,22 @@ namespace AdminWebsite.AcceptanceTests.Features
     [System.CodeDom.Compiler.GeneratedCodeAttribute("TechTalk.SpecFlow", "3.0.0.0")]
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [NUnit.Framework.TestFixtureAttribute()]
-    [NUnit.Framework.DescriptionAttribute("Case Admin adds Other information to booking hearing")]
-    public partial class CaseAdminAddsOtherInformationToBookingHearingFeature
+    [NUnit.Framework.DescriptionAttribute("Case Admin adds generic participant details to booking")]
+    public partial class CaseAdminAddsGenericParticipantDetailsToBookingFeature
     {
         
         private TechTalk.SpecFlow.ITestRunner testRunner;
         
-#line 1 "OtherInformation.feature"
+#line 1 "AddParticipants.feature"
 #line hidden
         
         [NUnit.Framework.OneTimeSetUpAttribute()]
         public virtual void FeatureSetup()
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
-            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Case Admin adds Other information to booking hearing", "\t\tAs a Case Admin\r\n\t\tI want to be able to add any other information to the Video " +
-                    "Hearing booking\r\n\t\tSo that any other details that might be relevant to the booki" +
-                    "ng can be included", ProgrammingLanguage.CSharp, ((string[])(null)));
+            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Case Admin adds generic participant details to booking", "\t\tAs a Case Admin\r\n\t\tI need to be able to add generic details for a participant\r\n" +
+                    "\t\tSo that these participant details are assigned to the hearing booking when it " +
+                    "is created", ProgrammingLanguage.CSharp, ((string[])(null)));
             testRunner.OnFeatureStart(featureInfo);
         }
         
@@ -69,32 +69,6 @@ namespace AdminWebsite.AcceptanceTests.Features
         public virtual void ScenarioCleanup()
         {
             testRunner.CollectScenarioErrors();
-        }
-        
-        [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Case Admin adds Other information to the Video Hearing booking")]
-        [NUnit.Framework.CategoryAttribute("VIH-2641")]
-        public virtual void CaseAdminAddsOtherInformationToTheVideoHearingBooking()
-        {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Case Admin adds Other information to the Video Hearing booking", null, new string[] {
-                        "VIH-2641"});
-#line 7
-this.ScenarioInitialize(scenarioInfo);
-            this.ScenarioStart();
-#line 8
- testRunner.Given("Admin user is on microsoft login page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 9
- testRunner.And("Case Admin logs into Vh-Admin website", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 10
- testRunner.And("user is on other information page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 11
- testRunner.When("user adds other information to the Video Hearing booking", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 12
- testRunner.And("user proceeds to next page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 13
- testRunner.Then("user should be on summary page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line hidden
-            this.ScenarioCleanup();
         }
     }
 }
