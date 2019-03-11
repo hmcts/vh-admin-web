@@ -12,5 +12,6 @@ export class ParticipantModel {
   phone?: string | undefined;
   solicitorsReference?: string | undefined;
   representee?: string | undefined;
+  company?: string | undefined;
   is_judge: boolean;
 }
