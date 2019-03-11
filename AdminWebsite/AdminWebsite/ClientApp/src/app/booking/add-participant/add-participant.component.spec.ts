@@ -46,7 +46,7 @@ p1.email = 'test@test.com';
 p1.phone = '32332';
 p1.hearing_role_name = 'Solicitor';
 p1.case_role_name = 'Claimant';
-p1.company = 'CN'
+p1.company = 'CN';
 
 const p2 = new ParticipantModel();
 p2.first_name = 'Jane';
@@ -58,7 +58,7 @@ p2.email = 'test@test.com';
 p2.phone = '32332';
 p2.hearing_role_name = 'Solicitor';
 p2.case_role_name = 'Claimant';
-p2.company = 'CN'
+p2.company = 'CN';
 
 const p3 = new ParticipantModel();
 p3.first_name = 'Chris';
@@ -70,7 +70,7 @@ p3.email = 'test@test.com';
 p3.phone = '32332';
 p3.hearing_role_name = 'Solicitor';
 p3.case_role_name = 'Claimant';
-p3.company = 'CN'
+p3.company = 'CN';
 
 participants.push(p1);
 participants.push(p2);
@@ -97,7 +97,7 @@ participant.display_name = 'Sam Green';
 participant.title = 'Mr';
 participant.hearing_role_name = 'Solicitor';
 participant.case_role_name = 'Claimant';
-participant.company = 'CN'
+participant.company = 'CN';
 
 
 const routerSpy = {
