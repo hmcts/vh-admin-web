@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ParticipantModel } from '../../common/model/participant.model';
-import { HearingModel} from '../../common/model/hearing.model';
-import { CaseAndHearingRolesResponse } from "../../services/clients/api-client";
+import { HearingModel } from '../../common/model/hearing.model';
+import { CaseAndHearingRolesResponse } from '../../services/clients/api-client';
 import { PartyModel } from '../../common/model/party.model';
 
 @Injectable({
@@ -12,8 +12,8 @@ export class ParticipantService {
   constructor() { }
 
   mapParticipantsRoles(caseRoles: CaseAndHearingRolesResponse[]) {
-    let participantRoles = caseRoles.map(s => {
-      let item = new PartyModel(s.name);
+    const participantRoles = caseRoles.map(s => {
+      const item = new PartyModel(s.name);
       item.hearingRoles = s.hearing_roles;
       return item;
     });
@@ -21,8 +21,10 @@ export class ParticipantService {
     return participantRoles;
   }
 
-  public checkDuplication(email: string, participants:ParticipantModel[]) :boolean{
-    if (!email) throw new Error(`Cannot check for duplication on undefined email`);
+  public checkDuplication(email: string, participants: ParticipantModel[]): boolean {
+    if (!email) {
+      throw new Error(`Cannot check for duplication on undefined email`);
+    }
     let existParticipant = false;
     if (participants.length > 0) {
       const part = participants.find(s => s.email.toLowerCase() === email.toLowerCase());
@@ -33,8 +35,8 @@ export class ParticipantService {
     return existParticipant;
   }
 
-  public removeParticipant(hearing:HearingModel, email:string) {
-    let indexOfParticipant = hearing.participants.findIndex(x => x.email.toLowerCase() === email.toLowerCase());
+  public removeParticipant(hearing: HearingModel, email: string) {
+    const indexOfParticipant = hearing.participants.findIndex(x => x.email.toLowerCase() === email.toLowerCase());
     if (indexOfParticipant > -1) {
       hearing.participants.splice(indexOfParticipant, 1);
     }

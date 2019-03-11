@@ -126,6 +126,13 @@
           <input id="lastName" formControlName="lastName" class="govuk-input govuk-input--width-20" type="text" />
         </div>
 
+        <div class="govuk-form-group">
+          <label class="govuk-label" for="companyName">
+            Company <span class="govuk-hint vh-inline">(optional)</span>
+          </label>
+          <input id="companyName" formControlName="companyName" class="govuk-input govuk-input--width-20" type="text" />
+        </div>
+
         <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':phoneInvalid}">
           <legend id="phone-error" *ngIf="phoneInvalid">
             <span class="govuk-error-message">

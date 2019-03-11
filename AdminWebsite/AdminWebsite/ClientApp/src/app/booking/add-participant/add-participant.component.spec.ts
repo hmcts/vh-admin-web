@@ -1,4 +1,4 @@
-import { DebugElement } from '@angular/core';
+import { DebugElement, Component } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { AbstractControl } from '@angular/forms';
 import { NavigationEnd, Router } from '@angular/router';
@@ -16,18 +16,23 @@ import { VideoHearingsService } from '../../services/video-hearings.service';
 import { ParticipantService } from '../services/participant.service';
 import { SearchEmailComponent } from '../search-email/search-email.component';
 import { AddParticipantComponent } from './add-participant.component';
-import { HearingModel, FeedModel } from '../../common/model/hearing.model';
+import { HearingModel } from '../../common/model/hearing.model';
 import { ParticipantModel } from '../../common/model/participant.model';
+import { CaseAndHearingRolesResponse } from '../../services/clients/api-client';
 
 let component: AddParticipantComponent;
 let fixture: ComponentFixture<AddParticipantComponent>;
 
+const roleList: CaseAndHearingRolesResponse[] = [new CaseAndHearingRolesResponse({ name: 'Claimant', hearing_roles: ['Solicitor'] })];
+
 let role: AbstractControl;
+let party: AbstractControl;
 let title: AbstractControl;
 let firstName: AbstractControl;
 let lastName: AbstractControl;
 let phone: AbstractControl;
 let displayName: AbstractControl;
+let companyName: AbstractControl;
 
 const participants: ParticipantModel[] = [];
 
@@ -39,6 +44,10 @@ p1.is_judge = true;
 p1.title = 'Mr.';
 p1.email = 'test@test.com';
 p1.phone = '32332';
+p1.hearing_role_name = 'Solicitor';
+p1.case_role_name = 'Claimant';
+p1.company = 'CN'
+
 const p2 = new ParticipantModel();
 p2.first_name = 'Jane';
 p2.last_name = 'Doe';
@@ -47,6 +56,9 @@ p2.is_judge = true;
 p2.title = 'Mr.';
 p2.email = 'test@test.com';
 p2.phone = '32332';
+p2.hearing_role_name = 'Solicitor';
+p2.case_role_name = 'Claimant';
+p2.company = 'CN'
 
 const p3 = new ParticipantModel();
 p3.first_name = 'Chris';
@@ -56,6 +68,10 @@ p3.is_judge = true;
 p3.title = 'Mr.';
 p3.email = 'test@test.com';
 p3.phone = '32332';
+p3.hearing_role_name = 'Solicitor';
+p3.case_role_name = 'Claimant';
+p3.company = 'CN'
+
 participants.push(p1);
 participants.push(p2);
 participants.push(p3);
@@ -65,7 +81,7 @@ function initHearingRequest(): HearingModel {
   const newHearing = new HearingModel();
   newHearing.cases = [];
   newHearing.hearing_type_id = -1;
-  newHearing.hearing_venue_id = -1
+  newHearing.hearing_venue_id = -1;
   newHearing.scheduled_duration = 0;
   newHearing.participants = participants;
   return newHearing;
@@ -79,6 +95,9 @@ participant.phone = '12345';
 participant.is_judge = false;
 participant.display_name = 'Sam Green';
 participant.title = 'Mr';
+participant.hearing_role_name = 'Solicitor';
+participant.case_role_name = 'Claimant';
+participant.company = 'CN'
 
 
 const routerSpy = {
@@ -127,27 +146,31 @@ describe('AddParticipantComponent', () => {
     component.ngOnInit();
     fixture.detectChanges();
 
+
     role = component.participantForm.controls['role'];
+    party = component.participantForm.controls['party'];
     title = component.participantForm.controls['title'];
     firstName = component.participantForm.controls['firstName'];
     lastName = component.participantForm.controls['lastName'];
     phone = component.participantForm.controls['phone'];
     displayName = component.participantForm.controls['displayName'];
+    companyName = component.participantForm.controls['companyName'];
   }));
 
   it('should create', () => {
     expect(component).toBeTruthy();
   });
-  it('should set role list and title list', () => {
+  it('should set case role list, hearing role list and title list', () => {
     component.ngOnInit();
     expect(component.roleList).toBeTruthy();
-    expect(component.roleList.length).toBe(3);
+    expect(component.roleList.length).toBe(2);
     expect(component.titleList).toBeTruthy();
     expect(component.titleList.length).toBe(2);
   });
   it('should set initial values for fields', () => {
     component.ngOnInit();
     expect(role.value).toBe('Please Select');
+    expect(party.value).toBe('Please Select');
     expect(firstName.value).toBe('');
     expect(lastName.value).toBe('');
     expect(phone.value).toBe('');
@@ -157,6 +180,8 @@ describe('AddParticipantComponent', () => {
     expect(component.participantForm.valid).toBeFalsy();
   });
   it('should set validation summary be visible if any field is invalid', () => {
+    component.showDetails = true;
+    fixture.detectChanges();
     component.saveParticipant();
     expect(component.isShowErrorSummary).toBeTruthy();
   });
@@ -185,7 +210,8 @@ describe('AddParticipantComponent', () => {
   });
   it('should set values fields if participant is found', () => {
     component.getParticipant(participant);
-    expect(role.value).toBe(participant.role);
+    expect(role.value).toBe(participant.hearing_role_name);
+    expect(party.value).toBe(participant.case_role_name);
     expect(firstName.value).toBe(participant.first_name);
     expect(lastName.value).toBe(participant.last_name);
     expect(phone.value).toBe(participant.phone);
@@ -193,8 +219,6 @@ describe('AddParticipantComponent', () => {
     expect(displayName.value).toBe(participant.display_name);
   });
   it('should clear all fields and reset to initial value', () => {
-    spyOn(component.searchEmail, 'clearEmail');
-
     component.getParticipant(participant);
     component.clearForm();
     expect(role.value).toBe('Please Select');
@@ -205,8 +229,6 @@ describe('AddParticipantComponent', () => {
     expect(displayName.value).toBe('');
   });
   it('should display next button and hide add button after clear all fields', () => {
-    spyOn(component.searchEmail, 'clearEmail');
-
     component.getParticipant(participant);
     component.clearForm();
     expect(component.displayNextButton).toBeTruthy();
@@ -214,48 +236,56 @@ describe('AddParticipantComponent', () => {
     expect(component.displayClearButton).toBeFalsy();
   });
   it('saved participant added to list of participants', () => {
+    component.showDetails = true;
+    fixture.detectChanges();
     spyOn(component.searchEmail, 'validateEmail').and.returnValue(true);
     component.searchEmail.email = 'mock@email.com';
 
     role.setValue('Appellant');
+    party.setValue('CaseRole');
     firstName.setValue('Sam');
     lastName.setValue('Green');
     title.setValue('Mrs');
     phone.setValue('12345');
     component.isRoleSelected = true;
+    component.isPartySelected = true;
     component.saveParticipant();
     expect(component.isShowErrorSummary).toBeFalsy();
-    expect(component.participants.length).toBeGreaterThan(0);
+    expect(component.hearing.participants.length).toBeGreaterThan(0);
   });
   it('should see next button and hide add button after saved participant', () => {
+    component.showDetails = true;
+    fixture.detectChanges();
     spyOn(component.searchEmail, 'validateEmail').and.returnValue(true);
     component.searchEmail.email = 'mock@email.com';
 
     role.setValue('Appellant');
+    party.setValue('CaseRole');
     firstName.setValue('Sam');
     lastName.setValue('Green');
     title.setValue('Mrs');
     phone.setValue('12345');
     displayName.setValue('Sam');
     component.isRoleSelected = true;
-    component.participants = [];
+    component.isPartySelected = true;
+    component.hearing.participants = [];
     component.saveParticipant();
     expect(component.displayNextButton).toBeTruthy();
     expect(component.displayAddButton).toBeFalsy();
     expect(component.displayClearButton).toBeFalsy();
   });
-  it('press button cancel display popup confirmation dialog', () => {
+  it('press button cancel display pop up confirmation dialog', () => {
     component.addParticipantCancel();
     expect(component.showCancelPopup).toBeTruthy();
   });
 
-  it('press button cancel on popup close popup confirmation dialog and navigate to dashboard', () => {
+  it('press button cancel on pop up close pop up confirmation dialog and navigate to dashboard', () => {
     component.handleCancelBooking('string');
     expect(routerSpy.navigate).toHaveBeenCalledWith(['/dashboard']);
     expect(component.showCancelPopup).toBeFalsy();
   });
 
-  it('press button continue on popup close popup confirmation dialog and return to add participant view', () => {
+  it('press button continue on pop up close pop up confirmation dialog and return to add participant view', () => {
     component.handleContinueBooking('string');
     expect(component.showCancelPopup).toBeFalsy();
   });
@@ -266,12 +296,12 @@ describe('AddParticipantComponent', () => {
     expect(component.displayClearButton).toBeFalsy();
   });
   it('if no participants added and pressed Next button then error displayed', () => {
-    component.participants = [];
+    component.hearing.participants = [];
     component.next();
     expect(component.displayErrorNoParticipants).toBeTruthy();
   });
   it('error that at least one participant should be added is hidden, once email is entering', () => {
-    component.participants = [];
+    component.hearing.participants = [];
     component.next();
     expect(component.displayErrorNoParticipants).toBeTruthy();
     component.getParticipant(participant);

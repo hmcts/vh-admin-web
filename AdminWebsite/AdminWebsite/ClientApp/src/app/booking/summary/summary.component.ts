@@ -9,8 +9,7 @@ import {
   HearingVenueResponse,
   HearingTypeResponse,
 } from '../../services/clients/api-client';
-import { HearingModel} from '../../common/model/hearing.model';
-import {ParticipantModel } from '../../common/model/participant.model';
+import { HearingModel } from '../../common/model/hearing.model';
 import { ParticipantsListComponent } from '../participants-list/participants-list.component';
 import { ReferenceDataService } from '../../services/reference-data.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
@@ -29,7 +28,7 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
   canNavigate = true;
   hearingForm: FormGroup;
   failedSubmission: boolean;
-  bookingsSaving: boolean = false;
+  bookingsSaving = false;
 
   caseNumber: string;
   caseName: string;
@@ -40,12 +39,10 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
   otherInformation: string;
   errors: any;
 
-  selectedHearingTypeName: HearingTypeResponse[];
- // participants: ParticipantModel[] = [];
   selectedHearingType: HearingTypeResponse[];
   saveFailed: boolean;
 
-  showConfirmationRemoveParticipant: boolean = false;
+  showConfirmationRemoveParticipant = false;
   selectedParticipantEmail: string;
   removerFullName: string;
 
@@ -73,7 +70,7 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
   }
 
   private confirmRemoveParticipant() {
-    let participant = this.hearing.participants.find(x => x.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase());
+    const participant = this.hearing.participants.find(x => x.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase());
     this.removerFullName = participant ? `${participant.title} ${participant.first_name} ${participant.last_name}` : '';
     this.showConfirmationRemoveParticipant = true;
   }
@@ -88,13 +85,14 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
   }
 
   removeParticipant() {
-    let indexOfParticipant = this.hearing.participants.findIndex(x => x.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase());
+    const indexOfParticipant = this.hearing.participants
+      .findIndex(x => x.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase());
     if (indexOfParticipant > -1) {
       this.hearing.participants.splice(indexOfParticipant, 1);
     }
     this.hearingService.updateHearingRequest(this.hearing);
   }
- 
+
   private retrieveHearingSummary() {
     this.caseNumber = this.hearing.cases[0].number;
     this.caseName = this.hearing.cases[0].name;
@@ -104,16 +102,6 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
     this.hearingDuration = this.getHearingDuration(this.hearing.scheduled_duration);
     this.otherInformation = this.hearing.other_information;
   }
-
-  //private getAllParticipants(): ParticipantModel[] {
-  //  let participants: ParticipantModel[] = [];
-  //  this.hearing.feeds.forEach(x => {
-  //    if (x.participants && x.participants.length >= 1) {
-  //      participants = participants.concat(x.participants);
-  //    }
-  //  });
-  //  return participants;
-  //}
 
   private getCaseHearingTypeName(hearing_type_id: number): void {
     this.hearingService.getHearingTypes()
@@ -138,7 +126,6 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
   }
 
   private getHearingDuration(duration: number): string {
-    console.log('DIRATION SUMMARY' + duration);
     return 'listed for ' + (duration === null ? 0 : duration) + ' minutes';
   }
 

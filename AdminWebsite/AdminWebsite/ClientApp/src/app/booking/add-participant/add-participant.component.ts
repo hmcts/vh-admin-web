@@ -15,7 +15,7 @@ import { ParticipantsListComponent } from '../participants-list/participants-lis
 import { BookingBaseComponent } from '../booking-base/booking-base.component';
 import { BookingService } from '../../services/booking.service';
 import { ParticipantService } from '../services/participant.service';
-import { CaseAndHearingRolesResponse } from "../../services/clients/api-client";
+import { CaseAndHearingRolesResponse } from '../../services/clients/api-client';
 import { PartyModel } from '../../common/model/party.model';
 
 @Component({
@@ -43,6 +43,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   private lastName: FormControl;
   private phone: FormControl;
   private displayName: FormControl;
+  private companyName: FormControl;
   isRoleSelected = true;
   isPartySelected = true;
   isTitleSelected = true;
@@ -80,7 +81,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   }
 
   private repopulateParticipantToEdit() {
-    let selectedParticipant = this.hearing.participants.find(s => s.email === this.selectedParticipantEmail);
+    const selectedParticipant = this.hearing.participants.find(s => s.email === this.selectedParticipantEmail);
     this.getParticipant(selectedParticipant);
     this.searchEmail.email = selectedParticipant.email;
     this.searchEmail.isValidEmail = true;
@@ -112,7 +113,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
   setupHearingRoles(caseRoleName: string) {
     this.hearingRoleList = this.caseAndHearingRoles.find(x => x.name === caseRoleName).hearingRoles;
-    if (this.hearingRoleList) {
+    if (this.hearingRoleList && !this.hearingRoleList.find(s => s === this.constants.PleaseSelect)) {
       this.hearingRoleList.unshift(this.constants.PleaseSelect);
     }
   }
@@ -123,13 +124,14 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
     this.participantDetails = participantDetails;
     this.participantForm.setValue({
-      role: this.participantDetails.case_role_name,
-      party: this.participantDetails.hearing_role_name,
+      role: this.participantDetails.hearing_role_name,
+      party: this.participantDetails.case_role_name,
       title: this.participantDetails.title,
       firstName: this.participantDetails.first_name,
       lastName: this.participantDetails.last_name,
       phone: this.participantDetails.phone,
-      displayName: this.participantDetails.display_name
+      displayName: this.participantDetails.display_name,
+      companyName: this.participantDetails.company,
     });
   }
 
@@ -139,7 +141,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   }
 
   emailChanged() {
-    if (this.participantForm.valid && this.searchEmail.validateEmail()) {
+    if (this.participantForm.valid && this.showDetails && this.searchEmail.validateEmail()) {
       if (this.editMode) {
         this.displayNext();
       } else {
@@ -188,6 +190,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     this.lastName = new FormControl('', Validators.required);
     this.phone = new FormControl('', [Validators.required, Validators.pattern(/^[0-9) -.]+$/)]);
     this.displayName = new FormControl('');
+    this.companyName = new FormControl('');
     this.participantForm = new FormGroup({
       role: this.role,
       party: this.party,
@@ -196,6 +199,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
       lastName: this.lastName,
       phone: this.phone,
       displayName: this.displayName,
+      companyName: this.companyName,
     });
     this.participantForm.valueChanges.subscribe(
       result => {
@@ -207,7 +211,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
           this.phone.value === '' &&
           this.displayName.value === '') || this.editMode) {
           this.displayNext();
-        } else if (this.participantForm.valid && this.searchEmail.validateEmail()) {
+        } else if (this.participantForm.valid && this.showDetails && this.searchEmail.validateEmail()) {
           this.displayAdd();
         } else {
           this.displayClear();
@@ -283,9 +287,9 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   }
 
   saveParticipant() {
-    const validEmail = this.searchEmail.validateEmail();
     this.actionsBeforeSave();
-    if (this.participantForm.valid && validEmail && this.isRoleSelected && this.isTitleSelected) {
+    const validEmail = this.showDetails ? this.searchEmail.validateEmail() : true;
+    if (this.participantForm.valid && validEmail && this.isRoleSelected && this.isPartySelected && this.isTitleSelected) {
       this.isShowErrorSummary = false;
       const newParticipant = new ParticipantModel();
       this.mapParticipant(newParticipant);
@@ -317,8 +321,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
       });
       this.clearForm();
       this.participantForm.markAsPristine();
-    }
-    else {
+    } else {
       this.isShowErrorSummary = true;
     }
   }
@@ -332,7 +335,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   }
 
   confirmRemoveParticipant() {
-    let participant = this.hearing.participants.find(x => x.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase());
+    const participant = this.hearing.participants.find(x => x.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase());
     this.removerFullName = participant ? `${participant.title} ${participant.first_name} ${participant.last_name}` : '';
     this.showConfirmationRemoveParticipant = true;
   }
@@ -351,6 +354,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     newParticipant.hearing_role_name = this.role.value;
     newParticipant.email = this.searchEmail.email;
     newParticipant.display_name = this.displayName.value;
+    newParticipant.company = this.companyName.value;
   }
 
   addParticipantCancel() {
@@ -393,7 +397,8 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         firstName: '',
         lastName: '',
         phone: '',
-        displayName: ''
+        displayName: '',
+        companyName: '',
       });
     this.role.markAsUntouched();
     this.party.markAsUntouched();

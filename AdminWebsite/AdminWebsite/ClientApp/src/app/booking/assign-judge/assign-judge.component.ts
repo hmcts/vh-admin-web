@@ -55,12 +55,11 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
   }
 
   private initForm() {
-    let find_judge = this.hearing.participants.find(x => x.is_judge === true);
+    const find_judge = this.hearing.participants.find(x => x.is_judge === true);
 
     if (!find_judge) {
       this.judge = new ParticipantDetailsResponse({ id: null });
-    }
-    else {
+    } else {
       this.judge = this.mapJudge(find_judge);
     }
     this.assignJudgeForm = this.fb.group({
@@ -88,7 +87,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
   }
 
   mapJudgeToModel(judge: ParticipantDetailsResponse): ParticipantModel {
-    let newParticipant = new ParticipantModel()
+    const newParticipant = new ParticipantModel();
     newParticipant.title = judge.title;
     newParticipant.first_name = judge.first_name;
     newParticipant.middle_names = judge.middle_name;
@@ -117,9 +116,9 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     this.judge.role = 'Judge';
     this.judge.id = selectedJudge.id;
 
-    let newJudge = this.mapJudgeToModel(this.judge);
+    const newJudge = this.mapJudgeToModel(this.judge);
 
-    let indexOfJudge = this.hearing.participants.findIndex(x => x.is_judge === true);
+    const indexOfJudge = this.hearing.participants.findIndex(x => x.is_judge === true);
     if (indexOfJudge > -1) {
       this.hearing.participants.splice(indexOfJudge, 1);
     }
@@ -181,7 +180,6 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     this.judgeService.getJudges()
       .subscribe(
         (data: ParticipantDetailsResponse[]) => {
-          console.debug(data);
           this.availableJudges = data.filter(x => x.first_name && x.last_name);
           const userResponse = new ParticipantDetailsResponse();
           userResponse.display_name = 'Please Select';
