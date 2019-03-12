@@ -24,7 +24,7 @@ import { PartyModel } from '../../common/model/party.model';
   styleUrls: ['./add-participant.component.css'],
 })
 export class AddParticipantComponent extends BookingBaseComponent implements OnInit, CanDeactiveComponent {
-  canNavigate = true;
+  canNavigate = false;
   constants = Constants;
 
   participantDetails: ParticipantModel;
@@ -152,7 +152,9 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
   ngOnInit() {
     super.ngOnInit();
-    this.hearing = this.videoHearingService.getCurrentRequest();
+    if (this.hearing.participants.length > 1) {
+      this.canNavigate = true;
+    }
     this.initializeForm();
     if (this.editMode) {
       this.selectedParticipantEmail = this.bookingService.getParticipantEmail();
@@ -298,6 +300,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         this.videoHearingService.updateHearingRequest(this.hearing);
         this.clearForm();
         this.displayNext();
+        this.canNavigate = true;
         this.participantForm.markAsPristine();
         this.showDetails = false;
       } else {

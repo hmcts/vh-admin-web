@@ -32,10 +32,9 @@ import { ErrorComponent } from '../../error/error.component';
 import { SignOutPopupComponent } from '../../popups/sign-out-popup/sign-out-popup.component';
 
 
-
 describe('BreadcrumbComponent', () => {
   const videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',
-    ['getHearingMediums', 'getHearingTypes', 'getCurrentRequest', 'updateHearingRequest']);
+    ['getHearingMediums', 'getHearingTypes', 'getCurrentRequest', 'updateHearingRequest', 'validCurrentRequest']);
   const bhClientSpy: jasmine.SpyObj<BHClient> = jasmine.createSpyObj<BHClient>('BHClient', ['getConfigSettings']);
 
   let component: BreadcrumbComponent;
@@ -101,7 +100,7 @@ describe('BreadcrumbComponent', () => {
     component.ngOnInit();
     expect(component).toBeTruthy();
   });
-  it('breadcrumb component should have predifine navigation items', () => {
+  it('breadcrumb component should have predefine navigation items', () => {
     component.ngOnInit();
     expect(component.breadcrumbItems.length).toBeGreaterThan(0);
   });
@@ -112,12 +111,12 @@ describe('BreadcrumbComponent', () => {
     expect(component.currentItem instanceof BreadcrumbItemModel).toBeTruthy();
 
   });
-  it('breadcrumb component currentItem should have property Active set to true and proprty Value set to true', () => {
+  it('breadcrumb component currentItem should have property Active set to true and property Value set to true', () => {
     component.ngOnInit();
     expect(component.currentItem.Active).toBeTruthy();
     expect(component.currentItem.Value).toBeTruthy();
   });
-  it('next items should have property Active set to false and proprty Value set to false', () => {
+  it('next items should have property Active set to false and property Value set to false', () => {
     component.ngOnInit();
     for (const item of component.breadcrumbItems) {
       if (item.Url !== component.currentItem.Url && item.Id > component.currentItem.Id) {
@@ -126,7 +125,7 @@ describe('BreadcrumbComponent', () => {
       }
     }
   });
-  it('previous items should have property Active set to true and proprty Value set to false', () => {
+  it('previous items should have property Active set to true and property Value set to false', () => {
     component.currentItem = component.breadcrumbItems[2];
     component.ngOnInit();
     for (const item of component.breadcrumbItems) {
