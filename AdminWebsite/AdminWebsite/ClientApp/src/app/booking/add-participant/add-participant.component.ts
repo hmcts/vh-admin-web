@@ -43,6 +43,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   private lastName: FormControl;
   private phone: FormControl;
   private displayName: FormControl;
+  private companyName: FormControl;
   isRoleSelected = true;
   isPartySelected = true;
   isTitleSelected = true;
@@ -112,7 +113,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
   setupHearingRoles(caseRoleName: string) {
     this.hearingRoleList = this.caseAndHearingRoles.find(x => x.name === caseRoleName).hearingRoles;
-    if (this.hearingRoleList) {
+    if (this.hearingRoleList && !this.hearingRoleList.find(s => s === this.constants.PleaseSelect)) {
       this.hearingRoleList.unshift(this.constants.PleaseSelect);
     }
   }
@@ -129,7 +130,8 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
       firstName: this.participantDetails.first_name,
       lastName: this.participantDetails.last_name,
       phone: this.participantDetails.phone,
-      displayName: this.participantDetails.display_name
+      displayName: this.participantDetails.display_name,
+      companyName: this.participantDetails.company,
     });
   }
 
@@ -188,6 +190,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     this.lastName = new FormControl('', Validators.required);
     this.phone = new FormControl('', [Validators.required, Validators.pattern(/^[0-9) -.]+$/)]);
     this.displayName = new FormControl('');
+    this.companyName = new FormControl('');
     this.participantForm = new FormGroup({
       role: this.role,
       party: this.party,
@@ -196,6 +199,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
       lastName: this.lastName,
       phone: this.phone,
       displayName: this.displayName,
+      companyName: this.companyName,
     });
     this.participantForm.valueChanges.subscribe(
       result => {
@@ -350,6 +354,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     newParticipant.hearing_role_name = this.role.value;
     newParticipant.email = this.searchEmail.email;
     newParticipant.display_name = this.displayName.value;
+    newParticipant.company = this.companyName.value;
   }
 
   addParticipantCancel() {
@@ -392,7 +397,8 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         firstName: '',
         lastName: '',
         phone: '',
-        displayName: ''
+        displayName: '',
+        companyName: '',
       });
     this.role.markAsUntouched();
     this.party.markAsUntouched();
