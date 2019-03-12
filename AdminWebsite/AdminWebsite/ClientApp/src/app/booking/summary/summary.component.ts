@@ -46,6 +46,7 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
   showConfirmationRemoveParticipant = false;
   selectedParticipantEmail: string;
   removerFullName: string;
+  showWaitSaving = false;
 
   @ViewChild(ParticipantsListComponent)
   participantsListComponent: ParticipantsListComponent;
@@ -150,21 +151,24 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
 
   bookHearing(): void {
     this.bookingsSaving = true;
+    this.showWaitSaving = true;
     this.hearingService.saveHearing(this.hearing)
       .subscribe(
         (data: number) => {
           this.hearingService.cancelRequest();
+          this.showWaitSaving = false;
           this.router.navigate(['/booking-confirmation']);
         },
         error => {
           console.error(error);
           this.saveFailed = true;
+          this.showWaitSaving = false;
           this.errors = error;
         }
       );
-
     if (this.errors) {
       this.saveFailed = true;
+      this.showWaitSaving = false;
     }
   }
 }

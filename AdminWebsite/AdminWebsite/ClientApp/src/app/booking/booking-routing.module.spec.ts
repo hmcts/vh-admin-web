@@ -29,6 +29,7 @@ import { ConfirmationPopupComponent } from '../popups/confirmation-popup/confirm
 import { BookingEditComponent } from '../shared/booking-edit/booking-edit.component';
 import { ErrorService } from '../services/error.service';
 import { RemovePopupComponent } from '../popups/remove-popup/remove-popup.component';
+import { WaitPopupComponent } from '../popups/wait-popup/wait-popup.component';
 
 describe('app routing', () => {
   let location: Location;
@@ -57,7 +58,8 @@ describe('app routing', () => {
         SummaryComponent,
         BookingConfirmationComponent,
         BookingEditComponent,
-        RemovePopupComponent
+        RemovePopupComponent,
+        WaitPopupComponent,
       ],
       providers: [
         AuthGuard,
