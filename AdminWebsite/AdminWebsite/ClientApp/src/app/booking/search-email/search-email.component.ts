@@ -76,12 +76,12 @@ export class SearchEmailComponent {
   }
 
   @HostListener('document:click', ['$event.target'])
-   clickedOutside(targetElement) {
+  clickedOutside(targetElement) {
     const clickedInside = this.elRef.nativeElement.contains(targetElement);
-      if (!clickedInside) {
-          this.isShowResult = false;
-      }
-}
+    if (!clickedInside) {
+      this.isShowResult = false;
+    }
+  }
 
   clearEmail() {
     this.email = '';

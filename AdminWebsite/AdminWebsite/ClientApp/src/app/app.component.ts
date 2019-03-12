@@ -72,6 +72,7 @@ export class AppComponent implements OnInit {
 
   handleSignOut() {
     this.showSignOutConfirmation = false;
+    this.videoHearingsService.cancelRequest();
     this.router.navigate(['/logout']);
   }
 
