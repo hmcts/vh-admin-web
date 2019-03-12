@@ -169,6 +169,16 @@
             </a>
           </span>
         </div>
+
+          <div class="govuk-grid-column-one-half" *ngIf="displayUpdateButton">
+            <img src="assets/images/AddIcon.png" alt="Add icon with sign plus" />
+            <span class="vh-vert-top-m15">
+              <a href="javascript:void(0)" (click)="updateParticipantAction()" type="submit" id="updateParticipantBtn" class="govuk-link govuk-body">
+                Update participant
+              </a>
+            </span>
+          </div>
+
         <div class="govuk-grid-column-one-half" *ngIf="displayClearButton">
           <img src="assets/images/ClearIcon.png" alt="Clear fiealds icon" />
           <span class="vh-vert-top-m15">
