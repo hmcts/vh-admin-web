@@ -10,12 +10,10 @@ import { of } from 'rxjs';
 import { MockValues } from '../../testing/data/test-objects';
 import { JudgeDataService } from '../services/judge-data.service';
 import { ParticipantsListComponent } from '../participants-list/participants-list.component';
-import { HearingModel, FeedModel } from '../../common/model/hearing.model';
+import { HearingModel} from '../../common/model/hearing.model';
 import { ParticipantModel } from '../../common/model/participant.model';
 
 function initHearingRequest(): HearingModel {
-
-  const f1 = new FeedModel('Judge');
 
   const participants: ParticipantModel[] = [];
   const p1 = new ParticipantModel();
@@ -34,12 +32,6 @@ function initHearingRequest(): HearingModel {
   p2.is_judge = true;
   p2.title = 'Mr.';
 
-  participants.push(p1);
-  participants.push(p2);
-
-  const f2 = new FeedModel('Professional');
-
-  const participants1: ParticipantModel[] = [];
   const p3 = new ParticipantModel();
   p3.display_name = 'display name3';
   p3.email = 'test3@TestBed.com';
@@ -63,12 +55,10 @@ function initHearingRequest(): HearingModel {
 
   const newHearing = new HearingModel();
   newHearing.cases = [];
-  newHearing.feeds = [];
-  newHearing.feeds.push(f1);
-  newHearing.feeds.push(f2);
+  newHearing.participants = participants;
 
   newHearing.hearing_type_id = -1;
-  newHearing.court_id = -1;
+  newHearing.hearing_venue_id = -1;
   newHearing.scheduled_date_time = null;
   newHearing.scheduled_duration = 0;
 

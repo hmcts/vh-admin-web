@@ -39,7 +39,7 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
   hearingDuration: string;
   otherInformation: string;
   errors: any;
-  participants: ParticipantModel[] = [];
+
   selectedHearingType: HearingTypeResponse[];
   saveFailed: boolean;
 
@@ -71,7 +71,7 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
   }
 
   private confirmRemoveParticipant() {
-    const participant = this.participants.find(x => x.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase());
+    const participant = this.hearing.participants.find(x => x.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase());
     this.removerFullName = participant ? `${participant.title} ${participant.first_name} ${participant.last_name}` : '';
     this.showConfirmationRemoveParticipant = true;
   }
@@ -83,25 +83,15 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
 
   handleCancelRemove() {
     this.showConfirmationRemoveParticipant = false;
-    this.participants = this.getAllParticipants();
   }
 
   removeParticipant() {
-    const indexOfParticipant = this.participants.findIndex(x =>
-      x.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase());
+    const indexOfParticipant = this.hearing.participants
+      .findIndex(x => x.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase());
     if (indexOfParticipant > -1) {
-      this.participants.splice(indexOfParticipant, 1);
+      this.hearing.participants.splice(indexOfParticipant, 1);
     }
-    this.removeFromFeed();
     this.hearingService.updateHearingRequest(this.hearing);
-  }
-
-  removeFromFeed() {
-    const indexOfParticipant = this.hearing.feeds.findIndex(x =>
-      x.participants.filter(y => y.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase()).length > 0);
-    if (indexOfParticipant > -1) {
-      this.hearing.feeds.splice(indexOfParticipant, 1);
-    }
   }
 
   private retrieveHearingSummary() {
@@ -109,20 +99,9 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
     this.caseName = this.hearing.cases[0].name;
     this.getCaseHearingTypeName(this.hearing.hearing_type_id);
     this.hearingDate = this.hearing.scheduled_date_time;
-    this.getCourtRoomAndAddress(this.hearing.court_id);
+    this.getCourtRoomAndAddress(this.hearing.hearing_venue_id);
     this.hearingDuration = this.getHearingDuration(this.hearing.scheduled_duration);
-    this.participants = this.getAllParticipants();
     this.otherInformation = this.hearing.other_information;
-  }
-
-  private getAllParticipants(): ParticipantModel[] {
-    let participants: ParticipantModel[] = [];
-    this.hearing.feeds.forEach(x => {
-      if (x.participants && x.participants.length >= 1) {
-        participants = participants.concat(x.participants);
-      }
-    });
-    return participants;
   }
 
   private getCaseHearingTypeName(hearing_type_id: number): void {
@@ -141,14 +120,13 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
       .subscribe(
         (data: HearingVenueResponse[]) => {
           const selectedCourt = data.filter(c => c.id === venueId);
-          this.courtRoomAddress = selectedCourt[0].name;
+          this.courtRoomAddress = `${selectedCourt[0].name} ${this.hearing.court_room}`;
         },
         error => console.error(error)
       );
   }
 
   private getHearingDuration(duration: number): string {
-    console.log('DIRATION SUMMARY' + duration);
     return 'listed for ' + (duration === null ? 0 : duration) + ' minutes';
   }
 

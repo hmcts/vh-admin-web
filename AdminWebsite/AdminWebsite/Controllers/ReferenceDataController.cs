@@ -4,6 +4,7 @@ using System.Net;
 using System.Threading.Tasks;
 using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Contracts.Responses;
+using AdminWebsite.Models;
 using AdminWebsite.Security;
 using Microsoft.AspNetCore.Mvc;
 using HearingTypeResponse = AdminWebsite.Contracts.Responses.HearingTypeResponse;
@@ -56,7 +57,7 @@ namespace AdminWebsite.Controllers
         /// </summary>
         /// <returns>List of valid participant roles</returns>
         [HttpGet("participantroles", Name = "GetParticipantRoles")]
-        [ProducesResponseType(typeof(IList<CaseAndHearingRolesResponse>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(IList<CaseAndHearingRolesResponse>), (int) HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<ActionResult<IList<CaseAndHearingRolesResponse>>> GetParticipantRoles(string caseTypeName)
         {

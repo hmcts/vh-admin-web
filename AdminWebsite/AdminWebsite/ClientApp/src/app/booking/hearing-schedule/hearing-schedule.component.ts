@@ -73,7 +73,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
       durationMinute = (duration.getMinutes() < 10 ? '0' : '') + duration.getMinutes();
     }
 
-    if (this.hearing && this.hearing.scheduled_date_time && this.hearing.scheduled_duration && this.hearing.court_id) {
+    if (this.hearing && this.hearing.scheduled_date_time && this.hearing.scheduled_duration && this.hearing.hearing_venue_id) {
       this.hasSaved = true;
     }
 
@@ -87,7 +87,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
       hearingStartTimeMinute: [startTimeMinute, [Validators.required, Validators.min(0), Validators.max(59)]],
       hearingDurationHour: [durationHour, [Validators.required, Validators.min(0), Validators.max(23)]],
       hearingDurationMinute: [durationMinute, [Validators.required, Validators.min(0), Validators.max(59)]],
-      courtAddress: [this.hearing.court_id, [Validators.required, Validators.min(1)]],
+      courtAddress: [this.hearing.hearing_venue_id, [Validators.required, Validators.min(1)]],
       courtRoom: [room],
     });
   }
@@ -166,7 +166,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
   }
 
   saveScheduleAndLocation() {
-    if (this.schedulingForm.valid) {
+    if (this.schedulingForm.valid && !this.hearingDateInvalid) {
       this.failedSubmission = false;
       this.updateHearingRequest();
       this.schedulingForm.markAsPristine();
@@ -182,7 +182,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
   }
 
   private updateHearingRequest() {
-    this.hearing.court_id = this.schedulingForm.value.courtAddress;
+    this.hearing.hearing_venue_id = this.schedulingForm.value.courtAddress;
     this.hearing.court_room = this.schedulingForm.value.courtRoom;
     const hearingDate = new Date(this.schedulingForm.value.hearingDate);
 
@@ -195,7 +195,6 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     let hearingDuration = (parseInt(this.schedulingForm.value.hearingDurationHour, 10) * 60);
     hearingDuration += parseInt(this.schedulingForm.value.hearingDurationMinute, 10);
     this.hearing.scheduled_duration = hearingDuration;
-    console.log('DURATION ' + this.hearing.scheduled_duration);
     this.hearingService.updateHearingRequest(this.hearing);
   }
 

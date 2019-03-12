@@ -39,3 +39,7 @@ background-color: #ffffff !important;
 .vh-top{
     margin-top: 15px;
 }
+
+.vh-inline{
+  display:inline-block;
+}

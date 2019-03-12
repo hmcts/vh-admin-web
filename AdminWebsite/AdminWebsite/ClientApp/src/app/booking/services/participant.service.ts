@@ -35,50 +35,10 @@ export class ParticipantService {
     return existParticipant;
   }
 
-  public getAllParticipants(hearing: HearingModel): ParticipantModel[] {
-    let participants: ParticipantModel[] = [];
-    hearing.feeds.forEach(x => {
-      if (x.participants && x.participants.length >= 1) {
-        participants = participants.concat(x.participants);
-      }
-    });
-    return participants;
-  }
-
-  public removeParticipant(participants: ParticipantModel[], hearing: HearingModel, email: string) {
-    const indexOfParticipant = participants.findIndex(x => x.email.toLowerCase() === email.toLowerCase());
+  public removeParticipant(hearing: HearingModel, email: string) {
+    const indexOfParticipant = hearing.participants.findIndex(x => x.email.toLowerCase() === email.toLowerCase());
     if (indexOfParticipant > -1) {
-      participants.splice(indexOfParticipant, 1);
+      hearing.participants.splice(indexOfParticipant, 1);
     }
-    this.removeFromFeed(hearing, email);
-  }
-
-  private removeFromFeed(hearing: HearingModel, email: string) {
-    const indexOfParticipant = hearing.feeds.findIndex(x =>
-      x.participants.filter(y => y.email.toLowerCase() === email.toLowerCase()).length > 0);
-    if (indexOfParticipant > -1) {
-      hearing.feeds.splice(indexOfParticipant, 1);
-    }
-  }
-
-  public addToFeed(newParticipant: ParticipantModel, hearing: HearingModel) {
-    let participantFeed = this.getExistingFeedWith(newParticipant.email, hearing);
-    if (participantFeed) {
-      participantFeed.participants = [];
-      participantFeed.location = newParticipant.email;
-    } else {
-      participantFeed = new FeedModel(newParticipant.email);
-      if (hearing.feeds) {
-        hearing.feeds.push(participantFeed);
-      }
-    }
-    participantFeed.participants.push(newParticipant);
-
-  }
-
-  private getExistingFeedWith(email: string, hearing: HearingModel): FeedModel {
-    return hearing.feeds ?
-      hearing.feeds.find(x => x.participants.filter(y => y.email.toLowerCase() === email.toLowerCase()).length > 0)
-      : null;
   }
 }

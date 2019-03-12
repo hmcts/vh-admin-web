@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import {
-  HearingTypeResponse, BHClient, BookNewHearingRequest, HearingDetailsResponse, CaseRoleResponse, CaseRequest, ParticipantRequest
+  HearingTypeResponse, BHClient, BookNewHearingRequest,
+  HearingDetailsResponse, CaseAndHearingRolesResponse, CaseRequest, ParticipantRequest
 } from './clients/api-client';
 import { HearingModel } from '../common/model/hearing.model';
 import { CaseRequestModel } from '../common/model/case-request.model';
@@ -57,8 +58,8 @@ export class VideoHearingsService {
     sessionStorage.setItem(this.newRequestKey, localRequest);
   }
 
-  getParticipantRoles(): Observable<CaseRoleResponse[]> {
-    return this.bhClient.getParticipantRoles();
+  getParticipantRoles(caseTypeName: string): Observable<CaseAndHearingRolesResponse[]> {
+    return this.bhClient.getParticipantRoles(caseTypeName);
   }
 
   cancelRequest() {
@@ -75,23 +76,25 @@ export class VideoHearingsService {
     // throw new Error('Mapping of hearing request not implemented yet.');
     let newHearingRequest = new BookNewHearingRequest();
 
-    // case
-    let cases = this.mapCases(newRequest);
-
-    newHearingRequest.case_type_name = newRequest.case_type_name;
+    // cases
+    newHearingRequest.cases = this.mapCases(newRequest);
+    console.log(newHearingRequest.cases);
+    newHearingRequest.case_type_name = newRequest.case_type;
     newHearingRequest.hearing_type_name = newRequest.hearing_type_name;
+
     // schedule
-    newHearingRequest.scheduled_date_time = newRequest.scheduled_date_time;
+    newHearingRequest.scheduled_date_time = new Date(newRequest.scheduled_date_time);
     newHearingRequest.scheduled_duration = newRequest.scheduled_duration;
     newHearingRequest.hearing_venue_name = newRequest.court_name;
     newHearingRequest.hearing_room_name = newRequest.court_room;
 
     // participants
-    let participants = this.mapParticipants(newRequest);
-
+    newHearingRequest.participants = this.mapParticipants(newRequest);
+    console.log(newHearingRequest.participants);
     // other information
     newHearingRequest.other_information = newRequest.other_information;
 
+    console.log(newHearingRequest);
     return newHearingRequest;
   }
 
@@ -125,6 +128,7 @@ export class VideoHearingsService {
       participant.representee = p.representee;
       participant.solicitors_reference = p.solicitorsReference;
 
+      console.log(participant);
       participants.push(participant);
     });
     return participants;

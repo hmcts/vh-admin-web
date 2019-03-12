@@ -24,7 +24,7 @@ function initExistingHearingRequest(): HearingModel {
 
   const existingRequest = new HearingModel();
   existingRequest.hearing_type_id = 2;
-  existingRequest.court_id = 1,
+  existingRequest.hearing_venue_id = 1,
   existingRequest.scheduled_date_time = today;
   existingRequest.scheduled_duration = 80;
   return existingRequest;
@@ -95,7 +95,7 @@ describe('HearingScheduleComponent first visit', () => {
     expect(component.hearingStartTimeMinute.value).toBeNull();
     expect(component.hearingDurationHour.value).toBeNull();
     expect(component.hearingDurationMinute.value).toBeNull();
-    expect(component.courtAddress.value).toBe(-1);
+    expect(component.courtAddress.value).toBeNull();
   });
 
   it('should fail validation when form empty', () => {
@@ -239,7 +239,7 @@ describe('HearingScheduleComponent returning to page', () => {
     expect(component.hearingStartTimeMinute.value).toBe(expectedStartMinute);
     expect(component.hearingDurationHour.value).toBe(expectedDurationHour);
     expect(component.hearingDurationMinute.value).toBe(expectedDurationMinute);
-    expect(component.courtAddress.value).toBe(existingRequest.court_id);
+    expect(component.courtAddress.value).toBe(existingRequest.hearing_venue_id);
   });
 
 });

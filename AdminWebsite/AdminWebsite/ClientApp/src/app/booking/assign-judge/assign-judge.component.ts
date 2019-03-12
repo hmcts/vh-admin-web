@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { CanDeactiveComponent } from 'src/app/common/guards/changes.guard';
 import { ParticipantDetailsResponse } from '../../services/clients/api-client';
-import { FeedModel, HearingModel } from '../../common/model/hearing.model';
+import { HearingModel } from '../../common/model/hearing.model';
 import { ParticipantModel } from '../../common/model/participant.model';
 
 import { VideoHearingsService } from 'src/app/services/video-hearings.service';
@@ -30,7 +30,6 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
   canNavigate = true;
 
   constants = Constants;
-  participants: ParticipantModel[] = [];
   availableJudges: ParticipantDetailsResponse[];
   isJudgeSelected = true;
 
@@ -59,9 +58,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     const find_judge = this.hearing.participants.find(x => x.is_judge === true);
 
     if (!find_judge) {
-      this.judge = new ParticipantDetailsResponse({
-        id: null
-      });
+      this.judge = new ParticipantDetailsResponse({ id: null });
     } else {
       this.judge = this.mapJudge(find_judge);
     }
@@ -73,8 +70,6 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
       this.addJudge(judgeUserId);
       this.isJudgeSelected = judgeUserId !== null;
     });
-
-    this.participants = this.getAllParticipants();
   }
 
   mapJudge(judge: ParticipantModel): ParticipantDetailsResponse {
@@ -122,6 +117,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     this.judge.id = selectedJudge.id;
 
     const newJudge = this.mapJudgeToModel(this.judge);
+
     const indexOfJudge = this.hearing.participants.findIndex(x => x.is_judge === true);
     if (indexOfJudge > -1) {
       this.hearing.participants.splice(indexOfJudge, 1);
@@ -177,20 +173,6 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
 
   goToDiv(fragment: string): void {
     window.document.getElementById(fragment).parentElement.parentElement.scrollIntoView();
-  }
-
-  private getAllParticipants(): ParticipantModel[] {
-    let participants: ParticipantModel[] = [];
-    this.hearing.feeds.forEach(x => {
-      if (x.participants && x.participants.length >= 1) {
-        participants = participants.concat(x.participants);
-      }
-    });
-    return participants;
-  }
-
-  private getExistingFeedWithJudge(): FeedModel {
-    return this.hearing.feeds.find(x => x.participants.filter(y => y.role === 'Judge').length > 0);
   }
 
   private loadJudges() {
