@@ -1191,6 +1191,8 @@ export class BookNewHearingRequest implements IBookNewHearingRequest {
     hearing_type_name?: string | undefined;
     cases?: CaseRequest[] | undefined;
     participants?: ParticipantRequest[] | undefined;
+    other_information?: string | undefined;
+    hearing_room_name?: string | undefined;
 
     constructor(data?: IBookNewHearingRequest) {
         if (data) {
@@ -1218,6 +1220,8 @@ export class BookNewHearingRequest implements IBookNewHearingRequest {
                 for (let item of data["participants"])
                     this.participants!.push(ParticipantRequest.fromJS(item));
             }
+            this.other_information = data["other_information"];
+            this.hearing_room_name = data["hearing_room_name"];
         }
     }
 
@@ -1245,6 +1249,8 @@ export class BookNewHearingRequest implements IBookNewHearingRequest {
             for (let item of this.participants)
                 data["participants"].push(item.toJSON());
         }
+        data["other_information"] = this.other_information;
+        data["hearing_room_name"] = this.hearing_room_name;
         return data; 
     }
 }
@@ -1257,6 +1263,8 @@ export interface IBookNewHearingRequest {
     hearing_type_name?: string | undefined;
     cases?: CaseRequest[] | undefined;
     participants?: ParticipantRequest[] | undefined;
+    other_information?: string | undefined;
+    hearing_room_name?: string | undefined;
 }
 
 export class CaseRequest implements ICaseRequest {
@@ -1636,6 +1644,8 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
     hearing_type_name?: string | undefined;
     cases?: CaseResponse2[] | undefined;
     participants?: ParticipantResponse[] | undefined;
+    other_information?: string | undefined;
+    hearing_room_name?: string | undefined;
 
     constructor(data?: IHearingDetailsResponse) {
         if (data) {
@@ -1664,6 +1674,8 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
                 for (let item of data["participants"])
                     this.participants!.push(ParticipantResponse.fromJS(item));
             }
+            this.other_information = data["other_information"];
+            this.hearing_room_name = data["hearing_room_name"];
         }
     }
 
@@ -1692,6 +1704,8 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
             for (let item of this.participants)
                 data["participants"].push(item.toJSON());
         }
+        data["other_information"] = this.other_information;
+        data["hearing_room_name"] = this.hearing_room_name;
         return data; 
     }
 }
@@ -1705,6 +1719,8 @@ export interface IHearingDetailsResponse {
     hearing_type_name?: string | undefined;
     cases?: CaseResponse2[] | undefined;
     participants?: ParticipantResponse[] | undefined;
+    other_information?: string | undefined;
+    hearing_room_name?: string | undefined;
 }
 
 export class CaseResponse2 implements ICaseResponse2 {

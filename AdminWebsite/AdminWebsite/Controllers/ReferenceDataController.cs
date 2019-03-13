@@ -58,7 +58,7 @@ namespace AdminWebsite.Controllers
         /// <returns>List of valid participant roles</returns>
         [HttpGet("participantroles", Name = "GetParticipantRoles")]
         [ProducesResponseType(typeof(IList<CaseAndHearingRolesResponse>), (int) HttpStatusCode.OK)]
-        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<ActionResult<IList<CaseAndHearingRolesResponse>>> GetParticipantRoles(string caseTypeName)
         {
             var response = new List<CaseAndHearingRolesResponse>();

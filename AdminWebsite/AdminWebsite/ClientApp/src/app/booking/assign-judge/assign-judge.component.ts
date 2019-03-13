@@ -97,6 +97,9 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     newParticipant.is_judge = true;
     newParticipant.phone = judge.phone;
     newParticipant.id = judge.id;
+    newParticipant.username = judge.email;
+    newParticipant.case_role_name = '5';
+    newParticipant.hearing_role_name = '5';
     return newParticipant;
   }
 
@@ -112,7 +115,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     this.judge.last_name = selectedJudge.last_name;
     this.judge.email = selectedJudge.email;
     this.judge.display_name = selectedJudge.display_name;
-    this.judge.title = '';
+    this.judge.title = 'mr.';
     this.judge.role = 'Judge';
     this.judge.id = selectedJudge.id;
 

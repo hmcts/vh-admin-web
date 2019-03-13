@@ -27,6 +27,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
   availableHearingTypes: HearingTypeResponse[];
   availableCaseTypes: string[];
   selectedCaseType: string;
+  selectedHearingType: string;
   filteredHearingTypes: HearingTypeResponse[];
   hasSaved: boolean;
 
@@ -47,6 +48,13 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
     this.initForm();
     this.retrieveHearingTypes();
     this.onChanged();
+
+    this.hearingType.valueChanges.subscribe(val => {
+      const id = val;
+      if (id !== null) {
+        this.selectedHearingType = this.availableHearingTypes.find(h => h.id === id).name;
+      }
+    });
   }
 
   onChanged() {
@@ -144,12 +152,15 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
   }
 
   private updateHearingRequest() {
-    this.hearing.hearing_type_id = this.hearingForm.value.hearingType;
     this.hearing.case_type = this.selectedCaseType;
     const hearingCase = new CaseModel();
     hearingCase.name = this.hearingForm.value.caseName;
     hearingCase.number = this.hearingForm.value.caseNumber;
     this.hearing.cases[0] = hearingCase;
+    this.hearing.case_type_id = this.hearingForm.value.caseType;
+    this.hearing.hearing_type_id = this.hearingForm.value.hearingType;
+    this.hearing.hearing_type_name = this.selectedHearingType;
+    console.log(this.hearing.hearing_type_name);
     this.hearingService.updateHearingRequest(this.hearing);
   }
 
