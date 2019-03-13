@@ -27,5 +27,7 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public void AddParticipantButton() => ClickElement(_addParticipantButton);
         public void Party() => SelectOption(CommonLocator.List("party"));
         public void Role() => SelectOption(CommonLocator.List("role"));
+        public string GetSelectedParty() => SelectLastItem(CommonLocator.List("party"));
+        public string GetSelectedRole() => SelectLastItem(CommonLocator.List("role"));
     }
 }
