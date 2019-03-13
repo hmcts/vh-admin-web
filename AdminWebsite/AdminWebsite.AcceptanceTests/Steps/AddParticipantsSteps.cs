@@ -71,7 +71,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             _addParticipant.AddParticipantButton();
         }
-        [When(@"paticipant detail is updated")]
+        [When(@"participant detail is updated")]
         public void WhenPaticipantDetailIsUpdated()
         {
             AddParticipantsPage();

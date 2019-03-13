@@ -98,7 +98,6 @@ namespace AdminWebsite.AcceptanceTests.Steps
                 case PageUri.HearingDetailsPage:
                     _summary.CaseName().Should().NotBe(TestData.HearingDetails.CaseName);
                     _summary.CaseNumber().Should().NotBe(TestData.HearingDetails.CaseNumber);
-                    _summary.CaseHearingType().Should().NotBe(TestData.HearingDetails.CaseHearingType);
                     break;
             }
         }

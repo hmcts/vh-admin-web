@@ -64,7 +64,7 @@ Scenario: Case Admin updates particpant details
 	And Case Admin logs into Vh-Admin website 
 	And user is on Summary page
 	When user navigates to add participants page to make changes
-	And paticipant detail is updated  
+	And participant detail is updated 
 	And user proceeds to summary page 
 	Then inputted values should be displayed as expected on summary page
 

@@ -231,10 +231,12 @@ this.ScenarioInitialize(scenarioInfo);
         [NUnit.Framework.TestAttribute()]
         [NUnit.Framework.DescriptionAttribute("Case Admin updates particpant details")]
         [NUnit.Framework.CategoryAttribute("smoketest")]
+        [NUnit.Framework.CategoryAttribute("#001WIP")]
         public virtual void CaseAdminUpdatesParticpantDetails()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Case Admin updates particpant details", null, new string[] {
-                        "smoketest"});
+                        "smoketest",
+                        "#001WIP"});
 #line 62
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
@@ -247,7 +249,7 @@ this.ScenarioInitialize(scenarioInfo);
 #line 66
  testRunner.When("user navigates to add participants page to make changes", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 67
- testRunner.And("paticipant detail is updated", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("participant detail is updated", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 68
  testRunner.And("user proceeds to summary page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 69

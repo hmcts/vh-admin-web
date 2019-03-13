@@ -17,14 +17,6 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _hearingDetails = hearingDetails;
             _scenarioContext = injectedContext;
         }
-        
-        //public void WhenHearingDetailsFormIsFilled(string number, string name)
-        //{            
-        //    HearingDetailsPage();
-        //    InputCaseNumber(number);
-        //    SelectHearingType();
-        //    InputCaseName(name);
-        //}
         [When(@"hearing details form is filled")]
         public void WhenHearingDetailsFormIsFilled()
         {
