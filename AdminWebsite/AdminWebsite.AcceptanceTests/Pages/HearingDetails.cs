@@ -12,8 +12,8 @@ namespace AdminWebsite.AcceptanceTests.Pages
         }
         private By _caseNumber => By.Id("caseNumber");
         private By _caseName => By.Id("caseName");
-        public void CaseNumber(string value) => InputValues(_caseNumber, value);
-        public void CaseName(string value) => InputValues(_caseName, value);
+        public void CaseNumber(string value) => ClearFieldInputValues(_caseNumber, value);
+        public void CaseName(string value) => ClearFieldInputValues(_caseName, value);
         public void CaseTypes() => SelectOption(CommonLocator.List("caseType"));
         public void HearingType() => SelectOption(CommonLocator.List("hearingType"));
         public IEnumerable<IWebElement> CaseTypesList() => GetListOfElements(CommonLocator.List("caseType")); 
