@@ -2,6 +2,7 @@
 using AdminWebsite.AcceptanceTests.Pages;
 using FluentAssertions;
 using System;
+using System.Linq;
 using TechTalk.SpecFlow;
 
 namespace AdminWebsite.AcceptanceTests.Steps
@@ -54,7 +55,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _hearingSchedule.HearingVenue();
         }
         [When(@"Enter room text as (.*)")]
-        public void EnterRoom(string room = TestData.HearingSchedule.Room)
+        public void EnterRoom(string room = "")
         {
             _hearingSchedule.HearingRoom(room);
         }
@@ -80,6 +81,19 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void ThenAnErrorMessageShouldBeDisplayedAsPleaseEnterADateInTheFuture(string errormessage)
         {
             _hearingSchedule.ErrorDate().Should().Be(errormessage);
+        }
+        [When(@"hearing schedule is updated")]
+        public void WhenHearingScheduleIsUpdated()
+        {
+            HearingSchedulePage();
+            var date = DateTime.Now.AddDays(2);
+            string[] splitDate = date.ToString("dd/MM/yyyy").Split('/');
+            _hearingSchedule.AddItems<string>("HearingDate", date.ToString("dddd dd MMMM yyyy , HH:mm"));
+            _hearingSchedule.HearingDate(splitDate);
+            _hearingSchedule.HearingStartTime(date.ToString("HH:mm").Split(':'));
+            InputHearingDuration(TestData.HearingSchedule.Duration);
+            _hearingSchedule.HearingVenue(TestData.HearingSchedule.CourtAddress.ToList().Last());
+            EnterRoom(TestData.HearingSchedule.Room);
         }
     }
 }

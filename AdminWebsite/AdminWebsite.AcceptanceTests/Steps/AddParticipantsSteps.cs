@@ -17,9 +17,8 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void ProfessionalParticipantIsAddedToHearing()
         {
             AddParticipantsPage();
-            SelectParty();
-            SelectRole();
             InputEmailAddress();
+            SelectRole();
             SelectTitle();
             InputFirstname();
             InputLastname();
@@ -38,9 +37,9 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _addParticipant.ParticipantEmail(email);
         }
         [When(@"select a role")]
-        public void SelectRole()
+        public void SelectRole(string role = "Professional")
         {
-            _addParticipant.Role();
+            _addParticipant.Role(role);
         }
         [When(@"select a title")]
         public void SelectTitle()
@@ -72,10 +71,16 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             _addParticipant.AddParticipantButton();
         }
-        [When(@"select a party")]
-        public void SelectParty()
+        [When(@"participant detail is updated")]
+        public void WhenPaticipantDetailIsUpdated()
         {
-            _addParticipant.Party();
+            AddParticipantsPage();
+            InputEmailAddress(TestData.AddParticipants.Email);
+            _addParticipant.AddItems<string>("Title", _addParticipant.GetSelectedTitle());
+            InputFirstname(TestData.AddParticipants.Firstname);
+            InputLastname(TestData.AddParticipants.Lastname);
+            InputTelephone(TestData.AddParticipants.Telephone);
+            InputDisplayname(TestData.AddParticipants.DisplayName);
         }
     }
 }
