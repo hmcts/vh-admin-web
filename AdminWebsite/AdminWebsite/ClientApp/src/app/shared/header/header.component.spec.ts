@@ -40,7 +40,7 @@ describe('HeaderComponent', () => {
   it('selected top menu item has active property set to true, others item active set to false', () => {
     component.topMenuItems = [];
     component.ngOnInit();
-    component.selectMenuItem(0);
+    component.navigateToSelectedMenuItem(0);
     expect(component.topMenuItems[0].active).toBeTruthy();
     if (component.topMenuItems.length > 1) {
       for (const item of component.topMenuItems.slice(1)) {
@@ -48,9 +48,9 @@ describe('HeaderComponent', () => {
       }
     }
   });
-  it('user should navigate by selecting top meny item', () => {
+  it('user should navigate by selecting top menu item', () => {
     component.ngOnInit();
-    component.selectMenuItem(0);
+    component.navigateToSelectedMenuItem(0);
     expect(router.navigate).toHaveBeenCalledWith([component.topMenuItems[0].url]);
   });
 });

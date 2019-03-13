@@ -7,13 +7,11 @@ import { WindowRef } from './security/window-ref';
 import { HeaderComponent } from './shared/header/header.component';
 import { VideoHearingsService } from './services/video-hearings.service';
 
-
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-
 export class AppComponent implements OnInit {
 
   private config = {
@@ -27,9 +25,11 @@ export class AppComponent implements OnInit {
   headerComponent: HeaderComponent;
 
   showSignOutConfirmation = false;
-
+  showSaveConfirmation = false;
   title = 'Book hearing';
   loggedIn: boolean;
+  menuItemIndex: number;
+
   constructor(private adalSvc: AdalService,
     private configService: ConfigService,
     private router: Router,
@@ -57,6 +57,7 @@ export class AppComponent implements OnInit {
     }
     if (this.headerComponent) {
       this.headerComponent.confirmLogout.subscribe(() => { this.showConfirmation(); });
+      this.headerComponent.confirmSaveBooking.subscribe((menuItemIndex) => { this.showConfirmationSaveBooking(menuItemIndex); });
     }
   }
 
@@ -68,14 +69,30 @@ export class AppComponent implements OnInit {
     }
   }
 
+  showConfirmationSaveBooking(menuItemIndex) {
+    this.menuItemIndex = menuItemIndex;
+    if (this.videoHearingsService.hasUnsavedChanges()) {
+      this.showSaveConfirmation = true;
+    } else {
+      this.headerComponent.navigateToSelectedMenuItem(menuItemIndex);
+    }
+  }
+
   handleContinue() {
     this.showSignOutConfirmation = false;
+    this.showSaveConfirmation = false;
   }
 
   handleSignOut() {
     this.showSignOutConfirmation = false;
     this.videoHearingsService.cancelRequest();
     this.router.navigate(['/logout']);
+  }
+
+  handleNavigate() {
+    this.showSaveConfirmation = false;
+    this.videoHearingsService.cancelRequest();
+    this.headerComponent.navigateToSelectedMenuItem(this.menuItemIndex);
   }
 
   @HostListener('window:beforeunload', ['$event'])
