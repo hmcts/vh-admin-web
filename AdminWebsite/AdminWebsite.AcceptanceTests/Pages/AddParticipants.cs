@@ -16,7 +16,6 @@ namespace AdminWebsite.AcceptanceTests.Pages
         private By _addParticipantButton => By.Id("addParticipantBtn");
         private By _companyName => By.Id("companyName");
 
-        public void Role(string option) => SelectOption(CommonLocator.List("role"), option);
         public void Title() => SelectOption(CommonLocator.List("title"));
         public string GetSelectedTitle() => SelectLastItem(CommonLocator.List("title"));
         public void ParticipantEmail(string email) => ClearFieldInputValues(_participantEmail, email);
