@@ -34,6 +34,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _summarySteps = summarySteps;
             _bookingsListSteps = bookingsListSteps;
         }
+        [When(@"user proceeds to summary page")]
         [When(@"user proceeds to next page")]
         [When(@"next button is clicked")]
         public void WhenNextButtonIsClicked()
@@ -132,5 +133,11 @@ namespace AdminWebsite.AcceptanceTests.Steps
                     break;
             }
         }
+        [When(@"user cancels the update")]
+        public void ClickCancelButton()
+        {
+            _common.CancelButton();
+        }
+
     }
 }

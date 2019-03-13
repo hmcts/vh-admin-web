@@ -17,6 +17,14 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _hearingDetails = hearingDetails;
             _scenarioContext = injectedContext;
         }
+        
+        //public void WhenHearingDetailsFormIsFilled(string number, string name)
+        //{            
+        //    HearingDetailsPage();
+        //    InputCaseNumber(number);
+        //    SelectHearingType();
+        //    InputCaseName(name);
+        //}
         [When(@"hearing details form is filled")]
         public void WhenHearingDetailsFormIsFilled()
         {
@@ -63,6 +71,14 @@ namespace AdminWebsite.AcceptanceTests.Steps
                     _hearingDetails.CaseTypesList().Should().BeEmpty();
                     break;
             }
-        }        
+        }
+        [When(@"hearing booking detail is updated")]
+        public void WhenHearingBookingDetailIsUpdated()
+        {
+            HearingDetailsPage();
+            InputCaseNumber(TestData.HearingDetails.CaseNumber);
+            SelectHearingType();
+            InputCaseName(TestData.HearingDetails.CaseName);            
+        }
     }
 }
