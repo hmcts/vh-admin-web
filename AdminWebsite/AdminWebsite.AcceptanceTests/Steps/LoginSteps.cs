@@ -53,5 +53,10 @@ namespace AdminWebsite.AcceptanceTests.Steps
             }
             _scenarioContext.Add("User", user);
         }
+        [Then(@"user should be navigated to sign in screen")]
+        public void ThenUserShouldBeNavigatedToSignInScreen()
+        {
+            _loginPage.SignInTitle();
+        }
     }
 }

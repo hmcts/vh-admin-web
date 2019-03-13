@@ -18,6 +18,7 @@ namespace AdminWebsite.AcceptanceTests.Pages
         private By _breadcrumbs => By.XPath("//li[@class='vh-breadcrumbs']/a");
         private By _nextButton => By.Id(("nextButton"));
         private By _cancelButton => By.Id(("cancelButton"));
+        private By _primaryNavItems => By.XPath("//*[@class='vh-primary-navigation__link']");
 
         protected IEnumerable<IWebElement> GetListOfElements(By elements)
         {
@@ -45,13 +46,19 @@ namespace AdminWebsite.AcceptanceTests.Pages
             return breadcrumbAttribute;
         }
 
-        protected void ClickElement(By element) => _browserContext.NgDriver.WaitUntilElementVisible(element).Click();
         protected void InputValues(By element, string value) => _browserContext.NgDriver.WaitUntilElementVisible(element).SendKeys(value);
+        protected void ClickElement(By element) => _browserContext.NgDriver.WaitUntilElementVisible(element).Click();
+        protected void ClearFieldInputValues(By element, string value)
+        {
+            var webElement = _browserContext.NgDriver.WaitUntilElementVisible(element);
+            webElement.Clear();
+            webElement.SendKeys(value);
+        }
         public void NextButton()
         {
             _browserContext.Retry(() => _browserContext.NgDriver.WaitUntilElementClickable(_nextButton).Click());
         }
-        public void CancelButton() => _browserContext.NgDriver.WaitUntilElementClickable(_nextButton).Click();
+        public void CancelButton() => _browserContext.NgDriver.WaitUntilElementClickable(_cancelButton).Click();
         public string GetElementText(By element) => _browserContext.NgDriver.WaitUntilElementVisible(element).Text;
 
         protected void SelectOption(By elements, string option)
@@ -70,6 +77,14 @@ namespace AdminWebsite.AcceptanceTests.Pages
             _browserContext.Retry(() => getListOfElements.ToArray().Count().Should().BeGreaterThan(0, "List is not populated"));
             _browserContext.NgDriver.WaitUntilElementClickable(getListOfElements.ToArray().First()).Click();
         }
+        protected string SelectLastItem(By elements)
+        {
+            var getListOfElements = GetListOfElements(elements);
+            _browserContext.Retry(() => getListOfElements.ToArray().Count().Should().BeGreaterThan(0, "List is not populated"));
+            var lastItem = _browserContext.NgDriver.WaitUntilElementClickable(getListOfElements.ToArray().Last());
+            lastItem.Click();
+            return lastItem.Text.Trim();
+        }
 
         public void PageUrl(string url)
         {
@@ -77,5 +92,10 @@ namespace AdminWebsite.AcceptanceTests.Pages
         }
 
         public void ClickBreadcrumb(string breadcrumb) => SelectOption(_breadcrumbs, breadcrumb);
+        public void AcceptBrowserAlert() => _browserContext.AcceptAlert();
+        public void DashBoard() => SelectOption(_primaryNavItems, "Dashboard");
+        public void BookingsList() => SelectOption(_primaryNavItems, "Bookings list");
+        public void AddItems<T>(string key, T value) => _browserContext.Items.AddOrUpdate(key, value);
+        public dynamic GetItems(string key) => _browserContext.Items.Get(key);
     }
 }

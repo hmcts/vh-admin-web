@@ -16,10 +16,12 @@ Examples:
 | Case Admin                |
 | VhOfficerCivilMoneyclaims |
 
-@VIH-2619
-Scenario: User must not be able to select past date from the calendar
+@VIH-2619 @Bug-VIH-4126
+Scenario: User to proceed until a valid date is entered
 	Given Admin user is on microsoft login page
 	And Case Admin logs into Vh-Admin website 
 	And user is on hearing schedule page
 	When user selects a date in the past from the calendar
+	And user proceeds to next page
 	Then an error message should be displayed as Please enter a date in the future
+	And user should remain on hearing schedule page 

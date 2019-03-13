@@ -10,7 +10,7 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public OtherInformation(BrowserContext browserContext) : base(browserContext)
         {
         }
-        public void AddOtherInformation(string information) => InputValues(_otherInformation, information);
+        public void AddOtherInformation(string information) => ClearFieldInputValues(_otherInformation, information);
         public string GetOtherInformationHeading() => GetElementText(_otherInformationText);
     }
 }

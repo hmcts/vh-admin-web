@@ -34,7 +34,9 @@ export class AppComponent implements OnInit {
     private configService: ConfigService,
     private router: Router,
     private window: WindowRef,
+
     pageTracker: PageTrackerService, private videoHearingsService: VideoHearingsService ) {
+
     this.config.tenant = this.configService.clientSettings.tenant_id;
     this.config.clientId = this.configService.clientSettings.client_id;
     this.config.redirectUri = this.configService.clientSettings.redirect_uri;
@@ -79,7 +81,7 @@ export class AppComponent implements OnInit {
   @HostListener('window:beforeunload', ['$event'])
   public beforeunloadHandler($event: any) {
     if (this.videoHearingsService.hasUnsavedChanges()) {
-       // show default confirmation pop up of browser to leave page.
+      // show default confirmation pop up of browser to leave page.
       $event.preventDefault();
       // return value should not be empty to show browser leave pop up
       $event.returnValue = 'save';
