@@ -105,7 +105,8 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
       .subscribe(
         (data: HearingTypeResponse[]) => {
           const selectedHearingType = data.filter(h => h.id === hearing_type_id);
-          this.caseHearingType = selectedHearingType[0].name;
+          this.caseHearingType = selectedHearingType ? selectedHearingType[0].name : '';
+          this.hearing.hearing_type_name = this.caseHearingType;
         },
         error => console.error(error)
       );
@@ -117,6 +118,7 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
         (data: HearingVenueResponse[]) => {
           const selectedCourt = data.filter(c => c.id === venueId);
           this.courtRoomAddress = `${selectedCourt[0].name} ${this.hearing.court_room}`;
+          this.hearing.court_name = selectedCourt ? selectedCourt[0].name : '';
         },
         error => console.error(error)
       );
@@ -148,12 +150,10 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
     this.bookingsSaving = true;
     this.showWaitSaving = true;
     this.showErrorSaving = false;
-    sessionStorage.setItem(this.newHearingSessionKey, '52B8A9E6-9EAF-4990-923A-263930BE140');
     this.hearingService.saveHearing(this.hearing)
       .subscribe(
-        (data: number) => {
-          sessionStorage.setItem(this.newHearingSessionKey, '52B8A9E6-9EAF-4990-923A-263930BE140');
-          // this.hearingService.cancelRequest();
+        (data: string) => {
+          this.hearingService.cancelRequest();
           this.showWaitSaving = false;
           this.router.navigate([PageUrls.BookingConfirmation]);
         },
@@ -163,10 +163,6 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
           this.errors = error;
         }
       );
-/*     if (this.errors) {
-      this.showWaitSaving = false;
-      this.showErrorSaving = true;
-    } */
   }
 
   cancel(): void {

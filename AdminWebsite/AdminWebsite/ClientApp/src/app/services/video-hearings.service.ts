@@ -66,7 +66,8 @@ export class VideoHearingsService {
     sessionStorage.removeItem(this.bookingHasChangesKey);
   }
 
-  saveHearing(newRequest: HearingModel): Observable<number> {
+  saveHearing(newRequest: HearingModel): Observable<string> {
+    debugger;
     const hearingRequest = this.mapHearing(newRequest);
     return this.bhClient.bookNewHearing(hearingRequest);
   }

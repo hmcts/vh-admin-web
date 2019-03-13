@@ -399,7 +399,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
   removeParticipant() {
     // check if participant details were populated, if yes then clean form.
-    if (this.searchEmail.email === this.selectedParticipantEmail) {
+    if (this.searchEmail && this.searchEmail.email === this.selectedParticipantEmail) {
       this.clearForm();
     }
     this.participantService.removeParticipant(this.hearing, this.selectedParticipantEmail);

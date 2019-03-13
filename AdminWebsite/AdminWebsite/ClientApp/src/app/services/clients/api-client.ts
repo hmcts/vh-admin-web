@@ -236,7 +236,7 @@ export class BHClient {
      * @param hearingRequest (optional) Hearing Request object
      * @return Success
      */
-    bookNewHearing(hearingRequest: BookNewHearingRequest | null | undefined): Observable<number> {
+    bookNewHearing(hearingRequest: BookNewHearingRequest | null | undefined): Observable<string> {
         let url_ = this.baseUrl + "/api/hearings";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -259,14 +259,14 @@ export class BHClient {
                 try {
                     return this.processBookNewHearing(<any>response_);
                 } catch (e) {
-                    return <Observable<number>><any>_observableThrow(e);
+                    return <Observable<string>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<number>><any>_observableThrow(response_);
+                return <Observable<string>><any>_observableThrow(response_);
         }));
     }
 
-    protected processBookNewHearing(response: HttpResponseBase): Observable<number> {
+    protected processBookNewHearing(response: HttpResponseBase): Observable<string> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -296,7 +296,7 @@ export class BHClient {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<number>(<any>null);
+        return _observableOf<string>(<any>null);
     }
 
     /**
@@ -441,8 +441,8 @@ export class BHClient {
     }
 
     /**
-     * Get available participant roles.
-     * @param caseTypeName (optional) The hearing case type.
+     * Get available participant roles
+     * @param caseTypeName (optional) 
      * @return Success
      */
     getParticipantRoles(caseTypeName: string | null | undefined): Observable<CaseAndHearingRolesResponse[]> {

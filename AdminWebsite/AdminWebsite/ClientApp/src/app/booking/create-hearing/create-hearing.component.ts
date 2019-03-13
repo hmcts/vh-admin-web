@@ -52,7 +52,8 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
     this.hearingType.valueChanges.subscribe(val => {
       const id = val;
       if (id !== null) {
-        this.selectedHearingType = this.availableHearingTypes.find(h => h.id === id).name;
+        const avaliableType = this.availableHearingTypes.find(h => h.id === id);
+        this.selectedHearingType = avaliableType ? avaliableType.name : '';
       }
     });
   }
