@@ -82,6 +82,8 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void WhenPaticipantDetailIsUpdated()
         {
             AddParticipantsPage();
+            SelectParty();
+            SelectRole();
             InputEmailAddress(TestData.AddParticipants.Email);
             _addParticipant.AddItems<string>("Title", _addParticipant.GetSelectedTitle());
             InputFirstname(TestData.AddParticipants.Firstname);
