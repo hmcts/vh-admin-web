@@ -28,6 +28,7 @@ export class ParticipantsListComponent implements OnInit {
     this.isSummaryPage = this.router.url.includes('summary');
     this.isEditRemoveVisible = !this.router.url.includes('assign-judge');
   }
+
   editJudge() {
     this.bookingService.setEditMode();
   }
