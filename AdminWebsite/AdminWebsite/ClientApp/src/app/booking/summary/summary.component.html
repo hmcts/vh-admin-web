@@ -1,8 +1,8 @@
 <app-breadcrumb [canNavigate]="canNavigate"></app-breadcrumb>
 <div class="govuk-grid-row">
-    <div class="govuk-grid-column-one-half">
-        <h1 class="govuk-heading-l">{{ constants.BookHearingTitle }}</h1>
-    </div>
+  <div class="govuk-grid-column-one-half">
+    <h1 class="govuk-heading-l">{{ constants.BookHearingTitle }}</h1>
+  </div>
 </div>
 
 <div class="govuk-grid-row">
@@ -11,16 +11,16 @@
     <h2 class="govuk-heading-m" id="hearingSummary">Hearing summary</h2>
     <app-booking-edit [title]="'Hearing details'" [editLink]="'book-hearing'"></app-booking-edit>
     <div class="govuk-form-group vhtable">
-      <div  id="caseNumber">{{ caseNumber }}</div>
-      <div  id="caseName">{{ caseName }}</div>
-      <div  id="caseHearingType">{{ caseHearingType }}</div>
+      <div id="caseNumber">{{ caseNumber }}</div>
+      <div id="caseName">{{ caseName }}</div>
+      <div id="caseHearingType">{{ caseHearingType }}</div>
     </div>
 
     <app-booking-edit [title]="'Hearing schedule'" [editLink]="'hearing-schedule'"></app-booking-edit>
     <div class="govuk-form-group vhtable">
-      <div  id="hearingDate">{{ hearingDate | date:"EEEE dd MMMM yyyy ',' HH:mm" }}</div>
-      <div  id="courtAddress">{{ courtRoomAddress }}</div>
-      <div  id="hearingDuration">{{ hearingDuration }}</div>
+      <div id="hearingDate">{{ hearingDate | date:"EEEE dd MMMM yyyy ',' HH:mm" }}</div>
+      <div id="courtAddress">{{ courtRoomAddress }}</div>
+      <div id="hearingDuration">{{ hearingDuration }}</div>
     </div>
 
     <app-booking-edit [title]="'Other information'" [editLink]="'other-information'"></app-booking-edit>
@@ -31,31 +31,32 @@
 
     <div class="sk-top">
       <input type="button" id="bookButton" class="govuk-button" role="button" value="Book" style="margin-right:25px;"
-             (click)="bookHearing()" alt="Book a Hearing" [disabled]="bookingsSaving" />
+        (click)="bookHearing()" alt="Book a Hearing" [disabled]="bookingsSaving" />
       <input type="button" id="cancelButton" class="govuk-button hmcts-button--secondary" role="button" value="Cancel"
-             (click)="confirmCancelBooking()" alt="Confirm cancellation of new booking and return to dashboard" />
-    </div>
-
-    <div *ngIf="saveFailed" class="alert alert-danger">
-      <span id="save-error" class="govuk-error-message">
-        Error! Save hearing unsuccessful.
-      </span>
+        (click)="confirmCancelBooking()" alt="Confirm cancellation of new booking and return to dashboard" />
     </div>
   </div>
 
-    <div class="govuk-grid-column-one-half" style="margin: 0;">
-        <app-participants-list [participants]="hearing.participants"></app-participants-list>
-    </div>
+  <div class="govuk-grid-column-one-half" style="margin: 0;">
+    <app-participants-list [participants]="hearing.participants"></app-participants-list>
+  </div>
 </div>
 
 <div *ngIf="attemptingCancellation">
-    <app-cancel-popup (continueBooking)="continueBooking($event)" (cancelBooking)="cancelBooking($event)"></app-cancel-popup>
+  <app-cancel-popup (continueBooking)="continueBooking($event)" (cancelBooking)="cancelBooking($event)">
+  </app-cancel-popup>
 </div>
 
 <div *ngIf="showConfirmationRemoveParticipant">
-  <app-remove-popup (continueRemove)="handleContinueRemove()" (cancelRemove)="handleCancelRemove()" [fullName]="removerFullName"></app-remove-popup>
+  <app-remove-popup (continueRemove)="handleContinueRemove()" (cancelRemove)="handleCancelRemove()"
+    [fullName]="removerFullName"></app-remove-popup>
 </div>
 
 <div *ngIf="showWaitSaving">
   <app-wait-popup></app-wait-popup>
+</div>
+
+<div *ngIf="showErrorSaving">
+  <app-save-failed-popup (tryAgain)="tryAgain($event)" (cancel)="cancel($event)">
+  </app-save-failed-popup>
 </div>

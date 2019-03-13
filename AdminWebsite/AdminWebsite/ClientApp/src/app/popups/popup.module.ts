@@ -23,6 +23,7 @@ import { WaitPopupComponent } from './wait-popup/wait-popup.component';
     ConfirmationPopupComponent,
     SignOutPopupComponent,
     WaitPopupComponent,
+    SaveFailedPopupComponent,
   ]
 })
 export class PopupModule { }

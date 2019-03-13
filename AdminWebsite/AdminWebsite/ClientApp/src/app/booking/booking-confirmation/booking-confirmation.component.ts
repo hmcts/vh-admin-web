@@ -15,10 +15,10 @@ import { PageUrls } from 'src/app/shared/page-url.constants';
 export class BookingConfirmationComponent implements OnInit {
 
   hearing: Observable<HearingDetailsResponse>;
-
   caseNumber: string;
   caseName: string;
   hearingDate: Date;
+  private newHearingSessionKey = 'newHearingId';
 
   constructor(
     private hearingService: VideoHearingsService,
@@ -29,11 +29,16 @@ export class BookingConfirmationComponent implements OnInit {
   }
 
   private retrieveSavedHearing() {
-    this.hearing = this.hearingService.getHearingById('52B8A9E6-9EAF-4990-923A-263930BE140C');
-    console.log(this.hearing);
-    this.caseNumber = 'Case number 01';
-    this.caseName = 'bbc vs hmrc';
-    this.hearingDate = new Date();
+    const hearingId = sessionStorage.getItem(this.newHearingSessionKey);
+    this.hearingService.getHearingById(hearingId)
+      .subscribe(
+        (data: HearingDetailsResponse) => {
+          this.caseNumber = data.cases[0].name;
+          this.caseName = data.cases[0].number;
+          this.hearingDate = new Date(data.scheduled_date_time);
+        },
+        error => console.error(error)
+      );
   }
 
   private bookAnotherHearing(): void {

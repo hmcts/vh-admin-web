@@ -5,7 +5,6 @@ import {
   HearingDetailsResponse, CaseAndHearingRolesResponse, CaseRequest, ParticipantRequest
 } from './clients/api-client';
 import { HearingModel } from '../common/model/hearing.model';
-import { CaseRequestModel } from '../common/model/case-request.model';
 
 @Injectable({
   providedIn: 'root'
@@ -73,7 +72,6 @@ export class VideoHearingsService {
   }
 
   mapHearing(newRequest: HearingModel): BookNewHearingRequest {
-    // throw new Error('Mapping of hearing request not implemented yet.');
     let newHearingRequest = new BookNewHearingRequest();
 
     // cases
@@ -91,6 +89,7 @@ export class VideoHearingsService {
     // participants
     newHearingRequest.participants = this.mapParticipants(newRequest);
     console.log(newHearingRequest.participants);
+
     // other information
     newHearingRequest.other_information = newRequest.other_information;
 
@@ -99,22 +98,23 @@ export class VideoHearingsService {
   }
 
   mapCases(newRequest: HearingModel): CaseRequest[] {
-    let cases: CaseRequest[] = [];
-    let caseRequest = new CaseRequest();
+    const cases: CaseRequest[] = [];
+    let caseRequest: CaseRequest;
     newRequest.cases.forEach(c => {
+      caseRequest = new CaseRequest();
       caseRequest.name = c.name;
       caseRequest.number = c.number;
       caseRequest.is_lead_case = false;
-
       cases.push(caseRequest);
     });
     return cases;
   }
 
   mapParticipants(newRequest: HearingModel): ParticipantRequest[] {
-    let participants: ParticipantRequest[] = [];
-    let participant = new ParticipantRequest();
+    const participants: ParticipantRequest[] = [];
+    let participant: ParticipantRequest;
     newRequest.participants.forEach(p => {
+      participant = new ParticipantRequest();
       participant.title = p.title;
       participant.first_name = p.first_name;
       participant.middle_names = p.middle_names;
@@ -127,7 +127,6 @@ export class VideoHearingsService {
       participant.hearing_role_name = p.hearing_role_name;
       participant.representee = p.representee;
       participant.solicitors_reference = p.solicitorsReference;
-
       console.log(participant);
       participants.push(participant);
     });

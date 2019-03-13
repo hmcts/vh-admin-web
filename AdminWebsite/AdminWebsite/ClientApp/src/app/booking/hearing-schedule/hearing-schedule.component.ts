@@ -28,6 +28,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
   hasSaved: boolean;
   today = new Date();
   canNavigate = true;
+  selectedCourtName: string;
 
   constructor(private refDataService: ReferenceDataService, private hearingService: VideoHearingsService,
               private fb: FormBuilder, protected router: Router,
@@ -89,6 +90,13 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
       hearingDurationMinute: [durationMinute, [Validators.required, Validators.min(0), Validators.max(59)]],
       courtAddress: [this.hearing.hearing_venue_id, [Validators.required, Validators.min(1)]],
       courtRoom: [room],
+    });
+
+    this.courtAddress.valueChanges.subscribe(val => {
+      const id = val;
+      if (id !== null) {
+        this.selectedCourtName = this.availableCourts.find(c => c.id === id).name;
+      }
     });
   }
 
@@ -184,6 +192,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
   private updateHearingRequest() {
     this.hearing.hearing_venue_id = this.schedulingForm.value.courtAddress;
     this.hearing.court_room = this.schedulingForm.value.courtRoom;
+    this.hearing.court_name = this.selectedCourtName;
     const hearingDate = new Date(this.schedulingForm.value.hearingDate);
 
     hearingDate.setHours(

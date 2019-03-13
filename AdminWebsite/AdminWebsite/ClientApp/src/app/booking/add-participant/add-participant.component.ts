@@ -355,6 +355,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     newParticipant.email = this.searchEmail.email;
     newParticipant.display_name = this.displayName.value;
     newParticipant.company = this.companyName.value;
+    newParticipant.username = this.searchEmail.email;
   }
 
   addParticipantCancel() {

@@ -1,16 +1,23 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { BookingConfirmationComponent } from './booking-confirmation.component';
+import { Router } from '@angular/router';
 
 describe('BookingConfirmationComponent', () => {
   let component: BookingConfirmationComponent;
   let fixture: ComponentFixture<BookingConfirmationComponent>;
+  let routerSpy: jasmine.SpyObj<Router>;
 
   beforeEach(async(() => {
+    routerSpy = jasmine.createSpyObj('Router', ['navigate']);
+
     TestBed.configureTestingModule({
-      declarations: [ BookingConfirmationComponent ]
+      declarations: [BookingConfirmationComponent],
+      providers: [
+        { provide: Router, useValue: routerSpy },
+      ]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
