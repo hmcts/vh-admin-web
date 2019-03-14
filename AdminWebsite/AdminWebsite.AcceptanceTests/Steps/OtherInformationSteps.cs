@@ -33,6 +33,11 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _otherInformation.GetOtherInformationHeading().Should().Be(TestData.OtherInformation.OtherInformationText);
             _otherInformation.AddOtherInformation("");
         }
-
+        [When(@"more information detail is updated")]
+        public void WhenMoreInformationDetailIsUpdated()
+        {
+            MoreInformationPage();
+            _otherInformation.AddOtherInformation(TestData.OtherInformation.OtherInformationText);
+        }
     }
 }
