@@ -24,6 +24,9 @@ export class BookingDetailsComponent implements OnInit {
   constructor(private videoHearingService: VideoHearingsService, private bookingDetailsService: BookingDetailsService) { }
 
   ngOnInit() {
+    //just temporary
+    this.hearingId = '4275BD93-7B36-4DB0-82FB-1D730AC6DEBF';
+
     this.videoHearingService.getHearingById(this.hearingId).subscribe(data => {
       this.mapHearing(data);
     });

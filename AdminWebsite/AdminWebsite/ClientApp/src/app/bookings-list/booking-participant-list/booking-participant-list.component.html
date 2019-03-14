@@ -1,7 +1,7 @@
-﻿<div id="roundedborder">
+<div id="roundedborder">
     <h3 class="govuk-heading-m">Participants added</h3>
     <div class="vhtable">
-        <div class="govuk-grid-column-one-third vhtable-header vh-image-15">
+        <div class="govuk-grid-column-one-third vhtable-header vh-image-15" *ngIf="judges.length > 0">
             <img src="/assets/images/govuk-crest.png" height="40" width="40" class="govuk-header__logotype-crest"
                  alt="HM Courts &amp; Tribunals Service crest" />
         </div>
