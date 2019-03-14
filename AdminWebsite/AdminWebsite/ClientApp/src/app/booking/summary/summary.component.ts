@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 
 import { Constants } from '../../common/constants';
 import { CanDeactiveComponent } from '../../common/guards/changes.guard';
-import { HearingVenueResponse, HearingTypeResponse } from '../../services/clients/api-client';
+import { HearingVenueResponse, HearingTypeResponse, HearingDetailsResponse } from '../../services/clients/api-client';
 import { HearingModel } from '../../common/model/hearing.model';
 import { ParticipantsListComponent } from '../participants-list/participants-list.component';
 import { ReferenceDataService } from '../../services/reference-data.service';
@@ -148,11 +148,11 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
     this.bookingsSaving = true;
     this.showWaitSaving = true;
     this.showErrorSaving = false;
-    sessionStorage.setItem(this.newHearingSessionKey, '52B8A9E6-9EAF-4990-923A-263930BE140');
     this.hearingService.saveHearing(this.hearing)
       .subscribe(
-        (data: number) => {
-          sessionStorage.setItem(this.newHearingSessionKey, '52B8A9E6-9EAF-4990-923A-263930BE140');
+        (data: HearingDetailsResponse) => {
+          console.log(data);
+          sessionStorage.setItem(this.newHearingSessionKey, data.id);
           // this.hearingService.cancelRequest();
           this.showWaitSaving = false;
           this.router.navigate([PageUrls.BookingConfirmation]);
@@ -163,10 +163,6 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
           this.errors = error;
         }
       );
-/*     if (this.errors) {
-      this.showWaitSaving = false;
-      this.showErrorSaving = true;
-    } */
   }
 
   cancel(): void {

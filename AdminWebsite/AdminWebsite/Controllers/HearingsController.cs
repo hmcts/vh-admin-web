@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Threading.Tasks;
 using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Models;
+using AdminWebsite.UserAPI.Client;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -17,6 +19,7 @@ namespace AdminWebsite.Controllers
     public class HearingsController : ControllerBase
     {
         private readonly IBookingsApiClient _bookingsApiClient;
+        private readonly IUserApiClient _userApiClient;
 
         /// <summary>
         /// Instantiates the controller
@@ -24,6 +27,7 @@ namespace AdminWebsite.Controllers
         public HearingsController(IBookingsApiClient bookingsApiClient)
         {
             _bookingsApiClient = bookingsApiClient;
+            
         }
 
         /// <summary>
@@ -33,14 +37,14 @@ namespace AdminWebsite.Controllers
         /// <returns>VideoHearingId</returns>
         [HttpPost]
         [SwaggerOperation(OperationId = "BookNewHearing")]
-        [ProducesResponseType(typeof(long), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(HearingDetailsResponse), (int)HttpStatusCode.Created)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public ActionResult<long> Post([FromBody] BookNewHearingRequest hearingRequest)
+        public async Task<ActionResult<HearingDetailsResponse>> Post([FromBody] BookNewHearingRequest hearingRequest)
         {
             try
             {
-                var hearingId = _bookingsApiClient.BookNewHearingAsync(hearingRequest);
-                return Created("", hearingId);
+                var hearingDetailsResponse = await _bookingsApiClient.BookNewHearingAsync(hearingRequest);
+                return Created("", hearingDetailsResponse.Id);
             }
             catch (BookingsApiException e)
             {
