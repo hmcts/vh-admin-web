@@ -72,5 +72,11 @@ namespace AdminWebsite.AcceptanceTests.Steps
             SelectHearingType();
             InputCaseName(TestData.HearingDetails.CaseName);            
         }
+        [Given(@"user selects hearing type as (.*)")]
+        public void GivenUserSelectsHearingTypeAsCivilMoneyClaims(string hearingType)
+        {
+            WhenHearingBookingDetailIsUpdated();
+            _hearingDetails.CaseTypes(hearingType);
+        }
     }
 }
