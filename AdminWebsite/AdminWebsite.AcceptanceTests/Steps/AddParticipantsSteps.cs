@@ -72,10 +72,24 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             _addParticipant.AddParticipantButton();
         }
+
         [When(@"select a party")]
         public void SelectParty()
         {
             _addParticipant.Party();
+        }
+        [When(@"participant detail is updated")]
+        public void WhenPaticipantDetailIsUpdated()
+        {
+            AddParticipantsPage();
+            _addParticipant.AddItems<string>("Party", _addParticipant.GetSelectedParty());
+            _addParticipant.AddItems<string>("Role", _addParticipant.GetSelectedRole());
+            InputEmailAddress(TestData.AddParticipants.Email);
+            _addParticipant.AddItems<string>("Title", _addParticipant.GetSelectedTitle());
+            InputFirstname(TestData.AddParticipants.Firstname);
+            InputLastname(TestData.AddParticipants.Lastname);
+            InputTelephone(TestData.AddParticipants.Telephone);
+            InputDisplayname(TestData.AddParticipants.DisplayName);
         }
     }
 }

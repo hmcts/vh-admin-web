@@ -8,5 +8,6 @@ namespace AdminWebsite.AcceptanceTests.Pages
         {
         }
         public void Judge() => SelectOption(CommonLocator.List("judgeName"));
+        public string GetSelectedJudge() => SelectLastItem(CommonLocator.List("judgeName"));
     }
 }

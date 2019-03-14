@@ -11,5 +11,7 @@
         public const string Active = "vh-active";
         public const string NotActive = "vh-notactive";
         public const string Current = "vh-current";
+        public const string BookingsList = "Bookings List";
+        public const string Dashboard = "Dashboard"; 
     }
 }
