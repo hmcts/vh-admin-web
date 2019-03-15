@@ -30,12 +30,12 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             _assignJudge.Judge();
         }
+        [Given(@"hearing booking is assigned to a judge")]
         [When(@"hearing booking is assigned to a different judge")]
         public void WhenHearingBookingIsAssignedToADifferentJudge()
         {
             AssignJudgePage();
             _assignJudge.AddItems<string>("Judge", _assignJudge.GetSelectedJudge());
         }
-
     }
 }
