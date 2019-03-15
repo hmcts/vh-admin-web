@@ -34,6 +34,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _summarySteps = summarySteps;
             _bookingsListSteps = bookingsListSteps;
         }
+        [Given(@"user proceeds to next page")]
         [When(@"user proceeds to summary page")]
         [When(@"user proceeds to next page")]
         [When(@"next button is clicked")]

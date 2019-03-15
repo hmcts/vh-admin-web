@@ -82,6 +82,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             _hearingSchedule.ErrorDate().Should().Be(errormessage);
         }
+        [Given(@"user adds hearing schedule")]
         [When(@"hearing schedule is updated")]
         public void WhenHearingScheduleIsUpdated()
         {

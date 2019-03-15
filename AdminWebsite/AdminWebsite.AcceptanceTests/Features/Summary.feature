@@ -57,7 +57,7 @@ Scenario: Case Admin attempts to remove particpant
 	When user removes participant on summary page
 	And user cancels the process of removing participant
 	Then participant should still be in the list 
-	
+
 @bug
 Scenario: Case Admin updates particpant details
 	Given Admin user is on microsoft login page

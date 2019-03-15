@@ -9,16 +9,12 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public SignOut(BrowserContext browserContext) : base(browserContext)
         {
         }
-
-        private readonly By _signOut = By.Id("linkSignOut");
-        private readonly By _warningMessage = By.XPath("//*[@class='govuk-heading-m'and contains(text(),'booking')]");
-        private readonly By _popupSignOut = By.Id("btn-signout");
-        private readonly By _popupContinue = By.Id("btn-cancel");
-        public void SignOutButton() => ClickElement(_signOut);
-        public string WarningMessage() => GetElementText(_warningMessage);
+        
+        public void SignOutButton() => ClickElement(By.Id("linkSignOut"));
+        public string WarningMessage() => GetElementText(By.XPath("//*[@class='content']/h1"));
         public void PopupSignOutButton()
         {
-            ClickElement(_popupSignOut);
+            ClickElement(By.Id("btn-signout"));
             try
             {
                 AcceptBrowserAlert();
@@ -29,6 +25,6 @@ namespace AdminWebsite.AcceptanceTests.Pages
             }
             
         }
-        public void PopupContinueButton() => ClickElement(_popupContinue);
+        public void PopupContinueButton() => ClickElement(By.Id("btn-cancel"));
     }
 }

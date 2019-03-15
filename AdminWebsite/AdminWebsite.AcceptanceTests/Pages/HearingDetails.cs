@@ -16,6 +16,7 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public void CaseName(string value) => ClearFieldInputValues(_caseName, value);
         public void CaseTypes() => SelectOption(CommonLocator.List("caseType"));
         public void HearingType() => SelectOption(CommonLocator.List("hearingType"));
-        public IEnumerable<IWebElement> CaseTypesList() => GetListOfElements(CommonLocator.List("caseType")); 
+        public IEnumerable<IWebElement> CaseTypesList() => GetListOfElements(CommonLocator.List("caseType"));
+        public void CaseTypes(string caseType) => SelectOption(CommonLocator.List("caseType"), caseType);
     }
 }
