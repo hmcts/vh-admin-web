@@ -25,7 +25,7 @@ Scenario Outline: Case Admin signs out in the process of booking hearing
 Examples: 
 | Booking           |
 | Hearing details   |
-| Hearing sjudge    |
+| Assign judge      |
 | Add participants  |
 | Other information |
 | Summary           |
@@ -42,7 +42,7 @@ Scenario Outline: Vh Officer signs out in the process of booking hearing
 Examples: 
 | Booking           |
 | Hearing details   |
-| Hearing sjudge    |
+| Assign judge      |
 | Add participants  |
 | Other information |
 | Summary           |

@@ -65,7 +65,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _hearingSchedule.HearingLocation().Should().BeGreaterOrEqualTo(2);
         }
         
-        [When(@"user selects a date in the past from the calendar")]
+        [When(@"user inputs a date in the past from the calendar")]
         public void WhenUserSelectsADateInThePastFromTheCalendar()
         {
             string[] date = DateTime.Now.AddDays(-1).ToString("dd/MM/yyyy").Split('/');
