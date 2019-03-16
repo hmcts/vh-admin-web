@@ -200,7 +200,7 @@ describe('AddParticipantComponent', () => {
     expect(lastName.value).toBe('');
     expect(phone.value).toBe('');
     expect(title.value).toBe('Please Select');
-    expect(companyName.value).toBe(''); 
+    expect(companyName.value).toBe('');
   });
   it('should set validation to false when form is empty', () => {
     expect(component.participantForm.valid).toBeFalsy();
@@ -401,7 +401,6 @@ describe('AddParticipantComponent', () => {
     component.handleContinueBooking('string');
     expect(component.showCancelPopup).toBeFalsy();
   });
-  
 });
 
 describe('AddParticipantComponent edit mode', () => {
@@ -535,7 +534,7 @@ describe('AddParticipantComponent edit mode', () => {
     expect(routerSpy.navigate).toHaveBeenCalled();
   });
   it('if press save button in edit mode then hide details and reset edit mode', () => {
-    component.next()
+    component.next();
     fixture.detectChanges();
     expect(component.showDetails).toBeFalsy();
     expect(component.localEditMode).toBeFalsy();
