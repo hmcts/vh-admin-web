@@ -11,6 +11,7 @@ import { ParticipantsListComponent } from '../participants-list/participants-lis
 import { ReferenceDataService } from '../../services/reference-data.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { PageUrls } from 'src/app/shared/page-url.constants';
+import { HearingDetailsResponse } from '../../services/clients/api-client';
 
 @Component({
   selector: 'app-summary',
@@ -152,7 +153,7 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
     this.showErrorSaving = false;
     this.hearingService.saveHearing(this.hearing)
       .subscribe(
-        (data: string) => {
+      (data: HearingDetailsResponse) => {
           this.hearingService.cancelRequest();
           this.showWaitSaving = false;
           this.router.navigate([PageUrls.BookingConfirmation]);

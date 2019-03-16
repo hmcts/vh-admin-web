@@ -1,5 +1,6 @@
-﻿import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { ParticipantDetailsModel } from '../../common/model/participant-details.model';
+import { UserIdentityService } from '../../services/user-identity.service';
 
 @Component({
   selector: 'app-booking-participant-details',
@@ -10,6 +11,9 @@ export class ParticipantDetailsComponent {
 
   @Input()
   participant: ParticipantDetailsModel = null;
+
+  @Input()
+  vh_officer_admin: boolean;
 
   constructor() { }
 }

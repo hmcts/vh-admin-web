@@ -1,4 +1,8 @@
-﻿.vh-top {
+.vh-top {
     vertical-align: top;
+}
+
+.vh-mt20{
+  margin-top:20px;
 }
 
