@@ -72,7 +72,7 @@ export class VideoHearingsService {
   }
 
   mapHearing(newRequest: HearingModel): BookNewHearingRequest {
-    let newHearingRequest = new BookNewHearingRequest();
+    const newHearingRequest = new BookNewHearingRequest();
 
     // cases
     newHearingRequest.cases = this.mapCases(newRequest);

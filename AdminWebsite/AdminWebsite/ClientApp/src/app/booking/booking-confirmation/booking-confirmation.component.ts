@@ -41,13 +41,14 @@ export class BookingConfirmationComponent implements OnInit {
       );
   }
 
-  private bookAnotherHearing(): void {
+  bookAnotherHearing(): void {
     this.clearSessionData();
     this.router.navigate([PageUrls.CreateHearing]);
   }
 
-  private returnToDashboard(): void {
+  returnToDashboard(): void {
     this.clearSessionData();
+    this.router.navigate(['/dashboard']);
   }
 
   private clearSessionData(): void {

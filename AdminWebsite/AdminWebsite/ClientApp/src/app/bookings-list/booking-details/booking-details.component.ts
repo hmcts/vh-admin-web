@@ -3,7 +3,7 @@ import { VideoHearingsService } from '../../services/video-hearings.service';
 import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
 import { ParticipantDetailsModel } from '../../common/model/participant-details.model';
 import { BookingDetailsService } from '../../services/booking-details.service';
-import {HearingDetailsResponse} from '../../services/clients/api-client';
+import { HearingDetailsResponse } from '../../services/clients/api-client';
 import { UserIdentityService } from '../../services/user-identity.service';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
@@ -36,7 +36,7 @@ export class BookingDetailsComponent implements OnInit {
     this.userIdentityService.getUserInformation().pipe(map(userProfile => {
       if (userProfile && userProfile.is_vh_officer_administrator_role) {
         this.isVhOfficerAdmin = true;
-      } 
+      }
     }));
   }
 

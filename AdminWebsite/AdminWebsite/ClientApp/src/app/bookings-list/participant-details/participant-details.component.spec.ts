@@ -32,7 +32,8 @@ describe('ParticipantDetailsComponent', () => {
   }));
 
   it('should display participant details', (done => {
-    const pr = new ParticipantDetailsModel('1', 'Mrs', 'Alan', 'Brake', 'Citizen', 'email.p1@email.com', 'email@ee.ee');
+    const pr = new ParticipantDetailsModel('1', 'Mrs', 'Alan', 'Brake', 'Citizen', 'email.p1@email.com',
+      'email@ee.ee', 'Defendant', 'Defendant LIP', 'Alan Brake', '');
 
     component.participant = pr;
 
@@ -43,7 +44,7 @@ describe('ParticipantDetailsComponent', () => {
         expect(divElementRole.length).toBeGreaterThan(0);
         expect(divElementRole.length).toBe(1);
         const el = divElementRole[0].nativeElement as HTMLElement;
-        expect(el.innerHTML).toContain('Citizen');
+        expect(el.innerHTML).toContain('Defendant');
         done();
       }
     );
