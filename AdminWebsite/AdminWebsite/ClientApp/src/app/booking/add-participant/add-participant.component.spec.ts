@@ -155,6 +155,9 @@ describe('AddParticipantComponent', () => {
     videoHearingsServiceSpy.getParticipantRoles.and.returnValue(of(roleList));
     videoHearingsServiceSpy.getCurrentRequest.and.returnValue(hearing);
     participantServiceSpy.mapParticipantsRoles.and.returnValue(partyList);
+    bookingServiceSpy.isEditMode.and.returnValue(false);
+
+
     fixture = TestBed.createComponent(AddParticipantComponent);
     debugElement = fixture.debugElement;
     component = debugElement.componentInstance;
@@ -175,6 +178,13 @@ describe('AddParticipantComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+  it('should initialize edit mode as false and value of button set to next', () => {
+    component.ngOnInit();
+    fixture.detectChanges();
+    expect(component.editMode).toBeFalsy();
+    expect(component.buttonAction).toBe('Next');
+    expect(videoHearingsServiceSpy.getCurrentRequest).toHaveBeenCalled();
+  });
   it('should set case role list, hearing role list and title list', () => {
     component.ngOnInit();
     expect(component.roleList).toBeTruthy();
@@ -190,6 +200,7 @@ describe('AddParticipantComponent', () => {
     expect(lastName.value).toBe('');
     expect(phone.value).toBe('');
     expect(title.value).toBe('Please Select');
+    expect(companyName.value).toBe(''); 
   });
   it('should set validation to false when form is empty', () => {
     expect(component.participantForm.valid).toBeFalsy();
@@ -233,7 +244,10 @@ describe('AddParticipantComponent', () => {
     expect(title.value).toBe(participant.title);
     expect(displayName.value).toBe(participant.display_name);
     expect(companyName.value).toBe(participant.company);
-
+    expect(component.displayNextButton).toBeFalsy();
+    expect(component.displayClearButton).toBeTruthy();
+    expect(component.displayAddButton).toBeTruthy();
+    expect(component.displayUpdateButton).toBeFalsy();
   });
   it('should clear all fields and reset to initial value', () => {
     component.getParticipant(participant);
@@ -246,6 +260,9 @@ describe('AddParticipantComponent', () => {
     expect(title.value).toBe('Please Select');
     expect(displayName.value).toBe('');
     expect(companyName.value).toBe('');
+    expect(role.untouched).toBeTruthy();
+    expect(party.untouched).toBeTruthy();
+    expect(firstName.untouched).toBeTruthy();
   });
   it('should display next button and hide add button after clear all fields', () => {
     component.getParticipant(participant);
@@ -341,6 +358,50 @@ describe('AddParticipantComponent', () => {
     expect(component.isRoleSelected).toBeTruthy();
     expect(component.hearingRoleList.length).toBe(1);
   });
+  it('should not add second time value: Please select to a hearing role list', () => {
+    const partyL = new PartyModel('Claimant');
+    partyL.hearingRoles = ['Please Select', 'Solicitor'];
+    const partyLst: PartyModel[] = [partyL];
+    component.caseAndHearingRoles = partyLst;
+    role.setValue('Claimant');
+    component.setupHearingRoles('Claimant');
+    expect(component.hearingRoleList.length).toBe(2);
+  });
+  it('the hearing role list should be empty if selected party name was not found, ', () => {
+    const partyL = new PartyModel('Claimant');
+    partyL.hearingRoles = ['Please Select', 'Solicitor'];
+    const partyLst: PartyModel[] = [partyL];
+    component.caseAndHearingRoles = partyLst;
+    component.setupHearingRoles('Defendant');
+    expect(component.hearingRoleList.length).toBe(1);
+  });
+  it('should set to true isTitleSelected', () => {
+    title.setValue('Mr');
+    fixture.detectChanges();
+    component.titleSelected();
+    expect(component.isTitleSelected).toBeTruthy();
+  });
+  it('should set to false isTitleSelected', () => {
+    title.setValue('Please Select');
+    fixture.detectChanges();
+    component.titleSelected();
+    expect(component.isTitleSelected).toBeFalsy();
+  });
+  it('should show error summary if input data is invalid', () => {
+    component.isRoleSelected = false;
+    fixture.detectChanges();
+    component.saveParticipant();
+    expect(component.showErrorSummary).toBeTruthy();
+  });
+  it('if cancel add participant then pop up confirmation dialog', () => {
+    component.addParticipantCancel();
+    expect(component.showCancelPopup).toBeTruthy();
+  });
+  it('if pop up confirm to continue, dialog is hidden', () => {
+    component.handleContinueBooking('string');
+    expect(component.showCancelPopup).toBeFalsy();
+  });
+  
 });
 
 describe('AddParticipantComponent edit mode', () => {
@@ -402,6 +463,25 @@ describe('AddParticipantComponent edit mode', () => {
     displayName = component.participantForm.controls['displayName'];
     companyName = component.participantForm.controls['companyName'];
   }));
+  it('should set title list and get current data from session', () => {
+    component.ngOnInit();
+    fixture.detectChanges();
+    expect(component.titleList).toBeTruthy();
+    expect(videoHearingsServiceSpy.getCurrentRequest).toHaveBeenCalled();
+  });
+  it('should initialize edit mode as true and value of button set to save', () => {
+    component.ngOnInit();
+    fixture.detectChanges();
+    expect(component.editMode).toBeTruthy();
+    expect(component.buttonAction).toBe('Save');
+  });
+  it('navigate to summary should reset editMode to false', () => {
+    component.navigateToSummary();
+    fixture.detectChanges();
+    expect(component.editMode).toBeFalsy();
+    expect(routerSpy.navigate).toHaveBeenCalledWith(['/summary']);
+    expect(bookingServiceSpy.resetEditMode).toHaveBeenCalled();
+  });
 
   it('should set edit mode and populate participant data', fakeAsync(() => {
     fixture.detectChanges();
@@ -439,5 +519,26 @@ describe('AddParticipantComponent edit mode', () => {
     expect(updatedParticipant.display_name).toBe('Sam');
     expect(displayName.value).toBe('');
   });
-
+  it('should before save booking check if all fields available', () => {
+    component.actionsBeforeSave();
+    expect(component.showDetails).toBeTruthy();
+    expect(firstName.touched).toBeTruthy();
+    expect(lastName.touched).toBeTruthy();
+    expect(phone.touched).toBeTruthy();
+    expect(role.touched).toBeTruthy();
+  });
+  it('if cancel add participant in edit mode then navigate to summary page', () => {
+    component.addParticipantCancel();
+    fixture.detectChanges();
+    expect(bookingServiceSpy.resetEditMode).toHaveBeenCalled();
+    expect(component.editMode).toBeFalsy();
+    expect(routerSpy.navigate).toHaveBeenCalled();
+  });
+  it('if press save button in edit mode then hide details and reset edit mode', () => {
+    component.next()
+    fixture.detectChanges();
+    expect(component.showDetails).toBeFalsy();
+    expect(component.localEditMode).toBeFalsy();
+    expect(bookingServiceSpy.resetEditMode).toHaveBeenCalled();
+  });
 });
