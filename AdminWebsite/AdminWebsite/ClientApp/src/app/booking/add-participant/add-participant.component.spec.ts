@@ -25,7 +25,8 @@ import { PartyModel } from '../../common/model/party.model';
 let component: AddParticipantComponent;
 let fixture: ComponentFixture<AddParticipantComponent>;
 
-const roleList: CaseAndHearingRolesResponse[] = [new CaseAndHearingRolesResponse({ name: 'Claimant', hearing_roles: ['Solicitor'] })];
+const roleList: CaseAndHearingRolesResponse[] =
+  [new CaseAndHearingRolesResponse({ name: 'Claimant', hearing_roles: ['Solicitor'] })];
 
 const partyR = new PartyModel('Claimant');
 partyR.hearingRoles = ['Solicitor'];
@@ -333,6 +334,12 @@ describe('AddParticipantComponent', () => {
 
     expect(component.hearingRoleList.length).toBe(2);
     expect(component.hearingRoleList[0]).toEqual('Please Select');
+  });
+  it('party selected will reset hearing roles', () => {
+    role.setValue('Claimant');
+    component.partySelected();
+    expect(component.isRoleSelected).toBeTruthy();
+    expect(component.hearingRoleList.length).toBe(1);
   });
 });
 
