@@ -24,10 +24,10 @@ namespace AdminWebsite.Controllers
         /// <summary>
         /// Instantiates the controller
         /// </summary>
-        public HearingsController(IBookingsApiClient bookingsApiClient)
+        public HearingsController(IBookingsApiClient bookingsApiClient, IUserApiClient userApiClient)
         {
             _bookingsApiClient = bookingsApiClient;
-            
+            _userApiClient = userApiClient;
         }
 
         /// <summary>
@@ -43,8 +43,13 @@ namespace AdminWebsite.Controllers
         {
             try
             {
+                if (hearingRequest.Participants != null)
+                {
+                    hearingRequest.Participants = await UpdateParticipantsUsername(hearingRequest.Participants);
+                }
+
                 var hearingDetailsResponse = await _bookingsApiClient.BookNewHearingAsync(hearingRequest);
-                return Created("", hearingDetailsResponse.Id);
+                return Created("", hearingDetailsResponse);
             }
             catch (BookingsApiException e)
             {
@@ -144,6 +149,27 @@ namespace AdminWebsite.Controllers
 
                 throw;
             }
+        }
+
+        private async Task<List<ParticipantRequest>> UpdateParticipantsUsername(List<ParticipantRequest> participants)
+        {
+            foreach (var participant in participants)
+            {
+                if (participant.Case_role_name == "Judge") continue;
+                var createUserRequest = new CreateUserRequest()
+                {
+                    First_name = participant.First_name,
+                    Last_name = participant.Last_name,
+                    Recovery_email = participant.Contact_email
+                };
+                var newUserResponse = await _userApiClient.CreateUserAsync(createUserRequest);
+                if (newUserResponse != null)
+                {
+                    participant.Username = newUserResponse.Username;
+                }
+
+            }
+            return participants;
         }
     }
 }

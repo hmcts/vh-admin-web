@@ -106,6 +106,7 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
         (data: HearingTypeResponse[]) => {
           const selectedHearingType = data.filter(h => h.id === hearing_type_id);
           this.caseHearingType = selectedHearingType[0].name;
+          this.hearing.hearing_type_name = selectedHearingType[0].name;
         },
         error => console.error(error)
       );
@@ -150,9 +151,8 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
     this.showErrorSaving = false;
     this.hearingService.saveHearing(this.hearing)
       .subscribe(
-        (data: HearingDetailsResponse) => {
-          console.log(data);
-          sessionStorage.setItem(this.newHearingSessionKey, data.id);
+        (hearingDetailsResponse: HearingDetailsResponse) => {
+          sessionStorage.setItem(this.newHearingSessionKey, hearingDetailsResponse.id);
           // this.hearingService.cancelRequest();
           this.showWaitSaving = false;
           this.router.navigate([PageUrls.BookingConfirmation]);

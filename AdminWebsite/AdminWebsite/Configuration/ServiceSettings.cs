@@ -13,5 +13,13 @@
         ///     The bookings api resource id
         /// </summary>
         public string BookingsApiResourceId { get; set; }
+        /// <summary>
+        ///     The user api url.
+        /// </summary>
+        public string UserApiUrl { get; set; }
+        /// <summary>
+        ///     The user api resource id
+        /// </summary>
+        public string UserApiResourceId { get; set; }
     }
 }

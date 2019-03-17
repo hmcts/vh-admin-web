@@ -3,7 +3,7 @@
   "defaultVariables": null,
   "swaggerGenerator": {
     "fromSwagger": {
-      "url": "https://localhost:44348/swagger/v1/swagger.json",
+      "url": "https://localhost:5200/swagger/v1/swagger.json",
       "output": null
     }
   },
@@ -18,7 +18,7 @@
       "disposeHttpClient": false,
       "protectedMethods": [],
       "generateExceptionClasses": true,
-      "exceptionClass": "UserApiException",
+      "exceptionClass": "UserServiceException",
       "wrapDtoExceptions": true,
       "useHttpClientCreationMethod": false,
       "httpClientType": "System.Net.Http.HttpClient",
@@ -78,7 +78,7 @@
       "typeNameGeneratorType": null,
       "propertyNameGeneratorType": null,
       "enumNameGeneratorType": null,
-      "serviceHost": "http://localhost:44348",
+      "serviceHost": "https://localhost:5200",
       "serviceSchemes": null,
       "output": "UserApiClient.cs"
     }

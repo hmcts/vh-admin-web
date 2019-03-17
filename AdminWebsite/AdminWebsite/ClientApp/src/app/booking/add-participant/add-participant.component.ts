@@ -17,6 +17,7 @@ import { BookingService } from '../../services/booking.service';
 import { ParticipantService } from '../services/participant.service';
 import { CaseAndHearingRolesResponse } from '../../services/clients/api-client';
 import { PartyModel } from '../../common/model/party.model';
+import { PageUrls } from 'src/app/shared/page-url.constants';
 
 @Component({
   selector: 'app-add-participant',
@@ -416,7 +417,6 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     newParticipant.email = this.searchEmail.email;
     newParticipant.display_name = this.displayName.value;
     newParticipant.company = this.companyName.value;
-    newParticipant.username = this.searchEmail.email;
   }
 
   addParticipantCancel() {
@@ -434,7 +434,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   handleCancelBooking(event: any) {
     this.showCancelPopup = false;
     this.participantForm.reset();
-    this.router.navigate(['/dashboard']);
+    this.router.navigate([PageUrls.Dashboard]);
   }
 
   handleConfirmation() {
@@ -491,7 +491,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         }
         this.navigateToSummary();
       } else {
-        this.router.navigate(['/other-information']);
+        this.router.navigate([PageUrls.OtherInformation]);
       }
     } else {
       this.displayErrorNoParticipants = true;
