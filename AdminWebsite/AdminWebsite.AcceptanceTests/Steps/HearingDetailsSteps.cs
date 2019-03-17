@@ -63,6 +63,14 @@ namespace AdminWebsite.AcceptanceTests.Steps
                     _hearingDetails.CaseTypesList().Should().BeEmpty();
                     break;
             }
-        }        
+        }
+        [When(@"hearing booking detail is updated")]
+        public void WhenHearingBookingDetailIsUpdated()
+        {
+            HearingDetailsPage();
+            InputCaseNumber(TestData.HearingDetails.CaseNumber);
+            SelectHearingType();
+            InputCaseName(TestData.HearingDetails.CaseName);            
+        }
     }
 }

@@ -18,11 +18,12 @@ namespace AdminWebsite.AcceptanceTests.Pages
 
         public void Role(string option) => SelectOption(CommonLocator.List("role"), option);
         public void Title() => SelectOption(CommonLocator.List("title"));
-        public void ParticipantEmail(string email) => InputValues(_participantEmail, email);
-        public void FirstName(string firstname) => InputValues(_firstName, firstname);
-        public void LastName(string lastname) => InputValues(_lastName, lastname);
-        public void Phone(string phone) => InputValues(_phone, phone);
-        public void DisplayName(string displayname) => InputValues(_displayName, displayname);
+        public string GetSelectedTitle() => SelectLastItem(CommonLocator.List("title"));
+        public void ParticipantEmail(string email) => ClearFieldInputValues(_participantEmail, email);
+        public void FirstName(string firstname) => ClearFieldInputValues(_firstName, firstname);
+        public void LastName(string lastname) => ClearFieldInputValues(_lastName, lastname);
+        public void Phone(string phone) => ClearFieldInputValues(_phone, phone);
+        public void DisplayName(string displayname) => ClearFieldInputValues(_displayName, displayname);
         public void AddParticipantButton() => ClickElement(_addParticipantButton);
         public void Party() => SelectOption(CommonLocator.List("party"));
         public void Role() => SelectOption(CommonLocator.List("role"));
