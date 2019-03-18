@@ -59,7 +59,7 @@ namespace AdminWebsite.AcceptanceTests.Pages
             _browserContext.Retry(() => _browserContext.NgDriver.WaitUntilElementClickable(_nextButton).Click());
         }
         public void CancelButton() => _browserContext.NgDriver.WaitUntilElementClickable(_cancelButton).Click();
-        public string GetElementText(By element) => _browserContext.NgDriver.WaitUntilElementVisible(element).Text;
+        public string GetElementText(By element) => _browserContext.NgDriver.WaitUntilElementVisible(element).Text.Trim();
 
         protected void SelectOption(By elements, string option)
         {
@@ -97,5 +97,16 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public void BookingsList() => SelectOption(_primaryNavItems, "Bookings list");
         public void AddItems<T>(string key, T value) => _browserContext.Items.AddOrUpdate(key, value);
         public dynamic GetItems(string key) => _browserContext.Items.Get(key);
+        public string GetParticipantDetails() => GetElementText(By.XPath("//*[@class='govuk-grid-column-two-thirds vhtable-header']"));
+        protected IEnumerable<string> Items(By elements)
+        {
+            var webElements = _browserContext.NgDriver.WaitUntilElementsVisible(elements);
+            IList<string> list = new List<string>();
+            foreach (var element in webElements)
+            {
+                list.Add(element.Text.Trim());
+            }
+            return list;
+        }
     }
 }

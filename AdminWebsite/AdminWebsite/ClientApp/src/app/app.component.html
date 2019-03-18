@@ -12,6 +12,8 @@
   <div *ngIf="showSignOutConfirmation">
     <app-sign-out-popup (continue)="handleContinue()" (signOut)="handleSignOut()"></app-sign-out-popup>
   </div>
-
+  <div *ngIf="showSaveConfirmation">
+    <app-cancel-popup (continueBooking)="handleContinue()" (cancelBooking)="handleNavigate()"></app-cancel-popup>
+  </div>
   <app-footer></app-footer>
 </div>

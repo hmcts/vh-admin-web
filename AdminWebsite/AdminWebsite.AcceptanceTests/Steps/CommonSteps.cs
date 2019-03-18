@@ -34,6 +34,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _summarySteps = summarySteps;
             _bookingsListSteps = bookingsListSteps;
         }
+        [Given(@"user proceeds to next page")]
         [When(@"user proceeds to summary page")]
         [When(@"user proceeds to next page")]
         [When(@"next button is clicked")]
@@ -101,6 +102,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             _common.BookingsList();
         }
+        [When(@"user tries to navigate away from (.*) a hearing")]
         [Given(@"user is in the process of (.*) Hearing")]
         public void GivenUserIsInTheProcessOfHearingDetailsHearing(string bookingPage)
         {           

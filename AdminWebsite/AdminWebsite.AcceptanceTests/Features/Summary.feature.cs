@@ -230,11 +230,11 @@ this.ScenarioInitialize(scenarioInfo);
         
         [NUnit.Framework.TestAttribute()]
         [NUnit.Framework.DescriptionAttribute("Case Admin updates particpant details")]
-        [NUnit.Framework.CategoryAttribute("smoketest")]
+        [NUnit.Framework.CategoryAttribute("bug")]
         public virtual void CaseAdminUpdatesParticpantDetails()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Case Admin updates particpant details", null, new string[] {
-                        "smoketest"});
+                        "bug"});
 #line 62
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();

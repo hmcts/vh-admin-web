@@ -83,7 +83,6 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
   ngOnInit() {
     super.ngOnInit();
-    this.hearing = this.videoHearingService.getCurrentRequest();
     this.retrieveRoles();
     this.initializeForm();
     if (this.editMode) {
@@ -217,8 +216,9 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   }
 
   setupHearingRoles(caseRoleName: string) {
-    this.hearingRoleList = this.caseAndHearingRoles.find(x => x.name === caseRoleName).hearingRoles;
-    if (this.hearingRoleList && !this.hearingRoleList.find(s => s === this.constants.PleaseSelect)) {
+    const list = this.caseAndHearingRoles.find(x => x.name === caseRoleName);
+    this.hearingRoleList = list ? list.hearingRoles : [];
+    if (!this.hearingRoleList.find(s => s === this.constants.PleaseSelect)) {
       this.hearingRoleList.unshift(this.constants.PleaseSelect);
     }
   }
@@ -338,7 +338,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
   saveParticipant() {
     this.actionsBeforeSave();
-    const validEmail = this.showDetails ? this.searchEmail.validateEmail() : true;
+    const validEmail = this.showDetails && this.searchEmail ? this.searchEmail.validateEmail() : true;
     if (this.participantForm.valid && validEmail && this.isRoleSelected && this.isPartySelected && this.isTitleSelected) {
       this.isShowErrorSummary = false;
       const newParticipant = new ParticipantModel();
@@ -367,7 +367,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   }
 
   updateParticipant() {
-    const validEmail = this.showDetails ? this.searchEmail.validateEmail() : true;
+    const validEmail = this.showDetails && this.searchEmail ? this.searchEmail.validateEmail() : true;
     this.actionsBeforeSave();
     if (this.participantForm.valid && validEmail && this.isRoleSelected && this.isTitleSelected) {
       this.isShowErrorSummary = false;
@@ -413,7 +413,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     newParticipant.title = this.title.value;
     newParticipant.case_role_name = this.party.value;
     newParticipant.hearing_role_name = this.role.value;
-    newParticipant.email = this.searchEmail.email;
+    newParticipant.email = this.searchEmail ? this.searchEmail.email : '';
     newParticipant.display_name = this.displayName.value;
     newParticipant.company = this.companyName.value;
     newParticipant.username = this.searchEmail.email;
@@ -470,7 +470,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     this.title.markAsUntouched();
     this.displayName.markAsUntouched();
     this.companyName.markAsUntouched();
-    if (this.showDetails) {
+    if (this.showDetails && this.searchEmail) {
       this.searchEmail.clearEmail();
     }
     this.showDetails = false;
