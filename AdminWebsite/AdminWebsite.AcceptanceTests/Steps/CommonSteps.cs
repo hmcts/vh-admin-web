@@ -126,20 +126,24 @@ namespace AdminWebsite.AcceptanceTests.Steps
                 case Breadcrumbs.Dashboard:
                     GivenUserIsOnHearingSchedulePage();
                     UserNavigatesToDashboard();
-                    _dashboardStep.DashboardPage();
                     break;
                 case Breadcrumbs.BookingsList:
                     GivenUserIsOnHearingSchedulePage();
                     UserNavigatesToBookingsList();
-                    _bookingsListSteps.BookingsListPage();
+                    break;
+                case "HMCTS Video hearing service":
+                    GivenUserIsOnHearingSchedulePage();
+                    UserClicksTopMenuLogo();
                     break;
             }
+            _common.AddItems<string>("BookingPage", bookingPage);
         }
         [When(@"user cancels the update")]
         public void ClickCancelButton()
         {
             _common.CancelButton();
         }
+        public void UserClicksTopMenuLogo() => _common.TopMenuHmctsLogo();
 
     }
 }
