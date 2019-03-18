@@ -1,6 +1,7 @@
 ﻿using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.AcceptanceTests.Pages;
 using FluentAssertions;
+using System;
 using System.Linq;
 using TechTalk.SpecFlow;
 
@@ -71,6 +72,16 @@ namespace AdminWebsite.AcceptanceTests.Steps
             InputCaseNumber(TestData.HearingDetails.CaseNumber);
             SelectHearingType();
             InputCaseName(TestData.HearingDetails.CaseName);            
+        }
+        [Given(@"user selects (.*)")]
+        public void GivenUserSelectsCaseTypeAsCivilMoneyClaims(string caseType)
+        {
+            _hearingDetails.AddItems<string>("CaseType", caseType);
+            InputCaseNumber(TestData.HearingDetails.CaseNumber);
+            InputCaseName(TestData.HearingDetails.CaseName);
+            _hearingDetails.CaseTypes(caseType);
+            _hearingDetails.HearingType();
+            _hearingDetails.NextButton();
         }
     }
 }
