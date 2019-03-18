@@ -29,29 +29,12 @@ function initHearingRequest(): HearingModel {
   p2.email = 'test2@TestBed.com';
   p2.first_name = 'first2';
   p2.last_name = 'last2';
-  p2.is_judge = true;
+  p2.is_judge = false;
   p2.title = 'Mr.';
 
-  const p3 = new ParticipantModel();
-  p3.display_name = 'display name3';
-  p3.email = 'test3@TestBed.com';
-  p3.first_name = 'first3';
-  p3.last_name = 'last3';
-  p3.is_judge = true;
-  p3.title = 'Mr.';
-
-  const p4 = new ParticipantModel();
-  p4.display_name = 'display name3';
-  p4.email = 'test3@TestBed.com';
-  p4.first_name = 'first3';
-  p4.last_name = 'last3';
-  p4.is_judge = true;
-  p4.title = 'Mr.';
 
   participants.push(p1);
   participants.push(p2);
-  participants.push(p3);
-  participants.push(p4);
 
   const newHearing = new HearingModel();
   newHearing.cases = [];
@@ -106,6 +89,22 @@ describe('AssignJudgeComponent', () => {
     console.log(component);
     component.saveJudge();
     expect(component.assignJudgeForm.valid).toBeFalsy();
+  });
+  it('should get current booking and judge details', () => {
+    component.ngOnInit();
+    expect(component.failedSubmission).toBeFalsy();
+    expect(videoHearingsServiceSpy.getCurrentRequest).toHaveBeenCalled();
+    expect(component.canNavigate).toBeTruthy();
+    expect(component.judge.first_name).toBe('first');
+    expect(component.judge.display_name).toBe('display name1');
+    expect(component.judge.email).toBe('test1@TestBed.com');
+    expect(component.judge.last_name).toBe('last');
+    expect(component.judge.title).toBe('Mr.');
+  });
+  it('should get available judges', () => {
+    component.ngOnInit();
+    expect(component.availableJudges.length).toBeGreaterThan(1);
+    expect(component.availableJudges[0].display_name).toBe('Please Select');
   });
 });
 

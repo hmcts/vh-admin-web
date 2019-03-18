@@ -1,4 +1,5 @@
-﻿using AdminWebsite.AcceptanceTests.Pages;
+﻿using AdminWebsite.AcceptanceTests.Helpers;
+using AdminWebsite.AcceptanceTests.Pages;
 using FluentAssertions;
 using TechTalk.SpecFlow;
 
@@ -21,7 +22,9 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void ThenWarningMessageShouldBeDisplayedAs(string warningMessage)
         {
             _signOut.WarningMessage().Should().Be(warningMessage);
-            _signOut.PopupSignOutButton();
+            var bookingPage = _signOut.GetItems("BookingPage");
+            if (bookingPage == Breadcrumbs.HearingDetails || bookingPage == Breadcrumbs.HearingSchedule || bookingPage == Breadcrumbs.AssignJudge || bookingPage == Breadcrumbs.AddParticipants || bookingPage == Breadcrumbs.OtherInformation || bookingPage == Breadcrumbs.Summary)            
+                _signOut.PopupSignOutButton();                       
         }
     }
 }

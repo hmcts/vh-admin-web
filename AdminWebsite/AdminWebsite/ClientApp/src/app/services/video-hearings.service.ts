@@ -51,6 +51,14 @@ export class VideoHearingsService {
     return this.modelHearing;
   }
 
+  validCurrentRequest() {
+    const localRequest = this.getCurrentRequest();
+    const valid = localRequest.scheduled_date_time && localRequest.scheduled_duration > 0 &&
+      localRequest.participants.length > 1 && localRequest.hearing_venue_id > 0 &&
+      localRequest.hearing_type_id > 0;
+    return valid;
+  }
+
   updateHearingRequest(updatedRequest: HearingModel) {
     this.modelHearing = updatedRequest;
     const localRequest = JSON.stringify(this.modelHearing);

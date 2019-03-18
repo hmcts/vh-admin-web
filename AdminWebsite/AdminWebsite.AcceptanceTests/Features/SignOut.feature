@@ -50,8 +50,9 @@ Scenario Outline: Warning message to dsiplay when Case Admin tries to navigate a
 	Given Admin user is on microsoft login page
 	And Case Admin logs into Vh-Admin website 
 	When user tries to navigate away from <booking> a hearing
-	Then warning message should be displayed as You will lose all your booking details if you sign out.
+	Then warning message should be displayed as You will lose all your booking details if you continue
 Examples: 
-| booking                |
-| Dashboard              |
-| Bookings List          |
+| booking                     |
+| Dashboard                   |
+| Bookings List               |
+| HMCTS Video hearing service |
