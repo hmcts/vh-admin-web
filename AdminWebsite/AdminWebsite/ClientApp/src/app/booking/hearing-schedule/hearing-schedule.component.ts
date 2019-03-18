@@ -60,6 +60,10 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     let durationMinute = null;
     let room = '';
 
+    if (this.hearing && this.hearing.hearing_venue_id === undefined) {
+      this.hearing.hearing_venue_id = -1;
+    }
+
     if (this.hearing && this.hearing.scheduled_date_time) {
       const date = new Date(this.hearing.scheduled_date_time);
       hearingDateParsed = this.datePipe.transform(date, 'yyyy-MM-dd');
@@ -82,7 +86,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     if (this.hearing && this.hearing.court_room) {
       room = this.hearing.court_room;
     }
-
+    console.log(this.hearing.hearing_venue_id);
     this.schedulingForm = this.fb.group({
       hearingDate: [hearingDateParsed, Validators.required],
       hearingStartTimeHour: [startTimeHour, [Validators.required, Validators.min(0), Validators.max(23)]],
@@ -95,11 +99,9 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
 
     this.courtAddress.valueChanges.subscribe(val => {
       const id = val;
-      console.log(id);
       if (id !== null) {
         this.selectedCourtName = this.availableCourts.find(c => c.id === id).name;
       }
-      console.log(this.selectedCourtName);
     });
   }
 
