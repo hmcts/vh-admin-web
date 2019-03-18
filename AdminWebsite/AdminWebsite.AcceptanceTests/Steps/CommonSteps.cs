@@ -102,6 +102,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             _common.BookingsList();
         }
+        [When(@"user tries to navigate away from (.*) a hearing")]
         [Given(@"user is in the process of (.*) Hearing")]
         public void GivenUserIsInTheProcessOfHearingDetailsHearing(string bookingPage)
         {           
