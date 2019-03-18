@@ -416,7 +416,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     newParticipant.email = this.searchEmail ? this.searchEmail.email : '';
     newParticipant.display_name = this.displayName.value;
     newParticipant.company = this.companyName.value;
-    newParticipant.username = this.searchEmail.email;
+    newParticipant.username = this.searchEmail ? this.searchEmail.email : '';
   }
 
   addParticipantCancel() {
@@ -484,6 +484,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   next() {
     if (this.hearing.participants && this.hearing.participants.length > 0) {
       if (this.editMode) {
+        debugger;
         this.updateParticipant();
         this.videoHearingService.updateHearingRequest(this.hearing);
         if (this.isShowErrorSummary) {
