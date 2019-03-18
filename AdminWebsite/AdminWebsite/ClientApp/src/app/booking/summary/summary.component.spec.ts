@@ -10,11 +10,16 @@ import { VideoHearingsService } from '../../services/video-hearings.service';
 import { MockValues } from '../../testing/data/test-objects';
 import { SummaryComponent } from './summary.component';
 import { RouterTestingModule } from '@angular/router/testing';
-import { HearingModel} from '../../common/model/hearing.model';
+import { HearingModel } from '../../common/model/hearing.model';
 import { CaseModel } from '../../common/model/case.model';
+import { ParticipantModel } from '../../common/model/participant.model';
 import { ParticipantsListStubComponent } from '../../testing/stubs/participant-list-stub';
 
 function initExistingHearingRequest(): HearingModel {
+
+  const pat1 = new ParticipantModel();
+  pat1.email = 'aa@aa.aa';
+
   const today = new Date();
   today.setHours(14, 30);
 
@@ -30,6 +35,9 @@ function initExistingHearingRequest(): HearingModel {
   existingRequest.scheduled_duration = 80;
   existingRequest.other_information = 'some notes';
   existingRequest.court_room = '123W';
+
+  existingRequest.participants = [];
+  existingRequest.participants.push(pat1);
   return existingRequest;
 }
 
@@ -68,7 +76,8 @@ describe('SummaryComponent with valid request', () => {
       ['getCourts']);
     referenceDataServiceServiceSpy.getCourts.and.returnValue(of(MockValues.Courts));
     videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',
-      ['getHearingMediums', 'getHearingTypes', 'getCurrentRequest', 'updateHearingRequest', 'saveHearing']);
+      ['getHearingMediums', 'getHearingTypes', 'getCurrentRequest',
+        'updateHearingRequest', 'saveHearing', 'cancelRequest']);
 
     videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
     videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
@@ -81,7 +90,7 @@ describe('SummaryComponent with valid request', () => {
       ],
       declarations: [SummaryComponent, BreadcrumbStubComponent,
         CancelPopupComponent, ParticipantsListStubComponent, BookingEditStubComponent,
-      RemovePopupComponent],
+        RemovePopupComponent],
       imports: [RouterTestingModule],
     })
       .compileComponents();
@@ -92,7 +101,11 @@ describe('SummaryComponent with valid request', () => {
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
-
+  it('should get booking data from storage', () => {
+    component.ngOnInit();
+    fixture.detectChanges();
+    expect(component.hearing).toBeTruthy();
+  });
   it('should display summary data from existing hearing', () => {
     expect(component.caseNumber).toEqual(existingRequest.cases[0].number);
     expect(component.caseName).toEqual(existingRequest.cases[0].name);
@@ -102,6 +115,33 @@ describe('SummaryComponent with valid request', () => {
     expect(component.hearingDate).toEqual(existingRequest.scheduled_date_time);
     const courtString = MockValues.Courts.find(c => c.id === existingRequest.hearing_venue_id);
     expect(component.courtRoomAddress).toEqual(`${courtString.name} 123W`);
+  });
+  it('should remove participant', () => {
+    component.ngOnInit()
+    component.selectedParticipantEmail = 'aa@aa.aa';
+    component.removeParticipant();
+    fixture.detectChanges();
+    expect(component.hearing.participants.length).toBe(0);
+    expect(videoHearingsServiceSpy.updateHearingRequest).toHaveBeenCalled();
+  });
+  it('should not remove participant by not existing email', () => {
+    component.ngOnInit()
+    const pat1 = new ParticipantModel();
+    pat1.email = 'aa@aa.aa';
+    component.hearing.participants = [];
+    component.hearing.participants.push(pat1);
+    component.selectedParticipantEmail = 'bb@bb.bb';
+
+    expect(component.hearing.participants.length).toBe(1);
+    component.removeParticipant();
+    fixture.detectChanges();
+    expect(component.hearing.participants.length).toBe(1);
+  });
+  it('should cancel booking and navigate away', () => {
+    component.cancelBooking();
+    fixture.detectChanges();
+    expect(videoHearingsServiceSpy.cancelRequest).toHaveBeenCalled();
+    expect(routerSpy.navigate).toHaveBeenCalled();
   });
 });
 

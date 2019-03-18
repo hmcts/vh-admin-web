@@ -5,6 +5,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { IParticipantRequest } from '../../services/clients/api-client';
 import { SearchService } from '../../services/search.service';
 import { SearchEmailComponent } from './search-email.component';
+import { ParticipantModel } from '../../common/model/participant.model';
 
 describe('SeachEmailComponent', () => {
   let component: SearchEmailComponent;
@@ -17,7 +18,7 @@ describe('SeachEmailComponent', () => {
         "email": "vb.email1@go.couk",
         "role": "Appellant",
         "title": "Mrs",
-        "firstName": "Alise",
+        "firstName": "Alisa",
         "lastName": "Smith",
         "phone": "1111222222",
         "organisationId": 3
@@ -27,7 +28,7 @@ describe('SeachEmailComponent', () => {
         "email": "vb.email2@go.couk",
         "role": "Appellant",
         "title": "Mrs",
-        "firstName": "Alise",
+        "firstName": "Alisa",
         "lastName": "Smith",
         "phone": "1111222222",
         "organisationId": 3
@@ -35,6 +36,15 @@ describe('SeachEmailComponent', () => {
     ]
     `
   );
+  const participantModel = new ParticipantModel();
+  participantModel.email = 'aa@aa.aa';
+  participantModel.first_name = 'Ann';
+  participantModel.last_name = 'Smith'
+  participantModel.title = 'Mrs';
+  participantModel.case_role_name = 'Defendant';
+  participantModel.hearing_role_name = 'Defendant LIP';
+  participantModel.phone = '12345678';
+  participantModel.display_name = 'Ann';
 
   let searchServiceSpy: jasmine.SpyObj<SearchService>;
 
@@ -58,7 +68,7 @@ describe('SeachEmailComponent', () => {
     expect(component).toBeTruthy();
   }));
 
-  it('should get serach term and email should be equal to term', async(() => {
+  it('should get search term and email should be equal to term', async(() => {
     searchServiceSpy.search.and.returnValue(of(participantList));
 
     fixture.detectChanges();
@@ -86,14 +96,26 @@ describe('SeachEmailComponent', () => {
   });
   it('should validate input email if email was not found in the list', () => {
     component.email = 'email@aa.aa';
+    spyOn(component.emailChanged, 'emit');
     component.blurEmail();
     expect(component.isValidEmail).toBeTruthy();
     expect(component.notFoundParticipant).toBeFalsy();
+    expect(component.emailChanged.emit).toHaveBeenCalled();
+
   });
   it('should close drop down on the click outside', () => {
     component.isShowResult = true;
     const elem = fixture.debugElement.nativeElement.querySelector('document');
     component.clickedOutside(elem);
     expect(component.isShowResult).toBeFalsy();
+  });
+  it('select item should emit event participant found', () => {
+    spyOn(component.findParticipant, 'emit');
+
+    component.selectItemClick(participantModel);
+    fixture.detectChanges();
+    expect(component.isShowResult).toBeFalsy();
+    expect(component.findParticipant.emit).toHaveBeenCalled();
+
   });
 });

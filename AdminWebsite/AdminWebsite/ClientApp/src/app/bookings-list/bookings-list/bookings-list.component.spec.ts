@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed, fakeAsync, tick  } from '@angular/core/testing';
 import { Output, EventEmitter, Directive, Component, Input } from '@angular/core';
 import { BookingsListComponent } from './bookings-list.component';
 import { of, throwError } from 'rxjs';
@@ -64,13 +64,13 @@ export class BookingslistTestData {
     const lists: Array<BookingsDetailsModel> = [];
     const b1 = new BookingsDetailsModel('1', new Date('2019-10-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JadgeGreen', '33A', 'Coronation Street',
-      'Jhon Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'));
+      'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'));
     const b2 = new BookingsDetailsModel('2', new Date('2019-10-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JadgeGreen', '33A', 'Coronation Street',
-      'Jhon Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'));
+      'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'));
     const b3 = new BookingsDetailsModel('3', new Date('2019-10-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JadgeGreen', '33A', 'Coronation Street',
-      'Jhon Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'));
+      'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'));
 
     lists.push(b1);
     lists.push(b2);
@@ -85,13 +85,13 @@ export class BookingslistTestData {
     const lists: Array<BookingsDetailsModel> = [];
     const b1 = new BookingsDetailsModel('1', new Date('2019-10-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JadgeGreen', '33A', 'Coronation Street',
-      'Jhon Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'));
+      'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'));
     const b2 = new BookingsDetailsModel('2', new Date('2019-10-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JadgeGreen', '33A', 'Coronation Street',
-      'Jhon Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'));
+      'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'));
     const b3 = new BookingsDetailsModel('6', new Date('2019-10-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JadgeGreen', '33A', 'Coronation Street',
-      'Jhon Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'));
+      'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'));
 
     lists.push(b1);
     lists.push(b2);
@@ -109,13 +109,13 @@ export class ArrayBookingslistModelTestData {
     const lists: Array<BookingsDetailsModel> = [];
     const b1 = new BookingsDetailsModel('11', new Date('2019-10-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JadgeGreen', '33A', 'Coronation Street',
-      'Jhon Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'));
+      'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'));
     const b2 = new BookingsDetailsModel('12', new Date('2019-10-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JadgeGreen', '33A', 'Coronation Street',
-      'Jhon Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'));
+      'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'));
     const b3 = new BookingsDetailsModel('33', new Date('2019-10-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JadgeGreen', '33A', 'Coronation Street',
-      'Jhon Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'));
+      'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'));
 
     lists.push(b1);
     lists.push(b2);
@@ -123,13 +123,13 @@ export class ArrayBookingslistModelTestData {
     const model1 = new BookingsListModel(new Date('2019-11-22 15:58:40.3730067'));
     const b11 = new BookingsDetailsModel('44', new Date('2019-11-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JadgeGreen', '33A', 'Coronation Street',
-      'Jhon Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'));
+      'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'));
     const b21 = new BookingsDetailsModel('45', new Date('2019-11-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JadgeGreen', '33A', 'Coronation Street',
-      'Jhon Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'));
+      'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'));
     const b31 = new BookingsDetailsModel('46', new Date('2019-11-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JadgeGreen', '33A', 'Coronation Street',
-      'Jhon Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'));
+      'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'));
     lists.push(b11);
     lists.push(b21);
     lists.push(b31);
@@ -158,7 +158,6 @@ class BookingDetailsComponent {
 
 describe('BookingsListComponent', () => {
   beforeEach(async(() => {
-
     const data = new ResponseTestData().getTestData();
 
     bookingsListServiceSpy.getBookingsList.and.returnValue(of(data));
@@ -182,7 +181,7 @@ describe('BookingsListComponent', () => {
 
   }));
 
-  it('should create bookingslist component', (() => {
+  it('should create bookings list component', (() => {
     expect(component).toBeTruthy();
   }));
 
@@ -221,5 +220,24 @@ describe('BookingsListComponent', () => {
     component.ngOnInit();
     expect(component.error).toBeTruthy();
   }));
+  it('should select row', () => {
+    component.bookings = new ArrayBookingslistModelTestData().getTestData();
+    component.ngOnInit();
+    fixture.detectChanges();
+    component.rowSelected(1, 0)
+    expect(component.selectedGroupIndex).toBe(1);
+    expect(component.selectedItemIndex).toBe(0);
+    expect(component.showDetails).toBeTruthy();
+  });
+  it('should hide booking details and show booking list', fakeAsync(() => {
 
+    component.selectedGroupIndex = 1;
+    component.selectedItemIndex = 0;
+    fixture.detectChanges();
+    component.closeHearingDetails();
+    tick(500);
+    fixture.whenStable().then(() => {
+      expect(component.showDetails).toBeFalsy();
+    });
+  }));
 });

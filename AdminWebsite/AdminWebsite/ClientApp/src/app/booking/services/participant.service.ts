@@ -17,7 +17,6 @@ export class ParticipantService {
       item.hearingRoles = s.hearing_roles;
       return item;
     });
-
     return participantRoles;
   }
 
