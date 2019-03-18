@@ -94,8 +94,8 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
   }
 
   private retrieveHearingSummary() {
-    this.caseNumber = this.hearing.cases[0].number;
-    this.caseName = this.hearing.cases[0].name;
+    this.caseNumber = this.hearing.cases.length > 0 ? this.hearing.cases[0].number : '';
+    this.caseName = this.hearing.cases.length > 0 ? this.hearing.cases[0].name : '';
     this.getCaseHearingTypeName(this.hearing.hearing_type_id);
     this.hearingDate = this.hearing.scheduled_date_time;
     this.getCourtRoomAndAddress(this.hearing.hearing_venue_id);

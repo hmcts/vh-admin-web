@@ -37,7 +37,6 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public void EditParticipantRoundedBoarder(string uri) => SelectOption(_particpantRoundedBoarder, uri);
         public void RemoveParticipant() => ClickElement(By.Id("btn-remove"));
         public void CancelRemoveParticipant() => ClickElement(By.Id("btn-cancel"));
-        public string ParticipantConfirmationMessage() => GetElementText(By.XPath("//h1[contains(text(),'hearing booking')]"));
-        public string GetParticipantDetails() => GetElementText(By.XPath("//*[@class='govuk-grid-column-two-thirds vhtable-header']"));
+        public string ParticipantConfirmationMessage() => GetElementText(By.XPath("//h1[contains(text(),'hearing booking')]"));        
     }
 }
