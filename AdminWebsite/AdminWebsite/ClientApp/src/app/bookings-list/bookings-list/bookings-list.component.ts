@@ -42,7 +42,6 @@ export class BookingsListComponent implements OnInit {
   }
 
   private handleError(err) {
-    console.log(err);
     this.error = true;
   }
 
