@@ -24,7 +24,7 @@ describe('ParticipantService', () => {
     const responses: CaseAndHearingRolesResponse[] = [];
     responses.push(response);
 
-    var models = service.mapParticipantsRoles(responses);
+    const models = service.mapParticipantsRoles(responses);
     expect(models).toBeTruthy();
     expect(models.length).toBe(1);
     expect(models[0].name).toBe('Defendant');
@@ -33,35 +33,34 @@ describe('ParticipantService', () => {
   }));
   it('should return empty party model array', inject([ParticipantService], (service: ParticipantService) => {
     const responses: CaseAndHearingRolesResponse[] = [];
-    var models = service.mapParticipantsRoles(responses);
+    const models = service.mapParticipantsRoles(responses);
     expect(models).toBeTruthy();
     expect(models.length).toBe(0);
   }));
-  it('should check email duplication and return false, no duplicated participant emails found', inject([ParticipantService], (service: ParticipantService) => {
+  it('should check email duplication and return false', inject([ParticipantService], (service: ParticipantService) => {
     const part1 = new ParticipantModel();
     part1.email = 'aa@aa.aa';
     const participants: ParticipantModel[] = [];
     participants.push(part1);
-    var result = service.checkDuplication('bb@bb.bb', participants);
+    const result = service.checkDuplication('bb@bb.bb', participants);
     expect(result).toBeFalsy();
   }));
-  it('should check email duplication and return false, no participants exists', inject([ParticipantService], (service: ParticipantService) => {
+  it('should check duplication returns false as no participants', inject([ParticipantService], (service: ParticipantService) => {
     const participants: ParticipantModel[] = [];
-    var result = service.checkDuplication('bb@bb.bb', participants);
+    const result = service.checkDuplication('bb@bb.bb', participants);
     expect(result).toBeFalsy();
   }));
-  
   it('should throw exception if email is invalid', inject([ParticipantService], (service: ParticipantService) => {
     const email = undefined;
     const participants: ParticipantModel[] = [];
     expect(() => service.checkDuplication(email, participants)).toThrowError(`Cannot check for duplication on undefined email`);
   }));
-  it('should check email duplication and return true, duplicated participant emails found', inject([ParticipantService], (service: ParticipantService) => {
+  it('should check email duplication and return true', inject([ParticipantService], (service: ParticipantService) => {
     const part1 = new ParticipantModel();
     part1.email = 'aa@aa.aa';
     const participants: ParticipantModel[] = [];
     participants.push(part1);
-    var result = service.checkDuplication('aa@aa.aa', participants);
+    const result = service.checkDuplication('aa@aa.aa', participants);
     expect(result).toBeTruthy();
   }));
   it('should remove participant', inject([ParticipantService], (service: ParticipantService) => {
@@ -71,8 +70,7 @@ describe('ParticipantService', () => {
     const participants: ParticipantModel[] = [];
     participants.push(part1);
     hearing.participants = participants;
-
-    var result = service.removeParticipant(hearing,'aa@aa.aa');
+    const result = service.removeParticipant(hearing, 'aa@aa.aa');
     expect(hearing.participants.length).toBe(0);
   }));
   it('should not remove participant, if email is not in the list', inject([ParticipantService], (service: ParticipantService) => {
@@ -82,8 +80,7 @@ describe('ParticipantService', () => {
     const participants: ParticipantModel[] = [];
     participants.push(part1);
     hearing.participants = participants;
-
-    var result = service.removeParticipant(hearing, 'bb@bb.bb');
+    const result = service.removeParticipant(hearing, 'bb@bb.bb');
     expect(hearing.participants.length).toBe(1);
   }));
 });

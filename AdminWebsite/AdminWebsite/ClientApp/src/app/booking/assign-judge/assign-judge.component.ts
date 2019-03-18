@@ -56,7 +56,6 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
 
   private initForm() {
     const find_judge = this.hearing.participants.find(x => x.is_judge === true);
-
     if (!find_judge) {
       this.judge = new ParticipantDetailsResponse({ id: null });
     } else {

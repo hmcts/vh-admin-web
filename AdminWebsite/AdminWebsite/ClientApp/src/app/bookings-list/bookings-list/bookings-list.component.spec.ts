@@ -224,7 +224,7 @@ describe('BookingsListComponent', () => {
     component.bookings = new ArrayBookingslistModelTestData().getTestData();
     component.ngOnInit();
     fixture.detectChanges();
-    component.rowSelected(1, 0)
+    component.rowSelected(1, 0);
     expect(component.selectedGroupIndex).toBe(1);
     expect(component.selectedItemIndex).toBe(0);
     expect(component.showDetails).toBeTruthy();

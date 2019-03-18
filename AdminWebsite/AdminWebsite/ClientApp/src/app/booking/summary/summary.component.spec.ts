@@ -117,7 +117,7 @@ describe('SummaryComponent with valid request', () => {
     expect(component.courtRoomAddress).toEqual(`${courtString.name} 123W`);
   });
   it('should remove participant', () => {
-    component.ngOnInit()
+    component.ngOnInit();
     component.selectedParticipantEmail = 'aa@aa.aa';
     component.removeParticipant();
     fixture.detectChanges();
@@ -125,7 +125,7 @@ describe('SummaryComponent with valid request', () => {
     expect(videoHearingsServiceSpy.updateHearingRequest).toHaveBeenCalled();
   });
   it('should not remove participant by not existing email', () => {
-    component.ngOnInit()
+    component.ngOnInit();
     const pat1 = new ParticipantModel();
     pat1.email = 'aa@aa.aa';
     component.hearing.participants = [];
