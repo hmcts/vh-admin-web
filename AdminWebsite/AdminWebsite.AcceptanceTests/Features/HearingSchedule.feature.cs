@@ -126,7 +126,7 @@ this.ScenarioInitialize(scenarioInfo);
 #line 23
  testRunner.And("user is on hearing schedule page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 24
- testRunner.When("user selects a date in the past from the calendar", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.When("user inputs a date in the past from the calendar", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 25
  testRunner.And("user proceeds to next page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 26

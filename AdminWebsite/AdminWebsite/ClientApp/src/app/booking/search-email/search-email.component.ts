@@ -58,7 +58,8 @@ export class SearchEmailComponent {
     selectedResult.first_name = result.first_name;
     selectedResult.last_name = result.last_name;
     selectedResult.title = result.title;
-    selectedResult.role = result.role;
+    selectedResult.case_role_name = result.case_role_name;
+    selectedResult.hearing_role_name = result.hearing_role_name;
     selectedResult.phone = result.phone;
     selectedResult.display_name = result.display_name;
 
@@ -75,12 +76,12 @@ export class SearchEmailComponent {
   }
 
   @HostListener('document:click', ['$event.target'])
-   clickedOutside(targetElement) {
+  clickedOutside(targetElement) {
     const clickedInside = this.elRef.nativeElement.contains(targetElement);
-      if (!clickedInside) {
-          this.isShowResult = false;
-      }
-}
+    if (!clickedInside) {
+      this.isShowResult = false;
+    }
+  }
 
   clearEmail() {
     this.email = '';

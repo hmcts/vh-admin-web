@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -15,34 +15,40 @@ import { ParticipantsListComponent } from '../participants-list/participants-lis
 import { BookingBaseComponent } from '../booking-base/booking-base.component';
 import { BookingService } from '../../services/booking.service';
 import { ParticipantService } from '../services/participant.service';
-import {CaseRoleResponse} from '../../services/clients/api-client';
+import { CaseAndHearingRolesResponse } from '../../services/clients/api-client';
+import { PartyModel } from '../../common/model/party.model';
 
 @Component({
   selector: 'app-add-participant',
   templateUrl: './add-participant.component.html',
   styleUrls: ['./add-participant.component.css'],
 })
-export class AddParticipantComponent extends BookingBaseComponent implements OnInit, CanDeactiveComponent {
+export class AddParticipantComponent extends BookingBaseComponent implements OnInit, AfterViewInit, OnDestroy, CanDeactiveComponent {
   canNavigate = true;
   constants = Constants;
 
   participantDetails: ParticipantModel;
   notFound: boolean;
   hearing: HearingModel;
-  participants: ParticipantModel[] = [];
   titleList: IDropDownModel[] = [];
-  roleList: CaseRoleResponse[];
+  roleList: string[];
+  hearingRoleList: string[];
+  caseAndHearingRoles: PartyModel[] = [];
   selectedParticipantEmail: string = null;
   participantForm: FormGroup;
   private role: FormControl;
+  private party: FormControl;
   private title: FormControl;
   private firstName: FormControl;
   private lastName: FormControl;
   private phone: FormControl;
   private displayName: FormControl;
+  private companyName: FormControl;
   isRoleSelected = true;
+  isPartySelected = true;
   isTitleSelected = true;
   isShowErrorSummary = false;
+  showDetails = false;
 
   showCancelPopup = false;
   showConfirmationPopup = false;
@@ -53,7 +59,9 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   displayNextButton = true;
   displayAddButton = false;
   displayClearButton = false;
+  displayUpdateButton = false;
   displayErrorNoParticipants = false;
+  localEditMode = false;
 
   @ViewChild(SearchEmailComponent)
   searchEmail: SearchEmailComponent;
@@ -70,85 +78,35 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
     super(bookingService, router);
     this.checkForExistingRequest();
-    this.retrieveRoles();
     this.titleList = searchService.TitleList;
-  }
-
-  private repopulateParticipantToEdit() {
-    const selectedParticipant = this.participants.find(s => s.email === this.selectedParticipantEmail);
-    this.getParticipant(selectedParticipant);
-    this.searchEmail.email = selectedParticipant.email;
-    this.searchEmail.isValidEmail = true;
-  }
-
-  private checkForExistingRequest() {
-    this.hearing = this.videoHearingService.getCurrentRequest();
-  }
-
-  private retrieveRoles() {
-    this.videoHearingService.getParticipantRoles()
-      .subscribe(
-        (data: CaseRoleResponse[]) => {
-          this.setupRoles(data);
-        },
-        error => console.error(error)
-      );
-  }
-
-  setupRoles(data: CaseRoleResponse[]) {
-    const rolesToIgnore = ['Judge', 'Clerk', 'Administrator'];
-    this.roleList = data.filter(x => rolesToIgnore.indexOf(x.name) === -1);
-    const firstItem = new CaseRoleResponse({ name: this.constants.PleaseSelect });
-    this.roleList.unshift(firstItem);
-  }
-
-  public getParticipant(participantDetails) {
-    this.displayErrorNoParticipants = false;
-    this.displayAdd();
-
-    this.participantDetails = participantDetails;
-    this.participantForm.setValue({
-      role: this.participantDetails.role,
-      title: this.participantDetails.title,
-      firstName: this.participantDetails.first_name,
-      lastName: this.participantDetails.last_name,
-      phone: this.participantDetails.phone,
-      displayName: this.participantDetails.display_name
-    });
-  }
-
-  notFoundParticipant() {
-    this.displayErrorNoParticipants = false;
-    this.displayClear();
-  }
-
-  emailChanged() {
-    if (this.participantForm.valid && this.searchEmail.validateEmail()) {
-      if (this.editMode) {
-        this.displayNext();
-      } else {
-        this.displayAdd();
-      }
-    }
   }
 
   ngOnInit() {
     super.ngOnInit();
     this.hearing = this.videoHearingService.getCurrentRequest();
-    if (this.hearing) {
-      this.participants = this.participantService.getAllParticipants(this.hearing);
-    }
+    this.retrieveRoles();
     this.initializeForm();
     if (this.editMode) {
-      this.selectedParticipantEmail = this.bookingService.getParticipantEmail();
-      this.repopulateParticipantToEdit();
-      this.displayNext();
+      setTimeout(() => {
+        this.showDetails = true;
+        this.selectedParticipantEmail = this.bookingService.getParticipantEmail();
+        this.repopulateParticipantToEdit();
+        this.displayNext();
+      }, 500);
     }
 
     if (this.participantsListComponent) {
       this.participantsListComponent.selectedParticipant.subscribe((participantEmail) => {
         this.selectedParticipantEmail = participantEmail;
-        this.repopulateParticipantToEdit();
+        this.showDetails = true;
+        setTimeout(() => {
+          this.repopulateParticipantToEdit();
+          this.displayUpdate();
+          this.localEditMode = true;
+          if (this.searchEmail) {
+            this.setParticipantEmail();
+          }
+        }, 500);
       });
 
       this.participantsListComponent.selectedParticipantToRemove.subscribe((participantEmail) => {
@@ -158,8 +116,27 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     }
   }
 
+  ngAfterViewInit() {
+    if (this.editMode) {
+      setTimeout(() => {
+        if (this.searchEmail && this.participantDetails) {
+          this.setParticipantEmail();
+        }
+      }, 500);
+    }
+  }
+
+  private setParticipantEmail() {
+    this.searchEmail.email = this.participantDetails.email;
+    this.searchEmail.isValidEmail = true;
+  }
+
   initializeForm() {
     this.role = new FormControl(this.constants.PleaseSelect, [
+      Validators.required,
+      Validators.pattern(this.constants.PleaseSelectPattern)
+    ]);
+    this.party = new FormControl(this.constants.PleaseSelect, [
       Validators.required,
       Validators.pattern(this.constants.PleaseSelectPattern)
     ]);
@@ -171,46 +148,143 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     this.lastName = new FormControl('', Validators.required);
     this.phone = new FormControl('', [Validators.required, Validators.pattern(/^[0-9) -.]+$/)]);
     this.displayName = new FormControl('');
+    this.companyName = new FormControl('');
     this.participantForm = new FormGroup({
       role: this.role,
+      party: this.party,
       title: this.title,
       firstName: this.firstName,
       lastName: this.lastName,
       phone: this.phone,
       displayName: this.displayName,
+      companyName: this.companyName,
     });
     this.participantForm.valueChanges.subscribe(
       result => {
-        if ((this.role.value === this.constants.PleaseSelect &&
-          this.title.value === this.constants.PleaseSelect &&
-          this.firstName.value === '' &&
-          this.lastName.value === '' &&
-          this.phone.value === '' &&
-          this.displayName.value === '') || this.editMode) {
-          this.displayNext();
-        } else if (this.participantForm.valid && this.searchEmail.validateEmail()) {
-          this.displayAdd();
-        } else {
-          this.displayClear();
-        }
+        setTimeout(() => {
+          if (this.showDetails && (this.role.value === this.constants.PleaseSelect &&
+            this.party.value === this.constants.PleaseSelect &&
+            this.title.value === this.constants.PleaseSelect &&
+            this.firstName.value === '' &&
+            this.lastName.value === '' &&
+            this.phone.value === '' &&
+            this.displayName.value === '') || this.editMode) {
+            this.displayNext();
+          } else if (!this.showDetails && (this.role.value === this.constants.PleaseSelect
+            && this.party.value === this.constants.PleaseSelect)) {
+            this.displayNext();
+          } else if (this.showDetails && this.participantForm.valid && (this.searchEmail && this.searchEmail.validateEmail())) {
+            if (this.localEditMode) {
+              this.displayUpdate();
+            } else {
+              this.displayAdd();
+            }
+          } else {
+            this.displayClear();
+          }
+        }, 500);
       });
+  }
+
+  private repopulateParticipantToEdit() {
+    const selectedParticipant = this.hearing.participants.find(s => s.email === this.selectedParticipantEmail);
+    if (selectedParticipant) {
+      this.getParticipant(selectedParticipant);
+    }
+  }
+
+  private checkForExistingRequest() {
+    this.hearing = this.videoHearingService.getCurrentRequest();
+  }
+
+  private retrieveRoles() {
+    this.videoHearingService.getParticipantRoles(this.hearing.case_type)
+      .subscribe(
+        (data: CaseAndHearingRolesResponse[]) => {
+          this.setupRoles(data);
+        },
+        error => console.error(error)
+      );
+  }
+
+  setupRoles(data: CaseAndHearingRolesResponse[]) {
+    this.caseAndHearingRoles = this.participantService.mapParticipantsRoles(data);
+    this.roleList = this.caseAndHearingRoles.map(x => x.name);
+    this.roleList.unshift(this.constants.PleaseSelect);
+    this.caseAndHearingRoles.forEach(x => {
+      this.setupHearingRoles(x.name);
+    });
+  }
+
+  setupHearingRoles(caseRoleName: string) {
+    const list = this.caseAndHearingRoles.find(x => x.name === caseRoleName);
+    this.hearingRoleList = list ? list.hearingRoles : [];
+    if (this.hearingRoleList && !this.hearingRoleList.find(s => s === this.constants.PleaseSelect)) {
+      this.hearingRoleList.unshift(this.constants.PleaseSelect);
+    }
+  }
+
+  public getParticipant(participantDetails) {
+    this.displayErrorNoParticipants = false;
+    this.displayAdd();
+    this.participantDetails = participantDetails;
+    this.setupHearingRoles(this.participantDetails.case_role_name);
+    this.participantForm.setValue({
+      party: this.participantDetails.case_role_name,
+      role: this.participantDetails.hearing_role_name,
+      title: this.participantDetails.title,
+      firstName: this.participantDetails.first_name,
+      lastName: this.participantDetails.last_name,
+      phone: this.participantDetails.phone,
+      displayName: this.participantDetails.display_name,
+      companyName: this.participantDetails.company,
+    });
+  }
+
+  notFoundParticipant() {
+    this.displayErrorNoParticipants = false;
+    this.displayClear();
+  }
+
+  emailChanged() {
+    if (this.participantForm.valid && this.showDetails && this.searchEmail.validateEmail()) {
+      if (this.editMode) {
+        this.displayNext();
+      } else {
+        this.displayAdd();
+      }
+    }
   }
 
   private displayAdd() {
     this.displayNextButton = false;
     this.displayClearButton = true;
     this.displayAddButton = true;
+    this.displayUpdateButton = false;
+
+  }
+
+  private displayUpdate() {
+    this.displayNextButton = false;
+    this.displayClearButton = true;
+    this.displayUpdateButton = true;
+    this.displayAddButton = false;
+
   }
 
   private displayNext() {
     this.displayNextButton = true;
     this.displayClearButton = false;
     this.displayAddButton = false;
+    this.displayUpdateButton = false;
+
   }
   private displayClear() {
     this.displayNextButton = false;
     this.displayClearButton = true;
     this.displayAddButton = false;
+    this.displayUpdateButton = false;
+
   }
 
   get firstNameInvalid() {
@@ -225,6 +299,10 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     return this.phone.invalid && (this.phone.dirty || this.phone.touched || this.isShowErrorSummary);
   }
 
+  get partyInvalid() {
+    return this.party.invalid && (this.party.dirty || this.party.touched || this.isShowErrorSummary);
+  }
+
   get roleInvalid() {
     return this.role.invalid && (this.role.dirty || this.role.touched || this.isShowErrorSummary);
   }
@@ -233,8 +311,14 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     return this.title.invalid && (this.title.dirty || this.title.touched || this.isShowErrorSummary);
   }
 
+  partySelected() {
+    this.isPartySelected = this.party.value !== this.constants.PleaseSelect;
+    this.setupHearingRoles(this.party.value);
+  }
+
   roleSelected() {
     this.isRoleSelected = this.role.value !== this.constants.PleaseSelect;
+    this.showDetails = true;
   }
 
   titleSelected() {
@@ -242,7 +326,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   }
 
   get emailInvalid() {
-    return this.searchEmail.validateEmail();
+    return this.showDetails ? this.searchEmail.validateEmail() : true;
   }
 
   get displayNameInvalid() {
@@ -254,18 +338,19 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   }
 
   saveParticipant() {
-    const validEmail = this.searchEmail.validateEmail();
     this.actionsBeforeSave();
-    if (this.participantForm.valid && validEmail && this.isRoleSelected && this.isTitleSelected) {
+    const validEmail = this.showDetails ? this.searchEmail.validateEmail() : true;
+    if (this.participantForm.valid && validEmail && this.isRoleSelected && this.isPartySelected && this.isTitleSelected) {
       this.isShowErrorSummary = false;
       const newParticipant = new ParticipantModel();
       this.mapParticipant(newParticipant);
-      if (!this.participantService.checkDuplication(newParticipant.email, this.participants)) {
-        this.participants.push(newParticipant);
-        this.addToFeed(newParticipant);
+      if (!this.participantService.checkDuplication(newParticipant.email, this.hearing.participants)) {
+        this.hearing.participants.push(newParticipant);
+        this.videoHearingService.updateHearingRequest(this.hearing);
         this.clearForm();
         this.displayNext();
         this.participantForm.markAsPristine();
+        this.showDetails = false;
       } else {
         this.showConfirmationPopup = true;
         this.confirmationMessage = `You have already added ${newParticipant.first_name} ${newParticipant.last_name} to this hearing`;
@@ -275,16 +360,21 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     }
   }
 
+  updateParticipantAction() {
+    this.updateParticipant();
+    this.videoHearingService.updateHearingRequest(this.hearing);
+    this.displayNext();
+    this.localEditMode = false;
+  }
+
   updateParticipant() {
-    const validEmail = this.searchEmail.validateEmail();
+    const validEmail = this.showDetails ? this.searchEmail.validateEmail() : true;
     this.actionsBeforeSave();
     if (this.participantForm.valid && validEmail && this.isRoleSelected && this.isTitleSelected) {
       this.isShowErrorSummary = false;
-      console.log('update participant');
-      this.participants.forEach(newParticipant => {
+      this.hearing.participants.forEach(newParticipant => {
         if (newParticipant.email === this.selectedParticipantEmail) {
           this.mapParticipant(newParticipant);
-          this.addToFeed(newParticipant);
         }
       });
       this.clearForm();
@@ -303,13 +393,17 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   }
 
   confirmRemoveParticipant() {
-    const participant =  this.participants.find(x => x.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase());
+    const participant = this.hearing.participants.find(x => x.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase());
     this.removerFullName = participant ? `${participant.title} ${participant.first_name} ${participant.last_name}` : '';
     this.showConfirmationRemoveParticipant = true;
   }
 
   removeParticipant() {
-    this.participantService.removeParticipant(this.participants, this.hearing, this.selectedParticipantEmail);
+    // check if participant details were populated, if yes then clean form.
+    if (this.searchEmail.email === this.selectedParticipantEmail) {
+      this.clearForm();
+    }
+    this.participantService.removeParticipant(this.hearing, this.selectedParticipantEmail);
     this.videoHearingService.updateHearingRequest(this.hearing);
   }
 
@@ -318,14 +412,11 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     newParticipant.last_name = this.lastName.value;
     newParticipant.phone = this.phone.value;
     newParticipant.title = this.title.value;
-    newParticipant.role = this.role.value;
+    newParticipant.case_role_name = this.party.value;
+    newParticipant.hearing_role_name = this.role.value;
     newParticipant.email = this.searchEmail.email;
     newParticipant.display_name = this.displayName.value;
-  }
-
-  addToFeed(newParticipant) {
-    this.participantService.addToFeed(newParticipant, this.hearing);
-    this.videoHearingService.updateHearingRequest(this.hearing);
+    newParticipant.company = this.companyName.value;
   }
 
   addParticipantCancel() {
@@ -357,32 +448,44 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
   handleCancelRemove() {
     this.showConfirmationRemoveParticipant = false;
-    this.participants = this.participantService.getAllParticipants(this.hearing);
   }
 
   clearForm() {
     this.participantForm.setValue(
       {
         role: this.constants.PleaseSelect,
+        party: this.constants.PleaseSelect,
         title: this.constants.PleaseSelect,
         firstName: '',
         lastName: '',
         phone: '',
-        displayName: ''
+        displayName: '',
+        companyName: '',
       });
     this.role.markAsUntouched();
+    this.party.markAsUntouched();
     this.firstName.markAsUntouched();
     this.lastName.markAsUntouched();
     this.phone.markAsUntouched();
     this.title.markAsUntouched();
-    this.searchEmail.clearEmail();
     this.displayName.markAsUntouched();
+    this.companyName.markAsUntouched();
+    if (this.showDetails) {
+      this.searchEmail.clearEmail();
+    }
+    this.showDetails = false;
+    this.resetEditMode();
+    this.localEditMode = false;
+    if (this.hearing.participants.length > 1) {
+      this.displayNext();
+    }
   }
 
   next() {
-    if (this.participants && this.participants.length > 0) {
+    if (this.hearing.participants && this.hearing.participants.length > 0) {
       if (this.editMode) {
         this.updateParticipant();
+        this.videoHearingService.updateHearingRequest(this.hearing);
         if (this.isShowErrorSummary) {
           return;
         }
@@ -404,5 +507,9 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
   goToDiv(fragment: string): void {
     window.document.getElementById(fragment).parentElement.parentElement.scrollIntoView();
+  }
+
+  ngOnDestroy() {
+    this.clearForm();
   }
 }

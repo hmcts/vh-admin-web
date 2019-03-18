@@ -25,12 +25,10 @@ Scenario Outline: Case Admin signs out in the process of booking hearing
 Examples: 
 | Booking           |
 | Hearing details   |
-| Hearing sjudge    |
+| Assign judge      |
 | Add participants  |
 | Other information |
 | Summary           |
-| Dashboard         |
-| Bookings List     |
 
 @VIH-2072
 Scenario Outline: Vh Officer signs out in the process of booking hearing
@@ -42,9 +40,18 @@ Scenario Outline: Vh Officer signs out in the process of booking hearing
 Examples: 
 | Booking           |
 | Hearing details   |
-| Hearing sjudge    |
+| Assign judge      |
 | Add participants  |
 | Other information |
 | Summary           |
-| Dashboard         |
-| Bookings List     |
+
+@bug_VIH-4159
+Scenario Outline: Warning message to dsiplay when Case Admin tries to navigate away from booking
+	Given Admin user is on microsoft login page
+	And Case Admin logs into Vh-Admin website 
+	When user tries to navigate away from <booking> a hearing
+	Then warning message should be displayed as You will lose all your booking details if you sign out.
+Examples: 
+| booking                |
+| Dashboard              |
+| Bookings List          |
