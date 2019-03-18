@@ -484,7 +484,6 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   next() {
     if (this.hearing.participants && this.hearing.participants.length > 0) {
       if (this.editMode) {
-        debugger;
         this.updateParticipant();
         this.videoHearingService.updateHearingRequest(this.hearing);
         if (this.isShowErrorSummary) {
