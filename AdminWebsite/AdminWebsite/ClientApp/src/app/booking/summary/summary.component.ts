@@ -153,7 +153,8 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
     this.showErrorSaving = false;
     this.hearingService.saveHearing(this.hearing)
       .subscribe(
-      (data: HearingDetailsResponse) => {
+      (hearingDetailsResponse: HearingDetailsResponse) => {
+          sessionStorage.setItem(this.newHearingSessionKey, hearingDetailsResponse.id);
           this.hearingService.cancelRequest();
           this.showWaitSaving = false;
           this.router.navigate([PageUrls.BookingConfirmation]);

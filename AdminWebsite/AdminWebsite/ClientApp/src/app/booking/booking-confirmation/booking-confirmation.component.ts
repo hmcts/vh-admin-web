@@ -27,7 +27,7 @@ export class BookingConfirmationComponent implements OnInit {
     this.retrieveSavedHearing();
   }
 
-  public retrieveSavedHearing() {
+  retrieveSavedHearing() {
     const hearingId = sessionStorage.getItem(this.newHearingSessionKey);
     this.hearingService.getHearingById(hearingId)
       .subscribe(
@@ -40,16 +40,17 @@ export class BookingConfirmationComponent implements OnInit {
       );
   }
 
-  public bookAnotherHearing(): void {
+  bookAnotherHearing(): void {
     this.clearSessionData();
     this.router.navigate([PageUrls.CreateHearing]);
   }
 
-  public returnToDashboard(): void {
+  returnToDashboard(): void {
     this.clearSessionData();
+    this.router.navigate([PageUrls.Dashboard]);
   }
 
-  public clearSessionData(): void {
+  clearSessionData(): void {
     this.hearingService.cancelRequest();
   }
 }
