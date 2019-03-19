@@ -87,7 +87,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void WhenHearingScheduleIsUpdated()
         {
             HearingSchedulePage();
-            var date = DateTime.Now.AddDays(2);
+            DateTime date = DateTime.UtcNow.AddDays(2);
             string[] splitDate = date.ToString("dd/MM/yyyy").Split('/');
             _hearingSchedule.AddItems<string>("HearingDate", date.ToString("dddd dd MMMM yyyy , HH:mm"));
             _hearingSchedule.HearingDate(splitDate);

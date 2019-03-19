@@ -1,7 +1,6 @@
 ﻿using AdminWebsite.AcceptanceTests.Helpers;
 using OpenQA.Selenium;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace AdminWebsite.AcceptanceTests.Pages
@@ -32,12 +31,6 @@ namespace AdminWebsite.AcceptanceTests.Pages
         }
         public void HearingStartTime(string[] currentTime = null)
         {
-            //var currentTime = CurrentTime();
-            //var startTime = GetListOfElements(_hearingStartTime).ToArray();            
-            //for (var i = 0; i < startTime.Length; i++)
-            //{
-            //    startTime[i].SendKeys(currentTime[i]);
-            //}
             if (currentTime == null)
                 currentTime = CurrentTime();
             var startTime = GetListOfElements(_hearingStartTime).ToArray();
@@ -59,7 +52,6 @@ namespace AdminWebsite.AcceptanceTests.Pages
         }
         public void HearingVenue() => SelectOption(CommonLocator.List("courtAddress"));
         public void HearingVenue(string venue) => SelectOption(CommonLocator.List("courtAddress"), venue);
-
         public int HearingLocation() => GetListOfElements(CommonLocator.List("courtAddress")).ToList().Count();
         public void HearingRoom(string room) => ClearFieldInputValues(_room, room);
         public string ErrorDate() => GetElementText(_errorDate);

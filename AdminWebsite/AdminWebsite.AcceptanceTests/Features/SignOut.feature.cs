@@ -177,7 +177,6 @@ this.ScenarioInitialize(scenarioInfo);
         [NUnit.Framework.CategoryAttribute("bug_VIH-4159")]
         [NUnit.Framework.TestCaseAttribute("Dashboard", null)]
         [NUnit.Framework.TestCaseAttribute("Bookings List", null)]
-        [NUnit.Framework.TestCaseAttribute("HMCTS logo crest image", null)]
         public virtual void WarningMessageToDsiplayWhenCaseAdminTriesToNavigateAwayFromBooking(string booking, string[] exampleTags)
         {
             string[] @__tags = new string[] {
@@ -195,10 +194,8 @@ this.ScenarioInitialize(scenarioInfo);
 #line 51
  testRunner.And("Case Admin logs into Vh-Admin website", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 52
- testRunner.And("user is in the process of <Booking> Hearing", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 53
  testRunner.When(string.Format("user tries to navigate away from {0} a hearing", booking), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 54
+#line 53
  testRunner.Then("warning message should be displayed as You will lose all your booking details if " +
                     "you sign out.", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
