@@ -19,7 +19,7 @@ p {
     max-height: 30%;
     overflow: auto;
     color: #0B0B0B;
-    font-family: Arial;
+    font-family: Helvetica, Arial, Verdana, Tahoma, sans-serif;
     font-size: 18px;
     line-height: 1.3157;
 }

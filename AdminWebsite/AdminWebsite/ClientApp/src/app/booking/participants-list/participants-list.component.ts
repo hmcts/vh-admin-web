@@ -2,6 +2,7 @@ import { Component, Input, OnInit, EventEmitter } from '@angular/core';
 import { BookingService } from '../../services/booking.service';
 import { ParticipantModel } from '../../common/model/participant.model';
 import { Router } from '@angular/router';
+import { PageUrls } from 'src/app/shared/page-url.constants';
 
 @Component({
   selector: 'app-participants-list',
@@ -37,7 +38,7 @@ export class ParticipantsListComponent implements OnInit {
     this.bookingService.setEditMode();
     if (this.isSummaryPage) {
       this.bookingService.setParticipantEmail(participantEmail);
-      this.router.navigate(['/add-participants']);
+      this.router.navigate([PageUrls.AddParticipants]);
     } else {
       // we are om the add participant page
       this.$selectedForEdit.emit(participantEmail);

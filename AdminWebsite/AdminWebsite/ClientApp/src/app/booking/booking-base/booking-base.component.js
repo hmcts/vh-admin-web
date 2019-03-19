@@ -13,7 +13,7 @@ var BookingBaseComponent = /** @class */ (function () {
     };
     BookingBaseComponent.prototype.navigateToSummary = function () {
         this.resetEditMode();
-        this.router.navigate(['/summary']);
+      this.router.navigate([PageUrls.Summary]);
     };
     BookingBaseComponent.prototype.resetEditMode = function () {
         this.bookingService.resetEditMode();

@@ -11,6 +11,7 @@ import { VideoHearingsService } from '../../services/video-hearings.service';
 import { BookingBaseComponent } from '../booking-base/booking-base.component';
 import { BookingService } from '../../services/booking.service';
 import { ErrorService } from 'src/app/services/error.service';
+import { PageUrls } from 'src/app/shared/page-url.constants';
 
 @Component({
   selector: 'app-create-hearing',
@@ -48,14 +49,6 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
     this.initForm();
     this.retrieveHearingTypes();
     this.onChanged();
-
-    this.hearingType.valueChanges.subscribe(val => {
-      const id = val;
-      if (id !== null) {
-        const avaliableType = this.availableHearingTypes.find(h => h.id === id);
-        this.selectedHearingType = avaliableType ? avaliableType.name : '';
-      }
-    });
   }
 
   onChanged() {
@@ -125,7 +118,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
       if (this.editMode) {
         this.navigateToSummary();
       } else {
-        this.router.navigate(['/hearing-schedule']);
+        this.router.navigate([PageUrls.HearingSchedule]);
       }
     } else {
       this.failedSubmission = true;
@@ -149,7 +142,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
     this.hearingService.cancelRequest();
     sessionStorage.removeItem(this.existingCaseTypeKey);
     this.hearingForm.reset();
-    this.router.navigate(['/dashboard']);
+    this.router.navigate([PageUrls.Dashboard]);
   }
 
   private updateHearingRequest() {
@@ -203,6 +196,8 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
     pleaseSelect.name = 'Please Select';
     pleaseSelect.id = -1;
     this.filteredHearingTypes.unshift(pleaseSelect);
+
+    this.hearing.hearing_type_id = -1;
   }
 
   private dynamicSort(property) {

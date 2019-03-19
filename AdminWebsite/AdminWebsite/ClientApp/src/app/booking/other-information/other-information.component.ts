@@ -7,6 +7,7 @@ import { VideoHearingsService } from '../../services/video-hearings.service';
 import { HearingModel } from '../../common/model/hearing.model';
 import { BookingBaseComponent } from '../booking-base/booking-base.component';
 import { BookingService } from '../../services/booking.service';
+import { PageUrls } from 'src/app/shared/page-url.constants';
 
 @Component({
   selector: 'app-other-information',
@@ -50,14 +51,14 @@ export class OtherInformationComponent extends BookingBaseComponent implements O
     if (this.editMode) {
       this.resetEditMode();
     }
-    this.router.navigate(['/summary']);
+    this.router.navigate([PageUrls.Summary]);
   }
 
   cancelBooking() {
     this.attemptingCancellation = false;
     this.videoHearingService.cancelRequest();
     this.otherInformationForm.reset();
-    this.router.navigate(['/dashboard']);
+    this.router.navigate([PageUrls.Dashboard]);
   }
 
   continueBooking() {
