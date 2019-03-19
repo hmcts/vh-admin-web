@@ -86,8 +86,8 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
       .findIndex(x => x.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase());
     if (indexOfParticipant > -1) {
       this.hearing.participants.splice(indexOfParticipant, 1);
+      this.hearingService.updateHearingRequest(this.hearing);
     }
-    this.hearingService.updateHearingRequest(this.hearing);
   }
 
   private retrieveHearingSummary() {
