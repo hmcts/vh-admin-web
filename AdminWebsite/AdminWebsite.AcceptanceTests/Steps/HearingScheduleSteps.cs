@@ -1,5 +1,8 @@
 ﻿using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.AcceptanceTests.Pages;
+using FluentAssertions;
+using System;
+using System.Linq;
 using TechTalk.SpecFlow;
 
 namespace AdminWebsite.AcceptanceTests.Steps
@@ -13,6 +16,8 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             _hearingSchedule = hearingSchedule;
         }
+
+        [When(@"user enters video hearing schedule details")]
         [When(@"hearing schedule form is filled")]
         public void WhenHearingScheduleFormIsFilled()
         {
@@ -20,8 +25,10 @@ namespace AdminWebsite.AcceptanceTests.Steps
             InputDateOfHearing();
             InputHearingStartTime();
             InputHearingDuration();
-            SelectCourtAddress();
+            SelectHearingVenue();
+            EnterRoom();
         }
+        [Then(@"user should remain on hearing schedule page")]
         [When(@"Admin user is on hearing schedule page")]
         public void HearingSchedulePage()
         {
@@ -42,10 +49,52 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             _hearingSchedule.HearingDuration(duration);
         }
-        [When(@"Select court address")]
-        public void SelectCourtAddress()
+        [When(@"Select hearing venue")]
+        public void SelectHearingVenue()
         {
-            _hearingSchedule.CourtAddress();
+            _hearingSchedule.HearingVenue();
+        }
+        [When(@"Enter room text as (.*)")]
+        public void EnterRoom(string room = "")
+        {
+            _hearingSchedule.HearingRoom(room);
+        }
+        
+        public void WhenUserProceedsToNextPage()
+        {
+            _hearingSchedule.HearingLocation().Should().BeGreaterOrEqualTo(2);
+        }
+        
+        [When(@"user inputs a date in the past from the calendar")]
+        public void WhenUserSelectsADateInThePastFromTheCalendar()
+        {
+            string[] date = DateTime.Now.AddDays(-1).ToString("dd/MM/yyyy").Split('/');
+            _hearingSchedule.HearingDate(date);
+            InputDateOfHearing();
+            InputHearingStartTime();
+            InputHearingDuration();
+            SelectHearingVenue();
+            EnterRoom();
+        }
+
+        [Then(@"an error message should be displayed as (.*)")]
+        public void ThenAnErrorMessageShouldBeDisplayedAsPleaseEnterADateInTheFuture(string errormessage)
+        {
+            _hearingSchedule.ErrorDate().Should().Be(errormessage);
+        }
+        [Given(@"user adds hearing schedule")]
+        [When(@"hearing schedule is updated")]
+        public void WhenHearingScheduleIsUpdated()
+        {
+            HearingSchedulePage();
+            var date = DateTime.Now.AddDays(2);
+            string[] splitDate = date.ToString("dd/MM/yyyy").Split('/');
+            _hearingSchedule.AddItems<string>("HearingDate", date.ToString("dddd dd MMMM yyyy , HH:mm"));
+            _hearingSchedule.HearingDate(splitDate);
+            _hearingSchedule.HearingStartTime(date.ToString("HH:mm").Split(':'));
+            InputHearingDuration(TestData.HearingSchedule.Duration);
+            _hearingSchedule.HearingVenue(TestData.HearingSchedule.CourtAddress.ToList().Last());
+            EnterRoom(TestData.HearingSchedule.Room);
         }
     }
 }

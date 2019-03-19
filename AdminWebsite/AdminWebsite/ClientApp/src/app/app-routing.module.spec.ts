@@ -25,6 +25,8 @@ import { PaginationStubComponent } from './testing/stubs/pagination-stub';
 import { UnauthorisedComponent } from './error/unauthorised.component';
 import { ErrorComponent } from './error/error.component';
 import { ErrorService } from './services/error.service';
+import { SignOutPopupComponent } from './popups/sign-out-popup/sign-out-popup.component';
+import { CancelPopupStubComponent } from './testing/stubs/cancel-popup-stub';
 
 describe('app routing', () => {
   let location: Location;
@@ -46,7 +48,9 @@ describe('app routing', () => {
         ContactUsStubComponent,
         PaginationStubComponent,
         UnauthorisedComponent,
-        ErrorComponent
+        ErrorComponent,
+        SignOutPopupComponent,
+        CancelPopupStubComponent,
       ],
       providers: [
         AuthGuard,

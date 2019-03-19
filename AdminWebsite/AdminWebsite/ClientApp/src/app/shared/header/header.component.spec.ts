@@ -1,7 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
-
 import { HeaderComponent } from './header.component';
+import { SignOutComponent } from '../sign-out/sign-out.component';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 describe('HeaderComponent', () => {
   let component: HeaderComponent;
@@ -13,12 +14,11 @@ describe('HeaderComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [HeaderComponent],
-      providers: [{ provide: Router, useValue: router }]
-    },
-
-    )
-      .compileComponents();
+      declarations: [HeaderComponent, SignOutComponent],
+      providers: [{ provide: Router, useValue: router },
+      ],
+      schemas: [NO_ERRORS_SCHEMA]
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -28,9 +28,11 @@ describe('HeaderComponent', () => {
   });
 
   it('should create the head component', () => {
+    fixture.detectChanges();
     expect(component).toBeTruthy();
   });
   it('header component should have top menu items', () => {
+    fixture.detectChanges();
     component.topMenuItems = [];
     component.ngOnInit();
     expect(component.topMenuItems.length).toBeGreaterThan(0);
@@ -38,7 +40,7 @@ describe('HeaderComponent', () => {
   it('selected top menu item has active property set to true, others item active set to false', () => {
     component.topMenuItems = [];
     component.ngOnInit();
-    component.selectMenuItem(0);
+    component.navigateToSelectedMenuItem(0);
     expect(component.topMenuItems[0].active).toBeTruthy();
     if (component.topMenuItems.length > 1) {
       for (const item of component.topMenuItems.slice(1)) {
@@ -46,9 +48,9 @@ describe('HeaderComponent', () => {
       }
     }
   });
-  it('user should navigate by selecting top meny item', () => {
+  it('user should navigate by selecting top menu item', () => {
     component.ngOnInit();
-    component.selectMenuItem(0);
+    component.navigateToSelectedMenuItem(0);
     expect(router.navigate).toHaveBeenCalledWith([component.topMenuItems[0].url]);
-});
+  });
 });

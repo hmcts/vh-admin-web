@@ -1,4 +1,4 @@
-﻿import { BookingsListModule } from './bookings-list.module';
+import { BookingsListModule } from './bookings-list.module';
 
 describe('BookingsListModule', () => {
   let bookingsListModule: BookingsListModule;

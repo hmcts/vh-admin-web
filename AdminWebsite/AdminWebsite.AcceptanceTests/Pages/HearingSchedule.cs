@@ -1,6 +1,7 @@
 ﻿using AdminWebsite.AcceptanceTests.Helpers;
 using OpenQA.Selenium;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace AdminWebsite.AcceptanceTests.Pages
@@ -16,21 +17,33 @@ namespace AdminWebsite.AcceptanceTests.Pages
         private By _hearingDuration => By.XPath("//input[@id='hearingDurationHour' or @id='hearingDurationMinute']");
         private string[] CurrentDate() => DateTime.Now.ToString("dd/MM/yyyy").Split('/');
         private string[] CurrentTime() => DateTime.Now.AddMinutes(30).ToString("HH:mm").Split(':');
+        private By _room = By.Id("court-room");
+        private By _errorDate = By.Id("hearingDate-error");
 
-        public void HearingDate()
-        {            
+        public void HearingDate(string[] currentdate = null)
+        {
+            if (currentdate == null)
+                currentdate = CurrentDate();
             ClickElement(_hearingDate);
-            foreach (var date in CurrentDate())
+            foreach (var date in currentdate)
             {
                 InputValues(_hearingDate, date);
             }
         }
-        public void HearingStartTime()
+        public void HearingStartTime(string[] currentTime = null)
         {
-            var currentTime = CurrentTime();
-            var startTime = GetListOfElements(_hearingStartTime).ToArray();            
+            //var currentTime = CurrentTime();
+            //var startTime = GetListOfElements(_hearingStartTime).ToArray();            
+            //for (var i = 0; i < startTime.Length; i++)
+            //{
+            //    startTime[i].SendKeys(currentTime[i]);
+            //}
+            if (currentTime == null)
+                currentTime = CurrentTime();
+            var startTime = GetListOfElements(_hearingStartTime).ToArray();
             for (var i = 0; i < startTime.Length; i++)
             {
+                startTime[i].Clear();
                 startTime[i].SendKeys(currentTime[i]);
             }
         }
@@ -40,9 +53,15 @@ namespace AdminWebsite.AcceptanceTests.Pages
             var hearingduration = hearingDuration.Split(':');
             for (var i = 0; i < duration.Length; i++)
             {
+                duration[i].Clear();
                 duration[i].SendKeys(hearingduration[i]);
             }
         }
-        public void CourtAddress() => SelectOption(CommonLocator.List("courtAddress"));
+        public void HearingVenue() => SelectOption(CommonLocator.List("courtAddress"));
+        public void HearingVenue(string venue) => SelectOption(CommonLocator.List("courtAddress"), venue);
+
+        public int HearingLocation() => GetListOfElements(CommonLocator.List("courtAddress")).ToList().Count();
+        public void HearingRoom(string room) => ClearFieldInputValues(_room, room);
+        public string ErrorDate() => GetElementText(_errorDate);
     }
 }

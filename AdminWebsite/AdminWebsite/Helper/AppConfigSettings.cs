@@ -1,4 +1,4 @@
-﻿using AdminWebsite.Services;
+﻿using AdminWebsite.BookingsAPI.Client;
 
 namespace AdminWebsite.Helper
 {

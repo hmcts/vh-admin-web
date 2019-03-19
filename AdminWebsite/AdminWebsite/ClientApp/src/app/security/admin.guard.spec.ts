@@ -1,13 +1,13 @@
-﻿import { TestBed } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 import { AdminGuard } from './admin.guard';
 import { Router } from '@angular/router';
 import { UserProfileResponse } from '../services/clients/api-client';
 import { UserIdentityService } from '../services/user-identity.service';
 import { of } from 'rxjs';
 
-let userProfileResponse: UserProfileResponse = new UserProfileResponse();
+const userProfileResponse: UserProfileResponse = new UserProfileResponse();
 
-class userIdentityServiceSpy {
+class UserIdentityServiceSpy {
   getUserInformation() {
     userProfileResponse.is_case_administrator = true;
     userProfileResponse.is_vh_officer_administrator_role = true;
@@ -26,7 +26,7 @@ describe('admin-guard', () => {
       providers: [
         AdminGuard,
         { provide: Router, useValue: router },
-        { provide: UserIdentityService, useClass: userIdentityServiceSpy }
+        { provide: UserIdentityService, useClass: UserIdentityServiceSpy }
       ],
     }).compileComponents();
     adminGuard = TestBed.get(AdminGuard);
@@ -40,7 +40,7 @@ describe('admin-guard', () => {
 
   describe('when login with case admin or vh officer admin role', () => {
     it('canActivate should return true', () => {
-      expect(adminGuard.canActivate(null,null)).toBeTruthy();
+      expect(adminGuard.canActivate(null, null)).toBeTruthy();
     });
   });
 });

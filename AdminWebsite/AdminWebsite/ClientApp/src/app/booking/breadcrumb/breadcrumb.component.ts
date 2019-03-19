@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 
 import { BreadcrumbItemModel } from './breadcrumbItem.model';
 import { BreadcrumbItems } from './breadcrumbItems';
+import { VideoHearingsService } from '../../services/video-hearings.service';
 
 @Component({
   selector: 'app-breadcrumb',
@@ -18,7 +19,7 @@ export class BreadcrumbComponent implements OnInit {
   @Input()
   canNavigate: boolean;
 
-  constructor(private router: Router) { }
+  constructor(private router: Router, private videoHearingService: VideoHearingsService) { }
 
   ngOnInit() {
     this.currentRouter = this.router.url;
@@ -39,6 +40,12 @@ export class BreadcrumbComponent implements OnInit {
     }
     if ((nextItem.Id - this.currentItem.Id === 1) && this.canNavigate) {
       this.router.navigate([nextItem.Url]);
+      return;
+    }
+    if (this.canNavigate) {
+      if (this.videoHearingService.validCurrentRequest()) {
+        this.router.navigate([nextItem.Url]);
+      }
       return;
     }
   }

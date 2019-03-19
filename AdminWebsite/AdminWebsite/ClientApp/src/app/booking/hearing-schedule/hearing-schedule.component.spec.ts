@@ -9,38 +9,23 @@ import { CancelPopupComponent } from 'src/app/popups/cancel-popup/cancel-popup.c
 import { SharedModule } from 'src/app/shared/shared.module';
 import { BreadcrumbStubComponent } from 'src/app/testing/stubs/breadcrumb-stub';
 
-import { HearingRequest } from '../../services/clients/api-client';
 import { ReferenceDataService } from '../../services/reference-data.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { MockValues } from '../../testing/data/test-objects';
 import { HearingScheduleComponent } from './hearing-schedule.component';
+import { HearingModel } from '../../common/model/hearing.model';
 import { ErrorService } from 'src/app/services/error.service';
 
-function initHearingRequest(): HearingRequest {
-  const initRequest = {
-    cases: [],
-    feeds: [],
-    hearing_type_id: -1,
-    hearing_medium_id: -1,
-    court_id: -1,
-    scheduled_date_time: null,
-    scheduled_duration: 0,
-  };
-  const newHearing = new HearingRequest(initRequest);
-  return newHearing;
-}
+const newHearing = new HearingModel();
 
-function initExistingHearingRequest(): HearingRequest {
+function initExistingHearingRequest(): HearingModel {
   const today = new Date();
   today.setHours(10, 30);
 
-  const existingRequest = new HearingRequest();
+  const existingRequest = new HearingModel();
   existingRequest.hearing_type_id = 2;
-  existingRequest.hearing_medium_id = 1;
-  existingRequest.feeds = [];
-  existingRequest.cases = [];
-  existingRequest.court_id = 1,
-    existingRequest.scheduled_date_time = today;
+  existingRequest.hearing_venue_id = 1,
+  existingRequest.scheduled_date_time = today;
   existingRequest.scheduled_duration = 80;
   return existingRequest;
 }
@@ -65,12 +50,10 @@ describe('HearingScheduleComponent first visit', () => {
   let component: HearingScheduleComponent;
   let fixture: ComponentFixture<HearingScheduleComponent>;
 
-  const newHearing = initHearingRequest();
-
   let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
   let referenceDataServiceServiceSpy: jasmine.SpyObj<ReferenceDataService>;
   let routerSpy: jasmine.SpyObj<Router>;
-  let errorService: jasmine.SpyObj<ErrorService> = jasmine.createSpyObj('ErrorService', ['handleError']);
+  const errorService: jasmine.SpyObj<ErrorService> = jasmine.createSpyObj('ErrorService', ['handleError']);
 
   beforeEach(async(() => {
     routerSpy = jasmine.createSpyObj('Router', ['navigate']);
@@ -105,21 +88,21 @@ describe('HearingScheduleComponent first visit', () => {
     initFormControls(component);
   });
 
-  it('should create and initalise to blank form', () => {
+  it('should create and initialize to blank form', () => {
     expect(component).toBeTruthy();
     expect(component.hearingDate.value).toBeNull();
     expect(component.hearingStartTimeHour.value).toBeNull();
     expect(component.hearingStartTimeMinute.value).toBeNull();
     expect(component.hearingDurationHour.value).toBeNull();
     expect(component.hearingDurationMinute.value).toBeNull();
-    expect(component.courtAddress.value).toBe(-1);
+    expect(component.courtAddress.value).toBeNull();
   });
 
   it('should fail validation when form empty', () => {
     expect(component.schedulingForm.invalid).toBeTruthy();
   });
 
-  it('should fail subimission when form is invalid', () => {
+  it('should fail submission when form is invalid', () => {
     expect(component.failedSubmission).toBeFalsy();
     component.saveScheduleAndLocation();
     expect(component.failedSubmission).toBeTruthy();
@@ -200,12 +183,12 @@ describe('HearingScheduleComponent returning to page', () => {
   let component: HearingScheduleComponent;
   let fixture: ComponentFixture<HearingScheduleComponent>;
 
-  const existingRequest: HearingRequest = initExistingHearingRequest();
+  const existingRequest: HearingModel = initExistingHearingRequest();
 
   let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
   let referenceDataServiceServiceSpy: jasmine.SpyObj<ReferenceDataService>;
   let routerSpy: jasmine.SpyObj<Router>;
-  let errorService: jasmine.SpyObj<ErrorService> = jasmine.createSpyObj('ErrorService', ['handleError']);
+  const errorService: jasmine.SpyObj<ErrorService> = jasmine.createSpyObj('ErrorService', ['handleError']);
 
   beforeEach(async(() => {
     routerSpy = jasmine.createSpyObj('Router', ['navigate']);
@@ -240,15 +223,15 @@ describe('HearingScheduleComponent returning to page', () => {
     initFormControls(component);
   });
 
-  it('should prepopulate form', () => {
+  it('should repopulate form', () => {
     const dateTransfomer = new DatePipe('en-GB');
     const dateString = dateTransfomer.transform(existingRequest.scheduled_date_time, 'yyyy-MM-dd');
     const durationDate = new Date(0, 0, 0, 0, 0, 0, 0);
     durationDate.setMinutes(existingRequest.scheduled_duration);
 
-    const expectedStartHour =  dateTransfomer.transform(existingRequest.scheduled_date_time, 'HH');
+    const expectedStartHour = dateTransfomer.transform(existingRequest.scheduled_date_time, 'HH');
     const expectedStartMinute = dateTransfomer.transform(existingRequest.scheduled_date_time, 'mm');
-    const expectedDurationHour =  dateTransfomer.transform(durationDate, 'HH');
+    const expectedDurationHour = dateTransfomer.transform(durationDate, 'HH');
     const expectedDurationMinute = dateTransfomer.transform(durationDate, 'mm');
 
     expect(component.hearingDate.value).toBe(dateString);
@@ -256,7 +239,7 @@ describe('HearingScheduleComponent returning to page', () => {
     expect(component.hearingStartTimeMinute.value).toBe(expectedStartMinute);
     expect(component.hearingDurationHour.value).toBe(expectedDurationHour);
     expect(component.hearingDurationMinute.value).toBe(expectedDurationMinute);
-    expect(component.courtAddress.value).toBe(existingRequest.court_id);
+    expect(component.courtAddress.value).toBe(existingRequest.hearing_venue_id);
   });
 
 });

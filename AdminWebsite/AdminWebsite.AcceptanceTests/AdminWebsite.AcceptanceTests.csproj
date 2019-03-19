@@ -6,7 +6,6 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
-
   <ItemGroup>
     <PackageReference Include="DotNetSeleniumExtras.PageObjects" Version="3.11.0" />
     <PackageReference Include="DotNetSeleniumExtras.WaitHelpers" Version="3.11.0" />
@@ -43,6 +42,9 @@
     <Compile Update="Steps\AssignJudgeSteps.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Steps\BookingsListSteps.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Steps\CommonSteps.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -61,6 +63,9 @@
     <Compile Update="Steps\OtherInformationSteps.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Steps\SignOutSteps.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Steps\SummarySteps.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -69,6 +74,18 @@
   <ItemGroup>
     <None Update="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Features\HearingDetails.feature">
+      <Generator></Generator>
+    </None>
+    <None Update="Features\HearingSchedule.feature">
+      <Generator></Generator>
+    </None>
+    <None Update="Features\OtherInformation.feature">
+      <Generator></Generator>
+    </None>
+    <None Update="Features\SignOut.feature">
+      <Generator></Generator>
     </None>
     <None Update="parameters.runsettings">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

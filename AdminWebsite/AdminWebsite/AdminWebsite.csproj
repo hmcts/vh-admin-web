@@ -25,7 +25,7 @@
   <ItemGroup>
     <PackageReference Include="Hearings.Common" Version="1.1.6088" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.6.1" />
-    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.2.2" />
+    <PackageReference Include="Microsoft.AspNetCore.All" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="2.2.0" />
@@ -53,25 +53,15 @@
     <Compile Remove="Contracts\Responses\GroupsResponse.cs" />
     <Compile Remove="Contracts\Responses\NewUserResponse.cs" />
     <Compile Remove="Contracts\Responses\UserDetailsResponse.cs" />
+    <Compile Remove="Services\HearingApiClient.cs" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="ClientApp\e2e\features\contactUs.feature">
-      <Generator>SpecFlowSingleFileGenerator</Generator>
-      <LastGenOutput>contactUs.feature.cs</LastGenOutput>
-    </None>
-    <None Update="ClientApp\e2e\features\hearingDetails.feature">
-      <Generator>SpecFlowSingleFileGenerator</Generator>
-      <LastGenOutput>hearingDetails.feature.cs</LastGenOutput>
-    </None>
-    <None Update="ClientApp\e2e\features\login.feature">
-      <Generator>SpecFlowSingleFileGenerator</Generator>
-      <LastGenOutput>login.feature.cs</LastGenOutput>
-    </None>
-    <None Update="ClientApp\e2e\features\participant.feature">
-      <Generator>SpecFlowSingleFileGenerator</Generator>
-      <LastGenOutput>participant.feature.cs</LastGenOutput>
-    </None>
+    <ProjectReference Include="..\AdminWebsite.BookingsAPI.Client\AdminWebsite.BookingsAPI.Client.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="ClientApp\e2e\" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

@@ -11,8 +11,8 @@ import { UserIdentityService } from '../services/user-identity.service';
 export class DashboardComponent implements OnInit {
 
   constructor(private router: Router, private userIdentityService: UserIdentityService) { }
-  showCheckList: boolean = false;
-  showBooking: boolean = false;
+  showCheckList = false;
+  showBooking = false;
 
     ngOnInit() {
         this.userIdentityService

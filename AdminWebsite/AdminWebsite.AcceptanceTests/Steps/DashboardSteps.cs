@@ -1,4 +1,5 @@
-﻿using AdminWebsite.AcceptanceTests.Pages;
+﻿using AdminWebsite.AcceptanceTests.Helpers;
+using AdminWebsite.AcceptanceTests.Pages;
 using FluentAssertions;
 using TechTalk.SpecFlow;
 
@@ -39,6 +40,11 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void WhenBookAVideoHearingPanelIsSelected()
         {
             _dashboard.BookHearingPanel();
+        }
+        [Given(@"user is on dashboard page")]
+        public void DashboardPage()
+        {
+            _dashboard.PageUrl(PageUri.DashboardPage);
         }
     }
 }

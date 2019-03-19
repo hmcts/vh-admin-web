@@ -4,13 +4,16 @@
   <app-header></app-header>
 
   <div class="govuk-width-container vh-content">
-
-    <button *ngIf="this.loggedIn" (click)="logOut()" name="Logout">LogOut</button>
-
     <main class="govuk-main-wrapper " id="main-content" role="main">
       <router-outlet></router-outlet>
     </main>
   </div>
 
+  <div *ngIf="showSignOutConfirmation">
+    <app-sign-out-popup (continue)="handleContinue()" (signOut)="handleSignOut()"></app-sign-out-popup>
+  </div>
+  <div *ngIf="showSaveConfirmation">
+    <app-cancel-popup (continueBooking)="handleContinue()" (cancelBooking)="handleNavigate()"></app-cancel-popup>
+  </div>
   <app-footer></app-footer>
 </div>

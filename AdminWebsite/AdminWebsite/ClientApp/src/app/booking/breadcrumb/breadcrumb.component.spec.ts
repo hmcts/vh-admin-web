@@ -4,10 +4,9 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { Observable } from 'rxjs';
 import { CancelPopupComponent } from 'src/app/popups/cancel-popup/cancel-popup.component';
 import { ConfirmationPopupComponent } from 'src/app/popups/confirmation-popup/confirmation-popup.component';
+import { RemovePopupComponent } from '../../popups/remove-popup/remove-popup.component';
 import { BHClient, ClientSettingsResponse } from 'src/app/services/clients/api-client';
 import { SharedModule } from 'src/app/shared/shared.module';
-import { FooterStubComponent } from 'src/app/testing/stubs/footer-stub';
-import { HeaderStubComponent } from 'src/app/testing/stubs/header-stub';
 
 import { routes } from '../../app-routing.module';
 import { AppComponent } from '../../app.component';
@@ -28,13 +27,14 @@ import { SearchEmailComponent } from '../search-email/search-email.component';
 import { SummaryComponent } from '../summary/summary.component';
 import { BreadcrumbComponent } from './breadcrumb.component';
 import { BreadcrumbItemModel } from './breadcrumbItem.model';
-import { ContactUsStubComponent } from 'src/app/testing/stubs/contact-us-stub';
 import { UnauthorisedComponent } from '../../error/unauthorised.component';
 import { ErrorComponent } from '../../error/error.component';
+import { SignOutPopupComponent } from '../../popups/sign-out-popup/sign-out-popup.component';
+
 
 describe('BreadcrumbComponent', () => {
   const videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',
-    ['getHearingMediums', 'getHearingTypes', 'getCurrentRequest', 'updateHearingRequest']);
+    ['getHearingMediums', 'getHearingTypes', 'getCurrentRequest', 'updateHearingRequest', 'validCurrentRequest']);
   const bhClientSpy: jasmine.SpyObj<BHClient> = jasmine.createSpyObj<BHClient>('BHClient', ['getConfigSettings']);
 
   let component: BreadcrumbComponent;
@@ -66,7 +66,9 @@ describe('BreadcrumbComponent', () => {
         BookingConfirmationComponent,
         CheckListComponent,
         UnauthorisedComponent,
-        ErrorComponent
+        ErrorComponent,
+        SignOutPopupComponent,
+        RemovePopupComponent,
       ],
       providers: [
         { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
@@ -98,7 +100,7 @@ describe('BreadcrumbComponent', () => {
     component.ngOnInit();
     expect(component).toBeTruthy();
   });
-  it('breadcrumb component should have predifine navigation items', () => {
+  it('breadcrumb component should have predefine navigation items', () => {
     component.ngOnInit();
     expect(component.breadcrumbItems.length).toBeGreaterThan(0);
   });
@@ -109,12 +111,12 @@ describe('BreadcrumbComponent', () => {
     expect(component.currentItem instanceof BreadcrumbItemModel).toBeTruthy();
 
   });
-  it('breadcrumb component currentItem should have property Active set to true and proprty Value set to true', () => {
+  it('breadcrumb component currentItem should have property Active set to true and property Value set to true', () => {
     component.ngOnInit();
     expect(component.currentItem.Active).toBeTruthy();
     expect(component.currentItem.Value).toBeTruthy();
   });
-  it('next items should have property Active set to false and proprty Value set to false', () => {
+  it('next items should have property Active set to false and property Value set to false', () => {
     component.ngOnInit();
     for (const item of component.breadcrumbItems) {
       if (item.Url !== component.currentItem.Url && item.Id > component.currentItem.Id) {
@@ -123,7 +125,7 @@ describe('BreadcrumbComponent', () => {
       }
     }
   });
-  it('previous items should have property Active set to true and proprty Value set to false', () => {
+  it('previous items should have property Active set to true and property Value set to false', () => {
     component.currentItem = component.breadcrumbItems[2];
     component.ngOnInit();
     for (const item of component.breadcrumbItems) {

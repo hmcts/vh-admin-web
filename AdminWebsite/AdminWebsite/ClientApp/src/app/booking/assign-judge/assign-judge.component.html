@@ -49,7 +49,7 @@
       </details>
 
       <div class="sk-top">
-        <input type="button" id="nextButton" class="govuk-button" role="button" value="Next" style="margin-right:25px;"
+        <input type="button" id="nextButton" class="govuk-button" role="button" value="{{buttonAction}}" style="margin-right:25px;"
           (click)="saveJudge()" alt="Save judge details and view add participant" />
         <input type="button" id="cancelButton" class="govuk-button hmcts-button--secondary" role="button" value="Cancel"
           (click)="confirmCancelBooking()" alt="Confirm cancellation of new booking and return to dashboard" />
@@ -57,7 +57,7 @@
     </form>
   </div>
   <div class="govuk-grid-column-one-half" style="margin: 0;">
-    <app-participants-list [participants]="participants"></app-participants-list>
+    <app-participants-list [participants]="hearing.participants"></app-participants-list>
   </div>
 </div>
 

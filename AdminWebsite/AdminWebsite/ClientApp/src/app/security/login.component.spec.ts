@@ -56,7 +56,7 @@ describe('LoginComponent', () => {
     fixture = TestBed.createComponent(LoginComponent);
     component = fixture.componentInstance;
     router = TestBed.get(Router);
-    router.initialNavigation()
+    router.initialNavigation();
     route = TestBed.get(ActivatedRoute);
     adalService = TestBed.get(AdalService);
     adalService.login = jasmine.createSpy('login');
@@ -73,7 +73,7 @@ describe('LoginComponent', () => {
   it('should fallback to root url if return url is invalid', () => {
     adalService.setAuthenticated(true);
     spyOn(router, 'navigate').and.callFake(() => {});
-    spyOn(router, 'navigateByUrl').and.callFake(() => { throw new Error('Invalid URL')});
+    spyOn(router, 'navigateByUrl').and.callFake(() => { throw new Error('Invalid URL'); });
     component.ngOnInit();
     expect(logger.error).toHaveBeenCalled();
     expect(router.navigate).toHaveBeenCalledWith(['/']);
