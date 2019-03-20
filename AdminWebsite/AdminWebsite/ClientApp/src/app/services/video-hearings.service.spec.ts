@@ -18,7 +18,7 @@ describe('Hearing Request Storage', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientModule],
-      providers: [VideoHearingsService, { provide: BHClient, useValue: clientApiSpy]
+      providers: [VideoHearingsService, { provide: BHClient, useValue: clientApiSpy }]
     });
 
     const mockSessionStorage = {
