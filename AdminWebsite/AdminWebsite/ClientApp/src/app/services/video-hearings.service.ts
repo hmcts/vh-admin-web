@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import {
-  HearingTypeResponse, BHClient, BookNewHearingRequest,
-  HearingDetailsResponse, CaseAndHearingRolesResponse, CaseRequest, ParticipantRequest
+  HearingTypeResponse, BHClient, BookNewHearingRequest, HearingDetailsResponse,
+  CaseAndHearingRolesResponse, CaseRequest, ParticipantRequest
 } from './clients/api-client';
 import { HearingModel } from '../common/model/hearing.model';
 
@@ -81,26 +81,15 @@ export class VideoHearingsService {
 
   mapHearing(newRequest: HearingModel): BookNewHearingRequest {
     const newHearingRequest = new BookNewHearingRequest();
-
-    // cases
     newHearingRequest.cases = this.mapCases(newRequest);
-    console.log(newHearingRequest.cases);
     newHearingRequest.case_type_name = newRequest.case_type;
     newHearingRequest.hearing_type_name = newRequest.hearing_type_name;
-
-    // schedule
     newHearingRequest.scheduled_date_time = new Date(newRequest.scheduled_date_time);
     newHearingRequest.scheduled_duration = newRequest.scheduled_duration;
     newHearingRequest.hearing_venue_name = newRequest.court_name;
     newHearingRequest.hearing_room_name = newRequest.court_room;
-
-    // participants
     newHearingRequest.participants = this.mapParticipants(newRequest);
-    console.log(newHearingRequest.participants);
-
-    // other information
     newHearingRequest.other_information = newRequest.other_information;
-
     console.log(newHearingRequest);
     return newHearingRequest;
   }
@@ -135,7 +124,6 @@ export class VideoHearingsService {
       participant.hearing_role_name = p.hearing_role_name;
       participant.representee = p.representee;
       participant.solicitors_reference = p.solicitorsReference;
-      console.log(participant);
       participants.push(participant);
     });
     return participants;

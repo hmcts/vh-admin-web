@@ -1,17 +1,18 @@
-import {DatePipe} from '@angular/common';
-import {Component, OnInit} from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {Router} from '@angular/router';
-import {Observable} from 'rxjs';
+import { DatePipe } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { Observable } from 'rxjs';
 
-import {CanDeactiveComponent} from '../../common/guards/changes.guard';
-import {HearingModel} from '../../common/model/hearing.model';
-import {ReferenceDataService} from '../../services/reference-data.service';
-import {VideoHearingsService} from '../../services/video-hearings.service';
-import {BookingBaseComponent} from '../booking-base/booking-base.component';
-import {BookingService} from '../../services/booking.service';
-import {ErrorService} from 'src/app/services/error.service';
-import {HearingVenueResponse} from '../../services/clients/api-client';
+import { CanDeactiveComponent } from '../../common/guards/changes.guard';
+import { HearingModel } from '../../common/model/hearing.model';
+import { ReferenceDataService } from '../../services/reference-data.service';
+import { VideoHearingsService } from '../../services/video-hearings.service';
+import { BookingBaseComponent } from '../booking-base/booking-base.component';
+import { BookingService } from '../../services/booking.service';
+import { ErrorService } from 'src/app/services/error.service';
+import { HearingVenueResponse } from '../../services/clients/api-client';
+import { PageUrls } from 'src/app/shared/page-url.constants';
 
 @Component({
   selector: 'app-hearing-schedule',
@@ -31,9 +32,9 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
   selectedCourtName: string;
 
   constructor(private refDataService: ReferenceDataService, private hearingService: VideoHearingsService,
-              private fb: FormBuilder, protected router: Router,
-              private datePipe: DatePipe, protected bookingService: BookingService,
-              private errorService: ErrorService) {
+    private fb: FormBuilder, protected router: Router,
+    private datePipe: DatePipe, protected bookingService: BookingService,
+    private errorService: ErrorService) {
     super(bookingService, router);
     this.attemptingCancellation = false;
     this.hasSaved = false;
@@ -59,6 +60,10 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     let durationMinute = null;
     let room = '';
 
+    if (this.hearing && this.hearing.hearing_venue_id === undefined) {
+      this.hearing.hearing_venue_id = -1;
+    }
+
     if (this.hearing && this.hearing.scheduled_date_time) {
       const date = new Date(this.hearing.scheduled_date_time);
       hearingDateParsed = this.datePipe.transform(date, 'yyyy-MM-dd');
@@ -81,7 +86,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     if (this.hearing && this.hearing.court_room) {
       room = this.hearing.court_room;
     }
-
+    console.log(this.hearing.hearing_venue_id);
     this.schedulingForm = this.fb.group({
       hearingDate: [hearingDateParsed, Validators.required],
       hearingStartTimeHour: [startTimeHour, [Validators.required, Validators.min(0), Validators.max(23)]],
@@ -168,6 +173,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
           pleaseSelect.name = 'Please Select';
           pleaseSelect.id = -1;
           this.availableCourts.unshift(pleaseSelect);
+          console.log(`courts = ${JSON.stringify(data, null, 2)}`);
         },
         error => this.errorService.handleError(error)
       );
@@ -182,7 +188,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
       if (this.editMode) {
         this.navigateToSummary();
       } else {
-        this.router.navigate(['/assign-judge']);
+        this.router.navigate([PageUrls.AssignJudge]);
       }
     } else {
       this.failedSubmission = true;
@@ -193,6 +199,8 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     this.hearing.hearing_venue_id = this.schedulingForm.value.courtAddress;
     this.hearing.court_room = this.schedulingForm.value.courtRoom;
     this.hearing.court_name = this.selectedCourtName;
+    console.log(this.hearing.court_room);
+    console.log(this.hearing.court_name);
     const hearingDate = new Date(this.schedulingForm.value.hearingDate);
 
     hearingDate.setHours(
@@ -223,7 +231,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     this.attemptingCancellation = false;
     this.hearingService.cancelRequest();
     this.schedulingForm.reset();
-    this.router.navigate(['/dashboard']);
+    this.router.navigate([PageUrls.Dashboard]);
   }
 
   goToDiv(fragment: string): void {

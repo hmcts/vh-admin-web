@@ -12,10 +12,10 @@ namespace AdminWebsite.AcceptanceTests.TestData
         public const string DisplayName = "Dummy01Email";
         public static IEnumerable<string> MoneyClaimsParty = new List<string>() { "Claimant", "Defendant" };
         public static IEnumerable<string> FinancialRemedyParty = new List<string>() { "Applicant", "Respondent" };
-        public static IEnumerable<string> ClaimantRole = new List<string>() { "Claimant LIP", "Solicitor", "McKenzie Friend" };
-        public static IEnumerable<string> DefendantRole = new List<string>() { "Defendant LIP", "Solicitor", "McKenzie Friend" };
-        public static IEnumerable<string> ApplicantRole = new List<string>() { "Applicant LIP", "Solicitor", "McKenzie Friend" };
-        public static IEnumerable<string> RespondentRole = new List<string>() { "Applicant LIP", "Solicitor", "McKenzie Friend" };
+        public static IEnumerable<string> ClaimantRole = new List<string>() { "Claimant LIP", "Solicitor" };
+        public static IEnumerable<string> DefendantRole = new List<string>() { "Defendant LIP", "Solicitor" };
+        public static IEnumerable<string> ApplicantRole = new List<string>() { "Applicant LIP", "Solicitor" };
+        public static IEnumerable<string> RespondentRole = new List<string>() { "Applicant LIP", "Solicitor" };
         public const string Claimant = "Claimant";
         public const string Defendant = "Defendant";
         public const string Applicant = "Applicant";

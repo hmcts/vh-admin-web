@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Models;
 using AdminWebsite.Security;
+using AdminWebsite.UserAPI.Client;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -21,15 +22,17 @@ namespace AdminWebsite.Controllers
     {
         private readonly IBookingsApiClient _bookingsApiClient;
         private readonly IUserIdentity _userIdentity;
+        private readonly IUserApiClient _userApiClient;
 
 
         /// <summary>
         /// Instantiates the controller
         /// </summary>
-        public HearingsController(IBookingsApiClient bookingsApiClient, IUserIdentity userIdentity)
+        public HearingsController(IBookingsApiClient bookingsApiClient, IUserIdentity userIdentity,  IUserApiClient userApiClient)
         {
             _bookingsApiClient = bookingsApiClient;
             _userIdentity = userIdentity;
+            _userApiClient = userApiClient;
         }
 
         /// <summary>
@@ -41,12 +44,17 @@ namespace AdminWebsite.Controllers
         [SwaggerOperation(OperationId = "BookNewHearing")]
         [ProducesResponseType(typeof(HearingDetailsResponse), (int)HttpStatusCode.Created)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult<string>> Post([FromBody] BookNewHearingRequest hearingRequest)
+        public async Task<ActionResult<HearingDetailsResponse>> Post([FromBody] BookNewHearingRequest hearingRequest)
         {
             try
             {
+                if (hearingRequest.Participants != null)
+                {
+                    hearingRequest.Participants = await UpdateParticipantsUsername(hearingRequest.Participants);
+                }
+
                 var hearingDetailsResponse = await _bookingsApiClient.BookNewHearingAsync(hearingRequest);
-                return Created("", hearingDetailsResponse.Id);
+                return Created("", hearingDetailsResponse);
             }
             catch (BookingsApiException e)
             {
@@ -125,6 +133,27 @@ namespace AdminWebsite.Controllers
 
                 throw;
             }
+        }
+
+        private async Task<List<ParticipantRequest>> UpdateParticipantsUsername(List<ParticipantRequest> participants)
+        {
+            foreach (var participant in participants)
+            {
+                if (participant.Case_role_name == "Judge") continue;
+                var createUserRequest = new CreateUserRequest()
+                {
+                    First_name = participant.First_name,
+                    Last_name = participant.Last_name,
+                    Recovery_email = participant.Contact_email
+                };
+                var newUserResponse = await _userApiClient.CreateUserAsync(createUserRequest);
+                if (newUserResponse != null)
+                {
+                    participant.Username = newUserResponse.Username;
+                }
+
+            }
+            return participants;
         }
 
         private List<int> GetHearingTypesId(IEnumerable<string> caseTypes)
