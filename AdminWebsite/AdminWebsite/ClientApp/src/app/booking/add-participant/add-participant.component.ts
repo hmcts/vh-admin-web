@@ -208,7 +208,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
   setupRoles(data: CaseAndHearingRolesResponse[]) {
     this.caseAndHearingRoles = this.participantService.mapParticipantsRoles(data);
-    this.roleList = this.caseAndHearingRoles.map(x => x.name);
+    this.roleList = this.caseAndHearingRoles.filter(x => x.name !== 'Judge').map(x => x.name);
     this.roleList.unshift(this.constants.PleaseSelect);
     this.caseAndHearingRoles.forEach(x => {
       this.setupHearingRoles(x.name);
