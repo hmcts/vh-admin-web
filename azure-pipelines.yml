@@ -18,7 +18,9 @@ variables:
   vhAzureKeyVault: 'https://vhwebsitepreview.vault.azure.net/' # Used during integration tests
   keyVaultName: vhcoreinfrahtpreview # Used to get secrets for integration tests
   secretsFilter: 'TenantId,vh-admin-web-appid,vh-admin-web-key,vh-bookings-api-identifieruris' # filters out secrets returned from key vault
-
+  infraKeyVaultName: 'vhcoreinfradev'
+  infraSecretsFilter: 'vh-core-infra-AppInsightsKey
+  
 # GitHub Repo that conatins build templates. Reference https://docs.microsoft.com/en-us/azure/devops/pipelines/process/templates?view=vsts#using-other-repositories
 resources:
   repositories:
@@ -42,3 +44,5 @@ jobs:
     SecretsFilter: $(SecretsFilter)
     solutionType: $(solutionType)
     integrationTestsAppSettingsTransform: $(integrationTestsAppSettingsTransform)
+    infraKeyVaultName: $(infraKeyVaultName)
+    infraSecretsFilter: $(infraSecretsFilter)
