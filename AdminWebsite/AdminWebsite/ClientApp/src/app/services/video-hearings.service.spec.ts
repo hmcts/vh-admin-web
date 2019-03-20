@@ -101,7 +101,7 @@ describe('Hearing Request Storage', () => {
       service.cancelRequest();
       expect(sessionStorage.removeItem).toHaveBeenCalledTimes(2);
     }));
-  it('should map and save hearing request in database',
+  it('should save hearing request in database',
     inject([VideoHearingsService], (service: VideoHearingsService) => {
       const date = Date.now();
       const caseModel = new CaseModel();
@@ -120,5 +120,35 @@ describe('Hearing Request Storage', () => {
 
       service.saveHearing(model);
       expect(clientApiSpy.bookNewHearing).toHaveBeenCalled();
+    }));
+  it('should map hearing request',
+    inject([VideoHearingsService], (service: VideoHearingsService) => {
+      const date = Date.now();
+      const caseModel = new CaseModel();
+      caseModel.name = 'case1';
+      caseModel.number = 'Number 1';
+      const model = new HearingModel();
+      model.case_type = 'Tax';
+      model.hearing_type_name = 'hearing type';
+      model.scheduled_date_time = new Date(date);
+      model.scheduled_duration = 30;
+      model.court_name = 'court address';
+      model.court_room = 'room 09';
+      model.other_information = 'note';
+      model.cases = [caseModel];
+      model.participants = [];
+
+      const request = service.mapHearing(model);
+
+      expect(request.case_type_name).toBe('Tax');
+      expect(request.hearing_room_name).toBe('room 09');
+      expect(request.hearing_venue_name).toBe('court address');
+      expect(request.other_information).toBe('note');
+      expect(request.case_type_name).toBe('Tax');
+      expect(request.cases).toBeTruthy();
+      expect(request.cases[0].name).toBe('case1');
+      expect(request.cases[0].number).toBe('Number 1');
+      expect(request.scheduled_date_time).toEqual(new Date(date));
+      expect(request.scheduled_duration).toBe(30);
     }));
 });
