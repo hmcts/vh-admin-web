@@ -13,13 +13,13 @@ export class ResponseTestData {
     const lists: Array<BookingsDetailsModel> = [];
     const b1 = new BookingsDetailsModel('1', new Date('2019-10-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JadgeGreen', '33A', 'Coronation Street',
-      'Jhon Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'));
+      'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'));
     const b2 = new BookingsDetailsModel('12', new Date('2019-10-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JadgeGreen', '33A', 'Coronation Street',
-      'Jhon Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'));
+      'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'));
     const b3 = new BookingsDetailsModel('33', new Date('2019-10-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JadgeGreen', '33A', 'Coronation Street',
-      'Jhon Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'));
+      'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'));
 
     lists.push(b1);
     lists.push(b2);
@@ -27,13 +27,13 @@ export class ResponseTestData {
     const model1 = new BookingsListModel(new Date('2019-11-22 15:58:40.3730067'));
     const b11 = new BookingsDetailsModel('44', new Date('2019-11-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JadgeGreen', '33A', 'Coronation Street',
-      'Jhon Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'));
+      'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'));
     const b21 = new BookingsDetailsModel('45', new Date('2019-11-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JadgeGreen', '33A', 'Coronation Street',
-      'Jhon Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'));
+      'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'));
     const b31 = new BookingsDetailsModel('46', new Date('2019-11-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JadgeGreen', '33A', 'Coronation Street',
-      'Jhon Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'));
+      'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'));
     lists.push(b11);
     lists.push(b21);
     lists.push(b31);
@@ -55,7 +55,7 @@ export class ResponseTestData {
   getTestData(): BookingsByDateResponse {
 
     const bhr = new BookingsHearingResponse();
-    bhr.hearing_id = 1;
+    bhr.hearing_id = '1';
     bhr.created_date = new Date('2019-10-22 13:58:40.3730067');
     bhr.hearing_date = new Date('2019-10-22 13:58:40.3730067');
     bhr.last_edit_date = new Date('2019-10-22 13:58:40.3730067');
@@ -71,7 +71,7 @@ export class ResponseTestData {
     bhr.last_edit_by = 'Sam';
 
     const bhr1 = new BookingsHearingResponse();
-    bhr1.hearing_id = 2;
+    bhr1.hearing_id = '2';
     bhr1.created_date = new Date('2019-10-22 13:58:40.3730067');
     bhr1.hearing_date = new Date('2019-10-22 13:58:40.3730067');
     bhr1.last_edit_date = new Date('2019-10-22 13:58:40.3730067');

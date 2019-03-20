@@ -17,7 +17,6 @@ import { BookingService } from '../../services/booking.service';
 import { ParticipantService } from '../services/participant.service';
 import { CaseAndHearingRolesResponse } from '../../services/clients/api-client';
 import { PartyModel } from '../../common/model/party.model';
-import { PageUrls } from 'src/app/shared/page-url.constants';
 
 @Component({
   selector: 'app-add-participant',
@@ -400,7 +399,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
   removeParticipant() {
     // check if participant details were populated, if yes then clean form.
-    if (this.searchEmail.email === this.selectedParticipantEmail) {
+    if (this.searchEmail && this.searchEmail.email === this.selectedParticipantEmail) {
       this.clearForm();
     }
     this.participantService.removeParticipant(this.hearing, this.selectedParticipantEmail);
@@ -417,6 +416,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     newParticipant.email = this.searchEmail ? this.searchEmail.email : '';
     newParticipant.display_name = this.displayName.value;
     newParticipant.company = this.companyName.value;
+    newParticipant.username = this.searchEmail ? this.searchEmail.email : '';
   }
 
   addParticipantCancel() {
@@ -434,7 +434,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   handleCancelBooking(event: any) {
     this.showCancelPopup = false;
     this.participantForm.reset();
-    this.router.navigate([PageUrls.Dashboard]);
+    this.router.navigate(['/dashboard']);
   }
 
   handleConfirmation() {
@@ -491,7 +491,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         }
         this.navigateToSummary();
       } else {
-        this.router.navigate([PageUrls.OtherInformation]);
+        this.router.navigate(['/other-information']);
       }
     } else {
       this.displayErrorNoParticipants = true;

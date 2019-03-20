@@ -5,12 +5,13 @@ import { Observable } from 'rxjs';
 
 import { Constants } from '../../common/constants';
 import { CanDeactiveComponent } from '../../common/guards/changes.guard';
-import { HearingVenueResponse, HearingTypeResponse, HearingDetailsResponse } from '../../services/clients/api-client';
+import { HearingVenueResponse, HearingTypeResponse } from '../../services/clients/api-client';
 import { HearingModel } from '../../common/model/hearing.model';
 import { ParticipantsListComponent } from '../participants-list/participants-list.component';
 import { ReferenceDataService } from '../../services/reference-data.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { PageUrls } from 'src/app/shared/page-url.constants';
+import { HearingDetailsResponse } from '../../services/clients/api-client';
 
 @Component({
   selector: 'app-summary',
@@ -105,8 +106,8 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
       .subscribe(
         (data: HearingTypeResponse[]) => {
           const selectedHearingType = data.filter(h => h.id === hearing_type_id);
-          this.caseHearingType = selectedHearingType[0].name;
-          this.hearing.hearing_type_name = selectedHearingType[0].name;
+          this.caseHearingType = selectedHearingType ? selectedHearingType[0].name : '';
+          this.hearing.hearing_type_name = this.caseHearingType;
         },
         error => console.error(error)
       );
@@ -118,6 +119,7 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
         (data: HearingVenueResponse[]) => {
           const selectedCourt = data.filter(c => c.id === venueId);
           this.courtRoomAddress = `${selectedCourt[0].name} ${this.hearing.court_room}`;
+          this.hearing.court_name = selectedCourt ? selectedCourt[0].name : '';
         },
         error => console.error(error)
       );
@@ -151,9 +153,9 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
     this.showErrorSaving = false;
     this.hearingService.saveHearing(this.hearing)
       .subscribe(
-        (hearingDetailsResponse: HearingDetailsResponse) => {
+      (hearingDetailsResponse: HearingDetailsResponse) => {
           sessionStorage.setItem(this.newHearingSessionKey, hearingDetailsResponse.id);
-          // this.hearingService.cancelRequest();
+          this.hearingService.cancelRequest();
           this.showWaitSaving = false;
           this.router.navigate([PageUrls.BookingConfirmation]);
         },

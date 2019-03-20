@@ -23,14 +23,14 @@ export class ResponseTestData {
     byDate.hearings = new Array<BookingsHearingResponse>();
 
     const bhr = new BookingsHearingResponse();
-    bhr.hearing_id = 1;
+    bhr.hearing_id = '1';
     bhr.created_date = new Date('2019-10-22 13:58:40.3730067');
     bhr.hearing_date = new Date('2019-10-22 13:58:40.3730067');
     bhr.last_edit_date = new Date('2019-10-22 13:58:40.3730067');
     bhr.scheduled_date_time = new Date('2019-10-22 13:58:40.3730067');
 
     const bhr1 = new BookingsHearingResponse();
-    bhr1.hearing_id = 2;
+    bhr1.hearing_id = '2';
 
     byDate.hearings.push(bhr);
     byDate.hearings.push(bhr1);

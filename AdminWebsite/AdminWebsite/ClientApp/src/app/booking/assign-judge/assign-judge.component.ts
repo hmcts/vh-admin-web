@@ -12,7 +12,6 @@ import { Constants } from 'src/app/common/constants';
 import { JudgeDataService } from 'src/app/booking/services/judge-data.service';
 import { BookingService } from '../../services/booking.service';
 import { BookingBaseComponent } from '../booking-base/booking-base.component';
-import { PageUrls } from 'src/app/shared/page-url.constants';
 
 @Component({
   selector: 'app-assign-judge',
@@ -90,7 +89,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
 
   mapJudgeToModel(judge: ParticipantDetailsResponse): ParticipantModel {
     const newParticipant = new ParticipantModel();
-    newParticipant.title = 'Mr.';
+    newParticipant.title = judge.title && judge.title.length > 0 ? judge.title : 'Judge';
     newParticipant.first_name = judge.first_name;
     newParticipant.middle_names = judge.middle_name;
     newParticipant.last_name = judge.last_name;
@@ -145,7 +144,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
       if (this.editMode) {
         this.navigateToSummary();
       } else {
-        this.router.navigate([PageUrls.AddParticipants]);
+        this.router.navigate(['/add-participants']);
       }
     } else {
       this.failedSubmission = true;
@@ -168,7 +167,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     this.attemptingCancellation = false;
     this.assignJudgeForm.reset();
     this.hearingService.cancelRequest();
-    this.router.navigate([PageUrls.Dashboard]);
+    this.router.navigate(['/dashboard']);
   }
 
   hasChanges(): Observable<boolean> | boolean {

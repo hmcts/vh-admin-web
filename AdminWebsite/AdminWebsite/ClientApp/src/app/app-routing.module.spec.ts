@@ -53,8 +53,8 @@ describe('app routing', () => {
         ErrorComponent,
         SignOutPopupComponent,
         WaitPopupComponent,
+        SaveFailedPopupComponent,
         CancelPopupStubComponent,
-        SaveFailedPopupComponent
       ],
       providers: [
         AuthGuard,
