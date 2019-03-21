@@ -140,20 +140,48 @@ namespace AdminWebsite.Controllers
             foreach (var participant in participants)
             {
                 if (participant.Case_role_name == "Judge") continue;
-                var createUserRequest = new CreateUserRequest()
-                {
-                    First_name = participant.First_name,
-                    Last_name = participant.Last_name,
-                    Recovery_email = participant.Contact_email
-                };
-                var newUserResponse = await _userApiClient.CreateUserAsync(createUserRequest);
-                if (newUserResponse != null)
-                {
-                    participant.Username = newUserResponse.Username;
-                }
+                //// create user in AD if users email does not exist in AD.
+                //var userProfile = await _userApiClient.GetUserByEmailAsync(participant.Contact_email);
+                //if (userProfile == null)
+                //{
+                    // create the user in AD.
+                    var createdNewUser = await CreateNewUserInAD(participant);
+                    if (createdNewUser != null)
+                    {
+                        participant.Username = createdNewUser.Username;
+                    // Add user to user group.
+                    var addUserToGroupRequest = new AddUserToGroupRequest()
+                    {
+                        User_id = createdNewUser.User_id,
+                        Group_name = "External"
+                    };
+                    await _userApiClient.AddUserToGroupAsync(addUserToGroupRequest);
 
+                    if (participant.Hearing_role_name == "Solicitor")
+                        {
+                            addUserToGroupRequest = new AddUserToGroupRequest()
+                            {
+                                User_id = createdNewUser.User_id,
+                                Group_name = "VirtualRoomProfessionalUser"
+                            };
+                            await _userApiClient.AddUserToGroupAsync(addUserToGroupRequest);
+                        }
+                    }
+                //}
             }
             return participants;
+        }
+
+        private async Task<NewUserResponse> CreateNewUserInAD(ParticipantRequest participant)
+        {
+            var createUserRequest = new CreateUserRequest()
+            {
+                First_name = participant.First_name,
+                Last_name = participant.Last_name,
+                Recovery_email = participant.Contact_email
+            };
+            var newUserResponse = await _userApiClient.CreateUserAsync(createUserRequest);
+            return newUserResponse;
         }
 
         private List<int> GetHearingTypesId(IEnumerable<string> caseTypes)
