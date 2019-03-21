@@ -141,9 +141,9 @@ namespace AdminWebsite.Controllers
             {
                 if (participant.Case_role_name == "Judge") continue;
                 //// create user in AD if users email does not exist in AD.
-                //var userProfile = await _userApiClient.GetUserByEmailAsync(participant.Contact_email);
-                //if (userProfile == null)
-                //{
+                var userProfile = await CreateUserInAD(participant.Contact_email);
+                if (userProfile == null)
+                {
                     // create the user in AD.
                     var createdNewUser = await CreateNewUserInAD(participant);
                     if (createdNewUser != null)
@@ -167,9 +167,25 @@ namespace AdminWebsite.Controllers
                             await _userApiClient.AddUserToGroupAsync(addUserToGroupRequest);
                         }
                     }
-                //}
+                }
             }
             return participants;
+        }
+
+        private async Task<UserProfile> CreateUserInAD(string emailAddress)
+        {
+            try
+            {
+                return await _userApiClient.GetUserByEmailAsync(emailAddress);
+            }
+            catch(UserAPI.Client.UserServiceException e)
+            {
+                if (e.StatusCode == (int)HttpStatusCode.NotFound)
+                {
+                    return null;
+                }
+            }
+            return null;
         }
 
         private async Task<NewUserResponse> CreateNewUserInAD(ParticipantRequest participant)
