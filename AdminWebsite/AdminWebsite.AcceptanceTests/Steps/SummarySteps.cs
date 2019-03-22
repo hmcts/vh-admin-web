@@ -113,5 +113,10 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             _summary.GetParticipantDetails().Should().NotBeNullOrEmpty();
         }
+        [When(@"user submit booking")]
+        public void WhenUserSubmitBooking()
+        {
+            _summary.Book();
+        }
     }
 }

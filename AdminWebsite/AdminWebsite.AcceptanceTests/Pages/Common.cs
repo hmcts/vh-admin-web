@@ -109,5 +109,6 @@ namespace AdminWebsite.AcceptanceTests.Pages
             return list;
         }
         public void TopMenuHmctsLogo() => SelectOption(By.XPath("//*[@class='hmcts-header__logotype']"));
+        public string SessionStorage(string script) => _browserContext.ExecuteJavascript(script);
     }
 }
