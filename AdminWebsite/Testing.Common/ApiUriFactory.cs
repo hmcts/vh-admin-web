@@ -25,7 +25,7 @@
     public class HearingEndpoints
     {
         private string ApiRoot => "api/hearings";
-        public string CreateAHearing => ApiRoot;
+        public string BookNewHearing => ApiRoot;
     }
 
     public class ReferenceEndpoints

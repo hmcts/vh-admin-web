@@ -22,10 +22,18 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void WhenHearingScheduleFormIsFilled()
         {
             HearingSchedulePage();
-            InputDateOfHearing();
-            InputHearingStartTime();
-            InputHearingDuration();
-            SelectHearingVenue();
+            //InputDateOfHearing();
+            //InputHearingStartTime();
+            //InputHearingDuration();
+            //SelectHearingVenue();
+            //EnterRoom();
+            var date = DateTime.Now.AddDays(2);
+            string[] splitDate = date.ToString("dd/MM/yyyy").Split('/');
+            _hearingSchedule.AddItems<string>("HearingDate", date.ToString("dddd dd MMMM yyyy , HH:mm"));
+            _hearingSchedule.HearingDate(splitDate);
+            _hearingSchedule.HearingStartTime(date.ToString("HH:mm").Split(':'));
+            InputHearingDuration(TestData.HearingSchedule.Duration);
+            _hearingSchedule.HearingVenue(TestData.HearingSchedule.CourtAddress.ToList().Last());
             EnterRoom();
         }
         [Then(@"user should remain on hearing schedule page")]

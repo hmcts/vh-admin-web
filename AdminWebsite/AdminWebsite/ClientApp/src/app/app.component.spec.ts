@@ -13,6 +13,7 @@ import { SignOutPopupStubComponent } from './testing/stubs/sign-out-popup-stub';
 import { PageTrackerService } from './services/page-tracker.service';
 import { WindowRef, WindowLocation } from './security/window-ref';
 import { VideoHearingsService } from './services/video-hearings.service';
+import { CancelPopupStubComponent } from './testing/stubs/cancel-popup-stub';
 
 @Component({ selector: 'app-header', template: '' })
 export class HeaderComponent {
@@ -62,6 +63,7 @@ describe('AppComponent', () => {
         HeaderComponent,
         FooterStubComponent,
         SignOutPopupStubComponent,
+        CancelPopupStubComponent,
       ],
       providers:
         [

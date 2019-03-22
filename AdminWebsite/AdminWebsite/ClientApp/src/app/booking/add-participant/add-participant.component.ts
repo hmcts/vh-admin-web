@@ -17,7 +17,6 @@ import { BookingService } from '../../services/booking.service';
 import { ParticipantService } from '../services/participant.service';
 import { CaseAndHearingRolesResponse } from '../../services/clients/api-client';
 import { PartyModel } from '../../common/model/party.model';
-import { PageUrls } from 'src/app/shared/page-url.constants';
 
 @Component({
   selector: 'app-add-participant',
@@ -84,7 +83,6 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
   ngOnInit() {
     super.ngOnInit();
-    this.hearing = this.videoHearingService.getCurrentRequest();
     this.retrieveRoles();
     this.initializeForm();
     if (this.editMode) {
@@ -210,7 +208,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
   setupRoles(data: CaseAndHearingRolesResponse[]) {
     this.caseAndHearingRoles = this.participantService.mapParticipantsRoles(data);
-    this.roleList = this.caseAndHearingRoles.map(x => x.name);
+    this.roleList = this.caseAndHearingRoles.filter(x => x.name !== 'Judge').map(x => x.name);
     this.roleList.unshift(this.constants.PleaseSelect);
     this.caseAndHearingRoles.forEach(x => {
       this.setupHearingRoles(x.name);
@@ -218,9 +216,9 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   }
 
   setupHearingRoles(caseRoleName: string) {
-    const list = this.caseAndHearingRoles.find(x => x.name === caseRoleName);
+    const list = this.caseAndHearingRoles.find(x => x.name === caseRoleName && x.name !== 'Judge');
     this.hearingRoleList = list ? list.hearingRoles : [];
-    if (this.hearingRoleList && !this.hearingRoleList.find(s => s === this.constants.PleaseSelect)) {
+    if (!this.hearingRoleList.find(s => s === this.constants.PleaseSelect)) {
       this.hearingRoleList.unshift(this.constants.PleaseSelect);
     }
   }
@@ -340,7 +338,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
   saveParticipant() {
     this.actionsBeforeSave();
-    const validEmail = this.showDetails ? this.searchEmail.validateEmail() : true;
+    const validEmail = this.showDetails && this.searchEmail ? this.searchEmail.validateEmail() : true;
     if (this.participantForm.valid && validEmail && this.isRoleSelected && this.isPartySelected && this.isTitleSelected) {
       this.isShowErrorSummary = false;
       const newParticipant = new ParticipantModel();
@@ -369,7 +367,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   }
 
   updateParticipant() {
-    const validEmail = this.showDetails ? this.searchEmail.validateEmail() : true;
+    const validEmail = this.showDetails && this.searchEmail ? this.searchEmail.validateEmail() : true;
     this.actionsBeforeSave();
     if (this.participantForm.valid && validEmail && this.isRoleSelected && this.isTitleSelected) {
       this.isShowErrorSummary = false;
@@ -401,7 +399,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
   removeParticipant() {
     // check if participant details were populated, if yes then clean form.
-    if (this.searchEmail.email === this.selectedParticipantEmail) {
+    if (this.searchEmail && this.searchEmail.email === this.selectedParticipantEmail) {
       this.clearForm();
     }
     this.participantService.removeParticipant(this.hearing, this.selectedParticipantEmail);
@@ -415,9 +413,10 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     newParticipant.title = this.title.value;
     newParticipant.case_role_name = this.party.value;
     newParticipant.hearing_role_name = this.role.value;
-    newParticipant.email = this.searchEmail.email;
+    newParticipant.email = this.searchEmail ? this.searchEmail.email : '';
     newParticipant.display_name = this.displayName.value;
     newParticipant.company = this.companyName.value;
+    newParticipant.username = this.searchEmail ? this.searchEmail.email : '';
   }
 
   addParticipantCancel() {
@@ -435,7 +434,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   handleCancelBooking(event: any) {
     this.showCancelPopup = false;
     this.participantForm.reset();
-    this.router.navigate([PageUrls.Dashboard]);
+    this.router.navigate(['/dashboard']);
   }
 
   handleConfirmation() {
@@ -471,7 +470,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     this.title.markAsUntouched();
     this.displayName.markAsUntouched();
     this.companyName.markAsUntouched();
-    if (this.showDetails) {
+    if (this.showDetails && this.searchEmail) {
       this.searchEmail.clearEmail();
     }
     this.showDetails = false;
@@ -492,7 +491,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         }
         this.navigateToSummary();
       } else {
-        this.router.navigate([PageUrls.OtherInformation]);
+        this.router.navigate(['/other-information']);
       }
     } else {
       this.displayErrorNoParticipants = true;

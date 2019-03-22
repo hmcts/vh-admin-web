@@ -12,7 +12,6 @@ import { Constants } from 'src/app/common/constants';
 import { JudgeDataService } from 'src/app/booking/services/judge-data.service';
 import { BookingService } from '../../services/booking.service';
 import { BookingBaseComponent } from '../booking-base/booking-base.component';
-import { PageUrls } from 'src/app/shared/page-url.constants';
 
 @Component({
   selector: 'app-assign-judge',
@@ -28,7 +27,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
   failedSubmission: boolean;
   attemptingCancellation: boolean;
   hasSaved: boolean;
-  canNavigate = true;
+  canNavigate = false;
 
   constants = Constants;
   availableJudges: ParticipantDetailsResponse[];
@@ -57,11 +56,11 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
 
   private initForm() {
     const find_judge = this.hearing.participants.find(x => x.is_judge === true);
-
     if (!find_judge) {
       this.judge = new ParticipantDetailsResponse({ id: null });
     } else {
       this.judge = this.mapJudge(find_judge);
+      this.canNavigate = true;
     }
     this.assignJudgeForm = this.fb.group({
       judgeName: [this.judge.id, Validators.required],
@@ -70,6 +69,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     this.judgeName.valueChanges.subscribe(judgeUserId => {
       this.addJudge(judgeUserId);
       this.isJudgeSelected = judgeUserId !== null;
+      this.canNavigate = this.isJudgeSelected;
     });
   }
 
@@ -89,7 +89,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
 
   mapJudgeToModel(judge: ParticipantDetailsResponse): ParticipantModel {
     const newParticipant = new ParticipantModel();
-    newParticipant.title = 'Mr.';
+    newParticipant.title = judge.title && judge.title.length > 0 ? judge.title : 'Judge';
     newParticipant.first_name = judge.first_name;
     newParticipant.middle_names = judge.middle_name;
     newParticipant.last_name = judge.last_name;
@@ -111,23 +111,25 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
   }
 
   public addJudge(judgeId: string) {
-    const selectedJudge = this.availableJudges.find(j => j.id === judgeId);
-    this.judge.first_name = selectedJudge.first_name;
-    this.judge.last_name = selectedJudge.last_name;
-    this.judge.email = selectedJudge.email;
-    this.judge.display_name = selectedJudge.display_name;
-    this.judge.title = '';
-    this.judge.role = 'Judge';
-    this.judge.id = selectedJudge.id;
+    if (judgeId) {
+      const selectedJudge = this.availableJudges.find(j => j.id === judgeId);
+      this.judge.first_name = selectedJudge.first_name;
+      this.judge.last_name = selectedJudge.last_name;
+      this.judge.email = selectedJudge.email;
+      this.judge.display_name = selectedJudge.display_name;
+      this.judge.title = '';
+      this.judge.role = 'Judge';
+      this.judge.id = selectedJudge.id;
 
-    const newJudge = this.mapJudgeToModel(this.judge);
+      const newJudge = this.mapJudgeToModel(this.judge);
 
-    const indexOfJudge = this.hearing.participants.findIndex(x => x.is_judge === true);
-    if (indexOfJudge > -1) {
-      this.hearing.participants.splice(indexOfJudge, 1);
+      const indexOfJudge = this.hearing.participants.findIndex(x => x.is_judge === true);
+      if (indexOfJudge > -1) {
+        this.hearing.participants.splice(indexOfJudge, 1);
+      }
+      this.hearing.participants.unshift(newJudge);
+      this.hearingService.updateHearingRequest(this.hearing);
     }
-    this.hearing.participants.unshift(newJudge);
-    this.hearingService.updateHearingRequest(this.hearing);
   }
 
   saveJudge() {
@@ -142,7 +144,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
       if (this.editMode) {
         this.navigateToSummary();
       } else {
-        this.router.navigate([PageUrls.AddParticipants]);
+        this.router.navigate(['/add-participants']);
       }
     } else {
       this.failedSubmission = true;
@@ -165,7 +167,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     this.attemptingCancellation = false;
     this.assignJudgeForm.reset();
     this.hearingService.cancelRequest();
-    this.router.navigate([PageUrls.Dashboard]);
+    this.router.navigate(['/dashboard']);
   }
 
   hasChanges(): Observable<boolean> | boolean {

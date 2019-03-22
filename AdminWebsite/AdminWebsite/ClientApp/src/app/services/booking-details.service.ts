@@ -19,12 +19,12 @@ export class BookingDetailsService {
       hearingResponse.cases && hearingResponse.cases.length > 0 ? hearingResponse.cases[0].name : '',
       hearingResponse.hearing_type_name,
       '',
-      '', // TODO not implemented yet
+      hearingResponse.hearing_room_name,
       hearingResponse.hearing_venue_name,
-      'stub.response@hearings.reform.hmcts.net',
-      new Date(Date.now()),
-      'stub.response@hearings.reform.hmcts.net',
-      new Date(Date.now()),
+      hearingResponse.created_by,
+      hearingResponse.created_date,
+      hearingResponse.updated_by,
+      hearingResponse.updated_date
     );
   }
 
@@ -34,8 +34,9 @@ export class BookingDetailsService {
     if (hearingResponse.participants && hearingResponse.participants.length > 0) {
       hearingResponse.participants.forEach(p => {
         const model = new ParticipantDetailsModel(p.id, p.title, p.first_name, p.last_name,
-          p.hearing_role_name, p.username, p.contact_email);
-        if (p.hearing_role_name === this.JUDGE) {
+          p.user_role_name, p.username, p.contact_email, p.case_role_name, p.hearing_role_name,
+          p.display_name, p.middle_names);
+        if (p.user_role_name === this.JUDGE) {
           judges.push(model);
         } else {
           participants.push(model);

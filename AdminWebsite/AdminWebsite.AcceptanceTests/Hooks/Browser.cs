@@ -27,7 +27,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         private TargetBrowser GetTargetBrowser()
         {
             TargetBrowser targetTargetBrowser;
-            return Enum.TryParse((string)_context.TestDirectory, true, out targetTargetBrowser) ? targetTargetBrowser : TargetBrowser.Chrome;
+            return Enum.TryParse(TestContext.Parameters["TargetBrowser"], true, out targetTargetBrowser) ? targetTargetBrowser : TargetBrowser.Chrome;
         }
 
         [BeforeScenario]
