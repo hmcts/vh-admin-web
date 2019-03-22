@@ -153,8 +153,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
     this.hearing.cases[0] = hearingCase;
     this.hearing.case_type_id = this.hearingForm.value.caseType;
     this.hearing.hearing_type_id = this.hearingForm.value.hearingType;
-    this.hearing.hearing_type_name = this.selectedHearingType;
-    console.log(this.hearing.hearing_type_name);
+
     this.hearingService.updateHearingRequest(this.hearing);
   }
 
@@ -194,10 +193,8 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
     }
     const pleaseSelect = new HearingTypeResponse();
     pleaseSelect.name = 'Please Select';
-    pleaseSelect.id = -1;
+    pleaseSelect.id = null;
     this.filteredHearingTypes.unshift(pleaseSelect);
-
-    this.hearing.hearing_type_id = -1;
   }
 
   private dynamicSort(property) {
