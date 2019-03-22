@@ -22,9 +22,9 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void WhenHearingDetailsFormIsFilled()
         {
             HearingDetailsPage();
-            InputCaseNumber();
+            InputCaseNumber(TestData.HearingDetails.CaseNumber);
+            InputCaseName(TestData.HearingDetails.CaseName);
             SelectHearingType();
-            InputCaseName();
         }
         [When(@"Admin user is on hearing details page")]
         public void HearingDetailsPage()
