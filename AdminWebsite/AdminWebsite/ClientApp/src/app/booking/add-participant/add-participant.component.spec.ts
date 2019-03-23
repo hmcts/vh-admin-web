@@ -71,7 +71,7 @@ const p3 = new ParticipantModel();
 p3.first_name = 'Chris';
 p3.last_name = 'Green';
 p3.display_name = 'Chris Green';
-p3.is_judge = true;
+p3.is_judge = false;
 p3.title = 'Mr.';
 p3.email = 'test3@test.com';
 p3.phone = '32332';
@@ -90,6 +90,17 @@ function initHearingRequest(): HearingModel {
   newHearing.hearing_type_id = -1;
   newHearing.hearing_venue_id = -1;
   newHearing.scheduled_duration = 0;
+  newHearing.participants = participants;
+  return newHearing;
+}
+
+function initExistHearingRequest(): HearingModel {
+  const newHearing = new HearingModel();
+  newHearing.cases = [];
+  newHearing.hearing_id = '12345'
+  newHearing.hearing_type_id = 1;
+  newHearing.hearing_venue_id = 1;
+  newHearing.scheduled_duration = 20;
   newHearing.participants = participants;
   return newHearing;
 }
@@ -437,7 +448,7 @@ describe('AddParticipantComponent edit mode', () => {
     })
       .compileComponents();
 
-    const hearing = initHearingRequest();
+    const hearing = initExistHearingRequest();
     videoHearingsServiceSpy.getParticipantRoles.and.returnValue(of(roleList));
     videoHearingsServiceSpy.getCurrentRequest.and.returnValue(hearing);
     participantServiceSpy.mapParticipantsRoles.and.returnValue(partyList);
@@ -533,11 +544,25 @@ describe('AddParticipantComponent edit mode', () => {
     expect(component.editMode).toBeFalsy();
     expect(routerSpy.navigate).toHaveBeenCalled();
   });
-  it('if press save button in edit mode then hide details and reset edit mode', () => {
+  it('if press save button in edit mode then update details and reset edit mode', () => {
     component.next();
     fixture.detectChanges();
     expect(component.showDetails).toBeFalsy();
     expect(component.localEditMode).toBeFalsy();
     expect(bookingServiceSpy.resetEditMode).toHaveBeenCalled();
+    expect(videoHearingsServiceSpy.updateHearingRequest).toHaveBeenCalled();
+  });
+  it('should check if the hearing exist', () => {
+    component.ngOnInit()
+    fixture.detectChanges();
+    expect(videoHearingsServiceSpy.getCurrentRequest).toHaveBeenCalled();
+    expect(component.hearing).toBeTruthy();
+    expect(component.hearing.hearing_id).toBeTruthy();
+    expect(component.isExistingHearing).toBeTruthy();
+    expect(component.isAnyParticipants).toBeTruthy();
+  });
+  it('press button cancel in edit mode navigate to summary', () => {
+    component.addParticipantCancel();
+    expect(routerSpy.navigate).toHaveBeenCalledWith('/summary');
   });
 });

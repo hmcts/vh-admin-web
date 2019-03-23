@@ -29,8 +29,9 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
   availableCaseTypes: string[];
   selectedCaseType: string;
   selectedHearingType: string;
-  filteredHearingTypes: HearingTypeResponse[];
+  filteredHearingTypes: HearingTypeResponse[] = [];
   hasSaved: boolean;
+  isExistingHearing: boolean;
 
   constructor(private hearingService: VideoHearingsService,
     private fb: FormBuilder,
@@ -64,13 +65,25 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
   private checkForExistingRequest() {
     this.hearing = this.hearingService.getCurrentRequest();
     if (this.hearing) {
+      this.isExistingHearing = this.hearing.hearing_id && this.hearing.hearing_id.length > 0;
       this.hasSaved = true;
     }
     const existingType = sessionStorage.getItem(this.existingCaseTypeKey);
-    if (this.hearing.hearing_type_id !== undefined && existingType !== null) {
+    if (this.hearing.hearing_type_name !== undefined && existingType !== null) {
       this.selectedCaseType = existingType;
     } else {
       this.selectedCaseType = 'Please Select';
+    }
+
+  }
+
+  private setHearingTypeForExistingHearing() {
+    if (this.isExistingHearing && this.filteredHearingTypes.length > 0) {
+      const selectedHearingTypes = this.filteredHearingTypes.filter(x => x.name === this.hearing.hearing_type_name);
+      if (selectedHearingTypes && selectedHearingTypes.length > 0) {
+        this.hearing.hearing_type_id = selectedHearingTypes[0].id;
+        this.hearingForm.get('hearingType').setValue(selectedHearingTypes[0].id);    
+      }
     }
   }
 
@@ -164,6 +177,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
         (data: HearingTypeResponse[]) => {
           this.setupCaseTypeAndHearingTypes(data);
           this.filterHearingTypes();
+          this.setHearingTypeForExistingHearing();
         },
         error => this.errorService.handleError(error)
       );

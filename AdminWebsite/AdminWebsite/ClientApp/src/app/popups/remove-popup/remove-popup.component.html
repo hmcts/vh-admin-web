@@ -2,6 +2,11 @@
   <div class="vh-popup vh-popup-xsmall" >
       <h1 class="govuk-heading-m vh-ml70 vh-mr70"> Are you sure you want to remove {{fullName}} from the hearing booking?</h1>
       <div class="govuk-grid-row">
+        <h1 class="govuk-heading-m vh-ml70 vh-mr70"> You must have at least one participant in a hearing.</h1>
+        <h1 class="govuk-heading-m vh-ml70 vh-mr70"> If you remove this participant you must add a new one.</h1>
+
+      </div>
+    <div class="govuk-grid-row">
         <div class="vh-top-m30">
           <input id="btn-remove" class="govuk-button vh-mr25" type="submit" value="Yes, remove participant" (click)="continueRemoveParticipant()">
           <input id="btn-cancel" class="govuk-button hmcts-button--secondary" type="submit" value="Cancel" (click)="cancelRemoveParticipant()">

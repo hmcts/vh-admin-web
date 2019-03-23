@@ -17,32 +17,32 @@
       </h2>
       <div class="govuk-error-summary__body">
         <ul class="govuk-list govuk-error-summary__list">
-          <li *ngIf="searchEmail.isValidEmail">
-            <a (click)="goToDiv('email-error')" href="javascript: void(0)">{{constants.Error.EmailErrorMsg}}</a>
-          </li>
           <li *ngIf="party.invalid || !isPartySelected">
             <a (click)="goToDiv('party-error')" href="javascript: void(0)">{{constants.Error.PartyErrorMsg}}</a>
           </li>
           <li *ngIf="role.invalid || !isRoleSelected">
             <a (click)="goToDiv('role-error')" href="javascript: void(0)">{{constants.Error.RoleErrorMsg}}</a>
           </li>
-          <li *ngIf="firstName.invalid">
-            <a (click)="goToDiv('firstName-error')" href="javascript: void(0)">{{constants.Error.FirstNameErrorMsg}}</a>
-          </li>
-          <li *ngIf="lastName.invalid">
-            <a (click)="goToDiv('lastName-error')" href="javascript: void(0)">{{constants.Error.LastNameErrorMsg}}</a>
-          </li>
-          <li *ngIf="phone.invalid">
-            <a (click)="goToDiv('phone-error')" href="javascript: void(0)">{{constants.Error.PhoneErrorMsg}}</a>
-          </li>
-          <li *ngIf="displayName.invalid">
-            <a (click)="goToDiv('display-name-error')" href="javascript: void(0)">{{constants.Error.DisplaNameErrorMsg}}</a>
-          </li>
-          <li *ngIf="displayErrorNoParticipants">
-            <a href="javascript: void(0)">{{constants.Error.NoParticipantsErrorMsg}}</a>
-          </li>
-        </ul>
-      </div>
+            <li *ngIf="emailInvalid()">
+              <a (click)="goToDiv('email-error')" href="javascript: void(0)">{{constants.Error.EmailErrorMsg}}</a>
+            </li>
+            <li *ngIf="firstName.invalid">
+              <a (click)="goToDiv('firstName-error')" href="javascript: void(0)">{{constants.Error.FirstNameErrorMsg}}</a>
+            </li>
+            <li *ngIf="lastName.invalid">
+              <a (click)="goToDiv('lastName-error')" href="javascript: void(0)">{{constants.Error.LastNameErrorMsg}}</a>
+            </li>
+            <li *ngIf="phone.invalid">
+              <a (click)="goToDiv('phone-error')" href="javascript: void(0)">{{constants.Error.PhoneErrorMsg}}</a>
+            </li>
+            <li *ngIf="displayName.invalid">
+              <a (click)="goToDiv('display-name-error')" href="javascript: void(0)">{{constants.Error.DisplaNameErrorMsg}}</a>
+            </li>
+            <li *ngIf="displayErrorNoParticipants">
+              <a href="javascript: void(0)">{{constants.Error.NoParticipantsErrorMsg}}</a>
+            </li>
+          </ul>
+</div>
     </div>
 
     <form [formGroup]="participantForm" (ngSubmit)="saveParticipant()" autocomplete="off">

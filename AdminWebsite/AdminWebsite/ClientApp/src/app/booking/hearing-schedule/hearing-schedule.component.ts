@@ -30,6 +30,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
   today = new Date();
   canNavigate = true;
   selectedCourtName: string;
+  isExistinHearing: boolean;
 
   constructor(private refDataService: ReferenceDataService, private hearingService: VideoHearingsService,
     private fb: FormBuilder, protected router: Router,
@@ -50,6 +51,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
 
   private checkForExistingRequest() {
     this.hearing = this.hearingService.getCurrentRequest();
+    this.isExistinHearing = this.hearing && this.hearing.hearing_id && this.hearing.hearing_id.length > 0;
   }
 
   private initForm() {
@@ -173,10 +175,21 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
           pleaseSelect.name = 'Please Select';
           pleaseSelect.id = -1;
           this.availableCourts.unshift(pleaseSelect);
+          this.setVenueForExistingHearing();
           console.log(`courts = ${JSON.stringify(data, null, 2)}`);
         },
         error => this.errorService.handleError(error)
       );
+  }
+
+  setVenueForExistingHearing() {
+    if (this.isExistinHearing && this.availableCourts && this.availableCourts.length > 0) {
+      const selectedCourts = this.availableCourts.filter(x => x.name === this.hearing.court_name);
+      if (selectedCourts && selectedCourts.length > 0) {
+        this.selectedCourtName = selectedCourts[0].name;
+        this.schedulingForm.get('courtAddress').setValue(selectedCourts[0].id);
+      }
+    }
   }
 
   saveScheduleAndLocation() {
