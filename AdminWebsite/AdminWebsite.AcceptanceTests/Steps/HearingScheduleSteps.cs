@@ -23,13 +23,13 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             HearingSchedulePage();
             var date = DateTime.Now.AddDays(2);
-            string[] splitDate = date.ToString("dd/MM/yyyy").Split('/');
+            var splitDate = date.ToString("dd/MM/yyyy").Replace("/", String.Empty);
             _hearingSchedule.AddItems<string>("HearingDate", date.ToString("dddd dd MMMM yyyy , HH:mm"));
+            _hearingSchedule.HearingDate(splitDate);
             _hearingSchedule.HearingStartTime(date.ToString("HH:mm").Split(':'));
             InputHearingDuration(TestData.HearingSchedule.Duration);
             _hearingSchedule.HearingVenue(TestData.HearingSchedule.CourtAddress.ToList().Last());
             EnterRoom();
-            _hearingSchedule.HearingDate(splitDate);
         }
         [Then(@"user should remain on hearing schedule page")]
         [When(@"Admin user is on hearing schedule page")]
@@ -71,13 +71,12 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [When(@"user inputs a date in the past from the calendar")]
         public void WhenUserSelectsADateInThePastFromTheCalendar()
         {
-            string[] date = DateTime.Now.AddDays(-1).ToString("dd/MM/yyyy").Split('/');
-            InputDateOfHearing();
+            string date = DateTime.Now.AddDays(-1).ToString("dd/MM/yyyy").Replace("/", String.Empty);
+            _hearingSchedule.HearingDate(date);
             InputHearingStartTime();
             InputHearingDuration();
             SelectHearingVenue();
             EnterRoom();
-            _hearingSchedule.HearingDate(date);
         }
 
         [Then(@"an error message should be displayed as (.*)")]
@@ -91,13 +90,13 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             HearingSchedulePage();
             DateTime date = DateTime.UtcNow.AddDays(2);
-            string[] splitDate = date.ToString("dd/MM/yyyy").Split('/');
+            string splitDate = date.ToString("dd/MM/yyyy").Replace("/", String.Empty);
             _hearingSchedule.AddItems<string>("HearingDate", date.ToString("dddd dd MMMM yyyy , HH:mm"));
-             _hearingSchedule.HearingStartTime(date.ToString("HH:mm").Split(':'));
+            _hearingSchedule.HearingDate(splitDate);
+            _hearingSchedule.HearingStartTime(date.ToString("HH:mm").Split(':'));
             InputHearingDuration(TestData.HearingSchedule.Duration);
             _hearingSchedule.HearingVenue(TestData.HearingSchedule.CourtAddress.ToList().Last());
             EnterRoom(TestData.HearingSchedule.Room);
-            _hearingSchedule.HearingDate(splitDate);
         }
     }
 }
