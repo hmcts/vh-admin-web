@@ -72,12 +72,10 @@ namespace AdminWebsite.AcceptanceTests.Features
         [NUnit.Framework.TestAttribute()]
         [NUnit.Framework.DescriptionAttribute("Admin views hearing information on summary page")]
         [NUnit.Framework.CategoryAttribute("smoketest")]
-        [NUnit.Framework.CategoryAttribute("#001Save_Booking")]
         public virtual void AdminViewsHearingInformationOnSummaryPage()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Admin views hearing information on summary page", null, new string[] {
-                        "smoketest",
-                        "#001Save_Booking"});
+                        "smoketest"});
 #line 4
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
