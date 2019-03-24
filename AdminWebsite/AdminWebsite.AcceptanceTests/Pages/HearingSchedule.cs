@@ -23,7 +23,6 @@ namespace AdminWebsite.AcceptanceTests.Pages
         {
             if (currentdate == null)
               currentdate = CurrentDate();
-            ClickElement(_hearingDate);
             InputValues(_hearingDate, currentdate);
         }
         public void HearingStartTime(string[] currentTime = null)
