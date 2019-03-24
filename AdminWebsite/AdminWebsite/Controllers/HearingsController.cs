@@ -141,7 +141,7 @@ namespace AdminWebsite.Controllers
             {
                 if (participant.Case_role_name == "Judge") continue;
                 //// create user in AD if users email does not exist in AD.
-                var userProfile = await CreateUserInAD(participant.Contact_email);
+                var userProfile = await CheckUserExistsInAD(participant.Contact_email);
                 if (userProfile == null)
                 {
                     // create the user in AD.
@@ -168,11 +168,15 @@ namespace AdminWebsite.Controllers
                         }
                     }
                 }
+                else
+                {
+                    participant.Username = userProfile.User_name;
+                }
             }
             return participants;
         }
 
-        private async Task<UserProfile> CreateUserInAD(string emailAddress)
+        private async Task<UserProfile> CheckUserExistsInAD(string emailAddress)
         {
             try
             {
