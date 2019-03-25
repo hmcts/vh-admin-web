@@ -11,11 +11,11 @@ variables:
   integrationTestsAppSettingsTransform: '
   "AzureAd/Authority":"https://login.microsoftonline.com/$(TenantId)",
   "AzureAd/ClientId":"$(vh-admin-web-appid)",
-  "AzureAd/ClientSecret":"$(vh-admin-web-secret)",
+  "AzureAd/ClientSecret":"$(vh-admin-web-key)",
   "AzureAd:TenantId":"$(TenantId)",
   "VhServices/BookingsApiResourceId":"$(vh-bookings-api-identifieruris)",
-  "VhServices/UserApiResourceId":"$(vh-user-api-identifieruris)"
-    '
+  "VhServices/UserApiResourceId":"$(vh-user-api-identifieruris)"'
+  
   vhAzureKeyVault: 'https://vhwebsitepreview.vault.azure.net/' # Used during integration tests
   keyVaultName: vhcoreinfrahtpreview # Used to get secrets for integration tests
   secretsFilter: 'TenantId,vh-admin-web-appid,vh-admin-web-key,vh-bookings-api-identifieruris,vh-user-api-identifieruris' # filters out secrets returned from key vault
