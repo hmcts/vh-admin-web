@@ -19,6 +19,8 @@ namespace AdminWebsite.AcceptanceTests.Pages
         private By _nextButton => By.Id(("nextButton"));
         private By _cancelButton => By.Id(("cancelButton"));
         private By _primaryNavItems => By.XPath("//*[@class='vh-primary-navigation__link']");
+        private By _tryAgain => By.Id("btnTryAgain");
+        private By _tryAgainMessage => By.XPath("//*[@class='govuk-heading-m vh-ml70 vh-mr70']");
 
         protected IEnumerable<IWebElement> GetListOfElements(By elements)
         {
@@ -88,7 +90,27 @@ namespace AdminWebsite.AcceptanceTests.Pages
 
         public void PageUrl(string url)
         {
+            if (url != PageUri.BookingConfirmationPage)
             _browserContext.Retry(() => _browserContext.NgDriver.Url.Should().Contain(url));
+
+            else
+            {
+                try
+                {
+                    _browserContext.Retry(() => _browserContext.NgDriver.Url.Should().Contain(url));
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Re-submit booking: {ex}");
+                    if (GetElementText(_tryAgainMessage) == TestData.BookingConfirmation.TryAgainMessage)                  
+
+                    {
+                        ClickElement(_tryAgain);
+                        _browserContext.Retry(() => _browserContext.NgDriver.Url.Should().Contain(url), 2);
+                    }                    
+                }
+            }           
+            
         }
 
         public void ClickBreadcrumb(string breadcrumb) => SelectOption(_breadcrumbs, breadcrumb);

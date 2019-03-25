@@ -23,7 +23,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             HearingSchedulePage();
             var date = DateTime.Now.AddDays(2);
-            var splitDate = date.ToString("dd/MM/yyyy").Replace("/", String.Empty);
+            string[] splitDate = DateTime.Now.AddDays(2).ToString("dd/MM/yyyy").Split('/');
             _hearingSchedule.AddItems<string>("HearingDate", date.ToString("dddd dd MMMM yyyy , HH:mm"));
             _hearingSchedule.HearingDate(splitDate);
             _hearingSchedule.HearingStartTime(date.ToString("HH:mm").Split(':'));
@@ -71,7 +71,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [When(@"user inputs a date in the past from the calendar")]
         public void WhenUserSelectsADateInThePastFromTheCalendar()
         {
-            string date = DateTime.Now.AddDays(-1).ToString("dd/MM/yyyy").Replace("/", String.Empty);
+            string[] date = DateTime.Now.AddDays(-1).ToString("dd/MM/yyyy").Split('/');
             _hearingSchedule.HearingDate(date);
             InputHearingStartTime();
             InputHearingDuration();
@@ -90,7 +90,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             HearingSchedulePage();
             DateTime date = DateTime.UtcNow.AddDays(2);
-            string splitDate = date.ToString("dd/MM/yyyy").Replace("/", String.Empty);
+            string[] splitDate = date.ToString("dd/MM/yyyy").Split('/');
             _hearingSchedule.AddItems<string>("HearingDate", date.ToString("dddd dd MMMM yyyy , HH:mm"));
             _hearingSchedule.HearingDate(splitDate);
             _hearingSchedule.HearingStartTime(date.ToString("HH:mm").Split(':'));
