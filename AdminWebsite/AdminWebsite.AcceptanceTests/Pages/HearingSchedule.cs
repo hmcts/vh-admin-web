@@ -23,7 +23,7 @@ namespace AdminWebsite.AcceptanceTests.Pages
         {
             if (currentdate == null)
               currentdate = CurrentDate();
-            ClickElement(_hearingDate);
+            ClickElement(By.XPath("//*[@for='hearingDate']"));
             foreach (var item in currentdate)
             {
                 InputValues(_hearingDate, item);

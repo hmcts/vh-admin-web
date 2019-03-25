@@ -73,10 +73,12 @@ namespace AdminWebsite.AcceptanceTests.Features
         [NUnit.Framework.TestAttribute()]
         [NUnit.Framework.DescriptionAttribute("Case Admin saves booking and views confirmation screen")]
         [NUnit.Framework.CategoryAttribute("smoketest")]
+        [NUnit.Framework.CategoryAttribute("VIH-2701")]
         public virtual void CaseAdminSavesBookingAndViewsConfirmationScreen()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Case Admin saves booking and views confirmation screen", null, new string[] {
-                        "smoketest"});
+                        "smoketest",
+                        "VIH-2701"});
 #line 7
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
