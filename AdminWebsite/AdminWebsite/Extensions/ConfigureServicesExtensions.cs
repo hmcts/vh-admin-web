@@ -89,7 +89,6 @@ namespace AdminWebsite.Extensions
 
         private static IUserApiClient BuildUserApiClient(HttpClient httpClient, ServiceSettings serviceSettings)
         {
-            Hearings.Common.ApplicationLogger.Trace("UserAPI-BaseURL", "Base Url", serviceSettings.UserApiUrl);
             return new UserApiClient(httpClient) { BaseUrl = serviceSettings.UserApiUrl };
         }
 
