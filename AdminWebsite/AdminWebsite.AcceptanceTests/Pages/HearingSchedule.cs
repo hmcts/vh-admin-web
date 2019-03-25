@@ -23,6 +23,7 @@ namespace AdminWebsite.AcceptanceTests.Pages
         {
             if (currentdate == null)
               currentdate = CurrentDate();
+            ClickElement(_hearingDate);
             foreach (var item in currentdate)
             {
                 InputValues(_hearingDate, item);
