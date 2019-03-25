@@ -46,7 +46,7 @@ namespace AdminWebsite.AcceptanceTests.Pages
             return breadcrumbAttribute;
         }
 
-        protected void InputValues(By element, string value) => _browserContext.NgDriver.WaitUntilElementVisible(element).SendKeys(value);
+        protected void InputValues(By element, string value) => _browserContext.NgDriver.FindElement(element).SendKeys(value);
         protected void ClickElement(By element) => _browserContext.NgDriver.WaitUntilElementVisible(element).Click();
         protected void ClearFieldInputValues(By element, string value)
         {

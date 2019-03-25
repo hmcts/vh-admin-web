@@ -62,7 +62,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             GivenUserIsOnAddParticipantsPage();
             _addParticipantsSteps.ProfessionalParticipantIsAddedToHearing();
             _common.NextButton();
-            _otherInformationStep.MoreInformationPage();
+            _otherInformationStep.WhenUserAddsOtherInformationToBookingHearing();
         }
         [When(@"user is in processing of booking hearing")]
         public void WhenUserIsInProcessingOfBookingHearing()

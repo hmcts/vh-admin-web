@@ -66,12 +66,12 @@ namespace AdminWebsite.AcceptanceTests.Features
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Test")]
-        [NUnit.Framework.CategoryAttribute("#001WIP")]
-        public virtual void Test()
+        [NUnit.Framework.DescriptionAttribute("Case Admin saves booking and views confirmation screen")]
+        [NUnit.Framework.CategoryAttribute("smoketest")]
+        public virtual void CaseAdminSavesBookingAndViewsConfirmationScreen()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Test", new string[] {
-                        "#001WIP"});
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Case Admin saves booking and views confirmation screen", null, new string[] {
+                        "smoketest"});
 #line 7
 this.ScenarioSetup(scenarioInfo);
 #line 8

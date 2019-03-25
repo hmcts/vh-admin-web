@@ -22,13 +22,8 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void WhenHearingScheduleFormIsFilled()
         {
             HearingSchedulePage();
-            //InputDateOfHearing();
-            //InputHearingStartTime();
-            //InputHearingDuration();
-            //SelectHearingVenue();
-            //EnterRoom();
             var date = DateTime.Now.AddDays(2);
-            string[] splitDate = date.ToString("dd/MM/yyyy").Split('/');
+            var splitDate = date.ToString("dd/MM/yyyy").Replace("/", String.Empty);
             _hearingSchedule.AddItems<string>("HearingDate", date.ToString("dddd dd MMMM yyyy , HH:mm"));
             _hearingSchedule.HearingDate(splitDate);
             _hearingSchedule.HearingStartTime(date.ToString("HH:mm").Split(':'));
@@ -76,9 +71,8 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [When(@"user inputs a date in the past from the calendar")]
         public void WhenUserSelectsADateInThePastFromTheCalendar()
         {
-            string[] date = DateTime.Now.AddDays(-1).ToString("dd/MM/yyyy").Split('/');
+            string date = DateTime.Now.AddDays(-1).ToString("dd/MM/yyyy").Replace("/", String.Empty);
             _hearingSchedule.HearingDate(date);
-            InputDateOfHearing();
             InputHearingStartTime();
             InputHearingDuration();
             SelectHearingVenue();
@@ -95,8 +89,8 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void WhenHearingScheduleIsUpdated()
         {
             HearingSchedulePage();
-            var date = DateTime.Now.AddDays(2);
-            string[] splitDate = date.ToString("dd/MM/yyyy").Split('/');
+            DateTime date = DateTime.UtcNow.AddDays(2);
+            string splitDate = date.ToString("dd/MM/yyyy").Replace("/", String.Empty);
             _hearingSchedule.AddItems<string>("HearingDate", date.ToString("dddd dd MMMM yyyy , HH:mm"));
             _hearingSchedule.HearingDate(splitDate);
             _hearingSchedule.HearingStartTime(date.ToString("HH:mm").Split(':'));
