@@ -40,7 +40,6 @@ describe('booking service', () => {
     service.setEditMode();
     expect(sessionStorage.setItem).toHaveBeenCalled();
   });
- 
   it('should reset edit mode ', () => {
     service.resetEditMode();
     expect(sessionStorage.removeItem).toHaveBeenCalled();

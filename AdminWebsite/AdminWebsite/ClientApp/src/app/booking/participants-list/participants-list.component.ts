@@ -26,8 +26,11 @@ export class ParticipantsListComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.isSummaryPage = this.router.url.includes('summary');
-    this.isEditRemoveVisible = !this.router.url.includes('assign-judge');
+    const currentUrl = this.router.url;
+    if (currentUrl) {
+      this.isSummaryPage = currentUrl.includes('summary');
+      this.isEditRemoveVisible = !currentUrl.includes('assign-judge');
+    }
   }
 
   editJudge() {

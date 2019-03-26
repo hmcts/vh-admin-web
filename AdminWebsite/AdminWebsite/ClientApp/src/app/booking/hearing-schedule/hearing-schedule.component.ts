@@ -25,8 +25,9 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
   availableCourts: HearingVenueResponse[];
   schedulingForm: FormGroup;
   failedSubmission: boolean;
-  attemptingCancellation: boolean;
-  hasSaved: boolean;
+  attemptingCancellation = false;
+  attemptingDiscardChanges = false;
+  hasSaved = false;
   today = new Date();
   canNavigate = true;
   selectedCourtName: string;
@@ -37,8 +38,6 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     private datePipe: DatePipe, protected bookingService: BookingService,
     private errorService: ErrorService) {
     super(bookingService, router);
-    this.attemptingCancellation = false;
-    this.hasSaved = false;
   }
 
   ngOnInit() {
@@ -230,11 +229,16 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
 
   continueBooking() {
     this.attemptingCancellation = false;
+    this.attemptingDiscardChanges = false;
   }
 
   confirmCancelBooking() {
     if (this.editMode) {
-      this.navigateToSummary();
+      if (this.schedulingForm.dirty || this.schedulingForm.touched) {
+        this.attemptingDiscardChanges = true;
+      } else {
+        this.navigateToSummary();
+      }
     } else {
       this.attemptingCancellation = true;
     }
@@ -245,6 +249,12 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     this.hearingService.cancelRequest();
     this.schedulingForm.reset();
     this.router.navigate([PageUrls.Dashboard]);
+  }
+
+  cancelChanges() {
+    this.attemptingDiscardChanges = false;
+    this.schedulingForm.reset();
+    this.navigateToSummary();
   }
 
   goToDiv(fragment: string): void {

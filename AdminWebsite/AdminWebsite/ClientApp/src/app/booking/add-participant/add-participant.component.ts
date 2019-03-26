@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable} from 'rxjs';
 import { Constants } from '../../common/constants';
 import { CanDeactiveComponent } from '../../common/guards/changes.guard';
 import { IDropDownModel } from '../../common/model/drop-down.model';
@@ -52,6 +52,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
   showCancelPopup = false;
   showConfirmationPopup = false;
+  attemptingDiscardChanges = false;
   confirmationMessage: string;
   showConfirmationRemoveParticipant = false;
   removerFullName: string;
@@ -359,6 +360,9 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     const validEmail = this.showDetails && (this.searchEmail ? this.searchEmail.validateEmail() : true);
     if (this.participantForm.valid && validEmail && this.isRoleSelected && this.isPartySelected && this.isTitleSelected) {
       this.isShowErrorSummary = false;
+      this.participantForm.markAsUntouched();
+      this.participantForm.markAsPristine();
+      this.participantForm.updateValueAndValidity();
       const newParticipant = new ParticipantModel();
       this.mapParticipant(newParticipant);
       if (!this.participantService.checkDuplication(newParticipant.email, this.hearing.participants)) {
@@ -417,6 +421,8 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   confirmRemoveParticipant() {
     const participant = this.hearing.participants.find(x => x.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase());
     this.removerFullName = participant ? `${participant.title} ${participant.first_name} ${participant.last_name}` : '';
+    const anyParticipants = this.hearing.participants.filter(x => !x.is_judge);
+    this.isAnyParticipants = anyParticipants && anyParticipants.length < 2;
     this.showConfirmationRemoveParticipant = true;
   }
 
@@ -444,20 +450,36 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
   addParticipantCancel() {
     if (this.editMode) {
-      this.navigateToSummary();
+      if (this.participantForm.dirty || this.participantForm.touched) {
+        this.attemptingDiscardChanges = true;
+      } else {
+        this.navigateToSummary();
+      }
     } else {
       this.showCancelPopup = true;
     }
   }
 
-  handleContinueBooking(event: any) {
+  handleContinueBooking() {
     this.showCancelPopup = false;
+    this.attemptingDiscardChanges = false;
   }
 
-  handleCancelBooking(event: any) {
+  handleCancelBooking() {
     this.showCancelPopup = false;
     this.participantForm.reset();
-    this.router.navigate(['/dashboard']);
+    if (this.editMode) {
+      this.navigateToSummary();
+    } else {
+      this.videoHearingService.cancelRequest();
+      this.router.navigate(['/dashboard']);
+    }
+  }
+
+  cancelChanges() {
+    this.attemptingDiscardChanges = false;
+    this.participantForm.reset();
+    this.navigateToSummary();
   }
 
   handleConfirmation() {
@@ -485,20 +507,18 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         displayName: '',
         companyName: '',
       });
-    this.role.markAsUntouched();
-    this.party.markAsUntouched();
-    this.firstName.markAsUntouched();
-    this.lastName.markAsUntouched();
-    this.phone.markAsUntouched();
-    this.title.markAsUntouched();
-    this.displayName.markAsUntouched();
-    this.companyName.markAsUntouched();
+    this.participantForm.markAsUntouched();
+    this.participantForm.markAsPristine();
+    this.participantForm.updateValueAndValidity();
     if (this.showDetails && this.searchEmail) {
       this.searchEmail.clearEmail();
     }
     this.showDetails = false;
     this.resetEditMode();
     this.localEditMode = false;
+    this.isShowErrorSummary = false;
+    this.isRoleSelected = true;
+    this.isPartySelected = true;
     if (this.hearing.participants.length > 1) {
       this.displayNext();
     }

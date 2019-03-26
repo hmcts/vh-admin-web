@@ -10,7 +10,7 @@ import { ParticipantModel } from '../common/model/participant.model';
 
 let clientApiSpy: jasmine.SpyObj<BHClient>;
 
-describe('Hearing Request Storage', () => {
+describe('Video hearing service', () => {
   const newRequestKey = 'bh-newRequest';
   clientApiSpy = jasmine.createSpyObj('BHClient',
     ['getHearingTypes', 'getParticipantRoles', 'bookNewHearing']);
@@ -62,9 +62,10 @@ describe('Hearing Request Storage', () => {
       expect(cachedRequest).toBeTruthy();
     }));
 
-  it('should return true if  booking has unsaved changes',
+  it('should check if  booking has unsaved changes',
     inject([VideoHearingsService], (service: VideoHearingsService) => {
-      expect(service.hasUnsavedChanges()).toBeTruthy();
+      service.hasUnsavedChanges();
+      expect(sessionStorage.getItem).toHaveBeenCalled();
     }));
   it('should save bookingHasChangesKey in the session storage',
     inject([VideoHearingsService], (service: VideoHearingsService) => {
@@ -185,7 +186,7 @@ describe('Hearing Request Storage', () => {
     inject([VideoHearingsService], (service: VideoHearingsService) => {
 
       const participants: ParticipantResponse[] = [];
-      let participant = new ParticipantResponse();
+      const participant = new ParticipantResponse();
       participant.title = 'Mr';
       participant.first_name = 'Dan';
       participant.middle_names = 'Ivan';
@@ -215,7 +216,7 @@ describe('Hearing Request Storage', () => {
     inject([VideoHearingsService], (service: VideoHearingsService) => {
 
       const participants: ParticipantModel[] = [];
-      let participant = new ParticipantModel();
+      const participant = new ParticipantModel();
       participant.title = 'Mr';
       participant.first_name = 'Dan';
       participant.middle_names = 'Ivan';

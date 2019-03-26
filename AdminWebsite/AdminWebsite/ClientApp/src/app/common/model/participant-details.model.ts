@@ -34,7 +34,7 @@ export class ParticipantDetailsModel {
   get fullName(): string {
     let fullName = `${this.Title} ${this.FirstName} ${this.LastName}`;
     if (this.Title === 'Judge' &&
-      (this.FirstName.indexOf('Judge') > -1 || this.LastName.indexOf('Judge') > -1)){
+      (this.FirstName.indexOf('Judge') > -1 || this.LastName.indexOf('Judge') > -1)) {
       fullName = `${this.FirstName} ${this.LastName}`;
     }
     return fullName;

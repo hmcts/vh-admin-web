@@ -1,7 +1,7 @@
 <div id="removePopup" class="vh-popup-overlay">
   <div class="vh-popup vh-popup-xsmall" >
       <h1 class="govuk-heading-m vh-ml70 vh-mr70"> Are you sure you want to remove {{fullName}} from the hearing booking?</h1>
-      <div class="govuk-grid-row">
+      <div class="govuk-grid-row" *ngIf="isLastParticipant">
         <h1 class="govuk-heading-m vh-ml70 vh-mr70"> You must have at least one participant in a hearing.</h1>
         <h1 class="govuk-heading-m vh-ml70 vh-mr70"> If you remove this participant you must add a new one.</h1>
 

@@ -22,6 +22,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
 
   private existingCaseTypeKey = 'selectedCaseType';
   attemptingCancellation: boolean;
+  attemptingDiscardChanges = false;
   failedSubmission: boolean;
   hearing: HearingModel;
   hearingForm: FormGroup;
@@ -74,7 +75,6 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
     } else {
       this.selectedCaseType = 'Please Select';
     }
-
   }
 
   private setHearingTypeForExistingHearing() {
@@ -82,7 +82,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
       const selectedHearingTypes = this.filteredHearingTypes.filter(x => x.name === this.hearing.hearing_type_name);
       if (selectedHearingTypes && selectedHearingTypes.length > 0) {
         this.hearing.hearing_type_id = selectedHearingTypes[0].id;
-        this.hearingForm.get('hearingType').setValue(selectedHearingTypes[0].id);    
+        this.hearingForm.get('hearingType').setValue(selectedHearingTypes[0].id);
       }
     }
   }
@@ -140,13 +140,22 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
 
   continueBooking() {
     this.attemptingCancellation = false;
+    this.attemptingDiscardChanges = false;
   }
 
   confirmCancelBooking() {
     if (this.editMode) {
-      this.navigateToSummary();
+      if (this.hearingForm.dirty || this.hearingForm.touched) {
+        this.attemptingDiscardChanges = true;
+      } else {
+        this.navigateToSummary();
+      }
     } else {
-      this.attemptingCancellation = true;
+      if (this.hearingForm.dirty || this.hearingForm.touched) {
+        this.attemptingCancellation = true;
+      } else {
+        this.cancelBooking();
+      }
     }
   }
 
@@ -156,6 +165,12 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
     sessionStorage.removeItem(this.existingCaseTypeKey);
     this.hearingForm.reset();
     this.router.navigate([PageUrls.Dashboard]);
+  }
+
+  cancelChanges() {
+    this.attemptingDiscardChanges = false;
+    this.hearingForm.reset();
+    this.navigateToSummary();
   }
 
   private updateHearingRequest() {

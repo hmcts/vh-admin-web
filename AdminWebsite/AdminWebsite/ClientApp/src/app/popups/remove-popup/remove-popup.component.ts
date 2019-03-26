@@ -12,7 +12,8 @@ export class RemovePopupComponent implements OnInit {
 
   @Input() fullName: string;
 
-  isLastParticipant = false;
+  @Input()
+  isLastParticipant: boolean;
 
 
   constructor() { }

@@ -83,7 +83,7 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
     this.showConfirmationRemoveParticipant = true;
     setTimeout(() => {
       this.removePopupComponent.isLastParticipant = !isNotLast;
-    });
+    }, 500);
   }
 
   handleContinueRemove() {

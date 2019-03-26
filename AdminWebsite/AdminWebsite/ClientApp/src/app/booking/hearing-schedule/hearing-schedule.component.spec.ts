@@ -5,16 +5,17 @@ import { AbstractControl, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { of } from 'rxjs';
-import { CancelPopupComponent } from 'src/app/popups/cancel-popup/cancel-popup.component';
-import { SharedModule } from 'src/app/shared/shared.module';
-import { BreadcrumbStubComponent } from 'src/app/testing/stubs/breadcrumb-stub';
+import { CancelPopupComponent } from '../../popups/cancel-popup/cancel-popup.component';
+import { SharedModule } from '../../shared/shared.module';
+import { BreadcrumbStubComponent } from '../../testing/stubs/breadcrumb-stub';
+import { DiscardConfirmPopupComponent } from '../../popups/discard-confirm-popup/discard-confirm-popup.component';
 
 import { ReferenceDataService } from '../../services/reference-data.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { MockValues } from '../../testing/data/test-objects';
 import { HearingScheduleComponent } from './hearing-schedule.component';
 import { HearingModel } from '../../common/model/hearing.model';
-import { ErrorService } from 'src/app/services/error.service';
+import { ErrorService } from '../../services/error.service';
 
 const newHearing = new HearingModel();
 
@@ -25,7 +26,7 @@ function initExistingHearingRequest(): HearingModel {
   const existingRequest = new HearingModel();
   existingRequest.hearing_type_id = 2;
   existingRequest.hearing_venue_id = 1,
-  existingRequest.scheduled_date_time = today;
+    existingRequest.scheduled_date_time = today;
   existingRequest.scheduled_duration = 80;
   return existingRequest;
 }
@@ -62,7 +63,8 @@ describe('HearingScheduleComponent first visit', () => {
       ['getCourts']);
     referenceDataServiceServiceSpy.getCourts.and.returnValue(of(MockValues.Courts));
     videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',
-      ['getHearingMediums', 'getHearingTypes', 'getCurrentRequest', 'updateHearingRequest']);
+      ['getHearingMediums', 'getHearingTypes', 'getCurrentRequest',
+        'updateHearingRequest', 'cancelRequest']);
 
     videoHearingsServiceSpy.getCurrentRequest.and.returnValue(newHearing);
 
@@ -75,7 +77,8 @@ describe('HearingScheduleComponent first visit', () => {
         { provide: ErrorService, useValue: errorService },
         DatePipe
       ],
-      declarations: [HearingScheduleComponent, BreadcrumbStubComponent, CancelPopupComponent]
+      declarations: [HearingScheduleComponent, BreadcrumbStubComponent,
+        CancelPopupComponent, DiscardConfirmPopupComponent]
     })
       .compileComponents();
   }));
@@ -197,7 +200,8 @@ describe('HearingScheduleComponent returning to page', () => {
       ['getCourts']);
     referenceDataServiceServiceSpy.getCourts.and.returnValue(of(MockValues.Courts));
     videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',
-      ['getHearingMediums', 'getHearingTypes', 'getCurrentRequest', 'updateHearingRequest']);
+      ['getHearingMediums', 'getHearingTypes', 'getCurrentRequest',
+        'updateHearingRequest', 'cancelRequest']);
 
     videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
 
@@ -210,7 +214,8 @@ describe('HearingScheduleComponent returning to page', () => {
         { provide: ErrorService, useValue: errorService },
         DatePipe
       ],
-      declarations: [HearingScheduleComponent, BreadcrumbStubComponent, CancelPopupComponent]
+      declarations: [HearingScheduleComponent, BreadcrumbStubComponent,
+        CancelPopupComponent, DiscardConfirmPopupComponent]
     })
       .compileComponents();
   }));
@@ -241,5 +246,49 @@ describe('HearingScheduleComponent returning to page', () => {
     expect(component.hearingDurationMinute.value).toBe(expectedDurationMinute);
     expect(component.courtAddress.value).toBe(existingRequest.hearing_venue_id);
   });
+  it('should hide cancel and discard pop up confirmation', () => {
+    component.attemptingCancellation = true;
+    component.attemptingDiscardChanges = true;
+    fixture.detectChanges();
+    component.continueBooking();
+    expect(component.attemptingCancellation).toBeFalsy();
+    expect(component.attemptingDiscardChanges).toBeFalsy();
+  });
+  it('should show discard pop up confirmation', () => {
+    component.editMode = true;
+    component.schedulingForm.markAsDirty();
+    fixture.detectChanges();
+    component.confirmCancelBooking();
+    expect(component.attemptingDiscardChanges).toBeTruthy();
+  });
+  it('should navigate to summary page if no changes', () => {
+    component.editMode = true;
+    component.schedulingForm.markAsPristine();
+    fixture.detectChanges();
+    component.confirmCancelBooking();
+    expect(routerSpy.navigate).toHaveBeenCalled();
+  });
+  it('should show cancel booking confirmation pop up', () => {
+    component.editMode = false;
+    fixture.detectChanges();
+    component.confirmCancelBooking();
+    expect(component.attemptingCancellation).toBeTruthy();
+  });
+  it('should cancel booking, hide pop up and navigate to dashboard', () => {
+    component.attemptingCancellation = true;
 
+    fixture.detectChanges();
+    component.cancelBooking();
+    expect(component.attemptingCancellation).toBeFalsy();
+    expect(videoHearingsServiceSpy.cancelRequest).toHaveBeenCalled();
+    expect(routerSpy.navigate).toHaveBeenCalled();
+  });
+  it('should cancel current changes, hide pop up and navigate to summary', () => {
+    component.attemptingDiscardChanges = true;
+
+    fixture.detectChanges();
+    component.cancelChanges();
+    expect(component.attemptingDiscardChanges).toBeFalsy();
+    expect(routerSpy.navigate).toHaveBeenCalled();
+  });
 });

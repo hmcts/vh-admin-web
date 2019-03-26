@@ -32,9 +32,10 @@ export class VideoHearingsService {
     }
   }
 
-  hasUnsavedChanges() {
-    return sessionStorage.getItem(this.newRequestKey) !== null ||
-      sessionStorage.getItem(this.bookingHasChangesKey) !== null;
+  hasUnsavedChanges(): boolean {
+    const keyRequest = sessionStorage.getItem(this.newRequestKey);
+    const keyChanges = sessionStorage.getItem(this.bookingHasChangesKey);
+    return keyRequest === this.newRequestKey || keyChanges === this.bookingHasChangesKey;
   }
 
   onBookingChange(isChanged: boolean) {
@@ -132,7 +133,7 @@ export class VideoHearingsService {
       caseRequest = new CaseModel();
       caseRequest.name = c.name;
       caseRequest.number = c.number;
-      caseRequest.isLeadCase= c.is_lead_case;
+      caseRequest.isLeadCase = c.is_lead_case;
       cases.push(caseRequest);
     });
     return cases;

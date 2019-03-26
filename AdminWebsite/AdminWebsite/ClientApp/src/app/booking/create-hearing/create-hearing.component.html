@@ -98,3 +98,8 @@
   <app-cancel-popup (continueBooking)="continueBooking($event)" (cancelBooking)="cancelBooking($event)">
   </app-cancel-popup>
 </div>
+
+<div *ngIf="attemptingDiscardChanges">
+  <app-discard-confirm-popup (continueEditing)="continueBooking($event)" (cancelChanges)="cancelChanges()">
+  </app-discard-confirm-popup>
+</div>
