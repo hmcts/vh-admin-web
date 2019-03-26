@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import {
-  HearingTypeResponse, BHClient, BookNewHearingRequest,
-  HearingDetailsResponse, CaseAndHearingRolesResponse
+  HearingTypeResponse, BHClient, BookNewHearingRequest, HearingDetailsResponse,
+  CaseAndHearingRolesResponse, CaseRequest, ParticipantRequest
 } from './clients/api-client';
 import { HearingModel } from '../common/model/hearing.model';
 
@@ -74,13 +74,59 @@ export class VideoHearingsService {
     sessionStorage.removeItem(this.bookingHasChangesKey);
   }
 
-  saveHearing(newRequest: HearingModel): Observable<number> {
+  saveHearing(newRequest: HearingModel): Observable<HearingDetailsResponse> {
     const hearingRequest = this.mapHearing(newRequest);
     return this.bhClient.bookNewHearing(hearingRequest);
   }
 
   mapHearing(newRequest: HearingModel): BookNewHearingRequest {
-    throw new Error('Mapping of hearing request not implemented yet.');
+    const newHearingRequest = new BookNewHearingRequest();
+    newHearingRequest.cases = this.mapCases(newRequest);
+    newHearingRequest.case_type_name = newRequest.case_type;
+    newHearingRequest.hearing_type_name = newRequest.hearing_type_name;
+    newHearingRequest.scheduled_date_time = new Date(newRequest.scheduled_date_time);
+    newHearingRequest.scheduled_duration = newRequest.scheduled_duration;
+    newHearingRequest.hearing_venue_name = newRequest.court_name;
+    newHearingRequest.hearing_room_name = newRequest.court_room;
+    newHearingRequest.participants = this.mapParticipants(newRequest);
+    newHearingRequest.other_information = newRequest.other_information;
+    console.log(newHearingRequest);
+    return newHearingRequest;
+  }
+
+  mapCases(newRequest: HearingModel): CaseRequest[] {
+    const cases: CaseRequest[] = [];
+    let caseRequest: CaseRequest;
+    newRequest.cases.forEach(c => {
+      caseRequest = new CaseRequest();
+      caseRequest.name = c.name;
+      caseRequest.number = c.number;
+      caseRequest.is_lead_case = false;
+      cases.push(caseRequest);
+    });
+    return cases;
+  }
+
+  mapParticipants(newRequest: HearingModel): ParticipantRequest[] {
+    const participants: ParticipantRequest[] = [];
+    let participant: ParticipantRequest;
+    newRequest.participants.forEach(p => {
+      participant = new ParticipantRequest();
+      participant.title = p.title;
+      participant.first_name = p.first_name;
+      participant.middle_names = p.middle_names;
+      participant.last_name = p.last_name;
+      participant.username = p.username;
+      participant.display_name = p.display_name;
+      participant.contact_email = p.email;
+      participant.telephone_number = p.phone;
+      participant.case_role_name = p.case_role_name;
+      participant.hearing_role_name = p.hearing_role_name;
+      participant.representee = p.representee;
+      participant.solicitors_reference = p.solicitorsReference;
+      participants.push(participant);
+    });
+    return participants;
   }
 
   getHearingById(hearingId: string): Observable<HearingDetailsResponse> {

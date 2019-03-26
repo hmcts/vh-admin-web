@@ -11,6 +11,7 @@ import { VideoHearingsService } from '../../services/video-hearings.service';
 import { BookingBaseComponent } from '../booking-base/booking-base.component';
 import { BookingService } from '../../services/booking.service';
 import { ErrorService } from 'src/app/services/error.service';
+import { PageUrls } from 'src/app/shared/page-url.constants';
 
 @Component({
   selector: 'app-create-hearing',
@@ -27,6 +28,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
   availableHearingTypes: HearingTypeResponse[];
   availableCaseTypes: string[];
   selectedCaseType: string;
+  selectedHearingType: string;
   filteredHearingTypes: HearingTypeResponse[];
   hasSaved: boolean;
 
@@ -116,7 +118,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
       if (this.editMode) {
         this.navigateToSummary();
       } else {
-        this.router.navigate(['/hearing-schedule']);
+        this.router.navigate([PageUrls.HearingSchedule]);
       }
     } else {
       this.failedSubmission = true;
@@ -140,16 +142,18 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
     this.hearingService.cancelRequest();
     sessionStorage.removeItem(this.existingCaseTypeKey);
     this.hearingForm.reset();
-    this.router.navigate(['/dashboard']);
+    this.router.navigate([PageUrls.Dashboard]);
   }
 
   private updateHearingRequest() {
-    this.hearing.hearing_type_id = this.hearingForm.value.hearingType;
     this.hearing.case_type = this.selectedCaseType;
     const hearingCase = new CaseModel();
     hearingCase.name = this.hearingForm.value.caseName;
     hearingCase.number = this.hearingForm.value.caseNumber;
     this.hearing.cases[0] = hearingCase;
+    this.hearing.case_type_id = this.hearingForm.value.caseType;
+    this.hearing.hearing_type_id = this.hearingForm.value.hearingType;
+
     this.hearingService.updateHearingRequest(this.hearing);
   }
 
@@ -189,7 +193,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
     }
     const pleaseSelect = new HearingTypeResponse();
     pleaseSelect.name = 'Please Select';
-    pleaseSelect.id = -1;
+    pleaseSelect.id = null;
     this.filteredHearingTypes.unshift(pleaseSelect);
   }
 

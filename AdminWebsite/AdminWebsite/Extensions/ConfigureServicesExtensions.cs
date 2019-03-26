@@ -10,6 +10,7 @@ using AdminWebsite.Helper;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
 using AdminWebsite.Swagger;
+using AdminWebsite.UserAPI.Client;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -51,6 +52,7 @@ namespace AdminWebsite.Extensions
         {
             serviceCollection.AddMemoryCache();
             serviceCollection.AddTransient<HearingApiTokenHandler>();
+            serviceCollection.AddTransient<UserApiTokenHandler>();
             serviceCollection.AddScoped<ITokenProvider, TokenProvider>();
             serviceCollection.AddScoped<IActiveDirectoryGroup, ActiveDirectoryGroup>();
             serviceCollection.AddScoped<IUserAccountService, UserAccountService>();
@@ -65,7 +67,11 @@ namespace AdminWebsite.Extensions
             serviceCollection.AddHttpClient<IBookingsApiClient, BookingsApiClient>()
                 .AddHttpMessageHandler(() => container.GetService<HearingApiTokenHandler>())
                 .AddTypedClient(httpClient => BuildHearingApiClient(httpClient, settings));
-            
+
+            serviceCollection.AddHttpClient<IUserApiClient, UserApiClient>()
+               .AddHttpMessageHandler(() => container.GetService<UserApiTokenHandler>())
+               .AddTypedClient(httpClient => BuildUserApiClient(httpClient, settings));
+
             serviceCollection.AddTransient<IUserIdentity, UserIdentity>((ctx) =>
             {
                 var userAccountService = ctx.GetService<IUserAccountService>();
@@ -80,7 +86,12 @@ namespace AdminWebsite.Extensions
         {
             return new BookingsApiClient(httpClient) { BaseUrl = serviceSettings.BookingsApiUrl };
         }
-        
+
+        private static IUserApiClient BuildUserApiClient(HttpClient httpClient, ServiceSettings serviceSettings)
+        {
+            return new UserApiClient(httpClient) { BaseUrl = serviceSettings.UserApiUrl };
+        }
+
         public static IServiceCollection AddJsonOptions(this IServiceCollection serviceCollection)
         {
             var contractResolver = new DefaultContractResolver

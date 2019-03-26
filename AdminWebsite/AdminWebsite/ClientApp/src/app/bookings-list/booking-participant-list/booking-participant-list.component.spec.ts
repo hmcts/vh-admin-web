@@ -1,4 +1,4 @@
-﻿import { DebugElement, Component, Input } from '@angular/core';
+import { DebugElement, Component, Input } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -13,6 +13,9 @@ import { ParticipantDetailsModel } from '../../common/model/participant-details.
 class ParticipantDetailsMockComponent {
   @Input()
   participant: ParticipantDetailsModel = null;
+
+  @Input()
+  vh_officer_admin: boolean;
 }
 
 describe('BookingParticipantListComponent', () => {
@@ -42,7 +45,8 @@ describe('BookingParticipantListComponent', () => {
   }));
 
   it('should display participants list', (done => {
-    const pr1 = new ParticipantDetailsModel('1', 'Mrs', 'Alan', 'Brake', 'Citizen', 'email.p1@email.com', 'email1@co.uk');
+    const pr1 = new ParticipantDetailsModel('1', 'Mrs', 'Alan', 'Brake', 'Citizen', 'email.p1@email.com',
+      'email1@co.uk', 'Defendant', 'Defendant LIP', 'Alan Brake', '');
     const participantsList: Array<ParticipantDetailsModel> = [];
     participantsList.push(pr1);
     participantsList.push(pr1);
@@ -61,7 +65,8 @@ describe('BookingParticipantListComponent', () => {
     );
   }));
   it('should detect last item in the participants list', (done => {
-    const pr1 = new ParticipantDetailsModel('1', 'Mrs', 'Alan', 'Brake', 'Citizen', 'email.p1@email.com', 'email1@co.uk');
+    const pr1 = new ParticipantDetailsModel('1', 'Mrs', 'Alan', 'Brake', 'Citizen', 'email.p1@email.com',
+      'email1@co.uk', 'Defendant', 'Defendant LIP', 'Alan Brake', '');
     const participantsList: Array<ParticipantDetailsModel> = [];
     participantsList.push(pr1);
     participantsList.push(pr1);
@@ -79,7 +84,8 @@ describe('BookingParticipantListComponent', () => {
   }));
 
   it('should display judges list', (done => {
-    const pr1 = new ParticipantDetailsModel('1', 'Mrs', 'Alan', 'Brake', 'Judge', 'email.p1@email.com', 'email1@co.uk');
+    const pr1 = new ParticipantDetailsModel('1', 'Mrs', 'Alan', 'Brake', 'Judge', 'email.p1@email.com',
+      'email1@co.uk', 'Judge', 'Judge', 'Alan Brake', '');
     const participantsList: Array<ParticipantDetailsModel> = [];
     participantsList.push(pr1);
     participantsList.push(pr1);

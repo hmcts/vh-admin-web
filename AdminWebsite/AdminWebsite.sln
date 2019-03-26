@@ -13,9 +13,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdminWebsite.UnitTests", "A
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdminWebsite.IntegrationTests", "AdminWebsite.IntegrationTests\AdminWebsite.IntegrationTests.csproj", "{BE8F819B-E6E1-4764-85DC-0A14773ECBE3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdminWebsite.AcceptanceTests", "AdminWebsite.AcceptanceTests\AdminWebsite.AcceptanceTests.csproj", "{4D14899D-EFF3-4AF0-9814-4FAA686F325D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdminWebsite.AcceptanceTests", "AdminWebsite.AcceptanceTests\AdminWebsite.AcceptanceTests.csproj", "{4D14899D-EFF3-4AF0-9814-4FAA686F325D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdminWebsite.BookingsAPI.Client", "AdminWebsite.BookingsAPI.Client\AdminWebsite.BookingsAPI.Client.csproj", "{ECA8A457-BA02-42E9-A70F-49DE1618E252}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdminWebsite.BookingsAPI.Client", "AdminWebsite.BookingsAPI.Client\AdminWebsite.BookingsAPI.Client.csproj", "{ECA8A457-BA02-42E9-A70F-49DE1618E252}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdminWebsite.UserAPI.Client", "AdminWebsite.UserAPI.Client\AdminWebsite.UserAPI.Client.csproj", "{57E4FA3E-41B2-43E6-8577-9D8502EE885E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,6 +49,10 @@ Global
 		{ECA8A457-BA02-42E9-A70F-49DE1618E252}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ECA8A457-BA02-42E9-A70F-49DE1618E252}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ECA8A457-BA02-42E9-A70F-49DE1618E252}.Release|Any CPU.Build.0 = Release|Any CPU
+		{57E4FA3E-41B2-43E6-8577-9D8502EE885E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{57E4FA3E-41B2-43E6-8577-9D8502EE885E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{57E4FA3E-41B2-43E6-8577-9D8502EE885E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{57E4FA3E-41B2-43E6-8577-9D8502EE885E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

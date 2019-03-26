@@ -95,7 +95,7 @@ describe('HearingScheduleComponent first visit', () => {
     expect(component.hearingStartTimeMinute.value).toBeNull();
     expect(component.hearingDurationHour.value).toBeNull();
     expect(component.hearingDurationMinute.value).toBeNull();
-    expect(component.courtAddress.value).toBeNull();
+    expect(component.courtAddress.value).toBe(-1);
   });
 
   it('should fail validation when form empty', () => {

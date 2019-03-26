@@ -31,24 +31,24 @@ namespace AdminWebsite
             services.AddSwagger();
             services.AddJsonOptions();
             RegisterSettings(services);
-            
+
             services.AddCustomTypes();
 
             RegisterAuth(services);
-            
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/dist"; });
         }
-        
+
         private void RegisterSettings(IServiceCollection services)
         {
-            services.Configure<SecuritySettings>(options => Configuration.Bind("AzureAd",options));
-            services.Configure<ServiceSettings>(options => Configuration.Bind("VhServices",options));
+            services.Configure<SecuritySettings>(options => Configuration.Bind("AzureAd", options));
+            services.Configure<ServiceSettings>(options => Configuration.Bind("VhServices", options));
             services.Configure<AppConfigSettings>(options => Configuration.Bind(options));
             services.Configure<SecuritySettings>(options => Configuration.Bind("ApplicationInsights", options));
         }
-        
+
         private void RegisterAuth(IServiceCollection serviceCollection)
         {
             var policy = new AuthorizationPolicyBuilder()
@@ -58,7 +58,7 @@ namespace AdminWebsite
             serviceCollection.AddMvc(options => { options.Filters.Add(new AuthorizeFilter(policy)); });
 
             var securitySettings = Configuration.GetSection("AzureAd").Get<SecuritySettings>();
-            
+
             serviceCollection.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -89,13 +89,13 @@ namespace AdminWebsite
                 app.UseExceptionHandler("/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
             }
-            
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
 
             app.UseAuthentication();
-            
+
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
@@ -115,7 +115,7 @@ namespace AdminWebsite
                     spa.UseAngularCliServer(npmScript: "start");
                 }
             });
-            
+
             app.UseMiddleware<ExceptionMiddleware>();
         }
     }

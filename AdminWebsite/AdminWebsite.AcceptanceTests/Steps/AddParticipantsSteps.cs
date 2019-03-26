@@ -17,7 +17,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [When(@"professional participant is added to hearing")]
         public void ProfessionalParticipantIsAddedToHearing()
         {
-            AddParticipantsPage();
+            AddParticipantsPage(); AddParticipantsPage();
             SelectParty();
             SelectRole();
             AddParticpantDetails();

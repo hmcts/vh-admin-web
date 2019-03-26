@@ -1,4 +1,4 @@
-﻿import { ComponentFixture, TestBed, async } from '@angular/core/testing';
+import { ComponentFixture, TestBed, async } from '@angular/core/testing';
 import { HttpClientModule } from '@angular/common/http';
 import { Component, Input } from '@angular/core';
 import { BookingDetailsComponent } from './booking-details.component';
@@ -17,15 +17,18 @@ export class BookingDetailsTestData {
   getBookingsDetailsModel() {
     return new BookingsDetailsModel('44', new Date('2019-11-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', '', '33A', 'Coronation Street',
-      'Jhon Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'));
+      'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'));
   }
 
   getParticipants() {
     const participants: Array<ParticipantDetailsModel> = [];
     const judges: Array<ParticipantDetailsModel> = [];
-    const p1 = new ParticipantDetailsModel('1', 'Mrs', 'Alan', 'Brake', 'Judge', 'email.p1@email.com', 'email1@co.uk');
-    const p2 = new ParticipantDetailsModel('2', 'Mrs', 'Roy', 'Bark', 'Citizen', 'email.p2@email.com', 'email2@co.uk');
-    const p3 = new ParticipantDetailsModel('2', 'Mrs', 'Fill', 'Green', 'Professional', 'email.p3@email.com', 'email3@co.uk');
+    const p1 = new ParticipantDetailsModel('1', 'Mrs', 'Alan', 'Brake', 'Judge', 'email.p1@email.com',
+      'email1@co.uk', 'Claimant', 'Solicitor', 'Alan Brake', '');
+    const p2 = new ParticipantDetailsModel('2', 'Mrs', 'Roy', 'Bark', 'Citizen', 'email.p2@email.com',
+      'email2@co.uk', 'Claimant', 'Claimant LIP', 'Roy Bark', '');
+    const p3 = new ParticipantDetailsModel('2', 'Mrs', 'Fill', 'Green', 'Professional', 'email.p3@email.com',
+      'email3@co.uk', 'Defendant', 'Defendant LIP', 'Fill', '');
     participants.push(p2);
     participants.push(p3);
     judges.push(p1);
@@ -44,6 +47,9 @@ class BookingParticipantListMockComponent {
 
   @Input()
   judges: Array<ParticipantDetailsModel> = [];
+
+  @Input()
+  vh_officer_admin: boolean;
 }
 
 @Component({
@@ -107,7 +113,7 @@ describe('BookingDetailsComponent', () => {
     component.ngOnInit();
     expect(component.judges).toBeTruthy();
     expect(component.judges.length).toBe(1);
-    expect(component.judges[0].Role).toBe('Judge');
+    expect(component.judges[0].UserRoleName).toBe('Judge');
     expect(component.judges[0].ParticipantId).toBe('1');
     expect(component.judges[0].FirstName).toBe('Alan');
   }));
@@ -116,7 +122,7 @@ describe('BookingDetailsComponent', () => {
     component.ngOnInit();
     expect(component.participants).toBeTruthy();
     expect(component.participants.length).toBe(2);
-    expect(component.participants[0].Role).toBe('Citizen');
+    expect(component.participants[0].UserRoleName).toBe('Citizen');
     expect(component.participants[0].ParticipantId).toBe('2');
   }));
 });

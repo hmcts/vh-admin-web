@@ -1,6 +1,7 @@
 import {BookingService} from '../../services/booking.service';
 import {Router} from '@angular/router';
 import {OnInit} from '@angular/core';
+import { PageUrls } from 'src/app/shared/page-url.constants';
 
 export abstract class BookingBaseComponent implements OnInit {
 
@@ -17,7 +18,7 @@ export abstract class BookingBaseComponent implements OnInit {
 
   navigateToSummary() {
     this.resetEditMode();
-    this.router.navigate(['/summary']);
+    this.router.navigate([PageUrls.Summary]);
   }
 
   resetEditMode() {
