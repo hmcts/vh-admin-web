@@ -27,7 +27,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             var hearingId = _bookingConfirmation.SessionStorage("return sessionStorage.getItem('newHearingId')");
             _bookingConfirmation.AddItems<string>("HearingId", hearingId);
             hearingId.Should().NotBeNullOrEmpty();            
-           // expectedResult.Should().Be(actualResult);
+            expectedResult.Should().Be(actualResult);
         }
     }
 }

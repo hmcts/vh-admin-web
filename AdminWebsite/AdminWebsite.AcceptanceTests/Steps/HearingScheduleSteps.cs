@@ -25,10 +25,8 @@ namespace AdminWebsite.AcceptanceTests.Steps
             HearingSchedulePage();
             var date = DateTime.Now.AddDays(2);
             var splitDate = new List<int>();
-            //splitDate.Add(date.Day);
-            splitDate.Add(12);
-            // splitDate.Add(date.Month);
-            splitDate.Add(12);
+            splitDate.Add(date.Day);            
+            splitDate.Add(date.Month);            
             splitDate.Add(date.Year);
            
            //string[] splitDate = DateTime.Now.AddDays(2).ToString("dd/MM/yyyy").Split('/');
