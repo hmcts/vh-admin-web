@@ -29,6 +29,15 @@ namespace AdminWebsite.AcceptanceTests.Pages
                 InputValues(_hearingDate, item);
             }
         }
+        public void HearingDates(int[] currentdate)
+        {
+            ClickElement(By.XPath("//*[@for='hearingDate']"));
+            foreach (var item in currentdate)
+            {
+                InputValues(_hearingDate, item.ToString());
+            }
+        }
+
         public void HearingStartTime(string[] currentTime = null)
         {
             if (currentTime == null)

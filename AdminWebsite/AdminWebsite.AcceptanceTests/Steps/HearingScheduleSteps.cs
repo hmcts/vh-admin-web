@@ -2,6 +2,7 @@
 using AdminWebsite.AcceptanceTests.Pages;
 using FluentAssertions;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using TechTalk.SpecFlow;
 
@@ -23,9 +24,14 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             HearingSchedulePage();
             var date = DateTime.Now.AddDays(2);
-            string[] splitDate = DateTime.Now.AddDays(2).ToString("dd/MM/yyyy").Split('/');
+            var splitDate = new List<int>();
+            splitDate.Add(date.Day);
+            splitDate.Add(date.Month);
+            splitDate.Add(date.Year);
+           
+           //string[] splitDate = DateTime.Now.AddDays(2).ToString("dd/MM/yyyy").Split('/');
             _hearingSchedule.AddItems<string>("HearingDate", date.ToString("dddd dd MMMM yyyy , HH:mm"));
-            _hearingSchedule.HearingDate(splitDate);
+            _hearingSchedule.HearingDates(splitDate.ToArray());
             _hearingSchedule.HearingStartTime(date.ToString("HH:mm").Split(':'));
             InputHearingDuration(TestData.HearingSchedule.Duration);
             _hearingSchedule.HearingVenue(TestData.HearingSchedule.CourtAddress.ToList().Last());
