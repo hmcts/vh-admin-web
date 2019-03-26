@@ -132,5 +132,6 @@ namespace AdminWebsite.AcceptanceTests.Pages
         }
         public void TopMenuHmctsLogo() => SelectOption(By.XPath("//*[@class='hmcts-header__logotype']"));
         public string SessionStorage(string script) => _browserContext.ExecuteJavascript(script);
+        public string Page() => _browserContext.PageUrl();
     }
 }

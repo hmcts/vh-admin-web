@@ -24,12 +24,12 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             HearingSchedulePage();
             var date = DateTime.Now.AddDays(2);
-            var splitDate = new List<int>();
-            splitDate.Add(date.Day);            
-            splitDate.Add(date.Month);            
-            splitDate.Add(date.Year);
-           
-           //string[] splitDate = DateTime.Now.AddDays(2).ToString("dd/MM/yyyy").Split('/');
+            var splitDate = new List<int>
+            {
+                date.Day,
+                date.Month,
+                date.Year
+            };
             _hearingSchedule.AddItems<string>("HearingDate", date.ToString("dddd dd MMMM yyyy , HH:mm"));
             _hearingSchedule.HearingDates(splitDate.ToArray());
             _hearingSchedule.HearingStartTime(date.ToString("HH:mm").Split(':'));

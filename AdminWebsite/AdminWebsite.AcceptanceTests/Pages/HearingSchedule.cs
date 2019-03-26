@@ -31,11 +31,20 @@ namespace AdminWebsite.AcceptanceTests.Pages
         }
         public void HearingDates(int[] currentdate)
         {
-            ClickElement(By.XPath("//*[@for='hearingDate']"));
-            foreach (var item in currentdate)
+            SauceLabsSettings sauceLab = new SauceLabsSettings();
+            if (sauceLab.RunWithSaucelabs == true)
             {
-                InputValues(_hearingDate, item.ToString());
+                InputValues(_hearingDate, currentdate[1].ToString());
+                InputValues(_hearingDate, currentdate[0].ToString());
+                InputValues(_hearingDate, currentdate[2].ToString());
             }
+            else
+            {
+                foreach (var item in currentdate)
+                {
+                    InputValues(_hearingDate, item.ToString());
+                }
+            }           
         }
 
         public void HearingStartTime(string[] currentTime = null)
