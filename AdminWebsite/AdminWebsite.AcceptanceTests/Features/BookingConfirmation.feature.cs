@@ -99,11 +99,13 @@ this.ScenarioInitialize(scenarioInfo);
         [NUnit.Framework.TestAttribute()]
         [NUnit.Framework.DescriptionAttribute("Case Admin with multiple case types saves booking")]
         [NUnit.Framework.CategoryAttribute("VIH-2701")]
-        [NUnit.Framework.TestCaseAttribute("Civil Money Claims", "Claimant", null)]
-        [NUnit.Framework.TestCaseAttribute("Civil Money Claims", "Defendant", null)]
-        [NUnit.Framework.TestCaseAttribute("Financial Remedy", "Applicant", null)]
-        [NUnit.Framework.TestCaseAttribute("Financial Remedy", "Respondent", null)]
-        public virtual void CaseAdminWithMultipleCaseTypesSavesBooking(string caseType, string party, string[] exampleTags)
+        [NUnit.Framework.TestCaseAttribute("Civil Money Claims", "Claimant", "Claimant LIP", null)]
+        [NUnit.Framework.TestCaseAttribute("Civil Money Claims", "Defendant", "Defendant LIP", null)]
+        [NUnit.Framework.TestCaseAttribute("Civil Money Claims", "Defendant", "Solicitor", null)]
+        [NUnit.Framework.TestCaseAttribute("Financial Remedy", "Applicant", "Applicant LIP", null)]
+        [NUnit.Framework.TestCaseAttribute("Financial Remedy", "Respondent", "Respondent LIP", null)]
+        [NUnit.Framework.TestCaseAttribute("Financial Remedy", "Respondent", "Solicitor", null)]
+        public virtual void CaseAdminWithMultipleCaseTypesSavesBooking(string caseType, string party, string role, string[] exampleTags)
         {
             string[] @__tags = new string[] {
                     "VIH-2701"};
@@ -134,7 +136,7 @@ this.ScenarioInitialize(scenarioInfo);
 #line 24
  testRunner.When(string.Format("user selects {0}", party), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 25
- testRunner.And("use adds participant", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And(string.Format("associated {0} is selected", role), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 26
  testRunner.And("user proceeds to next page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 27

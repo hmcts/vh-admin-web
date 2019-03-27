@@ -21,8 +21,8 @@ Scenario Outline: Case Admin with multiple case types saves booking
 	And user proceeds to next page 
 	And hearing booking is assigned to a judge
 	And user proceeds to next page 
-	When user selects <Party>
-	And use adds participant
+	When user selects <Party> 
+	And associated <Role> is selected 
 	And user proceeds to next page
 	And user adds other information to the Video Hearing booking
 	And user proceeds to next page
@@ -30,8 +30,10 @@ Scenario Outline: Case Admin with multiple case types saves booking
 	And user submit booking 
 	Then hearing should be booked
 Examples:
-| Case Type          | Party      |
-| Civil Money Claims | Claimant   |
-| Civil Money Claims | Defendant  |
-| Financial Remedy   | Applicant  |
-| Financial Remedy   | Respondent |	 
+| Case Type          | Party      | Role           |
+| Civil Money Claims | Claimant   | Claimant LIP   |
+| Civil Money Claims | Defendant  | Defendant LIP  |
+| Civil Money Claims | Defendant  | Solicitor      |
+| Financial Remedy   | Applicant  | Applicant LIP  |
+| Financial Remedy   | Respondent | Respondent LIP |
+| Financial Remedy   | Respondent | Solicitor      |
