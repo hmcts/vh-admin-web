@@ -6,3 +6,11 @@
   margin-top:20px;
 }
 
+.vh-mr-25 {
+  margin-right: 25px;
+}
+
+.vh-btn-cancel {
+  color: #ffffff;
+  background-color: #b10e1e;
+}

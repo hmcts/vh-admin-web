@@ -7,6 +7,7 @@ import { SignOutPopupComponent } from './sign-out-popup/sign-out-popup.component
 import { SaveFailedPopupComponent } from './save-failed-popup/save-failed-popup.component';
 import { CancelBookingPopupComponent } from './cancel-booking-popup/cancel-booking-popup.component';
 import { WaitPopupComponent } from './wait-popup/wait-popup.component';
+import { DiscardConfirmPopupComponent } from './discard-confirm-popup/discard-confirm-popup.component';
 
 @NgModule({
   imports: [
@@ -19,6 +20,7 @@ import { WaitPopupComponent } from './wait-popup/wait-popup.component';
     SaveFailedPopupComponent,
     CancelBookingPopupComponent,
     WaitPopupComponent,
+    DiscardConfirmPopupComponent,
   ],
   exports: [
     CancelPopupComponent,
@@ -26,6 +28,8 @@ import { WaitPopupComponent } from './wait-popup/wait-popup.component';
     SignOutPopupComponent,
     WaitPopupComponent,
     SaveFailedPopupComponent,
+    DiscardConfirmPopupComponent,
+    CancelBookingPopupComponent
   ]
 })
 export class PopupModule { }

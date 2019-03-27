@@ -32,6 +32,11 @@ export class ParticipantDetailsModel {
   Flag: boolean;
 
   get fullName(): string {
-    return `${this.Title} ${this.FirstName} ${this.LastName}`;
+    let fullName = `${this.Title} ${this.FirstName} ${this.LastName}`;
+    if (this.Title === 'Judge' &&
+      (this.FirstName.indexOf('Judge') > -1 || this.LastName.indexOf('Judge') > -1)) {
+      fullName = `${this.FirstName} ${this.LastName}`;
+    }
+    return fullName;
   }
 }

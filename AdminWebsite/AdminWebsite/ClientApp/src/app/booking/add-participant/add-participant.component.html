@@ -17,14 +17,14 @@
       </h2>
       <div class="govuk-error-summary__body">
         <ul class="govuk-list govuk-error-summary__list">
-          <li *ngIf="searchEmail.isValidEmail">
-            <a (click)="goToDiv('email-error')" href="javascript: void(0)">{{constants.Error.EmailErrorMsg}}</a>
-          </li>
           <li *ngIf="party.invalid || !isPartySelected">
             <a (click)="goToDiv('party-error')" href="javascript: void(0)">{{constants.Error.PartyErrorMsg}}</a>
           </li>
           <li *ngIf="role.invalid || !isRoleSelected">
             <a (click)="goToDiv('role-error')" href="javascript: void(0)">{{constants.Error.RoleErrorMsg}}</a>
+          </li>
+          <li *ngIf="emailInvalid()">
+            <a (click)="goToDiv('email-error')" href="javascript: void(0)">{{constants.Error.EmailErrorMsg}}</a>
           </li>
           <li *ngIf="firstName.invalid">
             <a (click)="goToDiv('firstName-error')" href="javascript: void(0)">{{constants.Error.FirstNameErrorMsg}}</a>
@@ -170,14 +170,14 @@
           </span>
         </div>
 
-          <div class="govuk-grid-column-one-half" *ngIf="displayUpdateButton">
-            <img src="assets/images/AddIcon.png" alt="Add icon with sign plus" />
-            <span class="vh-vert-top-m15">
-              <a href="javascript:void(0)" (click)="updateParticipantAction()" type="submit" id="updateParticipantBtn" class="govuk-link govuk-body">
-                Update participant
-              </a>
-            </span>
-          </div>
+        <div class="govuk-grid-column-one-half" *ngIf="displayUpdateButton">
+          <img src="assets/images/AddIcon.png" alt="Add icon with sign plus" />
+          <span class="vh-vert-top-m15">
+            <a href="javascript:void(0)" (click)="updateParticipantAction()" type="submit" id="updateParticipantBtn" class="govuk-link govuk-body">
+              Update participant
+            </a>
+          </span>
+        </div>
 
         <div class="govuk-grid-column-one-half" *ngIf="displayClearButton">
           <img src="assets/images/ClearIcon.png" alt="Clear fiealds icon" />
@@ -202,7 +202,7 @@
 </div>
 
 <div *ngIf="showCancelPopup">
-  <app-cancel-popup (continueBooking)="handleContinueBooking($event)" (cancelBooking)="handleCancelBooking($event)"></app-cancel-popup>
+  <app-cancel-popup (continueBooking)="handleContinueBooking()" (cancelBooking)="handleCancelBooking()"></app-cancel-popup>
 </div>
 
 <div *ngIf="showConfirmationPopup">
@@ -210,5 +210,11 @@
 </div>
 
 <div *ngIf="showConfirmationRemoveParticipant">
-  <app-remove-popup (continueRemove)="handleContinueRemove()" (cancelRemove)="handleCancelRemove()" [fullName]="removerFullName"></app-remove-popup>
+  <app-remove-popup (continueRemove)="handleContinueRemove()" (cancelRemove)="handleCancelRemove()" [fullName]="removerFullName" [isLastParticipant]="isAnyParticipants"></app-remove-popup>
 </div>
+
+<div *ngIf="attemptingDiscardChanges">
+  <app-discard-confirm-popup (continueEditing)="handleContinueBooking()" (cancelChanges)="cancelChanges()">
+  </app-discard-confirm-popup>
+</div>
+

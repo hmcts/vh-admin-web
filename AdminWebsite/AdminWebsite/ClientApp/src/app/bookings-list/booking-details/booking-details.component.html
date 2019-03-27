@@ -3,13 +3,25 @@
 </div>
 
 <h1 class="govuk-heading-l" id="hearingNumber">{{hearing?.HearingCaseNumber}}</h1>
+<strong class="govuk-tag">
+  Cancelled
+</strong>
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-one-half">
     <app-hearing-details [hearing]="hearing"></app-hearing-details>
-    <input type="button" class="govuk-button vh-mt20" value="Edit" role="button" id="edit-button" (click)="editHearing()" />
+    <input type="button" class="govuk-button vh-mt20 vh-mr-25" value="Edit" role="button" id="edit-button"
+      (click)="editHearing()" />
+    <input type="button" class="govuk-button vh-mt20 vh-btn-cancel" value="Cancel booking" role="button"
+      id="cancel-button" (click)="cancelHearing()" />
   </div>
   <div class="govuk-grid-column-one-half vh-top">
-    <app-booking-participant-list [participants]="participants" [judges]="judges" [vh_officer_admin]="isVhOfficerAdmin"></app-booking-participant-list>
+    <app-booking-participant-list [participants]="participants" [judges]="judges" [vh_officer_admin]="isVhOfficerAdmin">
+    </app-booking-participant-list>
   </div>
+</div>
+
+<div *ngIf="showCancelBooking">
+  <app-cancel-booking-popup (cancelBooking)="cancelBooking($event)" (keepBooking)="keepBooking($event)">
+  </app-cancel-booking-popup>
 </div>

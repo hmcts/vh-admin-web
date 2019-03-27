@@ -13,11 +13,13 @@ export class CancelBookingPopupComponent implements OnInit {
   ngOnInit() {
   }
 
-  cancelSave(): void {
+  cancelHearing(): void {
+    console.log('emit cancel');
     this.cancelBooking.emit();
   }
 
-  Save(): void {
+  keepHearing(): void {
+    console.log('emit keep booking');
     this.keepBooking.emit();
   }
 }

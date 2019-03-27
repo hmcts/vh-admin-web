@@ -9,6 +9,7 @@ import { CancelPopupStubComponent } from 'src/app/testing/stubs/cancel-popup-stu
 import { ConfirmationPopupStubComponent } from 'src/app/testing/stubs/confirmation-popup-stub';
 import { ParticipantsListStubComponent } from 'src/app/testing/stubs/participant-list-stub';
 import { RemovePopupStubComponent } from '../../testing/stubs/remove-popup-stub';
+import { DiscardConfirmPopupComponent } from '../../popups/discard-confirm-popup/discard-confirm-popup.component';
 
 import { SearchServiceStub } from 'src/app/testing/stubs/serice-service-stub';
 import { SearchService } from '../../services/search.service';
@@ -71,7 +72,7 @@ const p3 = new ParticipantModel();
 p3.first_name = 'Chris';
 p3.last_name = 'Green';
 p3.display_name = 'Chris Green';
-p3.is_judge = true;
+p3.is_judge = false;
 p3.title = 'Mr.';
 p3.email = 'test3@test.com';
 p3.phone = '32332';
@@ -90,6 +91,17 @@ function initHearingRequest(): HearingModel {
   newHearing.hearing_type_id = -1;
   newHearing.hearing_venue_id = -1;
   newHearing.scheduled_duration = 0;
+  newHearing.participants = participants;
+  return newHearing;
+}
+
+function initExistHearingRequest(): HearingModel {
+  const newHearing = new HearingModel();
+  newHearing.cases = [];
+  newHearing.hearing_id = '12345';
+  newHearing.hearing_type_id = 1;
+  newHearing.hearing_venue_id = 1;
+  newHearing.scheduled_duration = 20;
   newHearing.participants = participants;
   return newHearing;
 }
@@ -117,15 +129,15 @@ let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
 let participantServiceSpy: jasmine.SpyObj<ParticipantService>;
 let bookingServiceSpy: jasmine.SpyObj<BookingService>;
 
-describe('AddParticipantComponent', () => {
+videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',
+  ['getParticipantRoles', 'getCurrentRequest', 'updateHearingRequest', 'cancelRequest']);
+participantServiceSpy = jasmine.createSpyObj<ParticipantService>('ParticipantService',
+  ['checkDuplication', 'getAllParticipants', 'removeParticipant', 'mapParticipantsRoles']);
+bookingServiceSpy = jasmine.createSpyObj<BookingService>('BookingService',
+  ['isEditMode', 'setEditMode', 'resetEditMode', 'setParticipantEmail',
+    'getParticipantEmail', 'removeParticipantEmail']);
 
-  videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',
-    ['getParticipantRoles', 'getCurrentRequest', 'updateHearingRequest']);
-  participantServiceSpy = jasmine.createSpyObj<ParticipantService>('ParticipantService',
-    ['checkDuplication', 'getAllParticipants', 'removeParticipant', 'mapParticipantsRoles']);
-  bookingServiceSpy = jasmine.createSpyObj<BookingService>('BookingService',
-    ['isEditMode', 'setEditMode', 'resetEditMode', 'setParticipantEmail',
-      'getParticipantEmail', 'removeParticipantEmail']);
+describe('AddParticipantComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -136,7 +148,8 @@ describe('AddParticipantComponent', () => {
         ParticipantsListStubComponent,
         CancelPopupStubComponent,
         ConfirmationPopupStubComponent,
-        RemovePopupStubComponent
+        RemovePopupStubComponent,
+        DiscardConfirmPopupComponent,
       ],
       imports: [
         SharedModule
@@ -317,13 +330,13 @@ describe('AddParticipantComponent', () => {
   });
 
   it('press button cancel on pop up close pop up confirmation dialog and navigate to dashboard', () => {
-    component.handleCancelBooking('string');
+    component.handleCancelBooking();
     expect(routerSpy.navigate).toHaveBeenCalledWith(['/dashboard']);
     expect(component.showCancelPopup).toBeFalsy();
   });
 
   it('press button continue on pop up close pop up confirmation dialog and return to add participant view', () => {
-    component.handleContinueBooking('string');
+    component.handleContinueBooking();
     expect(component.showCancelPopup).toBeFalsy();
   });
 
@@ -398,20 +411,12 @@ describe('AddParticipantComponent', () => {
     expect(component.showCancelPopup).toBeTruthy();
   });
   it('if pop up confirm to continue, dialog is hidden', () => {
-    component.handleContinueBooking('string');
+    component.handleContinueBooking();
     expect(component.showCancelPopup).toBeFalsy();
   });
 });
 
 describe('AddParticipantComponent edit mode', () => {
-
-  videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',
-    ['getParticipantRoles', 'getCurrentRequest', 'updateHearingRequest']);
-  participantServiceSpy = jasmine.createSpyObj<ParticipantService>('ParticipantService',
-    ['checkDuplication', 'getAllParticipants', 'removeParticipant', 'mapParticipantsRoles']);
-  bookingServiceSpy = jasmine.createSpyObj<BookingService>('BookingService',
-    ['isEditMode', 'setEditMode', 'resetEditMode', 'setParticipantEmail',
-      'getParticipantEmail', 'removeParticipantEmail']);
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -422,7 +427,8 @@ describe('AddParticipantComponent edit mode', () => {
         ParticipantsListStubComponent,
         CancelPopupStubComponent,
         ConfirmationPopupStubComponent,
-        RemovePopupStubComponent
+        RemovePopupStubComponent,
+        DiscardConfirmPopupComponent,
       ],
       imports: [
         SharedModule
@@ -437,7 +443,7 @@ describe('AddParticipantComponent edit mode', () => {
     })
       .compileComponents();
 
-    const hearing = initHearingRequest();
+    const hearing = initExistHearingRequest();
     videoHearingsServiceSpy.getParticipantRoles.and.returnValue(of(roleList));
     videoHearingsServiceSpy.getCurrentRequest.and.returnValue(hearing);
     participantServiceSpy.mapParticipantsRoles.and.returnValue(partyList);
@@ -473,6 +479,7 @@ describe('AddParticipantComponent edit mode', () => {
     fixture.detectChanges();
     expect(component.editMode).toBeTruthy();
     expect(component.buttonAction).toBe('Save');
+    expect(bookingServiceSpy.isEditMode).toHaveBeenCalled();
   });
   it('navigate to summary should reset editMode to false', () => {
     component.navigateToSummary();
@@ -487,6 +494,11 @@ describe('AddParticipantComponent edit mode', () => {
     tick(1000);
     fixture.detectChanges();
     fixture.whenStable().then(() => {
+      expect(videoHearingsServiceSpy.getCurrentRequest).toHaveBeenCalled();
+      expect(component.hearing).toBeTruthy();
+      expect(component.isAnyParticipants).toBeTruthy();
+      expect(component.isExistingHearing).toBeTruthy();
+      expect(videoHearingsServiceSpy.getParticipantRoles).toHaveBeenCalled();
       expect(component.showDetails).toBeTruthy();
       expect(component.selectedParticipantEmail).toBe('test3@test.com');
       expect(component.displayNextButton).toBeTruthy();
@@ -533,11 +545,134 @@ describe('AddParticipantComponent edit mode', () => {
     expect(component.editMode).toBeFalsy();
     expect(routerSpy.navigate).toHaveBeenCalled();
   });
-  it('if press save button in edit mode then hide details and reset edit mode', () => {
+  it('if press save button in edit mode then update details and reset edit mode', () => {
     component.next();
     fixture.detectChanges();
     expect(component.showDetails).toBeFalsy();
     expect(component.localEditMode).toBeFalsy();
     expect(bookingServiceSpy.resetEditMode).toHaveBeenCalled();
+    expect(videoHearingsServiceSpy.updateHearingRequest).toHaveBeenCalled();
   });
+  it('should check if the hearing exist', () => {
+    component.ngOnInit();
+    fixture.detectChanges();
+    expect(videoHearingsServiceSpy.getCurrentRequest).toHaveBeenCalled();
+    expect(component.hearing).toBeTruthy();
+    expect(component.hearing.hearing_id).toBeTruthy();
+    expect(component.isExistingHearing).toBeTruthy();
+    expect(component.isAnyParticipants).toBeTruthy();
+  });
+  it('press button cancel in edit mode if no changes navigate to summary', () => {
+    component.participantForm.markAsUntouched();
+    component.participantForm.markAsPristine();
+    fixture.detectChanges();
+    component.addParticipantCancel();
+    expect(routerSpy.navigate).toHaveBeenCalled();
+  });
+  it('press button cancel in edit mode if there are some changes show pop up', () => {
+    component.participantForm.markAsDirty();
+    component.editMode = false;
+    fixture.detectChanges();
+    component.addParticipantCancel();
+    expect(component.showCancelPopup).toBeTruthy();
+  });
+  it('should hide cancel and discard pop up confirmation', () => {
+    component.handleContinueBooking();
+    expect(component.showCancelPopup).toBeFalsy();
+    expect(component.attemptingDiscardChanges).toBeFalsy();
+  });
+  it('should show discard pop up confirmation', () => {
+    component.editMode = true;
+    component.participantForm.markAsDirty();
+    fixture.detectChanges();
+    component.addParticipantCancel();
+    expect(component.attemptingDiscardChanges).toBeTruthy();
+  });
+  it('should show cancel booking confirmation pop up', () => {
+    component.editMode = false;
+    fixture.detectChanges();
+    component.addParticipantCancel();
+    expect(component.showCancelPopup).toBeTruthy();
+  });
+  it('should cancel booking, hide pop up and navigate to dashboard', () => {
+    component.handleCancelBooking();
+    expect(component.showCancelPopup).toBeFalsy();
+    expect(videoHearingsServiceSpy.cancelRequest).toHaveBeenCalled();
+    expect(routerSpy.navigate).toHaveBeenCalled();
+  });
+  it('should cancel current changes, hide pop up and navigate to summary', () => {
+    component.attemptingDiscardChanges = true;
+
+    fixture.detectChanges();
+    component.cancelChanges();
+    expect(component.attemptingDiscardChanges).toBeFalsy();
+    expect(routerSpy.navigate).toHaveBeenCalled();
+  });
+});
+
+describe('AddParticipantComponent edit mode no participants added', () => {
+
+  beforeEach(async(() => {
+    TestBed.configureTestingModule({
+      declarations: [
+        AddParticipantComponent,
+        BreadcrumbStubComponent,
+        SearchEmailComponent,
+        ParticipantsListStubComponent,
+        CancelPopupStubComponent,
+        ConfirmationPopupStubComponent,
+        RemovePopupStubComponent,
+        DiscardConfirmPopupComponent,
+      ],
+      imports: [
+        SharedModule
+      ],
+      providers: [
+        { provide: SearchService, useClass: SearchServiceStub },
+        { provide: Router, useValue: routerSpy },
+        { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
+        { provide: ParticipantService, useValue: participantServiceSpy },
+        { provide: BookingService, useValue: bookingServiceSpy },
+      ]
+    })
+      .compileComponents();
+
+    const hearing = initExistHearingRequest();
+    videoHearingsServiceSpy.getParticipantRoles.and.returnValue(of(roleList));
+    videoHearingsServiceSpy.getCurrentRequest.and.returnValue(hearing);
+    participantServiceSpy.mapParticipantsRoles.and.returnValue(partyList);
+    bookingServiceSpy.isEditMode.and.returnValue(true);
+    bookingServiceSpy.getParticipantEmail.and.returnValue('');
+
+
+    fixture = TestBed.createComponent(AddParticipantComponent);
+    debugElement = fixture.debugElement;
+    component = debugElement.componentInstance;
+    component.editMode = true;
+    component.ngOnInit();
+    fixture.detectChanges();
+
+
+    role = component.participantForm.controls['role'];
+    party = component.participantForm.controls['party'];
+    title = component.participantForm.controls['title'];
+    firstName = component.participantForm.controls['firstName'];
+    lastName = component.participantForm.controls['lastName'];
+    phone = component.participantForm.controls['phone'];
+    displayName = component.participantForm.controls['displayName'];
+    companyName = component.participantForm.controls['companyName'];
+  }));
+  it('should show button add participant', () => {
+    component.ngOnInit();
+    fixture.detectChanges();
+    expect(component.editMode).toBeTruthy();
+    expect(bookingServiceSpy.getParticipantEmail).toHaveBeenCalled();
+    expect(component.selectedParticipantEmail).toBe('');
+    expect(component.showDetails).toBeFalsy();
+    expect(component.displayNextButton).toBeFalsy();
+    expect(component.displayClearButton).toBeTruthy();
+    expect(component.displayAddButton).toBeTruthy();
+    expect(component.displayUpdateButton).toBeFalsy();
+  });
+
 });

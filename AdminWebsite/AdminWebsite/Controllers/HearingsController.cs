@@ -223,5 +223,33 @@ namespace AdminWebsite.Controllers
             return typeIds;
         }
 
+        /// <summary>
+        /// Update booking status
+        /// </summary>
+        /// <param name="hearingId">Id of the hearing to update the status for</param>
+        /// <param name="updateBookingStatusRequest">Status of the hearing to change to</param>
+        /// <returns>Success status</returns>
+        [HttpPatch("{hearingId}")]
+        [SwaggerOperation(OperationId = "UpdateBookingStatus")]
+        [ProducesResponseType((int) HttpStatusCode.OK)]
+        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> UpdateBookingStatus(Guid hearingId,
+            UpdateBookingStatusRequest updateBookingStatusRequest)
+        {
+            try
+            {
+                await _bookingsApiClient.UpdateBookingStatusAsync(hearingId, updateBookingStatusRequest);
+                return Ok();
+            }
+            catch (BookingsApiException e)
+            {
+                if (e.StatusCode == (int)HttpStatusCode.BadRequest)
+                {
+                    return BadRequest(e.Response);
+                }
+                throw;
+            }
+        }
     }
 }
