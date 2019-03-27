@@ -67,6 +67,34 @@ namespace AdminWebsite.Controllers
         }
 
         /// <summary>
+        /// Edit a hearing
+        /// </summary>
+        /// <param name="hearingId">The id of the hearing to update</param>
+        /// <param name="editHearingRequest">Hearing Request object for edit operation</param>
+        /// <returns>VideoHearingId</returns>
+        [HttpPut]
+        [SwaggerOperation(OperationId = "EditHearing")]
+        [ProducesResponseType(typeof(HearingDetailsResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<ActionResult<HearingDetailsResponse>> EditHearing(Guid hearingId, [FromBody] EditHearingRequest editHearingRequest)
+        {
+            try
+            {
+                var response = await _bookingsApiClient.UpdateHearingDetailsAsync(hearingId, null);
+                return Ok();
+            }
+            catch (BookingsApiException e)
+            {
+                if (e.StatusCode == (int)HttpStatusCode.BadRequest)
+                {
+                    return BadRequest(e.Response);
+                }
+                throw;
+            }
+        }
+
+        /// <summary>
         /// Gets bookings hearing by Id.
         /// </summary>
         /// <param name="hearingId">The unique sequential value of hearing ID.</param>
