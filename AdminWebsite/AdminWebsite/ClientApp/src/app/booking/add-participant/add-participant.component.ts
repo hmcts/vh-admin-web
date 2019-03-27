@@ -208,7 +208,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
   setupRoles(data: CaseAndHearingRolesResponse[]) {
     this.caseAndHearingRoles = this.participantService.mapParticipantsRoles(data);
-    this.roleList = this.caseAndHearingRoles.map(x => x.name);
+    this.roleList = this.caseAndHearingRoles.filter(x => x.name !== 'Judge').map(x => x.name);
     this.roleList.unshift(this.constants.PleaseSelect);
     this.caseAndHearingRoles.forEach(x => {
       this.setupHearingRoles(x.name);
@@ -216,7 +216,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   }
 
   setupHearingRoles(caseRoleName: string) {
-    const list = this.caseAndHearingRoles.find(x => x.name === caseRoleName);
+    const list = this.caseAndHearingRoles.find(x => x.name === caseRoleName && x.name !== 'Judge');
     this.hearingRoleList = list ? list.hearingRoles : [];
     if (!this.hearingRoleList.find(s => s === this.constants.PleaseSelect)) {
       this.hearingRoleList.unshift(this.constants.PleaseSelect);
@@ -399,7 +399,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
   removeParticipant() {
     // check if participant details were populated, if yes then clean form.
-    if (this.searchEmail.email === this.selectedParticipantEmail) {
+    if (this.searchEmail && this.searchEmail.email === this.selectedParticipantEmail) {
       this.clearForm();
     }
     this.participantService.removeParticipant(this.hearing, this.selectedParticipantEmail);
@@ -416,6 +416,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     newParticipant.email = this.searchEmail ? this.searchEmail.email : '';
     newParticipant.display_name = this.displayName.value;
     newParticipant.company = this.companyName.value;
+    newParticipant.username = this.searchEmail ? this.searchEmail.email : '';
   }
 
   addParticipantCancel() {

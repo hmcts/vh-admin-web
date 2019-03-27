@@ -14,6 +14,8 @@ import { HearingModel } from '../../common/model/hearing.model';
 import { CaseModel } from '../../common/model/case.model';
 import { ParticipantModel } from '../../common/model/participant.model';
 import { ParticipantsListStubComponent } from '../../testing/stubs/participant-list-stub';
+import { WaitPopupComponent } from '../../popups/wait-popup/wait-popup.component';
+import { SaveFailedPopupComponent } from 'src/app/popups/save-failed-popup/save-failed-popup.component';
 
 function initExistingHearingRequest(): HearingModel {
 
@@ -88,9 +90,16 @@ describe('SummaryComponent with valid request', () => {
         { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
         { provide: Router, useValue: routerSpy }
       ],
-      declarations: [SummaryComponent, BreadcrumbStubComponent,
-        CancelPopupComponent, ParticipantsListStubComponent, BookingEditStubComponent,
-        RemovePopupComponent],
+      declarations: [
+        SummaryComponent,
+        BreadcrumbStubComponent,
+        CancelPopupComponent,
+        ParticipantsListStubComponent,
+        BookingEditStubComponent,
+        RemovePopupComponent,
+        WaitPopupComponent,
+        SaveFailedPopupComponent
+      ],
       imports: [RouterTestingModule],
     })
       .compileComponents();
@@ -143,6 +152,9 @@ describe('SummaryComponent with valid request', () => {
     expect(videoHearingsServiceSpy.cancelRequest).toHaveBeenCalled();
     expect(routerSpy.navigate).toHaveBeenCalled();
   });
+  it('should hide pop up that indicated process saving a booking', () => {
+    expect(component.showWaitSaving).toBeFalsy();
+  });
 });
 
 describe('SummaryComponent  with invalid request', () => {
@@ -177,8 +189,16 @@ describe('SummaryComponent  with invalid request', () => {
         { provide: Router, useValue: routerSpy }
       ],
       imports: [RouterTestingModule],
-      declarations: [SummaryComponent, BreadcrumbStubComponent, CancelPopupComponent,
-        ParticipantsListStubComponent, BookingEditStubComponent, RemovePopupComponent]
+      declarations: [
+        SummaryComponent,
+        BreadcrumbStubComponent,
+        CancelPopupComponent,
+        ParticipantsListStubComponent,
+        BookingEditStubComponent,
+        RemovePopupComponent,
+        WaitPopupComponent,
+        SaveFailedPopupComponent
+      ]
     })
       .compileComponents();
   }));
@@ -191,6 +211,7 @@ describe('SummaryComponent  with invalid request', () => {
 
   it('should display save failed message', () => {
     component.bookHearing();
-    expect(component.saveFailed).toBeTruthy();
+    expect(component.showErrorSaving).toBeTruthy();
+    expect(component.showWaitSaving).toBeFalsy();
   });
 });

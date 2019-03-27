@@ -1,18 +1,31 @@
-﻿<div class="govuk-grid-row vh-row">
-    <div class="govuk-grid-column-full">
-        {{participant?.fullName}}
-        <div id="participant_role">
-            <strong>{{participant?.Role}}</strong>
-        </div>
-        <div id="participant_userName">
-            {{participant?.UserName}}
-        </div>
-        <div id="participant_email">
-            {{participant?.Email}}
-        </div>
+<div class="govuk-grid-row vh-row">
+  <div class="govuk-grid-column-full">
+    {{participant?.fullName}}
+    <div id="participant_role" class="govuk-hint">
+      {{participant?.HearingRoleName}}
     </div>
+    <div *ngIf="!vh_officer_admin">
+      <div class="govuk-grid-row" id="participant_userName">
+        <div class="govuk-grid-column-one-third">
+          User name:
+        </div>
+        <div class="govuk-grid-column-two-thirds">
+          {{participant?.UserName}}
+        </div>
+      </div>
+
+      <div class="govuk-grid-row" id="participant_email">
+        <div class="govuk-grid-column-one-third">
+          Email:
+        </div>
+        <div class="govuk-grid-column-two-thirds">
+          {{participant?.Email}}
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 <div class="govuk-grid-row vh-row" *ngIf="!participant?.Flag">
-    <div id="rowbottom"></div>
+  <div id="rowbottom"></div>
 </div>
 

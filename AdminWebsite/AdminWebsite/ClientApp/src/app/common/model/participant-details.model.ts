@@ -1,23 +1,32 @@
-﻿export class ParticipantDetailsModel {
+export class ParticipantDetailsModel {
   constructor(participantId: string, title: string, firstName: string, lastName: string,
-    role: string, userName: string, email: string) {
+    role: string, userName: string, email: string, caseRoleName: string, hearingRoleName: string,
+    displayName: string, middleNames: string) {
     this.ParticipantId = participantId;
     this.FirstName = firstName;
     this.LastName = lastName;
     this.Title = title;
-    this.Role = role;
+    this.UserRoleName = role;
     this.UserName = userName;
     this.Flag = false;
     this.Email = email;
+    this.CaseRoleName = caseRoleName;
+    this.HearingRoleName = hearingRoleName;
+    this.DisplayName = displayName;
+    this.MiddleNames = middleNames;
   }
 
   ParticipantId: string;
   Title: string;
   FirstName: string;
   LastName: string;
-  Role: string;
+  UserRoleName: string;
   UserName: string;
   Email: string;
+  CaseRoleName: string;
+  HearingRoleName: string;
+  DisplayName: string;
+  MiddleNames: string;
 
   // flag to indicate if participant is the last in the list and don't need decoration bottom line
   Flag: boolean;

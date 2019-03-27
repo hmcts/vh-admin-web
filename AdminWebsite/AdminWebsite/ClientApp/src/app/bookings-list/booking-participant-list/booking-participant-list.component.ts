@@ -1,4 +1,4 @@
-﻿import { Component, Input } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { ParticipantDetailsModel } from '../../common/model/participant-details.model';
 
 @Component({
@@ -17,6 +17,9 @@ export class BookingParticipantListComponent {
 
   @Input()
   judges: Array<ParticipantDetailsModel> = [];
+
+  @Input()
+  vh_officer_admin: boolean;
 
   constructor() { }
 

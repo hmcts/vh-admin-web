@@ -86,7 +86,6 @@ describe('AssignJudgeComponent', () => {
   });
 
   it('should fail validation if a judge is not selected', () => {
-    console.log(component);
     component.saveJudge();
     expect(component.assignJudgeForm.valid).toBeFalsy();
   });

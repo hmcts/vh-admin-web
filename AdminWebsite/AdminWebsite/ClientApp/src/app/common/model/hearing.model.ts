@@ -18,5 +18,8 @@ export class HearingModel {
   other_information?: string | undefined;
   court_room?: string | undefined;
   hearing_venue_id?: number | undefined;
+  case_type_id?: number | undefined;
+  hearing_type_name?: string | undefined;
+  court_id?: number | undefined;
+  court_name?: string | undefined;
 }
-

@@ -1,12 +1,28 @@
-<div class="govuk-width-container">
-
-  <main class="govuk-main-wrapper ">
-
-    <div class="govuk-grid-row">
-      <div class="govuk-grid-column-one-half background">
-        <h2 class="govuk-heading-l titleColor">Your hearing booking was successful</h2>
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <div class="govuk-panel govuk-panel--confirmation">
+      <h1 class="govuk-panel__title">
+        Your hearing booking was successful
+      </h1>
+      <div class="govuk-panel__body">
+        <div class="govuk-form-group vhtable">
+          <div class="vhtable-header" id="caseNumber">{{ caseNumber }}</div>
+          <div class="vhtable-header" id="caseName">{{ caseName }}</div>
+          <div class="vhtable-header" id="hearingDate">{{ hearingDate | date:"EEEE dd MMMM yyyy ',' HH:mm" }}</div>
+        </div>
       </div>
     </div>
 
-  </main>
+    <div class="vh-top-50">
+      <input id="btnBookAnotherHearing" type="button" class="govuk-button vh-mr25" role="button"
+        value="Book another hearing" (click)="bookAnotherHearing()" />
+    </div>
+
+    <div class="vh-top-30">
+      <a href="javascript:void(0);" class="govuk-link" (click)="returnToDashboard()">
+        Return to dashboard
+      </a>
+    </div>
+  </div>
+
 </div>

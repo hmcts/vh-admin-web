@@ -236,7 +236,7 @@ export class BHClient {
      * @param hearingRequest (optional) Hearing Request object
      * @return Success
      */
-    bookNewHearing(hearingRequest: BookNewHearingRequest | null | undefined): Observable<number> {
+    bookNewHearing(hearingRequest: BookNewHearingRequest | null | undefined): Observable<HearingDetailsResponse> {
         let url_ = this.baseUrl + "/api/hearings";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -259,14 +259,14 @@ export class BHClient {
                 try {
                     return this.processBookNewHearing(<any>response_);
                 } catch (e) {
-                    return <Observable<number>><any>_observableThrow(e);
+                    return <Observable<HearingDetailsResponse>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<number>><any>_observableThrow(response_);
+                return <Observable<HearingDetailsResponse>><any>_observableThrow(response_);
         }));
     }
 
-    protected processBookNewHearing(response: HttpResponseBase): Observable<number> {
+    protected processBookNewHearing(response: HttpResponseBase): Observable<HearingDetailsResponse> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -277,7 +277,7 @@ export class BHClient {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result201: any = null;
             let resultData201 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result201 = resultData201 !== undefined ? resultData201 : <any>null;
+            result201 = resultData201 ? HearingDetailsResponse.fromJS(resultData201) : new HearingDetailsResponse();
             return _observableOf(result201);
             }));
         } else if (status === 400) {
@@ -296,7 +296,7 @@ export class BHClient {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<number>(<any>null);
+        return _observableOf<HearingDetailsResponse>(<any>null);
     }
 
     /**
@@ -441,8 +441,8 @@ export class BHClient {
     }
 
     /**
-     * Get available participant roles.
-     * @param caseTypeName (optional) The hearing case type.
+     * Get available participant roles
+     * @param caseTypeName (optional) 
      * @return Success
      */
     getParticipantRoles(caseTypeName: string | null | undefined): Observable<CaseAndHearingRolesResponse[]> {
@@ -1191,6 +1191,8 @@ export class BookNewHearingRequest implements IBookNewHearingRequest {
     hearing_type_name?: string | undefined;
     cases?: CaseRequest[] | undefined;
     participants?: ParticipantRequest[] | undefined;
+    other_information?: string | undefined;
+    hearing_room_name?: string | undefined;
 
     constructor(data?: IBookNewHearingRequest) {
         if (data) {
@@ -1218,6 +1220,8 @@ export class BookNewHearingRequest implements IBookNewHearingRequest {
                 for (let item of data["participants"])
                     this.participants!.push(ParticipantRequest.fromJS(item));
             }
+            this.other_information = data["other_information"];
+            this.hearing_room_name = data["hearing_room_name"];
         }
     }
 
@@ -1245,6 +1249,8 @@ export class BookNewHearingRequest implements IBookNewHearingRequest {
             for (let item of this.participants)
                 data["participants"].push(item.toJSON());
         }
+        data["other_information"] = this.other_information;
+        data["hearing_room_name"] = this.hearing_room_name;
         return data; 
     }
 }
@@ -1257,6 +1263,8 @@ export interface IBookNewHearingRequest {
     hearing_type_name?: string | undefined;
     cases?: CaseRequest[] | undefined;
     participants?: ParticipantRequest[] | undefined;
+    other_information?: string | undefined;
+    hearing_room_name?: string | undefined;
 }
 
 export class CaseRequest implements ICaseRequest {
@@ -1383,250 +1391,6 @@ export interface IParticipantRequest {
     representee?: string | undefined;
 }
 
-/** A list of hearing bookings */
-export class BookingsResponse implements IBookingsResponse {
-    /** List of hearings */
-    hearings?: BookingsByDateResponse[] | undefined;
-    /** The next cursor to continue reading the list of hearings from */
-    next_cursor?: string | undefined;
-    /** How many hearings were requested */
-    limit?: number | undefined;
-    /** The url to the previous page of hearings (or null if not available) */
-    prev_page_url?: string | undefined;
-    /** The url to the next page of hearings (or null if not available) */
-    next_page_url?: string | undefined;
-
-    constructor(data?: IBookingsResponse) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            if (data["hearings"] && data["hearings"].constructor === Array) {
-                this.hearings = [] as any;
-                for (let item of data["hearings"])
-                    this.hearings!.push(BookingsByDateResponse.fromJS(item));
-            }
-            this.next_cursor = data["next_cursor"];
-            this.limit = data["limit"];
-            this.prev_page_url = data["prev_page_url"];
-            this.next_page_url = data["next_page_url"];
-        }
-    }
-
-    static fromJS(data: any): BookingsResponse {
-        data = typeof data === 'object' ? data : {};
-        let result = new BookingsResponse();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        if (this.hearings && this.hearings.constructor === Array) {
-            data["hearings"] = [];
-            for (let item of this.hearings)
-                data["hearings"].push(item.toJSON());
-        }
-        data["next_cursor"] = this.next_cursor;
-        data["limit"] = this.limit;
-        data["prev_page_url"] = this.prev_page_url;
-        data["next_page_url"] = this.next_page_url;
-        return data; 
-    }
-}
-
-/** A list of hearing bookings */
-export interface IBookingsResponse {
-    /** List of hearings */
-    hearings?: BookingsByDateResponse[] | undefined;
-    /** The next cursor to continue reading the list of hearings from */
-    next_cursor?: string | undefined;
-    /** How many hearings were requested */
-    limit?: number | undefined;
-    /** The url to the previous page of hearings (or null if not available) */
-    prev_page_url?: string | undefined;
-    /** The url to the next page of hearings (or null if not available) */
-    next_page_url?: string | undefined;
-}
-
-/** Hearings grouped by day */
-export class BookingsByDateResponse implements IBookingsByDateResponse {
-    /** The date bookings are grouped by */
-    scheduled_date?: Date | undefined;
-    /** List of hearings for the day */
-    hearings?: BookingsHearingResponse[] | undefined;
-
-    constructor(data?: IBookingsByDateResponse) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.scheduled_date = data["scheduled_date"] ? new Date(data["scheduled_date"].toString()) : <any>undefined;
-            if (data["hearings"] && data["hearings"].constructor === Array) {
-                this.hearings = [] as any;
-                for (let item of data["hearings"])
-                    this.hearings!.push(BookingsHearingResponse.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): BookingsByDateResponse {
-        data = typeof data === 'object' ? data : {};
-        let result = new BookingsByDateResponse();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["scheduled_date"] = this.scheduled_date ? this.scheduled_date.toISOString() : <any>undefined;
-        if (this.hearings && this.hearings.constructor === Array) {
-            data["hearings"] = [];
-            for (let item of this.hearings)
-                data["hearings"].push(item.toJSON());
-        }
-        return data; 
-    }
-}
-
-/** Hearings grouped by day */
-export interface IBookingsByDateResponse {
-    /** The date bookings are grouped by */
-    scheduled_date?: Date | undefined;
-    /** List of hearings for the day */
-    hearings?: BookingsHearingResponse[] | undefined;
-}
-
-/** A single booked hearing */
-export class BookingsHearingResponse implements IBookingsHearingResponse {
-    /** Unique hearing identifier */
-    hearing_id?: number | undefined;
-    /** The lead case number */
-    hearing_number?: string | undefined;
-    /** The lead case name */
-    hearing_name?: string | undefined;
-    /** Scheduled date and time for the hearing */
-    scheduled_date_time?: Date | undefined;
-    /** The scheduled hearing duration in minutes */
-    scheduled_duration?: number | undefined;
-    /** Display text for the type of hearing */
-    hearing_type_name?: string | undefined;
-    /** Room name in venue */
-    court_room?: string | undefined;
-    /** The venue display name */
-    court_address?: string | undefined;
-    /** Display name for lead judge */
-    judge_name?: string | undefined;
-    /** Username of user that created the hearing */
-    created_by?: string | undefined;
-    /** Date and time the hearing was created */
-    created_date?: Date | undefined;
-    /** Username for user that last edited the hearing (or created if not edits has occured) */
-    last_edit_by?: string | undefined;
-    /** The date and time when the hearing was last edited (or updated if no edits has occured) */
-    last_edit_date?: Date | undefined;
-    /** The date and time of he hearing */
-    hearing_date?: Date | undefined;
-
-    constructor(data?: IBookingsHearingResponse) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.hearing_id = data["hearing_id"];
-            this.hearing_number = data["hearing_number"];
-            this.hearing_name = data["hearing_name"];
-            this.scheduled_date_time = data["scheduled_date_time"] ? new Date(data["scheduled_date_time"].toString()) : <any>undefined;
-            this.scheduled_duration = data["scheduled_duration"];
-            this.hearing_type_name = data["hearing_type_name"];
-            this.court_room = data["court_room"];
-            this.court_address = data["court_address"];
-            this.judge_name = data["judge_name"];
-            this.created_by = data["created_by"];
-            this.created_date = data["created_date"] ? new Date(data["created_date"].toString()) : <any>undefined;
-            this.last_edit_by = data["last_edit_by"];
-            this.last_edit_date = data["last_edit_date"] ? new Date(data["last_edit_date"].toString()) : <any>undefined;
-            this.hearing_date = data["hearing_date"] ? new Date(data["hearing_date"].toString()) : <any>undefined;
-        }
-    }
-
-    static fromJS(data: any): BookingsHearingResponse {
-        data = typeof data === 'object' ? data : {};
-        let result = new BookingsHearingResponse();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["hearing_id"] = this.hearing_id;
-        data["hearing_number"] = this.hearing_number;
-        data["hearing_name"] = this.hearing_name;
-        data["scheduled_date_time"] = this.scheduled_date_time ? this.scheduled_date_time.toISOString() : <any>undefined;
-        data["scheduled_duration"] = this.scheduled_duration;
-        data["hearing_type_name"] = this.hearing_type_name;
-        data["court_room"] = this.court_room;
-        data["court_address"] = this.court_address;
-        data["judge_name"] = this.judge_name;
-        data["created_by"] = this.created_by;
-        data["created_date"] = this.created_date ? this.created_date.toISOString() : <any>undefined;
-        data["last_edit_by"] = this.last_edit_by;
-        data["last_edit_date"] = this.last_edit_date ? this.last_edit_date.toISOString() : <any>undefined;
-        data["hearing_date"] = this.hearing_date ? this.hearing_date.toISOString() : <any>undefined;
-        return data; 
-    }
-}
-
-/** A single booked hearing */
-export interface IBookingsHearingResponse {
-    /** Unique hearing identifier */
-    hearing_id?: number | undefined;
-    /** The lead case number */
-    hearing_number?: string | undefined;
-    /** The lead case name */
-    hearing_name?: string | undefined;
-    /** Scheduled date and time for the hearing */
-    scheduled_date_time?: Date | undefined;
-    /** The scheduled hearing duration in minutes */
-    scheduled_duration?: number | undefined;
-    /** Display text for the type of hearing */
-    hearing_type_name?: string | undefined;
-    /** Room name in venue */
-    court_room?: string | undefined;
-    /** The venue display name */
-    court_address?: string | undefined;
-    /** Display name for lead judge */
-    judge_name?: string | undefined;
-    /** Username of user that created the hearing */
-    created_by?: string | undefined;
-    /** Date and time the hearing was created */
-    created_date?: Date | undefined;
-    /** Username for user that last edited the hearing (or created if not edits has occured) */
-    last_edit_by?: string | undefined;
-    /** The date and time when the hearing was last edited (or updated if no edits has occured) */
-    last_edit_date?: Date | undefined;
-    /** The date and time of he hearing */
-    hearing_date?: Date | undefined;
-}
-
 export class HearingDetailsResponse implements IHearingDetailsResponse {
     id?: string | undefined;
     scheduled_date_time?: Date | undefined;
@@ -1636,6 +1400,12 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
     hearing_type_name?: string | undefined;
     cases?: CaseResponse2[] | undefined;
     participants?: ParticipantResponse[] | undefined;
+    other_information?: string | undefined;
+    hearing_room_name?: string | undefined;
+    created_date?: Date | undefined;
+    created_by?: string | undefined;
+    updated_by?: string | undefined;
+    updated_date?: Date | undefined;
 
     constructor(data?: IHearingDetailsResponse) {
         if (data) {
@@ -1664,6 +1434,12 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
                 for (let item of data["participants"])
                     this.participants!.push(ParticipantResponse.fromJS(item));
             }
+            this.other_information = data["other_information"];
+            this.hearing_room_name = data["hearing_room_name"];
+            this.created_date = data["created_date"] ? new Date(data["created_date"].toString()) : <any>undefined;
+            this.created_by = data["created_by"];
+            this.updated_by = data["updated_by"];
+            this.updated_date = data["updated_date"] ? new Date(data["updated_date"].toString()) : <any>undefined;
         }
     }
 
@@ -1692,6 +1468,12 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
             for (let item of this.participants)
                 data["participants"].push(item.toJSON());
         }
+        data["other_information"] = this.other_information;
+        data["hearing_room_name"] = this.hearing_room_name;
+        data["created_date"] = this.created_date ? this.created_date.toISOString() : <any>undefined;
+        data["created_by"] = this.created_by;
+        data["updated_by"] = this.updated_by;
+        data["updated_date"] = this.updated_date ? this.updated_date.toISOString() : <any>undefined;
         return data; 
     }
 }
@@ -1705,6 +1487,12 @@ export interface IHearingDetailsResponse {
     hearing_type_name?: string | undefined;
     cases?: CaseResponse2[] | undefined;
     participants?: ParticipantResponse[] | undefined;
+    other_information?: string | undefined;
+    hearing_room_name?: string | undefined;
+    created_date?: Date | undefined;
+    created_by?: string | undefined;
+    updated_by?: string | undefined;
+    updated_date?: Date | undefined;
 }
 
 export class CaseResponse2 implements ICaseResponse2 {
@@ -1829,6 +1617,206 @@ export interface IParticipantResponse {
     contact_email?: string | undefined;
     telephone_number?: string | undefined;
     username?: string | undefined;
+}
+
+export class BookingsResponse implements IBookingsResponse {
+    hearings?: BookingsByDateResponse[] | undefined;
+    next_cursor?: string | undefined;
+    limit?: number | undefined;
+    prev_page_url?: string | undefined;
+    next_page_url?: string | undefined;
+
+    constructor(data?: IBookingsResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["hearings"] && data["hearings"].constructor === Array) {
+                this.hearings = [] as any;
+                for (let item of data["hearings"])
+                    this.hearings!.push(BookingsByDateResponse.fromJS(item));
+            }
+            this.next_cursor = data["next_cursor"];
+            this.limit = data["limit"];
+            this.prev_page_url = data["prev_page_url"];
+            this.next_page_url = data["next_page_url"];
+        }
+    }
+
+    static fromJS(data: any): BookingsResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new BookingsResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.hearings && this.hearings.constructor === Array) {
+            data["hearings"] = [];
+            for (let item of this.hearings)
+                data["hearings"].push(item.toJSON());
+        }
+        data["next_cursor"] = this.next_cursor;
+        data["limit"] = this.limit;
+        data["prev_page_url"] = this.prev_page_url;
+        data["next_page_url"] = this.next_page_url;
+        return data; 
+    }
+}
+
+export interface IBookingsResponse {
+    hearings?: BookingsByDateResponse[] | undefined;
+    next_cursor?: string | undefined;
+    limit?: number | undefined;
+    prev_page_url?: string | undefined;
+    next_page_url?: string | undefined;
+}
+
+export class BookingsByDateResponse implements IBookingsByDateResponse {
+    scheduled_date?: Date | undefined;
+    hearings?: BookingsHearingResponse[] | undefined;
+
+    constructor(data?: IBookingsByDateResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.scheduled_date = data["scheduled_date"] ? new Date(data["scheduled_date"].toString()) : <any>undefined;
+            if (data["hearings"] && data["hearings"].constructor === Array) {
+                this.hearings = [] as any;
+                for (let item of data["hearings"])
+                    this.hearings!.push(BookingsHearingResponse.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): BookingsByDateResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new BookingsByDateResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["scheduled_date"] = this.scheduled_date ? this.scheduled_date.toISOString() : <any>undefined;
+        if (this.hearings && this.hearings.constructor === Array) {
+            data["hearings"] = [];
+            for (let item of this.hearings)
+                data["hearings"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IBookingsByDateResponse {
+    scheduled_date?: Date | undefined;
+    hearings?: BookingsHearingResponse[] | undefined;
+}
+
+export class BookingsHearingResponse implements IBookingsHearingResponse {
+    hearing_id?: string | undefined;
+    hearing_number?: string | undefined;
+    hearing_name?: string | undefined;
+    scheduled_date_time?: Date | undefined;
+    scheduled_duration?: number | undefined;
+    case_type_name?: string | undefined;
+    hearing_type_name?: string | undefined;
+    court_room?: string | undefined;
+    court_address?: string | undefined;
+    judge_name?: string | undefined;
+    created_by?: string | undefined;
+    created_date?: Date | undefined;
+    last_edit_by?: string | undefined;
+    last_edit_date?: Date | undefined;
+    hearing_date?: Date | undefined;
+
+    constructor(data?: IBookingsHearingResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.hearing_id = data["hearing_id"];
+            this.hearing_number = data["hearing_number"];
+            this.hearing_name = data["hearing_name"];
+            this.scheduled_date_time = data["scheduled_date_time"] ? new Date(data["scheduled_date_time"].toString()) : <any>undefined;
+            this.scheduled_duration = data["scheduled_duration"];
+            this.case_type_name = data["case_type_name"];
+            this.hearing_type_name = data["hearing_type_name"];
+            this.court_room = data["court_room"];
+            this.court_address = data["court_address"];
+            this.judge_name = data["judge_name"];
+            this.created_by = data["created_by"];
+            this.created_date = data["created_date"] ? new Date(data["created_date"].toString()) : <any>undefined;
+            this.last_edit_by = data["last_edit_by"];
+            this.last_edit_date = data["last_edit_date"] ? new Date(data["last_edit_date"].toString()) : <any>undefined;
+            this.hearing_date = data["hearing_date"] ? new Date(data["hearing_date"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): BookingsHearingResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new BookingsHearingResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["hearing_id"] = this.hearing_id;
+        data["hearing_number"] = this.hearing_number;
+        data["hearing_name"] = this.hearing_name;
+        data["scheduled_date_time"] = this.scheduled_date_time ? this.scheduled_date_time.toISOString() : <any>undefined;
+        data["scheduled_duration"] = this.scheduled_duration;
+        data["case_type_name"] = this.case_type_name;
+        data["hearing_type_name"] = this.hearing_type_name;
+        data["court_room"] = this.court_room;
+        data["court_address"] = this.court_address;
+        data["judge_name"] = this.judge_name;
+        data["created_by"] = this.created_by;
+        data["created_date"] = this.created_date ? this.created_date.toISOString() : <any>undefined;
+        data["last_edit_by"] = this.last_edit_by;
+        data["last_edit_date"] = this.last_edit_date ? this.last_edit_date.toISOString() : <any>undefined;
+        data["hearing_date"] = this.hearing_date ? this.hearing_date.toISOString() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IBookingsHearingResponse {
+    hearing_id?: string | undefined;
+    hearing_number?: string | undefined;
+    hearing_name?: string | undefined;
+    scheduled_date_time?: Date | undefined;
+    scheduled_duration?: number | undefined;
+    case_type_name?: string | undefined;
+    hearing_type_name?: string | undefined;
+    court_room?: string | undefined;
+    court_address?: string | undefined;
+    judge_name?: string | undefined;
+    created_by?: string | undefined;
+    created_date?: Date | undefined;
+    last_edit_by?: string | undefined;
+    last_edit_date?: Date | undefined;
+    hearing_date?: Date | undefined;
 }
 
 /** Defines a type of hearing based on case */

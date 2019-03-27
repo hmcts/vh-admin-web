@@ -5,14 +5,13 @@ import { Observable } from 'rxjs';
 
 import { Constants } from '../../common/constants';
 import { CanDeactiveComponent } from '../../common/guards/changes.guard';
-import {
-  HearingVenueResponse,
-  HearingTypeResponse,
-} from '../../services/clients/api-client';
+import { HearingVenueResponse, HearingTypeResponse } from '../../services/clients/api-client';
 import { HearingModel } from '../../common/model/hearing.model';
 import { ParticipantsListComponent } from '../participants-list/participants-list.component';
 import { ReferenceDataService } from '../../services/reference-data.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
+import { PageUrls } from 'src/app/shared/page-url.constants';
+import { HearingDetailsResponse } from '../../services/clients/api-client';
 
 @Component({
   selector: 'app-summary',
@@ -29,7 +28,6 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
   hearingForm: FormGroup;
   failedSubmission: boolean;
   bookingsSaving = false;
-
   caseNumber: string;
   caseName: string;
   caseHearingType: string;
@@ -38,20 +36,20 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
   hearingDuration: string;
   otherInformation: string;
   errors: any;
-
   selectedHearingType: HearingTypeResponse[];
-  saveFailed: boolean;
-
   showConfirmationRemoveParticipant = false;
   selectedParticipantEmail: string;
   removerFullName: string;
+  showWaitSaving = false;
+  showErrorSaving: boolean;
+  private newHearingSessionKey = 'newHearingId';
 
   @ViewChild(ParticipantsListComponent)
   participantsListComponent: ParticipantsListComponent;
 
   constructor(private hearingService: VideoHearingsService, private router: Router, private referenceDataService: ReferenceDataService) {
     this.attemptingCancellation = false;
-    this.saveFailed = false;
+    this.showErrorSaving = false;
   }
 
   ngOnInit() {
@@ -108,7 +106,8 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
       .subscribe(
         (data: HearingTypeResponse[]) => {
           const selectedHearingType = data.filter(h => h.id === hearing_type_id);
-          this.caseHearingType = selectedHearingType[0].name;
+          this.caseHearingType = selectedHearingType ? selectedHearingType[0].name : '';
+          this.hearing.hearing_type_name = this.caseHearingType;
         },
         error => console.error(error)
       );
@@ -120,6 +119,7 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
         (data: HearingVenueResponse[]) => {
           const selectedCourt = data.filter(c => c.id === venueId);
           this.courtRoomAddress = `${selectedCourt[0].name} ${this.hearing.court_room}`;
+          this.hearing.court_name = selectedCourt ? selectedCourt[0].name : '';
         },
         error => console.error(error)
       );
@@ -140,7 +140,7 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
   cancelBooking() {
     this.attemptingCancellation = false;
     this.hearingService.cancelRequest();
-    this.router.navigate(['/dashboard']);
+    this.router.navigate([PageUrls.Dashboard]);
   }
 
   hasChanges(): Observable<boolean> | boolean {
@@ -149,21 +149,30 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
 
   bookHearing(): void {
     this.bookingsSaving = true;
+    this.showWaitSaving = true;
+    this.showErrorSaving = false;
     this.hearingService.saveHearing(this.hearing)
       .subscribe(
-        (data: number) => {
+      (hearingDetailsResponse: HearingDetailsResponse) => {
+          sessionStorage.setItem(this.newHearingSessionKey, hearingDetailsResponse.id);
           this.hearingService.cancelRequest();
-          this.router.navigate(['/booking-confirmation']);
+          this.showWaitSaving = false;
+          this.router.navigate([PageUrls.BookingConfirmation]);
         },
         error => {
-          console.error(error);
-          this.saveFailed = true;
+          this.showWaitSaving = false;
+          this.showErrorSaving = true;
           this.errors = error;
         }
       );
+  }
 
-    if (this.errors) {
-      this.saveFailed = true;
-    }
+  cancel(): void {
+    this.showErrorSaving = false;
+  }
+
+  tryAgain(): void {
+    this.showErrorSaving = true;
+    this.bookHearing();
   }
 }

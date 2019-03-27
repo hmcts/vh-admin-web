@@ -3,7 +3,10 @@ import { VideoHearingsService } from '../../services/video-hearings.service';
 import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
 import { ParticipantDetailsModel } from '../../common/model/participant-details.model';
 import { BookingDetailsService } from '../../services/booking-details.service';
-import {HearingDetailsResponse} from '../../services/clients/api-client';
+import { HearingDetailsResponse } from '../../services/clients/api-client';
+import { UserIdentityService } from '../../services/user-identity.service';
+import { Observable, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-booking-details',
@@ -20,13 +23,21 @@ export class BookingDetailsComponent implements OnInit {
   hearing: BookingsDetailsModel;
   participants: Array<ParticipantDetailsModel> = [];
   judges: Array<ParticipantDetailsModel> = [];
+  isVhOfficerAdmin = false;
 
-  constructor(private videoHearingService: VideoHearingsService, private bookingDetailsService: BookingDetailsService) { }
+  constructor(private videoHearingService: VideoHearingsService,
+    private bookingDetailsService: BookingDetailsService,
+    private userIdentityService: UserIdentityService) { }
 
   ngOnInit() {
     this.videoHearingService.getHearingById(this.hearingId).subscribe(data => {
       this.mapHearing(data);
     });
+    this.userIdentityService.getUserInformation().pipe(map(userProfile => {
+      if (userProfile && userProfile.is_vh_officer_administrator_role) {
+        this.isVhOfficerAdmin = true;
+      }
+    }));
   }
 
   mapHearing(hearingResponse: HearingDetailsResponse) {
@@ -38,5 +49,9 @@ export class BookingDetailsComponent implements OnInit {
 
   navigateBack() {
     this.closeDetails.emit();
+  }
+
+  editHearing() {
+
   }
 }

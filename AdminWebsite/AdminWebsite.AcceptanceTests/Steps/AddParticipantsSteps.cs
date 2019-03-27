@@ -96,6 +96,13 @@ namespace AdminWebsite.AcceptanceTests.Steps
             }
             _addParticipant.Party(party);
         }
+        [When(@"associated (.*) is selected")]
+        public void RoleIsSelected(string role)
+        {
+            _addParticipant.Role(role);
+            AddParticpantDetails();
+            ClickAddParticipantsButton();
+        }
         [When(@"user clears inputted values")]
         public void WhenUserClearsInputtedValues()
         {

@@ -2,6 +2,7 @@
 using AdminWebsite.AcceptanceTests.Pages;
 using FluentAssertions;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using TechTalk.SpecFlow;
 
@@ -22,10 +23,18 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void WhenHearingScheduleFormIsFilled()
         {
             HearingSchedulePage();
-            InputDateOfHearing();
-            InputHearingStartTime();
-            InputHearingDuration();
-            SelectHearingVenue();
+            var date = DateTime.Now.AddDays(2);
+            var splitDate = new List<int>
+            {
+                date.Day,
+                date.Month,
+                date.Year
+            };
+            _hearingSchedule.AddItems<string>("HearingDate", date.ToString("dddd dd MMMM yyyy , HH:mm"));
+            _hearingSchedule.HearingDates(splitDate.ToArray());
+            _hearingSchedule.HearingStartTime(date.ToString("HH:mm").Split(':'));
+            InputHearingDuration(TestData.HearingSchedule.Duration);
+            _hearingSchedule.HearingVenue(TestData.HearingSchedule.CourtAddress.ToList().Last());
             EnterRoom();
         }
         [Then(@"user should remain on hearing schedule page")]
@@ -70,7 +79,6 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             string[] date = DateTime.Now.AddDays(-1).ToString("dd/MM/yyyy").Split('/');
             _hearingSchedule.HearingDate(date);
-            InputDateOfHearing();
             InputHearingStartTime();
             InputHearingDuration();
             SelectHearingVenue();
@@ -87,7 +95,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void WhenHearingScheduleIsUpdated()
         {
             HearingSchedulePage();
-            var date = DateTime.Now.AddDays(2);
+            DateTime date = DateTime.UtcNow.AddDays(2);
             string[] splitDate = date.ToString("dd/MM/yyyy").Split('/');
             _hearingSchedule.AddItems<string>("HearingDate", date.ToString("dddd dd MMMM yyyy , HH:mm"));
             _hearingSchedule.HearingDate(splitDate);

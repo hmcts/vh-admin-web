@@ -89,7 +89,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
 
   mapJudgeToModel(judge: ParticipantDetailsResponse): ParticipantModel {
     const newParticipant = new ParticipantModel();
-    newParticipant.title = judge.title;
+    newParticipant.title = judge.title && judge.title.length > 0 ? judge.title : 'Judge';
     newParticipant.first_name = judge.first_name;
     newParticipant.middle_names = judge.middle_name;
     newParticipant.last_name = judge.last_name;
@@ -98,6 +98,9 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     newParticipant.is_judge = true;
     newParticipant.phone = judge.phone;
     newParticipant.id = judge.id;
+    newParticipant.username = judge.email;
+    newParticipant.case_role_name = 'Judge';
+    newParticipant.hearing_role_name = 'Judge';
     return newParticipant;
   }
 

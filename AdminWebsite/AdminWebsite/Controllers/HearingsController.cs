@@ -1,8 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Models;
+using AdminWebsite.Security;
+using AdminWebsite.UserAPI.Client;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -17,13 +21,18 @@ namespace AdminWebsite.Controllers
     public class HearingsController : ControllerBase
     {
         private readonly IBookingsApiClient _bookingsApiClient;
+        private readonly IUserIdentity _userIdentity;
+        private readonly IUserApiClient _userApiClient;
+
 
         /// <summary>
         /// Instantiates the controller
         /// </summary>
-        public HearingsController(IBookingsApiClient bookingsApiClient)
+        public HearingsController(IBookingsApiClient bookingsApiClient, IUserIdentity userIdentity,  IUserApiClient userApiClient)
         {
             _bookingsApiClient = bookingsApiClient;
+            _userIdentity = userIdentity;
+            _userApiClient = userApiClient;
         }
 
         /// <summary>
@@ -33,14 +42,19 @@ namespace AdminWebsite.Controllers
         /// <returns>VideoHearingId</returns>
         [HttpPost]
         [SwaggerOperation(OperationId = "BookNewHearing")]
-        [ProducesResponseType(typeof(long), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(HearingDetailsResponse), (int)HttpStatusCode.Created)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public ActionResult<long> Post([FromBody] BookNewHearingRequest hearingRequest)
+        public async Task<ActionResult<HearingDetailsResponse>> Post([FromBody] BookNewHearingRequest hearingRequest)
         {
             try
             {
-                var hearingId = _bookingsApiClient.BookNewHearingAsync(hearingRequest);
-                return Created("", hearingId);
+                if (hearingRequest.Participants != null)
+                {
+                    hearingRequest.Participants = await UpdateParticipantsUsername(hearingRequest.Participants);
+                }
+
+                var hearingDetailsResponse = await _bookingsApiClient.BookNewHearingAsync(hearingRequest);
+                return Created("", hearingDetailsResponse);
             }
             catch (BookingsApiException e)
             {
@@ -93,42 +107,21 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public ActionResult GetBookingsList(string cursor, int limit = 100)
         {
+            IEnumerable<string> caseTypes = null;
+            if (_userIdentity.IsAdministratorRole())
+            {
+                caseTypes = _userIdentity.GetGroupDisplayNames();
+            }
+            else
+            {
+                return Unauthorized();
+            }
+
             try
-            {   
-                var bookingsResponse = new BookingsResponse
-                {
-                    Hearings = new List<BookingsByDateResponse>
-                    {
-                        new BookingsByDateResponse
-                        {
-                            Scheduled_date = new DateTime(2019, 04, 01),
-                            Hearings = new List<BookingsHearingResponse>
-                            {
-                                new BookingsHearingResponse
-                                {
-                                    Hearing_id = 1,
-                                    Court_room = "Room one",
-                                    Court_address = "Manchester",
-                                    Created_by = "ithc_admin@hearings.reform.hmcts.net",
-                                    Created_date = DateTime.Now.AddDays(-2),
-                                    Hearing_date = new DateTime(2019, 04, 01, 12, 0, 0),
-                                    Hearing_name = "IronMan vs Captain America",
-                                    Hearing_number = "2322122CD",
-                                    Hearing_type_name = "Application to Set Judgment Aside",
-                                    Judge_name = "Judge Lannister",
-                                    Scheduled_date_time = new DateTime(2019, 04, 01, 12, 0, 0),
-                                    Scheduled_duration = 40,
-                                    Last_edit_by = "ithc_admin@hearings.reform.hmcts.net",
-                                    Last_edit_date = DateTime.Now.AddHours(-3)
-                                }
-                            }
-                        }
-                    },
-                    Next_cursor = "-1",
-                    Limit = limit,
-                    Next_page_url = null,
-                    Prev_page_url = null
-                };
+            {
+                var types = caseTypes ?? Enumerable.Empty<string>();
+                var hearingTypesIds = GetHearingTypesId(types);
+                var bookingsResponse = _bookingsApiClient.GetHearingsByTypes(hearingTypesIds, cursor, limit);
                 return Ok(bookingsResponse);
             }
             catch (BookingsApiException e)
@@ -141,5 +134,94 @@ namespace AdminWebsite.Controllers
                 throw;
             }
         }
+
+        private async Task<List<ParticipantRequest>> UpdateParticipantsUsername(List<ParticipantRequest> participants)
+        {
+            foreach (var participant in participants)
+            {
+                if (participant.Case_role_name == "Judge") continue;
+                //// create user in AD if users email does not exist in AD.
+                var userProfile = await CheckUserExistsInAD(participant.Contact_email);
+                if (userProfile == null)
+                {
+                    // create the user in AD.
+                    var createdNewUser = await CreateNewUserInAD(participant);
+                    if (createdNewUser != null)
+                    {
+                        participant.Username = createdNewUser.Username;
+                    // Add user to user group.
+                    var addUserToGroupRequest = new AddUserToGroupRequest()
+                    {
+                        User_id = createdNewUser.User_id,
+                        Group_name = "External"
+                    };
+                    await _userApiClient.AddUserToGroupAsync(addUserToGroupRequest);
+
+                    if (participant.Hearing_role_name == "Solicitor")
+                        {
+                            addUserToGroupRequest = new AddUserToGroupRequest()
+                            {
+                                User_id = createdNewUser.User_id,
+                                Group_name = "VirtualRoomProfessionalUser"
+                            };
+                            await _userApiClient.AddUserToGroupAsync(addUserToGroupRequest);
+                        }
+                    }
+                }
+                else
+                {
+                    participant.Username = userProfile.User_name;
+                }
+            }
+            return participants;
+        }
+
+        private async Task<UserProfile> CheckUserExistsInAD(string emailAddress)
+        {
+            try
+            {
+                return await _userApiClient.GetUserByEmailAsync(emailAddress);
+            }
+            catch(UserAPI.Client.UserServiceException e)
+            {
+                if (e.StatusCode == (int)HttpStatusCode.NotFound)
+                {
+                    return null;
+                }
+            }
+            return null;
+        }
+
+        private async Task<NewUserResponse> CreateNewUserInAD(ParticipantRequest participant)
+        {
+            var createUserRequest = new CreateUserRequest()
+            {
+                First_name = participant.First_name,
+                Last_name = participant.Last_name,
+                Recovery_email = participant.Contact_email
+            };
+            var newUserResponse = await _userApiClient.CreateUserAsync(createUserRequest);
+            return newUserResponse;
+        }
+
+        private List<int> GetHearingTypesId(IEnumerable<string> caseTypes)
+        {
+            var typeIds = new List<int>();
+            var types = _bookingsApiClient.GetCaseTypes();
+            if (types != null && types.Any())
+            {
+                foreach (var item in caseTypes)
+                {
+                    var case_type = types.FirstOrDefault(s => s.Name == item);
+                    if (case_type != null)
+                    {
+                        typeIds.Add(case_type.Id.Value);
+                    }
+                }
+            }
+
+            return typeIds;
+        }
+
     }
 }
