@@ -1,14 +1,14 @@
 <app-breadcrumb [canNavigate]="canNavigate"></app-breadcrumb>
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-one-half">
-    <h1 class="govuk-heading-l">{{ constants.BookHearingTitle }}</h1>
+    <h1 class="govuk-heading-l">{{ isExistingBooking ? caseNumber : constants.BookHearingTitle }}</h1>
   </div>
 </div>
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-one-half">
 
-    <h2 class="govuk-heading-m" id="hearingSummary">Hearing summary</h2>
+    <h2 class="govuk-heading-m" id="hearingSummary">{{ isExistingBooking ? 'Booking details' : 'Hearing summary'}}</h2>
     <app-booking-edit [title]="'Hearing details'" [editLink]="'book-hearing'"></app-booking-edit>
     <div class="govuk-form-group vhtable">
       <div id="caseNumber">{{ caseNumber }}</div>
@@ -31,9 +31,9 @@
 
     <div class="sk-top">
       <input type="button" id="bookButton" class="govuk-button" role="button" value="Book" style="margin-right:25px;"
-        (click)="bookHearing()" alt="Book a Hearing" [disabled]="bookingsSaving" />
+             (click)="bookHearing()" alt="Book a Hearing" [disabled]="bookingsSaving" />
       <input type="button" id="cancelButton" class="govuk-button hmcts-button--secondary" role="button" value="Cancel"
-        (click)="confirmCancelBooking()" alt="Confirm cancellation of new booking and return to dashboard" />
+             (click)="confirmCancelBooking()" alt="Confirm cancellation of new booking and return to dashboard" />
     </div>
   </div>
 
@@ -49,7 +49,7 @@
 
 <div *ngIf="showConfirmationRemoveParticipant">
   <app-remove-popup (continueRemove)="handleContinueRemove()" (cancelRemove)="handleCancelRemove()"
-    [fullName]="removerFullName"></app-remove-popup>
+                    [fullName]="removerFullName"></app-remove-popup>
 </div>
 
 <div *ngIf="showWaitSaving">

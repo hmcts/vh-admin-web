@@ -1,8 +1,13 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, ViewChild } from '@angular/core';
 import { BookingsListService } from '../../services/bookings-list.service';
 import { BookingsListModel } from '../../common/model/bookings-list.model';
 import { BookingsResponse } from '../../services/clients/api-client';
 import { DOCUMENT } from '@angular/common';
+import { BookingPersistService } from '../../services/bookings-persist.service';
+import { BookingDetailsComponent } from '../booking-details/booking-details.component';
+import { BookingsModel } from '../../common/model/bookings.model';
+import { Router } from '@angular/router';
+import { PageUrls } from '../../shared/page-url.constants';
 
 @Component({
   selector: 'app-bookings-list',
@@ -23,12 +28,29 @@ export class BookingsListComponent implements OnInit {
   showDetails = false;
   selectedElement: HTMLElement;
   selectedHearingId = '';
+  bookingResponse: BookingsModel;
+
+  @ViewChild(BookingDetailsComponent)
+  bookingDetailsComponent: BookingDetailsComponent;
 
   constructor(private bookingsListService: BookingsListService,
+    private bookingPersistService: BookingPersistService,
+    private router: Router,
     @Inject(DOCUMENT) document) { }
 
   ngOnInit() {
-    this.getList();
+    if (this.bookingPersistService.bookingList.length > 0) {
+      this.cursor = this.bookingPersistService.nextCursor;
+      this.bookings = this.bookingPersistService.bookingList;
+      this.loaded = true;
+      this.recordsLoaded = true;
+      setTimeout(() => {
+        this.rowSelected(this.bookingPersistService.selectedGroupIndex, this.bookingPersistService.selectedItemIndex);
+        this.bookingPersistService.resetAll();
+      }, 100);
+    } else {
+      this.getList();
+    }
   }
 
   getList() {
@@ -60,6 +82,7 @@ export class BookingsListComponent implements OnInit {
     if (bookingsModel.Hearings) {
       this.bookings = this.bookingsListService.addBookings(bookingsModel, this.bookings);
     }
+    this.bookingResponse = bookingsModel;
     this.recordsLoaded = true;
     this.loaded = true;
   }
@@ -76,7 +99,15 @@ export class BookingsListComponent implements OnInit {
     this.selectedHearingId = this.bookings[groupByDate].BookingsDetails[indexHearing].HearingId;
     this.selectedGroupIndex = groupByDate;
     this.selectedItemIndex = indexHearing;
+    this.persistInformation();
     this.showDetails = true;
+  }
+
+  persistInformation() {
+    this.bookingPersistService.bookingList = this.bookings;
+    this.bookingPersistService.nextCursor = this.cursor;
+    this.bookingPersistService.selectedGroupIndex = this.selectedGroupIndex;
+    this.bookingPersistService.selectedItemIndex = this.selectedItemIndex;
   }
 
   closeHearingDetails() {

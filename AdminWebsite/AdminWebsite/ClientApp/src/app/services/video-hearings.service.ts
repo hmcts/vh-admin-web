@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import {
   HearingTypeResponse, BHClient, BookNewHearingRequest, HearingDetailsResponse,
   CaseAndHearingRolesResponse, CaseRequest, ParticipantRequest, CaseResponse2,
@@ -83,7 +83,17 @@ export class VideoHearingsService {
     return this.bhClient.bookNewHearing(hearingRequest);
   }
 
-  mapHearing(newRequest: HearingModel): BookNewHearingRequest {
+  updateHearing(booking: HearingModel): Observable<HearingDetailsResponse> {
+    const hearingRequest = this.mapExistingHearing(booking);
+    // to do waiting for api
+    return of(hearingRequest);
+  }
+
+  mapExistingHearing(booking: HearingModel): HearingDetailsResponse {
+    return new HearingDetailsResponse();
+  }
+
+  mapHearing(newRequest: HearingModel): HearingDetailsResponse {
     const newHearingRequest = new BookNewHearingRequest();
     newHearingRequest.cases = this.mapCases(newRequest);
     newHearingRequest.case_type_name = newRequest.case_type;
@@ -129,58 +139,64 @@ export class VideoHearingsService {
   mapCaseResponse2ToCaseModel(casesResponse: CaseResponse2[]): CaseModel[] {
     const cases: CaseModel[] = [];
     let caseRequest: CaseModel;
-    casesResponse.forEach(c => {
-      caseRequest = new CaseModel();
-      caseRequest.name = c.name;
-      caseRequest.number = c.number;
-      caseRequest.isLeadCase = c.is_lead_case;
-      cases.push(caseRequest);
-    });
+    if (casesResponse && casesResponse.length > 0) {
+      casesResponse.forEach(c => {
+        caseRequest = new CaseModel();
+        caseRequest.name = c.name;
+        caseRequest.number = c.number;
+        caseRequest.isLeadCase = c.is_lead_case;
+        cases.push(caseRequest);
+      });
+    }
     return cases;
   }
 
   mapParticipants(newRequest: ParticipantModel[]): ParticipantRequest[] {
     const participants: ParticipantRequest[] = [];
     let participant: ParticipantRequest;
-    newRequest.forEach(p => {
-      participant = new ParticipantRequest();
-      participant.title = p.title;
-      participant.first_name = p.first_name;
-      participant.middle_names = p.middle_names;
-      participant.last_name = p.last_name;
-      participant.username = p.username;
-      participant.display_name = p.display_name;
-      participant.contact_email = p.email;
-      participant.telephone_number = p.phone;
-      participant.case_role_name = p.case_role_name;
-      participant.hearing_role_name = p.hearing_role_name;
-      participant.representee = p.representee;
-      participant.solicitors_reference = p.solicitorsReference;
-      participants.push(participant);
-    });
+    if (newRequest && newRequest.length > 0) {
+      newRequest.forEach(p => {
+        participant = new ParticipantRequest();
+        participant.title = p.title;
+        participant.first_name = p.first_name;
+        participant.middle_names = p.middle_names;
+        participant.last_name = p.last_name;
+        participant.username = p.username;
+        participant.display_name = p.display_name;
+        participant.contact_email = p.email;
+        participant.telephone_number = p.phone;
+        participant.case_role_name = p.case_role_name;
+        participant.hearing_role_name = p.hearing_role_name;
+        participant.representee = p.representee;
+        participant.solicitors_reference = p.solicitorsReference;
+        participants.push(participant);
+      });
+    }
     return participants;
   }
 
   mapParticipantResponseToParticipantModel(response: ParticipantResponse[]): ParticipantModel[] {
     const participants: ParticipantModel[] = [];
     let participant: ParticipantModel;
-    response.forEach(p => {
-      participant = new ParticipantModel();
-      participant.title = p.title;
-      participant.first_name = p.first_name;
-      participant.middle_names = p.middle_names;
-      participant.last_name = p.last_name;
-      participant.username = p.username;
-      participant.display_name = p.display_name;
-      participant.email = p.contact_email;
-      participant.phone = p.telephone_number;
-      participant.case_role_name = p.case_role_name;
-      participant.hearing_role_name = p.hearing_role_name;
-      participant.representee = '';
-      participant.solicitorsReference = '';
-      participant.is_judge = p.case_role_name === 'Judge';
-      participants.push(participant);
-    });
+    if (response && response.length > 0) {
+      response.forEach(p => {
+        participant = new ParticipantModel();
+        participant.title = p.title;
+        participant.first_name = p.first_name;
+        participant.middle_names = p.middle_names;
+        participant.last_name = p.last_name;
+        participant.username = p.username;
+        participant.display_name = p.display_name;
+        participant.email = p.contact_email;
+        participant.phone = p.telephone_number;
+        participant.case_role_name = p.case_role_name;
+        participant.hearing_role_name = p.hearing_role_name;
+        participant.representee = '';
+        participant.solicitorsReference = '';
+        participant.is_judge = p.case_role_name === 'Judge';
+        participants.push(participant);
+      });
+    }
     return participants;
   }
 

@@ -45,6 +45,7 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
   showWaitSaving = false;
   showErrorSaving: boolean;
   private newHearingSessionKey = 'newHearingId';
+  isExistingBooking = false;
 
   @ViewChild(ParticipantsListComponent)
   participantsListComponent: ParticipantsListComponent;
@@ -64,6 +65,7 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
     this.checkForExistingRequest();
     this.retrieveHearingSummary();
     if (this.participantsListComponent) {
+      this.participantsListComponent.isEditMode = this.isExistingBooking;
       this.participantsListComponent.selectedParticipantToRemove.subscribe((participantEmail) => {
         this.selectedParticipantEmail = participantEmail;
         this.confirmRemoveParticipant();
@@ -73,6 +75,7 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
 
   private checkForExistingRequest() {
     this.hearing = this.hearingService.getCurrentRequest();
+    this.isExistingBooking = this.hearing.hearing_id && this.hearing.hearing_id.length > 0;
   }
 
   private confirmRemoveParticipant() {
@@ -164,7 +167,11 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
   cancelBooking() {
     this.attemptingCancellation = false;
     this.hearingService.cancelRequest();
-    this.router.navigate([PageUrls.Dashboard]);
+    if (this.isExistingBooking) {
+      this.router.navigate([PageUrls.BookingsList]);
+    } else {
+      this.router.navigate([PageUrls.Dashboard]);
+    }
   }
 
   hasChanges(): Observable<boolean> | boolean {
@@ -175,20 +182,38 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
     this.bookingsSaving = true;
     this.showWaitSaving = true;
     this.showErrorSaving = false;
-    this.hearingService.saveHearing(this.hearing)
-      .subscribe(
-        (hearingDetailsResponse: HearingDetailsResponse) => {
-          sessionStorage.setItem(this.newHearingSessionKey, hearingDetailsResponse.id);
-          this.hearingService.cancelRequest();
-          this.showWaitSaving = false;
-          this.router.navigate([PageUrls.BookingConfirmation]);
-        },
-        error => {
-          this.showWaitSaving = false;
-          this.showErrorSaving = true;
-          this.errors = error;
-        }
-      );
+    if (this.hearing.hearing_id && this.hearing.hearing_id.length > 0) {
+      this.updateHearing();
+    } else {
+      this.hearingService.saveHearing(this.hearing)
+        .subscribe(
+          (hearingDetailsResponse: HearingDetailsResponse) => {
+            sessionStorage.setItem(this.newHearingSessionKey, hearingDetailsResponse.id);
+            this.hearingService.cancelRequest();
+            this.showWaitSaving = false;
+            this.router.navigate([PageUrls.BookingConfirmation]);
+          },
+          error => {
+            this.showWaitSaving = false;
+            this.showErrorSaving = true;
+            this.errors = error;
+          }
+        );
+    }
+  }
+
+  updateHearing() {
+    this.hearingService.updateHearing(this.hearing)
+      .subscribe((hearingDetailsResponse: HearingDetailsResponse) => {
+        this.showWaitSaving = false;
+        this.hearing = this.hearingService.mapHearingDetailsResponseToHearingModel(hearingDetailsResponse);
+        this.hearingService.updateHearingRequest(this.hearing);
+        this.router.navigate([PageUrls.BookingsList]);
+      }, error => {
+        this.showWaitSaving = false;
+        this.showErrorSaving = true;
+        this.errors = error;
+      });
   }
 
   cancel(): void {
