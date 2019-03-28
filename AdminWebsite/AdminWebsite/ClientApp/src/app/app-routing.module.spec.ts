@@ -27,8 +27,8 @@ import { ErrorComponent } from './error/error.component';
 import { ErrorService } from './services/error.service';
 import { SignOutPopupComponent } from './popups/sign-out-popup/sign-out-popup.component';
 import { WaitPopupComponent } from './popups/wait-popup/wait-popup.component';
-import { SaveFailedPopupComponent } from './popups/save-failed-popup/save-failed-popup.component';
 import { CancelPopupStubComponent } from './testing/stubs/cancel-popup-stub';
+import { SaveFailedPopupComponent } from './popups/save-failed-popup/save-failed-popup.component';
 
 describe('app routing', () => {
   let location: Location;
