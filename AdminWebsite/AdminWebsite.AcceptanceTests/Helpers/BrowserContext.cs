@@ -64,7 +64,7 @@ namespace AdminWebsite.AcceptanceTests.Helpers
             NgDriver.WrappedDriver.Navigate().GoToUrl(_baseUrl);
         }
 
-        internal void Retry(Action action, int times = 4)
+        internal void Retry(Action action, int times = 5)
         {
             Policy
                 .Handle<Exception>()

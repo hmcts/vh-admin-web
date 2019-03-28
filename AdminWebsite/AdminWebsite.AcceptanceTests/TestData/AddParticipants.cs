@@ -15,7 +15,7 @@ namespace AdminWebsite.AcceptanceTests.TestData
         public static IEnumerable<string> ClaimantRole = new List<string>() { "Claimant LIP", "Solicitor" };
         public static IEnumerable<string> DefendantRole = new List<string>() { "Defendant LIP", "Solicitor" };
         public static IEnumerable<string> ApplicantRole = new List<string>() { "Applicant LIP", "Solicitor" };
-        public static IEnumerable<string> RespondentRole = new List<string>() { "Applicant LIP", "Solicitor" };
+        public static IEnumerable<string> RespondentRole = new List<string>() { "Respondent LIP", "Solicitor" };
         public const string Claimant = "Claimant";
         public const string Defendant = "Defendant";
         public const string Applicant = "Applicant";

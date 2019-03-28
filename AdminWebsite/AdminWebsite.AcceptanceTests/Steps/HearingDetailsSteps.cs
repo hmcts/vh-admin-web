@@ -22,9 +22,9 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void WhenHearingDetailsFormIsFilled()
         {
             HearingDetailsPage();
-            InputCaseNumber();
+            InputCaseNumber(TestData.HearingDetails.CaseNumber);
+            InputCaseName(TestData.HearingDetails.CaseName);
             SelectHearingType();
-            InputCaseName();
         }
         [When(@"Admin user is on hearing details page")]
         public void HearingDetailsPage()
@@ -69,9 +69,9 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void WhenHearingBookingDetailIsUpdated()
         {
             HearingDetailsPage();
-            InputCaseNumber(TestData.HearingDetails.CaseNumber);
+            InputCaseNumber(TestData.HearingDetails.CaseNumber1);
             SelectHearingType();
-            InputCaseName(TestData.HearingDetails.CaseName);            
+            InputCaseName(TestData.HearingDetails.CaseName1);            
         }
         [Given(@"user selects (.*)")]
         public void GivenUserSelectsCaseTypeAsCivilMoneyClaims(string caseType)
