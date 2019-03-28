@@ -12,7 +12,7 @@ interface ScrollPosition {
 
 // Infinite scroller directive with RxJS Observables
 @Directive({
-  selector: '[appScrollable]'
+  selector: '[app-scrollable]'
 })
 export class ScrollableDirective implements AfterViewInit {
 

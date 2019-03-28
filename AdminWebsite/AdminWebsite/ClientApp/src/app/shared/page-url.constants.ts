@@ -10,5 +10,6 @@ export let PageUrls = {
   OtherInformation: '/other-information',
   Summary: '/summary',
   BookingConfirmation: '/booking-confirmation',
-  BookingsList: '/bookings-list'
+  BookingsList: '/bookings-list',
+  BookingDetails: '/booking-details',
 };
