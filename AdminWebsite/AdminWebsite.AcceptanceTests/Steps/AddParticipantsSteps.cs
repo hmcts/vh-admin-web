@@ -17,7 +17,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [When(@"professional participant is added to hearing")]
         public void ProfessionalParticipantIsAddedToHearing()
         {
-            AddParticipantsPage(); AddParticipantsPage();
+            AddParticipantsPage();
             SelectParty();
             SelectRole();
             AddParticpantDetails();
@@ -95,6 +95,13 @@ namespace AdminWebsite.AcceptanceTests.Steps
                     break;
             }
             _addParticipant.Party(party);
+        }
+        [When(@"associated (.*) is selected")]
+        public void RoleIsSelected(string role)
+        {
+            _addParticipant.Role(role);
+            AddParticpantDetails();
+            ClickAddParticipantsButton();
         }
         [When(@"user clears inputted values")]
         public void WhenUserClearsInputtedValues()

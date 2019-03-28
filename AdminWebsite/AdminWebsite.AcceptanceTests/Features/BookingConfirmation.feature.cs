@@ -95,6 +95,63 @@ this.ScenarioInitialize(scenarioInfo);
 #line hidden
             this.ScenarioCleanup();
         }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Case Admin with multiple case types saves booking")]
+        [NUnit.Framework.CategoryAttribute("VIH-2701")]
+        [NUnit.Framework.TestCaseAttribute("Civil Money Claims", "Claimant", "Claimant LIP", null)]
+        [NUnit.Framework.TestCaseAttribute("Civil Money Claims", "Defendant", "Defendant LIP", null)]
+        [NUnit.Framework.TestCaseAttribute("Civil Money Claims", "Defendant", "Solicitor", null)]
+        [NUnit.Framework.TestCaseAttribute("Financial Remedy", "Applicant", "Applicant LIP", null)]
+        [NUnit.Framework.TestCaseAttribute("Financial Remedy", "Respondent", "Respondent LIP", null)]
+        [NUnit.Framework.TestCaseAttribute("Financial Remedy", "Respondent", "Solicitor", null)]
+        public virtual void CaseAdminWithMultipleCaseTypesSavesBooking(string caseType, string party, string role, string[] exampleTags)
+        {
+            string[] @__tags = new string[] {
+                    "VIH-2701"};
+            if ((exampleTags != null))
+            {
+                @__tags = System.Linq.Enumerable.ToArray(System.Linq.Enumerable.Concat(@__tags, exampleTags));
+            }
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Case Admin with multiple case types saves booking", null, @__tags);
+#line 15
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line 16
+ testRunner.Given("Admin user is on microsoft login page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 17
+ testRunner.And("CaseAdminFinRemedyCivilMoneyClaims logs into Vh-Admin website", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 18
+ testRunner.And("user is on hearing details page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 19
+ testRunner.And(string.Format("user selects {0}", caseType), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 20
+ testRunner.And("user adds hearing schedule", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 21
+ testRunner.And("user proceeds to next page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 22
+ testRunner.And("hearing booking is assigned to a judge", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 23
+ testRunner.And("user proceeds to next page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 24
+ testRunner.When(string.Format("user selects {0}", party), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 25
+ testRunner.And(string.Format("associated {0} is selected", role), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 26
+ testRunner.And("user proceeds to next page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 27
+ testRunner.And("user adds other information to the Video Hearing booking", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 28
+ testRunner.And("user proceeds to next page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 29
+ testRunner.And("Admin user is on summary page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 30
+ testRunner.And("user submit booking", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 31
+ testRunner.Then("hearing should be booked", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
     }
 }
 #pragma warning restore
