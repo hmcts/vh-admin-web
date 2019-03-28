@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BookingsListModel } from '../common/model/bookings-list.model';
+import { HearingModel } from '../common/model/hearing.model';
+import { ParticipantModel } from '../common/model/participant.model';
 
 @Injectable({ providedIn: 'root' })
 export class BookingPersistService {
@@ -8,12 +10,53 @@ export class BookingPersistService {
   private _nextCursor: string;
   private _selectedGroupIndex: number;
   private _selectedItemIndex: number;
+  SelectedHearingIdKey = 'SelectedHearingIdKey';
 
   resetAll() {
     this._bookingList = [];
     this._nextCursor = undefined;
     this.selectedGroupIndex = -1;
     this.selectedItemIndex = -1;
+    sessionStorage.removeItem(this.SelectedHearingIdKey);
+  }
+
+  updateBooking(hearing: HearingModel) {
+    if (this._bookingList.length > this._selectedGroupIndex &&
+      this._bookingList[this._selectedGroupIndex].BookingsDetails.length > this._selectedItemIndex) {
+      let hearingUpdate = this._bookingList[this._selectedGroupIndex].BookingsDetails[this.selectedItemIndex];
+      if (hearingUpdate.HearingId === hearing.hearing_id) {
+        hearingUpdate.HearingCaseName = hearing.cases && hearing.cases.length > 0 ? hearing.cases[0].name : '';
+        hearingUpdate.HearingCaseNumber = hearing.cases && hearing.cases.length > 0 ? hearing.cases[0].number : '';
+        hearingUpdate.StartTime = new Date(hearing.scheduled_date_time);
+        hearingUpdate.Duration = hearing.scheduled_duration;
+        hearingUpdate.CourtAddress = hearing.court_name;
+        hearingUpdate.CourtRoom = hearing.court_room;
+        hearingUpdate.HearingType = hearing.hearing_type_name;
+        hearingUpdate.CreatedBy = hearing.created_by;
+        if (this.isValidDate(hearing.created_date)) {
+          hearingUpdate.CreatedDate = new Date(hearing.created_date);
+        }
+        hearingUpdate.LastEditBy = hearing.updated_by;
+       
+        if (this.isValidDate(hearing.updated_date)) {
+          hearingUpdate.LastEditDate = new Date(hearing.updated_date);
+        }
+        hearingUpdate.JudgeName = this.getJudgeName(hearing.participants);
+      }
+    }
+  }
+
+  isValidDate(value: any): boolean {
+    if (value) {
+      const timestamp = Date.parse(value.toString());
+      return isNaN(timestamp) === false;
+    }
+    return false;
+  }
+
+  getJudgeName(participants: ParticipantModel[]) {
+    const judge = participants.find(x => x.case_role_name === 'Judge');
+    return judge ? judge.display_name : '';
   }
 
   set bookingList(value: Array<BookingsListModel>) {
@@ -46,5 +89,13 @@ export class BookingPersistService {
 
   get selectedItemIndex() {
     return this._selectedItemIndex;
+  }
+
+  set selectedHearingId(value: string) {
+    sessionStorage.setItem(this.SelectedHearingIdKey, value);
+  }
+
+  get selectedHearingId() {
+    return sessionStorage.getItem(this.SelectedHearingIdKey);
   }
 }

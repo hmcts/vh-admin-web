@@ -1,10 +1,9 @@
-import { Component, OnInit, Inject, ViewChild } from '@angular/core';
+import { Component, OnInit, Inject, AfterViewInit } from '@angular/core';
 import { BookingsListService } from '../../services/bookings-list.service';
 import { BookingsListModel } from '../../common/model/bookings-list.model';
 import { BookingsResponse } from '../../services/clients/api-client';
 import { DOCUMENT } from '@angular/common';
 import { BookingPersistService } from '../../services/bookings-persist.service';
-import { BookingDetailsComponent } from '../booking-details/booking-details.component';
 import { BookingsModel } from '../../common/model/bookings.model';
 import { Router } from '@angular/router';
 import { PageUrls } from '../../shared/page-url.constants';
@@ -14,7 +13,7 @@ import { PageUrls } from '../../shared/page-url.constants';
   templateUrl: './bookings-list.component.html',
   styleUrls: ['./bookings-list.component.css']
 })
-export class BookingsListComponent implements OnInit {
+export class BookingsListComponent implements OnInit, AfterViewInit {
   bookings: Array<BookingsListModel> = [];
   loaded = false;
   error = false;
@@ -25,13 +24,9 @@ export class BookingsListComponent implements OnInit {
 
   selectedItemIndex = -1;
   selectedGroupIndex = -1;
-  showDetails = false;
   selectedElement: HTMLElement;
   selectedHearingId = '';
   bookingResponse: BookingsModel;
-
-  @ViewChild(BookingDetailsComponent)
-  bookingDetailsComponent: BookingDetailsComponent;
 
   constructor(private bookingsListService: BookingsListService,
     private bookingPersistService: BookingPersistService,
@@ -45,11 +40,17 @@ export class BookingsListComponent implements OnInit {
       this.loaded = true;
       this.recordsLoaded = true;
       setTimeout(() => {
-        this.rowSelected(this.bookingPersistService.selectedGroupIndex, this.bookingPersistService.selectedItemIndex);
+        this.setSelectedRow(this.bookingPersistService.selectedGroupIndex, this.bookingPersistService.selectedItemIndex);
         this.bookingPersistService.resetAll();
-      }, 100);
+      }, 500);
     } else {
       this.getList();
+    }
+  }
+
+  ngAfterViewInit() {
+    if (this.bookingPersistService.bookingList.length > 0) {
+      this.closeHearingDetails();
     }
   }
 
@@ -73,7 +74,7 @@ export class BookingsListComponent implements OnInit {
       return;
     }
     const bookingsModel = this.bookingsListService.mapBookingsResponse(bookingsResponse);
-    if (bookingsModel.NextCursor === '0' || bookingsModel.Hearings.length === 0) {
+    if (!bookingsModel.NextCursor || bookingsModel.Hearings.length === 0) {
       this.endOfData = true;
       return;
     }
@@ -88,10 +89,17 @@ export class BookingsListComponent implements OnInit {
   }
 
   scrollHandler(e) {
+    console.log('Scroll');
     this.getList();
   }
 
   rowSelected(groupByDate, indexHearing) {
+    this.setSelectedRow(groupByDate, indexHearing);
+    this.persistInformation();
+    this.router.navigate([PageUrls.BookingDetails]);
+  }
+
+  setSelectedRow(groupByDate, indexHearing) {
     if (this.selectedGroupIndex > -1 && this.selectedItemIndex > -1) {
       this.bookings[this.selectedGroupIndex].BookingsDetails[this.selectedItemIndex].Selected = false;
     }
@@ -99,8 +107,6 @@ export class BookingsListComponent implements OnInit {
     this.selectedHearingId = this.bookings[groupByDate].BookingsDetails[indexHearing].HearingId;
     this.selectedGroupIndex = groupByDate;
     this.selectedItemIndex = indexHearing;
-    this.persistInformation();
-    this.showDetails = true;
   }
 
   persistInformation() {
@@ -108,10 +114,10 @@ export class BookingsListComponent implements OnInit {
     this.bookingPersistService.nextCursor = this.cursor;
     this.bookingPersistService.selectedGroupIndex = this.selectedGroupIndex;
     this.bookingPersistService.selectedItemIndex = this.selectedItemIndex;
+    this.bookingPersistService.selectedHearingId = this.selectedHearingId;
   }
 
   closeHearingDetails() {
-    this.showDetails = false;
     setTimeout(() => {
       this.selectedElement = document.getElementById(this.selectedGroupIndex + '_' + this.selectedItemIndex);
       this.selectedElement.scrollIntoView(false);
