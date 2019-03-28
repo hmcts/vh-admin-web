@@ -7,6 +7,7 @@ import { BookingPersistService } from '../../services/bookings-persist.service';
 import { BookingsModel } from '../../common/model/bookings.model';
 import { Router } from '@angular/router';
 import { PageUrls } from '../../shared/page-url.constants';
+import {VideoHearingsService } from '../../services/video-hearings.service';
 
 @Component({
   selector: 'app-bookings-list',
@@ -30,12 +31,18 @@ export class BookingsListComponent implements OnInit, AfterViewInit {
 
   constructor(private bookingsListService: BookingsListService,
     private bookingPersistService: BookingPersistService,
+    private videoHearingService: VideoHearingsService,
     private router: Router,
     @Inject(DOCUMENT) document) { }
 
   ngOnInit() {
     if (this.bookingPersistService.bookingList.length > 0) {
       this.cursor = this.bookingPersistService.nextCursor;
+      const editHearing = this.videoHearingService.getCurrentRequest();
+      if (editHearing.hearing_id === this.bookingPersistService.selectedHearingId) {
+        this.bookingPersistService.updateBooking(editHearing);
+        this.videoHearingService.cancelRequest();
+      }
       this.bookings = this.bookingPersistService.bookingList;
       this.loaded = true;
       this.recordsLoaded = true;
@@ -74,7 +81,7 @@ export class BookingsListComponent implements OnInit, AfterViewInit {
       return;
     }
     const bookingsModel = this.bookingsListService.mapBookingsResponse(bookingsResponse);
-    if (!bookingsModel.NextCursor || bookingsModel.Hearings.length === 0) {
+    if (!bookingsModel.NextCursor && bookingsModel.Hearings.length === 0) {
       this.endOfData = true;
       return;
     }

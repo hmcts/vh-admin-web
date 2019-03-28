@@ -14,7 +14,6 @@ import { PageUrls } from '../../shared/page-url.constants';
 import { HearingDetailsResponse } from '../../services/clients/api-client';
 import { BookingService } from '../../services/booking.service';
 import { RemovePopupComponent } from '../../popups/remove-popup/remove-popup.component';
-import { BookingPersistService } from '../../services/bookings-persist.service';
 
 @Component({
   selector: 'app-summary',
@@ -57,8 +56,8 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
   constructor(private hearingService: VideoHearingsService,
     private router: Router,
     private referenceDataService: ReferenceDataService,
-    private bookingService: BookingService,
-    private bookingPersistService: BookingPersistService) {
+    private bookingService: BookingService
+    ) {
     this.attemptingCancellation = false;
     this.showErrorSaving = false;
   }
@@ -208,9 +207,8 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
     this.hearingService.updateHearing(this.hearing)
       .subscribe((hearingDetailsResponse: HearingDetailsResponse) => {
         this.showWaitSaving = false;
-       // this.hearing = this.hearingService.mapHearingDetailsResponseToHearingModel(hearingDetailsResponse);
+        this.hearing = this.hearingService.mapHearingDetailsResponseToHearingModel(hearingDetailsResponse);
         this.hearingService.updateHearingRequest(this.hearing);
-        this.bookingPersistService.updateBooking(this.hearing);
         this.router.navigate([PageUrls.BookingDetails]);
       }, error => {
         this.showWaitSaving = false;
