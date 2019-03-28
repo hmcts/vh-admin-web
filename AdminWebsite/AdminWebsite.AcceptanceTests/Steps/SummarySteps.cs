@@ -33,8 +33,8 @@ namespace AdminWebsite.AcceptanceTests.Steps
             switch (_summary.GetItems("RelevantPage"))
             {
                 case PageUri.HearingDetailsPage :
-                    _summary.CaseName().Should().Be(TestData.HearingDetails.CaseName);
-                    _summary.CaseNumber().Should().Be(TestData.HearingDetails.CaseNumber);
+                    _summary.CaseName().Should().Be(TestData.HearingDetails.CaseName1);
+                    _summary.CaseNumber().Should().Be(TestData.HearingDetails.CaseNumber1);
                     _summary.CaseHearingType().Should().Be(TestData.HearingDetails.CaseHearingType);
                     break;
                 case PageUri.HearingSchedulePage:
@@ -96,8 +96,8 @@ namespace AdminWebsite.AcceptanceTests.Steps
             switch (_summary.GetItems("RelevantPage"))
             {
                 case PageUri.HearingDetailsPage:
-                    _summary.CaseName().Should().NotBe(TestData.HearingDetails.CaseName);
-                    _summary.CaseNumber().Should().NotBe(TestData.HearingDetails.CaseNumber);
+                    _summary.CaseName().Should().NotBe(TestData.HearingDetails.CaseName1);
+                    _summary.CaseNumber().Should().NotBe(TestData.HearingDetails.CaseNumber1);
                     break;
             }
         }
@@ -112,6 +112,11 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void ThenParticipantShouldStillBeInTheList()
         {
             _summary.GetParticipantDetails().Should().NotBeNullOrEmpty();
+        }
+        [When(@"user submit booking")]
+        public void WhenUserSubmitBooking()
+        {
+            _summary.Book();
         }
     }
 }
