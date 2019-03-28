@@ -1,4 +1,3 @@
-
 export class BookingsListModel {
 
   constructor(bookingsDate: Date) {
@@ -16,7 +15,7 @@ export class BookingsDetailsModel {
   constructor(hearingId: string, startTime: Date, duration: number, hearingCaseNumber: string,
     hearingCaseName: string, hearingType: string, judgeName: string, courtRoom: string,
     courtAddress: string, createdBy: string, createdDate: Date, lastEditBy: string,
-    lastEditDate: Date
+    lastEditDate: Date, status: string
   ) {
     this.HearingId = hearingId;
     this.StartTime = startTime;
@@ -32,6 +31,8 @@ export class BookingsDetailsModel {
     this.LastEditBy = lastEditBy;
     this.LastEditDate = lastEditDate;
     this.Selected = false;
+    this.Cancelled = this.Status === 'Cancelled';
+    this.Status = status;
   }
 
   HearingId: string;
@@ -48,6 +49,8 @@ export class BookingsDetailsModel {
   LastEditBy: string;
   LastEditDate: Date;
   Selected: boolean;
+  Cancelled: boolean;
+  Status: string;
 
   get DurationInHoursAndMinutes(): string {
     const hours = Math.floor(this.Duration / 60);

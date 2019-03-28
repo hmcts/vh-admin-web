@@ -1481,6 +1481,7 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
     created_by?: string | undefined;
     updated_by?: string | undefined;
     updated_date?: Date | undefined;
+    status?: HearingDetailsResponseStatus | undefined;
 
     constructor(data?: IHearingDetailsResponse) {
         if (data) {
@@ -1515,6 +1516,7 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
             this.created_by = data["created_by"];
             this.updated_by = data["updated_by"];
             this.updated_date = data["updated_date"] ? new Date(data["updated_date"].toString()) : <any>undefined;
+            this.status = data["status"];
         }
     }
 
@@ -1549,6 +1551,7 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
         data["created_by"] = this.created_by;
         data["updated_by"] = this.updated_by;
         data["updated_date"] = this.updated_date ? this.updated_date.toISOString() : <any>undefined;
+        data["status"] = this.status;
         return data; 
     }
 }
@@ -1568,6 +1571,7 @@ export interface IHearingDetailsResponse {
     created_by?: string | undefined;
     updated_by?: string | undefined;
     updated_date?: Date | undefined;
+    status?: HearingDetailsResponseStatus | undefined;
 }
 
 export class CaseResponse2 implements ICaseResponse2 {
@@ -1818,6 +1822,7 @@ export class BookingsHearingResponse implements IBookingsHearingResponse {
     last_edit_by?: string | undefined;
     last_edit_date?: Date | undefined;
     hearing_date?: Date | undefined;
+    status?: BookingsHearingResponseStatus | undefined;
 
     constructor(data?: IBookingsHearingResponse) {
         if (data) {
@@ -1845,6 +1850,7 @@ export class BookingsHearingResponse implements IBookingsHearingResponse {
             this.last_edit_by = data["last_edit_by"];
             this.last_edit_date = data["last_edit_date"] ? new Date(data["last_edit_date"].toString()) : <any>undefined;
             this.hearing_date = data["hearing_date"] ? new Date(data["hearing_date"].toString()) : <any>undefined;
+            this.status = data["status"];
         }
     }
 
@@ -1872,6 +1878,7 @@ export class BookingsHearingResponse implements IBookingsHearingResponse {
         data["last_edit_by"] = this.last_edit_by;
         data["last_edit_date"] = this.last_edit_date ? this.last_edit_date.toISOString() : <any>undefined;
         data["hearing_date"] = this.hearing_date ? this.hearing_date.toISOString() : <any>undefined;
+        data["status"] = this.status;
         return data; 
     }
 }
@@ -1892,6 +1899,7 @@ export interface IBookingsHearingResponse {
     last_edit_by?: string | undefined;
     last_edit_date?: Date | undefined;
     hearing_date?: Date | undefined;
+    status?: BookingsHearingResponseStatus | undefined;
 }
 
 export class UpdateBookingStatusRequest implements IUpdateBookingStatusRequest {
@@ -2192,6 +2200,18 @@ export class UserProfileResponse implements IUserProfileResponse {
 export interface IUserProfileResponse {
     is_vh_officer_administrator_role?: boolean | undefined;
     is_case_administrator?: boolean | undefined;
+}
+
+export enum HearingDetailsResponseStatus {
+    Booked = "Booked", 
+    Created = "Created", 
+    Cancelled = "Cancelled", 
+}
+
+export enum BookingsHearingResponseStatus {
+    Booked = "Booked", 
+    Created = "Created", 
+    Cancelled = "Cancelled", 
 }
 
 export class SwaggerException extends Error {

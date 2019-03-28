@@ -2378,6 +2378,11 @@ namespace AdminWebsite.BookingsAPI.Client
         [Newtonsoft.Json.JsonProperty("updated_date", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.DateTime? Updated_date { get; set; }
     
+        /// <summary>Gets or sets the booking status of the hearing</summary>
+        [Newtonsoft.Json.JsonProperty("status", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public HearingDetailsResponseStatus? Status { get; set; }
+    
         public string ToJson() 
         {
             return Newtonsoft.Json.JsonConvert.SerializeObject(this);
@@ -2804,6 +2809,11 @@ namespace AdminWebsite.BookingsAPI.Client
         [Newtonsoft.Json.JsonProperty("hearing_date", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.DateTime? Hearing_date { get; set; }
     
+        /// <summary>Gets or sets the booking status of the hearing</summary>
+        [Newtonsoft.Json.JsonProperty("status", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public BookingsHearingResponseStatus? Status { get; set; }
+    
         public string ToJson() 
         {
             return Newtonsoft.Json.JsonConvert.SerializeObject(this);
@@ -2901,6 +2911,34 @@ namespace AdminWebsite.BookingsAPI.Client
         {
             return Newtonsoft.Json.JsonConvert.DeserializeObject<PersonResponse>(data);
         }
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "9.13.18.0 (Newtonsoft.Json v11.0.0.0)")]
+    public enum HearingDetailsResponseStatus
+    {
+        [System.Runtime.Serialization.EnumMember(Value = @"Booked")]
+        Booked = 0,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Created")]
+        Created = 1,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Cancelled")]
+        Cancelled = 2,
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "9.13.18.0 (Newtonsoft.Json v11.0.0.0)")]
+    public enum BookingsHearingResponseStatus
+    {
+        [System.Runtime.Serialization.EnumMember(Value = @"Booked")]
+        Booked = 0,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Created")]
+        Created = 1,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Cancelled")]
+        Cancelled = 2,
     
     }
 

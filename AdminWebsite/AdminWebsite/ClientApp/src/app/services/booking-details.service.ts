@@ -24,7 +24,8 @@ export class BookingDetailsService {
       hearingResponse.created_by,
       hearingResponse.created_date,
       hearingResponse.updated_by,
-      hearingResponse.updated_date
+      hearingResponse.updated_date,
+      hearingResponse.status
     );
   }
 
