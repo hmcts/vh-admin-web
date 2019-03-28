@@ -376,24 +376,19 @@ export class BHClient {
     /**
      * Update booking status
      * @param hearingId Id of the hearing to update the status for
-     * @param updateBookingStatusRequest (optional) Status of the hearing to change to
      * @return Success
      */
-    updateBookingStatus(hearingId: string, updateBookingStatusRequest: UpdateBookingStatusRequest | null | undefined): Observable<void> {
+    updateBookingStatus(hearingId: string): Observable<void> {
         let url_ = this.baseUrl + "/api/hearings/{hearingId}";
         if (hearingId === undefined || hearingId === null)
             throw new Error("The parameter 'hearingId' must be defined.");
         url_ = url_.replace("{hearingId}", encodeURIComponent("" + hearingId)); 
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(updateBookingStatusRequest);
-
         let options_ : any = {
-            body: content_,
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
-                "Content-Type": "application/json", 
             })
         };
 
@@ -1900,46 +1895,6 @@ export interface IBookingsHearingResponse {
     last_edit_date?: Date | undefined;
     hearing_date?: Date | undefined;
     status?: BookingsHearingResponseStatus | undefined;
-}
-
-export class UpdateBookingStatusRequest implements IUpdateBookingStatusRequest {
-    updated_by?: string | undefined;
-    status?: string | undefined;
-
-    constructor(data?: IUpdateBookingStatusRequest) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.updated_by = data["updated_by"];
-            this.status = data["status"];
-        }
-    }
-
-    static fromJS(data: any): UpdateBookingStatusRequest {
-        data = typeof data === 'object' ? data : {};
-        let result = new UpdateBookingStatusRequest();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["updated_by"] = this.updated_by;
-        data["status"] = this.status;
-        return data; 
-    }
-}
-
-export interface IUpdateBookingStatusRequest {
-    updated_by?: string | undefined;
-    status?: string | undefined;
 }
 
 /** Defines a type of hearing based on case */

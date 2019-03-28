@@ -3,8 +3,7 @@ import { Observable } from 'rxjs';
 import {
   HearingTypeResponse, BHClient, BookNewHearingRequest, HearingDetailsResponse,
   CaseAndHearingRolesResponse, CaseRequest, ParticipantRequest, CaseResponse2,
-  ParticipantResponse,
-  UpdateBookingStatusRequest
+  ParticipantResponse
 } from './clients/api-client';
 import { HearingModel } from '../common/model/hearing.model';
 import { CaseModel } from '../common/model/case.model';
@@ -189,7 +188,7 @@ export class VideoHearingsService {
     return this.bhClient.getHearingById(hearingId);
   }
 
-  updateBookingStatus(hearingId: string, updateBookingStatusRequest: UpdateBookingStatusRequest): Observable<void> {
-    return this.bhClient.updateBookingStatus(hearingId, updateBookingStatusRequest);
+  updateBookingStatus(hearingId: string): Observable<void> {
+    return this.bhClient.updateBookingStatus(hearingId);
   }
 }

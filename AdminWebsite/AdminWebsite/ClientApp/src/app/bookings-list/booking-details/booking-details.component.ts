@@ -5,7 +5,7 @@ import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
 import { ParticipantDetailsModel } from '../../common/model/participant-details.model';
 import { BookingDetailsService } from '../../services/booking-details.service';
 import { BookingService } from '../../services/booking.service';
-import { HearingDetailsResponse, UpdateBookingStatusRequest } from '../../services/clients/api-client';
+import { HearingDetailsResponse } from '../../services/clients/api-client';
 import { UserIdentityService } from '../../services/user-identity.service';
 import { map } from 'rxjs/operators';
 import { HearingModel } from '../../common/model/hearing.model';
@@ -58,6 +58,7 @@ export class BookingDetailsComponent implements OnInit {
     const participants_and_judges = this.bookingDetailsService.mapBookingParticipants(hearingResponse);
     this.participants = participants_and_judges.participants;
     this.judges = participants_and_judges.judges;
+    console.log(this.hearing);
   }
 
   mapResponseToModel(hearingResponse: HearingDetailsResponse): HearingModel {
@@ -84,17 +85,12 @@ export class BookingDetailsComponent implements OnInit {
   }
 
   cancelBooking() {
-    const updateBookingStatusRequest = new UpdateBookingStatusRequest();
-    updateBookingStatusRequest.status = 'Cancelled';
-    updateBookingStatusRequest.updated_by = 'LGR';
-    console.log(this.hearingId);
-    this.videoHearingService.updateBookingStatus(this.hearingId, updateBookingStatusRequest)
+    this.videoHearingService.updateBookingStatus(this.hearingId)
       .subscribe(
         (data) => {
           this.showCancelBooking = false;
         },
         error => {
-          console.log('error');
           this.showCancelBooking = false;
           this.errors = error;
         }

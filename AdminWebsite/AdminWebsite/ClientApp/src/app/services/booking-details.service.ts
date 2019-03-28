@@ -11,6 +11,7 @@ export class BookingDetailsService {
   JUDGE = 'Judge';
 
   mapBooking(hearingResponse: HearingDetailsResponse): BookingsDetailsModel {
+    console.log(hearingResponse.status);
     return new BookingsDetailsModel(
       hearingResponse.id,
       hearingResponse.scheduled_date_time,

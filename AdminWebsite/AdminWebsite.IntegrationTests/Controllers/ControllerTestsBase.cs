@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using NUnit.Framework;
+using Microsoft.Extensions.PlatformAbstractions;
+using System.IO;
 
 namespace AdminWebsite.IntegrationTests.Controllers
 {
@@ -31,8 +33,12 @@ namespace AdminWebsite.IntegrationTests.Controllers
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
+            var integrationTestsPath = PlatformServices.Default.Application.ApplicationBasePath;
+            var applicationPath = Path.GetFullPath(Path.Combine(integrationTestsPath, "../../../../AdminWebsite"));
             var webHostBuilder =
                 WebHost.CreateDefaultBuilder()
+                    .UseContentRoot(applicationPath)
+                    .UseWebRoot(applicationPath)
                     .UseEnvironment("Development")
                     .UseKestrel(c => c.AddServerHeader = false)
                     .UseStartup<Startup>();
@@ -54,7 +60,7 @@ namespace AdminWebsite.IntegrationTests.Controllers
             var serviceSettings = serviceSettingsOptions.Value;
             _bearerToken = new TokenProvider(securitySettingsOptions).GetClientAccessToken(
                 securitySettings.ClientId, securitySettings.ClientSecret,
-                serviceSettings.BookingsApiResourceId);
+                securitySettings.ClientId);
 
             GraphApiToken = new TokenProvider(securitySettingsOptions).GetClientAccessToken(
                 securitySettings.ClientId, securitySettings.ClientSecret,
@@ -71,7 +77,7 @@ namespace AdminWebsite.IntegrationTests.Controllers
         {
             using (var client = _server.CreateClient())
             {
-               client.DefaultRequestHeaders.Add("Authorization", $"Bearer {_bearerToken}");
+                client.DefaultRequestHeaders.Add("Authorization", $"Bearer {_bearerToken}");
                 return await client.GetAsync(uri);
             }
         }

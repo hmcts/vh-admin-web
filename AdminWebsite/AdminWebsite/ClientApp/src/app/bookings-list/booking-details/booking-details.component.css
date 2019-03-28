@@ -18,10 +18,12 @@
 .vh-cancelledBooking {
   color: #ffffff;
   background-color: #b10e1e;
-  margin-left: 9px;
-  padding-top: 3px;
-  padding-bottom: 3px;
-  width: 50%;
-  font-weight: 200;
+  padding-top: 7px;
+  padding-bottom: 7px;
+  width: 35%;
+  font-weight: 300;
   text-align: center;
+  margin-top: 1px;
+  font-size: 18px;
+  font-family: "nta",Arial,sans-serif;  
 }

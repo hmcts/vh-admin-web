@@ -1,4 +1,6 @@
-﻿namespace Testing.Common
+﻿using System;
+
+namespace Testing.Common
 {
     public class ApiUriFactory
     {
@@ -26,13 +28,13 @@
     {
         private string ApiRoot => "api/hearings";
         public string BookNewHearing => ApiRoot;
+        //public string CancelHearing(Guid hearingId) => => $"{ApiRoot}/{hearingId}";
     }
 
     public class ReferenceEndpoints
     {
-        private string ApiRoot => "api/hearings";
+        private string ApiRoot => "api/reference";
         public string GetHearingTypes => $"{ApiRoot}/types";
-        public string GetHearingMediums => $"{ApiRoot}/mediums";
         public string GetHearingStatusTypes => $"{ApiRoot}/statustypes";
         public string GetParticipantRoles => $"{ApiRoot}/participantroles";
         public string GetCourts => $"{ApiRoot}/courts";

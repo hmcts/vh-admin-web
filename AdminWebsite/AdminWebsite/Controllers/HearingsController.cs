@@ -24,7 +24,6 @@ namespace AdminWebsite.Controllers
         private readonly IUserIdentity _userIdentity;
         private readonly IUserApiClient _userApiClient;
 
-
         /// <summary>
         /// Instantiates the controller
         /// </summary>
@@ -227,18 +226,21 @@ namespace AdminWebsite.Controllers
         /// Update booking status
         /// </summary>
         /// <param name="hearingId">Id of the hearing to update the status for</param>
-        /// <param name="updateBookingStatusRequest">Status of the hearing to change to</param>
         /// <returns>Success status</returns>
         [HttpPatch("{hearingId}")]
         [SwaggerOperation(OperationId = "UpdateBookingStatus")]
         [ProducesResponseType((int) HttpStatusCode.OK)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> UpdateBookingStatus(Guid hearingId,
-            UpdateBookingStatusRequest updateBookingStatusRequest)
+        public async Task<IActionResult> UpdateBookingStatus(Guid hearingId)
         {
             try
             {
+                var updateBookingStatusRequest = new UpdateBookingStatusRequest()
+                {
+                    Status = BookingsHearingResponseStatus.Cancelled.ToString(),
+                    Updated_by = _userIdentity.GetUserIdentityName()
+                };
                 await _bookingsApiClient.UpdateBookingStatusAsync(hearingId, updateBookingStatusRequest);
                 return Ok();
             }

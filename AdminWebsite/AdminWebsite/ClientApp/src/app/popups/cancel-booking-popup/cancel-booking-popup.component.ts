@@ -14,12 +14,10 @@ export class CancelBookingPopupComponent implements OnInit {
   }
 
   cancelHearing(): void {
-    console.log('emit cancel');
     this.cancelBooking.emit();
   }
 
   keepHearing(): void {
-    console.log('emit keep booking');
     this.keepBooking.emit();
   }
 }

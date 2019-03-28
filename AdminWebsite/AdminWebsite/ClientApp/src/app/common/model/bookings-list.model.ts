@@ -31,8 +31,8 @@ export class BookingsDetailsModel {
     this.LastEditBy = lastEditBy;
     this.LastEditDate = lastEditDate;
     this.Selected = false;
-    this.Cancelled = this.Status === 'Cancelled';
     this.Status = status;
+    this.Cancelled = this.Status === 'Cancelled';
   }
 
   HearingId: string;

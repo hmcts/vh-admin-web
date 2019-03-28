@@ -14,6 +14,7 @@ import { of } from 'rxjs';
 import { HearingModel } from '../../common/model/hearing.model';
 import { CaseModel } from '../../common/model/case.model';
 import { PageUrls } from '../../shared/page-url.constants';
+import { CancelBookingPopupComponent } from 'src/app/popups/cancel-booking-popup/cancel-booking-popup.component';
 
 let component: BookingDetailsComponent;
 let fixture: ComponentFixture<BookingDetailsComponent>;
@@ -25,7 +26,7 @@ export class BookingDetailsTestData {
   getBookingsDetailsModel() {
     return new BookingsDetailsModel('44', new Date('2019-11-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', '', '33A', 'Coronation Street',
-      'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'));
+      'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'), 'Booked');
   }
 
   getParticipants() {
@@ -102,7 +103,8 @@ describe('BookingDetailsComponent', () => {
       declarations: [
         BookingDetailsComponent,
         BookingParticipantListMockComponent,
-        HearingDetailsMockComponent
+        HearingDetailsMockComponent,
+        CancelBookingPopupComponent
       ],
       imports: [HttpClientModule],
       providers: [{ provide: VideoHearingsService, useValue: videoHearingServiceSpy },
