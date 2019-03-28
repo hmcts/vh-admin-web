@@ -11,6 +11,11 @@ namespace AdminWebsite.Models
     public class EditParticipantRequest
     {
         /// <summary>
+        ///     Participant Id.
+        /// </summary>
+        public Guid? Id { get; set; }
+
+        /// <summary>
         ///     Participant Title.
         /// </summary>
         public string Title { get; set; }
