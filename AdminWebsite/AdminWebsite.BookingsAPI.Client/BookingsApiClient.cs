@@ -2518,6 +2518,10 @@ namespace AdminWebsite.BookingsAPI.Client
         [Newtonsoft.Json.JsonProperty("cases", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.Collections.Generic.List<CaseRequest> Cases { get; set; }
     
+        /// <summary>User updated the hearing record</summary>
+        [Newtonsoft.Json.JsonProperty("updated_by", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Updated_by { get; set; }
+    
         public string ToJson() 
         {
             return Newtonsoft.Json.JsonConvert.SerializeObject(this);
