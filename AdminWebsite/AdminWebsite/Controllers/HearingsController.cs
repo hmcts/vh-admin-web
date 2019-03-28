@@ -72,7 +72,7 @@ namespace AdminWebsite.Controllers
         /// <param name="hearingId">The id of the hearing to update</param>
         /// <param name="editHearingRequest">Hearing Request object for edit operation</param>
         /// <returns>VideoHearingId</returns>
-        [HttpPut]
+        [HttpPut("{hearingId}")]
         [SwaggerOperation(OperationId = "EditHearing")]
         [ProducesResponseType(typeof(HearingDetailsResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
