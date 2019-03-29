@@ -79,9 +79,85 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult<HearingDetailsResponse>> EditHearing(Guid hearingId, [FromBody] EditHearingRequest editHearingRequest)
         {
+            //Validation
+            if (hearingId == Guid.Empty)
+            {
+                ModelState.AddModelError(nameof(hearingId), $"Please provide a valid {nameof(hearingId)}");
+                return BadRequest(ModelState);
+            }
+
+            if (editHearingRequest.Case == null)
+            {
+                ModelState.AddModelError(nameof(editHearingRequest.Case), $"Please provide valid case details");
+                return BadRequest(ModelState);
+            }
+
+            if (editHearingRequest.Participants?.Any() == false)
+            {
+                ModelState.AddModelError("Participants", $"Please provide at least one participant");
+                return BadRequest(ModelState);
+            }
+
+            var hearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
+            if (hearing == null)
+            {
+                return NotFound($"No hearing found for {hearingId}]");
+            }
+            
             try
             {
-                var response = await _bookingsApiClient.UpdateHearingDetailsAsync(hearingId, null);
+                //Save hearing details
+                var updateHearingRequest = new UpdateHearingRequest
+                {
+                    Hearing_room_name = editHearingRequest.HearingRoomName,
+                    Hearing_venue_name = editHearingRequest.HearingVenueName,
+                    Other_information = editHearingRequest.OtherInformation,
+                    Scheduled_date_time = editHearingRequest.ScheduledDateTime,
+                    Scheduled_duration = editHearingRequest.ScheduledDuration,
+                    Updated_by = User.Identity.Name,
+                    Cases = new List<CaseRequest>() {new CaseRequest {
+                                                            Name = editHearingRequest.Case.Name,
+                                                            Number = editHearingRequest.Case.Number }
+                                                    }
+                };
+                var response = await _bookingsApiClient.UpdateHearingDetailsAsync(hearingId, updateHearingRequest);
+
+                foreach (var participant in editHearingRequest.Participants)
+                {
+                    if(!participant.Id.HasValue)
+                    {
+                        //new record
+                    }
+                    else
+                    {
+                        var existingParticipant = hearing.Participants.FirstOrDefault(p => p.Id.Equals(participant.Id));
+                        if(existingParticipant == null)
+                        {
+                            //What do we do here ?
+                        }
+                        else
+                        {
+                            //Uodate here
+                        }
+                    }
+                }
+
+                //Delete the remaining participants
+
+                //Update existing participants
+                foreach (var participant in hearing.Participants)
+                {
+                    
+                }
+
+                
+
+                //Delete existing participants
+
+                //Add new participants
+
+
+
                 return Ok();
             }
             catch (BookingsApiException e)
