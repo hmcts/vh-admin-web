@@ -37,7 +37,7 @@ export class BookingPersistService {
           hearingUpdate.CreatedDate = new Date(hearing.created_date);
         }
         hearingUpdate.LastEditBy = hearing.updated_by;
-       
+
         if (this.isValidDate(hearing.updated_date)) {
           hearingUpdate.LastEditDate = new Date(hearing.updated_date);
         }

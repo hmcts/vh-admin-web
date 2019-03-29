@@ -1,4 +1,4 @@
-﻿<h2 class="govuk-heading-m remove-header-padding" id="bookingDetailsTitle">Booking details</h2>
+<h2 class="govuk-heading-m remove-header-padding" id="bookingDetailsTitle">Booking details</h2>
 <div class="govuk-panel govuk-panel--confirmation vh-panel" >
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-one-third">
@@ -9,7 +9,7 @@
                 <div class="govuk-hint vh-xsml" id="created-by"><strong>{{hearing?.CreatedBy}}</strong></div>
             </div>
             <div class="govuk-grid-row vh-b">
-                <div class="govuk-hint vh-xsml" id="created-date">{{hearing?.CreatedDate | date: "dd-MMM-yyyy',' HH:mm a"}}</div>
+              <div class="govuk-hint vh-xsml" id="created-date">{{hearing?.CreatedDate | date: 'dd MMM yyyy h:mm a'}}</div>
             </div>
         </div>
     </div>
@@ -22,7 +22,7 @@
                 <div class="govuk-hint vh-xsml" id="edit-by"><strong>{{hearing?.LastEditBy}}</strong></div>
             </div>
             <div class="govuk-grid-row">
-                <div class="govuk-hint vh-xsml" id="edit-date">{{hearing?.LastEditDate | date: "dd-MMM-yyyy',' HH:mm a"}}</div>
+                <div class="govuk-hint vh-xsml" id="edit-date">{{hearing?.LastEditDate | date: 'dd MMM yyyy h:mm a'}}</div>
             </div>
         </div>
     </div>
@@ -44,7 +44,7 @@
 <h2 class="govuk-heading-s remove-header-padding">Hearing schedule</h2>
 <div class="vh-section">
     <div class="govuk-grid-row vh-wrap">
-        <div class="govuk-body vh-sml" id="hearing-start">{{hearing?.StartTime | date:"EEEE dd MMMM yyyy ',' HH:mm a"}}</div>
+        <div class="govuk-body vh-sml" id="hearing-start">{{hearing?.StartTime | date:"EEEE dd MMMM yyyy ',' h:mm a"}}</div>
     </div>
     <div class="govuk-grid-row">
         <div class="govuk-body vh-sml" id="court-room-address">{{hearing?.CourtRoom}} {{hearing?.CourtAddress}}</div>
