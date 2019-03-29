@@ -200,9 +200,7 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
             this.router.navigate([PageUrls.BookingConfirmation]);
           },
           error => {
-            this.showWaitSaving = false;
-            this.showErrorSaving = true;
-            this.errors = error;
+            this.setError(error);
           }
         );
     }
@@ -214,10 +212,14 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
         this.showWaitSaving = false;
         this.router.navigate([PageUrls.BookingDetails]);
       }, error => {
-        this.showWaitSaving = false;
-        this.showErrorSaving = true;
-        this.errors = error;
+        this.setError(error);
       });
+  }
+
+  private setError(error) {
+    this.showWaitSaving = false;
+    this.showErrorSaving = true;
+    this.errors = error;
   }
 
   cancel(): void {

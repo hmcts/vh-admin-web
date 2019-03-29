@@ -16,6 +16,7 @@ import { ParticipantModel } from '../../common/model/participant.model';
 import { ParticipantsListStubComponent } from '../../testing/stubs/participant-list-stub';
 import { WaitPopupComponent } from '../../popups/wait-popup/wait-popup.component';
 import { SaveFailedPopupComponent } from 'src/app/popups/save-failed-popup/save-failed-popup.component';
+import { HearingDetailsResponse } from '../../services/clients/api-client';
 
 function initExistingHearingRequest(): HearingModel {
 
@@ -71,7 +72,7 @@ referenceDataServiceServiceSpy = jasmine.createSpyObj<ReferenceDataService>('Ref
 referenceDataServiceServiceSpy.getCourts.and.returnValue(of(MockValues.Courts));
 videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',
   ['getHearingMediums', 'getHearingTypes', 'getCurrentRequest',
-    'updateHearingRequest', 'saveHearing', 'cancelRequest']);
+    'updateHearingRequest', 'saveHearing', 'cancelRequest', 'updateHearing']);
 
 
 describe('SummaryComponent with valid request', () => {
@@ -85,6 +86,7 @@ describe('SummaryComponent with valid request', () => {
 
     videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
     videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
+    videoHearingsServiceSpy.saveHearing.and.returnValue(of(new HearingDetailsResponse()));
 
     TestBed.configureTestingModule({
       providers: [
@@ -157,6 +159,16 @@ describe('SummaryComponent with valid request', () => {
   it('should hide pop up that indicated process saving a booking', () => {
     expect(component.showWaitSaving).toBeFalsy();
   });
+  it('should save new booking', () => {
+    component.ngOnInit();
+    fixture.detectChanges();
+
+    component.bookHearing();
+    expect(component.bookingsSaving).toBeTruthy();
+    expect(component.showWaitSaving).toBeFalsy();
+    expect(routerSpy.navigate).toHaveBeenCalled();
+    expect(videoHearingsServiceSpy.saveHearing).toHaveBeenCalled();
+  });
 });
 
 describe('SummaryComponent  with invalid request', () => {
@@ -215,6 +227,7 @@ describe('SummaryComponent  with existing request', () => {
     existingRequest.hearing_id = '12345ty';
     videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
     videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
+    videoHearingsServiceSpy.updateHearing.and.returnValue(of(new HearingDetailsResponse()));
 
     TestBed.configureTestingModule({
       providers: [
@@ -245,8 +258,48 @@ describe('SummaryComponent  with existing request', () => {
 
   it('should indicate that the current booking is existing booking', () => {
     component.ngOnInit();
+    fixture.detectChanges();
     expect(component.isExistingBooking).toBeTruthy();
-   // expect(component.participantsListComponent).toBeTruthy();
   });
+  it('should retrieve hearing data', () => {
+    component.ngOnInit();
+    fixture.detectChanges();
+    expect(component.caseNumber).toBe('TX/12345/2018');
+    expect(component.caseName).toBe('Mr. Test User vs HMRC');
+    expect(videoHearingsServiceSpy.getHearingTypes).toHaveBeenCalled();
+    expect(component.caseHearingType).toBe('Application to Set Aside Judgement (SAJ)');
+    expect(referenceDataServiceServiceSpy.getCourts).toHaveBeenCalled();
+    expect(component.courtRoomAddress).toBeTruthy();
+    expect(component.hearingDuration).toBe('listed for 1 hour 20 minutes');
+  });
+  it('should hide pop up if continue booking pressed', () => {
+    component.continueBooking();
+    fixture.detectChanges();
+    expect(component.attemptingCancellation).toBeFalsy();
+  });
+  it('should show pop up if booking is canceling', () => {
+    component.confirmCancelBooking();
+    fixture.detectChanges();
+    expect(component.attemptingCancellation).toBeTruthy();
+  });
+  it('should hide pop up if booking is canceled', () => {
+    component.cancelBooking();
+    fixture.detectChanges();
+    expect(component.attemptingCancellation).toBeFalsy();
+    expect(videoHearingsServiceSpy.cancelRequest).toHaveBeenCalled();
+    expect(routerSpy.navigate).toHaveBeenCalled();
+  });
+  it('should update booking', () => {
+    component.ngOnInit();
+    fixture.detectChanges();
+
+    component.bookHearing();
+    expect(component.bookingsSaving).toBeTruthy();
+    expect(component.showWaitSaving).toBeFalsy();
+    expect(routerSpy.navigate).toHaveBeenCalled();
+
+    expect(videoHearingsServiceSpy.updateHearing).toHaveBeenCalled();
+  });
+
 });
 
