@@ -1,6 +1,6 @@
 <div *ngIf="!showDetails">
     <div *ngIf="recordsLoaded">
-        <div id="vh-table" class="vh-table" app-scrollable (scrollPosition)="scrollHandler($event)">
+        <div id="vh-table" class="vh-table" appScrollable (scrollPosition)="scrollHandler($event)">
 
             <div *ngFor="let booking of bookings; index as b">
                 <div class="govuk-grid-row vh-row">

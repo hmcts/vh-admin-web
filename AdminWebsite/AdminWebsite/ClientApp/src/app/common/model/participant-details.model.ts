@@ -31,6 +31,9 @@ export class ParticipantDetailsModel {
   // flag to indicate if participant is the last in the list and don't need decoration bottom line
   Flag: boolean;
 
+  // use to set unique id of the html element
+  IndexInList: number;
+
   get fullName(): string {
     let fullName = `${this.Title} ${this.FirstName} ${this.LastName}`;
     if (this.Title === 'Judge' &&

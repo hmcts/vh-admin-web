@@ -2,27 +2,27 @@
 <div class="govuk-panel govuk-panel--confirmation vh-panel" >
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-one-third">
-            <div class="govuk-hint vh-xsml">Created by:</div>
+            <div class="vh-xsml">Created by:</div>
         </div>
         <div class="govuk-grid-column-two-thirds vh-xsml">
             <div class="govuk-grid-row vh_panel-r" >
-                <div class="govuk-hint vh-xsml" id="created-by"><strong>{{hearing?.CreatedBy}}</strong></div>
+                <div class="vh-xsml" id="created-by"><strong>{{hearing?.CreatedBy}}</strong></div>
             </div>
             <div class="govuk-grid-row vh-b">
-              <div class="govuk-hint vh-xsml" id="created-date">{{hearing?.CreatedDate | date: 'dd MMM yyyy h:mm a'}}</div>
+              <div class="vh-xsml" id="created-date">{{hearing?.CreatedDate | date: 'dd MMM yyyy h:mm a'}}</div>
             </div>
         </div>
     </div>
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-one-third">
-            <span class="govuk-hint vh-xsml">Last edited by:</span>
+            <span class="vh-xsml">Last edited by:</span>
         </div>
         <div class="govuk-grid-column-two-thirds vh-xsml">
             <div class="govuk-grid-row vh_panel-r">
-                <div class="govuk-hint vh-xsml" id="edit-by"><strong>{{hearing?.LastEditBy}}</strong></div>
+                <div class="vh-xsml" id="edit-by"><strong>{{hearing?.LastEditBy}}</strong></div>
             </div>
             <div class="govuk-grid-row">
-                <div class="govuk-hint vh-xsml" id="edit-date">{{hearing?.LastEditDate | date: 'dd MMM yyyy h:mm a'}}</div>
+                <div class="vh-xsml" id="edit-date">{{hearing?.LastEditDate | date: 'dd MMM yyyy h:mm a'}}</div>
             </div>
         </div>
     </div>
