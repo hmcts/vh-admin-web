@@ -14,12 +14,14 @@ import { of } from 'rxjs';
 import { HearingModel } from '../../common/model/hearing.model';
 import { CaseModel } from '../../common/model/case.model';
 import { PageUrls } from '../../shared/page-url.constants';
+import { BookingPersistService } from '../../services/bookings-persist.service';
 
 let component: BookingDetailsComponent;
 let fixture: ComponentFixture<BookingDetailsComponent>;
 let videoHearingServiceSpy: jasmine.SpyObj<VideoHearingsService>;
 let routerSpy: jasmine.SpyObj<Router>;
 let bookingServiceSpy: jasmine.SpyObj<BookingService>;
+let bookingPersistServiceSpy: jasmine.SpyObj<BookingPersistService>;
 
 export class BookingDetailsTestData {
   getBookingsDetailsModel() {
@@ -93,10 +95,13 @@ describe('BookingDetailsComponent', () => {
   routerSpy = jasmine.createSpyObj('Router', ['navigate']);
   bookingServiceSpy = jasmine.createSpyObj('BookingService', ['setEditMode',
     'resetEditMode', 'setExistingCaseType', 'removeExistingCaseType']);
+  bookingPersistServiceSpy = jasmine.createSpyObj('BookingPersistService', ['selectedHearingId']);
 
   beforeEach(async(() => {
     videoHearingServiceSpy.getHearingById.and.returnValue(of(hearingResponse));
     videoHearingServiceSpy.mapHearingDetailsResponseToHearingModel.and.returnValue(hearingModel);
+
+    bookingPersistServiceSpy.selectedHearingId.and.returnValue('44');
 
     TestBed.configureTestingModule({
       declarations: [
@@ -108,7 +113,8 @@ describe('BookingDetailsComponent', () => {
       providers: [{ provide: VideoHearingsService, useValue: videoHearingServiceSpy },
       { provide: BookingDetailsService, useClass: BookingDetailsServiceMock },
       { provide: Router, useValue: routerSpy },
-      { provide: BookingService, useValue: bookingServiceSpy }
+        { provide: BookingService, useValue: bookingServiceSpy },
+        { provide: BookingPersistService, useValue: bookingPersistServiceSpy },
       ]
     }).compileComponents();
     fixture = TestBed.createComponent(BookingDetailsComponent);

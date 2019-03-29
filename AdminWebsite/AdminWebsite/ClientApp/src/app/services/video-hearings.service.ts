@@ -99,7 +99,7 @@ export class VideoHearingsService {
     hearing.hearing_room_name = booking.court_room;
     hearing.hearing_venue_name = booking.court_name;
     hearing.other_information = booking.other_information;
-    hearing.scheduled_date_time = booking.scheduled_date_time;
+    hearing.scheduled_date_time = new Date(booking.scheduled_date_time);
     hearing.scheduled_duration = booking.scheduled_duration;
     hearing.participants = this.mapParticipantModelToEditParticipantRequest(booking.participants);
     return hearing;
@@ -115,6 +115,7 @@ export class VideoHearingsService {
 
   mappingToEditParticipantRequest(participant: ParticipantModel): EditParticipantRequest {
     const editParticipant = new EditParticipantRequest();
+    editParticipant.id = participant.id;
     editParticipant.case_role_name = participant.case_role_name;
     editParticipant.contact_email = participant.email;
     editParticipant.display_name = participant.display_name;

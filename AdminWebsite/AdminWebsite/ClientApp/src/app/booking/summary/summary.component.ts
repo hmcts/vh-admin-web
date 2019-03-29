@@ -57,7 +57,7 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
     private router: Router,
     private referenceDataService: ReferenceDataService,
     private bookingService: BookingService
-    ) {
+  ) {
     this.attemptingCancellation = false;
     this.showErrorSaving = false;
   }
@@ -112,7 +112,7 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
   isLastParticipanRemoved() {
     const filteredParticipants = this.hearing.participants.filter(x => !x.is_judge);
     if (!filteredParticipants || filteredParticipants.length === 0) {
-      // the last participant was removed, go to add participant screen
+      // the last participant was removed, go to 'add participant' screen
       this.router.navigate([PageUrls.AddParticipants]);
     }
   }
@@ -154,7 +154,12 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
   }
 
   private getHearingDuration(duration: number): string {
-    return 'listed for ' + (duration === null ? 0 : duration) + ' minutes';
+    const hours = Math.floor(duration / 60);
+    const min = duration % 60;
+    const wordHours = hours > 1 ? 'hours' : 'hour';
+    const strHours = hours > 0 ? `${hours} ${wordHours}` : '';
+    const wordMin = min > 0 ? `${min} minutes` : '';
+    return `listed for ${strHours} ${wordMin}`.trim();
   }
 
   continueBooking() {
@@ -207,8 +212,6 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
     this.hearingService.updateHearing(this.hearing)
       .subscribe((hearingDetailsResponse: HearingDetailsResponse) => {
         this.showWaitSaving = false;
-        this.hearing = this.hearingService.mapHearingDetailsResponseToHearingModel(hearingDetailsResponse);
-        this.hearingService.updateHearingRequest(this.hearing);
         this.router.navigate([PageUrls.BookingDetails]);
       }, error => {
         this.showWaitSaving = false;

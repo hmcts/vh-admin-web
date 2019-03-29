@@ -23,7 +23,7 @@ export class BookingPersistService {
   updateBooking(hearing: HearingModel) {
     if (this._bookingList.length > this._selectedGroupIndex &&
       this._bookingList[this._selectedGroupIndex].BookingsDetails.length > this._selectedItemIndex) {
-      let hearingUpdate = this._bookingList[this._selectedGroupIndex].BookingsDetails[this.selectedItemIndex];
+      const hearingUpdate = this._bookingList[this._selectedGroupIndex].BookingsDetails[this.selectedItemIndex];
       if (hearingUpdate.HearingId === hearing.hearing_id) {
         hearingUpdate.HearingCaseName = hearing.cases && hearing.cases.length > 0 ? hearing.cases[0].name : '';
         hearingUpdate.HearingCaseNumber = hearing.cases && hearing.cases.length > 0 ? hearing.cases[0].number : '';
@@ -37,7 +37,7 @@ export class BookingPersistService {
           hearingUpdate.CreatedDate = new Date(hearing.created_date);
         }
         hearingUpdate.LastEditBy = hearing.updated_by;
-       
+
         if (this.isValidDate(hearing.updated_date)) {
           hearingUpdate.LastEditDate = new Date(hearing.updated_date);
         }

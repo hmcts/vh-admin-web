@@ -11,4 +11,7 @@ export class BookingEditStubComponent {
   get editLink() {
     return this._editLink;
   }
+
+  @Input()
+  elementId: string;
 }

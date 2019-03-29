@@ -1,5 +1,5 @@
-import { async, ComponentFixture, TestBed, fakeAsync, tick  } from '@angular/core/testing';
-import { Output, EventEmitter, Directive, Component, Input } from '@angular/core';
+import { async, ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { Output, EventEmitter, Directive, Component } from '@angular/core';
 import { BookingsListComponent } from './bookings-list.component';
 import { of, throwError } from 'rxjs';
 import { HttpClientModule } from '@angular/common/http';
@@ -7,6 +7,7 @@ import { BookingsModel } from '../../common/model/bookings.model';
 import { BookingsListService } from '../../services/bookings-list.service';
 import { BookingsListModel, BookingsDetailsModel } from '../../common/model/bookings-list.model';
 import { BookingsResponse, BookingsByDateResponse, BookingsHearingResponse } from '../../services/clients/api-client';
+import { Router } from '@angular/router';
 
 let component: BookingsListComponent;
 let fixture: ComponentFixture<BookingsListComponent>;
@@ -150,11 +151,9 @@ class ScrollableDirective {
   template: ''
 })
 class BookingDetailsComponent {
-  @Output()
-  closeDetails = new EventEmitter();
-  @Input()
-  hearingId: number;
 }
+
+let routerSpy: jasmine.SpyObj<Router>;
 
 describe('BookingsListComponent', () => {
   beforeEach(async(() => {
@@ -166,12 +165,14 @@ describe('BookingsListComponent', () => {
     const listModel = new ArrayBookingslistModelTestData().getTestData();
     bookingsListServiceSpy.mapBookingsResponse.and.returnValues(model1, model1, model1, model2);
     bookingsListServiceSpy.addBookings.and.returnValue(listModel);
+    routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
     TestBed.configureTestingModule({
       declarations: [BookingsListComponent, ScrollableDirective, BookingDetailsComponent],
       imports: [HttpClientModule],
       providers: [
         { provide: BookingsListService, useValue: bookingsListServiceSpy },
+        { provide: Router, useValue: routerSpy },
       ]
     }).compileComponents();
 
@@ -227,17 +228,5 @@ describe('BookingsListComponent', () => {
     component.rowSelected(1, 0);
     expect(component.selectedGroupIndex).toBe(1);
     expect(component.selectedItemIndex).toBe(0);
-    expect(component.showDetails).toBeTruthy();
   });
-  it('should hide booking details and show booking list', fakeAsync(() => {
-
-    component.selectedGroupIndex = 1;
-    component.selectedItemIndex = 0;
-    fixture.detectChanges();
-    component.closeHearingDetails();
-    tick(500);
-    fixture.whenStable().then(() => {
-      expect(component.showDetails).toBeFalsy();
-    });
-  }));
 });
