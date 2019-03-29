@@ -57,7 +57,7 @@ describe('BookingParticipantListComponent', () => {
     fixture.whenStable().then(
       () => {
         fixture.detectChanges();
-        const divElementRole = debugElement.queryAll(By.css('#participants-list'));
+        const divElementRole = debugElement.queryAll(By.css('#participants-list > div'));
         expect(divElementRole.length).toBeGreaterThan(0);
         expect(divElementRole.length).toBe(3);
         done();
@@ -95,7 +95,7 @@ describe('BookingParticipantListComponent', () => {
     fixture.whenStable().then(
       () => {
         fixture.detectChanges();
-        const divElementRole = debugElement.queryAll(By.css('#judges-list'));
+        const divElementRole = debugElement.queryAll(By.css('#judges-list > div'));
         expect(divElementRole.length).toBeGreaterThan(0);
         expect(divElementRole.length).toBe(2);
         done();
