@@ -27,7 +27,7 @@ namespace AdminWebsite.Controllers
         /// <summary>
         /// Instantiates the controller
         /// </summary>
-        public HearingsController(IBookingsApiClient bookingsApiClient, IUserIdentity userIdentity,  IUserApiClient userApiClient)
+        public HearingsController(IBookingsApiClient bookingsApiClient, IUserIdentity userIdentity, IUserApiClient userApiClient)
         {
             _bookingsApiClient = bookingsApiClient;
             _userIdentity = userIdentity;
@@ -54,6 +54,34 @@ namespace AdminWebsite.Controllers
 
                 var hearingDetailsResponse = await _bookingsApiClient.BookNewHearingAsync(hearingRequest);
                 return Created("", hearingDetailsResponse);
+            }
+            catch (BookingsApiException e)
+            {
+                if (e.StatusCode == (int)HttpStatusCode.BadRequest)
+                {
+                    return BadRequest(e.Response);
+                }
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Edit a hearing
+        /// </summary>
+        /// <param name="hearingId">The id of the hearing to update</param>
+        /// <param name="editHearingRequest">Hearing Request object for edit operation</param>
+        /// <returns>VideoHearingId</returns>
+        [HttpPut("{hearingId}")]
+        [SwaggerOperation(OperationId = "EditHearing")]
+        [ProducesResponseType(typeof(HearingDetailsResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<ActionResult<HearingDetailsResponse>> EditHearing(Guid hearingId, [FromBody] EditHearingRequest editHearingRequest)
+        {
+            try
+            {
+                var response = await _bookingsApiClient.UpdateHearingDetailsAsync(hearingId, null);
+                return Ok();
             }
             catch (BookingsApiException e)
             {
@@ -229,9 +257,9 @@ namespace AdminWebsite.Controllers
         /// <returns>Success status</returns>
         [HttpPatch("{hearingId}")]
         [SwaggerOperation(OperationId = "UpdateBookingStatus")]
-        [ProducesResponseType((int) HttpStatusCode.OK)]
-        [ProducesResponseType((int) HttpStatusCode.NotFound)]
-        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> UpdateBookingStatus(Guid hearingId)
         {
             try

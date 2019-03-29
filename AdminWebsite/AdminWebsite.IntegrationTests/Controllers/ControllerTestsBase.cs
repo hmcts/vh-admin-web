@@ -33,12 +33,8 @@ namespace AdminWebsite.IntegrationTests.Controllers
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            var integrationTestsPath = PlatformServices.Default.Application.ApplicationBasePath;
-            var applicationPath = Path.GetFullPath(Path.Combine(integrationTestsPath, "../../../../AdminWebsite"));
             var webHostBuilder =
                 WebHost.CreateDefaultBuilder()
-                    .UseContentRoot(applicationPath)
-                    .UseWebRoot(applicationPath)
                     .UseEnvironment("Development")
                     .UseKestrel(c => c.AddServerHeader = false)
                     .UseStartup<Startup>();

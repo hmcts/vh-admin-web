@@ -374,6 +374,85 @@ export class BHClient {
     }
 
     /**
+     * Edit a hearing
+     * @param hearingId The id of the hearing to update
+     * @param editHearingRequest (optional) Hearing Request object for edit operation
+     * @return Success
+     */
+    editHearing(hearingId: string, editHearingRequest: EditHearingRequest | null | undefined): Observable<HearingDetailsResponse> {
+        let url_ = this.baseUrl + "/api/hearings/{hearingId}";
+        if (hearingId === undefined || hearingId === null)
+            throw new Error("The parameter 'hearingId' must be defined.");
+        url_ = url_.replace("{hearingId}", encodeURIComponent("" + hearingId)); 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(editHearingRequest);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processEditHearing(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processEditHearing(<any>response_);
+                } catch (e) {
+                    return <Observable<HearingDetailsResponse>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<HearingDetailsResponse>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processEditHearing(response: HttpResponseBase): Observable<HearingDetailsResponse> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? HearingDetailsResponse.fromJS(resultData200) : new HearingDetailsResponse();
+            return _observableOf(result200);
+            }));
+        } else if (status === 404) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = resultData404 ? ProblemDetails.fromJS(resultData404) : new ProblemDetails();
+            return throwException("A server error occurred.", status, _responseText, _headers, result404);
+            }));
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = resultData400 ? ProblemDetails.fromJS(resultData400) : new ProblemDetails();
+            return throwException("A server error occurred.", status, _responseText, _headers, result400);
+            }));
+        } else if (status === 401) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("A server error occurred.", status, _responseText, _headers);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<HearingDetailsResponse>(<any>null);
+    }
+
+    /**
      * Update booking status
      * @param hearingId Id of the hearing to update the status for
      * @return Success
@@ -1895,6 +1974,240 @@ export interface IBookingsHearingResponse {
     last_edit_date?: Date | undefined;
     hearing_date?: Date | undefined;
     status?: BookingsHearingResponseStatus | undefined;
+}
+
+export class EditHearingRequest implements IEditHearingRequest {
+    /** The date and time for a hearing */
+    scheduled_date_time?: Date | undefined;
+    /** The duration of a hearing (number of minutes) */
+    scheduled_duration?: number | undefined;
+    /** The name of the hearing venue */
+    hearing_venue_name?: string | undefined;
+    /** The hearing room name at the hearing venue */
+    hearing_room_name?: string | undefined;
+    /** List of cases associated to the hearing */
+    case?: EditCaseRequest | undefined;
+    /** List of participants in hearing */
+    participants?: EditParticipantRequest[] | undefined;
+    /** Any other information about the hearing */
+    other_information?: string | undefined;
+
+    constructor(data?: IEditHearingRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.scheduled_date_time = data["scheduled_date_time"] ? new Date(data["scheduled_date_time"].toString()) : <any>undefined;
+            this.scheduled_duration = data["scheduled_duration"];
+            this.hearing_venue_name = data["hearing_venue_name"];
+            this.hearing_room_name = data["hearing_room_name"];
+            this.case = data["case"] ? EditCaseRequest.fromJS(data["case"]) : <any>undefined;
+            if (data["participants"] && data["participants"].constructor === Array) {
+                this.participants = [] as any;
+                for (let item of data["participants"])
+                    this.participants!.push(EditParticipantRequest.fromJS(item));
+            }
+            this.other_information = data["other_information"];
+        }
+    }
+
+    static fromJS(data: any): EditHearingRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new EditHearingRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["scheduled_date_time"] = this.scheduled_date_time ? this.scheduled_date_time.toISOString() : <any>undefined;
+        data["scheduled_duration"] = this.scheduled_duration;
+        data["hearing_venue_name"] = this.hearing_venue_name;
+        data["hearing_room_name"] = this.hearing_room_name;
+        data["case"] = this.case ? this.case.toJSON() : <any>undefined;
+        if (this.participants && this.participants.constructor === Array) {
+            data["participants"] = [];
+            for (let item of this.participants)
+                data["participants"].push(item.toJSON());
+        }
+        data["other_information"] = this.other_information;
+        return data; 
+    }
+}
+
+export interface IEditHearingRequest {
+    /** The date and time for a hearing */
+    scheduled_date_time?: Date | undefined;
+    /** The duration of a hearing (number of minutes) */
+    scheduled_duration?: number | undefined;
+    /** The name of the hearing venue */
+    hearing_venue_name?: string | undefined;
+    /** The hearing room name at the hearing venue */
+    hearing_room_name?: string | undefined;
+    /** List of cases associated to the hearing */
+    case?: EditCaseRequest | undefined;
+    /** List of participants in hearing */
+    participants?: EditParticipantRequest[] | undefined;
+    /** Any other information about the hearing */
+    other_information?: string | undefined;
+}
+
+/** Case request */
+export class EditCaseRequest implements IEditCaseRequest {
+    /** The case number */
+    number?: string | undefined;
+    /** The case name */
+    name?: string | undefined;
+
+    constructor(data?: IEditCaseRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.number = data["number"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): EditCaseRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new EditCaseRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["number"] = this.number;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+/** Case request */
+export interface IEditCaseRequest {
+    /** The case number */
+    number?: string | undefined;
+    /** The case name */
+    name?: string | undefined;
+}
+
+/** Participant request */
+export class EditParticipantRequest implements IEditParticipantRequest {
+    /** Participant Id. */
+    id?: string | undefined;
+    /** Participant Title. */
+    title?: string | undefined;
+    /** Participant first name. */
+    first_name?: string | undefined;
+    /** Participant middle name. */
+    middle_names?: string | undefined;
+    /** Participant last name. */
+    last_name?: string | undefined;
+    /** Participant Contact Email */
+    contact_email?: string | undefined;
+    /** Participant Telephone number */
+    telephone_number?: string | undefined;
+    /** Participant Display Name */
+    display_name?: string | undefined;
+    /** The name of the participant's case role */
+    case_role_name?: string | undefined;
+    /** The name of the participant's hearing role */
+    hearing_role_name?: string | undefined;
+    /** The solicitor's reference for a participant */
+    solicitors_reference?: string | undefined;
+    /** The representee of a representative */
+    representee?: string | undefined;
+
+    constructor(data?: IEditParticipantRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.title = data["title"];
+            this.first_name = data["first_name"];
+            this.middle_names = data["middle_names"];
+            this.last_name = data["last_name"];
+            this.contact_email = data["contact_email"];
+            this.telephone_number = data["telephone_number"];
+            this.display_name = data["display_name"];
+            this.case_role_name = data["case_role_name"];
+            this.hearing_role_name = data["hearing_role_name"];
+            this.solicitors_reference = data["solicitors_reference"];
+            this.representee = data["representee"];
+        }
+    }
+
+    static fromJS(data: any): EditParticipantRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new EditParticipantRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["title"] = this.title;
+        data["first_name"] = this.first_name;
+        data["middle_names"] = this.middle_names;
+        data["last_name"] = this.last_name;
+        data["contact_email"] = this.contact_email;
+        data["telephone_number"] = this.telephone_number;
+        data["display_name"] = this.display_name;
+        data["case_role_name"] = this.case_role_name;
+        data["hearing_role_name"] = this.hearing_role_name;
+        data["solicitors_reference"] = this.solicitors_reference;
+        data["representee"] = this.representee;
+        return data; 
+    }
+}
+
+/** Participant request */
+export interface IEditParticipantRequest {
+    /** Participant Id. */
+    id?: string | undefined;
+    /** Participant Title. */
+    title?: string | undefined;
+    /** Participant first name. */
+    first_name?: string | undefined;
+    /** Participant middle name. */
+    middle_names?: string | undefined;
+    /** Participant last name. */
+    last_name?: string | undefined;
+    /** Participant Contact Email */
+    contact_email?: string | undefined;
+    /** Participant Telephone number */
+    telephone_number?: string | undefined;
+    /** Participant Display Name */
+    display_name?: string | undefined;
+    /** The name of the participant's case role */
+    case_role_name?: string | undefined;
+    /** The name of the participant's hearing role */
+    hearing_role_name?: string | undefined;
+    /** The solicitor's reference for a participant */
+    solicitors_reference?: string | undefined;
+    /** The representee of a representative */
+    representee?: string | undefined;
 }
 
 /** Defines a type of hearing based on case */

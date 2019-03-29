@@ -20,6 +20,8 @@ export class ParticipantsListComponent implements OnInit {
   isSummaryPage = false;
   isEditRemoveVisible = true;
 
+  isEditMode = false;
+
   constructor(private bookingService: BookingService, private router: Router) {
     this.$selectedForEdit = new EventEmitter<string>();
     this.$selectedForRemove = new EventEmitter<string>();

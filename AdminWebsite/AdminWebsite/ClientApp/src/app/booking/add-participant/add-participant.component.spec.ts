@@ -674,5 +674,4 @@ describe('AddParticipantComponent edit mode no participants added', () => {
     expect(component.displayAddButton).toBeTruthy();
     expect(component.displayUpdateButton).toBeFalsy();
   });
-
 });

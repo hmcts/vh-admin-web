@@ -23,4 +23,7 @@ export class HearingModel {
   hearing_type_name?: string | undefined;
   court_id?: number | undefined;
   court_name?: string | undefined;
+  created_date?: Date | undefined;
+  updated_by?: string | undefined;
+  updated_date: Date | undefined;
 }

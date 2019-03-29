@@ -1,5 +1,5 @@
 <div id="roundedborder">
-  <h3 class="govuk-heading-m">Participants added</h3>
+  <h3 class="govuk-heading-m">{{isEditMode ? 'Participants' : 'Participants added'}}</h3>
   <div class="vhtable" id="participants-list">
 
     <div *ngFor="let pat of participants">

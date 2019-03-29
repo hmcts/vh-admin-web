@@ -9,5 +9,7 @@ export let PageUrls = {
   AddParticipants: '/add-participants',
   OtherInformation: '/other-information',
   Summary: '/summary',
-  BookingConfirmation: '/booking-confirmation'
+  BookingConfirmation: '/booking-confirmation',
+  BookingsList: '/bookings-list',
+  BookingDetails: '/booking-details',
 };

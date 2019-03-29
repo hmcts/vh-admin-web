@@ -18,7 +18,7 @@
                         <div class="govuk-grid-column-one-quarter">
 
                             <div class="vh-sml vh-col">{{detail.StartTime |date:'shortTime'}}</div>
-                            <div class="govuk-hint vh-sml vh-col">listed for {{detail.Duration}} minutes</div>
+                            <div class="govuk-hint vh-sml vh-col">listed for {{detail.DurationInHoursAndMinutes}} </div>
                             <div *ngIf="detail.Cancelled" class="vh-cancelledBooking">{{detail.Status}}</div>
                         </div>
                         <div class="govuk-grid-column-one-quarter">
@@ -85,7 +85,7 @@
     <div class="govuk-grid-row">
         <div *ngIf="error">
             <div class="govuk-grid-column-full vh-loader-container">
-                <p class="govuk-body-m">An error has occured, please try again later or contact your administrator</p>
+                <p class="govuk-body-m">An error has occurred, please try again later or contact your administrator</p>
             </div>
         </div>
     </div>
@@ -97,7 +97,4 @@
             </div>
         </div>
     </div>
-</div>
-<div *ngIf="showDetails">
-    <app-booking-details (closeDetails)="closeHearingDetails()" [hearingId]="selectedHearingId"></app-booking-details>
 </div>

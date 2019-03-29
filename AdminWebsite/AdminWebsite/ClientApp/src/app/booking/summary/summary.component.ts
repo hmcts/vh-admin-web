@@ -45,6 +45,7 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
   showWaitSaving = false;
   showErrorSaving: boolean;
   private newHearingSessionKey = 'newHearingId';
+  isExistingBooking = false;
 
   @ViewChild(ParticipantsListComponent)
   participantsListComponent: ParticipantsListComponent;
@@ -55,7 +56,8 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
   constructor(private hearingService: VideoHearingsService,
     private router: Router,
     private referenceDataService: ReferenceDataService,
-    private bookingService: BookingService) {
+    private bookingService: BookingService
+  ) {
     this.attemptingCancellation = false;
     this.showErrorSaving = false;
   }
@@ -64,6 +66,7 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
     this.checkForExistingRequest();
     this.retrieveHearingSummary();
     if (this.participantsListComponent) {
+      this.participantsListComponent.isEditMode = this.isExistingBooking;
       this.participantsListComponent.selectedParticipantToRemove.subscribe((participantEmail) => {
         this.selectedParticipantEmail = participantEmail;
         this.confirmRemoveParticipant();
@@ -73,6 +76,7 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
 
   private checkForExistingRequest() {
     this.hearing = this.hearingService.getCurrentRequest();
+    this.isExistingBooking = this.hearing.hearing_id && this.hearing.hearing_id.length > 0;
   }
 
   private confirmRemoveParticipant() {
@@ -108,7 +112,7 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
   isLastParticipanRemoved() {
     const filteredParticipants = this.hearing.participants.filter(x => !x.is_judge);
     if (!filteredParticipants || filteredParticipants.length === 0) {
-      // the last participant was removed, go to add participant screen
+      // the last participant was removed, go to 'add participant' screen
       this.router.navigate([PageUrls.AddParticipants]);
     }
   }
@@ -150,7 +154,12 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
   }
 
   private getHearingDuration(duration: number): string {
-    return 'listed for ' + (duration === null ? 0 : duration) + ' minutes';
+    const hours = Math.floor(duration / 60);
+    const min = duration % 60;
+    const wordHours = hours > 1 ? 'hours' : 'hour';
+    const strHours = hours > 0 ? `${hours} ${wordHours}` : '';
+    const wordMin = min > 0 ? `${min} minutes` : '';
+    return `listed for ${strHours} ${wordMin}`.trim();
   }
 
   continueBooking() {
@@ -164,7 +173,11 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
   cancelBooking() {
     this.attemptingCancellation = false;
     this.hearingService.cancelRequest();
-    this.router.navigate([PageUrls.Dashboard]);
+    if (this.isExistingBooking) {
+      this.router.navigate([PageUrls.BookingDetails]);
+    } else {
+      this.router.navigate([PageUrls.Dashboard]);
+    }
   }
 
   hasChanges(): Observable<boolean> | boolean {
@@ -175,20 +188,36 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
     this.bookingsSaving = true;
     this.showWaitSaving = true;
     this.showErrorSaving = false;
-    this.hearingService.saveHearing(this.hearing)
-      .subscribe(
-        (hearingDetailsResponse: HearingDetailsResponse) => {
-          sessionStorage.setItem(this.newHearingSessionKey, hearingDetailsResponse.id);
-          this.hearingService.cancelRequest();
-          this.showWaitSaving = false;
-          this.router.navigate([PageUrls.BookingConfirmation]);
-        },
-        error => {
-          this.showWaitSaving = false;
-          this.showErrorSaving = true;
-          this.errors = error;
-        }
-      );
+    if (this.hearing.hearing_id && this.hearing.hearing_id.length > 0) {
+      this.updateHearing();
+    } else {
+      this.hearingService.saveHearing(this.hearing)
+        .subscribe(
+          (hearingDetailsResponse: HearingDetailsResponse) => {
+            sessionStorage.setItem(this.newHearingSessionKey, hearingDetailsResponse.id);
+            this.hearingService.cancelRequest();
+            this.showWaitSaving = false;
+            this.router.navigate([PageUrls.BookingConfirmation]);
+          },
+          error => {
+            this.showWaitSaving = false;
+            this.showErrorSaving = true;
+            this.errors = error;
+          }
+        );
+    }
+  }
+
+  updateHearing() {
+    this.hearingService.updateHearing(this.hearing)
+      .subscribe((hearingDetailsResponse: HearingDetailsResponse) => {
+        this.showWaitSaving = false;
+        this.router.navigate([PageUrls.BookingDetails]);
+      }, error => {
+        this.showWaitSaving = false;
+        this.showErrorSaving = true;
+        this.errors = error;
+      });
   }
 
   cancel(): void {
