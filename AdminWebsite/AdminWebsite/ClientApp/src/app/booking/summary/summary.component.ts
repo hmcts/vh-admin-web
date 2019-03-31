@@ -146,7 +146,7 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
           const selectedCourt = data.filter(c => c.id === venueId);
           if (selectedCourt && selectedCourt.length > 0) {
             this.courtRoomAddress = `${selectedCourt[0].name} ${this.hearing.court_room}`;
-            this.hearing.court_name = selectedCourt ? selectedCourt[0].name : '';
+            this.hearing.court_name = selectedCourt[0].name;
           }
         },
         error => console.error(error)

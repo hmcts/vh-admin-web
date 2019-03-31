@@ -162,15 +162,15 @@ namespace AdminWebsite.Controllers
                     else
                     {
                         var existingParticipant = hearing.Participants.FirstOrDefault(p => p.Id.Equals(participant.Id));
-                        if(existingParticipant == null)
-                        {
-                            //Log in the application insights
-                            //What do we do here ?
-                        }
-                        else
-                        {
-                            //Update here
-                        }
+                        // if(existingParticipant == null)
+                         
+                        //    //Log in the application insights
+                        //    //What do we do here ?
+                        // }
+                        // else
+                        // {
+                        //    //Update here
+                        // }
                     }
                 }
 
@@ -184,9 +184,9 @@ namespace AdminWebsite.Controllers
                 }
 
                 
-                //Delete the remaining participants
+                // Delete the remaining participants
                 
-                //Delete existing participants
+                // Delete existing participants
 
                 
 
