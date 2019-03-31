@@ -92,7 +92,7 @@ class BookingDetailsServiceMock {
 
 describe('BookingDetailsComponent', () => {
   videoHearingServiceSpy = jasmine.createSpyObj('VodeoHearingService',
-    ['getHearingById', 'saveHearing', 'mapHearingDetailsResponseToHearingModel', 'updateHearingRequest']);
+    ['getHearingById', 'saveHearing', 'mapHearingDetailsResponseToHearingModel', 'updateHearingRequest', 'updateBookingStatus']);
   routerSpy = jasmine.createSpyObj('Router', ['navigate']);
   bookingServiceSpy = jasmine.createSpyObj('BookingService', ['setEditMode',
     'resetEditMode', 'setExistingCaseType', 'removeExistingCaseType']);
@@ -101,6 +101,7 @@ describe('BookingDetailsComponent', () => {
   beforeEach(async(() => {
     videoHearingServiceSpy.getHearingById.and.returnValue(of(hearingResponse));
     videoHearingServiceSpy.mapHearingDetailsResponseToHearingModel.and.returnValue(hearingModel);
+    videoHearingServiceSpy.updateBookingStatus.and.callThrough();
 
     bookingPersistServiceSpy.selectedHearingId.and.returnValue('44');
 
@@ -115,8 +116,8 @@ describe('BookingDetailsComponent', () => {
       providers: [{ provide: VideoHearingsService, useValue: videoHearingServiceSpy },
       { provide: BookingDetailsService, useClass: BookingDetailsServiceMock },
       { provide: Router, useValue: routerSpy },
-        { provide: BookingService, useValue: bookingServiceSpy },
-        { provide: BookingPersistService, useValue: bookingPersistServiceSpy },
+      { provide: BookingService, useValue: bookingServiceSpy },
+      { provide: BookingPersistService, useValue: bookingPersistServiceSpy },
       ]
     }).compileComponents();
     fixture = TestBed.createComponent(BookingDetailsComponent);
@@ -167,6 +168,23 @@ describe('BookingDetailsComponent', () => {
     expect(videoHearingServiceSpy.updateHearingRequest).toHaveBeenCalled();
     expect(bookingServiceSpy.resetEditMode).toHaveBeenCalled();
     expect(routerSpy.navigate).toHaveBeenCalledWith([PageUrls.Summary]);
+  });
+  it('should cancel booking', () => {
+    component.ngOnInit();
+    fixture.detectChanges();
+    component.cancelBooking();
+    // expect(component.cancelBooking).toBeFalsy();
+    // expect(videoHearingServiceSpy.updateBookingStatus).toHaveBeenCalled();
+  });
+  it('should show pop up if the cancel button was clicked', () => {
+    component.cancelHearing();
+    fixture.detectChanges();
+    expect(component.showCancelBooking).toBeTruthy();
+  });
+  it('should hide pop up if the keep booking button was clicked', () => {
+    component.keepBooking();
+    fixture.detectChanges();
+    expect(component.showCancelBooking).toBeFalsy();
   });
 });
 

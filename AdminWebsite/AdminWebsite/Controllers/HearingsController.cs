@@ -49,7 +49,12 @@ namespace AdminWebsite.Controllers
             {
                 if (hearingRequest.Participants != null)
                 {
-                    hearingRequest.Participants = await UpdateParticipantsUsername(hearingRequest.Participants);
+                    foreach (var participant in hearingRequest.Participants)
+                    {
+                        if (participant.Case_role_name == "Judge") continue;
+
+                        await UpdateParticipantUsername(participant);
+                    }
                 }
 
                 var hearingDetailsResponse = await _bookingsApiClient.BookNewHearingAsync(hearingRequest);
@@ -121,41 +126,68 @@ namespace AdminWebsite.Controllers
                 };
                 var response = await _bookingsApiClient.UpdateHearingDetailsAsync(hearingId, updateHearingRequest);
 
+                var newParticipantList = new List<ParticipantRequest>();
+
                 foreach (var participant in editHearingRequest.Participants)
                 {
                     if(!participant.Id.HasValue)
                     {
-                        //new record
+                        //Add a new participant
+
+                        //Map the request except the username
+                        var newParticipant = new ParticipantRequest()
+                        {
+                            Case_role_name = participant.CaseRoleName,
+                            Contact_email = participant.ContactEmail,
+                            Display_name = participant.DisplayName,
+                            First_name = participant.FirstName,
+                            Last_name = participant.LastName,
+                            Hearing_role_name = participant.HearingRoleName,
+                            Middle_names = participant.MiddleNames,
+                            Representee = participant.Representee,
+                            Solicitors_reference = participant.SolicitorsReference,
+                            Telephone_number = participant.TelephoneNumber,
+                            Title = participant.Title
+                        };
+                        
+                        //Judge is manually created in AD, no need to create one
+                        if (participant.CaseRoleName != "Judge")
+                        {
+                            //Update the request with newly created user details in AD
+                            await UpdateParticipantUsername(newParticipant);
+                        }
+                        newParticipantList.Add(newParticipant);
                     }
                     else
                     {
                         var existingParticipant = hearing.Participants.FirstOrDefault(p => p.Id.Equals(participant.Id));
-                        if(existingParticipant == null)
-                        {
-                            //What do we do here ?
-                        }
-                        else
-                        {
-                            //Uodate here
-                        }
+                        // if(existingParticipant == null)
+                         
+                        //    //Log in the application insights
+                        //    //What do we do here ?
+                        // }
+                        // else
+                        // {
+                        //    //Update here
+                        // }
                     }
                 }
 
-                //Delete the remaining participants
-
-                //Update existing participants
-                foreach (var participant in hearing.Participants)
+                //Add new participants
+                if (newParticipantList.Any())
                 {
-                    
+                    _bookingsApiClient.AddParticipantsToHearing(hearingId, new AddParticipantsToHearingRequest()
+                    {
+                        Participants = newParticipantList
+                    });
                 }
 
                 
+                // Delete the remaining participants
+                
+                // Delete existing participants
 
-                //Delete existing participants
-
-                //Add new participants
-
-
+                
 
                 return Ok();
             }
@@ -248,28 +280,7 @@ namespace AdminWebsite.Controllers
                 if (userProfile == null)
                 {
                     // create the user in AD.
-                    var createdNewUser = await CreateNewUserInAD(participant);
-                    if (createdNewUser != null)
-                    {
-                        participant.Username = createdNewUser.Username;
-                    // Add user to user group.
-                    var addUserToGroupRequest = new AddUserToGroupRequest()
-                    {
-                        User_id = createdNewUser.User_id,
-                        Group_name = "External"
-                    };
-                    await _userApiClient.AddUserToGroupAsync(addUserToGroupRequest);
-
-                    if (participant.Hearing_role_name == "Solicitor")
-                        {
-                            addUserToGroupRequest = new AddUserToGroupRequest()
-                            {
-                                User_id = createdNewUser.User_id,
-                                Group_name = "VirtualRoomProfessionalUser"
-                            };
-                            await _userApiClient.AddUserToGroupAsync(addUserToGroupRequest);
-                        }
-                    }
+                    await CreateNewUserInAD(participant);
                 }
                 else
                 {
@@ -277,6 +288,22 @@ namespace AdminWebsite.Controllers
                 }
             }
             return participants;
+        }
+
+        private async Task<ParticipantRequest> UpdateParticipantUsername(ParticipantRequest participant)
+        {
+            //// create user in AD if users email does not exist in AD.
+            var userProfile = await CheckUserExistsInAD(participant.Contact_email);
+            if (userProfile == null)
+            {
+                // create the user in AD.
+                await CreateNewUserInAD(participant);
+            }
+            else
+            {
+                participant.Username = userProfile.User_name;
+            }
+            return participant;
         }
 
         private async Task<UserProfile> CheckUserExistsInAD(string emailAddress)
@@ -304,6 +331,27 @@ namespace AdminWebsite.Controllers
                 Recovery_email = participant.Contact_email
             };
             var newUserResponse = await _userApiClient.CreateUserAsync(createUserRequest);
+            if (newUserResponse != null)
+            {
+                participant.Username = newUserResponse.Username;
+                // Add user to user group.
+                var addUserToGroupRequest = new AddUserToGroupRequest()
+                {
+                    User_id = newUserResponse.User_id,
+                    Group_name = "External"
+                };
+                await _userApiClient.AddUserToGroupAsync(addUserToGroupRequest);
+
+                if (participant.Hearing_role_name == "Solicitor")
+                {
+                    addUserToGroupRequest = new AddUserToGroupRequest()
+                    {
+                        User_id = newUserResponse.User_id,
+                        Group_name = "VirtualRoomProfessionalUser"
+                    };
+                    await _userApiClient.AddUserToGroupAsync(addUserToGroupRequest);
+                }
+            }
             return newUserResponse;
         }
 

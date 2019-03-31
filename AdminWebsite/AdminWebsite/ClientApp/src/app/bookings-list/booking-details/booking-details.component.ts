@@ -34,7 +34,7 @@ export class BookingDetailsComponent implements OnInit {
     private userIdentityService: UserIdentityService,
     private router: Router,
     private bookingService: BookingService,
-    private bookingPersistService: BookingPersistService) { 
+    private bookingPersistService: BookingPersistService) {
     this.showCancelBooking = false;
   }
 
