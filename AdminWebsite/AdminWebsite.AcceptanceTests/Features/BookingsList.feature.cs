@@ -18,8 +18,8 @@ namespace AdminWebsite.AcceptanceTests.Features
     [System.CodeDom.Compiler.GeneratedCodeAttribute("TechTalk.SpecFlow", "3.0.0.0")]
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [NUnit.Framework.TestFixtureAttribute()]
-    [NUnit.Framework.DescriptionAttribute("Changes to VH Officer/Case Admin Booking details view")]
-    public partial class ChangesToVHOfficerCaseAdminBookingDetailsViewFeature
+    [NUnit.Framework.DescriptionAttribute("VH Officer/Case Admin Booking details")]
+    public partial class VHOfficerCaseAdminBookingDetailsFeature
     {
         
         private TechTalk.SpecFlow.ITestRunner testRunner;
@@ -31,8 +31,9 @@ namespace AdminWebsite.AcceptanceTests.Features
         public virtual void FeatureSetup()
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
-            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Changes to VH Officer/Case Admin Booking details view", "As a VH Officer\r\nI want to view the details of a video hearing booking\r\nSo that I" +
-                    " can see if they are correct, up to date etc", ProgrammingLanguage.CSharp, ((string[])(null)));
+            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "VH Officer/Case Admin Booking details", "As a VH Officer/Case Admin\r\nI want to view or amend the details of a video hearin" +
+                    "g booking\r\nSo that I can ensure any changes in details can be reflected in the V" +
+                    "H system", ProgrammingLanguage.CSharp, ((string[])(null)));
             testRunner.OnFeatureStart(featureInfo);
         }
         
@@ -77,13 +78,23 @@ namespace AdminWebsite.AcceptanceTests.Features
         public virtual void AdminOfficerViewsBookingDetails(string user, string[] exampleTags)
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Admin officer views booking details", null, exampleTags);
-#line 7
+#line 6
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
-#line 8
+#line 7
  testRunner.Given("Admin user is on microsoft login page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 9
+#line 8
  testRunner.And(string.Format("{0} logs into Vh-Admin website", user), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 9
+ testRunner.And("user is on Summary page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 10
+ testRunner.When("user submit booking", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 11
+ testRunner.And("hearing is booked", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 12
+ testRunner.And("admin user returns to dashboard", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 13
+ testRunner.Then("admin user can view booking list", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
         }
