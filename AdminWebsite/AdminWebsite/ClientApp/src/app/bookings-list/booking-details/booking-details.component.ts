@@ -38,7 +38,9 @@ export class BookingDetailsComponent implements OnInit {
     if (this.hearingId) {
       this.videoHearingService.getHearingById(this.hearingId).subscribe(data => {
         this.mapHearing(data);
+        // mapping to Hearing model for edit on summary page
         this.booking = this.videoHearingService.mapHearingDetailsResponseToHearingModel(data);
+        this.setBookingInStorage();
       });
     }
     this.userIdentityService.getUserInformation().pipe(map(userProfile => {
@@ -63,10 +65,13 @@ export class BookingDetailsComponent implements OnInit {
     this.router.navigate([PageUrls.BookingsList]);
   }
 
-  editHearing() {
+  setBookingInStorage() {
     this.bookingService.resetEditMode();
     this.bookingService.setExistingCaseType(this.booking.case_type);
     this.videoHearingService.updateHearingRequest(this.booking);
+  }
+
+  editHearing() {
     this.router.navigate([PageUrls.Summary]);
   }
 }

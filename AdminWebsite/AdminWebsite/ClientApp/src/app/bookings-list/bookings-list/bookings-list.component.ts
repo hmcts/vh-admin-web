@@ -7,7 +7,7 @@ import { BookingPersistService } from '../../services/bookings-persist.service';
 import { BookingsModel } from '../../common/model/bookings.model';
 import { Router } from '@angular/router';
 import { PageUrls } from '../../shared/page-url.constants';
-import {VideoHearingsService } from '../../services/video-hearings.service';
+import { VideoHearingsService } from '../../services/video-hearings.service';
 
 @Component({
   selector: 'app-bookings-list',
@@ -39,10 +39,8 @@ export class BookingsListComponent implements OnInit, AfterViewInit {
     if (this.bookingPersistService.bookingList.length > 0) {
       this.cursor = this.bookingPersistService.nextCursor;
       const editHearing = this.videoHearingService.getCurrentRequest();
-      if (editHearing.hearing_id === this.bookingPersistService.selectedHearingId) {
-        this.bookingPersistService.updateBooking(editHearing);
-        this.videoHearingService.cancelRequest();
-      }
+      this.bookingPersistService.updateBooking(editHearing);
+      this.videoHearingService.cancelRequest();
       this.bookings = this.bookingPersistService.bookingList;
       this.loaded = true;
       this.recordsLoaded = true;
@@ -102,6 +100,7 @@ export class BookingsListComponent implements OnInit, AfterViewInit {
 
   rowSelected(groupByDate, indexHearing) {
     this.setSelectedRow(groupByDate, indexHearing);
+    this.videoHearingService.cancelRequest();
     this.persistInformation();
     this.router.navigate([PageUrls.BookingDetails]);
   }
@@ -121,6 +120,7 @@ export class BookingsListComponent implements OnInit, AfterViewInit {
     this.bookingPersistService.nextCursor = this.cursor;
     this.bookingPersistService.selectedGroupIndex = this.selectedGroupIndex;
     this.bookingPersistService.selectedItemIndex = this.selectedItemIndex;
+    // hearing id is stored in session storage
     this.bookingPersistService.selectedHearingId = this.selectedHearingId;
   }
 

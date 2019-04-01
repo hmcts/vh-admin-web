@@ -1,7 +1,6 @@
 
-<div *ngIf="!showDetails">
     <div *ngIf="recordsLoaded">
-        <div id="vh-table" class="vh-table" app-scrollable (scrollPosition)="scrollHandler($event)">
+        <div id="vh-table" class="vh-table" appScrollable (scrollPosition)="scrollHandler($event)">
 
             <div *ngFor="let booking of bookings; index as b">
                 <div class="govuk-grid-row vh-row">
@@ -19,7 +18,7 @@
                         <div class="govuk-grid-column-one-quarter">
 
                             <div class="vh-sml vh-col">{{detail.StartTime |date:'shortTime'}}</div>
-                            <div class="govuk-hint vh-sml vh-col">listed for {{detail.Duration}} minutes</div>
+                            <div class="govuk-hint vh-sml vh-col">listed for {{detail.DurationInHoursAndMinutes}} </div>
                         </div>
                         <div class="govuk-grid-column-one-quarter">
 
@@ -85,7 +84,7 @@
     <div class="govuk-grid-row">
         <div *ngIf="error">
             <div class="govuk-grid-column-full vh-loader-container">
-                <p class="govuk-body-m">An error has occured, please try again later or contact your administrator</p>
+                <p class="govuk-body-m">An error has occurred, please try again later or contact your administrator</p>
             </div>
         </div>
     </div>
@@ -97,4 +96,3 @@
             </div>
         </div>
     </div>
-</div>

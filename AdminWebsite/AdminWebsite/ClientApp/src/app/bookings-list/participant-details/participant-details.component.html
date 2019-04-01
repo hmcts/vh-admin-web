@@ -1,11 +1,11 @@
 <div class="govuk-grid-row vh-row">
   <div class="govuk-grid-column-full">
     {{participant?.fullName}}
-    <div id="participant_role" class="govuk-hint">
+    <div [attr.id]="'participant_role' + participant?.IndexInList" class="govuk-hint">
       {{participant?.HearingRoleName}}
     </div>
     <div *ngIf="!vh_officer_admin">
-      <div class="govuk-grid-row" id="participant_userName">
+      <div class="govuk-grid-row" [attr.id]="'participant_userName' + participant?.IndexInList">
         <div class="govuk-grid-column-one-third">
           User name:
         </div>
@@ -14,7 +14,7 @@
         </div>
       </div>
 
-      <div class="govuk-grid-row" id="participant_email">
+      <div class="govuk-grid-row" [attr.id]="'participant_email' + participant?.IndexInList">
         <div class="govuk-grid-column-one-third">
           Email:
         </div>
@@ -26,6 +26,6 @@
   </div>
 </div>
 <div class="govuk-grid-row vh-row" *ngIf="!participant?.Flag">
-  <div id="rowbottom"></div>
+  <div class="rowbottom"></div>
 </div>
 
