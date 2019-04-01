@@ -101,9 +101,8 @@ describe('BookingDetailsComponent', () => {
   beforeEach(async(() => {
     videoHearingServiceSpy.getHearingById.and.returnValue(of(hearingResponse));
     videoHearingServiceSpy.mapHearingDetailsResponseToHearingModel.and.returnValue(hearingModel);
-    videoHearingServiceSpy.updateBookingStatus.and.callThrough();
-
     bookingPersistServiceSpy.selectedHearingId.and.returnValue('44');
+    videoHearingServiceSpy.updateBookingStatus.and.returnValue(of());
 
     TestBed.configureTestingModule({
       declarations: [
@@ -173,8 +172,8 @@ describe('BookingDetailsComponent', () => {
     component.ngOnInit();
     fixture.detectChanges();
     component.cancelBooking();
-    // expect(component.cancelBooking).toBeFalsy();
-    // expect(videoHearingServiceSpy.updateBookingStatus).toHaveBeenCalled();
+    expect(component.showCancelBooking).toBeFalsy();
+    expect(videoHearingServiceSpy.updateBookingStatus).toHaveBeenCalled();
   });
   it('should show pop up if the cancel button was clicked', () => {
     component.cancelHearing();
