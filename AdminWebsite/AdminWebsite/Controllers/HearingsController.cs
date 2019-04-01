@@ -91,17 +91,17 @@ namespace AdminWebsite.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (editHearingRequest.Case == null)
-            {
-                ModelState.AddModelError(nameof(editHearingRequest.Case), $"Please provide valid case details");
-                return BadRequest(ModelState);
-            }
+            //if (editHearingRequest.Case == null)
+            //{
+            //    ModelState.AddModelError(nameof(editHearingRequest.Case), $"Please provide valid case details");
+            //    return BadRequest(ModelState);
+            //}
 
-            if (editHearingRequest.Participants?.Any() == false)
-            {
-                ModelState.AddModelError("Participants", $"Please provide at least one participant");
-                return BadRequest(ModelState);
-            }
+            //if (editHearingRequest.Participants?.Any() == false)
+            //{
+            //    ModelState.AddModelError("Participants", $"Please provide at least one participant");
+            //    return BadRequest(ModelState);
+            //}
 
             var hearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
             if (hearing == null)
