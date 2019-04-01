@@ -114,7 +114,7 @@ namespace AdminWebsite.Controllers
             {
                 //Save hearing details
                 var updateHearingRequest = MapHearingUpdateRequest(editHearingRequest);
-                var response = await _bookingsApiClient.UpdateHearingDetailsAsync(hearingId, updateHearingRequest);
+                await _bookingsApiClient.UpdateHearingDetailsAsync(hearingId, updateHearingRequest);
 
                 var newParticipantList = new List<ParticipantRequest>();
                 
@@ -137,7 +137,7 @@ namespace AdminWebsite.Controllers
                     else
                     {
                         var existingParticipant = hearing.Participants.FirstOrDefault(p => p.Id.Equals(participant.Id));
-                        if(existingParticipant != null)
+                        if(existingParticipant != null && (existingParticipant.User_role_name == "Individual" || existingParticipant.User_role_name == "Representative"))
                         {
                             //Update participant
                             var updateParticipantRequest = MapUpdateParticipantRequest(participant);
@@ -156,7 +156,7 @@ namespace AdminWebsite.Controllers
                 }
 
                 //Delete existing participants if the request doesn't contain any update information
-                var deleteParticipantList = hearing.Participants.Where(p => editHearingRequest.Participants.Any(rp => rp.Id != p.Id.Value));
+                var deleteParticipantList = hearing.Participants.Where(p => editHearingRequest.Participants.All(rp => rp.Id != p.Id.Value));
                 foreach (var participantToDelete in deleteParticipantList)
                 {
                     await _bookingsApiClient.RemoveParticipantFromHearingAsync(hearingId, participantToDelete.Id.Value);

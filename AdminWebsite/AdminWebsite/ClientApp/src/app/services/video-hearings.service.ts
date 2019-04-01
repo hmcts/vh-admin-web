@@ -218,6 +218,7 @@ export class VideoHearingsService {
     if (response && response.length > 0) {
       response.forEach(p => {
         participant = new ParticipantModel();
+        participant.id = p.id;
         participant.title = p.title;
         participant.first_name = p.first_name;
         participant.middle_names = p.middle_names;
