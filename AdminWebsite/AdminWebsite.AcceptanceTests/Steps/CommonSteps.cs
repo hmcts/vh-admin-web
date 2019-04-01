@@ -1,5 +1,7 @@
 ﻿using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.AcceptanceTests.Pages;
+using FluentAssertions;
+using System;
 using TechTalk.SpecFlow;
 
 namespace AdminWebsite.AcceptanceTests.Steps
@@ -138,12 +140,20 @@ namespace AdminWebsite.AcceptanceTests.Steps
             }
             _common.AddItems<string>("BookingPage", bookingPage);
         }
-        [When(@"user cancels the update")]
-        public void ClickCancelButton()
+        [When(@"user discards changes")]
+        public void WhenUserDiscardsChanges()
         {
-            _common.CancelButton();
+            try
+            {
+                _common.CancelButton();
+                _common.CancelWarningMessage().Should().Be("Are you sure you want to discard them?");
+                _common.DiscardChanges();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"No user warning message is displayed: {ex.Message}");
+            }           
         }
         public void UserClicksTopMenuLogo() => _common.TopMenuHmctsLogo();
-
     }
 }
