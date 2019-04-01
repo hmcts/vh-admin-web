@@ -17,5 +17,12 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             _bookingsList.PageUrl(PageUri.BookingListPage);
         }
+        [Then(@"admin user can view booking list")]
+        public void ThenAdminUserCanViewBookingList()
+        {
+            _bookingsList.BookingsList();
+            BookingsListPage();
+        }
+
     }
 }
