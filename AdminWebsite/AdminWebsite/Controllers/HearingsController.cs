@@ -91,18 +91,6 @@ namespace AdminWebsite.Controllers
                 return BadRequest(ModelState);
             }
 
-            //if (editHearingRequest.Case == null)
-            //{
-            //    ModelState.AddModelError(nameof(editHearingRequest.Case), $"Please provide valid case details");
-            //    return BadRequest(ModelState);
-            //}
-
-            //if (editHearingRequest.Participants?.Any() == false)
-            //{
-            //    ModelState.AddModelError("Participants", $"Please provide at least one participant");
-            //    return BadRequest(ModelState);
-            //}
-
             var hearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
             if (hearing == null)
             {
@@ -112,85 +100,12 @@ namespace AdminWebsite.Controllers
             try
             {
                 //Save hearing details
-                var updateHearingRequest = new UpdateHearingRequest
-                {
-                    Hearing_room_name = editHearingRequest.HearingRoomName,
-                    Hearing_venue_name = editHearingRequest.HearingVenueName,
-                    Other_information = editHearingRequest.OtherInformation,
-                    Scheduled_date_time = editHearingRequest.ScheduledDateTime,
-                    Scheduled_duration = editHearingRequest.ScheduledDuration,
-                    Updated_by = User.Identity.Name,
-                    Cases = new List<CaseRequest>() {new CaseRequest {
-                                                            Name = editHearingRequest.Case.Name,
-                                                            Number = editHearingRequest.Case.Number }
-                                                    }
-                };
+                var updateHearingRequest = MapUpdateHearingRequest(editHearingRequest);
+
                 var response = await _bookingsApiClient.UpdateHearingDetailsAsync(hearingId, updateHearingRequest);
 
-                var newParticipantList = new List<ParticipantRequest>();
-
-                foreach (var participant in editHearingRequest.Participants)
-                {
-                    if(!participant.Id.HasValue)
-                    {
-                        //Add a new participant
-
-                        //Map the request except the username
-                        var newParticipant = new ParticipantRequest()
-                        {
-                            Case_role_name = participant.CaseRoleName,
-                            Contact_email = participant.ContactEmail,
-                            Display_name = participant.DisplayName,
-                            First_name = participant.FirstName,
-                            Last_name = participant.LastName,
-                            Hearing_role_name = participant.HearingRoleName,
-                            Middle_names = participant.MiddleNames,
-                            Representee = participant.Representee,
-                            Solicitors_reference = participant.SolicitorsReference,
-                            Telephone_number = participant.TelephoneNumber,
-                            Title = participant.Title
-                        };
-                        
-                        //Judge is manually created in AD, no need to create one
-                        if (participant.CaseRoleName != "Judge")
-                        {
-                            //Update the request with newly created user details in AD
-                            await UpdateParticipantUsername(newParticipant);
-                        }
-                        newParticipantList.Add(newParticipant);
-                    }
-                    else
-                    {
-                        var existingParticipant = hearing.Participants.FirstOrDefault(p => p.Id.Equals(participant.Id));
-                        // if(existingParticipant == null)
-                         
-                        //    //Log in the application insights
-                        //    //What do we do here ?
-                        // }
-                        // else
-                        // {
-                        //    //Update here
-                        // }
-                    }
-                }
-
-                //Add new participants
-                if (newParticipantList.Any())
-                {
-                    _bookingsApiClient.AddParticipantsToHearing(hearingId, new AddParticipantsToHearingRequest()
-                    {
-                        Participants = newParticipantList
-                    });
-                }
-
                 
-                // Delete the remaining participants
-                
-                // Delete existing participants
-
-                
-
-                return Ok();
+                return Ok(response);
             }
             catch (BookingsApiException e)
             {
@@ -200,6 +115,25 @@ namespace AdminWebsite.Controllers
                 }
                 throw;
             }
+        }
+
+        private UpdateHearingRequest MapUpdateHearingRequest(EditHearingRequest editHearingRequest)
+        {
+            var updateHearingRequest = new UpdateHearingRequest
+            {
+                Hearing_room_name = editHearingRequest.HearingRoomName,
+                Hearing_venue_name = editHearingRequest.HearingVenueName,
+                Other_information = editHearingRequest.OtherInformation,
+                Scheduled_date_time = editHearingRequest.ScheduledDateTime,
+                Scheduled_duration = editHearingRequest.ScheduledDuration,
+                Updated_by = User.Identity.Name,
+                Cases = new List<CaseRequest>() {new CaseRequest {
+                                                            Name = editHearingRequest.Case.Name,
+                                                            Number = editHearingRequest.Case.Number }
+                                                    }
+            };
+
+            return updateHearingRequest;
         }
 
         /// <summary>
