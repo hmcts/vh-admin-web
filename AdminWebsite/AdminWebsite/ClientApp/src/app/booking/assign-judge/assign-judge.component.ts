@@ -25,7 +25,8 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
   judge: ParticipantDetailsResponse;
   assignJudgeForm: FormGroup;
   failedSubmission: boolean;
-  attemptingCancellation: boolean;
+  attemptingCancellation = false;
+  attemptingDiscardChanges = false;
   hasSaved: boolean;
   canNavigate = false;
 
@@ -96,7 +97,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     newParticipant.display_name = judge.display_name;
     newParticipant.email = judge.email;
     newParticipant.is_judge = true;
-    newParticipant.phone = judge.phone;
+    newParticipant.phone = judge.phone ? judge.phone : '';
     newParticipant.id = judge.id;
     newParticipant.username = judge.email;
     newParticipant.case_role_name = 'Judge';
@@ -128,7 +129,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         this.hearing.participants.splice(indexOfJudge, 1);
       }
       this.hearing.participants.unshift(newJudge);
-      this.hearingService.updateHearingRequest(this.hearing);
+      // this.hearingService.updateHearingRequest(this.hearing);
     }
   }
 
@@ -141,6 +142,8 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
       this.failedSubmission = false;
       this.assignJudgeForm.markAsPristine();
       this.hasSaved = true;
+      this.hearingService.updateHearingRequest(this.hearing);
+
       if (this.editMode) {
         this.navigateToSummary();
       } else {
@@ -153,7 +156,11 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
 
   confirmCancelBooking() {
     if (this.editMode) {
-      this.navigateToSummary();
+      if (this.assignJudgeForm.dirty || this.assignJudgeForm.touched) {
+        this.attemptingDiscardChanges = true;
+      } else {
+        this.navigateToSummary();
+      }
     } else {
       this.attemptingCancellation = true;
     }
@@ -161,6 +168,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
 
   continueBooking() {
     this.attemptingCancellation = false;
+    this.attemptingDiscardChanges = false;
   }
 
   cancelAssignJudge() {
@@ -168,6 +176,12 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     this.assignJudgeForm.reset();
     this.hearingService.cancelRequest();
     this.router.navigate(['/dashboard']);
+  }
+
+  cancelChanges() {
+    this.attemptingDiscardChanges = false;
+    this.assignJudgeForm.reset();
+    this.navigateToSummary();
   }
 
   hasChanges(): Observable<boolean> | boolean {

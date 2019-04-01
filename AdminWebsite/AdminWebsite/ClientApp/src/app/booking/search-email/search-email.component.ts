@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, HostListener, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostListener, Output, ViewChild } from '@angular/core';
 import { Subject } from 'rxjs';
 
 import { Constants } from '../../common/constants';
@@ -30,6 +30,9 @@ export class SearchEmailComponent {
 
   @Output()
   emailChanged = new EventEmitter<string>();
+
+  @ViewChild('emailInput')
+  emailInput: ElementRef;
 
   constructor(searchService: SearchService, private elRef: ElementRef) {
     this.searchService = searchService;
@@ -68,7 +71,6 @@ export class SearchEmailComponent {
   }
 
   validateEmail() {
-
     /* tslint:disable: max-line-length */
     const pattern = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     this.isValidEmail = this.email && this.email.length > 0 && pattern.test(this.email.toLowerCase());
@@ -80,6 +82,16 @@ export class SearchEmailComponent {
     const clickedInside = this.elRef.nativeElement.contains(targetElement);
     if (!clickedInside) {
       this.isShowResult = false;
+    }
+  }
+
+  setEmailDisabled(value: boolean) {
+    if (!value) {
+      this.emailInput.nativeElement.removeAttribute('disabled');
+    } else {
+      setTimeout(() => {
+        this.emailInput.nativeElement.setAttribute('disabled', 'true');
+      }, 500);
     }
   }
 

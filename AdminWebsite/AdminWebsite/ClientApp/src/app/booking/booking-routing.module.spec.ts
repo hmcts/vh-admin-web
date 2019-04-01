@@ -31,6 +31,7 @@ import { ErrorService } from '../services/error.service';
 import { RemovePopupComponent } from '../popups/remove-popup/remove-popup.component';
 import { WaitPopupComponent } from '../popups/wait-popup/wait-popup.component';
 import { SaveFailedPopupComponent } from '../popups/save-failed-popup/save-failed-popup.component';
+import { DiscardConfirmPopupComponent } from '../popups/discard-confirm-popup/discard-confirm-popup.component';
 
 describe('app routing', () => {
   let location: Location;
@@ -61,7 +62,8 @@ describe('app routing', () => {
         BookingEditComponent,
         RemovePopupComponent,
         WaitPopupComponent,
-        SaveFailedPopupComponent
+        SaveFailedPopupComponent,
+        DiscardConfirmPopupComponent,
       ],
       providers: [
         AuthGuard,
