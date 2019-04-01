@@ -44,6 +44,11 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   private phone: FormControl;
   private displayName: FormControl;
   private companyName: FormControl;
+  private houseNumber: FormControl;
+  private street: FormControl;
+  private city: FormControl;
+  private county: FormControl;
+  private postcode: FormControl;
   isRoleSelected = true;
   isPartySelected = true;
   isTitleSelected = true;
@@ -65,6 +70,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   localEditMode = false;
   isExistingHearing: boolean;
   isAnyParticipants = true;
+  showAddress = false;
 
   @ViewChild(SearchEmailComponent)
   searchEmail: SearchEmailComponent;
@@ -160,6 +166,11 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     this.phone = new FormControl('', [Validators.required, Validators.pattern(/^[0-9) -.]+$/)]);
     this.displayName = new FormControl('');
     this.companyName = new FormControl('');
+    this.houseNumber = new FormControl('');
+    this.street = new FormControl('');
+    this.city = new FormControl('');
+    this.county = new FormControl('');
+    this.postcode = new FormControl('');
     this.participantForm = new FormGroup({
       role: this.role,
       party: this.party,
@@ -169,6 +180,11 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
       phone: this.phone,
       displayName: this.displayName,
       companyName: this.companyName,
+      houseNumber: this.houseNumber,
+      street: this.street,
+      city: this.city,
+      county: this.county,
+      postcode: this.postcode,
     });
     this.participantForm.valueChanges.subscribe(
       result => {
@@ -334,6 +350,11 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
   roleSelected() {
     this.isRoleSelected = this.role.value !== this.constants.PleaseSelect;
+    if (this.role.value !== 'Solicitor') {
+      this.showAddress = true;
+    }
+    console.log(this.role.value);
+    console.log(sessionStorage);
     this.showDetails = true;
   }
 
@@ -506,6 +527,11 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         phone: '',
         displayName: '',
         companyName: '',
+        houseNumber: '',
+        street: '',
+        city: '',
+        county: '',
+        postcode:'',
       });
     this.participantForm.markAsUntouched();
     this.participantForm.markAsPristine();

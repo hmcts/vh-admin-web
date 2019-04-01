@@ -158,6 +158,73 @@
           <input id="displayName" formControlName="displayName" class="govuk-input govuk-input--width-20" type="text" />
 
         </div>
+        <div ngIf="showAddress">
+          <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':displayNameInvalid}">
+
+            <legend id="display-name-error" *ngIf="displayNameInvalid">
+              <span class="govuk-error-message">
+                {{constants.Error.DisplaNameErrorMsg}}
+              </span>
+            </legend>
+            <label class="govuk-label" for="displayName">
+              House Number
+            </label>
+            <input id="houseNumber" formControlName="houseNumber" class="govuk-input govuk-input--width-20" type="text" />
+
+          </div>
+          <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':displayNameInvalid}">
+
+            <legend id="display-name-error" *ngIf="displayNameInvalid">
+              <span class="govuk-error-message">
+                {{constants.Error.DisplaNameErrorMsg}}
+              </span>
+            </legend>
+            <label class="govuk-label" for="displayName">
+              Street
+            </label>
+            <input id="street" formControlName="street" class="govuk-input govuk-input--width-20" type="text" />
+
+          </div>
+          <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':displayNameInvalid}">
+
+            <legend id="display-name-error" *ngIf="displayNameInvalid">
+              <span class="govuk-error-message">
+                {{constants.Error.DisplaNameErrorMsg}}
+              </span>
+            </legend>
+            <label class="govuk-label" for="displayName">
+              City
+            </label>
+            <input id="city" formControlName="city" class="govuk-input govuk-input--width-20" type="text" />
+
+          </div>
+          <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':displayNameInvalid}">
+
+            <legend id="display-name-error" *ngIf="displayNameInvalid">
+              <span class="govuk-error-message">
+                {{constants.Error.DisplaNameErrorMsg}}
+              </span>
+            </legend>
+            <label class="govuk-label" for="displayName">
+              County
+            </label>
+            <input id="county" formControlName="county" class="govuk-input govuk-input--width-20" type="text" />
+
+          </div>
+          <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':displayNameInvalid}">
+
+            <legend id="display-name-error" *ngIf="displayNameInvalid">
+              <span class="govuk-error-message">
+                {{constants.Error.DisplaNameErrorMsg}}
+              </span>
+            </legend>
+            <label class="govuk-label" for="displayName">
+              Postcode
+            </label>
+            <input id="postcode" formControlName="postcode" class="govuk-input govuk-input--width-20" type="text" />
+
+          </div>
+        </div>
       </div>
 
       <div class="govuk-grid-row">
