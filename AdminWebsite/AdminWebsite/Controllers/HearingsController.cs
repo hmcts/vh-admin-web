@@ -82,12 +82,25 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType(typeof(HearingDetailsResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<ActionResult<HearingDetailsResponse>> EditHearing(Guid hearingId, [FromBody] EditHearingRequest editHearingRequest)
         {
             //Validation
             if (hearingId == Guid.Empty)
             {
                 ModelState.AddModelError(nameof(hearingId), $"Please provide a valid {nameof(hearingId)}");
+                return BadRequest(ModelState);
+            }
+
+            if (editHearingRequest.Case == null)
+            {
+                ModelState.AddModelError(nameof(editHearingRequest.Case), $"Please provide valid case details");
+                return BadRequest(ModelState);
+            }
+
+            if (editHearingRequest.Participants?.Any() == false)
+            {
+                ModelState.AddModelError("Participants", $"Please provide at least one participant");
                 return BadRequest(ModelState);
             }
 
@@ -100,12 +113,56 @@ namespace AdminWebsite.Controllers
             try
             {
                 //Save hearing details
-                var updateHearingRequest = MapUpdateHearingRequest(editHearingRequest);
-
+                var updateHearingRequest = MapHearingUpdateRequest(editHearingRequest);
                 var response = await _bookingsApiClient.UpdateHearingDetailsAsync(hearingId, updateHearingRequest);
 
+                var newParticipantList = new List<ParticipantRequest>();
                 
-                return Ok(response);
+                foreach (var participant in editHearingRequest.Participants)
+                {
+                    if(!participant.Id.HasValue)
+                    {
+                        //Add a new participant
+
+                        //Map the request except the username
+                        var newParticipant = MapNewParticipantRequest(participant);
+                        //Judge is manually created in AD, no need to create one
+                        if (participant.CaseRoleName != "Judge")
+                        {
+                            //Update the request with newly created user details in AD
+                            await UpdateParticipantUsername(newParticipant);
+                        }
+                        newParticipantList.Add(newParticipant);
+                    }
+                    else
+                    {
+                        var existingParticipant = hearing.Participants.FirstOrDefault(p => p.Id.Equals(participant.Id));
+                        if(existingParticipant != null)
+                        {
+                            //Update participant
+                            var updateParticipantRequest = MapUpdateParticipantRequest(participant);
+                            await _bookingsApiClient.UpdateParticipantDetailsAsync(hearingId, participant.Id.Value, updateParticipantRequest);
+                        }
+                    }
+                }
+
+                //Add new participants
+                if (newParticipantList.Any())
+                {
+                    await _bookingsApiClient.AddParticipantsToHearingAsync(hearingId, new AddParticipantsToHearingRequest()
+                    {
+                        Participants = newParticipantList
+                    });
+                }
+
+                //Delete existing participants if the request doesn't contain any update information
+                var deleteParticipantList = hearing.Participants.Where(p => editHearingRequest.Participants.Any(rp => rp.Id != p.Id.Value));
+                foreach (var participantToDelete in deleteParticipantList)
+                {
+                    await _bookingsApiClient.RemoveParticipantFromHearingAsync(hearingId, participantToDelete.Id.Value);
+                }
+
+                return Ok();
             }
             catch (BookingsApiException e)
             {
@@ -113,27 +170,16 @@ namespace AdminWebsite.Controllers
                 {
                     return BadRequest(e.Response);
                 }
+                if (e.StatusCode == (int)HttpStatusCode.NotFound)
+                {
+                    return NotFound(e.Response);
+                }
+                if (e.StatusCode == (int)HttpStatusCode.NoContent)
+                {
+                    return NoContent();
+                }
                 throw;
             }
-        }
-
-        private UpdateHearingRequest MapUpdateHearingRequest(EditHearingRequest editHearingRequest)
-        {
-            var updateHearingRequest = new UpdateHearingRequest
-            {
-                Hearing_room_name = editHearingRequest.HearingRoomName,
-                Hearing_venue_name = editHearingRequest.HearingVenueName,
-                Other_information = editHearingRequest.OtherInformation,
-                Scheduled_date_time = editHearingRequest.ScheduledDateTime,
-                Scheduled_duration = editHearingRequest.ScheduledDuration,
-                Updated_by = User.Identity.Name,
-                Cases = new List<CaseRequest>() {new CaseRequest {
-                                                            Name = editHearingRequest.Case.Name,
-                                                            Number = editHearingRequest.Case.Number }
-                                                    }
-            };
-
-            return updateHearingRequest;
         }
 
         /// <summary>
@@ -203,26 +249,6 @@ namespace AdminWebsite.Controllers
 
                 throw;
             }
-        }
-
-        private async Task<List<ParticipantRequest>> UpdateParticipantsUsername(List<ParticipantRequest> participants)
-        {
-            foreach (var participant in participants)
-            {
-                if (participant.Case_role_name == "Judge") continue;
-                //// create user in AD if users email does not exist in AD.
-                var userProfile = await CheckUserExistsInAD(participant.Contact_email);
-                if (userProfile == null)
-                {
-                    // create the user in AD.
-                    await CreateNewUserInAD(participant);
-                }
-                else
-                {
-                    participant.Username = userProfile.User_name;
-                }
-            }
-            return participants;
         }
 
         private async Task<ParticipantRequest> UpdateParticipantUsername(ParticipantRequest participant)
@@ -307,6 +333,60 @@ namespace AdminWebsite.Controllers
             }
 
             return typeIds;
+        }
+
+        private UpdateHearingRequest MapHearingUpdateRequest(EditHearingRequest editHearingRequest)
+        {
+            var updateHearingRequest = new UpdateHearingRequest
+            {
+                Hearing_room_name = editHearingRequest.HearingRoomName,
+                Hearing_venue_name = editHearingRequest.HearingVenueName,
+                Other_information = editHearingRequest.OtherInformation,
+                Scheduled_date_time = editHearingRequest.ScheduledDateTime,
+                Scheduled_duration = editHearingRequest.ScheduledDuration,
+                Updated_by = User.Identity.Name,
+                Cases = new List<CaseRequest>() {new CaseRequest {
+                                                            Name = editHearingRequest.Case.Name,
+                                                            Number = editHearingRequest.Case.Number }
+                                                    }
+                };
+            return updateHearingRequest;
+        }
+
+        private UpdateParticipantRequest MapUpdateParticipantRequest(EditParticipantRequest participant)
+        {
+            var updateParticipantRequest = new UpdateParticipantRequest
+            {
+                Title = participant.Title,
+                Display_name = participant.DisplayName,
+                City = participant.City,
+                County = participant.County,
+                House_number = participant.HouseNumber,
+                Organisation_name = participant.OrganisationName,
+                Postcode = participant.Postcode,
+                Street = participant.Street,
+                Telephone_number = participant.TelephoneNumber
+            };
+            return updateParticipantRequest;
+        }
+
+        private ParticipantRequest MapNewParticipantRequest(EditParticipantRequest participant)
+        {
+            var newParticipant = new ParticipantRequest()
+            {
+                Case_role_name = participant.CaseRoleName,
+                Contact_email = participant.ContactEmail,
+                Display_name = participant.DisplayName,
+                First_name = participant.FirstName,
+                Last_name = participant.LastName,
+                Hearing_role_name = participant.HearingRoleName,
+                Middle_names = participant.MiddleNames,
+                Representee = participant.Representee,
+                Solicitors_reference = participant.SolicitorsReference,
+                Telephone_number = participant.TelephoneNumber,
+                Title = participant.Title
+            };
+            return newParticipant;
         }
 
     }
