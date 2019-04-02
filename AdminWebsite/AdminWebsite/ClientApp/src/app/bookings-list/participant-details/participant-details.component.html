@@ -4,7 +4,7 @@
     <div [attr.id]="'participant_role' + participant?.IndexInList" class="govuk-hint">
       {{participant?.HearingRoleName}}
     </div>
-    <div *ngIf="!vh_officer_admin">
+    <div *ngIf="vh_officer_admin">
       <div class="govuk-grid-row" [attr.id]="'participant_userName' + participant?.IndexInList">
         <div class="govuk-grid-column-one-third">
           User name:
