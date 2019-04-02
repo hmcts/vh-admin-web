@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Models;
 using AdminWebsite.Security;
+using AdminWebsite.Services;
 using AdminWebsite.UserAPI.Client;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
@@ -18,10 +19,13 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private Mock<IUserApiClient> _userApiClient;
         private Mock<IBookingsApiClient> _bookingsApiClient;
         private Mock<IUserIdentity> _userIdentity;
-        private AdminWebsite.Controllers.HearingsController _controller;
+        private Mock<IUserAccountService> _userAccountService;
+        
         private Guid _validId;
         private EditHearingRequest _request;
         private HearingDetailsResponse _existingHearing;
+        
+        private AdminWebsite.Controllers.HearingsController _controller;
 
         [SetUp]
         public void Setup()
@@ -29,7 +33,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _bookingsApiClient = new Mock<IBookingsApiClient>();
             _userIdentity = new Mock<IUserIdentity>();
             _userApiClient = new Mock<IUserApiClient>();
-            _controller = new AdminWebsite.Controllers.HearingsController(_bookingsApiClient.Object, _userIdentity.Object, _userApiClient.Object);
+            _userAccountService = new Mock<IUserAccountService>();
+            _controller = new AdminWebsite.Controllers.HearingsController(_bookingsApiClient.Object, _userIdentity.Object, _userAccountService.Object);
 
             _validId = Guid.NewGuid();
             _request = new EditHearingRequest

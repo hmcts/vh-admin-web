@@ -4,6 +4,8 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Threading.Tasks;
+using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Contracts.Requests;
 using AdminWebsite.Contracts.Responses;
 using AdminWebsite.Helper;
@@ -14,6 +16,8 @@ using Microsoft.Extensions.Options;
 using Microsoft.Graph;
 using Newtonsoft.Json;
 using AdminWebsite.Configuration;
+using AdminWebsite.UserAPI.Client;
+using UserServiceException = AdminWebsite.Security.UserServiceException;
 
 namespace AdminWebsite.Services
 {
@@ -37,21 +41,91 @@ namespace AdminWebsite.Services
         void ResetPassword(string userId, string password = null);
         IEnumerable<ParticipantDetailsResponse> GetUsersByGroup();
         string TemporaryPassword { get; }
+        
+        Task UpdateParticipantUsername(ParticipantRequest participant);
     }
 
     public class UserAccountService : IUserAccountService
     {
         private readonly TimeSpan _retryTimeout;
+        private readonly IUserApiClient _userApiClient;
         private readonly ITokenProvider _tokenProvider;
         private readonly SecuritySettings _securitySettings;
         private readonly bool _isLive;
         private readonly string _temporaryPassword;
 
         string IUserAccountService.TemporaryPassword => _temporaryPassword;
+        
+        public async Task UpdateParticipantUsername(ParticipantRequest participant)
+        {
+            //// create user in AD if users email does not exist in AD.
+            var userProfile = await CheckUserExistsInAD(participant.Contact_email);
+            if (userProfile == null)
+            {
+                // create the user in AD.
+                await CreateNewUserInAD(participant);
+            }
+            else
+            {
+                participant.Username = userProfile.User_name;
+            }
+        }
+        
+        private async Task<UserProfile> CheckUserExistsInAD(string emailAddress)
+        {
+            try
+            {
+                return await _userApiClient.GetUserByEmailAsync(emailAddress);
+            }
+            catch(UserAPI.Client.UserServiceException e)
+            {
+                if (e.StatusCode == (int)HttpStatusCode.NotFound)
+                {
+                    return null;
+                }
+            }
+            return null;
+        }
 
-        public UserAccountService(ITokenProvider tokenProvider, IOptions<SecuritySettings> securitySettings, IOptions<AppConfigSettings> appSettings)
+        private async Task<NewUserResponse> CreateNewUserInAD(ParticipantRequest participant)
+        {
+            var createUserRequest = new CreateUserRequest
+            {
+                First_name = participant.First_name,
+                Last_name = participant.Last_name,
+                Recovery_email = participant.Contact_email
+            };
+            var newUserResponse = await _userApiClient.CreateUserAsync(createUserRequest);
+            if (newUserResponse == null) 
+                return null;
+
+            participant.Username = newUserResponse.Username;
+
+            // Add user to user group.
+            var addUserToGroupRequest = new AddUserToGroupRequest
+            {
+                User_id = newUserResponse.User_id,
+                Group_name = "External"
+            };
+
+            await _userApiClient.AddUserToGroupAsync(addUserToGroupRequest);
+
+            if (participant.Hearing_role_name == "Solicitor")
+            {
+                addUserToGroupRequest = new AddUserToGroupRequest()
+                {
+                    User_id = newUserResponse.User_id,
+                    Group_name = "VirtualRoomProfessionalUser"
+                };
+                await _userApiClient.AddUserToGroupAsync(addUserToGroupRequest);
+            }
+            return newUserResponse;
+        }
+
+        public UserAccountService(IUserApiClient userApiClient, ITokenProvider tokenProvider, IOptions<SecuritySettings> securitySettings, IOptions<AppConfigSettings> appSettings)
         {
             _retryTimeout = TimeSpan.FromSeconds(appSettings.Value.APIFailureRetryTimeoutSeconds);
+            _userApiClient = userApiClient;
             _tokenProvider = tokenProvider;
             _securitySettings = securitySettings.Value;
             _isLive = appSettings.Value.IsLive;
