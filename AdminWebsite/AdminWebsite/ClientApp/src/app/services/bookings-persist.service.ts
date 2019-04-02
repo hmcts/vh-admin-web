@@ -10,7 +10,7 @@ export class BookingPersistService {
   private _nextCursor: string;
   private _selectedGroupIndex: number;
   private _selectedItemIndex: number;
-  SelectedHearingIdKey = 'SelectedHearingIdKey';
+  private readonly SelectedHearingIdKey = 'SelectedHearingIdKey';
 
   resetAll() {
     this._bookingList = [];
@@ -31,7 +31,6 @@ export class BookingPersistService {
         hearingUpdate.Duration = hearing.scheduled_duration;
         hearingUpdate.CourtAddress = hearing.court_name;
         hearingUpdate.CourtRoom = hearing.court_room;
-        hearingUpdate.HearingType = hearing.hearing_type_name;
         hearingUpdate.CreatedBy = hearing.created_by;
         if (this.isValidDate(hearing.created_date)) {
           hearingUpdate.CreatedDate = new Date(hearing.created_date);
