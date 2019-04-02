@@ -11,7 +11,7 @@ export class BookingDetailsService {
   JUDGE = 'Judge';
 
   mapBooking(hearingResponse: HearingDetailsResponse): BookingsDetailsModel {
-    let model = new BookingsDetailsModel(
+    const model = new BookingsDetailsModel(
       hearingResponse.id,
       hearingResponse.scheduled_date_time,
       hearingResponse.scheduled_duration,
