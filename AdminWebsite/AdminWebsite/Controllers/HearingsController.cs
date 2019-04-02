@@ -7,6 +7,7 @@ using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.UserAPI.Client;
+using Hearings.Common;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -94,20 +95,27 @@ namespace AdminWebsite.Controllers
 
             if (editHearingRequest.Case == null)
             {
-                ModelState.AddModelError(nameof(editHearingRequest.Case), $"Please provide valid case details");
+                ModelState.AddModelError(nameof(editHearingRequest.Case), "Please provide valid case details");
                 return BadRequest(ModelState);
             }
 
-            if (editHearingRequest.Participants?.Any() == false)
+            if (editHearingRequest.Participants == null || !editHearingRequest.Participants.Any())
             {
-                ModelState.AddModelError("Participants", $"Please provide at least one participant");
+                ModelState.AddModelError("Participants", "Please provide at least one participant");
                 return BadRequest(ModelState);
             }
 
-            var hearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
-            if (hearing == null)
+            HearingDetailsResponse hearing;
+            try
             {
-                return NotFound($"No hearing found for {hearingId}]");
+                hearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
+            }
+            catch (BookingsApiException e)
+            {
+                if (e.StatusCode != (int) HttpStatusCode.NotFound)
+                    throw;
+                
+                return NotFound($"No hearing with id found [{hearingId}]");   
             }
             
             try
@@ -122,14 +130,13 @@ namespace AdminWebsite.Controllers
                 {
                     if(!participant.Id.HasValue)
                     {
-                        //Add a new participant
-
-                        //Map the request except the username
+                        // Add a new participant
+                        // Map the request except the username
                         var newParticipant = MapNewParticipantRequest(participant);
-                        //Judge is manually created in AD, no need to create one
+                        // Judge is manually created in AD, no need to create one
                         if (participant.CaseRoleName != "Judge")
                         {
-                            //Update the request with newly created user details in AD
+                            // Update the request with newly created user details in AD
                             await UpdateParticipantUsername(newParticipant);
                         }
                         newParticipantList.Add(newParticipant);
@@ -146,7 +153,7 @@ namespace AdminWebsite.Controllers
                     }
                 }
 
-                //Add new participants
+                // Add new participants
                 if (newParticipantList.Any())
                 {
                     await _bookingsApiClient.AddParticipantsToHearingAsync(hearingId, new AddParticipantsToHearingRequest()
@@ -155,7 +162,7 @@ namespace AdminWebsite.Controllers
                     });
                 }
 
-                //Delete existing participants if the request doesn't contain any update information
+                // Delete existing participants if the request doesn't contain any update information
                 var deleteParticipantList = hearing.Participants.Where(p => editHearingRequest.Participants.All(rp => rp.Id != p.Id.Value));
                 foreach (var participantToDelete in deleteParticipantList)
                 {
