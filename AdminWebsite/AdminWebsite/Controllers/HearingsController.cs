@@ -180,10 +180,6 @@ namespace AdminWebsite.Controllers
                 {
                     return NotFound(e.Response);
                 }
-                if (e.StatusCode == (int)HttpStatusCode.NoContent)
-                {
-                    return NoContent();
-                }
                 throw;
             }
         }

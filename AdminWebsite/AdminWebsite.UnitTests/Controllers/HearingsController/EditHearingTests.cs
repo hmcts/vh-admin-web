@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Models;
@@ -9,7 +10,6 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
-using NUnit.Framework.Internal;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {
@@ -149,6 +149,36 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var result = await _controller.EditHearing(_validId, _request);
             var hearing = (HearingDetailsResponse) ((OkObjectResult) result.Result).Value;
             hearing.Id.Should().Be(_existingHearing.Id);
+        }
+        
+        [Test]
+        public async Task should_pass_on_bad_request_from_bookings_api()
+        {
+            _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
+                .ReturnsAsync(_existingHearing);
+
+            _bookingsApiClient.Setup(x =>
+                    x.UpdateHearingDetailsAsync(It.IsAny<Guid>(), It.IsAny<UpdateHearingRequest>()))
+                .ThrowsAsync(new BookingsApiException("Bad request", (int) HttpStatusCode.BadRequest, "",
+                    new Dictionary<string, IEnumerable<string>>(), null));
+
+            var response = await _controller.EditHearing(_validId, _request);
+            response.Result.Should().BeOfType<BadRequestObjectResult>();
+        }
+        
+        [Test]
+        public async Task should_pass_on_not_found_request_from_bookings_api()
+        {
+            _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
+                .ReturnsAsync(_existingHearing);
+
+            _bookingsApiClient.Setup(x =>
+                    x.UpdateHearingDetailsAsync(It.IsAny<Guid>(), It.IsAny<UpdateHearingRequest>()))
+                .ThrowsAsync(new BookingsApiException("Not found", (int) HttpStatusCode.NotFound, "",
+                    new Dictionary<string, IEnumerable<string>>(), null));
+
+            var response = await _controller.EditHearing(_validId, _request);
+            response.Result.Should().BeOfType<NotFoundObjectResult>();
         }
     }
 }
