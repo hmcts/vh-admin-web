@@ -440,6 +440,10 @@ export class BHClient {
             result400 = resultData400 ? ProblemDetails.fromJS(resultData400) : new ProblemDetails();
             return throwException("A server error occurred.", status, _responseText, _headers, result400);
             }));
+        } else if (status === 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("A server error occurred.", status, _responseText, _headers);
+            }));
         } else if (status === 401) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             return throwException("A server error occurred.", status, _responseText, _headers);
@@ -2130,6 +2134,18 @@ export class EditParticipantRequest implements IEditParticipantRequest {
     solicitors_reference?: string | undefined;
     /** The representee of a representative */
     representee?: string | undefined;
+    /** House number of an Individual */
+    house_number?: string | undefined;
+    /** Stree number of an Individual */
+    street?: string | undefined;
+    /** Postcode of an Individual */
+    postcode?: string | undefined;
+    /** City/Town of an Individual */
+    city?: string | undefined;
+    /** County of an Individual */
+    county?: string | undefined;
+    /** Organisation name */
+    organisation_name?: string | undefined;
 
     constructor(data?: IEditParticipantRequest) {
         if (data) {
@@ -2154,6 +2170,12 @@ export class EditParticipantRequest implements IEditParticipantRequest {
             this.hearing_role_name = data["hearing_role_name"];
             this.solicitors_reference = data["solicitors_reference"];
             this.representee = data["representee"];
+            this.house_number = data["house_number"];
+            this.street = data["street"];
+            this.postcode = data["postcode"];
+            this.city = data["city"];
+            this.county = data["county"];
+            this.organisation_name = data["organisation_name"];
         }
     }
 
@@ -2178,6 +2200,12 @@ export class EditParticipantRequest implements IEditParticipantRequest {
         data["hearing_role_name"] = this.hearing_role_name;
         data["solicitors_reference"] = this.solicitors_reference;
         data["representee"] = this.representee;
+        data["house_number"] = this.house_number;
+        data["street"] = this.street;
+        data["postcode"] = this.postcode;
+        data["city"] = this.city;
+        data["county"] = this.county;
+        data["organisation_name"] = this.organisation_name;
         return data; 
     }
 }
@@ -2208,6 +2236,18 @@ export interface IEditParticipantRequest {
     solicitors_reference?: string | undefined;
     /** The representee of a representative */
     representee?: string | undefined;
+    /** House number of an Individual */
+    house_number?: string | undefined;
+    /** Stree number of an Individual */
+    street?: string | undefined;
+    /** Postcode of an Individual */
+    postcode?: string | undefined;
+    /** City/Town of an Individual */
+    city?: string | undefined;
+    /** County of an Individual */
+    county?: string | undefined;
+    /** Organisation name */
+    organisation_name?: string | undefined;
 }
 
 /** Defines a type of hearing based on case */

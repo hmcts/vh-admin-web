@@ -1,31 +1,31 @@
 <h2 class="govuk-heading-m remove-header-padding" id="bookingDetailsTitle">Booking details</h2>
-<div class="govuk-panel govuk-panel--confirmation vh-panel" >
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-one-third">
-            <div class="vh-xsml">Created by:</div>
-        </div>
-        <div class="govuk-grid-column-two-thirds vh-xsml">
-            <div class="govuk-grid-row vh_panel-r" >
-                <div class="vh-xsml" id="created-by"><strong>{{hearing?.CreatedBy}}</strong></div>
-            </div>
-            <div class="govuk-grid-row vh-b">
-              <div class="vh-xsml" id="created-date">{{hearing?.CreatedDate | date: 'dd MMM yyyy h:mm a'}}</div>
-            </div>
-        </div>
+<div class="govuk-panel govuk-panel--confirmation vh-panel">
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-one-third">
+      <div class="vh-xsml">Created by:</div>
     </div>
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-one-third">
-            <span class="vh-xsml">Last edited by:</span>
-        </div>
-        <div class="govuk-grid-column-two-thirds vh-xsml">
-            <div class="govuk-grid-row vh_panel-r">
-                <div class="vh-xsml" id="edit-by"><strong>{{hearing?.LastEditBy}}</strong></div>
-            </div>
-            <div class="govuk-grid-row">
-                <div class="vh-xsml" id="edit-date">{{hearing?.LastEditDate | date: 'dd MMM yyyy h:mm a'}}</div>
-            </div>
-        </div>
+    <div class="govuk-grid-column-two-thirds vh-xsml">
+      <div class="govuk-grid-row vh_panel-r">
+        <div class="vh-xsml" id="created-by"><strong>{{hearing?.CreatedBy}}</strong></div>
+      </div>
+      <div class="govuk-grid-row vh-b">
+        <div class="vh-xsml" id="created-date">{{hearing?.CreatedDate | date: 'dd MMM yyyy h:mm a'}}</div>
+      </div>
     </div>
+  </div>
+  <div class="govuk-grid-row" *ngIf="hearing?.LastEditBy && hearing?.LastEditBy.length > 0">
+    <div class="govuk-grid-column-one-third">
+      <span class="vh-xsml">Last edited by:</span>
+    </div>
+    <div class="govuk-grid-column-two-thirds vh-xsml">
+      <div class="govuk-grid-row vh_panel-r">
+        <div class="vh-xsml" id="edit-by"><strong>{{hearing?.LastEditBy}}</strong></div>
+      </div>
+      <div class="govuk-grid-row">
+        <div class="vh-xsml" id="edit-date">{{hearing?.LastEditDate | date: 'dd MMM yyyy h:mm a'}}</div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <h2 class="govuk-heading-s remove-header-padding">Hearing details</h2>

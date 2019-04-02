@@ -158,6 +158,10 @@ export class VideoHearingsService {
     hearing.court_room = response.hearing_room_name;
     hearing.participants = this.mapParticipantResponseToParticipantModel(response.participants);
     hearing.other_information = response.other_information;
+    hearing.created_date = new Date(response.created_date);
+    hearing.created_by = response.created_by;
+    hearing.updated_date = new Date(response.updated_date);
+    hearing.updated_by = response.updated_by;
     return hearing;
   }
 
@@ -219,6 +223,7 @@ export class VideoHearingsService {
     if (response && response.length > 0) {
       response.forEach(p => {
         participant = new ParticipantModel();
+        participant.id = p.id;
         participant.title = p.title;
         participant.first_name = p.first_name;
         participant.middle_names = p.middle_names;
