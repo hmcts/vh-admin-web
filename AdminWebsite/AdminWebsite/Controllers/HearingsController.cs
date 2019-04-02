@@ -168,7 +168,7 @@ namespace AdminWebsite.Controllers
                     await _bookingsApiClient.RemoveParticipantFromHearingAsync(hearingId, participantToDelete.Id.Value);
                 }
 
-                return Ok();
+                return Ok(await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId));
             }
             catch (BookingsApiException e)
             {

@@ -110,7 +110,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _request.Participants[0].FirstName = "New user firstname";
             
             var result = await _controller.EditHearing(_validId, _request);
-            ((OkResult) result.Result).StatusCode.Should().Be(200);
+            ((OkObjectResult) result.Result).StatusCode.Should().Be(200);
             _bookingsApiClient.Verify(x => x.AddParticipantsToHearingAsync(It.IsAny<Guid>(), It.IsAny<AddParticipantsToHearingRequest>()), Times.Once);
         }
         
@@ -123,7 +123,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _request.Participants[0].Id = _existingHearing.Participants[0].Id;
             
             var result = await _controller.EditHearing(_validId, _request);
-            ((OkResult) result.Result).StatusCode.Should().Be(200);
+            ((OkObjectResult) result.Result).StatusCode.Should().Be(200);
             _bookingsApiClient.Verify(x => x.UpdateParticipantDetailsAsync(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<UpdateParticipantRequest>()), Times.Once);
         }
         
@@ -136,8 +136,19 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _request.Participants[0].FirstName = "new user";
             
             var result = await _controller.EditHearing(_validId, _request);
-            ((OkResult) result.Result).StatusCode.Should().Be(200);
+            ((OkObjectResult) result.Result).StatusCode.Should().Be(200);
             _bookingsApiClient.Verify(x => x.RemoveParticipantFromHearingAsync(It.IsAny<Guid>(), _existingHearing.Participants[0].Id.Value), Times.Once);
+        }
+
+        [Test]
+        public async Task should_return_updated_hearing()
+        {
+            _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
+                .ReturnsAsync(_existingHearing);
+
+            var result = await _controller.EditHearing(_validId, _request);
+            var hearing = (HearingDetailsResponse) ((OkObjectResult) result.Result).Value;
+            hearing.Id.Should().Be(_existingHearing.Id);
         }
     }
 }
