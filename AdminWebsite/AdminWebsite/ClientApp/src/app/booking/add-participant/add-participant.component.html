@@ -158,7 +158,7 @@
           <input id="displayName" formControlName="displayName" class="govuk-input govuk-input--width-20" type="text" />
 
         </div>
-        <div ngIf="showAddress">
+        <div *ngIf="showAddress">
           <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':displayNameInvalid}">
 
             <legend id="display-name-error" *ngIf="displayNameInvalid">
