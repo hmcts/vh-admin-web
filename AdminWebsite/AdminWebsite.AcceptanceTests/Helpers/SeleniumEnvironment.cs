@@ -1,8 +1,7 @@
 ﻿using OpenQA.Selenium;
-using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.Remote;
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using TechTalk.SpecFlow;
@@ -40,34 +39,10 @@ namespace AdminWebsite.AcceptanceTests.Helpers
                     caps.SetCapability("platform", "Windows 10");
                     caps.SetCapability("version", "64.0");
                     break;
-                case TargetBrowser.Safari:
-                    caps.SetCapability("browserName", "Safari");
-                    caps.SetCapability("platform", "macOS 10.14");
-                    caps.SetCapability("version", "12.0");
-                    break;
-                case TargetBrowser.Edge:
-                    caps.SetCapability("browserName", "MicrosoftEdge");
-                    caps.SetCapability("platform", "Windows 10");
-                    caps.SetCapability("version", "16.16299");
-                    break;
                 case TargetBrowser.IE11:
                     caps.SetCapability("browserName", "Internet Explorer");
                     caps.SetCapability("platform", "Windows 10");
                     caps.SetCapability("version", "11.285");
-                    break;
-                case TargetBrowser.IPhoneSafari:
-                    caps.SetCapability("appiumVersion", "1.9.1");
-                    caps.SetCapability("deviceName", "iPhone 8 Simulator");
-                    caps.SetCapability("deviceOrientation", "portrait");
-                    caps.SetCapability("platformVersion", "12.0");
-                    caps.SetCapability("platformName", "iOS");
-                    caps.SetCapability("browserName", "Safari");
-                    break;
-                default:
-
-                    caps.SetCapability("browserName", "Chrome");
-                    caps.SetCapability("platform", "Windows 10");
-                    caps.SetCapability("version", "71.0");
                     break;
             }
 
@@ -85,26 +60,14 @@ namespace AdminWebsite.AcceptanceTests.Helpers
 
         private IWebDriver InitLocalDriver()
         {
-            var chromeDriverProcesses = Process.GetProcessesByName("ChromeDriver");
-
-            foreach (var chromeDriverProcess in chromeDriverProcesses)
+            var options = new FirefoxOptions
             {
-                try
-                {
-                    chromeDriverProcess.Kill();
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
-                }
-            }
-            ChromeOptions options = new ChromeOptions();
-            options.AddArgument("ignore -certificate-errors");
-
-            return new ChromeDriver(ChromeDriverPath, options);
+                AcceptInsecureCertificates = true
+            };
+            return new FirefoxDriver(FireFoxDriverPath, options);
         }
 
-        private string ChromeDriverPath
+        private string FireFoxDriverPath
         {
             get
             {
