@@ -7,7 +7,6 @@ using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.UserAPI.Client;
-using Hearings.Common;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -351,7 +350,7 @@ namespace AdminWebsite.Controllers
                 Other_information = editHearingRequest.OtherInformation,
                 Scheduled_date_time = editHearingRequest.ScheduledDateTime,
                 Scheduled_duration = editHearingRequest.ScheduledDuration,
-                Updated_by = User.Identity.Name,
+                Updated_by = _userIdentity.GetUserIdentityName(),
                 Cases = new List<CaseRequest>() {new CaseRequest {
                                                             Name = editHearingRequest.Case.Name,
                                                             Number = editHearingRequest.Case.Number }

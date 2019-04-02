@@ -9,6 +9,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
+using NUnit.Framework.Internal;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {
@@ -20,6 +21,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private AdminWebsite.Controllers.HearingsController _controller;
         private Guid _validId;
         private EditHearingRequest _request;
+        private HearingDetailsResponse _existingHearing;
 
         [SetUp]
         public void Setup()
@@ -41,6 +43,18 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 {
                     new EditParticipantRequest()
                 } 
+            };
+            
+            _existingHearing = new HearingDetailsResponse
+            {
+                Participants = new List<ParticipantResponse>
+                {
+                    new ParticipantResponse
+                    {
+                        Id = Guid.NewGuid(),
+                        User_role_name = "Individual"
+                    }
+                }
             };
         }
         
@@ -85,6 +99,45 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var result = await _controller.EditHearing(_validId, _request);
             var notFoundResult = (NotFoundObjectResult) result.Result;
             notFoundResult.Value.Should().Be($"No hearing with id found [{_validId}]");
+        }
+
+        [Test]
+        public async Task should_add_participants_without_id()
+        {
+            _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
+                .ReturnsAsync(_existingHearing);
+
+            _request.Participants[0].FirstName = "New user firstname";
+            
+            var result = await _controller.EditHearing(_validId, _request);
+            ((OkResult) result.Result).StatusCode.Should().Be(200);
+            _bookingsApiClient.Verify(x => x.AddParticipantsToHearingAsync(It.IsAny<Guid>(), It.IsAny<AddParticipantsToHearingRequest>()), Times.Once);
+        }
+        
+        [Test]
+        public async Task should_update_existing_participants()
+        {
+            _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
+                .ReturnsAsync(_existingHearing);
+
+            _request.Participants[0].Id = _existingHearing.Participants[0].Id;
+            
+            var result = await _controller.EditHearing(_validId, _request);
+            ((OkResult) result.Result).StatusCode.Should().Be(200);
+            _bookingsApiClient.Verify(x => x.UpdateParticipantDetailsAsync(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<UpdateParticipantRequest>()), Times.Once);
+        }
+        
+        [Test]
+        public async Task should_delete_missing_participants()
+        {
+            _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
+                .ReturnsAsync(_existingHearing);
+
+            _request.Participants[0].FirstName = "new user";
+            
+            var result = await _controller.EditHearing(_validId, _request);
+            ((OkResult) result.Result).StatusCode.Should().Be(200);
+            _bookingsApiClient.Verify(x => x.RemoveParticipantFromHearingAsync(It.IsAny<Guid>(), _existingHearing.Participants[0].Id.Value), Times.Once);
         }
     }
 }
