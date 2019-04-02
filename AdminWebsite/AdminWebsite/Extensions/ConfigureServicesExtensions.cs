@@ -78,7 +78,7 @@ namespace AdminWebsite.Extensions
                 var userPrincipal = ctx.GetService<IHttpContextAccessor>().HttpContext.User;
                 return new UserIdentity(userPrincipal, userAccountService);
             });
-            
+
             return serviceCollection;
         }
         

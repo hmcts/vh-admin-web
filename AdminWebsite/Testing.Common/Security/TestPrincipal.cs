@@ -1,6 +1,6 @@
 using System.Security.Claims;
 
-namespace AdminWebsite.UnitTests.Security
+namespace Testing.Common.Security
 {
     /// <summary>
     /// Mock class to ease testing of identity services

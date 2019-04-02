@@ -5,6 +5,7 @@ using FluentAssertions;
 using Microsoft.Graph;
 using Moq;
 using NUnit.Framework;
+using Testing.Common.Security;
 
 namespace AdminWebsite.UnitTests.Security
 {

@@ -2,13 +2,21 @@
 using AdminWebsite.Configuration;
 using AdminWebsite.Security;
 using System.Net.Http;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using AdminWebsite.BookingsAPI.Client;
+using AdminWebsite.Services;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Clients.ActiveDirectory;
+using Moq;
 using NUnit.Framework;
+using Testing.Common.Security;
 
 namespace AdminWebsite.IntegrationTests.Controllers
 {
@@ -17,16 +25,14 @@ namespace AdminWebsite.IntegrationTests.Controllers
     {
         private TestServer _server;
         private string _bearerToken = String.Empty;
-        protected string GraphApiToken;   
-        private readonly string _environmentName = "Development";
-        
+
+        protected readonly Mock<IBookingsApiClient> BookingsApiClient;
+
         protected ControllerTestsBase()
-        {
-            if (!string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")))
-            {
-                _environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-            }
+        {   
+            BookingsApiClient = new Mock<IBookingsApiClient>();
         }
+
         
         [OneTimeSetUp]
         public void OneTimeSetup()
@@ -35,9 +41,22 @@ namespace AdminWebsite.IntegrationTests.Controllers
                 WebHost.CreateDefaultBuilder()
                     .UseEnvironment("Development")
                     .UseKestrel(c => c.AddServerHeader = false)
-                    .UseStartup<Startup>();
+                    .UseStartup<Startup>()
+                    .ConfigureServices(MockServices);
+
             _server = new TestServer(webHostBuilder);
             GetClientAccessTokenForBookHearingApi();
+        }
+
+        private void MockServices(IServiceCollection services)
+        {
+            services.AddSingleton<IBookingsApiClient>(BookingsApiClient.Object);
+
+            var accessor = new Mock<IHttpContextAccessor>();
+            var httpContext = new Mock<HttpContext>();
+            httpContext.Setup(x => x.User).Returns(new TestPrincipal());
+            accessor.Setup(x => x.HttpContext).Returns(httpContext.Object);
+            services.AddSingleton(accessor.Object);
         }
 
         private void GetClientAccessTokenForBookHearingApi()
@@ -49,16 +68,10 @@ namespace AdminWebsite.IntegrationTests.Controllers
             var configRoot = configRootBuilder.Build();
 
             var securitySettingsOptions = Options.Create(configRoot.GetSection("AzureAd").Get<SecuritySettings>());
-            var serviceSettingsOptions = Options.Create(configRoot.GetSection("VhServices").Get<ServiceSettings>());
             var securitySettings = securitySettingsOptions.Value;
-            var serviceSettings = serviceSettingsOptions.Value;
             _bearerToken = new TokenProvider(securitySettingsOptions).GetClientAccessToken(
                 securitySettings.ClientId, securitySettings.ClientSecret,
-                serviceSettings.BookingsApiResourceId);
-
-            GraphApiToken = new TokenProvider(securitySettingsOptions).GetClientAccessToken(
-                securitySettings.ClientId, securitySettings.ClientSecret,
-                "https://graph.microsoft.com");
+                securitySettings.ClientId);
         }
 
         [OneTimeTearDown]
