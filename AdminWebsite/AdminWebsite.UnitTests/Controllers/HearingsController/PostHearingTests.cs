@@ -37,13 +37,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 Case_role_name= "Claimant",
                 Hearing_role_name = "Solicitor"
             };
-            
-            var hearing = new BookNewHearingRequest
-            {
-                Participants = new List<BookingsAPI.Client.ParticipantRequest> { participant }
-            };
 
-            await _controller.Post(hearing);
+            await PostWithParticipants(participant);
             
             _userAccountService.Verify(x => x.UpdateParticipantUsername(participant), Times.Once);
         }
@@ -58,12 +53,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 Hearing_role_name = "Judge"
             };
             
-            var hearing = new BookNewHearingRequest
-            {
-                Participants = new List<BookingsAPI.Client.ParticipantRequest> { participant }
-            };
-
-            await _controller.Post(hearing);
+            await PostWithParticipants(participant);
             
             _userAccountService.Verify(x => x.UpdateParticipantUsername(participant), Times.Never);   
         }
@@ -87,18 +77,31 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task should_pass_current_user_as_created_by_to_service()
         {
-            var hearing = new BookNewHearingRequest
-            {
-                Participants = new List<BookingsAPI.Client.ParticipantRequest>()
-            };
-
+            
             const string currentUsername = "test@user.com";
             _userIdentity.Setup(x => x.GetUserIdentityName()).Returns(currentUsername);
 
-            await _controller.Post(hearing);
+            await PostNewHearing();
 
             _bookingsApiClient.Verify(x => x.BookNewHearingAsync(It.Is<BookNewHearingRequest>(
                 request => request.Created_by == currentUsername)), Times.Once);
+        }
+
+        private Task<ActionResult<HearingDetailsResponse>> PostNewHearing()
+        {
+            // without supplying participants
+            return PostWithParticipants();
+        }
+
+        private async Task<ActionResult<HearingDetailsResponse>> PostWithParticipants(
+            params BookingsAPI.Client.ParticipantRequest[] participants)
+        {
+            var hearing = new BookNewHearingRequest
+            {
+                Participants = new List<BookingsAPI.Client.ParticipantRequest>(participants)
+            };
+
+            return await _controller.Post(hearing);
         }
     }
 }
