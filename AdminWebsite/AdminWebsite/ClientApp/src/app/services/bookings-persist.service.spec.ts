@@ -62,7 +62,7 @@ describe('BookingsPersistService', () => {
 
       expect(service.bookingList[0].BookingsDetails[0].HearingCaseName).not.toBe(updatedCase.name);
     });
-    
+
     it('should update all hearing model values for selected hearing', () => {
       service.bookingList = [
         MockGroupedBookings([
