@@ -58,6 +58,7 @@ namespace AdminWebsite.Controllers
                     }
                 }
 
+                hearingRequest.Created_by = _userIdentity.GetUserIdentityName();
                 var hearingDetailsResponse = await _bookingsApiClient.BookNewHearingAsync(hearingRequest);
                 return Created("", hearingDetailsResponse);
             }
