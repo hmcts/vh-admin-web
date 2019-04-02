@@ -56,6 +56,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                     }
                 }
             };
+            
+            _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
+                .ReturnsAsync(_existingHearing);
         }
         
         [Test]
@@ -154,13 +157,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task should_pass_on_bad_request_from_bookings_api()
         {
-            _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
-                .ReturnsAsync(_existingHearing);
-
-            _bookingsApiClient.Setup(x =>
-                    x.UpdateHearingDetailsAsync(It.IsAny<Guid>(), It.IsAny<UpdateHearingRequest>()))
-                .ThrowsAsync(new BookingsApiException("Bad request", (int) HttpStatusCode.BadRequest, "",
-                    new Dictionary<string, IEnumerable<string>>(), null));
+            GivenApiThrowsExceptionOnUpdate(HttpStatusCode.BadRequest);
 
             var response = await _controller.EditHearing(_validId, _request);
             response.Result.Should().BeOfType<BadRequestObjectResult>();
@@ -169,16 +166,18 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task should_pass_on_not_found_request_from_bookings_api()
         {
-            _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
-                .ReturnsAsync(_existingHearing);
-
-            _bookingsApiClient.Setup(x =>
-                    x.UpdateHearingDetailsAsync(It.IsAny<Guid>(), It.IsAny<UpdateHearingRequest>()))
-                .ThrowsAsync(new BookingsApiException("Not found", (int) HttpStatusCode.NotFound, "",
-                    new Dictionary<string, IEnumerable<string>>(), null));
+            GivenApiThrowsExceptionOnUpdate(HttpStatusCode.NotFound);
 
             var response = await _controller.EditHearing(_validId, _request);
             response.Result.Should().BeOfType<NotFoundObjectResult>();
+        }
+
+        private void GivenApiThrowsExceptionOnUpdate(HttpStatusCode code)
+        {
+            _bookingsApiClient.Setup(x =>
+                    x.UpdateHearingDetailsAsync(It.IsAny<Guid>(), It.IsAny<UpdateHearingRequest>()))
+                .ThrowsAsync(new BookingsApiException(code.ToString(), (int) code, "",
+                    new Dictionary<string, IEnumerable<string>>(), null));
         }
     }
 }
