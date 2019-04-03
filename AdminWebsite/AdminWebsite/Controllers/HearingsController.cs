@@ -346,11 +346,15 @@ namespace AdminWebsite.Controllers
                 Scheduled_date_time = editHearingRequest.ScheduledDateTime,
                 Scheduled_duration = editHearingRequest.ScheduledDuration,
                 Updated_by = _userIdentity.GetUserIdentityName(),
-                Cases = new List<CaseRequest>() {new CaseRequest {
-                                                            Name = editHearingRequest.Case.Name,
-                                                            Number = editHearingRequest.Case.Number }
-                                                    }
-                };
+                Cases = new List<CaseRequest>()
+                {
+                    new CaseRequest
+                    {
+                        Name = editHearingRequest.Case.Name,
+                        Number = editHearingRequest.Case.Number
+                    }
+                }
+            };
             return updateHearingRequest;
         }
 
@@ -400,23 +404,33 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> UpdateBookingStatus(Guid hearingId)
+        public async Task<ActionResult> UpdateBookingStatus(Guid hearingId)
         {
+            if (hearingId == Guid.Empty)
+            {
+                ModelState.AddModelError(nameof(hearingId), $"Please provide a valid {nameof(hearingId)}");
+                return BadRequest(ModelState);
+            }
+
             try
             {
                 var updateBookingStatusRequest = new UpdateBookingStatusRequest()
                 {
-                    Status = BookingsHearingResponseStatus.Cancelled.ToString(),
+                    Status = UpdateBookingStatusRequestStatus.Cancelled,
                     Updated_by = _userIdentity.GetUserIdentityName()
                 };
                 await _bookingsApiClient.UpdateBookingStatusAsync(hearingId, updateBookingStatusRequest);
-                return Ok();
+                return NoContent();
             }
             catch (BookingsApiException e)
             {
                 if (e.StatusCode == (int)HttpStatusCode.BadRequest)
                 {
                     return BadRequest(e.Response);
+                }
+                if (e.StatusCode == (int)HttpStatusCode.NotFound)
+                {
+                    return NotFound(e.Response);
                 }
                 throw;
             }

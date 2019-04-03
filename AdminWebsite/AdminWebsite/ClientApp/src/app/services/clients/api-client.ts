@@ -1346,6 +1346,7 @@ export class BookNewHearingRequest implements IBookNewHearingRequest {
     participants?: ParticipantRequest[] | undefined;
     hearing_room_name?: string | undefined;
     other_information?: string | undefined;
+    created_by?: string | undefined;
 
     constructor(data?: IBookNewHearingRequest) {
         if (data) {
@@ -1375,6 +1376,7 @@ export class BookNewHearingRequest implements IBookNewHearingRequest {
             }
             this.hearing_room_name = data["hearing_room_name"];
             this.other_information = data["other_information"];
+            this.created_by = data["created_by"];
         }
     }
 
@@ -1404,6 +1406,7 @@ export class BookNewHearingRequest implements IBookNewHearingRequest {
         }
         data["hearing_room_name"] = this.hearing_room_name;
         data["other_information"] = this.other_information;
+        data["created_by"] = this.created_by;
         return data; 
     }
 }
@@ -1418,6 +1421,7 @@ export interface IBookNewHearingRequest {
     participants?: ParticipantRequest[] | undefined;
     hearing_room_name?: string | undefined;
     other_information?: string | undefined;
+    created_by?: string | undefined;
 }
 
 export class CaseRequest implements ICaseRequest {
