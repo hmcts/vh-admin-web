@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-
+import { MomentModule } from 'angular2-moment';
 import { SharedModule } from '../shared/shared.module';
 import { BookingsListComponent } from './bookings-list/bookings-list.component';
 import { BookingsListRoutingModule } from './bookings-list-routing.module';
@@ -13,6 +13,7 @@ import { HearingDetailsComponent } from './hearing-details/hearing-details.compo
   imports: [
     SharedModule,
     BookingsListRoutingModule,
+    MomentModule
   ],
   declarations: [
     BookingsListComponent,

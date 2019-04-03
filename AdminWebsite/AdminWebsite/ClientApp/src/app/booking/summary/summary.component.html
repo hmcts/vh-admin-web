@@ -18,7 +18,7 @@
 
     <app-booking-edit [title]="'Hearing schedule'" [editLink]="'hearing-schedule'" [elementId]="'hearing-schedule-id'"></app-booking-edit>
     <div class="govuk-form-group vhtable">
-      <div id="hearingDate">{{ hearingDate | date:"EEEE dd MMMM yyyy ',' h:mm a" }}</div>
+      <div id="hearingDate">{{ hearingDate | amLocal | amDateFormat: 'dddd Do MMMM YYYY [,] H:mm a' }}</div>
       <div id="courtAddress">{{ courtRoomAddress }}</div>
       <div id="hearingDuration">{{ hearingDuration }}</div>
     </div>

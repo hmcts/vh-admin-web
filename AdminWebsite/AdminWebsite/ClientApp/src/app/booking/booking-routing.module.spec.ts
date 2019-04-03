@@ -32,6 +32,7 @@ import { RemovePopupComponent } from '../popups/remove-popup/remove-popup.compon
 import { WaitPopupComponent } from '../popups/wait-popup/wait-popup.component';
 import { SaveFailedPopupComponent } from '../popups/save-failed-popup/save-failed-popup.component';
 import { DiscardConfirmPopupComponent } from '../popups/discard-confirm-popup/discard-confirm-popup.component';
+import { MomentModule } from 'angular2-moment';
 
 describe('app routing', () => {
   let location: Location;
@@ -45,7 +46,7 @@ describe('app routing', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [ReactiveFormsModule, RouterTestingModule.withRoutes(routes), FormsModule],
+      imports: [ReactiveFormsModule, RouterTestingModule.withRoutes(routes), FormsModule, MomentModule],
       declarations: [
         BreadcrumbComponent,
         CancelPopupComponent,
