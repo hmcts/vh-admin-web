@@ -21,7 +21,6 @@ namespace AdminWebsite.IntegrationTests.Services
         private Mock<IUserApiClient> _apiClient;
         private IOptions<SecuritySettings> _securitySettings;
         private AppConfigSettings _appSettings;
-        private ServiceSettings _serviceSettings;
 
         [SetUp]
         public void Setup()
@@ -34,7 +33,6 @@ namespace AdminWebsite.IntegrationTests.Services
             
             var configRoot = configRootBuilder.Build();
 
-            _serviceSettings = configRoot.GetSection("VhServices").Get<ServiceSettings>();
             _securitySettings = Options.Create(configRoot.GetSection("AzureAd").Get<SecuritySettings>());
             _appSettings = new AppConfigSettings();
         }
