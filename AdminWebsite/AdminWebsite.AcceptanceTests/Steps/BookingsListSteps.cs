@@ -1,5 +1,6 @@
 ﻿using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.AcceptanceTests.Pages;
+using FluentAssertions;
 using TechTalk.SpecFlow;
 
 namespace AdminWebsite.AcceptanceTests.Steps
@@ -23,6 +24,14 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _bookingsList.BookingsList();
             BookingsListPage();
         }
-
+        [When(@"admin user tries to amend booking")]
+        public void UpdateParticipantDetails()
+        {
+            _bookingsList.BookingsList();
+            BookingsListPage();
+            _bookingsList.SelectHearing(_bookingsList.GetItems("CaseNumber"));
+            _bookingsList.EditBookingList();
+            _bookingsList.BookingDetailsTitle().Should().Be(_bookingsList.GetItems("CaseNumber"));
+        }
     }
 }

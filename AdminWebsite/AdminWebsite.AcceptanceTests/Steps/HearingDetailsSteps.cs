@@ -22,7 +22,9 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void WhenHearingDetailsFormIsFilled()
         {
             HearingDetailsPage();
-            InputCaseNumber(TestData.HearingDetails.CaseNumber);
+            var caseNumber = $"AutomatedTest_{Guid.NewGuid().ToString()}";
+            _hearingDetails.AddItems("CaseNumber", caseNumber);
+            InputCaseNumber(caseNumber);
             InputCaseName(TestData.HearingDetails.CaseName);
             SelectHearingType();
         }
@@ -77,7 +79,8 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void GivenUserSelectsCaseTypeAsCivilMoneyClaims(string caseType)
         {
             _hearingDetails.AddItems<string>("CaseType", caseType);
-            InputCaseNumber(TestData.HearingDetails.CaseNumber);
+            var caseNumber = $"AutomatedTest_{Guid.NewGuid().ToString()}";
+            _hearingDetails.AddItems("CaseNumber", caseNumber);
             InputCaseName(TestData.HearingDetails.CaseName);
             _hearingDetails.CaseTypes(caseType);
             _hearingDetails.HearingType();

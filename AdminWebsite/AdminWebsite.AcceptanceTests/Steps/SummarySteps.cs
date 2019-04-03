@@ -118,5 +118,9 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             _summary.Book();
         }
+        [Then(@"")]
+        public void UpdateParticipantDetails()
+        {
+        }
     }
 }

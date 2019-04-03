@@ -70,7 +70,10 @@ namespace AdminWebsite.AcceptanceTests.Pages
             foreach (var element in getListOfElements)
             {
                 if (option == element.Text.Trim())
+                {
                     _browserContext.NgDriver.WaitUntilElementClickable(element).Click();
+                    break;
+                }
             }
         }
         protected void SelectOption(By elements)
