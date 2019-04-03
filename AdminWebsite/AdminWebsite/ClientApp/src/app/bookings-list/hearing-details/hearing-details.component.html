@@ -22,7 +22,7 @@
         <div class="vh-xsml" id="edit-by"><strong>{{hearing?.LastEditBy}}</strong></div>
       </div>
       <div class="govuk-grid-row">
-        <div class="vh-xsml" id="edit-date">{{hearing?.LastEditDate | amLocale | amDateFormat: 'DD MMM YYYY H:mm a'}}</div>
+        <div class="vh-xsml" id="edit-date">{{hearing?.LastEditDate | amLocal | amDateFormat: 'Do MMM YYYY H:mm a'}}</div>
       </div>
     </div>
   </div>
