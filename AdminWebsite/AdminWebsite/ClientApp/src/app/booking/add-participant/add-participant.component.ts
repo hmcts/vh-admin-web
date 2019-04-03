@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Observable} from 'rxjs';
+import { Observable } from 'rxjs';
 import { Constants } from '../../common/constants';
 import { CanDeactiveComponent } from '../../common/guards/changes.guard';
 import { IDropDownModel } from '../../common/model/drop-down.model';
@@ -137,7 +137,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   private setParticipantEmail() {
     this.searchEmail.email = this.participantDetails.email;
     this.searchEmail.isValidEmail = true;
-    this.searchEmail.setEmailDisabled(this.participantDetails.id && this.participantDetails.id.length > 0 );
+    this.searchEmail.setEmailDisabled(this.participantDetails.id && this.participantDetails.id.length > 0);
   }
 
 
@@ -243,7 +243,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   public getParticipant(participantDetails) {
     this.displayErrorNoParticipants = false;
     this.displayAdd();
-    this.participantDetails = Object.assign({},participantDetails);
+    this.participantDetails = Object.assign({}, participantDetails);
     this.setupHearingRoles(this.participantDetails.case_role_name);
     this.participantForm.setValue({
       party: this.participantDetails.case_role_name,
