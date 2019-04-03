@@ -30,30 +30,34 @@
 
 <h2 class="govuk-heading-s remove-header-padding">Hearing details</h2>
 <div class="vh-section">
-    <div class="govuk-grid-row vh-wrap">
-        <div class="govuk-body vh-sml" id="hearing-number">{{hearing?.HearingCaseNumber}}</div>
-    </div>
-    <div class="govuk-grid-row">
-        <div class="govuk-body vh-sml" id="hearing-name">{{hearing?.HearingCaseName}}</div>
-    </div>
-    <div class="govuk-grid-row">
-        <div class="govuk-body vh-sml" id="hearing-type">{{hearing?.HearingType}}</div>
-    </div>
+  <div class="govuk-grid-row vh-wrap">
+    <div class="govuk-body vh-sml" id="hearing-number">{{hearing?.HearingCaseNumber}}</div>
+  </div>
+  <div class="govuk-grid-row">
+    <div class="govuk-body vh-sml" id="hearing-name">{{hearing?.HearingCaseName}}</div>
+  </div>
+  <div class="govuk-grid-row">
+    <div class="govuk-body vh-sml" id="hearing-type">{{hearing?.HearingType}}</div>
+  </div>
 </div>
 
 <h2 class="govuk-heading-s remove-header-padding">Hearing schedule</h2>
 <div class="vh-section">
-    <div class="govuk-grid-row vh-wrap">
-        <div class="govuk-body vh-sml" id="hearing-start">{{hearing?.StartTime | date:"EEEE dd MMMM yyyy ',' h:mm a"}}</div>
-    </div>
-    <div class="govuk-grid-row">
-        <div class="govuk-body vh-sml" id="court-room-address">{{hearing?.CourtRoom}} {{hearing?.CourtAddress}}</div>
-    </div>
-    <div class="govuk-grid-row">
-        <div class="govuk-body vh-sml" id="duration">listed for {{hearing?.DurationInHoursAndMinutes}}</div>
-    </div>
+  <div class="govuk-grid-row vh-wrap">
+    <div class="govuk-body vh-sml" id="hearing-start">{{hearing?.StartTime | date:"EEEE dd MMMM yyyy ',' h:mm a"}}</div>
+  </div>
+  <div class="govuk-grid-row">
+    <div class="govuk-body vh-sml" id="court-room-address">{{hearing?.CourtRoom}} {{hearing?.CourtAddress}}</div>
+  </div>
+  <div class="govuk-grid-row">
+    <div class="govuk-body vh-sml" id="duration">listed for {{hearing?.DurationInHoursAndMinutes}}</div>
+  </div>
 </div>
 
 <h2 class="govuk-heading-s remove-header-padding">Other information</h2>
+<div class="govuk-form-group vhtable">
+  <div class="vh-text-break" id="otherInformation">{{ hearing?.OtherInformation }}</div>
+</div>
+
 
 
