@@ -17,16 +17,6 @@ namespace AdminWebsite.IntegrationTests.Controllers
     {
         private TestServer _server;
         private string _bearerToken = String.Empty;
-        protected string GraphApiToken;   
-        private readonly string _environmentName = "Development";
-        
-        protected ControllerTestsBase()
-        {
-            if (!string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")))
-            {
-                _environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-            }
-        }
         
         [OneTimeSetUp]
         public void OneTimeSetup()
@@ -49,16 +39,11 @@ namespace AdminWebsite.IntegrationTests.Controllers
             var configRoot = configRootBuilder.Build();
 
             var securitySettingsOptions = Options.Create(configRoot.GetSection("AzureAd").Get<SecuritySettings>());
-            var serviceSettingsOptions = Options.Create(configRoot.GetSection("VhServices").Get<ServiceSettings>());
             var securitySettings = securitySettingsOptions.Value;
-            var serviceSettings = serviceSettingsOptions.Value;
+
             _bearerToken = new TokenProvider(securitySettingsOptions).GetClientAccessToken(
                 securitySettings.ClientId, securitySettings.ClientSecret,
-                serviceSettings.BookingsApiResourceId);
-
-            GraphApiToken = new TokenProvider(securitySettingsOptions).GetClientAccessToken(
-                securitySettings.ClientId, securitySettings.ClientSecret,
-                "https://graph.microsoft.com");
+                securitySettings.ClientId);
         }
 
         [OneTimeTearDown]
