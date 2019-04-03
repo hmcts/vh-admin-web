@@ -9,7 +9,7 @@
         <div class="vh-xsml" id="created-by"><strong>{{hearing?.CreatedBy}}</strong></div>
       </div>
       <div class="govuk-grid-row vh-b">
-        <div class="vh-xsml" id="created-date">{{hearing?.CreatedDate | date: 'dd MMM yyyy h:mm a'}}</div>
+        <div class="vh-xsml" id="created-date">{{hearing?.CreatedDate | amLocal | amDateFormat: 'Do MMM YYYY H:mm a'}}</div>
       </div>
     </div>
   </div>
@@ -22,7 +22,7 @@
         <div class="vh-xsml" id="edit-by"><strong>{{hearing?.LastEditBy}}</strong></div>
       </div>
       <div class="govuk-grid-row">
-        <div class="vh-xsml" id="edit-date">{{hearing?.LastEditDate | date: 'dd MMM yyyy h:mm a'}}</div>
+        <div class="vh-xsml" id="edit-date">{{hearing?.LastEditDate | amLocale | amDateFormat: 'DD MMM YYYY H:mm a'}}</div>
       </div>
     </div>
   </div>
@@ -44,7 +44,7 @@
 <h2 class="govuk-heading-s remove-header-padding">Hearing schedule</h2>
 <div class="vh-section">
   <div class="govuk-grid-row vh-wrap">
-    <div class="govuk-body vh-sml" id="hearing-start">{{hearing?.StartTime | date:"EEEE dd MMMM yyyy ',' h:mm a"}}</div>
+    <div class="govuk-body vh-sml" id="hearing-start">{{hearing?.StartTime | amLocal | amDateFormat: 'dddd Do MMMM YYYY [,] H:mm a'}}</div>
   </div>
   <div class="govuk-grid-row">
     <div class="govuk-body vh-sml" id="court-room-address">{{hearing?.CourtRoom}} {{hearing?.CourtAddress}}</div>
@@ -56,7 +56,7 @@
 
 <h2 class="govuk-heading-s remove-header-padding">Other information</h2>
 <div class="govuk-form-group vhtable">
-  <div class="vh-text-break" id="otherInformation">{{ hearing?.OtherInformation }}</div>
+  <div class="govuk-body vh-text-break" id="otherInformation">{{ hearing?.OtherInformation }}</div>
 </div>
 
 

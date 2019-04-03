@@ -16,6 +16,7 @@ import { BookingDetailsComponent } from './booking-details/booking-details.compo
 import { BookingParticipantListComponent } from './booking-participant-list/booking-participant-list.component';
 import { ParticipantDetailsComponent } from './participant-details/participant-details.component';
 import { HearingDetailsComponent } from './hearing-details/hearing-details.component';
+import { MomentModule } from 'angular2-moment';
 
 
 describe('app routing', () => {
@@ -28,7 +29,7 @@ describe('app routing', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [RouterTestingModule.withRoutes(routes)],
+      imports: [RouterTestingModule.withRoutes(routes), MomentModule],
       declarations: [
         BookingsListComponent,
         BookingDetailsComponent,

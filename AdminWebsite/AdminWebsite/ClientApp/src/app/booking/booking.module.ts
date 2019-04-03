@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-
+import { MomentModule } from 'angular2-moment';
 import { PopupModule } from '../popups/popup.module';
 import { SharedModule } from '../shared/shared.module';
 import { AddParticipantComponent } from './add-participant/add-participant.component';
@@ -17,6 +17,7 @@ import { RemovePopupComponent } from '../popups/remove-popup/remove-popup.compon
 
 @NgModule({
   imports: [
+    MomentModule,
     SharedModule,
     BookingRoutingModule,
     PopupModule
