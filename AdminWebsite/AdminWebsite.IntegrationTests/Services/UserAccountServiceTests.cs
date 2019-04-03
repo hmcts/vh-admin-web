@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using AdminWebsite.Configuration;
 using AdminWebsite.Helper;
+using AdminWebsite.IntegrationTests.Helper;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
 using AdminWebsite.UserAPI.Client;
@@ -27,13 +28,7 @@ namespace AdminWebsite.IntegrationTests.Services
         {
             _apiClient = new Mock<IUserApiClient>();
             
-            var configRootBuilder = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json")
-                .AddUserSecrets<Startup>();
-            
-            var configRoot = configRootBuilder.Build();
-
-            _securitySettings = Options.Create(configRoot.GetSection("AzureAd").Get<SecuritySettings>());
+            _securitySettings = Options.Create(new TestSettings().Security);
             _appSettings = new AppConfigSettings();
         }
 
