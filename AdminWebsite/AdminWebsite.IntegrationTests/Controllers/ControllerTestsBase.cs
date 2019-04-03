@@ -3,6 +3,7 @@ using AdminWebsite.Configuration;
 using AdminWebsite.Security;
 using System.Net.Http;
 using System.Threading.Tasks;
+using AdminWebsite.IntegrationTests.Helper;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
@@ -32,16 +33,8 @@ namespace AdminWebsite.IntegrationTests.Controllers
 
         private void GetClientAccessTokenForBookHearingApi()
         {
-            var configRootBuilder = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json")
-                .AddUserSecrets<Startup>();
-            
-            var configRoot = configRootBuilder.Build();
-
-            var securitySettingsOptions = Options.Create(configRoot.GetSection("AzureAd").Get<SecuritySettings>());
-            var securitySettings = securitySettingsOptions.Value;
-
-            _bearerToken = new TokenProvider(securitySettingsOptions).GetClientAccessToken(
+            var securitySettings = new TestSettings().Security;
+            _bearerToken = new TokenProvider(Options.Create(securitySettings)).GetClientAccessToken(
                 securitySettings.ClientId, securitySettings.ClientSecret,
                 securitySettings.ClientId);
         }
