@@ -122,7 +122,6 @@ namespace AdminWebsite.Services
                 var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get,
                     $"{_securitySettings.GraphApiBaseUri}v1.0/groups?$filter=displayName eq '{groupName}'");
                 responseMessage = client.SendAsync(httpRequestMessage).Result;
-
             }
 
             if (responseMessage.IsSuccessStatusCode)

@@ -108,7 +108,5 @@ namespace AdminWebsite.UnitTests.Services
             
             _apiClient.Verify(x => x.CreateUserAsync(It.IsAny<CreateUserRequest>()), Times.Never);
         }
-        
-        
     }
 }
