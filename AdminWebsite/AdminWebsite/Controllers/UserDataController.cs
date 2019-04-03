@@ -25,7 +25,7 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public ActionResult<IList<ParticipantDetailsResponse>> GetJudges()
         {
-            var response = _userAccountService.GetUsersByGroup();
+            var response = _userAccountService.GetJudgeUsers();
             return Ok(response);
         }
     }

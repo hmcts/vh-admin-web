@@ -23,7 +23,7 @@ namespace AdminWebsite.Services
     {
         Group GetGroupById(string groupId);
 
-        IEnumerable<ParticipantDetailsResponse> GetUsersByGroup();
+        IEnumerable<ParticipantDetailsResponse> GetJudgeUsers();
        
         Task UpdateParticipantUsername(ParticipantRequest participant);
     }
@@ -66,12 +66,13 @@ namespace AdminWebsite.Services
             }
             catch(UserAPI.Client.UserServiceException e)
             {
-                if (e.StatusCode == (int)HttpStatusCode.NotFound)
+                if (e.StatusCode == (int) HttpStatusCode.NotFound)
                 {
                     return null;
                 }
+
+                throw;
             }
-            return null;
         }
 
         private async Task<NewUserResponse> CreateNewUserInAD(ParticipantRequest participant)
@@ -82,9 +83,8 @@ namespace AdminWebsite.Services
                 Last_name = participant.Last_name,
                 Recovery_email = participant.Contact_email
             };
+
             var newUserResponse = await _userApiClient.CreateUserAsync(createUserRequest);
-            if (newUserResponse == null) 
-                return null;
 
             participant.Username = newUserResponse.Username;
 
@@ -165,7 +165,7 @@ namespace AdminWebsite.Services
             throw new UserServiceException(message, reason);
         }
 
-        public IEnumerable<ParticipantDetailsResponse> GetUsersByGroup()
+        public IEnumerable<ParticipantDetailsResponse> GetJudgeUsers()
         {
             var judges = GetUsersByGroupName("VirtualRoomJudge");
             if (_isLive)
