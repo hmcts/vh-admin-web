@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Net;
 using AdminWebsite.BookingsAPI.Client;
@@ -14,6 +15,17 @@ namespace Testing.Common
             return new BookingsApiException(
                 statusCode.ToString(), 
                 (int) statusCode,
+                statusCode.ToString(),
+                new Dictionary<string, IEnumerable<string>>(),
+                null
+            );
+        }
+
+        public static Exception ForUserService(HttpStatusCode statusCode)
+        {
+            return new AdminWebsite.UserAPI.Client.UserServiceException(
+                statusCode.ToString(), 
+                (int) statusCode, 
                 statusCode.ToString(),
                 new Dictionary<string, IEnumerable<string>>(),
                 null

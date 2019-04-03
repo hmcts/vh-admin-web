@@ -9,6 +9,7 @@ using AdminWebsite.UserAPI.Client;
 using Microsoft.Extensions.Options;
 using Moq;
 using NUnit.Framework;
+using Testing.Common;
 
 namespace AdminWebsite.UnitTests.Services
 {
@@ -43,16 +44,14 @@ namespace AdminWebsite.UnitTests.Services
             );
 
             _apiClient.Setup(x => x.GetUserByEmailAsync(It.IsAny<string>()))
-                .Throws(new UserAPI.Client.UserServiceException("NotFound", (int) HttpStatusCode.NotFound, "",
-                    new Dictionary<string, IEnumerable<string>>(), null));
+                .Throws(ClientException.ForUserService(HttpStatusCode.NotFound));
         }
 
         [Test]
         public void should_fail_if_we_cannot_figure_out_user_existence()
         {
             _apiClient.Setup(x => x.GetUserByEmailAsync(It.IsAny<string>()))
-                .Throws(new UserAPI.Client.UserServiceException("Error", (int) HttpStatusCode.InternalServerError, "",
-                    new Dictionary<string, IEnumerable<string>>(), null));
+                .Throws(ClientException.ForUserService(HttpStatusCode.InternalServerError));
 
             Assert.ThrowsAsync<UserAPI.Client.UserServiceException>(() =>
                 _service.UpdateParticipantUsername(new BookingsAPI.Client.ParticipantRequest()));

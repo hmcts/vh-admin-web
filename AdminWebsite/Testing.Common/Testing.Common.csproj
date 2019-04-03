@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AdminWebsite\AdminWebsite.csproj" />
+    <ProjectReference Include="..\AdminWebsite.UserAPI.Client\AdminWebsite.UserAPI.Client.csproj" />
   </ItemGroup>
 
 </Project>
