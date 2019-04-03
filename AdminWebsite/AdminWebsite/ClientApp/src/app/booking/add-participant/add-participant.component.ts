@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Observable} from 'rxjs';
+import { Observable } from 'rxjs';
 import { Constants } from '../../common/constants';
 import { CanDeactiveComponent } from '../../common/guards/changes.guard';
 import { IDropDownModel } from '../../common/model/drop-down.model';
@@ -17,6 +17,7 @@ import { BookingService } from '../../services/booking.service';
 import { ParticipantService } from '../services/participant.service';
 import { CaseAndHearingRolesResponse } from '../../services/clients/api-client';
 import { PartyModel } from '../../common/model/party.model';
+
 
 @Component({
   selector: 'app-add-participant',
@@ -261,6 +262,9 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     this.displayAdd();
     this.participantDetails = participantDetails;
     this.setupHearingRoles(this.participantDetails.case_role_name);
+    if (this.constants.IndividualRoles.indexOf(this.participantDetails.hearing_role_name) > -1) {
+      this.showAddress = true;
+    }
     this.participantForm.setValue({
       party: this.participantDetails.case_role_name,
       role: this.participantDetails.hearing_role_name,
@@ -270,6 +274,11 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
       phone: this.participantDetails.phone,
       displayName: this.participantDetails.display_name,
       companyName: this.participantDetails.company ? this.participantDetails.company : '',
+      houseNumber: this.participantDetails.housenumber ? this.participantDetails.housenumber : '',
+      street: this.participantDetails.street ? this.participantDetails.street : '',
+      city: this.participantDetails.city ? this.participantDetails.city : '',
+      county: this.participantDetails.county ? this.participantDetails.county : '',
+      postcode: this.participantDetails.postcode ? this.participantDetails.postcode : ''
     });
     setTimeout(() => {
       this.participantForm.get('role').setValue(this.participantDetails.hearing_role_name);
@@ -343,6 +352,24 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     return this.title.invalid && (this.title.dirty || this.title.touched || this.isShowErrorSummary);
   }
 
+  get houseNumberInvalid() {
+    return this.houseNumber.invalid && (this.houseNumber.dirty || this.houseNumber.touched || this.isShowErrorSummary);
+  }
+
+  get streetInvalid() {
+    return this.street.invalid && (this.street.dirty || this.street.touched || this.isShowErrorSummary);
+  }
+  get cityInvalid() {
+    return this.city.invalid && (this.title.dirty || this.city.touched || this.isShowErrorSummary);
+  }
+  get countyInvalid() {
+    return this.county.invalid && (this.county.dirty || this.county.touched || this.isShowErrorSummary);
+  }
+
+  get postcodeInvalid() {
+    return this.postcode.invalid && (this.postcode.dirty || this.postcode.touched || this.isShowErrorSummary);
+  }
+
   partySelected() {
     this.isPartySelected = this.party.value !== this.constants.PleaseSelect;
     this.setupHearingRoles(this.party.value);
@@ -352,6 +379,26 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     this.isRoleSelected = this.role.value !== this.constants.PleaseSelect;
     if (this.role.value !== 'Solicitor') {
       this.showAddress = true;
+
+      this.houseNumber.setValidators([Validators.required]);
+      this.street.setValidators([Validators.required]);
+      this.city.setValidators([Validators.required]);
+      this.county.setValidators([Validators.required]);
+      this.postcode.setValidators([Validators.required]);
+
+      this.houseNumber.updateValueAndValidity();
+      this.street.updateValueAndValidity();
+      this.city.updateValueAndValidity();
+      this.county.updateValueAndValidity();
+      this.postcode.updateValueAndValidity();
+    } else {
+      this.showAddress = false;
+
+      this.houseNumber.setValue('');
+      this.street.setValue('');
+      this.city.setValue('');
+      this.county.setValue('');
+      this.postcode.setValue('');
     }
     console.log(this.role.value);
     console.log(sessionStorage);
@@ -379,6 +426,9 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   saveParticipant() {
     this.actionsBeforeSave();
     const validEmail = this.showDetails && (this.searchEmail ? this.searchEmail.validateEmail() : true);
+    console.log('############# Save Participant #############');
+    console.log(this.participantForm);
+    console.log(this.roleInvalid);
     if (this.participantForm.valid && validEmail && this.isRoleSelected && this.isPartySelected && this.isTitleSelected) {
       this.isShowErrorSummary = false;
       this.participantForm.markAsUntouched();
@@ -386,6 +436,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
       this.participantForm.updateValueAndValidity();
       const newParticipant = new ParticipantModel();
       this.mapParticipant(newParticipant);
+      console.log(newParticipant);
       if (!this.participantService.checkDuplication(newParticipant.email, this.hearing.participants)) {
         this.hearing.participants.push(newParticipant);
         this.videoHearingService.updateHearingRequest(this.hearing);
@@ -467,6 +518,11 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     newParticipant.display_name = this.displayName.value;
     newParticipant.company = this.companyName.value;
     newParticipant.username = this.searchEmail ? this.searchEmail.email : '';
+    newParticipant.housenumber = this.houseNumber.value;
+    newParticipant.street = this.street.value;
+    newParticipant.city = this.city.value;
+    newParticipant.county = this.county.value;
+    newParticipant.postcode = this.postcode.value;
   }
 
   addParticipantCancel() {
@@ -531,7 +587,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         street: '',
         city: '',
         county: '',
-        postcode:'',
+        postcode: '',
       });
     this.participantForm.markAsUntouched();
     this.participantForm.markAsPristine();

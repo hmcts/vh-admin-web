@@ -22,6 +22,7 @@ import { HearingModel } from '../../common/model/hearing.model';
 import { ParticipantModel } from '../../common/model/participant.model';
 import { CaseAndHearingRolesResponse } from '../../services/clients/api-client';
 import { PartyModel } from '../../common/model/party.model';
+import { Constants } from '../../common/constants';
 
 let component: AddParticipantComponent;
 let fixture: ComponentFixture<AddParticipantComponent>;
@@ -41,6 +42,11 @@ let lastName: AbstractControl;
 let phone: AbstractControl;
 let displayName: AbstractControl;
 let companyName: AbstractControl;
+let houseNumber: AbstractControl;
+let street: AbstractControl;
+let city: AbstractControl;
+let county: AbstractControl;
+let postcode: AbstractControl;
 
 const participants: ParticipantModel[] = [];
 
@@ -55,6 +61,11 @@ p1.phone = '32332';
 p1.hearing_role_name = 'Solicitor';
 p1.case_role_name = 'Claimant';
 p1.company = 'CN';
+p1.housenumber = '';
+p1.street = '';
+p1.postcode = '';
+p1.city = '';
+p1.postcode = '';
 
 const p2 = new ParticipantModel();
 p2.first_name = 'Jane';
@@ -67,6 +78,11 @@ p2.phone = '32332';
 p2.hearing_role_name = 'Solicitor';
 p2.case_role_name = 'Claimant';
 p2.company = 'CN';
+p2.housenumber = '';
+p2.street = '';
+p2.postcode = '';
+p2.city = '';
+p2.postcode = '';
 
 const p3 = new ParticipantModel();
 p3.first_name = 'Chris';
@@ -79,11 +95,35 @@ p3.phone = '32332';
 p3.hearing_role_name = 'Solicitor';
 p3.case_role_name = 'Claimant';
 p3.company = 'CN';
+p3.housenumber = '';
+p3.street = '';
+p3.postcode = '';
+p3.city = '';
+p3.postcode = '';
+
+const p4 = new ParticipantModel();
+p4.first_name = 'Test';
+p4.last_name = 'Participant';
+p4.display_name = 'Test Participant';
+p4.is_judge = false;
+p4.title = 'Mr.';
+p4.email = 'test4@test.com';
+p4.phone = '32332';
+p4.hearing_role_name = 'Claimant LIP';
+p4.case_role_name = 'Claimant';
+p4.company = 'CN';
+p4.housenumber = '1';
+p4.street = 'Test Street';
+p4.postcode = 'TE1 5NR';
+p4.city = 'Test City';
+p4.county = 'Test County';
 
 participants.push(p1);
 participants.push(p2);
 participants.push(p3);
+participants.push(p4);
 
+const constants = Constants;
 
 function initHearingRequest(): HearingModel {
   const newHearing = new HearingModel();
@@ -186,6 +226,11 @@ describe('AddParticipantComponent', () => {
     phone = component.participantForm.controls['phone'];
     displayName = component.participantForm.controls['displayName'];
     companyName = component.participantForm.controls['companyName'];
+    houseNumber = component.participantForm.controls['companyName'];
+    street = component.participantForm.controls['companyName'];
+    city = component.participantForm.controls['companyName'];
+    county = component.participantForm.controls['companyName'];
+    postcode = component.participantForm.controls['companyName'];
   }));
 
   it('should create', () => {
@@ -257,6 +302,13 @@ describe('AddParticipantComponent', () => {
     expect(title.value).toBe(participant.title);
     expect(displayName.value).toBe(participant.display_name);
     expect(companyName.value).toBe(participant.company);
+    if (constants.IndividualRoles.indexOf(participant.hearing_role_name) > -1) {
+      expect(houseNumber.value).toBe(participant.housenumber);
+      expect(street.value).toBe(participant.street);
+      expect(city.value).toBe(participant.city);
+      expect(county.value).toBe(participant.county);
+      expect(postcode.value).toBe(participant.postcode);
+    }
     expect(component.displayNextButton).toBeFalsy();
     expect(component.displayClearButton).toBeTruthy();
     expect(component.displayAddButton).toBeTruthy();
@@ -286,19 +338,28 @@ describe('AddParticipantComponent', () => {
   });
   it('saved participant added to list of participants', () => {
     component.showDetails = true;
+    component.showAddress = true;
     fixture.detectChanges();
     spyOn(component.searchEmail, 'validateEmail').and.returnValue(true);
     component.searchEmail.email = 'mock@email.com';
 
-    role.setValue('Appellant');
+    role.setValue('Applicant LIP');
     party.setValue('CaseRole');
     firstName.setValue('Sam');
     lastName.setValue('Green');
     title.setValue('Mrs');
     phone.setValue('12345');
+    displayName.setValue('Sam Green');
+    houseNumber.setValue('12');
+    street.setValue('Test Street');
+    city.setValue('Test City');
+    county.setValue('Test County');
+    postcode.setValue('TE1 5NR');
     component.isRoleSelected = true;
     component.isPartySelected = true;
     component.saveParticipant();
+    console.log('################## Save Participant ##########');
+    console.log(component.hearing.participants);
     expect(component.isShowErrorSummary).toBeFalsy();
     expect(component.hearing.participants.length).toBeGreaterThan(0);
   });
@@ -467,6 +528,11 @@ describe('AddParticipantComponent edit mode', () => {
     phone = component.participantForm.controls['phone'];
     displayName = component.participantForm.controls['displayName'];
     companyName = component.participantForm.controls['companyName'];
+    houseNumber = component.participantForm.controls['houseNumber'];
+    street = component.participantForm.controls['street'];
+    city = component.participantForm.controls['city'];
+    county = component.participantForm.controls['county'];
+    postcode = component.participantForm.controls['postcode'];
   }));
   it('should set title list and get current data from session', () => {
     component.ngOnInit();

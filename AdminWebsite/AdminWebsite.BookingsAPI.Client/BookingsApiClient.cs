@@ -160,7 +160,7 @@ namespace AdminWebsite.BookingsAPI.Client
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         System.Threading.Tasks.Task<HearingDetailsResponse> BookNewHearingAsync(BookNewHearingRequest request, System.Threading.CancellationToken cancellationToken);
     
-        /// <summary>Gets list of upcoming bookings hearing for a given case types</summary>
+        /// <summary>Get a paged list of booked hearings</summary>
         /// <param name="types">The hearing case types.</param>
         /// <param name="cursor">Cursor specifying from which entries to read next page, is defaulted if not specified</param>
         /// <param name="limit">The max number hearings records to return.</param>
@@ -168,7 +168,7 @@ namespace AdminWebsite.BookingsAPI.Client
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<BookingsResponse> GetHearingsByTypesAsync(System.Collections.Generic.IEnumerable<int> types, string cursor, int? limit);
     
-        /// <summary>Gets list of upcoming bookings hearing for a given case types</summary>
+        /// <summary>Get a paged list of booked hearings</summary>
         /// <param name="types">The hearing case types.</param>
         /// <param name="cursor">Cursor specifying from which entries to read next page, is defaulted if not specified</param>
         /// <param name="limit">The max number hearings records to return.</param>
@@ -176,7 +176,7 @@ namespace AdminWebsite.BookingsAPI.Client
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
         BookingsResponse GetHearingsByTypes(System.Collections.Generic.IEnumerable<int> types, string cursor, int? limit);
     
-        /// <summary>Gets list of upcoming bookings hearing for a given case types</summary>
+        /// <summary>Get a paged list of booked hearings</summary>
         /// <param name="types">The hearing case types.</param>
         /// <param name="cursor">Cursor specifying from which entries to read next page, is defaulted if not specified</param>
         /// <param name="limit">The max number hearings records to return.</param>
@@ -264,7 +264,7 @@ namespace AdminWebsite.BookingsAPI.Client
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         System.Threading.Tasks.Task<ParticipantResponse> GetParticipantInHearingAsync(System.Guid hearingId, System.Guid participantId, System.Threading.CancellationToken cancellationToken);
     
-        /// <summary>Remove a participant from a hearing</summary>
+        /// <summary>Update participant details</summary>
         /// <param name="hearingId">Id of hearing to look up</param>
         /// <param name="participantId">Id of participant to remove</param>
         /// <param name="request">The participant information to add</param>
@@ -272,7 +272,7 @@ namespace AdminWebsite.BookingsAPI.Client
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task UpdateParticipantDetailsAsync(System.Guid hearingId, System.Guid participantId, UpdateParticipantRequest request);
     
-        /// <summary>Remove a participant from a hearing</summary>
+        /// <summary>Update participant details</summary>
         /// <param name="hearingId">Id of hearing to look up</param>
         /// <param name="participantId">Id of participant to remove</param>
         /// <param name="request">The participant information to add</param>
@@ -280,7 +280,7 @@ namespace AdminWebsite.BookingsAPI.Client
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
         void UpdateParticipantDetails(System.Guid hearingId, System.Guid participantId, UpdateParticipantRequest request);
     
-        /// <summary>Remove a participant from a hearing</summary>
+        /// <summary>Update participant details</summary>
         /// <param name="hearingId">Id of hearing to look up</param>
         /// <param name="participantId">Id of participant to remove</param>
         /// <param name="request">The participant information to add</param>
@@ -1203,7 +1203,7 @@ namespace AdminWebsite.BookingsAPI.Client
             }
         }
     
-        /// <summary>Gets list of upcoming bookings hearing for a given case types</summary>
+        /// <summary>Get a paged list of booked hearings</summary>
         /// <param name="types">The hearing case types.</param>
         /// <param name="cursor">Cursor specifying from which entries to read next page, is defaulted if not specified</param>
         /// <param name="limit">The max number hearings records to return.</param>
@@ -1214,7 +1214,7 @@ namespace AdminWebsite.BookingsAPI.Client
             return GetHearingsByTypesAsync(types, cursor, limit, System.Threading.CancellationToken.None);
         }
     
-        /// <summary>Gets list of upcoming bookings hearing for a given case types</summary>
+        /// <summary>Get a paged list of booked hearings</summary>
         /// <param name="types">The hearing case types.</param>
         /// <param name="cursor">Cursor specifying from which entries to read next page, is defaulted if not specified</param>
         /// <param name="limit">The max number hearings records to return.</param>
@@ -1225,7 +1225,7 @@ namespace AdminWebsite.BookingsAPI.Client
             return System.Threading.Tasks.Task.Run(async () => await GetHearingsByTypesAsync(types, cursor, limit, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
         }
     
-        /// <summary>Gets list of upcoming bookings hearing for a given case types</summary>
+        /// <summary>Get a paged list of booked hearings</summary>
         /// <param name="types">The hearing case types.</param>
         /// <param name="cursor">Cursor specifying from which entries to read next page, is defaulted if not specified</param>
         /// <param name="limit">The max number hearings records to return.</param>
@@ -1760,7 +1760,7 @@ namespace AdminWebsite.BookingsAPI.Client
             }
         }
     
-        /// <summary>Remove a participant from a hearing</summary>
+        /// <summary>Update participant details</summary>
         /// <param name="hearingId">Id of hearing to look up</param>
         /// <param name="participantId">Id of participant to remove</param>
         /// <param name="request">The participant information to add</param>
@@ -1771,7 +1771,7 @@ namespace AdminWebsite.BookingsAPI.Client
             return UpdateParticipantDetailsAsync(hearingId, participantId, request, System.Threading.CancellationToken.None);
         }
     
-        /// <summary>Remove a participant from a hearing</summary>
+        /// <summary>Update participant details</summary>
         /// <param name="hearingId">Id of hearing to look up</param>
         /// <param name="participantId">Id of participant to remove</param>
         /// <param name="request">The participant information to add</param>
@@ -1782,7 +1782,7 @@ namespace AdminWebsite.BookingsAPI.Client
             System.Threading.Tasks.Task.Run(async () => await UpdateParticipantDetailsAsync(hearingId, participantId, request, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
         }
     
-        /// <summary>Remove a participant from a hearing</summary>
+        /// <summary>Update participant details</summary>
         /// <param name="hearingId">Id of hearing to look up</param>
         /// <param name="participantId">Id of participant to remove</param>
         /// <param name="request">The participant information to add</param>
@@ -2372,19 +2372,19 @@ namespace AdminWebsite.BookingsAPI.Client
         [Newtonsoft.Json.JsonProperty("other_information", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Other_information { get; set; }
     
-        /// <summary>Gets or sets the created date.</summary>
+        /// <summary>The date and time the hearing was created</summary>
         [Newtonsoft.Json.JsonProperty("created_date", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.DateTime? Created_date { get; set; }
     
-        /// <summary>Gets or sets the created by.</summary>
+        /// <summary>The VH admin username that created the hearing</summary>
         [Newtonsoft.Json.JsonProperty("created_by", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Created_by { get; set; }
     
-        /// <summary>Gets or sets the updated by.</summary>
+        /// <summary>The last date and time any details for the hearing was updated</summary>
         [Newtonsoft.Json.JsonProperty("updated_by", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Updated_by { get; set; }
     
-        /// <summary>Gets or sets the updated date.</summary>
+        /// <summary>User id of the who last updated the hearing</summary>
         [Newtonsoft.Json.JsonProperty("updated_date", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.DateTime? Updated_date { get; set; }
     
@@ -2478,6 +2478,26 @@ namespace AdminWebsite.BookingsAPI.Client
         /// <summary>Participant username</summary>
         [Newtonsoft.Json.JsonProperty("username", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Username { get; set; }
+    
+        /// <summary>House number of an Individual</summary>
+        [Newtonsoft.Json.JsonProperty("house_number", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string House_number { get; set; }
+    
+        /// <summary>Stree number of an Individual</summary>
+        [Newtonsoft.Json.JsonProperty("street", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Street { get; set; }
+    
+        /// <summary>Postcode of an Individual</summary>
+        [Newtonsoft.Json.JsonProperty("postcode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Postcode { get; set; }
+    
+        /// <summary>City/Town of an Individual</summary>
+        [Newtonsoft.Json.JsonProperty("city", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string City { get; set; }
+    
+        /// <summary>County of an Individual</summary>
+        [Newtonsoft.Json.JsonProperty("county", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string County { get; set; }
     
         public string ToJson() 
         {
@@ -2600,6 +2620,10 @@ namespace AdminWebsite.BookingsAPI.Client
         [Newtonsoft.Json.JsonProperty("other_information", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Other_information { get; set; }
     
+        /// <summary>The VH admin username that created the hearing</summary>
+        [Newtonsoft.Json.JsonProperty("created_by", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Created_by { get; set; }
+    
         public string ToJson() 
         {
             return Newtonsoft.Json.JsonConvert.SerializeObject(this);
@@ -2662,6 +2686,26 @@ namespace AdminWebsite.BookingsAPI.Client
         /// <summary>The representee of a representative</summary>
         [Newtonsoft.Json.JsonProperty("representee", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Representee { get; set; }
+    
+        /// <summary>House number of an Individual</summary>
+        [Newtonsoft.Json.JsonProperty("house_number", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string House_number { get; set; }
+    
+        /// <summary>Stree number of an Individual</summary>
+        [Newtonsoft.Json.JsonProperty("street", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Street { get; set; }
+    
+        /// <summary>Postcode of an Individual</summary>
+        [Newtonsoft.Json.JsonProperty("postcode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Postcode { get; set; }
+    
+        /// <summary>City/Town of an Individual</summary>
+        [Newtonsoft.Json.JsonProperty("city", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string City { get; set; }
+    
+        /// <summary>County of an Individual</summary>
+        [Newtonsoft.Json.JsonProperty("county", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string County { get; set; }
     
         public string ToJson() 
         {
@@ -2890,6 +2934,10 @@ namespace AdminWebsite.BookingsAPI.Client
         /// <summary>Organisation name</summary>
         [Newtonsoft.Json.JsonProperty("organisation_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Organisation_name { get; set; }
+    
+        /// <summary>Hearing Role Name</summary>
+        [Newtonsoft.Json.JsonProperty("hearing_role_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Hearing_role_name { get; set; }
     
         public string ToJson() 
         {
