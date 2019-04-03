@@ -8,6 +8,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
+using Testing.Common;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {
@@ -67,8 +68,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             };
 
             _bookingsApiClient.Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
-                .Throws(new BookingsApiException("BadRequest", (int) HttpStatusCode.BadRequest,
-                    "", new Dictionary<string, IEnumerable<string>>(), null));
+                .Throws(ClientException.ForBookingsAPI(HttpStatusCode.BadRequest));
 
             var result = await _controller.Post(hearing);
             result.Result.Should().BeOfType<BadRequestObjectResult>();   
