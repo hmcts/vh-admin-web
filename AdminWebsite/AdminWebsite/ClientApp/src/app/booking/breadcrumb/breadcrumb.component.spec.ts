@@ -7,6 +7,7 @@ import { ConfirmationPopupComponent } from 'src/app/popups/confirmation-popup/co
 import { RemovePopupComponent } from '../../popups/remove-popup/remove-popup.component';
 import { BHClient, ClientSettingsResponse } from 'src/app/services/clients/api-client';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { MomentModule } from 'angular2-moment';
 
 import { routes } from '../../app-routing.module';
 import { AppComponent } from '../../app.component';
@@ -81,7 +82,7 @@ describe('BreadcrumbComponent', () => {
         ConfigService,
         { provide: BHClient, useValue: bhClientSpy },
       ],
-      imports: [RouterTestingModule.withRoutes(routes), SharedModule]
+      imports: [RouterTestingModule.withRoutes(routes), SharedModule, MomentModule]
     })
       .compileComponents();
   }));
