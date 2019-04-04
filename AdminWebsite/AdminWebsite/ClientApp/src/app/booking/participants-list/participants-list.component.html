@@ -5,11 +5,11 @@
     <div *ngFor="let pat of participants">
       <div *ngIf="pat.is_judge">
         <div class="govuk-grid-row vh-row">
-          <div class="govuk-grid-column-one-third vhtable-header vh-image-15">
+          <div class="govuk-grid-column-one-third vh-image-15">
             <img src="/assets/images/govuk-crest.png" height="40" width="40" class="govuk-header__logotype-crest"
                  alt="HM Courts &amp; Tribunals Service crest" />
           </div>
-          <div class="govuk-grid-column-one-half vhtable-header vh-image-50" id="judge-name">
+          <div class="govuk-grid-column-one-half vh-image-50" id="judge-name">
             {{pat.title === 'Judge' ? '' : pat.title}} {{pat.first_name}} {{pat.last_name}}
             <div>
               <strong>Judge</strong>
