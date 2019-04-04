@@ -26,7 +26,7 @@
           Judge
         </label>
         <select class="govuk-select govuk-input--width-20" id="judgeName" formControlName="judgeName">
-          <option *ngFor="let judge of availableJudges" [ngValue]="judge.id">{{ judge.display_name }}</option>
+          <option *ngFor="let judge of availableJudges" [ngValue]="judge.email">{{ judge.display_name }}</option>
         </select>
         <div *ngIf="(judgeNameInvalid || !isJudgeSelected)" class="alert alert-danger">
           <span id="judgeName-error" class="govuk-error-message">
