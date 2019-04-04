@@ -17,7 +17,7 @@
         <div class="govuk-grid-row vh-row vh-a" (click)="rowSelected(b,i)" [attr.id]="b+'_'+i">
           <div class="govuk-grid-column-one-quarter">
 
-            <div class="vh-sml vh-col">{{detail.StartTime | amLocal | amDateFormat:'H:mm a'}}</div>
+            <div class="vh-sml vh-col">{{detail.StartTime | amLocal | amDateFormat:'h:mm a'}}</div>
             <div class="govuk-hint vh-sml vh-col">listed for {{detail.DurationInHoursAndMinutes}} </div>
           </div>
           <div class="govuk-grid-column-one-quarter">
@@ -37,7 +37,7 @@
 
                 <span class="govuk-hint vh-xsml">{{detail.CreatedBy}}</span>
                 <span class="govuk-hint vh-xsml">
-                  {{detail.CreatedDate | amLocal | amDateFormat: 'DD MMM YYYY H:mm a'}}
+                  {{detail.CreatedDate | amLocal | amDateFormat: 'DD MMM YYYY h:mm a'}}
                 </span>
               </div>
             </div>
@@ -47,7 +47,7 @@
 
                 <span class="govuk-hint vh-xsml">{{detail.LastEditBy}}</span>
                 <span class="govuk-hint vh-xsml">
-                  {{detail.LastEditDate | amLocal | amDateFormat: 'DD MMM YYYY H:mm a'}}
+                  {{detail.LastEditDate | amLocal | amDateFormat: 'DD MMM YYYY h:mm a'}}
                 </span>
               </div>
             </div>
