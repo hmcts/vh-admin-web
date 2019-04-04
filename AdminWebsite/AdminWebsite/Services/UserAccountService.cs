@@ -182,26 +182,22 @@ namespace AdminWebsite.Services
             return judgesList.Except(judgesTest, CompareJudgeById);
         }
 
-        public List<JudgeResponse> GetUsersByGroupName(string groupName)
+        private List<JudgeResponse> GetUsersByGroupName(string groupName)
         {
-            Group groupData = GetGroupByName(groupName);
+            var groupData = GetGroupByName(groupName);
             if (groupData == null) return new List<JudgeResponse>();
 
             var response = GetUsersByGroup(groupData.Id);
-            if (response != null)
+            return response.Select(x => new JudgeResponse
             {
-                return response.Select(x => new JudgeResponse
-                {
-                    FirstName = x.GivenName,
-                    LastName = x.Surname,
-                    DisplayName = x.DisplayName,
-                    Email = x.UserPrincipalName
-                }).ToList();
-            }
-            return new List<JudgeResponse>();
+                FirstName = x.GivenName,
+                LastName = x.Surname,
+                DisplayName = x.DisplayName,
+                Email = x.UserPrincipalName
+            }).ToList();
         }
 
-        public List<User> GetUsersByGroup(string groupId)
+        private IEnumerable<User> GetUsersByGroup(string groupId)
         {
             var accessToken = _tokenProvider.GetClientAccessToken(_securitySettings.ClientId,
                 _securitySettings.ClientSecret,
