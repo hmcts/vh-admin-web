@@ -100,7 +100,7 @@ describe('AssignJudgeComponent', () => {
   });
 
   it('should fail validation if a judge is not selected', () => {
-    component.cancelAssignJudge()
+    component.cancelAssignJudge();
     component.saveJudge();
     expect(component.assignJudgeForm.valid).toBeFalsy();
   });

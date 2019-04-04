@@ -43,6 +43,32 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     super(bookingService, router);
   }
 
+  static mapJudge(judge: ParticipantModel): JudgeResponse {
+    return new JudgeResponse({
+      email: judge.email,
+      first_name: judge.first_name,
+      last_name: judge.last_name,
+      display_name: judge.display_name
+    });
+  }
+
+  static mapJudgeToModel(judge: JudgeResponse): ParticipantModel {
+    const newParticipant = new ParticipantModel();
+    newParticipant.title = 'Judge';
+    newParticipant.first_name = judge.first_name;
+    newParticipant.middle_names = '';
+    newParticipant.last_name = judge.last_name;
+    newParticipant.display_name = judge.display_name;
+    newParticipant.email = judge.email;
+    newParticipant.is_judge = true;
+    newParticipant.phone = '';
+    newParticipant.id = null;
+    newParticipant.username = judge.email;
+    newParticipant.case_role_name = 'Judge';
+    newParticipant.hearing_role_name = 'Judge';
+    return newParticipant;
+  }
+
   ngOnInit() {
     super.ngOnInit();
     this.failedSubmission = false;
@@ -72,32 +98,6 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
       this.isJudgeSelected = judgeUserId !== null;
       this.canNavigate = this.isJudgeSelected;
     });
-  }
-
-  static mapJudge(judge: ParticipantModel): JudgeResponse {
-    return new JudgeResponse({
-      email: judge.email,
-      first_name: judge.first_name,
-      last_name: judge.last_name,
-      display_name: judge.display_name
-    });
-  }
-
-  static mapJudgeToModel(judge: JudgeResponse): ParticipantModel {
-    const newParticipant = new ParticipantModel();
-    newParticipant.title = 'Judge';
-    newParticipant.first_name = judge.first_name;
-    newParticipant.middle_names = '';
-    newParticipant.last_name = judge.last_name;
-    newParticipant.display_name = judge.display_name;
-    newParticipant.email = judge.email;
-    newParticipant.is_judge = true;
-    newParticipant.phone = '';
-    newParticipant.id = null;
-    newParticipant.username = judge.email;
-    newParticipant.case_role_name = 'Judge';
-    newParticipant.hearing_role_name = 'Judge';
-    return newParticipant;
   }
 
   get judgeName() { return this.assignJudgeForm.get('judgeName'); }
