@@ -28,7 +28,7 @@ let component: AddParticipantComponent;
 let fixture: ComponentFixture<AddParticipantComponent>;
 
 const roleList: CaseAndHearingRolesResponse[] =
-  [new CaseAndHearingRolesResponse({ name: 'Claimant', hearing_roles: ['Solicitor','Claimant LIP'] })];
+  [new CaseAndHearingRolesResponse({ name: 'Claimant', hearing_roles: ['Solicitor', 'Claimant LIP'] })];
 
 const partyR = new PartyModel('Claimant');
 partyR.hearingRoles = ['Solicitor', 'Claimant LIP'];
