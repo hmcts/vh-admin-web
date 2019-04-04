@@ -21,10 +21,24 @@ namespace AdminWebsite.Services
 {
     public interface IUserAccountService
     {
+        /// <summary>
+        /// Get the full group information based by the active directory id
+        /// </summary>
+        /// <param name="groupId">Id for the active directory group</param>
         Group GetGroupById(string groupId);
 
+        /// <summary>
+        /// Returns a list of all judges in the active directory
+        /// </summary>
+        /// <remarks>
+        /// Filters test accounts if configured to run as live environment 
+        /// </remarks>
         IEnumerable<JudgeResponse> GetJudgeUsers();
        
+        /// <summary>
+        /// Creates a user based on the participant information or updates the participant username if it already exists
+        /// </summary>
+        /// <param name="participant">Data to create user by and returns the username in</param>
         Task UpdateParticipantUsername(ParticipantRequest participant);
     }
 
@@ -38,6 +52,7 @@ namespace AdminWebsite.Services
         private static readonly Compare<JudgeResponse> CompareJudgeById =
             Compare<JudgeResponse>.By((x, y) => x.Email == y.Email, x => x.Email.GetHashCode());
         
+        /// <summary>Create the service</summary>
         public UserAccountService(IUserApiClient userApiClient, ITokenProvider tokenProvider, IOptions<SecuritySettings> securitySettings, IOptions<AppConfigSettings> appSettings)
         {
             _userApiClient = userApiClient;
@@ -46,6 +61,7 @@ namespace AdminWebsite.Services
             _isLive = appSettings.Value.IsLive;
         }
 
+        /// <inheritdoc />
         public async Task UpdateParticipantUsername(ParticipantRequest participant)
         {
             //// create user in AD if users email does not exist in AD.
@@ -112,8 +128,7 @@ namespace AdminWebsite.Services
             return newUserResponse;
         }
 
-
-        public Group GetGroupByName(string groupName)
+        private Group GetGroupByName(string groupName)
         {
             var accessToken = _tokenProvider.GetClientAccessToken(_securitySettings.ClientId,
                 _securitySettings.ClientSecret, _securitySettings.GraphApiBaseUri);
@@ -138,6 +153,7 @@ namespace AdminWebsite.Services
             throw new UserServiceException(message, reason);
         }
 
+        /// <inheritdoc />
         public Group GetGroupById(string groupId)
         {
             var accessToken = _tokenProvider.GetClientAccessToken(_securitySettings.ClientId,
@@ -167,6 +183,7 @@ namespace AdminWebsite.Services
             throw new UserServiceException(message, reason);
         }
 
+        /// <inheritdoc />
         public IEnumerable<JudgeResponse> GetJudgeUsers()
         {
             var judges = GetUsersByGroupName("VirtualRoomJudge");
