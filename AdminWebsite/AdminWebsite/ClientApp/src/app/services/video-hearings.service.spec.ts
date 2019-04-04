@@ -262,4 +262,58 @@ describe('Video hearing service', () => {
       expect(model[0].county).toEqual(participant.county);
       expect(model[0].postcode).toEqual(participant.postcode);
     }));
+  it('should map Existing hearing',
+    inject([VideoHearingsService], (service: VideoHearingsService) => {
+      const participants: ParticipantModel[] = [];
+      const participant = new ParticipantModel();
+      participant.title = 'Mr';
+      participant.first_name = 'Dan';
+      participant.middle_names = 'Ivan';
+      participant.last_name = 'Smith';
+      participant.username = 'dan@email.aa';
+      participant.display_name = 'Dan Smith';
+      participant.email = 'dan@email.aa';
+      participant.phone = '123123123';
+      participant.case_role_name = 'Defendant';
+      participant.hearing_role_name = 'Defendant LIP';
+      participant.housenumber = '123';
+      participant.street = 'Test Street';
+      participant.city = 'Test City';
+      participant.county = 'Test County';
+      participant.postcode = 'TE1 TNR';
+      participants.push(participant);
+      const caseModel = new CaseModel();
+      caseModel.name = 'case1';
+      caseModel.number = 'Number 1';
+      const hearingModel = new HearingModel();
+      hearingModel.court_room = 'Court Room1';
+      hearingModel.court_name = 'Test Court';
+      hearingModel.other_information = 'Other Information';
+      hearingModel.scheduled_date_time = new Date();
+      hearingModel.scheduled_duration = 45;
+      hearingModel.participants = participants;
+      hearingModel.cases = [caseModel];
+
+      const editHearingRequest = service.mapExistingHearing(hearingModel);
+
+      expect(editHearingRequest.hearing_room_name).toEqual(hearingModel.court_room);
+      expect(editHearingRequest.hearing_venue_name).toEqual(hearingModel.court_name);
+      expect(editHearingRequest.other_information).toEqual(hearingModel.other_information);
+      expect(editHearingRequest.scheduled_date_time).toEqual(hearingModel.scheduled_date_time);
+      expect(editHearingRequest.scheduled_duration).toEqual(hearingModel.scheduled_duration);
+      expect(editHearingRequest.participants.length).toBeGreaterThan(0);
+      expect(editHearingRequest.participants[0].title).toEqual(hearingModel.participants[0].title);
+      expect(editHearingRequest.participants[0].first_name).toEqual(hearingModel.participants[0].first_name);
+      expect(editHearingRequest.participants[0].last_name).toEqual(hearingModel.participants[0].last_name);
+      expect(editHearingRequest.participants[0].middle_names).toEqual(hearingModel.participants[0].middle_names);
+      expect(editHearingRequest.participants[0].hearing_role_name).toEqual(hearingModel.participants[0].hearing_role_name);
+      expect(editHearingRequest.participants[0].case_role_name).toEqual(hearingModel.participants[0].case_role_name);
+      expect(editHearingRequest.participants[0].house_number).toEqual(hearingModel.participants[0].housenumber);
+      expect(editHearingRequest.participants[0].street).toEqual(hearingModel.participants[0].street);
+      expect(editHearingRequest.participants[0].city).toEqual(hearingModel.participants[0].city);
+      expect(editHearingRequest.participants[0].county).toEqual(hearingModel.participants[0].county);
+      expect(editHearingRequest.participants[0].postcode).toEqual(hearingModel.participants[0].postcode);
+      expect(editHearingRequest.case.name).toEqual(hearingModel.cases[0].name);
+      expect(editHearingRequest.case.number).toEqual(hearingModel.cases[0].number);
+    }));
 });
