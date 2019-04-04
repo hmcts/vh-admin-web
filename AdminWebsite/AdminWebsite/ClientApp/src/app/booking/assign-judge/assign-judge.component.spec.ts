@@ -15,7 +15,7 @@ import { JudgeDataService } from '../services/judge-data.service';
 import { ParticipantsListStubComponent } from '../../testing/stubs/participant-list-stub';
 import { HearingModel } from '../../common/model/hearing.model';
 import { ParticipantModel } from '../../common/model/participant.model';
-import {By} from "@angular/platform-browser";
+import { By } from '@angular/platform-browser';
 
 function initHearingRequest(): HearingModel {
 
