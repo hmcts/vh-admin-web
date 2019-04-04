@@ -386,8 +386,6 @@ describe('AddParticipantComponent', () => {
 
     component.isPartySelected = true;
     component.saveParticipant();
-    console.log('################## Save Participant ##########');
-    console.log(component.hearing.participants);
     expect(component.isShowErrorSummary).toBeFalsy();
     expect(component.hearing.participants.length).toBeGreaterThan(0);
   });

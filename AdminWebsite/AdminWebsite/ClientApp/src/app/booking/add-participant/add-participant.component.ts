@@ -431,19 +431,13 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   saveParticipant() {
     this.actionsBeforeSave();
     const validEmail = this.showDetails && (this.searchEmail ? this.searchEmail.validateEmail() : true);
-    console.log('############# Save Participant #############');
-    console.log(this.participantForm);
-    console.log(this.roleInvalid);
-    console.log('role selected ###### ' + this.isRoleSelected);
     if (this.participantForm.valid && validEmail && this.isRoleSelected && this.isPartySelected && this.isTitleSelected) {
-      console.log('#####Participant valid#####');
       this.isShowErrorSummary = false;
       this.participantForm.markAsUntouched();
       this.participantForm.markAsPristine();
       this.participantForm.updateValueAndValidity();
       const newParticipant = new ParticipantModel();
       this.mapParticipant(newParticipant);
-      console.log(newParticipant);
       if (!this.participantService.checkDuplication(newParticipant.email, this.hearing.participants)) {
         this.hearing.participants.push(newParticipant);
         this.videoHearingService.updateHearingRequest(this.hearing);
