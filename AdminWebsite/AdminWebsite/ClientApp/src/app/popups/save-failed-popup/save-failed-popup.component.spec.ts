@@ -2,6 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { SaveFailedPopupComponent } from './save-failed-popup.component';
 import { By } from '@angular/platform-browser';
+import { DebugElement, ElementRef } from '@angular/core';
 
 describe('SaveFailedPopupComponent', () => {
   let component: SaveFailedPopupComponent;
@@ -12,11 +13,11 @@ describe('SaveFailedPopupComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ 
-        SaveFailedPopupComponent 
+      declarations: [
+        SaveFailedPopupComponent
       ]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

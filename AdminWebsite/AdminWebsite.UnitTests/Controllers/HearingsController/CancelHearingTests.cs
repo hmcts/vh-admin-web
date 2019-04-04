@@ -7,6 +7,7 @@ using Moq;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
@@ -65,12 +66,32 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
 
         [Test]
-        public async Task should_return_bad_request_if_invalid_hearing_id()
+        public async Task should_return_bad_request_if_hearing_id_is_empty()
         {
+            GivenApiThrowsExceptionOnCancel(HttpStatusCode.BadRequest);
+
             var invalidId = Guid.Empty;
             var result = await _controller.UpdateBookingStatus(invalidId);
             var badRequestResult = (BadRequestObjectResult)result;
             badRequestResult.Should().BeOfType<BadRequestObjectResult>();
+        }
+
+        [Test]
+        public async Task should_return_bad_request_if_invalid_hearing_id()
+        {
+            GivenApiThrowsExceptionOnCancel(HttpStatusCode.NotFound);
+
+            var result = await _controller.UpdateBookingStatus(_guid);
+            var notFoundResult = (NotFoundObjectResult) result;
+            notFoundResult.StatusCode.Should().Be(404);
+        }
+
+        private void GivenApiThrowsExceptionOnCancel(HttpStatusCode code)
+        {
+            _bookingsApiClient.Setup(x =>
+                    x.UpdateBookingStatusAsync(It.IsAny<Guid>(), It.IsAny<UpdateBookingStatusRequest>()))
+                .ThrowsAsync(new BookingsApiException(code.ToString(), (int)code, "",
+                    new Dictionary<string, IEnumerable<string>>(), null));
         }
     }
 }
