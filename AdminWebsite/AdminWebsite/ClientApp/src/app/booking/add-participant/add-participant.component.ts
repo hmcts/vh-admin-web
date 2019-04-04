@@ -429,7 +429,9 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     console.log('############# Save Participant #############');
     console.log(this.participantForm);
     console.log(this.roleInvalid);
+    console.log('role selected ###### ' + this.isRoleSelected);
     if (this.participantForm.valid && validEmail && this.isRoleSelected && this.isPartySelected && this.isTitleSelected) {
+      console.log('#####Participant valid#####');
       this.isShowErrorSummary = false;
       this.participantForm.markAsUntouched();
       this.participantForm.markAsPristine();
