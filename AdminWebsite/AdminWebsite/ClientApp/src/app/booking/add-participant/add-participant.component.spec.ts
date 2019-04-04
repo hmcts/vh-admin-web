@@ -1,6 +1,6 @@
 import { DebugElement, Component } from '@angular/core';
 import { async, ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
-import { AbstractControl } from '@angular/forms';
+import { AbstractControl, Validator, Validators } from '@angular/forms';
 import { NavigationEnd, Router } from '@angular/router';
 import { of } from 'rxjs';
 import { SharedModule } from 'src/app/shared/shared.module';
@@ -28,10 +28,10 @@ let component: AddParticipantComponent;
 let fixture: ComponentFixture<AddParticipantComponent>;
 
 const roleList: CaseAndHearingRolesResponse[] =
-  [new CaseAndHearingRolesResponse({ name: 'Claimant', hearing_roles: ['Solicitor'] })];
+  [new CaseAndHearingRolesResponse({ name: 'Claimant', hearing_roles: ['Solicitor','Claimant LIP'] })];
 
 const partyR = new PartyModel('Claimant');
-partyR.hearingRoles = ['Solicitor'];
+partyR.hearingRoles = ['Solicitor', 'Claimant LIP'];
 const partyList: PartyModel[] = [partyR];
 
 let role: AbstractControl;
@@ -226,11 +226,11 @@ describe('AddParticipantComponent', () => {
     phone = component.participantForm.controls['phone'];
     displayName = component.participantForm.controls['displayName'];
     companyName = component.participantForm.controls['companyName'];
-    houseNumber = component.participantForm.controls['companyName'];
-    street = component.participantForm.controls['companyName'];
-    city = component.participantForm.controls['companyName'];
-    county = component.participantForm.controls['companyName'];
-    postcode = component.participantForm.controls['companyName'];
+    houseNumber = component.participantForm.controls['houseNumber'];
+    street = component.participantForm.controls['street'];
+    city = component.participantForm.controls['city'];
+    county = component.participantForm.controls['county'];
+    postcode = component.participantForm.controls['postcode'];
   }));
 
   it('should create', () => {
@@ -338,23 +338,47 @@ describe('AddParticipantComponent', () => {
   });
   it('saved participant added to list of participants', () => {
     component.showDetails = true;
-    component.showAddress = true;
     fixture.detectChanges();
     spyOn(component.searchEmail, 'validateEmail').and.returnValue(true);
     component.searchEmail.email = 'mock@email.com';
-    role.setValue('Applicant LIP');
-    party.setValue('CaseRole');
+    role.setValue('Claimant LIP');
+    party.setValue('Claimant');
     firstName.setValue('Sam');
     lastName.setValue('Green');
     title.setValue('Mrs');
     phone.setValue('12345');
     displayName.setValue('Sam Green');
-    houseNumber.setValue('12');
-    street.setValue('Test Street');
-    city.setValue('Test City');
-    county.setValue('Test County');
-    postcode.setValue('TE1 5NR');
     component.isRoleSelected = true;
+    if (constants.IndividualRoles.indexOf(role.value) > -1) {
+      component.showAddress = true;
+      houseNumber.setValue('12');
+      street.setValue('Test Street');
+      city.setValue('Test City');
+      county.setValue('Test County');
+      postcode.setValue('TE1 5NR');
+      houseNumber.setValidators([Validators.required]);
+      street.setValidators([Validators.required]);
+      city.setValidators([Validators.required]);
+      county.setValidators([Validators.required]);
+      postcode.setValidators([Validators.required]);
+      houseNumber.updateValueAndValidity();
+      street.updateValueAndValidity();
+      city.updateValueAndValidity();
+      county.updateValueAndValidity();
+      postcode.updateValueAndValidity();
+    } else {
+      houseNumber.clearValidators();
+      street.clearValidators();
+      city.clearValidators();
+      county.clearValidators();
+      postcode.clearValidators();
+      houseNumber.updateValueAndValidity();
+      street.updateValueAndValidity();
+      city.updateValueAndValidity();
+      county.updateValueAndValidity();
+      postcode.updateValueAndValidity();
+    }
+
     component.isPartySelected = true;
     component.saveParticipant();
     console.log('################## Save Participant ##########');
@@ -422,7 +446,7 @@ describe('AddParticipantComponent', () => {
     expect(component.roleList.length).toBe(2);
     expect(component.roleList[0]).toEqual('Please Select');
 
-    expect(component.hearingRoleList.length).toBe(2);
+    expect(component.hearingRoleList.length).toBe(3);
     expect(component.hearingRoleList[0]).toEqual('Please Select');
   });
   it('party selected will reset hearing roles', () => {
