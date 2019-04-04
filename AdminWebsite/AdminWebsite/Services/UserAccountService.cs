@@ -23,7 +23,7 @@ namespace AdminWebsite.Services
     {
         Group GetGroupById(string groupId);
 
-        IEnumerable<ParticipantDetailsResponse> GetJudgeUsers();
+        IEnumerable<JudgeResponse> GetJudgeUsers();
        
         Task UpdateParticipantUsername(ParticipantRequest participant);
     }
@@ -164,7 +164,7 @@ namespace AdminWebsite.Services
             throw new UserServiceException(message, reason);
         }
 
-        public IEnumerable<ParticipantDetailsResponse> GetJudgeUsers()
+        public IEnumerable<JudgeResponse> GetJudgeUsers()
         {
             var judges = GetUsersByGroupName("VirtualRoomJudge");
             if (_isLive)
@@ -174,52 +174,44 @@ namespace AdminWebsite.Services
             return judges;
         }
 
-        private IEnumerable<ParticipantDetailsResponse> ExcludeTestJudges(IEnumerable<ParticipantDetailsResponse> judgesList)
+        private IEnumerable<JudgeResponse> ExcludeTestJudges(IEnumerable<JudgeResponse> judgesList)
         {
             var judgesTest = GetUsersByGroupName("TestAccount");
-            judgesList = judgesList.Except(judgesTest);
-            
-            return judgesList;
+            return judgesList.Except(judgesTest);
         }
 
-        public IEnumerable<ParticipantDetailsResponse> GetUsersByGroupName(string groupName)
+        public IEnumerable<JudgeResponse> GetUsersByGroupName(string groupName)
         {
             Group groupData = GetGroupByName(groupName);
-            if (groupData == null) return new List<ParticipantDetailsResponse>();
+            if (groupData == null) return new List<JudgeResponse>();
 
-            List<User> response = GetUsersByGroup(groupData.Id);
+            var response = GetUsersByGroup(groupData.Id);
             if (response != null || response.Any())
             {
-                IEnumerable<ParticipantDetailsResponse> judges = response.Select(x => new ParticipantDetailsResponse()
+                return response.Select(x => new JudgeResponse
                 {
-                    Id = x.Id,
                     FirstName = x.GivenName,
-                    MiddleName = "",
                     LastName = x.Surname,
                     DisplayName = x.DisplayName,
-                    Email = x.UserPrincipalName,
-                    Phone = x.MobilePhone,
-                    Role = x.JobTitle
+                    Email = x.UserPrincipalName
                 });
-                return judges;
             }
-            return new List<ParticipantDetailsResponse>();
+            return new List<JudgeResponse>();
         }
 
         public List<User> GetUsersByGroup(string groupId)
         {
-            string accessToken = _tokenProvider.GetClientAccessToken(_securitySettings.ClientId,
+            var accessToken = _tokenProvider.GetClientAccessToken(_securitySettings.ClientId,
                 _securitySettings.ClientSecret,
                 _securitySettings.GraphApiBaseUri);
 
-            using (HttpClient client = new HttpClient())
+            using (var client = new HttpClient())
             {
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-                HttpRequestMessage httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, $"{_securitySettings.GraphApiBaseUri}v1.0/groups/{groupId}/members");
+                var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, $"{_securitySettings.GraphApiBaseUri}v1.0/groups/{groupId}/members");
 
-                DirectoryObject queryResponse = client.SendAsync(httpRequestMessage).Result.Content.ReadAsAsync<DirectoryObject>().Result;
-                List<User> users = JsonConvert.DeserializeObject<List<User>>(queryResponse.AdditionalData["value"].ToString());
-                return users;
+                var queryResponse = client.SendAsync(httpRequestMessage).Result.Content.ReadAsAsync<DirectoryObject>().Result;
+                return JsonConvert.DeserializeObject<List<User>>(queryResponse.AdditionalData["value"].ToString());
             }
         }
     }

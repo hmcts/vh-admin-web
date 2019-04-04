@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { CanDeactiveComponent } from 'src/app/common/guards/changes.guard';
-import { ParticipantDetailsResponse } from '../../services/clients/api-client';
+import { JudgeResponse } from '../../services/clients/api-client';
 import { HearingModel } from '../../common/model/hearing.model';
 import { ParticipantModel } from '../../common/model/participant.model';
 
@@ -22,7 +22,7 @@ import { BookingBaseComponent } from '../booking-base/booking-base.component';
 export class AssignJudgeComponent extends BookingBaseComponent implements OnInit, CanDeactiveComponent {
 
   hearing: HearingModel;
-  judge: ParticipantDetailsResponse;
+  judge: JudgeResponse;
   assignJudgeForm: FormGroup;
   failedSubmission: boolean;
   attemptingCancellation = false;
@@ -31,7 +31,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
   canNavigate = false;
 
   constants = Constants;
-  availableJudges: ParticipantDetailsResponse[];
+  availableJudges: JudgeResponse[];
   isJudgeSelected = true;
 
   constructor(
@@ -58,13 +58,13 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
   private initForm() {
     const find_judge = this.hearing.participants.find(x => x.is_judge === true);
     if (!find_judge) {
-      this.judge = new ParticipantDetailsResponse({ id: null });
+      this.judge = new JudgeResponse({ email: null });
     } else {
-      this.judge = this.mapJudge(find_judge);
+      this.judge = AssignJudgeComponent.mapJudge(find_judge);
       this.canNavigate = true;
     }
     this.assignJudgeForm = this.fb.group({
-      judgeName: [this.judge.id, Validators.required],
+      judgeName: [this.judge.email, Validators.required],
     });
 
     this.judgeName.valueChanges.subscribe(judgeUserId => {
@@ -74,31 +74,26 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     });
   }
 
-  mapJudge(judge: ParticipantModel): ParticipantDetailsResponse {
-    return new ParticipantDetailsResponse({
-      id: judge.id,
-      title: judge.title,
-      first_name: judge.first_name,
-      middle_name: judge.middle_names,
-      last_name: judge.last_name,
-      display_name: judge.display_name,
+  static mapJudge(judge: ParticipantModel): JudgeResponse {
+    return new JudgeResponse({
       email: judge.email,
-      role: 'Judge',
-      phone: judge.phone
+      first_name: judge.first_name,
+      last_name: judge.last_name,
+      display_name: judge.display_name
     });
   }
 
-  mapJudgeToModel(judge: ParticipantDetailsResponse): ParticipantModel {
+  static mapJudgeToModel(judge: JudgeResponse): ParticipantModel {
     const newParticipant = new ParticipantModel();
-    newParticipant.title = judge.title && judge.title.length > 0 ? judge.title : 'Judge';
+    newParticipant.title = 'Judge';
     newParticipant.first_name = judge.first_name;
-    newParticipant.middle_names = judge.middle_name;
+    newParticipant.middle_names = '';
     newParticipant.last_name = judge.last_name;
     newParticipant.display_name = judge.display_name;
     newParticipant.email = judge.email;
     newParticipant.is_judge = true;
-    newParticipant.phone = judge.phone ? judge.phone : '';
-    newParticipant.id = judge.id;
+    newParticipant.phone = '';
+    newParticipant.id = null;
     newParticipant.username = judge.email;
     newParticipant.case_role_name = 'Judge';
     newParticipant.hearing_role_name = 'Judge';
@@ -113,28 +108,26 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
 
   public addJudge(judgeId: string) {
     if (judgeId) {
-      const selectedJudge = this.availableJudges.find(j => j.id === judgeId);
+      const selectedJudge = this.availableJudges.find(j => j.email === judgeId);
       this.judge.first_name = selectedJudge.first_name;
       this.judge.last_name = selectedJudge.last_name;
       this.judge.email = selectedJudge.email;
       this.judge.display_name = selectedJudge.display_name;
-      this.judge.title = '';
-      this.judge.role = 'Judge';
-      this.judge.id = selectedJudge.id;
 
-      const newJudge = this.mapJudgeToModel(this.judge);
+      const newJudge = AssignJudgeComponent.mapJudgeToModel(this.judge);
 
       const indexOfJudge = this.hearing.participants.findIndex(x => x.is_judge === true);
       if (indexOfJudge > -1) {
         this.hearing.participants.splice(indexOfJudge, 1);
       }
       this.hearing.participants.unshift(newJudge);
-      // this.hearingService.updateHearingRequest(this.hearing);
     }
   }
 
   saveJudge() {
-    if (this.judge.id === null) {
+    console.log(`judge email is = ${this.judge.email}`);
+    if (this.judge.email === null) {
+      console.log('not selected.. returning');
       this.isJudgeSelected = false;
       return;
     }
@@ -199,11 +192,11 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     if (this.availableJudges) { return; }
     this.judgeService.getJudges()
       .subscribe(
-        (data: ParticipantDetailsResponse[]) => {
+        (data: JudgeResponse[]) => {
           this.availableJudges = data.filter(x => x.first_name && x.last_name);
-          const userResponse = new ParticipantDetailsResponse();
+          const userResponse = new JudgeResponse();
           userResponse.display_name = 'Please Select';
-          userResponse.id = null;
+          userResponse.email = null;
           this.availableJudges.unshift(userResponse);
         },
         error => console.error(error)

@@ -21,9 +21,9 @@ namespace AdminWebsite.Controllers
         ///     Get Judges
         /// </summary>
         [HttpGet("judges", Name = "GetJudges")]
-        [ProducesResponseType(typeof(IList<ParticipantDetailsResponse>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(IList<JudgeResponse>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        public ActionResult<IList<ParticipantDetailsResponse>> GetJudges()
+        public ActionResult<IList<JudgeResponse>> GetJudges()
         {
             var response = _userAccountService.GetJudgeUsers();
             return Ok(response);

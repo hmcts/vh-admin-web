@@ -12,7 +12,6 @@ import { AssignJudgeComponent } from './assign-judge.component';
 import { of } from 'rxjs';
 import { MockValues } from '../../testing/data/test-objects';
 import { JudgeDataService } from '../services/judge-data.service';
-import { ParticipantsListComponent } from '../participants-list/participants-list.component';
 import { ParticipantsListStubComponent } from '../../testing/stubs/participant-list-stub';
 import { HearingModel } from '../../common/model/hearing.model';
 import { ParticipantModel } from '../../common/model/participant.model';
@@ -101,9 +100,11 @@ describe('AssignJudgeComponent', () => {
   });
 
   it('should fail validation if a judge is not selected', () => {
+    component.cancelAssignJudge()
     component.saveJudge();
     expect(component.assignJudgeForm.valid).toBeFalsy();
   });
+
   it('should get current booking and judge details', () => {
     component.ngOnInit();
     expect(component.failedSubmission).toBeFalsy();
@@ -113,7 +114,6 @@ describe('AssignJudgeComponent', () => {
     expect(component.judge.display_name).toBe('display name1');
     expect(component.judge.email).toBe('test1@TestBed.com');
     expect(component.judge.last_name).toBe('last');
-    expect(component.judge.title).toBe('Mr.');
   });
   it('should get available judges', () => {
     component.ngOnInit();
