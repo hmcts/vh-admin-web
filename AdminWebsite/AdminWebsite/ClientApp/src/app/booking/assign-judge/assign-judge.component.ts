@@ -125,9 +125,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
   }
 
   saveJudge() {
-    console.log(`judge email is = ${this.judge.email}`);
     if (this.judge.email === null) {
-      console.log('not selected.. returning');
       this.isJudgeSelected = false;
       return;
     }
