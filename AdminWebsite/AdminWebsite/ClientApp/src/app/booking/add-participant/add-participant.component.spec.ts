@@ -264,6 +264,12 @@ describe('AddParticipantComponent', () => {
     expect(phone.value).toBe('');
     expect(title.value).toBe('Please Select');
     expect(companyName.value).toBe('');
+    expect(houseNumber.value).toBe('');
+    expect(street.value).toBe('');
+    expect(city.value).toBe('');
+    expect(county.value).toBe('');
+    expect(postcode.value).toBe('');
+    expect(component.showAddress).toBeFalsy();
   });
   it('should set validation to false when form is empty', () => {
     expect(component.participantForm.valid).toBeFalsy();
@@ -296,6 +302,15 @@ describe('AddParticipantComponent', () => {
     role.setValue('Appellant');
     component.roleSelected();
     expect(role.valid && component.isRoleSelected).toBeTruthy();
+  });
+  it('should validate house number', () => {
+    party.setValue('Claimant');
+    role.setValue('Claimant LIP');
+    component.showAddress = true;
+    houseNumber.setValidators([Validators.required]);
+    houseNumber.updateValueAndValidity();
+    houseNumber.setValue(123);
+    expect(houseNumber.valid).toBeTruthy();
   });
   it('should set values fields if participant if found', () => {
     component.getParticipant(participant);
