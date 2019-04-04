@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Models;
 using AdminWebsite.Security;
-using AdminWebsite.UserAPI.Client;
+using AdminWebsite.Services;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -22,17 +22,17 @@ namespace AdminWebsite.Controllers
     {
         private readonly IBookingsApiClient _bookingsApiClient;
         private readonly IUserIdentity _userIdentity;
-        private readonly IUserApiClient _userApiClient;
+        private readonly IUserAccountService _userAccountService;
 
 
         /// <summary>
         /// Instantiates the controller
         /// </summary>
-        public HearingsController(IBookingsApiClient bookingsApiClient, IUserIdentity userIdentity,  IUserApiClient userApiClient)
+        public HearingsController(IBookingsApiClient bookingsApiClient, IUserIdentity userIdentity, IUserAccountService userAccountService)
         {
             _bookingsApiClient = bookingsApiClient;
             _userIdentity = userIdentity;
-            _userApiClient = userApiClient;
+            _userAccountService = userAccountService;
         }
 
         /// <summary>
@@ -54,7 +54,7 @@ namespace AdminWebsite.Controllers
                     {
                         if (participant.Case_role_name == "Judge") continue;
 
-                        await UpdateParticipantUsername(participant);
+                        await _userAccountService.UpdateParticipantUsername(participant);
                     }
                 }
 
@@ -137,7 +137,7 @@ namespace AdminWebsite.Controllers
                         if (participant.CaseRoleName != "Judge")
                         {
                             // Update the request with newly created user details in AD
-                            await UpdateParticipantUsername(newParticipant);
+                            await _userAccountService.UpdateParticipantUsername(newParticipant);
                         }
                         newParticipantList.Add(newParticipant);
                     }
@@ -254,70 +254,6 @@ namespace AdminWebsite.Controllers
             }
         }
 
-        private async Task<ParticipantRequest> UpdateParticipantUsername(ParticipantRequest participant)
-        {
-            //// create user in AD if users email does not exist in AD.
-            var userProfile = await CheckUserExistsInAD(participant.Contact_email);
-            if (userProfile == null)
-            {
-                // create the user in AD.
-                await CreateNewUserInAD(participant);
-            }
-            else
-            {
-                participant.Username = userProfile.User_name;
-            }
-            return participant;
-        }
-
-        private async Task<UserProfile> CheckUserExistsInAD(string emailAddress)
-        {
-            try
-            {
-                return await _userApiClient.GetUserByEmailAsync(emailAddress);
-            }
-            catch(UserAPI.Client.UserServiceException e)
-            {
-                if (e.StatusCode == (int)HttpStatusCode.NotFound)
-                {
-                    return null;
-                }
-            }
-            return null;
-        }
-
-        private async Task<NewUserResponse> CreateNewUserInAD(ParticipantRequest participant)
-        {
-            var createUserRequest = new CreateUserRequest()
-            {
-                First_name = participant.First_name,
-                Last_name = participant.Last_name,
-                Recovery_email = participant.Contact_email
-            };
-            var newUserResponse = await _userApiClient.CreateUserAsync(createUserRequest);
-            if (newUserResponse != null)
-            {
-                participant.Username = newUserResponse.Username;
-                // Add user to user group.
-                var addUserToGroupRequest = new AddUserToGroupRequest()
-                {
-                    User_id = newUserResponse.User_id,
-                    Group_name = "External"
-                };
-                await _userApiClient.AddUserToGroupAsync(addUserToGroupRequest);
-
-                if (participant.Hearing_role_name == "Solicitor")
-                {
-                    addUserToGroupRequest = new AddUserToGroupRequest()
-                    {
-                        User_id = newUserResponse.User_id,
-                        Group_name = "VirtualRoomProfessionalUser"
-                    };
-                    await _userApiClient.AddUserToGroupAsync(addUserToGroupRequest);
-                }
-            }
-            return newUserResponse;
-        }
 
         private List<int> GetHearingTypesId(IEnumerable<string> caseTypes)
         {

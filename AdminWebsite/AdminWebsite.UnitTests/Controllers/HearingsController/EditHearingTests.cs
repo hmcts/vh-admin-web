@@ -5,11 +5,13 @@ using System.Threading.Tasks;
 using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Models;
 using AdminWebsite.Security;
+using AdminWebsite.Services;
 using AdminWebsite.UserAPI.Client;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
+using Testing.Common;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {
@@ -18,10 +20,13 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private Mock<IUserApiClient> _userApiClient;
         private Mock<IBookingsApiClient> _bookingsApiClient;
         private Mock<IUserIdentity> _userIdentity;
-        private AdminWebsite.Controllers.HearingsController _controller;
+        private Mock<IUserAccountService> _userAccountService;
+        
         private Guid _validId;
         private EditHearingRequest _request;
         private HearingDetailsResponse _existingHearing;
+        
+        private AdminWebsite.Controllers.HearingsController _controller;
 
         [SetUp]
         public void Setup()
@@ -29,7 +34,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _bookingsApiClient = new Mock<IBookingsApiClient>();
             _userIdentity = new Mock<IUserIdentity>();
             _userApiClient = new Mock<IUserApiClient>();
-            _controller = new AdminWebsite.Controllers.HearingsController(_bookingsApiClient.Object, _userIdentity.Object, _userApiClient.Object);
+            _userAccountService = new Mock<IUserAccountService>();
+            _controller = new AdminWebsite.Controllers.HearingsController(_bookingsApiClient.Object, _userIdentity.Object, _userAccountService.Object);
 
             _validId = Guid.NewGuid();
             _request = new EditHearingRequest
@@ -96,8 +102,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         public async Task should_return_not_found_if_hearing_is_missing()
         {
             _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
-                .Throws(new BookingsApiException("Missing", 404, "", new Dictionary<string, IEnumerable<string>>(),
-                    null));
+                .Throws(ClientException.ForBookingsAPI(HttpStatusCode.NotFound));
 
             var result = await _controller.EditHearing(_validId, _request);
             var notFoundResult = (NotFoundObjectResult) result.Result;
@@ -164,8 +169,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         {
             _bookingsApiClient.Setup(x =>
                     x.UpdateHearingDetailsAsync(It.IsAny<Guid>(), It.IsAny<UpdateHearingRequest>()))
-                .ThrowsAsync(new BookingsApiException(code.ToString(), (int) code, "",
-                    new Dictionary<string, IEnumerable<string>>(), null));
+                .ThrowsAsync(ClientException.ForBookingsAPI(code));
         }
     }
 }

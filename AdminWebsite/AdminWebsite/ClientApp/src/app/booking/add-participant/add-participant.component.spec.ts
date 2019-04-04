@@ -95,11 +95,13 @@ p3.phone = '32332';
 p3.hearing_role_name = 'Solicitor';
 p3.case_role_name = 'Claimant';
 p3.company = 'CN';
+
 p3.housenumber = '';
 p3.street = '';
 p3.postcode = '';
 p3.city = '';
 p3.postcode = '';
+p3.id = '1234';
 
 const p4 = new ParticipantModel();
 p4.first_name = 'Test';
@@ -117,6 +119,9 @@ p4.street = 'Test Street';
 p4.postcode = 'TE1 5NR';
 p4.city = 'Test City';
 p4.county = 'Test County';
+p3.id = '1234';
+
+
 
 participants.push(p1);
 participants.push(p2);
