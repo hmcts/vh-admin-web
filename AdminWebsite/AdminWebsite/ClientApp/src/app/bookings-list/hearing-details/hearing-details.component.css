@@ -45,3 +45,8 @@ div {
    margin-right:10px !important;
    text-align:left !important;
 }
+
+.vh-text-break {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}

@@ -98,7 +98,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     newParticipant.email = judge.email;
     newParticipant.is_judge = true;
     newParticipant.phone = judge.phone ? judge.phone : '';
-    newParticipant.id = judge.id;
+    newParticipant.id = null;
     newParticipant.username = judge.email;
     newParticipant.case_role_name = 'Judge';
     newParticipant.hearing_role_name = 'Judge';
@@ -129,7 +129,6 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         this.hearing.participants.splice(indexOfJudge, 1);
       }
       this.hearing.participants.unshift(newJudge);
-      // this.hearingService.updateHearingRequest(this.hearing);
     }
   }
 

@@ -50,6 +50,7 @@ export class BookingsDetailsModel {
   LastEditDate: Date;
   Selected: boolean;
   Cancelled: boolean;
+  OtherInformation: string;
   Status: string;
 
   get DurationInHoursAndMinutes(): string {

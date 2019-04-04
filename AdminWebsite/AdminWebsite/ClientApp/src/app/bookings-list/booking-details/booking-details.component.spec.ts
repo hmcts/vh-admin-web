@@ -16,6 +16,7 @@ import { CaseModel } from '../../common/model/case.model';
 import { PageUrls } from '../../shared/page-url.constants';
 import { CancelBookingPopupComponent } from 'src/app/popups/cancel-booking-popup/cancel-booking-popup.component';
 import { BookingPersistService } from '../../services/bookings-persist.service';
+import { UserIdentityService } from '../../services/user-identity.service';
 
 let component: BookingDetailsComponent;
 let fixture: ComponentFixture<BookingDetailsComponent>;
@@ -23,6 +24,7 @@ let videoHearingServiceSpy: jasmine.SpyObj<VideoHearingsService>;
 let routerSpy: jasmine.SpyObj<Router>;
 let bookingServiceSpy: jasmine.SpyObj<BookingService>;
 let bookingPersistServiceSpy: jasmine.SpyObj<BookingPersistService>;
+let userIdentityServiceSpy: jasmine.SpyObj<UserIdentityService>;
 
 export class BookingDetailsTestData {
   getBookingsDetailsModel() {
@@ -97,12 +99,14 @@ describe('BookingDetailsComponent', () => {
   bookingServiceSpy = jasmine.createSpyObj('BookingService', ['setEditMode',
     'resetEditMode', 'setExistingCaseType', 'removeExistingCaseType']);
   bookingPersistServiceSpy = jasmine.createSpyObj('BookingPersistService', ['selectedHearingId']);
+  userIdentityServiceSpy = jasmine.createSpyObj('UserIdentityService', ['getUserInformation']);
 
   beforeEach(async(() => {
     videoHearingServiceSpy.getHearingById.and.returnValue(of(hearingResponse));
     videoHearingServiceSpy.mapHearingDetailsResponseToHearingModel.and.returnValue(hearingModel);
     bookingPersistServiceSpy.selectedHearingId.and.returnValue('44');
     videoHearingServiceSpy.updateBookingStatus.and.returnValue(of());
+    userIdentityServiceSpy.getUserInformation.and.returnValue(of(true));
 
     TestBed.configureTestingModule({
       declarations: [
@@ -117,6 +121,7 @@ describe('BookingDetailsComponent', () => {
       { provide: Router, useValue: routerSpy },
       { provide: BookingService, useValue: bookingServiceSpy },
       { provide: BookingPersistService, useValue: bookingPersistServiceSpy },
+      { provide: UserIdentityService, useValue: userIdentityServiceSpy },
       ]
     }).compileComponents();
     fixture = TestBed.createComponent(BookingDetailsComponent);

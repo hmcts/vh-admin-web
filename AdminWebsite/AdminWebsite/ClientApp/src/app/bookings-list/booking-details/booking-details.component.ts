@@ -48,11 +48,11 @@ export class BookingDetailsComponent implements OnInit {
         this.setBookingInStorage();
       });
     }
-    this.userIdentityService.getUserInformation().pipe(map(userProfile => {
+    this.userIdentityService.getUserInformation().subscribe(userProfile => {
       if (userProfile && userProfile.is_vh_officer_administrator_role) {
         this.isVhOfficerAdmin = true;
       }
-    }));
+    });
   }
 
   mapHearing(hearingResponse: HearingDetailsResponse) {

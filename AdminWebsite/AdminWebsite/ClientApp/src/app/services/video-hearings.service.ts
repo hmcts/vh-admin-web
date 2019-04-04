@@ -39,7 +39,7 @@ export class VideoHearingsService {
   hasUnsavedChanges(): boolean {
     const keyRequest = sessionStorage.getItem(this.newRequestKey);
     const keyChanges = sessionStorage.getItem(this.bookingHasChangesKey);
-    return keyRequest === this.newRequestKey || keyChanges === this.bookingHasChangesKey;
+    return keyRequest !== null || keyChanges === 'true';
   }
 
   onBookingChange(isChanged: boolean) {

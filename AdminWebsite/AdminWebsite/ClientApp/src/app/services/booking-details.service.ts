@@ -11,8 +11,7 @@ export class BookingDetailsService {
   JUDGE = 'Judge';
 
   mapBooking(hearingResponse: HearingDetailsResponse): BookingsDetailsModel {
-    console.log(hearingResponse.status);
-    return new BookingsDetailsModel(
+    const model = new BookingsDetailsModel(
       hearingResponse.id,
       hearingResponse.scheduled_date_time,
       hearingResponse.scheduled_duration,
@@ -28,6 +27,9 @@ export class BookingDetailsService {
       hearingResponse.updated_date,
       hearingResponse.status
     );
+
+    model.OtherInformation = hearingResponse.other_information;
+    return model;
   }
 
   mapBookingParticipants(hearingResponse: HearingDetailsResponse) {
