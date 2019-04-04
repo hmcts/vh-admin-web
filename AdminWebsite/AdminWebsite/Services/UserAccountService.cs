@@ -34,6 +34,9 @@ namespace AdminWebsite.Services
         private readonly ITokenProvider _tokenProvider;
         private readonly SecuritySettings _securitySettings;
         private readonly bool _isLive;
+
+        private static readonly Compare<JudgeResponse> CompareJudgeById =
+            Compare<JudgeResponse>.By((x, y) => x.Email == y.Email, x => x.Email.GetHashCode());
         
         public UserAccountService(IUserApiClient userApiClient, ITokenProvider tokenProvider, IOptions<SecuritySettings> securitySettings, IOptions<AppConfigSettings> appSettings)
         {
@@ -168,25 +171,24 @@ namespace AdminWebsite.Services
         {
             var judges = GetUsersByGroupName("VirtualRoomJudge");
             if (_isLive)
-                judges = ExcludeTestJudges(judges);
+                judges = ExcludeTestJudges(judges).ToList();
 
-            judges = judges.OrderBy(j => j.DisplayName);
-            return judges;
+            return judges.OrderBy(j => j.DisplayName);
         }
 
         private IEnumerable<JudgeResponse> ExcludeTestJudges(IEnumerable<JudgeResponse> judgesList)
         {
             var judgesTest = GetUsersByGroupName("TestAccount");
-            return judgesList.Except(judgesTest);
+            return judgesList.Except(judgesTest, CompareJudgeById);
         }
 
-        public IEnumerable<JudgeResponse> GetUsersByGroupName(string groupName)
+        public List<JudgeResponse> GetUsersByGroupName(string groupName)
         {
             Group groupData = GetGroupByName(groupName);
             if (groupData == null) return new List<JudgeResponse>();
 
             var response = GetUsersByGroup(groupData.Id);
-            if (response != null || response.Any())
+            if (response != null)
             {
                 return response.Select(x => new JudgeResponse
                 {
@@ -194,7 +196,7 @@ namespace AdminWebsite.Services
                     LastName = x.Surname,
                     DisplayName = x.DisplayName,
                     Email = x.UserPrincipalName
-                });
+                }).ToList();
             }
             return new List<JudgeResponse>();
         }
