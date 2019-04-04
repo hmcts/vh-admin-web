@@ -309,9 +309,50 @@ describe('AddParticipantComponent', () => {
     component.showAddress = true;
     houseNumber.setValidators([Validators.required]);
     houseNumber.updateValueAndValidity();
-    houseNumber.setValue(123);
+    houseNumber.setValue('123');
     expect(houseNumber.valid).toBeTruthy();
   });
+
+  it('should validate street', () => {
+    party.setValue('Claimant');
+    role.setValue('Claimant LIP');
+    component.showAddress = true;
+    street.setValidators([Validators.required]);
+    street.updateValueAndValidity();
+    street.setValue('Test Street');
+    expect(street.valid).toBeTruthy();
+  });
+
+  it('should validate city', () => {
+    party.setValue('Claimant');
+    role.setValue('Claimant LIP');
+    component.showAddress = true;
+    city.setValidators([Validators.required]);
+    city.updateValueAndValidity();
+    city.setValue('Test City');
+    expect(city.valid).toBeTruthy();
+  });
+
+  it('should validate county', () => {
+    party.setValue('Claimant');
+    role.setValue('Claimant LIP');
+    component.showAddress = true;
+    county.setValidators([Validators.required]);
+    county.updateValueAndValidity();
+    county.setValue('Test County');
+    expect(county.valid).toBeTruthy();
+  });
+
+  it('should validate postcode', () => {
+    party.setValue('Claimant');
+    role.setValue('Claimant LIP');
+    component.showAddress = true;
+    postcode.setValidators([Validators.required]);
+    postcode.updateValueAndValidity();
+    postcode.setValue('TE1 5NR');
+    expect(postcode.valid).toBeTruthy();
+  });
+
   it('should set values fields if participant if found', () => {
     component.getParticipant(participant);
     expect(role.value).toBe(participant.hearing_role_name);
