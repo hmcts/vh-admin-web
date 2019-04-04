@@ -73,7 +73,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var invalidId = Guid.Empty;
             var result = await _controller.UpdateBookingStatus(invalidId);
             var badRequestResult = (BadRequestObjectResult)result;
-            badRequestResult.Should().BeOfType<BadRequestObjectResult>();
+            badRequestResult.StatusCode.Should().Be(400);
         }
 
         [Test]
