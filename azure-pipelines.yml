@@ -5,9 +5,10 @@ variables:
   apiDirectory: 'AdminWebsite/AdminWebsite'
   sonarCloudPrepareExtraProperties: |  
     sonar.exclusions=**/node_modules/**,**/*.spec.ts,*.spec.ts,**/ClientApp/src/*,**/ClientApp/coverage/**/*
-    sonar.typescript.lcov.reportPaths=$(System.DefaultWorkingDirectory)/*/ClientApp/coverage/lcov.info,**/lcov.info
+    sonar.typescript.lcov.reportPaths=$(System.DefaultWorkingDirectory)/AdminWebsite/AdminWebsite/ClientApp/coverage/lcov.info
     sonar.typescript.exclusions=**/node_modules/**,**/typings.d.ts,**/main.ts,**/environments/environment*.ts,**/*routing.module.ts,**/api-client.ts
     sonar.cs.opencover.reportsPaths=$(Common.TestResultsDirectory)\Coverage\coverage.opencover.xml
+    sonar.coverage.exclusions=Testing.Common/*,AdminWebsite/Views/*,AdminWebsite/Pages/*,AdminWebsite.UserAPI.Client/*,AdminWebsite.AcceptanceTests/*
   integrationTestsAppSettingsTransform: '
   "AzureAd/Authority":"https://login.microsoftonline.com/$(TenantId)",
   "AzureAd/ClientId":"$(vh-admin-web-appid)",

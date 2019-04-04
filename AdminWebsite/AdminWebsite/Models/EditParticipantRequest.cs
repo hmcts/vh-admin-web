@@ -70,20 +70,35 @@ namespace AdminWebsite.Models
         /// </summary>
         public string Representee { get; set; }
 
-        // House/Building number of a participant
+        /// <summary>
+        /// House number of an Individual
+        /// </summary>
         public string HouseNumber { get; set; }
 
-        // Street name of a participant
+        /// <summary>
+        /// Stree number of an Individual
+        /// </summary>
         public string Street { get; set; }
 
-        // City of a participant
+        /// <summary>
+        /// Postcode of an Individual
+        /// </summary>
+        public string Postcode { get; set; }
+
+        /// <summary>
+        /// City/Town of an Individual
+        /// </summary>
         public string City { get; set; }
 
-        // County of a participant
+        /// <summary>
+        /// County of an Individual
+        /// </summary>
         public string County { get; set; }
 
-        // Postcode of a participant
-        public string Postcode { get; set; }
+        /// <summary>
+        /// Organisation name
+        /// </summary>
+        public string OrganisationName { get; set; }
 
     }
 }

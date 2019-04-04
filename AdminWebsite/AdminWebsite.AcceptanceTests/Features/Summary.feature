@@ -75,5 +75,5 @@ Scenario: Case Admin attempts to update hearing details
 	And user is on Summary page
 	When user navigates to hearing details page to make changes
 	And hearing booking detail is updated
-	And user cancels the update  
+	And user discards changes
 	Then inputted values should not be saved 

@@ -1,100 +1,98 @@
 
-<div *ngIf="!showDetails">
-    <div *ngIf="recordsLoaded">
-        <div id="vh-table" class="vh-table" appScrollable (scrollPosition)="scrollHandler($event)">
+<div *ngIf="recordsLoaded">
+  <div id="vh-table" class="vh-table" appScrollable (scrollPosition)="scrollHandler($event)">
 
-            <div *ngFor="let booking of bookings; index as b">
-                <div class="govuk-grid-row vh-row">
-                    <div class="govuk-grid-column-full govuk-hint ">
-                        {{booking.BookingsDate |date: 'EEEE dd MMMM yyyy'}}
-                    </div>
-                </div>
-                <div class="govuk-grid-row vh-row">
-                    <div class="rowbottom"></div>
-                </div>
+    <div *ngFor="let booking of bookings; index as b">
+      <div class="govuk-grid-row vh-row">
+        <div class="govuk-grid-column-full govuk-hint ">
+          {{booking.BookingsDate | amLocal | amDateFormat: 'dddd DD MMMM YYYY'}}
+        </div>
+      </div>
+      <div class="govuk-grid-row vh-row">
+        <div class="rowbottom"></div>
+      </div>
 
-                <div *ngFor="let detail of booking.BookingsDetails; index as i"
-                     [ngClass]="{'vh-row-selected':detail.Selected}">
-                    <div class="govuk-grid-row vh-row vh-a" (click)="rowSelected(b,i)" [attr.id]="b+'_'+i">
-                        <div class="govuk-grid-column-one-quarter">
+      <div *ngFor="let detail of booking.BookingsDetails; index as i"
+           [ngClass]="{'vh-row-selected':detail.Selected}">
+        <div class="govuk-grid-row vh-row vh-a" (click)="rowSelected(b,i)" [attr.id]="b+'_'+i">
+          <div class="govuk-grid-column-one-quarter">
 
-                            <div class="vh-sml vh-col">{{detail.StartTime |date:'shortTime'}}</div>
-                            <div class="govuk-hint vh-sml vh-col">listed for {{detail.DurationInHoursAndMinutes}} </div>
-                        </div>
-                        <div class="govuk-grid-column-one-quarter">
+            <div class="vh-sml vh-col">{{detail.StartTime | amLocal | amDateFormat:'H:mm a'}}</div>
+            <div class="govuk-hint vh-sml vh-col">listed for {{detail.DurationInHoursAndMinutes}} </div>
+          </div>
+          <div class="govuk-grid-column-one-quarter">
 
-                            <div class="vh-sml">{{detail.HearingCaseNumber}}</div>
-                            <div class="vh-sml">{{detail.HearingCaseName}}</div>
-                            <div class="vh-sml">{{detail.HearingType}}</div>
-                        </div>
-                        <div class="govuk-grid-column-one-quarter">
-                            <div class="vh-sml">{{detail.JudgeName}}</div>
-                            <div class="govuk-hint vh-sml">{{detail.CourtAddress}}</div>
-                        </div>
-                        <div class="govuk-grid-column-one-quarter">
-                            <div class="govuk-grid-row">
-                                <div class="govuk-grid-column-full">
-                                    <div class="govuk-hint vh-xsml">Created by: </div>
-
-                                    <span class="govuk-hint vh-xsml">{{detail.CreatedBy}}</span>
-                                    <span class="govuk-hint vh-xsml">
-                                        {{detail.CreatedDate |date: 'dd MMM yyyy h:mm a'}}
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="govuk-grid-row" *ngIf="detail.LastEditBy">
-                                <div class="govuk-grid-column-full vh-l">
-                                    <div class="govuk-hint vh-xsml">Last edited by: </div>
-
-                                    <span class="govuk-hint vh-xsml">{{detail.LastEditBy}}</span>
-                                    <span class="govuk-hint vh-xsml">
-                                        {{detail.LastEditDate |date: 'dd MMM yyyy h:mm a'}}
-                                    </span>
-                                </div>
-                            </div>
-
-
-                        </div>
-
-                    </div>
-                    <div class="govuk-grid-row vh-row">
-                        <div class="rowbottom"></div>
-                    </div>
-
-                </div>
-
-            </div>
-
+            <div class="vh-sml">{{detail.HearingCaseNumber}}</div>
+            <div class="vh-sml">{{detail.HearingCaseName}}</div>
+            <div class="vh-sml">{{detail.HearingType}}</div>
+          </div>
+          <div class="govuk-grid-column-one-quarter">
+            <div class="vh-sml">{{detail.JudgeName}}</div>
+            <div class="govuk-hint vh-sml">{{detail.CourtAddress}}</div>
+          </div>
+          <div class="govuk-grid-column-one-quarter">
             <div class="govuk-grid-row">
-                <div *ngIf="endOfData">
-                    <div class="govuk-grid-column-full vh-loader-container">
-                        <p class="govuk-body-m">End of data</p>
-                    </div>
-                </div>
+              <div class="govuk-grid-column-full">
+                <div class="govuk-hint vh-xsml">Created by: </div>
+
+                <span class="govuk-hint vh-xsml">{{detail.CreatedBy}}</span>
+                <span class="govuk-hint vh-xsml">
+                  {{detail.CreatedDate | amLocal | amDateFormat: 'DD MMM YYYY H:mm a'}}
+                </span>
+              </div>
+            </div>
+            <div class="govuk-grid-row" *ngIf="detail.LastEditBy">
+              <div class="govuk-grid-column-full vh-l">
+                <div class="govuk-hint vh-xsml">Last edited by: </div>
+
+                <span class="govuk-hint vh-xsml">{{detail.LastEditBy}}</span>
+                <span class="govuk-hint vh-xsml">
+                  {{detail.LastEditDate | amLocal | amDateFormat: 'DD MMM YYYY H:mm a'}}
+                </span>
+              </div>
             </div>
 
+
+          </div>
+
         </div>
-    </div>
-    <div class="govuk-grid-row">
-        <div *ngIf="endOfData && bookings.length == 0">
-            <div class="govuk-grid-column-full vh-loader-container">
-                <p class="govuk-body-m">No records found</p>
-            </div>
+        <div class="govuk-grid-row vh-row">
+          <div class="rowbottom"></div>
         </div>
-    </div>
-    <div class="govuk-grid-row">
-        <div *ngIf="error">
-            <div class="govuk-grid-column-full vh-loader-container">
-                <p class="govuk-body-m">An error has occurred, please try again later or contact your administrator</p>
-            </div>
-        </div>
+
+      </div>
+
     </div>
 
     <div class="govuk-grid-row">
-        <div *ngIf="!loaded && !endOfData && !error">
-            <div class="govuk-grid-column-full vh-loader-container">
-                <div class="vh-loader"></div>
-            </div>
+      <div *ngIf="endOfData">
+        <div class="govuk-grid-column-full vh-loader-container">
+          <p class="govuk-body-m">End of data</p>
         </div>
+      </div>
     </div>
+
+  </div>
+</div>
+<div class="govuk-grid-row">
+  <div *ngIf="endOfData && bookings.length == 0">
+    <div class="govuk-grid-column-full vh-loader-container">
+      <p class="govuk-body-m">No records found</p>
+    </div>
+  </div>
+</div>
+<div class="govuk-grid-row">
+  <div *ngIf="error">
+    <div class="govuk-grid-column-full vh-loader-container">
+      <p class="govuk-body-m">An error has occurred, please try again later or contact your administrator</p>
+    </div>
+  </div>
+</div>
+
+<div class="govuk-grid-row">
+  <div *ngIf="!loaded && !endOfData && !error">
+    <div class="govuk-grid-column-full vh-loader-container">
+      <div class="vh-loader"></div>
+    </div>
+  </div>
 </div>

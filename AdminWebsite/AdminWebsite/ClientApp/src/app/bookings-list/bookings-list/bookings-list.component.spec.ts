@@ -8,13 +8,19 @@ import { BookingsListService } from '../../services/bookings-list.service';
 import { BookingsListModel, BookingsDetailsModel } from '../../common/model/bookings-list.model';
 import { BookingsResponse, BookingsByDateResponse, BookingsHearingResponse } from '../../services/clients/api-client';
 import { Router } from '@angular/router';
+import { BookingPersistService } from '../../services/bookings-persist.service';
+import { VideoHearingsService } from '../../services/video-hearings.service';
+import { HearingModel } from '../../common/model/hearing.model';
+import { MomentModule } from 'angular2-moment';
 
 let component: BookingsListComponent;
 let fixture: ComponentFixture<BookingsListComponent>;
 let bookingsListServiceSpy: jasmine.SpyObj<BookingsListService>;
 bookingsListServiceSpy = jasmine.createSpyObj<BookingsListService>('BookingsListService',
   ['getBookingsList', 'mapBookingsResponse', 'addBookings']);
-
+let videoHearingServiceSpy: jasmine.SpyObj<VideoHearingsService>;
+videoHearingServiceSpy = jasmine.createSpyObj('VideoHearingService',
+  ['getCurrentRequest', 'cancelRequest']);
 export class ResponseTestData {
 
   getTestData(): BookingsResponse {
@@ -153,7 +159,24 @@ class ScrollableDirective {
 class BookingDetailsComponent {
 }
 
+export class BookingPersistServiceSpy {
+  private _bookingList: Array<BookingsListModel> = [];
+
+  get bookingList() {
+    const listItem = new BookingslistTestData().getTestData();
+    this._bookingList.push(listItem);
+    return this._bookingList;
+  }
+
+  get nextCursor() { return '12345'; }
+  get selectedGroupIndex() { return 0; }
+  get selectedItemIndex() { return 0; }
+  updateBooking(hearing: HearingModel) { }
+  resetAll() { }
+}
+
 let routerSpy: jasmine.SpyObj<Router>;
+
 
 describe('BookingsListComponent', () => {
   beforeEach(async(() => {
@@ -169,10 +192,11 @@ describe('BookingsListComponent', () => {
 
     TestBed.configureTestingModule({
       declarations: [BookingsListComponent, ScrollableDirective, BookingDetailsComponent],
-      imports: [HttpClientModule],
+      imports: [HttpClientModule, MomentModule],
       providers: [
         { provide: BookingsListService, useValue: bookingsListServiceSpy },
         { provide: Router, useValue: routerSpy },
+        { provide: VideoHearingsService, useValue: videoHearingServiceSpy },
       ]
     }).compileComponents();
 
@@ -229,4 +253,47 @@ describe('BookingsListComponent', () => {
     expect(component.selectedGroupIndex).toBe(1);
     expect(component.selectedItemIndex).toBe(0);
   });
+
+});
+
+describe('BookingsListComponent with existing booking', () => {
+  beforeEach(async(() => {
+    const data = new ResponseTestData().getTestData();
+
+    bookingsListServiceSpy.getBookingsList.and.returnValue(of(data));
+    const model1 = new BookingslistTestData().getBookings();
+    const model2 = new BookingslistTestData().getBookings1();
+    const listModel = new ArrayBookingslistModelTestData().getTestData();
+    bookingsListServiceSpy.mapBookingsResponse.and.returnValues(model1, model1, model1, model2);
+    bookingsListServiceSpy.addBookings.and.returnValue(listModel);
+    routerSpy = jasmine.createSpyObj('Router', ['navigate']);
+
+    TestBed.configureTestingModule({
+      declarations: [BookingsListComponent, ScrollableDirective, BookingDetailsComponent],
+      imports: [HttpClientModule, MomentModule],
+      providers: [
+        { provide: BookingsListService, useValue: bookingsListServiceSpy },
+        { provide: Router, useValue: routerSpy },
+        { provide: BookingPersistService, useClass: BookingPersistServiceSpy },
+        { provide: VideoHearingsService, useValue: videoHearingServiceSpy },
+      ]
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(BookingsListComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+
+  }));
+
+  it('should update selected item', (() => {
+
+    component.ngOnInit();
+    fixture.detectChanges();
+
+    expect(component.loaded).toBeTruthy();
+    expect(component.bookings).toBeTruthy();
+    expect(component.selectedGroupIndex).toBe(0);
+    expect(component.selectedItemIndex).toBe(0);
+    expect(component.selectedHearingId).toBe('1');
+  }));
 });

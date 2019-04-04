@@ -144,7 +144,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   private setParticipantEmail() {
     this.searchEmail.email = this.participantDetails.email;
     this.searchEmail.isValidEmail = true;
-    this.searchEmail.setEmailDisabled(this.isAnyParticipants);
+    this.searchEmail.setEmailDisabled(this.participantDetails.id && this.participantDetails.id.length > 0);
   }
 
 
@@ -260,7 +260,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   public getParticipant(participantDetails) {
     this.displayErrorNoParticipants = false;
     this.displayAdd();
-    this.participantDetails = participantDetails;
+    this.participantDetails = Object.assign({}, participantDetails);
     this.setupHearingRoles(this.participantDetails.case_role_name);
     if (this.constants.IndividualRoles.indexOf(this.participantDetails.hearing_role_name) > -1) {
       this.showAddress = true;

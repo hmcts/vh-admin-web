@@ -36,9 +36,9 @@ export class BHClient {
     getAllParticipantsChecklists(pageSize: number | null | undefined, page: number | null | undefined): Observable<ChecklistsResponse> {
         let url_ = this.baseUrl + "/api/checklists?";
         if (pageSize !== undefined)
-            url_ += "pageSize=" + encodeURIComponent("" + pageSize) + "&"; 
+            url_ += "pageSize=" + encodeURIComponent("" + pageSize) + "&";
         if (page !== undefined)
-            url_ += "page=" + encodeURIComponent("" + page) + "&"; 
+            url_ += "page=" + encodeURIComponent("" + page) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -65,8 +65,8 @@ export class BHClient {
 
     protected processGetAllParticipantsChecklists(response: HttpResponseBase): Observable<ChecklistsResponse> {
         const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
             (<any>response).error instanceof Blob ? (<any>response).error : undefined;
 
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
@@ -135,8 +135,8 @@ export class BHClient {
 
     protected processGetConfigSettings(response: HttpResponseBase): Observable<ClientSettingsResponse> {
         const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
             (<any>response).error instanceof Blob ? (<any>response).error : undefined;
 
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
@@ -164,9 +164,9 @@ export class BHClient {
     getBookingsList(cursor: string | null | undefined, limit: number | null | undefined): Observable<BookingsResponse> {
         let url_ = this.baseUrl + "/api/hearings?";
         if (cursor !== undefined)
-            url_ += "cursor=" + encodeURIComponent("" + cursor) + "&"; 
+            url_ += "cursor=" + encodeURIComponent("" + cursor) + "&";
         if (limit !== undefined)
-            url_ += "limit=" + encodeURIComponent("" + limit) + "&"; 
+            url_ += "limit=" + encodeURIComponent("" + limit) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -193,8 +193,8 @@ export class BHClient {
 
     protected processGetBookingsList(response: HttpResponseBase): Observable<BookingsResponse> {
         const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
             (<any>response).error instanceof Blob ? (<any>response).error : undefined;
 
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
@@ -247,7 +247,7 @@ export class BHClient {
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
-                "Content-Type": "application/json", 
+                "Content-Type": "application/json",
                 "Accept": "application/json"
             })
         };
@@ -268,8 +268,8 @@ export class BHClient {
 
     protected processBookNewHearing(response: HttpResponseBase): Observable<HearingDetailsResponse> {
         const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
             (<any>response).error instanceof Blob ? (<any>response).error : undefined;
 
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
@@ -308,7 +308,7 @@ export class BHClient {
         let url_ = this.baseUrl + "/api/hearings/{hearingId}";
         if (hearingId === undefined || hearingId === null)
             throw new Error("The parameter 'hearingId' must be defined.");
-        url_ = url_.replace("{hearingId}", encodeURIComponent("" + hearingId)); 
+        url_ = url_.replace("{hearingId}", encodeURIComponent("" + hearingId));
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -335,8 +335,8 @@ export class BHClient {
 
     protected processGetHearingById(response: HttpResponseBase): Observable<HearingDetailsResponse> {
         const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
             (<any>response).error instanceof Blob ? (<any>response).error : undefined;
 
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
@@ -383,7 +383,7 @@ export class BHClient {
         let url_ = this.baseUrl + "/api/hearings/{hearingId}";
         if (hearingId === undefined || hearingId === null)
             throw new Error("The parameter 'hearingId' must be defined.");
-        url_ = url_.replace("{hearingId}", encodeURIComponent("" + hearingId)); 
+        url_ = url_.replace("{hearingId}", encodeURIComponent("" + hearingId));
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(editHearingRequest);
@@ -393,7 +393,7 @@ export class BHClient {
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
-                "Content-Type": "application/json", 
+                "Content-Type": "application/json",
                 "Accept": "application/json"
             })
         };
@@ -414,8 +414,8 @@ export class BHClient {
 
     protected processEditHearing(response: HttpResponseBase): Observable<HearingDetailsResponse> {
         const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
             (<any>response).error instanceof Blob ? (<any>response).error : undefined;
 
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
@@ -439,6 +439,10 @@ export class BHClient {
             let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
             result400 = resultData400 ? ProblemDetails.fromJS(resultData400) : new ProblemDetails();
             return throwException("A server error occurred.", status, _responseText, _headers, result400);
+            }));
+        } else if (status === 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("A server error occurred.", status, _responseText, _headers);
             }));
         } else if (status === 401) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
@@ -484,8 +488,8 @@ export class BHClient {
 
     protected processGetHearingTypes(response: HttpResponseBase): Observable<HearingTypeResponse[]> {
         const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
             (<any>response).error instanceof Blob ? (<any>response).error : undefined;
 
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
@@ -521,13 +525,13 @@ export class BHClient {
 
     /**
      * Get available participant roles
-     * @param caseTypeName (optional) 
+     * @param caseTypeName (optional)
      * @return Success
      */
     getParticipantRoles(caseTypeName: string | null | undefined): Observable<CaseAndHearingRolesResponse[]> {
         let url_ = this.baseUrl + "/api/reference/participantroles?";
         if (caseTypeName !== undefined)
-            url_ += "caseTypeName=" + encodeURIComponent("" + caseTypeName) + "&"; 
+            url_ += "caseTypeName=" + encodeURIComponent("" + caseTypeName) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -554,8 +558,8 @@ export class BHClient {
 
     protected processGetParticipantRoles(response: HttpResponseBase): Observable<CaseAndHearingRolesResponse[]> {
         const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
             (<any>response).error instanceof Blob ? (<any>response).error : undefined;
 
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
@@ -621,8 +625,8 @@ export class BHClient {
 
     protected processGetCourts(response: HttpResponseBase): Observable<HearingVenueResponse[]> {
         const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
             (<any>response).error instanceof Blob ? (<any>response).error : undefined;
 
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
@@ -688,8 +692,8 @@ export class BHClient {
 
     protected processGetJudges(response: HttpResponseBase): Observable<ParticipantDetailsResponse[]> {
         const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
             (<any>response).error instanceof Blob ? (<any>response).error : undefined;
 
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
@@ -751,8 +755,8 @@ export class BHClient {
 
     protected processGetUserProfile(response: HttpResponseBase): Observable<UserProfileResponse> {
         const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
             (<any>response).error instanceof Blob ? (<any>response).error : undefined;
 
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
@@ -850,7 +854,7 @@ export class ChecklistsResponse implements IChecklistsResponse {
         data["current_page"] = this.current_page;
         data["prev_page_url"] = this.prev_page_url;
         data["next_page_url"] = this.next_page_url;
-        return data; 
+        return data;
     }
 }
 
@@ -948,7 +952,7 @@ export class HearingParticipantCheckListResponse implements IHearingParticipantC
         }
         data["landline"] = this.landline;
         data["mobile"] = this.mobile;
-        return data; 
+        return data;
     }
 }
 
@@ -1026,7 +1030,7 @@ export class ChecklistsHearingResponse implements IChecklistsHearingResponse {
             for (let item of this.cases)
                 data["cases"].push(item.toJSON());
         }
-        return data; 
+        return data;
     }
 }
 
@@ -1084,7 +1088,7 @@ export class QuestionAnswerResponse implements IQuestionAnswerResponse {
         data["answer"] = this.answer;
         data["notes"] = this.notes;
         data["created_at"] = this.created_at ? this.created_at.toISOString() : <any>undefined;
-        return data; 
+        return data;
     }
 }
 
@@ -1134,7 +1138,7 @@ export class CaseResponse implements ICaseResponse {
         data = typeof data === 'object' ? data : {};
         data["number"] = this.number;
         data["name"] = this.name;
-        return data; 
+        return data;
     }
 }
 
@@ -1186,7 +1190,7 @@ export class ProblemDetails implements IProblemDetails {
         data["status"] = this.status;
         data["detail"] = this.detail;
         data["instance"] = this.instance;
-        return data; 
+        return data;
     }
 }
 
@@ -1244,7 +1248,7 @@ export class ClientSettingsResponse implements IClientSettingsResponse {
         data["redirect_uri"] = this.redirect_uri;
         data["post_logout_redirect_uri"] = this.post_logout_redirect_uri;
         data["instrumentation_key"] = this.instrumentation_key;
-        return data; 
+        return data;
     }
 }
 
@@ -1333,7 +1337,7 @@ export class BookNewHearingRequest implements IBookNewHearingRequest {
         data["hearing_room_name"] = this.hearing_room_name;
         data["other_information"] = this.other_information;
         data["created_by"] = this.created_by;
-        return data; 
+        return data;
     }
 }
 
@@ -1384,7 +1388,7 @@ export class CaseRequest implements ICaseRequest {
         data["number"] = this.number;
         data["name"] = this.name;
         data["is_lead_case"] = this.is_lead_case;
-        return data; 
+        return data;
     }
 }
 
@@ -1470,7 +1474,7 @@ export class ParticipantRequest implements IParticipantRequest {
         data["postcode"] = this.postcode;
         data["city"] = this.city;
         data["county"] = this.county;
-        return data; 
+        return data;
     }
 }
 
@@ -1577,7 +1581,7 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
         data["created_by"] = this.created_by;
         data["updated_by"] = this.updated_by;
         data["updated_date"] = this.updated_date ? this.updated_date.toISOString() : <any>undefined;
-        return data; 
+        return data;
     }
 }
 
@@ -1632,7 +1636,7 @@ export class CaseResponse2 implements ICaseResponse2 {
         data["number"] = this.number;
         data["name"] = this.name;
         data["is_lead_case"] = this.is_lead_case;
-        return data; 
+        return data;
     }
 }
 
@@ -1718,7 +1722,7 @@ export class ParticipantResponse implements IParticipantResponse {
         data["postcode"] = this.postcode;
         data["city"] = this.city;
         data["county"] = this.county;
-        return data; 
+        return data;
     }
 }
 
@@ -1790,7 +1794,7 @@ export class BookingsResponse implements IBookingsResponse {
         data["limit"] = this.limit;
         data["prev_page_url"] = this.prev_page_url;
         data["next_page_url"] = this.next_page_url;
-        return data; 
+        return data;
     }
 }
 
@@ -1841,7 +1845,7 @@ export class BookingsByDateResponse implements IBookingsByDateResponse {
             for (let item of this.hearings)
                 data["hearings"].push(item.toJSON());
         }
-        return data; 
+        return data;
     }
 }
 
@@ -1920,7 +1924,7 @@ export class BookingsHearingResponse implements IBookingsHearingResponse {
         data["last_edit_by"] = this.last_edit_by;
         data["last_edit_date"] = this.last_edit_date ? this.last_edit_date.toISOString() : <any>undefined;
         data["hearing_date"] = this.hearing_date ? this.hearing_date.toISOString() : <any>undefined;
-        return data; 
+        return data;
     }
 }
 
@@ -2003,7 +2007,7 @@ export class EditHearingRequest implements IEditHearingRequest {
                 data["participants"].push(item.toJSON());
         }
         data["other_information"] = this.other_information;
-        return data; 
+        return data;
     }
 }
 
@@ -2058,7 +2062,7 @@ export class EditCaseRequest implements IEditCaseRequest {
         data = typeof data === 'object' ? data : {};
         data["number"] = this.number;
         data["name"] = this.name;
-        return data; 
+        return data;
     }
 }
 
@@ -2096,11 +2100,20 @@ export class EditParticipantRequest implements IEditParticipantRequest {
     solicitors_reference?: string | undefined;
     /** The representee of a representative */
     representee?: string | undefined;
+
+    /** House number of an Individual */
     house_number?: string | undefined;
+    /** Stree number of an Individual */
     street?: string | undefined;
-    city?: string | undefined;
-    county?: string | undefined;
+    /** Postcode of an Individual */
     postcode?: string | undefined;
+    /** City/Town of an Individual */
+    city?: string | undefined;
+    /** County of an Individual */
+    county?: string | undefined;
+    /** Organisation name */
+    organisation_name?: string | undefined;
+
 
     constructor(data?: IEditParticipantRequest) {
         if (data) {
@@ -2127,9 +2140,12 @@ export class EditParticipantRequest implements IEditParticipantRequest {
             this.representee = data["representee"];
             this.house_number = data["house_number"];
             this.street = data["street"];
+
+            this.postcode = data["postcode"];
             this.city = data["city"];
             this.county = data["county"];
-            this.postcode = data["postcode"];
+            this.organisation_name = data["organisation_name"];
+
         }
     }
 
@@ -2156,10 +2172,13 @@ export class EditParticipantRequest implements IEditParticipantRequest {
         data["representee"] = this.representee;
         data["house_number"] = this.house_number;
         data["street"] = this.street;
+
+        data["postcode"] = this.postcode;
         data["city"] = this.city;
         data["county"] = this.county;
-        data["postcode"] = this.postcode;
-        return data; 
+        data["organisation_name"] = this.organisation_name;
+
+        return data;
     }
 }
 
@@ -2189,11 +2208,18 @@ export interface IEditParticipantRequest {
     solicitors_reference?: string | undefined;
     /** The representee of a representative */
     representee?: string | undefined;
+    /** House number of an Individual */
     house_number?: string | undefined;
+    /** Stree number of an Individual */
     street?: string | undefined;
-    city?: string | undefined;
-    county?: string | undefined;
+    /** Postcode of an Individual */
     postcode?: string | undefined;
+    /** City/Town of an Individual */
+    city?: string | undefined;
+    /** County of an Individual */
+    county?: string | undefined;
+    /** Organisation name */
+    organisation_name?: string | undefined;
 }
 
 /** Defines a type of hearing based on case */
@@ -2238,7 +2264,7 @@ export class HearingTypeResponse implements IHearingTypeResponse {
         data["group"] = this.group;
         data["id"] = this.id;
         data["name"] = this.name;
-        return data; 
+        return data;
     }
 }
 
@@ -2296,7 +2322,7 @@ export class CaseAndHearingRolesResponse implements ICaseAndHearingRolesResponse
             for (let item of this.hearing_roles)
                 data["hearing_roles"].push(item);
         }
-        return data; 
+        return data;
     }
 }
 
@@ -2339,7 +2365,7 @@ export class HearingVenueResponse implements IHearingVenueResponse {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["name"] = this.name;
-        return data; 
+        return data;
     }
 }
 
@@ -2400,7 +2426,7 @@ export class ParticipantDetailsResponse implements IParticipantDetailsResponse {
         data["email"] = this.email;
         data["role"] = this.role;
         data["phone"] = this.phone;
-        return data; 
+        return data;
     }
 }
 
@@ -2447,7 +2473,7 @@ export class UserProfileResponse implements IUserProfileResponse {
         data = typeof data === 'object' ? data : {};
         data["is_vh_officer_administrator_role"] = this.is_vh_officer_administrator_role;
         data["is_case_administrator"] = this.is_case_administrator;
-        return data; 
+        return data;
     }
 }
 
@@ -2458,10 +2484,10 @@ export interface IUserProfileResponse {
 
 export class SwaggerException extends Error {
     message: string;
-    status: number; 
-    response: string; 
+    status: number;
+    response: string;
     headers: { [key: string]: any; };
-    result: any; 
+    result: any;
 
     constructor(message: string, status: number, response: string, headers: { [key: string]: any; }, result: any) {
         super();
@@ -2493,12 +2519,12 @@ function blobToText(blob: any): Observable<string> {
             observer.next("");
             observer.complete();
         } else {
-            let reader = new FileReader(); 
-            reader.onload = event => { 
+            let reader = new FileReader();
+            reader.onload = event => {
                 observer.next((<any>event.target).result);
                 observer.complete();
             };
-            reader.readAsText(blob); 
+            reader.readAsText(blob);
         }
     });
 }

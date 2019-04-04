@@ -30,6 +30,7 @@ import { PageTrackerService } from './services/page-tracker.service';
 import { AppInsightsLogger } from './services/app-insights-logger.service';
 import { Config } from '../app/common/model/config';
 import { WindowRef } from './security/window-ref';
+import { MomentModule } from 'angular2-moment';
 
 export function getSettings(configService: ConfigService) {
   return () => configService.loadConfig();
@@ -46,6 +47,7 @@ export function getSettings(configService: ConfigService) {
     ErrorComponent,
   ],
   imports: [
+    MomentModule,
     BookingModule,
     BookingsListModule,
     BrowserModule,

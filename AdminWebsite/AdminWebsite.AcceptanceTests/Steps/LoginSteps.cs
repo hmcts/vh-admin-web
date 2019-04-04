@@ -42,10 +42,12 @@ namespace AdminWebsite.AcceptanceTests.Steps
                 case "VH Officer": _loginPage.Logon(appSecrets.VhOfficerUsername, password);
                     break;
                 case "Case Admin": _loginPage.Logon(appSecrets.CaseAdminCivilMoneyClaims, password);
+                    _scenarioContext.Add("Username", appSecrets.VhOfficerUsername);
                     break;
                 case "Non-Admin": _loginPage.Logon(appSecrets.NonAdmin, password);
                     break;
                 case "VhOfficerCivilMoneyclaims": _loginPage.Logon(appSecrets.VhOfficerCivilMoneyclaims, password);
+                    _scenarioContext.Add("Username", appSecrets.VhOfficerUsername);
                     break;
                 case "CaseAdminFinRemedyCivilMoneyClaims":
                     _loginPage.Logon(appSecrets.CaseAdminFinRemedyCivilMoneyClaims, password);

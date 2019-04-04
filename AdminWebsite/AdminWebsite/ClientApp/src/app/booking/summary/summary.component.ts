@@ -146,7 +146,7 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
           const selectedCourt = data.filter(c => c.id === venueId);
           if (selectedCourt && selectedCourt.length > 0) {
             this.courtRoomAddress = `${selectedCourt[0].name} ${this.hearing.court_room}`;
-            this.hearing.court_name = selectedCourt ? selectedCourt[0].name : '';
+            this.hearing.court_name = selectedCourt[0].name;
           }
         },
         error => console.error(error)
@@ -200,9 +200,7 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
             this.router.navigate([PageUrls.BookingConfirmation]);
           },
           error => {
-            this.showWaitSaving = false;
-            this.showErrorSaving = true;
-            this.errors = error;
+            this.setError(error);
           }
         );
     }
@@ -214,10 +212,14 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
         this.showWaitSaving = false;
         this.router.navigate([PageUrls.BookingDetails]);
       }, error => {
-        this.showWaitSaving = false;
-        this.showErrorSaving = true;
-        this.errors = error;
+        this.setError(error);
       });
+  }
+
+  private setError(error) {
+    this.showWaitSaving = false;
+    this.showErrorSaving = true;
+    this.errors = error;
   }
 
   cancel(): void {
