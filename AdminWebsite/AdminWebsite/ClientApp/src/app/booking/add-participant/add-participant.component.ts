@@ -208,6 +208,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     this.hearing = this.videoHearingService.getCurrentRequest();
     if (this.hearing) {
       this.isExistingHearing = this.hearing.hearing_id && this.hearing.hearing_id.length > 0;
+
       const anyParticipants = this.hearing.participants.find(x => !x.is_judge);
       this.isAnyParticipants = anyParticipants && !anyParticipants.is_judge;
     }
@@ -244,6 +245,10 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     this.displayErrorNoParticipants = false;
     this.displayAdd();
     this.participantDetails = Object.assign({}, participantDetails);
+
+    // if it's added in the existing hearing participant, then allowed all fields to edit.
+    this.isAnyParticipants = this.participantDetails.id && this.participantDetails.id.length > 0;
+
     this.setupHearingRoles(this.participantDetails.case_role_name);
     this.participantForm.setValue({
       party: this.participantDetails.case_role_name,

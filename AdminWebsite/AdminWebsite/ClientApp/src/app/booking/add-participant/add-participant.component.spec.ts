@@ -79,6 +79,7 @@ p3.phone = '32332';
 p3.hearing_role_name = 'Solicitor';
 p3.case_role_name = 'Claimant';
 p3.company = 'CN';
+p3.id = '1234';
 
 participants.push(p1);
 participants.push(p2);

@@ -33,8 +33,6 @@ resources:
 
 trigger:
 - master
-pr:
-- master
 
 jobs:
 - template: jobs/angularDotNetCore.yml@azureDevOpsTemplates # Template reference
