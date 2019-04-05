@@ -20,6 +20,7 @@ export class LoginComponent implements OnInit {
 
   ngOnInit() {
     if (this.adalSvc.userInfo.authenticated) {
+      console.log(`return url = ${returnUrl}`);
       const returnUrl = this.returnUrlService.popUrl() || '/';
       try {
         this.router.navigateByUrl(returnUrl);
