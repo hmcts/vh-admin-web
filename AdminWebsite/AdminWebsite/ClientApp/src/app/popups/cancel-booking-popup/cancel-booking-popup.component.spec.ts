@@ -29,9 +29,6 @@ describe('CancelBookingPopupComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
   it('should emit event when the cancel button is clicked', () => {
     spyOn(component.cancelBooking, 'emit');
     buttonCancel.nativeElement.click();

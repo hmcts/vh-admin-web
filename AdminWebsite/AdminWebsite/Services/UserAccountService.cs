@@ -22,13 +22,13 @@ namespace AdminWebsite.Services
     public interface IUserAccountService
     {
         /// <summary>
-        /// Get the full group information based by the active directory id
+        ///     Get the full group information based by the active directory id
         /// </summary>
         /// <param name="groupId">Id for the active directory group</param>
+        /// <returns></returns>
         Group GetGroupById(string groupId);
         /// <summary>
-        /// <summary>
-        /// Returns a list of all judges in the active directory
+        ///     Returns a list of all judges in the active directory
         /// </summary>
         /// <remarks>
         /// Filters test accounts if configured to run as live environment 

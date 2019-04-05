@@ -94,9 +94,14 @@ export class BookingDetailsComponent implements OnInit {
         (data) => {
           this.showCancelBooking = false;
           this.videoHearingService.getHearingById(this.hearingId)
-            .subscribe(newData => {
-              this.mapHearing(newData);
-            });
+            .subscribe(
+              (newData) => {
+                this.mapHearing(newData);
+              },
+              error => {
+                this.errors = error;
+              }
+            );
         },
         error => {
           this.showCancelBooking = false;
