@@ -75,7 +75,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         {
             GivenApiThrowsExceptionOnCancel(HttpStatusCode.BadRequest);
 
-            var invalidId = Guid.Empty;
+            var invalidId = Guid.NewGuid();
             var result = await _controller.UpdateBookingStatus(invalidId);
             var badRequestResult = (BadRequestObjectResult)result;
             badRequestResult.StatusCode.Should().Be(400);
