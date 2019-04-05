@@ -3,10 +3,10 @@
   <h1 class="govuk-heading-l">Book a video hearing</h1>
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-      <h1 class="govuk-heading-m">Other information</h1>
+      <h1 class="govuk-heading-m" id="other-info-header">Other information</h1>
       <form [formGroup]="otherInformationForm" class="govuk-form-group" (ngSubmit)="next()">
 
-        <fieldset class="govuk-fieldset fieldset-margin" aria-describedby="other-information">
+        <fieldset class="govuk-fieldset fieldset-margin" aria-describedby="other-information-text">
           <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
             <p class="govuk-body" id="other-information-text">
               Please note any other information about this hearing that the video hearings administrator should be aware of.
@@ -16,15 +16,15 @@
             <textarea class="govuk-textarea vh-text-h" id="details-other-information"
                       name="otherInformation" rows="14" cols="80"
                       formControlName="otherInformation"
-                      aria-describedby="other-information"></textarea>
+                      aria-describedby="hidden-other-text"></textarea>
           </div>
         </fieldset>
 
         <div class="vh-mt50">
           <input id="nextButton" type="button" class="govuk-button vh-mr25" role="button" value="{{buttonAction}}"
                  (click)="next()" alt="Save hearing other information and go to summary" />
-          <input id="cancelButton" type="button"  class="govuk-button hmcts-button--secondary"
-                 role="button" value="Cancel" (click)="confirmCancelBooking()" alt="Confirm cancellation of new booking and return to dashboard"/>
+          <input id="cancelButton" type="button" class="govuk-button hmcts-button--secondary"
+                 role="button" value="Cancel" (click)="confirmCancelBooking()" alt="Confirm cancellation of new booking and return to dashboard" />
         </div>
 
       </form>
@@ -35,4 +35,8 @@
                       (cancelBooking)="cancelBooking($event)"></app-cancel-popup>
   </div>
 
-</div>
+  <div *ngIf="attemptingDiscardChanges">
+    <app-discard-confirm-popup (continueEditing)="continueBooking($event)" (cancelChanges)="cancelChanges()">
+    </app-discard-confirm-popup>
+
+  </div>

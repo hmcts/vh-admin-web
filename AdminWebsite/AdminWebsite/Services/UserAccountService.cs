@@ -4,314 +4,131 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using AdminWebsite.Contracts.Requests;
+using System.Threading.Tasks;
+using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Contracts.Responses;
 using AdminWebsite.Helper;
 using AdminWebsite.Security;
 using AdminWebsite.Services.Models;
-using Hearings.Common;
 using Microsoft.Extensions.Options;
 using Microsoft.Graph;
 using Newtonsoft.Json;
 using AdminWebsite.Configuration;
+using AdminWebsite.UserAPI.Client;
+using UserServiceException = AdminWebsite.Security.UserServiceException;
 
 namespace AdminWebsite.Services
 {
     public interface IUserAccountService
     {
-        NewAdUserAccount CreateUser(User newUser);
-        NewAdUserAccount CreateUser(string firstName, string lastName, string displayName = null, string password = null);
-        void AddUserToGroup(User user, Group group);
-        void UpdateAuthenticationInformation(string userId, string recoveryMail);
         /// <summary>
-        /// Get a user in AD either via Object ID or UserPrincipalName
+        /// Get the full group information based by the active directory id
         /// </summary>
-        /// <param name="userId"></param>
-        /// <returns></returns>
-        User GetUserById(string userId);
-        IList<User> QueryUsers(string filter);
-        User GetUserByAlternativeEmail(string alternativeEmail);
-        Group GetGroupByName(string groupName);
+        /// <param name="groupId">Id for the active directory group</param>
         Group GetGroupById(string groupId);
-        List<Group> GetGroupsForUser(string userId);
-        void ResetPassword(string userId, string password = null);
-        IEnumerable<ParticipantDetailsResponse> GetUsersByGroup();
-        string TemporaryPassword { get; }
+
+        /// <summary>
+        /// Returns a list of all judges in the active directory
+        /// </summary>
+        /// <remarks>
+        /// Filters test accounts if configured to run as live environment 
+        /// </remarks>
+        IEnumerable<JudgeResponse> GetJudgeUsers();
+       
+        /// <summary>
+        /// Creates a user based on the participant information or updates the participant username if it already exists
+        /// </summary>
+        /// <param name="participant">Data to create user by and returns the username in</param>
+        Task UpdateParticipantUsername(ParticipantRequest participant);
     }
 
     public class UserAccountService : IUserAccountService
     {
-        private readonly TimeSpan _retryTimeout;
+        private readonly IUserApiClient _userApiClient;
         private readonly ITokenProvider _tokenProvider;
         private readonly SecuritySettings _securitySettings;
         private readonly bool _isLive;
-        private readonly string _temporaryPassword;
 
-        string IUserAccountService.TemporaryPassword => _temporaryPassword;
-
-        public UserAccountService(ITokenProvider tokenProvider, IOptions<SecuritySettings> securitySettings, IOptions<AppConfigSettings> appSettings)
+        private static readonly Compare<JudgeResponse> CompareJudgeById =
+            Compare<JudgeResponse>.By((x, y) => x.Email == y.Email, x => x.Email.GetHashCode());
+        
+        /// <summary>Create the service</summary>
+        public UserAccountService(IUserApiClient userApiClient, ITokenProvider tokenProvider, IOptions<SecuritySettings> securitySettings, IOptions<AppConfigSettings> appSettings)
         {
-            _retryTimeout = TimeSpan.FromSeconds(appSettings.Value.APIFailureRetryTimeoutSeconds);
+            _userApiClient = userApiClient;
             _tokenProvider = tokenProvider;
             _securitySettings = securitySettings.Value;
             _isLive = appSettings.Value.IsLive;
-            _temporaryPassword = _securitySettings.TemporaryPassword;
         }
 
-        public NewAdUserAccount CreateUser(User newUser)
+        /// <inheritdoc />
+        public async Task UpdateParticipantUsername(ParticipantRequest participant)
         {
-            var accessToken = _tokenProvider.GetClientAccessToken(_securitySettings.ClientId,
-                _securitySettings.ClientSecret,
-                _securitySettings.GraphApiBaseUri);
-
-            HttpResponseMessage responseMessage;
-            using (var client = new HttpClient())
+            //// create user in AD if users email does not exist in AD.
+            var userProfile = await CheckUserExistsInAD(participant.Contact_email);
+            if (userProfile == null)
             {
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-                var stringContent = new StringContent(JsonConvert.SerializeObject(newUser));
-                stringContent.Headers.ContentType = MediaTypeHeaderValue.Parse("application/json");
-                var httpRequestMessage =
-                    new HttpRequestMessage(HttpMethod.Post, $"{_securitySettings.GraphApiBaseUri}v1.0/users");
-                httpRequestMessage.Content = stringContent;
-                responseMessage = client.SendAsync(httpRequestMessage).Result;
+                // create the user in AD.
+                await CreateNewUserInAD(participant);
             }
-
-            if (responseMessage.IsSuccessStatusCode)
+            else
             {
-                var user = responseMessage.Content.ReadAsAsync<User>().Result;
-                var adUserAccount = new NewAdUserAccount
-                {
-                    Username = user.UserPrincipalName,
-                    OneTimePassword = newUser.PasswordProfile.Password,
-                    UserId = user.Id
-                };
-                return adUserAccount;
+                participant.Username = userProfile.User_name;
             }
-
-            var message = $"Failed to add create user {newUser.UserPrincipalName}";
-            var reason = responseMessage.Content.ReadAsStringAsync().Result;
-            throw new UserServiceException(message, reason);
         }
-
-        /// <summary>
-        ///     Creates a user in AD.
-        /// </summary>
-        /// <param name="firstName"></param>
-        /// <param name="lastName"></param>
-        /// <param name="displayName"></param>
-        /// <param name="password"></param>
-        /// <returns></returns>
-        public NewAdUserAccount CreateUser(string firstName, string lastName, string displayName = null,
-            string password = null)
+        
+        private async Task<UserProfile> CheckUserExistsInAD(string emailAddress)
         {
-            string createdPassword = _temporaryPassword;
-            var userDisplayName = displayName ?? $@"{firstName} {lastName}";
-            var userPrincipalName = $@"{firstName}.{lastName}@hearings.reform.hmcts.net".ToLower();
-
-            var user = new User
+            try
             {
-                AccountEnabled = true,
-                DisplayName = userDisplayName,
-                MailNickname = $@"{firstName}.{lastName}",
-                PasswordProfile = new PasswordProfile
-                {
-                    ForceChangePasswordNextSignIn = true,
-                    Password = createdPassword
-                },
-                GivenName = firstName,
-                Surname = lastName,
-                UserPrincipalName = userPrincipalName
-            };
-
-            return CreateUser(user);
-        }
-
-        public void AddUserToGroup(User user, Group group)
-        {
-            var accessToken = _tokenProvider.GetClientAccessToken(_securitySettings.ClientId, _securitySettings.ClientSecret,
-                _securitySettings.GraphApiBaseUri);
-
-            var body = new CustomDirectoryObject
-            {
-                ObjectDataId = $"{_securitySettings.GraphApiBaseUri}v1.0/directoryObjects/{user.Id}"
-            };
-
-            HttpResponseMessage responseMessage;
-            using (var client = new HttpClient())
-            {
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-                var stringContent = new StringContent(JsonConvert.SerializeObject(body));
-                stringContent.Headers.ContentType = MediaTypeHeaderValue.Parse("application/json");
-                var httpRequestMessage =
-                    new HttpRequestMessage(HttpMethod.Post,
-                        $@"{_securitySettings.GraphApiBaseUri}beta/groups/{group.Id}/members/$ref")
-                    {
-                        Content = stringContent
-                    };
-                responseMessage = client.SendAsync(httpRequestMessage).Result;
+                return await _userApiClient.GetUserByEmailAsync(emailAddress);
             }
-
-            if (responseMessage.IsSuccessStatusCode) return;
-
-            var message = $"Failed to add user {user.Id} to group {group.Id}";
-            var reason = responseMessage.Content.ReadAsStringAsync().Result;
-            throw new UserServiceException(message, reason);
-        }
-
-        public void UpdateAuthenticationInformation(string userId, string recoveryMail) {
-            var timeout = DateTime.Now.Add(_retryTimeout);
-            UpdateAuthenticationInformation(userId, recoveryMail, timeout);
-        }
-
-        private void UpdateAuthenticationInformation(string userId, string recoveryMail, DateTime timeout)
-        {
-            var accessToken = _tokenProvider.GetClientAccessToken(_securitySettings.ClientId,
-                _securitySettings.ClientSecret, "https://graph.windows.net/");
-
-            var model = new UpdateAuthenticationInformationRequest
+            catch(UserAPI.Client.UserServiceException e)
             {
-                OtherMails = new List<string> { recoveryMail }
-            };
-
-            HttpResponseMessage responseMessage;
-            using (var client = new HttpClient())
-            {
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-                var stringContent = new StringContent(JsonConvert.SerializeObject(model));
-                stringContent.Headers.ContentType = MediaTypeHeaderValue.Parse("application/json");
-                var httpRequestMessage =
-                    new HttpRequestMessage(HttpMethod.Patch,
-                        $"https://graph.windows.net/{_securitySettings.TenantId}/users/{userId}?api-version=1.6")
-                    {
-                        Content = stringContent
-                    };
-                responseMessage = client.SendAsync(httpRequestMessage).Result;
-            }
-
-            if (responseMessage.IsSuccessStatusCode) return;
-
-            var reason = responseMessage.Content.ReadAsStringAsync().Result;
-
-            // If it's 404 try it again as the user might simply not have become "ready" in AD
-            if (responseMessage.StatusCode == HttpStatusCode.NotFound) {
-                if (DateTime.Now > timeout) {
-                    throw new UserServiceException("Timed out trying to update alternative address for ${userId}", reason);
-                }
-                ApplicationLogger.Trace("APIFailure", "GraphAPI 404 PATCH /users/{id}", $"Failed to update authentication information for user {userId}, will retry.");
-                UpdateAuthenticationInformation(userId, recoveryMail, timeout);
-                return;
-            }
-
-            var message = $"Failed to update alternative email address for {userId}";
-            throw new UserServiceException(message, reason);
-        }
-
-        public User GetUserById(string userId)
-        {
-            var accessToken = _tokenProvider.GetClientAccessToken(_securitySettings.ClientId,
-                _securitySettings.ClientSecret,
-                _securitySettings.GraphApiBaseUri);
-
-            HttpResponseMessage responseMessage;
-            using (var client = new HttpClient())
-            {
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-                var httpRequestMessage =
-                    new HttpRequestMessage(HttpMethod.Get, $"{_securitySettings.GraphApiBaseUri}v1.0/users/{userId}");
-                responseMessage = client.SendAsync(httpRequestMessage).Result;
-            }
-
-            if (responseMessage.IsSuccessStatusCode)
-            {
-                return responseMessage.Content.ReadAsAsync<User>().Result;
-            }
-
-            if (responseMessage.StatusCode == HttpStatusCode.NotFound)
-            {
-                return null;
-            }
-
-            var message = $"Failed to get user by id {userId}";
-            var reason = responseMessage.Content.ReadAsStringAsync().Result;
-            throw new UserServiceException(message, reason);
-        }
-
-        public IList<User> QueryUsers(string filter)
-        {
-            var accessToken = _tokenProvider.GetClientAccessToken(_securitySettings.ClientId,
-                _securitySettings.ClientSecret,
-                _securitySettings.GraphApiBaseUri);
-
-            HttpResponseMessage responseMessage;
-            using (var client = new HttpClient())
-            {
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-                var httpRequestMessage =
-                    new HttpRequestMessage(HttpMethod.Get, $"{_securitySettings.GraphApiBaseUri}v1.0/users?$filter={filter}");
-                responseMessage = client.SendAsync(httpRequestMessage).Result;
-
-            }
-
-            if (responseMessage.IsSuccessStatusCode)
-            {
-                return responseMessage.Content.ReadAsAsync<AzureAdGraphQueryResponse<User>>().Result.Value;
-            }
-
-            var message = $"Failed to get query users with filter {filter}";
-            var reason = responseMessage.Content.ReadAsStringAsync().Result;
-            throw new UserServiceException(message, reason);
-        }
-
-        public User GetUserByAlternativeEmail(string alternativeEmail)
-        {
-            var accessToken = _tokenProvider.GetClientAccessToken(_securitySettings.ClientId,
-                _securitySettings.ClientSecret, "https://graph.windows.net/");
-
-            HttpResponseMessage responseMessage;
-            using (var client = new HttpClient())
-            {
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-                var httpRequestMessage =
-                    new HttpRequestMessage(HttpMethod.Get,
-                        $"https://graph.windows.net/{_securitySettings.TenantId}/users?$filter=otherMails/any(c:c eq '{alternativeEmail}')&api-version=1.6");
-                responseMessage = client.SendAsync(httpRequestMessage).Result;
-            }
-
-            if (responseMessage.IsSuccessStatusCode)
-            {
-                var queryResponse = responseMessage.Content.ReadAsAsync<AzureAdGraphQueryResponse<AzureAdGraphUserResponse>>().Result;
-                if (!queryResponse.Value.Any())
+                if (e.StatusCode == (int) HttpStatusCode.NotFound)
                 {
                     return null;
                 }
 
-                var adUser = queryResponse.Value.First();
-                return new User
-                {
-                    Id = adUser.ObjectId,
-                    DisplayName = adUser.DisplayName,
-                    UserPrincipalName = adUser.UserPrincipalName
-                };
+                throw;
             }
-
-            var message = $"Failed to search for a user with alternate email {alternativeEmail}";
-            var reason = responseMessage.Content.ReadAsStringAsync().Result;
-            throw new UserServiceException(message, reason);
         }
 
-        public Group GetGroupByName(string groupName)
+        private async Task<NewUserResponse> CreateNewUserInAD(ParticipantRequest participant)
+        {
+            var createUserRequest = new CreateUserRequest
+            {
+                First_name = participant.First_name,
+                Last_name = participant.Last_name,
+                Recovery_email = participant.Contact_email
+            };
+
+            var newUserResponse = await _userApiClient.CreateUserAsync(createUserRequest);
+
+            participant.Username = newUserResponse.Username;
+
+            // Add user to user group.
+            var addUserToGroupRequest = new AddUserToGroupRequest
+            {
+                User_id = newUserResponse.User_id,
+                Group_name = "External"
+            };
+
+            await _userApiClient.AddUserToGroupAsync(addUserToGroupRequest);
+
+            if (participant.Hearing_role_name == "Solicitor")
+            {
+                addUserToGroupRequest = new AddUserToGroupRequest()
+                {
+                    User_id = newUserResponse.User_id,
+                    Group_name = "VirtualRoomProfessionalUser"
+                };
+                await _userApiClient.AddUserToGroupAsync(addUserToGroupRequest);
+            }
+            return newUserResponse;
+        }
+
+        private Group GetGroupByName(string groupName)
         {
             var accessToken = _tokenProvider.GetClientAccessToken(_securitySettings.ClientId,
                 _securitySettings.ClientSecret, _securitySettings.GraphApiBaseUri);
@@ -323,7 +140,6 @@ namespace AdminWebsite.Services
                 var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get,
                     $"{_securitySettings.GraphApiBaseUri}v1.0/groups?$filter=displayName eq '{groupName}'");
                 responseMessage = client.SendAsync(httpRequestMessage).Result;
-
             }
 
             if (responseMessage.IsSuccessStatusCode)
@@ -337,6 +153,7 @@ namespace AdminWebsite.Services
             throw new UserServiceException(message, reason);
         }
 
+        /// <inheritdoc />
         public Group GetGroupById(string groupId)
         {
             var accessToken = _tokenProvider.GetClientAccessToken(_securitySettings.ClientId,
@@ -366,129 +183,50 @@ namespace AdminWebsite.Services
             throw new UserServiceException(message, reason);
         }
 
-        public List<Group> GetGroupsForUser(string userId)
-        {
-            var accessToken = _tokenProvider.GetClientAccessToken(_securitySettings.ClientId,
-                _securitySettings.ClientSecret, _securitySettings.GraphApiBaseUri);
-
-            HttpResponseMessage responseMessage;
-            using (var client = new HttpClient())
-            {
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-                var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get,
-                    $"{_securitySettings.GraphApiBaseUri}v1.0/users/{userId}/memberOf");
-                responseMessage = client.SendAsync(httpRequestMessage).Result;
-            }
-
-            if (responseMessage.IsSuccessStatusCode)
-            {
-                var queryResponse = responseMessage.Content.ReadAsAsync<DirectoryObject>().Result;
-                var groups =
-                    JsonConvert.DeserializeObject<List<Group>>(queryResponse.AdditionalData["value"].ToString());
-                return groups;
-            }
-
-            var message = $"Failed to get group for user {userId}";
-            var reason = responseMessage.Content.ReadAsStringAsync().Result;
-            throw new UserServiceException(message, reason);
-        }
-
-        public void ResetPassword(string userId, string password = null)
-        {
-            var accessToken = _tokenProvider.GetClientAccessToken(_securitySettings.ClientId,
-                _securitySettings.ClientSecret, _securitySettings.GraphApiBaseUri);
-
-            var createdPassword = password ?? new PasswordGenerator().IncludeLowercase().IncludeUppercase()
-                                      .IncludeNumeric().IncludeSpecial().LengthRequired(8).Next();
-
-            var model = new User
-            {
-                PasswordProfile = new PasswordProfile
-                {
-                    Password = createdPassword,
-                    ForceChangePasswordNextSignIn = true
-                }
-            };
-
-            HttpResponseMessage responseMessage;
-            using (var client = new HttpClient())
-            {
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-                var stringContent = new StringContent(JsonConvert.SerializeObject(model));
-                stringContent.Headers.ContentType = MediaTypeHeaderValue.Parse("application/json");
-                var httpRequestMessage =
-                    new HttpRequestMessage(HttpMethod.Patch, $"{_securitySettings.GraphApiBaseUri}v1.0/users/{userId}")
-                    {
-                        Content = stringContent
-                    };
-                responseMessage = client.SendAsync(httpRequestMessage).Result;
-            }
-
-            if (responseMessage.IsSuccessStatusCode) return;
-            var message = $"Failed to get group for user {userId}";
-            var reason = responseMessage.Content.ReadAsStringAsync().Result;
-            throw new UserServiceException(message, reason);
-        }
-
-        public IEnumerable<ParticipantDetailsResponse> GetUsersByGroup()
+        /// <inheritdoc />
+        public IEnumerable<JudgeResponse> GetJudgeUsers()
         {
             var judges = GetUsersByGroupName("VirtualRoomJudge");
             if (_isLive)
-                judges = ExcludeTestJudges(judges);
+                judges = ExcludeTestJudges(judges).ToList();
 
-            judges = judges.OrderBy(j => j.DisplayName);
-            return judges;
+            return judges.OrderBy(j => j.DisplayName);
         }
 
-        private IEnumerable<ParticipantDetailsResponse> ExcludeTestJudges(IEnumerable<ParticipantDetailsResponse> judgesList)
+        private IEnumerable<JudgeResponse> ExcludeTestJudges(IEnumerable<JudgeResponse> judgesList)
         {
             var judgesTest = GetUsersByGroupName("TestAccount");
-            judgesList = judgesList.Except(judgesTest);
-            
-            return judgesList;
+            return judgesList.Except(judgesTest, CompareJudgeById);
         }
 
-        public IEnumerable<ParticipantDetailsResponse> GetUsersByGroupName(string groupName)
+        private List<JudgeResponse> GetUsersByGroupName(string groupName)
         {
-            Group groupData = GetGroupByName(groupName);
-            if (groupData == null) return new List<ParticipantDetailsResponse>();
+            var groupData = GetGroupByName(groupName);
+            if (groupData == null) return new List<JudgeResponse>();
 
-            List<User> response = GetUsersByGroup(groupData.Id);
-            if (response != null || response.Any())
+            var response = GetUsersByGroup(groupData.Id);
+            return response.Select(x => new JudgeResponse
             {
-                IEnumerable<ParticipantDetailsResponse> judges = response.Select(x => new ParticipantDetailsResponse()
-                {
-                    Id = x.Id,
-                    FirstName = x.GivenName,
-                    MiddleName = "",
-                    LastName = x.Surname,
-                    DisplayName = x.DisplayName,
-                    Email = x.UserPrincipalName,
-                    Phone = x.MobilePhone,
-                    Role = x.JobTitle
-                });
-                return judges;
-            }
-            return new List<ParticipantDetailsResponse>();
+                FirstName = x.GivenName,
+                LastName = x.Surname,
+                DisplayName = x.DisplayName,
+                Email = x.UserPrincipalName
+            }).ToList();
         }
 
-        public List<User> GetUsersByGroup(string groupId)
+        private IEnumerable<User> GetUsersByGroup(string groupId)
         {
-            string accessToken = _tokenProvider.GetClientAccessToken(_securitySettings.ClientId,
+            var accessToken = _tokenProvider.GetClientAccessToken(_securitySettings.ClientId,
                 _securitySettings.ClientSecret,
                 _securitySettings.GraphApiBaseUri);
 
-            using (HttpClient client = new HttpClient())
+            using (var client = new HttpClient())
             {
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-                HttpRequestMessage httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, $"{_securitySettings.GraphApiBaseUri}v1.0/groups/{groupId}/members");
+                var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, $"{_securitySettings.GraphApiBaseUri}v1.0/groups/{groupId}/members");
 
-                DirectoryObject queryResponse = client.SendAsync(httpRequestMessage).Result.Content.ReadAsAsync<DirectoryObject>().Result;
-                List<User> users = JsonConvert.DeserializeObject<List<User>>(queryResponse.AdditionalData["value"].ToString());
-                return users;
+                var queryResponse = client.SendAsync(httpRequestMessage).Result.Content.ReadAsAsync<DirectoryObject>().Result;
+                return JsonConvert.DeserializeObject<List<User>>(queryResponse.AdditionalData["value"].ToString());
             }
         }
     }

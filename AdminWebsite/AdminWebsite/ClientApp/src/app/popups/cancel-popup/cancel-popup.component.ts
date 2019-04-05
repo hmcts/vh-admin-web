@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, Input } from '@angular/core';
 
 @Component({
   selector: 'app-cancel-popup',
@@ -9,6 +9,8 @@ export class CancelPopupComponent implements OnInit {
   @Output() continueBooking: EventEmitter<any> = new EventEmitter<any>();
   @Output() cancelBooking: EventEmitter<any> = new EventEmitter<any>();
 
+  @Input()
+  message = 'You will lose all your booking details if you continue';
 
   constructor() { }
 
@@ -22,7 +24,4 @@ export class CancelPopupComponent implements OnInit {
   cancelBookingHearing() {
     this.cancelBooking.emit();
   }
-
-
-
 }

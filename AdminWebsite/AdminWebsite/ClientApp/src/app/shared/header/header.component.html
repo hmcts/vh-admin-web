@@ -14,7 +14,7 @@
     <div class="hmcts-primary-navigation__container">
       <ul id="navigation" style="display: inline-block;" class="hmcts-primary-navigation__list" aria-label="Top Level Navigation">
         <li class="hmcts-primary-navigation__item" *ngFor="let topItem of topMenuItems; index as i">
-          <a class="vh-primary-navigation__link" href="javascript:void(0)" (click)="selectMenuItem(i)" [class.vh-primary-navigation__link_active]="topItem?.active">
+          <a class="vh-primary-navigation__link" [attr.id]="'topItem' + i" href="javascript:void(0)" (click)="selectMenuItem(i)" [class.vh-primary-navigation__link_active]="topItem?.active">
             {{topItem.name}}
           </a>
         </li>

@@ -1,6 +1,6 @@
-﻿.govuk-panel--confirmation {
+.govuk-panel--confirmation {
     background: #f7f7f7;
-    color: black;
+    color: #000000 !important;
     padding: 5px;
     border: 1px solid #e9e7e7;
 }
@@ -44,4 +44,9 @@ div {
 .vh_panel-r {
    margin-right:10px !important;
    text-align:left !important;
+}
+
+.vh-text-break {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 }

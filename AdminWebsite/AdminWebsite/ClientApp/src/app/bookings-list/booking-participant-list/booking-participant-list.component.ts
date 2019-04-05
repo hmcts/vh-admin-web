@@ -28,7 +28,11 @@ export class BookingParticipantListComponent {
     if (this._participants && this._participants.length > 0) {
       this._participants[this._participants.length - 1].Flag = true;
     }
+    let indexItem = 0;
+    this._participants.forEach(x => {
+      x.IndexInList = indexItem;
+      indexItem++;
+    });
     return this._participants;
   }
-
 }

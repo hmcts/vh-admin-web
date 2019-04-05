@@ -1,10 +1,16 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import {
   HearingTypeResponse, BHClient, BookNewHearingRequest, HearingDetailsResponse,
-  CaseAndHearingRolesResponse, CaseRequest, ParticipantRequest
+  CaseAndHearingRolesResponse, CaseRequest, ParticipantRequest, CaseResponse2,
+  ParticipantResponse,
+  EditHearingRequest,
+  EditCaseRequest,
+  EditParticipantRequest
 } from './clients/api-client';
 import { HearingModel } from '../common/model/hearing.model';
+import { CaseModel } from '../common/model/case.model';
+import { ParticipantModel } from '../common/model/participant.model';
 
 @Injectable({
   providedIn: 'root'
@@ -29,9 +35,10 @@ export class VideoHearingsService {
     }
   }
 
-  hasUnsavedChanges() {
-    return sessionStorage.getItem(this.newRequestKey) !== null ||
-      sessionStorage.getItem(this.bookingHasChangesKey) !== null;
+  hasUnsavedChanges(): boolean {
+    const keyRequest = sessionStorage.getItem(this.newRequestKey);
+    const keyChanges = sessionStorage.getItem(this.bookingHasChangesKey);
+    return keyRequest !== null || keyChanges === 'true';
   }
 
   onBookingChange(isChanged: boolean) {
@@ -79,6 +86,50 @@ export class VideoHearingsService {
     return this.bhClient.bookNewHearing(hearingRequest);
   }
 
+  updateHearing(booking: HearingModel): Observable<HearingDetailsResponse> {
+    const hearingRequest = this.mapExistingHearing(booking);
+    return this.bhClient.editHearing(booking.hearing_id, hearingRequest);
+  }
+
+  mapExistingHearing(booking: HearingModel): EditHearingRequest {
+    const hearing = new EditHearingRequest();
+    if (booking.cases && booking.cases.length > 0) {
+      hearing.case = new EditCaseRequest({ name: booking.cases[0].name, number: booking.cases[0].number });
+    }
+    hearing.hearing_room_name = booking.court_room;
+    hearing.hearing_venue_name = booking.court_name;
+    hearing.other_information = booking.other_information;
+    hearing.scheduled_date_time = new Date(booking.scheduled_date_time);
+    hearing.scheduled_duration = booking.scheduled_duration;
+    hearing.participants = this.mapParticipantModelToEditParticipantRequest(booking.participants);
+    return hearing;
+  }
+
+  mapParticipantModelToEditParticipantRequest(participants: ParticipantModel[]): EditParticipantRequest[] {
+    let list: Array<EditParticipantRequest> = [];
+    if (participants && participants.length > 0) {
+      list = participants.map(x => this.mappingToEditParticipantRequest(x));
+      }
+    return list;
+  }
+
+  mappingToEditParticipantRequest(participant: ParticipantModel): EditParticipantRequest {
+    const editParticipant = new EditParticipantRequest();
+    editParticipant.id = participant.id;
+    editParticipant.case_role_name = participant.case_role_name;
+    editParticipant.contact_email = participant.email;
+    editParticipant.display_name = participant.display_name;
+    editParticipant.first_name = participant.first_name;
+    editParticipant.last_name = participant.last_name;
+    editParticipant.hearing_role_name = participant.hearing_role_name;
+    editParticipant.middle_names = participant.middle_names;
+    editParticipant.representee = participant.representee;
+    editParticipant.solicitors_reference = participant.solicitorsReference;
+    editParticipant.telephone_number = participant.phone;
+    editParticipant.title = participant.title;
+    return editParticipant;
+  }
+
   mapHearing(newRequest: HearingModel): BookNewHearingRequest {
     const newHearingRequest = new BookNewHearingRequest();
     newHearingRequest.cases = this.mapCases(newRequest);
@@ -88,10 +139,29 @@ export class VideoHearingsService {
     newHearingRequest.scheduled_duration = newRequest.scheduled_duration;
     newHearingRequest.hearing_venue_name = newRequest.court_name;
     newHearingRequest.hearing_room_name = newRequest.court_room;
-    newHearingRequest.participants = this.mapParticipants(newRequest);
+    newHearingRequest.participants = this.mapParticipants(newRequest.participants);
     newHearingRequest.other_information = newRequest.other_information;
     console.log(newHearingRequest);
     return newHearingRequest;
+  }
+
+  mapHearingDetailsResponseToHearingModel(response: HearingDetailsResponse): HearingModel {
+    const hearing = new HearingModel();
+    hearing.hearing_id = response.id;
+    hearing.cases = this.mapCaseResponse2ToCaseModel(response.cases);
+    hearing.hearing_type_name = response.hearing_type_name;
+    hearing.case_type = response.case_type_name;
+    hearing.scheduled_date_time = new Date(response.scheduled_date_time);
+    hearing.scheduled_duration = response.scheduled_duration;
+    hearing.court_name = response.hearing_venue_name;
+    hearing.court_room = response.hearing_room_name;
+    hearing.participants = this.mapParticipantResponseToParticipantModel(response.participants);
+    hearing.other_information = response.other_information;
+    hearing.created_date = new Date(response.created_date);
+    hearing.created_by = response.created_by;
+    hearing.updated_date = new Date(response.updated_date);
+    hearing.updated_by = response.updated_by;
+    return hearing;
   }
 
   mapCases(newRequest: HearingModel): CaseRequest[] {
@@ -107,25 +177,68 @@ export class VideoHearingsService {
     return cases;
   }
 
-  mapParticipants(newRequest: HearingModel): ParticipantRequest[] {
+  mapCaseResponse2ToCaseModel(casesResponse: CaseResponse2[]): CaseModel[] {
+    const cases: CaseModel[] = [];
+    let caseRequest: CaseModel;
+    if (casesResponse && casesResponse.length > 0) {
+      casesResponse.forEach(c => {
+        caseRequest = new CaseModel();
+        caseRequest.name = c.name;
+        caseRequest.number = c.number;
+        caseRequest.isLeadCase = c.is_lead_case;
+        cases.push(caseRequest);
+      });
+    }
+    return cases;
+  }
+
+  mapParticipants(newRequest: ParticipantModel[]): ParticipantRequest[] {
     const participants: ParticipantRequest[] = [];
     let participant: ParticipantRequest;
-    newRequest.participants.forEach(p => {
-      participant = new ParticipantRequest();
-      participant.title = p.title;
-      participant.first_name = p.first_name;
-      participant.middle_names = p.middle_names;
-      participant.last_name = p.last_name;
-      participant.username = p.username;
-      participant.display_name = p.display_name;
-      participant.contact_email = p.email;
-      participant.telephone_number = p.phone;
-      participant.case_role_name = p.case_role_name;
-      participant.hearing_role_name = p.hearing_role_name;
-      participant.representee = p.representee;
-      participant.solicitors_reference = p.solicitorsReference;
-      participants.push(participant);
-    });
+    if (newRequest && newRequest.length > 0) {
+      newRequest.forEach(p => {
+        participant = new ParticipantRequest();
+        participant.title = p.title;
+        participant.first_name = p.first_name;
+        participant.middle_names = p.middle_names;
+        participant.last_name = p.last_name;
+        participant.username = p.username;
+        participant.display_name = p.display_name;
+        participant.contact_email = p.email;
+        participant.telephone_number = p.phone;
+        participant.case_role_name = p.case_role_name;
+        participant.hearing_role_name = p.hearing_role_name;
+        participant.representee = p.representee;
+        participant.solicitors_reference = p.solicitorsReference;
+        participants.push(participant);
+      });
+    }
+    return participants;
+  }
+
+  mapParticipantResponseToParticipantModel(response: ParticipantResponse[]): ParticipantModel[] {
+    const participants: ParticipantModel[] = [];
+    let participant: ParticipantModel;
+    if (response && response.length > 0) {
+      response.forEach(p => {
+        participant = new ParticipantModel();
+        participant.id = p.id;
+        participant.title = p.title;
+        participant.first_name = p.first_name;
+        participant.middle_names = p.middle_names;
+        participant.last_name = p.last_name;
+        participant.username = p.username;
+        participant.display_name = p.display_name;
+        participant.email = p.contact_email;
+        participant.phone = p.telephone_number;
+        participant.case_role_name = p.case_role_name;
+        participant.hearing_role_name = p.hearing_role_name;
+        participant.representee = '';
+        participant.solicitorsReference = '';
+        participant.is_judge = p.case_role_name === 'Judge';
+        participants.push(participant);
+      });
+    }
     return participants;
   }
 

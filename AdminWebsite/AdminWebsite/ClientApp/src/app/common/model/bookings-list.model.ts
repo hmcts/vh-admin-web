@@ -48,6 +48,7 @@ export class BookingsDetailsModel {
   LastEditBy: string;
   LastEditDate: Date;
   Selected: boolean;
+  OtherInformation: string;
 
   get DurationInHoursAndMinutes(): string {
     const hours = Math.floor(this.Duration / 60);

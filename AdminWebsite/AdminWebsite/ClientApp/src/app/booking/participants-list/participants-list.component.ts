@@ -20,14 +20,19 @@ export class ParticipantsListComponent implements OnInit {
   isSummaryPage = false;
   isEditRemoveVisible = true;
 
+  isEditMode = false;
+
   constructor(private bookingService: BookingService, private router: Router) {
     this.$selectedForEdit = new EventEmitter<string>();
     this.$selectedForRemove = new EventEmitter<string>();
   }
 
   ngOnInit() {
-    this.isSummaryPage = this.router.url.includes('summary');
-    this.isEditRemoveVisible = !this.router.url.includes('assign-judge');
+    const currentUrl = this.router.url;
+    if (currentUrl) {
+      this.isSummaryPage = currentUrl.includes('summary');
+      this.isEditRemoveVisible = !currentUrl.includes('assign-judge');
+    }
   }
 
   editJudge() {
