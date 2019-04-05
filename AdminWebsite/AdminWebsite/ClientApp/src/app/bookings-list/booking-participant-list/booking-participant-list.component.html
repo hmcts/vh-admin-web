@@ -1,15 +1,15 @@
 <div id="roundedborder">
-    <h3 class="govuk-heading-m">Participants</h3>
-    <div class="vhtable">
-        <div class="govuk-grid-column-one-third vhtable-header vh-image-15" *ngIf="judges.length > 0">
-            <img src="/assets/images/govuk-crest.png" height="40" width="40" class="govuk-header__logotype-crest"
-                 alt="HM Courts &amp; Tribunals Service crest" />
-        </div>
-        <div *ngFor="let judge of judges" id="judges-list">
-            <app-booking-participant-details [participant]="judge" [vh_officer_admin]="vh_officer_admin"></app-booking-participant-details>
-        </div>
-        <div *ngFor="let participant of participants" id="participants-list">
-            <app-booking-participant-details [participant]="participant" [vh_officer_admin]="vh_officer_admin"></app-booking-participant-details>
-        </div>
+  <h3 class="govuk-heading-m">Participants</h3>
+  <div class="vhtable">
+    <div id="judges-list">
+      <div *ngFor="let judge of judges">
+        <app-booking-participant-details [participant]="judge" [vh_officer_admin]="vh_officer_admin"></app-booking-participant-details>
+      </div>
     </div>
+    <div id="participants-list">
+      <div *ngFor="let participant of participants">
+        <app-booking-participant-details [participant]="participant" [vh_officer_admin]="vh_officer_admin"></app-booking-participant-details>
+      </div>
+    </div>
+  </div>
 </div>

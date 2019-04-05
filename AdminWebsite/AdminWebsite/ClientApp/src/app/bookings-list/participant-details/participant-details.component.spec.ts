@@ -34,13 +34,13 @@ describe('ParticipantDetailsComponent', () => {
   it('should display participant details', (done => {
     const pr = new ParticipantDetailsModel('1', 'Mrs', 'Alan', 'Brake', 'Citizen', 'email.p1@email.com',
       'email@ee.ee', 'Defendant', 'Defendant LIP', 'Alan Brake', '');
-
+    pr.IndexInList = 0;
     component.participant = pr;
 
     fixture.whenStable().then(
       () => {
         fixture.detectChanges();
-        const divElementRole = debugElement.queryAll(By.css('#participant_role'));
+        const divElementRole = debugElement.queryAll(By.css('#participant_role0'));
         expect(divElementRole.length).toBeGreaterThan(0);
         expect(divElementRole.length).toBe(1);
         const el = divElementRole[0].nativeElement as HTMLElement;

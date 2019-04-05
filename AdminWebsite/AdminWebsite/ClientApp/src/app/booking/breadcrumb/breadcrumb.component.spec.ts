@@ -7,6 +7,7 @@ import { ConfirmationPopupComponent } from 'src/app/popups/confirmation-popup/co
 import { RemovePopupComponent } from '../../popups/remove-popup/remove-popup.component';
 import { BHClient, ClientSettingsResponse } from 'src/app/services/clients/api-client';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { MomentModule } from 'angular2-moment';
 
 import { routes } from '../../app-routing.module';
 import { AppComponent } from '../../app.component';
@@ -31,7 +32,9 @@ import { UnauthorisedComponent } from '../../error/unauthorised.component';
 import { ErrorComponent } from '../../error/error.component';
 import { SignOutPopupComponent } from '../../popups/sign-out-popup/sign-out-popup.component';
 import { WaitPopupComponent } from '../../popups/wait-popup/wait-popup.component';
-import { SaveFailedPopupComponent } from 'src/app/popups/save-failed-popup/save-failed-popup.component';
+import { SaveFailedPopupComponent } from '../../popups/save-failed-popup/save-failed-popup.component';
+import { DiscardConfirmPopupComponent } from '../../popups/discard-confirm-popup/discard-confirm-popup.component';
+
 describe('BreadcrumbComponent', () => {
   const videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',
     ['getHearingMediums', 'getHearingTypes', 'getCurrentRequest', 'updateHearingRequest', 'validCurrentRequest']);
@@ -70,7 +73,8 @@ describe('BreadcrumbComponent', () => {
         SignOutPopupComponent,
         RemovePopupComponent,
         WaitPopupComponent,
-        SaveFailedPopupComponent
+        SaveFailedPopupComponent,
+        DiscardConfirmPopupComponent,
       ],
       providers: [
         { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
@@ -78,7 +82,7 @@ describe('BreadcrumbComponent', () => {
         ConfigService,
         { provide: BHClient, useValue: bhClientSpy },
       ],
-      imports: [RouterTestingModule.withRoutes(routes), SharedModule]
+      imports: [RouterTestingModule.withRoutes(routes), SharedModule, MomentModule]
     })
       .compileComponents();
   }));

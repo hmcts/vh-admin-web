@@ -7,9 +7,13 @@ import { Injectable } from '@angular/core';
 export class BookingService {
   private bookingEditKey: string;
   private participantEmailKey: string;
+  private existingCaseTypeKey: string;
+
   constructor() {
     this.bookingEditKey = 'bookingEditKey';
     this.participantEmailKey = 'participantEmailKey';
+    this.existingCaseTypeKey = 'selectedCaseType';
+
   }
 
   setEditMode() {
@@ -18,6 +22,7 @@ export class BookingService {
 
   resetEditMode() {
     sessionStorage.removeItem(this.bookingEditKey);
+    sessionStorage.removeItem(this.existingCaseTypeKey);
   }
 
   isEditMode(): boolean {
@@ -37,4 +42,16 @@ export class BookingService {
     sessionStorage.removeItem(this.participantEmailKey);
   }
 
+  isParticipantEmail(): boolean {
+    const participantEmail = sessionStorage.getItem(this.participantEmailKey);
+    return participantEmail && participantEmail.length > 0;
+  }
+
+  setExistingCaseType(selectedCaseType: string) {
+    sessionStorage.setItem(this.existingCaseTypeKey, selectedCaseType);
+  }
+
+  removeExistingCaseType() {
+    sessionStorage.removeItem(this.existingCaseTypeKey);
+  }
 }

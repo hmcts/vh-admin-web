@@ -18,6 +18,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             _bookingConfirmation.PageUrl(PageUri.BookingConfirmationPage);
         }
+        [When(@"hearing is booked")]
         [Then(@"hearing should be booked")]
         public void BookHearingConfirmation()
         {
@@ -28,6 +29,12 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _bookingConfirmation.AddItems<string>("HearingId", hearingId);
             hearingId.Should().NotBeNullOrEmpty();            
             expectedResult.Should().Be(actualResult);
+        }
+        [When(@"admin user returns to dashboard")]
+        public void WhenAdminUserReturnsToBookingList()
+        {
+            _bookingConfirmation.ReturnToDashboard();
+            _bookingConfirmation.PageUrl(PageUri.DashboardPage);
         }
     }
 }
