@@ -22,9 +22,16 @@ namespace AdminWebsite.Services
     public interface IUserAccountService
     {
         Group GetGroupById(string groupId);
-
+        /// <summary>
+        ///     Get a list of Judges.
+        /// </summary>
+        /// <returns></returns>
         IEnumerable<ParticipantDetailsResponse> GetJudgeUsers();
-       
+        /// <summary>
+        ///     Returns the username from AD for the participant
+        /// </summary>
+        /// <param name="participant"></param>
+        /// <returns></returns>
         Task UpdateParticipantUsername(ParticipantRequest participant);
     }
 
@@ -35,6 +42,13 @@ namespace AdminWebsite.Services
         private readonly SecuritySettings _securitySettings;
         private readonly bool _isLive;
         
+        /// <summary>
+        ///     Service class that creates and returns users in AD.
+        /// </summary>
+        /// <param name="userApiClient"></param>
+        /// <param name="tokenProvider"></param>
+        /// <param name="securitySettings"></param>
+        /// <param name="appSettings"></param>
         public UserAccountService(IUserApiClient userApiClient, ITokenProvider tokenProvider, IOptions<SecuritySettings> securitySettings, IOptions<AppConfigSettings> appSettings)
         {
             _userApiClient = userApiClient;
@@ -43,9 +57,14 @@ namespace AdminWebsite.Services
             _isLive = appSettings.Value.IsLive;
         }
 
+        /// <summary>
+        ///     Returns the username from AD for the participant 
+        /// </summary>
+        /// <param name="participant"></param>
+        /// <returns></returns>
         public async Task UpdateParticipantUsername(ParticipantRequest participant)
         {
-            //// create user in AD if users email does not exist in AD.
+            // create user in AD if users email does not exist in AD.
             var userProfile = await CheckUserExistsInAD(participant.Contact_email);
             if (userProfile == null)
             {
@@ -164,6 +183,10 @@ namespace AdminWebsite.Services
             throw new UserServiceException(message, reason);
         }
 
+        /// <summary>
+        ///     Get a list of Judges from AD
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<ParticipantDetailsResponse> GetJudgeUsers()
         {
             var judges = GetUsersByGroupName("VirtualRoomJudge");
