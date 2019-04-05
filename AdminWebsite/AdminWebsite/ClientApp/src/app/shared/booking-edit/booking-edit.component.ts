@@ -17,6 +17,9 @@ export class BookingEditComponent {
     this._editLink = `/${editLink}`;
   }
 
+  @Input()
+  elementId: string;
+
   get editLink() {
     return this._editLink;
   }

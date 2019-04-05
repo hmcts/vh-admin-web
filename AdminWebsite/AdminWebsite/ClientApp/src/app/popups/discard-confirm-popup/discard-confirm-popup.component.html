@@ -1,0 +1,14 @@
+<div id="cancelPopup" class="vh-popup-overlay">
+  <div class="vh-popup vh-popup-small" style="text-align: center;">
+    <h1 class="govuk-heading-m">There are unsaved changes.</h1>
+    <div class="content">
+      <h1 class="govuk-heading-m"> Are you sure you want to discard them?</h1>
+      <div class="govuk-grid-row">
+        <div class="vh-top">
+          <input id="btn-continue" class="govuk-button hmcts-button--secondary vh-mr25" type="submit" value="Continue editing" (click)="continueEditingBooking()">
+          <input id="btn-discard-changes" class="govuk-button" type="submit" value="Discard changes" (click)="cancelBookingChanges()">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

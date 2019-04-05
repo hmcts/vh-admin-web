@@ -16,6 +16,8 @@ import { ParticipantModel } from '../../common/model/participant.model';
 import { ParticipantsListStubComponent } from '../../testing/stubs/participant-list-stub';
 import { WaitPopupComponent } from '../../popups/wait-popup/wait-popup.component';
 import { SaveFailedPopupComponent } from 'src/app/popups/save-failed-popup/save-failed-popup.component';
+import { HearingDetailsResponse } from '../../services/clients/api-client';
+import { MomentModule } from 'angular2-moment';
 
 function initExistingHearingRequest(): HearingModel {
 
@@ -60,29 +62,32 @@ function initBadHearingRequest(): HearingModel {
   return existingRequest;
 }
 
+let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
+let referenceDataServiceServiceSpy: jasmine.SpyObj<ReferenceDataService>;
+let routerSpy: jasmine.SpyObj<Router>;
+
+routerSpy = jasmine.createSpyObj('Router', ['navigate', 'url']);
+
+referenceDataServiceServiceSpy = jasmine.createSpyObj<ReferenceDataService>('ReferenceDataService',
+  ['getCourts']);
+referenceDataServiceServiceSpy.getCourts.and.returnValue(of(MockValues.Courts));
+videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',
+  ['getHearingMediums', 'getHearingTypes', 'getCurrentRequest',
+    'updateHearingRequest', 'saveHearing', 'cancelRequest', 'updateHearing']);
+
+
 describe('SummaryComponent with valid request', () => {
   let component: SummaryComponent;
   let fixture: ComponentFixture<SummaryComponent>;
 
   const existingRequest = initExistingHearingRequest();
 
-  let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
-  let referenceDataServiceServiceSpy: jasmine.SpyObj<ReferenceDataService>;
-  let routerSpy: jasmine.SpyObj<Router>;
-
   beforeEach(async(() => {
     initExistingHearingRequest();
-    routerSpy = jasmine.createSpyObj('Router', ['navigate', 'url']);
-
-    referenceDataServiceServiceSpy = jasmine.createSpyObj<ReferenceDataService>('ReferenceDataService',
-      ['getCourts']);
-    referenceDataServiceServiceSpy.getCourts.and.returnValue(of(MockValues.Courts));
-    videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',
-      ['getHearingMediums', 'getHearingTypes', 'getCurrentRequest',
-        'updateHearingRequest', 'saveHearing', 'cancelRequest']);
 
     videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
     videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
+    videoHearingsServiceSpy.saveHearing.and.returnValue(of(new HearingDetailsResponse()));
 
     TestBed.configureTestingModule({
       providers: [
@@ -100,7 +105,7 @@ describe('SummaryComponent with valid request', () => {
         WaitPopupComponent,
         SaveFailedPopupComponent
       ],
-      imports: [RouterTestingModule],
+      imports: [RouterTestingModule, MomentModule],
     })
       .compileComponents();
   }));
@@ -155,26 +160,24 @@ describe('SummaryComponent with valid request', () => {
   it('should hide pop up that indicated process saving a booking', () => {
     expect(component.showWaitSaving).toBeFalsy();
   });
+  it('should save new booking', () => {
+    component.ngOnInit();
+    fixture.detectChanges();
+
+    component.bookHearing();
+    expect(component.bookingsSaving).toBeTruthy();
+    expect(component.showWaitSaving).toBeFalsy();
+    expect(routerSpy.navigate).toHaveBeenCalled();
+    expect(videoHearingsServiceSpy.saveHearing).toHaveBeenCalled();
+  });
 });
 
 describe('SummaryComponent  with invalid request', () => {
   let component: SummaryComponent;
   let fixture: ComponentFixture<SummaryComponent>;
 
-  let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
-  let referenceDataServiceServiceSpy: jasmine.SpyObj<ReferenceDataService>;
-  let routerSpy: jasmine.SpyObj<Router>;
-
   beforeEach(async(() => {
     initExistingHearingRequest();
-    routerSpy = jasmine.createSpyObj('Router', ['navigate']);
-
-    referenceDataServiceServiceSpy = jasmine.createSpyObj<ReferenceDataService>('ReferenceDataService',
-      ['getCourts']);
-    referenceDataServiceServiceSpy.getCourts.and.returnValue(of(MockValues.Courts));
-    videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',
-      ['getHearingMediums', 'getHearingTypes', 'getCurrentRequest', 'updateHearingRequest', 'saveHearing', 'getOtherInformation']);
-
     const existingRequest = initBadHearingRequest();
     videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
     videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
@@ -188,7 +191,7 @@ describe('SummaryComponent  with invalid request', () => {
         { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
         { provide: Router, useValue: routerSpy }
       ],
-      imports: [RouterTestingModule],
+      imports: [RouterTestingModule, MomentModule],
       declarations: [
         SummaryComponent,
         BreadcrumbStubComponent,
@@ -215,3 +218,89 @@ describe('SummaryComponent  with invalid request', () => {
     expect(component.showWaitSaving).toBeFalsy();
   });
 });
+
+describe('SummaryComponent  with existing request', () => {
+  let component: SummaryComponent;
+  let fixture: ComponentFixture<SummaryComponent>;
+
+  beforeEach(async(() => {
+    const existingRequest = initExistingHearingRequest();
+    existingRequest.hearing_id = '12345ty';
+    videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
+    videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
+    videoHearingsServiceSpy.updateHearing.and.returnValue(of(new HearingDetailsResponse()));
+
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: ReferenceDataService, useValue: referenceDataServiceServiceSpy },
+        { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
+        { provide: Router, useValue: routerSpy }
+      ],
+      imports: [RouterTestingModule, MomentModule],
+      declarations: [
+        SummaryComponent,
+        BreadcrumbStubComponent,
+        CancelPopupComponent,
+        ParticipantsListStubComponent,
+        BookingEditStubComponent,
+        RemovePopupComponent,
+        WaitPopupComponent,
+        SaveFailedPopupComponent
+      ]
+    })
+      .compileComponents();
+  }));
+
+  beforeEach(() => {
+    fixture = TestBed.createComponent(SummaryComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should indicate that the current booking is existing booking', () => {
+    component.ngOnInit();
+    fixture.detectChanges();
+    expect(component.isExistingBooking).toBeTruthy();
+  });
+  it('should retrieve hearing data', () => {
+    component.ngOnInit();
+    fixture.detectChanges();
+    expect(component.caseNumber).toBe('TX/12345/2018');
+    expect(component.caseName).toBe('Mr. Test User vs HMRC');
+    expect(videoHearingsServiceSpy.getHearingTypes).toHaveBeenCalled();
+    expect(component.caseHearingType).toBe('Application to Set Aside Judgement (SAJ)');
+    expect(referenceDataServiceServiceSpy.getCourts).toHaveBeenCalled();
+    expect(component.courtRoomAddress).toBeTruthy();
+    expect(component.hearingDuration).toBe('listed for 1 hour 20 minutes');
+  });
+  it('should hide pop up if continue booking pressed', () => {
+    component.continueBooking();
+    fixture.detectChanges();
+    expect(component.attemptingCancellation).toBeFalsy();
+  });
+  it('should show pop up if booking is canceling', () => {
+    component.confirmCancelBooking();
+    fixture.detectChanges();
+    expect(component.attemptingCancellation).toBeTruthy();
+  });
+  it('should hide pop up if booking is canceled', () => {
+    component.cancelBooking();
+    fixture.detectChanges();
+    expect(component.attemptingCancellation).toBeFalsy();
+    expect(videoHearingsServiceSpy.cancelRequest).toHaveBeenCalled();
+    expect(routerSpy.navigate).toHaveBeenCalled();
+  });
+  it('should update booking', () => {
+    component.ngOnInit();
+    fixture.detectChanges();
+
+    component.bookHearing();
+    expect(component.bookingsSaving).toBeTruthy();
+    expect(component.showWaitSaving).toBeFalsy();
+    expect(routerSpy.navigate).toHaveBeenCalled();
+
+    expect(videoHearingsServiceSpy.updateHearing).toHaveBeenCalled();
+  });
+
+});
+

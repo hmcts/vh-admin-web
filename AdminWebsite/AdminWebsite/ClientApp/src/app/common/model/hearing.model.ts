@@ -8,6 +8,7 @@ export class HearingModel {
     this.participants = [];
     this.scheduled_duration = 0;
   }
+  hearing_id?: string | undefined;
   scheduled_date_time?: Date | undefined;
   scheduled_duration?: number | undefined;
   hearing_type_id?: number | undefined;
@@ -22,4 +23,7 @@ export class HearingModel {
   hearing_type_name?: string | undefined;
   court_id?: number | undefined;
   court_name?: string | undefined;
+  created_date?: Date | undefined;
+  updated_by?: string | undefined;
+  updated_date: Date | undefined;
 }

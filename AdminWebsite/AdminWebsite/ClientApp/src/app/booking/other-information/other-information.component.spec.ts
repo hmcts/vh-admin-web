@@ -5,10 +5,11 @@ import { AbstractControl } from '@angular/forms';
 import { BreadcrumbComponent } from '../breadcrumb/breadcrumb.component';
 import { OtherInformationComponent } from './other-information.component';
 import { VideoHearingsService } from '../../services/video-hearings.service';
-import { CancelPopupStubComponent } from 'src/app/testing/stubs/cancel-popup-stub';
-import { ConfirmationPopupStubComponent } from 'src/app/testing/stubs/confirmation-popup-stub';
-import { SharedModule } from 'src/app/shared/shared.module';
+import { CancelPopupStubComponent } from '../../testing/stubs/cancel-popup-stub';
+import { ConfirmationPopupStubComponent } from '../../testing/stubs/confirmation-popup-stub';
+import { SharedModule } from '../../shared/shared.module';
 import { HearingModel } from '../../common/model/hearing.model';
+import { DiscardConfirmPopupComponent } from '../../popups/discard-confirm-popup/discard-confirm-popup.component';
 
 let routerSpy: jasmine.SpyObj<Router>;
 let otherInformation: AbstractControl;
@@ -36,7 +37,8 @@ describe('OtherInformationComponent', () => {
         OtherInformationComponent,
         BreadcrumbComponent,
         CancelPopupStubComponent,
-        ConfirmationPopupStubComponent
+        ConfirmationPopupStubComponent,
+        DiscardConfirmPopupComponent,
       ]
     })
       .compileComponents();
@@ -71,5 +73,42 @@ describe('OtherInformationComponent', () => {
     component.cancelBooking();
     expect(routerSpy.navigate).toHaveBeenCalledWith(['/dashboard']);
     expect(videoHearingsServiceSpy.cancelRequest).toHaveBeenCalled();
+  });
+  it('should hide cancel and discard pop up confirmation', () => {
+    component.continueBooking();
+    expect(component.attemptingCancellation).toBeFalsy();
+    expect(component.attemptingDiscardChanges).toBeFalsy();
+  });
+  it('should show discard pop up confirmation', () => {
+    component.editMode = true;
+    component.otherInformationForm.markAsDirty();
+    fixture.detectChanges();
+    component.confirmCancelBooking();
+    expect(component.attemptingDiscardChanges).toBeTruthy();
+  });
+  it('should navigate to summary page if no changes', () => {
+    component.editMode = true;
+    component.otherInformationForm.markAsPristine();
+    fixture.detectChanges();
+    component.confirmCancelBooking();
+    expect(routerSpy.navigate).toHaveBeenCalled();
+  });
+  it('should show cancel booking confirmation pop up', () => {
+    component.editMode = false;
+    fixture.detectChanges();
+    component.confirmCancelBooking();
+    expect(component.attemptingCancellation).toBeTruthy();
+  });
+  it('should cancel booking, hide pop up and navigate to dashboard', () => {
+    component.cancelBooking();
+    expect(component.attemptingCancellation).toBeFalsy();
+    expect(videoHearingsServiceSpy.cancelRequest).toHaveBeenCalled();
+    expect(routerSpy.navigate).toHaveBeenCalled();
+  });
+  it('should cancel current changes, hide pop up and navigate to summary', () => {
+    fixture.detectChanges();
+    component.cancelChanges();
+    expect(component.attemptingDiscardChanges).toBeFalsy();
+    expect(routerSpy.navigate).toHaveBeenCalled();
   });
 });
