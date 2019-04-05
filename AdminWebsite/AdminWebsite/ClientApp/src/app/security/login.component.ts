@@ -22,6 +22,7 @@ export class LoginComponent implements OnInit {
     if (this.adalSvc.userInfo.authenticated) {
       const returnUrl = this.returnUrlService.popUrl() || '/';
       try {
+        console.log(`return url = ${returnUrl}`);
         this.router.navigateByUrl(returnUrl);
       } catch (err) {
         this.logger.error('Failed to navigate to redirect url, possibly stored url is invalid', err, returnUrl);
