@@ -15,8 +15,7 @@ import { BookingBaseComponent } from '../booking-base/booking-base.component';
 
 @Component({
   selector: 'app-assign-judge',
-  templateUrl: './assign-judge.component.html',
-  styleUrls: ['./assign-judge.component.css']
+  templateUrl: './assign-judge.component.html'
 })
 
 export class AssignJudgeComponent extends BookingBaseComponent implements OnInit, CanDeactiveComponent {
