@@ -26,6 +26,10 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _hearingDetails.AddItems("CaseNumber", caseNumber);
             InputCaseNumber(caseNumber);
             InputCaseName(TestData.HearingDetails.CaseName);
+            if (_scenarioContext.Get<string>("Username").Contains("moneyclaims_financialremedy"))
+            {
+                SelectCaseType();
+            }
             SelectHearingType();
         }
         [When(@"Admin user is on hearing details page")]
@@ -81,10 +85,29 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _hearingDetails.AddItems<string>("CaseType", caseType);
             var caseNumber = $"AutomatedTest_{Guid.NewGuid().ToString()}";
             _hearingDetails.AddItems("CaseNumber", caseNumber);
+            InputCaseNumber(caseNumber);
             InputCaseName(TestData.HearingDetails.CaseName);
             _hearingDetails.CaseTypes(caseType);
             _hearingDetails.HearingType();
             _hearingDetails.NextButton();
+        }
+        [Then(@"disabled mandatory fields should be (.*)")]
+        public void ThenDisabledMandatoryFieldsShouldBeListed(int field)
+        {
+            _hearingDetails.DisabledFields().Should().Be(field);
+        }
+        [When(@"(.*) updates hearing booking details")]
+        public void WhenCaseAdminUpdatesHearingBookingDetails(string user)
+        {
+            switch (user)
+            {
+                case "Case Admin": _hearingDetails.DisabledFields().Should().Be(1);
+                    break;
+                case "CaseAdminFinRemedyCivilMoneyClaims": _hearingDetails.DisabledFields().Should().Be(2);
+                    break;
+            }
+            InputCaseNumber(TestData.HearingDetails.CaseNumber1);
+            InputCaseName(TestData.HearingDetails.CaseName1);
         }
     }
 }

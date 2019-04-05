@@ -94,7 +94,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _hearingSchedule.AddItems<string>("HearingDate", date.ToString("dddd dd MMMM yyyy , HH:mm"));
             _hearingSchedule.HearingDate(splitDate);
             _hearingSchedule.HearingStartTime(date.ToString("HH:mm").Split(':'));
-            InputHearingDuration(TestData.HearingSchedule.Duration);
+            InputHearingDuration(TestData.HearingSchedule.Duration1);
             _hearingSchedule.HearingVenue(TestData.HearingSchedule.CourtAddress.ToList().Last());
             EnterRoom(TestData.HearingSchedule.Room);
         }

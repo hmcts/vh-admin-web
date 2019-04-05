@@ -1,6 +1,7 @@
 ﻿using AdminWebsite.AcceptanceTests.Helpers;
 using OpenQA.Selenium;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace AdminWebsite.AcceptanceTests.Pages
 {
@@ -29,5 +30,6 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public void ClearInput() => ClickElement(By.Id("clearFormBtn"));
         public string PartyErrorMessage() => GetElementText(By.Id("party-error"));
         public string RoleErrorMessage() => GetElementText(By.Id("role-error"));
+        public IEnumerable<string> ParticipantPageErrorMessages() => Items(By.XPath("//*[@class='govuk-list govuk-error-summary__list']/li"));        
     }
 }

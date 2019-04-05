@@ -1,6 +1,5 @@
 ﻿Feature: CreateHearing
 
-@smoketest
 Scenario: Admin views hearing information on summary page
 	Given Admin user is on microsoft login page
 	When Case Admin logs in with valid credentials

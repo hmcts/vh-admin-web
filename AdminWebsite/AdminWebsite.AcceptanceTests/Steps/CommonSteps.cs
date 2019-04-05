@@ -88,6 +88,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _common.NextButton();
             _addParticipantsSteps.AddParticipantsPage();
         }
+        [When(@"user is on Summary page")]
         [Given(@"user is on Summary page")]
         public void GivenUserIsOnSummaryPage()
         {

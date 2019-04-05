@@ -137,6 +137,7 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public string SessionStorage(string script) => _browserContext.ExecuteJavascript(script);
         public string Page() => _browserContext.PageUrl();
         public string CancelWarningMessage() => GetElementText(By.XPath("//*[@class='content']/h1"));
-        public void DiscardChanges() => ClickElement(By.Id("btn-discard-changes"));
+        public void DiscardChanges() => ClickElement(By.Id("btn-discard-changes"));       
+        public int DisabledFields() => GetListOfElements(By.XPath("//*[@disabled='true']")).ToList().Count;
     }
 }

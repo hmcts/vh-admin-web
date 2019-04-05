@@ -106,6 +106,10 @@ this.ScenarioInitialize(scenarioInfo);
         [NUnit.Framework.DescriptionAttribute("Case Admin signs out in the process of booking hearing")]
         [NUnit.Framework.CategoryAttribute("VIH-2072")]
         [NUnit.Framework.TestCaseAttribute("Hearing details", null)]
+        [NUnit.Framework.TestCaseAttribute("Assign judge", null)]
+        [NUnit.Framework.TestCaseAttribute("Add participants", null)]
+        [NUnit.Framework.TestCaseAttribute("Other information", null)]
+        [NUnit.Framework.TestCaseAttribute("Summary", null)]
         public virtual void CaseAdminSignsOutInTheProcessOfBookingHearing(string booking, string[] exampleTags)
         {
             string[] @__tags = new string[] {
