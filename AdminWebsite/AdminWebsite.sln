@@ -24,6 +24,7 @@ ProjectSection(SolutionItems) = preProject
 	..\azure-pipelines.yml = ..\azure-pipelines.yml
 	..\README.md = ..\README.md
 	..\LICENSE = ..\LICENSE
+	..\CODEOWNERS = ..\CODEOWNERS
 EndProjectSection
 EndProject
 Global
