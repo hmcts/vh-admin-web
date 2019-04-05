@@ -60,7 +60,6 @@ export class BookingDetailsComponent implements OnInit {
     const participants_and_judges = this.bookingDetailsService.mapBookingParticipants(hearingResponse);
     this.participants = participants_and_judges.participants;
     this.judges = participants_and_judges.judges;
-    console.log(this.hearing);
   }
 
   mapResponseToModel(hearingResponse: HearingDetailsResponse): HearingModel {

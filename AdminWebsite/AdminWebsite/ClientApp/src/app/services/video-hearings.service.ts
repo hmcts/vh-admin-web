@@ -142,7 +142,6 @@ export class VideoHearingsService {
     newHearingRequest.hearing_room_name = newRequest.court_room;
     newHearingRequest.participants = this.mapParticipants(newRequest.participants);
     newHearingRequest.other_information = newRequest.other_information;
-    console.log(newHearingRequest);
     return newHearingRequest;
   }
 

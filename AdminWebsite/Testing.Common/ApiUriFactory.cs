@@ -30,7 +30,7 @@ namespace Testing.Common
     {
         private string ApiRoot => "api/hearings";
         public string BookNewHearing => ApiRoot;
-        public string CancelHearing(Guid hearingId) => $"{ApiRoot}/{hearingId}";
+        public string UpdateHearingStatus(Guid hearingId) => $"{ApiRoot}/{hearingId}";
     }
 
     public class ReferenceEndpoints
