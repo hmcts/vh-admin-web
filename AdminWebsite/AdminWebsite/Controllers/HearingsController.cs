@@ -133,7 +133,16 @@ namespace AdminWebsite.Controllers
                         // Map the request except the username
                         var newParticipant = MapNewParticipantRequest(participant);
                         // Judge is manually created in AD, no need to create one
-                        if (participant.CaseRoleName != "Judge")
+                        if (participant.CaseRoleName == "Judge")
+                        {
+                            if(hearing.Participants.Any(p => p.Username.Equals(participant.ContactEmail)))
+                            {
+                                //If the judge already exists in the database, there is no need to add again.
+                                continue;
+                            }
+                            newParticipant.Username = participant.ContactEmail;
+                        }
+                        else
                         {
                             // Update the request with newly created user details in AD
                             await _userAccountService.UpdateParticipantUsername(newParticipant);
@@ -162,7 +171,7 @@ namespace AdminWebsite.Controllers
                 }
 
                 // Delete existing participants if the request doesn't contain any update information
-                var deleteParticipantList = hearing.Participants.Where(p => editHearingRequest.Participants.All(rp => rp.Id != p.Id.Value));
+                var deleteParticipantList = hearing.Participants.Where(p => editHearingRequest.Participants.All(rp => rp.ContactEmail != p.Contact_email));
                 foreach (var participantToDelete in deleteParticipantList)
                 {
                     await _bookingsApiClient.RemoveParticipantFromHearingAsync(hearingId, participantToDelete.Id.Value);

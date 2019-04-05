@@ -21,17 +21,24 @@ namespace AdminWebsite.Services
 {
     public interface IUserAccountService
     {
+        /// <summary>
+        /// Get the full group information based by the active directory id
+        /// </summary>
+        /// <param name="groupId">Id for the active directory group</param>
         Group GetGroupById(string groupId);
         /// <summary>
-        ///     Get a list of Judges.
-        /// </summary>
-        /// <returns></returns>
-        IEnumerable<ParticipantDetailsResponse> GetJudgeUsers();
         /// <summary>
-        ///     Returns the username from AD for the participant
+        /// Returns a list of all judges in the active directory
         /// </summary>
+        /// <remarks>
+        /// Filters test accounts if configured to run as live environment 
+        /// </remarks>
+        IEnumerable<JudgeResponse> GetJudgeUsers();
         /// <param name="participant"></param>
-        /// <returns></returns>
+        /// <summary>
+        /// Creates a user based on the participant information or updates the participant username if it already exists
+        /// </summary>
+        /// <param name="participant">Data to create user by and returns the username in</param>
         Task UpdateParticipantUsername(ParticipantRequest participant);
     }
 
@@ -41,11 +48,11 @@ namespace AdminWebsite.Services
         private readonly ITokenProvider _tokenProvider;
         private readonly SecuritySettings _securitySettings;
         private readonly bool _isLive;
+
+        private static readonly Compare<JudgeResponse> CompareJudgeById =
+            Compare<JudgeResponse>.By((x, y) => x.Email == y.Email, x => x.Email.GetHashCode());
         
-        /// <summary>
-        ///     Service class that creates and returns users in AD.
-        /// </summary>
-        /// <param name="userApiClient"></param>
+        /// <summary>Create the service</summary>
         /// <param name="tokenProvider"></param>
         /// <param name="securitySettings"></param>
         /// <param name="appSettings"></param>
@@ -57,11 +64,7 @@ namespace AdminWebsite.Services
             _isLive = appSettings.Value.IsLive;
         }
 
-        /// <summary>
-        ///     Returns the username from AD for the participant 
-        /// </summary>
-        /// <param name="participant"></param>
-        /// <returns></returns>
+        /// <inheritdoc />
         public async Task UpdateParticipantUsername(ParticipantRequest participant)
         {
             // create user in AD if users email does not exist in AD.
@@ -128,8 +131,7 @@ namespace AdminWebsite.Services
             return newUserResponse;
         }
 
-
-        public Group GetGroupByName(string groupName)
+        private Group GetGroupByName(string groupName)
         {
             var accessToken = _tokenProvider.GetClientAccessToken(_securitySettings.ClientId,
                 _securitySettings.ClientSecret, _securitySettings.GraphApiBaseUri);
@@ -154,6 +156,7 @@ namespace AdminWebsite.Services
             throw new UserServiceException(message, reason);
         }
 
+        /// <inheritdoc />
         public Group GetGroupById(string groupId)
         {
             var accessToken = _tokenProvider.GetClientAccessToken(_securitySettings.ClientId,
@@ -183,66 +186,50 @@ namespace AdminWebsite.Services
             throw new UserServiceException(message, reason);
         }
 
-        /// <summary>
-        ///     Get a list of Judges from AD
-        /// </summary>
-        /// <returns></returns>
-        public IEnumerable<ParticipantDetailsResponse> GetJudgeUsers()
+        /// <inheritdoc />
+        public IEnumerable<JudgeResponse> GetJudgeUsers()
         {
             var judges = GetUsersByGroupName("VirtualRoomJudge");
             if (_isLive)
-                judges = ExcludeTestJudges(judges);
+                judges = ExcludeTestJudges(judges).ToList();
 
-            judges = judges.OrderBy(j => j.DisplayName);
-            return judges;
+            return judges.OrderBy(j => j.DisplayName);
         }
 
-        private IEnumerable<ParticipantDetailsResponse> ExcludeTestJudges(IEnumerable<ParticipantDetailsResponse> judgesList)
+        private IEnumerable<JudgeResponse> ExcludeTestJudges(IEnumerable<JudgeResponse> judgesList)
         {
             var judgesTest = GetUsersByGroupName("TestAccount");
-            judgesList = judgesList.Except(judgesTest);
-            
-            return judgesList;
+            return judgesList.Except(judgesTest, CompareJudgeById);
         }
 
-        public IEnumerable<ParticipantDetailsResponse> GetUsersByGroupName(string groupName)
+        private List<JudgeResponse> GetUsersByGroupName(string groupName)
         {
-            Group groupData = GetGroupByName(groupName);
-            if (groupData == null) return new List<ParticipantDetailsResponse>();
+            var groupData = GetGroupByName(groupName);
+            if (groupData == null) return new List<JudgeResponse>();
 
-            List<User> response = GetUsersByGroup(groupData.Id);
-            if (response != null || response.Any())
+            var response = GetUsersByGroup(groupData.Id);
+            return response.Select(x => new JudgeResponse
             {
-                IEnumerable<ParticipantDetailsResponse> judges = response.Select(x => new ParticipantDetailsResponse()
-                {
-                    Id = x.Id,
-                    FirstName = x.GivenName,
-                    MiddleName = "",
-                    LastName = x.Surname,
-                    DisplayName = x.DisplayName,
-                    Email = x.UserPrincipalName,
-                    Phone = x.MobilePhone,
-                    Role = x.JobTitle
-                });
-                return judges;
-            }
-            return new List<ParticipantDetailsResponse>();
+                FirstName = x.GivenName,
+                LastName = x.Surname,
+                DisplayName = x.DisplayName,
+                Email = x.UserPrincipalName
+            }).ToList();
         }
 
-        public List<User> GetUsersByGroup(string groupId)
+        private IEnumerable<User> GetUsersByGroup(string groupId)
         {
-            string accessToken = _tokenProvider.GetClientAccessToken(_securitySettings.ClientId,
+            var accessToken = _tokenProvider.GetClientAccessToken(_securitySettings.ClientId,
                 _securitySettings.ClientSecret,
                 _securitySettings.GraphApiBaseUri);
 
-            using (HttpClient client = new HttpClient())
+            using (var client = new HttpClient())
             {
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-                HttpRequestMessage httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, $"{_securitySettings.GraphApiBaseUri}v1.0/groups/{groupId}/members");
+                var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, $"{_securitySettings.GraphApiBaseUri}v1.0/groups/{groupId}/members");
 
-                DirectoryObject queryResponse = client.SendAsync(httpRequestMessage).Result.Content.ReadAsAsync<DirectoryObject>().Result;
-                List<User> users = JsonConvert.DeserializeObject<List<User>>(queryResponse.AdditionalData["value"].ToString());
-                return users;
+                var queryResponse = client.SendAsync(httpRequestMessage).Result.Content.ReadAsAsync<DirectoryObject>().Result;
+                return JsonConvert.DeserializeObject<List<User>>(queryResponse.AdditionalData["value"].ToString());
             }
         }
     }

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace AdminWebsite.Models
 {
     /// <summary>
-    ///     Edit hearing request
+    /// Request for updating an existing hearing
     /// </summary>
     public class EditHearingRequest
     {
