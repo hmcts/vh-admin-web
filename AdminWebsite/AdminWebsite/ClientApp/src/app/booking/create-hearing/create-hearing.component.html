@@ -57,8 +57,8 @@
     <label class="govuk-label govuk-!-width-one-half" for="caseType">
       Case type
     </label>
-    <select class="govuk-select govuk-!-width-one-half" id="caseType" formControlName="caseType">
-      <option *ngFor="let availableCaseType of availableCaseTypes" [ngValue]="availableCaseType">
+    <select class="govuk-select govuk-!-width-one-half" id="caseType" formControlName="caseType"  [attr.disabled]="isExistingHearing">
+      <option *ngFor="let availableCaseType of availableCaseTypes" [ngValue]="availableCaseType" >
         {{availableCaseType}}
       </option>
     </select>
@@ -73,7 +73,7 @@
     <label class="govuk-label govuk-!-width-one-half" for="hearingType">
       Hearing type
     </label>
-    <select class="govuk-select govuk-!-width-one-half" id="hearingType" formControlName="hearingType">
+    <select class="govuk-select govuk-!-width-one-half" id="hearingType" formControlName="hearingType" [attr.disabled]="isExistingHearing">
       <option *ngFor="let availableHearingType of filteredHearingTypes" [ngValue]="availableHearingType.id">
         {{availableHearingType.name}}
       </option>
@@ -97,4 +97,9 @@
 <div *ngIf="attemptingCancellation">
   <app-cancel-popup (continueBooking)="continueBooking($event)" (cancelBooking)="cancelBooking($event)">
   </app-cancel-popup>
+</div>
+
+<div *ngIf="attemptingDiscardChanges">
+  <app-discard-confirm-popup (continueEditing)="continueBooking($event)" (cancelChanges)="cancelChanges()">
+  </app-discard-confirm-popup>
 </div>

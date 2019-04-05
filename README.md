@@ -1,6 +1,20 @@
 # vh-admin-web
 This application provides the book a video hearing functionality for the video hearing case administrator.
 
+## Running code coverage
+
+1. Install the report generator dotnet tool
+https://www.nuget.org/packages/dotnet-reportgenerator-globaltool/
+
+You may need to restart your prompt to get the updated path.
+
+2. CD into the `AdminWebsite` folder
+
+3. Run the command for windows or osx `./run_coverage.sh` or `run_coverage.bat`
+
+The coverage report will open automatically after run, joining the results for both integration and unit tests.
+
+
 # Sonar Cloud
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=vh-admin-web&metric=alert_status)](https://sonarcloud.io/dashboard?id=vh-admin-web)
 

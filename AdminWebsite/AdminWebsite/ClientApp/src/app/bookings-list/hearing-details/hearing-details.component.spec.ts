@@ -5,6 +5,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 
 import { HearingDetailsComponent } from './hearing-details.component';
 import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
+import { MomentModule } from 'angular2-moment';
 
 describe('HearingDetailsComponent', () => {
 
@@ -15,7 +16,8 @@ describe('HearingDetailsComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [HearingDetailsComponent],
-      imports: [RouterTestingModule],
+      imports: [RouterTestingModule, MomentModule
+],
     })
       .compileComponents();
   }));
