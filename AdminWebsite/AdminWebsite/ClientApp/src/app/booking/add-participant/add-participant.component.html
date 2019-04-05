@@ -87,11 +87,6 @@
         </app-search-email>
 
         <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error': titleInvalid || !isTitleSelected}">
-          <legend id="role-error" *ngIf="titleInvalid || !isTitleSelected">
-            <span class="govuk-error-message">
-              {{constants.Error.TitleErrorMsg}}
-            </span>
-          </legend>
           <label class="govuk-label" for="title">
             Title
           </label>

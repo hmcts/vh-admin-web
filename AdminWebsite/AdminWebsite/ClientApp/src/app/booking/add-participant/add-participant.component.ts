@@ -158,10 +158,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
       Validators.required,
       Validators.pattern(this.constants.PleaseSelectPattern)
     ]);
-    this.title = new FormControl(this.constants.PleaseSelect, [
-      Validators.required,
-      Validators.pattern(this.constants.PleaseSelectPattern)
-    ]);
+    this.title = new FormControl(this.constants.PleaseSelect);
     this.firstName = new FormControl('', Validators.required);
     this.lastName = new FormControl('', Validators.required);
     this.phone = new FormControl('', [Validators.required, Validators.pattern(/^[0-9) -.]+$/)]);
@@ -353,10 +350,6 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     return this.role.invalid && (this.role.dirty || this.role.touched || this.isShowErrorSummary);
   }
 
-  get titleInvalid() {
-    return this.title.invalid && (this.title.dirty || this.title.touched || this.isShowErrorSummary);
-  }
-
   get houseNumberInvalid() {
     return this.houseNumber.invalid && (this.houseNumber.dirty || this.houseNumber.touched || this.isShowErrorSummary);
   }
@@ -405,8 +398,6 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
       this.county.setValue('');
       this.postcode.setValue('');
     }
-    console.log(this.role.value);
-    console.log(sessionStorage);
     this.showDetails = true;
   }
 
@@ -425,7 +416,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   }
 
   showErrorSummary() {
-    return !this.participantForm.valid || !this.isRoleSelected || !this.isTitleSelected;
+    return !this.participantForm.valid || !this.isRoleSelected;
   }
 
   saveParticipant() {

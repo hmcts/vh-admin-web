@@ -445,6 +445,12 @@ describe('AddParticipantComponent', () => {
     expect(component.isShowErrorSummary).toBeFalsy();
     expect(component.hearing.participants.length).toBeGreaterThan(0);
   });
+  it('saved participant with invalid details should show error summary', () => {
+    component.isRoleSelected = false;
+    component.isPartySelected = false;
+    component.saveParticipant();
+    expect(component.isShowErrorSummary).toBeTruthy();
+  });
   it('should see next button and hide add button after saved participant', () => {
     component.showDetails = true;
     fixture.detectChanges();
