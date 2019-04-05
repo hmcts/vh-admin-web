@@ -64,7 +64,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   displayErrorNoParticipants = false;
   localEditMode = false;
   isExistingHearing: boolean;
-  isAnyParticipants = true;
+  isAnyParticipants: boolean;
 
   @ViewChild(SearchEmailComponent)
   searchEmail: SearchEmailComponent;
@@ -140,8 +140,6 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     this.searchEmail.setEmailDisabled(this.participantDetails.id && this.participantDetails.id.length > 0);
   }
 
-
-
   initializeForm() {
     this.role = new FormControl(this.constants.PleaseSelect, [
       Validators.required,
@@ -210,7 +208,9 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
       this.isExistingHearing = this.hearing.hearing_id && this.hearing.hearing_id.length > 0;
 
       const anyParticipants = this.hearing.participants.find(x => !x.is_judge);
-      this.isAnyParticipants = anyParticipants && !anyParticipants.is_judge;
+      if (this.editMode) {
+        this.isAnyParticipants = anyParticipants && !anyParticipants.is_judge;
+      }
     }
   }
 
@@ -250,6 +250,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     this.isAnyParticipants = this.participantDetails.id && this.participantDetails.id.length > 0;
 
     this.setupHearingRoles(this.participantDetails.case_role_name);
+
     this.participantForm.setValue({
       party: this.participantDetails.case_role_name,
       role: this.participantDetails.hearing_role_name,
@@ -393,8 +394,9 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     this.localEditMode = false;
   }
 
+
   updateParticipant() {
-    if (!this.isAnyParticipants) {
+    if (!this.isAnyParticipants && !this.participantDetails) {
       this.saveParticipant();
       this.isAnyParticipants = true;
     } else {
@@ -408,6 +410,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
           }
         });
         this.clearForm();
+        this.participantDetails = null;
         this.participantForm.markAsPristine();
       } else {
         this.isShowErrorSummary = true;
