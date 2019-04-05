@@ -22,6 +22,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private AdminWebsite.Controllers.HearingsController _controller;
         private HearingDetailsResponse _vhBookingToDelete;
         private Guid _guid;
+        private UpdateBookingStatusRequest _updateBookingStatusRequest;
 
         [SetUp]
         public void Setup()
@@ -60,12 +61,14 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             };
             _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(_vhBookingToDelete);
+
+            _updateBookingStatusRequest = new UpdateBookingStatusRequest() { Status = UpdateBookingStatusRequestStatus.Cancelled, Updated_by = "admin user" };
         }
 
         [Test]
         public async Task should_cancel_existing_hearing()
         {
-            var result = await _controller.UpdateBookingStatus(_guid);
+            var result = await _controller.UpdateBookingStatus(_guid, _updateBookingStatusRequest);
             var noContentResult = (NoContentResult)result;
             noContentResult.StatusCode.Should().Be(204);
         }
@@ -76,7 +79,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             GivenApiThrowsExceptionOnCancel(HttpStatusCode.BadRequest);
 
             var invalidId = Guid.NewGuid();
-            var result = await _controller.UpdateBookingStatus(invalidId);
+            var result = await _controller.UpdateBookingStatus(invalidId, _updateBookingStatusRequest);
             var badRequestResult = (BadRequestObjectResult)result;
             badRequestResult.StatusCode.Should().Be(400);
         }
@@ -86,7 +89,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         {
             GivenApiThrowsExceptionOnCancel(HttpStatusCode.NotFound);
 
-            var result = await _controller.UpdateBookingStatus(_guid);
+            var result = await _controller.UpdateBookingStatus(_guid, _updateBookingStatusRequest);
             var notFoundResult = (NotFoundObjectResult) result;
             notFoundResult.StatusCode.Should().Be(404);
         }

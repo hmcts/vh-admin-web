@@ -7,7 +7,8 @@ import {
 
   EditHearingRequest,
   EditCaseRequest,
-  EditParticipantRequest
+  EditParticipantRequest,
+  UpdateBookingStatusRequest
 } from './clients/api-client';
 import { HearingModel } from '../common/model/hearing.model';
 import { CaseModel } from '../common/model/case.model';
@@ -246,7 +247,7 @@ export class VideoHearingsService {
     return this.bhClient.getHearingById(hearingId);
   }
 
-  updateBookingStatus(hearingId: string): Observable<void> {
-    return this.bhClient.updateBookingStatus(hearingId);
+  updateBookingStatus(hearingId: string, updateBookingStatus: UpdateBookingStatusRequest): Observable<void> {
+    return this.bhClient.updateBookingStatus(hearingId, updateBookingStatus);
   }
 }

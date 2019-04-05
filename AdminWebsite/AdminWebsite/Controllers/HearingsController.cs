@@ -341,24 +341,22 @@ namespace AdminWebsite.Controllers
         }
 
         /// <summary>
-        /// Update booking status
+        ///     Update the hearing status.
         /// </summary>
-        /// <param name="hearingId">Id of the hearing to update the status for</param>
+        /// <param name="hearingId">The hearing id</param>
+        /// <param name="updateBookingStatusRequest"></param>
         /// <returns>Success status</returns>
         [HttpPatch("{hearingId}")]
         [SwaggerOperation(OperationId = "UpdateBookingStatus")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult> UpdateBookingStatus(Guid hearingId)
+        public async Task<ActionResult> UpdateBookingStatus(Guid hearingId, 
+            UpdateBookingStatusRequest updateBookingStatusRequest)
         {
             try
             {
-                var updateBookingStatusRequest = new UpdateBookingStatusRequest()
-                {
-                    Status = UpdateBookingStatusRequestStatus.Cancelled,
-                    Updated_by = _userIdentity.GetUserIdentityName()
-                };
+                updateBookingStatusRequest.Updated_by = _userIdentity.GetUserIdentityName();
                 await _bookingsApiClient.UpdateBookingStatusAsync(hearingId, updateBookingStatusRequest);
                 return NoContent();
             }
