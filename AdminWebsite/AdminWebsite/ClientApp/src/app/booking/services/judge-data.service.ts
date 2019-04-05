@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BHClient, ParticipantDetailsResponse } from 'src/app/services/clients/api-client';
+import { BHClient, JudgeResponse } from 'src/app/services/clients/api-client';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -9,7 +9,7 @@ export class JudgeDataService {
 
     constructor(private bhClient: BHClient) { }
 
-    getJudges(): Observable<ParticipantDetailsResponse[]> {
+    getJudges(): Observable<JudgeResponse[]> {
         return this.bhClient.getJudges();
     }
 }

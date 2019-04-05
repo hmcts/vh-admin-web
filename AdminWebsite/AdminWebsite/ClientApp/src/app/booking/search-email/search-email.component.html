@@ -9,8 +9,8 @@
       <label class="govuk-label" for="participantEmail">
         Email
       </label>
-     <input id="participantEmail" name="participantEmail" [(ngModel)]="email" (blur)="blurEmail()" class="govuk-input govuk-input--width-20"
-       (keyup)="searchTerm.next($event.target.value)" type="email"
+     <input #emailInput id="participantEmail" name="participantEmail" [(ngModel)]="email" (blur)="blurEmail()" class="govuk-input govuk-input--width-20"
+       (keyup)="searchTerm.next($event.target.value)" type="email" 
       />
      
     <ul *ngIf="isShowResult" class="vh-li-email">

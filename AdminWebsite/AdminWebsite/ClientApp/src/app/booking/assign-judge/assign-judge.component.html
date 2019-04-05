@@ -26,7 +26,7 @@
           Judge
         </label>
         <select class="govuk-select govuk-input--width-20" id="judgeName" formControlName="judgeName">
-          <option *ngFor="let judge of availableJudges" [ngValue]="judge.id">{{ judge.display_name }}</option>
+          <option *ngFor="let judge of availableJudges" [ngValue]="judge.email">{{ judge.display_name }}</option>
         </select>
         <div *ngIf="(judgeNameInvalid || !isJudgeSelected)" class="alert alert-danger">
           <span id="judgeName-error" class="govuk-error-message">
@@ -63,4 +63,9 @@
 
 <div *ngIf="attemptingCancellation">
   <app-cancel-popup (continueBooking)="continueBooking($event)" (cancelBooking)="cancelAssignJudge($event)"></app-cancel-popup>
+</div>
+
+<div *ngIf="attemptingDiscardChanges">
+  <app-discard-confirm-popup (continueEditing)="continueBooking($event)" (cancelChanges)="cancelChanges()">
+  </app-discard-confirm-popup>
 </div>

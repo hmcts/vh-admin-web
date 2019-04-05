@@ -16,7 +16,8 @@ import { PageUrls } from 'src/app/shared/page-url.constants';
 })
 export class OtherInformationComponent extends BookingBaseComponent implements OnInit, CanDeactiveComponent {
   hearing: HearingModel;
-  attemptingCancellation: boolean;
+  attemptingCancellation = false;
+  attemptingDiscardChanges = false;
   canNavigate = true;
   otherInformationForm: FormGroup;
   otherInformationText: string;
@@ -24,7 +25,6 @@ export class OtherInformationComponent extends BookingBaseComponent implements O
   constructor(private fb: FormBuilder, private videoHearingService: VideoHearingsService,
     protected router: Router, protected bookingService: BookingService) {
     super(bookingService, router);
-    this.attemptingCancellation = false;
   }
 
   ngOnInit() {
@@ -61,13 +61,23 @@ export class OtherInformationComponent extends BookingBaseComponent implements O
     this.router.navigate([PageUrls.Dashboard]);
   }
 
+  cancelChanges() {
+    this.attemptingDiscardChanges = false;
+    this.otherInformationForm.reset();
+    this.navigateToSummary();
+  }
   continueBooking() {
     this.attemptingCancellation = false;
+    this.attemptingDiscardChanges = false;
   }
 
   confirmCancelBooking() {
     if (this.editMode) {
-      this.navigateToSummary();
+      if (this.otherInformationForm.dirty || this.otherInformationForm.touched) {
+        this.attemptingDiscardChanges = true;
+      } else {
+        this.navigateToSummary();
+      }
     } else {
       this.attemptingCancellation = true;
     }
