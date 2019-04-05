@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using AdminWebsite.BookingsAPI.Client;
@@ -60,7 +61,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                     {
                         Id = Guid.NewGuid(),
                         User_role_name = "Individual",
-                        Contact_email = "old@user.com"
+                        Contact_email = "old@user.com",
+                        Username = "old@user.com"
                     }
                 }
             };
@@ -165,6 +167,37 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             var response = await _controller.EditHearing(_validId, _request);
             response.Result.Should().BeOfType<NotFoundObjectResult>();
+        }
+
+        [Test]
+        public async Task should_replace_judge_based_on_email()
+        {
+            var existingJudgeId = Guid.NewGuid();
+            _existingHearing.Participants.Add(new ParticipantResponse
+            {
+                First_name = "Existing",
+                Last_name = "Judge",
+                Contact_email = "existing@judge.com",
+                Username = "existing@judge.com",
+                Case_role_name = "Judge",
+                Id = existingJudgeId
+            });
+            
+            const string newJudgeEmail = "new@judge.com";
+            _request.Participants.Add(new EditParticipantRequest
+            {
+                CaseRoleName = "Judge",
+                FirstName = "New",
+                LastName = "Judge",
+                ContactEmail = newJudgeEmail
+            });
+
+            var response = await _controller.EditHearing(_validId, _request);
+            response.Result.Should().BeOfType<OkObjectResult>();
+
+            _bookingsApiClient.Verify(x => x.RemoveParticipantFromHearingAsync(_validId, existingJudgeId), Times.Once);
+            _bookingsApiClient.Verify(x => x.AddParticipantsToHearingAsync(_validId, It.Is<AddParticipantsToHearingRequest>(
+                participants => participants.Participants.Any(p => p.Username == newJudgeEmail))), Times.Once);
         }
 
         private void GivenApiThrowsExceptionOnUpdate(HttpStatusCode code)
