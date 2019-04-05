@@ -34,11 +34,11 @@ namespace AdminWebsite.Services
         /// Filters test accounts if configured to run as live environment 
         /// </remarks>
         IEnumerable<JudgeResponse> GetJudgeUsers();
-        /// <param name="participant"></param>
         /// <summary>
         /// Creates a user based on the participant information or updates the participant username if it already exists
         /// </summary>
-        /// <param name="participant">Data to create user by and returns the username in</param>
+        /// <param name="participant"></param>
+        /// <returns></returns>
         Task UpdateParticipantUsername(ParticipantRequest participant);
     }
 
@@ -51,8 +51,11 @@ namespace AdminWebsite.Services
 
         private static readonly Compare<JudgeResponse> CompareJudgeById =
             Compare<JudgeResponse>.By((x, y) => x.Email == y.Email, x => x.Email.GetHashCode());
-        
-        /// <summary>Create the service</summary>
+
+        /// <summary>
+        /// Create the service
+        /// </summary>
+        /// <param name="userApiClient"></param>
         /// <param name="tokenProvider"></param>
         /// <param name="securitySettings"></param>
         /// <param name="appSettings"></param>

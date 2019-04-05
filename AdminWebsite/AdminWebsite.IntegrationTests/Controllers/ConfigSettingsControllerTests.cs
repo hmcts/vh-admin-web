@@ -21,6 +21,10 @@ namespace AdminWebsite.IntegrationTests.Controllers
                 ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<ClientSettingsResponse>(getResponse.Content
                     .ReadAsStringAsync().Result);
             clientSettingsResponseModel.Should().NotBeNull();
+            clientSettingsResponseModel.ClientId.Should().NotBeNull();
+            clientSettingsResponseModel.TenantId.Should().NotBeNull();
+            clientSettingsResponseModel.RedirectUri.Should().NotBeNull();
+
         }
     }
 }
