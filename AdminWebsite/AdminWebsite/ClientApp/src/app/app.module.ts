@@ -30,6 +30,8 @@ import { PageTrackerService } from './services/page-tracker.service';
 import { AppInsightsLogger } from './services/app-insights-logger.service';
 import { Config } from '../app/common/model/config';
 import { WindowRef } from './security/window-ref';
+import { MomentModule } from 'angular2-moment';
+import { CustomAdalInterceptor } from "./custom-adal-interceptor";
 
 export function getSettings(configService: ConfigService) {
   return () => configService.loadConfig();
@@ -46,6 +48,7 @@ export function getSettings(configService: ConfigService) {
     ErrorComponent,
   ],
   imports: [
+    MomentModule,
     BookingModule,
     BookingsListModule,
     BrowserModule,
@@ -58,10 +61,11 @@ export function getSettings(configService: ConfigService) {
     ReactiveFormsModule,
     AppRoutingModule,
     { provide: APP_INITIALIZER, useFactory: getSettings, deps: [ConfigService], multi: true },
-    { provide: HTTP_INTERCEPTORS, useClass: AdalInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: CustomAdalInterceptor, multi: true },
     { provide: BH_API_BASE_URL, useFactory: () => '.' },
     AdalService,
     AdalGuard,
+    AdalInterceptor,
     ConfigService,
     AuthGuard,
     ChangesGuard,
