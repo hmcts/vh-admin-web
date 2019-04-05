@@ -250,7 +250,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     this.isAnyParticipants = this.participantDetails.id && this.participantDetails.id.length > 0;
 
     this.setupHearingRoles(this.participantDetails.case_role_name);
-   
+
     this.participantForm.setValue({
       party: this.participantDetails.case_role_name,
       role: this.participantDetails.hearing_role_name,
@@ -394,7 +394,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     this.localEditMode = false;
   }
 
- 
+
   updateParticipant() {
     if (!this.isAnyParticipants && !this.participantDetails) {
       this.saveParticipant();
