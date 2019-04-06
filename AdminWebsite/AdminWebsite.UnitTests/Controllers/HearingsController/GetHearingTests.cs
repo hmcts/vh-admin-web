@@ -8,6 +8,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Net;
+using Testing.Common;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {
@@ -86,8 +87,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private void GivenApiThrowsExceptionOnGetHearing(HttpStatusCode code)
         {
             _bookingsApiClient.Setup(x => x.GetHearingDetailsById(It.IsAny<Guid>()))
-                .Throws(new BookingsApiException(code.ToString(), (int)code, "",
-                    new Dictionary<string, IEnumerable<string>>(), null));
+                .Throws(ClientException.ForBookingsAPI(code));
         }
     }
 }

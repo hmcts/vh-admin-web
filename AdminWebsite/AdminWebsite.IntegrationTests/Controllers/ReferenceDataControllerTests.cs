@@ -1,10 +1,8 @@
 ﻿using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Models;
 using FluentAssertions;
-using Microsoft.AspNetCore.Razor.Language;
 using NUnit.Framework;
 using Testing.Common;
 
@@ -17,7 +15,7 @@ namespace AdminWebsite.IntegrationTests.Controllers
         [Test]
         public async Task should_retrieve_a_list_of_hearing_venues()
         {
-            var getResponse = await SendGetRequestAsync(_referenceEndpoints.GetCourts);
+            var getResponse = await SendGetRequestAsync("api/reference/courts");
             getResponse.StatusCode.Should().Be(HttpStatusCode.OK);
 
             var hearingVenueResponseModel =

@@ -13,17 +13,4 @@
 .vh-btn-cancel {
   color: #ffffff;
   background-color: #b10e1e;
-}
-
-.vh-cancelledBooking {
-  color: #ffffff;
-  background-color: #b10e1e;
-  padding-top: 7px;
-  padding-bottom: 7px;
-  width: 35%;
-  font-weight: 300;
-  text-align: center;
-  margin-top: 1px;
-  font-size: 18px;
-  font-family: "nta",Arial,sans-serif;  
-}
+} 
