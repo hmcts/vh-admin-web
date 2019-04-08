@@ -31,7 +31,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         }
         [When(@"admin user tries to amend booking")]
         public void UpdateParticipantDetails()
-        {
+        {            
             _bookingsList.BookingsList();
             BookingsListPage();
             _bookingsList.SelectHearing(_bookingsList.GetItems("CaseNumber"));

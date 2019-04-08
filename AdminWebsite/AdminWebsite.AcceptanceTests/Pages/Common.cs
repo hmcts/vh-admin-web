@@ -49,7 +49,7 @@ namespace AdminWebsite.AcceptanceTests.Pages
         }
 
         protected void InputValues(By element, string value) => _browserContext.NgDriver.WaitUntilElementVisible(element).SendKeys(value);
-        protected void ClickElement(By element) => _browserContext.NgDriver.WaitUntilElementVisible(element).Click();
+        protected void ClickElement(By element) => _browserContext.NgDriver.WaitUntilElementClickable(element).Click();
         protected void ClearFieldInputValues(By element, string value)
         {
             var webElement = _browserContext.NgDriver.WaitUntilElementVisible(element);

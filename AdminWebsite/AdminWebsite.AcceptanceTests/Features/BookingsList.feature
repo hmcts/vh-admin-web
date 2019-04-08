@@ -3,7 +3,7 @@ As a VH Officer/Case Admin
 I want to view or amend the details of a video hearing booking
 So that I can ensure any changes in details can be reflected in the VH system
 
-@smoketest @VIH-3461 @000090000
+@smoketest @VIH-3461
 Scenario Outline: Admin officer views booking details
 	Given hearing is booked by <admin>
 	When admin user returns to dashboard  
@@ -14,7 +14,7 @@ Examples:
 | Case Admin                |
 | VhOfficerCivilMoneyclaims |
 
-@smoketest @VIH-3743 @000090000
+@smoketest @VIH-3743
 Scenario: Admin officer changes judge
 	Given Case Admin tries to amend booking
 	When user navigates to add judge page to make changes
