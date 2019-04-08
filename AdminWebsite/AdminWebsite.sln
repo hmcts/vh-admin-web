@@ -19,6 +19,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdminWebsite.BookingsAPI.Cl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdminWebsite.UserAPI.Client", "AdminWebsite.UserAPI.Client\AdminWebsite.UserAPI.Client.csproj", "{57E4FA3E-41B2-43E6-8577-9D8502EE885E}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution", "Solution", "{36646BC3-5BD3-4860-841D-01E07EDCF7CF}"
+ProjectSection(SolutionItems) = preProject
+	..\azure-pipelines.yml = ..\azure-pipelines.yml
+	..\README.md = ..\README.md
+	..\LICENSE = ..\LICENSE
+	..\CODEOWNERS = ..\CODEOWNERS
+EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
