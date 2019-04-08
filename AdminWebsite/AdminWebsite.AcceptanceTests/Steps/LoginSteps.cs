@@ -18,39 +18,35 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _loginPage = loginPage;
             _scenarioContext = injectedContext;
         }
-
-        [Given(@"Admin user is on microsoft login page")]
-        [Given(@"Non-Admin user is on microsoft login page")]
-        [Given(@"VH Officer is on microsoft login page")]
-        [Given(@"Case Admin is on microsoft login page")]
-        public void GivenCaseAdminIsOnMicrosoftLoginPage()
+        public void AdminOnMicrosoftLoginPage()
         {
             _browserContext.Retry(() =>
             {
                 _browserContext.PageUrl().Should().Contain("login.microsoftonline.com");
             }, 10);
         }
-
         [Given(@"(.*) logs into Vh-Admin website")]
         [When(@"(.*) logs in with valid credentials")]
         public void UserLogsInWithValidCredentials(string user)
         {
+            AdminOnMicrosoftLoginPage();
             var appSecrets = TestConfigSettings.GetSettings();
             var password = appSecrets.UserPassword;
             switch (user)
             {
-                case "VH Officer": _loginPage.Logon(appSecrets.VhOfficerUsername, password);
+                case "VH Officer": _loginPage.Logon(appSecrets.VhOfficerFinRemedyCivilMoneyclaims, password);
                     break;
                 case "Case Admin": _loginPage.Logon(appSecrets.CaseAdminCivilMoneyClaims, password);
-                    _scenarioContext.Add("Username", appSecrets.VhOfficerUsername);
+                    _scenarioContext.Add("Username", appSecrets.CaseAdminCivilMoneyClaims);
                     break;
                 case "Non-Admin": _loginPage.Logon(appSecrets.NonAdmin, password);
                     break;
                 case "VhOfficerCivilMoneyclaims": _loginPage.Logon(appSecrets.VhOfficerCivilMoneyclaims, password);
-                    _scenarioContext.Add("Username", appSecrets.VhOfficerUsername);
+                    _scenarioContext.Add("Username", appSecrets.VhOfficerCivilMoneyclaims);
                     break;
                 case "CaseAdminFinRemedyCivilMoneyClaims":
                     _loginPage.Logon(appSecrets.CaseAdminFinRemedyCivilMoneyClaims, password);
+                    _scenarioContext.Add("Username", appSecrets.CaseAdminFinRemedyCivilMoneyClaims);
                     break;
             }
             _scenarioContext.Add("User", user);

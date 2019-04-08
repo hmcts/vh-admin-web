@@ -24,17 +24,17 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             BookingsListPage();
             var actualResult = _bookingConfirmation.ConfirmationMessage();
-            var expectedResult = $"{TestData.BookingConfirmation.BookingConfirmationMessage} {TestData.HearingDetails.CaseNumber} {TestData.HearingDetails.CaseName} {_bookingConfirmation.GetItems("HearingDate")}";
+            var expectedResult = $"{TestData.BookingConfirmation.BookingConfirmationMessage} {_bookingConfirmation.GetItems("CaseNumber")} {TestData.HearingDetails.CaseName} {_bookingConfirmation.GetItems("HearingDate")}";
             var hearingId = _bookingConfirmation.SessionStorage("return sessionStorage.getItem('newHearingId')");
             _bookingConfirmation.AddItems<string>("HearingId", hearingId);
             hearingId.Should().NotBeNullOrEmpty();            
-            expectedResult.Should().Be(actualResult);
+            expectedResult.ToLower().Should().Contain(actualResult.ToLower());
         }
         [When(@"admin user returns to dashboard")]
-        public void WhenAdminUserReturnsToBookingList()
+        public void BookAnotherHearing()
         {
-            _bookingConfirmation.ReturnToDashboard();
-            _bookingConfirmation.PageUrl(PageUri.DashboardPage);
+            _bookingConfirmation.BookAnotherHearing();
+            _bookingConfirmation.PageUrl(PageUri.HearingDetailsPage);
         }
     }
 }

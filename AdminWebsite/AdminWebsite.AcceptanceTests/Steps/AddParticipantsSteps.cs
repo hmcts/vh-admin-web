@@ -114,10 +114,11 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [Then(@"all values should be cleared from the fields")]
         public void ThenAllValuesShouldBeClearedFromTheFields()
         {
-            _addParticipant.PartyErrorMessage().Should().Be(TestData.AddParticipants.PartyErrorMessage);
-            _addParticipant.RoleErrorMessage().Should().Be(TestData.AddParticipants.RoleErrorMessage);
+            _addParticipant.NextButton();
+            _addParticipant.ParticipantPageErrorMessages().Should().Contain(TestData.AddParticipants.PartyErrorMessage);
+            _addParticipant.ParticipantPageErrorMessages().Should().Contain(TestData.AddParticipants.RoleErrorMessage);
         }
-
+        [When(@"admin adds participant details")]
         [When(@"use adds participant")]
         public void WhenUseAddsParticipant()
         {
@@ -155,6 +156,15 @@ namespace AdminWebsite.AcceptanceTests.Steps
             InputLastname(TestData.AddParticipants.Lastname);
             InputTelephone(TestData.AddParticipants.Telephone);
             InputDisplayname(TestData.AddParticipants.DisplayName);            
+        }
+        [Then(@"mandatory fields should be disabled")]
+        public void ThenMandatoryFieldsShouldBeDisabled()
+        {
+            _addParticipant.PartyField().Should().Be("true");
+            _addParticipant.RoleField().Should().Be("true");
+            _addParticipant.Email().Should().Be("true");
+            _addParticipant.Firstname().Should().Be("true");
+            _addParticipant.Lastname().Should().Be("true");
         }
     }
 }

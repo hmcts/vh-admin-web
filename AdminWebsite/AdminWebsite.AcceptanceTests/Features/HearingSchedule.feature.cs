@@ -31,10 +31,10 @@ namespace AdminWebsite.AcceptanceTests.Features
         public virtual void FeatureSetup()
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
-            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Case Admin or VH Officer enters VH schedule & location details", "\t\tAs a person who books a video hearing (e.g. Case Admin or VH Officer)\r\n\t\tI want" +
-                    " to be presented with an appropriate form for schedule & location details\r\n\t\tSo " +
-                    "that I am able to enter time, date and location of the video hearing I am reques" +
-                    "ting", ProgrammingLanguage.CSharp, ((string[])(null)));
+            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Case Admin or VH Officer enters VH schedule & location details", "\tAs a person who books a video hearing (e.g. Case Admin or VH Officer)\r\n\tI want t" +
+                    "o be presented with an appropriate form for schedule & location details\r\n\tSo tha" +
+                    "t I am able to enter time, date and location of the video hearing I am requestin" +
+                    "g", ProgrammingLanguage.CSharp, ((string[])(null)));
             testRunner.OnFeatureStart(featureInfo);
         }
         
@@ -73,35 +73,24 @@ namespace AdminWebsite.AcceptanceTests.Features
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("User enters time date and location of the video hearing")]
+        [NUnit.Framework.DescriptionAttribute("Case Admin enters time date and location of the video hearing")]
         [NUnit.Framework.CategoryAttribute("VIH-2619")]
         [NUnit.Framework.CategoryAttribute("smoketest")]
-        [NUnit.Framework.TestCaseAttribute("Case Admin", null)]
-        [NUnit.Framework.TestCaseAttribute("VhOfficerCivilMoneyclaims", null)]
-        public virtual void UserEntersTimeDateAndLocationOfTheVideoHearing(string user, string[] exampleTags)
+        public virtual void CaseAdminEntersTimeDateAndLocationOfTheVideoHearing()
         {
-            string[] @__tags = new string[] {
-                    "VIH-2619",
-                    "smoketest"};
-            if ((exampleTags != null))
-            {
-                @__tags = System.Linq.Enumerable.ToArray(System.Linq.Enumerable.Concat(@__tags, exampleTags));
-            }
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("User enters time date and location of the video hearing", null, @__tags);
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Case Admin enters time date and location of the video hearing", null, new string[] {
+                        "VIH-2619",
+                        "smoketest"});
 #line 7
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 8
- testRunner.Given("Admin user is on microsoft login page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.Given("Case Admin is on hearing schedule page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 9
- testRunner.And(string.Format("{0} logs into Vh-Admin website", user), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 10
- testRunner.And("user is on hearing schedule page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 11
  testRunner.When("user enters video hearing schedule details", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 12
+#line 10
  testRunner.And("user proceeds to next page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 13
+#line 11
  testRunner.Then("user should be on assign judge page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -116,22 +105,18 @@ this.ScenarioInitialize(scenarioInfo);
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("User to proceed until a valid date is entered", null, new string[] {
                         "VIH-2619",
                         "Bug-VIH-4126"});
-#line 20
+#line 14
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
-#line 21
- testRunner.Given("Admin user is on microsoft login page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 22
- testRunner.And("Case Admin logs into Vh-Admin website", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 23
- testRunner.And("user is on hearing schedule page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 24
+#line 15
+ testRunner.Given("Case Admin is on hearing schedule page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 16
  testRunner.When("user inputs a date in the past from the calendar", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 25
+#line 17
  testRunner.And("user proceeds to next page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 26
+#line 18
  testRunner.Then("an error message should be displayed as Please enter a date in the future", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 27
+#line 19
  testRunner.And("user should remain on hearing schedule page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             this.ScenarioCleanup();
