@@ -125,10 +125,14 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public void DashBoard() => ClickElement(By.Id("topItem0"));
         public void BookingsList()
         {
-            var element = By.Id("topItem1");
-            _browserContext.Retry(() => GetElementText(element).Should().BeNullOrEmpty(), 2);
-            ClickElement(element);
+            var element = _browserContext.NgDriver.FindElement(By.Id("topItem1"));
+            _browserContext.Retry(() =>
+            {
+                element.Click();
+                element.GetAttribute("class").Should().Contain("active");
+            }, 3);
         }
+
         public void AddItems<T>(string key, T value) => _browserContext.Items.AddOrUpdate(key, value);
         public dynamic GetItems(string key) => _browserContext.Items.Get(key);
         public string GetParticipantDetails() => GetElementText(By.XPath("//*[contains(@class, 'vhtable-header')]"));

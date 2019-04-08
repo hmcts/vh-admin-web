@@ -75,15 +75,13 @@ namespace AdminWebsite.AcceptanceTests.Features
         [NUnit.Framework.DescriptionAttribute("Admin officer views booking details")]
         [NUnit.Framework.CategoryAttribute("smoketest")]
         [NUnit.Framework.CategoryAttribute("VIH-3461")]
-        [NUnit.Framework.CategoryAttribute("001SauceLab_Test")]
         [NUnit.Framework.TestCaseAttribute("Case Admin", null)]
         [NUnit.Framework.TestCaseAttribute("VhOfficerCivilMoneyclaims", null)]
         public virtual void AdminOfficerViewsBookingDetails(string admin, string[] exampleTags)
         {
             string[] @__tags = new string[] {
                     "smoketest",
-                    "VIH-3461",
-                    "001SauceLab_Test"};
+                    "VIH-3461"};
             if ((exampleTags != null))
             {
                 @__tags = System.Linq.Enumerable.ToArray(System.Linq.Enumerable.Concat(@__tags, exampleTags));
@@ -108,13 +106,11 @@ this.ScenarioInitialize(scenarioInfo);
         [NUnit.Framework.DescriptionAttribute("Admin officer changes judge")]
         [NUnit.Framework.CategoryAttribute("smoketest")]
         [NUnit.Framework.CategoryAttribute("VIH-3743")]
-        [NUnit.Framework.CategoryAttribute("001SauceLab_Test")]
         public virtual void AdminOfficerChangesJudge()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Admin officer changes judge", null, new string[] {
                         "smoketest",
-                        "VIH-3743",
-                        "001SauceLab_Test"});
+                        "VIH-3743"});
 #line 18
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
