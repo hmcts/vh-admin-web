@@ -31,10 +31,10 @@ namespace AdminWebsite.AcceptanceTests.Steps
             expectedResult.ToLower().Should().Contain(actualResult.ToLower());
         }
         [When(@"admin user returns to dashboard")]
-        public void WhenAdminUserReturnsToBookingList()
+        public void BookAnotherHearing()
         {
-            _bookingConfirmation.ReturnToDashboard();
-            _bookingConfirmation.PageUrl(PageUri.DashboardPage);
+            _bookingConfirmation.BookAnotherHearing();
+            _bookingConfirmation.PageUrl(PageUri.HearingDetailsPage);
         }
     }
 }
