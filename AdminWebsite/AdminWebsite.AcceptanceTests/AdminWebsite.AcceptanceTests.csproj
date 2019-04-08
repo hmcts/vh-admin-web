@@ -100,9 +100,6 @@
     <None Update="parameters.runsettings">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Features\CreateHearing.feature">
-      <Generator></Generator>
-    </None>
     <None Update="Features\Login.feature">
       <Generator></Generator>
     </None>
