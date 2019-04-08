@@ -76,7 +76,7 @@ namespace AdminWebsite.AcceptanceTests.Features
         [NUnit.Framework.CategoryAttribute("smoketest")]
         [NUnit.Framework.TestCaseAttribute("Case Admin", null)]
         [NUnit.Framework.TestCaseAttribute("VhOfficerCivilMoneyclaims", null)]
-        public virtual void AdminOfficerViewsBookingDetails(string user, string[] exampleTags)
+        public virtual void AdminOfficerViewsBookingDetails(string admin, string[] exampleTags)
         {
             string[] @__tags = new string[] {
                     "smoketest"};
@@ -89,20 +89,12 @@ namespace AdminWebsite.AcceptanceTests.Features
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 8
- testRunner.Given("Admin user is on microsoft login page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.Given(string.Format("hearing is booked by {0}", admin), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 9
- testRunner.And(string.Format("{0} logs into Vh-Admin website", user), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.When("admin user returns to dashboard", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 10
- testRunner.And("user is on Summary page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 11
- testRunner.When("user submit booking", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 12
- testRunner.And("hearing is booked", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 13
- testRunner.And("admin user returns to dashboard", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 14
  testRunner.Then("admin user can view booking list", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 15
+#line 11
  testRunner.And("expected details should be populated", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             this.ScenarioCleanup();
@@ -115,32 +107,20 @@ this.ScenarioInitialize(scenarioInfo);
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Admin officer changes judge", null, new string[] {
                         "smoketest"});
-#line 22
+#line 18
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
-#line 23
- testRunner.Given("Admin user is on microsoft login page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 24
- testRunner.And("Case Admin logs into Vh-Admin website", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 25
- testRunner.And("user is on Summary page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 26
- testRunner.When("user submit booking", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 27
- testRunner.And("hearing is booked", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 28
- testRunner.And("admin user returns to dashboard", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 29
- testRunner.And("admin user tries to amend booking", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 30
+#line 19
+ testRunner.Given("Case Admin tries to amend booking", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 20
  testRunner.When("user navigates to add judge page to make changes", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 31
+#line 21
  testRunner.And("hearing booking is assigned to a different judge", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 32
+#line 22
  testRunner.And("user proceeds to summary page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 33
+#line 23
  testRunner.Then("inputted values should be displayed as expected on summary page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 34
+#line 24
  testRunner.And("amended values should be saved", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             this.ScenarioCleanup();
@@ -151,26 +131,14 @@ this.ScenarioInitialize(scenarioInfo);
         public virtual void ParticipantIsRemovedFromBookedHearing()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Participant is removed from booked hearing", null, ((string[])(null)));
-#line 36
+#line 26
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
-#line 37
- testRunner.Given("Admin user is on microsoft login page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 38
- testRunner.And("Case Admin logs into Vh-Admin website", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 39
- testRunner.And("user is on Summary page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 40
- testRunner.When("user submit booking", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 41
- testRunner.And("hearing is booked", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 42
- testRunner.And("admin user returns to dashboard", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 43
- testRunner.And("admin user tries to amend booking", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 44
- testRunner.And("user removes participant on summary page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 45
+#line 27
+ testRunner.Given("Case Admin tries to amend booking", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 28
+ testRunner.When("user removes participant on summary page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 29
  testRunner.Then("participant should be removed from the list", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -181,26 +149,14 @@ this.ScenarioInitialize(scenarioInfo);
         public virtual void DisabledFieldsWhenAmendingParticipantDetails()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Disabled fields when amending participant details", null, ((string[])(null)));
-#line 47
+#line 31
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
-#line 48
- testRunner.Given("Admin user is on microsoft login page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 49
- testRunner.And("Case Admin logs into Vh-Admin website", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 50
- testRunner.And("user is on Summary page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 51
- testRunner.When("user submit booking", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 52
- testRunner.And("hearing is booked", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 53
- testRunner.And("admin user returns to dashboard", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 54
- testRunner.And("admin user tries to amend booking", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 55
+#line 32
+ testRunner.Given("Case Admin tries to amend booking", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 33
  testRunner.When("user navigates to add participants page to make changes", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 56
+#line 34
  testRunner.Then("mandatory fields should be disabled", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -208,44 +164,23 @@ this.ScenarioInitialize(scenarioInfo);
         
         [NUnit.Framework.TestAttribute()]
         [NUnit.Framework.DescriptionAttribute("Admin amends hearing details")]
-        [NUnit.Framework.CategoryAttribute("002_WIP")]
-        [NUnit.Framework.TestCaseAttribute("Case Admin", null)]
-        [NUnit.Framework.TestCaseAttribute("CaseAdminFinRemedyCivilMoneyClaims", null)]
-        public virtual void AdminAmendsHearingDetails(string user, string[] exampleTags)
+        public virtual void AdminAmendsHearingDetails()
         {
-            string[] @__tags = new string[] {
-                    "002_WIP"};
-            if ((exampleTags != null))
-            {
-                @__tags = System.Linq.Enumerable.ToArray(System.Linq.Enumerable.Concat(@__tags, exampleTags));
-            }
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Admin amends hearing details", null, @__tags);
-#line 59
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Admin amends hearing details", null, ((string[])(null)));
+#line 36
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
-#line 60
- testRunner.Given("Admin user is on microsoft login page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 61
- testRunner.And(string.Format("{0} logs into Vh-Admin website", user), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 62
- testRunner.And("user is on Summary page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 63
- testRunner.When("user submit booking", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 64
- testRunner.And("hearing is booked", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 65
- testRunner.And("admin user returns to dashboard", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 66
- testRunner.And("admin user tries to amend booking", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 67
+#line 37
+ testRunner.Given("Case Admin tries to amend booking", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 38
  testRunner.When("user navigates to hearing details page to make changes", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 68
- testRunner.And(string.Format("{0} updates hearing booking details", user), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 69
+#line 39
+ testRunner.And("Case Admin updates hearing booking details", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 40
  testRunner.And("user proceeds to summary page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 70
+#line 41
  testRunner.Then("inputted values should be displayed as expected on summary page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 71
+#line 42
  testRunner.And("amended values should be saved", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             this.ScenarioCleanup();
@@ -256,32 +191,20 @@ this.ScenarioInitialize(scenarioInfo);
         public virtual void CaseAdminAmendsMoreInformation()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Case Admin amends more information", null, ((string[])(null)));
-#line 77
+#line 44
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
-#line 78
- testRunner.Given("Admin user is on microsoft login page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 79
- testRunner.And("Case Admin logs into Vh-Admin website", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 80
- testRunner.And("user is on Summary page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 81
- testRunner.When("user submit booking", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 82
- testRunner.And("hearing is booked", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 83
- testRunner.And("admin user returns to dashboard", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 84
- testRunner.And("admin user tries to amend booking", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 85
+#line 45
+ testRunner.Given("Case Admin tries to amend booking", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 46
  testRunner.When("user navigates to more information page to make changes", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 86
+#line 47
  testRunner.And("more information detail is updated", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 87
+#line 48
  testRunner.And("user proceeds to summary page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 88
+#line 49
  testRunner.Then("inputted values should be displayed as expected on summary page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 89
+#line 50
  testRunner.And("amended values should be saved", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             this.ScenarioCleanup();
@@ -289,35 +212,25 @@ this.ScenarioInitialize(scenarioInfo);
         
         [NUnit.Framework.TestAttribute()]
         [NUnit.Framework.DescriptionAttribute("Case Admin amends hearing schedule")]
+        [NUnit.Framework.CategoryAttribute("bug")]
         public virtual void CaseAdminAmendsHearingSchedule()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Case Admin amends hearing schedule", null, ((string[])(null)));
-#line 91
- this.ScenarioInitialize(scenarioInfo);
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Case Admin amends hearing schedule", null, new string[] {
+                        "bug"});
+#line 53
+this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
-#line 92
- testRunner.Given("Admin user is on microsoft login page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 93
- testRunner.And("Case Admin logs into Vh-Admin website", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 94
- testRunner.And("user is on Summary page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 95
- testRunner.When("user submit booking", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 96
- testRunner.And("hearing is booked", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 97
- testRunner.And("admin user returns to dashboard", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 98
- testRunner.And("admin user tries to amend booking", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 99
+#line 54
+ testRunner.Given("Case Admin tries to amend booking", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 55
  testRunner.When("user navigates to hearing schedule page to make changes", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 100
+#line 56
  testRunner.And("hearing schedule is updated", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 101
+#line 57
  testRunner.And("user proceeds to summary page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 102
+#line 58
  testRunner.Then("inputted values should be displayed as expected on summary page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 103
+#line 59
  testRunner.And("amended values should be saved", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             this.ScenarioCleanup();

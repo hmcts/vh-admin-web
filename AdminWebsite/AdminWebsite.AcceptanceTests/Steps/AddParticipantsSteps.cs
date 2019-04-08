@@ -118,7 +118,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _addParticipant.ParticipantPageErrorMessages().Should().Contain(TestData.AddParticipants.PartyErrorMessage);
             _addParticipant.ParticipantPageErrorMessages().Should().Contain(TestData.AddParticipants.RoleErrorMessage);
         }
-
+        [When(@"admin adds participant details")]
         [When(@"use adds participant")]
         public void WhenUseAddsParticipant()
         {
@@ -160,7 +160,11 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [Then(@"mandatory fields should be disabled")]
         public void ThenMandatoryFieldsShouldBeDisabled()
         {
-            _addParticipant.DisabledFields().Should().Be(5);
+            _addParticipant.PartyField().Should().Be("true");
+            _addParticipant.RoleField().Should().Be("true");
+            _addParticipant.Email().Should().Be("true");
+            _addParticipant.Firstname().Should().Be("true");
+            _addParticipant.Lastname().Should().Be("true");
         }
     }
 }

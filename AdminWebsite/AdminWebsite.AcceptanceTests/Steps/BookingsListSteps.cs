@@ -64,8 +64,8 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [Then(@"amended values should be saved")]
         public void AmendedValuesShouldBeSaved()
         {
-            _bookingsList.NextButton();
-            _bookingsList.PageUrl(PageUri.BookingListPage);
+            _bookingsList.BookButton();
+            _bookingsList.PageUrl(PageUri.BookingDetailsPage);
             
             switch (_bookingsList.GetItems("RelevantPage"))
             {
@@ -77,7 +77,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
                     _bookingsList.CaseNumber().Should().Be(TestData.HearingDetails.CaseNumber1);
                     break;
                 case PageUri.HearingSchedulePage:
-                    _bookingsList.HearingDate().Should().Be(_bookingsList.GetItems("HearingDate"));
+                    _bookingsList.HearingDate().ToLower().Should().Be(_bookingsList.GetItems("HearingDate"));
                     _bookingsList.CourtAddress().Should().Be($"{TestData.HearingSchedule.CourtAddress.ToList().Last()} {TestData.HearingSchedule.Room}");
                     _bookingsList.HearingDuration().Should().Be("30 minutes");
                     break;                

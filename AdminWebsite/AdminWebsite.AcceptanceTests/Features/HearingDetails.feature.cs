@@ -84,12 +84,10 @@ namespace AdminWebsite.AcceptanceTests.Features
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 8
- testRunner.Given("Admin user is on microsoft login page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.Given("Case Admin logs into Vh-Admin website", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 9
- testRunner.And("Case Admin logs into Vh-Admin website", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 10
  testRunner.And("user is on hearing details page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 11
+#line 10
  testRunner.Then("case type dropdown should not be populated", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -104,16 +102,14 @@ this.ScenarioInitialize(scenarioInfo);
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Display dropdown on hearing details page for more than one case type", null, new string[] {
                         "VIH-3582",
                         "smoketest"});
-#line 14
+#line 13
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
+#line 14
+ testRunner.Given("CaseAdminFinRemedyCivilMoneyClaims logs into Vh-Admin website", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 15
- testRunner.Given("Admin user is on microsoft login page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 16
- testRunner.And("CaseAdminFinRemedyCivilMoneyClaims logs into Vh-Admin website", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 17
  testRunner.And("user is on hearing details page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 18
+#line 16
  testRunner.Then("case type dropdown should be populated", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();

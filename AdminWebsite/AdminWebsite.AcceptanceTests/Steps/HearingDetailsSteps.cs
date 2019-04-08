@@ -99,6 +99,8 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [When(@"(.*) updates hearing booking details")]
         public void WhenCaseAdminUpdatesHearingBookingDetails(string user)
         {
+            InputCaseNumber(TestData.HearingDetails.CaseNumber1);
+            InputCaseName(TestData.HearingDetails.CaseName1);
             switch (user)
             {
                 case "Case Admin": _hearingDetails.DisabledFields().Should().Be(1);
@@ -106,8 +108,6 @@ namespace AdminWebsite.AcceptanceTests.Steps
                 case "CaseAdminFinRemedyCivilMoneyClaims": _hearingDetails.DisabledFields().Should().Be(2);
                     break;
             }
-            InputCaseNumber(TestData.HearingDetails.CaseNumber1);
-            InputCaseName(TestData.HearingDetails.CaseName1);
         }
     }
 }
