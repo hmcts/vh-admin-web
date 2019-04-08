@@ -123,7 +123,12 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public void ClickBreadcrumb(string breadcrumb) => SelectOption(_breadcrumbs, breadcrumb);
         public void AcceptBrowserAlert() => _browserContext.AcceptAlert();
         public void DashBoard() => ClickElement(By.Id("topItem0"));
-        public void BookingsList() => ClickElement(By.Id("topItem1"));
+        public void BookingsList()
+        {
+            var element = By.Id("topItem1");
+            _browserContext.Retry(() => GetElementText(element).Should().BeNullOrEmpty(), 2);
+            ClickElement(element);
+        }
         public void AddItems<T>(string key, T value) => _browserContext.Items.AddOrUpdate(key, value);
         public dynamic GetItems(string key) => _browserContext.Items.Get(key);
         public string GetParticipantDetails() => GetElementText(By.XPath("//*[contains(@class, 'vhtable-header')]"));
