@@ -11,6 +11,7 @@ import { map } from 'rxjs/operators';
 import { HearingModel } from '../../common/model/hearing.model';
 import { PageUrls } from '../../shared/page-url.constants';
 import { BookingPersistService } from '../../services/bookings-persist.service';
+import { ErrorService } from 'src/app/services/error.service';
 
 @Component({
   selector: 'app-booking-details',
@@ -26,7 +27,6 @@ export class BookingDetailsComponent implements OnInit {
   isVhOfficerAdmin = false;
   showCancelBooking: boolean;
   hearingId: string;
-  errors: any;
   updateBookingStatusRequest: UpdateBookingStatusRequest;
 
   constructor(
@@ -35,7 +35,8 @@ export class BookingDetailsComponent implements OnInit {
     private userIdentityService: UserIdentityService,
     private router: Router,
     private bookingService: BookingService,
-    private bookingPersistService: BookingPersistService) {
+    private bookingPersistService: BookingPersistService,
+    private errorService: ErrorService) {
     this.showCancelBooking = false;
   }
 
@@ -103,13 +104,13 @@ export class BookingDetailsComponent implements OnInit {
                 this.mapHearing(newData);
               },
               error => {
-                this.errors = error;
+                this.errorService.handleError(error);
               }
             );
         },
         error => {
           this.showCancelBooking = false;
-          this.errors = error;
+          this.errorService.handleError(error);
         }
       );
   }

@@ -32,7 +32,7 @@ export class BookingsDetailsModel {
     this.LastEditDate = lastEditDate;
     this.Selected = false;
     this.Status = status;
-    this.Cancelled = this.Status === 'Cancelled';
+    this.Cancelled = false;
   }
 
   HearingId: string;
@@ -60,5 +60,9 @@ export class BookingsDetailsModel {
     const strHours = hours > 0 ? `${hours} ${wordHours}` : '';
     const wordMin = min > 0 ? `${min} minutes` : '';
     return `${strHours} ${wordMin}`.trim();
+  }
+
+  get isCancelled(): boolean {
+    return this.Status === 'Cancelled';
   }
 }

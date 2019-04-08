@@ -7,7 +7,7 @@ import { BookingDetailsComponent } from './booking-details.component';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { BookingDetailsService } from '../../services/booking-details.service';
 import { BookingService } from '../../services/booking.service';
-import { HearingDetailsResponse } from '../../services/clients/api-client';
+import { HearingDetailsResponse, UpdateBookingStatusRequest, UpdateBookingStatusRequestStatus } from '../../services/clients/api-client';
 import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
 import { ParticipantDetailsModel } from '../../common/model/participant-details.model';
 import { of } from 'rxjs';
@@ -17,6 +17,7 @@ import { PageUrls } from '../../shared/page-url.constants';
 import { CancelBookingPopupComponent } from 'src/app/popups/cancel-booking-popup/cancel-booking-popup.component';
 import { BookingPersistService } from '../../services/bookings-persist.service';
 import { UserIdentityService } from '../../services/user-identity.service';
+import { ErrorService } from 'src/app/services/error.service';
 
 let component: BookingDetailsComponent;
 let fixture: ComponentFixture<BookingDetailsComponent>;
@@ -83,6 +84,10 @@ hearingModel.hearing_id = '44';
 hearingModel.cases = [caseModel];
 hearingModel.scheduled_duration = 120;
 
+const updateBookingStatusRequest = new UpdateBookingStatusRequest();
+updateBookingStatusRequest.status = UpdateBookingStatusRequestStatus.Cancelled;
+const exisitingId = 'f36e2912-521f-475a-b70c-6be87d0a992b';
+
 class BookingDetailsServiceMock {
   mapBooking(response) {
     return new BookingDetailsTestData().getBookingsDetailsModel();
@@ -93,19 +98,21 @@ class BookingDetailsServiceMock {
 }
 
 describe('BookingDetailsComponent', () => {
-  videoHearingServiceSpy = jasmine.createSpyObj('VodeoHearingService',
-    ['getHearingById', 'saveHearing', 'mapHearingDetailsResponseToHearingModel', 'updateHearingRequest', 'updateBookingStatus']);
+  videoHearingServiceSpy = jasmine.createSpyObj('VideoHearingService',
+    ['getHearingById', 'saveHearing', 'mapHearingDetailsResponseToHearingModel',
+      'updateHearingRequest', 'updateBookingStatus']);
   routerSpy = jasmine.createSpyObj('Router', ['navigate']);
   bookingServiceSpy = jasmine.createSpyObj('BookingService', ['setEditMode',
     'resetEditMode', 'setExistingCaseType', 'removeExistingCaseType']);
   bookingPersistServiceSpy = jasmine.createSpyObj('BookingPersistService', ['selectedHearingId']);
   userIdentityServiceSpy = jasmine.createSpyObj('UserIdentityService', ['getUserInformation']);
+  const errorService: jasmine.SpyObj<ErrorService> = jasmine.createSpyObj('ErrorService', ['handleError']);
 
   beforeEach(async(() => {
     videoHearingServiceSpy.getHearingById.and.returnValue(of(hearingResponse));
+    videoHearingServiceSpy.updateBookingStatus.and.returnValue(of());
     videoHearingServiceSpy.mapHearingDetailsResponseToHearingModel.and.returnValue(hearingModel);
     bookingPersistServiceSpy.selectedHearingId.and.returnValue('44');
-    videoHearingServiceSpy.updateBookingStatus.and.returnValue(of());
     userIdentityServiceSpy.getUserInformation.and.returnValue(of(true));
 
     TestBed.configureTestingModule({
@@ -116,12 +123,14 @@ describe('BookingDetailsComponent', () => {
         CancelBookingPopupComponent
       ],
       imports: [HttpClientModule],
-      providers: [{ provide: VideoHearingsService, useValue: videoHearingServiceSpy },
-      { provide: BookingDetailsService, useClass: BookingDetailsServiceMock },
-      { provide: Router, useValue: routerSpy },
-      { provide: BookingService, useValue: bookingServiceSpy },
-      { provide: BookingPersistService, useValue: bookingPersistServiceSpy },
-      { provide: UserIdentityService, useValue: userIdentityServiceSpy },
+      providers: [
+        { provide: VideoHearingsService, useValue: videoHearingServiceSpy },
+        { provide: BookingDetailsService, useClass: BookingDetailsServiceMock },
+        { provide: Router, useValue: routerSpy },
+        { provide: BookingService, useValue: bookingServiceSpy },
+        { provide: BookingPersistService, useValue: bookingPersistServiceSpy },
+        { provide: UserIdentityService, useValue: userIdentityServiceSpy },
+        { provide: ErrorService, useValue: errorService },
       ]
     }).compileComponents();
     fixture = TestBed.createComponent(BookingDetailsComponent);
@@ -178,7 +187,9 @@ describe('BookingDetailsComponent', () => {
     fixture.detectChanges();
     component.cancelBooking();
     expect(component.showCancelBooking).toBeFalsy();
-    expect(videoHearingServiceSpy.updateBookingStatus).toHaveBeenCalled();
+    console.log(videoHearingServiceSpy);
+    expect(videoHearingServiceSpy.updateBookingStatus)
+      .toHaveBeenCalledWith(bookingPersistServiceSpy.selectedHearingId, updateBookingStatusRequest);
   });
   it('should show pop up if the cancel button was clicked', () => {
     component.cancelHearing();
