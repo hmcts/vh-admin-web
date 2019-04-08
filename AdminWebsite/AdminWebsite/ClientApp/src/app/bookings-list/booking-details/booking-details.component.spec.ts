@@ -186,6 +186,9 @@ describe('BookingDetailsComponent', () => {
     expect(component.showCancelBooking).toBeTruthy();
   });
   it('should hide pop up if the keep booking button was clicked', () => {
+    component.cancelHearing();
+    fixture.detectChanges();
+    expect(component.showCancelBooking).toBeTruthy();
     component.keepBooking();
     fixture.detectChanges();
     expect(component.showCancelBooking).toBeFalsy();

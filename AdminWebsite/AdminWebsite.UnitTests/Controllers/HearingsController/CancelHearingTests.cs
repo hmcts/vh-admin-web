@@ -62,7 +62,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         public async Task should_return_not_found_if_invalid_hearing_id()
         {
             GivenApiThrowsExceptionOnCancel(HttpStatusCode.NotFound);
-
             var result = await _controller.UpdateBookingStatus(_guid, _updateBookingStatusRequest);
             var notFoundResult = (NotFoundObjectResult) result;
             notFoundResult.StatusCode.Should().Be(404);
