@@ -124,10 +124,10 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public void AcceptBrowserAlert() => _browserContext.AcceptAlert();
         public void DashBoard() => ClickElement(By.Id("topItem0"));
         public void BookingsList()
-        {
-            var element = _browserContext.NgDriver.FindElement(By.Id("topItem1"));
+        {            
             _browserContext.Retry(() =>
             {
+                var element = _browserContext.NgDriver.FindElement(By.Id("topItem1"));
                 element.Click();
                 element.GetAttribute("class").Should().Contain("active");
             }, 3);
