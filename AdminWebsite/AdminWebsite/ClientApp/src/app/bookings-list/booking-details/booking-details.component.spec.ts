@@ -190,6 +190,8 @@ describe('BookingDetailsComponent', () => {
     console.log(videoHearingServiceSpy);
     expect(videoHearingServiceSpy.updateBookingStatus)
       .toHaveBeenCalledWith(bookingPersistServiceSpy.selectedHearingId, updateBookingStatusRequest);
+    expect(videoHearingServiceSpy.getHearingById)
+      .toHaveBeenCalled();
   });
   it('should show pop up if the cancel button was clicked', () => {
     component.cancelHearing();
