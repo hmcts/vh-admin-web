@@ -7,11 +7,11 @@
     <h1 class="govuk-heading-l" id="hearingNumber">{{hearing.HearingCaseNumber}} </h1>
   </div>
   <div class="govuk-grid-row">
-      <div class="govuk-grid-column-one-third">
+    <div class="govuk-grid-column-one-third">
       <div *ngIf="hearing.Cancelled" class="vh-cancelled-booking">{{ hearing.Status }}</div>
     </div>
   </div>
-  
+
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-one-half">
       <app-hearing-details [hearing]="hearing"></app-hearing-details>
@@ -23,7 +23,8 @@
       </div>
     </div>
     <div class="govuk-grid-column-one-half vh-top">
-      <app-booking-participant-list [participants]="participants" [judges]="judges" [vh_officer_admin]="isVhOfficerAdmin">
+      <app-booking-participant-list [participants]="participants" [judges]="judges"
+        [vh_officer_admin]="isVhOfficerAdmin">
       </app-booking-participant-list>
     </div>
   </div>

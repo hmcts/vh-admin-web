@@ -32,7 +32,7 @@ export class BookingsDetailsModel {
     this.LastEditDate = lastEditDate;
     this.Selected = false;
     this.Status = status;
-    this.Cancelled = false;
+    this.Cancelled = this.Status === 'Cancelled';
   }
 
   HearingId: string;
@@ -62,7 +62,7 @@ export class BookingsDetailsModel {
     return `${strHours} ${wordMin}`.trim();
   }
 
-  get isCancelled(): boolean {
+  public get isCancelled(): boolean {
     return this.Status === 'Cancelled';
   }
 }
