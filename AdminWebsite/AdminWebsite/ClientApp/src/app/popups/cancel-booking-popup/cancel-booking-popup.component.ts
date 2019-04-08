@@ -2,8 +2,7 @@ import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-cancel-booking-popup',
-  templateUrl: './cancel-booking-popup.component.html',
-  styleUrls: ['./cancel-booking-popup.component.css']
+  templateUrl: './cancel-booking-popup.component.html'
 })
 export class CancelBookingPopupComponent implements OnInit {
   @Output() cancelBooking: EventEmitter<any> = new EventEmitter<any>();
