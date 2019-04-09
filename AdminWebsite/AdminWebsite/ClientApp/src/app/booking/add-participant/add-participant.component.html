@@ -158,7 +158,7 @@
 
         </div>
         <div *ngIf="showAddress">
-          <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':displayNameInvalid}">
+          <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':houseNumberInvalid}">
 
             <legend id="display-name-error" *ngIf="houseNumberInvalid">
               <span class="govuk-error-message">
@@ -171,7 +171,7 @@
             <input id="houseNumber" formControlName="houseNumber" class="govuk-input govuk-input--width-20" type="text" />
 
           </div>
-          <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':displayNameInvalid}">
+          <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':streetInvalid}">
 
             <legend id="display-name-error" *ngIf="streetInvalid">
               <span class="govuk-error-message">
@@ -184,7 +184,7 @@
             <input id="street" formControlName="street" class="govuk-input govuk-input--width-20" type="text" />
 
           </div>
-          <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':displayNameInvalid}">
+          <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':cityInvalid}">
 
             <legend id="display-name-error" *ngIf="cityInvalid">
               <span class="govuk-error-message">
@@ -197,7 +197,7 @@
             <input id="city" formControlName="city" class="govuk-input govuk-input--width-20" type="text" />
 
           </div>
-          <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':displayNameInvalid}">
+          <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':countyInvalid}">
 
             <legend id="display-name-error" *ngIf="countyInvalid">
               <span class="govuk-error-message">
@@ -210,7 +210,7 @@
             <input id="county" formControlName="county" class="govuk-input govuk-input--width-20" type="text" />
 
           </div>
-          <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':displayNameInvalid}">
+          <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':postcodeInvalid}">
 
             <legend id="post-code-error" *ngIf="postcodeInvalid">
               <span class="govuk-error-message">
