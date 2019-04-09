@@ -128,7 +128,7 @@ namespace AdminWebsite.AcceptanceTests.Pages
             _browserContext.Retry(() =>
             {
                 var element = _browserContext.NgDriver.FindElement(By.Id("topItem1"));
-                element.Click();
+                ExecuteScript("document.getElementById('topItem1').click()");
                 element.GetAttribute("class").Should().Contain("active");
             }, 3);
         }
