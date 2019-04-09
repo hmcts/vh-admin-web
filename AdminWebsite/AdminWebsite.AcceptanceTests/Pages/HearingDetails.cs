@@ -18,5 +18,6 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public void HearingType() => SelectOption(CommonLocator.List("hearingType"));
         public IEnumerable<IWebElement> CaseTypesList() => GetListOfElements(CommonLocator.List("caseType"));
         public void CaseTypes(string caseType) => SelectOption(CommonLocator.List("caseType"), caseType);
+        public int DisabledHearingDetailsFields() => GetListOfElements(By.XPath("//*[@disabled='true']")).ToList().Count;
     }
 }
