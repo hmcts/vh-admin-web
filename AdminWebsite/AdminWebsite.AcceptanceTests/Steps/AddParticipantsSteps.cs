@@ -159,25 +159,16 @@ namespace AdminWebsite.AcceptanceTests.Steps
             InputTelephone(TestData.AddParticipants.Telephone);
             InputDisplayname(TestData.AddParticipants.DisplayName);            
         }
-        //[Then(@"mandatory fields should be disabled")]
-        //public void ThenMandatoryFieldsShouldBeDisabled()
-        //{
-        //    _addParticipant.PartyField().Should().Be("true");
-        //    _addParticipant.RoleField().Should().Be("true");
-        //    _addParticipant.Email().Should().Be("true");
-        //    _addParticipant.Firstname().Should().Be("true");
-        //    _addParticipant.Lastname().Should().Be("true");
-        //    Address();
-        //}
         [When(@"participant details is updated")]
         public void WhenParticipantDetailsIsUpdated()
         {
+            if (!_addParticipant.RoleValue().Contains("Solicitor"))
+                Address();
             _addParticipant.PartyField().Should().Be("true");
             _addParticipant.RoleField().Should().Be("true");
             _addParticipant.Email().Should().Be("true");
             _addParticipant.Firstname().Should().Be("true");
-            _addParticipant.Lastname().Should().Be("true");
-            Address();
+            _addParticipant.Lastname().Should().Be("true");            
         }
         private void Address()
         {

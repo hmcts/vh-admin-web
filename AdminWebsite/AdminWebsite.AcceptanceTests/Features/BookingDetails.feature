@@ -3,7 +3,6 @@ As a VH Officer/Case Admin
 I want to view or amend the details of a video hearing booking
 So that I can ensure any changes in details can be reflected in the VH system
 
-
 @smoketest @VIH-3461
 Scenario: Case Admin views booking details
 	Given hearing is booked by Case Admin
