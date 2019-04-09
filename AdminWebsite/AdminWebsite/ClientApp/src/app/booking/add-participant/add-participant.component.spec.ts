@@ -255,6 +255,14 @@ describe('AddParticipantComponent', () => {
     expect(component.participantDetails.case_role_name).toBeTruthy();
     expect(component.setupHearingRoles).toHaveBeenCalled();
   });
+  it('should title be selected', () => {
+    component.participantForm.get('title').setValue('Mr');
+    fixture.detectChanges();
+
+    component.titleSelected();
+
+    expect(component.isTitleSelected).toBeTruthy();
+  });
   it('should run getParticipant method and reset undefined party and role for new added participant', () => {
     participant.case_role_name = undefined;
     participant.hearing_role_name = undefined;
