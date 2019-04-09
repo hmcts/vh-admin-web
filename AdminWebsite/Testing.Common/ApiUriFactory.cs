@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AdminWebsite.BookingsAPI.Client;
+using System;
 
 namespace Testing.Common
 {
@@ -30,7 +31,8 @@ namespace Testing.Common
     {
         private string ApiRoot => "api/hearings";
         public string BookNewHearing => ApiRoot;
-        public string UpdateHearingStatus(Guid hearingId) => $"{ApiRoot}/{hearingId}";
+        public string UpdateHearingStatus(Guid hearingId, 
+            UpdateBookingStatusRequest updateBookingStatusRequest) => $"{ApiRoot}/{hearingId}";
     }
 
     public class ReferenceEndpoints

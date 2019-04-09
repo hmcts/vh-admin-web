@@ -182,7 +182,7 @@ describe('BookingDetailsComponent', () => {
     expect(bookingServiceSpy.resetEditMode).toHaveBeenCalled();
     expect(routerSpy.navigate).toHaveBeenCalledWith([PageUrls.Summary]);
   });
-  it('should cancel booking', () => {
+  it('should update hearing status when cancel booking called', () => {
     component.ngOnInit();
     fixture.detectChanges();
     component.cancelBooking();
