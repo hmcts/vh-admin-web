@@ -248,6 +248,44 @@ describe('AddParticipantComponent', () => {
     component.roleSelected();
     expect(role.valid && component.isRoleSelected).toBeTruthy();
   });
+  it('should run getParticipant method and setup hearings roles for a case role', () => {
+    spyOn(component, 'setupHearingRoles');
+    component.getParticipant(participant);
+
+    expect(component.participantDetails.case_role_name).toBeTruthy();
+    expect(component.setupHearingRoles).toHaveBeenCalled();
+  });
+  it('should run getParticipant method and reset undefined party and role for new added participant', () => {
+    participant.case_role_name = undefined;
+    participant.hearing_role_name = undefined;
+    component.getParticipant(participant);
+
+    expect(component.participantDetails.case_role_name).toBeTruthy();
+    expect(component.participantDetails.case_role_name).toEqual('Please Select');
+    expect(component.participantDetails.hearing_role_name).toEqual('Please Select');
+  });
+  it('should run getParticipant method and reset empty party and role for new added participant', () => {
+    participant.case_role_name = '';
+    participant.hearing_role_name = '';
+    component.isPartySelected = true;
+    component.isRoleSelected = true;
+    component.getParticipant(participant);
+
+    expect(component.participantDetails.case_role_name).toBeTruthy();
+    expect(component.participantDetails.case_role_name).toEqual('Please Select');
+    expect(component.participantDetails.hearing_role_name).toEqual('Please Select');
+  });
+  it('should run getParticipant method and reset empty party and role for new added participant', () => {
+    participant.case_role_name = '';
+    participant.hearing_role_name = '';
+    component.isPartySelected = true;
+    component.isRoleSelected = true;
+    component.getParticipant(participant);
+
+    expect(component.participantDetails.case_role_name).toBeTruthy();
+    expect(component.participantDetails.case_role_name).toEqual('Please Select');
+    expect(component.participantDetails.hearing_role_name).toEqual('Please Select');
+  });
   it('should set participant details values from existing participant or person data.', () => {
     participant.id = '12345';
 
@@ -568,16 +606,15 @@ describe('AddParticipantComponent edit mode', () => {
     fixture.detectChanges();
     component.searchEmail.email = participant.email;
     component.participantForm.setValue({
-      party: participant.case_role_name,
-      role: participant.hearing_role_name,
-      title: participant.title,
+      party: 'Claimant',
+      role: 'Solicitor',
+      title: 'Ms',
       firstName: participant.first_name,
       lastName: participant.last_name,
       phone: participant.phone,
       displayName: participant.display_name,
       companyName: participant.company,
     });
-
     component.next();
 
     expect(component.showDetails).toBeFalsy();
