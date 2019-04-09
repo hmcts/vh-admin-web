@@ -299,8 +299,6 @@ describe('Video hearing service', () => {
       const expectedParticipant = hearingModel.participants[0];
       const expectedCase = hearingModel.cases[0];
       const actualCase = editHearingRequest.case;
-      
-
       expect(editHearingRequest.hearing_room_name).toEqual(hearingModel.court_room);
       expect(editHearingRequest.hearing_venue_name).toEqual(hearingModel.court_name);
       expect(editHearingRequest.other_information).toEqual(hearingModel.other_information);
