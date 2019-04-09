@@ -18,13 +18,13 @@ namespace AdminWebsite.AcceptanceTests.Steps
         private readonly AddParticipantsSteps _addParticipantsSteps;
         private readonly OtherInformationSteps _otherInformationStep;
         private readonly SummarySteps _summarySteps;
-        private readonly BookingsListSteps _bookingsListSteps;
+        private readonly BookingDetailsSteps _bookingsListSteps;
         private readonly BookingConfirmationStep _bookingConfirmationStep;
         public CommonSteps(Common common, DashboardSteps dashboardStep, 
             HearingDetailsSteps hearingDetailsSteps, LoginSteps loginStep,
             HearingScheduleSteps hearingScheduleSteps, AssignJudgeSteps assignJudgeStep, 
             AddParticipantsSteps addParticipantsSteps, OtherInformationSteps otherInformationStep,
-            SummarySteps summarySteps, BookingsListSteps bookingsListSteps, BookingConfirmationStep bookingConfirmationStep)
+            SummarySteps summarySteps, BookingDetailsSteps bookingsListSteps, BookingConfirmationStep bookingConfirmationStep)
         {
             _common = common;
             _dashboardStep = dashboardStep;

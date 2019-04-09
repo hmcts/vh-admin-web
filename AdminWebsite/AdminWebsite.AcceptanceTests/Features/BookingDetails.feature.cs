@@ -24,7 +24,7 @@ namespace AdminWebsite.AcceptanceTests.Features
         
         private TechTalk.SpecFlow.ITestRunner testRunner;
         
-#line 1 "BookingsList.feature"
+#line 1 "BookingDetails.feature"
 #line hidden
         
         [NUnit.Framework.OneTimeSetUpAttribute()]

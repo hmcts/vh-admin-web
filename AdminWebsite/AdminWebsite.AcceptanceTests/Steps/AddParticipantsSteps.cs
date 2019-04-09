@@ -66,6 +66,8 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [When(@"click add participants button")]
         public void ClickAddParticipantsButton()
         {
+            if (!_addParticipant.RoleValue().Contains("Solicitor"))            
+                Address();            
             _addParticipant.AddParticipantButton();
         }
         [When(@"select a party")]
@@ -165,6 +167,26 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _addParticipant.Email().Should().Be("true");
             _addParticipant.Firstname().Should().Be("true");
             _addParticipant.Lastname().Should().Be("true");
+        }
+        private void Address()
+        {
+            var houseNumber = Faker.RandomNumber.Next().ToString();
+            var street = Faker.Address.StreetAddress();
+            var city = Faker.Address.City();
+            var county = Faker.Address.UkCountry();
+            var postcode = Faker.Address.UkPostCode();
+
+            _addParticipant.AddItems("HouseNumber", houseNumber);
+            _addParticipant.AddItems("Street", street);
+            _addParticipant.AddItems("City", city);
+            _addParticipant.AddItems("County", county);
+            _addParticipant.AddItems("Postcode", postcode);
+
+            _addParticipant.HouseNumber(houseNumber);
+            _addParticipant.Street(street);
+            _addParticipant.City(city);
+            _addParticipant.County(county);
+            _addParticipant.Postcode(postcode);
         }
     }
 }
