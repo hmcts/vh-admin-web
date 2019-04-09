@@ -1,6 +1,7 @@
 export const Constants = {
   BookHearingTitle: 'Book a video hearing',
   PleaseSelect: 'Please Select',
+  Solicitor: 'Solicitor',
   PleaseSelectPattern: '^((?!Please Select).)*$',
   Judge: 'Judge',
   Citizen: 'Citizen',

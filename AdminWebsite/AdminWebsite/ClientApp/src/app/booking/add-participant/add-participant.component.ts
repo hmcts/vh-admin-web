@@ -378,7 +378,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
   roleSelected() {
     this.isRoleSelected = this.role.value !== this.constants.PleaseSelect;
-    if (this.role.value !== 'Solicitor') {
+    if (this.role.value !== this.constants.Solicitor) {
       this.showAddress = true;
 
       this.houseNumber.setValidators([Validators.required]);
