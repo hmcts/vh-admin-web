@@ -436,11 +436,13 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   }
 
   confirmRemoveParticipant() {
-    const participant = this.hearing.participants.find(x => x.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase());
-    this.removerFullName = participant ? `${participant.title} ${participant.first_name} ${participant.last_name}` : '';
-    const anyParticipants = this.hearing.participants.filter(x => !x.is_judge);
-    this.isAnyParticipants = anyParticipants && anyParticipants.length < 2;
-    this.showConfirmationRemoveParticipant = true;
+    if (this.selectedParticipantEmail) {
+      const participant = this.hearing.participants.find(x => x.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase());
+      this.removerFullName = participant ? `${participant.title} ${participant.first_name} ${participant.last_name}` : '';
+      const anyParticipants = this.hearing.participants.filter(x => !x.is_judge);
+      this.isAnyParticipants = anyParticipants && anyParticipants.length < 2;
+      this.showConfirmationRemoveParticipant = true;
+    }
   }
 
   removeParticipant() {

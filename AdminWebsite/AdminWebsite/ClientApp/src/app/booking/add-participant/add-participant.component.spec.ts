@@ -765,14 +765,25 @@ describe('AddParticipantComponent edit mode no participants added', () => {
     console.log('partList', partList);
     expect(partList).toBeDefined();
   }));
-  it('should subscribe for participant select, if no role is defined do not show details', fakeAsync(() => {
+  it('should subscribe for participant list select participant for edit', fakeAsync(() => {
     fixture.detectChanges();
     component.ngOnInit();
     const partList: ParticipantsListComponent = fixture.componentInstance.participantsListComponent;
-
+    partList.editParticipant('test2@test.com');
     partList.selectedParticipant.emit();
     tick(600);
     fixture.detectChanges();
     expect(component.showDetails).toBeFalsy();
+  }));
+  it('should subscribe for participant list remove participant', fakeAsync(() => {
+    fixture.detectChanges();
+    component.ngOnInit();
+    const partList: ParticipantsListComponent = fixture.componentInstance.participantsListComponent;
+    partList.removeParticipant('test2@test.com');
+    component.selectedParticipantEmail = 'test2@test.com';
+    partList.selectedParticipantToRemove.emit();
+    tick(600);
+    fixture.detectChanges();
+    expect(component.showConfirmationRemoveParticipant).toBeTruthy();
   }));
 });
