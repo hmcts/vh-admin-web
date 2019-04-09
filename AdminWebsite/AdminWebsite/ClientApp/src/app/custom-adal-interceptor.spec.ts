@@ -26,17 +26,20 @@ describe('CustomAdalInterceptor', () => {
     expect(service).toBeTruthy();
   }));
 
-  it('should have added cache headers', inject([CustomAdalInterceptor], (service: CustomAdalInterceptor) => {
-    let response: HttpResponse<any>;
-    const next: any = {
-      handle: responseHandle => {
-        response = responseHandle;
-      }
-    };
+  it('should add cache headers to get requests', inject([CustomAdalInterceptor], (service: CustomAdalInterceptor) => {
+    let modifiedRequest: HttpRequest<any> = null;
+    adalInspector.intercept.and.callFake((customRequest: HttpRequest<any>, _: any) => {
+      modifiedRequest = customRequest;
+    });
 
-    const request: HttpRequest<any> = new HttpRequest<any>('GET', 'https://localhost:5400/api/courts');
+    const next: any = {};
+    const request = new HttpRequest<any>('GET', 'url');
     service.intercept(request, next);
-    // expect(response.headers.get("Cache-Control")).toEqual("no-cache");
+
+    expect(modifiedRequest).not.toBeNull();
+    console.log(modifiedRequest.headers);
+    expect(modifiedRequest.headers.get('Cache-Control')).toEqual('no-cache');
+    expect(modifiedRequest.headers.get('Pragma')).toEqual('no-cache');
   }));
 
 });

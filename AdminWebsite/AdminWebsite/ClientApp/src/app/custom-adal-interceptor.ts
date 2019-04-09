@@ -17,8 +17,10 @@ export class CustomAdalInterceptor implements HttpInterceptor {
     }
     if (request.method === 'GET') {
       const customRequest = request.clone({
-        headers: request.headers.set('Cache-Control', 'no-cache')
-          .set('Pragma', 'no-cache')
+        setHeaders: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
       });
       return this.adalInteceptor.intercept(customRequest, next);
     }
