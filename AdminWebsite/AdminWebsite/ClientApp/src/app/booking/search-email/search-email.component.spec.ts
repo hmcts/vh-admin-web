@@ -1,41 +1,45 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { SharedModule } from 'src/app/shared/shared.module';
 
-import { IParticipantRequest } from '../../services/clients/api-client';
+import { PersonResponse } from '../../services/clients/api-client';
 import { SearchService } from '../../services/search.service';
 import { SearchEmailComponent } from './search-email.component';
 import { ParticipantModel } from '../../common/model/participant.model';
+import { By } from '@angular/platform-browser';
 
 describe('SeachEmailComponent', () => {
   let component: SearchEmailComponent;
   let fixture: ComponentFixture<SearchEmailComponent>;
-  const participantList: IParticipantRequest[] = JSON.parse(
+  const participantList: PersonResponse[] = JSON.parse(
     `
     [
       {
         "id": 1,
-        "email": "vb.email1@go.couk",
+        "contact_email": "vb.email1@go.couk",
         "role": "Appellant",
         "title": "Mrs",
-        "firstName": "Alisa",
-        "lastName": "Smith",
-        "phone": "1111222222",
-        "organisationId": 3
+        "first_name": "Alisa",
+        "middle_names":"No",
+        "last_name": "Smith",
+        "photelephone_numberne": "1111222222",
+        "username": "vb.email1@go.couk"
       },
       {
         "id": 2,
-        "email": "vb.email2@go.couk",
+        "contact_email": "vb.email2@go.couk",
         "role": "Appellant",
         "title": "Mrs",
-        "firstName": "Alisa",
-        "lastName": "Smith",
-        "phone": "1111222222",
-        "organisationId": 3
+        "first_name": "Alisa",
+        "middle_names":"No",
+        "last_name": "Smith",
+        "telephone_number": "1111222222",
+        "username": "vb.email2@go.couk"
       }
     ]
     `
   );
+
   const participantModel = new ParticipantModel();
   participantModel.email = 'aa@aa.aa';
   participantModel.first_name = 'Ann';
@@ -50,7 +54,6 @@ describe('SeachEmailComponent', () => {
 
   beforeEach(() => {
     searchServiceSpy = jasmine.createSpyObj<SearchService>('SearchService', ['search']);
-    searchServiceSpy.search.and.returnValue(of(participantList));
 
     TestBed.configureTestingModule({
       declarations: [SearchEmailComponent],
@@ -67,18 +70,18 @@ describe('SeachEmailComponent', () => {
   it('should create participant email search component', async(() => {
     expect(component).toBeTruthy();
   }));
-
-  it('should get search term and email should be equal to term', async(() => {
+  it('should search service return list of person and map it to result list', (done) => {
     searchServiceSpy.search.and.returnValue(of(participantList));
 
+    component.ngOnInit();
     fixture.detectChanges();
-    component.searchTerm.subscribe((term) => {
-      expect(term).toBe('ema');
-    });
-    component.searchTerm.next('ema');
-    expect(component.email).toEqual('ema');
-   // expect(component.results).toBeTruthy();
-  }));
+
+    done();
+
+    expect(component.results).toBeTruthy();
+    expect(component.results.length).toEqual(0);
+  });
+
   it('should validate email', () => {
     component.email = 'email@aa.aa';
     component.validateEmail();
@@ -93,15 +96,15 @@ describe('SeachEmailComponent', () => {
     component.email = 'email@aa.aa';
     component.clearEmail();
     expect(component.email).toEqual('');
+    expect(component.isValidEmail).toBeTruthy();
+    expect(component.notFoundParticipant).toBeFalsy();
   });
   it('should validate input email if email was not found in the list', () => {
     component.email = 'email@aa.aa';
-    spyOn(component.emailChanged, 'emit');
+    fixture.detectChanges();
     component.blurEmail();
     expect(component.isValidEmail).toBeTruthy();
     expect(component.notFoundParticipant).toBeFalsy();
-    expect(component.emailChanged.emit).toHaveBeenCalled();
-
   });
   it('should close drop down on the click outside', () => {
     component.isShowResult = true;
@@ -116,6 +119,59 @@ describe('SeachEmailComponent', () => {
     fixture.detectChanges();
     expect(component.isShowResult).toBeFalsy();
     expect(component.findParticipant.emit).toHaveBeenCalled();
+
+  });
+  it('should disable email address', fakeAsync(() => {
+    fixture.detectChanges();
+
+    const emailEl = fixture.debugElement.query(By.css('#participantEmail'));
+
+    component.setEmailDisabled(true);
+    tick(600);
+    fixture.detectChanges();
+    expect(emailEl.nativeElement.disabled).toBeTruthy();
+  }));
+  it('should enable email address', fakeAsync(() => {
+    fixture.detectChanges();
+    const emailEl = fixture.debugElement.query(By.css('#participantEmail'));
+    component.setEmailDisabled(true);
+    tick(600);
+    fixture.detectChanges();
+    component.setEmailDisabled(false);
+    tick(600);
+    fixture.detectChanges();
+    expect(emailEl.nativeElement.disabled).toBeFalsy();
+  }));
+  it('should show message not found participant for given email', () => {
+    component.results = null;
+    spyOn(component.emailChanged, 'emit');
+    component.blurEmail();
+    fixture.detectChanges();
+
+    expect(component.notFoundParticipant).toBeFalsy();
+    expect(component.emailChanged.emit).toHaveBeenCalled();
+
+  });
+  it('should map PersonResponse to ParticipantModel', () => {
+    const person = new PersonResponse({
+      contact_email: 'aa@aa.aa',
+      first_name: 'Sam',
+      last_name: 'Green',
+      title: 'Ms',
+      middle_names: 'No',
+      telephone_number: '11111111',
+      username: 'aa@aa.aa'
+    });
+
+    const model = component.mapPersonResponseToParticipantModel(person);
+
+    expect(model.email).toEqual(person.contact_email);
+    expect(model.first_name).toEqual(person.first_name);
+    expect(model.last_name).toEqual(person.last_name);
+    expect(model.middle_names).toEqual(person.middle_names);
+    expect(model.title).toEqual(person.title);
+    expect(model.phone).toEqual(person.telephone_number);
+    expect(model.username).toEqual(person.username);
 
   });
 });

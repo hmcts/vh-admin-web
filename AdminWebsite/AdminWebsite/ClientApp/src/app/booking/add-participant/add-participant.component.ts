@@ -102,24 +102,24 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         }
       }, 500);
     }
-
+    const self = this;
     if (this.participantsListComponent) {
       this.participantsListComponent.selectedParticipant.subscribe((participantEmail) => {
-        this.selectedParticipantEmail = participantEmail;
-        this.showDetails = true;
+        self.selectedParticipantEmail = participantEmail;
+        self.showDetails = true;
         setTimeout(() => {
-          this.repopulateParticipantToEdit();
-          this.displayUpdate();
-          this.localEditMode = true;
-          if (this.searchEmail) {
-            this.setParticipantEmail();
+          self.repopulateParticipantToEdit();
+          self.displayUpdate();
+          self.localEditMode = true;
+          if (self.searchEmail) {
+            self.setParticipantEmail();
           }
         }, 500);
       });
 
       this.participantsListComponent.selectedParticipantToRemove.subscribe((participantEmail) => {
-        this.selectedParticipantEmail = participantEmail;
-        this.confirmRemoveParticipant();
+        self.selectedParticipantEmail = participantEmail;
+        self.confirmRemoveParticipant();
       });
     }
   }
@@ -168,28 +168,29 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
       displayName: this.displayName,
       companyName: this.companyName,
     });
+    const self = this;
     this.participantForm.valueChanges.subscribe(
       result => {
         setTimeout(() => {
-          if (this.showDetails && (this.role.value === this.constants.PleaseSelect &&
-            this.party.value === this.constants.PleaseSelect &&
-            this.title.value === this.constants.PleaseSelect &&
-            this.firstName.value === '' &&
-            this.lastName.value === '' &&
-            this.phone.value === '' &&
-            this.displayName.value === '') || this.editMode) {
-            this.displayNext();
-          } else if (!this.showDetails && (this.role.value === this.constants.PleaseSelect
-            && this.party.value === this.constants.PleaseSelect)) {
-            this.displayNext();
-          } else if (this.showDetails && this.participantForm.valid && (this.searchEmail && this.searchEmail.validateEmail())) {
-            if (this.localEditMode) {
-              this.displayUpdate();
+          if (self.showDetails && (self.role.value === self.constants.PleaseSelect &&
+            self.party.value === self.constants.PleaseSelect &&
+            self.title.value === self.constants.PleaseSelect &&
+            self.firstName.value === '' &&
+            self.lastName.value === '' &&
+            self.phone.value === '' &&
+            self.displayName.value === '') || self.editMode) {
+            self.displayNext();
+          } else if (!self.showDetails && (self.role.value === self.constants.PleaseSelect
+            && self.party.value === self.constants.PleaseSelect)) {
+            self.displayNext();
+          } else if (self.showDetails && self.participantForm.valid && (self.searchEmail && self.searchEmail.validateEmail())) {
+            if (self.localEditMode) {
+              self.displayUpdate();
             } else {
-              this.displayAdd();
+              self.displayAdd();
             }
           } else {
-            this.displayClear();
+            self.displayClear();
           }
         }, 500);
       });
@@ -248,17 +249,25 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
     // if it's added in the existing hearing participant, then allowed all fields to edit.
     this.isAnyParticipants = this.participantDetails.id && this.participantDetails.id.length > 0;
-
-    this.setupHearingRoles(this.participantDetails.case_role_name);
-
+    if (this.participantDetails.case_role_name) {
+      this.setupHearingRoles(this.participantDetails.case_role_name);
+    }
+    if (this.isPartySelected && !this.isAnyParticipants &&
+      (!this.participantDetails.case_role_name || this.participantDetails.case_role_name.length === 0)) {
+      this.participantDetails.case_role_name = this.party.value;
+    }
+    if (this.isRoleSelected && !this.isAnyParticipants &&
+      (!this.participantDetails.hearing_role_name || this.participantDetails.hearing_role_name.length === 0)) {
+      this.participantDetails.hearing_role_name = this.role.value;
+    }
     this.participantForm.setValue({
       party: this.participantDetails.case_role_name,
       role: this.participantDetails.hearing_role_name,
       title: this.participantDetails.title,
       firstName: this.participantDetails.first_name,
       lastName: this.participantDetails.last_name,
-      phone: this.participantDetails.phone,
-      displayName: this.participantDetails.display_name,
+      phone: this.participantDetails.phone || '',
+      displayName: this.participantDetails.display_name || '',
       companyName: this.participantDetails.company ? this.participantDetails.company : '',
     });
     setTimeout(() => {

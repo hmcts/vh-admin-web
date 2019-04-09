@@ -11,7 +11,7 @@ import { ParticipantsListStubComponent } from 'src/app/testing/stubs/participant
 import { RemovePopupStubComponent } from '../../testing/stubs/remove-popup-stub';
 import { DiscardConfirmPopupComponent } from '../../popups/discard-confirm-popup/discard-confirm-popup.component';
 
-import { SearchServiceStub } from 'src/app/testing/stubs/serice-service-stub';
+import { SearchServiceStub } from 'src/app/testing/stubs/service-service-stub';
 import { SearchService } from '../../services/search.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { ParticipantService } from '../services/participant.service';
@@ -248,7 +248,25 @@ describe('AddParticipantComponent', () => {
     component.roleSelected();
     expect(role.valid && component.isRoleSelected).toBeTruthy();
   });
-  it('should set values fields if participant if found', () => {
+  it('should set participant details values from existing participant or person data.', () => {
+    participant.id = '12345';
+
+    component.getParticipant(participant);
+
+    expect(component.participantDetails).toBeTruthy();
+    expect(component.participantDetails.email).toEqual(participant.email);
+    expect(component.participantDetails.id).toEqual(participant.id);
+  });
+
+  it('should populate the form fields if the participant is found in data store', () => {
+    participant.id = '2345';
+    component.isPartySelected = true;
+    component.participantForm.get('party').setValue('Claimant');
+    component.isRoleSelected = true;
+    component.participantForm.get('role').setValue('Solicitor');
+
+    fixture.detectChanges();
+
     component.getParticipant(participant);
     expect(role.value).toBe(participant.hearing_role_name);
     expect(party.value).toBe(participant.case_role_name);
@@ -546,9 +564,22 @@ describe('AddParticipantComponent edit mode', () => {
     expect(component.editMode).toBeFalsy();
     expect(routerSpy.navigate).toHaveBeenCalled();
   });
-  it('if press save button in edit mode then update details and reset edit mode', () => {
-    component.next();
+  it('should update participant details and reset edit mode to false if method next is called', () => {
     fixture.detectChanges();
+    component.searchEmail.email = participant.email;
+    component.participantForm.setValue({
+      party: participant.case_role_name,
+      role: participant.hearing_role_name,
+      title: participant.title,
+      firstName: participant.first_name,
+      lastName: participant.last_name,
+      phone: participant.phone,
+      displayName: participant.display_name,
+      companyName: participant.company,
+    });
+
+    component.next();
+
     expect(component.showDetails).toBeFalsy();
     expect(component.localEditMode).toBeFalsy();
     expect(bookingServiceSpy.resetEditMode).toHaveBeenCalled();
@@ -563,11 +594,13 @@ describe('AddParticipantComponent edit mode', () => {
     expect(component.isExistingHearing).toBeTruthy();
     expect(component.isAnyParticipants).toBeTruthy();
   });
-  it('press button cancel in edit mode if no changes navigate to summary', () => {
+  it('should navigate to summary page if the method cancel called in the edit mode and no changes made', () => {
     component.participantForm.markAsUntouched();
     component.participantForm.markAsPristine();
+
     fixture.detectChanges();
     component.addParticipantCancel();
+
     expect(routerSpy.navigate).toHaveBeenCalled();
   });
   it('press button cancel in edit mode if there are some changes show pop up', () => {

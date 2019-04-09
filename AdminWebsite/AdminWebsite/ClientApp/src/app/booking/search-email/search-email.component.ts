@@ -1,6 +1,6 @@
-import { Component, ElementRef, EventEmitter, HostListener, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostListener, Output, ViewChild, OnInit } from '@angular/core';
 import { Subject } from 'rxjs';
-
+import { PersonResponse } from '../../services/clients/api-client';
 import { Constants } from '../../common/constants';
 import { ParticipantModel } from '../../common/model/participant.model';
 import { SearchService } from '../../services/search.service';
@@ -11,17 +11,16 @@ import { SearchService } from '../../services/search.service';
   styleUrls: ['./search-email.component.css'],
   providers: [SearchService]
 })
-export class SearchEmailComponent {
+export class SearchEmailComponent implements OnInit {
   constants = Constants;
   participantDetails: ParticipantModel;
   searchTerm = new Subject<string>();
-  results: Object;
+  results: ParticipantModel[] = [];
   isShowResult = false;
   notFoundParticipant = false;
   email = '';
   isValidEmail = true;
   searchService: SearchService;
-
   @Output()
   findParticipant = new EventEmitter<ParticipantModel>();
 
@@ -36,10 +35,13 @@ export class SearchEmailComponent {
 
   constructor(searchService: SearchService, private elRef: ElementRef) {
     this.searchService = searchService;
+  }
+
+  ngOnInit() {
     this.searchService.search(this.searchTerm)
       .subscribe(data => {
-        this.results = data;
-        if (this.results) {
+        if (data && data.length > 0) {
+          this.results = data.map(x => this.mapPersonResponseToParticipantModel(x));
           this.isShowResult = true;
           this.isValidEmail = true;
           this.notFoundParticipant = false;
@@ -61,10 +63,7 @@ export class SearchEmailComponent {
     selectedResult.first_name = result.first_name;
     selectedResult.last_name = result.last_name;
     selectedResult.title = result.title;
-    selectedResult.case_role_name = result.case_role_name;
-    selectedResult.hearing_role_name = result.hearing_role_name;
     selectedResult.phone = result.phone;
-    selectedResult.display_name = result.display_name;
 
     this.isShowResult = false;
     return this.findParticipant.emit(selectedResult);
@@ -107,5 +106,24 @@ export class SearchEmailComponent {
       this.emailChanged.emit(this.email);
       this.notFoundParticipant = false;
     }
+  }
+
+  mapPersonResponseToParticipantModel(p: PersonResponse): ParticipantModel {
+    let participant: ParticipantModel;
+    if (p) {
+      participant = new ParticipantModel();
+      participant.id = p.id;
+      participant.title = p.title;
+      participant.first_name = p.first_name;
+      participant.middle_names = p.middle_names;
+      participant.last_name = p.last_name;
+      participant.username = p.username;
+      participant.email = p.contact_email;
+      participant.phone = p.telephone_number;
+      participant.representee = '';
+      participant.solicitorsReference = '';
+    }
+
+    return participant;
   }
 }
