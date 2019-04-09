@@ -295,6 +295,11 @@ describe('Video hearing service', () => {
       hearingModel.cases = [caseModel];
 
       const editHearingRequest = service.mapExistingHearing(hearingModel);
+      const actualParticipant = editHearingRequest.participants[0];
+      const expectedParticipant = hearingModel.participants[0];
+      const expectedCase = hearingModel.cases[0];
+      const actualCase = editHearingRequest.case;
+      
 
       expect(editHearingRequest.hearing_room_name).toEqual(hearingModel.court_room);
       expect(editHearingRequest.hearing_venue_name).toEqual(hearingModel.court_name);
@@ -302,18 +307,18 @@ describe('Video hearing service', () => {
       expect(editHearingRequest.scheduled_date_time).toEqual(hearingModel.scheduled_date_time);
       expect(editHearingRequest.scheduled_duration).toEqual(hearingModel.scheduled_duration);
       expect(editHearingRequest.participants.length).toBeGreaterThan(0);
-      expect(editHearingRequest.participants[0].title).toEqual(hearingModel.participants[0].title);
-      expect(editHearingRequest.participants[0].first_name).toEqual(hearingModel.participants[0].first_name);
-      expect(editHearingRequest.participants[0].last_name).toEqual(hearingModel.participants[0].last_name);
-      expect(editHearingRequest.participants[0].middle_names).toEqual(hearingModel.participants[0].middle_names);
-      expect(editHearingRequest.participants[0].hearing_role_name).toEqual(hearingModel.participants[0].hearing_role_name);
-      expect(editHearingRequest.participants[0].case_role_name).toEqual(hearingModel.participants[0].case_role_name);
-      expect(editHearingRequest.participants[0].house_number).toEqual(hearingModel.participants[0].housenumber);
-      expect(editHearingRequest.participants[0].street).toEqual(hearingModel.participants[0].street);
-      expect(editHearingRequest.participants[0].city).toEqual(hearingModel.participants[0].city);
-      expect(editHearingRequest.participants[0].county).toEqual(hearingModel.participants[0].county);
-      expect(editHearingRequest.participants[0].postcode).toEqual(hearingModel.participants[0].postcode);
-      expect(editHearingRequest.case.name).toEqual(hearingModel.cases[0].name);
-      expect(editHearingRequest.case.number).toEqual(hearingModel.cases[0].number);
+      expect(actualParticipant.title).toEqual(expectedParticipant.title);
+      expect(actualParticipant.first_name).toEqual(expectedParticipant.first_name);
+      expect(actualParticipant.last_name).toEqual(expectedParticipant.last_name);
+      expect(actualParticipant.middle_names).toEqual(expectedParticipant.middle_names);
+      expect(actualParticipant.hearing_role_name).toEqual(expectedParticipant.hearing_role_name);
+      expect(actualParticipant.case_role_name).toEqual(expectedParticipant.case_role_name);
+      expect(actualParticipant.house_number).toEqual(expectedParticipant.housenumber);
+      expect(actualParticipant.street).toEqual(expectedParticipant.street);
+      expect(actualParticipant.city).toEqual(expectedParticipant.city);
+      expect(actualParticipant.county).toEqual(expectedParticipant.county);
+      expect(actualParticipant.postcode).toEqual(expectedParticipant.postcode);
+      expect(actualCase.name).toEqual(expectedCase.name);
+      expect(actualCase.number).toEqual(expectedCase.number);
     }));
 });
