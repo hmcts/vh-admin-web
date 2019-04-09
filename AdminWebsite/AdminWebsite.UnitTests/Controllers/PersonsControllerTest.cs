@@ -67,5 +67,20 @@ namespace AdminWebsite.UnitTests.Controllers
             var response = await _controller.GetPersonBySearchTerm("term");
             response.Result.Should().BeOfType<BadRequestObjectResult>();
         }
+
+        [Test]
+        public async Task PersonController_should_pass_on_exeption_request_from_bookings_api()
+        {
+            _bookingsApiClient.Setup(x => x.GetPersonBySearchTermAsync(It.IsAny<string>()))
+                  .ThrowsAsync(ClientException.ForBookingsAPI(HttpStatusCode.InternalServerError));
+            try
+            {
+                await _controller.GetPersonBySearchTerm("term");
+            }
+            catch(Exception e)
+            {
+                e.Should().BeOfType(typeof(BookingsApiException));
+            }
+        }
     }
 }

@@ -2,6 +2,8 @@ import { DebugElement, Component } from '@angular/core';
 import { async, ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { AbstractControl } from '@angular/forms';
 import { NavigationEnd, Router } from '@angular/router';
+import { RouterTestingModule } from '@angular/router/testing';
+
 import { of } from 'rxjs';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { BreadcrumbStubComponent } from 'src/app/testing/stubs/breadcrumb-stub';
@@ -22,6 +24,7 @@ import { HearingModel } from '../../common/model/hearing.model';
 import { ParticipantModel } from '../../common/model/participant.model';
 import { CaseAndHearingRolesResponse } from '../../services/clients/api-client';
 import { PartyModel } from '../../common/model/party.model';
+import { ParticipantsListComponent } from '../participants-list/participants-list.component';
 
 let component: AddParticipantComponent;
 let fixture: ComponentFixture<AddParticipantComponent>;
@@ -201,11 +204,13 @@ describe('AddParticipantComponent', () => {
   });
   it('should set case role list, hearing role list and title list', () => {
     component.ngOnInit();
+    component.ngAfterViewInit();
     expect(component.roleList).toBeTruthy();
     expect(component.roleList.length).toBe(2);
     expect(component.titleList).toBeTruthy();
     expect(component.titleList.length).toBe(2);
   });
+
   it('should set initial values for fields', () => {
     component.ngOnInit();
     expect(role.value).toBe('Please Select');
@@ -697,14 +702,15 @@ describe('AddParticipantComponent edit mode no participants added', () => {
         AddParticipantComponent,
         BreadcrumbStubComponent,
         SearchEmailComponent,
-        ParticipantsListStubComponent,
+        ParticipantsListComponent,
         CancelPopupStubComponent,
         ConfirmationPopupStubComponent,
         RemovePopupStubComponent,
         DiscardConfirmPopupComponent,
       ],
       imports: [
-        SharedModule
+        SharedModule,
+        RouterTestingModule
       ],
       providers: [
         { provide: SearchService, useClass: SearchServiceStub },
@@ -753,4 +759,20 @@ describe('AddParticipantComponent edit mode no participants added', () => {
     expect(component.displayAddButton).toBeTruthy();
     expect(component.displayUpdateButton).toBeFalsy();
   });
+  it('should recognize a participantList', async(() => {
+    fixture.detectChanges();
+    const partList: ParticipantsListComponent = fixture.componentInstance.participantsListComponent;
+    console.log('partList', partList);
+    expect(partList).toBeDefined();
+  }));
+  it('should subscribe for participant select, if no role is defined do not show details', fakeAsync(() => {
+    fixture.detectChanges();
+    component.ngOnInit();
+    const partList: ParticipantsListComponent = fixture.componentInstance.participantsListComponent;
+
+    partList.selectedParticipant.emit();
+    tick(600);
+    fixture.detectChanges();
+    expect(component.showDetails).toBeFalsy();
+  }));
 });
