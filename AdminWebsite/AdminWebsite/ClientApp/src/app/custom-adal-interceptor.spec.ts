@@ -11,12 +11,6 @@ let adalInspector: jasmine.SpyObj<AdalInterceptor>;
 adalInspector = jasmine.createSpyObj('AdalInterceptor',  ['intercept']);
 
 describe('CustomAdalInterceptor', () => {
-  
-  const next: any = {
-    handle: (request: HttpRequest<any>) => ({
-      
-    })
-  };
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -40,9 +34,9 @@ describe('CustomAdalInterceptor', () => {
       }
     };
 
-    const request: HttpRequest<any> = new HttpRequest<any>("GET", 'https://localhost:5400/api/courts');
+    const request: HttpRequest<any> = new HttpRequest<any>('GET', 'https://localhost:5400/api/courts');
     service.intercept(request, next);
-    //expect(response.headers.get("Cache-Control")).toEqual("no-cache");
+    // expect(response.headers.get("Cache-Control")).toEqual("no-cache");
   }));
 
 });
