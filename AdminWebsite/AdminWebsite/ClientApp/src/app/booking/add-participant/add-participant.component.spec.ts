@@ -427,6 +427,11 @@ describe('AddParticipantComponent', () => {
     component.getParticipant(participant);
     expect(component.displayErrorNoParticipants).toBeFalsy();
   });
+  it('should method next navigate to ', () => {
+    component.hearing.participants = participants;
+    component.next();
+    expect(routerSpy.navigate).toHaveBeenCalled();
+  });
   it('the case roles and hearing roles were populated', () => {
     component.setupRoles(roleList);
     expect(component.roleList.length).toBe(2);
@@ -628,12 +633,34 @@ describe('AddParticipantComponent edit mode', () => {
       displayName: participant.display_name,
       companyName: participant.company,
     });
+    component.hearing = initHearingRequest();
+    fixture.detectChanges();
     component.next();
 
     expect(component.showDetails).toBeFalsy();
     expect(component.localEditMode).toBeFalsy();
     expect(bookingServiceSpy.resetEditMode).toHaveBeenCalled();
     expect(videoHearingsServiceSpy.updateHearingRequest).toHaveBeenCalled();
+  });
+  it('should update participant details and return as form is invalid', () => {
+    fixture.detectChanges();
+    component.searchEmail.email = participant.email;
+    component.participantForm.setValue({
+      party: 'Please Select',
+      role: '',
+      title: 'Please Select',
+      firstName: participant.first_name,
+      lastName: participant.last_name,
+      phone: participant.phone,
+      displayName: participant.display_name,
+      companyName: participant.company,
+    });
+    component.hearing = initHearingRequest();
+    fixture.detectChanges();
+    component.next();
+
+    expect(videoHearingsServiceSpy.updateHearingRequest).toHaveBeenCalled();
+    expect(component.showDetails).toBeTruthy();
   });
   it('should check if the hearing exist', () => {
     component.ngOnInit();
@@ -762,7 +789,6 @@ describe('AddParticipantComponent edit mode no participants added', () => {
   it('should recognize a participantList', async(() => {
     fixture.detectChanges();
     const partList: ParticipantsListComponent = fixture.componentInstance.participantsListComponent;
-    console.log('partList', partList);
     expect(partList).toBeDefined();
   }));
   it('should subscribe for participant list select participant for edit', fakeAsync(() => {
@@ -786,4 +812,15 @@ describe('AddParticipantComponent edit mode no participants added', () => {
     fixture.detectChanges();
     expect(component.showConfirmationRemoveParticipant).toBeTruthy();
   }));
+  it('should show confirmation to remove', fakeAsync(() => {
+    fixture.detectChanges();
+    const partList: ParticipantsListComponent = fixture.componentInstance.participantsListComponent;
+    partList.removeParticipant('test2@test.com');
+    component.selectedParticipantEmail = undefined;
+    partList.selectedParticipantToRemove.emit();
+    tick(1000);
+    fixture.detectChanges();
+    expect(component.showConfirmationRemoveParticipant).toBeTruthy();
+  }));
+
 });
