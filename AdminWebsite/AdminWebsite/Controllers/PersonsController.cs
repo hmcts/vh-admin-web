@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace AdminWebsite.Controllers
 {
@@ -12,14 +13,14 @@ namespace AdminWebsite.Controllers
     [Produces("application/json")]
     [Route("api/persons")]
     [ApiController]
-    public class PersonController : ControllerBase
+    public class PersonsController : ControllerBase
     {
         private readonly IBookingsApiClient _bookingsApiClient;
 
         /// <summary>
         /// Instantiates the controller
         /// </summary>
-        public PersonController(IBookingsApiClient bookingsApiClient)
+        public PersonsController(IBookingsApiClient bookingsApiClient)
         {
             _bookingsApiClient = bookingsApiClient;
         }
@@ -33,11 +34,11 @@ namespace AdminWebsite.Controllers
         [SwaggerOperation(OperationId = "GetPersonBySearchTerm")]
         [ProducesResponseType(typeof(List<PersonResponse>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public IActionResult GetPersonBySearchTerm(string term)
+        public async Task<ActionResult<IList<PersonResponse>>> GetPersonBySearchTerm(string term)
         {
             try
             {
-                var personsResponse = _bookingsApiClient.GetPersonBySearchTerm(term);
+                var personsResponse = await _bookingsApiClient.GetPersonBySearchTermAsync(term);
                 return Ok(personsResponse);
             }
             catch (BookingsApiException e)
