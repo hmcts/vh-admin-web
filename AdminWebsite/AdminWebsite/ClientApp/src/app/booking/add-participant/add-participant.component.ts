@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Observable} from 'rxjs';
+import { Observable } from 'rxjs';
 import { Constants } from '../../common/constants';
 import { CanDeactiveComponent } from '../../common/guards/changes.guard';
 import { IDropDownModel } from '../../common/model/drop-down.model';
@@ -64,7 +64,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   displayErrorNoParticipants = false;
   localEditMode = false;
   isExistingHearing: boolean;
-  isAnyParticipants = true;
+  isAnyParticipants: boolean;
 
   @ViewChild(SearchEmailComponent)
   searchEmail: SearchEmailComponent;
@@ -137,10 +137,8 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   private setParticipantEmail() {
     this.searchEmail.email = this.participantDetails.email;
     this.searchEmail.isValidEmail = true;
-    this.searchEmail.setEmailDisabled(this.isAnyParticipants);
+    this.searchEmail.setEmailDisabled(this.participantDetails.id && this.participantDetails.id.length > 0);
   }
-
-
 
   initializeForm() {
     this.role = new FormControl(this.constants.PleaseSelect, [
@@ -208,8 +206,11 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     this.hearing = this.videoHearingService.getCurrentRequest();
     if (this.hearing) {
       this.isExistingHearing = this.hearing.hearing_id && this.hearing.hearing_id.length > 0;
+
       const anyParticipants = this.hearing.participants.find(x => !x.is_judge);
-      this.isAnyParticipants = anyParticipants && !anyParticipants.is_judge;
+      if (this.editMode) {
+        this.isAnyParticipants = anyParticipants && !anyParticipants.is_judge;
+      }
     }
   }
 
@@ -243,8 +244,13 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   public getParticipant(participantDetails) {
     this.displayErrorNoParticipants = false;
     this.displayAdd();
-    this.participantDetails = participantDetails;
+    this.participantDetails = Object.assign({}, participantDetails);
+
+    // if it's added in the existing hearing participant, then allowed all fields to edit.
+    this.isAnyParticipants = this.participantDetails.id && this.participantDetails.id.length > 0;
+
     this.setupHearingRoles(this.participantDetails.case_role_name);
+
     this.participantForm.setValue({
       party: this.participantDetails.case_role_name,
       role: this.participantDetails.hearing_role_name,
@@ -388,8 +394,9 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     this.localEditMode = false;
   }
 
+
   updateParticipant() {
-    if (!this.isAnyParticipants) {
+    if (!this.isAnyParticipants && !this.participantDetails) {
       this.saveParticipant();
       this.isAnyParticipants = true;
     } else {
@@ -403,6 +410,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
           }
         });
         this.clearForm();
+        this.participantDetails = null;
         this.participantForm.markAsPristine();
       } else {
         this.isShowErrorSummary = true;

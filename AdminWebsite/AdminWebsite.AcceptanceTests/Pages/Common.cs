@@ -49,7 +49,7 @@ namespace AdminWebsite.AcceptanceTests.Pages
         }
 
         protected void InputValues(By element, string value) => _browserContext.NgDriver.WaitUntilElementVisible(element).SendKeys(value);
-        protected void ClickElement(By element) => _browserContext.NgDriver.WaitUntilElementVisible(element).Click();
+        protected void ClickElement(By element) => _browserContext.NgDriver.WaitUntilElementClickable(element).Click();
         protected void ClearFieldInputValues(By element, string value)
         {
             var webElement = _browserContext.NgDriver.WaitUntilElementVisible(element);
@@ -59,6 +59,10 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public void NextButton()
         {
             _browserContext.Retry(() => _browserContext.NgDriver.WaitUntilElementClickable(_nextButton).Click());
+        }
+        public void BookButton()
+        {
+            _browserContext.Retry(() => _browserContext.NgDriver.WaitUntilElementClickable(By.Id("bookButton")).Click());
         }
         public void CancelButton() => _browserContext.NgDriver.WaitUntilElementClickable(_cancelButton).Click();
         public string GetElementText(By element) => _browserContext.NgDriver.WaitUntilElementVisible(element).Text.Trim();
@@ -70,7 +74,10 @@ namespace AdminWebsite.AcceptanceTests.Pages
             foreach (var element in getListOfElements)
             {
                 if (option == element.Text.Trim())
+                {
                     _browserContext.NgDriver.WaitUntilElementClickable(element).Click();
+                    break;
+                }
             }
         }
         protected void SelectOption(By elements)
@@ -115,11 +122,20 @@ namespace AdminWebsite.AcceptanceTests.Pages
 
         public void ClickBreadcrumb(string breadcrumb) => SelectOption(_breadcrumbs, breadcrumb);
         public void AcceptBrowserAlert() => _browserContext.AcceptAlert();
-        public void DashBoard() => SelectOption(_primaryNavItems, "Dashboard");
-        public void BookingsList() => SelectOption(_primaryNavItems, "Bookings list");
+        public void DashBoard() => ClickElement(By.Id("topItem0"));
+        public void BookingsList()
+        {            
+            _browserContext.Retry(() =>
+            {
+                var element = _browserContext.NgDriver.FindElement(By.Id("topItem1"));
+                element.Click();
+                element.GetAttribute("class").Should().Contain("active");
+            }, 3);
+        }
+
         public void AddItems<T>(string key, T value) => _browserContext.Items.AddOrUpdate(key, value);
         public dynamic GetItems(string key) => _browserContext.Items.Get(key);
-        public string GetParticipantDetails() => GetElementText(By.XPath("//*[@class='govuk-grid-column-two-thirds vhtable-header']"));
+        public string GetParticipantDetails() => GetElementText(By.XPath("//*[contains(@class, 'vhtable-header')]"));
         protected IEnumerable<string> Items(By elements)
         {
             var webElements = _browserContext.NgDriver.WaitUntilElementsVisible(elements);
@@ -134,6 +150,8 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public string SessionStorage(string script) => _browserContext.ExecuteJavascript(script);
         public string Page() => _browserContext.PageUrl();
         public string CancelWarningMessage() => GetElementText(By.XPath("//*[@class='content']/h1"));
-        public void DiscardChanges() => ClickElement(By.Id("btn-discard-changes"));
+        public void DiscardChanges() => ClickElement(By.Id("btn-discard-changes"));       
+        public int DisabledFields() => GetListOfElements(By.XPath("//*[@disabled='true']")).ToList().Count;
+        public string GetAttribute(By element) => _browserContext.NgDriver.FindElement(element).GetAttribute("disabled");
     }
 }

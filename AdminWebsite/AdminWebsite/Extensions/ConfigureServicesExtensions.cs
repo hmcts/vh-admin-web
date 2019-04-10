@@ -58,7 +58,6 @@ namespace AdminWebsite.Extensions
             serviceCollection.AddScoped<IUserAccountService, UserAccountService>();
             serviceCollection.AddScoped<SecuritySettings>();
             serviceCollection.AddScoped<AppConfigSettings>();
-            serviceCollection.AddScoped<UserManager>();
 
             // Build the hearings api client using a reusable HttpClient factory and predefined base url
             var container = serviceCollection.BuildServiceProvider();

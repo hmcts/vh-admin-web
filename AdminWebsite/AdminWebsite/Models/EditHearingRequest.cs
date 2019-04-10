@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace AdminWebsite.Models
 {
+    /// <summary>
+    /// Request for updating an existing hearing
+    /// </summary>
     public class EditHearingRequest
     {
         /// <summary>

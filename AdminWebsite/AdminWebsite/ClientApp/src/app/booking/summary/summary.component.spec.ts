@@ -17,6 +17,7 @@ import { ParticipantsListStubComponent } from '../../testing/stubs/participant-l
 import { WaitPopupComponent } from '../../popups/wait-popup/wait-popup.component';
 import { SaveFailedPopupComponent } from 'src/app/popups/save-failed-popup/save-failed-popup.component';
 import { HearingDetailsResponse } from '../../services/clients/api-client';
+import { MomentModule } from 'angular2-moment';
 
 function initExistingHearingRequest(): HearingModel {
 
@@ -104,7 +105,7 @@ describe('SummaryComponent with valid request', () => {
         WaitPopupComponent,
         SaveFailedPopupComponent
       ],
-      imports: [RouterTestingModule],
+      imports: [RouterTestingModule, MomentModule],
     })
       .compileComponents();
   }));
@@ -190,7 +191,7 @@ describe('SummaryComponent  with invalid request', () => {
         { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
         { provide: Router, useValue: routerSpy }
       ],
-      imports: [RouterTestingModule],
+      imports: [RouterTestingModule, MomentModule],
       declarations: [
         SummaryComponent,
         BreadcrumbStubComponent,
@@ -235,7 +236,7 @@ describe('SummaryComponent  with existing request', () => {
         { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
         { provide: Router, useValue: routerSpy }
       ],
-      imports: [RouterTestingModule],
+      imports: [RouterTestingModule, MomentModule],
       declarations: [
         SummaryComponent,
         BreadcrumbStubComponent,

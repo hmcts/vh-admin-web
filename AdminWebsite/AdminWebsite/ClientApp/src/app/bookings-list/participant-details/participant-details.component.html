@@ -1,18 +1,27 @@
 <div class="govuk-grid-row vh-row">
-  <div class="govuk-grid-column-full">
-    {{participant?.fullName}}
-    <div [attr.id]="'participant_role' + participant?.IndexInList" class="govuk-hint">
-      {{participant?.HearingRoleName}}
+
+  <div *ngIf="participant?.HearingRoleName === 'Judge'">
+    <div class="govuk-grid-column-one-third vh-image-15">
+      <img src="/assets/images/govuk-crest.png" height="40" width="40" class="govuk-header__logotype-crest"
+           alt="HM Courts &amp; Tribunals Service crest" />
     </div>
-    <div *ngIf="!vh_officer_admin">
-      <div class="govuk-grid-row" [attr.id]="'participant_userName' + participant?.IndexInList">
-        <div class="govuk-grid-column-one-third">
-          User name:
-        </div>
-        <div class="govuk-grid-column-two-thirds">
-          {{participant?.UserName}}
-        </div>
+    <div class="govuk-grid-column-one-half vh-image-50" id="judge-name">
+      {{participant?.fullName}}
+      <div [attr.id]="'participant_role' + participant?.IndexInList" class="govuk-hint">
+        {{participant?.HearingRoleName}}
       </div>
+    </div>
+  </div> 
+
+  <div class="govuk-grid-column-full">
+    <div *ngIf="participant?.HearingRoleName !== 'Judge'">
+      {{participant?.fullName}}
+      <div [attr.id]="'participant_role' + participant?.IndexInList" class="govuk-hint">
+        {{participant?.HearingRoleName}}
+      </div>
+    </div>
+
+    <div *ngIf="vh_officer_admin">
 
       <div class="govuk-grid-row" [attr.id]="'participant_email' + participant?.IndexInList">
         <div class="govuk-grid-column-one-third">
@@ -22,6 +31,15 @@
           {{participant?.Email}}
         </div>
       </div>
+      <div class="govuk-grid-row" [attr.id]="'participant_userName' + participant?.IndexInList">
+        <div class="govuk-grid-column-one-third">
+          Username:
+        </div>
+        <div class="govuk-grid-column-two-thirds">
+          {{participant?.UserName}}
+        </div>
+      </div>
+
     </div>
   </div>
 </div>

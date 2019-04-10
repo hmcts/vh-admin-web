@@ -16,27 +16,16 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public string CourtAddress() => GetElementText(By.Id("courtAddress"));
         public string HearingDuration() => GetElementText(By.Id("hearingDuration"));
         public string OtherInformation() => GetElementText(By.Id("otherInformation"));
+        private By _boarder => By.XPath("//a[@class='vhlink']");
 
-        // New attribute to be added to the html for below element
-        public string Judge() => GetElementText(By.XPath("//*[@class='govuk-grid-column-one-half vhtable-header vh-image-50']"));
+        public string Judge() => GetElementText(By.Id("judge-name"));
         public void Book() => ClickElement(By.Id("bookButton"));
-        private By _editButtons => By.Id("edit-link");
-        private By _particpantRoundedBoarder => By.XPath("//a[@class='vhlink']");
-        public void EditPage(string uri)
-        {
-            var pages = GetListOfElements(_editButtons);
-            foreach (var page in pages)
-            {
-                if (page.GetAttribute("href").Contains(uri))
-                {
-                    page.Click();
-                    break;
-                }
-            }
-        }
-        public void EditParticipantRoundedBoarder(string uri) => SelectOption(_particpantRoundedBoarder, uri);
+        public void EditRoundedBoarder(string uri) => SelectOption(_boarder, uri);
         public void RemoveParticipant() => ClickElement(By.Id("btn-remove"));
         public void CancelRemoveParticipant() => ClickElement(By.Id("btn-cancel"));
-        public string ParticipantConfirmationMessage() => GetElementText(By.XPath("//h1[contains(text(),'hearing booking')]"));        
+        public string ParticipantConfirmationMessage() => GetElementText(By.XPath("//h1[contains(text(),'hearing booking')]"));
+        public void EditHearingDetails() => ClickElement(By.Id("edit-linkhearing-details-id"));
+        public void EditScheduleDetails() => ClickElement(By.Id("edit-linkhearing-schedule-id"));
+        public void EditMoreInformation() => ClickElement(By.Id("edit-linkother-information-id"));
     }
 }

@@ -1,4 +1,4 @@
-import { HearingTypeResponse, HearingVenueResponse, ParticipantDetailsResponse } from 'src/app/services/clients/api-client';
+import {HearingTypeResponse, HearingVenueResponse, JudgeResponse} from 'src/app/services/clients/api-client';
 
 export class MockValues {
 
@@ -51,47 +51,31 @@ export class MockValues {
      ]`);
 
 
-  static Judges: ParticipantDetailsResponse[] = JSON.parse(
+  static Judges: JudgeResponse[] = JSON.parse(
     `[
         {
-          "id": "1",
           "first_name": "John",
           "last_name": "Doe",
-          "middle_names": "a",
           "display_name": "John Doe",
-          "email": "John.Doe@hearings.reform.hmcts.net",
-          "title": "Judge",
-          "role": "Judge"
+          "email": "John.Doe@hearings.reform.hmcts.net"
         },
         {
-           "id":"2",
            "first_name": "John2",
            "last_name": "Doe",
-           "middle_names": "",
            "display_name": "John2 Doe",
-           "email": "John2.Doe@hearings.reform.hmcts.net",
-           "title": "Judge",
-           "role": "Judge"
+           "email": "John2.Doe@hearings.reform.hmcts.net"
         },
         {
-           "id":"3",
            "first_name": "John3",
            "last_name": "Doe",
-           "middle_names": "",
            "display_name": "John3 Doe",
-           "email": "John3.Doe@hearings.reform.hmcts.net",
-           "title": "Judge",
-           "role": "Judge"
+           "email": "John3.Doe@hearings.reform.hmcts.net"
         },
         {
-           "id":"4",
            "first_name": "John4",
            "last_name": "Doe",
-           "middle_names": "",
            "display_name": "John4 Doe",
-           "email": "John4.Doe@hearings.reform.hmcts.net",
-           "title": "Judge",
-           "role": "Judge"
+           "email": "John4.Doe@hearings.reform.hmcts.net"
         }
      ]`);
 }

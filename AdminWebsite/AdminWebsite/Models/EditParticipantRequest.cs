@@ -69,5 +69,35 @@ namespace AdminWebsite.Models
         /// The representee of a representative
         /// </summary>
         public string Representee { get; set; }
+
+        /// <summary>
+        /// House number of an Individual
+        /// </summary>
+        public string HouseNumber { get; set; }
+
+        /// <summary>
+        /// Stree number of an Individual
+        /// </summary>
+        public string Street { get; set; }
+
+        /// <summary>
+        /// Postcode of an Individual
+        /// </summary>
+        public string Postcode { get; set; }
+
+        /// <summary>
+        /// City/Town of an Individual
+        /// </summary>
+        public string City { get; set; }
+
+        /// <summary>
+        /// County of an Individual
+        /// </summary>
+        public string County { get; set; }
+
+        /// <summary>
+        /// Organisation name
+        /// </summary>
+        public string OrganisationName { get; set; }
     }
 }

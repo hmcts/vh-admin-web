@@ -6,6 +6,10 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="DotNetSeleniumExtras.PageObjects" Version="3.11.0" />
     <PackageReference Include="DotNetSeleniumExtras.WaitHelpers" Version="3.11.0" />
@@ -78,6 +82,9 @@
     <None Update="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Features\BookingsList.feature">
+      <Generator></Generator>
+    </None>
     <None Update="Features\HearingDetails.feature">
       <Generator></Generator>
     </None>
@@ -92,9 +99,6 @@
     </None>
     <None Update="parameters.runsettings">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Features\CreateHearing.feature">
-      <Generator></Generator>
     </None>
     <None Update="Features\Login.feature">
       <Generator></Generator>
