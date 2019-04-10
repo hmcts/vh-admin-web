@@ -10,7 +10,7 @@ namespace AdminWebsite.IntegrationTests.Controllers
 {
     public class PersonsControllerTests : ControllerTestsBase
     {
-        [Ignore("Api is not ready")]
+        [Ignore("Temporary ignored as Booking Api is not deployed yet, works only on branch")]
         [Test]
         public async Task should_return_a_list_of_person_matching_search_term()
         {
@@ -21,7 +21,7 @@ namespace AdminWebsite.IntegrationTests.Controllers
 
             if (persons.Any())
             {
-                var result = persons.All(x => x.Contact_email.StartsWith("ado"));
+                var result = persons.All(x => x.Contact_email.Contains("ado"));
                 result.Should().BeTrue();
             }
             else
