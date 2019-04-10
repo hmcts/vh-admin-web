@@ -1,6 +1,6 @@
 import { DebugElement, Component } from '@angular/core';
 import { async, ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
-import { AbstractControl, Validator, Validators } from '@angular/forms';
+import { AbstractControl, Validator, Validators, FormControl } from '@angular/forms';
 import { NavigationEnd, Router } from '@angular/router';
 import { of } from 'rxjs';
 import { SharedModule } from 'src/app/shared/shared.module';
@@ -304,53 +304,23 @@ describe('AddParticipantComponent', () => {
     expect(role.valid && component.isRoleSelected).toBeTruthy();
   });
   it('should validate house number', () => {
-    party.setValue('Claimant');
-    role.setValue('Claimant LIP');
-    component.showAddress = true;
-    houseNumber.setValidators([Validators.required]);
-    houseNumber.updateValueAndValidity();
-    houseNumber.setValue('123');
-    expect(houseNumber.valid).toBeTruthy();
+    isAddressControlValid(houseNumber, '123');
   });
 
   it('should validate street', () => {
-    party.setValue('Claimant');
-    role.setValue('Claimant LIP');
-    component.showAddress = true;
-    street.setValidators([Validators.required]);
-    street.updateValueAndValidity();
-    street.setValue('Test Street');
-    expect(street.valid).toBeTruthy();
+    isAddressControlValid(street, 'Test Street');
   });
 
   it('should validate city', () => {
-    party.setValue('Claimant');
-    role.setValue('Claimant LIP');
-    component.showAddress = true;
-    city.setValidators([Validators.required]);
-    city.updateValueAndValidity();
-    city.setValue('Test City');
-    expect(city.valid).toBeTruthy();
+    isAddressControlValid(county, 'Test City');
   });
 
   it('should validate county', () => {
-    party.setValue('Claimant');
-    role.setValue('Claimant LIP');
-    component.showAddress = true;
-    county.setValidators([Validators.required]);
-    county.updateValueAndValidity();
-    county.setValue('Test County');
-    expect(county.valid).toBeTruthy();
+    isAddressControlValid(city, 'Test County');
   });
 
   it('should validate postcode', () => {
-    party.setValue('Claimant');
-    role.setValue('Claimant LIP');
-    component.showAddress = true;
-    postcode.setValidators([Validators.required]);
-    postcode.updateValueAndValidity();
-    postcode.setValue('TE1 5NR');
-    expect(postcode.valid).toBeTruthy();
+    isAddressControlValid(postcode, 'TE1 5NR');
   });
 
   it('should set values fields if participant if found', () => {
@@ -410,36 +380,12 @@ describe('AddParticipantComponent', () => {
     phone.setValue('12345');
     displayName.setValue('Sam Green');
     component.isRoleSelected = true;
-    if (constants.IndividualRoles.indexOf(role.value) > -1) {
-      component.showAddress = true;
-      houseNumber.setValue('12');
-      street.setValue('Test Street');
-      city.setValue('Test City');
-      county.setValue('Test County');
-      postcode.setValue('TE1 5NR');
-      houseNumber.setValidators([Validators.required]);
-      street.setValidators([Validators.required]);
-      city.setValidators([Validators.required]);
-      county.setValidators([Validators.required]);
-      postcode.setValidators([Validators.required]);
-      houseNumber.updateValueAndValidity();
-      street.updateValueAndValidity();
-      city.updateValueAndValidity();
-      county.updateValueAndValidity();
-      postcode.updateValueAndValidity();
-    } else {
-      houseNumber.clearValidators();
-      street.clearValidators();
-      city.clearValidators();
-      county.clearValidators();
-      postcode.clearValidators();
-      houseNumber.updateValueAndValidity();
-      street.updateValueAndValidity();
-      city.updateValueAndValidity();
-      county.updateValueAndValidity();
-      postcode.updateValueAndValidity();
-    }
-
+    component.showAddress = true;
+    houseNumber.setValue('12');
+    street.setValue('Test Street');
+    city.setValue('Test City');
+    county.setValue('Test County');
+    postcode.setValue('TE1 5NR');
     component.isPartySelected = true;
     component.saveParticipant();
     expect(component.isShowErrorSummary).toBeFalsy();
@@ -829,3 +775,13 @@ describe('AddParticipantComponent edit mode no participants added', () => {
     expect(component.displayUpdateButton).toBeFalsy();
   });
 });
+
+function isAddressControlValid(control: AbstractControl, controlValue: string) {
+  party.setValue('Claimant');
+  role.setValue('Claimant LIP');
+  component.showAddress = true;
+  control.setValidators([Validators.required]);
+  control.updateValueAndValidity();
+  control.setValue(controlValue);
+  expect(control.valid).toBeTruthy();
+}

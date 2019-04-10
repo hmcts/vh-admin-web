@@ -334,42 +334,46 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   }
 
   get firstNameInvalid() {
-    return this.firstName.invalid && (this.firstName.dirty || this.firstName.touched || this.isShowErrorSummary);
+    return this.isControlInValid(this.firstName);
   }
 
   get lastNameInvalid() {
-    return this.lastName.invalid && (this.lastName.dirty || this.lastName.touched || this.isShowErrorSummary);
+    return this.isControlInValid(this.lastName);
   }
 
   get phoneInvalid() {
-    return this.phone.invalid && (this.phone.dirty || this.phone.touched || this.isShowErrorSummary);
+    return this.isControlInValid(this.phone);
   }
 
   get partyInvalid() {
-    return this.party.invalid && (this.party.dirty || this.party.touched || this.isShowErrorSummary);
+    return this.isControlInValid(this.party);
   }
 
   get roleInvalid() {
-    return this.role.invalid && (this.role.dirty || this.role.touched || this.isShowErrorSummary);
+    return this.isControlInValid(this.role);
   }
 
   get houseNumberInvalid() {
-    return this.houseNumber.invalid && (this.houseNumber.dirty || this.houseNumber.touched || this.isShowErrorSummary);
+    return this.isControlInValid(this.houseNumber);
   }
 
   get streetInvalid() {
-    return this.street.invalid && (this.street.dirty || this.street.touched || this.isShowErrorSummary);
+    return this.isControlInValid(this.street);
   }
   get cityInvalid() {
-    return this.city.invalid && (this.title.dirty || this.city.touched || this.isShowErrorSummary);
+    return this.isControlInValid(this.title);
   }
   get countyInvalid() {
-    return this.county.invalid && (this.county.dirty || this.county.touched || this.isShowErrorSummary);
+    return this.isControlInValid(this.county);
   }
 
   get postcodeInvalid() {
-    return this.postcode.invalid && (this.postcode.dirty || this.postcode.touched || this.isShowErrorSummary);
+    return this.isControlInValid(this.postcode);
   }
+
+  isControlInValid(control: FormControl) {
+    return control.invalid && (control.dirty || control.touched || this.showErrorSummary);
+ }
 
   partySelected() {
     this.isPartySelected = this.party.value !== this.constants.PleaseSelect;
@@ -378,7 +382,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
   roleSelected() {
     this.isRoleSelected = this.role.value !== this.constants.PleaseSelect;
-    if (this.role.value !== 'Solicitor') {
+    if (this.role.value !== this.constants.Solicitor) {
       this.showAddress = true;
 
       this.houseNumber.setValidators([Validators.required]);
