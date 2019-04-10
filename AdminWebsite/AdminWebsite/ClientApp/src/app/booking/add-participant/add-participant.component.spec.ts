@@ -831,4 +831,43 @@ describe('AddParticipantComponent edit mode no participants added', () => {
     expect(component.displayAddButton).toBeTruthy();
 
   });
+  it('should set isAnyParticipants to false', () => {
+    participant.id = '';
+    component.participantDetails = participant;
+    component.resetPartyAndRole();
+    expect(component.isAnyParticipants).toBeFalsy();
+  });
+  it('should set isAnyParticipants to true', () => {
+    participant.id = '12345';
+    component.participantDetails = participant;
+    component.resetPartyAndRole();
+    expect(component.isAnyParticipants).toBeTruthy();
+  });
+  it('should reset hearing role if the participant has set case role value', () => {
+    spyOn(component, 'setupHearingRoles');
+    participant.id = undefined;
+    component.participantDetails = participant;
+    component.resetPartyAndRole();
+    expect(component.setupHearingRoles).toHaveBeenCalled();
+  });
+  it('should set case role value from the input field', () => {
+    participant.id = undefined;
+    participant.case_role_name = undefined;
+    component.isPartySelected = true;
+    component.participantDetails = participant;
+
+    component.resetPartyAndRole();
+    expect(component.participantDetails.case_role_name).toBeTruthy();
+    expect(component.participantDetails.case_role_name).toEqual('Please Select');
+  });
+  it('should set hearing role value from the input field', () => {
+    participant.id = undefined;
+    participant.hearing_role_name = undefined;
+    component.isRoleSelected = true;
+    component.participantDetails = participant;
+
+    component.resetPartyAndRole();
+    expect(component.participantDetails.hearing_role_name).toBeTruthy();
+    expect(component.participantDetails.hearing_role_name).toEqual('Please Select');
+  });
 });

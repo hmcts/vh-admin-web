@@ -248,6 +248,25 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     this.participantDetails = Object.assign({}, participantDetails);
 
     // if it's added in the existing hearing participant, then allowed all fields to edit.
+    this.resetPartyAndRole();
+
+    this.participantForm.setValue({
+      party: this.participantDetails.case_role_name,
+      role: this.participantDetails.hearing_role_name,
+      title: this.participantDetails.title,
+      firstName: this.participantDetails.first_name,
+      lastName: this.participantDetails.last_name,
+      phone: this.participantDetails.phone || '',
+      displayName: this.participantDetails.display_name || '',
+      companyName: this.participantDetails.company ? this.participantDetails.company : '',
+    });
+
+    setTimeout(() => {
+      this.participantForm.get('role').setValue(this.participantDetails.hearing_role_name);
+    }, 500);
+  }
+
+  resetPartyAndRole() {
     this.isAnyParticipants = this.participantDetails.id && this.participantDetails.id.length > 0;
     if (this.participantDetails.case_role_name) {
       this.setupHearingRoles(this.participantDetails.case_role_name);
@@ -260,19 +279,6 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
       (!this.participantDetails.hearing_role_name || this.participantDetails.hearing_role_name.length === 0)) {
       this.participantDetails.hearing_role_name = this.role.value;
     }
-    this.participantForm.setValue({
-      party: this.participantDetails.case_role_name,
-      role: this.participantDetails.hearing_role_name,
-      title: this.participantDetails.title,
-      firstName: this.participantDetails.first_name,
-      lastName: this.participantDetails.last_name,
-      phone: this.participantDetails.phone || '',
-      displayName: this.participantDetails.display_name || '',
-      companyName: this.participantDetails.company ? this.participantDetails.company : '',
-    });
-    setTimeout(() => {
-      this.participantForm.get('role').setValue(this.participantDetails.hearing_role_name);
-    }, 500);
   }
 
   notFoundParticipant() {
