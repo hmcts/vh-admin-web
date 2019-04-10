@@ -822,5 +822,13 @@ describe('AddParticipantComponent edit mode no participants added', () => {
     fixture.detectChanges();
     expect(component.showConfirmationRemoveParticipant).toBeTruthy();
   }));
+  it('should display add button if participant has not email set', () => {
+    fixture.detectChanges();
+    component.selectedParticipantEmail = '';
+    component.ngOnInit();
 
+    expect(component.showDetails).toBeFalsy();
+    expect(component.displayAddButton).toBeTruthy();
+
+  });
 });

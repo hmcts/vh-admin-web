@@ -69,6 +69,7 @@ describe('SeachEmailComponent', () => {
 
   it('should create participant email search component', async(() => {
     expect(component).toBeTruthy();
+    expect(component.searchService).toBeTruthy();
   }));
   it('should have empty list of participant models', async(() => {
     expect(component.results).toBeTruthy();
@@ -76,7 +77,6 @@ describe('SeachEmailComponent', () => {
   }));
   it('should search service return list of person and map it to result list', (done) => {
     searchServiceSpy.search.and.returnValue(of(participantList));
-
     component.ngOnInit();
     fixture.detectChanges();
 
