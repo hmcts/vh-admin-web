@@ -13,7 +13,7 @@
                 <label class="govuk-label" for="pageSize">
                     Page size
                 </label>
-                <select [(ngModel)]="pageSize" (change)="changePageSize()" class="govuk-select vh-top" name="pageSize">
+                <select [(ngModel)]="pageSize" (change)="changePageSize()" class="govuk-select vh-top" name="pageSize" aria-label="pageSize">
                     <option value="5">5</option>
                     <option value="25">25</option>
                     <option value="50">50</option>
@@ -42,8 +42,8 @@
 
                 <div class="govuk-grid-column-two-thirds">
                     <a href="javascript:void(0)" (click)="expandItem(i)">
-                        <img src="assets/images/glyphicons-602-chevron-down.png" rel="icon chevron down" *ngIf="ph.IsExpanded" />
-                        <img src="assets/images/glyphicons-601-chevron-up.png" rel="icon chevron up" *ngIf="!ph.IsExpanded" />
+                        <img src="assets/images/glyphicons-602-chevron-down.png" rel="icon chevron down" *ngIf="ph.IsExpanded" alt="glyphicons-602-chevron-down" />
+                        <img src="assets/images/glyphicons-601-chevron-up.png" rel="icon chevron up" *ngIf="!ph.IsExpanded" alt="glyphicons-602-chevron-up"/>
                     </a>
                     {{ph.FullName}} ({{ph.HearingCase}})
                 </div>

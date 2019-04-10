@@ -1,8 +1,8 @@
 <app-breadcrumb [canNavigate]="schedulingForm.valid && hasSaved"></app-breadcrumb>
 
-<h2 class="govuk-heading-l">Book a video hearing</h2>
+<h1 class="govuk-heading-l">Book a video hearing</h1>
 
-<h3 class="govuk-heading-m">Time and location</h3>
+<h2 class="govuk-heading-m">Time and location</h2>
 
 <form [formGroup]="schedulingForm" class="govuk-form-group" (ngSubmit)="saveScheduleAndLocation()">
   <div [ngClass]="hearingDateInvalid ? 'govuk-form-group--error' : 'govuk-form-group'">
@@ -10,7 +10,7 @@
       Date of hearing
     </label>
     <input id="hearingDate" class="govuk-input govuk-!-width-one-quarter" type="date" formControlName="hearingDate"
-           required placeholder="e.g. 30/02/2018" min="{{today | date:'yyyy-MM-dd'}}">
+      required placeholder="e.g. 30/02/2018" min="{{today | date:'yyyy-MM-dd'}}">
     <div *ngIf="hearingDateInvalid" class="alert alert-danger">
       <span id="hearingDate-error" class="govuk-error-message">
         Please enter a date in the future
@@ -18,22 +18,28 @@
     </div>
   </div>
 
-  <div [ngClass]="hearingStartTimeHourInvalid || hearingStartTimeMinuteInvalid ? 'govuk-form-group--error' : 'govuk-form-group'">
+  <div
+    [ngClass]="hearingStartTimeHourInvalid || hearingStartTimeMinuteInvalid ? 'govuk-form-group--error' : 'govuk-form-group'">
     <label class="govuk-label govuk-!-width-one-half" for="hearingStartTime">
       Hearing start time (use the 24 hour clock)
     </label>
-    <fieldset class="govuk-fieldset" aria-describedby="stahint" role="group">
+    <fieldset class="govuk-fieldset" aria-describedby="hearingStartTimeHour" role="group">
+      <legend></legend>
       <div class="govuk-date-input">
         <div class="govuk-date-input__item">
           <div class="govuk-form-group">
-            <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="hearingStartTimeHour" name="hearingStartTimeHour"
-                   type="number" min="0" max="23" placeholder="HH" formControlName="hearingStartTimeHour">
+            <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="hearingStartTimeHour"
+              name="hearingStartTimeHour" type="number" min="0" max="23" placeholder="HH"
+              formControlName="hearingStartTimeHour" title="hearingStartTimeHour" aria-label="hearingStartTimeHour"
+              aria-labelledby="hearingStartTimeHour" />
           </div>
         </div>
         <div class="govuk-date-input__item">
           <div class="govuk-form-group">
-            <input class="govuk-input govuk-date-input__input govuk-input--width-2 minutes" id="hearingStartTimeMinute" name="hearingStartTimeMinute"
-                   type="number" min="0" max="59" placeholder="MM" formControlName="hearingStartTimeMinute">
+            <input class="govuk-input govuk-date-input__input govuk-input--width-2 minutes" id="hearingStartTimeMinute"
+              name="hearingStartTimeMinute" type="number" min="0" max="59" placeholder="MM"
+              title="hearingStartTimeMinute" formControlName="hearingStartTimeMinute"
+              aria-label="hearingStartTimeMinute" aria-labelledby="hearingStartTimeMinute" />
           </div>
         </div>
       </div>
@@ -50,22 +56,28 @@
     </div>
   </div>
 
-  <div [ngClass]="hearingDurationHourInvalid || hearingDurationMinuteInvalid ? 'govuk-form-group--error' : 'govuk-form-group'">
+  <div
+    [ngClass]="hearingDurationHourInvalid || hearingDurationMinuteInvalid ? 'govuk-form-group--error' : 'govuk-form-group'">
     <label class="govuk-label govuk-!-width-one-half" for="hearingDuration">
       Duration
     </label>
-    <fieldset class="govuk-fieldset" aria-describedby="stahint" role="group">
-      <div class="govuk-date-input" id="hearingDurationHour">
+    <fieldset class="govuk-fieldset" aria-describedby="hearingDurationHour" role="group">
+      <legend></legend>
+      <div class="govuk-date-input">
         <div class="govuk-date-input__item">
           <div class="govuk-form-group">
-            <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="hearingDurationHour" name="hearingDurationHour"
-                   type="number" placeholder="00" min="0" max="23" formControlName="hearingDurationHour">
+            <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="hearingDurationHour"
+              name="hearingDurationHour" type="number" placeholder="00" min="0" max="23" title="hearingDurationHour"
+              formControlName="hearingDurationHour" aria-label="hearingDurationHour"
+              aria-labelledby="hearingDurationHour" />
           </div>
         </div>
         <div class="govuk-date-input__item">
           <div class="govuk-form-group">
-            <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="hearingDurationMinute" name="hearingDurationMinute"
-                   type="number" placeholder="45" min="0" max="59" formControlName="hearingDurationMinute">
+            <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="hearingDurationMinute"
+              name="hearingDurationMinute" type="number" placeholder="45" min="0" max="59" title="hearingDurationMinute"
+              formControlName="hearingDurationMinute" aria-label="hearingDurationMinute"
+              aria-labelledby="hearingDurationMinute" />
           </div>
         </div>
       </div>
@@ -100,21 +112,22 @@
     <label class="govuk-label" for="court-room">
       Room
     </label>
-    <input class="govuk-input govuk-!-width-one-half" id="court-room" name="court-room" type="text" formControlName="courtRoom">
+    <input class="govuk-input govuk-!-width-one-half" id="court-room" name="court-room" type="text"
+      formControlName="courtRoom">
   </div>
 
-
   <div class="sk-top">
-    <input type="button" id="nextButton" class="govuk-button" role="button" value="{{buttonAction}}" style="margin-right:25px;"
-           (click)="saveScheduleAndLocation()" alt="Save hearing schedule and location details and go to judge assignment" />
+    <input type="button" id="nextButton" class="govuk-button vh-mr25" role="button" value="{{buttonAction}}"
+      (click)="saveScheduleAndLocation()" alt="Save hearing schedule and location details and go to judge assignment" />
     <input type="button" id="cancelButton" class="govuk-button hmcts-button--secondary" role="button" value="Cancel"
-           (click)="confirmCancelBooking()" alt="Confirm cancellation of new booking and return to dashboard" />
+      (click)="confirmCancelBooking()" alt="Confirm cancellation of new booking and return to dashboard" />
   </div>
 
 </form>
 
 <div *ngIf="attemptingCancellation">
-  <app-cancel-popup (continueBooking)="continueBooking($event)" (cancelBooking)="cancelBooking($event)"></app-cancel-popup>
+  <app-cancel-popup (continueBooking)="continueBooking($event)" (cancelBooking)="cancelBooking($event)">
+  </app-cancel-popup>
 </div>
 
 <div *ngIf="attemptingDiscardChanges">
