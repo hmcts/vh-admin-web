@@ -45,7 +45,7 @@ export class ParticipantsListComponent implements OnInit {
       this.bookingService.setParticipantEmail(participantEmail);
       this.router.navigate([PageUrls.AddParticipants]);
     } else {
-      // we are om the add participant page
+      // we are on the add participant page
       this.$selectedForEdit.emit(participantEmail);
     }
   }

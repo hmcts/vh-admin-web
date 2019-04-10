@@ -44,6 +44,8 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   private phone: FormControl;
   private displayName: FormControl;
   private companyName: FormControl;
+  private solicitorReference: FormControl;
+  private representing: FormControl;
   isRoleSelected = true;
   isPartySelected = true;
   isTitleSelected = true;
@@ -158,6 +160,8 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     this.phone = new FormControl('', [Validators.required, Validators.pattern(/^[0-9) -.]+$/)]);
     this.displayName = new FormControl('');
     this.companyName = new FormControl('');
+    this.solicitorReference = new FormControl('');
+    this.representing = new FormControl('');
     this.participantForm = new FormGroup({
       role: this.role,
       party: this.party,
@@ -167,6 +171,8 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
       phone: this.phone,
       displayName: this.displayName,
       companyName: this.companyName,
+      solicitorReference: this.solicitorReference,
+      representing: this.representing
     });
     this.participantForm.valueChanges.subscribe(
       result => {
@@ -260,6 +266,8 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
       phone: this.participantDetails.phone,
       displayName: this.participantDetails.display_name,
       companyName: this.participantDetails.company ? this.participantDetails.company : '',
+      solicitorReference: this.participantDetails.solicitorsReference ? this.participantDetails.solicitorsReference : '',
+      representing: this.participantDetails.representee ? this.participantDetails.representee : '',
     });
     setTimeout(() => {
       this.participantForm.get('role').setValue(this.participantDetails.hearing_role_name);
@@ -454,6 +462,8 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     newParticipant.display_name = this.displayName.value;
     newParticipant.company = this.companyName.value;
     newParticipant.username = this.searchEmail ? this.searchEmail.email : '';
+    newParticipant.solicitorsReference = this.solicitorReference.value;
+    newParticipant.representee = this.representing.value;
   }
 
   addParticipantCancel() {
@@ -514,6 +524,8 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         phone: '',
         displayName: '',
         companyName: '',
+        solicitorReference: '',
+        representing: '',
       });
     this.participantForm.markAsUntouched();
     this.participantForm.markAsPristine();
