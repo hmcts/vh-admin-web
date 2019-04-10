@@ -33,8 +33,10 @@
           <div class="govuk-grid-column-two-thirds vhtable-header">
             {{pat.title}} {{pat.first_name}} {{pat.last_name}}
             <div>
-              <strong>{{pat.case_role_name}}</strong>
+              {{pat.case_role_name}}
+              <span *ngIf="pat.isRepresent"> ,representing</span>
             </div>
+            <div>{{pat.representee}}</div>
           </div>
           <div class="govuk-grid-column-one-third vhtable-cell" *ngIf="isEditRemoveVisible">
             <a class="vhlink" href="javascript:void(0)" (click)="editParticipant(pat.email)">Edit</a>

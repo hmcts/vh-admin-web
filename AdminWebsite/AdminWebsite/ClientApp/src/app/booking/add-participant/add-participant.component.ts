@@ -67,6 +67,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   localEditMode = false;
   isExistingHearing: boolean;
   isAnyParticipants: boolean;
+  isSolicitor = false;
 
   @ViewChild(SearchEmailComponent)
   searchEmail: SearchEmailComponent;
@@ -349,6 +350,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   roleSelected() {
     this.isRoleSelected = this.role.value !== this.constants.PleaseSelect;
     this.showDetails = true;
+    this.isSolicitor = this.role.value === this.constants.Solisitor;
   }
 
   titleSelected() {
