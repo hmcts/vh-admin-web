@@ -1,6 +1,8 @@
 ﻿using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.AcceptanceTests.Pages;
 using FluentAssertions;
+using NUnit.Framework;
+using OpenQA.Selenium;
 using System;
 using System.Linq;
 using TechTalk.SpecFlow;
@@ -48,17 +50,9 @@ namespace AdminWebsite.AcceptanceTests.Steps
             }
             if (username.Contains("caseadmin"))
             {
-                var exception = string.Empty;
-                 try
-                {
-                    _bookingDetails.ParticipantUsername().Should().Contain("reform");
-                }
-                catch (Exception ex)
-                {
-                    exception = ex.InnerException.Message;
-                }
-                exception.ToLower().Should().Contain("unable to locate element:");
+                Assert.Throws<WebDriverTimeoutException>(() => _bookingDetails.ParticipantUsername());
             }
+            
             _bookingDetails.CreatedBy().Should().Be(username);
         }
         [Then(@"amended values should be saved")]
