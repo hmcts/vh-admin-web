@@ -41,18 +41,26 @@ export class SearchEmailComponent implements OnInit {
     this.searchService.search(this.searchTerm)
       .subscribe(data => {
         if (data && data.length > 0) {
-          this.results = data.map(x => this.mapPersonResponseToParticipantModel(x));
-          this.isShowResult = true;
-          this.isValidEmail = true;
-          this.notFoundParticipant = false;
+          this.getData(data);
         } else {
-          this.isShowResult = false;
-          this.notFoundParticipant = true;
-          return this.participantsNotFound.emit();
+          this.noDataFound();
         }
       });
 
     this.searchTerm.subscribe(s => this.email = s);
+  }
+
+  getData(data: PersonResponse[]) {
+    this.results = data.map(x => this.mapPersonResponseToParticipantModel(x));
+    this.isShowResult = true;
+    this.isValidEmail = true;
+    this.notFoundParticipant = false;
+  }
+
+  noDataFound() {
+    this.isShowResult = false;
+    this.notFoundParticipant = true;
+    this.participantsNotFound.emit();
   }
 
   selectItemClick(result: ParticipantModel) {

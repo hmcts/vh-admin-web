@@ -71,6 +71,11 @@ describe('SeachEmailComponent', () => {
     expect(component).toBeTruthy();
     expect(component.searchService).toBeTruthy();
   }));
+  it('should detect emailInput element', async(() => {
+    expect(component.emailInput).toBeTruthy();
+    expect(component.emailInput.nativeElement).toBeTruthy();
+
+  }));
   it('should have empty list of participant models', async(() => {
     expect(component.results).toBeTruthy();
     expect(component.results.length).toBe(0);
@@ -177,5 +182,18 @@ describe('SeachEmailComponent', () => {
     expect(model.phone).toEqual(person.telephone_number);
     expect(model.username).toEqual(person.username);
 
+  });
+  it('should find data and set notFoundParticipant to false', () => {
+    component.getData(participantList);
+    expect(component.isShowResult).toBeTruthy();
+    expect(component.isValidEmail).toBeTruthy();
+    expect(component.notFoundParticipant).toBeFalsy();
+  });
+  it('should set notFoundParticipant to true', () => {
+    spyOn(component.participantsNotFound, 'emit');
+    component.noDataFound();
+    expect(component.isShowResult).toBeFalsy();
+    expect(component.notFoundParticipant).toBeTruthy();
+    expect(component.participantsNotFound.emit).toHaveBeenCalled();
   });
 });
