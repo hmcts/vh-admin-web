@@ -46,32 +46,5 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var noContentResult = (NoContentResult)result;
             noContentResult.StatusCode.Should().Be(204);
         }
-
-        [Test]
-        public async Task should_return_bad_request_if_status_is_not_sent()
-        {
-            GivenApiThrowsExceptionOnCancel(HttpStatusCode.BadRequest);
-
-            _updateBookingStatusRequest.Status = null;
-            var result = await _controller.UpdateBookingStatus(_guid, _updateBookingStatusRequest);
-            var badRequestResult = (BadRequestObjectResult)result;
-            badRequestResult.StatusCode.Should().Be(400);
-        }
-
-        [Test]
-        public async Task should_return_not_found_if_invalid_hearing_id()
-        {
-            GivenApiThrowsExceptionOnCancel(HttpStatusCode.NotFound);
-            var result = await _controller.UpdateBookingStatus(_guid, _updateBookingStatusRequest);
-            var notFoundResult = (NotFoundObjectResult) result;
-            notFoundResult.StatusCode.Should().Be(404);
-        }
-
-        private void GivenApiThrowsExceptionOnCancel(HttpStatusCode code)
-        {
-            _bookingsApiClient.Setup(x =>
-                    x.UpdateBookingStatusAsync(It.IsAny<Guid>(), It.IsAny<UpdateBookingStatusRequest>()))
-                .ThrowsAsync(ClientException.ForBookingsAPI(code));
-        }
     }
 }
