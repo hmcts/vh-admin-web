@@ -114,7 +114,7 @@ namespace AdminWebsite.AcceptanceTests.Helpers
         }
         public void AcceptAlert()
         {
-            Retry(() => NgDriver.SwitchTo().Alert().Accept());
+            Retry(() => NgDriver.SwitchTo().Alert().Accept(), 3);
         }        
     }
 

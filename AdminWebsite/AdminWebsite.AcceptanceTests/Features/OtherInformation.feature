@@ -5,18 +5,14 @@
 
 @VIH-2641
 Scenario: Case Admin adds Other information to the Video Hearing booking
-	Given Admin user is on microsoft login page
-	And Case Admin logs into Vh-Admin website 
-	And user is on other information page 
+	Given Case Admin is on other information page 
 	When user adds other information to the Video Hearing booking  
 	And user proceeds to next page 
 	Then user should be on summary page 
 	
 @VIH-2641
 Scenario: Case Admin continues booking without adding Other information
-	Given Admin user is on microsoft login page
-	And Case Admin logs into Vh-Admin website 
-	And user is on other information page 
+	Given Case Admin is on other information page 
 	When user continues booking without adding other information  
 	And user proceeds to next page 
 	Then user should be on summary page 

@@ -1,6 +1,7 @@
 ﻿using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.AcceptanceTests.Pages;
 using FluentAssertions;
+using System;
 using System.Linq;
 using TechTalk.SpecFlow;
 
@@ -38,9 +39,9 @@ namespace AdminWebsite.AcceptanceTests.Steps
                     _summary.CaseHearingType().Should().Be(TestData.HearingDetails.CaseHearingType);
                     break;
                 case PageUri.HearingSchedulePage:
-                    _summary.HearingDate().Should().Be(_summary.GetItems("HearingDate"));
+                    _summary.HearingDate().ToLower().Should().Be(_summary.GetItems("HearingDate"));
                     _summary.CourtAddress().Should().Be($"{TestData.HearingSchedule.CourtAddress.ToList().Last()} {TestData.HearingSchedule.Room}");
-                    _summary.HearingDuration().Should().Be("1 hour 30 minutes");
+                    _summary.HearingDuration().Should().Be("listed for 30 minutes");
                     break;
                 case PageUri.OtherInformationPage:
                     _summary.OtherInformation().Should().Be(TestData.OtherInformation.OtherInformationText);
@@ -70,10 +71,10 @@ namespace AdminWebsite.AcceptanceTests.Steps
                     _summary.EditMoreInformation();
                     break;
                 case "add judge": pageUri = PageUri.AssignJudgePage;
-                    _summary.EditParticipantRoundedBoarder("Change");
+                    _summary.EditRoundedBoarder("Change");
                     break;
                 case "add participants": pageUri = PageUri.AddParticipantsPage;
-                    _summary.EditParticipantRoundedBoarder("Edit");
+                    _summary.EditRoundedBoarder("Edit");
                     break;
             }
             _summary.AddItems<string>("RelevantPage", pageUri);
@@ -81,13 +82,23 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [When(@"user removes participant on summary page")]
         public void GivenUserRemovesParticipantOnSummaryPage()
         {
-            _summary.EditParticipantRoundedBoarder("Remove");
+            _summary.EditRoundedBoarder("Remove");
         }
         [Then(@"participant should be removed from the list")]
         public void ThenParticipantShouldBeRemovedFromTheList()
         {
             _summary.ParticipantConfirmationMessage().Should().Contain("Are you sure you want to remove");
             _summary.RemoveParticipant();
+            var exception = string.Empty;
+            try
+            {
+                _summary.GetParticipantDetails().Should().NotBeNullOrEmpty();
+            }
+            catch (Exception ex)
+            {
+                exception = ex.InnerException.Message;
+            }
+            exception.ToLower().Should().Contain("unable to locate element:");
         }
         [Then(@"inputted values should not be saved")]
         public void ThenInputtedValuesShouldNotBeSaved()
@@ -117,6 +128,10 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void WhenUserSubmitBooking()
         {
             _summary.Book();
+        }
+        [Then(@"")]
+        public void UpdateParticipantDetails()
+        {
         }
     }
 }
