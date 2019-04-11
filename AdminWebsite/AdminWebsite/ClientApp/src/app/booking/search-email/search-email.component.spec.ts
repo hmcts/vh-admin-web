@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { SharedModule } from 'src/app/shared/shared.module';
 
@@ -6,6 +6,7 @@ import { IParticipantRequest } from '../../services/clients/api-client';
 import { SearchService } from '../../services/search.service';
 import { SearchEmailComponent } from './search-email.component';
 import { ParticipantModel } from '../../common/model/participant.model';
+import { By } from '@angular/platform-browser';
 
 describe('SeachEmailComponent', () => {
   let component: SearchEmailComponent;
@@ -118,4 +119,13 @@ describe('SeachEmailComponent', () => {
     expect(component.findParticipant.emit).toHaveBeenCalled();
 
   });
+
+  it('should disable email address input by attribute', fakeAsync(() => {
+    component.disabled = true;
+    fixture.detectChanges();
+    tick();
+
+    const element = fixture.debugElement.query(By.css('#participantEmail')).nativeElement;
+    expect(element.disabled).toBeTruthy();
+  }));
 });
