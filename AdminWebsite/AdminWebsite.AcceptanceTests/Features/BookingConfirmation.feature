@@ -10,7 +10,7 @@ Scenario: Case Admin saves booking and views confirmation screen
 	Then hearing should be booked
 
 @VIH-2701 @bug
-Scenario Outline: Test testing
+Scenario Outline: Case Admin with multiple case types saves booking
 	Given 'VH Officer' with <CaseTypes> adds participant with <Party> and <Role> to booking 
 	When user submit booking 
 	Then hearing should be booked
