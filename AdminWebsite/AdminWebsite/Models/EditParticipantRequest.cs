@@ -99,5 +99,6 @@ namespace AdminWebsite.Models
         /// Organisation name
         /// </summary>
         public string OrganisationName { get; set; }
+
     }
 }

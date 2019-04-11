@@ -9,31 +9,35 @@
   <div class="govuk-grid-column-one-half">
 
     <h2 class="govuk-heading-m" id="hearingSummary">{{ isExistingBooking ? 'Booking details' : 'Hearing summary'}}</h2>
-    <app-booking-edit [title]="'Hearing details'" [editLink]="'book-hearing'" [elementId]="'hearing-details-id'"></app-booking-edit>
+    <app-booking-edit [title]="'Hearing details'" [editLink]="'book-hearing'" [elementId]="'hearing-details-id'">
+    </app-booking-edit>
     <div class="govuk-form-group vhtable">
       <div id="caseNumber">{{ caseNumber }}</div>
       <div id="caseName">{{ caseName }}</div>
       <div id="caseHearingType">{{ caseHearingType }}</div>
     </div>
 
-    <app-booking-edit [title]="'Hearing schedule'" [editLink]="'hearing-schedule'" [elementId]="'hearing-schedule-id'"></app-booking-edit>
+    <app-booking-edit [title]="'Hearing schedule'" [editLink]="'hearing-schedule'" [elementId]="'hearing-schedule-id'">
+    </app-booking-edit>
     <div class="govuk-form-group vhtable">
       <div id="hearingDate">{{ hearingDate | amLocal | amDateFormat: 'dddd DD MMMM YYYY [,] H:mm a' }}</div>
       <div id="courtAddress">{{ courtRoomAddress }}</div>
       <div id="hearingDuration">{{ hearingDuration }}</div>
     </div>
 
-    <app-booking-edit [title]="'Other information'" [editLink]="'other-information'" [elementId]="'other-information-id'"></app-booking-edit>
+    <app-booking-edit [title]="'Other information'" [editLink]="'other-information'"
+      [elementId]="'other-information-id'"></app-booking-edit>
 
     <div class="govuk-form-group vhtable">
       <div class="vh-text-break" id="otherInformation">{{ otherInformation }}</div>
     </div>
 
     <div class="sk-top">
-      <input type="button" id="bookButton" class="govuk-button" role="button" value="{{isExistingBooking ? 'Save' : 'Book'}}" style="margin-right:25px;"
-             (click)="bookHearing()" alt="Book a Hearing" [disabled]="bookingsSaving" />
+      <input type="button" id="bookButton" class="govuk-button vh-mr25" role="button"
+        value="{{isExistingBooking ? 'Save' : 'Book'}}" (click)="bookHearing()" alt="Book a Hearing"
+        [disabled]="bookingsSaving" />
       <input type="button" id="cancelButton" class="govuk-button hmcts-button--secondary" role="button" value="Cancel"
-             (click)="confirmCancelBooking()" alt="Confirm cancellation of new booking and return to dashboard" />
+        (click)="confirmCancelBooking()" alt="Confirm cancellation of new booking and return to dashboard" />
     </div>
   </div>
 
@@ -49,7 +53,7 @@
 
 <div *ngIf="showConfirmationRemoveParticipant">
   <app-remove-popup (continueRemove)="handleContinueRemove()" (cancelRemove)="handleCancelRemove()"
-                    [fullName]="removerFullName"></app-remove-popup>
+    [fullName]="removerFullName"></app-remove-popup>
 </div>
 
 <div *ngIf="showWaitSaving">

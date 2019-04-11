@@ -197,6 +197,11 @@ describe('Video hearing service', () => {
       participant.telephone_number = '123123123';
       participant.case_role_name = 'Defendant';
       participant.hearing_role_name = 'Defendant LIP';
+      participant.house_number = '123';
+      participant.street = 'Test Street';
+      participant.city = 'Test City';
+      participant.county = 'Test County';
+      participant.postcode = 'TE1 TNR';
       participants.push(participant);
 
       const model = service.mapParticipantResponseToParticipantModel(participants);
@@ -211,6 +216,11 @@ describe('Video hearing service', () => {
       expect(model[0].phone).toEqual(participant.telephone_number);
       expect(model[0].case_role_name).toEqual(participant.case_role_name);
       expect(model[0].hearing_role_name).toEqual(participant.hearing_role_name);
+      expect(model[0].housenumber).toEqual(participant.house_number);
+      expect(model[0].street).toEqual(participant.street);
+      expect(model[0].city).toEqual(participant.city);
+      expect(model[0].county).toEqual(participant.county);
+      expect(model[0].postcode).toEqual(participant.postcode);
     }));
   it('should map ParticipantModel toParticipantResponse',
     inject([VideoHearingsService], (service: VideoHearingsService) => {
@@ -227,6 +237,11 @@ describe('Video hearing service', () => {
       participant.phone = '123123123';
       participant.case_role_name = 'Defendant';
       participant.hearing_role_name = 'Defendant LIP';
+      participant.housenumber = '123';
+      participant.street = 'Test Street';
+      participant.city = 'Test City';
+      participant.county = 'Test County';
+      participant.postcode = 'TE1 TNR';
       participants.push(participant);
 
       const model = service.mapParticipants(participants);
@@ -241,5 +256,111 @@ describe('Video hearing service', () => {
       expect(model[0].telephone_number).toEqual(participant.phone);
       expect(model[0].case_role_name).toEqual(participant.case_role_name);
       expect(model[0].hearing_role_name).toEqual(participant.hearing_role_name);
+      expect(model[0].house_number).toEqual(participant.housenumber);
+      expect(model[0].street).toEqual(participant.street);
+      expect(model[0].city).toEqual(participant.city);
+      expect(model[0].county).toEqual(participant.county);
+      expect(model[0].postcode).toEqual(participant.postcode);
+    }));
+  it('should map Existing hearing',
+    inject([VideoHearingsService], (service: VideoHearingsService) => {
+      const participants: ParticipantModel[] = [];
+      const participant = new ParticipantModel();
+      participant.title = 'Mr';
+      participant.first_name = 'Dan';
+      participant.middle_names = 'Ivan';
+      participant.last_name = 'Smith';
+      participant.username = 'dan@email.aa';
+      participant.display_name = 'Dan Smith';
+      participant.email = 'dan@email.aa';
+      participant.phone = '123123123';
+      participant.case_role_name = 'Defendant';
+      participant.hearing_role_name = 'Defendant LIP';
+      participant.housenumber = '123';
+      participant.street = 'Test Street';
+      participant.city = 'Test City';
+      participant.county = 'Test County';
+      participant.postcode = 'TE1 TNR';
+      participants.push(participant);
+      const caseModel = new CaseModel();
+      caseModel.name = 'case1';
+      caseModel.number = 'Number 1';
+      const hearingModel = new HearingModel();
+      hearingModel.court_room = 'Court Room1';
+      hearingModel.court_name = 'Test Court';
+      hearingModel.other_information = 'Other Information';
+      hearingModel.scheduled_date_time = new Date();
+      hearingModel.scheduled_duration = 45;
+      hearingModel.participants = participants;
+      hearingModel.cases = [caseModel];
+
+      const editHearingRequest = service.mapExistingHearing(hearingModel);
+      const actualParticipant = editHearingRequest.participants[0];
+      const expectedParticipant = hearingModel.participants[0];
+      const expectedCase = hearingModel.cases[0];
+      const actualCase = editHearingRequest.case;
+      expect(editHearingRequest.hearing_room_name).toEqual(hearingModel.court_room);
+      expect(editHearingRequest.hearing_venue_name).toEqual(hearingModel.court_name);
+      expect(editHearingRequest.other_information).toEqual(hearingModel.other_information);
+      expect(editHearingRequest.scheduled_date_time).toEqual(hearingModel.scheduled_date_time);
+      expect(editHearingRequest.scheduled_duration).toEqual(hearingModel.scheduled_duration);
+      expect(editHearingRequest.participants.length).toBeGreaterThan(0);
+      expect(actualParticipant.title).toEqual(expectedParticipant.title);
+      expect(actualParticipant.first_name).toEqual(expectedParticipant.first_name);
+      expect(actualParticipant.last_name).toEqual(expectedParticipant.last_name);
+      expect(actualParticipant.middle_names).toEqual(expectedParticipant.middle_names);
+      expect(actualParticipant.hearing_role_name).toEqual(expectedParticipant.hearing_role_name);
+      expect(actualParticipant.case_role_name).toEqual(expectedParticipant.case_role_name);
+      expect(actualParticipant.house_number).toEqual(expectedParticipant.housenumber);
+      expect(actualParticipant.street).toEqual(expectedParticipant.street);
+      expect(actualParticipant.city).toEqual(expectedParticipant.city);
+      expect(actualParticipant.county).toEqual(expectedParticipant.county);
+      expect(actualParticipant.postcode).toEqual(expectedParticipant.postcode);
+      expect(actualCase.name).toEqual(expectedCase.name);
+      expect(actualCase.number).toEqual(expectedCase.number);
+    }));
+  it('should map Existing hearing',
+    inject([VideoHearingsService], (service: VideoHearingsService) => {
+      const participants: ParticipantModel[] = [];
+      const participant = new ParticipantModel();
+      participant.title = 'Mr';
+      participant.first_name = 'Dan';
+      participant.middle_names = 'Ivan';
+      participant.last_name = 'Smith';
+      participant.username = 'dan@email.aa';
+      participant.display_name = 'Dan Smith';
+      participant.email = 'dan@email.aa';
+      participant.phone = '123123123';
+      participant.case_role_name = 'Defendant';
+      participant.hearing_role_name = 'Defendant LIP';
+      participants.push(participant);
+      const caseModel = new CaseModel();
+      caseModel.name = 'case1';
+      caseModel.number = 'Number 1';
+      const hearingModel = new HearingModel();
+      hearingModel.court_room = 'Court Room1';
+      hearingModel.court_name = 'Test Court';
+      hearingModel.other_information = 'Other Information';
+      hearingModel.scheduled_date_time = new Date();
+      hearingModel.scheduled_duration = 45;
+      hearingModel.participants = participants;
+      hearingModel.cases = [caseModel];
+
+      const editHearingRequest = service.mapExistingHearing(hearingModel);
+
+      expect(editHearingRequest.hearing_room_name).toEqual(hearingModel.court_room);
+      expect(editHearingRequest.hearing_venue_name).toEqual(hearingModel.court_name);
+      expect(editHearingRequest.other_information).toEqual(hearingModel.other_information);
+      expect(editHearingRequest.scheduled_date_time).toEqual(hearingModel.scheduled_date_time);
+      expect(editHearingRequest.scheduled_duration).toEqual(hearingModel.scheduled_duration);
+      expect(editHearingRequest.participants.length).toBeGreaterThan(0);
+      expect(editHearingRequest.participants[0].title).toEqual(hearingModel.participants[0].title);
+      expect(editHearingRequest.participants[0].first_name).toEqual(hearingModel.participants[0].first_name);
+      expect(editHearingRequest.participants[0].last_name).toEqual(hearingModel.participants[0].last_name);
+      expect(editHearingRequest.participants[0].middle_names).toEqual(hearingModel.participants[0].middle_names);
+      expect(editHearingRequest.participants[0].hearing_role_name).toEqual(hearingModel.participants[0].hearing_role_name);
+      expect(editHearingRequest.participants[0].case_role_name).toEqual(hearingModel.participants[0].case_role_name);
+      expect(editHearingRequest.case.name).toEqual(hearingModel.cases[0].name);
+      expect(editHearingRequest.case.number).toEqual(hearingModel.cases[0].number);
     }));
 });

@@ -2,8 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 @Component({
   selector: 'app-confirmation-popup',
-  templateUrl: './confirmation-popup.component.html',
-  styleUrls: ['./confirmation-popup.component.css']
+  templateUrl: './confirmation-popup.component.html'
 })
 export class ConfirmationPopupComponent implements OnInit {
   @Input() message: string;

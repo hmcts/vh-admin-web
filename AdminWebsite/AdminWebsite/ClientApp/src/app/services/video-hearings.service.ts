@@ -3,10 +3,12 @@ import { Observable, of } from 'rxjs';
 import {
   HearingTypeResponse, BHClient, BookNewHearingRequest, HearingDetailsResponse,
   CaseAndHearingRolesResponse, CaseRequest, ParticipantRequest, CaseResponse2,
-  ParticipantResponse,
+  ParticipantResponse,
+
   EditHearingRequest,
   EditCaseRequest,
-  EditParticipantRequest
+  EditParticipantRequest,
+  UpdateBookingStatusRequest
 } from './clients/api-client';
 import { HearingModel } from '../common/model/hearing.model';
 import { CaseModel } from '../common/model/case.model';
@@ -127,6 +129,11 @@ export class VideoHearingsService {
     editParticipant.solicitors_reference = participant.solicitorsReference;
     editParticipant.telephone_number = participant.phone;
     editParticipant.title = participant.title;
+    editParticipant.house_number = participant.housenumber;
+    editParticipant.street = participant.street;
+    editParticipant.city = participant.city;
+    editParticipant.county = participant.county;
+    editParticipant.postcode = participant.postcode;
     return editParticipant;
   }
 
@@ -141,7 +148,6 @@ export class VideoHearingsService {
     newHearingRequest.hearing_room_name = newRequest.court_room;
     newHearingRequest.participants = this.mapParticipants(newRequest.participants);
     newHearingRequest.other_information = newRequest.other_information;
-    console.log(newHearingRequest);
     return newHearingRequest;
   }
 
@@ -210,6 +216,11 @@ export class VideoHearingsService {
         participant.hearing_role_name = p.hearing_role_name;
         participant.representee = p.representee;
         participant.solicitors_reference = p.solicitorsReference;
+        participant.house_number = p.housenumber;
+        participant.street = p.street;
+        participant.city = p.city;
+        participant.county = p.county;
+        participant.postcode = p.postcode;
         participants.push(participant);
       });
     }
@@ -236,6 +247,11 @@ export class VideoHearingsService {
         participant.representee = '';
         participant.solicitorsReference = '';
         participant.is_judge = p.case_role_name === 'Judge';
+        participant.housenumber = p.house_number;
+        participant.street = p.street;
+        participant.city = p.city;
+        participant.county = p.county;
+        participant.postcode = p.postcode;
         participants.push(participant);
       });
     }
@@ -244,5 +260,9 @@ export class VideoHearingsService {
 
   getHearingById(hearingId: string): Observable<HearingDetailsResponse> {
     return this.bhClient.getHearingById(hearingId);
+  }
+
+  updateBookingStatus(hearingId: string, updateBookingStatus: UpdateBookingStatusRequest): Observable<void> {
+    return this.bhClient.updateBookingStatus(hearingId, updateBookingStatus);
   }
 }
