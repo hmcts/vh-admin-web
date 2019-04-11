@@ -1,4 +1,4 @@
-import { Component, OnInit, EventEmitter, ViewChild } from '@angular/core';
+import { Component, OnInit, EventEmitter, ViewChild, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { TopMenuItems } from './topMenuItems';
 import { SignOutComponent } from '../sign-out/sign-out.component';
@@ -9,6 +9,8 @@ import { SignOutComponent } from '../sign-out/sign-out.component';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit {
+  @Input() loggedIn;
+
   @ViewChild(SignOutComponent)
   signoutComponent: SignOutComponent;
 
