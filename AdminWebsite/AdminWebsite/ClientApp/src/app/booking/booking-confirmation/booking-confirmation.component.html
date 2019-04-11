@@ -8,7 +8,7 @@
         <div class="govuk-form-group vhtable">
           <div class="vhtable-header" id="caseNumber">{{ caseNumber }}</div>
           <div class="vhtable-header" id="caseName">{{ caseName }}</div>
-          <div class="vhtable-header" id="hearingDate">{{ hearingDate | date:"EEEE dd MMMM yyyy ',' HH:mm" }}</div>
+          <div class="vhtable-header" id="hearingDate">{{ hearingDate | amLocal | amDateFormat: 'dddd DD MMMM YYYY [,] h:mm a' }}</div>
         </div>
       </div>
     </div>
