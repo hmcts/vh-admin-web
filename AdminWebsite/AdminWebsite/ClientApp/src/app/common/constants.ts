@@ -3,7 +3,7 @@ export const Constants = {
   PleaseSelect: 'Please Select',
   PleaseSelectPattern: '^((?!Please Select).)*$',
   Judge: 'Judge',
-  Solisitor: 'Solicitor',
+  Solicitor: 'Solicitor',
   Citizen: 'Citizen',
   Professional: 'Professional',
   Error: {

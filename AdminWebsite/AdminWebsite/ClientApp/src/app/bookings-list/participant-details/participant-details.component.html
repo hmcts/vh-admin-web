@@ -18,7 +18,9 @@
       {{participant?.fullName}}
       <div [attr.id]="'participant_role' + participant?.IndexInList" class="govuk-hint">
         {{participant?.HearingRoleName}}
+        <span *ngIf="participant.isRepresent">, representing</span>
       </div>
+      <div><strong>{{participant.representee}}</strong></div>
     </div>
 
     <div *ngIf="vh_officer_admin">

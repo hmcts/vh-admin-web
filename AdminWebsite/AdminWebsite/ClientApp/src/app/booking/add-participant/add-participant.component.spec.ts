@@ -41,6 +41,8 @@ let lastName: AbstractControl;
 let phone: AbstractControl;
 let displayName: AbstractControl;
 let companyName: AbstractControl;
+let representing: AbstractControl;
+let solicitorReference: AbstractControl;
 
 const participants: ParticipantModel[] = [];
 
@@ -674,5 +676,88 @@ describe('AddParticipantComponent edit mode no participants added', () => {
     expect(component.displayClearButton).toBeTruthy();
     expect(component.displayAddButton).toBeTruthy();
     expect(component.displayUpdateButton).toBeFalsy();
+  });
+});
+
+describe('AddParticipantComponent set representer', () => {
+
+  beforeEach(async(() => {
+    TestBed.configureTestingModule({
+      declarations: [
+        AddParticipantComponent,
+        BreadcrumbStubComponent,
+        SearchEmailComponent,
+        ParticipantsListStubComponent,
+        CancelPopupStubComponent,
+        ConfirmationPopupStubComponent,
+        RemovePopupStubComponent,
+        DiscardConfirmPopupComponent,
+      ],
+      imports: [
+        SharedModule
+      ],
+      providers: [
+        { provide: SearchService, useClass: SearchServiceStub },
+        { provide: Router, useValue: routerSpy },
+        { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
+        { provide: ParticipantService, useValue: participantServiceSpy },
+        { provide: BookingService, useValue: bookingServiceSpy },
+      ]
+    })
+      .compileComponents();
+
+    const hearing = initExistHearingRequest();
+    videoHearingsServiceSpy.getParticipantRoles.and.returnValue(of(roleList));
+    videoHearingsServiceSpy.getCurrentRequest.and.returnValue(hearing);
+    participantServiceSpy.mapParticipantsRoles.and.returnValue(partyList);
+    bookingServiceSpy.isEditMode.and.returnValue(true);
+    bookingServiceSpy.getParticipantEmail.and.returnValue('');
+
+
+    fixture = TestBed.createComponent(AddParticipantComponent);
+    debugElement = fixture.debugElement;
+    component = debugElement.componentInstance;
+    component.ngOnInit();
+    fixture.detectChanges();
+
+    role = component.participantForm.controls['role'];
+    party = component.participantForm.controls['party'];
+    title = component.participantForm.controls['title'];
+    firstName = component.participantForm.controls['firstName'];
+    lastName = component.participantForm.controls['lastName'];
+    phone = component.participantForm.controls['phone'];
+    displayName = component.participantForm.controls['displayName'];
+    companyName = component.participantForm.controls['companyName'];
+    solicitorReference = component.participantForm.controls['solicitorReference'];
+    representing = component.participantForm.controls['representing'];
+  }));
+  it('should show solicitor reference, company and name of representing person', () => {
+    fixture.detectChanges();
+    component.participantForm.get('role').setValue('Solicitor');
+
+    component.roleSelected();
+    fixture.detectChanges();
+
+    expect(component.isSolicitor).toBeTruthy();
+  });
+  it('should clean the fields solicitor reference, company and name of representing person', () => {
+    fixture.detectChanges();
+    component.participantForm.get('role').setValue('Solicitor');
+    component.roleSelected();
+    fixture.detectChanges();
+    component.participantForm.get('companyName').setValue('Organization');
+    component.participantForm.get('solicitorReference').setValue('Ref1');
+    component.participantForm.get('representing').setValue('Ms X');
+    
+    fixture.detectChanges();
+
+    component.participantForm.get('role').setValue('Claimant');
+    component.roleSelected();
+    fixture.detectChanges();
+
+    expect(component.isSolicitor).toBeFalsy();
+    expect(component.participantForm.get('companyName').value).toEqual('');
+    expect(component.participantForm.get('solicitorReference').value).toEqual('');
+    expect(component.participantForm.get('representing').value).toEqual('');
   });
 });

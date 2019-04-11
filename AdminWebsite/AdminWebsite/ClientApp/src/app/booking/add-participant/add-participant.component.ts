@@ -89,22 +89,8 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   ngOnInit() {
     super.ngOnInit();
     this.checkForExistingRequest();
-    this.retrieveRoles();
+
     this.initializeForm();
-    if (this.editMode) {
-      setTimeout(() => {
-        this.selectedParticipantEmail = this.bookingService.getParticipantEmail();
-        if (!this.selectedParticipantEmail || this.selectedParticipantEmail.length === 0) {
-          // no participants, we need to add one
-          this.showDetails = false;
-          this.displayAdd();
-        } else {
-          this.showDetails = true;
-          this.repopulateParticipantToEdit();
-          this.displayNext();
-        }
-      }, 500);
-    }
 
     if (this.participantsListComponent) {
       this.participantsListComponent.selectedParticipant.subscribe((participantEmail) => {
@@ -128,13 +114,28 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   }
 
   ngAfterViewInit() {
-    if (this.editMode) {
-      setTimeout(() => {
-        if (this.searchEmail && this.participantDetails) {
-          this.setParticipantEmail();
-        }
-      }, 500);
-    }
+    this.videoHearingService.getParticipantRoles(this.hearing.case_type)
+      .subscribe(
+        (data: CaseAndHearingRolesResponse[]) => {
+          this.setupRoles(data);
+          if (this.editMode) {
+              this.selectedParticipantEmail = this.bookingService.getParticipantEmail();
+              if (!this.selectedParticipantEmail || this.selectedParticipantEmail.length === 0) {
+                // no participants, we need to add one
+                this.showDetails = false;
+                this.displayAdd();
+              } else {
+                this.showDetails = true;
+                setTimeout(() => {
+                  if (this.searchEmail && this.participantDetails) {
+                    this.setParticipantEmail();
+                  }
+                }, 300);
+                this.displayNext();
+              }
+              this.repopulateParticipantToEdit();
+          }
+        }, error => console.error(error));
   }
 
   private setParticipantEmail() {
@@ -221,15 +222,15 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     }
   }
 
-  private retrieveRoles() {
-    this.videoHearingService.getParticipantRoles(this.hearing.case_type)
-      .subscribe(
-        (data: CaseAndHearingRolesResponse[]) => {
-          this.setupRoles(data);
-        },
-        error => console.error(error)
-      );
-  }
+  //private retrieveRoles() {
+  //  this.videoHearingService.getParticipantRoles(this.hearing.case_type)
+  //    .subscribe(
+  //      (data: CaseAndHearingRolesResponse[]) => {
+  //        this.setupRoles(data);
+  //      },
+  //      error => console.error(error)
+  //    );
+  //}
 
   setupRoles(data: CaseAndHearingRolesResponse[]) {
     this.caseAndHearingRoles = this.participantService.mapParticipantsRoles(data);
@@ -257,6 +258,8 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     this.isAnyParticipants = this.participantDetails.id && this.participantDetails.id.length > 0;
 
     this.setupHearingRoles(this.participantDetails.case_role_name);
+
+    this.isSolicitor = this.participantDetails.hearing_role_name === Constants.Solicitor;
 
     this.participantForm.setValue({
       party: this.participantDetails.case_role_name,
@@ -350,7 +353,12 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   roleSelected() {
     this.isRoleSelected = this.role.value !== this.constants.PleaseSelect;
     this.showDetails = true;
-    this.isSolicitor = this.role.value === this.constants.Solisitor;
+    this.isSolicitor = this.role.value === this.constants.Solicitor;
+    if (!this.isSolicitor) {
+      this.companyName.setValue('');
+      this.solicitorReference.setValue('');
+      this.representing.setValue('');
+    }
   }
 
   titleSelected() {
