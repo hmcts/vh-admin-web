@@ -128,29 +128,17 @@ describe('SeachEmailComponent', () => {
     fixture.detectChanges();
     expect(component.isShowResult).toBeFalsy();
     expect(component.findParticipant.emit).toHaveBeenCalled();
-
   });
-  it('should disable email address', fakeAsync(() => {
-    fixture.detectChanges();
 
-    const emailEl = fixture.debugElement.query(By.css('#participantEmail'));
+  it('should disable email address input by attribute', fakeAsync(() => {
+    component.disabled = true;
+    fixture.detectChanges();
+    tick();
 
-    component.setEmailDisabled(true);
-    tick(600);
-    fixture.detectChanges();
-    expect(emailEl.nativeElement.disabled).toBeTruthy();
+    const element = fixture.debugElement.query(By.css('#participantEmail')).nativeElement;
+    expect(element.disabled).toBeTruthy();
   }));
-  it('should enable email address', fakeAsync(() => {
-    fixture.detectChanges();
-    const emailEl = fixture.debugElement.query(By.css('#participantEmail'));
-    component.setEmailDisabled(true);
-    tick(600);
-    fixture.detectChanges();
-    component.setEmailDisabled(false);
-    tick(600);
-    fixture.detectChanges();
-    expect(emailEl.nativeElement.disabled).toBeFalsy();
-  }));
+
   it('should show message not found participant for given email', () => {
     component.results = null;
     spyOn(component.emailChanged, 'emit');

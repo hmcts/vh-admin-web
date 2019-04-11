@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, HostListener, Output, ViewChild, OnInit } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostListener, Output, ViewChild, OnInit, Input } from '@angular/core';
 import { Subject } from 'rxjs';
 import { PersonResponse } from '../../services/clients/api-client';
 import { Constants } from '../../common/constants';
@@ -32,6 +32,9 @@ export class SearchEmailComponent implements OnInit {
 
   @ViewChild('emailInput')
   emailInput: ElementRef;
+
+  @Input()
+  disabled: boolean;
 
   constructor(searchService: SearchService, private elRef: ElementRef) {
     this.searchService = searchService;
@@ -89,16 +92,6 @@ export class SearchEmailComponent implements OnInit {
     const clickedInside = this.elRef.nativeElement.contains(targetElement);
     if (!clickedInside) {
       this.isShowResult = false;
-    }
-  }
-
-  setEmailDisabled(value: boolean) {
-    if (!value) {
-      this.emailInput.nativeElement.removeAttribute('disabled');
-    } else {
-      setTimeout(() => {
-        this.emailInput.nativeElement.setAttribute('disabled', 'true');
-      }, 500);
     }
   }
 
