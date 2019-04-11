@@ -1,10 +1,10 @@
 <app-breadcrumb [canNavigate]="hearingForm.valid && hasSaved"></app-breadcrumb>
-<h2 class="govuk-heading-l">Book a video hearing</h2>
+<h1 class="govuk-heading-l">Book a video hearing</h1>
 
-<h3 class="govuk-heading-m">Hearing details</h3>
+<h2 class="govuk-heading-m">Hearing details</h2>
 
 <div *ngIf="failedSubmission && hearingForm.invalid" class="govuk-error-summary govuk-!-width-one-half"
-     aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+  aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
   <h2 class="govuk-error-summary__title" id="error-summary-title">
     Please complete the missing information
   </h2>
@@ -29,7 +29,7 @@
 <form [formGroup]="hearingForm" class="govuk-form-group" (ngSubmit)="saveHearingDetails()">
   <div [ngClass]="caseNumberInvalid ? 'govuk-form-group--error' : 'govuk-form-group'">
     <label class="govuk-label govuk-!-width-one-half" for="caseNumber">
-      Case Number
+      Case number
     </label>
     <input id="caseNumber" class="govuk-input govuk-!-width-one-half" type="text" formControlName="caseNumber" required>
     <div *ngIf="caseNumberInvalid" class="alert alert-danger">
@@ -41,10 +41,10 @@
 
   <div [ngClass]="caseNameInvalid ? 'govuk-form-group--error' : 'govuk-form-group'">
     <label class="govuk-label govuk-!-width-one-half" for="caseName">
-      Case Name
+      Case name
     </label>
     <input id="caseName" placeholder="e.g. Ms A Smith vs HMRC" class="govuk-input govuk-!-width-one-half" type="text"
-           formControlName="caseName" required>
+      formControlName="caseName" required>
     <div *ngIf="caseNameInvalid" class="alert alert-danger">
       <span id="caseName-error" class="govuk-error-message">
         Please enter a case name
@@ -53,12 +53,13 @@
   </div>
 
   <div *ngIf="availableCaseTypes.length > 1"
-       [ngClass]="caseTypeInvalid ? 'govuk-form-group--error' : 'govuk-form-group'">
+    [ngClass]="caseTypeInvalid ? 'govuk-form-group--error' : 'govuk-form-group'">
     <label class="govuk-label govuk-!-width-one-half" for="caseType">
       Case type
     </label>
-    <select class="govuk-select govuk-!-width-one-half" id="caseType" formControlName="caseType"  [attr.disabled]="isExistingHearing">
-      <option *ngFor="let availableCaseType of availableCaseTypes" [ngValue]="availableCaseType" >
+    <select class="govuk-select govuk-!-width-one-half" id="caseType" formControlName="caseType"
+      [attr.disabled]="isExistingHearing">
+      <option *ngFor="let availableCaseType of availableCaseTypes" [ngValue]="availableCaseType">
         {{availableCaseType}}
       </option>
     </select>
@@ -73,7 +74,8 @@
     <label class="govuk-label govuk-!-width-one-half" for="hearingType">
       Hearing type
     </label>
-    <select class="govuk-select govuk-!-width-one-half" id="hearingType" formControlName="hearingType" [attr.disabled]="isExistingHearing">
+    <select class="govuk-select govuk-!-width-one-half" id="hearingType" formControlName="hearingType"
+      [attr.disabled]="isExistingHearing">
       <option *ngFor="let availableHearingType of filteredHearingTypes" [ngValue]="availableHearingType.id">
         {{availableHearingType.name}}
       </option>
@@ -86,10 +88,10 @@
   </div>
 
   <div class="sk-top">
-    <input type="button" id="nextButton" class="govuk-button" role="button" value="{{buttonAction}}"
-           style="margin-right:25px;" (click)="saveHearingDetails()" alt="Save hearing details and view hearings schedule" />
+    <input type="button" id="nextButton" class="govuk-button vh-mr25" role="button" value="{{buttonAction}}"
+      (click)="saveHearingDetails()" alt="Save hearing details and view hearings schedule" />
     <input type="button" id="cancelButton" class="govuk-button hmcts-button--secondary" role="button" value="Cancel"
-           (click)="confirmCancelBooking()" alt="Confirm cancellation of new booking and return to dashboard" />
+      (click)="confirmCancelBooking()" alt="Confirm cancellation of new booking and return to dashboard" />
   </div>
 
 </form>

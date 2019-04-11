@@ -457,6 +457,81 @@ export class BHClient {
     }
 
     /**
+     * Update the hearing status.
+     * @param hearingId The hearing id
+     * @param updateBookingStatusRequest (optional) 
+     * @return Success
+     */
+    updateBookingStatus(hearingId: string, updateBookingStatusRequest: UpdateBookingStatusRequest | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/hearings/{hearingId}";
+        if (hearingId === undefined || hearingId === null)
+            throw new Error("The parameter 'hearingId' must be defined.");
+        url_ = url_.replace("{hearingId}", encodeURIComponent("" + hearingId)); 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(updateBookingStatusRequest);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("patch", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateBookingStatus(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateBookingStatus(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateBookingStatus(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status === 404) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result404: any = null;
+            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result404 = resultData404 ? ProblemDetails.fromJS(resultData404) : new ProblemDetails();
+            return throwException("A server error occurred.", status, _responseText, _headers, result404);
+            }));
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = resultData400 ? ProblemDetails.fromJS(resultData400) : new ProblemDetails();
+            return throwException("A server error occurred.", status, _responseText, _headers, result400);
+            }));
+        } else if (status === 401) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("A server error occurred.", status, _responseText, _headers);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
      * Gets a list hearing types
      * @return Success
      */
@@ -1513,6 +1588,7 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
     created_by?: string | undefined;
     updated_by?: string | undefined;
     updated_date?: Date | undefined;
+    status?: HearingDetailsResponseStatus | undefined;
 
     constructor(data?: IHearingDetailsResponse) {
         if (data) {
@@ -1547,6 +1623,7 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
             this.created_by = data["created_by"];
             this.updated_by = data["updated_by"];
             this.updated_date = data["updated_date"] ? new Date(data["updated_date"].toString()) : <any>undefined;
+            this.status = data["status"];
         }
     }
 
@@ -1581,6 +1658,7 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
         data["created_by"] = this.created_by;
         data["updated_by"] = this.updated_by;
         data["updated_date"] = this.updated_date ? this.updated_date.toISOString() : <any>undefined;
+        data["status"] = this.status;
         return data; 
     }
 }
@@ -1600,6 +1678,7 @@ export interface IHearingDetailsResponse {
     created_by?: string | undefined;
     updated_by?: string | undefined;
     updated_date?: Date | undefined;
+    status?: HearingDetailsResponseStatus | undefined;
 }
 
 export class CaseResponse2 implements ICaseResponse2 {
@@ -1870,6 +1949,7 @@ export class BookingsHearingResponse implements IBookingsHearingResponse {
     last_edit_by?: string | undefined;
     last_edit_date?: Date | undefined;
     hearing_date?: Date | undefined;
+    status?: BookingsHearingResponseStatus | undefined;
 
     constructor(data?: IBookingsHearingResponse) {
         if (data) {
@@ -1897,6 +1977,7 @@ export class BookingsHearingResponse implements IBookingsHearingResponse {
             this.last_edit_by = data["last_edit_by"];
             this.last_edit_date = data["last_edit_date"] ? new Date(data["last_edit_date"].toString()) : <any>undefined;
             this.hearing_date = data["hearing_date"] ? new Date(data["hearing_date"].toString()) : <any>undefined;
+            this.status = data["status"];
         }
     }
 
@@ -1924,6 +2005,7 @@ export class BookingsHearingResponse implements IBookingsHearingResponse {
         data["last_edit_by"] = this.last_edit_by;
         data["last_edit_date"] = this.last_edit_date ? this.last_edit_date.toISOString() : <any>undefined;
         data["hearing_date"] = this.hearing_date ? this.hearing_date.toISOString() : <any>undefined;
+        data["status"] = this.status;
         return data; 
     }
 }
@@ -1944,6 +2026,7 @@ export interface IBookingsHearingResponse {
     last_edit_by?: string | undefined;
     last_edit_date?: Date | undefined;
     hearing_date?: Date | undefined;
+    status?: BookingsHearingResponseStatus | undefined;
 }
 
 /** Request for updating an existing hearing */
@@ -2218,6 +2301,46 @@ export interface IEditParticipantRequest {
     organisation_name?: string | undefined;
 }
 
+export class UpdateBookingStatusRequest implements IUpdateBookingStatusRequest {
+    updated_by?: string | undefined;
+    status?: UpdateBookingStatusRequestStatus | undefined;
+
+    constructor(data?: IUpdateBookingStatusRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.updated_by = data["updated_by"];
+            this.status = data["status"];
+        }
+    }
+
+    static fromJS(data: any): UpdateBookingStatusRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateBookingStatusRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["updated_by"] = this.updated_by;
+        data["status"] = this.status;
+        return data; 
+    }
+}
+
+export interface IUpdateBookingStatusRequest {
+    updated_by?: string | undefined;
+    status?: UpdateBookingStatusRequestStatus | undefined;
+}
+
 /** Defines a type of hearing based on case */
 export class HearingTypeResponse implements IHearingTypeResponse {
     /** The short code for the type */
@@ -2466,6 +2589,23 @@ export class UserProfileResponse implements IUserProfileResponse {
 export interface IUserProfileResponse {
     is_vh_officer_administrator_role?: boolean | undefined;
     is_case_administrator?: boolean | undefined;
+}
+
+export enum HearingDetailsResponseStatus {
+    Booked = "Booked", 
+    Created = "Created", 
+    Cancelled = "Cancelled", 
+}
+
+export enum BookingsHearingResponseStatus {
+    Booked = "Booked", 
+    Created = "Created", 
+    Cancelled = "Cancelled", 
+}
+
+export enum UpdateBookingStatusRequestStatus {
+    Created = "Created", 
+    Cancelled = "Cancelled", 
 }
 
 export class SwaggerException extends Error {
