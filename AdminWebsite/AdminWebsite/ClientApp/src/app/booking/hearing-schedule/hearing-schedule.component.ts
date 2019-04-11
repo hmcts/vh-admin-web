@@ -87,7 +87,6 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     if (this.hearing && this.hearing.court_room) {
       room = this.hearing.court_room;
     }
-
     this.schedulingForm = this.fb.group({
       hearingDate: [hearingDateParsed, Validators.required],
       hearingStartTimeHour: [startTimeHour, [Validators.required, Validators.min(0), Validators.max(23)]],

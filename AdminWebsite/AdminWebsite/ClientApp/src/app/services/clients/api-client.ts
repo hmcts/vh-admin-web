@@ -1486,6 +1486,11 @@ export class ParticipantRequest implements IParticipantRequest {
     hearing_role_name?: string | undefined;
     solicitors_reference?: string | undefined;
     representee?: string | undefined;
+    house_number?: string | undefined;
+    street?: string | undefined;
+    postcode?: string | undefined;
+    city?: string | undefined;
+    county?: string | undefined;
 
     constructor(data?: IParticipantRequest) {
         if (data) {
@@ -1510,6 +1515,11 @@ export class ParticipantRequest implements IParticipantRequest {
             this.hearing_role_name = data["hearing_role_name"];
             this.solicitors_reference = data["solicitors_reference"];
             this.representee = data["representee"];
+            this.house_number = data["house_number"];
+            this.street = data["street"];
+            this.postcode = data["postcode"];
+            this.city = data["city"];
+            this.county = data["county"];
         }
     }
 
@@ -1534,6 +1544,11 @@ export class ParticipantRequest implements IParticipantRequest {
         data["hearing_role_name"] = this.hearing_role_name;
         data["solicitors_reference"] = this.solicitors_reference;
         data["representee"] = this.representee;
+        data["house_number"] = this.house_number;
+        data["street"] = this.street;
+        data["postcode"] = this.postcode;
+        data["city"] = this.city;
+        data["county"] = this.county;
         return data; 
     }
 }
@@ -1551,6 +1566,11 @@ export interface IParticipantRequest {
     hearing_role_name?: string | undefined;
     solicitors_reference?: string | undefined;
     representee?: string | undefined;
+    house_number?: string | undefined;
+    street?: string | undefined;
+    postcode?: string | undefined;
+    city?: string | undefined;
+    county?: string | undefined;
 }
 
 export class HearingDetailsResponse implements IHearingDetailsResponse {
@@ -1718,6 +1738,11 @@ export class ParticipantResponse implements IParticipantResponse {
     contact_email?: string | undefined;
     telephone_number?: string | undefined;
     username?: string | undefined;
+    house_number?: string | undefined;
+    street?: string | undefined;
+    postcode?: string | undefined;
+    city?: string | undefined;
+    county?: string | undefined;
 
     constructor(data?: IParticipantResponse) {
         if (data) {
@@ -1742,6 +1767,11 @@ export class ParticipantResponse implements IParticipantResponse {
             this.contact_email = data["contact_email"];
             this.telephone_number = data["telephone_number"];
             this.username = data["username"];
+            this.house_number = data["house_number"];
+            this.street = data["street"];
+            this.postcode = data["postcode"];
+            this.city = data["city"];
+            this.county = data["county"];
         }
     }
 
@@ -1766,6 +1796,11 @@ export class ParticipantResponse implements IParticipantResponse {
         data["contact_email"] = this.contact_email;
         data["telephone_number"] = this.telephone_number;
         data["username"] = this.username;
+        data["house_number"] = this.house_number;
+        data["street"] = this.street;
+        data["postcode"] = this.postcode;
+        data["city"] = this.city;
+        data["county"] = this.county;
         return data; 
     }
 }
@@ -1783,6 +1818,11 @@ export interface IParticipantResponse {
     contact_email?: string | undefined;
     telephone_number?: string | undefined;
     username?: string | undefined;
+    house_number?: string | undefined;
+    street?: string | undefined;
+    postcode?: string | undefined;
+    city?: string | undefined;
+    county?: string | undefined;
 }
 
 export class BookingsResponse implements IBookingsResponse {

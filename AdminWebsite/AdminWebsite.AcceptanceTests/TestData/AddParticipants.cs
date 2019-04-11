@@ -24,5 +24,10 @@ namespace AdminWebsite.AcceptanceTests.TestData
         public const string FinancialRemedy = "Financial Remedy";
         public const string PartyErrorMessage = "Please select a party";
         public const string RoleErrorMessage = "Please select a role";
+        public const string HouseNumber = "102";
+        public const string Street = "Petty France";
+        public const string City = "London";
+        public const string County = "Greater London";
+        public const string PostCode = "SW1H 9AJ";
     }
 }

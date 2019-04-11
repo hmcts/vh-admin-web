@@ -3,10 +3,10 @@ using OpenQA.Selenium;
 
 namespace AdminWebsite.AcceptanceTests.Pages
 {
-    public class BookingsList : Common
+    public class BookingDetails : Common
     {
         private readonly BrowserContext _browserContext;
-        public BookingsList(BrowserContext browserContext) : base(browserContext)
+        public BookingDetails(BrowserContext browserContext) : base(browserContext)
         {
             _browserContext = browserContext;
         }

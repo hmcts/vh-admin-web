@@ -1,6 +1,6 @@
 import { DebugElement, Component } from '@angular/core';
 import { async, ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
-import { AbstractControl } from '@angular/forms';
+import { AbstractControl, Validator, Validators, FormControl } from '@angular/forms';
 import { NavigationEnd, Router } from '@angular/router';
 import { of } from 'rxjs';
 import { SharedModule } from 'src/app/shared/shared.module';
@@ -22,15 +22,16 @@ import { HearingModel } from '../../common/model/hearing.model';
 import { ParticipantModel } from '../../common/model/participant.model';
 import { CaseAndHearingRolesResponse } from '../../services/clients/api-client';
 import { PartyModel } from '../../common/model/party.model';
+import { Constants } from '../../common/constants';
 
 let component: AddParticipantComponent;
 let fixture: ComponentFixture<AddParticipantComponent>;
 
 const roleList: CaseAndHearingRolesResponse[] =
-  [new CaseAndHearingRolesResponse({ name: 'Claimant', hearing_roles: ['Solicitor'] })];
+  [new CaseAndHearingRolesResponse({ name: 'Claimant', hearing_roles: ['Solicitor', 'Claimant LIP'] })];
 
 const partyR = new PartyModel('Claimant');
-partyR.hearingRoles = ['Solicitor'];
+partyR.hearingRoles = ['Solicitor', 'Claimant LIP'];
 const partyList: PartyModel[] = [partyR];
 
 let role: AbstractControl;
@@ -41,6 +42,11 @@ let lastName: AbstractControl;
 let phone: AbstractControl;
 let displayName: AbstractControl;
 let companyName: AbstractControl;
+let houseNumber: AbstractControl;
+let street: AbstractControl;
+let city: AbstractControl;
+let county: AbstractControl;
+let postcode: AbstractControl;
 
 const participants: ParticipantModel[] = [];
 
@@ -55,6 +61,11 @@ p1.phone = '32332';
 p1.hearing_role_name = 'Solicitor';
 p1.case_role_name = 'Claimant';
 p1.company = 'CN';
+p1.housenumber = '';
+p1.street = '';
+p1.postcode = '';
+p1.city = '';
+p1.postcode = '';
 
 const p2 = new ParticipantModel();
 p2.first_name = 'Jane';
@@ -67,6 +78,11 @@ p2.phone = '32332';
 p2.hearing_role_name = 'Solicitor';
 p2.case_role_name = 'Claimant';
 p2.company = 'CN';
+p2.housenumber = '';
+p2.street = '';
+p2.postcode = '';
+p2.city = '';
+p2.postcode = '';
 
 const p3 = new ParticipantModel();
 p3.first_name = 'Chris';
@@ -79,12 +95,40 @@ p3.phone = '32332';
 p3.hearing_role_name = 'Solicitor';
 p3.case_role_name = 'Claimant';
 p3.company = 'CN';
+
+p3.housenumber = '';
+p3.street = '';
+p3.postcode = '';
+p3.city = '';
+p3.postcode = '';
 p3.id = '1234';
+
+const p4 = new ParticipantModel();
+p4.first_name = 'Test';
+p4.last_name = 'Participant';
+p4.display_name = 'Test Participant';
+p4.is_judge = false;
+p4.title = 'Mr.';
+p4.email = 'test4@test.com';
+p4.phone = '32332';
+p4.hearing_role_name = 'Claimant LIP';
+p4.case_role_name = 'Claimant';
+p4.company = 'CN';
+p4.housenumber = '1';
+p4.street = 'Test Street';
+p4.postcode = 'TE1 5NR';
+p4.city = 'Test City';
+p4.county = 'Test County';
+p3.id = '1234';
+
+
 
 participants.push(p1);
 participants.push(p2);
 participants.push(p3);
+participants.push(p4);
 
+const constants = Constants;
 
 function initHearingRequest(): HearingModel {
   const newHearing = new HearingModel();
@@ -187,6 +231,11 @@ describe('AddParticipantComponent', () => {
     phone = component.participantForm.controls['phone'];
     displayName = component.participantForm.controls['displayName'];
     companyName = component.participantForm.controls['companyName'];
+    houseNumber = component.participantForm.controls['houseNumber'];
+    street = component.participantForm.controls['street'];
+    city = component.participantForm.controls['city'];
+    county = component.participantForm.controls['county'];
+    postcode = component.participantForm.controls['postcode'];
   }));
 
   it('should create', () => {
@@ -215,6 +264,12 @@ describe('AddParticipantComponent', () => {
     expect(phone.value).toBe('');
     expect(title.value).toBe('Please Select');
     expect(companyName.value).toBe('');
+    expect(houseNumber.value).toBe('');
+    expect(street.value).toBe('');
+    expect(city.value).toBe('');
+    expect(county.value).toBe('');
+    expect(postcode.value).toBe('');
+    expect(component.showAddress).toBeFalsy();
   });
   it('should set validation to false when form is empty', () => {
     expect(component.participantForm.valid).toBeFalsy();
@@ -248,6 +303,26 @@ describe('AddParticipantComponent', () => {
     component.roleSelected();
     expect(role.valid && component.isRoleSelected).toBeTruthy();
   });
+  it('should validate house number', () => {
+    isAddressControlValid(houseNumber, '123');
+  });
+
+  it('should validate street', () => {
+    isAddressControlValid(street, 'Test Street');
+  });
+
+  it('should validate city', () => {
+    isAddressControlValid(county, 'Test City');
+  });
+
+  it('should validate county', () => {
+    isAddressControlValid(city, 'Test County');
+  });
+
+  it('should validate postcode', () => {
+    isAddressControlValid(postcode, 'TE1 5NR');
+  });
+
   it('should set values fields if participant if found', () => {
     component.getParticipant(participant);
     expect(role.value).toBe(participant.hearing_role_name);
@@ -258,6 +333,13 @@ describe('AddParticipantComponent', () => {
     expect(title.value).toBe(participant.title);
     expect(displayName.value).toBe(participant.display_name);
     expect(companyName.value).toBe(participant.company);
+    if (constants.IndividualRoles.indexOf(participant.hearing_role_name) > -1) {
+      expect(houseNumber.value).toBe(participant.housenumber);
+      expect(street.value).toBe(participant.street);
+      expect(city.value).toBe(participant.city);
+      expect(county.value).toBe(participant.county);
+      expect(postcode.value).toBe(participant.postcode);
+    }
     expect(component.displayNextButton).toBeFalsy();
     expect(component.displayClearButton).toBeTruthy();
     expect(component.displayAddButton).toBeTruthy();
@@ -290,18 +372,30 @@ describe('AddParticipantComponent', () => {
     fixture.detectChanges();
     spyOn(component.searchEmail, 'validateEmail').and.returnValue(true);
     component.searchEmail.email = 'mock@email.com';
-
-    role.setValue('Appellant');
-    party.setValue('CaseRole');
+    role.setValue('Claimant LIP');
+    party.setValue('Claimant');
     firstName.setValue('Sam');
     lastName.setValue('Green');
     title.setValue('Mrs');
     phone.setValue('12345');
+    displayName.setValue('Sam Green');
     component.isRoleSelected = true;
+    component.showAddress = true;
+    houseNumber.setValue('12');
+    street.setValue('Test Street');
+    city.setValue('Test City');
+    county.setValue('Test County');
+    postcode.setValue('TE1 5NR');
     component.isPartySelected = true;
     component.saveParticipant();
     expect(component.isShowErrorSummary).toBeFalsy();
     expect(component.hearing.participants.length).toBeGreaterThan(0);
+  });
+  it('saved participant with invalid details should show error summary', () => {
+    component.isRoleSelected = false;
+    component.isPartySelected = false;
+    component.saveParticipant();
+    expect(component.isShowErrorSummary).toBeTruthy();
   });
   it('should see next button and hide add button after saved participant', () => {
     component.showDetails = true;
@@ -363,7 +457,7 @@ describe('AddParticipantComponent', () => {
     expect(component.roleList.length).toBe(2);
     expect(component.roleList[0]).toEqual('Please Select');
 
-    expect(component.hearingRoleList.length).toBe(2);
+    expect(component.hearingRoleList.length).toBe(3);
     expect(component.hearingRoleList[0]).toEqual('Please Select');
   });
   it('party selected will reset hearing roles', () => {
@@ -468,6 +562,11 @@ describe('AddParticipantComponent edit mode', () => {
     phone = component.participantForm.controls['phone'];
     displayName = component.participantForm.controls['displayName'];
     companyName = component.participantForm.controls['companyName'];
+    houseNumber = component.participantForm.controls['houseNumber'];
+    street = component.participantForm.controls['street'];
+    city = component.participantForm.controls['city'];
+    county = component.participantForm.controls['county'];
+    postcode = component.participantForm.controls['postcode'];
   }));
   it('should set title list and get current data from session', () => {
     component.ngOnInit();
@@ -676,3 +775,13 @@ describe('AddParticipantComponent edit mode no participants added', () => {
     expect(component.displayUpdateButton).toBeFalsy();
   });
 });
+
+function isAddressControlValid(control: AbstractControl, controlValue: string) {
+  party.setValue('Claimant');
+  role.setValue('Claimant LIP');
+  component.showAddress = true;
+  control.setValidators([Validators.required]);
+  control.updateValueAndValidity();
+  control.setValue(controlValue);
+  expect(control.valid).toBeTruthy();
+}

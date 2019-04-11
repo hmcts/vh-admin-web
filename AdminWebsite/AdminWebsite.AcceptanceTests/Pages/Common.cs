@@ -128,7 +128,7 @@ namespace AdminWebsite.AcceptanceTests.Pages
             _browserContext.Retry(() =>
             {
                 var element = _browserContext.NgDriver.FindElement(By.Id("topItem1"));
-                element.Click();
+                ExecuteScript("document.getElementById('topItem1').click()");
                 element.GetAttribute("class").Should().Contain("active");
             }, 3);
         }
@@ -147,11 +147,11 @@ namespace AdminWebsite.AcceptanceTests.Pages
             return list;
         }
         public void TopMenuHmctsLogo() => SelectOption(By.XPath("//*[@class='hmcts-header__logotype']"));
-        public string SessionStorage(string script) => _browserContext.ExecuteJavascript(script);
+        public string ExecuteScript(string script) => _browserContext.ExecuteJavascript(script);
         public string Page() => _browserContext.PageUrl();
         public string CancelWarningMessage() => GetElementText(By.XPath("//*[@class='content']/h1"));
         public void DiscardChanges() => ClickElement(By.Id("btn-discard-changes"));       
         public int DisabledFields() => GetListOfElements(By.XPath("//*[@disabled='true']")).ToList().Count;
-        public string GetAttribute(By element) => _browserContext.NgDriver.FindElement(element).GetAttribute("disabled");
+        public string GetAttribute(By element) => _browserContext.NgDriver.WaitUntilElementVisible(element).GetAttribute("disabled");        
     }
 }
