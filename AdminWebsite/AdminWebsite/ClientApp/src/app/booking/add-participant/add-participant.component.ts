@@ -361,7 +361,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     return this.isControlInValid(this.street);
   }
   get cityInvalid() {
-    return this.isControlInValid(this.title);
+    return this.isControlInValid(this.city);
   }
   get countyInvalid() {
     return this.isControlInValid(this.county);
