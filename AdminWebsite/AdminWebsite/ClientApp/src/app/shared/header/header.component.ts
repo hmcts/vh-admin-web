@@ -9,7 +9,7 @@ import { SignOutComponent } from '../sign-out/sign-out.component';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit {
-  @Input() loggedIn;
+  @Input() loggedIn: boolean;
 
   @ViewChild(SignOutComponent)
   signoutComponent: SignOutComponent;
@@ -20,8 +20,11 @@ export class HeaderComponent implements OnInit {
   topMenuItems = [];
 
   constructor(private router: Router) {
-    this.$confirmLogout = new EventEmitter();
+    if (this.loggedIn) {
+      this.$confirmLogout = new EventEmitter();
+      }
     this.$confirmSaveBooking = new EventEmitter();
+    console.log(this.loggedIn);
   }
 
   selectMenuItem(indexOfItem: number) {
@@ -39,7 +42,9 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit() {
     this.topMenuItems = TopMenuItems;
-    this.signoutComponent.confirmLogout.subscribe(() => { this.logout(); });
+    if (this.loggedIn) {
+      this.signoutComponent.confirmLogout.subscribe(() => { this.logout(); });
+    }
   }
 
   logout() {

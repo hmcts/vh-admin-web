@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, HostListener } from '@angular/core';
+import { Component, OnInit, ViewChild, HostListener, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { AdalService } from 'adal-angular4';
 import { ConfigService } from './services/config.service';
@@ -56,7 +56,9 @@ export class AppComponent implements OnInit {
       this.router.navigate(['/login'], { queryParams: { returnUrl: currentUrl } });
     }
     if (this.headerComponent) {
-      this.headerComponent.confirmLogout.subscribe(() => { this.showConfirmation(); });
+      if (this.loggedIn) {
+        this.headerComponent.confirmLogout.subscribe(() => { this.showConfirmation(); });
+      }
       this.headerComponent.confirmSaveBooking.subscribe((menuItemIndex) => { this.showConfirmationSaveBooking(menuItemIndex); });
     }
   }

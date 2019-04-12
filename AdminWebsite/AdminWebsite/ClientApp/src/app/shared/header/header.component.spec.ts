@@ -2,12 +2,13 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { HeaderComponent } from './header.component';
 import { SignOutComponent } from '../sign-out/sign-out.component';
-import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { NO_ERRORS_SCHEMA, DebugElement  } from '@angular/core';
+import { By } from '@angular/platform-browser';
 
 describe('HeaderComponent', () => {
   let component: HeaderComponent;
   let fixture: ComponentFixture<HeaderComponent>;
-
+  let debugElement: DebugElement;
   const router = {
     navigate: jasmine.createSpy('navigate')
   };
@@ -52,5 +53,23 @@ describe('HeaderComponent', () => {
     component.ngOnInit();
     component.navigateToSelectedMenuItem(0);
     expect(router.navigate).toHaveBeenCalledWith([component.topMenuItems[0].url]);
+  });
+  it('user should see Signout button once logged in', () => {
+    component.ngOnInit();
+    component.loggedIn = true;
+    fixture.detectChanges();
+    debugElement = fixture.debugElement;
+    const signOutElement = debugElement.queryAll(By.css('#linkSignOut'));
+    expect(signOutElement.length).toBeGreaterThan(0);
+    const el = signOutElement[0].nativeElement as HTMLElement;
+    expect(el.innerHTML).toContain('Sign out');
+  });
+  it('user should not see Signout button if not logged in', () => {
+    component.ngOnInit();
+    component.loggedIn = false;
+    fixture.detectChanges();
+    debugElement = fixture.debugElement;
+    const signOutElement = debugElement.queryAll(By.css('#linkSignOut'));
+    expect(signOutElement.length).toBe(0);
   });
 });

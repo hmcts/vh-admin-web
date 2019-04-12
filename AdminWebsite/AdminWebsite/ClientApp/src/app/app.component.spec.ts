@@ -14,14 +14,7 @@ import { PageTrackerService } from './services/page-tracker.service';
 import { WindowRef, WindowLocation } from './security/window-ref';
 import { VideoHearingsService } from './services/video-hearings.service';
 import { CancelPopupStubComponent } from './testing/stubs/cancel-popup-stub';
-
-@Component({ selector: 'app-header', template: '' })
-export class HeaderComponent {
-  $confirmLogout: EventEmitter<any> = new EventEmitter<any>();
-  get confirmLogout() {
-    return this.$confirmLogout;
-  }
-}
+import { HeaderStubComponent } from './testing/stubs/header-stub';
 
 const adalService = {
   init: jasmine.createSpy('init'),
@@ -55,16 +48,15 @@ describe('AppComponent', () => {
     window.getLocation.and.returnValue(new WindowLocation('/url'));
 
     pageTracker = jasmine.createSpyObj('PageTrackerService', ['trackNavigation', 'trackPreviousPage']);
-
     TestBed.configureTestingModule({
       imports: [HttpClientModule, RouterTestingModule],
       declarations: [
         AppComponent,
-        HeaderComponent,
+        HeaderStubComponent,
         FooterStubComponent,
         SignOutPopupStubComponent,
         CancelPopupStubComponent,
-      ],
+        ],
       providers:
         [
           { provide: AdalService, useValue: adalService },
@@ -110,3 +102,4 @@ describe('AppComponent', () => {
     expect(lastRoutingArgs.queryParams.returnUrl).toEqual('/url?search#hash');
   }));
 });
+
