@@ -9,30 +9,32 @@
         <fieldset class="govuk-fieldset fieldset-margin" aria-describedby="other-information-text">
           <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
             <p class="govuk-body" id="other-information-text">
-              Please note any other information about this hearing that the video hearings administrator should be aware of.
+              Please note any other information about this hearing that the video hearings administrator should be aware
+              of.
             </p>
           </legend>
           <div class="govuk-form-group textarea-top-margin">
-            <textarea class="govuk-textarea vh-text-h" id="details-other-information"
-                      name="otherInformation" rows="14" cols="80"
-                      formControlName="otherInformation"
-                      aria-describedby="hidden-other-text"></textarea>
+            <label class="govuk-label govuk-!-width-one-half" for="hidden-other-text"></label>
+            <textarea class="govuk-textarea vh-text-h" id="details-other-information" name="otherInformation" rows="14"
+              cols="80" formControlName="otherInformation" title="hidden-other-text" aria-label="hidden-other-text"
+              aria-labelledby="other-information-text"></textarea>
           </div>
         </fieldset>
 
         <div class="vh-mt50">
           <input id="nextButton" type="button" class="govuk-button vh-mr25" role="button" value="{{buttonAction}}"
-                 (click)="next()" alt="Save hearing other information and go to summary" />
-          <input id="cancelButton" type="button" class="govuk-button hmcts-button--secondary"
-                 role="button" value="Cancel" (click)="confirmCancelBooking()" alt="Confirm cancellation of new booking and return to dashboard" />
+            (click)="next()" alt="Save hearing other information and go to summary" />
+          <input id="cancelButton" type="button" class="govuk-button hmcts-button--secondary" role="button"
+            value="Cancel" (click)="confirmCancelBooking()"
+            alt="Confirm cancellation of new booking and return to dashboard" />
         </div>
 
       </form>
     </div>
   </div>
   <div *ngIf="attemptingCancellation">
-    <app-cancel-popup (continueBooking)="continueBooking($event)"
-                      (cancelBooking)="cancelBooking($event)"></app-cancel-popup>
+    <app-cancel-popup (continueBooking)="continueBooking($event)" (cancelBooking)="cancelBooking($event)">
+    </app-cancel-popup>
   </div>
 
   <div *ngIf="attemptingDiscardChanges">

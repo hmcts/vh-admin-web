@@ -24,7 +24,6 @@ namespace AdminWebsite.Controllers
         private readonly IUserIdentity _userIdentity;
         private readonly IUserAccountService _userAccountService;
 
-
         /// <summary>
         /// Instantiates the controller
         /// </summary>
@@ -293,11 +292,15 @@ namespace AdminWebsite.Controllers
                 Scheduled_date_time = editHearingRequest.ScheduledDateTime,
                 Scheduled_duration = editHearingRequest.ScheduledDuration,
                 Updated_by = _userIdentity.GetUserIdentityName(),
-                Cases = new List<CaseRequest>() {new CaseRequest {
-                                                            Name = editHearingRequest.Case.Name,
-                                                            Number = editHearingRequest.Case.Number }
-                                                    }
-                };
+                Cases = new List<CaseRequest>()
+                {
+                    new CaseRequest
+                    {
+                        Name = editHearingRequest.Case.Name,
+                        Number = editHearingRequest.Case.Number
+                    }
+                }
+            };
             return updateHearingRequest;
         }
 
@@ -337,5 +340,38 @@ namespace AdminWebsite.Controllers
             return newParticipant;
         }
 
+        /// <summary>
+        ///     Update the hearing status.
+        /// </summary>
+        /// <param name="hearingId">The hearing id</param>
+        /// <param name="updateBookingStatusRequest"></param>
+        /// <returns>Success status</returns>
+        [HttpPatch("{hearingId}")]
+        [SwaggerOperation(OperationId = "UpdateBookingStatus")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<ActionResult> UpdateBookingStatus(Guid hearingId, 
+            UpdateBookingStatusRequest updateBookingStatusRequest)
+        {
+            try
+            {
+                updateBookingStatusRequest.Updated_by = _userIdentity.GetUserIdentityName();
+                await _bookingsApiClient.UpdateBookingStatusAsync(hearingId, updateBookingStatusRequest);
+                return NoContent();
+            }
+            catch (BookingsApiException e)
+            {
+                if (e.StatusCode == (int)HttpStatusCode.BadRequest)
+                {
+                    return BadRequest(e.Response);
+                }
+                if (e.StatusCode == (int)HttpStatusCode.NotFound)
+                {
+                    return NotFound(e.Response);
+                }
+                throw;
+            }
+        }
     }
 }

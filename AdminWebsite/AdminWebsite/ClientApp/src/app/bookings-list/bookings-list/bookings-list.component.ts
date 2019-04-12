@@ -94,7 +94,6 @@ export class BookingsListComponent implements OnInit, AfterViewInit {
   }
 
   scrollHandler(e) {
-    console.log('Scroll');
     this.getList();
   }
 

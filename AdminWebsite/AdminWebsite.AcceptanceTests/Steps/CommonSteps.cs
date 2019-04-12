@@ -18,13 +18,13 @@ namespace AdminWebsite.AcceptanceTests.Steps
         private readonly AddParticipantsSteps _addParticipantsSteps;
         private readonly OtherInformationSteps _otherInformationStep;
         private readonly SummarySteps _summarySteps;
-        private readonly BookingsListSteps _bookingsListSteps;
+        private readonly BookingDetailsSteps _bookingDetailsSteps;
         private readonly BookingConfirmationStep _bookingConfirmationStep;
         public CommonSteps(Common common, DashboardSteps dashboardStep, 
             HearingDetailsSteps hearingDetailsSteps, LoginSteps loginStep,
             HearingScheduleSteps hearingScheduleSteps, AssignJudgeSteps assignJudgeStep, 
             AddParticipantsSteps addParticipantsSteps, OtherInformationSteps otherInformationStep,
-            SummarySteps summarySteps, BookingsListSteps bookingsListSteps, BookingConfirmationStep bookingConfirmationStep)
+            SummarySteps summarySteps, BookingDetailsSteps bookingsListSteps, BookingConfirmationStep bookingConfirmationStep)
         {
             _common = common;
             _dashboardStep = dashboardStep;
@@ -35,7 +35,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _addParticipantsSteps = addParticipantsSteps;
             _otherInformationStep = otherInformationStep;
             _summarySteps = summarySteps;
-            _bookingsListSteps = bookingsListSteps;
+            _bookingDetailsSteps = bookingsListSteps;
             _bookingConfirmationStep = bookingConfirmationStep;
         }
         [Given(@"user proceeds to next page")]
@@ -149,7 +149,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             AdminIsOnSummaryPage(admin);
             _summarySteps.WhenUserSubmitBooking();
             _bookingConfirmationStep.BookHearingConfirmation();
-            _bookingsListSteps.UpdateParticipantDetails();
+            _bookingDetailsSteps.UpdateParticipantDetails();
         }
         [Given(@"hearing is booked by (.*)")]
         public void HearingIsBookedByAdmin(string admin)
@@ -241,6 +241,14 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _otherInformationStep.WhenUserAddsOtherInformationToBookingHearing();
             WhenNextButtonIsClicked();
             _summarySteps.SummaryPage();
+        }
+        [Given(@"(.*) is on booking details page")]
+        public void GivenCaseAdminIsOnBookingDetailsPage(string admin)
+        {
+            HearingIsBookedByAdmin(admin);
+            _bookingConfirmationStep.BookAnotherHearing();
+            _bookingDetailsSteps.ThenAdminUserCanViewBookingList();
+
         }
     }
 }

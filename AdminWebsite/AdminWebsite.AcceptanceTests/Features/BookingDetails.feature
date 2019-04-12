@@ -4,15 +4,18 @@ I want to view or amend the details of a video hearing booking
 So that I can ensure any changes in details can be reflected in the VH system
 
 @smoketest @VIH-3461
-Scenario Outline: Admin officer views booking details
-	Given hearing is booked by <admin>
+Scenario: Case Admin views booking details
+	Given hearing is booked by Case Admin
 	When admin user returns to dashboard  
 	Then admin user can view booking list
 	And expected details should be populated
-Examples: 
-| admin                     |
-| Case Admin                |
-| VhOfficerCivilMoneyclaims |
+
+@smoketest @VIH-3461
+Scenario: Vh Officer views booking details
+	Given hearing is booked by VhOfficerCivilMoneyclaims
+	When admin user returns to dashboard  
+	Then admin user can view booking list
+	And expected details should be populated
 
 @smoketest @VIH-3743
 Scenario: Admin officer changes judge
@@ -23,16 +26,20 @@ Scenario: Admin officer changes judge
 	Then inputted values should be displayed as expected on summary page
 	And amended values should be saved
 
-@VIH-3743
+ @VIH-3743
 Scenario: Participant is removed from booked hearing
 	Given Case Admin tries to amend booking
 	When user removes participant on summary page
 	Then participant should be removed from the list 
 
-Scenario: Disabled fields when amending participant details
+ @smoketest @VIH-3743          
+Scenario: Case Admin amends participant details
 	Given Case Admin tries to amend booking
 	When user navigates to add participants page to make changes
-	Then mandatory fields should be disabled
+	And participant details is updated 
+	And user proceeds to summary page
+	Then inputted values should be displayed as expected on summary page
+	And amended values should be saved
 
 @VIH-3743
 Scenario: Admin amends hearing details
@@ -60,3 +67,14 @@ Scenario: Case Admin amends hearing schedule
 	And user proceeds to summary page 
 	Then inputted values should be displayed as expected on summary page
 	And amended values should be saved
+
+@VIH-3731
+Scenario Outline: Admin cancels a video hearing booking
+	Given <Admin> is on booking details page
+	When the admin cancels hearing
+	Then cancelled label should be shown on booking details page
+	And booking details page should be displayed without the Edit or Cancel buttons
+Examples:
+| Admin                     |
+| Case Admin                |
+| VhOfficerCivilMoneyclaims |

@@ -26,7 +26,7 @@ function initExistingHearingRequest(): HearingModel {
   const existingRequest = new HearingModel();
   existingRequest.hearing_type_id = 2;
   existingRequest.hearing_venue_id = 1,
-    existingRequest.scheduled_date_time = today;
+  existingRequest.scheduled_date_time = today;
   existingRequest.scheduled_duration = 80;
   return existingRequest;
 }

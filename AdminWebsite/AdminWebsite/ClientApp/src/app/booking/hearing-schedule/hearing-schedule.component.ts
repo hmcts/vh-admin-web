@@ -87,7 +87,6 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     if (this.hearing && this.hearing.court_room) {
       room = this.hearing.court_room;
     }
-    console.log(this.hearing.hearing_venue_id);
     this.schedulingForm = this.fb.group({
       hearingDate: [hearingDateParsed, Validators.required],
       hearingStartTimeHour: [startTimeHour, [Validators.required, Validators.min(0), Validators.max(23)]],
@@ -169,13 +168,11 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
       .subscribe(
         (data: HearingVenueResponse[]) => {
           this.availableCourts = data;
-          console.log(`courts = ${JSON.stringify(data, null, 2)}`);
           const pleaseSelect = new HearingVenueResponse();
           pleaseSelect.name = 'Please Select';
           pleaseSelect.id = -1;
           this.availableCourts.unshift(pleaseSelect);
           this.setVenueForExistingHearing();
-          console.log(`courts = ${JSON.stringify(data, null, 2)}`);
         },
         error => this.errorService.handleError(error)
       );
@@ -211,8 +208,6 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     this.hearing.hearing_venue_id = this.schedulingForm.value.courtAddress;
     this.hearing.court_room = this.schedulingForm.value.courtRoom;
     this.hearing.court_name = this.selectedCourtName;
-    console.log(this.hearing.court_room);
-    console.log(this.hearing.court_name);
     const hearingDate = new Date(this.schedulingForm.value.hearingDate);
 
     hearingDate.setHours(
