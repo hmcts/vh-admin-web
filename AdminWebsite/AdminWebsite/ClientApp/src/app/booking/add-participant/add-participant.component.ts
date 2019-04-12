@@ -97,6 +97,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     super.ngOnInit();
     this.checkForExistingRequest();
     this.initializeForm();
+
     if (this.participantsListComponent) {
       const self = this;
       self.participantsListComponent.selectedParticipant.subscribe((participantEmail) => {
@@ -356,17 +357,24 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     this.displayAddButton = false;
     this.displayUpdateButton = false;
   }
-
   get firstNameInvalid() {
-    return this.isControlInValid(this.firstName);
+    return this.firstName.invalid && (this.firstName.dirty || this.firstName.touched || this.isShowErrorSummary);
   }
 
   get lastNameInvalid() {
-    return this.isControlInValid(this.lastName);
+    return this.lastName.invalid && (this.lastName.dirty || this.lastName.touched || this.isShowErrorSummary);
   }
 
   get phoneInvalid() {
-    return this.isControlInValid(this.phone);
+    return this.phone.invalid && (this.phone.dirty || this.phone.touched || this.isShowErrorSummary);
+  }
+
+  get partyInvalid() {
+    return this.party.invalid && (this.party.dirty || this.party.touched || this.isShowErrorSummary);
+  }
+
+  get roleInvalid() {
+    return this.role.invalid && (this.role.dirty || this.role.touched || this.isShowErrorSummary);
   }
 
   get displayNameInvalid() {
@@ -374,35 +382,29 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
       || (this.displayName.touched && this.displayName.value === '');
   }
 
-  get partyInvalid() {
-    return this.isControlInValid(this.party);
-  }
-
-  get roleInvalid() {
-    return this.isControlInValid(this.role);
-  }
-
   get houseNumberInvalid() {
-    return this.isControlInValid(this.houseNumber);
+    return this.houseNumber.invalid && (this.houseNumber.dirty || this.houseNumber.touched || this.isShowErrorSummary);
   }
 
   get streetInvalid() {
-    return this.isControlInValid(this.street);
+    return this.street.invalid && (this.street.dirty || this.street.touched || this.isShowErrorSummary);
   }
   get cityInvalid() {
-    return this.isControlInValid(this.city);
+    return this.city.invalid && (this.city.dirty || this.city.touched || this.isShowErrorSummary);
   }
   get countyInvalid() {
-    return this.isControlInValid(this.county);
+    return this.county.invalid && (this.county.dirty || this.county.touched || this.isShowErrorSummary);
   }
 
   get postcodeInvalid() {
-    return this.isControlInValid(this.postcode);
+    return this.postcode.invalid && (this.postcode.dirty || this.postcode.touched || this.isShowErrorSummary);
   }
 
-  isControlInValid(control: FormControl) {
-    return control.invalid && (control.dirty || control.touched || this.showErrorSummary);
- }
+  isControlInValid(controlName: string) {
+    return this.participantForm.get(controlName).invalid &&
+      (this.participantForm.get(controlName).dirty || this.participantForm.get(controlName).touched ||
+        this.showErrorSummary);
+  }
 
   partySelected() {
     this.isPartySelected = this.party.value !== this.constants.PleaseSelect;
@@ -446,7 +448,6 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
       return this.showDetails && this.searchEmail ? this.searchEmail.validateEmail() : true;
     });
   }
-
 
   showErrorSummary() {
     return !this.participantForm.valid || !this.isRoleSelected;

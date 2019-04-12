@@ -165,6 +165,11 @@ participant.title = 'Mr';
 participant.hearing_role_name = 'Solicitor';
 participant.case_role_name = 'Claimant';
 participant.company = 'CN';
+participant.housenumber = '1';
+participant.street = 'Test Street';
+participant.postcode = 'TE1 5NR';
+participant.city = 'Test City';
+participant.county = 'Test County';
 
 const routerSpy = {
   navigate: jasmine.createSpy('navigate'),
@@ -696,6 +701,11 @@ describe('AddParticipantComponent edit mode', () => {
       phone: participant.phone,
       displayName: participant.display_name,
       companyName: participant.company,
+      houseNumber: participant.housenumber,
+      street: participant.street,
+      city: participant.city,
+      county: participant.county,
+      postcode: participant.postcode
     });
     component.hearing = initHearingRequest();
     fixture.detectChanges();
@@ -706,7 +716,7 @@ describe('AddParticipantComponent edit mode', () => {
     expect(bookingServiceSpy.resetEditMode).toHaveBeenCalled();
     expect(videoHearingsServiceSpy.updateHearingRequest).toHaveBeenCalled();
   });
-  it('should update participant details and return as form is invalid', () => {
+  it('should detect that the form is invalid while performing update', () => {
     fixture.detectChanges();
     component.searchEmail.email = participant.email;
     component.participantForm.setValue({
@@ -718,6 +728,11 @@ describe('AddParticipantComponent edit mode', () => {
       phone: participant.phone,
       displayName: participant.display_name,
       companyName: participant.company,
+      houseNumber: participant.housenumber,
+      street: participant.street,
+      city: participant.city,
+      county: participant.county,
+      postcode: participant.postcode
     });
     component.hearing = initHearingRequest();
     fixture.detectChanges();
