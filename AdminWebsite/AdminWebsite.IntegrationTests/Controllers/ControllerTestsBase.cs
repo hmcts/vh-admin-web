@@ -10,6 +10,8 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using NUnit.Framework;
+using Microsoft.Extensions.PlatformAbstractions;
+using System.IO;
 
 namespace AdminWebsite.IntegrationTests.Controllers
 {
@@ -49,7 +51,7 @@ namespace AdminWebsite.IntegrationTests.Controllers
         {
             using (var client = _server.CreateClient())
             {
-               client.DefaultRequestHeaders.Add("Authorization", $"Bearer {_bearerToken}");
+                client.DefaultRequestHeaders.Add("Authorization", $"Bearer {_bearerToken}");
                 return await client.GetAsync(uri);
             }
         }

@@ -5,12 +5,13 @@ import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
 import { ParticipantDetailsModel } from '../../common/model/participant-details.model';
 import { BookingDetailsService } from '../../services/booking-details.service';
 import { BookingService } from '../../services/booking.service';
-import { HearingDetailsResponse } from '../../services/clients/api-client';
+import { HearingDetailsResponse, UpdateBookingStatusRequest, UpdateBookingStatusRequestStatus } from '../../services/clients/api-client';
 import { UserIdentityService } from '../../services/user-identity.service';
 import { map } from 'rxjs/operators';
 import { HearingModel } from '../../common/model/hearing.model';
 import { PageUrls } from '../../shared/page-url.constants';
 import { BookingPersistService } from '../../services/bookings-persist.service';
+import { ErrorService } from 'src/app/services/error.service';
 
 @Component({
   selector: 'app-booking-details',
@@ -24,14 +25,20 @@ export class BookingDetailsComponent implements OnInit {
   participants: Array<ParticipantDetailsModel> = [];
   judges: Array<ParticipantDetailsModel> = [];
   isVhOfficerAdmin = false;
+  showCancelBooking: boolean;
   hearingId: string;
+  updateBookingStatusRequest: UpdateBookingStatusRequest;
 
-  constructor(private videoHearingService: VideoHearingsService,
+  constructor(
+    private videoHearingService: VideoHearingsService,
     private bookingDetailsService: BookingDetailsService,
     private userIdentityService: UserIdentityService,
     private router: Router,
     private bookingService: BookingService,
-    private bookingPersistService: BookingPersistService) { }
+    private bookingPersistService: BookingPersistService,
+    private errorService: ErrorService) {
+    this.showCancelBooking = false;
+  }
 
   ngOnInit() {
     this.hearingId = this.bookingPersistService.selectedHearingId;
@@ -73,5 +80,38 @@ export class BookingDetailsComponent implements OnInit {
 
   editHearing() {
     this.router.navigate([PageUrls.Summary]);
+  }
+
+  cancelHearing() {
+    this.showCancelBooking = true;
+  }
+
+  keepBooking() {
+    this.showCancelBooking = false;
+  }
+
+  cancelBooking() {
+    const updateBookingStatus = new UpdateBookingStatusRequest();
+    updateBookingStatus.status = UpdateBookingStatusRequestStatus.Cancelled;
+
+    this.videoHearingService.updateBookingStatus(this.hearingId, updateBookingStatus)
+      .subscribe(
+        (data) => {
+          this.showCancelBooking = false;
+          this.videoHearingService.getHearingById(this.hearingId)
+            .subscribe(
+              (newData) => {
+                this.mapHearing(newData);
+              },
+              error => {
+                this.errorService.handleError(error);
+              }
+            );
+        },
+        error => {
+          this.showCancelBooking = false;
+          this.errorService.handleError(error);
+        }
+      );
   }
 }

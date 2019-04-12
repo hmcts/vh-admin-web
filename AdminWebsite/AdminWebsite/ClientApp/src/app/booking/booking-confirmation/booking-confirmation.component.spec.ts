@@ -108,7 +108,6 @@ describe('BookingConfirmationComponent', () => {
   it('should display the new hearing information', () => {
     component.ngOnInit();
     component.retrieveSavedHearing();
-    console.log(newHearing.cases[0].number);
     expect(component.caseNumber).toEqual(newHearing.cases[0].number);
     expect(component.caseName).toEqual(newHearing.cases[0].name);
     expect(component.hearingDate).toEqual(newHearing.scheduled_date_time);

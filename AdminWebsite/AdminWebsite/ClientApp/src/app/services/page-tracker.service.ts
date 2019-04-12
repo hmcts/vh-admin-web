@@ -22,7 +22,6 @@ export class PageTrackerService {
       pairwise()
     ).subscribe((e) => {
         sessionStorage.setItem(this.PREVIOUS_ROUTE, e[0]['url']);
-        console.log('NAVIGATION PREVIOUS => ', e[0]['url']);
       });
   }
 
