@@ -41,6 +41,7 @@ describe('HeaderComponent', () => {
   it('selected top menu item has active property set to true, others item active set to false', () => {
     component.topMenuItems = [];
     component.ngOnInit();
+    component.loggedIn = true;
     component.navigateToSelectedMenuItem(0);
     expect(component.topMenuItems[0].active).toBeTruthy();
     if (component.topMenuItems.length > 1) {
