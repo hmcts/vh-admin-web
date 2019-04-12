@@ -97,3 +97,19 @@
         transform: rotate(360deg);
     }
 }
+
+.vh-cancelled-booking {
+    color: #ffffff;
+    background-color: #b10e1e;
+    margin-left: 9px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    width: 50%;
+    font-weight: 200;
+    text-align: center;
+}
+
+.vh-row-cancelled {
+    background-color: lightgray;
+    padding-top: 3px;
+}

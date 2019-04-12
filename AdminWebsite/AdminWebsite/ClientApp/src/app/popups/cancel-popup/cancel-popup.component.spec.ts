@@ -8,9 +8,9 @@ describe('CancelPopupComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ CancelPopupComponent ]
+      declarations: [CancelPopupComponent]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
