@@ -3,7 +3,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { UserIdentityService } from '../services/user-identity.service';
 import { DashboardComponent } from './dashboard.component';
 import { UserProfileResponse } from '../services/clients/api-client';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { ErrorService } from 'src/app/services/error.service';
 import { PageUrls } from '../shared/page-url.constants';
 import { Router } from '@angular/router';
@@ -21,18 +21,27 @@ class UserIdentityServiceSpy {
 describe('DashboardComponent', () => {
   let component: DashboardComponent;
   let fixture: ComponentFixture<DashboardComponent>;
-  const errorService: jasmine.SpyObj<ErrorService> = jasmine.createSpyObj('ErrorService', ['handleError']);
+  const errorServiceSpy: jasmine.SpyObj<ErrorService> = jasmine.createSpyObj('ErrorService', ['handleError']);
+  const userIdentitySpy = jasmine.createSpyObj<UserIdentityService>('UserIdentityService', ['getUserInformation']);
+  userIdentitySpy.getUserInformation.and.returnValue(of(new UserProfileResponse({
+    is_case_administrator: true,
+    is_vh_officer_administrator_role: true
+  })));
   let routerSpy: jasmine.SpyObj<Router>;
   routerSpy = jasmine.createSpyObj('Router', ['navigate']);
+  routerSpy.navigate.and.callFake(() => { });
 
   beforeEach(async(() => {
 
     TestBed.configureTestingModule({
-      imports: [RouterTestingModule],
+      imports: [
+        RouterTestingModule
+      ],
       declarations: [DashboardComponent],
       providers: [
-        { provide: UserIdentityService, useClass: UserIdentityServiceSpy },
-        { provide: ErrorService, useValue: errorService },
+        { provide: UserIdentityService, useValue: userIdentitySpy },
+        { provide: ErrorService, useValue: errorServiceSpy },
+        { provide: Router, useValue: routerSpy },
       ]
     })
       .compileComponents();
@@ -41,22 +50,30 @@ describe('DashboardComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(DashboardComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
-
-  it('should create', () => {
-    expect(component).toBeTruthy();
   });
 
   it('should show for VH officer checklist', async () => {
+    userIdentitySpy.getUserInformation.and.returnValue(of(new UserProfileResponse({
+      is_case_administrator: true,
+      is_vh_officer_administrator_role: true
+    })));
+
     component.ngOnInit();
-    fixture.detectChanges();
     expect(component.showCheckList).toBeTruthy();
   });
 
   it('should show for VH officer and case admin booking', async () => {
+    userIdentitySpy.getUserInformation.and.returnValue(of(new UserProfileResponse({
+      is_case_administrator: true,
+      is_vh_officer_administrator_role: true
+    })));
     component.ngOnInit();
-    fixture.detectChanges();
     expect(component.showBooking).toBeTruthy();
+  });
+
+  it('should call error service if the userprofile fails', async () => {
+    userIdentitySpy.getUserInformation.and.returnValue(throwError({ status: 404 }));
+    component.ngOnInit();
+    expect(errorServiceSpy.handleError).toHaveBeenCalled();
   });
 });

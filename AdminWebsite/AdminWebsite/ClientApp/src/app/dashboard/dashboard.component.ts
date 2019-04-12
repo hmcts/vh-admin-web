@@ -21,17 +21,22 @@ export class DashboardComponent implements OnInit {
   showBooking = false;
 
   ngOnInit() {
-    this.userIdentityService
-      .getUserInformation()
-      .subscribe(s => {
-        this.showCheckList = s.is_vh_officer_administrator_role;
-        this.showBooking = s.is_case_administrator || s.is_vh_officer_administrator_role;
-        if (!this.showCheckList && !this.showBooking) {
-          this.router.navigate([PageUrls.Unauthorised]);
-        }
-      },
+    this.getUserInformation();
+  }
+
+  getUserInformation() {
+    this.userIdentityService.getUserInformation()
+      .subscribe(
+        s => {
+          this.showCheckList = s.is_vh_officer_administrator_role;
+          this.showBooking = s.is_case_administrator || s.is_vh_officer_administrator_role;
+          if (!this.showCheckList && !this.showBooking) {
+            this.router.navigate([PageUrls.Unauthorised]);
+          }
+        },
         error => {
           this.errorService.handleError(error);
-        });
+        }
+      );
   }
 }
