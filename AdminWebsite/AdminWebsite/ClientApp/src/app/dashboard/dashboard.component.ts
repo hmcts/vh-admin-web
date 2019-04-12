@@ -21,10 +21,6 @@ export class DashboardComponent implements OnInit {
   showBooking = false;
 
   ngOnInit() {
-    this.getUserInformation();
-  }
-
-  getUserInformation() {
     this.userIdentityService.getUserInformation()
       .subscribe(
         s => {
