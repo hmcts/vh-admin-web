@@ -1,3 +1,4 @@
+import { MomentModule } from 'angular2-moment';
 import { DebugElement } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
@@ -5,7 +6,8 @@ import { RouterTestingModule } from '@angular/router/testing';
 
 import { HearingDetailsComponent } from './hearing-details.component';
 import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
-import { MomentModule } from 'angular2-moment';
+import { LongDatetimePipe } from '../../../app/shared/directives/date-time.pipe';
+
 
 describe('HearingDetailsComponent', () => {
 
@@ -15,7 +17,7 @@ describe('HearingDetailsComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [HearingDetailsComponent],
+      declarations: [HearingDetailsComponent, LongDatetimePipe],
       imports: [RouterTestingModule, MomentModule
 ],
     })

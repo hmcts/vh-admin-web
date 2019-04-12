@@ -37,7 +37,7 @@
 
                 <span class="govuk-hint vh-xsml">{{detail.CreatedBy}}</span>
                 <span class="govuk-hint vh-xsml">
-                  {{detail.CreatedDate | amLocal | amDateFormat: 'DD MMM YYYY h:mm a'}}
+                  {{detail.CreatedDate | appLongDatetime}}
                 </span>
               </div>
             </div>
@@ -47,7 +47,7 @@
 
                 <span class="govuk-hint vh-xsml">{{detail.LastEditBy}}</span>
                 <span class="govuk-hint vh-xsml">
-                  {{detail.LastEditDate | amLocal | amDateFormat: 'DD MMM YYYY h:mm a'}}
+                  {{detail.LastEditDate | appLongDatetime}}
                 </span>
               </div>
             </div>

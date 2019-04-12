@@ -10,6 +10,7 @@ import { of } from 'rxjs';
 import { CaseRequest } from 'src/app/services/clients/api-client';
 import { CaseModel } from 'src/app/common/model/case.model';
 import { MomentModule } from 'angular2-moment';
+import { LongDatetimePipe } from '../../../app/shared/directives/date-time.pipe';
 
 function initHearingRequest(): HearingModel {
 
@@ -87,7 +88,7 @@ describe('BookingConfirmationComponent', () => {
     videoHearingsServiceSpy.getHearingById.and.returnValue(of(newHearing));
 
     TestBed.configureTestingModule({
-      declarations: [BookingConfirmationComponent],
+      declarations: [BookingConfirmationComponent, LongDatetimePipe],
       imports: [RouterTestingModule, MomentModule],
       providers: [
         { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },

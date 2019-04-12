@@ -17,7 +17,7 @@ import { BookingParticipantListComponent } from './booking-participant-list/book
 import { ParticipantDetailsComponent } from './participant-details/participant-details.component';
 import { HearingDetailsComponent } from './hearing-details/hearing-details.component';
 import { MomentModule } from 'angular2-moment';
-
+import { LongDatetimePipe } from '../../app/shared/directives/date-time.pipe';
 
 describe('app routing', () => {
   let location: Location;
@@ -36,6 +36,7 @@ describe('app routing', () => {
         BookingParticipantListComponent,
         ParticipantDetailsComponent,
         HearingDetailsComponent,
+        LongDatetimePipe
       ],
       providers: [
         AuthGuard,

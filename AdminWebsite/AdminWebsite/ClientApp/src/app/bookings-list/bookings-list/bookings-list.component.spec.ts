@@ -12,6 +12,7 @@ import { BookingPersistService } from '../../services/bookings-persist.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { HearingModel } from '../../common/model/hearing.model';
 import { MomentModule } from 'angular2-moment';
+import { LongDatetimePipe } from '../../../app/shared/directives/date-time.pipe';
 
 let component: BookingsListComponent;
 let fixture: ComponentFixture<BookingsListComponent>;
@@ -191,7 +192,7 @@ describe('BookingsListComponent', () => {
     routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
     TestBed.configureTestingModule({
-      declarations: [BookingsListComponent, ScrollableDirective, BookingDetailsComponent],
+      declarations: [BookingsListComponent, ScrollableDirective, BookingDetailsComponent, LongDatetimePipe],
       imports: [HttpClientModule, MomentModule],
       providers: [
         { provide: BookingsListService, useValue: bookingsListServiceSpy },
@@ -269,7 +270,7 @@ describe('BookingsListComponent with existing booking', () => {
     routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
     TestBed.configureTestingModule({
-      declarations: [BookingsListComponent, ScrollableDirective, BookingDetailsComponent],
+      declarations: [BookingsListComponent, ScrollableDirective, BookingDetailsComponent, LongDatetimePipe],
       imports: [HttpClientModule, MomentModule],
       providers: [
         { provide: BookingsListService, useValue: bookingsListServiceSpy },
