@@ -400,12 +400,6 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     return this.postcode.invalid && (this.postcode.dirty || this.postcode.touched || this.isShowErrorSummary);
   }
 
-  isControlInValid(controlName: string) {
-    return this.participantForm.get(controlName).invalid &&
-      (this.participantForm.get(controlName).dirty || this.participantForm.get(controlName).touched ||
-        this.showErrorSummary);
-  }
-
   partySelected() {
     this.isPartySelected = this.party.value !== this.constants.PleaseSelect;
     this.setupHearingRoles(this.party.value);

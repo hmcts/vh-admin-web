@@ -941,6 +941,46 @@ describe('AddParticipantComponent edit mode no participants added', () => {
     expect(component.participantDetails.hearing_role_name).toBeTruthy();
     expect(component.participantDetails.hearing_role_name).toEqual('Please Select');
   });
+  it('should set houseNumber field to invalid', () => {
+    component.participantForm.get('houseNumber').setErrors({ 'incorrect': true });
+    component.participantForm.get('houseNumber').markAsTouched();
+    component.isShowErrorSummary = true;
+
+    expect(component.houseNumberInvalid).toBeTruthy();
+  });
+  it('should set street field to invalid', () => {
+    component.participantForm.get('street').setErrors({ 'incorrect': true });
+    component.participantForm.get('street').markAsTouched();
+    component.isShowErrorSummary = true;
+    expect(component.streetInvalid).toBeTruthy();
+  });
+  it('should set city field to invalid', () => {
+    component.participantForm.get('city').setErrors({ 'incorrect': true });
+    component.participantForm.get('city').markAsTouched();
+    component.isShowErrorSummary = true;
+    expect(component.cityInvalid).toBeTruthy();
+  });
+  it('should set county field to invalid', () => {
+    component.participantForm.get('county').setErrors({ 'incorrect': true });
+    component.participantForm.get('county').markAsTouched();
+
+    component.isShowErrorSummary = true;
+    expect(component.countyInvalid).toBeTruthy();
+  });
+  it('should set postcode field to invalid', () => {
+    component.participantForm.get('postcode').setErrors({ 'incorrect': true });
+    component.participantForm.get('postcode').markAsTouched();
+    component.isShowErrorSummary = true;
+    expect(component.postcodeInvalid).toBeTruthy();
+  });
+  it('should disable first and last names fields if the person exist in data store', () => {
+    participant.is_exist_person = true;
+    component.participantDetails = participant;
+    component.getParticipant(participant);
+
+    expect(component.participantForm.get('firstName').disabled).toBeTruthy();
+    expect(component.participantForm.get('lastName').disabled).toBeTruthy();
+  });
 });
 
 function isAddressControlValid(control: AbstractControl, controlValue: string) {

@@ -183,6 +183,11 @@ describe('SeachEmailComponent', () => {
     expect(model.username).toEqual(person.username);
 
   });
+  it('should mapping return empty ParticipantModel if  PersonResponse is null', () => {
+    const person = null;
+    const model = component.mapPersonResponseToParticipantModel(person);
+    expect(model).toEqual(undefined);
+  });
   it('should find data and set notFoundParticipant to false', () => {
     component.getData(participantList);
     expect(component.isShowResult).toBeTruthy();
