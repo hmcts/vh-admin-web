@@ -67,3 +67,14 @@ Scenario: Case Admin amends hearing schedule
 	And user proceeds to summary page 
 	Then inputted values should be displayed as expected on summary page
 	And amended values should be saved
+
+@VIH-3731
+Scenario Outline: Admin cancels a video hearing booking
+	Given <Admin> is on booking details page
+	When the admin cancels hearing
+	Then cancelled label should be shown on booking details page
+	And booking details page should be displayed without the Edit or Cancel buttons
+Examples:
+| Admin                     |
+| Case Admin                |
+| VhOfficerCivilMoneyclaims |
