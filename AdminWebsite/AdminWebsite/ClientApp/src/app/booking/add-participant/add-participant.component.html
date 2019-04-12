@@ -57,7 +57,7 @@
           Party
         </label>
         <select id="party" formControlName="party" (change)="partySelected()"
-                class="govuk-select vh-input-w390" [attr.disabled]="isExistingHearing && isAnyParticipants">
+                class="govuk-select vh-input-w390">
           <option *ngFor="let prt of roleList" [ngValue]="prt">
             {{prt}}
           </option>
@@ -75,7 +75,7 @@
           Role
         </label>
         <select id="role" formControlName="role" (change)="roleSelected()"
-                class="govuk-select vh-input-w390" [attr.disabled]="isExistingHearing && isAnyParticipants">
+                class="govuk-select vh-input-w390">
           <option *ngFor="let ro of hearingRoleList" [ngValue]="ro">
             {{ro}}
           </option>
@@ -113,7 +113,7 @@
             First name
           </label>
           <input id="firstName" formControlName="firstName" class="govuk-input govuk-input--width-20"
-                 type="text" [attr.disabled]="isExistingHearing && isAnyParticipants"/>
+                 type="text" />
 
         </div>
 
@@ -127,7 +127,7 @@
             Last name
           </label>
           <input id="lastName" formControlName="lastName" class="govuk-input govuk-input--width-20"
-                 type="text" [attr.disabled]="isExistingHearing && isAnyParticipants"/>
+                 type="text" />
         </div>
 
         <div class="govuk-form-group">
@@ -160,7 +160,6 @@
             Display Name
           </label>
           <input id="displayName" formControlName="displayName" class="govuk-input govuk-input--width-20" type="text" />
-
         </div>
       </div>
 

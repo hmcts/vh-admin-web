@@ -14,4 +14,5 @@ export class ParticipantModel {
   representee?: string | undefined;
   company?: string | undefined;
   is_judge: boolean;
+  is_exist_person: boolean;
 }

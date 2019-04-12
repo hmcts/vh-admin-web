@@ -72,9 +72,10 @@ export class SearchEmailComponent implements OnInit {
     selectedResult.last_name = result.last_name;
     selectedResult.title = result.title;
     selectedResult.phone = result.phone;
-
+    selectedResult.is_exist_person = true;
     this.isShowResult = false;
-    return this.findParticipant.emit(selectedResult);
+    this.findParticipant.emit(selectedResult);
+    this.setEmailDisabled(true);
   }
 
   validateEmail() {

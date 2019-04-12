@@ -122,7 +122,6 @@ participant.hearing_role_name = 'Solicitor';
 participant.case_role_name = 'Claimant';
 participant.company = 'CN';
 
-
 const routerSpy = {
   navigate: jasmine.createSpy('navigate'),
   events: of(new NavigationEnd(2, '/', '/'))
@@ -245,20 +244,13 @@ describe('AddParticipantComponent', () => {
     phone.setValue('123456');
     expect(phone.valid).toBeTruthy();
   });
-  it('should validate role', () => {
+  it('should check if the role is valid role', () => {
     role.setValue('Please Select');
     component.roleSelected();
     expect(role.valid && component.isRoleSelected).toBeFalsy();
     role.setValue('Appellant');
     component.roleSelected();
     expect(role.valid && component.isRoleSelected).toBeTruthy();
-  });
-  it('should run getParticipant method and setup hearings roles for a case role', () => {
-    spyOn(component, 'setupHearingRoles');
-    component.getParticipant(participant);
-
-    expect(component.participantDetails.case_role_name).toBeTruthy();
-    expect(component.setupHearingRoles).toHaveBeenCalled();
   });
   it('should title be selected', () => {
     component.participantForm.get('title').setValue('Mr');
@@ -268,7 +260,7 @@ describe('AddParticipantComponent', () => {
 
     expect(component.isTitleSelected).toBeTruthy();
   });
-  it('should run getParticipant method and reset undefined party and role for new added participant', () => {
+  it('should reset undefined value for party and role to Please Select', () => {
     participant.case_role_name = undefined;
     participant.hearing_role_name = undefined;
     component.getParticipant(participant);
@@ -277,7 +269,7 @@ describe('AddParticipantComponent', () => {
     expect(component.participantDetails.case_role_name).toEqual('Please Select');
     expect(component.participantDetails.hearing_role_name).toEqual('Please Select');
   });
-  it('should run getParticipant method and reset empty party and role for new added participant', () => {
+  it('should reset empty party and role to Please Select', () => {
     participant.case_role_name = '';
     participant.hearing_role_name = '';
     component.isPartySelected = true;
@@ -288,27 +280,6 @@ describe('AddParticipantComponent', () => {
     expect(component.participantDetails.case_role_name).toEqual('Please Select');
     expect(component.participantDetails.hearing_role_name).toEqual('Please Select');
   });
-  it('should run getParticipant method and reset empty party and role for new added participant', () => {
-    participant.case_role_name = '';
-    participant.hearing_role_name = '';
-    component.isPartySelected = true;
-    component.isRoleSelected = true;
-    component.getParticipant(participant);
-
-    expect(component.participantDetails.case_role_name).toBeTruthy();
-    expect(component.participantDetails.case_role_name).toEqual('Please Select');
-    expect(component.participantDetails.hearing_role_name).toEqual('Please Select');
-  });
-  it('should set participant details values from existing participant or person data.', () => {
-    participant.id = '12345';
-
-    component.getParticipant(participant);
-
-    expect(component.participantDetails).toBeTruthy();
-    expect(component.participantDetails.email).toEqual(participant.email);
-    expect(component.participantDetails.id).toEqual(participant.id);
-  });
-
   it('should populate the form fields if the participant is found in data store', () => {
     participant.id = '2345';
     component.isPartySelected = true;
@@ -327,6 +298,8 @@ describe('AddParticipantComponent', () => {
     expect(title.value).toBe(participant.title);
     expect(displayName.value).toBe(participant.display_name);
     expect(companyName.value).toBe(participant.company);
+    expect(component.participantDetails.email).toEqual(participant.email);
+    expect(component.participantDetails.id).toEqual(participant.id);
     expect(component.displayNextButton).toBeFalsy();
     expect(component.displayClearButton).toBeTruthy();
     expect(component.displayAddButton).toBeTruthy();
@@ -359,16 +332,20 @@ describe('AddParticipantComponent', () => {
     fixture.detectChanges();
     spyOn(component.searchEmail, 'validateEmail').and.returnValue(true);
     component.searchEmail.email = 'mock@email.com';
-
     role.setValue('Appellant');
     party.setValue('CaseRole');
     firstName.setValue('Sam');
     lastName.setValue('Green');
     title.setValue('Mrs');
     phone.setValue('12345');
+    displayName.setValue('Sam');
+    companyName.setValue('CC');
+
     component.isRoleSelected = true;
     component.isPartySelected = true;
+
     component.saveParticipant();
+
     expect(component.isShowErrorSummary).toBeFalsy();
     expect(component.hearing.participants.length).toBeGreaterThan(0);
   });
@@ -377,7 +354,6 @@ describe('AddParticipantComponent', () => {
     fixture.detectChanges();
     spyOn(component.searchEmail, 'validateEmail').and.returnValue(true);
     component.searchEmail.email = 'mock@email.com';
-
     role.setValue('Appellant');
     party.setValue('CaseRole');
     firstName.setValue('Sam');
@@ -427,10 +403,10 @@ describe('AddParticipantComponent', () => {
     component.getParticipant(participant);
     expect(component.displayErrorNoParticipants).toBeFalsy();
   });
-  it('should method next navigate to ', () => {
+  it('should navigate to other information page', () => {
     component.hearing.participants = participants;
     component.next();
-    expect(routerSpy.navigate).toHaveBeenCalled();
+    expect(routerSpy.navigate).toHaveBeenCalledWith(['/other-information']);
   });
   it('the case roles and hearing roles were populated', () => {
     component.setupRoles(roleList);
@@ -571,8 +547,7 @@ describe('AddParticipantComponent edit mode', () => {
     fixture.whenStable().then(() => {
       expect(videoHearingsServiceSpy.getCurrentRequest).toHaveBeenCalled();
       expect(component.hearing).toBeTruthy();
-      expect(component.isAnyParticipants).toBeTruthy();
-      expect(component.isExistingHearing).toBeTruthy();
+      expect(component.existingParticipant).toBeTruthy();
       expect(videoHearingsServiceSpy.getParticipantRoles).toHaveBeenCalled();
       expect(component.showDetails).toBeTruthy();
       expect(component.selectedParticipantEmail).toBe('test3@test.com');
@@ -662,15 +637,15 @@ describe('AddParticipantComponent edit mode', () => {
     expect(videoHearingsServiceSpy.updateHearingRequest).toHaveBeenCalled();
     expect(component.showDetails).toBeTruthy();
   });
-  it('should check if the hearing exist', () => {
+  it('should check if existing booking has participants', () => {
     component.ngOnInit();
     fixture.detectChanges();
     expect(videoHearingsServiceSpy.getCurrentRequest).toHaveBeenCalled();
     expect(component.hearing).toBeTruthy();
     expect(component.hearing.hearing_id).toBeTruthy();
-    expect(component.isExistingHearing).toBeTruthy();
-    expect(component.isAnyParticipants).toBeTruthy();
+    expect(component.bookingHasParticipants).toBeTruthy();
   });
+
   it('should navigate to summary page if the method cancel called in the edit mode and no changes made', () => {
     component.participantForm.markAsUntouched();
     component.participantForm.markAsPristine();
@@ -791,7 +766,7 @@ describe('AddParticipantComponent edit mode no participants added', () => {
     const partList: ParticipantsListComponent = fixture.componentInstance.participantsListComponent;
     expect(partList).toBeDefined();
   }));
-  it('should subscribe for participant list select participant for edit', fakeAsync(() => {
+  it('should show all fields if the participant selected for edit', fakeAsync(() => {
     fixture.detectChanges();
     component.ngOnInit();
     const partList: ParticipantsListComponent = fixture.componentInstance.participantsListComponent;
@@ -799,9 +774,9 @@ describe('AddParticipantComponent edit mode no participants added', () => {
     partList.selectedParticipant.emit();
     tick(600);
     fixture.detectChanges();
-    expect(component.showDetails).toBeFalsy();
+    expect(component.showDetails).toBeTruthy();
   }));
-  it('should subscribe for participant list remove participant', fakeAsync(() => {
+  it('should show confirmation to remove participant', fakeAsync(() => {
     fixture.detectChanges();
     component.ngOnInit();
     const partList: ParticipantsListComponent = fixture.componentInstance.participantsListComponent;
@@ -812,42 +787,34 @@ describe('AddParticipantComponent edit mode no participants added', () => {
     fixture.detectChanges();
     expect(component.showConfirmationRemoveParticipant).toBeTruthy();
   }));
-  it('should show confirmation to remove', fakeAsync(() => {
-    fixture.detectChanges();
-    const partList: ParticipantsListComponent = fixture.componentInstance.participantsListComponent;
-    partList.removeParticipant('test2@test.com');
-    component.selectedParticipantEmail = undefined;
-    partList.selectedParticipantToRemove.emit();
-    tick(1000);
-    fixture.detectChanges();
-    expect(component.showConfirmationRemoveParticipant).toBeTruthy();
-  }));
-  it('should display add button if participant has not email set', () => {
+  it('should display add button if participant has no email set', () => {
     fixture.detectChanges();
     component.selectedParticipantEmail = '';
     component.ngOnInit();
 
     expect(component.showDetails).toBeFalsy();
     expect(component.displayAddButton).toBeTruthy();
-
   });
-  it('should set isAnyParticipants to false', () => {
+  it('should set existingParticipant to false', () => {
     participant.id = '';
     component.participantDetails = participant;
-    component.resetPartyAndRole();
-    expect(component.isAnyParticipants).toBeFalsy();
+    component.getParticipant(participant);
+    expect(component.existingParticipant).toBeFalsy();
   });
-  it('should set isAnyParticipants to true', () => {
+  it('should set existingParticipant to true', () => {
     participant.id = '12345';
     component.participantDetails = participant;
-    component.resetPartyAndRole();
-    expect(component.isAnyParticipants).toBeTruthy();
+    component.getParticipant(participant);
+    expect(component.existingParticipant).toBeTruthy();
   });
-  it('should reset hearing role if the participant has set case role value', () => {
+  it('should reset hearing roles drop down if participant case role changed', () => {
     spyOn(component, 'setupHearingRoles');
     participant.id = undefined;
+    participant.case_role_name = 'Claimant';
     component.participantDetails = participant;
+    fixture.detectChanges();
     component.resetPartyAndRole();
+
     expect(component.setupHearingRoles).toHaveBeenCalled();
   });
   it('should set case role value from the input field', () => {
