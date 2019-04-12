@@ -1,7 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { HeaderComponent } from './header.component';
-import { SignOutComponent } from '../sign-out/sign-out.component';
 import { NO_ERRORS_SCHEMA, DebugElement } from '@angular/core';
 import { By } from '@angular/platform-browser';
 
@@ -15,7 +14,7 @@ describe('HeaderComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [HeaderComponent, SignOutComponent],
+      declarations: [HeaderComponent],
       providers: [{ provide: Router, useValue: router },
       ],
       schemas: [NO_ERRORS_SCHEMA]
@@ -81,6 +80,6 @@ describe('HeaderComponent', () => {
     const signOutElement = debugElement.query(By.css('#linkSignOut'));
     spyOn(component.$confirmLogout, 'emit');
     signOutElement.triggerEventHandler('click', null);
-    // expect(component.$confirmLogout.emit).toHaveBeenCalled();
+    expect(component.$confirmLogout.emit).toHaveBeenCalled();
   });
 });

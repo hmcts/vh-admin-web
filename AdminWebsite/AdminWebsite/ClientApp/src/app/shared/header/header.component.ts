@@ -1,7 +1,6 @@
 import { Component, OnInit, EventEmitter, ViewChild, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { TopMenuItems } from './topMenuItems';
-import { SignOutComponent } from '../sign-out/sign-out.component';
 
 @Component({
   selector: 'app-header',
@@ -10,9 +9,6 @@ import { SignOutComponent } from '../sign-out/sign-out.component';
 })
 export class HeaderComponent implements OnInit {
   @Input() loggedIn: boolean;
-
-  @ViewChild(SignOutComponent)
-  signoutComponent: SignOutComponent;
 
   $confirmLogout: EventEmitter<any>;
   $confirmSaveBooking: EventEmitter<any>;
@@ -39,10 +35,7 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit() {
     this.topMenuItems = TopMenuItems;
-    if (this.loggedIn) {
-      this.signoutComponent.confirmLogout.subscribe(() => { this.logout(); });
-    }
-  }
+   }
 
   logout() {
     this.$confirmLogout.emit();

@@ -7,7 +7,13 @@
         </span>
     </div>
     <div *ngIf="loggedIn">
-      <app-sign-out></app-sign-out>
+      <nav class="vh-sign">
+        <div class="govuk-header__navigation govuk-header__navigation-item">
+          <a class="govuk-header__link" href="javascript:void()" (click)="logout()" id="linkSignOut">
+            Sign out
+          </a>
+        </div>
+      </nav>
     </div>
   </div>
   <nav class="hmcts-primary-navigation" aria-label="Primary navigation">
