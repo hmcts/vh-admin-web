@@ -26,7 +26,7 @@ describe('HeaderComponent', () => {
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
-    
+
   it('header component should have top menu items', () => {
     fixture.detectChanges();
     component.topMenuItems = [];
