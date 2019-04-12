@@ -36,5 +36,10 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public string CourtAddress() => GetElementText(By.Id("court-room-address"));
         public string HearingDuration() => GetElementText(By.Id("duration"));
         public string OtherInformation() => GetElementText(By.Id("otherInformation"));
+        public void CancelBookingButton() => ClickElement(By.Id("cancel-button")); 
+        public void PopupCancelBookingButton() => ClickElement(By.Id("btnCancelBooking"));        
+        public void PopupKeepBookingButton() => ClickElement(By.Id("btnKeepBooking"));
+        public string CancelledLabel() => GetElementText(By.Id("lblCancelled"));        
+        public string PopupCancelBookingWarningMessage() => GetElementText(By.XPath("//h1[contains(@class, 'govuk-heading-m')]"));
     }
 }
