@@ -1,45 +1,45 @@
-import { TestBed, inject } from '@angular/core/testing';
 import { CustomAdalInterceptor } from './custom-adal-interceptor';
 import { AdalInterceptor } from 'adal-angular4';
-import { AdalService } from 'adal-angular4';
-import { MockAdalService } from './testing/mocks/MockAdalService';
-import { HttpClientTestingModule, HttpTestingController, TestRequest } from '@angular/common/http/testing';
-import { BHClient } from './services/clients/api-client';
-import { HTTP_INTERCEPTORS, HttpRequest, HttpResponse } from '@angular/common/http';
-
-let adalInspector: jasmine.SpyObj<AdalInterceptor>;
-adalInspector = jasmine.createSpyObj('AdalInterceptor',  ['intercept']);
+import { HttpRequest, HttpHandler } from '@angular/common/http';
 
 describe('CustomAdalInterceptor', () => {
+  let adalInterceptor: jasmine.SpyObj<AdalInterceptor>;
+  let service: CustomAdalInterceptor;
+  let modifiedRequest: HttpRequest<any> = null;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({
-      providers: [
-        CustomAdalInterceptor,
-        { provide: AdalInterceptor, useValue: adalInspector },
-        { provide: AdalService, useClass: MockAdalService },
-      ]
+    adalInterceptor = jasmine.createSpyObj('AdalInterceptor', ['intercept']);
+    service = new CustomAdalInterceptor(adalInterceptor);
+
+    adalInterceptor.intercept.and.callFake((customRequest: HttpRequest<any>, _: any) => {
+      modifiedRequest = customRequest;
     });
   });
 
-  it('should be created', inject([CustomAdalInterceptor], (service: CustomAdalInterceptor) => {
-    expect(service).toBeTruthy();
-  }));
-
-  it('should add cache headers to get requests', inject([CustomAdalInterceptor], (service: CustomAdalInterceptor) => {
-    let modifiedRequest: HttpRequest<any> = null;
-    adalInspector.intercept.and.callFake((customRequest: HttpRequest<any>, _: any) => {
-      modifiedRequest = customRequest;
-    });
-
+  it('should add cache headers to get requests', () => {
     const next: any = {};
     const request = new HttpRequest<any>('GET', 'url');
     service.intercept(request, next);
 
     expect(modifiedRequest).not.toBeNull();
-    console.log(modifiedRequest.headers);
     expect(modifiedRequest.headers.get('Cache-Control')).toEqual('no-cache');
     expect(modifiedRequest.headers.get('Pragma')).toEqual('no-cache');
-  }));
+  });
 
+  it('should pass calls directly to adal interceptor for non GET requests', () => {
+    const next: any = {};
+    const request = new HttpRequest<any>('DELETE', 'url');
+    service.intercept(request, next);
+
+    expect(modifiedRequest).not.toBeNull();
+    expect(adalInterceptor.intercept).toHaveBeenCalled();
+  });
+
+  it('should just call the intercept directly for config endpoint', () => {
+    const next = jasmine.createSpyObj<HttpHandler>(['handle']);
+    const request = new HttpRequest<any>('GET', '/api/config');
+    service.intercept(request, next);
+
+    expect(next.handle).toHaveBeenCalled();
+  });
 });
