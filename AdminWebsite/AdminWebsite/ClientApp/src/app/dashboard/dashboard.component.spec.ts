@@ -59,17 +59,4 @@ describe('DashboardComponent', () => {
     fixture.detectChanges();
     expect(component.showBooking).toBeTruthy();
   });
-
-  it('should navigate to create booking page when create hearing is clicked', () => {
-    component.ngOnInit();
-    component.goToCreateHearing();
-    expect(routerSpy.navigate).toHaveBeenCalledWith([PageUrls.CreateHearing]);
-  });
-
-  it('should navigate to unauthorised page if user profile is not case admin and not vh officer', () => {
-    component.ngOnInit();
-    component.showBooking = false;
-    component.showCheckList = false;
-    expect(routerSpy.navigate).toHaveBeenCalledWith([PageUrls.Unauthorised]);
-  });
 });

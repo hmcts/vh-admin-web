@@ -34,8 +34,4 @@ export class DashboardComponent implements OnInit {
           this.errorService.handleError(error);
         });
   }
-
-  goToCreateHearing() {
-    this.router.navigate([PageUrls.CreateHearing]);
-  }
 }
