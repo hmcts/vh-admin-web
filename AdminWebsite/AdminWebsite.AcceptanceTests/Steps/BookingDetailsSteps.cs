@@ -81,5 +81,23 @@ namespace AdminWebsite.AcceptanceTests.Steps
             }
             _bookingDetails.EditedBy().Should().Be(_scenarioContext.Get<string>("Username"));
         }
+        [When(@"the admin cancels hearing")]
+        public void WhenTheAdminCancelsHearing()
+        {
+            _bookingDetails.CancelBookingButton();
+            _bookingDetails.PopupCancelBookingWarningMessage().Should().Be(TestData.BookingDetails.CancelBookingWarningMessage);
+            _bookingDetails.PopupCancelBookingButton();
+        }
+        [Then(@"cancelled label should be shown on booking details page")]
+        public void ThenCancelledLabelShouldBeShownOnHearing()
+        {
+            _bookingDetails.CancelledLabel().Should().Be(TestData.BookingDetails.CancelledLabel);
+        }
+        [Then(@"booking details page should be displayed without the Edit or Cancel buttons")]
+        public void NoEditOrCancelButtons()
+        {
+            Assert.Throws<WebDriverTimeoutException>(() => _bookingDetails.EditBookingList());
+            Assert.Throws<WebDriverTimeoutException>(() => _bookingDetails.CancelBookingButton());
+        }
     }
 }
