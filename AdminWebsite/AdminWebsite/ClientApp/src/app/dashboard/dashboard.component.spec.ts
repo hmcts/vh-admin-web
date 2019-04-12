@@ -76,4 +76,15 @@ describe('DashboardComponent', () => {
     component.ngOnInit();
     expect(errorServiceSpy.handleError).toHaveBeenCalled();
   });
+
+  it('should show unauthorised page', async () => {
+    userIdentitySpy.getUserInformation.and.returnValue(of(new UserProfileResponse({
+      is_case_administrator: false,
+      is_vh_officer_administrator_role: false
+    })));
+    component.ngOnInit();
+    expect(component.showBooking).toBeFalsy();
+    expect(component.showCheckList).toBeFalsy();
+    expect(routerSpy.navigate).toHaveBeenCalledWith([PageUrls.Unauthorised]);
+  });
 });
