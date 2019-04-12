@@ -276,44 +276,29 @@ this.ScenarioInitialize(scenarioInfo);
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Case Admin cancels a video hearing booking")]
+        [NUnit.Framework.DescriptionAttribute("Admin cancels a video hearing booking")]
         [NUnit.Framework.CategoryAttribute("VIH-3731")]
-        public virtual void CaseAdminCancelsAVideoHearingBooking()
+        [NUnit.Framework.TestCaseAttribute("Case Admin", null)]
+        [NUnit.Framework.TestCaseAttribute("VhOfficerCivilMoneyclaims", null)]
+        public virtual void AdminCancelsAVideoHearingBooking(string admin, string[] exampleTags)
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Case Admin cancels a video hearing booking", null, new string[] {
-                        "VIH-3731"});
+            string[] @__tags = new string[] {
+                    "VIH-3731"};
+            if ((exampleTags != null))
+            {
+                @__tags = System.Linq.Enumerable.ToArray(System.Linq.Enumerable.Concat(@__tags, exampleTags));
+            }
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Admin cancels a video hearing booking", null, @__tags);
 #line 72
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 73
- testRunner.Given("Case Admin is on booking details page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.Given(string.Format("{0} is on booking details page", admin), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 74
- testRunner.When("hearing is cancelled", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.When("the admin cancels hearing", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 75
  testRunner.Then("cancelled label should be shown on booking details page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 76
- testRunner.And("booking details page should be displayed without the Edit or Cancel buttons", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line hidden
-            this.ScenarioCleanup();
-        }
-        
-        [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Vh Officer cancels a video hearing booking")]
-        [NUnit.Framework.CategoryAttribute("VIH-3731")]
-        public virtual void VhOfficerCancelsAVideoHearingBooking()
-        {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Vh Officer cancels a video hearing booking", null, new string[] {
-                        "VIH-3731"});
-#line 79
-this.ScenarioInitialize(scenarioInfo);
-            this.ScenarioStart();
-#line 80
- testRunner.Given("VhOfficerCivilMoneyclaims is on booking details page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 81
- testRunner.When("hearing is cancelled", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 82
- testRunner.Then("cancelled label should be shown on booking details page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
-#line 83
  testRunner.And("booking details page should be displayed without the Edit or Cancel buttons", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             this.ScenarioCleanup();

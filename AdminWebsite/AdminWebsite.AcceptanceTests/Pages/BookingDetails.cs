@@ -40,6 +40,6 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public void PopupCancelBookingButton() => ClickElement(By.Id("btnCancelBooking"));        
         public void PopupKeepBookingButton() => ClickElement(By.Id("btnKeepBooking"));
         public string CancelledLabel() => GetElementText(By.Id("lblCancelled"));        
-        public string PopupCancelBookingWarningMessage() => GetElementText(By.XPath("//h1[contains(@class, 'govuk-heading-m')]"));
+        public string PopupCancelBookingWarningMessage() => GetElementText(By.CssSelector("h1.govuk-heading-m"));
     }
 }

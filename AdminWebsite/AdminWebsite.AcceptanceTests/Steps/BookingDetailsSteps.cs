@@ -81,8 +81,8 @@ namespace AdminWebsite.AcceptanceTests.Steps
             }
             _bookingDetails.EditedBy().Should().Be(_scenarioContext.Get<string>("Username"));
         }
-        [When(@"hearing is cancelled")]
-        public void WhenHearingIsCancelled()
+        [When(@"the admin cancels hearing")]
+        public void WhenTheAdminCancelsHearing()
         {
             _bookingDetails.CancelBookingButton();
             _bookingDetails.PopupCancelBookingWarningMessage().Should().Be(TestData.BookingDetails.CancelBookingWarningMessage);
