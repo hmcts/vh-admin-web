@@ -54,7 +54,7 @@ describe('DashboardComponent', () => {
 
   it('should show for VH officer checklist', async () => {
     userIdentitySpy.getUserInformation.and.returnValue(of(new UserProfileResponse({
-      is_case_administrator: true,
+      is_case_administrator: false,
       is_vh_officer_administrator_role: true
     })));
 
