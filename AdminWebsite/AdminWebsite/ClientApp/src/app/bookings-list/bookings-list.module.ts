@@ -7,12 +7,14 @@ import { BookingDetailsComponent } from './booking-details/booking-details.compo
 import { ParticipantDetailsComponent } from './participant-details/participant-details.component';
 import { BookingParticipantListComponent } from './booking-participant-list/booking-participant-list.component';
 import { HearingDetailsComponent } from './hearing-details/hearing-details.component';
+import { PopupModule } from '../popups/popup.module';
 
 
 @NgModule({
   imports: [
     SharedModule,
     BookingsListRoutingModule,
+    PopupModule,
     MomentModule
   ],
   declarations: [

@@ -18,6 +18,7 @@ import { ParticipantService } from '../services/participant.service';
 import { CaseAndHearingRolesResponse } from '../../services/clients/api-client';
 import { PartyModel } from '../../common/model/party.model';
 
+
 @Component({
   selector: 'app-add-participant',
   templateUrl: './add-participant.component.html',
@@ -45,6 +46,11 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   private phone: FormControl;
   private displayName: FormControl;
   private companyName: FormControl;
+  private houseNumber: FormControl;
+  private street: FormControl;
+  private city: FormControl;
+  private county: FormControl;
+  private postcode: FormControl;
   isRoleSelected = true;
   isPartySelected = true;
   isTitleSelected = true;
@@ -67,6 +73,8 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   existingPerson: boolean;
   existingParticipant: boolean;
   bookingHasParticipants: boolean;
+  showAddress = false;
+
 
   @ViewChild(SearchEmailComponent)
   searchEmail: SearchEmailComponent;
@@ -163,15 +171,17 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
       Validators.required,
       Validators.pattern(this.constants.PleaseSelectPattern)
     ]);
-    this.title = new FormControl(this.constants.PleaseSelect, [
-      Validators.required,
-      Validators.pattern(this.constants.PleaseSelectPattern)
-    ]);
+    this.title = new FormControl(this.constants.PleaseSelect);
     this.firstName = new FormControl('', Validators.required);
     this.lastName = new FormControl('', Validators.required);
     this.phone = new FormControl('', [Validators.required, Validators.pattern(/^[0-9) -.]+$/)]);
     this.displayName = new FormControl('', Validators.required);
     this.companyName = new FormControl('');
+    this.houseNumber = new FormControl('');
+    this.street = new FormControl('');
+    this.city = new FormControl('');
+    this.county = new FormControl('');
+    this.postcode = new FormControl('');
     this.participantForm = new FormGroup({
       role: this.role,
       party: this.party,
@@ -181,6 +191,11 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
       phone: this.phone,
       displayName: this.displayName,
       companyName: this.companyName,
+      houseNumber: this.houseNumber,
+      street: this.street,
+      city: this.city,
+      county: this.county,
+      postcode: this.postcode,
     });
     const self = this;
     this.participantForm.valueChanges.subscribe(
@@ -260,6 +275,9 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     // if it's added in the existing hearing participant, then allowed all fields to edit.
     this.resetPartyAndRole();
 
+    if (this.constants.IndividualRoles.indexOf(this.participantDetails.hearing_role_name) > -1) {
+      this.showAddress = true;
+    }
     this.participantForm.setValue({
       party: this.participantDetails.case_role_name,
       role: this.participantDetails.hearing_role_name,
@@ -269,6 +287,11 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
       phone: this.participantDetails.phone || '',
       displayName: this.participantDetails.display_name || '',
       companyName: this.participantDetails.company ? this.participantDetails.company : '',
+      houseNumber: this.participantDetails.housenumber ? this.participantDetails.housenumber : '',
+      street: this.participantDetails.street ? this.participantDetails.street : '',
+      city: this.participantDetails.city ? this.participantDetails.city : '',
+      county: this.participantDetails.county ? this.participantDetails.county : '',
+      postcode: this.participantDetails.postcode ? this.participantDetails.postcode : ''
     });
 
     setTimeout(() => {
@@ -335,15 +358,15 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   }
 
   get firstNameInvalid() {
-    return this.firstName.invalid && (this.firstName.dirty || this.firstName.touched || this.isShowErrorSummary);
+    return this.isControlInValid(this.firstName);
   }
 
   get lastNameInvalid() {
-    return this.lastName.invalid && (this.lastName.dirty || this.lastName.touched || this.isShowErrorSummary);
+    return this.isControlInValid(this.lastName);
   }
 
   get phoneInvalid() {
-    return this.phone.invalid && (this.phone.dirty || this.phone.touched || this.isShowErrorSummary);
+    return this.isControlInValid(this.phone);
   }
 
   get displayNameInvalid() {
@@ -352,16 +375,34 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   }
 
   get partyInvalid() {
-    return this.party.invalid && (this.party.dirty || this.party.touched || this.isShowErrorSummary);
+    return this.isControlInValid(this.party);
   }
 
   get roleInvalid() {
-    return this.role.invalid && (this.role.dirty || this.role.touched || this.isShowErrorSummary);
+    return this.isControlInValid(this.role);
   }
 
-  get titleInvalid() {
-    return this.title.invalid && (this.title.dirty || this.title.touched || this.isShowErrorSummary);
+  get houseNumberInvalid() {
+    return this.isControlInValid(this.houseNumber);
   }
+
+  get streetInvalid() {
+    return this.isControlInValid(this.street);
+  }
+  get cityInvalid() {
+    return this.isControlInValid(this.city);
+  }
+  get countyInvalid() {
+    return this.isControlInValid(this.county);
+  }
+
+  get postcodeInvalid() {
+    return this.isControlInValid(this.postcode);
+  }
+
+  isControlInValid(control: FormControl) {
+    return control.invalid && (control.dirty || control.touched || this.showErrorSummary);
+ }
 
   partySelected() {
     this.isPartySelected = this.party.value !== this.constants.PleaseSelect;
@@ -370,6 +411,29 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
   roleSelected() {
     this.isRoleSelected = this.role.value !== this.constants.PleaseSelect;
+    if (this.role.value !== this.constants.Solicitor) {
+      this.showAddress = true;
+
+      this.houseNumber.setValidators([Validators.required]);
+      this.street.setValidators([Validators.required]);
+      this.city.setValidators([Validators.required]);
+      this.county.setValidators([Validators.required]);
+      this.postcode.setValidators([Validators.required]);
+
+      this.houseNumber.updateValueAndValidity();
+      this.street.updateValueAndValidity();
+      this.city.updateValueAndValidity();
+      this.county.updateValueAndValidity();
+      this.postcode.updateValueAndValidity();
+    } else {
+      this.showAddress = false;
+
+      this.houseNumber.setValue('');
+      this.street.setValue('');
+      this.city.setValue('');
+      this.county.setValue('');
+      this.postcode.setValue('');
+    }
     this.showDetails = true;
   }
 
@@ -385,7 +449,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
 
   showErrorSummary() {
-    return !this.participantForm.valid || !this.isRoleSelected || !this.isTitleSelected;
+    return !this.participantForm.valid || !this.isRoleSelected;
   }
 
   saveParticipant() {
@@ -484,6 +548,11 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     newParticipant.display_name = this.displayName.value;
     newParticipant.company = this.companyName.value;
     newParticipant.username = this.searchEmail ? this.searchEmail.email : '';
+    newParticipant.housenumber = this.houseNumber.value;
+    newParticipant.street = this.street.value;
+    newParticipant.city = this.city.value;
+    newParticipant.county = this.county.value;
+    newParticipant.postcode = this.postcode.value;
   }
 
   addParticipantCancel() {
@@ -545,6 +614,11 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         phone: '',
         displayName: '',
         companyName: '',
+        houseNumber: '',
+        street: '',
+        city: '',
+        county: '',
+        postcode: '',
       });
     this.participantForm.markAsUntouched();
     this.participantForm.markAsPristine();

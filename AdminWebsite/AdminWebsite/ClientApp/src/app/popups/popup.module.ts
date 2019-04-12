@@ -5,6 +5,7 @@ import { CancelPopupComponent } from './cancel-popup/cancel-popup.component';
 import { ConfirmationPopupComponent } from './confirmation-popup/confirmation-popup.component';
 import { SignOutPopupComponent } from './sign-out-popup/sign-out-popup.component';
 import { SaveFailedPopupComponent } from './save-failed-popup/save-failed-popup.component';
+import { CancelBookingPopupComponent } from './cancel-booking-popup/cancel-booking-popup.component';
 import { WaitPopupComponent } from './wait-popup/wait-popup.component';
 import { DiscardConfirmPopupComponent } from './discard-confirm-popup/discard-confirm-popup.component';
 
@@ -17,6 +18,7 @@ import { DiscardConfirmPopupComponent } from './discard-confirm-popup/discard-co
     ConfirmationPopupComponent,
     SignOutPopupComponent,
     SaveFailedPopupComponent,
+    CancelBookingPopupComponent,
     WaitPopupComponent,
     DiscardConfirmPopupComponent,
   ],
@@ -27,6 +29,7 @@ import { DiscardConfirmPopupComponent } from './discard-confirm-popup/discard-co
     WaitPopupComponent,
     SaveFailedPopupComponent,
     DiscardConfirmPopupComponent,
+    CancelBookingPopupComponent
   ]
 })
 export class PopupModule { }

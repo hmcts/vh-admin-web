@@ -87,11 +87,6 @@
         </app-search-email>
 
         <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error': titleInvalid || !isTitleSelected}">
-          <legend id="role-error" *ngIf="titleInvalid || !isTitleSelected">
-            <span class="govuk-error-message">
-              {{constants.Error.TitleErrorMsg}}
-            </span>
-          </legend>
           <label class="govuk-label" for="title">
             Title
           </label>
@@ -160,6 +155,73 @@
             Display Name
           </label>
           <input id="displayName" formControlName="displayName" class="govuk-input govuk-input--width-20" type="text" />
+        </div>
+        <div *ngIf="showAddress">
+          <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':houseNumberInvalid}">
+
+            <legend id="display-name-error" *ngIf="houseNumberInvalid">
+              <span class="govuk-error-message">
+                {{constants.Error.HouseNumberErrorMsg}}
+              </span>
+            </legend>
+            <label class="govuk-label" for="houseNumber">
+              House number
+            </label>
+            <input id="houseNumber" formControlName="houseNumber" class="govuk-input govuk-input--width-20" type="text" />
+
+          </div>
+          <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':streetInvalid}">
+
+            <legend id="display-name-error" *ngIf="streetInvalid">
+              <span class="govuk-error-message">
+                {{constants.Error.StreetErrorMsg}}
+              </span>
+            </legend>
+            <label class="govuk-label" for="street">
+              Street
+            </label>
+            <input id="street" formControlName="street" class="govuk-input govuk-input--width-20" type="text" />
+
+          </div>
+          <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':cityInvalid}">
+
+            <legend id="display-name-error" *ngIf="cityInvalid">
+              <span class="govuk-error-message">
+                {{constants.Error.CityErrorMsg}}
+              </span>
+            </legend>
+            <label class="govuk-label" for="city">
+              City
+            </label>
+            <input id="city" formControlName="city" class="govuk-input govuk-input--width-20" type="text" />
+
+          </div>
+          <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':countyInvalid}">
+
+            <legend id="display-name-error" *ngIf="countyInvalid">
+              <span class="govuk-error-message">
+                {{constants.Error.CountyErrorMsg}}
+              </span>
+            </legend>
+            <label class="govuk-label" for="county">
+              County
+            </label>
+            <input id="county" formControlName="county" class="govuk-input govuk-input--width-20" type="text" />
+
+          </div>
+          <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':postcodeInvalid}">
+
+            <legend id="post-code-error" *ngIf="postcodeInvalid">
+              <span class="govuk-error-message">
+                {{constants.Error.PostcodeErrorMsg}}
+              </span>
+            </legend>
+            <label class="govuk-label" for="postcode">
+              Postcode
+            </label>
+            <input id="postcode" formControlName="postcode" class="govuk-input govuk-input--width-20" type="text" />
+
+          </div>
         </div>
       </div>
 

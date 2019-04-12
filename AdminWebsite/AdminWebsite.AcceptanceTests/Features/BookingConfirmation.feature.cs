@@ -91,7 +91,7 @@ this.ScenarioInitialize(scenarioInfo);
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Test testing")]
+        [NUnit.Framework.DescriptionAttribute("Case Admin with multiple case types saves booking")]
         [NUnit.Framework.CategoryAttribute("VIH-2701")]
         [NUnit.Framework.CategoryAttribute("bug")]
         [NUnit.Framework.TestCaseAttribute("Civil Money Claims", "Claimant", "Claimant LIP", null)]
@@ -100,7 +100,7 @@ this.ScenarioInitialize(scenarioInfo);
         [NUnit.Framework.TestCaseAttribute("Financial Remedy", "Applicant", "Applicant LIP", null)]
         [NUnit.Framework.TestCaseAttribute("Financial Remedy", "Respondent", "Respondent LIP", null)]
         [NUnit.Framework.TestCaseAttribute("Financial Remedy", "Respondent", "Solicitor", null)]
-        public virtual void TestTesting(string caseTypes, string party, string role, string[] exampleTags)
+        public virtual void CaseAdminWithMultipleCaseTypesSavesBooking(string caseTypes, string party, string role, string[] exampleTags)
         {
             string[] @__tags = new string[] {
                     "VIH-2701",
@@ -109,7 +109,7 @@ this.ScenarioInitialize(scenarioInfo);
             {
                 @__tags = System.Linq.Enumerable.ToArray(System.Linq.Enumerable.Concat(@__tags, exampleTags));
             }
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Test testing", null, @__tags);
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Case Admin with multiple case types saves booking", null, @__tags);
 #line 13
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();

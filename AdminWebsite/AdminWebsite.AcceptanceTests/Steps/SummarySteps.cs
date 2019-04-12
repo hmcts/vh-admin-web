@@ -71,10 +71,10 @@ namespace AdminWebsite.AcceptanceTests.Steps
                     _summary.EditMoreInformation();
                     break;
                 case "add judge": pageUri = PageUri.AssignJudgePage;
-                    _summary.EditRoundedBoarder("Change");
+                    _summary.EditRoundedBorder("Change");
                     break;
                 case "add participants": pageUri = PageUri.AddParticipantsPage;
-                    _summary.EditRoundedBoarder("Edit");
+                    _summary.EditRoundedBorder("Edit");
                     break;
             }
             _summary.AddItems<string>("RelevantPage", pageUri);
@@ -82,7 +82,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [When(@"user removes participant on summary page")]
         public void GivenUserRemovesParticipantOnSummaryPage()
         {
-            _summary.EditRoundedBoarder("Remove");
+            _summary.EditRoundedBorder("Remove");
         }
         [Then(@"participant should be removed from the list")]
         public void ThenParticipantShouldBeRemovedFromTheList()
