@@ -5,6 +5,8 @@ import { DashboardComponent } from './dashboard.component';
 import { UserProfileResponse } from '../services/clients/api-client';
 import { of } from 'rxjs';
 import { ErrorService } from 'src/app/services/error.service';
+import { PageUrls } from '../shared/page-url.constants';
+import { Router } from '@angular/router';
 
 const userProfileResponse: UserProfileResponse = new UserProfileResponse();
 
@@ -20,6 +22,9 @@ describe('DashboardComponent', () => {
   let component: DashboardComponent;
   let fixture: ComponentFixture<DashboardComponent>;
   const errorService: jasmine.SpyObj<ErrorService> = jasmine.createSpyObj('ErrorService', ['handleError']);
+  let routerSpy: jasmine.SpyObj<Router>;
+  routerSpy = jasmine.createSpyObj('Router', ['navigate']);
+
   beforeEach(async(() => {
 
     TestBed.configureTestingModule({
@@ -49,9 +54,22 @@ describe('DashboardComponent', () => {
     expect(component.showCheckList).toBeTruthy();
   });
 
-  it('should show for VH officer abd case admin booking', async () => {
+  it('should show for VH officer and case admin booking', async () => {
     component.ngOnInit();
     fixture.detectChanges();
     expect(component.showBooking).toBeTruthy();
+  });
+
+  it('should navigate to create booking page when create hearing is clicked', () => {
+    component.ngOnInit();
+    component.goToCreateHearing();
+    expect(routerSpy.navigate).toHaveBeenCalledWith([PageUrls.CreateHearing]);
+  });
+
+  it('should navigate to unauthorised page if user profile is not case admin and not vh officer', () => {
+    component.ngOnInit();
+    component.showBooking = false;
+    component.showCheckList = false;
+    expect(routerSpy.navigate).toHaveBeenCalledWith([PageUrls.Unauthorised]);
   });
 });

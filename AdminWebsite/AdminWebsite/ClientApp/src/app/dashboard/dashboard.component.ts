@@ -27,7 +27,7 @@ export class DashboardComponent implements OnInit {
         this.showCheckList = s.is_vh_officer_administrator_role;
         this.showBooking = s.is_case_administrator || s.is_vh_officer_administrator_role;
         if (!this.showCheckList && !this.showBooking) {
-          this.router.navigate(['/unauthorised']);
+          this.router.navigate([PageUrls.Unauthorised]);
         }
       },
         error => {
@@ -36,7 +36,6 @@ export class DashboardComponent implements OnInit {
   }
 
   goToCreateHearing() {
-    this.router.navigate(['/book-hearing']);
+    this.router.navigate([PageUrls.CreateHearing]);
   }
 }
-
