@@ -34,12 +34,4 @@ describe('CustomAdalInterceptor', () => {
     expect(modifiedRequest).not.toBeNull();
     expect(adalInterceptor.intercept).toHaveBeenCalled();
   });
-
-  it('should just call the intercept directly for config endpoint', () => {
-    const next = jasmine.createSpyObj<HttpHandler>(['handle']);
-    const request = new HttpRequest<any>('GET', '/api/config');
-    service.intercept(request, next);
-
-    expect(next.handle).toHaveBeenCalled();
-  });
 });

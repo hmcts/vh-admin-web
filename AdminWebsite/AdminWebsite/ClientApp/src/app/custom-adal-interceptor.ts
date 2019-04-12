@@ -3,18 +3,17 @@ import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent } from '@angular/c
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
+/**
+ * This custom adal interceptor will wrap any http call adding on the adal jwt token.
+ * It will also add Cache-Control headers to the request. This is required for IE11
+ * which may otherwise end up caching all the ajax requests.
+ * https://www.itworld.com/article/2693447/ajax-requests-not-executing-or-updating-in-internet-explorer-solution.html
+ */
 @Injectable()
 export class CustomAdalInterceptor implements HttpInterceptor {
-
-  private readonly anonymousPaths: string[] = ['/api/config'];
-
   constructor(public adalInteceptor: AdalInterceptor) { }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-
-    if (this.isAnonymous(request.url)) {
-      return next.handle(request);
-    }
     if (request.method === 'GET') {
       const customRequest = request.clone({
         setHeaders: {
@@ -25,9 +24,5 @@ export class CustomAdalInterceptor implements HttpInterceptor {
       return this.adalInteceptor.intercept(customRequest, next);
     }
     return this.adalInteceptor.intercept(request, next);
-  }
-
-  private isAnonymous(url: string): boolean {
-    return this.anonymousPaths.indexOf(url) > -1;
   }
 }
