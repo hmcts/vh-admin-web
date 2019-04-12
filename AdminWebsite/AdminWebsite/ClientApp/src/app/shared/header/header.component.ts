@@ -41,11 +41,6 @@ export class HeaderComponent implements OnInit {
     this.$confirmLogout.emit();
   }
 
-  logoClick() {
-    // navigate to dashboard
-    this.$confirmSaveBooking.emit(0);
-  }
-
   get confirmLogout() {
     return this.$confirmLogout;
   }

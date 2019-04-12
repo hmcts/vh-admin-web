@@ -35,7 +35,7 @@ export class AppComponent implements OnInit {
     private router: Router,
     private window: WindowRef,
 
-    pageTracker: PageTrackerService, private videoHearingsService: VideoHearingsService ) {
+    pageTracker: PageTrackerService, private videoHearingsService: VideoHearingsService) {
 
     this.config.tenant = this.configService.clientSettings.tenant_id;
     this.config.clientId = this.configService.clientSettings.client_id;
@@ -55,12 +55,8 @@ export class AppComponent implements OnInit {
     if (!this.loggedIn) {
       this.router.navigate(['/login'], { queryParams: { returnUrl: currentUrl } });
     }
-    if (this.headerComponent) {
-      if (this.loggedIn) {
-        this.headerComponent.confirmLogout.subscribe(() => { this.showConfirmation(); });
-      }
-      this.headerComponent.confirmSaveBooking.subscribe((menuItemIndex) => { this.showConfirmationSaveBooking(menuItemIndex); });
-    }
+    this.headerComponent.confirmLogout.subscribe(() => { this.showConfirmation(); });
+    this.headerComponent.confirmSaveBooking.subscribe((menuItemIndex) => { this.showConfirmationSaveBooking(menuItemIndex); });
   }
 
   showConfirmation() {

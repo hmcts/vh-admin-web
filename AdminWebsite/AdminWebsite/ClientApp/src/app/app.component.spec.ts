@@ -14,7 +14,8 @@ import { PageTrackerService } from './services/page-tracker.service';
 import { WindowRef, WindowLocation } from './security/window-ref';
 import { VideoHearingsService } from './services/video-hearings.service';
 import { CancelPopupStubComponent } from './testing/stubs/cancel-popup-stub';
-import { HeaderStubComponent } from './testing/stubs/header-stub';
+import { HeaderComponent } from './shared/header/header.component';
+
 
 const adalService = {
   init: jasmine.createSpy('init'),
@@ -52,7 +53,7 @@ describe('AppComponent', () => {
       imports: [HttpClientModule, RouterTestingModule],
       declarations: [
         AppComponent,
-        HeaderStubComponent,
+        HeaderComponent,
         FooterStubComponent,
         SignOutPopupStubComponent,
         CancelPopupStubComponent,
@@ -87,7 +88,7 @@ describe('AppComponent', () => {
   it('should redirect to login with current url as return url if not authenticated', fakeAsync(() => {
     const fixture = TestBed.createComponent(AppComponent);
     const component = fixture.componentInstance;
-
+    fixture.detectChanges();
     adalService.userInfo.and.returnValue({ authenticated: false });
     window.getLocation.and.returnValue(new WindowLocation('/url', '?search', '#hash'));
 
