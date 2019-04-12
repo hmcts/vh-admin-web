@@ -20,12 +20,9 @@ export class HeaderComponent implements OnInit {
   topMenuItems = [];
 
   constructor(private router: Router) {
-    if (this.loggedIn) {
-      this.$confirmLogout = new EventEmitter();
-      }
+    this.$confirmLogout = new EventEmitter();
     this.$confirmSaveBooking = new EventEmitter();
-    console.log(this.loggedIn);
-  }
+   }
 
   selectMenuItem(indexOfItem: number) {
     // confirmation to save a booking changes before navigate away.

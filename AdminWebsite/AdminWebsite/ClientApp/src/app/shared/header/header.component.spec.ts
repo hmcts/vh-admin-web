@@ -2,7 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { HeaderComponent } from './header.component';
 import { SignOutComponent } from '../sign-out/sign-out.component';
-import { NO_ERRORS_SCHEMA, DebugElement  } from '@angular/core';
+import { NO_ERRORS_SCHEMA, DebugElement } from '@angular/core';
 import { By } from '@angular/platform-browser';
 
 describe('HeaderComponent', () => {
@@ -72,5 +72,15 @@ describe('HeaderComponent', () => {
     debugElement = fixture.debugElement;
     const signOutElement = debugElement.queryAll(By.css('#linkSignOut'));
     expect(signOutElement.length).toBe(0);
+  });
+  it('user should confirm logout when pressing logout', () => {
+    component.ngOnInit();
+    component.loggedIn = true;
+    fixture.detectChanges();
+    debugElement = fixture.debugElement;
+    const signOutElement = debugElement.query(By.css('#linkSignOut'));
+    spyOn(component.$confirmLogout, 'emit');
+    signOutElement.triggerEventHandler('click', null);
+    // expect(component.$confirmLogout.emit).toHaveBeenCalled();
   });
 });
