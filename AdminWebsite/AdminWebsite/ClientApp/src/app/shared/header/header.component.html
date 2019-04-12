@@ -1,14 +1,14 @@
 <header class="hmcts-header" role="banner">
   <div class="hmcts-header__container">
     <div class="hmcts-header__logo">
-        <span class="hmcts-header__logotype hmcts-header__link">
-          <img src="assets/images/UkGovCrestWhite.png" height="32" width="38" class="hmcts-header__logotype-crest" alt="HMCTS logo crest image" />
-          <span class="hmcts-header__logotype-text">HMCTS Video hearing service</span>
-        </span>
+      <span class="hmcts-header__logotype hmcts-header__link">
+        <img src="assets/images/UkGovCrestWhite.png" height="32" width="38" class="hmcts-header__logotype-crest" alt="HMCTS logo crest image" />
+        <span class="hmcts-header__logotype-text">HMCTS Video hearing service</span>
+      </span>
     </div>
     <div *ngIf="loggedIn">
       <nav class="vh-sign">
-        <div class="govuk-header__navigation govuk-header__navigation-item">
+        <div class="govuk-header__navigation govuk-header__navigation-item right-align">
           <a class="govuk-header__link" href="javascript:void()" (click)="logout()" id="linkSignOut">
             Sign out
           </a>
