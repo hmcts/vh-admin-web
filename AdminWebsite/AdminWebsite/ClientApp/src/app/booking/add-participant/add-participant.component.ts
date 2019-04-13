@@ -74,6 +74,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   existingParticipant: boolean;
   bookingHasParticipants: boolean;
   showAddress = false;
+  existingPersonEmails: string[] = [];
 
 
   @ViewChild(SearchEmailComponent)
@@ -160,7 +161,8 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   private setParticipantEmail() {
     this.searchEmail.email = this.participantDetails.email;
     this.searchEmail.isValidEmail = true;
-    this.searchEmail.setEmailDisabled(this.participantDetails.id && this.participantDetails.id.length > 0);
+    this.searchEmail.setEmailDisabled((this.participantDetails.id && this.participantDetails.id.length > 0)
+      || this.participantDetails.is_exist_person);
   }
 
   initializeForm() {
@@ -263,10 +265,12 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   public getParticipant(participantDetails) {
     this.displayErrorNoParticipants = false;
     this.displayAdd();
+    this.enableFields();
     this.participantDetails = Object.assign({}, participantDetails);
 
     if (participantDetails.is_exist_person) {
       this.disableLastFirstNames();
+      this.existingPersonEmails.push(participantDetails.email);
     }
     this.existingParticipant = participantDetails.id && participantDetails.id.length > 0;
     if (this.existingParticipant) {
@@ -518,7 +522,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
       const participant = this.hearing.participants.find(x => x.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase());
       this.removerFullName = participant ? `${participant.title} ${participant.first_name} ${participant.last_name}` : '';
       const anyParticipants = this.hearing.participants.filter(x => !x.is_judge);
-      this.bookingHasParticipants = anyParticipants && anyParticipants.length < 2;
+      this.bookingHasParticipants = anyParticipants && anyParticipants.length > 1;
       this.showConfirmationRemoveParticipant = true;
     }
   }
@@ -548,6 +552,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     newParticipant.city = this.city.value;
     newParticipant.county = this.county.value;
     newParticipant.postcode = this.postcode.value;
+    newParticipant.is_exist_person = this.existingPersonEmails.findIndex(x => x === newParticipant.email) > -1;
   }
 
   addParticipantCancel() {
