@@ -68,27 +68,24 @@ describe('app routing', () => {
       ],
     }).compileComponents();
 
+    fixture = TestBed.createComponent(DashboardComponent);
+
     router = TestBed.get(Router);
     location = TestBed.get(Location);
-    fixture = TestBed.createComponent(DashboardComponent);
     adalSvc = TestBed.get(AdalService);
   });
 
-  describe('when logged in with successful authentication', () => {
-    it('it should be able to navigate to dashboard successfully', fakeAsync(() => {
-      adalSvc.setAuthenticated(true);
-      router.navigate(['/dashboard']);
-      tick();
-      expect(location.path()).toBe('/dashboard');
-    }));
-  });
+  it('it should be able to navigate to dashboard successfully', fakeAsync(() => {
+    adalSvc.setAuthenticated(true);
+    router.navigate(['/dashboard']);
+    tick();
+    expect(location.path()).toBe('/dashboard');
+  }));
 
-  describe('when log in failed with unsuccessful authentication', () => {
-    it('it should navigate to login', fakeAsync(() => {
-      adalSvc.setAuthenticated(false);
-      router.navigate(['/dashboard']);
-      tick();
-      expect(location.path()).toBe('/login');
-    }));
-  });
+  it('it should navigate to login', fakeAsync(() => {
+    adalSvc.setAuthenticated(false);
+    router.navigate(['/dashboard']);
+    tick();
+    expect(location.path()).toBe('/login');
+  }));
 });
