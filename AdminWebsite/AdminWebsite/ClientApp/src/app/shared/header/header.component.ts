@@ -1,7 +1,6 @@
-import { Component, OnInit, EventEmitter, ViewChild } from '@angular/core';
+import { Component, OnInit, EventEmitter, ViewChild, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { TopMenuItems } from './topMenuItems';
-import { SignOutComponent } from '../sign-out/sign-out.component';
 
 @Component({
   selector: 'app-header',
@@ -9,8 +8,7 @@ import { SignOutComponent } from '../sign-out/sign-out.component';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit {
-  @ViewChild(SignOutComponent)
-  signoutComponent: SignOutComponent;
+  @Input() loggedIn: boolean;
 
   $confirmLogout: EventEmitter<any>;
   $confirmSaveBooking: EventEmitter<any>;
@@ -20,7 +18,7 @@ export class HeaderComponent implements OnInit {
   constructor(private router: Router) {
     this.$confirmLogout = new EventEmitter();
     this.$confirmSaveBooking = new EventEmitter();
-  }
+   }
 
   selectMenuItem(indexOfItem: number) {
     // confirmation to save a booking changes before navigate away.
@@ -37,16 +35,10 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit() {
     this.topMenuItems = TopMenuItems;
-    this.signoutComponent.confirmLogout.subscribe(() => { this.logout(); });
-  }
+   }
 
   logout() {
     this.$confirmLogout.emit();
-  }
-
-  logoClick() {
-    // navigate to dashboard
-    this.$confirmSaveBooking.emit(0);
   }
 
   get confirmLogout() {
