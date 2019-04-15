@@ -39,6 +39,10 @@ function initExistingHearingRequest(): HearingModel {
   existingRequest.scheduled_duration = 80;
   existingRequest.other_information = 'some notes';
   existingRequest.court_room = '123W';
+  const hearingTypeName = MockValues.HearingTypesList.find(c => c.id === existingRequest.hearing_type_id).name;
+  existingRequest.hearing_type_name = hearingTypeName;
+  const courtString = MockValues.Courts.find(c => c.id === existingRequest.hearing_venue_id).name;
+  existingRequest.court_name = courtString;
 
   existingRequest.participants = [];
   existingRequest.participants.push(pat1);
@@ -128,7 +132,7 @@ describe('SummaryComponent with valid request', () => {
     expect(component.caseHearingType).toEqual(hearingstring);
     expect(component.hearingDate).toEqual(existingRequest.scheduled_date_time);
     const courtString = MockValues.Courts.find(c => c.id === existingRequest.hearing_venue_id);
-    expect(component.courtRoomAddress).toEqual(`${courtString.name} 123W`);
+    expect(component.courtRoomAddress).toEqual(`${courtString.name}, 123W`);
   });
   it('should remove participant', () => {
     component.ngOnInit();
@@ -267,9 +271,7 @@ describe('SummaryComponent  with existing request', () => {
     fixture.detectChanges();
     expect(component.caseNumber).toBe('TX/12345/2018');
     expect(component.caseName).toBe('Mr. Test User vs HMRC');
-    expect(videoHearingsServiceSpy.getHearingTypes).toHaveBeenCalled();
     expect(component.caseHearingType).toBe('Application to Set Aside Judgement (SAJ)');
-    expect(referenceDataServiceServiceSpy.getCourts).toHaveBeenCalled();
     expect(component.courtRoomAddress).toBeTruthy();
     expect(component.hearingDuration).toBe('listed for 1 hour 20 minutes');
   });

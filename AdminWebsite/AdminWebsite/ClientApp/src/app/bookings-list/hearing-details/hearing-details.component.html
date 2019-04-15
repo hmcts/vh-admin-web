@@ -47,7 +47,7 @@
     <div class="govuk-body vh-sml" id="hearing-start">{{hearing?.StartTime | amLocal | amDateFormat: 'dddd DD MMMM YYYY [,] h:mm a'}}</div>
   </div>
   <div class="govuk-grid-row">
-    <div class="govuk-body vh-sml" id="court-room-address">{{hearing?.CourtRoom}} {{hearing?.CourtAddress}}</div>
+    <div class="govuk-body vh-sml" id="court-room-address">{{hearing?.CourtAddress}}, {{hearing?.CourtRoom}}</div>
   </div>
   <div class="govuk-grid-row">
     <div class="govuk-body vh-sml" id="duration">listed for {{hearing?.DurationInHoursAndMinutes}}</div>
