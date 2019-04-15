@@ -152,6 +152,11 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public string CancelWarningMessage() => GetElementText(By.XPath("//*[@class='content']/h1"));
         public void DiscardChanges() => ClickElement(By.Id("btn-discard-changes"));       
         public int DisabledFields() => GetListOfElements(By.XPath("//*[@disabled='true']")).ToList().Count;
-        public string GetAttribute(By element) => _browserContext.NgDriver.WaitUntilElementVisible(element).GetAttribute("disabled");        
+        public string GetAttribute(By element) => _browserContext.NgDriver.WaitUntilElementVisible(element).GetAttribute("disabled"); 
+        public string ExecuteScript(string script, By element)
+        {
+            _browserContext.NgDriver.WaitUntilElementsVisible(element);
+           return  _browserContext.ExecuteJavascript(script);
+        }
     }
 }
