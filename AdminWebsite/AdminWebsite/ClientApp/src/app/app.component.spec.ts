@@ -14,14 +14,8 @@ import { PageTrackerService } from './services/page-tracker.service';
 import { WindowRef, WindowLocation } from './security/window-ref';
 import { VideoHearingsService } from './services/video-hearings.service';
 import { CancelPopupStubComponent } from './testing/stubs/cancel-popup-stub';
+import { HeaderComponent } from './shared/header/header.component';
 
-@Component({ selector: 'app-header', template: '' })
-export class HeaderComponent {
-  $confirmLogout: EventEmitter<any> = new EventEmitter<any>();
-  get confirmLogout() {
-    return this.$confirmLogout;
-  }
-}
 
 const adalService = {
   init: jasmine.createSpy('init'),
@@ -55,7 +49,6 @@ describe('AppComponent', () => {
     window.getLocation.and.returnValue(new WindowLocation('/url'));
 
     pageTracker = jasmine.createSpyObj('PageTrackerService', ['trackNavigation', 'trackPreviousPage']);
-
     TestBed.configureTestingModule({
       imports: [HttpClientModule, RouterTestingModule],
       declarations: [
@@ -64,7 +57,7 @@ describe('AppComponent', () => {
         FooterStubComponent,
         SignOutPopupStubComponent,
         CancelPopupStubComponent,
-      ],
+        ],
       providers:
         [
           { provide: AdalService, useValue: adalService },
@@ -95,7 +88,7 @@ describe('AppComponent', () => {
   it('should redirect to login with current url as return url if not authenticated', fakeAsync(() => {
     const fixture = TestBed.createComponent(AppComponent);
     const component = fixture.componentInstance;
-
+    fixture.detectChanges();
     adalService.userInfo.and.returnValue({ authenticated: false });
     window.getLocation.and.returnValue(new WindowLocation('/url', '?search', '#hash'));
 
@@ -110,3 +103,4 @@ describe('AppComponent', () => {
     expect(lastRoutingArgs.queryParams.returnUrl).toEqual('/url?search#hash');
   }));
 });
+

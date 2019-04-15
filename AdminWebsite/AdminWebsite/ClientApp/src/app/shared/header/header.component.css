@@ -36,3 +36,6 @@
  .hmcts-header__link:focus{
      color: #ffffff;
  }
+.right-align {
+  float: right;
+}
