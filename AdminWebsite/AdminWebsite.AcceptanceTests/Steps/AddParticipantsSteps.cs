@@ -31,7 +31,8 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [When(@"input email address")]
         public void InputEmailAddress(string email = "dummyemail@email.com")
         {
-            _addParticipant.ParticipantEmail(email);
+            _addParticipant.ParticipantEmail(email.Substring(0,3));
+            _addParticipant.ExistingParticipant(email);
         }
         [When(@"select a role")]
         public void SelectRole()
