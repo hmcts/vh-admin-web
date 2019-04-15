@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, HostListener } from '@angular/core';
+import { Component, OnInit, ViewChild, HostListener, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { AdalService } from 'adal-angular4';
 import { ConfigService } from './services/config.service';
@@ -35,7 +35,7 @@ export class AppComponent implements OnInit {
     private router: Router,
     private window: WindowRef,
 
-    pageTracker: PageTrackerService, private videoHearingsService: VideoHearingsService ) {
+    pageTracker: PageTrackerService, private videoHearingsService: VideoHearingsService) {
 
     this.config.tenant = this.configService.clientSettings.tenant_id;
     this.config.clientId = this.configService.clientSettings.client_id;
@@ -55,10 +55,8 @@ export class AppComponent implements OnInit {
     if (!this.loggedIn) {
       this.router.navigate(['/login'], { queryParams: { returnUrl: currentUrl } });
     }
-    if (this.headerComponent) {
-      this.headerComponent.confirmLogout.subscribe(() => { this.showConfirmation(); });
-      this.headerComponent.confirmSaveBooking.subscribe((menuItemIndex) => { this.showConfirmationSaveBooking(menuItemIndex); });
-    }
+    this.headerComponent.confirmLogout.subscribe(() => { this.showConfirmation(); });
+    this.headerComponent.confirmSaveBooking.subscribe((menuItemIndex) => { this.showConfirmationSaveBooking(menuItemIndex); });
   }
 
   showConfirmation() {
