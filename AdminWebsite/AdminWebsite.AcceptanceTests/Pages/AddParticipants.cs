@@ -41,6 +41,6 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public void City(string city) => ClearFieldInputValues(By.Id("city"), city);
         public void County(string county) => ClearFieldInputValues(By.Id("county"), county);
         public void Postcode(string postcode) => ClearFieldInputValues(By.Id("postcode"), postcode);
-        public string RoleValue() => ExecuteScript("return document.getElementById('role').value");
+        public string RoleValue() => ExecuteScript("return document.getElementById('role').value", By.Id("role"));                
     }
 }
