@@ -17,7 +17,7 @@ export const Constants = {
     NoParticipantsErrorMsg: 'Please enter at least one participant',
     HouseNumberErrorMsg: 'Please enter a building number',
     StreetErrorMsg: 'Please enter a street name',
-    CityErrorMsg: 'Please enter a city',
+    CityErrorMsg: 'Please enter a town or city',
     CountyErrorMsg: 'Please enter a county',
     PostcodeErrorMsg: 'Please enter a postcode',
   },
