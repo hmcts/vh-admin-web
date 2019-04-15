@@ -66,16 +66,6 @@ describe('SeachEmailComponent', () => {
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
-
-  it('should create participant email search component', async(() => {
-    expect(component).toBeTruthy();
-    expect(component.searchService).toBeTruthy();
-  }));
-  it('should detect emailInput element', async(() => {
-    expect(component.emailInput).toBeTruthy();
-    expect(component.emailInput.nativeElement).toBeTruthy();
-
-  }));
   it('should have empty list of participant models', async(() => {
     expect(component.results).toBeTruthy();
     expect(component.results.length).toBe(0);

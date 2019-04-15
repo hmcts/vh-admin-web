@@ -20,7 +20,6 @@ export class SearchEmailComponent implements OnInit {
   notFoundParticipant = false;
   email = '';
   isValidEmail = true;
-  searchService: SearchService;
   @Output()
   findParticipant = new EventEmitter<ParticipantModel>();
 
@@ -33,8 +32,7 @@ export class SearchEmailComponent implements OnInit {
   @ViewChild('emailInput')
   emailInput: ElementRef;
 
-  constructor(searchService: SearchService, private elRef: ElementRef) {
-    this.searchService = searchService;
+  constructor(private searchService: SearchService, private elRef: ElementRef) {
   }
 
   ngOnInit() {
