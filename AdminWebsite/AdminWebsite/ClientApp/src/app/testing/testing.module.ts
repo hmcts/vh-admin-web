@@ -34,7 +34,7 @@ import { BookingEditStubComponent } from './stubs/booking-edit-stub';
     BookingEditStubComponent,
     SearchEmailStubComponent,
     SignOutPopupStubComponent,
-    SignOutStubComponent
+    SignOutStubComponent,
   ]
 })
 export class TestingModule { }
