@@ -27,7 +27,6 @@ import { LongDatetimePipe } from './directives/date-time.pipe';
     PaginationComponent,
     ScrollableDirective,
     BookingEditComponent,
-    SignOutComponent,
     LongDatetimePipe
   ],
   exports: [
@@ -41,7 +40,6 @@ import { LongDatetimePipe } from './directives/date-time.pipe';
     ReactiveFormsModule,
     HttpClientModule,
     ScrollableDirective,
-    SignOutComponent,
     LongDatetimePipe
   ]
 })
