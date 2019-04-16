@@ -82,6 +82,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
       const selectedHearingTypes = this.filteredHearingTypes.filter(x => x.name === this.hearing.hearing_type_name);
       if (selectedHearingTypes && selectedHearingTypes.length > 0) {
         this.hearing.hearing_type_id = selectedHearingTypes[0].id;
+        this.hearing.hearing_type_name = selectedHearingTypes[0].name;
         this.hearingForm.get('hearingType').setValue(selectedHearingTypes[0].id);
       }
     }
@@ -181,7 +182,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
     this.hearing.cases[0] = hearingCase;
     this.hearing.case_type_id = this.hearingForm.value.caseType;
     this.hearing.hearing_type_id = this.hearingForm.value.hearingType;
-
+    this.hearing.hearing_type_name = this.availableHearingTypes.find(c => c.id === this.hearing.hearing_type_id).name;
     this.hearingService.updateHearingRequest(this.hearing);
   }
 
