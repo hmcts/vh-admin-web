@@ -122,7 +122,8 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
     this.caseName = this.hearing.cases.length > 0 ? this.hearing.cases[0].name : '';
     this.caseHearingType = this.hearing.hearing_type_name;
     this.hearingDate = this.hearing.scheduled_date_time;
-    this.courtRoomAddress = `${this.hearing.court_name}, ${this.hearing.court_room}`;
+    const courtRoomText = this.hearing.court_room ? ', ' + this.hearing.court_room : '';
+    this.courtRoomAddress = `${this.hearing.court_name}${courtRoomText}`;
     this.hearingDuration = this.getHearingDuration(this.hearing.scheduled_duration);
     this.otherInformation = this.hearing.other_information;
   }
