@@ -64,7 +64,7 @@ describe('HearingScheduleComponent first visit', () => {
     referenceDataServiceServiceSpy.getCourts.and.returnValue(of(MockValues.Courts));
     videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',
       ['getHearingMediums', 'getHearingTypes', 'getCurrentRequest',
-        'updateHearingRequest', 'cancelRequest']);
+        'updateHearingRequest', 'cancelRequest', 'onBookingChange']);
 
     videoHearingsServiceSpy.getCurrentRequest.and.returnValue(newHearing);
 
@@ -201,7 +201,7 @@ describe('HearingScheduleComponent returning to page', () => {
     referenceDataServiceServiceSpy.getCourts.and.returnValue(of(MockValues.Courts));
     videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',
       ['getHearingMediums', 'getHearingTypes', 'getCurrentRequest',
-        'updateHearingRequest', 'cancelRequest']);
+        'updateHearingRequest', 'cancelRequest', 'onBookingChange']);
 
     videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
 

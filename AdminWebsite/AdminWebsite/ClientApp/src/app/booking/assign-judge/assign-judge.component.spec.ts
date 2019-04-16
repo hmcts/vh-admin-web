@@ -69,7 +69,7 @@ describe('AssignJudgeComponent', () => {
 
     videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',
       ['getHearingMediums', 'getHearingTypes', 'getCurrentRequest',
-        'updateHearingRequest', 'cancelRequest']);
+        'updateHearingRequest', 'cancelRequest', 'onBookingChange']);
     videoHearingsServiceSpy.getCurrentRequest.and.returnValue(newHearing);
 
     bookingServiseSpy = jasmine.createSpyObj<BookingService>('BookingService', ['resetEditMode', 'isEditMode']);

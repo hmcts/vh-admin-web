@@ -1,9 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
-
-import { CanDeactiveComponent } from '../../common/guards/changes.guard';
 import { HearingTypeResponse } from '../../services/clients/api-client';
 import { HearingModel } from '../../common/model/hearing.model';
 import { CaseModel } from '../../common/model/case.model';
@@ -18,7 +15,7 @@ import { PageUrls } from 'src/app/shared/page-url.constants';
   templateUrl: './create-hearing.component.html',
   styleUrls: ['./create-hearing.component.scss']
 })
-export class CreateHearingComponent extends BookingBaseComponent implements OnInit, CanDeactiveComponent {
+export class CreateHearingComponent extends BookingBaseComponent implements OnInit {
 
   private existingCaseTypeKey = 'selectedCaseType';
   attemptingCancellation: boolean;
@@ -34,29 +31,23 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
   hasSaved: boolean;
   isExistingHearing: boolean;
 
-  constructor(private hearingService: VideoHearingsService,
+  constructor(protected hearingService: VideoHearingsService,
     private fb: FormBuilder,
     protected router: Router,
     protected bookingService: BookingService,
     private errorService: ErrorService) {
-    super(bookingService, router);
+    super(bookingService, router, hearingService);
     this.attemptingCancellation = false;
     this.availableCaseTypes = [];
   }
 
   ngOnInit() {
-    super.ngOnInit();
     this.failedSubmission = false;
     this.checkForExistingRequest();
     this.initForm();
+    super.ngOnInit();
     this.retrieveHearingTypes();
-    this.onChanged();
-  }
-
-  onChanged() {
-    this.hearingForm.valueChanges.subscribe(x => {
-      this.hearingService.onBookingChange(this.hearingForm.dirty);
-    });
+    this.onChanged(this.hearingForm);
   }
 
   goToDiv(fragment: string): void {
@@ -236,12 +227,5 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
       const result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
       return result * sortOrder;
     };
-  }
-
-  hasChanges(): Observable<boolean> | boolean {
-    if (this.hearingForm.dirty) {
-      this.confirmCancelBooking();
-    }
-    return this.hearingForm.dirty;
   }
 }

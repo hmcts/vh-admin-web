@@ -21,7 +21,7 @@ import { RemovePopupComponent } from '../../popups/remove-popup/remove-popup.com
   styleUrls: ['./summary.component.css']
 })
 
-export class SummaryComponent implements OnInit, CanDeactiveComponent {
+export class SummaryComponent implements OnInit {
 
   constants = Constants;
   hearing: HearingModel;
@@ -105,6 +105,7 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
     if (indexOfParticipant > -1) {
       this.hearing.participants.splice(indexOfParticipant, 1);
       this.hearingService.updateHearingRequest(this.hearing);
+      this.hearingService.onBookingChange(true);
       this.bookingService.removeParticipantEmail();
       this.isLastParticipanRemoved();
     }
@@ -178,10 +179,6 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
     } else {
       this.router.navigate([PageUrls.Dashboard]);
     }
-  }
-
-  hasChanges(): Observable<boolean> | boolean {
-    return true;
   }
 
   bookHearing(): void {

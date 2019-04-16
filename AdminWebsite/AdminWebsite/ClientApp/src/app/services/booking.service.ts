@@ -1,33 +1,31 @@
 import { Injectable } from '@angular/core';
-
+import { Constants } from '../common/constants';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BookingService {
-  private bookingEditKey: string;
   private participantEmailKey: string;
   private existingCaseTypeKey: string;
 
   constructor() {
-    this.bookingEditKey = 'bookingEditKey';
     this.participantEmailKey = 'participantEmailKey';
     this.existingCaseTypeKey = 'selectedCaseType';
 
   }
 
   setEditMode() {
-    sessionStorage.setItem(this.bookingEditKey, this.bookingEditKey);
+    sessionStorage.setItem(Constants.bookingEditKey, Constants.bookingEditKey);
   }
 
   resetEditMode() {
-    sessionStorage.removeItem(this.bookingEditKey);
+    sessionStorage.removeItem(Constants.bookingEditKey);
     sessionStorage.removeItem(this.existingCaseTypeKey);
   }
 
   isEditMode(): boolean {
-    const editMode = sessionStorage.getItem(this.bookingEditKey);
-    return editMode === this.bookingEditKey;
+    const editMode = sessionStorage.getItem(Constants.bookingEditKey);
+    return editMode === Constants.bookingEditKey;
   }
 
   setParticipantEmail(participantEmail: string) {

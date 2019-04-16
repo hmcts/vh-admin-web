@@ -182,7 +182,7 @@ let participantServiceSpy: jasmine.SpyObj<ParticipantService>;
 let bookingServiceSpy: jasmine.SpyObj<BookingService>;
 
 videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',
-  ['getParticipantRoles', 'getCurrentRequest', 'updateHearingRequest', 'cancelRequest']);
+  ['getParticipantRoles', 'getCurrentRequest', 'updateHearingRequest', 'cancelRequest', 'onBookingChange']);
 participantServiceSpy = jasmine.createSpyObj<ParticipantService>('ParticipantService',
   ['checkDuplication', 'getAllParticipants', 'removeParticipant', 'mapParticipantsRoles']);
 bookingServiceSpy = jasmine.createSpyObj<BookingService>('BookingService',

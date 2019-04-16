@@ -73,7 +73,7 @@ referenceDataServiceServiceSpy = jasmine.createSpyObj<ReferenceDataService>('Ref
 referenceDataServiceServiceSpy.getCourts.and.returnValue(of(MockValues.Courts));
 videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',
   ['getHearingMediums', 'getHearingTypes', 'getCurrentRequest',
-    'updateHearingRequest', 'saveHearing', 'cancelRequest', 'updateHearing']);
+    'updateHearingRequest', 'saveHearing', 'cancelRequest', 'updateHearing', 'onBookingChange']);
 
 
 describe('SummaryComponent with valid request', () => {

@@ -3,7 +3,6 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { Constants } from '../../common/constants';
-import { CanDeactiveComponent } from '../../common/guards/changes.guard';
 import { IDropDownModel } from '../../common/model/drop-down.model';
 import { HearingModel } from '../../common/model/hearing.model';
 import { ParticipantModel } from '../../common/model/participant.model';
@@ -25,7 +24,7 @@ import { PartyModel } from '../../common/model/party.model';
   styleUrls: ['./add-participant.component.css'],
 })
 export class AddParticipantComponent extends BookingBaseComponent implements OnInit,
-  AfterViewInit, AfterContentInit, OnDestroy, CanDeactiveComponent {
+  AfterViewInit, AfterContentInit, OnDestroy {
   canNavigate = true;
   constants = Constants;
 
@@ -85,12 +84,12 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
   constructor(
     private searchService: SearchService,
-    private videoHearingService: VideoHearingsService,
+    protected videoHearingService: VideoHearingsService,
     private participantService: ParticipantService,
     protected router: Router,
     protected bookingService: BookingService) {
 
-    super(bookingService, router);
+    super(bookingService, router, videoHearingService);
     this.titleList = searchService.TitleList;
   }
 
@@ -119,6 +118,8 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         this.confirmRemoveParticipant();
       });
     }
+
+    this.onChanged(this.participantForm);
   }
 
   ngAfterViewInit() {
@@ -534,6 +535,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     }
     this.participantService.removeParticipant(this.hearing, this.selectedParticipantEmail);
     this.videoHearingService.updateHearingRequest(this.hearing);
+    this.videoHearingService.onBookingChange(true);
   }
 
   mapParticipant(newParticipant: ParticipantModel) {

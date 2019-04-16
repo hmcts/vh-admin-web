@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { CanDeactiveComponent } from '../../common/guards/changes.guard';
-import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { HearingModel } from '../../common/model/hearing.model';
@@ -14,7 +12,7 @@ import { PageUrls } from 'src/app/shared/page-url.constants';
   templateUrl: './other-information.component.html',
   styleUrls: ['./other-information.component.css']
 })
-export class OtherInformationComponent extends BookingBaseComponent implements OnInit, CanDeactiveComponent {
+export class OtherInformationComponent extends BookingBaseComponent implements OnInit {
   hearing: HearingModel;
   attemptingCancellation = false;
   attemptingDiscardChanges = false;
@@ -22,15 +20,16 @@ export class OtherInformationComponent extends BookingBaseComponent implements O
   otherInformationForm: FormGroup;
   otherInformationText: string;
 
-  constructor(private fb: FormBuilder, private videoHearingService: VideoHearingsService,
+  constructor(private fb: FormBuilder, protected videoHearingService: VideoHearingsService,
     protected router: Router, protected bookingService: BookingService) {
-    super(bookingService, router);
+    super(bookingService, router, videoHearingService);
   }
 
   ngOnInit() {
     super.ngOnInit();
     this.checkForExistingRequest();
     this.initForm();
+    this.onChanged(this.otherInformationForm);
   }
 
   private initForm() {
@@ -81,10 +80,5 @@ export class OtherInformationComponent extends BookingBaseComponent implements O
     } else {
       this.attemptingCancellation = true;
     }
-  }
-
-  hasChanges(): Observable<boolean> | boolean {
-    this.confirmCancelBooking();
-    return true;
   }
 }

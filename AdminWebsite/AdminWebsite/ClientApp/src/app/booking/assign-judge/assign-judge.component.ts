@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
-import { CanDeactiveComponent } from 'src/app/common/guards/changes.guard';
 import { JudgeResponse } from '../../services/clients/api-client';
 import { HearingModel } from '../../common/model/hearing.model';
 import { ParticipantModel } from '../../common/model/participant.model';
@@ -18,7 +16,7 @@ import { BookingBaseComponent } from '../booking-base/booking-base.component';
   templateUrl: './assign-judge.component.html'
 })
 
-export class AssignJudgeComponent extends BookingBaseComponent implements OnInit, CanDeactiveComponent {
+export class AssignJudgeComponent extends BookingBaseComponent implements OnInit {
 
   hearing: HearingModel;
   judge: JudgeResponse;
@@ -36,10 +34,10 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
   constructor(
     private fb: FormBuilder,
     protected router: Router,
-    private hearingService: VideoHearingsService,
+    protected hearingService: VideoHearingsService,
     private judgeService: JudgeDataService,
     protected bookingService: BookingService) {
-    super(bookingService, router);
+    super(bookingService, router, hearingService);
   }
 
   static mapJudge(judge: ParticipantModel): JudgeResponse {
@@ -79,6 +77,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     this.checkForExistingRequest();
     this.loadJudges();
     this.initForm();
+    this.onChanged(this.assignJudgeForm);
   }
 
   private checkForExistingRequest() {
@@ -177,13 +176,6 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     this.attemptingDiscardChanges = false;
     this.assignJudgeForm.reset();
     this.navigateToSummary();
-  }
-
-  hasChanges(): Observable<boolean> | boolean {
-    if (this.assignJudgeForm.dirty) {
-      this.confirmCancelBooking();
-    }
-    return this.assignJudgeForm.dirty;
   }
 
   goToDiv(fragment: string): void {

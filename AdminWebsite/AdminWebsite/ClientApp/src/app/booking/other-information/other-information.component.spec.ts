@@ -22,7 +22,7 @@ describe('OtherInformationComponent', () => {
   let component: OtherInformationComponent;
   let fixture: ComponentFixture<OtherInformationComponent>;
   videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',
-    ['getCurrentRequest', 'cancelRequest', 'updateHearingRequest']);
+    ['getCurrentRequest', 'cancelRequest', 'updateHearingRequest', 'onBookingChange']);
 
   beforeEach(async(() => {
     routerSpy = jasmine.createSpyObj('Router', ['navigate']);

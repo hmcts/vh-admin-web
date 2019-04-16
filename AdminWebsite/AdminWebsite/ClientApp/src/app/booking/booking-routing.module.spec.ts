@@ -84,22 +84,7 @@ describe('app routing', () => {
     bookingGuard = TestBed.get(AdminGuard);
   });
 
-  describe('when create hearing form is dirty', () => {
-    it('it should not be able to navigate away from current route', fakeAsync(() => {
-      adalSvc.setAuthenticated(true);
-      changesGuard.setflag(false);
-      bookingGuard.setflag(true);
-      createHearing.ngOnInit();
-      router.navigate(['/book-hearing']);
-      tick();
-      createHearing.hearingForm.markAsDirty();
-      router.navigate(['/summary']);
-      tick();
-      expect(location.path()).toBe('/book-hearing');
-    }));
-  });
-
-  describe('when create hearing form is prestine', () => {
+  describe('when create hearing', () => {
     it('it should be able to navigate away from current route', fakeAsync(() => {
       adalSvc.setAuthenticated(true);
       changesGuard.setflag(true);

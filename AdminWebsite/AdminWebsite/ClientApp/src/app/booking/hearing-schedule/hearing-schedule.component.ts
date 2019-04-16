@@ -19,7 +19,7 @@ import { PageUrls } from 'src/app/shared/page-url.constants';
   templateUrl: './hearing-schedule.component.html',
   styleUrls: ['./hearing-schedule.component.css']
 })
-export class HearingScheduleComponent extends BookingBaseComponent implements OnInit, CanDeactiveComponent {
+export class HearingScheduleComponent extends BookingBaseComponent implements OnInit {
 
   hearing: HearingModel;
   availableCourts: HearingVenueResponse[];
@@ -33,11 +33,11 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
   selectedCourtName: string;
   isExistinHearing: boolean;
 
-  constructor(private refDataService: ReferenceDataService, private hearingService: VideoHearingsService,
+  constructor(private refDataService: ReferenceDataService, protected hearingService: VideoHearingsService,
     private fb: FormBuilder, protected router: Router,
     private datePipe: DatePipe, protected bookingService: BookingService,
     private errorService: ErrorService) {
-    super(bookingService, router);
+    super(bookingService, router, hearingService);
   }
 
   ngOnInit() {
@@ -46,6 +46,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     this.checkForExistingRequest();
     this.retrieveCourts();
     this.initForm();
+    this.onChanged(this.schedulingForm);
   }
 
   private checkForExistingRequest() {
@@ -254,12 +255,5 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
 
   goToDiv(fragment: string): void {
     window.document.getElementById(fragment).parentElement.parentElement.scrollIntoView();
-  }
-
-  hasChanges(): Observable<boolean> | boolean {
-    if (this.schedulingForm.dirty) {
-      this.confirmCancelBooking();
-    }
-    return this.schedulingForm.dirty;
   }
 }

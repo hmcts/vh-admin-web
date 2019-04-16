@@ -14,10 +14,10 @@ import { OtherInformationComponent } from './other-information/other-information
 import { SummaryComponent } from './summary/summary.component';
 
 export const routes: Routes = [
-  { path: 'book-hearing', component: CreateHearingComponent, canActivate: [AuthGuard, AdminGuard], canDeactivate: [ChangesGuard] },
-  { path: 'hearing-schedule', component: HearingScheduleComponent, canActivate: [AuthGuard, AdminGuard], canDeactivate: [ChangesGuard] },
-  { path: 'assign-judge', component: AssignJudgeComponent, canActivate: [AuthGuard, AdminGuard], canDeactivate: [ChangesGuard] },
-  { path: 'add-participants', component: AddParticipantComponent, canActivate: [AuthGuard, AdminGuard], canDeactivate: [ChangesGuard] },
+  { path: 'book-hearing', component: CreateHearingComponent, canActivate: [AuthGuard, AdminGuard] },
+  { path: 'hearing-schedule', component: HearingScheduleComponent, canActivate: [AuthGuard, AdminGuard] },
+  { path: 'assign-judge', component: AssignJudgeComponent, canActivate: [AuthGuard, AdminGuard] },
+  { path: 'add-participants', component: AddParticipantComponent, canActivate: [AuthGuard, AdminGuard] },
   { path: 'other-information', component: OtherInformationComponent, canActivate: [AuthGuard, AdminGuard]},
   { path: 'summary', component: SummaryComponent, canActivate: [AuthGuard, AdminGuard] },
   { path: 'booking-confirmation', component: BookingConfirmationComponent, canActivate: [AuthGuard, AdminGuard] },

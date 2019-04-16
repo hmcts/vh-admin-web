@@ -72,6 +72,7 @@ export class AppComponent implements OnInit {
     if (this.videoHearingsService.hasUnsavedChanges()) {
       this.showSaveConfirmation = true;
     } else {
+      this.videoHearingsService.clearBookingStorage();
       this.headerComponent.navigateToSelectedMenuItem(menuItemIndex);
     }
   }
