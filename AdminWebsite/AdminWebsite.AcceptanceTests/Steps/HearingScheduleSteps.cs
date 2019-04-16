@@ -24,7 +24,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             HearingSchedulePage();
             var date = DateTime.UtcNow.AddDays(2);
-            _hearingSchedule.AddItems<string>("HearingDate", date.ToString("dddd dd MMMM yyyy , HH:mm"));
+            _hearingSchedule.AddItems<string>("HearingDate", date.ToString("dddd dd MMMM yyyy, h:mmtt").ToLower());
             _hearingSchedule.HearingDate(date.ToString("yyyy-MM-dd"));
             _hearingSchedule.HearingStartTime(date.ToString("HH:mm").Split(':'));
             InputHearingDuration(TestData.HearingSchedule.Duration);
@@ -91,7 +91,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             HearingSchedulePage();
             DateTime date = DateTime.UtcNow.AddDays(2);
             string splitDate = date.ToString("yyyy-MM-dd");
-            _hearingSchedule.AddItems<string>("HearingDate", date.ToString("dddd dd MMMM yyyy , hh:mm tt").ToLower());
+            _hearingSchedule.AddItems<string>("HearingDate", date.ToString("dddd dd MMMM yyyy, h:mmtt").ToLower());
             _hearingSchedule.HearingDate(splitDate);
             _hearingSchedule.HearingStartTime(date.ToString("HH:mm").Split(':'));
             InputHearingDuration(TestData.HearingSchedule.Duration1);

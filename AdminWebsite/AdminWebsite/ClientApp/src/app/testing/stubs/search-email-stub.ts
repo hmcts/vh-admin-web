@@ -1,14 +1,25 @@
-import { Component, Output } from '@angular/core';
-import { EventEmitter } from 'events';
+import { Component, Output, ViewChild, ElementRef, EventEmitter } from '@angular/core';
+import { ParticipantModel } from '../../common/model/participant.model';
 
 @Component({ selector: 'app-search-email', template: '' })
 export class SearchEmailStubComponent {
-    @Output()
-    findParticipant = new EventEmitter();
-    validateEmail() {
-        return true;
-    }
-    clearEmail() {
 
-    }
+  @Output()
+  findParticipant = new EventEmitter<ParticipantModel>();
+
+  @Output()
+  participantsNotFound = new EventEmitter();
+
+  @Output()
+  emailChanged = new EventEmitter<string>();
+
+  @ViewChild('emailInput')
+  emailInput: ElementRef;
+
+  validateEmail() {
+    return true;
+  }
+  clearEmail() {
+
+  }
 }

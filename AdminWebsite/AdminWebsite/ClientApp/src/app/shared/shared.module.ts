@@ -9,8 +9,8 @@ import { HeaderComponent } from './header/header.component';
 import { PaginationComponent } from './pagination/pagination.component';
 import { SharedRoutingModule } from './shared-routing.module';
 import { ScrollableDirective } from './directives/scrollable.directive';
-import { SignOutComponent } from './sign-out/sign-out.component';
 import { BookingEditComponent } from './booking-edit/booking-edit.component';
+import { LongDatetimePipe } from './directives/date-time.pipe';
 
 @NgModule({
   imports: [
@@ -27,7 +27,7 @@ import { BookingEditComponent } from './booking-edit/booking-edit.component';
     PaginationComponent,
     ScrollableDirective,
     BookingEditComponent,
-    SignOutComponent,
+    LongDatetimePipe
   ],
   exports: [
     HeaderComponent,
@@ -40,7 +40,7 @@ import { BookingEditComponent } from './booking-edit/booking-edit.component';
     ReactiveFormsModule,
     HttpClientModule,
     ScrollableDirective,
-    SignOutComponent,
+    LongDatetimePipe
   ]
 })
 export class SharedModule { }
