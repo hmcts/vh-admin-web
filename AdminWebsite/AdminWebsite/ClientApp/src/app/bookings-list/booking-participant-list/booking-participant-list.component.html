@@ -3,12 +3,14 @@
   <div class="vhtable">
     <div id="judges-list">
       <div *ngFor="let judge of judges">
-        <app-booking-participant-details [participant]="judge" [vh_officer_admin]="vh_officer_admin"></app-booking-participant-details>
+        <app-booking-participant-details [participant]="judge" [vh_officer_admin]="vh_officer_admin">
+        </app-booking-participant-details>
       </div>
     </div>
     <div id="participants-list">
       <div *ngFor="let participant of participants">
-        <app-booking-participant-details [participant]="participant" [vh_officer_admin]="vh_officer_admin"></app-booking-participant-details>
+        <app-booking-participant-details [participant]="participant" [vh_officer_admin]="vh_officer_admin">
+        </app-booking-participant-details>
       </div>
     </div>
   </div>

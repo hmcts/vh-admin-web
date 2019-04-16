@@ -119,21 +119,21 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         (data: CaseAndHearingRolesResponse[]) => {
           this.setupRoles(data);
           if (this.editMode) {
-              this.selectedParticipantEmail = this.bookingService.getParticipantEmail();
-              if (!this.selectedParticipantEmail || this.selectedParticipantEmail.length === 0) {
-                // no participants, we need to add one
-                this.showDetails = false;
-                this.displayAdd();
-              } else {
-                this.showDetails = true;
-                setTimeout(() => {
-                  if (this.searchEmail && this.participantDetails) {
-                    this.setParticipantEmail();
-                  }
-                }, 300);
-                this.displayNext();
-              }
-              this.repopulateParticipantToEdit();
+            this.selectedParticipantEmail = this.bookingService.getParticipantEmail();
+            if (!this.selectedParticipantEmail || this.selectedParticipantEmail.length === 0) {
+              // no participants, we need to add one
+              this.showDetails = false;
+              this.displayAdd();
+            } else {
+              this.showDetails = true;
+              setTimeout(() => {
+                if (this.searchEmail && this.participantDetails) {
+                  this.setParticipantEmail();
+                }
+              }, 300);
+              this.displayNext();
+            }
+            this.repopulateParticipantToEdit();
           }
         }, error => console.error(error));
   }

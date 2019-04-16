@@ -748,7 +748,7 @@ describe('AddParticipantComponent set representer', () => {
     component.participantForm.get('companyName').setValue('Organization');
     component.participantForm.get('solicitorReference').setValue('Ref1');
     component.participantForm.get('representing').setValue('Ms X');
-    
+
     fixture.detectChanges();
 
     component.participantForm.get('role').setValue('Claimant');

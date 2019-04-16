@@ -293,11 +293,15 @@ namespace AdminWebsite.Controllers
                 Scheduled_date_time = editHearingRequest.ScheduledDateTime,
                 Scheduled_duration = editHearingRequest.ScheduledDuration,
                 Updated_by = _userIdentity.GetUserIdentityName(),
-                Cases = new List<CaseRequest>() {new CaseRequest {
-                                                            Name = editHearingRequest.Case.Name,
-                                                            Number = editHearingRequest.Case.Number }
-                                                    }
-                };
+                Cases = new List<CaseRequest>()
+                {
+                    new CaseRequest
+                    {
+                            Name = editHearingRequest.Case.Name,
+                            Number = editHearingRequest.Case.Number
+                    }
+                }
+            };
             return updateHearingRequest;
         }
 
@@ -313,7 +317,9 @@ namespace AdminWebsite.Controllers
                 Organisation_name = participant.OrganisationName,
                 Postcode = participant.Postcode,
                 Street = participant.Street,
-                Telephone_number = participant.TelephoneNumber
+                Telephone_number = participant.TelephoneNumber,
+                Representee = participant.Representee,
+                Solicitor_reference = participant.SolicitorsReference
             };
             return updateParticipantRequest;
         }
@@ -332,7 +338,8 @@ namespace AdminWebsite.Controllers
                 Representee = participant.Representee,
                 Solicitors_reference = participant.SolicitorsReference,
                 Telephone_number = participant.TelephoneNumber,
-                Title = participant.Title
+                Title = participant.Title,
+                Organisation = participant.OrganisationName
             };
             return newParticipant;
         }

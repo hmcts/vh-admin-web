@@ -3,7 +3,8 @@ import { Observable, of } from 'rxjs';
 import {
   HearingTypeResponse, BHClient, BookNewHearingRequest, HearingDetailsResponse,
   CaseAndHearingRolesResponse, CaseRequest, ParticipantRequest, CaseResponse2,
-  ParticipantResponse,
+  ParticipantResponse,
+
   EditHearingRequest,
   EditCaseRequest,
   EditParticipantRequest
@@ -109,7 +110,7 @@ export class VideoHearingsService {
     let list: Array<EditParticipantRequest> = [];
     if (participants && participants.length > 0) {
       list = participants.map(x => this.mappingToEditParticipantRequest(x));
-      }
+    }
     return list;
   }
 
@@ -127,6 +128,7 @@ export class VideoHearingsService {
     editParticipant.solicitors_reference = participant.solicitorsReference;
     editParticipant.telephone_number = participant.phone;
     editParticipant.title = participant.title;
+    editParticipant.organisation_name = participant.company;
     return editParticipant;
   }
 
@@ -210,6 +212,7 @@ export class VideoHearingsService {
         participant.hearing_role_name = p.hearing_role_name;
         participant.representee = p.representee;
         participant.solicitors_reference = p.solicitorsReference;
+        participant.organisation = p.company;
         participants.push(participant);
       });
     }
@@ -233,8 +236,9 @@ export class VideoHearingsService {
         participant.phone = p.telephone_number;
         participant.case_role_name = p.case_role_name;
         participant.hearing_role_name = p.hearing_role_name;
-        participant.representee = '';
-        participant.solicitorsReference = '';
+        participant.representee = p.representee;
+        participant.solicitorsReference = p.solicitor_reference;
+        participant.company = p.organisation;
         participant.is_judge = p.case_role_name === 'Judge';
         participants.push(participant);
       });

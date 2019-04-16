@@ -33,7 +33,7 @@ describe('ParticipantDetailsComponent', () => {
 
   it('should display participant details', (done => {
     const pr = new ParticipantDetailsModel('1', 'Mrs', 'Alan', 'Brake', 'Citizen', 'email.p1@email.com',
-      'email@ee.ee', 'Defendant', 'Defendant LIP', 'Alan Brake', '');
+      'email@ee.ee', 'Defendant', 'Defendant LIP', 'Alan Brake', '', 'ABC Solicitors', 'new Solicitor', 'defendant');
     pr.IndexInList = 0;
     component.participant = pr;
 

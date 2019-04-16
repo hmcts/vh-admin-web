@@ -15,7 +15,7 @@ export class ParticipantModel {
   company?: string | undefined;
   is_judge: boolean;
 
-  get isRepresent() { 
+  get isRepresent() {
     return this.hearing_role_name && this.hearing_role_name.indexOf('Solicitor') > -1
       && this.representee && this.representee.length > 0;
   }
