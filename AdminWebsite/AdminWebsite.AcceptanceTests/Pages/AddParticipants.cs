@@ -36,5 +36,11 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public string Email() => GetAttribute(By.Id("participantEmail"));
         public string Firstname() => GetAttribute(By.Id("firstName"));
         public string Lastname() => GetAttribute(By.Id("lastName"));
+        public void HouseNumber(string houseNumber) => ClearFieldInputValues(By.Id("houseNumber"), houseNumber);
+        public void Street(string street) => ClearFieldInputValues(By.Id("street"), street);
+        public void City(string city) => ClearFieldInputValues(By.Id("city"), city);
+        public void County(string county) => ClearFieldInputValues(By.Id("county"), county);
+        public void Postcode(string postcode) => ClearFieldInputValues(By.Id("postcode"), postcode);
+        public string RoleValue() => ExecuteScript("return document.getElementById('role').value", By.Id("role"));                
     }
 }

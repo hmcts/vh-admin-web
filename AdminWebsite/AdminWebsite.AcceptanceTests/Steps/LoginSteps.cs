@@ -35,6 +35,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             switch (user)
             {
                 case "VH Officer": _loginPage.Logon(appSecrets.VhOfficerFinRemedyCivilMoneyclaims, password);
+                    _scenarioContext.Add("Username", appSecrets.VhOfficerFinRemedyCivilMoneyclaims);
                     break;
                 case "Case Admin": _loginPage.Logon(appSecrets.CaseAdminCivilMoneyClaims, password);
                     _scenarioContext.Add("Username", appSecrets.CaseAdminCivilMoneyClaims);

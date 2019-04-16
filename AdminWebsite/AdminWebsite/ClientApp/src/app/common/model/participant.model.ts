@@ -14,9 +14,15 @@ export class ParticipantModel {
   representee?: string | undefined;
   company?: string | undefined;
   is_judge: boolean;
-
+  is_exist_person: boolean;
+  housenumber?: string | undefined;
+  street?: string | undefined;
+  city?: string | undefined;
+  county?: string | undefined;
+  postcode?: string | undefined;
+  
   get isRepresent() {
     return this.hearing_role_name && this.hearing_role_name.indexOf('Solicitor') > -1
       && this.representee && this.representee.length > 0;
-  }
+  }  
 }

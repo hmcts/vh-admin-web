@@ -3,10 +3,10 @@ using OpenQA.Selenium;
 
 namespace AdminWebsite.AcceptanceTests.Pages
 {
-    public class BookingsList : Common
+    public class BookingDetails : Common
     {
         private readonly BrowserContext _browserContext;
-        public BookingsList(BrowserContext browserContext) : base(browserContext)
+        public BookingDetails(BrowserContext browserContext) : base(browserContext)
         {
             _browserContext = browserContext;
         }
@@ -36,5 +36,10 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public string CourtAddress() => GetElementText(By.Id("court-room-address"));
         public string HearingDuration() => GetElementText(By.Id("duration"));
         public string OtherInformation() => GetElementText(By.Id("otherInformation"));
+        public void CancelBookingButton() => ClickElement(By.Id("cancel-button")); 
+        public void PopupCancelBookingButton() => ClickElement(By.Id("btnCancelBooking"));        
+        public void PopupKeepBookingButton() => ClickElement(By.Id("btnKeepBooking"));
+        public string CancelledLabel() => GetElementText(By.Id("lblCancelled"));        
+        public string PopupCancelBookingWarningMessage() => GetElementText(By.CssSelector("h1.govuk-heading-m"));
     }
 }

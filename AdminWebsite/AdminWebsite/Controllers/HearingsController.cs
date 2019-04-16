@@ -24,7 +24,6 @@ namespace AdminWebsite.Controllers
         private readonly IUserIdentity _userIdentity;
         private readonly IUserAccountService _userAccountService;
 
-
         /// <summary>
         /// Instantiates the controller
         /// </summary>
@@ -339,10 +338,48 @@ namespace AdminWebsite.Controllers
                 Solicitors_reference = participant.SolicitorsReference,
                 Telephone_number = participant.TelephoneNumber,
                 Title = participant.Title,
-                Organisation = participant.OrganisationName
+                Organisation = participant.OrganisationName,
+                House_number = participant.HouseNumber,
+                Street = participant.Street,
+                City = participant.City,
+                County = participant.County,
+                Postcode = participant.Postcode
             };
             return newParticipant;
         }
 
+        /// <summary>
+        ///     Update the hearing status.
+        /// </summary>
+        /// <param name="hearingId">The hearing id</param>
+        /// <param name="updateBookingStatusRequest"></param>
+        /// <returns>Success status</returns>
+        [HttpPatch("{hearingId}")]
+        [SwaggerOperation(OperationId = "UpdateBookingStatus")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<ActionResult> UpdateBookingStatus(Guid hearingId, 
+            UpdateBookingStatusRequest updateBookingStatusRequest)
+        {
+            try
+            {
+                updateBookingStatusRequest.Updated_by = _userIdentity.GetUserIdentityName();
+                await _bookingsApiClient.UpdateBookingStatusAsync(hearingId, updateBookingStatusRequest);
+                return NoContent();
+            }
+            catch (BookingsApiException e)
+            {
+                if (e.StatusCode == (int)HttpStatusCode.BadRequest)
+                {
+                    return BadRequest(e.Response);
+                }
+                if (e.StatusCode == (int)HttpStatusCode.NotFound)
+                {
+                    return NotFound(e.Response);
+                }
+                throw;
+            }
+        }
     }
 }

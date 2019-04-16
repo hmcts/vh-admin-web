@@ -15,8 +15,7 @@ import { BookingBaseComponent } from '../booking-base/booking-base.component';
 
 @Component({
   selector: 'app-assign-judge',
-  templateUrl: './assign-judge.component.html',
-  styleUrls: ['./assign-judge.component.css']
+  templateUrl: './assign-judge.component.html'
 })
 
 export class AssignJudgeComponent extends BookingBaseComponent implements OnInit, CanDeactiveComponent {
@@ -66,6 +65,11 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     newParticipant.username = judge.email;
     newParticipant.case_role_name = 'Judge';
     newParticipant.hearing_role_name = 'Judge';
+    newParticipant.housenumber = null;
+    newParticipant.street = null;
+    newParticipant.city = null;
+    newParticipant.county = null;
+    newParticipant.postcode = null;
     return newParticipant;
   }
 

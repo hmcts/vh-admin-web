@@ -1,3 +1,4 @@
+import { MomentModule } from 'angular2-moment';
 import { DebugElement } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
@@ -5,7 +6,8 @@ import { RouterTestingModule } from '@angular/router/testing';
 
 import { HearingDetailsComponent } from './hearing-details.component';
 import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
-import { MomentModule } from 'angular2-moment';
+import { LongDatetimePipe } from '../../../app/shared/directives/date-time.pipe';
+
 
 describe('HearingDetailsComponent', () => {
 
@@ -15,7 +17,7 @@ describe('HearingDetailsComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [HearingDetailsComponent],
+      declarations: [HearingDetailsComponent, LongDatetimePipe],
       imports: [RouterTestingModule, MomentModule
 ],
     })
@@ -37,7 +39,7 @@ describe('HearingDetailsComponent', () => {
   it('should display hearing details', (done => {
     const h1 = new BookingsDetailsModel('1', new Date('2019-10-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JadgeGreen', '33A', 'Coronation Street',
-      'Jhon Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'));
+      'Jhon Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'), 'Booked');
 
     component.hearing = h1;
 

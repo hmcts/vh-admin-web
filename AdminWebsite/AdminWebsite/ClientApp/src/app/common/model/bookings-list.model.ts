@@ -1,3 +1,4 @@
+import { FormatShortDuration } from '../formatters/format-short-duration';
 
 export class BookingsListModel {
 
@@ -16,7 +17,7 @@ export class BookingsDetailsModel {
   constructor(hearingId: string, startTime: Date, duration: number, hearingCaseNumber: string,
     hearingCaseName: string, hearingType: string, judgeName: string, courtRoom: string,
     courtAddress: string, createdBy: string, createdDate: Date, lastEditBy: string,
-    lastEditDate: Date
+    lastEditDate: Date, status: string
   ) {
     this.HearingId = hearingId;
     this.StartTime = startTime;
@@ -32,6 +33,8 @@ export class BookingsDetailsModel {
     this.LastEditBy = lastEditBy;
     this.LastEditDate = lastEditDate;
     this.Selected = false;
+    this.Status = status;
+    this.Cancelled = this.Status === 'Cancelled';
   }
 
   HearingId: string;
@@ -48,14 +51,15 @@ export class BookingsDetailsModel {
   LastEditBy: string;
   LastEditDate: Date;
   Selected: boolean;
+  Cancelled: boolean;
   OtherInformation: string;
+  Status: string;
 
   get DurationInHoursAndMinutes(): string {
-    const hours = Math.floor(this.Duration / 60);
-    const min = this.Duration % 60;
-    const wordHours = hours > 1 ? 'hours' : 'hour';
-    const strHours = hours > 0 ? `${hours} ${wordHours}` : '';
-    const wordMin = min > 0 ? `${min} minutes` : '';
-    return `${strHours} ${wordMin}`.trim();
+    return FormatShortDuration(this.Duration);
+  }
+
+  public get isCancelled(): boolean {
+    return this.Status === 'Cancelled';
   }
 }

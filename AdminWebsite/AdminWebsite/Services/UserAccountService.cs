@@ -22,23 +22,23 @@ namespace AdminWebsite.Services
     public interface IUserAccountService
     {
         /// <summary>
-        /// Get the full group information based by the active directory id
+        ///     Get the full group information based by the active directory id
         /// </summary>
         /// <param name="groupId">Id for the active directory group</param>
+        /// <returns></returns>
         Group GetGroupById(string groupId);
-
         /// <summary>
-        /// Returns a list of all judges in the active directory
+        ///     Returns a list of all judges in the active directory
         /// </summary>
         /// <remarks>
         /// Filters test accounts if configured to run as live environment 
         /// </remarks>
         IEnumerable<JudgeResponse> GetJudgeUsers();
-       
         /// <summary>
         /// Creates a user based on the participant information or updates the participant username if it already exists
         /// </summary>
-        /// <param name="participant">Data to create user by and returns the username in</param>
+        /// <param name="participant"></param>
+        /// <returns></returns>
         Task UpdateParticipantUsername(ParticipantRequest participant);
     }
 
@@ -51,8 +51,14 @@ namespace AdminWebsite.Services
 
         private static readonly Compare<JudgeResponse> CompareJudgeById =
             Compare<JudgeResponse>.By((x, y) => x.Email == y.Email, x => x.Email.GetHashCode());
-        
-        /// <summary>Create the service</summary>
+
+        /// <summary>
+        /// Create the service
+        /// </summary>
+        /// <param name="userApiClient"></param>
+        /// <param name="tokenProvider"></param>
+        /// <param name="securitySettings"></param>
+        /// <param name="appSettings"></param>
         public UserAccountService(IUserApiClient userApiClient, ITokenProvider tokenProvider, IOptions<SecuritySettings> securitySettings, IOptions<AppConfigSettings> appSettings)
         {
             _userApiClient = userApiClient;
@@ -64,7 +70,7 @@ namespace AdminWebsite.Services
         /// <inheritdoc />
         public async Task UpdateParticipantUsername(ParticipantRequest participant)
         {
-            //// create user in AD if users email does not exist in AD.
+            // create user in AD if users email does not exist in AD.
             var userProfile = await CheckUserExistsInAD(participant.Contact_email);
             if (userProfile == null)
             {

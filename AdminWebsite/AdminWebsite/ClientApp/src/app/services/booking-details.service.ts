@@ -25,7 +25,7 @@ export class BookingDetailsService {
       hearingResponse.created_date,
       hearingResponse.updated_by,
       hearingResponse.updated_date,
-
+      hearingResponse.status
     );
 
     model.OtherInformation = hearingResponse.other_information;

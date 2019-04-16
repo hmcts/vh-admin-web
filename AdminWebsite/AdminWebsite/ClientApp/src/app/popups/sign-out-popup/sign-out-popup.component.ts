@@ -2,8 +2,7 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 
 @Component({
   selector: 'app-sign-out-popup',
-  templateUrl: './sign-out-popup.component.html',
-  styleUrls: ['./sign-out-popup.component.css']
+  templateUrl: './sign-out-popup.component.html'
 })
 export class SignOutPopupComponent implements OnInit {
   @Output() continue: EventEmitter<any>;

@@ -24,7 +24,8 @@ function MockBookedHearing(): BookingsDetailsModel {
     'created.by@admin.com',
     new Date(),
     'last.edit@admin.com',
-    new Date()
+    new Date(),
+    'booked'
   );
 }
 

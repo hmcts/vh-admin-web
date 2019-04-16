@@ -1,4 +1,7 @@
-﻿namespace Testing.Common
+﻿using AdminWebsite.BookingsAPI.Client;
+using System;
+
+namespace Testing.Common
 {
     public class ApiUriFactory
     {
@@ -8,12 +11,14 @@
             HearingEndpoints = new HearingEndpoints();
             ReferenceEndpoints = new ReferenceEndpoints();
             UserAccountEndpoints = new UserAccountEndpoints();
-        }
-
+            UserIdentityEndpoints = new UserIdentityEndpoints();
+        }            
+    
         public ConfigSettingsEndpoints ConfigSettingsEndpoints { get; set; }
         public HearingEndpoints HearingEndpoints { get; set; }
         public ReferenceEndpoints ReferenceEndpoints { get; set; }
         public UserAccountEndpoints UserAccountEndpoints { get; set; }
+        public UserIdentityEndpoints UserIdentityEndpoints { get; set; }
     }
 
     public class ConfigSettingsEndpoints
@@ -26,14 +31,14 @@
     {
         private string ApiRoot => "api/hearings";
         public string BookNewHearing => ApiRoot;
+        public string UpdateHearingStatus(Guid hearingId, 
+            UpdateBookingStatusRequest updateBookingStatusRequest) => $"{ApiRoot}/{hearingId}";
     }
 
     public class ReferenceEndpoints
     {
-        private string ApiRoot => "api/hearings";
+        private string ApiRoot => "api/reference";
         public string GetHearingTypes => $"{ApiRoot}/types";
-        public string GetHearingMediums => $"{ApiRoot}/mediums";
-        public string GetHearingStatusTypes => $"{ApiRoot}/statustypes";
         public string GetParticipantRoles => $"{ApiRoot}/participantroles";
         public string GetCourts => $"{ApiRoot}/courts";
     }
@@ -51,5 +56,11 @@
         public string GetGroupByName(string groupName) => $"{ApiRoot}/group/?name={groupName}";
         public string GetGroupById(string groupId) => $"{ApiRoot}/group/{groupId}";
         public string GetUsersByGroup(string groupName) => $"{ApiRoot}/judges";
+    }
+
+    public class UserIdentityEndpoints
+    {
+        private string ApiRoot => "api/user";
+        public string GetUserProfile => ApiRoot;
     }
 }
