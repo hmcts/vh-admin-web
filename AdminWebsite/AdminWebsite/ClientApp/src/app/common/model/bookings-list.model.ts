@@ -1,3 +1,5 @@
+import { FormatShortDuration } from "../formatters/format-short-duration";
+
 export class BookingsListModel {
 
   constructor(bookingsDate: Date) {
@@ -54,12 +56,7 @@ export class BookingsDetailsModel {
   Status: string;
 
   get DurationInHoursAndMinutes(): string {
-    const hours = Math.floor(this.Duration / 60);
-    const min = this.Duration % 60;
-    const wordHours = hours > 1 ? 'hours' : 'hour';
-    const strHours = hours > 0 ? `${hours} ${wordHours}` : '';
-    const wordMin = min > 0 ? `${min} minutes` : '';
-    return `${strHours} ${wordMin}`.trim();
+    return FormatShortDuration(this.Duration);
   }
 
   public get isCancelled(): boolean {
