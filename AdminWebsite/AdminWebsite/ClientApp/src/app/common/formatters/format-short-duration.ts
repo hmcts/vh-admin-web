@@ -1,18 +1,18 @@
 function formatHours(hours: number): string {
-  if (hours == 0) {
+  if (hours === 0) {
     return '';
   }
-  if (hours == 1) {
-    return '1 hour'
+  if (hours === 1) {
+    return '1 hour';
   }
   return hours + ' hours';
 }
 
 function formatMinutes(minutes: number): string {
-  if (minutes == 0) {
+  if (minutes === 0) {
     return '';
   }
-  if (minutes == 1) {
+  if (minutes === 1) {
     return '1 minute';
   }
   return minutes + ' minutes';

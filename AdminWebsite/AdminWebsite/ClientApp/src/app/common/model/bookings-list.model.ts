@@ -1,4 +1,4 @@
-import { FormatShortDuration } from "../formatters/format-short-duration";
+import { FormatShortDuration } from '../formatters/format-short-duration';
 
 export class BookingsListModel {
 

@@ -1,4 +1,4 @@
-import { FormatShortDuration } from "./format-short-duration";
+import { FormatShortDuration } from './format-short-duration';
 
 describe('FormatShortDuration', () => {
   it('should be able to set minutes to hours, minutes less than hour', () => {
@@ -30,10 +30,10 @@ describe('FormatShortDuration', () => {
   });
 
   it('should throw error on invalid duration', () => {
-    expect(() => FormatShortDuration(null)).toThrowError("Invalid duration: 'null'")
+    expect(() => FormatShortDuration(null)).toThrowError('Invalid duration: \'null\'');
   });
 
   it('should throw error on negative duration', () => {
-    expect(() => FormatShortDuration(-1)).toThrowError("Invalid duration: '-1'")
+    expect(() => FormatShortDuration(-1)).toThrowError('Invalid duration: \'-1\'');
   });
-})
+});

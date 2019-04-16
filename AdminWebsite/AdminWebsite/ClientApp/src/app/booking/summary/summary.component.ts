@@ -14,7 +14,7 @@ import { PageUrls } from '../../shared/page-url.constants';
 import { HearingDetailsResponse } from '../../services/clients/api-client';
 import { BookingService } from '../../services/booking.service';
 import { RemovePopupComponent } from '../../popups/remove-popup/remove-popup.component';
-import { FormatShortDuration } from "../../common/formatters/format-short-duration";
+import { FormatShortDuration } from '../../common/formatters/format-short-duration';
 
 @Component({
   selector: 'app-summary',
