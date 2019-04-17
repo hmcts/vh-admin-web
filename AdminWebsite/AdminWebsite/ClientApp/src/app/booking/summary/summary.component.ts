@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 
 import { Constants } from '../../common/constants';
 import { CanDeactiveComponent } from '../../common/guards/changes.guard';
-import { HearingVenueResponse, HearingTypeResponse } from '../../services/clients/api-client';
+import { HearingTypeResponse } from '../../services/clients/api-client';
 import { HearingModel } from '../../common/model/hearing.model';
 import { ParticipantsListComponent } from '../participants-list/participants-list.component';
 import { ReferenceDataService } from '../../services/reference-data.service';
@@ -122,37 +122,16 @@ export class SummaryComponent implements OnInit {
   private retrieveHearingSummary() {
     this.caseNumber = this.hearing.cases.length > 0 ? this.hearing.cases[0].number : '';
     this.caseName = this.hearing.cases.length > 0 ? this.hearing.cases[0].name : '';
-    this.getCaseHearingTypeName(this.hearing.hearing_type_id);
+    this.caseHearingType = this.hearing.hearing_type_name;
     this.hearingDate = this.hearing.scheduled_date_time;
-    this.getCourtRoomAndAddress(this.hearing.hearing_venue_id);
     this.hearingDuration = `listed for ${FormatShortDuration(this.hearing.scheduled_duration)}`;
+    this.courtRoomAddress = this.formatCourtRoom(this.hearing.court_name, this.hearing.court_room);
     this.otherInformation = this.hearing.other_information;
   }
 
-  private getCaseHearingTypeName(hearing_type_id: number): void {
-    this.hearingService.getHearingTypes()
-      .subscribe(
-        (data: HearingTypeResponse[]) => {
-          const selectedHearingType = data.filter(h => h.id === hearing_type_id);
-          this.caseHearingType = selectedHearingType && selectedHearingType.length > 0 ? selectedHearingType[0].name : '';
-          this.hearing.hearing_type_name = this.caseHearingType;
-        },
-        error => console.error(error)
-      );
-  }
-
-  private getCourtRoomAndAddress(venueId: number): void {
-    this.referenceDataService.getCourts()
-      .subscribe(
-        (data: HearingVenueResponse[]) => {
-          const selectedCourt = data.filter(c => c.id === venueId);
-          if (selectedCourt && selectedCourt.length > 0) {
-            this.courtRoomAddress = `${selectedCourt[0].name} ${this.hearing.court_room}`;
-            this.hearing.court_name = selectedCourt[0].name;
-          }
-        },
-        error => console.error(error)
-      );
+  private formatCourtRoom(courtName, courtRoom) {
+    const courtRoomText = courtRoom ? ', ' + courtRoom : '';
+    return `${courtName}${courtRoomText}`;
   }
 
   continueBooking() {
