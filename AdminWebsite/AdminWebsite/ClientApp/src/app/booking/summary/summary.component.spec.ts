@@ -1,3 +1,4 @@
+import { MomentModule } from 'angular2-moment';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { of, throwError } from 'rxjs';
@@ -17,7 +18,7 @@ import { ParticipantsListStubComponent } from '../../testing/stubs/participant-l
 import { WaitPopupComponent } from '../../popups/wait-popup/wait-popup.component';
 import { SaveFailedPopupComponent } from 'src/app/popups/save-failed-popup/save-failed-popup.component';
 import { HearingDetailsResponse } from '../../services/clients/api-client';
-import { MomentModule } from 'angular2-moment';
+import { LongDatetimePipe } from '../../../app/shared/directives/date-time.pipe';
 
 function initExistingHearingRequest(): HearingModel {
 
@@ -103,7 +104,8 @@ describe('SummaryComponent with valid request', () => {
         BookingEditStubComponent,
         RemovePopupComponent,
         WaitPopupComponent,
-        SaveFailedPopupComponent
+        SaveFailedPopupComponent,
+        LongDatetimePipe
       ],
       imports: [RouterTestingModule, MomentModule],
     })
@@ -200,7 +202,8 @@ describe('SummaryComponent  with invalid request', () => {
         BookingEditStubComponent,
         RemovePopupComponent,
         WaitPopupComponent,
-        SaveFailedPopupComponent
+        SaveFailedPopupComponent,
+        LongDatetimePipe
       ]
     })
       .compileComponents();
@@ -245,7 +248,8 @@ describe('SummaryComponent  with existing request', () => {
         BookingEditStubComponent,
         RemovePopupComponent,
         WaitPopupComponent,
-        SaveFailedPopupComponent
+        SaveFailedPopupComponent,
+        LongDatetimePipe
       ]
     })
       .compileComponents();

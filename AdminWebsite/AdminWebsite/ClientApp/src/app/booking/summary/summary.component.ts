@@ -14,6 +14,7 @@ import { PageUrls } from '../../shared/page-url.constants';
 import { HearingDetailsResponse } from '../../services/clients/api-client';
 import { BookingService } from '../../services/booking.service';
 import { RemovePopupComponent } from '../../popups/remove-popup/remove-popup.component';
+import { FormatShortDuration } from '../../common/formatters/format-short-duration';
 
 @Component({
   selector: 'app-summary',
@@ -124,7 +125,7 @@ export class SummaryComponent implements OnInit {
     this.getCaseHearingTypeName(this.hearing.hearing_type_id);
     this.hearingDate = this.hearing.scheduled_date_time;
     this.getCourtRoomAndAddress(this.hearing.hearing_venue_id);
-    this.hearingDuration = this.getHearingDuration(this.hearing.scheduled_duration);
+    this.hearingDuration = `listed for ${FormatShortDuration(this.hearing.scheduled_duration)}`;
     this.otherInformation = this.hearing.other_information;
   }
 
@@ -152,15 +153,6 @@ export class SummaryComponent implements OnInit {
         },
         error => console.error(error)
       );
-  }
-
-  private getHearingDuration(duration: number): string {
-    const hours = Math.floor(duration / 60);
-    const min = duration % 60;
-    const wordHours = hours > 1 ? 'hours' : 'hour';
-    const strHours = hours > 0 ? `${hours} ${wordHours}` : '';
-    const wordMin = min > 0 ? `${min} minutes` : '';
-    return `listed for ${strHours} ${wordMin}`.trim();
   }
 
   continueBooking() {

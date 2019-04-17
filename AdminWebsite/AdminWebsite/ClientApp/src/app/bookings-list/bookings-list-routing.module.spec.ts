@@ -18,7 +18,7 @@ import { ParticipantDetailsComponent } from './participant-details/participant-d
 import { HearingDetailsComponent } from './hearing-details/hearing-details.component';
 import { CancelBookingPopupComponent } from '../popups/cancel-booking-popup/cancel-booking-popup.component';
 import { MomentModule } from 'angular2-moment';
-
+import { LongDatetimePipe } from '../../app/shared/directives/date-time.pipe';
 
 describe('app routing', () => {
   let location: Location;
@@ -37,6 +37,7 @@ describe('app routing', () => {
         BookingParticipantListComponent,
         ParticipantDetailsComponent,
         HearingDetailsComponent,
+        LongDatetimePipe,
         CancelBookingPopupComponent
       ],
       providers: [

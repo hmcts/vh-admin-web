@@ -33,6 +33,7 @@ import { WaitPopupComponent } from '../popups/wait-popup/wait-popup.component';
 import { SaveFailedPopupComponent } from '../popups/save-failed-popup/save-failed-popup.component';
 import { DiscardConfirmPopupComponent } from '../popups/discard-confirm-popup/discard-confirm-popup.component';
 import { MomentModule } from 'angular2-moment';
+import { LongDatetimePipe } from '../../app/shared/directives/date-time.pipe';
 
 describe('app routing', () => {
   let location: Location;
@@ -65,6 +66,7 @@ describe('app routing', () => {
         WaitPopupComponent,
         SaveFailedPopupComponent,
         DiscardConfirmPopupComponent,
+        LongDatetimePipe
       ],
       providers: [
         AuthGuard,
