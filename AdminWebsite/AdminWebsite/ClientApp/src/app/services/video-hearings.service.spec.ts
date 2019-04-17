@@ -69,12 +69,12 @@ describe('Video hearing service', () => {
     }));
   it('should save bookingHasChangesKey in the session storage',
     inject([VideoHearingsService], (service: VideoHearingsService) => {
-      service.onBookingChange(true);
+      service.setBookingHasChanged(true);
       expect(sessionStorage.setItem).toHaveBeenCalled();
     }));
   it('should remove bookingHasChangesKey from the session storage',
     inject([VideoHearingsService], (service: VideoHearingsService) => {
-      service.onBookingChange(false);
+      service.setBookingHasChanged(false);
       expect(sessionStorage.removeItem).toHaveBeenCalled();
     }));
   it('should get hearings types',

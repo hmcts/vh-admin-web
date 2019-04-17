@@ -1,9 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
-
-import { CanDeactiveComponent } from '../../common/guards/changes.guard';
 import { HearingTypeResponse } from '../../services/clients/api-client';
 import { HearingModel } from '../../common/model/hearing.model';
 import { CaseModel } from '../../common/model/case.model';
@@ -18,14 +15,13 @@ import { PageUrls } from 'src/app/shared/page-url.constants';
   templateUrl: './create-hearing.component.html',
   styleUrls: ['./create-hearing.component.scss']
 })
-export class CreateHearingComponent extends BookingBaseComponent implements OnInit, CanDeactiveComponent {
+export class CreateHearingComponent extends BookingBaseComponent implements OnInit {
 
   private existingCaseTypeKey = 'selectedCaseType';
   attemptingCancellation: boolean;
   attemptingDiscardChanges = false;
   failedSubmission: boolean;
   hearing: HearingModel;
-  hearingForm: FormGroup;
   availableHearingTypes: HearingTypeResponse[];
   availableCaseTypes: string[];
   selectedCaseType: string;
@@ -34,29 +30,22 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
   hasSaved: boolean;
   isExistingHearing: boolean;
 
-  constructor(private hearingService: VideoHearingsService,
+  constructor(protected hearingService: VideoHearingsService,
     private fb: FormBuilder,
     protected router: Router,
     protected bookingService: BookingService,
     private errorService: ErrorService) {
-    super(bookingService, router);
+    super(bookingService, router, hearingService);
     this.attemptingCancellation = false;
     this.availableCaseTypes = [];
   }
 
   ngOnInit() {
-    super.ngOnInit();
     this.failedSubmission = false;
     this.checkForExistingRequest();
     this.initForm();
     this.retrieveHearingTypes();
-    this.onChanged();
-  }
-
-  onChanged() {
-    this.hearingForm.valueChanges.subscribe(x => {
-      this.hearingService.onBookingChange(this.hearingForm.dirty);
-    });
+    super.ngOnInit();
   }
 
   goToDiv(fragment: string): void {
@@ -82,7 +71,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
       const selectedHearingTypes = this.filteredHearingTypes.filter(x => x.name === this.hearing.hearing_type_name);
       if (selectedHearingTypes && selectedHearingTypes.length > 0) {
         this.hearing.hearing_type_id = selectedHearingTypes[0].id;
-        this.hearingForm.get('hearingType').setValue(selectedHearingTypes[0].id);
+        this.form.get('hearingType').setValue(selectedHearingTypes[0].id);
       }
     }
   }
@@ -92,7 +81,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
     if (!firstCase) {
       firstCase = new CaseModel();
     }
-    this.hearingForm = this.fb.group({
+    this.form = this.fb.group({
       caseName: [firstCase.name, Validators.required],
       caseNumber: [firstCase.number, Validators.required],
       caseType: [this.selectedCaseType, [Validators.required, Validators.pattern('^((?!Please Select).)*$')]],
@@ -100,10 +89,10 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
     });
   }
 
-  get caseName() { return this.hearingForm.get('caseName'); }
-  get caseNumber() { return this.hearingForm.get('caseNumber'); }
-  get caseType() { return this.hearingForm.get('caseType'); }
-  get hearingType() { return this.hearingForm.get('hearingType'); }
+  get caseName() { return this.form.get('caseName'); }
+  get caseNumber() { return this.form.get('caseNumber'); }
+  get caseType() { return this.form.get('caseType'); }
+  get hearingType() { return this.form.get('hearingType'); }
 
   get caseNameInvalid() {
     return this.caseName.invalid && (this.caseName.dirty || this.caseName.touched || this.failedSubmission);
@@ -122,11 +111,11 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
   }
 
   saveHearingDetails() {
-    if (this.hearingForm.valid) {
+    if (this.form.valid) {
       this.failedSubmission = false;
       this.updateHearingRequest();
       sessionStorage.setItem(this.existingCaseTypeKey, this.selectedCaseType);
-      this.hearingForm.markAsPristine();
+      this.form.markAsPristine();
       this.hasSaved = true;
       if (this.editMode) {
         this.navigateToSummary();
@@ -145,13 +134,13 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
 
   confirmCancelBooking() {
     if (this.editMode) {
-      if (this.hearingForm.dirty || this.hearingForm.touched) {
+      if (this.form.dirty || this.form.touched) {
         this.attemptingDiscardChanges = true;
       } else {
         this.navigateToSummary();
       }
     } else {
-      if (this.hearingForm.dirty || this.hearingForm.touched) {
+      if (this.form.dirty || this.form.touched) {
         this.attemptingCancellation = true;
       } else {
         this.cancelBooking();
@@ -163,24 +152,24 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
     this.attemptingCancellation = false;
     this.hearingService.cancelRequest();
     sessionStorage.removeItem(this.existingCaseTypeKey);
-    this.hearingForm.reset();
+    this.form.reset();
     this.router.navigate([PageUrls.Dashboard]);
   }
 
   cancelChanges() {
     this.attemptingDiscardChanges = false;
-    this.hearingForm.reset();
+    this.form.reset();
     this.navigateToSummary();
   }
 
   private updateHearingRequest() {
     this.hearing.case_type = this.selectedCaseType;
     const hearingCase = new CaseModel();
-    hearingCase.name = this.hearingForm.value.caseName;
-    hearingCase.number = this.hearingForm.value.caseNumber;
+    hearingCase.name = this.form.value.caseName;
+    hearingCase.number = this.form.value.caseNumber;
     this.hearing.cases[0] = hearingCase;
-    this.hearing.case_type_id = this.hearingForm.value.caseType;
-    this.hearing.hearing_type_id = this.hearingForm.value.hearingType;
+    this.hearing.case_type_id = this.form.value.caseType;
+    this.hearing.hearing_type_id = this.form.value.hearingType;
     this.hearing.hearing_type_name = this.availableHearingTypes.find(c => c.id === this.hearing.hearing_type_id).name;
     this.hearingService.updateHearingRequest(this.hearing);
   }
@@ -209,7 +198,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
 
     if (this.availableCaseTypes.length === 1) {
       this.selectedCaseType = this.availableCaseTypes[0];
-      this.hearingForm.get('caseType').setValue(this.selectedCaseType);
+      this.form.get('caseType').setValue(this.selectedCaseType);
     } else {
       this.availableCaseTypes.unshift('Please Select');
     }
@@ -236,12 +225,5 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
       const result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
       return result * sortOrder;
     };
-  }
-
-  hasChanges(): Observable<boolean> | boolean {
-    if (this.hearingForm.dirty) {
-      this.confirmCancelBooking();
-    }
-    return this.hearingForm.dirty;
   }
 }

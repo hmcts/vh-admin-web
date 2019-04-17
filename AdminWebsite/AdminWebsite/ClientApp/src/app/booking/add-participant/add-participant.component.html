@@ -45,7 +45,7 @@
       </div>
     </div>
 
-    <form [formGroup]="participantForm" (ngSubmit)="saveParticipant()" autocomplete="off">
+    <form [formGroup]="form" (ngSubmit)="saveParticipant()" autocomplete="off">
 
       <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error': partyInvalid || !isPartySelected}">
         <legend id="party-error" *ngIf="partyInvalid || !isPartySelected">

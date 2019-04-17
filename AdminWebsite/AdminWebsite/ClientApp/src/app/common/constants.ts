@@ -25,5 +25,5 @@ export const Constants = {
     phone: '0300 303 0655',
     email: 'admin@videohearings.hmcts.net'
   },
-  IndividualRoles: ['Claimant LIP', 'Defendant LIP', 'Applicant LIP', 'Respondent LIP']
+  IndividualRoles: ['Claimant LIP', 'Defendant LIP', 'Applicant LIP', 'Respondent LIP'],
 };
