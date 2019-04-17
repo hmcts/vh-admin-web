@@ -2,9 +2,6 @@ import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
-
-import { CanDeactiveComponent } from '../../common/guards/changes.guard';
 import { HearingModel } from '../../common/model/hearing.model';
 import { ReferenceDataService } from '../../services/reference-data.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
@@ -23,7 +20,6 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
 
   hearing: HearingModel;
   availableCourts: HearingVenueResponse[];
-  schedulingForm: FormGroup;
   failedSubmission: boolean;
   attemptingCancellation = false;
   attemptingDiscardChanges = false;
@@ -41,12 +37,11 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
   }
 
   ngOnInit() {
-    super.ngOnInit();
     this.failedSubmission = false;
     this.checkForExistingRequest();
     this.retrieveCourts();
     this.initForm();
-    this.onChanged(this.schedulingForm);
+    super.ngOnInit();
   }
 
   private checkForExistingRequest() {
@@ -88,7 +83,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     if (this.hearing && this.hearing.court_room) {
       room = this.hearing.court_room;
     }
-    this.schedulingForm = this.fb.group({
+    this.form = this.fb.group({
       hearingDate: [hearingDateParsed, Validators.required],
       hearingStartTimeHour: [startTimeHour, [Validators.required, Validators.min(0), Validators.max(23)]],
       hearingStartTimeMinute: [startTimeMinute, [Validators.required, Validators.min(0), Validators.max(59)]],
@@ -107,31 +102,31 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
   }
 
   get hearingDate() {
-    return this.schedulingForm.get('hearingDate');
+    return this.form.get('hearingDate');
   }
 
   get hearingStartTimeHour() {
-    return this.schedulingForm.get('hearingStartTimeHour');
+    return this.form.get('hearingStartTimeHour');
   }
 
   get hearingStartTimeMinute() {
-    return this.schedulingForm.get('hearingStartTimeMinute');
+    return this.form.get('hearingStartTimeMinute');
   }
 
   get hearingDurationHour() {
-    return this.schedulingForm.get('hearingDurationHour');
+    return this.form.get('hearingDurationHour');
   }
 
   get hearingDurationMinute() {
-    return this.schedulingForm.get('hearingDurationMinute');
+    return this.form.get('hearingDurationMinute');
   }
 
   get courtAddress() {
-    return this.schedulingForm.get('courtAddress');
+    return this.form.get('courtAddress');
   }
 
   get courtRoom() {
-    return this.schedulingForm.get('courtRoom');
+    return this.form.get('courtRoom');
   }
 
   get hearingDateInvalid() {
@@ -184,16 +179,16 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
       const selectedCourts = this.availableCourts.filter(x => x.name === this.hearing.court_name);
       if (selectedCourts && selectedCourts.length > 0) {
         this.selectedCourtName = selectedCourts[0].name;
-        this.schedulingForm.get('courtAddress').setValue(selectedCourts[0].id);
+        this.form.get('courtAddress').setValue(selectedCourts[0].id);
       }
     }
   }
 
   saveScheduleAndLocation() {
-    if (this.schedulingForm.valid && !this.hearingDateInvalid) {
+    if (this.form.valid && !this.hearingDateInvalid) {
       this.failedSubmission = false;
       this.updateHearingRequest();
-      this.schedulingForm.markAsPristine();
+      this.form.markAsPristine();
       this.hasSaved = true;
       if (this.editMode) {
         this.navigateToSummary();
@@ -206,19 +201,19 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
   }
 
   private updateHearingRequest() {
-    this.hearing.hearing_venue_id = this.schedulingForm.value.courtAddress;
-    this.hearing.court_room = this.schedulingForm.value.courtRoom;
+    this.hearing.hearing_venue_id = this.form.value.courtAddress;
+    this.hearing.court_room = this.form.value.courtRoom;
     this.hearing.court_name = this.selectedCourtName;
-    const hearingDate = new Date(this.schedulingForm.value.hearingDate);
+    const hearingDate = new Date(this.form.value.hearingDate);
 
     hearingDate.setHours(
-      this.schedulingForm.value.hearingStartTimeHour,
-      this.schedulingForm.value.hearingStartTimeMinute
+      this.form.value.hearingStartTimeHour,
+      this.form.value.hearingStartTimeMinute
     );
 
     this.hearing.scheduled_date_time = hearingDate;
-    let hearingDuration = (parseInt(this.schedulingForm.value.hearingDurationHour, 10) * 60);
-    hearingDuration += parseInt(this.schedulingForm.value.hearingDurationMinute, 10);
+    let hearingDuration = (parseInt(this.form.value.hearingDurationHour, 10) * 60);
+    hearingDuration += parseInt(this.form.value.hearingDurationMinute, 10);
     this.hearing.scheduled_duration = hearingDuration;
     this.hearingService.updateHearingRequest(this.hearing);
   }
@@ -230,7 +225,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
 
   confirmCancelBooking() {
     if (this.editMode) {
-      if (this.schedulingForm.dirty || this.schedulingForm.touched) {
+      if (this.form.dirty || this.form.touched) {
         this.attemptingDiscardChanges = true;
       } else {
         this.navigateToSummary();
@@ -243,13 +238,13 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
   cancelBooking() {
     this.attemptingCancellation = false;
     this.hearingService.cancelRequest();
-    this.schedulingForm.reset();
+    this.form.reset();
     this.router.navigate([PageUrls.Dashboard]);
   }
 
   cancelChanges() {
     this.attemptingDiscardChanges = false;
-    this.schedulingForm.reset();
+    this.form.reset();
     this.navigateToSummary();
   }
 

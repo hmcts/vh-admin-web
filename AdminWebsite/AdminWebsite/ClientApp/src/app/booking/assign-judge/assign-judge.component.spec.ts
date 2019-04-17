@@ -69,7 +69,7 @@ describe('AssignJudgeComponent', () => {
 
     videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',
       ['getHearingMediums', 'getHearingTypes', 'getCurrentRequest',
-        'updateHearingRequest', 'cancelRequest', 'onBookingChange']);
+        'updateHearingRequest', 'cancelRequest', 'setBookingHasChanged']);
     videoHearingsServiceSpy.getCurrentRequest.and.returnValue(newHearing);
 
     bookingServiseSpy = jasmine.createSpyObj<BookingService>('BookingService', ['resetEditMode', 'isEditMode']);
@@ -99,7 +99,7 @@ describe('AssignJudgeComponent', () => {
   it('should fail validation if a judge is not selected', () => {
     component.cancelAssignJudge();
     component.saveJudge();
-    expect(component.assignJudgeForm.valid).toBeFalsy();
+    expect(component.form.valid).toBeFalsy();
   });
 
   it('is valid and has updated selected judge after selecting judge in dropdown', () => {
@@ -109,7 +109,7 @@ describe('AssignJudgeComponent', () => {
     fixture.detectChanges();
 
     expect(component.judge.email).toBe('John2.Doe@hearings.reform.hmcts.net');
-    expect(component.assignJudgeForm.valid).toBeTruthy();
+    expect(component.form.valid).toBeTruthy();
   });
 
   it('should get current booking and judge details', () => {
@@ -137,14 +137,14 @@ describe('AssignJudgeComponent', () => {
   });
   it('should show discard pop up confirmation', () => {
     component.editMode = true;
-    component.assignJudgeForm.markAsDirty();
+    component.form.markAsDirty();
     fixture.detectChanges();
     component.confirmCancelBooking();
     expect(component.attemptingDiscardChanges).toBeTruthy();
   });
   it('should navigate to summary page if no changes', () => {
     component.editMode = true;
-    component.assignJudgeForm.markAsPristine();
+    component.form.markAsPristine();
     fixture.detectChanges();
     component.confirmCancelBooking();
     expect(routerSpy.navigate).toHaveBeenCalled();

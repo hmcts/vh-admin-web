@@ -92,7 +92,7 @@ describe('app routing', () => {
       createHearing.ngOnInit();
       router.navigate(['/book-hearing']);
       tick();
-      createHearing.hearingForm.markAsPristine();
+      createHearing.form.markAsPristine();
       router.navigate(['/hearing-schedule']);
       tick();
       expect(location.path()).toBe('/hearing-schedule');

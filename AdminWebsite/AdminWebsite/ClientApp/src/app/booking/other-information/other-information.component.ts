@@ -17,7 +17,7 @@ export class OtherInformationComponent extends BookingBaseComponent implements O
   attemptingCancellation = false;
   attemptingDiscardChanges = false;
   canNavigate = true;
-  otherInformationForm: FormGroup;
+
   otherInformationText: string;
 
   constructor(private fb: FormBuilder, protected videoHearingService: VideoHearingsService,
@@ -26,14 +26,13 @@ export class OtherInformationComponent extends BookingBaseComponent implements O
   }
 
   ngOnInit() {
-    super.ngOnInit();
     this.checkForExistingRequest();
     this.initForm();
-    this.onChanged(this.otherInformationForm);
+    super.ngOnInit();
   }
 
   private initForm() {
-    this.otherInformationForm = this.fb.group({
+    this.form = this.fb.group({
       otherInformation: [this.otherInformationText !== null ? this.otherInformationText : ''],
     });
   }
@@ -44,9 +43,9 @@ export class OtherInformationComponent extends BookingBaseComponent implements O
   }
 
   next() {
-    this.hearing.other_information = this.otherInformationForm.value.otherInformation;
+    this.hearing.other_information = this.form.value.otherInformation;
     this.videoHearingService.updateHearingRequest(this.hearing);
-    this.otherInformationForm.markAsPristine();
+    this.form.markAsPristine();
     if (this.editMode) {
       this.resetEditMode();
     }
@@ -56,13 +55,13 @@ export class OtherInformationComponent extends BookingBaseComponent implements O
   cancelBooking() {
     this.attemptingCancellation = false;
     this.videoHearingService.cancelRequest();
-    this.otherInformationForm.reset();
+    this.form.reset();
     this.router.navigate([PageUrls.Dashboard]);
   }
 
   cancelChanges() {
     this.attemptingDiscardChanges = false;
-    this.otherInformationForm.reset();
+    this.form.reset();
     this.navigateToSummary();
   }
   continueBooking() {
@@ -72,7 +71,7 @@ export class OtherInformationComponent extends BookingBaseComponent implements O
 
   confirmCancelBooking() {
     if (this.editMode) {
-      if (this.otherInformationForm.dirty || this.otherInformationForm.touched) {
+      if (this.form.dirty || this.form.touched) {
         this.attemptingDiscardChanges = true;
       } else {
         this.navigateToSummary();

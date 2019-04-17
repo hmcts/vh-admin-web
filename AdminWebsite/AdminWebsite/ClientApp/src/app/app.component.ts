@@ -6,6 +6,7 @@ import { PageTrackerService } from './services/page-tracker.service';
 import { WindowRef } from './security/window-ref';
 import { HeaderComponent } from './shared/header/header.component';
 import { VideoHearingsService } from './services/video-hearings.service';
+import { BookingService } from './services/booking.service';
 
 @Component({
   selector: 'app-root',
@@ -34,8 +35,9 @@ export class AppComponent implements OnInit {
     private configService: ConfigService,
     private router: Router,
     private window: WindowRef,
-
-    pageTracker: PageTrackerService, private videoHearingsService: VideoHearingsService) {
+    pageTracker: PageTrackerService,
+    private videoHearingsService: VideoHearingsService,
+    private bookingService: BookingService) {
 
     this.config.tenant = this.configService.clientSettings.tenant_id;
     this.config.clientId = this.configService.clientSettings.client_id;
@@ -72,7 +74,8 @@ export class AppComponent implements OnInit {
     if (this.videoHearingsService.hasUnsavedChanges()) {
       this.showSaveConfirmation = true;
     } else {
-      this.videoHearingsService.clearBookingStorage();
+      this.videoHearingsService.cancelRequest();
+      this.bookingService.resetEditMode();
       this.headerComponent.navigateToSelectedMenuItem(menuItemIndex);
     }
   }

@@ -20,7 +20,6 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
 
   hearing: HearingModel;
   judge: JudgeResponse;
-  assignJudgeForm: FormGroup;
   failedSubmission: boolean;
   attemptingCancellation = false;
   attemptingDiscardChanges = false;
@@ -72,12 +71,11 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
   }
 
   ngOnInit() {
-    super.ngOnInit();
     this.failedSubmission = false;
     this.checkForExistingRequest();
     this.loadJudges();
     this.initForm();
-    this.onChanged(this.assignJudgeForm);
+    super.ngOnInit();
   }
 
   private checkForExistingRequest() {
@@ -92,7 +90,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
       this.judge = AssignJudgeComponent.mapJudge(find_judge);
       this.canNavigate = true;
     }
-    this.assignJudgeForm = this.fb.group({
+    this.form = this.fb.group({
       judgeName: [this.judge.email, Validators.required],
     });
 
@@ -103,7 +101,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     });
   }
 
-  get judgeName() { return this.assignJudgeForm.get('judgeName'); }
+  get judgeName() { return this.form.get('judgeName'); }
 
   get judgeNameInvalid() {
     return this.judgeName.invalid && (this.judgeName.dirty || this.judgeName.touched || this.failedSubmission);
@@ -132,9 +130,9 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
       this.isJudgeSelected = false;
       return;
     }
-    if (this.assignJudgeForm.valid) {
+    if (this.form.valid) {
       this.failedSubmission = false;
-      this.assignJudgeForm.markAsPristine();
+      this.form.markAsPristine();
       this.hasSaved = true;
       this.hearingService.updateHearingRequest(this.hearing);
 
@@ -150,7 +148,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
 
   confirmCancelBooking() {
     if (this.editMode) {
-      if (this.assignJudgeForm.dirty || this.assignJudgeForm.touched) {
+      if (this.form.dirty || this.form.touched) {
         this.attemptingDiscardChanges = true;
       } else {
         this.navigateToSummary();
@@ -167,14 +165,14 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
 
   cancelAssignJudge() {
     this.attemptingCancellation = false;
-    this.assignJudgeForm.reset();
+    this.form.reset();
     this.hearingService.cancelRequest();
     this.router.navigate(['/dashboard']);
   }
 
   cancelChanges() {
     this.attemptingDiscardChanges = false;
-    this.assignJudgeForm.reset();
+    this.form.reset();
     this.navigateToSummary();
   }
 

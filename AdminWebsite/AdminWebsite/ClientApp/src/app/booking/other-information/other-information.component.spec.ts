@@ -22,7 +22,7 @@ describe('OtherInformationComponent', () => {
   let component: OtherInformationComponent;
   let fixture: ComponentFixture<OtherInformationComponent>;
   videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',
-    ['getCurrentRequest', 'cancelRequest', 'updateHearingRequest', 'onBookingChange']);
+    ['getCurrentRequest', 'cancelRequest', 'updateHearingRequest', 'setBookingHasChanged']);
 
   beforeEach(async(() => {
     routerSpy = jasmine.createSpyObj('Router', ['navigate']);
@@ -49,7 +49,7 @@ describe('OtherInformationComponent', () => {
     fixture = TestBed.createComponent(OtherInformationComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-    otherInformation = component.otherInformationForm.controls['otherInformation'];
+    otherInformation = component.form.controls['otherInformation'];
   });
 
   it('should create', () => {
@@ -81,14 +81,14 @@ describe('OtherInformationComponent', () => {
   });
   it('should show discard pop up confirmation', () => {
     component.editMode = true;
-    component.otherInformationForm.markAsDirty();
+    component.form.markAsDirty();
     fixture.detectChanges();
     component.confirmCancelBooking();
     expect(component.attemptingDiscardChanges).toBeTruthy();
   });
   it('should navigate to summary page if no changes', () => {
     component.editMode = true;
-    component.otherInformationForm.markAsPristine();
+    component.form.markAsPristine();
     fixture.detectChanges();
     component.confirmCancelBooking();
     expect(routerSpy.navigate).toHaveBeenCalled();

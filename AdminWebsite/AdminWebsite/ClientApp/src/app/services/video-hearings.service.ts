@@ -21,10 +21,12 @@ import { Constants } from '../common/constants';
 export class VideoHearingsService {
 
   private newRequestKey: string;
+  private bookingHasChangesKey: string;
   private modelHearing: HearingModel;
 
   constructor(private bhClient: BHClient) {
     this.newRequestKey = 'bh-newRequest';
+    this.bookingHasChangesKey = 'bookingHasChangesKey';
   }
 
   private checkForExistingHearing() {
@@ -43,15 +45,15 @@ export class VideoHearingsService {
       const model: HearingModel = JSON.parse(keyRequest);
       existingHearing = model.hearing_id && model.hearing_id.length > 0;
     }
-    const keyChanges = sessionStorage.getItem(Constants.bookingHasChangesKey);
+    const keyChanges = sessionStorage.getItem(this.bookingHasChangesKey);
     return (keyRequest !== null && !existingHearing) || keyChanges === 'true';
   }
 
-  onBookingChange(isChanged: boolean) {
+  setBookingHasChanged(isChanged: boolean) {
     if (isChanged) {
-      sessionStorage.setItem(Constants.bookingHasChangesKey, 'true');
+      sessionStorage.setItem(this.bookingHasChangesKey, 'true');
     } else {
-      sessionStorage.removeItem(Constants.bookingHasChangesKey);
+      sessionStorage.removeItem(this.bookingHasChangesKey);
     }
   }
 
@@ -84,12 +86,7 @@ export class VideoHearingsService {
 
   cancelRequest() {
     sessionStorage.removeItem(this.newRequestKey);
-    sessionStorage.removeItem(Constants.bookingHasChangesKey);
-  }
-
-  clearBookingStorage() {
-    this.cancelRequest();
-    sessionStorage.removeItem(Constants.bookingEditKey);
+    sessionStorage.removeItem(this.bookingHasChangesKey);
   }
 
   saveHearing(newRequest: HearingModel): Observable<HearingDetailsResponse> {

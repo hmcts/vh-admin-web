@@ -105,7 +105,7 @@ export class SummaryComponent implements OnInit {
     if (indexOfParticipant > -1) {
       this.hearing.participants.splice(indexOfParticipant, 1);
       this.hearingService.updateHearingRequest(this.hearing);
-      this.hearingService.onBookingChange(true);
+      this.hearingService.setBookingHasChanged(true);
       this.bookingService.removeParticipantEmail();
       this.isLastParticipanRemoved();
     }
