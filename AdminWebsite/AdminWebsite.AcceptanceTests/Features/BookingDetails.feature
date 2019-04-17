@@ -84,4 +84,4 @@ Scenario: Case Admin adds existing person to a booked hearing
 	Given Case Admin tries to amend booking
 	When user adds existing participant to hearing  
 	Then inputted values should be displayed as expected on summary page
-	And amended values should be saved
+	And values should be displayed as expected on edit view
