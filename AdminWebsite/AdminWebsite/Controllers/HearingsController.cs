@@ -316,7 +316,7 @@ namespace AdminWebsite.Controllers
                 Organisation_name = participant.OrganisationName,
                 Postcode = participant.Postcode,
                 Street = participant.Street,
-                Telephone_number = participant.TelephoneNumber
+                Telephone_number = participant.TelephoneNumber,
             };
             return updateParticipantRequest;
         }
@@ -335,7 +335,12 @@ namespace AdminWebsite.Controllers
                 Representee = participant.Representee,
                 Solicitors_reference = participant.SolicitorsReference,
                 Telephone_number = participant.TelephoneNumber,
-                Title = participant.Title
+                Title = participant.Title,
+                House_number = participant.HouseNumber,
+                Street = participant.Street,
+                City = participant.City,
+                County = participant.County,
+                Postcode = participant.Postcode
             };
             return newParticipant;
         }

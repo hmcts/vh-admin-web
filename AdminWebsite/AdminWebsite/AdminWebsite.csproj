@@ -45,6 +45,8 @@
     <Compile Remove="ClientApp\e2e\features\**" />
     <Content Remove="$(SpaRoot)**" />
     <Content Remove="ClientApp\e2e\features\**" />
+    <Content Include="ClientApp\src\app\common\formatters\format-short-duration.spec.ts" />
+    <Content Include="ClientApp\src\app\common\formatters\format-short-duration.ts" />
     <EmbeddedResource Remove="ClientApp\e2e\features\**" />
     <None Remove="$(SpaRoot)**" />
     <None Remove="ClientApp\e2e\features\**" />
