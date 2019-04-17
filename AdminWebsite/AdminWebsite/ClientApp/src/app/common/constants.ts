@@ -26,5 +26,4 @@ export const Constants = {
     email: 'admin@videohearings.hmcts.net'
   },
   IndividualRoles: ['Claimant LIP', 'Defendant LIP', 'Applicant LIP', 'Respondent LIP'],
-  bookingEditKey: 'bookingEditKey',
 };

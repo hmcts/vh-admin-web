@@ -39,14 +39,14 @@ export class VideoHearingsService {
   }
 
   hasUnsavedChanges(): boolean {
-    const keyRequest = sessionStorage.getItem(this.newRequestKey);
+    const request = sessionStorage.getItem(this.newRequestKey);
     let existingHearing = false;
-    if (keyRequest) {
-      const model: HearingModel = JSON.parse(keyRequest);
+    if (request) {
+      const model: HearingModel = JSON.parse(request);
       existingHearing = model.hearing_id && model.hearing_id.length > 0;
     }
     const keyChanges = sessionStorage.getItem(this.bookingHasChangesKey);
-    return (keyRequest !== null && !existingHearing) || keyChanges === 'true';
+    return (request !== null && !existingHearing) || keyChanges === 'true';
   }
 
   setBookingHasChanged(isChanged: boolean) {
