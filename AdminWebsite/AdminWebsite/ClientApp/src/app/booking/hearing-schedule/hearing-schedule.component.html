@@ -1,10 +1,10 @@
-<app-breadcrumb [canNavigate]="schedulingForm.valid && hasSaved"></app-breadcrumb>
+<app-breadcrumb [canNavigate]="form.valid && hasSaved"></app-breadcrumb>
 
 <h1 class="govuk-heading-l">Book a video hearing</h1>
 
 <h2 class="govuk-heading-m">Time and location</h2>
 
-<form [formGroup]="schedulingForm" class="govuk-form-group" (ngSubmit)="saveScheduleAndLocation()">
+<form [formGroup]="form" class="govuk-form-group" (ngSubmit)="saveScheduleAndLocation()">
   <div [ngClass]="hearingDateInvalid ? 'govuk-form-group--error' : 'govuk-form-group'">
     <label class="govuk-label govuk-!-width-one-quarter" for="hearingDate">
       Date of hearing

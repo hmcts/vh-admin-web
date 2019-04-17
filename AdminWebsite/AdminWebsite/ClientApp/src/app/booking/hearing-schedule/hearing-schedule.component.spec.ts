@@ -39,12 +39,12 @@ let durationMinuteControl: AbstractControl;
 let courtControl: AbstractControl;
 
 function initFormControls(component: HearingScheduleComponent) {
-  dateControl = component.schedulingForm.controls['hearingDate'];
-  startTimeHourControl = component.schedulingForm.controls['hearingStartTimeHour'];
-  startTimeMinuteControl = component.schedulingForm.controls['hearingStartTimeMinute'];
-  durationHourControl = component.schedulingForm.controls['hearingDurationHour'];
-  durationMinuteControl = component.schedulingForm.controls['hearingDurationMinute'];
-  courtControl = component.schedulingForm.controls['courtAddress'];
+  dateControl = component.form.controls['hearingDate'];
+  startTimeHourControl = component.form.controls['hearingStartTimeHour'];
+  startTimeMinuteControl = component.form.controls['hearingStartTimeMinute'];
+  durationHourControl = component.form.controls['hearingDurationHour'];
+  durationMinuteControl = component.form.controls['hearingDurationMinute'];
+  courtControl = component.form.controls['courtAddress'];
 }
 
 describe('HearingScheduleComponent first visit', () => {
@@ -64,7 +64,7 @@ describe('HearingScheduleComponent first visit', () => {
     referenceDataServiceServiceSpy.getCourts.and.returnValue(of(MockValues.Courts));
     videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',
       ['getHearingMediums', 'getHearingTypes', 'getCurrentRequest',
-        'updateHearingRequest', 'cancelRequest']);
+        'updateHearingRequest', 'cancelRequest', 'setBookingHasChanged']);
 
     videoHearingsServiceSpy.getCurrentRequest.and.returnValue(newHearing);
 
@@ -102,7 +102,7 @@ describe('HearingScheduleComponent first visit', () => {
   });
 
   it('should fail validation when form empty', () => {
-    expect(component.schedulingForm.invalid).toBeTruthy();
+    expect(component.form.invalid).toBeTruthy();
   });
 
   it('should fail submission when form is invalid', () => {
@@ -165,7 +165,7 @@ describe('HearingScheduleComponent first visit', () => {
   });
 
   it('should update hearing request when form is valid', () => {
-    expect(component.schedulingForm.valid).toBeFalsy();
+    expect(component.form.valid).toBeFalsy();
 
     dateControl.setValue('9999-12-30');
     startTimeHourControl.setValue(10);
@@ -174,7 +174,7 @@ describe('HearingScheduleComponent first visit', () => {
     durationMinuteControl.setValue(30);
     courtControl.setValue(1);
 
-    expect(component.schedulingForm.valid).toBeTruthy();
+    expect(component.form.valid).toBeTruthy();
 
     component.saveScheduleAndLocation();
 
@@ -201,7 +201,7 @@ describe('HearingScheduleComponent returning to page', () => {
     referenceDataServiceServiceSpy.getCourts.and.returnValue(of(MockValues.Courts));
     videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',
       ['getHearingMediums', 'getHearingTypes', 'getCurrentRequest',
-        'updateHearingRequest', 'cancelRequest']);
+        'updateHearingRequest', 'cancelRequest', 'setBookingHasChanged']);
 
     videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
 
@@ -256,14 +256,14 @@ describe('HearingScheduleComponent returning to page', () => {
   });
   it('should show discard pop up confirmation', () => {
     component.editMode = true;
-    component.schedulingForm.markAsDirty();
+    component.form.markAsDirty();
     fixture.detectChanges();
     component.confirmCancelBooking();
     expect(component.attemptingDiscardChanges).toBeTruthy();
   });
   it('should navigate to summary page if no changes', () => {
     component.editMode = true;
-    component.schedulingForm.markAsPristine();
+    component.form.markAsPristine();
     fixture.detectChanges();
     component.confirmCancelBooking();
     expect(routerSpy.navigate).toHaveBeenCalled();

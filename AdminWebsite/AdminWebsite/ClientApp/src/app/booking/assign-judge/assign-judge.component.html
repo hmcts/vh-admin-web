@@ -3,7 +3,7 @@
 
 <h2 class="govuk-heading-m">Assign a Judge</h2>
 
-<div *ngIf="failedSubmission && assignJudgeForm.invalid" class="govuk-error-summary govuk-!-width-one-half"
+<div *ngIf="failedSubmission && form.invalid" class="govuk-error-summary govuk-!-width-one-half"
   aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
   <h2 class="govuk-error-summary__title" id="error-summary-title">
     Please complete the missing information
@@ -19,7 +19,7 @@
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-one-half">
-    <form [formGroup]="assignJudgeForm" class="govuk-form-group" (ngSubmit)="saveJudge()">
+    <form [formGroup]="form" class="govuk-form-group" (ngSubmit)="saveJudge()">
 
       <div [ngClass]="(judgeNameInvalid || !isJudgeSelected) ? 'govuk-form-group--error' : 'govuk-form-group'">
         <label class="govuk-label govuk-!-width-one-half" for="judgeName">

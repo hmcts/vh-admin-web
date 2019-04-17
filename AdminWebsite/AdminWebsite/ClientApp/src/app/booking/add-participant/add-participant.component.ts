@@ -3,7 +3,6 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { Constants } from '../../common/constants';
-import { CanDeactiveComponent } from '../../common/guards/changes.guard';
 import { IDropDownModel } from '../../common/model/drop-down.model';
 import { HearingModel } from '../../common/model/hearing.model';
 import { ParticipantModel } from '../../common/model/participant.model';
@@ -25,7 +24,7 @@ import { PartyModel } from '../../common/model/party.model';
   styleUrls: ['./add-participant.component.css'],
 })
 export class AddParticipantComponent extends BookingBaseComponent implements OnInit,
-  AfterViewInit, AfterContentInit, OnDestroy, CanDeactiveComponent {
+  AfterViewInit, AfterContentInit, OnDestroy {
   canNavigate = true;
   constants = Constants;
 
@@ -37,7 +36,6 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   hearingRoleList: string[];
   caseAndHearingRoles: PartyModel[] = [];
   selectedParticipantEmail: string = null;
-  participantForm: FormGroup;
   private role: FormControl;
   private party: FormControl;
   private title: FormControl;
@@ -85,19 +83,20 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
   constructor(
     private searchService: SearchService,
-    private videoHearingService: VideoHearingsService,
+    protected videoHearingService: VideoHearingsService,
     private participantService: ParticipantService,
     protected router: Router,
     protected bookingService: BookingService) {
 
-    super(bookingService, router);
+    super(bookingService, router, videoHearingService);
     this.titleList = searchService.TitleList;
   }
 
   ngOnInit() {
-    super.ngOnInit();
+
     this.checkForExistingRequest();
     this.initializeForm();
+    super.ngOnInit();
 
     if (this.participantsListComponent) {
       const self = this;
@@ -185,7 +184,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     this.city = new FormControl('');
     this.county = new FormControl('');
     this.postcode = new FormControl('');
-    this.participantForm = new FormGroup({
+    this.form = new FormGroup({
       role: this.role,
       party: this.party,
       title: this.title,
@@ -201,7 +200,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
       postcode: this.postcode,
     });
     const self = this;
-    this.participantForm.valueChanges.subscribe(
+    this.form.valueChanges.subscribe(
       result => {
         setTimeout(() => {
           if (self.showDetails && (self.role.value === self.constants.PleaseSelect &&
@@ -215,7 +214,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
           } else if (!self.showDetails && (self.role.value === self.constants.PleaseSelect
             && self.party.value === self.constants.PleaseSelect)) {
             self.displayNext();
-          } else if (self.showDetails && self.participantForm.valid && (self.searchEmail && self.searchEmail.validateEmail())) {
+          } else if (self.showDetails && self.form.valid && (self.searchEmail && self.searchEmail.validateEmail())) {
             if (self.localEditMode) {
               self.displayUpdate();
             } else {
@@ -283,7 +282,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     if (this.constants.IndividualRoles.indexOf(this.participantDetails.hearing_role_name) > -1) {
       this.showAddress = true;
     }
-    this.participantForm.setValue({
+    this.form.setValue({
       party: this.participantDetails.case_role_name,
       role: this.participantDetails.hearing_role_name,
       title: this.participantDetails.title,
@@ -300,7 +299,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     });
 
     setTimeout(() => {
-      this.participantForm.get('role').setValue(this.participantDetails.hearing_role_name);
+      this.form.get('role').setValue(this.participantDetails.hearing_role_name);
     }, 500);
 
   }
@@ -325,7 +324,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   }
 
   emailChanged() {
-    if (this.participantForm.valid && this.showDetails && this.searchEmail.validateEmail()) {
+    if (this.form.valid && this.showDetails && this.searchEmail.validateEmail()) {
       if (this.editMode) {
         this.displayNext();
       } else {
@@ -448,17 +447,17 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   }
 
   showErrorSummary() {
-    return !this.participantForm.valid || !this.isRoleSelected;
+    return !this.form.valid || !this.isRoleSelected;
   }
 
   saveParticipant() {
     this.actionsBeforeSave();
     const validEmail = this.showDetails && (this.searchEmail ? this.searchEmail.validateEmail() : true);
-    if (this.participantForm.valid && validEmail && this.isRoleSelected && this.isPartySelected && this.isTitleSelected) {
+    if (this.form.valid && validEmail && this.isRoleSelected && this.isPartySelected && this.isTitleSelected) {
       this.isShowErrorSummary = false;
-      this.participantForm.markAsUntouched();
-      this.participantForm.markAsPristine();
-      this.participantForm.updateValueAndValidity();
+      this.form.markAsUntouched();
+      this.form.markAsPristine();
+      this.form.updateValueAndValidity();
       const newParticipant = new ParticipantModel();
       this.mapParticipant(newParticipant);
       if (!this.participantService.checkDuplication(newParticipant.email, this.hearing.participants)) {
@@ -466,7 +465,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         this.videoHearingService.updateHearingRequest(this.hearing);
         this.clearForm();
         this.displayNext();
-        this.participantForm.markAsPristine();
+        this.form.markAsPristine();
         this.showDetails = false;
       } else {
         this.showConfirmationPopup = true;
@@ -492,7 +491,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     } else {
       const validEmail = this.showDetails && this.searchEmail ? this.searchEmail.validateEmail() : true;
       this.actionsBeforeSave();
-      if (this.participantForm.valid && validEmail && this.isRoleSelected && this.isTitleSelected) {
+      if (this.form.valid && validEmail && this.isRoleSelected && this.isTitleSelected) {
         this.isShowErrorSummary = false;
         this.hearing.participants.forEach(newParticipant => {
           if (newParticipant.email === this.selectedParticipantEmail) {
@@ -501,7 +500,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         });
         this.clearForm();
         this.participantDetails = null;
-        this.participantForm.markAsPristine();
+        this.form.markAsPristine();
       } else {
         this.isShowErrorSummary = true;
       }
@@ -534,6 +533,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     }
     this.participantService.removeParticipant(this.hearing, this.selectedParticipantEmail);
     this.videoHearingService.updateHearingRequest(this.hearing);
+    this.videoHearingService.setBookingHasChanged(true);
   }
 
   mapParticipant(newParticipant: ParticipantModel) {
@@ -557,7 +557,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
   addParticipantCancel() {
     if (this.editMode) {
-      if (this.participantForm.dirty || this.participantForm.touched) {
+      if (this.form.dirty || this.form.touched) {
         this.attemptingDiscardChanges = true;
       } else {
         this.navigateToSummary();
@@ -574,7 +574,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
   handleCancelBooking() {
     this.showCancelPopup = false;
-    this.participantForm.reset();
+    this.form.reset();
     if (this.editMode) {
       this.navigateToSummary();
     } else {
@@ -585,7 +585,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
   cancelChanges() {
     this.attemptingDiscardChanges = false;
-    this.participantForm.reset();
+    this.form.reset();
     this.navigateToSummary();
   }
 
@@ -604,7 +604,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
   clearForm() {
     this.enableFields();
-    this.participantForm.setValue(
+    this.form.setValue(
       {
         role: this.constants.PleaseSelect,
         party: this.constants.PleaseSelect,
@@ -620,9 +620,9 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         county: '',
         postcode: '',
       });
-    this.participantForm.markAsUntouched();
-    this.participantForm.markAsPristine();
-    this.participantForm.updateValueAndValidity();
+    this.form.markAsUntouched();
+    this.form.markAsPristine();
+    this.form.updateValueAndValidity();
     if (this.showDetails && this.searchEmail) {
       this.searchEmail.clearEmail();
     }
@@ -665,10 +665,10 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   }
 
   hasChanges(): Observable<boolean> | boolean {
-    if (this.participantForm.dirty) {
+    if (this.form.dirty) {
       this.showCancelPopup = true;
     }
-    return this.participantForm.dirty;
+    return this.form.dirty;
   }
 
   goToDiv(fragment: string): void {
@@ -677,18 +677,18 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
 
   disableLastFirstNames() {
-    this.participantForm.get('lastName').disable();
-    this.participantForm.get('firstName').disable();
+    this.form.get('lastName').disable();
+    this.form.get('firstName').disable();
   }
   disableCaseAndHearingRoles() {
-    this.participantForm.get('party').disable();
-    this.participantForm.get('role').disable();
+    this.form.get('party').disable();
+    this.form.get('role').disable();
   }
   enableFields() {
-    this.participantForm.get('lastName').enable();
-    this.participantForm.get('firstName').enable();
-    this.participantForm.get('party').enable();
-    this.participantForm.get('role').enable();
+    this.form.get('lastName').enable();
+    this.form.get('firstName').enable();
+    this.form.get('party').enable();
+    this.form.get('role').enable();
   }
 
   ngOnDestroy() {
