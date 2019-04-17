@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 
 import { Constants } from '../../common/constants';
 import { CanDeactiveComponent } from '../../common/guards/changes.guard';
-import { HearingVenueResponse, HearingTypeResponse } from '../../services/clients/api-client';
+import { HearingTypeResponse } from '../../services/clients/api-client';
 import { HearingModel } from '../../common/model/hearing.model';
 import { ParticipantsListComponent } from '../participants-list/participants-list.component';
 import { ReferenceDataService } from '../../services/reference-data.service';

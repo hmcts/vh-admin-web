@@ -19,7 +19,6 @@ import { WaitPopupComponent } from '../../popups/wait-popup/wait-popup.component
 import { SaveFailedPopupComponent } from 'src/app/popups/save-failed-popup/save-failed-popup.component';
 import { HearingDetailsResponse } from '../../services/clients/api-client';
 import { LongDatetimePipe } from '../../../app/shared/directives/date-time.pipe';
-import { concat } from 'rxjs/operators';
 
 function initExistingHearingRequest(): HearingModel {
 
