@@ -134,6 +134,8 @@ describe('CreateHearingComponent with multiple case types', () => {
     expect(component.hearingForm.valid).toBeTruthy();
     component.saveHearingDetails();
     expect(component.hearing.hearing_type_id).toBe(2);
+    const hearingTypeName = MockValues.HearingTypesList.find(c => c.id === component.hearing.hearing_type_id).name;
+    expect(component.hearing.hearing_type_name).toBe(hearingTypeName);
     expect(component.hearing.cases.length).toBe(1);
   });
 });

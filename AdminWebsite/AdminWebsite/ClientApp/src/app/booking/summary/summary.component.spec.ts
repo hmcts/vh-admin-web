@@ -19,6 +19,7 @@ import { WaitPopupComponent } from '../../popups/wait-popup/wait-popup.component
 import { SaveFailedPopupComponent } from 'src/app/popups/save-failed-popup/save-failed-popup.component';
 import { HearingDetailsResponse } from '../../services/clients/api-client';
 import { LongDatetimePipe } from '../../../app/shared/directives/date-time.pipe';
+import { concat } from 'rxjs/operators';
 
 function initExistingHearingRequest(): HearingModel {
 
@@ -85,10 +86,10 @@ describe('SummaryComponent with valid request', () => {
   let component: SummaryComponent;
   let fixture: ComponentFixture<SummaryComponent>;
 
-  const existingRequest = initExistingHearingRequest();
+  let existingRequest: any;
 
   beforeEach(async(() => {
-    initExistingHearingRequest();
+    existingRequest = initExistingHearingRequest();
 
     videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
     videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
@@ -175,6 +176,13 @@ describe('SummaryComponent with valid request', () => {
     expect(component.showWaitSaving).toBeFalsy();
     expect(routerSpy.navigate).toHaveBeenCalled();
     expect(videoHearingsServiceSpy.saveHearing).toHaveBeenCalled();
+  });
+  it('should display valid court address when room number is empty', () => {
+    component.hearing.court_room = '';
+    component.ngOnInit();
+    fixture.detectChanges();
+    const courtString = MockValues.Courts.find(c => c.id === existingRequest.hearing_venue_id);
+    expect(component.courtRoomAddress).toEqual(`${courtString.name}`);
   });
 });
 
