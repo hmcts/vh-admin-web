@@ -1,5 +1,6 @@
 ﻿using AdminWebsite.AcceptanceTests.Helpers;
 using OpenQA.Selenium;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -41,6 +42,18 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public void City(string city) => ClearFieldInputValues(By.Id("city"), city);
         public void County(string county) => ClearFieldInputValues(By.Id("county"), county);
         public void Postcode(string postcode) => ClearFieldInputValues(By.Id("postcode"), postcode);
-        public string RoleValue() => ExecuteScript("return document.getElementById('role').value", By.Id("role"));                
+        public string RoleValue() => ExecuteScript("return document.getElementById('role').value", By.Id("role"));
+        public void ExistingParticipant(string contactEmail)
+        {
+            var webElement = GetListOfElements(By.CssSelector("a.vh-a-email")).Single(u => u.Text == contactEmail);
+            if (webElement == null)
+            {
+                throw new Exception($"Failed to find an existing person in response matching contact email: {contactEmail}");
+            }
+            else
+            {
+                webElement.Click();
+            }
+        }
     }
 }

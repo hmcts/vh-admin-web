@@ -1,5 +1,4 @@
 ﻿using AdminWebsite.BookingsAPI.Client;
-using Faker;
 using FizzWare.NBuilder;
 using System.Linq;
 
@@ -7,17 +6,17 @@ namespace Testing.Common.Builders.Request
 {
     public class CreateHearingRequest
     {
-        public static BookNewHearingRequest BuildRequest(string contactEmail)
+        public static BookNewHearingRequest BuildRequest(string contactEmail, string firstname, string lastname)
         {
             var participant = Builder<ParticipantRequest>.CreateListOfSize(1).All()
                 .With(x => x.Case_role_name = "Defendant")
                 .With(x => x.Hearing_role_name = "Defendant LIP")
-                .With(x => x.Title = Name.Prefix())
-                .With(x => x.First_name = Name.First())
-                .With(x => x.Last_name = Name.Last())
+                .With(x => x.Title = "Mr")
+                .With(x => x.First_name = firstname)
+                .With(x => x.Last_name = lastname)
                 .With(x => x.Username = contactEmail)
                 .With(x => x.Contact_email = contactEmail)
-                .With(x => x.Telephone_number = Phone.Number())
+                .With(x => x.Telephone_number = "1234567890")
                 .Build().ToList();
 
             var cases = Builder<CaseRequest>.CreateListOfSize(1).All()

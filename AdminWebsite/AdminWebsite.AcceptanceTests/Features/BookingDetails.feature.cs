@@ -303,6 +303,30 @@ this.ScenarioInitialize(scenarioInfo);
 #line hidden
             this.ScenarioCleanup();
         }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Case Admin adds existing person to a booked hearing")]
+        [NUnit.Framework.CategoryAttribute("VIH-3743")]
+        [NUnit.Framework.CategoryAttribute("test123")]
+        public virtual void CaseAdminAddsExistingPersonToABookedHearing()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Case Admin adds existing person to a booked hearing", null, new string[] {
+                        "VIH-3743",
+                        "test123"});
+#line 83
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line 84
+ testRunner.Given("Case Admin tries to amend booking", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 85
+ testRunner.When("user adds existing participant to hearing", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 86
+ testRunner.Then("inputted values should be displayed as expected on summary page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 87
+ testRunner.And("amended values should be saved", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            this.ScenarioCleanup();
+        }
     }
 }
 #pragma warning restore

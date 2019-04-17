@@ -15,13 +15,12 @@ namespace AdminWebsite.AcceptanceTests.Hooks
 {
     [Binding]
     public class ApiHook
-    {
-        private static string Participant { get; set; }
+    {        
         [BeforeTestRun]
         public static async Task CreateTheNewHearingRequest()
         {
             var bearer = $"Bearer {GetClientAccessTokenForBookHearingApi()}";
-            var request = CreateHearingRequest.BuildRequest(Participant);
+            var request = CreateHearingRequest.BuildRequest(TestData.AddParticipants.Email, TestData.AddParticipants.Firstname, TestData.AddParticipants.Lastname);
             var jsonBody = ApiRequestHelper.SerialiseRequestToSnakeCaseJson(request);
             var test = new StringContent(jsonBody, Encoding.UTF8, "application/json");
             using (var client = new HttpClient())
@@ -47,8 +46,6 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             var config = configRootBuilder.Build();
             config.Bind("AzureAd", security);
             config.Bind("VhServices", service);
-            config.Bind("TestUserSecrets", testUserSecrets);
-            Participant = testUserSecrets.NonAdmin;
             var authContext = new AuthenticationContext(security.Authority);
             var credential = new ClientCredential(security.ClientId, security.ClientSecret);
             return authContext.AcquireTokenAsync(service.BookingsApiResourceId, credential).Result.AccessToken;

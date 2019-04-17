@@ -20,6 +20,8 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="2.2.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
+    <PackageReference Include="NUnit" Version="3.11.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.13.0" />
     <PackageReference Include="Polly" Version="7.0.2" />
     <PackageReference Include="Protractor.Net.Standard" Version="0.12.0" />
     <PackageReference Include="Selenium.Support" Version="3.141.0" />
@@ -31,7 +33,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AdminWebsite.BookingsAPI.Client\AdminWebsite.BookingsAPI.Client.csproj" />
-    <ProjectReference Include="..\AdminWebsite.IntegrationTests\AdminWebsite.IntegrationTests.csproj" />
     <ProjectReference Include="..\Testing.Common\Testing.Common.csproj" />
   </ItemGroup>
 

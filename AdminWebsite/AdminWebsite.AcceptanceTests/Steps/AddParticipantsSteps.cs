@@ -1,6 +1,7 @@
 ﻿using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.AcceptanceTests.Pages;
 using FluentAssertions;
+using System.Linq;
 using TechTalk.SpecFlow;
 
 namespace AdminWebsite.AcceptanceTests.Steps
@@ -29,10 +30,14 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _addParticipant.PageUrl(PageUri.AddParticipantsPage);
         }
         [When(@"input email address")]
-        public void InputEmailAddress(string email = "dummyemail@email.com")
+        public void InputEmailAddress(string email)
         {
-            _addParticipant.ParticipantEmail(email.Substring(0,3));
-            _addParticipant.ExistingParticipant(email);
+            if (email == null)
+            {
+                email = Faker.Internet.Email();
+                _addParticipant.AddItems<string>("ParticipantEmail", email);
+            }
+            _addParticipant.ParticipantEmail(email);
         }
         [When(@"select a role")]
         public void SelectRole()
@@ -46,13 +51,18 @@ namespace AdminWebsite.AcceptanceTests.Steps
         }
         [When(@"input firstname")]
         public void InputFirstname(string firstname = "Dummy")
-        {
+        {            
             _addParticipant.FirstName(firstname);
         }
         [When(@"input lastname")]
-        public void InputLastname(string lastname = "Email")
+        public void InputLastname(string lastname)
         {
-            _addParticipant.LastName(lastname);
+            if (lastname == null)
+            {
+                lastname = Faker.Name.Last();
+                _addParticipant.AddItems<string>("Lastname", lastname);
+            }
+             _addParticipant.LastName(lastname);
         }
         [When(@"input telephone")]
         public void InputTelephone(string phone = "0123456789")
@@ -147,16 +157,18 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [Then(@"Participant detail is displayed on the list")]
         public void ThenParticipantDetailIsDisplayedOnTheList()
         {
-            string expectedResult = $"{_addParticipant.GetItems("Title")} {TestData.AddParticipants.Firstname} {TestData.AddParticipants.Lastname} {_addParticipant.GetItems("Party")}";
+            string expectedResult = $"{_addParticipant.GetItems("Title")} {TestData.AddParticipants.Firstname} {_addParticipant.GetItems("Lastname")} {_addParticipant.GetItems("Party")}";
             var actualResult = _addParticipant.GetParticipantDetails().Replace("\r\n", " ");
             actualResult.Should().Be(expectedResult.Trim());
         }
         public void AddParticpantDetails()
-        {            
-            InputEmailAddress(TestData.AddParticipants.Email);
+        {
+            var email = Faker.Internet.Email();
+            _addParticipant.AddItems<string>("ParticipantEmail", email);
+            InputEmailAddress(email);
             _addParticipant.AddItems<string>("Title", _addParticipant.GetSelectedTitle());
             InputFirstname(TestData.AddParticipants.Firstname);
-            InputLastname(TestData.AddParticipants.Lastname);
+            InputLastname(_addParticipant.GetItems("Lastname"));
             InputTelephone(TestData.AddParticipants.Telephone);
             InputDisplayname(TestData.AddParticipants.DisplayName);            
         }
@@ -190,6 +202,21 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _addParticipant.City(city);
             _addParticipant.County(county);
             _addParticipant.Postcode(postcode);
+        }
+        [When(@"user adds existing participant to hearing")]
+        public void WhenUserAddsExistingParticipantToHearing()
+        {
+            _addParticipant.AddItems<string>("RelevantPage", PageUri.AddParticipantsPage);
+            _addParticipant.ClickBreadcrumb("Add participants");
+            _addParticipant.Party(TestData.AddParticipants.Defendant);
+            _addParticipant.Role(TestData.AddParticipants.DefendantRole.First());
+            var email = TestData.AddParticipants.Email;
+            _addParticipant.ParticipantEmail(email.Substring(0, 3));
+            _addParticipant.ExistingParticipant(email);
+            _addParticipant.DisplayName(TestData.AddParticipants.DisplayName);
+            ClickAddParticipantsButton();
+            _addParticipant.NextButton();
+            _addParticipant.ClickBreadcrumb("Summary");
         }
     }
 }
