@@ -189,7 +189,7 @@ let participantServiceSpy: jasmine.SpyObj<ParticipantService>;
 let bookingServiceSpy: jasmine.SpyObj<BookingService>;
 
 videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',
-  ['getParticipantRoles', 'getCurrentRequest', 'updateHearingRequest', 'cancelRequest']);
+  ['getParticipantRoles', 'getCurrentRequest', 'updateHearingRequest', 'cancelRequest', 'setBookingHasChanged']);
 participantServiceSpy = jasmine.createSpyObj<ParticipantService>('ParticipantService',
   ['checkDuplication', 'getAllParticipants', 'removeParticipant', 'mapParticipantsRoles']);
 bookingServiceSpy = jasmine.createSpyObj<BookingService>('BookingService',
@@ -237,21 +237,21 @@ describe('AddParticipantComponent', () => {
     fixture.detectChanges();
 
 
-    role = component.participantForm.controls['role'];
-    party = component.participantForm.controls['party'];
-    title = component.participantForm.controls['title'];
-    firstName = component.participantForm.controls['firstName'];
-    lastName = component.participantForm.controls['lastName'];
-    phone = component.participantForm.controls['phone'];
-    displayName = component.participantForm.controls['displayName'];
-    companyName = component.participantForm.controls['companyName'];
-    houseNumber = component.participantForm.controls['houseNumber'];
-    street = component.participantForm.controls['street'];
-    city = component.participantForm.controls['city'];
-    county = component.participantForm.controls['county'];
-    postcode = component.participantForm.controls['postcode'];
-    solicitorReference = component.participantForm.controls['solicitorReference'];
-    representing = component.participantForm.controls['representing'];
+    role = component.form.controls['role'];
+    party = component.form.controls['party'];
+    title = component.form.controls['title'];
+    firstName = component.form.controls['firstName'];
+    lastName = component.form.controls['lastName'];
+    phone = component.form.controls['phone'];
+    displayName = component.form.controls['displayName'];
+    companyName = component.form.controls['companyName'];
+    houseNumber = component.form.controls['houseNumber'];
+    street = component.form.controls['street'];
+    city = component.form.controls['city'];
+    county = component.form.controls['county'];
+    postcode = component.form.controls['postcode'];
+    solicitorReference = component.form.controls['solicitorReference'];
+    representing = component.form.controls['representing'];
   }));
 
   it('should create', () => {
@@ -290,7 +290,7 @@ describe('AddParticipantComponent', () => {
     expect(component.showAddress).toBeFalsy();
   });
   it('should set validation to false when form is empty', () => {
-    expect(component.participantForm.valid).toBeFalsy();
+    expect(component.form.valid).toBeFalsy();
   });
   it('should set validation summary be visible if any field is invalid', () => {
     component.showDetails = true;
@@ -364,9 +364,9 @@ describe('AddParticipantComponent', () => {
   it('should populate the form fields if the participant is found in data store', () => {
     participant.id = '2345';
     component.isPartySelected = true;
-    component.participantForm.get('party').setValue('Claimant');
+    component.form.get('party').setValue('Claimant');
     component.isRoleSelected = true;
-    component.participantForm.get('role').setValue('Solicitor');
+    component.form.get('role').setValue('Solicitor');
 
     fixture.detectChanges();
 
@@ -608,19 +608,19 @@ describe('AddParticipantComponent edit mode', () => {
     fixture.detectChanges();
 
 
-    role = component.participantForm.controls['role'];
-    party = component.participantForm.controls['party'];
-    title = component.participantForm.controls['title'];
-    firstName = component.participantForm.controls['firstName'];
-    lastName = component.participantForm.controls['lastName'];
-    phone = component.participantForm.controls['phone'];
-    displayName = component.participantForm.controls['displayName'];
-    companyName = component.participantForm.controls['companyName'];
-    houseNumber = component.participantForm.controls['houseNumber'];
-    street = component.participantForm.controls['street'];
-    city = component.participantForm.controls['city'];
-    county = component.participantForm.controls['county'];
-    postcode = component.participantForm.controls['postcode'];
+    role = component.form.controls['role'];
+    party = component.form.controls['party'];
+    title = component.form.controls['title'];
+    firstName = component.form.controls['firstName'];
+    lastName = component.form.controls['lastName'];
+    phone = component.form.controls['phone'];
+    displayName = component.form.controls['displayName'];
+    companyName = component.form.controls['companyName'];
+    houseNumber = component.form.controls['houseNumber'];
+    street = component.form.controls['street'];
+    city = component.form.controls['city'];
+    county = component.form.controls['county'];
+    postcode = component.form.controls['postcode'];
   }));
   it('should set title list and get current data from session', () => {
     component.ngOnInit();
@@ -701,7 +701,7 @@ describe('AddParticipantComponent edit mode', () => {
   it('should update participant details and reset edit mode to false if method next is called', () => {
     fixture.detectChanges();
     component.searchEmail.email = participant.email;
-    component.participantForm.setValue({
+    component.form.setValue({
       party: 'Claimant',
       role: 'Solicitor',
       title: 'Ms',
@@ -730,7 +730,7 @@ describe('AddParticipantComponent edit mode', () => {
   it('should detect that the form is invalid while performing update', () => {
     fixture.detectChanges();
     component.searchEmail.email = participant.email;
-    component.participantForm.setValue({
+    component.form.setValue({
       party: 'Please Select',
       role: '',
       title: 'Please Select',
@@ -764,8 +764,8 @@ describe('AddParticipantComponent edit mode', () => {
   });
 
   it('should navigate to summary page if the method cancel called in the edit mode and no changes made', () => {
-    component.participantForm.markAsUntouched();
-    component.participantForm.markAsPristine();
+    component.form.markAsUntouched();
+    component.form.markAsPristine();
 
     fixture.detectChanges();
     component.addParticipantCancel();
@@ -773,7 +773,7 @@ describe('AddParticipantComponent edit mode', () => {
     expect(routerSpy.navigate).toHaveBeenCalled();
   });
   it('press button cancel in edit mode if there are some changes show pop up', () => {
-    component.participantForm.markAsDirty();
+    component.form.markAsDirty();
     component.editMode = false;
     fixture.detectChanges();
     component.addParticipantCancel();
@@ -786,7 +786,7 @@ describe('AddParticipantComponent edit mode', () => {
   });
   it('should show discard pop up confirmation', () => {
     component.editMode = true;
-    component.participantForm.markAsDirty();
+    component.form.markAsDirty();
     fixture.detectChanges();
     component.addParticipantCancel();
     expect(component.attemptingDiscardChanges).toBeTruthy();
@@ -857,14 +857,14 @@ describe('AddParticipantComponent edit mode no participants added', () => {
     fixture.detectChanges();
 
 
-    role = component.participantForm.controls['role'];
-    party = component.participantForm.controls['party'];
-    title = component.participantForm.controls['title'];
-    firstName = component.participantForm.controls['firstName'];
-    lastName = component.participantForm.controls['lastName'];
-    phone = component.participantForm.controls['phone'];
-    displayName = component.participantForm.controls['displayName'];
-    companyName = component.participantForm.controls['companyName'];
+    role = component.form.controls['role'];
+    party = component.form.controls['party'];
+    title = component.form.controls['title'];
+    firstName = component.form.controls['firstName'];
+    lastName = component.form.controls['lastName'];
+    phone = component.form.controls['phone'];
+    displayName = component.form.controls['displayName'];
+    companyName = component.form.controls['companyName'];
   }));
   it('should show button add participant', () => {
     component.ngOnInit();
@@ -921,20 +921,20 @@ describe('AddParticipantComponent set representer', () => {
     component.ngOnInit();
     fixture.detectChanges();
 
-    role = component.participantForm.controls['role'];
-    party = component.participantForm.controls['party'];
-    title = component.participantForm.controls['title'];
-    firstName = component.participantForm.controls['firstName'];
-    lastName = component.participantForm.controls['lastName'];
-    phone = component.participantForm.controls['phone'];
-    displayName = component.participantForm.controls['displayName'];
-    companyName = component.participantForm.controls['companyName'];
-    solicitorReference = component.participantForm.controls['solicitorReference'];
-    representing = component.participantForm.controls['representing'];
+    role = component.form.controls['role'];
+    party = component.form.controls['party'];
+    title = component.form.controls['title'];
+    firstName = component.form.controls['firstName'];
+    lastName = component.form.controls['lastName'];
+    phone = component.form.controls['phone'];
+    displayName = component.form.controls['displayName'];
+    companyName = component.form.controls['companyName'];
+    solicitorReference = component.form.controls['solicitorReference'];
+    representing = component.form.controls['representing'];
   }));
   it('should show solicitor reference, company and name of representing person', () => {
     fixture.detectChanges();
-    component.participantForm.get('role').setValue('Solicitor');
+    component.form.get('role').setValue('Solicitor');
 
     component.roleSelected();
     fixture.detectChanges();
@@ -943,23 +943,23 @@ describe('AddParticipantComponent set representer', () => {
   });
   it('should clean the fields solicitor reference, company and name of representing person', () => {
     fixture.detectChanges();
-    component.participantForm.get('role').setValue('Solicitor');
+    component.form.get('role').setValue('Solicitor');
     component.roleSelected();
     fixture.detectChanges();
-    component.participantForm.get('companyName').setValue('Organization');
-    component.participantForm.get('solicitorReference').setValue('Ref1');
-    component.participantForm.get('representing').setValue('Ms X');
+    component.form.get('companyName').setValue('Organization');
+    component.form.get('solicitorReference').setValue('Ref1');
+    component.form.get('representing').setValue('Ms X');
 
     fixture.detectChanges();
 
-    component.participantForm.get('role').setValue('Claimant');
+    component.form.get('role').setValue('Claimant');
     component.roleSelected();
     fixture.detectChanges();
 
     expect(component.isSolicitor).toBeFalsy();
-    expect(component.participantForm.get('companyName').value).toEqual('');
-    expect(component.participantForm.get('solicitorReference').value).toEqual('');
-    expect(component.participantForm.get('representing').value).toEqual('');
+    expect(component.form.get('companyName').value).toEqual('');
+    expect(component.form.get('solicitorReference').value).toEqual('');
+    expect(component.form.get('representing').value).toEqual('');
   });
   it('should recognize a participantList', async(() => {
     fixture.detectChanges();
@@ -1038,34 +1038,34 @@ describe('AddParticipantComponent set representer', () => {
     expect(component.participantDetails.hearing_role_name).toEqual('Please Select');
   });
   it('should set houseNumber field to invalid', () => {
-    component.participantForm.get('houseNumber').setErrors({ 'incorrect': true });
-    component.participantForm.get('houseNumber').markAsTouched();
+    component.form.get('houseNumber').setErrors({ 'incorrect': true });
+    component.form.get('houseNumber').markAsTouched();
     component.isShowErrorSummary = true;
 
     expect(component.houseNumberInvalid).toBeTruthy();
   });
   it('should set street field to invalid', () => {
-    component.participantForm.get('street').setErrors({ 'incorrect': true });
-    component.participantForm.get('street').markAsTouched();
+    component.form.get('street').setErrors({ 'incorrect': true });
+    component.form.get('street').markAsTouched();
     component.isShowErrorSummary = true;
     expect(component.streetInvalid).toBeTruthy();
   });
   it('should set city field to invalid', () => {
-    component.participantForm.get('city').setErrors({ 'incorrect': true });
-    component.participantForm.get('city').markAsTouched();
+    component.form.get('city').setErrors({ 'incorrect': true });
+    component.form.get('city').markAsTouched();
     component.isShowErrorSummary = true;
     expect(component.cityInvalid).toBeTruthy();
   });
   it('should set county field to invalid', () => {
-    component.participantForm.get('county').setErrors({ 'incorrect': true });
-    component.participantForm.get('county').markAsTouched();
+    component.form.get('county').setErrors({ 'incorrect': true });
+    component.form.get('county').markAsTouched();
 
     component.isShowErrorSummary = true;
     expect(component.countyInvalid).toBeTruthy();
   });
   it('should set postcode field to invalid', () => {
-    component.participantForm.get('postcode').setErrors({ 'incorrect': true });
-    component.participantForm.get('postcode').markAsTouched();
+    component.form.get('postcode').setErrors({ 'incorrect': true });
+    component.form.get('postcode').markAsTouched();
     component.isShowErrorSummary = true;
     expect(component.postcodeInvalid).toBeTruthy();
   });
@@ -1074,8 +1074,8 @@ describe('AddParticipantComponent set representer', () => {
     component.participantDetails = participant;
     component.getParticipant(participant);
 
-    expect(component.participantForm.get('firstName').disabled).toBeTruthy();
-    expect(component.participantForm.get('lastName').disabled).toBeTruthy();
+    expect(component.form.get('firstName').disabled).toBeTruthy();
+    expect(component.form.get('lastName').disabled).toBeTruthy();
   });
 });
 

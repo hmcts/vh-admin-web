@@ -40,7 +40,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
                     break;
                 case PageUri.HearingSchedulePage:
                     _summary.HearingDate().ToLower().Should().Be(_summary.GetItems("HearingDate"));
-                    _summary.CourtAddress().Should().Be($"{TestData.HearingSchedule.CourtAddress.ToList().Last()} {TestData.HearingSchedule.Room}");
+                    _summary.CourtAddress().Should().Be($"{TestData.HearingSchedule.CourtAddress.ToList().Last()}, {TestData.HearingSchedule.Room}");
                     _summary.HearingDuration().Should().Be("listed for 30 minutes");
                     break;
                 case PageUri.OtherInformationPage:
