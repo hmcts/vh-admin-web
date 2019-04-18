@@ -2,6 +2,7 @@
 using TechTalk.SpecFlow;
 using NUnit.Framework;
 using System;
+using AdminWebsite.AcceptanceTests.Contexts;
 
 namespace AdminWebsite.AcceptanceTests.Hooks
 {
@@ -12,15 +13,17 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         private readonly TestContext _context;
         private readonly SauceLabsSettings _saucelabsSettings;
         private readonly ScenarioContext _scenarioContext;
+        private readonly TestsContext _testContext;
         
 
         public Browser(BrowserContext browserContext, TestContext context, SauceLabsSettings saucelabsSettings,
-            ScenarioContext injectedContext)
+            ScenarioContext injectedContext, TestsContext testContext)
         {
             _browserContext = browserContext;
             _context = context;
             _saucelabsSettings = saucelabsSettings;
             _scenarioContext = injectedContext;
+            _testContext = testContext;
         }
 
 
@@ -33,7 +36,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         [BeforeScenario]
         public void BeforeScenario()
         {
-            var appTestContext = TestConfigSettings.GetSettings(); ;
+            var appTestContext = _testContext.TestUserSecrets;
             var environment = new SeleniumEnvironment(_saucelabsSettings, _scenarioContext.ScenarioInfo, GetTargetBrowser());
             _browserContext.BrowserSetup(appTestContext.WebsiteUrl, environment);
             _browserContext.LaunchSite();           

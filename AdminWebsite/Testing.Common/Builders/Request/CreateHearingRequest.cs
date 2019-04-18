@@ -9,12 +9,12 @@ namespace Testing.Common.Builders.Request
         public static BookNewHearingRequest BuildRequest(string contactEmail, string firstname, string lastname)
         {
             var participant = Builder<ParticipantRequest>.CreateListOfSize(1).All()
-                .With(x => x.Case_role_name = "Defendant")
-                .With(x => x.Hearing_role_name = "Defendant LIP")
+                .With(x => x.Case_role_name = "Claimant")
+                .With(x => x.Hearing_role_name = "Claimant LIP")
                 .With(x => x.Title = "Mr")
                 .With(x => x.First_name = firstname)
                 .With(x => x.Last_name = lastname)
-                .With(x => x.Username = contactEmail)
+                .With(x => x.Username = $"{firstname}.{lastname}@hearings.reform.hmcts.net")
                 .With(x => x.Contact_email = contactEmail)
                 .With(x => x.Telephone_number = "1234567890")
                 .Build().ToList();

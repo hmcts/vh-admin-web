@@ -26,8 +26,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             _summary.PageUrl(PageUri.SummaryPage);
         }
-        
-        [Then(@"inputted values should be displayed as expected on summary page")]
+        [Then(@"values should be displayed as expected on summary page")]
         public void ThenInputtedValuesShouldBeDisplayedAsExpectedOnSummaryPage()
         {
             SummaryPage();            

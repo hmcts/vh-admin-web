@@ -132,7 +132,7 @@ this.ScenarioInitialize(scenarioInfo);
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 22
- testRunner.Given("Case Admin tries to amend booking", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.Given("Case Admin amends booking", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 23
  testRunner.When("user navigates to add judge page to make changes", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 24
@@ -140,7 +140,7 @@ this.ScenarioInitialize(scenarioInfo);
 #line 25
  testRunner.And("user proceeds to summary page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 26
- testRunner.Then("inputted values should be displayed as expected on summary page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("values should be displayed as expected on summary page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 27
  testRunner.And("amended values should be saved", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
@@ -158,7 +158,7 @@ this.ScenarioInitialize(scenarioInfo);
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 31
- testRunner.Given("Case Admin tries to amend booking", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.Given("Case Admin amends booking", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 32
  testRunner.When("user removes participant on summary page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 33
@@ -180,7 +180,7 @@ this.ScenarioInitialize(scenarioInfo);
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 37
- testRunner.Given("Case Admin tries to amend booking", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.Given("Case Admin amends booking", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 38
  testRunner.When("user navigates to add participants page to make changes", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 39
@@ -188,7 +188,7 @@ this.ScenarioInitialize(scenarioInfo);
 #line 40
  testRunner.And("user proceeds to summary page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 41
- testRunner.Then("inputted values should be displayed as expected on summary page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("values should be displayed as expected on summary page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 42
  testRunner.And("amended values should be saved", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
@@ -206,7 +206,7 @@ this.ScenarioInitialize(scenarioInfo);
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 46
- testRunner.Given("Case Admin tries to amend booking", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.Given("Case Admin amends booking", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 47
  testRunner.When("user navigates to hearing details page to make changes", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 48
@@ -214,7 +214,7 @@ this.ScenarioInitialize(scenarioInfo);
 #line 49
  testRunner.And("user proceeds to summary page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 50
- testRunner.Then("inputted values should be displayed as expected on summary page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("values should be displayed as expected on summary page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 51
  testRunner.And("amended values should be saved", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
@@ -232,7 +232,7 @@ this.ScenarioInitialize(scenarioInfo);
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 55
- testRunner.Given("Case Admin tries to amend booking", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.Given("Case Admin amends booking", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 56
  testRunner.When("user navigates to more information page to make changes", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 57
@@ -240,7 +240,7 @@ this.ScenarioInitialize(scenarioInfo);
 #line 58
  testRunner.And("user proceeds to summary page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 59
- testRunner.Then("inputted values should be displayed as expected on summary page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("values should be displayed as expected on summary page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 60
  testRunner.And("amended values should be saved", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
@@ -260,7 +260,7 @@ this.ScenarioInitialize(scenarioInfo);
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 64
- testRunner.Given("Case Admin tries to amend booking", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.Given("Case Admin amends booking", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 65
  testRunner.When("user navigates to hearing schedule page to make changes", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 66
@@ -268,7 +268,7 @@ this.ScenarioInitialize(scenarioInfo);
 #line 67
  testRunner.And("user proceeds to summary page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 68
- testRunner.Then("inputted values should be displayed as expected on summary page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("values should be displayed as expected on summary page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 69
  testRunner.And("amended values should be saved", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
@@ -305,25 +305,23 @@ this.ScenarioInitialize(scenarioInfo);
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Case Admin adds existing person to a booked hearing")]
-        [NUnit.Framework.CategoryAttribute("VIH-3743")]
-        [NUnit.Framework.CategoryAttribute("test123")]
-        public virtual void CaseAdminAddsExistingPersonToABookedHearing()
+        [NUnit.Framework.DescriptionAttribute("Case Admin amends existing hearing with an existing participant")]
+        [NUnit.Framework.CategoryAttribute("VIH-3996")]
+        public virtual void CaseAdminAmendsExistingHearingWithAnExistingParticipant()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Case Admin adds existing person to a booked hearing", null, new string[] {
-                        "VIH-3743",
-                        "test123"});
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Case Admin amends existing hearing with an existing participant", null, new string[] {
+                        "VIH-3996"});
 #line 83
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
 #line 84
- testRunner.Given("Case Admin tries to amend booking", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.Given("Case Admin amends booking", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 85
  testRunner.When("user adds existing participant to hearing", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 86
- testRunner.Then("inputted values should be displayed as expected on summary page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("values should be displayed as expected on summary page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 87
- testRunner.And("amended values should be saved", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("values should be displayed as expected on edit view", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             this.ScenarioCleanup();
         }

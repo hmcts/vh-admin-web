@@ -10,10 +10,12 @@ namespace AdminWebsite.AcceptanceTests.Steps
     public sealed class AddParticipantsSteps
     {
         private readonly AddParticipants _addParticipant;
+        private readonly ScenarioContext _scenarioContext;
 
-        public AddParticipantsSteps(AddParticipants addParticipant)
+        public AddParticipantsSteps(AddParticipants addParticipant, ScenarioContext scenarioContext)
         {
             _addParticipant = addParticipant;
+            _scenarioContext = scenarioContext;
         }
         [When(@"professional participant is added to hearing")]
         public void ProfessionalParticipantIsAddedToHearing()
@@ -163,25 +165,22 @@ namespace AdminWebsite.AcceptanceTests.Steps
         }
         public void AddParticpantDetails()
         {
-            var email = Faker.Internet.Email();
-            _addParticipant.AddItems<string>("ParticipantEmail", email);
-            InputEmailAddress(email);
-            _addParticipant.AddItems<string>("Title", _addParticipant.GetSelectedTitle());
-            InputFirstname(TestData.AddParticipants.Firstname);
-            InputLastname(_addParticipant.GetItems("Lastname"));
-            InputTelephone(TestData.AddParticipants.Telephone);
-            InputDisplayname(TestData.AddParticipants.DisplayName);            
+            var tag = _scenarioContext.ScenarioInfo.Tags;
+            if (tag.Contains("ExistingPerson"))
+                ExistingPerson();
+            else
+                NonExistingPerson();
         }
         [When(@"participant details is updated")]
         public void WhenParticipantDetailsIsUpdated()
         {
             if (!_addParticipant.RoleValue().Contains("Solicitor"))
                 Address();
-            _addParticipant.PartyField().Should().Be("true");
-            _addParticipant.RoleField().Should().Be("true");
-            _addParticipant.Email().Should().Be("true");
-            _addParticipant.Firstname().Should().Be("true");
-            _addParticipant.Lastname().Should().Be("true");            
+            _addParticipant.PartyField().Should().BeFalse();
+            _addParticipant.RoleField().Should().BeFalse();
+            _addParticipant.Email().Should().BeFalse();
+            _addParticipant.Firstname().Should().BeFalse();
+            _addParticipant.Lastname().Should().BeFalse();            
         }
         private void Address()
         {
@@ -210,13 +209,31 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _addParticipant.ClickBreadcrumb("Add participants");
             _addParticipant.Party(TestData.AddParticipants.Defendant);
             _addParticipant.Role(TestData.AddParticipants.DefendantRole.First());
+            ExistingPerson();
+            ClickAddParticipantsButton();
+            _addParticipant.NextButton();
+            _addParticipant.ClickBreadcrumb("Summary");
+        }
+        private void ExistingPerson()
+        {
             var email = TestData.AddParticipants.Email;
             _addParticipant.ParticipantEmail(email.Substring(0, 3));
             _addParticipant.ExistingParticipant(email);
             _addParticipant.DisplayName(TestData.AddParticipants.DisplayName);
-            ClickAddParticipantsButton();
-            _addParticipant.NextButton();
-            _addParticipant.ClickBreadcrumb("Summary");
+            _addParticipant.Email().Should().BeFalse();
+            _addParticipant.Firstname().Should().BeFalse();
+            _addParticipant.Lastname().Should().BeFalse();
+        }
+        private void NonExistingPerson()
+        {
+            var email = Faker.Internet.Email();
+            _addParticipant.AddItems<string>("ParticipantEmail", email);
+            InputEmailAddress(email);
+            _addParticipant.AddItems<string>("Title", _addParticipant.GetSelectedTitle());
+            InputFirstname(TestData.AddParticipants.Firstname);
+            InputLastname(_addParticipant.GetItems("Lastname"));
+            InputTelephone(TestData.AddParticipants.Telephone);
+            InputDisplayname(TestData.AddParticipants.DisplayName);
         }
     }
 }
