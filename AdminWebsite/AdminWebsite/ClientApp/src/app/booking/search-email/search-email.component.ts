@@ -70,6 +70,7 @@ export class SearchEmailComponent implements OnInit {
     selectedResult.last_name = result.last_name;
     selectedResult.title = result.title;
     selectedResult.phone = result.phone;
+    selectedResult.company = result.company;
     selectedResult.housenumber = result.housenumber;
     selectedResult.street = result.street;
     selectedResult.city = result.city;
@@ -134,6 +135,7 @@ export class SearchEmailComponent implements OnInit {
       participant.phone = p.telephone_number;
       participant.representee = '';
       participant.solicitorsReference = '';
+      participant.company = p.organisation;
       participant.housenumber = p.house_number;
       participant.street = p.street;
       participant.city = p.city;
