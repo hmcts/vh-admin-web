@@ -1557,7 +1557,7 @@ export class ParticipantRequest implements IParticipantRequest {
     hearing_role_name?: string | undefined;
     solicitors_reference?: string | undefined;
     representee?: string | undefined;
-    organisation?: string | undefined;
+    organisation_name?: string | undefined;
     house_number?: string | undefined;
     street?: string | undefined;
     postcode?: string | undefined;
@@ -1587,7 +1587,7 @@ export class ParticipantRequest implements IParticipantRequest {
             this.hearing_role_name = data["hearing_role_name"];
             this.solicitors_reference = data["solicitors_reference"];
             this.representee = data["representee"];
-            this.organisation = data["organisation"];
+            this.organisation_name = data["organisation_name"];
             this.house_number = data["house_number"];
             this.street = data["street"];
             this.postcode = data["postcode"];
@@ -1617,7 +1617,7 @@ export class ParticipantRequest implements IParticipantRequest {
         data["hearing_role_name"] = this.hearing_role_name;
         data["solicitors_reference"] = this.solicitors_reference;
         data["representee"] = this.representee;
-        data["organisation"] = this.organisation;
+        data["organisation_name"] = this.organisation_name;
         data["house_number"] = this.house_number;
         data["street"] = this.street;
         data["postcode"] = this.postcode;
@@ -1640,7 +1640,7 @@ export interface IParticipantRequest {
     hearing_role_name?: string | undefined;
     solicitors_reference?: string | undefined;
     representee?: string | undefined;
-    organisation?: string | undefined;
+    organisation_name?: string | undefined;
     house_number?: string | undefined;
     street?: string | undefined;
     postcode?: string | undefined;
@@ -2437,6 +2437,12 @@ export class PersonResponse implements IPersonResponse {
     contact_email?: string | undefined;
     telephone_number?: string | undefined;
     username?: string | undefined;
+    organisation?: string | undefined;
+    house_number?: string | undefined;
+    street?: string | undefined;
+    postcode?: string | undefined;
+    city?: string | undefined;
+    county?: string | undefined;
 
     constructor(data?: IPersonResponse) {
         if (data) {
@@ -2457,6 +2463,12 @@ export class PersonResponse implements IPersonResponse {
             this.contact_email = data["contact_email"];
             this.telephone_number = data["telephone_number"];
             this.username = data["username"];
+            this.organisation = data["organisation"];
+            this.house_number = data["house_number"];
+            this.street = data["street"];
+            this.postcode = data["postcode"];
+            this.city = data["city"];
+            this.county = data["county"];
         }
     }
 
@@ -2477,6 +2489,12 @@ export class PersonResponse implements IPersonResponse {
         data["contact_email"] = this.contact_email;
         data["telephone_number"] = this.telephone_number;
         data["username"] = this.username;
+        data["organisation"] = this.organisation;
+        data["house_number"] = this.house_number;
+        data["street"] = this.street;
+        data["postcode"] = this.postcode;
+        data["city"] = this.city;
+        data["county"] = this.county;
         return data; 
     }
 }
@@ -2490,6 +2508,12 @@ export interface IPersonResponse {
     contact_email?: string | undefined;
     telephone_number?: string | undefined;
     username?: string | undefined;
+    organisation?: string | undefined;
+    house_number?: string | undefined;
+    street?: string | undefined;
+    postcode?: string | undefined;
+    city?: string | undefined;
+    county?: string | undefined;
 }
 
 /** Defines a type of hearing based on case */

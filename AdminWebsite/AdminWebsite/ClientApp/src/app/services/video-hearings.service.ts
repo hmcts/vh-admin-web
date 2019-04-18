@@ -223,7 +223,7 @@ export class VideoHearingsService {
         participant.hearing_role_name = p.hearing_role_name;
         participant.representee = p.representee;
         participant.solicitors_reference = p.solicitorsReference;
-        participant.organisation = p.company;
+        participant.organisation_name = p.company;
         participant.house_number = p.housenumber;
         participant.street = p.street;
         participant.city = p.city;

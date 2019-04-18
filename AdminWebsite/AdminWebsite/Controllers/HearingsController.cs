@@ -318,7 +318,7 @@ namespace AdminWebsite.Controllers
                 Street = participant.Street,
                 Telephone_number = participant.TelephoneNumber,
                 Representee = participant.Representee,
-                Solicitor_reference = participant.SolicitorsReference
+                Solicitors_reference = participant.SolicitorsReference
             };
             return updateParticipantRequest;
         }
@@ -338,7 +338,7 @@ namespace AdminWebsite.Controllers
                 Solicitors_reference = participant.SolicitorsReference,
                 Telephone_number = participant.TelephoneNumber,
                 Title = participant.Title,
-                Organisation = participant.OrganisationName,
+                Organisation_name = participant.OrganisationName,
                 House_number = participant.HouseNumber,
                 Street = participant.Street,
                 City = participant.City,
