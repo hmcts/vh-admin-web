@@ -881,7 +881,9 @@ describe('AddParticipantComponent edit mode no participants added', () => {
 
   it('should recognize a participantList', async(() => {
     fixture.detectChanges();
+    console.log(fixture.componentInstance);
     const partList: ParticipantsListComponent = fixture.componentInstance.participantsListComponent;
+    console.log(partList);
     expect(partList).toBeDefined();
   }));
   it('should show all fields if the participant selected for edit', fakeAsync(() => {

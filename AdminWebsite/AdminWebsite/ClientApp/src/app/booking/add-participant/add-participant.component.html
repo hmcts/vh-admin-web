@@ -10,8 +10,8 @@
 
     <h2 class="govuk-heading-m">Add a participant</h2>
 
-    <div *ngIf="isShowErrorSummary || displayErrorNoParticipants" class="govuk-error-summary" aria-labelledby="error-summary-title"
-         role="alert" data-module="error-summary">
+    <div *ngIf="isShowErrorSummary || displayErrorNoParticipants" class="govuk-error-summary"
+      aria-labelledby="error-summary-title" role="alert" data-module="error-summary">
       <h2 class="govuk-error-summary__title" id="error-summary-title">
         Please complete the missing information
       </h2>
@@ -36,7 +36,8 @@
             <a (click)="goToDiv('phone-error')" href="javascript: void(0)">{{constants.Error.PhoneErrorMsg}}</a>
           </li>
           <li *ngIf="displayName.invalid">
-            <a (click)="goToDiv('display-name-error')" href="javascript: void(0)">{{constants.Error.DisplaNameErrorMsg}}</a>
+            <a (click)="goToDiv('display-name-error')"
+              href="javascript: void(0)">{{constants.Error.DisplaNameErrorMsg}}</a>
           </li>
           <li *ngIf="displayErrorNoParticipants">
             <a href="javascript: void(0)">{{constants.Error.NoParticipantsErrorMsg}}</a>
@@ -56,8 +57,7 @@
         <label class="govuk-label" for="party">
           Party
         </label>
-        <select id="party" formControlName="party" (change)="partySelected()"
-                class="govuk-select vh-input-w390">
+        <select id="party" formControlName="party" (change)="partySelected()" class="govuk-select vh-input-w390">
           <option *ngFor="let prt of roleList" [ngValue]="prt">
             {{prt}}
           </option>
@@ -74,8 +74,7 @@
         <label class="govuk-label" for="role">
           Role
         </label>
-        <select id="role" formControlName="role" (change)="roleSelected()"
-                class="govuk-select vh-input-w390">
+        <select id="role" formControlName="role" (change)="roleSelected()" class="govuk-select vh-input-w390">
           <option *ngFor="let ro of hearingRoleList" [ngValue]="ro">
             {{ro}}
           </option>
@@ -83,7 +82,7 @@
       </div>
       <div *ngIf="showDetails">
         <app-search-email (findParticipant)="getParticipant($event)" (participantsNotFound)="notFoundParticipant()"
-                          (emailChanged)="emailChanged()">
+          (emailChanged)="emailChanged()">
         </app-search-email>
 
         <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error': titleInvalid || !isTitleSelected}">
@@ -107,8 +106,7 @@
           <label class="govuk-label" for="firstName">
             First name
           </label>
-          <input id="firstName" formControlName="firstName" class="govuk-input govuk-input--width-20"
-                 type="text" />
+          <input id="firstName" formControlName="firstName" class="govuk-input govuk-input--width-20" type="text" />
 
         </div>
 
@@ -121,11 +119,8 @@
           <label class="govuk-label" for="lastName">
             Last name
           </label>
-          <input id="lastName" formControlName="lastName" class="govuk-input govuk-input--width-20"
-                 type="text" />
+          <input id="lastName" formControlName="lastName" class="govuk-input govuk-input--width-20" type="text" />
         </div>
-
-
 
         <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':phoneInvalid}">
           <legend id="phone-error" *ngIf="phoneInvalid">
@@ -162,7 +157,8 @@
             <label class="govuk-label" for="houseNumber">
               Building and street
             </label>
-            <input id="houseNumber" formControlName="houseNumber" class="govuk-input govuk-input--width-20" type="text" />
+            <input id="houseNumber" formControlName="houseNumber" class="govuk-input govuk-input--width-20"
+              type="text" />
 
           </div>
           <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':streetInvalid}">
@@ -189,7 +185,6 @@
 
           </div>
           <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':countyInvalid}">
-
             <legend id="display-name-error" *ngIf="countyInvalid">
               <span class="govuk-error-message">
                 {{constants.Error.CountyErrorMsg}}
@@ -199,8 +194,8 @@
               County
             </label>
             <input id="county" formControlName="county" class="govuk-input govuk-input--width-20" type="text" />
-
           </div>
+
           <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':postcodeInvalid}">
 
             <legend id="post-code-error" *ngIf="postcodeInvalid">
@@ -216,27 +211,46 @@
           </div>
         </div>
 
-        <div *ngIf="isSolicitor">
-          <div class="govuk-form-group">
+        <div *ngIf="isSolicitor || showAddress">
+          <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':companyInvalid}">
+            <legend id="display-name-error" *ngIf="companyInvalid">
+              <span class="govuk-error-message">
+                {{constants.Error.CompanyErrorMsg}}
+              </span>
+            </legend>
             <label class="govuk-label" for="companyName">
-              Organisation <span class="govuk-hint vh-inline">(optional)</span>
+              Organisation <span class="govuk-hint vh-inline" *ngIf="showAddress">(optional)</span>
             </label>
-            <input id="companyName" formControlName="companyName" class="govuk-input govuk-input--width-20" type="text" />
+            <input id="companyName" formControlName="companyName" class="govuk-input govuk-input--width-20"
+              type="text" />
           </div>
+        </div>
 
-          <div class="govuk-form-group">
+        <div *ngIf="isSolicitor">
+          <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':solicitorReferenceInvalid}">
+            <legend id="display-name-error" *ngIf="solicitorReferenceInvalid">
+              <span class="govuk-error-message">
+                {{constants.Error.SolicitorReferenceMsg}}
+              </span>
+            </legend>
             <label class="govuk-label" for="solicitorReference">
               Solicitor reference
             </label>
-            <input id="solicitorReference" formControlName="solicitorReference" class="govuk-input govuk-input--width-20" type="text" />
+            <input id="solicitorReference" formControlName="solicitorReference"
+              class="govuk-input govuk-input--width-20" type="text" />
           </div>
-
           <h2 class="govuk-heading-m">Client details</h2>
-          <div class="govuk-form-group">
+          <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':representeeInvalid}">
+            <legend id="display-name-error" *ngIf="representeeInvalid">
+              <span class="govuk-error-message">
+                {{constants.Error.RepresenteeErrorMsg}}
+              </span>
+            </legend>
             <label class="govuk-label" for="representing">
               Representing
             </label>
-            <input id="representing" formControlName="representing" class="govuk-input govuk-input--width-20" type="text" />
+            <input id="representing" formControlName="representing" class="govuk-input govuk-input--width-20"
+              type="text" />
           </div>
         </div>
 
@@ -246,7 +260,8 @@
         <div class="govuk-grid-column-one-half" *ngIf="displayAddButton">
           <img src="assets/images/AddIcon.png" alt="Add icon with sign plus" />
           <span class="vh-vert-top-m15">
-            <a href="javascript:void(0)" (click)="saveParticipant()" type="submit" id="addParticipantBtn" class="govuk-link govuk-body">
+            <a href="javascript:void(0)" (click)="saveParticipant()" type="submit" id="addParticipantBtn"
+              class="govuk-link govuk-body">
               Add participant
             </a>
           </span>
@@ -255,7 +270,8 @@
         <div class="govuk-grid-column-one-half" *ngIf="displayUpdateButton">
           <img src="assets/images/AddIcon.png" alt="Add icon with sign plus" />
           <span class="vh-vert-top-m15">
-            <a href="javascript:void(0)" (click)="updateParticipantAction()" type="submit" id="updateParticipantBtn" class="govuk-link govuk-body">
+            <a href="javascript:void(0)" (click)="updateParticipantAction()" type="submit" id="updateParticipantBtn"
+              class="govuk-link govuk-body">
               Update participant
             </a>
           </span>
@@ -272,9 +288,10 @@
       </div>
     </form>
     <div class="vh-top">
-      <input *ngIf="displayNextButton" id="nextButton" type="button" class="govuk-button vh-mr25" role="button" value="{{buttonAction}}"
-             (click)="next()" />
-      <input id="cancelBtn" type="button" class="govuk-button hmcts-button--secondary" role="button" value="Cancel" (click)="addParticipantCancel()" />
+      <input *ngIf="displayNextButton" id="nextButton" type="button" class="govuk-button vh-mr25" role="button"
+        value="{{buttonAction}}" (click)="next()" />
+      <input id="cancelBtn" type="button" class="govuk-button hmcts-button--secondary" role="button" value="Cancel"
+        (click)="addParticipantCancel()" />
     </div>
   </div>
 
@@ -284,7 +301,8 @@
 </div>
 
 <div *ngIf="showCancelPopup">
-  <app-cancel-popup (continueBooking)="handleContinueBooking()" (cancelBooking)="handleCancelBooking()"></app-cancel-popup>
+  <app-cancel-popup (continueBooking)="handleContinueBooking()" (cancelBooking)="handleCancelBooking()">
+  </app-cancel-popup>
 </div>
 
 <div *ngIf="showConfirmationPopup">
@@ -292,11 +310,11 @@
 </div>
 
 <div *ngIf="showConfirmationRemoveParticipant">
-  <app-remove-popup (continueRemove)="handleContinueRemove()" (cancelRemove)="handleCancelRemove()" [fullName]="removerFullName" [isLastParticipant]="isAnyParticipants"></app-remove-popup>
+  <app-remove-popup (continueRemove)="handleContinueRemove()" (cancelRemove)="handleCancelRemove()"
+    [fullName]="removerFullName" [isLastParticipant]="isAnyParticipants"></app-remove-popup>
 </div>
 
 <div *ngIf="attemptingDiscardChanges">
   <app-discard-confirm-popup (continueEditing)="handleContinueBooking()" (cancelChanges)="cancelChanges()">
   </app-discard-confirm-popup>
 </div>
-
