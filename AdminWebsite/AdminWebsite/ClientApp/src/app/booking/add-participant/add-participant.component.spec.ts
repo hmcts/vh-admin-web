@@ -340,7 +340,7 @@ describe('AddParticipantComponent', () => {
   it('should validate postcode', () => {
     isAddressControlValid(postcode, 'TE1 5NR');
   });
- it('should reset undefined value for party and role to Please Select', () => {
+  it('should reset undefined value for party and role to Please Select', () => {
     participant.case_role_name = undefined;
     participant.hearing_role_name = undefined;
     component.getParticipant(participant);
@@ -963,7 +963,9 @@ describe('AddParticipantComponent set representer', () => {
   });
   it('should recognize a participantList', async(() => {
     fixture.detectChanges();
+    console.log(fixture.componentInstance);
     const partList: ParticipantsListComponent = fixture.componentInstance.participantsListComponent;
+    console.log(partList);
     expect(partList).toBeDefined();
   }));
   it('should show all fields if the participant selected for edit', fakeAsync(() => {

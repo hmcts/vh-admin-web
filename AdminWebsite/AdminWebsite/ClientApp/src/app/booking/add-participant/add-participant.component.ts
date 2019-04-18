@@ -412,7 +412,15 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   get postcodeInvalid() {
     return this.postcode.invalid && (this.postcode.dirty || this.postcode.touched || this.isShowErrorSummary);
   }
-
+  get solicitorReferenceInvalid() {
+    return this.solicitorReference.invalid && (this.solicitorReference.dirty || this.solicitorReference.touched || this.isShowErrorSummary);
+  }
+  get representeeInvalid() {
+    return this.representing.invalid && (this.representing.dirty || this.representing.touched || this.isShowErrorSummary);
+  }
+  get companyInvalid() {
+    return this.companyName.invalid && (this.companyName.dirty || this.companyName.touched || this.isShowErrorSummary);
+  }
   partySelected() {
     this.isPartySelected = this.party.value !== this.constants.PleaseSelect;
     this.setupHearingRoles(this.party.value);
@@ -434,8 +442,21 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
       this.city.updateValueAndValidity();
       this.county.updateValueAndValidity();
       this.postcode.updateValueAndValidity();
+
+      this.companyName.setValue('');
+      this.solicitorReference.setValue('');
+      this.representing.setValue('');
+
     } else {
       this.showAddress = false;
+
+      this.companyName.setValidators([Validators.required]);
+      this.solicitorReference.setValidators([Validators.required]);
+      this.representing.setValidators([Validators.required]);
+
+      this.companyName.updateValueAndValidity();
+      this.solicitorReference.updateValueAndValidity();
+      this.representing.updateValueAndValidity();
 
       this.houseNumber.setValue('');
       this.street.setValue('');
@@ -549,6 +570,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     }
     this.participantService.removeParticipant(this.hearing, this.selectedParticipantEmail);
     this.videoHearingService.updateHearingRequest(this.hearing);
+//     this.videoHearingService.setBookingHasChanged(true);
   }
 
   mapParticipant(newParticipant: ParticipantModel) {
