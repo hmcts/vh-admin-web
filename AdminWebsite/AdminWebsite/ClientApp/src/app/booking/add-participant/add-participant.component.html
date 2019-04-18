@@ -122,6 +122,16 @@
           <input id="lastName" formControlName="lastName" class="govuk-input govuk-input--width-20" type="text" />
         </div>
 
+        <div *ngIf="showAddress">
+          <div class="govuk-form-group">
+            <label class="govuk-label" for="companyName">
+              Organisation <span class="govuk-hint vh-inline" *ngIf="showAddress">(optional)</span>
+            </label>
+            <input id="companyName" formControlName="companyName" class="govuk-input govuk-input--width-20"
+              type="text" />
+          </div>
+        </div>
+
         <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':phoneInvalid}">
           <legend id="phone-error" *ngIf="phoneInvalid">
             <span class="govuk-error-message">
@@ -211,7 +221,12 @@
           </div>
         </div>
 
-        <div *ngIf="isSolicitor || showAddress">
+<!--         <div *ngIf="isSolicitor || showAddress">
+
+        </div> -->
+
+        <div *ngIf="isSolicitor">
+
           <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':companyInvalid}">
             <legend id="display-name-error" *ngIf="companyInvalid">
               <span class="govuk-error-message">
@@ -224,9 +239,7 @@
             <input id="companyName" formControlName="companyName" class="govuk-input govuk-input--width-20"
               type="text" />
           </div>
-        </div>
 
-        <div *ngIf="isSolicitor">
           <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':solicitorReferenceInvalid}">
             <legend id="display-name-error" *ngIf="solicitorReferenceInvalid">
               <span class="govuk-error-message">

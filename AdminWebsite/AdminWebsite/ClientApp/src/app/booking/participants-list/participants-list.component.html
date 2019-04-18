@@ -33,8 +33,7 @@
           <div class="govuk-grid-column-two-thirds vhtable-header">
             {{pat.title}} {{pat.first_name}} {{pat.last_name}}
             <div>
-              {{pat.hearing_role_name}}
-              <span *ngIf="pat.representee">, representing</span>
+              {{pat.hearing_role_name}}<span *ngIf="pat.representee">, representing</span>
             </div>
             <div><strong>{{pat.representee}}</strong></div>
           </div>
