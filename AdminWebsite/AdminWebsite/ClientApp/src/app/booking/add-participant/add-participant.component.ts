@@ -446,6 +446,9 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
       this.solicitorReference.setValue('');
       this.representing.setValue('');
 
+      this.companyName.clearValidators();
+      this.companyName.updateValueAndValidity();
+
     } else {
       this.showAddress = false;
 
