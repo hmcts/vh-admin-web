@@ -23,7 +23,9 @@ export class DashboardComponent implements OnInit {
   async ngOnInit() {
     await this.userIdentityService.getUserInformation().toPromise()
       .then(result => {
+        console.log('case: ' + result.is_case_administrator);
         this.showCheckList = result.is_vh_officer_administrator_role;
+        console.log('officer: ' + result.is_vh_officer_administrator_role);
         this.showBooking = result.is_case_administrator || result.is_vh_officer_administrator_role;
       })
       .catch(error => {
