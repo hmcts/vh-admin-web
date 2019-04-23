@@ -3,19 +3,11 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { UserIdentityService } from '../services/user-identity.service';
 import { DashboardComponent } from './dashboard.component';
 import { UserProfileResponse } from '../services/clients/api-client';
-import { of, throwError } from 'rxjs';
+import { of } from 'rxjs';
 import { ErrorService } from 'src/app/services/error.service';
-import { PageUrls } from '../shared/page-url.constants';
 import { Router } from '@angular/router';
 
 const userProfileResponse: UserProfileResponse = new UserProfileResponse();
-class UserIdentityServiceSpy {
-  getUserInformation() {
-    userProfileResponse.is_case_administrator = true;
-    userProfileResponse.is_vh_officer_administrator_role = true;
-    return of(userProfileResponse);
-  }
-}
 
 describe('DashboardComponent', () => {
   let component: DashboardComponent;

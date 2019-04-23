@@ -1,8 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { UserIdentityService } from '../services/user-identity.service';
-import { ErrorService } from '../services/error.service';
-import { PageUrls } from '../shared/page-url.constants';
 
 @Component({
   selector: 'app-dashboard',
@@ -13,9 +10,7 @@ import { PageUrls } from '../shared/page-url.constants';
 export class DashboardComponent implements OnInit {
 
   constructor(
-    private router: Router,
-    private userIdentityService: UserIdentityService,
-    private errorService: ErrorService) { }
+    private userIdentityService: UserIdentityService) { }
 
   showCheckList = false;
   showBooking = false;
