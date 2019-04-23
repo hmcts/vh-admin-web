@@ -26,8 +26,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             _summary.PageUrl(PageUri.SummaryPage);
         }
-        
-        [Then(@"inputted values should be displayed as expected on summary page")]
+        [Then(@"values should be displayed as expected on summary page")]
         public void ThenInputtedValuesShouldBeDisplayedAsExpectedOnSummaryPage()
         {
             SummaryPage();            
@@ -50,7 +49,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
                     _summary.Judge().Should().Contain(_summary.GetItems("Judge"));
                     break;
                 case PageUri.AddParticipantsPage:
-                    string expectedResult = $"{_summary.GetItems("Title")} {TestData.AddParticipants.Firstname} {TestData.AddParticipants.Lastname}";
+                    string expectedResult = $"{_summary.GetItems("Title")} {TestData.AddParticipants.Firstname} {_summary.GetItems("Lastname")}";
                     _summary.GetParticipantDetails().Should().Contain(expectedResult.Trim());
                     break;
             }

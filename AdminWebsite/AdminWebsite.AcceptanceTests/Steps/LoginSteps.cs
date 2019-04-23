@@ -1,4 +1,5 @@
-﻿using AdminWebsite.AcceptanceTests.Helpers;
+﻿using AdminWebsite.AcceptanceTests.Contexts;
+using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.AcceptanceTests.Pages;
 using FluentAssertions;
 using TechTalk.SpecFlow;
@@ -11,12 +12,14 @@ namespace AdminWebsite.AcceptanceTests.Steps
         private readonly BrowserContext _browserContext;
         private readonly MicrosoftLoginPage _loginPage;
         private readonly ScenarioContext _scenarioContext;
+        private readonly TestsContext _testContext;
         public LoginSteps(BrowserContext browserContext, MicrosoftLoginPage loginPage,
-            ScenarioContext injectedContext)
+            ScenarioContext injectedContext, TestsContext testContext)
         {
             _browserContext = browserContext;
             _loginPage = loginPage;
             _scenarioContext = injectedContext;
+            _testContext = testContext;
         }
         public void AdminOnMicrosoftLoginPage()
         {
@@ -30,7 +33,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void UserLogsInWithValidCredentials(string user)
         {
             AdminOnMicrosoftLoginPage();
-            var appSecrets = TestConfigSettings.GetSettings();
+            var appSecrets = _testContext.TestUserSecrets;
             var password = appSecrets.UserPassword;
             switch (user)
             {
