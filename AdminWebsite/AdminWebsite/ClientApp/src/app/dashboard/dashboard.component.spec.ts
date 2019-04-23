@@ -4,19 +4,11 @@ import { UserIdentityService } from '../services/user-identity.service';
 import { DashboardComponent } from './dashboard.component';
 import { UserProfileResponse } from '../services/clients/api-client';
 import { of } from 'rxjs';
-import { ErrorService } from 'src/app/services/error.service';
-import { Router } from '@angular/router';
-
-const userProfileResponse: UserProfileResponse = new UserProfileResponse();
 
 describe('DashboardComponent', () => {
   let component: DashboardComponent;
   let fixture: ComponentFixture<DashboardComponent>;
-  const errorServiceSpy: jasmine.SpyObj<ErrorService> = jasmine.createSpyObj('ErrorService', ['handleError']);
   const userIdentitySpy = jasmine.createSpyObj<UserIdentityService>('UserIdentityService', ['getUserInformation']);
-  let routerSpy: jasmine.SpyObj<Router>;
-  routerSpy = jasmine.createSpyObj('Router', ['navigate']);
-  routerSpy.navigate.and.callFake(() => { });
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -26,8 +18,6 @@ describe('DashboardComponent', () => {
       declarations: [DashboardComponent],
       providers: [
         { provide: UserIdentityService, useValue: userIdentitySpy },
-        { provide: ErrorService, useValue: errorServiceSpy },
-        { provide: Router, useValue: routerSpy },
       ]
     })
       .compileComponents();
