@@ -17,7 +17,7 @@ export const Constants = {
     NoParticipantsErrorMsg: 'Please enter at least one participant',
     HouseNumberErrorMsg: 'Please enter a building number',
     StreetErrorMsg: 'Please enter a street name',
-    CityErrorMsg: 'Please enter a city',
+    CityErrorMsg: 'Please enter a town or city',
     CountyErrorMsg: 'Please enter a county',
     PostcodeErrorMsg: 'Please enter a postcode',
   },
@@ -25,5 +25,5 @@ export const Constants = {
     phone: '0300 303 0655',
     email: 'admin@videohearings.hmcts.net'
   },
-  IndividualRoles: ['Claimant LIP', 'Defendant LIP', 'Applicant LIP', 'Respondent LIP']
+  IndividualRoles: ['Claimant LIP', 'Defendant LIP', 'Applicant LIP', 'Respondent LIP'],
 };

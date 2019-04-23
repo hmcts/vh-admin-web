@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-
 import { Observable, of } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import { IDropDownModel } from '../common/model/drop-down.model';
 import { ParticipantModel } from '../common/model/participant.model';
+import { BHClient, PersonResponse } from '../services/clients/api-client';
 
 @Injectable({
   providedIn: 'root'
@@ -58,28 +57,19 @@ export class SearchService {
       }
     ];
 
-
-  // ToDo should be change to Hearing API
-  baseUrl = 'http://localhost:5000';
-  queryUrl = '?search=';
-
-  constructor(private http: HttpClient) { }
+  constructor(private bhClient: BHClient) { }
 
   search(terms: Observable<string>) {
-    return terms.pipe(debounceTime(400))
+    return terms.pipe(debounceTime(500))
       .pipe(distinctUntilChanged())
       .pipe(switchMap(term => this.searchEntries(term)));
   }
 
-  searchEntries(term) {
-    // TODO should call Hearing API to find participants with email that match term.
-    let allResults: ParticipantModel[] = null;
+  searchEntries(term): Observable<Array<PersonResponse>> {
+    const allResults: PersonResponse[] = [];
     if (term.length > 2) {
-      const findEmail = this.ParticipantList.find(s => s.email.includes(term));
-      allResults = term && term.length > 0 && findEmail ? this.ParticipantList : allResults;
+      return this.bhClient.getPersonBySearchTerm(term);
     }
     return of(allResults);
   }
-
-
 }

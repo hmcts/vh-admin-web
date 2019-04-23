@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 
 import { Constants } from '../../common/constants';
 import { CanDeactiveComponent } from '../../common/guards/changes.guard';
-import { HearingVenueResponse, HearingTypeResponse } from '../../services/clients/api-client';
+import { HearingTypeResponse } from '../../services/clients/api-client';
 import { HearingModel } from '../../common/model/hearing.model';
 import { ParticipantsListComponent } from '../participants-list/participants-list.component';
 import { ReferenceDataService } from '../../services/reference-data.service';
@@ -14,6 +14,7 @@ import { PageUrls } from '../../shared/page-url.constants';
 import { HearingDetailsResponse } from '../../services/clients/api-client';
 import { BookingService } from '../../services/booking.service';
 import { RemovePopupComponent } from '../../popups/remove-popup/remove-popup.component';
+import { FormatShortDuration } from '../../common/formatters/format-short-duration';
 
 @Component({
   selector: 'app-summary',
@@ -21,7 +22,7 @@ import { RemovePopupComponent } from '../../popups/remove-popup/remove-popup.com
   styleUrls: ['./summary.component.css']
 })
 
-export class SummaryComponent implements OnInit, CanDeactiveComponent {
+export class SummaryComponent implements OnInit {
 
   constants = Constants;
   hearing: HearingModel;
@@ -105,6 +106,7 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
     if (indexOfParticipant > -1) {
       this.hearing.participants.splice(indexOfParticipant, 1);
       this.hearingService.updateHearingRequest(this.hearing);
+      this.hearingService.setBookingHasChanged(true);
       this.bookingService.removeParticipantEmail();
       this.isLastParticipanRemoved();
     }
@@ -120,46 +122,16 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
   private retrieveHearingSummary() {
     this.caseNumber = this.hearing.cases.length > 0 ? this.hearing.cases[0].number : '';
     this.caseName = this.hearing.cases.length > 0 ? this.hearing.cases[0].name : '';
-    this.getCaseHearingTypeName(this.hearing.hearing_type_id);
+    this.caseHearingType = this.hearing.hearing_type_name;
     this.hearingDate = this.hearing.scheduled_date_time;
-    this.getCourtRoomAndAddress(this.hearing.hearing_venue_id);
-    this.hearingDuration = this.getHearingDuration(this.hearing.scheduled_duration);
+    this.hearingDuration = `listed for ${FormatShortDuration(this.hearing.scheduled_duration)}`;
+    this.courtRoomAddress = this.formatCourtRoom(this.hearing.court_name, this.hearing.court_room);
     this.otherInformation = this.hearing.other_information;
   }
 
-  private getCaseHearingTypeName(hearing_type_id: number): void {
-    this.hearingService.getHearingTypes()
-      .subscribe(
-        (data: HearingTypeResponse[]) => {
-          const selectedHearingType = data.filter(h => h.id === hearing_type_id);
-          this.caseHearingType = selectedHearingType && selectedHearingType.length > 0 ? selectedHearingType[0].name : '';
-          this.hearing.hearing_type_name = this.caseHearingType;
-        },
-        error => console.error(error)
-      );
-  }
-
-  private getCourtRoomAndAddress(venueId: number): void {
-    this.referenceDataService.getCourts()
-      .subscribe(
-        (data: HearingVenueResponse[]) => {
-          const selectedCourt = data.filter(c => c.id === venueId);
-          if (selectedCourt && selectedCourt.length > 0) {
-            this.courtRoomAddress = `${selectedCourt[0].name} ${this.hearing.court_room}`;
-            this.hearing.court_name = selectedCourt[0].name;
-          }
-        },
-        error => console.error(error)
-      );
-  }
-
-  private getHearingDuration(duration: number): string {
-    const hours = Math.floor(duration / 60);
-    const min = duration % 60;
-    const wordHours = hours > 1 ? 'hours' : 'hour';
-    const strHours = hours > 0 ? `${hours} ${wordHours}` : '';
-    const wordMin = min > 0 ? `${min} minutes` : '';
-    return `listed for ${strHours} ${wordMin}`.trim();
+  private formatCourtRoom(courtName, courtRoom) {
+    const courtRoomText = courtRoom ? ', ' + courtRoom : '';
+    return `${courtName}${courtRoomText}`;
   }
 
   continueBooking() {
@@ -178,10 +150,6 @@ export class SummaryComponent implements OnInit, CanDeactiveComponent {
     } else {
       this.router.navigate([PageUrls.Dashboard]);
     }
-  }
-
-  hasChanges(): Observable<boolean> | boolean {
-    return true;
   }
 
   bookHearing(): void {

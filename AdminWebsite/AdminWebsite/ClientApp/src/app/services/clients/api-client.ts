@@ -532,6 +532,77 @@ export class BHClient {
     }
 
     /**
+     * Gets person list by email search term.
+     * @param term The email address search term.
+     * @return Success
+     */
+    getPersonBySearchTerm(term: string): Observable<PersonResponse[]> {
+        let url_ = this.baseUrl + "/api/persons/search/{term}";
+        if (term === undefined || term === null)
+            throw new Error("The parameter 'term' must be defined.");
+        url_ = url_.replace("{term}", encodeURIComponent("" + term)); 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetPersonBySearchTerm(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetPersonBySearchTerm(<any>response_);
+                } catch (e) {
+                    return <Observable<PersonResponse[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<PersonResponse[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetPersonBySearchTerm(response: HttpResponseBase): Observable<PersonResponse[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(PersonResponse.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = resultData400 ? ProblemDetails.fromJS(resultData400) : new ProblemDetails();
+            return throwException("A server error occurred.", status, _responseText, _headers, result400);
+            }));
+        } else if (status === 401) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("A server error occurred.", status, _responseText, _headers);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<PersonResponse[]>(<any>null);
+    }
+
+    /**
      * Gets a list hearing types
      * @return Success
      */
@@ -2339,6 +2410,94 @@ export class UpdateBookingStatusRequest implements IUpdateBookingStatusRequest {
 export interface IUpdateBookingStatusRequest {
     updated_by?: string | undefined;
     status?: UpdateBookingStatusRequestStatus | undefined;
+}
+
+export class PersonResponse implements IPersonResponse {
+    id?: string | undefined;
+    title?: string | undefined;
+    first_name?: string | undefined;
+    middle_names?: string | undefined;
+    last_name?: string | undefined;
+    contact_email?: string | undefined;
+    telephone_number?: string | undefined;
+    username?: string | undefined;
+    organisation?: string | undefined;
+    house_number?: string | undefined;
+    street?: string | undefined;
+    postcode?: string | undefined;
+    city?: string | undefined;
+    county?: string | undefined;
+
+    constructor(data?: IPersonResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.title = data["title"];
+            this.first_name = data["first_name"];
+            this.middle_names = data["middle_names"];
+            this.last_name = data["last_name"];
+            this.contact_email = data["contact_email"];
+            this.telephone_number = data["telephone_number"];
+            this.username = data["username"];
+            this.organisation = data["organisation"];
+            this.house_number = data["house_number"];
+            this.street = data["street"];
+            this.postcode = data["postcode"];
+            this.city = data["city"];
+            this.county = data["county"];
+        }
+    }
+
+    static fromJS(data: any): PersonResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new PersonResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["title"] = this.title;
+        data["first_name"] = this.first_name;
+        data["middle_names"] = this.middle_names;
+        data["last_name"] = this.last_name;
+        data["contact_email"] = this.contact_email;
+        data["telephone_number"] = this.telephone_number;
+        data["username"] = this.username;
+        data["organisation"] = this.organisation;
+        data["house_number"] = this.house_number;
+        data["street"] = this.street;
+        data["postcode"] = this.postcode;
+        data["city"] = this.city;
+        data["county"] = this.county;
+        return data; 
+    }
+}
+
+export interface IPersonResponse {
+    id?: string | undefined;
+    title?: string | undefined;
+    first_name?: string | undefined;
+    middle_names?: string | undefined;
+    last_name?: string | undefined;
+    contact_email?: string | undefined;
+    telephone_number?: string | undefined;
+    username?: string | undefined;
+    organisation?: string | undefined;
+    house_number?: string | undefined;
+    street?: string | undefined;
+    postcode?: string | undefined;
+    city?: string | undefined;
+    county?: string | undefined;
 }
 
 /** Defines a type of hearing based on case */

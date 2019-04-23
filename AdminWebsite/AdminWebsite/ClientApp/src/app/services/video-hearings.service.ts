@@ -13,6 +13,7 @@ import {
 import { HearingModel } from '../common/model/hearing.model';
 import { CaseModel } from '../common/model/case.model';
 import { ParticipantModel } from '../common/model/participant.model';
+import { Constants } from '../common/constants';
 
 @Injectable({
   providedIn: 'root'
@@ -38,12 +39,17 @@ export class VideoHearingsService {
   }
 
   hasUnsavedChanges(): boolean {
-    const keyRequest = sessionStorage.getItem(this.newRequestKey);
+    const request = sessionStorage.getItem(this.newRequestKey);
+    let existingHearing = false;
+    if (request) {
+      const model: HearingModel = JSON.parse(request);
+      existingHearing = model.hearing_id && model.hearing_id.length > 0;
+    }
     const keyChanges = sessionStorage.getItem(this.bookingHasChangesKey);
-    return keyRequest !== null || keyChanges === 'true';
+    return (request !== null && !existingHearing) || keyChanges === 'true';
   }
 
-  onBookingChange(isChanged: boolean) {
+  setBookingHasChanged(isChanged: boolean) {
     if (isChanged) {
       sessionStorage.setItem(this.bookingHasChangesKey, 'true');
     } else {
@@ -111,7 +117,7 @@ export class VideoHearingsService {
     let list: Array<EditParticipantRequest> = [];
     if (participants && participants.length > 0) {
       list = participants.map(x => this.mappingToEditParticipantRequest(x));
-      }
+    }
     return list;
   }
 

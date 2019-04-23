@@ -33,6 +33,7 @@ import { WaitPopupComponent } from '../popups/wait-popup/wait-popup.component';
 import { SaveFailedPopupComponent } from '../popups/save-failed-popup/save-failed-popup.component';
 import { DiscardConfirmPopupComponent } from '../popups/discard-confirm-popup/discard-confirm-popup.component';
 import { MomentModule } from 'angular2-moment';
+import { LongDatetimePipe } from '../../app/shared/directives/date-time.pipe';
 
 describe('app routing', () => {
   let location: Location;
@@ -65,6 +66,7 @@ describe('app routing', () => {
         WaitPopupComponent,
         SaveFailedPopupComponent,
         DiscardConfirmPopupComponent,
+        LongDatetimePipe
       ],
       providers: [
         AuthGuard,
@@ -84,22 +86,7 @@ describe('app routing', () => {
     bookingGuard = TestBed.get(AdminGuard);
   });
 
-  describe('when create hearing form is dirty', () => {
-    it('it should not be able to navigate away from current route', fakeAsync(() => {
-      adalSvc.setAuthenticated(true);
-      changesGuard.setflag(false);
-      bookingGuard.setflag(true);
-      createHearing.ngOnInit();
-      router.navigate(['/book-hearing']);
-      tick();
-      createHearing.hearingForm.markAsDirty();
-      router.navigate(['/summary']);
-      tick();
-      expect(location.path()).toBe('/book-hearing');
-    }));
-  });
-
-  describe('when create hearing form is prestine', () => {
+  describe('when create hearing', () => {
     it('it should be able to navigate away from current route', fakeAsync(() => {
       adalSvc.setAuthenticated(true);
       changesGuard.setflag(true);
@@ -107,7 +94,7 @@ describe('app routing', () => {
       createHearing.ngOnInit();
       router.navigate(['/book-hearing']);
       tick();
-      createHearing.hearingForm.markAsPristine();
+      createHearing.form.markAsPristine();
       router.navigate(['/hearing-schedule']);
       tick();
       expect(location.path()).toBe('/hearing-schedule');
