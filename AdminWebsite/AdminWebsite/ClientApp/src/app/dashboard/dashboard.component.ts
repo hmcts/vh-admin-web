@@ -22,9 +22,7 @@ export class DashboardComponent implements OnInit {
 
   async ngOnInit() {
     const profile = await this.userIdentityService.getUserInformation().toPromise();
-    console.log('case: ' + profile.is_case_administrator);
     this.showCheckList = profile.is_vh_officer_administrator_role;
-    console.log('officer: ' + profile.is_vh_officer_administrator_role);
     this.showBooking = profile.is_case_administrator || profile.is_vh_officer_administrator_role;
   }
 }
