@@ -71,12 +71,16 @@ namespace AdminWebsite.AcceptanceTests.Features
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Case Admin saves booking and views confirmation screen")]
+        [NUnit.Framework.DescriptionAttribute("Case Admin creates hearing with an existing individual")]
         [NUnit.Framework.CategoryAttribute("VIH-2701")]
-        public virtual void CaseAdminSavesBookingAndViewsConfirmationScreen()
+        [NUnit.Framework.CategoryAttribute("ExistingPerson")]
+        [NUnit.Framework.CategoryAttribute("smoketest")]
+        public virtual void CaseAdminCreatesHearingWithAnExistingIndividual()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Case Admin saves booking and views confirmation screen", null, new string[] {
-                        "VIH-2701"});
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Case Admin creates hearing with an existing individual", null, new string[] {
+                        "VIH-2701",
+                        "ExistingPerson",
+                        "smoketest"});
 #line 7
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();

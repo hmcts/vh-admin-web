@@ -29,10 +29,11 @@ namespace Testing.Common
 
     public class HearingEndpoints
     {
-        private string ApiRoot => "api/hearings";
+        private string ApiRoot => "/hearings";
         public string BookNewHearing => ApiRoot;
         public string UpdateHearingStatus(Guid hearingId, 
             UpdateBookingStatusRequest updateBookingStatusRequest) => $"{ApiRoot}/{hearingId}";
+        public string RemoveHearing(string hearingId) => $"{ApiRoot}/{hearingId}";
     }
 
     public class ReferenceEndpoints
