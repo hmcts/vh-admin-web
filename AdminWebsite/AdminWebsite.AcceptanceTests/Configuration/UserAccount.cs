@@ -12,6 +12,5 @@ namespace AdminWebsite.AcceptanceTests.Configuration
         public string CaseAdminFinRemedyCivilMoneyClaims { get; set; }
         public string NonAdmin { get; set; }
         public string UserPassword { get; set; }
-        public string WebsiteUrl { get; set; }
     }
 }
