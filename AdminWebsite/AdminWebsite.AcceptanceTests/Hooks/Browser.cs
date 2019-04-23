@@ -33,7 +33,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             return Enum.TryParse(TestContext.Parameters["TargetBrowser"], true, out targetTargetBrowser) ? targetTargetBrowser : TargetBrowser.Chrome;
         }
 
-        [BeforeScenario]
+        [BeforeScenario (Order = 2)]
         public void BeforeScenario()
         {
             var appTestContext = _testContext.TestUserSecrets;

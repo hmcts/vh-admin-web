@@ -41,7 +41,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             testContext.TestUserSecrets = userAccountConfig;
         }
 
-        [BeforeScenario(Order = 1)]
+        [BeforeScenario(Order = 2)]
         public void CreateNewHearingRequest(TestsContext testContext)
         {
             var tag = _scenarioContext.ScenarioInfo.Tags;
