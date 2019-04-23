@@ -9,16 +9,17 @@ import { LogoutComponent } from './security/logout.component';
 import { VhOfficerAdminGuard } from './security/vh-officer-admin.guard';
 import { UnauthorisedComponent } from './error/unauthorised.component';
 import { ErrorComponent } from './error/error.component';
+import { AdminGuard } from './security/admin.guard';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-    { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
+    { path: 'dashboard', component: DashboardComponent, canActivate: [AdminGuard] },
     { path: 'login', component: LoginComponent },
     { path: 'logout', component: LogoutComponent },
     { path: 'checklists', component: CheckListComponent, canActivate: [VhOfficerAdminGuard] },
     { path: 'unauthorised', component: UnauthorisedComponent },
     { path: 'error', component: ErrorComponent },
-    { path: '**', redirectTo: 'dashboard', pathMatch: 'full', canActivate: [AuthGuard] }
+    { path: '**', redirectTo: 'dashboard', pathMatch: 'full', canActivate: [AdminGuard] }
 ];
 
 @NgModule({
