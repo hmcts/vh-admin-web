@@ -20,19 +20,14 @@ export class DashboardComponent implements OnInit {
   showCheckList = false;
   showBooking = false;
 
-  ngOnInit() {
-    this.userIdentityService.getUserInformation()
-      .subscribe(
-        s => {
-          this.showCheckList = s.is_vh_officer_administrator_role;
-          this.showBooking = s.is_case_administrator || s.is_vh_officer_administrator_role;
-          if (!this.showCheckList && !this.showBooking) {
-            this.router.navigate([PageUrls.Unauthorised]);
-          }
-        },
-        error => {
-          this.errorService.handleError(error);
-        }
-      );
+  async ngOnInit() {
+    await this.userIdentityService.getUserInformation().toPromise()
+      .then(result => {
+        this.showCheckList = result.is_vh_officer_administrator_role;
+        this.showBooking = result.is_case_administrator || result.is_vh_officer_administrator_role;
+      })
+      .catch(error => {
+        this.errorService.handleError(error);
+      });
   }
 }
