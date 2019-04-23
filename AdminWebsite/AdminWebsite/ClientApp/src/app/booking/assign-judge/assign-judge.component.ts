@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
-import { CanDeactiveComponent } from 'src/app/common/guards/changes.guard';
 import { JudgeResponse } from '../../services/clients/api-client';
 import { HearingModel } from '../../common/model/hearing.model';
 import { ParticipantModel } from '../../common/model/participant.model';
@@ -18,11 +16,10 @@ import { BookingBaseComponent } from '../booking-base/booking-base.component';
   templateUrl: './assign-judge.component.html'
 })
 
-export class AssignJudgeComponent extends BookingBaseComponent implements OnInit, CanDeactiveComponent {
+export class AssignJudgeComponent extends BookingBaseComponent implements OnInit {
 
   hearing: HearingModel;
   judge: JudgeResponse;
-  assignJudgeForm: FormGroup;
   failedSubmission: boolean;
   attemptingCancellation = false;
   attemptingDiscardChanges = false;
@@ -36,10 +33,10 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
   constructor(
     private fb: FormBuilder,
     protected router: Router,
-    private hearingService: VideoHearingsService,
+    protected hearingService: VideoHearingsService,
     private judgeService: JudgeDataService,
     protected bookingService: BookingService) {
-    super(bookingService, router);
+    super(bookingService, router, hearingService);
   }
 
   static mapJudge(judge: ParticipantModel): JudgeResponse {
@@ -74,11 +71,11 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
   }
 
   ngOnInit() {
-    super.ngOnInit();
     this.failedSubmission = false;
     this.checkForExistingRequest();
     this.loadJudges();
     this.initForm();
+    super.ngOnInit();
   }
 
   private checkForExistingRequest() {
@@ -93,7 +90,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
       this.judge = AssignJudgeComponent.mapJudge(find_judge);
       this.canNavigate = true;
     }
-    this.assignJudgeForm = this.fb.group({
+    this.form = this.fb.group({
       judgeName: [this.judge.email, Validators.required],
     });
 
@@ -104,7 +101,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     });
   }
 
-  get judgeName() { return this.assignJudgeForm.get('judgeName'); }
+  get judgeName() { return this.form.get('judgeName'); }
 
   get judgeNameInvalid() {
     return this.judgeName.invalid && (this.judgeName.dirty || this.judgeName.touched || this.failedSubmission);
@@ -133,9 +130,9 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
       this.isJudgeSelected = false;
       return;
     }
-    if (this.assignJudgeForm.valid) {
+    if (this.form.valid) {
       this.failedSubmission = false;
-      this.assignJudgeForm.markAsPristine();
+      this.form.markAsPristine();
       this.hasSaved = true;
       this.hearingService.updateHearingRequest(this.hearing);
 
@@ -151,7 +148,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
 
   confirmCancelBooking() {
     if (this.editMode) {
-      if (this.assignJudgeForm.dirty || this.assignJudgeForm.touched) {
+      if (this.form.dirty || this.form.touched) {
         this.attemptingDiscardChanges = true;
       } else {
         this.navigateToSummary();
@@ -168,22 +165,15 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
 
   cancelAssignJudge() {
     this.attemptingCancellation = false;
-    this.assignJudgeForm.reset();
+    this.form.reset();
     this.hearingService.cancelRequest();
     this.router.navigate(['/dashboard']);
   }
 
   cancelChanges() {
     this.attemptingDiscardChanges = false;
-    this.assignJudgeForm.reset();
+    this.form.reset();
     this.navigateToSummary();
-  }
-
-  hasChanges(): Observable<boolean> | boolean {
-    if (this.assignJudgeForm.dirty) {
-      this.confirmCancelBooking();
-    }
-    return this.assignJudgeForm.dirty;
   }
 
   goToDiv(fragment: string): void {
