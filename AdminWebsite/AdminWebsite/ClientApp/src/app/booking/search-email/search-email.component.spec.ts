@@ -159,7 +159,12 @@ describe('SeachEmailComponent', () => {
       title: 'Ms',
       middle_names: 'No',
       telephone_number: '11111111',
-      username: 'aa@aa.aa'
+      username: 'aa@aa.aa',
+      organisation: 'Name of a company',
+      house_number: '30',
+      street: 'Street Name',
+      city: 'City',
+      postcode: 'AB132BG',
     });
 
     const model = component.mapPersonResponseToParticipantModel(person);
@@ -171,6 +176,13 @@ describe('SeachEmailComponent', () => {
     expect(model.title).toEqual(person.title);
     expect(model.phone).toEqual(person.telephone_number);
     expect(model.username).toEqual(person.username);
+    expect(model.company).toEqual(person.organisation);
+    expect(model.housenumber).toEqual(person.house_number);
+    expect(model.street).toEqual(person.street);
+    expect(model.city).toEqual(person.city);
+    expect(model.county).toEqual(person.county);
+    expect(model.postcode).toEqual(person.postcode);
+
 
   });
   it('should mapping return empty ParticipantModel if  PersonResponse is null', () => {
