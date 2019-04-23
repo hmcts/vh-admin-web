@@ -151,6 +151,15 @@ describe('SeachEmailComponent', () => {
     expect(component.emailChanged.emit).toHaveBeenCalled();
 
   });
+  it('should emit event email is changed if searched emails array is empty', () => {
+    component.results = [];
+    spyOn(component.emailChanged, 'emit');
+    component.blurEmail();
+    fixture.detectChanges();
+
+    expect(component.notFoundParticipant).toBeFalsy();
+    expect(component.emailChanged.emit).toHaveBeenCalled();
+  });
   it('should map PersonResponse to ParticipantModel', () => {
     const person = new PersonResponse({
       contact_email: 'aa@aa.aa',
