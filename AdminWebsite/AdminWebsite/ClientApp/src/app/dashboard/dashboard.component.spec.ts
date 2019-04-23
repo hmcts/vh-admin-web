@@ -9,7 +9,6 @@ import { PageUrls } from '../shared/page-url.constants';
 import { Router } from '@angular/router';
 
 const userProfileResponse: UserProfileResponse = new UserProfileResponse();
-
 class UserIdentityServiceSpy {
   getUserInformation() {
     userProfileResponse.is_case_administrator = true;
@@ -23,17 +22,11 @@ describe('DashboardComponent', () => {
   let fixture: ComponentFixture<DashboardComponent>;
   const errorServiceSpy: jasmine.SpyObj<ErrorService> = jasmine.createSpyObj('ErrorService', ['handleError']);
   const userIdentitySpy = jasmine.createSpyObj<UserIdentityService>('UserIdentityService', ['getUserInformation']);
-  userIdentitySpy.getUserInformation.and.returnValue(of(new UserProfileResponse({
-    is_case_administrator: true,
-    is_vh_officer_administrator_role: true
-  })));
   let routerSpy: jasmine.SpyObj<Router>;
   routerSpy = jasmine.createSpyObj('Router', ['navigate']);
   routerSpy.navigate.and.callFake(() => { });
 
   beforeEach(async(() => {
-    userIdentitySpy.getUserInformation.and.returnValue(Promise.resolve(userProfileResponse));
-
     TestBed.configureTestingModule({
       imports: [
         RouterTestingModule
