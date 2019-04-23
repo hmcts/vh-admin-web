@@ -11,6 +11,7 @@ using System.Net;
 using TechTalk.SpecFlow;
 using Testing.Common;
 using Testing.Common.Builders.Request;
+using SecuritySettings = AdminWebsite.AcceptanceTests.Configuration.SecuritySettings;
 
 namespace AdminWebsite.AcceptanceTests.Hooks
 {
@@ -39,6 +40,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             testContext.BearerToken = authContext.AcquireTokenAsync(vhServiceConfig.BookingsApiResourceId, credential).Result.AccessToken;
             testContext.BaseUrl = vhServiceConfig.BookingsApiUrl;
             testContext.TestUserSecrets = userAccountConfig;
+            testContext.AzureAd = azureAdConfig;
         }
 
         [BeforeScenario(Order = 2)]

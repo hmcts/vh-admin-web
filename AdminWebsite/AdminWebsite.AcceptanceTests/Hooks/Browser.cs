@@ -36,9 +36,9 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         [BeforeScenario (Order = 2)]
         public void BeforeScenario()
         {
-            var appTestContext = _testContext.TestUserSecrets;
+            var appTestContext = _testContext.AzureAd;
             var environment = new SeleniumEnvironment(_saucelabsSettings, _scenarioContext.ScenarioInfo, GetTargetBrowser());
-            _browserContext.BrowserSetup(appTestContext.WebsiteUrl, environment);
+            _browserContext.BrowserSetup(appTestContext.RedirectUri, environment);
             _browserContext.LaunchSite();           
         }
 

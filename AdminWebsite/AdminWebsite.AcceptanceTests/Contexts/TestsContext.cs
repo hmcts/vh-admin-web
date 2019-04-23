@@ -13,6 +13,7 @@ namespace AdminWebsite.AcceptanceTests.Contexts
         public string Json { get; set; }
         public string HearingId { get; set; }
         public UserAccount TestUserSecrets { get; set; }
+        public SecuritySettings AzureAd { get; set; }
 
         public RestClient Client()
         {
