@@ -143,8 +143,8 @@ namespace AdminWebsite.AcceptanceTests.Steps
             AdminOnOtherInformationPage(admin);
             _common.NextButton();
         }
-        [Given(@"(.*) tries to amend booking")]
-        public void AdminTriesToAmendBooking(string admin)
+        [Given(@"(.*) amends booking")]
+        public void AdminAmendsBooking(string admin)
         {
             AdminIsOnSummaryPage(admin);
             _summarySteps.WhenUserSubmitBooking();
