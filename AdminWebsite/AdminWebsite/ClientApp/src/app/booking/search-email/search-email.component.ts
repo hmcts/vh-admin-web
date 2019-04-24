@@ -114,7 +114,7 @@ export class SearchEmailComponent implements OnInit {
   }
 
   blurEmail() {
-    if (!this.results) {
+    if (!this.results  || this.results.length === 0) {
       this.validateEmail();
       this.emailChanged.emit(this.email);
       this.notFoundParticipant = false;

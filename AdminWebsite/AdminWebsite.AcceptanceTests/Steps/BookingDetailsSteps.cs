@@ -55,6 +55,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             
             _bookingDetails.CreatedBy().Should().Be(username);
         }
+        [Then(@"values should be displayed as expected on edit view")]
         [Then(@"amended values should be saved")]
         public void AmendedValuesShouldBeSaved()
         {
