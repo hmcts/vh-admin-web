@@ -3,6 +3,7 @@ using AdminWebsite.Configuration;
 using AdminWebsite.Extensions;
 using AdminWebsite.Helper;
 using AdminWebsite.Middleware;
+
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -102,7 +103,7 @@ namespace AdminWebsite
                     name: "default",
                     template: "{controller}/{action=Index}/{id?}");
             });
-
+            app.UseNoCacheHttpHeaders();
             app.UseSpa(spa =>
             {
                 // To learn more about options for serving an Angular SPA from ASP.NET Core,

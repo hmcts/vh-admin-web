@@ -1,6 +1,7 @@
 ﻿using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.AcceptanceTests.Pages;
 using FluentAssertions;
+using System.Linq;
 using TechTalk.SpecFlow;
 
 namespace AdminWebsite.AcceptanceTests.Steps
@@ -9,10 +10,12 @@ namespace AdminWebsite.AcceptanceTests.Steps
     public sealed class AddParticipantsSteps
     {
         private readonly AddParticipants _addParticipant;
+        private readonly ScenarioContext _scenarioContext;
 
-        public AddParticipantsSteps(AddParticipants addParticipant)
+        public AddParticipantsSteps(AddParticipants addParticipant, ScenarioContext scenarioContext)
         {
             _addParticipant = addParticipant;
+            _scenarioContext = scenarioContext;
         }
         [When(@"professional participant is added to hearing")]
         public void ProfessionalParticipantIsAddedToHearing()
@@ -29,8 +32,13 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _addParticipant.PageUrl(PageUri.AddParticipantsPage);
         }
         [When(@"input email address")]
-        public void InputEmailAddress(string email = "dummyemail@email.com")
+        public void InputEmailAddress(string email)
         {
+            if (email == null)
+            {
+                email = Faker.Internet.Email();
+                _addParticipant.AddItems<string>("ParticipantEmail", email);
+            }
             _addParticipant.ParticipantEmail(email);
         }
         [When(@"select a role")]
@@ -45,13 +53,18 @@ namespace AdminWebsite.AcceptanceTests.Steps
         }
         [When(@"input firstname")]
         public void InputFirstname(string firstname = "Dummy")
-        {
+        {            
             _addParticipant.FirstName(firstname);
         }
         [When(@"input lastname")]
-        public void InputLastname(string lastname = "Email")
+        public void InputLastname(string lastname)
         {
-            _addParticipant.LastName(lastname);
+            if (lastname == null)
+            {
+                lastname = Faker.Name.Last();
+                _addParticipant.AddItems<string>("Lastname", lastname);
+            }
+             _addParticipant.LastName(lastname);
         }
         [When(@"input telephone")]
         public void InputTelephone(string phone = "0123456789")
@@ -146,29 +159,28 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [Then(@"Participant detail is displayed on the list")]
         public void ThenParticipantDetailIsDisplayedOnTheList()
         {
-            string expectedResult = $"{_addParticipant.GetItems("Title")} {TestData.AddParticipants.Firstname} {TestData.AddParticipants.Lastname} {_addParticipant.GetItems("Party")}";
+            string expectedResult = $"{_addParticipant.GetItems("Title")} {TestData.AddParticipants.Firstname} {_addParticipant.GetItems("Lastname")} {_addParticipant.GetItems("Party")}";
             var actualResult = _addParticipant.GetParticipantDetails().Replace("\r\n", " ");
             actualResult.Should().Be(expectedResult.Trim());
         }
         public void AddParticpantDetails()
-        {            
-            InputEmailAddress(TestData.AddParticipants.Email);
-            _addParticipant.AddItems<string>("Title", _addParticipant.GetSelectedTitle());
-            InputFirstname(TestData.AddParticipants.Firstname);
-            InputLastname(TestData.AddParticipants.Lastname);
-            InputTelephone(TestData.AddParticipants.Telephone);
-            InputDisplayname(TestData.AddParticipants.DisplayName);            
+        {
+            var tag = _scenarioContext.ScenarioInfo.Tags;
+            if (tag.Contains("ExistingPerson"))
+                ExistingPerson();
+            else
+                NonExistingPerson();
         }
         [When(@"participant details is updated")]
         public void WhenParticipantDetailsIsUpdated()
         {
             if (!_addParticipant.RoleValue().Contains("Solicitor"))
                 Address();
-            _addParticipant.PartyField().Should().Be("true");
-            _addParticipant.RoleField().Should().Be("true");
-            _addParticipant.Email().Should().Be("true");
-            _addParticipant.Firstname().Should().Be("true");
-            _addParticipant.Lastname().Should().Be("true");            
+            _addParticipant.PartyField().Should().BeFalse();
+            _addParticipant.RoleField().Should().BeFalse();
+            _addParticipant.Email().Should().BeFalse();
+            _addParticipant.Firstname().Should().BeFalse();
+            _addParticipant.Lastname().Should().BeFalse();            
         }
         private void Address()
         {
@@ -189,6 +201,39 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _addParticipant.City(city);
             _addParticipant.County(county);
             _addParticipant.Postcode(postcode);
+        }
+        [When(@"user adds existing participant to hearing")]
+        public void WhenUserAddsExistingParticipantToHearing()
+        {
+            _addParticipant.AddItems<string>("RelevantPage", PageUri.AddParticipantsPage);
+            _addParticipant.ClickBreadcrumb("Add participants");
+            _addParticipant.Party(TestData.AddParticipants.Defendant);
+            _addParticipant.Role(TestData.AddParticipants.DefendantRole.First());
+            ExistingPerson();
+            ClickAddParticipantsButton();
+            _addParticipant.NextButton();
+            _addParticipant.ClickBreadcrumb("Summary");
+        }
+        private void ExistingPerson()
+        {
+            var email = TestData.AddParticipants.Email;
+            _addParticipant.ParticipantEmail(email.Substring(0, 3));
+            _addParticipant.ExistingParticipant(email);
+            _addParticipant.DisplayName(TestData.AddParticipants.DisplayName);
+            _addParticipant.Email().Should().BeFalse();
+            _addParticipant.Firstname().Should().BeFalse();
+            _addParticipant.Lastname().Should().BeFalse();
+        }
+        private void NonExistingPerson()
+        {
+            var email = Faker.Internet.Email();
+            _addParticipant.AddItems<string>("ParticipantEmail", email);
+            InputEmailAddress(email);
+            _addParticipant.AddItems<string>("Title", _addParticipant.GetSelectedTitle());
+            InputFirstname(TestData.AddParticipants.Firstname);
+            InputLastname(_addParticipant.GetItems("Lastname"));
+            InputTelephone(TestData.AddParticipants.Telephone);
+            InputDisplayname(TestData.AddParticipants.DisplayName);
         }
     }
 }
