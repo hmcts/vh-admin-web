@@ -75,13 +75,6 @@ describe('app routing', () => {
     adalSvc = TestBed.get(AdalService);
   });
 
-  it('it should be able to navigate to dashboard successfully', fakeAsync(() => {
-    adalSvc.setAuthenticated(true);
-    router.navigate(['/dashboard']);
-    tick();
-    expect(location.path()).toBe('/dashboard');
-  }));
-
   it('it should navigate to login', fakeAsync(() => {
     adalSvc.setAuthenticated(false);
     router.navigate(['/dashboard']);

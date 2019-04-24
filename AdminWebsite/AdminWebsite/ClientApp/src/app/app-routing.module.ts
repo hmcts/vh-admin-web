@@ -3,7 +3,6 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { CheckListComponent } from './check-list/check-list.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { AuthGuard } from './security/auth.gaurd';
 import { LoginComponent } from './security/login.component';
 import { LogoutComponent } from './security/logout.component';
 import { VhOfficerAdminGuard } from './security/vh-officer-admin.guard';
