@@ -135,6 +135,7 @@ export class VideoHearingsService {
     editParticipant.solicitors_reference = participant.solicitorsReference;
     editParticipant.telephone_number = participant.phone;
     editParticipant.title = participant.title;
+    editParticipant.organisation_name = participant.company;
     editParticipant.house_number = participant.housenumber;
     editParticipant.street = participant.street;
     editParticipant.city = participant.city;
@@ -222,6 +223,7 @@ export class VideoHearingsService {
         participant.hearing_role_name = p.hearing_role_name;
         participant.representee = p.representee;
         participant.solicitors_reference = p.solicitorsReference;
+        participant.organisation_name = p.company;
         participant.house_number = p.housenumber;
         participant.street = p.street;
         participant.city = p.city;
@@ -250,8 +252,9 @@ export class VideoHearingsService {
         participant.phone = p.telephone_number;
         participant.case_role_name = p.case_role_name;
         participant.hearing_role_name = p.hearing_role_name;
-        participant.representee = '';
-        participant.solicitorsReference = '';
+        participant.representee = p.representee;
+        participant.solicitorsReference = p.solicitor_reference;
+        participant.company = p.organisation;
         participant.is_judge = p.case_role_name === 'Judge';
         participant.housenumber = p.house_number;
         participant.street = p.street;

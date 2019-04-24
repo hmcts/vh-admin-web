@@ -1557,6 +1557,7 @@ export class ParticipantRequest implements IParticipantRequest {
     hearing_role_name?: string | undefined;
     solicitors_reference?: string | undefined;
     representee?: string | undefined;
+    organisation_name?: string | undefined;
     house_number?: string | undefined;
     street?: string | undefined;
     postcode?: string | undefined;
@@ -1586,6 +1587,7 @@ export class ParticipantRequest implements IParticipantRequest {
             this.hearing_role_name = data["hearing_role_name"];
             this.solicitors_reference = data["solicitors_reference"];
             this.representee = data["representee"];
+            this.organisation_name = data["organisation_name"];
             this.house_number = data["house_number"];
             this.street = data["street"];
             this.postcode = data["postcode"];
@@ -1615,6 +1617,7 @@ export class ParticipantRequest implements IParticipantRequest {
         data["hearing_role_name"] = this.hearing_role_name;
         data["solicitors_reference"] = this.solicitors_reference;
         data["representee"] = this.representee;
+        data["organisation_name"] = this.organisation_name;
         data["house_number"] = this.house_number;
         data["street"] = this.street;
         data["postcode"] = this.postcode;
@@ -1637,6 +1640,7 @@ export interface IParticipantRequest {
     hearing_role_name?: string | undefined;
     solicitors_reference?: string | undefined;
     representee?: string | undefined;
+    organisation_name?: string | undefined;
     house_number?: string | undefined;
     street?: string | undefined;
     postcode?: string | undefined;
@@ -1809,6 +1813,9 @@ export class ParticipantResponse implements IParticipantResponse {
     contact_email?: string | undefined;
     telephone_number?: string | undefined;
     username?: string | undefined;
+    solicitor_reference?: string | undefined;
+    organisation?: string | undefined;
+    representee?: string | undefined;
     house_number?: string | undefined;
     street?: string | undefined;
     postcode?: string | undefined;
@@ -1838,6 +1845,9 @@ export class ParticipantResponse implements IParticipantResponse {
             this.contact_email = data["contact_email"];
             this.telephone_number = data["telephone_number"];
             this.username = data["username"];
+            this.solicitor_reference = data["solicitor_reference"];
+            this.organisation = data["organisation"];
+            this.representee = data["representee"];
             this.house_number = data["house_number"];
             this.street = data["street"];
             this.postcode = data["postcode"];
@@ -1867,6 +1877,9 @@ export class ParticipantResponse implements IParticipantResponse {
         data["contact_email"] = this.contact_email;
         data["telephone_number"] = this.telephone_number;
         data["username"] = this.username;
+        data["solicitor_reference"] = this.solicitor_reference;
+        data["organisation"] = this.organisation;
+        data["representee"] = this.representee;
         data["house_number"] = this.house_number;
         data["street"] = this.street;
         data["postcode"] = this.postcode;
@@ -1889,6 +1902,9 @@ export interface IParticipantResponse {
     contact_email?: string | undefined;
     telephone_number?: string | undefined;
     username?: string | undefined;
+    solicitor_reference?: string | undefined;
+    organisation?: string | undefined;
+    representee?: string | undefined;
     house_number?: string | undefined;
     street?: string | undefined;
     postcode?: string | undefined;

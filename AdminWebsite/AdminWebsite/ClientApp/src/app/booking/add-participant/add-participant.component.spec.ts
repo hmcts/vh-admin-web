@@ -45,6 +45,8 @@ let lastName: AbstractControl;
 let phone: AbstractControl;
 let displayName: AbstractControl;
 let companyName: AbstractControl;
+let representing: AbstractControl;
+let solicitorReference: AbstractControl;
 let houseNumber: AbstractControl;
 let street: AbstractControl;
 let city: AbstractControl;
@@ -68,7 +70,8 @@ p1.housenumber = '';
 p1.street = '';
 p1.postcode = '';
 p1.city = '';
-p1.postcode = '';
+p1.solicitorsReference = 'sol ref';
+p1.representee = 'representee';
 
 const p2 = new ParticipantModel();
 p2.first_name = 'Jane';
@@ -85,7 +88,8 @@ p2.housenumber = '';
 p2.street = '';
 p2.postcode = '';
 p2.city = '';
-p2.postcode = '';
+p2.solicitorsReference = 'sol ref';
+p2.representee = 'representee';
 
 const p3 = new ParticipantModel();
 p3.first_name = 'Chris';
@@ -103,8 +107,9 @@ p3.housenumber = '';
 p3.street = '';
 p3.postcode = '';
 p3.city = '';
-p3.postcode = '';
+p3.solicitorsReference = 'sol ref';
 p3.id = '1234';
+p3.representee = 'representee';
 
 const p4 = new ParticipantModel();
 p4.first_name = 'Test';
@@ -170,6 +175,8 @@ participant.street = 'Test Street';
 participant.postcode = 'TE1 5NR';
 participant.city = 'Test City';
 participant.county = 'Test County';
+participant.solicitorsReference = 'Test sol ref';
+participant.representee = 'test representee';
 
 const routerSpy = {
   navigate: jasmine.createSpy('navigate'),
@@ -243,6 +250,8 @@ describe('AddParticipantComponent', () => {
     city = component.form.controls['city'];
     county = component.form.controls['county'];
     postcode = component.form.controls['postcode'];
+    solicitorReference = component.form.controls['solicitorReference'];
+    representing = component.form.controls['representing'];
   }));
 
   it('should create', () => {
@@ -331,7 +340,7 @@ describe('AddParticipantComponent', () => {
   it('should validate postcode', () => {
     isAddressControlValid(postcode, 'TE1 5NR');
   });
- it('should reset undefined value for party and role to Please Select', () => {
+  it('should reset undefined value for party and role to Please Select', () => {
     participant.case_role_name = undefined;
     participant.hearing_role_name = undefined;
     component.getParticipant(participant);
@@ -705,7 +714,9 @@ describe('AddParticipantComponent edit mode', () => {
       street: participant.street,
       city: participant.city,
       county: participant.county,
-      postcode: participant.postcode
+      postcode: participant.postcode,
+      solicitorReference: participant.solicitorsReference,
+      representing: participant.representee
     });
     component.hearing = initHearingRequest();
     fixture.detectChanges();
@@ -732,7 +743,9 @@ describe('AddParticipantComponent edit mode', () => {
       street: participant.street,
       city: participant.city,
       county: participant.county,
-      postcode: participant.postcode
+      postcode: participant.postcode,
+      solicitorReference: participant.solicitorsReference,
+      representing: participant.representee
     });
     component.hearing = initHearingRequest();
     fixture.detectChanges();
@@ -865,9 +878,12 @@ describe('AddParticipantComponent edit mode no participants added', () => {
     expect(component.displayAddButton).toBeTruthy();
     expect(component.displayUpdateButton).toBeFalsy();
   });
+
   it('should recognize a participantList', async(() => {
     fixture.detectChanges();
+    console.log(fixture.componentInstance);
     const partList: ParticipantsListComponent = fixture.componentInstance.participantsListComponent;
+    console.log(partList);
     expect(partList).toBeDefined();
   }));
   it('should show all fields if the participant selected for edit', fakeAsync(() => {
@@ -980,6 +996,88 @@ describe('AddParticipantComponent edit mode no participants added', () => {
 
     expect(component.form.get('firstName').disabled).toBeTruthy();
     expect(component.form.get('lastName').disabled).toBeTruthy();
+  });
+});
+describe('AddParticipantComponent set representer', () => {
+
+  beforeEach(async(() => {
+    TestBed.configureTestingModule({
+      declarations: [
+        AddParticipantComponent,
+        BreadcrumbStubComponent,
+        SearchEmailComponent,
+        ParticipantsListStubComponent,
+        CancelPopupStubComponent,
+        ConfirmationPopupStubComponent,
+        RemovePopupStubComponent,
+        DiscardConfirmPopupComponent,
+      ],
+      imports: [
+        SharedModule
+      ],
+      providers: [
+        { provide: SearchService, useClass: SearchServiceStub },
+        { provide: Router, useValue: routerSpy },
+        { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
+        { provide: ParticipantService, useValue: participantServiceSpy },
+        { provide: BookingService, useValue: bookingServiceSpy },
+      ]
+    })
+      .compileComponents();
+
+    const hearing = initExistHearingRequest();
+    videoHearingsServiceSpy.getParticipantRoles.and.returnValue(of(roleList));
+    videoHearingsServiceSpy.getCurrentRequest.and.returnValue(hearing);
+    participantServiceSpy.mapParticipantsRoles.and.returnValue(partyList);
+    bookingServiceSpy.isEditMode.and.returnValue(true);
+    bookingServiceSpy.getParticipantEmail.and.returnValue('');
+
+
+    fixture = TestBed.createComponent(AddParticipantComponent);
+    debugElement = fixture.debugElement;
+    component = debugElement.componentInstance;
+    component.ngOnInit();
+    fixture.detectChanges();
+
+    role = component.form.controls['role'];
+    party = component.form.controls['party'];
+    title = component.form.controls['title'];
+    firstName = component.form.controls['firstName'];
+    lastName = component.form.controls['lastName'];
+    phone = component.form.controls['phone'];
+    displayName = component.form.controls['displayName'];
+    companyName = component.form.controls['companyName'];
+    solicitorReference = component.form.controls['solicitorReference'];
+    representing = component.form.controls['representing'];
+  }));
+  it('should show solicitor reference, company and name of representing person', () => {
+    fixture.detectChanges();
+    component.form.get('role').setValue('Solicitor');
+
+    component.roleSelected();
+    fixture.detectChanges();
+
+    expect(component.isSolicitor).toBeTruthy();
+  });
+  it('should clean the fields solicitor reference, company and name of representing person', () => {
+    fixture.detectChanges();
+    component.form.get('role').setValue('Solicitor');
+    component.roleSelected();
+    fixture.detectChanges();
+    component.form.get('companyName').setValue('Organisation');
+    component.form.get('solicitorReference').setValue('Ref1');
+    component.form.get('representing').setValue('Ms X');
+
+    fixture.detectChanges();
+
+    component.form.get('role').setValue('Claimant');
+    component.roleSelected();
+    fixture.detectChanges();
+
+    expect(component.isSolicitor).toBeFalsy();
+    expect(component.form.get('companyName').value).toEqual('');
+    expect(component.form.get('solicitorReference').value).toEqual('');
+    expect(component.form.get('representing').value).toEqual('');
   });
 });
 
