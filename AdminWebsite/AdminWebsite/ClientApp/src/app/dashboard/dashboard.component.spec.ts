@@ -5,26 +5,20 @@ import { DashboardComponent } from './dashboard.component';
 import { UserProfileResponse } from '../services/clients/api-client';
 import { of } from 'rxjs';
 
-const userProfileResponse: UserProfileResponse = new UserProfileResponse();
-
-class UserIdentityServiceSpy {
-  getUserInformation() {
-    userProfileResponse.is_case_administrator = true;
-    userProfileResponse.is_vh_officer_administrator_role = true;
-    return of(userProfileResponse);
-  }
-}
-
 describe('DashboardComponent', () => {
   let component: DashboardComponent;
   let fixture: ComponentFixture<DashboardComponent>;
+  const userIdentitySpy = jasmine.createSpyObj<UserIdentityService>('UserIdentityService', ['getUserInformation']);
 
   beforeEach(async(() => {
-
     TestBed.configureTestingModule({
-      imports: [RouterTestingModule],
+      imports: [
+        RouterTestingModule
+      ],
       declarations: [DashboardComponent],
-      providers: [{ provide: UserIdentityService, useClass: UserIdentityServiceSpy }]
+      providers: [
+        { provide: UserIdentityService, useValue: userIdentitySpy },
+      ]
     })
       .compileComponents();
   }));
@@ -32,24 +26,23 @@ describe('DashboardComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(DashboardComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
-
-  it('should create', () => {
-    expect(component).toBeTruthy();
   });
 
   it('should show for VH officer checklist', async () => {
-    component.ngOnInit();
-    fixture.detectChanges();
+    userIdentitySpy.getUserInformation.and.returnValue(of(new UserProfileResponse({
+      is_case_administrator: false,
+      is_vh_officer_administrator_role: true
+    })));
+    await component.ngOnInit();
     expect(component.showCheckList).toBeTruthy();
-
   });
-  it('should show for VH officer abd case admin booking', async () => {
-    component.ngOnInit();
-    fixture.detectChanges();
+
+  it('should show for VH officer and case admin booking', async () => {
+    userIdentitySpy.getUserInformation.and.returnValue(of(new UserProfileResponse({
+      is_case_administrator: true,
+      is_vh_officer_administrator_role: true
+    })));
+    await component.ngOnInit();
     expect(component.showBooking).toBeTruthy();
-
   });
-
 });
