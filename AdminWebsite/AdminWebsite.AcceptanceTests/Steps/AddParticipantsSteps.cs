@@ -53,7 +53,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         }
         [When(@"input firstname")]
         public void InputFirstname(string firstname = "Dummy")
-        {            
+        {
             _addParticipant.FirstName(firstname);
         }
         [When(@"input lastname")]
@@ -64,13 +64,13 @@ namespace AdminWebsite.AcceptanceTests.Steps
                 lastname = Faker.Name.Last();
                 _addParticipant.AddItems<string>("Lastname", lastname);
             }
-             _addParticipant.LastName(lastname);
+            _addParticipant.LastName(lastname);
         }
         [When(@"input telephone")]
         public void InputTelephone(string phone = "0123456789")
         {
             _addParticipant.Phone(phone);
-        }        
+        }
         [When(@"input displayname")]
         public void InputDisplayname(string displayname = "Dummy Email")
         {
@@ -79,8 +79,14 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [When(@"click add participants button")]
         public void ClickAddParticipantsButton()
         {
-            if (!_addParticipant.RoleValue().Contains("Solicitor"))            
-                Address();            
+            var tag = _scenarioContext.ScenarioInfo.Tags;
+            if (!_addParticipant.RoleValue().Contains("Solicitor"))
+            {
+                if (!tag.Contains("ExistingPerson"))
+                {
+                    Address();
+                }                
+            }
             _addParticipant.AddParticipantButton();
         }
         [When(@"select a party")]
@@ -99,7 +105,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [When(@"user selects (.*)")]
         public void WhenUserSelects(string party)
         {
-           _addParticipant.AddItems<string>("Party", party);            
+            _addParticipant.AddItems<string>("Party", party);
             switch (_addParticipant.GetItems("CaseType"))
             {
                 case (TestData.AddParticipants.CivilMoneyClaims):
@@ -180,7 +186,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _addParticipant.RoleField().Should().BeFalse();
             _addParticipant.Email().Should().BeFalse();
             _addParticipant.Firstname().Should().BeFalse();
-            _addParticipant.Lastname().Should().BeFalse();            
+            _addParticipant.Lastname().Should().BeFalse();
         }
         private void Address()
         {
@@ -223,6 +229,12 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _addParticipant.Email().Should().BeFalse();
             _addParticipant.Firstname().Should().BeFalse();
             _addParticipant.Lastname().Should().BeFalse();
+            _addParticipant.GetFieldValue("phone").Should().NotBeNullOrEmpty();
+            _addParticipant.GetFieldValue("houseNumber").Should().NotBeNullOrEmpty();
+            _addParticipant.GetFieldValue("street").Should().NotBeNullOrEmpty();
+            _addParticipant.GetFieldValue("city").Should().NotBeNullOrEmpty();
+            _addParticipant.GetFieldValue("county").Should().NotBeNullOrEmpty();
+            _addParticipant.GetFieldValue("postcode").Should().NotBeNullOrEmpty();
         }
         private void NonExistingPerson()
         {
