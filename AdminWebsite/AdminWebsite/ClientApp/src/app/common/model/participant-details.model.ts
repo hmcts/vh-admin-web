@@ -1,7 +1,8 @@
 export class ParticipantDetailsModel {
   constructor(participantId: string, title: string, firstName: string, lastName: string,
     role: string, userName: string, email: string, caseRoleName: string, hearingRoleName: string,
-    displayName: string, middleNames: string) {
+    displayName: string, middleNames: string, organisation: string, solicitorReference: string,
+    representee: string) {
     this.ParticipantId = participantId;
     this.FirstName = firstName;
     this.LastName = lastName;
@@ -14,6 +15,9 @@ export class ParticipantDetailsModel {
     this.HearingRoleName = hearingRoleName;
     this.DisplayName = displayName;
     this.MiddleNames = middleNames;
+    this.SolicitorsReference = solicitorReference;
+    this.Representee = representee;
+    this.Company = organisation;
   }
 
   ParticipantId: string;
@@ -27,6 +31,10 @@ export class ParticipantDetailsModel {
   HearingRoleName: string;
   DisplayName: string;
   MiddleNames: string;
+  SolicitorsReference: string;
+  Representee: string;
+  Company: string;
+
 
   // flag to indicate if participant is the last in the list and don't need decoration bottom line
   Flag: boolean;
@@ -41,5 +49,10 @@ export class ParticipantDetailsModel {
       fullName = `${this.FirstName} ${this.LastName}`;
     }
     return fullName;
+  }
+
+  get isRepresent() {
+    return this.HearingRoleName && this.HearingRoleName.indexOf('Solicitor') > -1
+      && this.Representee && this.Representee.length > 0;
   }
 }

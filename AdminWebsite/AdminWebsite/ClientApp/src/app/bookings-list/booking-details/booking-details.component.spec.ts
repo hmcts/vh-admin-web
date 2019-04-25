@@ -38,11 +38,11 @@ export class BookingDetailsTestData {
     const participants: Array<ParticipantDetailsModel> = [];
     const judges: Array<ParticipantDetailsModel> = [];
     const p1 = new ParticipantDetailsModel('1', 'Mrs', 'Alan', 'Brake', 'Judge', 'email.p1@email.com',
-      'email1@co.uk', 'Claimant', 'Solicitor', 'Alan Brake', '');
+      'email1@co.uk', 'Claimant', 'Solicitor', 'Alan Brake', '', 'ABC Solicitors', 'new Solicitor', 'defendant');
     const p2 = new ParticipantDetailsModel('2', 'Mrs', 'Roy', 'Bark', 'Citizen', 'email.p2@email.com',
-      'email2@co.uk', 'Claimant', 'Claimant LIP', 'Roy Bark', '');
+      'email2@co.uk', 'Claimant', 'Claimant LIP', 'Roy Bark', '', 'ABC Solicitors', 'new Solicitor', 'defendant');
     const p3 = new ParticipantDetailsModel('2', 'Mrs', 'Fill', 'Green', 'Professional', 'email.p3@email.com',
-      'email3@co.uk', 'Defendant', 'Defendant LIP', 'Fill', '');
+      'email3@co.uk', 'Defendant', 'Defendant LIP', 'Fill', '', 'ABC Solicitors', 'new Solicitor', 'defendant');
     participants.push(p2);
     participants.push(p3);
     judges.push(p1);

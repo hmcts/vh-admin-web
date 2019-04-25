@@ -20,6 +20,9 @@ export const Constants = {
     CityErrorMsg: 'Please enter a town or city',
     CountyErrorMsg: 'Please enter a county',
     PostcodeErrorMsg: 'Please enter a postcode',
+    CompanyErrorMsg: 'Please enter an organisation name',
+    SolicitorReferenceMsg: 'Please enter a solicitor reference',
+    RepresenteeErrorMsg: 'Please enter a representee'
   },
   Contact: {
     phone: '0300 303 0655',

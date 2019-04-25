@@ -10,6 +10,7 @@
       </div>
       <div class="govuk-grid-row vh-b">
         <div class="vh-xsml" id="created-date">{{hearing?.CreatedDate | appLongDatetime}}</div>
+        
       </div>
     </div>
   </div>
@@ -23,6 +24,7 @@
       </div>
       <div class="govuk-grid-row">
         <div class="vh-xsml" id="edit-date">{{hearing?.LastEditDate | appLongDatetime}}</div>
+        
       </div>
     </div>
   </div>
@@ -45,6 +47,7 @@
 <div class="vh-section">
   <div class="govuk-grid-row vh-wrap">
     <div class="govuk-body vh-sml" id="hearing-start">{{hearing?.StartTime | appLongDatetime}}</div>
+
   </div>
   <div class="govuk-grid-row">
     <div class="govuk-body vh-sml" id="court-room-address">{{hearing?.CourtAddress}}{{hearing?.CourtRoom ? ', ' + hearing?.CourtRoom : ''}}</div>
@@ -58,6 +61,3 @@
 <div class="govuk-form-group vhtable">
   <div class="govuk-body vh-text-break" id="otherInformation">{{ hearing?.OtherInformation }}</div>
 </div>
-
-
-
