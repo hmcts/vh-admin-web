@@ -19,6 +19,9 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public void LastName(string lastname) => ClearFieldInputValues(By.Id("lastName"), lastname);
         public void Phone(string phone) => ClearFieldInputValues(By.Id("phone"), phone);
         public void DisplayName(string displayname) => ClearFieldInputValues(By.Id("displayName"), displayname);
+        public void Organisation(string organisation) => ClearFieldInputValues(_companyName, organisation);
+        public void SoliicitorReference(string reference) => ClearFieldInputValues(By.Id("solicitorReference"), reference);
+        public void ClientRepresenting(string client) => ClearFieldInputValues(By.Id("representing"), client);
         public void AddParticipantButton() => ClickElement(By.Id("addParticipantBtn"));
         public void Party() => SelectOption(CommonLocator.List("party"));
         public void Role() => SelectOption(CommonLocator.List("role"));

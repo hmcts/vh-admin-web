@@ -180,13 +180,19 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [When(@"participant details is updated")]
         public void WhenParticipantDetailsIsUpdated()
         {
-            if (!_addParticipant.RoleValue().Contains("Solicitor"))
-                Address();
             _addParticipant.PartyField().Should().BeFalse();
             _addParticipant.RoleField().Should().BeFalse();
             _addParticipant.Email().Should().BeFalse();
             _addParticipant.Firstname().Should().BeFalse();
-            _addParticipant.Lastname().Should().BeFalse();
+            _addParticipant.Lastname().Should().BeFalse();           
+            if (_addParticipant.RoleValue().Contains("LIP"))
+            {
+                Address();
+            }
+            if (_addParticipant.RoleValue().Contains("Solicitor"))
+            {
+                SolicitorInformation();
+            }                         
         }
         private void Address()
         {
@@ -229,12 +235,20 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _addParticipant.Email().Should().BeFalse();
             _addParticipant.Firstname().Should().BeFalse();
             _addParticipant.Lastname().Should().BeFalse();
-            _addParticipant.GetFieldValue("phone").Should().NotBeNullOrEmpty();
-            _addParticipant.GetFieldValue("houseNumber").Should().NotBeNullOrEmpty();
-            _addParticipant.GetFieldValue("street").Should().NotBeNullOrEmpty();
-            _addParticipant.GetFieldValue("city").Should().NotBeNullOrEmpty();
-            _addParticipant.GetFieldValue("county").Should().NotBeNullOrEmpty();
-            _addParticipant.GetFieldValue("postcode").Should().NotBeNullOrEmpty();
+            if (_addParticipant.RoleValue().Contains("LIP"))
+            {
+                _addParticipant.GetFieldValue("phone").Should().NotBeNullOrEmpty();
+                _addParticipant.GetFieldValue("houseNumber").Should().NotBeNullOrEmpty();
+                _addParticipant.GetFieldValue("street").Should().NotBeNullOrEmpty();
+                _addParticipant.GetFieldValue("city").Should().NotBeNullOrEmpty();
+                _addParticipant.GetFieldValue("county").Should().NotBeNullOrEmpty();
+                _addParticipant.GetFieldValue("postcode").Should().NotBeNullOrEmpty();
+            }
+            if (_addParticipant.RoleValue().Contains("Solicitor"))
+            {
+                _addParticipant.GetFieldValue("companyName").Should().NotBeNullOrEmpty();
+                SolicitorInformation();
+            }            
         }
         private void NonExistingPerson()
         {
@@ -246,6 +260,16 @@ namespace AdminWebsite.AcceptanceTests.Steps
             InputLastname(_addParticipant.GetItems("Lastname"));
             InputTelephone(TestData.AddParticipants.Telephone);
             InputDisplayname(TestData.AddParticipants.DisplayName);
+        }
+
+        private void SolicitorInformation()
+        {
+            var organisation = Faker.Company.Name();
+            _addParticipant.Organisation(organisation);
+            var solicitorReference = Faker.Company.CatchPhrase();
+            _addParticipant.SoliicitorReference(solicitorReference);
+            var clientDetails = Faker.Name.FullName();
+            _addParticipant.ClientRepresenting(clientDetails); 
         }
     }
 }
