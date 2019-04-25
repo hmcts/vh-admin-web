@@ -12,13 +12,13 @@
       </div>
 
       <div *ngFor="let detail of booking.BookingsDetails; index as i"
-                    [ngClass]="{'vh-row-selected':detail.Selected, 'vh-row-cancelled':detail.Cancelled}">
+        [ngClass]="{'vh-row-selected':detail.Selected, 'vh-row-cancelled':detail.Cancelled}">
         <div class="govuk-grid-row vh-row vh-a" (click)="rowSelected(b,i)" [attr.id]="b+'_'+i">
           <div class="govuk-grid-column-one-quarter">
 
             <div class="vh-sml vh-col">{{detail.StartTime | amLocal | amDateFormat:'h:mm a'}}</div>
             <div class="govuk-hint vh-sml vh-col">listed for {{detail.DurationInHoursAndMinutes}} </div>
-                            <div *ngIf="detail.Cancelled" class="vh-cancelled-booking">{{detail.Status}}</div>
+            <div *ngIf="detail.Cancelled" class="vh-cancelled-booking">{{detail.Status}}</div>
           </div>
           <div class="govuk-grid-column-one-quarter">
 
@@ -51,8 +51,6 @@
                 </span>
               </div>
             </div>
-
-
           </div>
 
         </div>

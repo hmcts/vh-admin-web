@@ -296,8 +296,8 @@ namespace AdminWebsite.Controllers
                 {
                     new CaseRequest
                     {
-                        Name = editHearingRequest.Case.Name,
-                        Number = editHearingRequest.Case.Number
+                            Name = editHearingRequest.Case.Name,
+                            Number = editHearingRequest.Case.Number
                     }
                 }
             };
@@ -317,6 +317,8 @@ namespace AdminWebsite.Controllers
                 Postcode = participant.Postcode,
                 Street = participant.Street,
                 Telephone_number = participant.TelephoneNumber,
+                Representee = participant.Representee,
+                Solicitors_reference = participant.SolicitorsReference
             };
             return updateParticipantRequest;
         }
@@ -336,6 +338,7 @@ namespace AdminWebsite.Controllers
                 Solicitors_reference = participant.SolicitorsReference,
                 Telephone_number = participant.TelephoneNumber,
                 Title = participant.Title,
+                Organisation_name = participant.OrganisationName,
                 House_number = participant.HouseNumber,
                 Street = participant.Street,
                 City = participant.City,
