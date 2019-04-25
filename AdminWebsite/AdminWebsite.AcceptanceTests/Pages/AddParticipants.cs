@@ -55,5 +55,6 @@ namespace AdminWebsite.AcceptanceTests.Pages
                 webElement.Click();
             }
         }
+        public string GetFieldValue(string field) => ExecuteScript($"return document.getElementById('{field}').value");
     }
 }
