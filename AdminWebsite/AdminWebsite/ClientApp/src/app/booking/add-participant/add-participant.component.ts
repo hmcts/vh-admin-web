@@ -447,6 +447,14 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
       this.county.updateValueAndValidity();
       this.postcode.updateValueAndValidity();
 
+      this.companyName.clearValidators();
+      this.solicitorReference.clearValidators();
+      this.representing.clearValidators();
+
+      this.companyName.updateValueAndValidity();
+      this.solicitorReference.updateValueAndValidity();
+      this.representing.updateValueAndValidity();
+
       this.companyName.setValue('');
       this.solicitorReference.setValue('');
       this.representing.setValue('');
@@ -460,6 +468,18 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
       this.companyName.updateValueAndValidity();
       this.solicitorReference.updateValueAndValidity();
       this.representing.updateValueAndValidity();
+
+      this.houseNumber.clearValidators();
+      this.street.clearValidators();
+      this.city.clearValidators();
+      this.county.clearValidators();
+      this.postcode.clearValidators();
+
+      this.houseNumber.updateValueAndValidity();
+      this.street.updateValueAndValidity();
+      this.city.updateValueAndValidity();
+      this.county.updateValueAndValidity();
+      this.postcode.updateValueAndValidity();
 
       this.houseNumber.setValue('');
       this.street.setValue('');
