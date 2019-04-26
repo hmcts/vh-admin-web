@@ -43,6 +43,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   private phone: FormControl;
   private displayName: FormControl;
   private companyName: FormControl;
+  private companyNameIndividual: FormControl;
   private solicitorReference: FormControl;
   private representing: FormControl;
   private houseNumber: FormControl;
@@ -180,6 +181,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     this.phone = new FormControl('', [Validators.required, Validators.pattern(/^[0-9) -.]+$/)]);
     this.displayName = new FormControl('', Validators.required);
     this.companyName = new FormControl('');
+    this.companyNameIndividual = new FormControl('');
     this.solicitorReference = new FormControl('');
     this.representing = new FormControl('');
     this.houseNumber = new FormControl('');
@@ -196,6 +198,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
       phone: this.phone,
       displayName: this.displayName,
       companyName: this.companyName,
+      companyNameIndividual: this.companyNameIndividual,
       solicitorReference: this.solicitorReference,
       representing: this.representing,
       houseNumber: this.houseNumber,
@@ -208,6 +211,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     this.form.valueChanges.subscribe(
       result => {
         setTimeout(() => {
+          console.log(this.form.value);
           if (self.showDetails && (self.role.value === self.constants.PleaseSelect &&
             self.party.value === self.constants.PleaseSelect &&
             self.title.value === self.constants.PleaseSelect &&
@@ -298,6 +302,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
       phone: this.participantDetails.phone || '',
       displayName: this.participantDetails.display_name || '',
       companyName: this.participantDetails.company ? this.participantDetails.company : '',
+      companyNameIndividual: this.participantDetails.company ? this.participantDetails.company : '',
       solicitorReference: this.participantDetails.solicitorsReference ? this.participantDetails.solicitorsReference : '',
       representing: this.participantDetails.representee ? this.participantDetails.representee : '',
       houseNumber: this.participantDetails.housenumber ? this.participantDetails.housenumber : '',
@@ -441,6 +446,10 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
       this.city.updateValueAndValidity();
       this.county.updateValueAndValidity();
       this.postcode.updateValueAndValidity();
+
+      this.companyName.setValue('');
+      this.solicitorReference.setValue('');
+      this.representing.setValue('');
     } else {
       this.showAddress = false;
 
@@ -457,16 +466,10 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
       this.city.setValue('');
       this.county.setValue('');
       this.postcode.setValue('');
+      this.companyNameIndividual.setValue('');
     }
     this.showDetails = true;
     this.isSolicitor = this.role.value === this.constants.Solicitor;
-    if (!this.isSolicitor) {
-      this.companyName.setValue('');
-      this.solicitorReference.setValue('');
-      this.representing.setValue('');
-      this.companyName.clearValidators();
-      this.companyName.updateValueAndValidity();
-    }
   }
 
   titleSelected() {
@@ -578,7 +581,11 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     newParticipant.hearing_role_name = this.role.value;
     newParticipant.email = this.searchEmail ? this.searchEmail.email : '';
     newParticipant.display_name = this.displayName.value;
-    newParticipant.company = this.companyName.value;
+    if (this.role.value === Constants.Solicitor) {
+      newParticipant.company = this.companyName.value;
+    } else {
+      newParticipant.company = this.companyNameIndividual.value;
+    }
     newParticipant.username = this.searchEmail ? this.searchEmail.email : '';
     newParticipant.solicitorsReference = this.solicitorReference.value;
     newParticipant.representee = this.representing.value;
@@ -649,6 +656,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         phone: '',
         displayName: '',
         companyName: '',
+        companyNameIndividual: '',
         solicitorReference: '',
         representing: '',
         houseNumber: '',

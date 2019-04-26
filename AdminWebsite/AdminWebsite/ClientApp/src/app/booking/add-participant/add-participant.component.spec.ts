@@ -45,6 +45,7 @@ let lastName: AbstractControl;
 let phone: AbstractControl;
 let displayName: AbstractControl;
 let companyName: AbstractControl;
+let companyNameIndividual: AbstractControl;
 let representing: AbstractControl;
 let solicitorReference: AbstractControl;
 let houseNumber: AbstractControl;
@@ -616,6 +617,7 @@ describe('AddParticipantComponent edit mode', () => {
     phone = component.form.controls['phone'];
     displayName = component.form.controls['displayName'];
     companyName = component.form.controls['companyName'];
+    companyNameIndividual = component.form.controls['companyNameIndividual'];
     houseNumber = component.form.controls['houseNumber'];
     street = component.form.controls['street'];
     city = component.form.controls['city'];
@@ -710,6 +712,7 @@ describe('AddParticipantComponent edit mode', () => {
       phone: participant.phone,
       displayName: participant.display_name,
       companyName: participant.company,
+      companyNameIndividual: participant.company,
       houseNumber: participant.housenumber,
       street: participant.street,
       city: participant.city,
@@ -739,6 +742,7 @@ describe('AddParticipantComponent edit mode', () => {
       phone: participant.phone,
       displayName: participant.display_name,
       companyName: participant.company,
+      companyNameIndividual: participant.company,
       houseNumber: participant.housenumber,
       street: participant.street,
       city: participant.city,
