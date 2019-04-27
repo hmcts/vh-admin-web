@@ -211,7 +211,6 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     this.form.valueChanges.subscribe(
       result => {
         setTimeout(() => {
-          console.log(this.form.value);
           if (self.showDetails && (self.role.value === self.constants.PleaseSelect &&
             self.party.value === self.constants.PleaseSelect &&
             self.title.value === self.constants.PleaseSelect &&
