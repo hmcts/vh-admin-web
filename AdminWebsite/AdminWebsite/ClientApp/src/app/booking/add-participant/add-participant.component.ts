@@ -291,7 +291,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
       this.showAddress = true;
     }
     this.isSolicitor = this.participantDetails.hearing_role_name === Constants.Solicitor;
-
+    this.roleSelected();
     this.form.setValue({
       party: this.participantDetails.case_role_name,
       role: this.participantDetails.hearing_role_name,
