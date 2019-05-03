@@ -12,16 +12,7 @@ namespace AdminWebsite.Services
     /// </summary>
     public static class ApplicationLogger
     {
-        private static readonly TelemetryClient TelemetryClient = new TelemetryClient
-        {
-            Context =
-            {
-                Cloud =
-                {
-                    RoleName = "vh-admin-web"
-                }
-            }
-        };
+        private static readonly TelemetryClient TelemetryClient = new TelemetryClient();
 
         public static void Trace(string traceCategory, string eventTitle, string information)
         {
