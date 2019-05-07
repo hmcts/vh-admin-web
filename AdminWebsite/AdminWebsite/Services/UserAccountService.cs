@@ -134,31 +134,6 @@ namespace AdminWebsite.Services
             return newUserResponse;
         }
 
-        private Group GetGroupByName(string groupName)
-        {
-            var accessToken = _tokenProvider.GetClientAccessToken(_securitySettings.ClientId,
-                _securitySettings.ClientSecret, _securitySettings.GraphApiBaseUri);
-
-            HttpResponseMessage responseMessage;
-            using (var client = new HttpClient())
-            {
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-                var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get,
-                    $"{_securitySettings.GraphApiBaseUri}v1.0/groups?$filter=displayName eq '{groupName}'");
-                responseMessage = client.SendAsync(httpRequestMessage).Result;
-            }
-
-            if (responseMessage.IsSuccessStatusCode)
-            {
-                var queryResponse = responseMessage.Content.ReadAsAsync<GraphQueryResponse>().Result;
-                return queryResponse.Value?.FirstOrDefault();
-            }
-
-            var message = $"Failed to get group by name {groupName}";
-            var reason = responseMessage.Content.ReadAsStringAsync().Result;
-            throw new UserServiceException(message, reason);
-        }
-
         /// <inheritdoc />
         public Group GetGroupById(string groupId)
         {
