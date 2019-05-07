@@ -207,10 +207,10 @@ namespace AdminWebsite.Services
 
         private List<JudgeResponse> GetUsersByGroupName(string groupName)
         {
-            var groupData = GetGroupByName(groupName);
+            var groupData = _userApiClient.GetGroupByName(groupName);
             if (groupData == null) return new List<JudgeResponse>();
 
-            var response = GetUsersByGroup(groupData.Id);
+            var response = GetUsersByGroup(groupData.Group_id);
             return response.Select(x => new JudgeResponse
             {
                 FirstName = x.GivenName,
