@@ -7,7 +7,6 @@ using AdminWebsite.Security;
 using AdminWebsite.Services;
 using AdminWebsite.UserAPI.Client;
 using FluentAssertions;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Moq;
 using NUnit.Framework;
@@ -87,13 +86,16 @@ namespace AdminWebsite.IntegrationTests.Services
         [Test]
         public void should_return_group_with_display_name_by_id()
         {
+            GroupsResponse groupResponse = new GroupsResponse() { Display_name = "VirtualRoomProfessionalUser", Group_id = "f3340a0e-2ea2-45c6-b19c-d601b8dac13f" };
+            _apiClient.Setup(x => x.GetGroupById("f3340a0e-2ea2-45c6-b19c-d601b8dac13f")).Returns(groupResponse);
             var group = GetService().GetGroupById("f3340a0e-2ea2-45c6-b19c-d601b8dac13f");
-            group.DisplayName.Should().Be("VirtualRoomProfessionalUser");
+            group.Display_name.Should().Be("VirtualRoomProfessionalUser");
         }
         
         [Test]
         public void should_throw_exception_on_invalid_server_response_for_group_by_id()
         {
+            _apiClient.Setup(x => x.GetGroupById(It.IsAny<string>())).Throws(new UserServiceException());
             Assert.Throws<UserServiceException>(() => GetService().GetGroupById("not a valid id"));
         }
     }
