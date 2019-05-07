@@ -124,11 +124,11 @@
 
         <div *ngIf="showAddress">
           <div class="govuk-form-group">
-            <label class="govuk-label" for="companyName">
-              Organisation <span class="govuk-hint vh-inline" *ngIf="showAddress">(optional)</span>
+            <label class="govuk-label" for="companyNameIndividual">
+              Organisation <span class="govuk-hint vh-inline">(optional)</span>
             </label>
-            <input id="companyName" formControlName="companyName" class="govuk-input govuk-input--width-20"
-              type="text" />
+            <input id="companyNameIndividual" formControlName="companyNameIndividual"
+              class="govuk-input govuk-input--width-20" type="text" />
           </div>
         </div>
 
@@ -230,7 +230,7 @@
               </span>
             </legend>
             <label class="govuk-label" for="companyName">
-              Organisation <span class="govuk-hint vh-inline" *ngIf="showAddress">(optional)</span>
+              Organisation
             </label>
             <input id="companyName" formControlName="companyName" class="govuk-input govuk-input--width-20"
               type="text" />

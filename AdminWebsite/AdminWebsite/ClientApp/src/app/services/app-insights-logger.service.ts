@@ -13,6 +13,13 @@ export class AppInsightsLogger implements Logger {
 
     // Unfortunately, there is no way to know if the setup is successful or not
     AppInsights.downloadAndSetup(appInsightsConfig);
+
+    // When it's been initialised, set the role so we know which application is logging
+    AppInsights.queue.push(() => {
+      AppInsights.context.addTelemetryInitializer((envelope) => {
+        envelope.tags['ai.cloud.role'] = 'vh-admin-web';
+      });
+    });
   }
 
   trackPage(pageName: string, url: string) {

@@ -4,8 +4,6 @@ using System.Net;
 using System.Threading.Tasks;
 using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Services;
-using Hearings.Common;
-using Hearings.Common.Helpers;
 using Microsoft.AspNetCore.Http;
 
 namespace AdminWebsite.Middleware
@@ -30,14 +28,13 @@ namespace AdminWebsite.Middleware
             }
             catch (BookingsApiException apiException)
             {
-                var properties = new Dictionary<string, string>();
-                properties.Add("response", apiException.Response);
-                ApplicationLogger.TraceException(TraceCategory.APIException.ToString(), "BookHearing Client Exception", apiException, null, properties);
+                var properties = new Dictionary<string, string> {{"response", apiException.Response}};
+                ApplicationLogger.TraceException(TraceCategory.Dependency.ToString(), "Bookings API Client Exception", apiException, null, properties);
                 await HandleExceptionAsync(httpContext, apiException);
             }
             catch (Exception ex)
             {
-                ApplicationLogger.TraceException(TraceCategory.APIException.ToString(), "BookHearing Client Exception", ex, null,
+                ApplicationLogger.TraceException(TraceCategory.UnhandledError.ToString(), "AdminWeb Unhandled Exception", ex, null,
                     null);
                 await HandleExceptionAsync(httpContext, ex);
             }
