@@ -12,6 +12,9 @@ using Microsoft.Extensions.Options;
 using NUnit.Framework;
 using Microsoft.Extensions.PlatformAbstractions;
 using System.IO;
+using Microsoft.Extensions.DependencyInjection;
+using AdminWebsite.Services;
+using Moq;
 
 namespace AdminWebsite.IntegrationTests.Controllers
 {
@@ -20,7 +23,9 @@ namespace AdminWebsite.IntegrationTests.Controllers
     {
         private TestServer _server;
         private string _bearerToken = String.Empty;
-        
+
+        protected Mock<IUserAccountService> userAccountService { get; private set; }
+
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
@@ -28,9 +33,15 @@ namespace AdminWebsite.IntegrationTests.Controllers
                 WebHost.CreateDefaultBuilder()
                     .UseEnvironment("Development")
                     .UseKestrel(c => c.AddServerHeader = false)
-                    .UseStartup<Startup>();
+                    .UseStartup<Startup>().ConfigureServices(AddMocks);
             _server = new TestServer(webHostBuilder);
             GetClientAccessTokenForBookHearingApi();
+        }
+
+        private void AddMocks(IServiceCollection obj)
+        {
+            userAccountService = new Mock<IUserAccountService>();
+            obj.AddSingleton(userAccountService.Object);
         }
 
         private void GetClientAccessTokenForBookHearingApi()
