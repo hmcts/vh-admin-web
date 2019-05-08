@@ -161,30 +161,14 @@ namespace AdminWebsite.Services
             var groupData = _userApiClient.GetGroupByName(groupName);
             if (groupData == null) return new List<JudgeResponse>();
 
-            var response = GetUsersByGroup(groupData.Group_id);
+            var response = _userApiClient.GetJudges(groupData.Group_id);
             return response.Select(x => new JudgeResponse
             {
-                FirstName = x.GivenName,
-                LastName = x.Surname,
-                DisplayName = x.DisplayName,
-                Email = x.UserPrincipalName
+                FirstName = x.First_name,
+                LastName = x.Last_name,
+                DisplayName = x.Display_name,
+                Email = x.Email
             }).ToList();
-        }
-
-        private IEnumerable<User> GetUsersByGroup(string groupId)
-        {
-            var accessToken = _tokenProvider.GetClientAccessToken(_securitySettings.ClientId,
-                _securitySettings.ClientSecret,
-                _securitySettings.GraphApiBaseUri);
-
-            using (var client = new HttpClient())
-            {
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-                var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, $"{_securitySettings.GraphApiBaseUri}v1.0/groups/{groupId}/members");
-
-                var queryResponse = client.SendAsync(httpRequestMessage).Result.Content.ReadAsAsync<DirectoryObject>().Result;
-                return JsonConvert.DeserializeObject<List<User>>(queryResponse.AdditionalData["value"].ToString());
-            }
         }
     }
 }
