@@ -37,42 +37,11 @@ namespace AdminWebsite.IntegrationTests.Services
             var appSettings = Options.Create(_appSettings);
 
             return new UserAccountService(
-                _apiClient.Object, 
-                tokenProvider, 
-                _securitySettings,
-                appSettings
+                _apiClient.Object //, 
+                //tokenProvider, 
+                //_securitySettings,
+                //appSettings
             );
-        }
-
-        [Test]
-        public void should_contain_test_users_if_live_setting_is_off()
-        {
-            _appSettings.IsLive = false;
-            GroupsResponse groupResponse = new GroupsResponse() { Display_name = "VirtualRoomJudge", Group_id = "431f50b2-fb30-4937-9e91-9b9eeb54097f" };
-            _apiClient.Setup(x => x.GetGroupByName("VirtualRoomJudge")).Returns(groupResponse);
-
-            GroupsResponse groupResponseTest = new GroupsResponse() { Display_name = "TestAccount", Group_id = "63b60a06-874f-490d-8acb-56a88a125078" };
-            _apiClient.Setup(x => x.GetGroupByName("TestAccount")).Returns(groupResponseTest);
-
-            var judges = GetService().GetJudgeUsers().ToList();
-            judges.Count.Should().BeGreaterThan(0);
-            judges.Should().Contain(p =>
-                p.Email.Equals(TestJudgeEmail, StringComparison.CurrentCultureIgnoreCase));
-        }
-
-        [Test]
-        public void should_return_a_list_of_judges_excluding_test_users_if_live()
-        {
-            _appSettings.IsLive = true;
-            GroupsResponse groupResponse = new GroupsResponse() { Display_name = "VirtualRoomJudge", Group_id = "431f50b2-fb30-4937-9e91-9b9eeb54097f" };
-            _apiClient.Setup(x => x.GetGroupByName("VirtualRoomJudge")).Returns(groupResponse);
-
-            GroupsResponse groupResponseTest = new GroupsResponse() { Display_name = "TestAccount", Group_id = "63b60a06-874f-490d-8acb-56a88a125078" };
-            _apiClient.Setup(x => x.GetGroupByName("TestAccount")).Returns(groupResponseTest);
-            var judges = GetService().GetJudgeUsers().ToList();
-            judges.Count.Should().BeGreaterThan(0);
-            judges.Should().NotContain(p =>
-                p.Email.Equals(TestJudgeEmail, StringComparison.CurrentCultureIgnoreCase));
         }
 
         [Test]

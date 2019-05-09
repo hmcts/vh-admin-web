@@ -161,18 +161,18 @@ namespace AdminWebsite.UserAPI.Client
         /// <summary>Get Judges from AD</summary>
         /// <returns>Success</returns>
         /// <exception cref="UserServiceException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.List<UserResponse>> GetJudgesAsync(string groupId);
+        System.Threading.Tasks.Task<System.Collections.Generic.List<UserResponse>> GetJudgesAsync();
     
         /// <summary>Get Judges from AD</summary>
         /// <returns>Success</returns>
         /// <exception cref="UserServiceException">A server side error occurred.</exception>
-        System.Collections.Generic.List<UserResponse> GetJudges(string groupId);
+        System.Collections.Generic.List<UserResponse> GetJudges();
     
         /// <summary>Get Judges from AD</summary>
         /// <returns>Success</returns>
         /// <exception cref="UserServiceException">A server side error occurred.</exception>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        System.Threading.Tasks.Task<System.Collections.Generic.List<UserResponse>> GetJudgesAsync(string groupId, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<System.Collections.Generic.List<UserResponse>> GetJudgesAsync(System.Threading.CancellationToken cancellationToken);
     
     }
     
@@ -1106,31 +1106,27 @@ namespace AdminWebsite.UserAPI.Client
         /// <summary>Get Judges from AD</summary>
         /// <returns>Success</returns>
         /// <exception cref="UserServiceException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<System.Collections.Generic.List<UserResponse>> GetJudgesAsync(string groupId)
+        public System.Threading.Tasks.Task<System.Collections.Generic.List<UserResponse>> GetJudgesAsync()
         {
-            return GetJudgesAsync(groupId, System.Threading.CancellationToken.None);
+            return GetJudgesAsync(System.Threading.CancellationToken.None);
         }
     
         /// <summary>Get Judges from AD</summary>
         /// <returns>Success</returns>
         /// <exception cref="UserServiceException">A server side error occurred.</exception>
-        public System.Collections.Generic.List<UserResponse> GetJudges(string groupId)
+        public System.Collections.Generic.List<UserResponse> GetJudges()
         {
-            return System.Threading.Tasks.Task.Run(async () => await GetJudgesAsync(groupId, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
+            return System.Threading.Tasks.Task.Run(async () => await GetJudgesAsync(System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
         }
     
         /// <summary>Get Judges from AD</summary>
         /// <returns>Success</returns>
         /// <exception cref="UserServiceException">A server side error occurred.</exception>
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        public async System.Threading.Tasks.Task<System.Collections.Generic.List<UserResponse>> GetJudgesAsync(string groupId, System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task<System.Collections.Generic.List<UserResponse>> GetJudgesAsync(System.Threading.CancellationToken cancellationToken)
         {
-            if (groupId == null)
-                throw new System.ArgumentNullException("groupId");
-    
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/users/user/{groupId}");
-            urlBuilder_.Replace("{groupId}", System.Uri.EscapeDataString(ConvertToString(groupId, System.Globalization.CultureInfo.InvariantCulture)));
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/users/judges");
     
             var client_ = _httpClient;
             try

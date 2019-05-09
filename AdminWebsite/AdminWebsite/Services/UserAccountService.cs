@@ -1,21 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Contracts.Responses;
-using AdminWebsite.Helper;
-using AdminWebsite.Security;
-using AdminWebsite.Services.Models;
-using Microsoft.Extensions.Options;
-using Microsoft.Graph;
-using Newtonsoft.Json;
-using AdminWebsite.Configuration;
 using AdminWebsite.UserAPI.Client;
-using UserServiceException = AdminWebsite.Security.UserServiceException;
 
 namespace AdminWebsite.Services
 {
@@ -45,26 +34,14 @@ namespace AdminWebsite.Services
     public class UserAccountService : IUserAccountService
     {
         private readonly IUserApiClient _userApiClient;
-        private readonly ITokenProvider _tokenProvider;
-        private readonly SecuritySettings _securitySettings;
-        private readonly bool _isLive;
-
-        private static readonly Compare<JudgeResponse> CompareJudgeById =
-            Compare<JudgeResponse>.By((x, y) => x.Email == y.Email, x => x.Email.GetHashCode());
 
         /// <summary>
         /// Create the service
         /// </summary>
         /// <param name="userApiClient"></param>
-        /// <param name="tokenProvider"></param>
-        /// <param name="securitySettings"></param>
-        /// <param name="appSettings"></param>
-        public UserAccountService(IUserApiClient userApiClient, ITokenProvider tokenProvider, IOptions<SecuritySettings> securitySettings, IOptions<AppConfigSettings> appSettings)
+        public UserAccountService(IUserApiClient userApiClient)
         {
             _userApiClient = userApiClient;
-            _tokenProvider = tokenProvider;
-            _securitySettings = securitySettings.Value;
-            _isLive = appSettings.Value.IsLive;
         }
 
         /// <inheritdoc />
@@ -143,26 +120,8 @@ namespace AdminWebsite.Services
         /// <inheritdoc />
         public IEnumerable<JudgeResponse> GetJudgeUsers()
         {
-            var judges = GetUsersByGroupName("VirtualRoomJudge");
-            if (_isLive)
-                judges = ExcludeTestJudges(judges).ToList();
-
-            return judges.OrderBy(j => j.DisplayName);
-        }
-
-        private IEnumerable<JudgeResponse> ExcludeTestJudges(IEnumerable<JudgeResponse> judgesList)
-        {
-            var judgesTest = GetUsersByGroupName("TestAccount");
-            return judgesList.Except(judgesTest, CompareJudgeById);
-        }
-
-        private List<JudgeResponse> GetUsersByGroupName(string groupName)
-        {
-            var groupData = _userApiClient.GetGroupByName(groupName);
-            if (groupData == null) return new List<JudgeResponse>();
-
-            var response = _userApiClient.GetJudges(groupData.Group_id);
-            return response.Select(x => new JudgeResponse
+            var judgesList = _userApiClient.GetJudges();
+            return judgesList.Select(x => new JudgeResponse
             {
                 FirstName = x.First_name,
                 LastName = x.Last_name,

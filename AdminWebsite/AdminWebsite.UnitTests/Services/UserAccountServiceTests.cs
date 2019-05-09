@@ -37,10 +37,10 @@ namespace AdminWebsite.UnitTests.Services
                 .Returns(new SecuritySettings());
             
             _service = new UserAccountService(
-                _apiClient.Object, 
-                _tokenProvider.Object,
-                _securitySettings.Object,
-                _appSettings.Object
+                _apiClient.Object
+                //_tokenProvider.Object,
+                //_securitySettings.Object,
+                //_appSettings.Object
             );
 
             _apiClient.Setup(x => x.GetUserByEmailAsync(It.IsAny<string>()))
