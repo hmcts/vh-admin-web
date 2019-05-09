@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using AdminWebsite.Configuration;
 using AdminWebsite.Helper;
@@ -60,7 +61,21 @@ namespace AdminWebsite.IntegrationTests.Services
             var group = GetService().GetGroupById("f3340a0e-2ea2-45c6-b19c-d601b8dac13f");
             group.Display_name.Should().Be("VirtualRoomProfessionalUser");
         }
-        
+
+        [Test]
+        public void should_return_list_of_judges()
+        {
+            var judgesList = new List<UserResponse>();
+            var judge = new UserResponse() { Display_name = "john maclain", Email = "john.maclain@email.com", First_name = "john", Last_name = "maclain" };
+            judgesList.Add(judge);
+            judge = new UserResponse() { Display_name = "john wayne", Email = "john.wayne@email.com", First_name = "john", Last_name = "wayne" };
+            judgesList.Add(judge);
+
+            _apiClient.Setup(x => x.GetJudges()).Returns(judgesList);
+            var group = GetService().GetJudgeUsers();
+            group.Should().NotBeNullOrEmpty();
+        }
+
         [Test]
         public void should_throw_exception_on_invalid_server_response_for_group_by_id()
         {

@@ -36,12 +36,7 @@ namespace AdminWebsite.UnitTests.Services
             _securitySettings.Setup(x => x.Value)
                 .Returns(new SecuritySettings());
             
-            _service = new UserAccountService(
-                _apiClient.Object
-                //_tokenProvider.Object,
-                //_securitySettings.Object,
-                //_appSettings.Object
-            );
+            _service = new UserAccountService(_apiClient.Object);
 
             _apiClient.Setup(x => x.GetUserByEmailAsync(It.IsAny<string>()))
                 .Throws(ClientException.ForUserService(HttpStatusCode.NotFound));
