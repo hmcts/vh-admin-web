@@ -3,7 +3,8 @@ using AdminWebsite.Configuration;
 using AdminWebsite.Extensions;
 using AdminWebsite.Helper;
 using AdminWebsite.Middleware;
-
+using AdminWebsite.Services;
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -29,6 +30,8 @@ namespace AdminWebsite
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<ITelemetryInitializer>(new CloudRoleNameInitializer());
+            
             services.AddSwagger();
             services.AddJsonOptions();
             RegisterSettings(services);
@@ -38,6 +41,7 @@ namespace AdminWebsite
             RegisterAuth(services);
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/dist"; });
         }

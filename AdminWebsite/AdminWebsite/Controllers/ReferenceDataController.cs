@@ -6,6 +6,7 @@ using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Contracts.Responses;
 using AdminWebsite.Models;
 using AdminWebsite.Security;
+using AdminWebsite.Services;
 using Microsoft.AspNetCore.Mvc;
 using HearingTypeResponse = AdminWebsite.Contracts.Responses.HearingTypeResponse;
 
