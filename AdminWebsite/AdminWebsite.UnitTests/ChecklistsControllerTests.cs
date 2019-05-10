@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using AdminWebsite.Controllers;
 using AdminWebsite.Models;
 using AdminWebsite.Security;
@@ -21,12 +22,12 @@ namespace AdminWebsite.UnitTests
         }
 
         [Test]
-        public void should_return_a_list_of_bookings()
+        public async Task should_return_a_list_of_bookings()
         {
             const int page = 2, pageSize = 10;
-            _userIdentity.Setup(x => x.IsVhOfficerAdministratorRole()).Returns(true);
+            _userIdentity.Setup(x => x.IsVhOfficerAdministratorRole()).ReturnsAsync(true);
 
-            var actionResult = (OkObjectResult) _controller.GetAllParticipantsChecklists(pageSize, page);
+            var actionResult = (OkObjectResult) await _controller.GetAllParticipantsChecklists(pageSize, page);
 
             var actualResponse = (ChecklistsResponse) actionResult.Value;
             actualResponse.Hearings.Should().NotBeNull();

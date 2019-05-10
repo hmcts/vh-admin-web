@@ -40,6 +40,8 @@ namespace AdminWebsite.Services
         /// <param name="participant"></param>
         /// <returns></returns>
         Task UpdateParticipantUsername(ParticipantRequest participant);
+
+        Task<string> GetUserRoleAsync(string userName);
     }
 
     public class UserAccountService : IUserAccountService
@@ -82,7 +84,14 @@ namespace AdminWebsite.Services
                 participant.Username = userProfile.User_name;
             }
         }
-        
+
+        public async Task<string> GetUserRoleAsync(string userName)
+        {
+            var user = await _userApiClient.GetUserByAdUserNameAsync(userName);
+
+            return user.User_role;
+        }
+
         private async Task<UserProfile> CheckUserExistsInAD(string emailAddress)
         {
             try

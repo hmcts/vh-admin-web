@@ -3,6 +3,7 @@ using AdminWebsite.Security;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace AdminWebsite.Controllers
 {
@@ -20,12 +21,12 @@ namespace AdminWebsite.Controllers
         [HttpGet]
         [SwaggerOperation(OperationId = "GetUserProfile")]
         [ProducesResponseType(typeof(UserProfileResponse), (int)HttpStatusCode.OK)]
-        public ActionResult<UserProfileResponse> GetUserProfile()
+        public async Task<ActionResult<UserProfileResponse>> GetUserProfile()
         {
             var profile = new UserProfileResponse
             {
-                IsVhOfficerAdministratorRole = _userIdentity.IsVhOfficerAdministratorRole(),
-                IsCaseAdministrator = _userIdentity.IsCaseAdministratorRole()
+                IsVhOfficerAdministratorRole = await _userIdentity.IsVhOfficerAdministratorRole(),
+                IsCaseAdministrator = await _userIdentity.IsCaseAdministratorRole()
             };
            
             return Ok(profile);

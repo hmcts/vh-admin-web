@@ -1,8 +1,13 @@
 using System;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Threading.Tasks;
 using AdminWebsite.Configuration;
 using AdminWebsite.Extensions;
 using AdminWebsite.Helper;
 using AdminWebsite.Middleware;
+using AdminWebsite.Security;
 using AdminWebsite.Services;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -13,6 +18,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -68,12 +74,44 @@ namespace AdminWebsite
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+       
             }).AddJwtBearer(options =>
             {
                 options.Authority = securitySettings.Authority;
                 options.TokenValidationParameters.ValidateLifetime = true;
                 options.Audience = securitySettings.ClientId;
                 options.TokenValidationParameters.ClockSkew = TimeSpan.Zero;
+                options.Events = new JwtBearerEvents
+                {
+                    OnTokenValidated = async ctx =>
+                    {
+                        var cache = ctx.HttpContext.RequestServices.GetService<IMemoryCache>();
+
+                        var username = ctx.Principal.Identity.Name;
+                        if (!(ctx.SecurityToken is JwtSecurityToken jwtToken)) return;
+
+                        var userProfileClaims = await cache.GetOrCreate(jwtToken.RawData, async entry =>
+                        {
+                            var userAccountService = ctx.HttpContext.RequestServices.GetService<IUserAccountService>();
+
+                            var userRole = await userAccountService.GetUserRoleAsync(username);
+                            var isVhOfficerAdministratorRole = userRole == UserRole.VhOfficer.ToString();
+                            var isCaseAdministratorRole = userRole == UserRole.CaseAdmin.ToString();
+
+                            //TODO - create class to take in claims and return object with these properties.
+                            return new List<Claim>
+                            {
+                                new Claim("IsVhOfficerAdministratorRole", isVhOfficerAdministratorRole.ToString()),
+                                new Claim("IsCaseAdministratorRole", isCaseAdministratorRole.ToString()),
+                                new Claim("IsAdministratorRole", (isVhOfficerAdministratorRole || isCaseAdministratorRole).ToString())
+                            };
+                        });
+
+                        var claimsIdentity = ctx.Principal.Identity as ClaimsIdentity;
+
+                        claimsIdentity?.AddClaims(userProfileClaims);
+                    }
+                };
             });
 
             serviceCollection.AddAuthorization();

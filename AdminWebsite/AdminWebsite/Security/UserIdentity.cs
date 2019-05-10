@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace AdminWebsite.Security
 {
@@ -16,9 +17,9 @@ namespace AdminWebsite.Security
 
         string GetUserIdentityName();
 
-        bool IsVhOfficerAdministratorRole();
+        Task<bool> IsVhOfficerAdministratorRole();
 
-        bool IsCaseAdministratorRole();
+        Task<bool> IsCaseAdministratorRole();
 
         /// <summary>
         /// Returns a list of the case types the user is allowed to administrate
@@ -28,8 +29,9 @@ namespace AdminWebsite.Security
 
     public class UserIdentity : IUserIdentity
     {
-        private static readonly string[] AcceptedAdministratorRoles = { "Civil Money Claims", "Tax", "Financial Remedy" };
-        private static readonly string virtualRoomAdministrator = "VirtualRoomAdministrator";
+        //TODO remove
+        private static readonly string[] AcceptedAdministratorRoles = { "Civil Money Claims", "Financial Remedy" };
+        private const string VirtualRoomAdministrator = "VirtualRoomAdministrator";
 
         private readonly ClaimsPrincipal _currentUser;
         private readonly IUserAccountService _userAccountService;
@@ -52,6 +54,7 @@ namespace AdminWebsite.Security
             return GetGroupDisplayNames().Where(group => AcceptedAdministratorRoles.Contains(group));
         }
         
+        //TODO - these methods will be on the userPrincipal claims as claims
         public bool IsAdministratorRole()
         {
             var groups = GetGroupDisplayNames().ToList();
@@ -60,19 +63,21 @@ namespace AdminWebsite.Security
 
             return groups.Any(g => AcceptedAdministratorRoles.Contains(g))
                    || (groups.Contains(internalGroup) && groups.Contains(administratorGroup))
-                   || groups.Contains(virtualRoomAdministrator);
+                   || groups.Contains(VirtualRoomAdministrator);
         }
 
-        public bool IsVhOfficerAdministratorRole()
+        public async Task<bool> IsVhOfficerAdministratorRole()
         {
-            var groups = GetGroupDisplayNames().ToList();
-            return groups.Contains(virtualRoomAdministrator);
+            var userRole = await _userAccountService.GetUserRoleAsync(_currentUser.Identity.Name);
+
+            return userRole == UserRole.VhOfficer.ToString();
         }
 
-        public bool IsCaseAdministratorRole()
+        public async Task<bool> IsCaseAdministratorRole()
         {
-            var groups = GetGroupDisplayNames().ToList();
-            return groups.Any(g => AcceptedAdministratorRoles.Contains(g));
+            var userRole = await _userAccountService.GetUserRoleAsync(_currentUser.Identity.Name);
+
+            return userRole == UserRole.CaseAdmin.ToString();
         }
 
         public string GetUserIdentityName()
