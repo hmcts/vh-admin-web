@@ -1,6 +1,9 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AdminWebsite.Configuration;
@@ -69,7 +72,8 @@ namespace AdminWebsite
             serviceCollection.AddMvc(options => { options.Filters.Add(new AuthorizeFilter(policy)); });
 
             var securitySettings = Configuration.GetSection("AzureAd").Get<SecuritySettings>();
-
+            var cache = new ConcurrentDictionary<string, Task<IEnumerable<Claim>>>();
+            
             serviceCollection.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -85,12 +89,10 @@ namespace AdminWebsite
                 {
                     OnTokenValidated = async ctx =>
                     {
-                        var cache = ctx.HttpContext.RequestServices.GetService<IMemoryCache>();
-
                         var username = ctx.Principal.Identity.Name;
                         if (!(ctx.SecurityToken is JwtSecurityToken jwtToken)) return;
 
-                        var userProfileClaims = await cache.GetOrCreate(jwtToken.RawData, async entry =>
+                        var userProfileClaims = await cache.GetOrAdd(jwtToken.RawData,  async entry =>
                         {
                             var userAccountService = ctx.HttpContext.RequestServices.GetService<IUserAccountService>();
 
@@ -104,7 +106,7 @@ namespace AdminWebsite
                                 new Claim("IsVhOfficerAdministratorRole", isVhOfficerAdministratorRole.ToString()),
                                 new Claim("IsCaseAdministratorRole", isCaseAdministratorRole.ToString()),
                                 new Claim("IsAdministratorRole", (isVhOfficerAdministratorRole || isCaseAdministratorRole).ToString())
-                            };
+                            }.AsEnumerable();
                         });
 
                         var claimsIdentity = ctx.Principal.Identity as ClaimsIdentity;
