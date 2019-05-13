@@ -69,7 +69,7 @@ namespace AdminWebsite
 
             var securitySettings = Configuration.GetSection("AzureAd").Get<SecuritySettings>();
             var cache = new ConcurrentDictionary<string, Task<IEnumerable<Claim>>>();
-            
+
             serviceCollection.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -88,13 +88,12 @@ namespace AdminWebsite
                         var username = ctx.Principal.Identity.Name;
                         if (!(ctx.SecurityToken is JwtSecurityToken jwtToken)) return;
 
-                        var userProfileClaims = await cache.GetOrAdd(jwtToken.RawData,  async entry =>
+                        var userProfileClaims = await cache.GetOrAdd(jwtToken.RawData,  async key =>
                         {
                             var userAccountService = ctx.HttpContext.RequestServices.GetService<IUserAccountService>();
-                            var userRole = await userAccountService.GetUserRoleAsync(username);
-                            var adminClaimHelper = new AdministratorRoleClaimsHelper(userRole);
+                            var userRole = new Lazy<Task<string>>(() => userAccountService.GetUserRoleAsync(username));
 
-                            return adminClaimHelper.GetAdministratorClaims();
+                            return new AdministratorRoleClaimsHelper(await userRole.Value).GetAdministratorClaims();
                         });
 
                         var claimsIdentity = ctx.Principal.Identity as ClaimsIdentity;

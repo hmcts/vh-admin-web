@@ -10,6 +10,8 @@ namespace AdminWebsite.Helper
         private const string VhOfficerAdministratorClaimName = "IsVhOfficerAdministratorRole";
         private const string CaseAdministratorClaimName = "IsCaseAdministratorRole";
         private const string AdministratorClaimName = "IsAdministratorRole";
+        private const string GroupsClaimName = "groups";
+
         private readonly IEnumerable<Claim> _administratorClaims;
 
         public AdministratorRoleClaimsHelper(string userRole)
