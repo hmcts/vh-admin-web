@@ -2,8 +2,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AdminWebsite.Configuration;
@@ -17,11 +15,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -95,18 +91,10 @@ namespace AdminWebsite
                         var userProfileClaims = await cache.GetOrAdd(jwtToken.RawData,  async entry =>
                         {
                             var userAccountService = ctx.HttpContext.RequestServices.GetService<IUserAccountService>();
-
                             var userRole = await userAccountService.GetUserRoleAsync(username);
-                            var isVhOfficerAdministratorRole = userRole == UserRole.VhOfficer.ToString();
-                            var isCaseAdministratorRole = userRole == UserRole.CaseAdmin.ToString();
+                            var adminClaimHelper = new AdministratorRoleClaimsHelper(userRole);
 
-                            //TODO - create class to take in claims and return object with these properties.
-                            return new List<Claim>
-                            {
-                                new Claim("IsVhOfficerAdministratorRole", isVhOfficerAdministratorRole.ToString()),
-                                new Claim("IsCaseAdministratorRole", isCaseAdministratorRole.ToString()),
-                                new Claim("IsAdministratorRole", (isVhOfficerAdministratorRole || isCaseAdministratorRole).ToString())
-                            }.AsEnumerable();
+                            return adminClaimHelper.GetAdministratorClaims();
                         });
 
                         var claimsIdentity = ctx.Principal.Identity as ClaimsIdentity;

@@ -1,8 +1,8 @@
-﻿using AdminWebsite.Services;
+﻿using AdminWebsite.Helper;
+using AdminWebsite.Services;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace AdminWebsite.Security
 {
@@ -17,9 +17,9 @@ namespace AdminWebsite.Security
 
         string GetUserIdentityName();
 
-        Task<bool> IsVhOfficerAdministratorRole();
+        bool IsVhOfficerAdministratorRole();
 
-        Task<bool> IsCaseAdministratorRole();
+        bool IsCaseAdministratorRole();
 
         /// <summary>
         /// Returns a list of the case types the user is allowed to administrate
@@ -29,10 +29,8 @@ namespace AdminWebsite.Security
 
     public class UserIdentity : IUserIdentity
     {
-        //TODO remove
         private static readonly string[] AcceptedAdministratorRoles = { "Civil Money Claims", "Financial Remedy" };
-        private const string VirtualRoomAdministrator = "VirtualRoomAdministrator";
-
+        private readonly AdministratorRoleClaimsHelper _administratorRoleClaimsHelper;
         private readonly ClaimsPrincipal _currentUser;
         private readonly IUserAccountService _userAccountService;
 
@@ -40,12 +38,13 @@ namespace AdminWebsite.Security
         {
             _currentUser = currentUser;
             _userAccountService = userAccountService;
+            _administratorRoleClaimsHelper = new AdministratorRoleClaimsHelper(_currentUser.Claims);
         }
 
         public IEnumerable<string> GetGroupDisplayNames()
         {
             var groupClaims = _currentUser.Claims.Where(x => x.Type == "groups").ToList();
-            return groupClaims.Select(x => _userAccountService.GetGroupById(x.Value).DisplayName).ToList();            
+            return groupClaims.Select(x => _userAccountService.GetGroupById(x.Value).DisplayName).ToList();
         }
 
         /// <inheritdoc />
@@ -53,31 +52,20 @@ namespace AdminWebsite.Security
         {
             return GetGroupDisplayNames().Where(group => AcceptedAdministratorRoles.Contains(group));
         }
-        
-        //TODO - these methods will be on the userPrincipal claims as claims
+
         public bool IsAdministratorRole()
         {
-            var groups = GetGroupDisplayNames().ToList();
-            const string internalGroup = "Internal";
-            const string administratorGroup = "HearingAdministrator";
-
-            return groups.Any(g => AcceptedAdministratorRoles.Contains(g))
-                   || (groups.Contains(internalGroup) && groups.Contains(administratorGroup))
-                   || groups.Contains(VirtualRoomAdministrator);
+            return _administratorRoleClaimsHelper.IsAdministratorRole;
         }
 
-        public async Task<bool> IsVhOfficerAdministratorRole()
+        public bool IsVhOfficerAdministratorRole()
         {
-            var userRole = await _userAccountService.GetUserRoleAsync(_currentUser.Identity.Name);
-
-            return userRole == UserRole.VhOfficer.ToString();
+            return _administratorRoleClaimsHelper.IsVhOfficerAdministratorRole;
         }
 
-        public async Task<bool> IsCaseAdministratorRole()
+        public bool IsCaseAdministratorRole()
         {
-            var userRole = await _userAccountService.GetUserRoleAsync(_currentUser.Identity.Name);
-
-            return userRole == UserRole.CaseAdmin.ToString();
+            return _administratorRoleClaimsHelper.IsCaseAdministratorRole;
         }
 
         public string GetUserIdentityName()

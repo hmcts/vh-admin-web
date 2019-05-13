@@ -41,7 +41,7 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetAllParticipantsChecklists(int pageSize = 5, int page = 1)
         {
-            if (! await _userIdentity.IsVhOfficerAdministratorRole())
+            if (! _userIdentity.IsVhOfficerAdministratorRole())
                 return Unauthorized();
 
             var response = new ChecklistsResponse
@@ -94,7 +94,7 @@ namespace AdminWebsite.Controllers
                 Total_pages = 1,
                 Page_size = pageSize
             };
-            return Ok(response);
+            return await Task.FromResult(Ok(response));
         }
     }
 }

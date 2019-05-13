@@ -21,12 +21,12 @@ namespace AdminWebsite.Controllers
         [HttpGet]
         [SwaggerOperation(OperationId = "GetUserProfile")]
         [ProducesResponseType(typeof(UserProfileResponse), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<UserProfileResponse>> GetUserProfile()
+        public ActionResult<UserProfileResponse> GetUserProfile()
         {
             var profile = new UserProfileResponse
             {
-                IsVhOfficerAdministratorRole = await _userIdentity.IsVhOfficerAdministratorRole(),
-                IsCaseAdministrator = await _userIdentity.IsCaseAdministratorRole()
+                IsVhOfficerAdministratorRole = _userIdentity.IsVhOfficerAdministratorRole(),
+                IsCaseAdministrator = _userIdentity.IsCaseAdministratorRole()
             };
            
             return Ok(profile);
