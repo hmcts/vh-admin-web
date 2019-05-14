@@ -34,7 +34,7 @@ namespace AdminWebsite.UnitTests.Security
                 .Returns(new Group {DisplayName = "Civil Money Claims"});
             
             // then the user should have rights to the two groups
-            var userIdentity = new UserIdentity(user, _userAccountService.Object);
+            var userIdentity = new UserIdentity(user);
             var caseTypes = userIdentity.GetAdministratorCaseTypes();
             caseTypes.Should().Contain("Civil Money Claims");
             caseTypes.Should().Contain("Financial Remedy");

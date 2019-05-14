@@ -58,6 +58,7 @@ namespace AdminWebsite.Extensions
             serviceCollection.AddScoped<IUserAccountService, UserAccountService>();
             serviceCollection.AddScoped<SecuritySettings>();
             serviceCollection.AddScoped<AppConfigSettings>();
+            serviceCollection.AddSingleton<IClaimsCacheProvider, MemoryClaimsCacheProvider>();
 
             // Build the hearings api client using a reusable HttpClient factory and predefined base url
             var container = serviceCollection.BuildServiceProvider();
@@ -73,9 +74,9 @@ namespace AdminWebsite.Extensions
 
             serviceCollection.AddTransient<IUserIdentity, UserIdentity>((ctx) =>
             {
-                var userAccountService = ctx.GetService<IUserAccountService>();
                 var userPrincipal = ctx.GetService<IHttpContextAccessor>().HttpContext.User;
-                return new UserIdentity(userPrincipal, userAccountService);
+
+                return new UserIdentity(userPrincipal);
             });
             
             return serviceCollection;

@@ -25,7 +25,7 @@ namespace AdminWebsite.UnitTests
         public async Task should_return_a_list_of_bookings()
         {
             const int page = 2, pageSize = 10;
-            _userIdentity.Setup(x => x.IsVhOfficerAdministratorRole()).ReturnsAsync(true);
+            _userIdentity.Setup(x => x.IsVhOfficerAdministratorRole()).Returns(true);
 
             var actionResult = (OkObjectResult) await _controller.GetAllParticipantsChecklists(pageSize, page);
 

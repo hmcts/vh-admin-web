@@ -1,4 +1,6 @@
-﻿using AdminWebsite.Security;
+﻿using System;
+using AdminWebsite.Security;
+using AdminWebsite.Services.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -10,21 +12,22 @@ namespace AdminWebsite.Helper
         private const string VhOfficerAdministratorClaimName = "IsVhOfficerAdministratorRole";
         private const string CaseAdministratorClaimName = "IsCaseAdministratorRole";
         private const string AdministratorClaimName = "IsAdministratorRole";
-        private const string GroupsClaimName = "groups";
+        private const string UserCaseTypesClaimName = "UserCaseTypes";
 
         private readonly IEnumerable<Claim> _administratorClaims;
 
-        public AdministratorRoleClaimsHelper(string userRole)
+        public AdministratorRoleClaimsHelper(UserGroupData userGroupData)
         {
-            IsVhOfficerAdministratorRole = userRole == UserRole.VhOfficer.ToString();
-            IsCaseAdministratorRole = userRole == UserRole.CaseAdmin.ToString();
+            IsVhOfficerAdministratorRole = userGroupData.UserRole == UserRole.VhOfficer.ToString();
+            IsCaseAdministratorRole = userGroupData.UserRole == UserRole.CaseAdmin.ToString();
             IsAdministratorRole = IsVhOfficerAdministratorRole || IsCaseAdministratorRole;
 
             _administratorClaims = new List<Claim>
             {
                 new Claim(VhOfficerAdministratorClaimName, IsVhOfficerAdministratorRole.ToString()),
                 new Claim(CaseAdministratorClaimName, IsCaseAdministratorRole.ToString()),
-                new Claim(AdministratorClaimName, (IsVhOfficerAdministratorRole || IsCaseAdministratorRole).ToString())
+                new Claim(AdministratorClaimName, (IsVhOfficerAdministratorRole || IsCaseAdministratorRole).ToString()),
+                new Claim(UserCaseTypesClaimName, string.Join(",", userGroupData.CaseTypes))
             };
         }
 
@@ -34,22 +37,26 @@ namespace AdminWebsite.Helper
             var vhAdminRoleClaim = claimsList.FirstOrDefault(x => x.Type == VhOfficerAdministratorClaimName);
             var caseAdminRoleClaim = claimsList.FirstOrDefault(x => x.Type == CaseAdministratorClaimName);
             var adminRoleClaim = claimsList.FirstOrDefault(x => x.Type == AdministratorClaimName);
+            var userCaseTypes = claimsList.FirstOrDefault(x => x.Type == UserCaseTypesClaimName);
 
-            IsVhOfficerAdministratorRole = GetClaimValue(vhAdminRoleClaim);
-            IsCaseAdministratorRole = GetClaimValue(caseAdminRoleClaim);
-            IsAdministratorRole = GetClaimValue(adminRoleClaim);
+            IsVhOfficerAdministratorRole = GetClaimBoolValue(vhAdminRoleClaim);
+            IsCaseAdministratorRole = GetClaimBoolValue(caseAdminRoleClaim);
+            IsAdministratorRole = GetClaimBoolValue(adminRoleClaim);
+            UserCaseTypes = userCaseTypes?.Value?.Split(",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries) ??
+                            Enumerable.Empty<string>();
         }
 
         public bool IsVhOfficerAdministratorRole { get; set; }
         public bool IsCaseAdministratorRole { get; set; }
         public bool IsAdministratorRole { get; set; }
+        public IEnumerable<string> UserCaseTypes { get; set; }
 
         public IEnumerable<Claim> GetAdministratorClaims()
         {
             return _administratorClaims;
         }
 
-        private static bool GetClaimValue(Claim claim)
+        private static bool GetClaimBoolValue(Claim claim)
         {
             return !string.IsNullOrWhiteSpace(claim?.Value) &&
                    (bool.TryParse(claim.Value, out var result) && result);

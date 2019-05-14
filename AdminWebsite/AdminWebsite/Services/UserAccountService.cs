@@ -41,7 +41,7 @@ namespace AdminWebsite.Services
         /// <returns></returns>
         Task UpdateParticipantUsername(ParticipantRequest participant);
 
-        Task<string> GetUserRoleAsync(string userName);
+        Task<UserGroupData> GetUserGroupDataAsync(string userName);
     }
 
     public class UserAccountService : IUserAccountService
@@ -85,11 +85,11 @@ namespace AdminWebsite.Services
             }
         }
 
-        public async Task<string> GetUserRoleAsync(string userName)
+        public async Task<UserGroupData> GetUserGroupDataAsync(string userName)
         {
             var user = await _userApiClient.GetUserByAdUserNameAsync(userName);
 
-            return user.User_role;
+            return new UserGroupData {UserRole = user.User_role, CaseTypes = user.Case_type};
         }
 
         private async Task<UserProfile> CheckUserExistsInAD(string emailAddress)

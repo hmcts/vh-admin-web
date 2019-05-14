@@ -1,14 +1,7 @@
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Threading.Tasks;
 using AdminWebsite.Configuration;
 using AdminWebsite.Extensions;
 using AdminWebsite.Helper;
 using AdminWebsite.Middleware;
-using AdminWebsite.Security;
 using AdminWebsite.Services;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -20,6 +13,10 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace AdminWebsite
 {
@@ -36,7 +33,7 @@ namespace AdminWebsite
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<ITelemetryInitializer>(new CloudRoleNameInitializer());
-            
+
             services.AddSwagger();
             services.AddJsonOptions();
             RegisterSettings(services);
@@ -68,13 +65,12 @@ namespace AdminWebsite
             serviceCollection.AddMvc(options => { options.Filters.Add(new AuthorizeFilter(policy)); });
 
             var securitySettings = Configuration.GetSection("AzureAd").Get<SecuritySettings>();
-            var cache = new ConcurrentDictionary<string, Task<IEnumerable<Claim>>>();
 
             serviceCollection.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-       
+
             }).AddJwtBearer(options =>
             {
                 options.Authority = securitySettings.Authority;
@@ -83,23 +79,7 @@ namespace AdminWebsite
                 options.TokenValidationParameters.ClockSkew = TimeSpan.Zero;
                 options.Events = new JwtBearerEvents
                 {
-                    OnTokenValidated = async ctx =>
-                    {
-                        var username = ctx.Principal.Identity.Name;
-                        if (!(ctx.SecurityToken is JwtSecurityToken jwtToken)) return;
-
-                        var userProfileClaims = await cache.GetOrAdd(jwtToken.RawData,  async key =>
-                        {
-                            var userAccountService = ctx.HttpContext.RequestServices.GetService<IUserAccountService>();
-                            var userRole = new Lazy<Task<string>>(() => userAccountService.GetUserRoleAsync(username));
-
-                            return new AdministratorRoleClaimsHelper(await userRole.Value).GetAdministratorClaims();
-                        });
-
-                        var claimsIdentity = ctx.Principal.Identity as ClaimsIdentity;
-
-                        claimsIdentity?.AddClaims(userProfileClaims);
-                    }
+                    OnTokenValidated = OnTokenValidated()
                 };
             });
 
@@ -149,6 +129,30 @@ namespace AdminWebsite
             });
 
             app.UseMiddleware<ExceptionMiddleware>();
+        }
+
+        private static Func<TokenValidatedContext, Task> OnTokenValidated()
+        {
+            return async ctx =>
+            {
+                var username = ctx.Principal.Identity.Name;
+                if (!(ctx.SecurityToken is JwtSecurityToken jwtToken)) return;
+
+                var cache = ctx.HttpContext.RequestServices.GetService<IClaimsCacheProvider>();
+                var userProfileClaims = await cache.GetOrAdd(jwtToken.RawData, async key =>
+                {
+                    var userAccountService = ctx.HttpContext.RequestServices.GetService<IUserAccountService>();
+
+                    return new AdministratorRoleClaimsHelper
+                    (
+                        await userAccountService.GetUserGroupDataAsync(username)
+                    ).GetAdministratorClaims();
+                });
+
+                var claimsIdentity = ctx.Principal.Identity as ClaimsIdentity;
+
+                claimsIdentity?.AddClaims(userProfileClaims);
+            };
         }
     }
 }
