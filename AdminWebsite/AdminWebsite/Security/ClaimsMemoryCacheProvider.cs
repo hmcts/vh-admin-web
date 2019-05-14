@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace AdminWebsite.Services
+namespace AdminWebsite.Security
 {
     public interface IClaimsCacheProvider
     {

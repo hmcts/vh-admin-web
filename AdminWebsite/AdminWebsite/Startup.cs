@@ -2,6 +2,7 @@ using AdminWebsite.Configuration;
 using AdminWebsite.Extensions;
 using AdminWebsite.Helper;
 using AdminWebsite.Middleware;
+using AdminWebsite.Security;
 using AdminWebsite.Services;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -135,23 +136,14 @@ namespace AdminWebsite
         {
             return async ctx =>
             {
-                var username = ctx.Principal.Identity.Name;
-                if (!(ctx.SecurityToken is JwtSecurityToken jwtToken)) return;
-
-                var cache = ctx.HttpContext.RequestServices.GetService<IClaimsCacheProvider>();
-                var userProfileClaims = await cache.GetOrAdd(jwtToken.RawData, async key =>
+                if (ctx.SecurityToken is JwtSecurityToken jwtToken)
                 {
-                    var userAccountService = ctx.HttpContext.RequestServices.GetService<IUserAccountService>();
+                    var cachedUserClaimBuilder = ctx.HttpContext.RequestServices.GetService<ICachedUserClaimBuilder>();
+                    var userProfileClaims = await cachedUserClaimBuilder.BuildAsync(ctx.Principal.Identity.Name, jwtToken.RawData);
+                    var claimsIdentity = ctx.Principal.Identity as ClaimsIdentity;
 
-                    return new AdministratorRoleClaimsHelper
-                    (
-                        await userAccountService.GetUserGroupDataAsync(username)
-                    ).GetAdministratorClaims();
-                });
-
-                var claimsIdentity = ctx.Principal.Identity as ClaimsIdentity;
-
-                claimsIdentity?.AddClaims(userProfileClaims);
+                    claimsIdentity?.AddClaims(userProfileClaims);
+                }
             };
         }
     }
