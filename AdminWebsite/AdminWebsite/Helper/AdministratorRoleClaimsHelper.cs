@@ -27,7 +27,7 @@ namespace AdminWebsite.Helper
                 new Claim(VhOfficerAdministratorClaimName, IsVhOfficerAdministratorRole.ToString()),
                 new Claim(CaseAdministratorClaimName, IsCaseAdministratorRole.ToString()),
                 new Claim(AdministratorClaimName, (IsVhOfficerAdministratorRole || IsCaseAdministratorRole).ToString()),
-                new Claim(UserCaseTypesClaimName, string.Join(",", userGroupData.CaseTypes))
+                new Claim(UserCaseTypesClaimName, string.Join(",", userGroupData.CaseTypes ?? Enumerable.Empty<string>()))
             };
         }
 

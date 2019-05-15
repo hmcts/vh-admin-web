@@ -1,8 +1,8 @@
+using AdminWebsite.Helper;
+using AdminWebsite.Services;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using AdminWebsite.Helper;
-using AdminWebsite.Services;
 
 namespace AdminWebsite.Security
 {
@@ -25,9 +25,10 @@ namespace AdminWebsite.Security
         public async Task<IEnumerable<Claim>> BuildAsync(string username, string cacheKey)
         {
             return await _claimsCacheProvider
-                .GetOrAdd(cacheKey, async key => 
-                    new AdministratorRoleClaimsHelper(await _userAccountService.GetUserGroupDataAsync(username))
-                        .GetAdministratorClaims());
+            .GetOrAdd(cacheKey, async key => new AdministratorRoleClaimsHelper
+            (
+                await _userAccountService.GetUserGroupDataAsync(username)
+            ).GetAdministratorClaims());
         }
     }
 }

@@ -17,7 +17,7 @@ namespace AdminWebsite.Security
 
     public class UserIdentity : IUserIdentity
     {
-        private static readonly string[] AcceptedAdministratorRoles = { "Civil Money Claims", "Financial Remedy" };
+        private static readonly string[] AcceptedAdministratorRoles = { "MoneyClaims", "FinancialRemedy" };
         private readonly ClaimsPrincipal _currentUser;
         private readonly AdministratorRoleClaimsHelper _administratorRoleClaimsHelper;
 
