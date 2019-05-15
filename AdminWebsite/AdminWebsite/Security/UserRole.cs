@@ -1,14 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace AdminWebsite.Security
+﻿namespace AdminWebsite.Security
 {
     public enum UserRole
     {
-        [Display(Name = "None")] None = 0,
-        [Display(Name = "VH Officer")] VhOfficer = 1,
-        [Display(Name = "Representative")] Representative = 2,
-        [Display(Name = "Individual")] Individual = 3,
-        [Display(Name = "Judge")] Judge = 4,
-        [Display(Name = "Case Admin")] CaseAdmin = 5
+        None = 0,
+        VhOfficer = 1,
+        Representative = 2,
+        Individual = 3,
+        Judge = 4,
+        CaseAdmin = 5
     }
 }

@@ -78,10 +78,7 @@ namespace AdminWebsite
                 options.TokenValidationParameters.ValidateLifetime = true;
                 options.Audience = securitySettings.ClientId;
                 options.TokenValidationParameters.ClockSkew = TimeSpan.Zero;
-                options.Events = new JwtBearerEvents
-                {
-                    OnTokenValidated = OnTokenValidated()
-                };
+                options.Events = new JwtBearerEvents { OnTokenValidated = OnTokenValidated };
             });
 
             serviceCollection.AddAuthorization();
@@ -132,19 +129,16 @@ namespace AdminWebsite
             app.UseMiddleware<ExceptionMiddleware>();
         }
 
-        private static Func<TokenValidatedContext, Task> OnTokenValidated()
+        private static async Task OnTokenValidated(TokenValidatedContext ctx)
         {
-            return async ctx =>
+            if (ctx.SecurityToken is JwtSecurityToken jwtToken)
             {
-                if (ctx.SecurityToken is JwtSecurityToken jwtToken)
-                {
-                    var cachedUserClaimBuilder = ctx.HttpContext.RequestServices.GetService<ICachedUserClaimBuilder>();
-                    var userProfileClaims = await cachedUserClaimBuilder.BuildAsync(ctx.Principal.Identity.Name, jwtToken.RawData);
-                    var claimsIdentity = ctx.Principal.Identity as ClaimsIdentity;
+                var cachedUserClaimBuilder = ctx.HttpContext.RequestServices.GetService<ICachedUserClaimBuilder>();
+                var userProfileClaims = await cachedUserClaimBuilder.BuildAsync(ctx.Principal.Identity.Name, jwtToken.RawData);
+                var claimsIdentity = ctx.Principal.Identity as ClaimsIdentity;
 
-                    claimsIdentity?.AddClaims(userProfileClaims);
-                }
-            };
+                claimsIdentity?.AddClaims(userProfileClaims);
+            }
         }
     }
 }

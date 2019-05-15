@@ -28,7 +28,7 @@ namespace AdminWebsite.Security
             .GetOrAdd(cacheKey, async key => new AdministratorRoleClaimsHelper
             (
                 await _userAccountService.GetUserGroupDataAsync(username)
-            ).GetAdministratorClaims());
+            ).GetClaims());
         }
     }
 }

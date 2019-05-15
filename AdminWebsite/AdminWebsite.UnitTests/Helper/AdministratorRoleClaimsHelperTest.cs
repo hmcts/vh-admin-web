@@ -11,7 +11,7 @@ namespace AdminWebsite.UnitTests.Helper
     public class AdministratorRoleClaimsHelperTest
     {
         [Test]
-        public void GetAdministratorClaims_Returns_Claims()
+        public void should_return_claims_with_user_case_types()
         {
             var userGroupData = new UserGroupData
             {
@@ -19,7 +19,7 @@ namespace AdminWebsite.UnitTests.Helper
                 CaseTypes = new List<string> { "Case1", "Case2" }
             };
 
-            var claims = new AdministratorRoleClaimsHelper(userGroupData).GetAdministratorClaims().ToList();
+            var claims = new AdministratorRoleClaimsHelper(userGroupData).GetClaims().ToList();
 
             claims.Should().NotBeNull();
             claims.Should().NotContainNulls();
@@ -31,7 +31,7 @@ namespace AdminWebsite.UnitTests.Helper
 
         [TestCase("VhOfficer", true)]
         [TestCase("SomeRole", false)]
-        public void IsVhOfficerAdministratorRole_Properties_Are_Correctly_Set(string role, bool expectedClaimValue)
+        public void should_set_all_properties_correctly_for_vhofficer(string role, bool expectedClaimValue)
         {
             var userGroupData = new UserGroupData { UserRole = role };
             var claims = new List<Claim>
@@ -51,7 +51,7 @@ namespace AdminWebsite.UnitTests.Helper
         [TestCase("CaseAdmin", true)]
         [TestCase("VhOfficer", false)]
         [TestCase("SomeRole", false)]
-        public void IsCaseAdministratorRole_Properties_Are_Correctly_Set(string role, bool expectedClaimValue)
+        public void should_set_all_properties_correctly_for_caseadmin(string role, bool expectedClaimValue)
         {
             var userGroupData = new UserGroupData { UserRole = role };
             var claims = new List<Claim>
@@ -71,7 +71,7 @@ namespace AdminWebsite.UnitTests.Helper
         [TestCase("CaseAdmin", true)]
         [TestCase("VhOfficer", true)]
         [TestCase("SomeRole", false)]
-        public void IsAdministratorRole_Properties_Are_Correctly_Set(string role, bool expectedClaimValue)
+        public void should_set_all_properties_correctly_for_admin(string role, bool expectedClaimValue)
         {
             var userGroupData = new UserGroupData { UserRole = role };
             var claims = new List<Claim>

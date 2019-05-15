@@ -1,6 +1,5 @@
 ﻿using AdminWebsite.Helper;
 using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
 
 namespace AdminWebsite.Security
@@ -17,7 +16,6 @@ namespace AdminWebsite.Security
 
     public class UserIdentity : IUserIdentity
     {
-        private static readonly string[] AcceptedAdministratorRoles = { "MoneyClaims", "FinancialRemedy" };
         private readonly ClaimsPrincipal _currentUser;
         private readonly AdministratorRoleClaimsHelper _administratorRoleClaimsHelper;
 
@@ -35,7 +33,7 @@ namespace AdminWebsite.Security
         /// <inheritdoc />
         public IEnumerable<string> GetAdministratorCaseTypes()
         {
-            return _administratorRoleClaimsHelper.UserCaseTypes.Where(group => AcceptedAdministratorRoles.Contains(group));
+            return _administratorRoleClaimsHelper.UserCaseTypes;
         }
 
         public bool IsAdministratorRole()

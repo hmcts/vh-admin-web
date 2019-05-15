@@ -24,7 +24,21 @@ namespace AdminWebsite.UnitTests.Security
         }
 
         [Test]
-        public void GetGroupDisplayNames_Returns_UserCaseType()
+        public void should_have_no_case_types_if_missing_case_types_claim()
+        {
+            // given there are two groups assigned to the user identity
+            var user = new TestPrincipal();
+
+            // then the user should have rights to the two groups
+            var userIdentity = new UserIdentity(user);
+            var caseTypes = userIdentity.GetAdministratorCaseTypes().ToList();
+
+            caseTypes.Should().NotBeNull();
+            caseTypes.Should().HaveCount(0);
+        }
+
+        [Test]
+        public void should_return_group_display_names()
         {
             var user = new TestPrincipal(new Claim("UserCaseTypes", "MoneyClaims,FinancialRemedy"));
 
@@ -39,7 +53,7 @@ namespace AdminWebsite.UnitTests.Security
         [TestCase(true)]
         [TestCase(false)]
         [TestCase(null)]
-        public void IsAdministratorRole_Returns_Correct_Value(bool? state)
+        public void should_set_the_isadministratorrole_property(bool? state)
         {
             var user = new TestPrincipal(new Claim("IsAdministratorRole", state.ToString()));
 
@@ -52,7 +66,7 @@ namespace AdminWebsite.UnitTests.Security
         [TestCase(true)]
         [TestCase(false)]
         [TestCase(null)]
-        public void IsVhOfficerAdministratorRole_Returns_Correct_Value(bool? state)
+        public void should_set_the_isvhofficeradministratorRole_property(bool? state)
         {
             var user = new TestPrincipal(new Claim("IsVhOfficerAdministratorRole", state.ToString()));
 
@@ -65,7 +79,7 @@ namespace AdminWebsite.UnitTests.Security
         [TestCase(true)]
         [TestCase(false)]
         [TestCase(null)]
-        public void IsCaseAdministratorRole_Returns_Correct_Value(bool? state)
+        public void should_set_the_iscaseadministratorrole_property(bool? state)
         {
             var user = new TestPrincipal(new Claim("IsCaseAdministratorRole", state.ToString()));
 
@@ -76,7 +90,7 @@ namespace AdminWebsite.UnitTests.Security
         }
 
         [Test]
-        public void GetUserIdentityName_Returns_False_Claim_Not_Exist()
+        public void should_return_the_username()
         {
             const string name = "Someone@somewhere.com";
             var user = new TestPrincipal(new Claim(ClaimTypes.Name, name));

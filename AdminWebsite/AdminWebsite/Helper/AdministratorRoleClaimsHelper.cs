@@ -42,7 +42,7 @@ namespace AdminWebsite.Helper
             IsVhOfficerAdministratorRole = GetClaimBoolValue(vhAdminRoleClaim);
             IsCaseAdministratorRole = GetClaimBoolValue(caseAdminRoleClaim);
             IsAdministratorRole = GetClaimBoolValue(adminRoleClaim);
-            UserCaseTypes = userCaseTypes?.Value?.Split(",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries) ??
+            UserCaseTypes = userCaseTypes?.Value.Split(",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries) ??
                             Enumerable.Empty<string>();
         }
 
@@ -51,7 +51,7 @@ namespace AdminWebsite.Helper
         public bool IsAdministratorRole { get; set; }
         public IEnumerable<string> UserCaseTypes { get; set; }
 
-        public IEnumerable<Claim> GetAdministratorClaims()
+        public IEnumerable<Claim> GetClaims()
         {
             return _administratorClaims;
         }
