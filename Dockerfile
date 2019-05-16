@@ -5,6 +5,6 @@ WORKDIR /app
 EXPOSE 80
 EXPOSE 443
  
-COPY . ./
+COPY ./dotentArtifacts/WebApp ./
  
 ENTRYPOINT ["dotnet", "AdminWebsite.dll"]
