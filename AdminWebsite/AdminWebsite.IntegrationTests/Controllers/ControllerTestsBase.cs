@@ -1,5 +1,4 @@
 ﻿using System;
-using AdminWebsite.Configuration;
 using AdminWebsite.Security;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -7,14 +6,8 @@ using AdminWebsite.IntegrationTests.Helper;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using NUnit.Framework;
-using Microsoft.Extensions.PlatformAbstractions;
-using System.IO;
-using Microsoft.Extensions.DependencyInjection;
-using AdminWebsite.Services;
-using Moq;
 
 namespace AdminWebsite.IntegrationTests.Controllers
 {
@@ -24,8 +17,6 @@ namespace AdminWebsite.IntegrationTests.Controllers
         private TestServer _server;
         private string _bearerToken = String.Empty;
 
-        protected Mock<IUserAccountService> userAccountService { get; private set; }
-
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
@@ -33,15 +24,9 @@ namespace AdminWebsite.IntegrationTests.Controllers
                 WebHost.CreateDefaultBuilder()
                     .UseEnvironment("Development")
                     .UseKestrel(c => c.AddServerHeader = false)
-                    .UseStartup<Startup>().ConfigureServices(AddMocks);
+                    .UseStartup<Startup>();
             _server = new TestServer(webHostBuilder);
             GetClientAccessTokenForBookHearingApi();
-        }
-
-        private void AddMocks(IServiceCollection obj)
-        {
-            userAccountService = new Mock<IUserAccountService>();
-            obj.AddSingleton(userAccountService.Object);
         }
 
         private void GetClientAccessTokenForBookHearingApi()
