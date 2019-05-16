@@ -17,38 +17,38 @@ namespace AdminWebsite.Security
     public class UserIdentity : IUserIdentity
     {
         private readonly ClaimsPrincipal _currentUser;
-        private readonly AdministratorRoleClaimsHelper _administratorRoleClaimsHelper;
+        private readonly AdministratorRoleClaims _administratorRoleClaims;
 
         public UserIdentity(ClaimsPrincipal currentUser)
         {
             _currentUser = currentUser;
-            _administratorRoleClaimsHelper = new AdministratorRoleClaimsHelper(_currentUser.Claims);
+            _administratorRoleClaims = new AdministratorRoleClaims(_currentUser.Claims);
         }
 
         public IEnumerable<string> GetGroupDisplayNames()
         {
-            return _administratorRoleClaimsHelper.UserCaseTypes;
+            return _administratorRoleClaims.UserCaseTypes;
         }
 
         /// <inheritdoc />
         public IEnumerable<string> GetAdministratorCaseTypes()
         {
-            return _administratorRoleClaimsHelper.UserCaseTypes;
+            return _administratorRoleClaims.UserCaseTypes;
         }
 
         public bool IsAdministratorRole()
         {
-            return _administratorRoleClaimsHelper.IsAdministratorRole;
+            return _administratorRoleClaims.IsAdministratorRole;
         }
 
         public bool IsVhOfficerAdministratorRole()
         {
-            return _administratorRoleClaimsHelper.IsVhOfficerAdministratorRole;
+            return _administratorRoleClaims.IsVhOfficerAdministratorRole;
         }
 
         public bool IsCaseAdministratorRole()
         {
-            return _administratorRoleClaimsHelper.IsCaseAdministratorRole;
+            return _administratorRoleClaims.IsCaseAdministratorRole;
         }
 
         public string GetUserIdentityName()

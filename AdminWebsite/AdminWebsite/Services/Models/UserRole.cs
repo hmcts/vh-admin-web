@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
+using AdminWebsite.Security;
 
 namespace AdminWebsite.Services.Models
 {
-    public class UserGroupData
+    public class UserRole
     {
-        public string UserRole { get; set; }
+        public UserRoleType UserRoleType { get; set; }
         public IEnumerable<string> CaseTypes { get; set; }
     }
 }

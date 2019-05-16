@@ -1,20 +1,20 @@
-﻿using System;
+﻿using AdminWebsite.BookingsAPI.Client;
+using AdminWebsite.Configuration;
+using AdminWebsite.Contracts.Responses;
+using AdminWebsite.Helper;
+using AdminWebsite.Security;
+using AdminWebsite.Services.Models;
+using AdminWebsite.UserAPI.Client;
+using Microsoft.Extensions.Options;
+using Microsoft.Graph;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using AdminWebsite.BookingsAPI.Client;
-using AdminWebsite.Contracts.Responses;
-using AdminWebsite.Helper;
-using AdminWebsite.Security;
-using AdminWebsite.Services.Models;
-using Microsoft.Extensions.Options;
-using Microsoft.Graph;
-using Newtonsoft.Json;
-using AdminWebsite.Configuration;
-using AdminWebsite.UserAPI.Client;
 using UserServiceException = AdminWebsite.Security.UserServiceException;
 
 namespace AdminWebsite.Services
@@ -41,7 +41,7 @@ namespace AdminWebsite.Services
         /// <returns></returns>
         Task UpdateParticipantUsername(ParticipantRequest participant);
 
-        Task<UserGroupData> GetUserGroupDataAsync(string userName);
+        Task<UserRole> GetUserRoleAsync(string userName);
     }
 
     public class UserAccountService : IUserAccountService
@@ -85,11 +85,12 @@ namespace AdminWebsite.Services
             }
         }
 
-        public async Task<UserGroupData> GetUserGroupDataAsync(string userName)
+        public async Task<UserRole> GetUserRoleAsync(string userName)
         {
             var user = await _userApiClient.GetUserByAdUserNameAsync(userName);
+            Enum.TryParse<UserRoleType>(user.User_role, out var userRoleResult);
 
-            return new UserGroupData {UserRole = user.User_role, CaseTypes = user.Case_type};
+            return new UserRole { UserRoleType = userRoleResult, CaseTypes = user.Case_type };
         }
 
         private async Task<UserProfile> CheckUserExistsInAD(string emailAddress)
@@ -98,9 +99,9 @@ namespace AdminWebsite.Services
             {
                 return await _userApiClient.GetUserByEmailAsync(emailAddress);
             }
-            catch(UserAPI.Client.UserServiceException e)
+            catch (UserAPI.Client.UserServiceException e)
             {
-                if (e.StatusCode == (int) HttpStatusCode.NotFound)
+                if (e.StatusCode == (int)HttpStatusCode.NotFound)
                 {
                     return null;
                 }
@@ -203,7 +204,9 @@ namespace AdminWebsite.Services
         {
             var judges = GetUsersByGroupName("VirtualRoomJudge");
             if (_isLive)
+            {
                 judges = ExcludeTestJudges(judges).ToList();
+            }
 
             return judges.OrderBy(j => j.DisplayName);
         }
@@ -217,7 +220,10 @@ namespace AdminWebsite.Services
         private List<JudgeResponse> GetUsersByGroupName(string groupName)
         {
             var groupData = GetGroupByName(groupName);
-            if (groupData == null) return new List<JudgeResponse>();
+            if (groupData == null)
+            {
+                return new List<JudgeResponse>();
+            }
 
             var response = GetUsersByGroup(groupData.Id);
             return response.Select(x => new JudgeResponse

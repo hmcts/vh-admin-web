@@ -113,17 +113,17 @@ namespace AdminWebsite.UnitTests.Services
         [Test]
         public async Task GetUserGroupDataAsync_Returns_UserGroupData()
         {
-            const string userRole = "role1";
+            var userRole = UserRoleType.VhOfficer;
             var caseType = new List<string>{"one", "two"};
 
             _userApiClient
                 .Setup(x => x.GetUserByAdUserNameAsync(It.IsAny<string>()))
-                .ReturnsAsync(new UserProfile { User_role = userRole, Case_type = caseType});
+                .ReturnsAsync(new UserProfile { User_role = userRole.ToString(), Case_type = caseType});
 
-            var result = await _service.GetUserGroupDataAsync(It.IsAny<string>());
+            var result = await _service.GetUserRoleAsync(It.IsAny<string>());
 
             result.Should().NotBeNull();
-            result.UserRole.Should().Be(userRole);
+            result.UserRoleType.Should().Be(userRole);
             result.CaseTypes.Should().BeEquivalentTo(caseType);
         }
     }

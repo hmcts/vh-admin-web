@@ -22,13 +22,15 @@ namespace AdminWebsite.Security
             _userAccountService = userAccountService;
         }
 
+        //We cache the task of UserRole because we only want the async method to get user role once 
         public async Task<IEnumerable<Claim>> BuildAsync(string username, string cacheKey)
         {
-            return await _claimsCacheProvider
-            .GetOrAdd(cacheKey, async key => new AdministratorRoleClaimsHelper
+            var userRole = await _claimsCacheProvider.GetOrAddAsync
             (
-                await _userAccountService.GetUserGroupDataAsync(username)
-            ).GetClaims());
+                cacheKey, async key => await _userAccountService.GetUserRoleAsync(username)
+            );
+
+            return new AdministratorRoleClaims(userRole).Claims;
         }
     }
 }

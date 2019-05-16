@@ -1,26 +1,25 @@
-﻿using System;
+﻿using AdminWebsite.Services.Models;
+using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace AdminWebsite.Security
 {
     public interface IClaimsCacheProvider
     {
-        Task<IEnumerable<Claim>> GetOrAdd(string key, Func<string, Task<IEnumerable<Claim>>> valueFactory);
+        Task<UserRole> GetOrAddAsync(string key, Func<string, Task<UserRole>> valueFactory);
     }
 
     public class MemoryClaimsCacheProvider : IClaimsCacheProvider
     {
-        private readonly ConcurrentDictionary<string, Task<IEnumerable<Claim>>> _cache;
+        private readonly ConcurrentDictionary<string, Task<UserRole>> _cache;
 
         public MemoryClaimsCacheProvider()
         {
-            _cache = new ConcurrentDictionary<string, Task<IEnumerable<Claim>>>();    
+            _cache = new ConcurrentDictionary<string, Task<UserRole>>();
         }
 
-        public async Task<IEnumerable<Claim>> GetOrAdd(string key, Func<string, Task<IEnumerable<Claim>>> valueFactory)
+        public async Task<UserRole> GetOrAddAsync(string key, Func<string, Task<UserRole>> valueFactory)
         {
             return await _cache.GetOrAdd(key, valueFactory);
         }

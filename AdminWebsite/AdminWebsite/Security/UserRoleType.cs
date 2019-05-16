@@ -1,6 +1,6 @@
 ﻿namespace AdminWebsite.Security
 {
-    public enum UserRole
+    public enum UserRoleType
     {
         None = 0,
         VhOfficer = 1,
