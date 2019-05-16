@@ -11,9 +11,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Helper\api-auth-self-signed.pfx">
+    <EmbeddedResource Include="Helper\api-auth-self-signed.pfx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    </EmbeddedResource>
     <EmbeddedResource Include="Helper\AzureAdMockData\microsoft-openid-config.json" />
     <EmbeddedResource Include="Helper\AzureAdMockData\microsoft-wellknown-keys.json" />
   </ItemGroup>

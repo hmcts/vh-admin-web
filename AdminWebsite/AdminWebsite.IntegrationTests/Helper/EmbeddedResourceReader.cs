@@ -1,6 +1,5 @@
 ﻿using System.IO;
 using System.Net.Http;
-using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,14 +12,23 @@ namespace AdminWebsite.IntegrationTests.Helper
 
         public static X509Certificate2 GetCertificate()
         {
-            var path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"Helper\api-auth-self-signed.pfx");
+            var resourceName = $"{EmbeddedResourceQualifier}.api-auth-self-signed.pfx";
 
-            return new X509Certificate2
-            (
-                File.ReadAllBytes(path), 
-                "api-demo", 
-                X509KeyStorageFlags.UserKeySet
-            );
+            using (var certificateStream = typeof(EmbeddedResourceReader).Assembly.GetManifestResourceStream(resourceName))
+            {
+                if (certificateStream == null)
+                {
+                    return null;
+                }
+
+                var rawBytes = new byte[certificateStream.Length];
+                for (var i = 0; i < certificateStream.Length; i++)
+                {
+                    rawBytes[i] = (byte)certificateStream.ReadByte();
+                }
+
+                return new X509Certificate2(rawBytes, "api-demo", X509KeyStorageFlags.UserKeySet);
+            }
         }
 
         public static async Task<HttpResponseMessage> GetOpenIdConfigurationAsResponseMessage(string resource)
