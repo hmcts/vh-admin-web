@@ -23,7 +23,7 @@ ingress:
     # kubernetes.io/tls-acme: "true"
   paths: []
   hosts:
-    hosts: vh-hearings-api-aks.hearings.reform.hmcts.net
+    hosts: vh-admin-web-aks.hearings.reform.hmcts.net
     paths:
       - /
   tls: []
