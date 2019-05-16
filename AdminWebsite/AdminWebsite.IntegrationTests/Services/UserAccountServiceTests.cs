@@ -1,14 +1,7 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using AdminWebsite.Configuration;
-using AdminWebsite.Helper;
-using AdminWebsite.IntegrationTests.Helper;
-using AdminWebsite.Security;
 using AdminWebsite.Services;
 using AdminWebsite.UserAPI.Client;
 using FluentAssertions;
-using Microsoft.Extensions.Options;
 using Moq;
 using NUnit.Framework;
 using UserServiceException = AdminWebsite.Security.UserServiceException;
@@ -17,32 +10,17 @@ namespace AdminWebsite.IntegrationTests.Services
 {
     public class UserAccountServiceTests
     {
-        private const string TestJudgeEmail = "automation01judge01@hearings.reform.hmcts.net";
-        
         private Mock<IUserApiClient> _apiClient;
-        private IOptions<SecuritySettings> _securitySettings;
-        private AppConfigSettings _appSettings;
 
         [SetUp]
         public void Setup()
         {
             _apiClient = new Mock<IUserApiClient>();
-            
-            _securitySettings = Options.Create(new TestSettings().Security);
-            _appSettings = new AppConfigSettings();
         }
 
         private UserAccountService GetService()
         {
-            var tokenProvider = new TokenProvider(_securitySettings);
-            var appSettings = Options.Create(_appSettings);
-
-            return new UserAccountService(
-                _apiClient.Object //, 
-                //tokenProvider, 
-                //_securitySettings,
-                //appSettings
-            );
+            return new UserAccountService(_apiClient.Object);
         }
 
         [Test]
@@ -66,9 +44,9 @@ namespace AdminWebsite.IntegrationTests.Services
         public void should_return_list_of_judges()
         {
             var judgesList = new List<UserResponse>();
-            var judge = new UserResponse() { Display_name = "john maclain", Email = "john.maclain@email.com", First_name = "john", Last_name = "maclain" };
+            var judge = new UserResponse { Display_name = "john maclain", Email = "john.maclain@email.com", First_name = "john", Last_name = "maclain" };
             judgesList.Add(judge);
-            judge = new UserResponse() { Display_name = "john wayne", Email = "john.wayne@email.com", First_name = "john", Last_name = "wayne" };
+            judge = new UserResponse { Display_name = "john wayne", Email = "john.wayne@email.com", First_name = "john", Last_name = "wayne" };
             judgesList.Add(judge);
 
             _apiClient.Setup(x => x.GetJudges()).Returns(judgesList);
