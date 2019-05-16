@@ -1,5 +1,3 @@
-using System;
-using System.Linq;
 using AdminWebsite.Configuration;
 using AdminWebsite.Helper;
 using AdminWebsite.IntegrationTests.Helper;
@@ -7,10 +5,11 @@ using AdminWebsite.Security;
 using AdminWebsite.Services;
 using AdminWebsite.UserAPI.Client;
 using FluentAssertions;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Moq;
 using NUnit.Framework;
+using System;
+using System.Linq;
 using UserServiceException = AdminWebsite.Security.UserServiceException;
 
 namespace AdminWebsite.IntegrationTests.Services
@@ -18,7 +17,7 @@ namespace AdminWebsite.IntegrationTests.Services
     public class UserAccountServiceTests
     {
         private const string TestJudgeEmail = "automation01judge01@hearings.reform.hmcts.net";
-        
+
         private Mock<IUserApiClient> _apiClient;
         private IOptions<SecuritySettings> _securitySettings;
         private AppConfigSettings _appSettings;
@@ -27,7 +26,6 @@ namespace AdminWebsite.IntegrationTests.Services
         public void Setup()
         {
             _apiClient = new Mock<IUserApiClient>();
-            
             _securitySettings = Options.Create(new TestSettings().Security);
             _appSettings = new AppConfigSettings();
         }
@@ -37,12 +35,7 @@ namespace AdminWebsite.IntegrationTests.Services
             var tokenProvider = new TokenProvider(_securitySettings);
             var appSettings = Options.Create(_appSettings);
 
-            return new UserAccountService(
-                _apiClient.Object, 
-                tokenProvider, 
-                _securitySettings,
-                appSettings
-            );
+            return new UserAccountService(_apiClient.Object, tokenProvider, _securitySettings, appSettings);
         }
 
         [Test]
@@ -72,14 +65,14 @@ namespace AdminWebsite.IntegrationTests.Services
             var group = GetService().GetGroupById(invalidGroupId);
             group.Should().BeNull();
         }
-        
+
         [Test]
         public void should_return_group_with_display_name_by_id()
         {
             var group = GetService().GetGroupById("f3340a0e-2ea2-45c6-b19c-d601b8dac13f");
             group.DisplayName.Should().Be("VirtualRoomProfessionalUser");
         }
-        
+
         [Test]
         public void should_throw_exception_on_invalid_server_response_for_group_by_id()
         {

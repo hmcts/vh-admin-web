@@ -5,6 +5,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Controllers\api-auth-self-signed.pfx" />
+    <None Remove="Helper\AzureAdMockData\microsoft-openid-config.json" />
+    <None Remove="Helper\AzureAdMockData\microsoft-wellknown-keys.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Helper\api-auth-self-signed.pfx" />
+    <EmbeddedResource Include="Helper\AzureAdMockData\microsoft-openid-config.json" />
+    <EmbeddedResource Include="Helper\AzureAdMockData\microsoft-wellknown-keys.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="coverlet.msbuild" Version="2.5.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
