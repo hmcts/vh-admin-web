@@ -11,7 +11,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Helper\api-auth-self-signed.pfx" />
+    <Content Include="Helper\api-auth-self-signed.pfx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <EmbeddedResource Include="Helper\AzureAdMockData\microsoft-openid-config.json" />
     <EmbeddedResource Include="Helper\AzureAdMockData\microsoft-wellknown-keys.json" />
   </ItemGroup>
@@ -40,6 +42,12 @@
   <ItemGroup>
     <ProjectReference Include="..\AdminWebsite\AdminWebsite.csproj" />
     <ProjectReference Include="..\Testing.Common\Testing.Common.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Helper\BearerTokenBuilder.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>
