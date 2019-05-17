@@ -1,36 +1,18 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
-using AdminWebsite.BookingsAPI.Client;
-using AdminWebsite.Configuration;
+﻿using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Contracts.Responses;
-using AdminWebsite.Helper;
 using AdminWebsite.Security;
 using AdminWebsite.Services.Models;
 using AdminWebsite.UserAPI.Client;
-using Microsoft.Extensions.Options;
-using Microsoft.Graph;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using UserServiceException = AdminWebsite.Security.UserServiceException;
 
 namespace AdminWebsite.Services
 {
     public interface IUserAccountService
     {
-        /// <summary>
-        ///     Get the full group information based by the active directory id
-        /// </summary>
-        /// <param name="groupId">Id for the active directory group</param>
-        /// <returns></returns>
-        GroupsResponse GetGroupById(string groupId);
         /// <summary>
         ///     Returns a list of all judges in the active directory
         /// </summary>
@@ -134,12 +116,6 @@ namespace AdminWebsite.Services
                 await _userApiClient.AddUserToGroupAsync(addUserToGroupRequest);
             }
             return newUserResponse;
-        }
-
-        /// <inheritdoc />
-        public GroupsResponse GetGroupById(string groupId)
-        {
-            return _userApiClient.GetGroupById(groupId);
         }
 
         /// <inheritdoc />
