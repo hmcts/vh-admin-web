@@ -31,14 +31,18 @@ namespace AdminWebsite.IntegrationTests.Controllers
                     .UseEnvironment("Development")
                     .UseKestrel(c => c.AddServerHeader = false)
                     .UseStartup<Startup>()
+                    // Override the the service container here, add mocks or stubs
                     .ConfigureTestServices(OverrideDependenciesInServiceCollection)
+                    // Reconfigure the services 
                     .ConfigureServices(services =>
                     {
+                        // Reconfigure the authentication mechanism to allow different settings 
                         services.PostConfigure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme, options =>
                         {
                             options.Audience = "https://test";
                             options.BackchannelHttpHandler = new MockBackchannel();
                             options.MetadataAddress = "https://inmemory.microsoft.com/common/.well-known/openid-configuration";
+                            // Validate signature using self signed token that BearerTokenBuilder builds
                             options.TokenValidationParameters = new TokenValidationParameters
                             {
                                 SignatureValidator = (token, parameters) => new JwtSecurityToken(token)
@@ -55,6 +59,7 @@ namespace AdminWebsite.IntegrationTests.Controllers
         {
             _accessToken = new BearerTokenBuilder()
                 .WithClaim(ClaimTypes.Name, "doctor@who.com")
+                // We are using a self signed certificate to create the SigningCredentials used when signing a token
                 .WithSigningCertificate(EmbeddedResourceReader.GetCertificate())
                 .BuildToken();
         }
@@ -112,7 +117,6 @@ namespace AdminWebsite.IntegrationTests.Controllers
 
         private static void OverrideDependenciesInServiceCollection(IServiceCollection services)
         {
-            //Override the the service container here, add mocks or stubs
             var cachedUserClaimBuilder = new Mock<ICachedUserClaimBuilder>();
 
             var claims = new AdministratorRoleClaims(new UserRole

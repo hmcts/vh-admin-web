@@ -19,7 +19,7 @@ namespace AdminWebsite.IntegrationTests.Helper
                 return await EmbeddedResourceReader.GetOpenIdConfigurationAsResponseMessage("microsoft-wellknown-keys.json");
             }
 
-            throw new NotImplementedException();
+            throw new InvalidOperationException($"A call to {request.RequestUri.AbsoluteUri} has not been mocked, please add it");
         }
     }
 }
