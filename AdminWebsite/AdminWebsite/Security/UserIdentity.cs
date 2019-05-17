@@ -43,7 +43,7 @@ namespace AdminWebsite.Security
         public IEnumerable<string> GetGroupDisplayNames()
         {
             var groupClaims = _currentUser.Claims.Where(x => x.Type == "groups").ToList();
-            return groupClaims.Select(x => _userAccountService.GetGroupById(x.Value).DisplayName).ToList();            
+            return groupClaims.Select(x => _userAccountService.GetGroupById(x.Value).Display_name).ToList();            
         }
 
         /// <inheritdoc />

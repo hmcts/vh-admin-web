@@ -28,10 +28,10 @@ namespace AdminWebsite.UnitTests.Security
             
             // and those two groups maps to the administrator roles
             _userAccountService.Setup(x => x.GetGroupById(financialRemedyClaim.Value))
-                .Returns(new Group {DisplayName = "Financial Remedy"});
+                .Returns(new UserAPI.Client.GroupsResponse {Display_name = "Financial Remedy"});
             
             _userAccountService.Setup(x => x.GetGroupById(civilMoneyClaim.Value))
-                .Returns(new Group {DisplayName = "Civil Money Claims"});
+                .Returns(new UserAPI.Client.GroupsResponse { Display_name = "Civil Money Claims"});
             
             // then the user should have rights to the two groups
             var userIdentity = new UserIdentity(user, _userAccountService.Object);

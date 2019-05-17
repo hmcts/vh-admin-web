@@ -1,5 +1,4 @@
 ﻿using System;
-using AdminWebsite.Configuration;
 using AdminWebsite.Security;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -7,11 +6,8 @@ using AdminWebsite.IntegrationTests.Helper;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using NUnit.Framework;
-using Microsoft.Extensions.PlatformAbstractions;
-using System.IO;
 
 namespace AdminWebsite.IntegrationTests.Controllers
 {
@@ -20,7 +16,7 @@ namespace AdminWebsite.IntegrationTests.Controllers
     {
         private TestServer _server;
         private string _bearerToken = String.Empty;
-        
+
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
