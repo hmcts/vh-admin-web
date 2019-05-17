@@ -20,6 +20,10 @@ namespace AdminWebsite.Security
             Reason = info.GetString("Reason");
         }
 
+        public UserServiceException()
+        {
+        }
+
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {

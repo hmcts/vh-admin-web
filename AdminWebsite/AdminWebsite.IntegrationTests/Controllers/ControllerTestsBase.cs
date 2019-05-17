@@ -55,57 +55,12 @@ namespace AdminWebsite.IntegrationTests.Controllers
             _server = new TestServer(webHostBuilder);
         }
 
-        private void CreateAccessToken()
-        {
-            _accessToken = new BearerTokenBuilder()
-                .WithClaim(ClaimTypes.Name, "doctor@who.com")
-                // We are using a self signed certificate to create the SigningCredentials used when signing a token
-                .WithSigningCertificate(EmbeddedResourceReader.GetCertificate())
-                .BuildToken();
-        }
-
         protected async Task<HttpResponseMessage> SendGetRequestAsync(string uri)
         {
             using (var client = _server.CreateClient())
             {
                 client.DefaultRequestHeaders.Add("Authorization", $"Bearer {_accessToken}");
                 return await client.GetAsync(uri);
-            }
-        }
-
-        protected async Task<HttpResponseMessage> SendPostRequestAsync(string uri, HttpContent httpContent)
-        {
-            using (var client = _server.CreateClient())
-            {
-                client.DefaultRequestHeaders.Add("Authorization", $"Bearer {_accessToken}");
-                return await client.PostAsync(uri, httpContent);
-            }
-        }
-
-        protected async Task<HttpResponseMessage> SendPatchRequestAsync(string uri, StringContent httpContent)
-        {
-            using (var client = _server.CreateClient())
-            {
-                client.DefaultRequestHeaders.Add("Authorization", $"Bearer {_accessToken}");
-                return await client.PatchAsync(uri, httpContent);
-            }
-        }
-
-        protected async Task<HttpResponseMessage> SendPutRequestAsync(string uri, StringContent httpContent)
-        {
-            using (var client = _server.CreateClient())
-            {
-                client.DefaultRequestHeaders.Add("Authorization", $"Bearer {_accessToken}");
-                return await client.PutAsync(uri, httpContent);
-            }
-        }
-
-        protected async Task<HttpResponseMessage> SendDeleteRequestAsync(string uri)
-        {
-            using (var client = _server.CreateClient())
-            {
-                client.DefaultRequestHeaders.Add("Authorization", $"Bearer {_accessToken}");
-                return await client.DeleteAsync(uri);
             }
         }
 
@@ -131,6 +86,15 @@ namespace AdminWebsite.IntegrationTests.Controllers
             .ReturnsAsync(claims);
 
             services.AddTransient(x => cachedUserClaimBuilder.Object);
+        }
+
+        private void CreateAccessToken()
+        {
+            _accessToken = new BearerTokenBuilder()
+                .WithClaim(ClaimTypes.Name, "doctor@who.com")
+                // We are using a self signed certificate to create the SigningCredentials used when signing a token
+                .WithSigningCertificate(EmbeddedResourceReader.GetCertificate())
+                .BuildToken();
         }
     }
 }
