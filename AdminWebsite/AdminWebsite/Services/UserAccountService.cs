@@ -1,21 +1,18 @@
-﻿using System.Collections.Generic;
+﻿using AdminWebsite.BookingsAPI.Client;
+using AdminWebsite.Contracts.Responses;
+using AdminWebsite.Security;
+using AdminWebsite.Services.Models;
+using AdminWebsite.UserAPI.Client;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using AdminWebsite.BookingsAPI.Client;
-using AdminWebsite.Contracts.Responses;
-using AdminWebsite.UserAPI.Client;
 
 namespace AdminWebsite.Services
 {
     public interface IUserAccountService
     {
-        /// <summary>
-        ///     Get the full group information based by the active directory id
-        /// </summary>
-        /// <param name="groupId">Id for the active directory group</param>
-        /// <returns></returns>
-        GroupsResponse GetGroupById(string groupId);
         /// <summary>
         ///     Returns a list of all judges in the active directory
         /// </summary>
@@ -29,6 +26,8 @@ namespace AdminWebsite.Services
         /// <param name="participant"></param>
         /// <returns></returns>
         Task UpdateParticipantUsername(ParticipantRequest participant);
+
+        Task<UserRole> GetUserRoleAsync(string userName);
     }
 
     public class UserAccountService : IUserAccountService
@@ -59,16 +58,24 @@ namespace AdminWebsite.Services
                 participant.Username = userProfile.User_name;
             }
         }
-        
+
+        public async Task<UserRole> GetUserRoleAsync(string userName)
+        {
+            var user = await _userApiClient.GetUserByAdUserNameAsync(userName);
+            Enum.TryParse<UserRoleType>(user.User_role, out var userRoleResult);
+
+            return new UserRole { UserRoleType = userRoleResult, CaseTypes = user.Case_type };
+        }
+
         private async Task<UserProfile> CheckUserExistsInAD(string emailAddress)
         {
             try
             {
                 return await _userApiClient.GetUserByEmailAsync(emailAddress);
             }
-            catch(UserAPI.Client.UserServiceException e)
+            catch (UserAPI.Client.UserServiceException e)
             {
-                if (e.StatusCode == (int) HttpStatusCode.NotFound)
+                if (e.StatusCode == (int)HttpStatusCode.NotFound)
                 {
                     return null;
                 }
@@ -109,12 +116,6 @@ namespace AdminWebsite.Services
                 await _userApiClient.AddUserToGroupAsync(addUserToGroupRequest);
             }
             return newUserResponse;
-        }
-
-        /// <inheritdoc />
-        public GroupsResponse GetGroupById(string groupId)
-        {
-            return _userApiClient.GetGroupById(groupId);
         }
 
         /// <inheritdoc />

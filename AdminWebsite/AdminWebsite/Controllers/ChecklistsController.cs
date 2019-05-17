@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Threading.Tasks;
 using AdminWebsite.Models;
 using AdminWebsite.Security;
 using Microsoft.AspNetCore.Mvc;
@@ -38,9 +39,9 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType(typeof(ChecklistsResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public IActionResult GetAllParticipantsChecklists(int pageSize = 5, int page = 1)
+        public async Task<IActionResult> GetAllParticipantsChecklists(int pageSize = 5, int page = 1)
         {
-            if (!_userIdentity.IsVhOfficerAdministratorRole())
+            if (! _userIdentity.IsVhOfficerAdministratorRole())
                 return Unauthorized();
 
             var response = new ChecklistsResponse
@@ -93,7 +94,7 @@ namespace AdminWebsite.Controllers
                 Total_pages = 1,
                 Page_size = pageSize
             };
-            return Ok(response);
+            return await Task.FromResult(Ok(response));
         }
     }
 }

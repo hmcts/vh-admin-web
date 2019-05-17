@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Security.Claims;
 
 namespace AdminWebsite.UnitTests.Security
@@ -7,8 +8,7 @@ namespace AdminWebsite.UnitTests.Security
     /// </summary>
     public class TestIdentity : ClaimsIdentity
     {
-        public TestIdentity(params Claim[] claims) : base(claims)
-        {
-        }
+        public TestIdentity(params Claim[] claims) : base(claims) {}
+        public TestIdentity(IEnumerable<Claim> claims) : base(claims) {}
     }
 }
