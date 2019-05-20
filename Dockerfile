@@ -32,7 +32,7 @@ ENV VhServices:BookingsApiUrl = $VhServicesBookingsApiUrl
 ENV VhServices:UserApiResourceId = $VhServicesUserApiResourceId
 ENV VhServices:UserApiUrl = $VhServicesUserApiUrl
 ENV AzureAd:TemporaryPassword = $AzureAdTemporaryPassword
-ENV ParticipantRequest = $ParticipantRequest  {"Display_name": "Victoria Deeley", "Email": "Victoria.Deeley@hearings.reform.hmcts.net", "First_name": "Victoria", "Last_name": "Deeley", "Phone": "03003030655", "Role": "Administrator", "Title": "Ms", "Username": "Victoria.Deeley@hearings.reform.hmcts.net"}
+ENV ParticipantRequest = $ParticipantRequest
  
 EXPOSE 80
 EXPOSE 443
