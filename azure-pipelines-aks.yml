@@ -96,7 +96,6 @@ stages:
       inputs:
         artifactName: 'dotentArtifacts'
         downloadPath: '$(Build.SourcesDirectory)'
-        parallelizationLimit: 50
 
     - task: Docker@2
       displayName: build
