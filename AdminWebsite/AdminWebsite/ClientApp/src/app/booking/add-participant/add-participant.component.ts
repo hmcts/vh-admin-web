@@ -595,7 +595,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     newParticipant.first_name = this.firstName.value;
     newParticipant.last_name = this.lastName.value;
     newParticipant.phone = this.phone.value;
-    newParticipant.title = this.title.value;
+    newParticipant.title = (this.title.value === this.constants.PleaseSelect) ? null : this.title.value;
     newParticipant.case_role_name = this.party.value;
     newParticipant.hearing_role_name = this.role.value;
     newParticipant.email = this.searchEmail ? this.searchEmail.email : '';
