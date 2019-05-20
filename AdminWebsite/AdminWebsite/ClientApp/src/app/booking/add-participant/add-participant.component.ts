@@ -295,7 +295,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     this.form.setValue({
       party: this.participantDetails.case_role_name,
       role: this.participantDetails.hearing_role_name,
-      title: this.participantDetails.title,
+      title: (this.participantDetails.title === undefined) ? this.constants.PleaseSelect : this.participantDetails.title,
       firstName: this.participantDetails.first_name,
       lastName: this.participantDetails.last_name,
       phone: this.participantDetails.phone || '',
