@@ -93,7 +93,7 @@ stages:
         repository: '$(Build.Repository.Name)'
         command: build
         Dockerfile: Dockerfile
-        arguments: '--build-arg ConnectionStringsVhBookings="$(ConnectionStringsVhBookings)"'
+        arguments: '--build-arg $(BuildArguments)'
         tags: |
           $(Build.BuildId)
           latest
