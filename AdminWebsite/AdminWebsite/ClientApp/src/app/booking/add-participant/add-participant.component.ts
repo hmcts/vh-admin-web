@@ -539,7 +539,6 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     this.localEditMode = false;
   }
 
-
   updateParticipant() {
     if (!this.existingParticipant && !this.participantDetails) {
       this.saveParticipant();
