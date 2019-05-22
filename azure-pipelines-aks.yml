@@ -28,13 +28,6 @@ variables:
   helmVersion: '2.12.3'
   runtimeId: 'ubuntu.16.04-x64' # possible values linux-x64, win-x64, win10-x64
 
-  dockerImageBuildArguments: | 
-    --build-arg ApplicationInsightsInstrumentationKey="$(vh-core-infra-AppInsightsKey)" AzureAdAuthority="$(AzureAdAuthority)"
-     AzureAdClientId="$(vh-admin-web-appid)" AzureAdClientSecret="$(vh-admin-web-key)" AzureAdPostLogoutRedirectUri="$(AzureAdPostLogoutRedirectUri)"
-      AzureAdRedirectUri="$(AzureAdRedirectUri)" AzureAdTenantId="$(tenantid)" VhServicesBookingsApiResourceId="$(vh-bookings-api-identifieruris)"
-       VhServicesBookingsApiUrl="$(VhServicesBookingsApiUrl)" VhServicesUserApiResourceId="$(vh-user-api-identifieruris)" VhServicesUserApiUrl="$(VhServicesUserApiUrl)"
-        AzureAdTemporaryPassword="$(AzureAdTemporaryPassword)" ParticipantRequest="$(ParticipantRequest)"
-
 
 # GitHub Repo that conatins build templates. Reference https://docs.microsoft.com/en-us/azure/devops/pipelines/process/templates?view=vsts#using-other-repositories
 resources:
@@ -111,7 +104,7 @@ stages:
         repository: '$(Build.Repository.Name)'
         command: build
         Dockerfile: Dockerfile
-        arguments: '$(dockerImageBuildArguments)'
+        arguments: '--build-arg ApplicationInsightsInstrumentationKey="$(vh-core-infra-AppInsightsKey)" AzureAdAuthority="$(AzureAdAuthority)" AzureAdClientId="$(vh-admin-web-appid)" AzureAdClientSecret="$(vh-admin-web-key)" AzureAdPostLogoutRedirectUri="$(AzureAdPostLogoutRedirectUri)" AzureAdRedirectUri="$(AzureAdRedirectUri)" AzureAdTenantId="$(tenantid)" VhServicesBookingsApiResourceId="$(vh-bookings-api-identifieruris)" VhServicesBookingsApiUrl="$(VhServicesBookingsApiUrl)" VhServicesUserApiResourceId="$(vh-user-api-identifieruris)" VhServicesUserApiUrl="$(VhServicesUserApiUrl)" AzureAdTemporaryPassword="$(AzureAdTemporaryPassword)" ParticipantRequest="$(ParticipantRequest)"'
         tags: |
           $(Build.BuildId)
           latest
