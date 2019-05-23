@@ -41,7 +41,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             await PostWithParticipants(participant);
             
-            _userAccountService.Verify(x => x.UpdateParticipantUsername(participant), Times.Once);
+            _userAccountService.Verify(x => x.CreateUser(participant), Times.Once);
         }
         
         [Test]
