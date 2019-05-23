@@ -1,6 +1,5 @@
 {{- if .Values.ingress.enabled -}}
 {{- $fullName := include "vh-admin-web.fullname" . -}}
-{{- $ingressPaths := .Values.ingress.paths -}}
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
@@ -27,14 +26,14 @@ spec:
 {{- end }}
   rules:
   {{- range .Values.ingress.hosts }}
-    - host: {{ . | quote }}
+    - host: {{ .host | quote }}
       http:
         paths:
-	{{- range $ingressPaths }}
+        {{- range .paths }}
           - path: {{ . }}
             backend:
               serviceName: {{ $fullName }}
               servicePort: http
-	{{- end }}
+        {{- end }}
   {{- end }}
 {{- end }}
