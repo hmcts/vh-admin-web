@@ -36,6 +36,8 @@ ENV ParticipantRequest = $ParticipantRequest
 
 ENV ASPNETCORE_URLS="http://+"
 
+ENV RequireHttpsMetadata = false
+
  
 EXPOSE 80
 EXPOSE 443
