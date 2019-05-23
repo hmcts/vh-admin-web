@@ -1,96 +1,102 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async } from '@angular/core/testing';
 
 import { LoginComponent } from './login.component';
-import { RouterTestingModule } from '@angular/router/testing';
 import { AdalService } from 'adal-angular4';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
+import { ReturnUrlService } from 'src/app/services/return-url.service';
 import { LoggerService } from '../services/logger.service';
-import { ReturnUrlService } from '../services/return-url.service';
-
-export class MockAdalService {
-  userInfo = {
-      authenticated: false
-  };
-
-  setAuthenticated(authenticated: boolean) {
-      this.userInfo = {
-          authenticated: authenticated
-      };
-  }
-
-  login() {}
-}
+import {WindowRef} from '../shared/window-ref';
 
 describe('LoginComponent', () => {
   let component: LoginComponent;
-  let fixture: ComponentFixture<LoginComponent>;
-  let router: Router;
-  let route: ActivatedRoute;
-  let adalService: MockAdalService;
+  let router: jasmine.SpyObj<Router>;
+  let adalService: jasmine.SpyObj<AdalService>;
   let returnUrl: jasmine.SpyObj<ReturnUrlService>;
   let logger: jasmine.SpyObj<LoggerService>;
-
-  const routes = [
-    { path: 'login', component: LoginComponent }
-  ];
+  let window: jasmine.SpyObj<WindowRef>;
+  let route: any;
 
   beforeEach(async(() => {
-    logger = jasmine.createSpyObj('LoggerService', ['error']);
-    returnUrl = jasmine.createSpyObj('ReturnUrlService', ['popUrl', 'setUrl']);
+    route = {
+      snapshot: {
+        queryParams: {}
+      }
+    };
 
-    TestBed.configureTestingModule({
-      declarations: [ LoginComponent ],
-      providers: [
-        { provide: AdalService, useClass: MockAdalService },
-        { provide: LoggerService, useValue: logger },
-        { provide: ReturnUrlService, useValue: returnUrl }
-      ],
-      imports: [
-        RouterTestingModule.withRoutes(routes)
-      ]
-    })
-    .compileComponents();
+    logger = jasmine.createSpyObj<LoggerService>(['error']);
+    adalService = jasmine.createSpyObj<AdalService>(['setAuthenticated', 'login', 'userInfo']);
+    router = jasmine.createSpyObj<Router>(['navigate', 'navigateByUrl']);
+    returnUrl = jasmine.createSpyObj<ReturnUrlService>(['popUrl', 'setUrl']);
+    window = jasmine.createSpyObj<WindowRef>(['getLocation']);
+
+    component = new LoginComponent(adalService, route, router, logger, returnUrl, window);
   }));
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(LoginComponent);
-    component = fixture.componentInstance;
-    router = TestBed.get(Router);
-    router.initialNavigation();
-    route = TestBed.get(ActivatedRoute);
-    adalService = TestBed.get(AdalService);
-    adalService.login = jasmine.createSpy('login');
-  });
+  const givenAuthenticated = (authenticated: boolean) => {
+    adalService.userInfo.authenticated = authenticated;
+  };
 
-  it('should store return url if supplied', () => {
-    adalService.setAuthenticated(false);
-    route.snapshot.queryParams['returnUrl'] = '/returnPath';
-    component.ngOnInit();
+  const whenInitializingComponent = async (): Promise<void> => {
+    window.getLocation.and.returnValue({pathname: '/login'});
+    await component.ngOnInit();
+  };
+
+  it('should store root url if no return url is set and call login if not authenticated', async () => {
+    givenAuthenticated(false);
+
+    await whenInitializingComponent();
+
     expect(adalService.login).toHaveBeenCalled();
-    expect(returnUrl.setUrl).toHaveBeenCalledWith('/returnPath');
+    expect(returnUrl.setUrl).toHaveBeenCalledWith('/');
   });
 
-  it('should fallback to root url if return url is invalid', () => {
-    adalService.setAuthenticated(true);
-    spyOn(router, 'navigate').and.callFake(() => {});
-    spyOn(router, 'navigateByUrl').and.callFake(() => { throw new Error('Invalid URL'); });
-    component.ngOnInit();
-    expect(logger.error).toHaveBeenCalled();
-    expect(router.navigate).toHaveBeenCalledWith(['/']);
+  it('should remember return url if given when not authenticated', async () => {
+    givenAuthenticated(false);
+
+    // and we have a return url set in the query param
+    route.snapshot.queryParams['returnUrl'] = 'returnto';
+
+    await whenInitializingComponent();
+
+    expect(returnUrl.setUrl).toHaveBeenCalledWith('returnto');
   });
 
-  it('should use saved return url', () => {
-    adalService.setAuthenticated(true);
+  it('should not set url when current pathname is same as return url when not authenticated', async () => {
+    givenAuthenticated(false);
+
+    // and we have a return url set in the query param
+    route.snapshot.queryParams['returnUrl'] = '/login?returnUrl=%2Flogin';
+
+    await whenInitializingComponent();
+
+    expect(returnUrl.setUrl).not.toHaveBeenCalled();
+  });
+
+  it('should redirect to remembered return url if authenticated', async () => {
+    givenAuthenticated(true);
     returnUrl.popUrl.and.returnValue('testurl');
-    spyOn(router, 'navigateByUrl').and.callFake(() => {});
-    component.ngOnInit();
+
+    await whenInitializingComponent();
+
     expect(router.navigateByUrl).toHaveBeenCalledWith('testurl');
   });
 
-  it('should return to root url if no return path is given', () => {
-    adalService.setAuthenticated(true);
-    spyOn(router, 'navigateByUrl').and.callFake(() => {});
-    component.ngOnInit();
+  it('should redirect to root url when authenticated if no return  url has been set', async () => {
+    givenAuthenticated(true);
+
+    await whenInitializingComponent();
+
     expect(router.navigateByUrl).toHaveBeenCalledWith('/');
+  });
+
+  it('should redirect to root if the remembered return url is invalid', async () => {
+    givenAuthenticated(true);
+
+    // and navigating to the return url throws an error
+    router.navigateByUrl.and.throwError('invalid url');
+
+    await whenInitializingComponent();
+
+    expect(router.navigate).toHaveBeenCalledWith(['/']);
   });
 });

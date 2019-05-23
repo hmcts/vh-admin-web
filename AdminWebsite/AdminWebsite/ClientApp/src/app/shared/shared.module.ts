@@ -10,6 +10,7 @@ import { PaginationComponent } from './pagination/pagination.component';
 import { SharedRoutingModule } from './shared-routing.module';
 import { ScrollableDirective } from './directives/scrollable.directive';
 import { BookingEditComponent } from './booking-edit/booking-edit.component';
+import { WindowRef } from './window-ref';
 import { LongDatetimePipe } from './directives/date-time.pipe';
 
 @NgModule({
@@ -28,6 +29,9 @@ import { LongDatetimePipe } from './directives/date-time.pipe';
     ScrollableDirective,
     BookingEditComponent,
     LongDatetimePipe
+  ],
+  providers: [
+    WindowRef
   ],
   exports: [
     HeaderComponent,
