@@ -52,8 +52,6 @@ namespace AdminWebsite.Controllers
                     foreach (var participant in hearingRequest.Participants)
                     {
                         if (participant.Case_role_name == "Judge") continue;
-
-                        // await _userAccountService.UpdateParticipantUsername(participant);
                         await _userAccountService.CreateUser(participant);
                     }
                 }
@@ -146,7 +144,6 @@ namespace AdminWebsite.Controllers
                         else
                         {
                             // Update the request with newly created user details in AD
-                            // await _userAccountService.UpdateParticipantUsername(newParticipant);
                             await _userAccountService.CreateUser(newParticipant);
                         }
                         newParticipantList.Add(newParticipant);
