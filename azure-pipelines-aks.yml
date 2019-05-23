@@ -103,7 +103,7 @@ stages:
         containerRegistry: 'vh-acr-dev'
         repository: '$(Build.Repository.Name)'
         command: build
-        Dockerfile: Dockerfile
+        Dockerfile: 
         arguments: '--build-arg $(BuildArguments)'
         tags: |
           $(Build.BuildId)
