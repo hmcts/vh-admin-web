@@ -22,7 +22,7 @@ ingress:
     kubernetes.io/ingress.class: traefik
     # kubernetes.io/tls-acme: "true"
   hosts:
-    hosts: vh-admin-web-aks.hearings.reform.hmcts.net
+    host: vh-admin-web-aks.hearings.reform.hmcts.net
     paths:
       - /
   tls: []
