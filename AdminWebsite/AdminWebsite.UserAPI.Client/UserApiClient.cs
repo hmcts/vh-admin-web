@@ -771,6 +771,21 @@ namespace AdminWebsite.UserAPI.Client
                             throw new UserServiceException("Not Found", (int)response_.StatusCode, responseData_, headers_, null);
                         }
                         else
+                        if (status_ == "409") 
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            var result_ = default(UserCreationConflictResponse); 
+                            try
+                            {
+                                result_ = Newtonsoft.Json.JsonConvert.DeserializeObject<UserCreationConflictResponse>(responseData_, _settings.Value);
+                            } 
+                            catch (System.Exception exception_) 
+                            {
+                                throw new UserServiceException("Could not deserialize the response body.", (int)response_.StatusCode, responseData_, headers_, exception_);
+                            }
+                            throw new UserServiceException<UserCreationConflictResponse>("Conflict", (int)response_.StatusCode, responseData_, headers_, result_, null);
+                        }
+                        else
                         if (status_ == "401") 
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
@@ -1293,6 +1308,9 @@ namespace AdminWebsite.UserAPI.Client
         [Newtonsoft.Json.JsonProperty("recovery_email", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Recovery_email { get; set; }
     
+        [Newtonsoft.Json.JsonProperty("user_role", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string User_role { get; set; }
+    
         public string ToJson() 
         {
             return Newtonsoft.Json.JsonConvert.SerializeObject(this);
@@ -1325,6 +1343,30 @@ namespace AdminWebsite.UserAPI.Client
         public static NewUserResponse FromJson(string data)
         {
             return Newtonsoft.Json.JsonConvert.DeserializeObject<NewUserResponse>(data);
+        }
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "9.13.22.0 (Newtonsoft.Json v11.0.0.0)")]
+    public partial class UserCreationConflictResponse 
+    {
+        [Newtonsoft.Json.JsonProperty("message", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Message { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("code", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Code { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("username", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Username { get; set; }
+    
+        public string ToJson() 
+        {
+            return Newtonsoft.Json.JsonConvert.SerializeObject(this);
+        }
+    
+        public static UserCreationConflictResponse FromJson(string data)
+        {
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<UserCreationConflictResponse>(data);
         }
     
     }
