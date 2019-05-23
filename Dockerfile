@@ -33,6 +33,9 @@ ENV VhServices:UserApiResourceId = $VhServicesUserApiResourceId
 ENV VhServices:UserApiUrl = $VhServicesUserApiUrl
 ENV AzureAd:TemporaryPassword = $AzureAdTemporaryPassword
 ENV ParticipantRequest = $ParticipantRequest
+
+ENV ASPNETCORE_URLS="http://+"
+
  
 EXPOSE 80
 EXPOSE 443

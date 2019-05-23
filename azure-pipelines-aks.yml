@@ -104,7 +104,7 @@ stages:
         repository: '$(Build.Repository.Name)'
         command: build
         Dockerfile: Dockerfile
-        arguments: '--build-arg ApplicationInsightsInstrumentationKey="$(vh-core-infra-AppInsightsKey)" AzureAdAuthority="$(AzureAdAuthority)" AzureAdClientId="$(vh-admin-web-appid)" AzureAdClientSecret="$(vh-admin-web-key)" AzureAdPostLogoutRedirectUri="$(AzureAdPostLogoutRedirectUri)" AzureAdRedirectUri="$(AzureAdRedirectUri)" AzureAdTenantId="$(tenantid)" VhServicesBookingsApiResourceId="$(vh-bookings-api-identifieruris)" VhServicesBookingsApiUrl="$(VhServicesBookingsApiUrl)" VhServicesUserApiResourceId="$(vh-user-api-identifieruris)" VhServicesUserApiUrl="$(VhServicesUserApiUrl)" AzureAdTemporaryPassword="$(AzureAdTemporaryPassword)" ParticipantRequest="$(ParticipantRequest)"'
+        arguments: '--build-arg $(BuildArguments)'
         tags: |
           $(Build.BuildId)
           latest
