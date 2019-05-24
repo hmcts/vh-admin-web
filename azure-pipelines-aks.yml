@@ -82,13 +82,13 @@ stages:
     - task: AzureKeyVault@1
       inputs:
         azureSubscription: 'Reform-CFT-VH-Dev'
-        KeyVaultName: 'vhcoreinfrahtdev'
+        KeyVaultName: 'vhcoreinfrahttest2'
         SecretsFilter: 'TenantId,vh-admin-web-appid,vh-admin-web-key,vh-bookings-api-identifieruris,vh-user-api-identifieruris'
 
     - task: AzureKeyVault@1
       inputs:
         azureSubscription: 'Reform-CFT-VH-Dev'
-        KeyVaultName: 'vhcoreinfradev'
+        KeyVaultName: 'vhcoreinfratest2'
         SecretsFilter: 'vh-core-infra-AppInsightsKey'
     
     - task: DownloadBuildArtifacts@0
