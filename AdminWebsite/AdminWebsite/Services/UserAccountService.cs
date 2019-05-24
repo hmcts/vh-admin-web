@@ -23,13 +23,6 @@ namespace AdminWebsite.Services
         IEnumerable<JudgeResponse> GetJudgeUsers();
 
         /// <summary>
-        /// Creates a user based on the participant information or updates the participant username if it already exists
-        /// </summary>
-        /// <param name="participant"></param>
-        /// <returns></returns>
-        Task UpdateParticipantUsername(ParticipantRequest participant);
-        
-        /// <summary>
         /// 
         /// </summary>
         /// <param name="userName"></param>
@@ -37,7 +30,7 @@ namespace AdminWebsite.Services
         Task<UserRole> GetUserRoleAsync(string userName);
 
         /// <summary>
-        /// Creates and returns a username
+        ///     Returns the username / creates a user if one does not exist. 
         /// </summary>
         /// <param name="participant"></param>
         /// <returns></returns>
@@ -60,79 +53,12 @@ namespace AdminWebsite.Services
             _userApiClient = userApiClient;
         }
 
-        /// <inheritdoc />
-        public async Task UpdateParticipantUsername(ParticipantRequest participant)
-        {
-            // create user in AD if users email does not exist in AD.
-            var userProfile = await CheckUserExistsInAD(participant.Contact_email);
-            if (userProfile == null)
-            {
-                // create the user in AD.
-                await CreateNewUserInAD(participant);
-            }
-            else
-            {
-                participant.Username = userProfile.User_name;
-            }
-        }
-
         public async Task<UserRole> GetUserRoleAsync(string userName)
         {
             var user = await _userApiClient.GetUserByAdUserNameAsync(userName);
             Enum.TryParse<UserRoleType>(user.User_role, out var userRoleResult);
 
             return new UserRole { UserRoleType = userRoleResult, CaseTypes = user.Case_type };
-        }
-
-        private async Task<UserProfile> CheckUserExistsInAD(string emailAddress)
-        {
-            try
-            {
-                return await _userApiClient.GetUserByEmailAsync(emailAddress);
-            }
-            catch (UserAPI.Client.UserServiceException e)
-            {
-                if (e.StatusCode == (int)HttpStatusCode.NotFound)
-                {
-                    return null;
-                }
-
-                throw;
-            }
-        }
-
-        private async Task<NewUserResponse> CreateNewUserInAD(ParticipantRequest participant)
-        {
-            var createUserRequest = new CreateUserRequest
-            {
-                First_name = participant.First_name,
-                Last_name = participant.Last_name,
-                Recovery_email = participant.Contact_email
-            };
-
-            var newUserResponse = await _userApiClient.CreateUserAsync(createUserRequest);
-
-            participant.Username = newUserResponse.Username;
-
-            // Add user to user group.
-            var addUserToGroupRequest = new AddUserToGroupRequest
-            {
-                User_id = newUserResponse.User_id,
-                Group_name = "External"
-            };
-
-            await _userApiClient.AddUserToGroupAsync(addUserToGroupRequest);
-
-            if (participant.Hearing_role_name == "Solicitor")
-            {
-                addUserToGroupRequest = new AddUserToGroupRequest()
-                {
-                    User_id = newUserResponse.User_id,
-                    Group_name = "VirtualRoomProfessionalUser"
-                };
-                await _userApiClient.AddUserToGroupAsync(addUserToGroupRequest);
-            }
-            return newUserResponse;
         }
 
         /// <inheritdoc />

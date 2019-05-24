@@ -48,7 +48,7 @@ namespace AdminWebsite.UnitTests.Services
                 .Throws(ClientException.ForUserService(HttpStatusCode.InternalServerError));
 
             Assert.ThrowsAsync<UserAPI.Client.UserServiceException>(() =>
-                _service.UpdateParticipantUsername(new BookingsAPI.Client.ParticipantRequest()));
+                _service.CreateUser(new BookingsAPI.Client.ParticipantRequest()));
         }
 
         [Test]
@@ -62,7 +62,7 @@ namespace AdminWebsite.UnitTests.Services
                 Username = "existin@user.com"
             };
 
-            await _service.UpdateParticipantUsername(participant);
+            await _service.CreateUser(participant);
 
             _userApiClient.Verify(x => x.AddUserToGroupAsync(It.Is<AddUserToGroupRequest>(y => y.Group_name == "External")),
                 Times.Once);
@@ -80,7 +80,7 @@ namespace AdminWebsite.UnitTests.Services
                 Hearing_role_name = "Solicitor"
             };
 
-            await _service.UpdateParticipantUsername(participant);
+            await _service.CreateUser(participant);
 
             _userApiClient.Verify(x => x.AddUserToGroupAsync(It.Is<AddUserToGroupRequest>(y => y.Group_name == "VirtualRoomProfessionalUser")),
                 Times.Once);
@@ -97,7 +97,7 @@ namespace AdminWebsite.UnitTests.Services
             _userApiClient.Setup(x => x.GetUserByEmailAsync(It.IsAny<string>()))
                 .ReturnsAsync(new UserProfile { User_name = participant.Username });
 
-            await _service.UpdateParticipantUsername(participant);
+            await _service.CreateUser(participant);
 
             _userApiClient.Verify(x => x.CreateUserAsync(It.IsAny<CreateUserRequest>()), Times.Never);
         }
