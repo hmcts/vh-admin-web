@@ -104,7 +104,7 @@ stages:
         repository: '$(Build.Repository.Name)'
         command: build
         Dockerfile: Dockerfile
-        arguments: ''
+        arguments: '$(BuildArguments)'
         tags: |
           $(Build.BuildId)
           latest
