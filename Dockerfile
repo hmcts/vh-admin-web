@@ -42,7 +42,7 @@ ENV ASPNETCORE_ENVIRONMENT Development
 
  
 EXPOSE 80
-EXPOSE 443
+# EXPOSE 443
  
 COPY ./dotentArtifacts/WebApp ./
  
