@@ -74,6 +74,7 @@ namespace AdminWebsite
                 options.TokenValidationParameters.ValidateLifetime = true;
                 options.Audience = securitySettings.ClientId;
                 options.TokenValidationParameters.ClockSkew = TimeSpan.Zero;
+                options.RequireHttpsMetadata = false;
             });
 
             serviceCollection.AddAuthorization();
