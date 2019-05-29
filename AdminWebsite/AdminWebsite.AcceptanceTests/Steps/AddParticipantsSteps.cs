@@ -157,15 +157,15 @@ namespace AdminWebsite.AcceptanceTests.Steps
                 case (TestData.AddParticipants.Respondent):
                     _addParticipant.RoleList().Should().BeEquivalentTo(TestData.AddParticipants.RespondentRole);
                     break;
-            }
-            _addParticipant.Role();
+            }        
+            _addParticipant.AddItems<string>("Role", _addParticipant.GetSelectedRole());
             AddParticpantDetails();
             ClickAddParticipantsButton();
         }
         [Then(@"Participant detail is displayed on the list")]
         public void ThenParticipantDetailIsDisplayedOnTheList()
         {
-            string expectedResult = $"{_addParticipant.GetItems("Title")} {TestData.AddParticipants.Firstname} {_addParticipant.GetItems("Lastname")} {_addParticipant.GetItems("Party")}";
+            string expectedResult = $"{_addParticipant.GetItems("Title")} {TestData.AddParticipants.Firstname} {_addParticipant.GetItems("Lastname")} {_addParticipant.GetItems("Role")}";
             var actualResult = _addParticipant.GetParticipantDetails().Replace("\r\n", " ");
             actualResult.Should().Be(expectedResult.Trim());
         }

@@ -74,14 +74,13 @@ namespace AdminWebsite.AcceptanceTests.Features
         [NUnit.Framework.TestAttribute()]
         [NUnit.Framework.DescriptionAttribute("Add participant details to booking")]
         [NUnit.Framework.CategoryAttribute("VIH-3883")]
+        [NUnit.Framework.CategoryAttribute("WIP_Test01")]
         [NUnit.Framework.TestCaseAttribute("Civil Money Claims", "Claimant", null)]
-        [NUnit.Framework.TestCaseAttribute("Civil Money Claims", "Defendant", null)]
-        [NUnit.Framework.TestCaseAttribute("Financial Remedy", "Applicant", null)]
-        [NUnit.Framework.TestCaseAttribute("Financial Remedy", "Respondent", null)]
         public virtual void AddParticipantDetailsToBooking(string caseTypes, string party, string[] exampleTags)
         {
             string[] @__tags = new string[] {
-                    "VIH-3883"};
+                    "VIH-3883",
+                    "WIP_Test01"};
             if ((exampleTags != null))
             {
                 @__tags = System.Linq.Enumerable.ToArray(System.Linq.Enumerable.Concat(@__tags, exampleTags));
