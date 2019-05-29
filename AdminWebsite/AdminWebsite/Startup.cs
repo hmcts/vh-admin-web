@@ -1,20 +1,23 @@
-using System;
 using AdminWebsite.Configuration;
 using AdminWebsite.Extensions;
 using AdminWebsite.Helper;
 using AdminWebsite.Middleware;
+using AdminWebsite.Security;
 using AdminWebsite.Services;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace AdminWebsite
 {
@@ -31,7 +34,7 @@ namespace AdminWebsite
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<ITelemetryInitializer>(new CloudRoleNameInitializer());
-            
+
             services.AddSwagger();
             services.AddJsonOptions();
             RegisterSettings(services);
@@ -68,12 +71,14 @@ namespace AdminWebsite
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+
             }).AddJwtBearer(options =>
             {
                 options.Authority = securitySettings.Authority;
                 options.TokenValidationParameters.ValidateLifetime = true;
                 options.Audience = securitySettings.ClientId;
                 options.TokenValidationParameters.ClockSkew = TimeSpan.Zero;
+                options.Events = new JwtBearerEvents { OnTokenValidated = OnTokenValidated };
             });
 
             serviceCollection.AddAuthorization();
@@ -122,6 +127,18 @@ namespace AdminWebsite
             });
 
             app.UseMiddleware<ExceptionMiddleware>();
+        }
+
+        private static async Task OnTokenValidated(TokenValidatedContext ctx)
+        {
+            if (ctx.SecurityToken is JwtSecurityToken jwtToken)
+            {
+                var cachedUserClaimBuilder = ctx.HttpContext.RequestServices.GetService<ICachedUserClaimBuilder>();
+                var userProfileClaims = await cachedUserClaimBuilder.BuildAsync(ctx.Principal.Identity.Name, jwtToken.RawData);
+                var claimsIdentity = ctx.Principal.Identity as ClaimsIdentity;
+
+                claimsIdentity?.AddClaims(userProfileClaims);
+            }
         }
     }
 }

@@ -235,6 +235,7 @@ namespace AdminWebsite.Controllers
         public ActionResult GetBookingsList(string cursor, int limit = 100)
         {
             IEnumerable<string> caseTypes = null;
+            
             if (_userIdentity.IsAdministratorRole())
             {
                 caseTypes = _userIdentity.GetGroupDisplayNames();

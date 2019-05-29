@@ -291,11 +291,11 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
       this.showAddress = true;
     }
     this.isSolicitor = this.participantDetails.hearing_role_name === Constants.Solicitor;
-    this.roleSelected();
+
     this.form.setValue({
       party: this.participantDetails.case_role_name,
       role: this.participantDetails.hearing_role_name,
-      title: this.participantDetails.title,
+      title: (this.participantDetails.title === undefined) ? this.constants.PleaseSelect : this.participantDetails.title,
       firstName: this.participantDetails.first_name,
       lastName: this.participantDetails.last_name,
       phone: this.participantDetails.phone || '',
@@ -313,6 +313,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
     setTimeout(() => {
       this.form.get('role').setValue(this.participantDetails.hearing_role_name);
+      this.roleSelected();
     }, 500);
 
   }
@@ -538,7 +539,6 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     this.localEditMode = false;
   }
 
-
   updateParticipant() {
     if (!this.existingParticipant && !this.participantDetails) {
       this.saveParticipant();
@@ -595,7 +595,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     newParticipant.first_name = this.firstName.value;
     newParticipant.last_name = this.lastName.value;
     newParticipant.phone = this.phone.value;
-    newParticipant.title = this.title.value;
+    newParticipant.title = (this.title.value === this.constants.PleaseSelect) ? null : this.title.value;
     newParticipant.case_role_name = this.party.value;
     newParticipant.hearing_role_name = this.role.value;
     newParticipant.email = this.searchEmail ? this.searchEmail.email : '';

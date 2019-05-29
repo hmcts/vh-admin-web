@@ -6,7 +6,7 @@ export class ParticipantDetailsModel {
     this.ParticipantId = participantId;
     this.FirstName = firstName;
     this.LastName = lastName;
-    this.Title = title;
+    this.Title = (title === undefined) ? '' : title;
     this.UserRoleName = role;
     this.UserName = userName;
     this.Flag = false;

@@ -1,32 +1,18 @@
-﻿using System;
+﻿using AdminWebsite.BookingsAPI.Client;
+using AdminWebsite.Contracts.Responses;
+using AdminWebsite.Security;
+using AdminWebsite.Services.Models;
+using AdminWebsite.UserAPI.Client;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using AdminWebsite.BookingsAPI.Client;
-using AdminWebsite.Contracts.Responses;
-using AdminWebsite.Helper;
-using AdminWebsite.Security;
-using AdminWebsite.Services.Models;
-using Microsoft.Extensions.Options;
-using Microsoft.Graph;
-using Newtonsoft.Json;
-using AdminWebsite.Configuration;
-using AdminWebsite.UserAPI.Client;
-using UserServiceException = AdminWebsite.Security.UserServiceException;
 
 namespace AdminWebsite.Services
 {
     public interface IUserAccountService
     {
-        /// <summary>
-        ///     Get the full group information based by the active directory id
-        /// </summary>
-        /// <param name="groupId">Id for the active directory group</param>
-        /// <returns></returns>
-        Group GetGroupById(string groupId);
         /// <summary>
         ///     Returns a list of all judges in the active directory
         /// </summary>
@@ -40,31 +26,21 @@ namespace AdminWebsite.Services
         /// <param name="participant"></param>
         /// <returns></returns>
         Task UpdateParticipantUsername(ParticipantRequest participant);
+
+        Task<UserRole> GetUserRoleAsync(string userName);
     }
 
     public class UserAccountService : IUserAccountService
     {
         private readonly IUserApiClient _userApiClient;
-        private readonly ITokenProvider _tokenProvider;
-        private readonly SecuritySettings _securitySettings;
-        private readonly bool _isLive;
-
-        private static readonly Compare<JudgeResponse> CompareJudgeById =
-            Compare<JudgeResponse>.By((x, y) => x.Email == y.Email, x => x.Email.GetHashCode());
 
         /// <summary>
         /// Create the service
         /// </summary>
         /// <param name="userApiClient"></param>
-        /// <param name="tokenProvider"></param>
-        /// <param name="securitySettings"></param>
-        /// <param name="appSettings"></param>
-        public UserAccountService(IUserApiClient userApiClient, ITokenProvider tokenProvider, IOptions<SecuritySettings> securitySettings, IOptions<AppConfigSettings> appSettings)
+        public UserAccountService(IUserApiClient userApiClient)
         {
             _userApiClient = userApiClient;
-            _tokenProvider = tokenProvider;
-            _securitySettings = securitySettings.Value;
-            _isLive = appSettings.Value.IsLive;
         }
 
         /// <inheritdoc />
@@ -82,16 +58,24 @@ namespace AdminWebsite.Services
                 participant.Username = userProfile.User_name;
             }
         }
-        
+
+        public async Task<UserRole> GetUserRoleAsync(string userName)
+        {
+            var user = await _userApiClient.GetUserByAdUserNameAsync(userName);
+            Enum.TryParse<UserRoleType>(user.User_role, out var userRoleResult);
+
+            return new UserRole { UserRoleType = userRoleResult, CaseTypes = user.Case_type };
+        }
+
         private async Task<UserProfile> CheckUserExistsInAD(string emailAddress)
         {
             try
             {
                 return await _userApiClient.GetUserByEmailAsync(emailAddress);
             }
-            catch(UserAPI.Client.UserServiceException e)
+            catch (UserAPI.Client.UserServiceException e)
             {
-                if (e.StatusCode == (int) HttpStatusCode.NotFound)
+                if (e.StatusCode == (int)HttpStatusCode.NotFound)
                 {
                     return null;
                 }
@@ -134,106 +118,17 @@ namespace AdminWebsite.Services
             return newUserResponse;
         }
 
-        private Group GetGroupByName(string groupName)
-        {
-            var accessToken = _tokenProvider.GetClientAccessToken(_securitySettings.ClientId,
-                _securitySettings.ClientSecret, _securitySettings.GraphApiBaseUri);
-
-            HttpResponseMessage responseMessage;
-            using (var client = new HttpClient())
-            {
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-                var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get,
-                    $"{_securitySettings.GraphApiBaseUri}v1.0/groups?$filter=displayName eq '{groupName}'");
-                responseMessage = client.SendAsync(httpRequestMessage).Result;
-            }
-
-            if (responseMessage.IsSuccessStatusCode)
-            {
-                var queryResponse = responseMessage.Content.ReadAsAsync<GraphQueryResponse>().Result;
-                return queryResponse.Value?.FirstOrDefault();
-            }
-
-            var message = $"Failed to get group by name {groupName}";
-            var reason = responseMessage.Content.ReadAsStringAsync().Result;
-            throw new UserServiceException(message, reason);
-        }
-
-        /// <inheritdoc />
-        public Group GetGroupById(string groupId)
-        {
-            var accessToken = _tokenProvider.GetClientAccessToken(_securitySettings.ClientId,
-                _securitySettings.ClientSecret, _securitySettings.GraphApiBaseUri);
-
-            HttpResponseMessage responseMessage;
-            using (var client = new HttpClient())
-            {
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-                var httpRequestMessage =
-                    new HttpRequestMessage(HttpMethod.Get, $"{_securitySettings.GraphApiBaseUri}v1.0/groups/{groupId}");
-                responseMessage = client.SendAsync(httpRequestMessage).Result;
-            }
-
-            if (responseMessage.IsSuccessStatusCode)
-            {
-                return responseMessage.Content.ReadAsAsync<Group>().Result;
-            }
-
-            if (responseMessage.StatusCode == HttpStatusCode.NotFound)
-            {
-                return null;
-            }
-
-            var message = $"Failed to get group by id {groupId}";
-            var reason = responseMessage.Content.ReadAsStringAsync().Result;
-            throw new UserServiceException(message, reason);
-        }
-
         /// <inheritdoc />
         public IEnumerable<JudgeResponse> GetJudgeUsers()
         {
-            var judges = GetUsersByGroupName("VirtualRoomJudge");
-            if (_isLive)
-                judges = ExcludeTestJudges(judges).ToList();
-
-            return judges.OrderBy(j => j.DisplayName);
-        }
-
-        private IEnumerable<JudgeResponse> ExcludeTestJudges(IEnumerable<JudgeResponse> judgesList)
-        {
-            var judgesTest = GetUsersByGroupName("TestAccount");
-            return judgesList.Except(judgesTest, CompareJudgeById);
-        }
-
-        private List<JudgeResponse> GetUsersByGroupName(string groupName)
-        {
-            var groupData = GetGroupByName(groupName);
-            if (groupData == null) return new List<JudgeResponse>();
-
-            var response = GetUsersByGroup(groupData.Id);
-            return response.Select(x => new JudgeResponse
+            var judgesList = _userApiClient.GetJudges();
+            return judgesList.Select(x => new JudgeResponse
             {
-                FirstName = x.GivenName,
-                LastName = x.Surname,
-                DisplayName = x.DisplayName,
-                Email = x.UserPrincipalName
+                FirstName = x.First_name,
+                LastName = x.Last_name,
+                DisplayName = x.Display_name,
+                Email = x.Email
             }).ToList();
-        }
-
-        private IEnumerable<User> GetUsersByGroup(string groupId)
-        {
-            var accessToken = _tokenProvider.GetClientAccessToken(_securitySettings.ClientId,
-                _securitySettings.ClientSecret,
-                _securitySettings.GraphApiBaseUri);
-
-            using (var client = new HttpClient())
-            {
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-                var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, $"{_securitySettings.GraphApiBaseUri}v1.0/groups/{groupId}/members");
-
-                var queryResponse = client.SendAsync(httpRequestMessage).Result.Content.ReadAsAsync<DirectoryObject>().Result;
-                return JsonConvert.DeserializeObject<List<User>>(queryResponse.AdditionalData["value"].ToString());
-            }
         }
     }
 }
