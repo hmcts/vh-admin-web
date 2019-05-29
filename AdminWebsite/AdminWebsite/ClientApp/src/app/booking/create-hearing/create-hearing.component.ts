@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HearingTypeResponse } from '../../services/clients/api-client';
 import { HearingModel } from '../../common/model/hearing.model';
@@ -16,8 +16,6 @@ import { PageUrls } from 'src/app/shared/page-url.constants';
   styleUrls: ['./create-hearing.component.scss']
 })
 export class CreateHearingComponent extends BookingBaseComponent implements OnInit {
-
-  private existingCaseTypeKey = 'selectedCaseType';
   attemptingCancellation: boolean;
   attemptingDiscardChanges = false;
   failedSubmission: boolean;
@@ -42,7 +40,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
 
   ngOnInit() {
     this.failedSubmission = false;
-    this.checkForExistingRequest();
+    this.checkForExistingRequestOrCreateNew();
     this.initForm();
     this.retrieveHearingTypes();
     super.ngOnInit();
@@ -52,24 +50,23 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
     window.document.getElementById(fragment).parentElement.parentElement.scrollIntoView();
   }
 
-  private checkForExistingRequest() {
+  private checkForExistingRequestOrCreateNew() {
     this.hearing = this.hearingService.getCurrentRequest();
-    if (this.hearing) {
-      this.isExistingHearing = this.hearing.hearing_id && this.hearing.hearing_id.length > 0;
+
+    this.isExistingHearing = this.hearing.hearing_id && this.hearing.hearing_id.length > 0;
+
+    if (!!this.hearing.hearing_type_name && !!this.hearing.case_type) {
+      this.selectedCaseType = this.hearing.case_type;
       this.hasSaved = true;
-    }
-    const existingType = sessionStorage.getItem(this.existingCaseTypeKey);
-    if (this.hearing.hearing_type_name !== undefined && existingType !== null) {
-      this.selectedCaseType = existingType;
     } else {
       this.selectedCaseType = 'Please Select';
     }
   }
 
   private setHearingTypeForExistingHearing() {
-    if (this.isExistingHearing && this.filteredHearingTypes.length > 0) {
+    if (this.hasSaved && this.filteredHearingTypes.length > 0) {
       const selectedHearingTypes = this.filteredHearingTypes.filter(x => x.name === this.hearing.hearing_type_name);
-      if (selectedHearingTypes && selectedHearingTypes.length > 0) {
+      if (!!selectedHearingTypes) {
         this.hearing.hearing_type_id = selectedHearingTypes[0].id;
         this.form.get('hearingType').setValue(selectedHearingTypes[0].id);
       }
@@ -114,7 +111,6 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
     if (this.form.valid) {
       this.failedSubmission = false;
       this.updateHearingRequest();
-      sessionStorage.setItem(this.existingCaseTypeKey, this.selectedCaseType);
       this.form.markAsPristine();
       this.hasSaved = true;
       if (this.editMode) {
@@ -151,7 +147,6 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
   cancelBooking() {
     this.attemptingCancellation = false;
     this.hearingService.cancelRequest();
-    sessionStorage.removeItem(this.existingCaseTypeKey);
     this.form.reset();
     this.router.navigate([PageUrls.Dashboard]);
   }
