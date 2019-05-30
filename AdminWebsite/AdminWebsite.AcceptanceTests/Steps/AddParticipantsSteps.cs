@@ -1,6 +1,7 @@
 ﻿using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.AcceptanceTests.Pages;
 using FluentAssertions;
+using System;
 using System.Linq;
 using TechTalk.SpecFlow;
 
@@ -80,7 +81,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void ClickAddParticipantsButton()
         {
             var tag = _scenarioContext.ScenarioInfo.Tags;
-            if (!_addParticipant.RoleValue().Contains("Solicitor"))
+            if (!_addParticipant.RoleValue().Contains(RoleType.Solicitor.ToString()))
             {
                 if (!tag.Contains("ExistingPerson"))
                 {
@@ -157,17 +158,25 @@ namespace AdminWebsite.AcceptanceTests.Steps
                 case (TestData.AddParticipants.Respondent):
                     _addParticipant.RoleList().Should().BeEquivalentTo(TestData.AddParticipants.RespondentRole);
                     break;
-            }
-            _addParticipant.Role();
+            }        
+            _addParticipant.AddItems<string>("Role", _addParticipant.GetSelectedRole());
             AddParticpantDetails();
             ClickAddParticipantsButton();
         }
         [Then(@"Participant detail is displayed on the list")]
         public void ThenParticipantDetailIsDisplayedOnTheList()
         {
-            string expectedResult = $"{_addParticipant.GetItems("Title")} {TestData.AddParticipants.Firstname} {_addParticipant.GetItems("Lastname")} {_addParticipant.GetItems("Party")}";
+            string expectedResult = $"{_addParticipant.GetItems("Title")} {TestData.AddParticipants.Firstname} {_addParticipant.GetItems("Lastname")} {_addParticipant.GetItems("Role")}";
             var actualResult = _addParticipant.GetParticipantDetails().Replace("\r\n", " ");
-            actualResult.Should().Be(expectedResult.Trim());
+            if (_addParticipant.GetItems("Role") == RoleType.Solicitor.ToString())
+            {
+                var clientRepresenting = _addParticipant.GetItems("ClientRepresenting");
+                actualResult.Should().Be($"{expectedResult}, representing {clientRepresenting}");
+            }
+            else
+            {
+                actualResult.Should().Be(expectedResult.Trim());
+            }            
         }
         public void AddParticpantDetails()
         {
@@ -180,7 +189,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [When(@"participant details is updated")]
         public void WhenParticipantDetailsIsUpdated()
         {
-            if (!_addParticipant.RoleValue().Contains("Solicitor"))
+            if (!_addParticipant.RoleValue().Contains(RoleType.Solicitor.ToString()))
                 Address();
             _addParticipant.PartyField().Should().BeFalse();
             _addParticipant.RoleField().Should().BeFalse();
@@ -235,6 +244,10 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _addParticipant.GetFieldValue("city").Should().NotBeNullOrEmpty();
             _addParticipant.GetFieldValue("county").Should().NotBeNullOrEmpty();
             _addParticipant.GetFieldValue("postcode").Should().NotBeNullOrEmpty();
+            if (_addParticipant.RoleValue().Contains("Solicitor"))
+            {
+                SolicitorInformation();
+            }
         }
         private void NonExistingPerson()
         {
@@ -246,6 +259,22 @@ namespace AdminWebsite.AcceptanceTests.Steps
             InputLastname(_addParticipant.GetItems("Lastname"));
             InputTelephone(TestData.AddParticipants.Telephone);
             InputDisplayname(TestData.AddParticipants.DisplayName);
+            if (_addParticipant.RoleValue().Contains("Solicitor"))
+            {
+                SolicitorInformation();
+            }
+        }
+        private void SolicitorInformation()
+        {
+            var organisation = Faker.Company.Name();
+            _addParticipant.Organisation(organisation);
+            _addParticipant.AddItems<string>("Organisation", organisation);
+            var solicitorReference = Faker.Company.CatchPhrase();
+            _addParticipant.SoliicitorReference(solicitorReference);
+            _addParticipant.AddItems<string>("Company", solicitorReference);
+            var clientDetails = Faker.Name.FullName();
+            _addParticipant.ClientRepresenting(clientDetails);
+            _addParticipant.AddItems<string>("ClientRepresenting", clientDetails);
         }
     }
 }

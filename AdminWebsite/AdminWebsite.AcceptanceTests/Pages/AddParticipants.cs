@@ -43,6 +43,9 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public void County(string county) => ClearFieldInputValues(By.Id("county"), county);
         public void Postcode(string postcode) => ClearFieldInputValues(By.Id("postcode"), postcode);
         public string RoleValue() => ExecuteScript("return document.getElementById('role').value", By.Id("role"));
+        public void Organisation(string organisation) => ClearFieldInputValues(_companyName, organisation);
+        public void SoliicitorReference(string reference) => ClearFieldInputValues(By.Id("solicitorReference"), reference);
+        public void ClientRepresenting(string client) => ClearFieldInputValues(By.Id("representing"), client);
         public void ExistingParticipant(string contactEmail)
         {
             var webElement = GetListOfElements(By.CssSelector("a.vh-a-email")).Single(u => u.Text == contactEmail);
