@@ -74,13 +74,13 @@ namespace AdminWebsite.AcceptanceTests.Features
         [NUnit.Framework.TestAttribute()]
         [NUnit.Framework.DescriptionAttribute("Add participant details to booking")]
         [NUnit.Framework.CategoryAttribute("VIH-3883")]
-        [NUnit.Framework.CategoryAttribute("WIP_Test01")]
+        [NUnit.Framework.CategoryAttribute("smoketest")]
         [NUnit.Framework.TestCaseAttribute("Civil Money Claims", "Claimant", null)]
         public virtual void AddParticipantDetailsToBooking(string caseTypes, string party, string[] exampleTags)
         {
             string[] @__tags = new string[] {
                     "VIH-3883",
-                    "WIP_Test01"};
+                    "smoketest"};
             if ((exampleTags != null))
             {
                 @__tags = System.Linq.Enumerable.ToArray(System.Linq.Enumerable.Concat(@__tags, exampleTags));
@@ -106,14 +106,14 @@ this.ScenarioInitialize(scenarioInfo);
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Case Admin clears participant details", null, new string[] {
                         "VIH-3883"});
-#line 19
+#line 16
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
-#line 20
+#line 17
  testRunner.Given("Case Admin is on add participants page", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 21
+#line 18
  testRunner.When("user clears inputted values", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 22
+#line 19
  testRunner.Then("all values should be cleared from the fields", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
