@@ -3,7 +3,7 @@
 		I need to be able to add generic details for a participant
 		So that these participant details are assigned to the hearing booking when it is created
 
-@VIH-3883 
+@VIH-3883 @smoketest
 Scenario Outline: Add participant details to booking
 	Given 'VH Officer' with multiple <CaseTypes> wants to add a <Party> to booking 
 	When admin adds participant details
@@ -11,9 +11,6 @@ Scenario Outline: Add participant details to booking
 Examples:
 | CaseTypes          | Party      |
 | Civil Money Claims | Claimant   |
-| Civil Money Claims | Defendant  |
-| Financial Remedy   | Applicant  |
-| Financial Remedy   | Respondent |	 
 
 @VIH-3883
 Scenario: Case Admin clears participant details
