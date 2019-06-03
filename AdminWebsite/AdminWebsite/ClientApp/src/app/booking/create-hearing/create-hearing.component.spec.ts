@@ -43,7 +43,6 @@ describe('CreateHearingComponent with multiple case types', () => {
   let caseNameControl: AbstractControl;
   let caseNumberControl: AbstractControl;
   let caseTypeControl: AbstractControl;
-  let hearingMethodControl: AbstractControl;
   let hearingTypeControl: AbstractControl;
 
   const newHearing = initHearingRequest();
@@ -76,7 +75,6 @@ describe('CreateHearingComponent with multiple case types', () => {
     fixture.detectChanges();
 
     caseNameControl = component.form.controls['caseName'];
-    hearingMethodControl = component.form.controls['hearingMethod'];
     caseNumberControl = component.form.controls['caseNumber'];
     caseTypeControl = component.form.controls['caseType'];
     hearingTypeControl = component.form.controls['hearingType'];
