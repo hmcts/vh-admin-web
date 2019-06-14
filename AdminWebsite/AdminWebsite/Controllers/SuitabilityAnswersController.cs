@@ -39,7 +39,6 @@ namespace AdminWebsite.Controllers
         [HttpGet]
         [SwaggerOperation(OperationId = "GetBookingsList")]
         [ProducesResponseType(typeof(BookingsResponse), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public ActionResult GetSuitabilityAnswersList(string cursor, int limit = 100)
         {
