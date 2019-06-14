@@ -1,3 +1,4 @@
+import { SuitabilityModule } from './suitability/suitability.module';
 import { DatePipe } from '@angular/common';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { APP_INITIALIZER, NgModule, ErrorHandler } from '@angular/core';
@@ -52,9 +53,10 @@ export function getSettings(configService: ConfigService) {
     BookingModule,
     BookingsListModule,
     BrowserModule,
+    SuitabilityModule,
     AppRoutingModule,
     SharedModule,
-    PopupModule,
+    PopupModule
   ],
   providers: [
     HttpClientModule,
