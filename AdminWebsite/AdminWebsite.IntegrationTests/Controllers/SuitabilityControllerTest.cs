@@ -47,6 +47,7 @@ namespace AdminWebsite.IntegrationTests.Controllers
             var result = _controller.GetSuitabilityAnswersList("", 1);
 
             result.Should().NotBeNull();
+
             var objectResult = (UnauthorizedResult)result;
             objectResult.StatusCode.Should().Be((int)HttpStatusCode.Unauthorized);
         }
