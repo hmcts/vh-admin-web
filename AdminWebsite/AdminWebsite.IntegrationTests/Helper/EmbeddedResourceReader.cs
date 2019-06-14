@@ -12,7 +12,7 @@ namespace AdminWebsite.IntegrationTests.Helper
 
         public static X509Certificate2 GetCertificate()
         {
-            var resourceName = $"{EmbeddedResourceQualifier}.api-auth-self-signed.pfx";
+            var resourceName = $"{EmbeddedResourceQualifier}.localhost.pfx";
 
             using (var certificateStream = typeof(EmbeddedResourceReader).Assembly.GetManifestResourceStream(resourceName))
             {
@@ -27,7 +27,7 @@ namespace AdminWebsite.IntegrationTests.Helper
                     rawBytes[i] = (byte)certificateStream.ReadByte();
                 }
 
-                return new X509Certificate2(rawBytes, "api-demo", X509KeyStorageFlags.UserKeySet);
+                return new X509Certificate2(rawBytes, "password", X509KeyStorageFlags.UserKeySet);
             }
         }
 

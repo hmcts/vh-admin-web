@@ -38,48 +38,20 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Hooks\Browser.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="Hooks\SaucelabsResult.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="Steps\AddParticipantsSteps.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="Steps\AssignJudgeSteps.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="Steps\BookingConfirmationStep.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="Steps\BookingDetailsSteps.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="Steps\CommonSteps.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="Steps\DashboardSteps.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="Steps\HearingDetailsSteps.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="Steps\HearingScheduleSteps.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="Steps\LoginSteps.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="Steps\OtherInformationSteps.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="Steps\SignOutSteps.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="Steps\SummarySteps.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Update="Hooks\Browser.cs" />
+    <Compile Update="Hooks\SaucelabsResult.cs" />
+    <Compile Update="Steps\AddParticipantsSteps.cs" />
+    <Compile Update="Steps\AssignJudgeSteps.cs" />
+    <Compile Update="Steps\BookingConfirmationStep.cs" />
+    <Compile Update="Steps\BookingDetailsSteps.cs" />
+    <Compile Update="Steps\CommonSteps.cs" />
+    <Compile Update="Steps\DashboardSteps.cs" />
+    <Compile Update="Steps\HearingDetailsSteps.cs" />
+    <Compile Update="Steps\HearingScheduleSteps.cs" />
+    <Compile Update="Steps\LoginSteps.cs" />
+    <Compile Update="Steps\OtherInformationSteps.cs" />
+    <Compile Update="Steps\SignOutSteps.cs" />
+    <Compile Update="Steps\SummarySteps.cs" />
   </ItemGroup>
 
   <ItemGroup>
