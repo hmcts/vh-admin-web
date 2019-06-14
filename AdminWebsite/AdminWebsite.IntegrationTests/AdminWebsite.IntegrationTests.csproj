@@ -8,14 +8,15 @@
     <None Remove="Controllers\api-auth-self-signed.pfx" />
     <None Remove="Helper\AzureAdMockData\microsoft-openid-config.json" />
     <None Remove="Helper\AzureAdMockData\microsoft-wellknown-keys.json" />
+    <None Remove="Helper\localhost.pfx" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Helper\api-auth-self-signed.pfx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
     <EmbeddedResource Include="Helper\AzureAdMockData\microsoft-openid-config.json" />
     <EmbeddedResource Include="Helper\AzureAdMockData\microsoft-wellknown-keys.json" />
+    <EmbeddedResource Include="Helper\localhost.pfx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup>
