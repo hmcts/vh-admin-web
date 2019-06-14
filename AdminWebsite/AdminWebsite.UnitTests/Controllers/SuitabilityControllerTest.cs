@@ -5,11 +5,13 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
+using System;
+using System.Collections.Generic;
 using System.Net;
 
 namespace AdminWebsite.UnitTests.Controllers
 {
-    public class SuitabilityControllerTest 
+    public class SuitabilityControllerTest
     {
         private SuitabilityAnswersController _controller;
         private Mock<IBookingsApiClient> _bookingsApiClientMock;
@@ -50,6 +52,20 @@ namespace AdminWebsite.UnitTests.Controllers
 
             var objectResult = (UnauthorizedResult)result;
             objectResult.StatusCode.Should().Be((int)HttpStatusCode.Unauthorized);
+        }
+
+        [Test]
+        public void Should_return_badRequest_if_exception_throw()
+        {
+            _userIdentityMock.Setup(s => s.IsVhOfficerAdministratorRole()).Returns(true);
+            _bookingsApiClientMock.Setup(s => s.GetSuitabilityAnswers("", 1)).Throws(new BookingsApiException("error",400,"",new Dictionary<string, IEnumerable<string>>(), new Exception()));
+
+            var result = _controller.GetSuitabilityAnswersList("", 1);
+
+            result.Should().NotBeNull();
+
+            var objectResult = (BadRequestObjectResult)result;
+            objectResult.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
         }
     }
 }
