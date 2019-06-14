@@ -7,9 +7,9 @@ using Moq;
 using NUnit.Framework;
 using System.Net;
 
-namespace AdminWebsite.IntegrationTests.Controllers
+namespace AdminWebsite.UnitTests.Controllers
 {
-    public class SuitabilityControllerTest : ControllerTestsBase
+    public class SuitabilityControllerTest 
     {
         private SuitabilityAnswersController _controller;
         private Mock<IBookingsApiClient> _bookingsApiClientMock;
