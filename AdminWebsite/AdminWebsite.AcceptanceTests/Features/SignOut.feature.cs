@@ -169,13 +169,14 @@ this.ScenarioInitialize(scenarioInfo);
         [NUnit.Framework.TestAttribute()]
         [NUnit.Framework.DescriptionAttribute("Warning message to dsiplay when Case Admin tries to navigate away from booking")]
         [NUnit.Framework.CategoryAttribute("bug_VIH-4159")]
+        [NUnit.Framework.CategoryAttribute("FixBug")]
         [NUnit.Framework.TestCaseAttribute("Dashboard", null)]
         [NUnit.Framework.TestCaseAttribute("Bookings List", null)]
-        [NUnit.Framework.TestCaseAttribute("HMCTS Video hearing service", null)]
         public virtual void WarningMessageToDsiplayWhenCaseAdminTriesToNavigateAwayFromBooking(string booking, string[] exampleTags)
         {
             string[] @__tags = new string[] {
-                    "bug_VIH-4159"};
+                    "bug_VIH-4159",
+                    "FixBug"};
             if ((exampleTags != null))
             {
                 @__tags = System.Linq.Enumerable.ToArray(System.Linq.Enumerable.Concat(@__tags, exampleTags));
