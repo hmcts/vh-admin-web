@@ -813,7 +813,7 @@ export class BHClient {
      * @param limit (optional) The max number of participants with suitability answers to be returned.
      * @return Success
      */
-    getBookingsList2(cursor: string | null | undefined, limit: number | null | undefined): Observable<BookingsResponse> {
+    getBookingsList2(cursor: string | null | undefined, limit: number | null | undefined): Observable<SuitabilityAnswersResponse> {
         let url_ = this.baseUrl + "/api/suitability-answers?";
         if (cursor !== undefined)
             url_ += "cursor=" + encodeURIComponent("" + cursor) + "&"; 
@@ -836,14 +836,14 @@ export class BHClient {
                 try {
                     return this.processGetBookingsList2(<any>response_);
                 } catch (e) {
-                    return <Observable<BookingsResponse>><any>_observableThrow(e);
+                    return <Observable<SuitabilityAnswersResponse>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<BookingsResponse>><any>_observableThrow(response_);
+                return <Observable<SuitabilityAnswersResponse>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetBookingsList2(response: HttpResponseBase): Observable<BookingsResponse> {
+    protected processGetBookingsList2(response: HttpResponseBase): Observable<SuitabilityAnswersResponse> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -854,15 +854,8 @@ export class BHClient {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? BookingsResponse.fromJS(resultData200) : new BookingsResponse();
+            result200 = resultData200 ? SuitabilityAnswersResponse.fromJS(resultData200) : new SuitabilityAnswersResponse();
             return _observableOf(result200);
-            }));
-        } else if (status === 404) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result404: any = null;
-            let resultData404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result404 = resultData404 ? ProblemDetails.fromJS(resultData404) : new ProblemDetails();
-            return throwException("A server error occurred.", status, _responseText, _headers, result404);
             }));
         } else if (status === 400) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
@@ -880,7 +873,7 @@ export class BHClient {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<BookingsResponse>(<any>null);
+        return _observableOf<SuitabilityAnswersResponse>(<any>null);
     }
 
     /**
@@ -2743,6 +2736,186 @@ export class HearingVenueResponse implements IHearingVenueResponse {
 export interface IHearingVenueResponse {
     id?: number | undefined;
     name?: string | undefined;
+}
+
+export class SuitabilityAnswersResponse implements ISuitabilityAnswersResponse {
+    participant_suitability_answer_response?: ParticipantSuitabilityAnswerResponse[] | undefined;
+    next_cursor?: string | undefined;
+    limit?: number | undefined;
+    prev_page_url?: string | undefined;
+    next_page_url?: string | undefined;
+
+    constructor(data?: ISuitabilityAnswersResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["participant_suitability_answer_response"] && data["participant_suitability_answer_response"].constructor === Array) {
+                this.participant_suitability_answer_response = [] as any;
+                for (let item of data["participant_suitability_answer_response"])
+                    this.participant_suitability_answer_response!.push(ParticipantSuitabilityAnswerResponse.fromJS(item));
+            }
+            this.next_cursor = data["next_cursor"];
+            this.limit = data["limit"];
+            this.prev_page_url = data["prev_page_url"];
+            this.next_page_url = data["next_page_url"];
+        }
+    }
+
+    static fromJS(data: any): SuitabilityAnswersResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new SuitabilityAnswersResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.participant_suitability_answer_response && this.participant_suitability_answer_response.constructor === Array) {
+            data["participant_suitability_answer_response"] = [];
+            for (let item of this.participant_suitability_answer_response)
+                data["participant_suitability_answer_response"].push(item.toJSON());
+        }
+        data["next_cursor"] = this.next_cursor;
+        data["limit"] = this.limit;
+        data["prev_page_url"] = this.prev_page_url;
+        data["next_page_url"] = this.next_page_url;
+        return data; 
+    }
+}
+
+export interface ISuitabilityAnswersResponse {
+    participant_suitability_answer_response?: ParticipantSuitabilityAnswerResponse[] | undefined;
+    next_cursor?: string | undefined;
+    limit?: number | undefined;
+    prev_page_url?: string | undefined;
+    next_page_url?: string | undefined;
+}
+
+export class ParticipantSuitabilityAnswerResponse implements IParticipantSuitabilityAnswerResponse {
+    participant_id?: string | undefined;
+    case_number?: string | undefined;
+    hearing_role?: string | undefined;
+    title?: string | undefined;
+    first_name?: string | undefined;
+    last_name?: string | undefined;
+    updated_at?: Date | undefined;
+    representee?: string | undefined;
+    answers?: SuitabilityAnswerResponse[] | undefined;
+
+    constructor(data?: IParticipantSuitabilityAnswerResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.participant_id = data["participant_id"];
+            this.case_number = data["case_number"];
+            this.hearing_role = data["hearing_role"];
+            this.title = data["title"];
+            this.first_name = data["first_name"];
+            this.last_name = data["last_name"];
+            this.updated_at = data["updated_at"] ? new Date(data["updated_at"].toString()) : <any>undefined;
+            this.representee = data["representee"];
+            if (data["answers"] && data["answers"].constructor === Array) {
+                this.answers = [] as any;
+                for (let item of data["answers"])
+                    this.answers!.push(SuitabilityAnswerResponse.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): ParticipantSuitabilityAnswerResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new ParticipantSuitabilityAnswerResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["participant_id"] = this.participant_id;
+        data["case_number"] = this.case_number;
+        data["hearing_role"] = this.hearing_role;
+        data["title"] = this.title;
+        data["first_name"] = this.first_name;
+        data["last_name"] = this.last_name;
+        data["updated_at"] = this.updated_at ? this.updated_at.toISOString() : <any>undefined;
+        data["representee"] = this.representee;
+        if (this.answers && this.answers.constructor === Array) {
+            data["answers"] = [];
+            for (let item of this.answers)
+                data["answers"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IParticipantSuitabilityAnswerResponse {
+    participant_id?: string | undefined;
+    case_number?: string | undefined;
+    hearing_role?: string | undefined;
+    title?: string | undefined;
+    first_name?: string | undefined;
+    last_name?: string | undefined;
+    updated_at?: Date | undefined;
+    representee?: string | undefined;
+    answers?: SuitabilityAnswerResponse[] | undefined;
+}
+
+export class SuitabilityAnswerResponse implements ISuitabilityAnswerResponse {
+    key?: string | undefined;
+    answer?: string | undefined;
+    extended_answer?: string | undefined;
+
+    constructor(data?: ISuitabilityAnswerResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.key = data["key"];
+            this.answer = data["answer"];
+            this.extended_answer = data["extended_answer"];
+        }
+    }
+
+    static fromJS(data: any): SuitabilityAnswerResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new SuitabilityAnswerResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["key"] = this.key;
+        data["answer"] = this.answer;
+        data["extended_answer"] = this.extended_answer;
+        return data; 
+    }
+}
+
+export interface ISuitabilityAnswerResponse {
+    key?: string | undefined;
+    answer?: string | undefined;
+    extended_answer?: string | undefined;
 }
 
 /** A judge existing in the system */

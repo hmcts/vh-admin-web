@@ -40,7 +40,7 @@ namespace AdminWebsite.Controllers
         [SwaggerOperation(OperationId = "GetBookingsList")]
         [ProducesResponseType(typeof(SuitabilityAnswersResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public ActionResult GetSuitabilityAnswersList(string cursor, int limit = 100)
+        public async Task<ActionResult> GetSuitabilityAnswersList(string cursor, int limit = 100)
         {
 
             if (!_userIdentity.IsVhOfficerAdministratorRole())
@@ -50,7 +50,7 @@ namespace AdminWebsite.Controllers
 
             try
             {
-                var answerResponse = _bookingsApiClient.GetSuitabilityAnswers(cursor, limit);
+                var answerResponse = await _bookingsApiClient.GetSuitabilityAnswersAsync(cursor, limit);
                 return Ok(answerResponse);
             }
             catch (BookingsApiException e)
