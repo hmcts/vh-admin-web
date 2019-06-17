@@ -8,6 +8,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace AdminWebsite.UnitTests.Controllers
 {
@@ -26,7 +27,7 @@ namespace AdminWebsite.UnitTests.Controllers
         }
 
         [Test]
-        public void Should_retrieve_the_suitability_answers()
+        public async Task Should_retrieve_the_suitability_answers()
         {
             var response = new SuitabilityAnswersResponse();
 
@@ -34,7 +35,7 @@ namespace AdminWebsite.UnitTests.Controllers
             _bookingsApiClientMock.Setup(s => s.GetSuitabilityAnswers("", 1)).Returns(response);
 
 
-            var result = _controller.GetSuitabilityAnswersList("", 1);
+            var result = await _controller.GetSuitabilityAnswersList("", 1);
 
             result.Should().NotBeNull();
             var objectResult = (ObjectResult)result;
@@ -42,11 +43,11 @@ namespace AdminWebsite.UnitTests.Controllers
         }
 
         [Test]
-        public void Should_return_unauthorized()
+        public async Task Should_return_unauthorized()
         {
             _userIdentityMock.Setup(s => s.IsVhOfficerAdministratorRole()).Returns(false);
 
-            var result = _controller.GetSuitabilityAnswersList("", 1);
+            var result = await _controller.GetSuitabilityAnswersList("", 1);
 
             result.Should().NotBeNull();
 
@@ -55,12 +56,12 @@ namespace AdminWebsite.UnitTests.Controllers
         }
 
         [Test]
-        public void Should_return_badRequest_if_exception_throw()
+        public async Task Should_return_badRequest_if_exception_throw()
         {
             _userIdentityMock.Setup(s => s.IsVhOfficerAdministratorRole()).Returns(true);
-            _bookingsApiClientMock.Setup(s => s.GetSuitabilityAnswers("", 1)).Throws(new BookingsApiException("error",400,"",new Dictionary<string, IEnumerable<string>>(), new Exception()));
+            _bookingsApiClientMock.Setup(s => s.GetSuitabilityAnswersAsync("", 1)).Throws(new BookingsApiException("error",400,"",new Dictionary<string, IEnumerable<string>>(), new Exception()));
 
-            var result = _controller.GetSuitabilityAnswersList("", 1);
+            var result = await _controller.GetSuitabilityAnswersList("", 1);
 
             result.Should().NotBeNull();
 
