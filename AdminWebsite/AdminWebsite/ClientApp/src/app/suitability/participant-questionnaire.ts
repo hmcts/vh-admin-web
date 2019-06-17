@@ -5,7 +5,7 @@ export class ParticipantQuestionnaire {
     readonly hearingId: string;
     readonly participantId: string;
 
-    readonly answers: SuitabilityAnswer[];
+    readonly answers: SuitabilityAnswerGroup[];
 
     constructor(data: ParticipantQuestionnaire) {
         this.displayName = data.displayName;
@@ -17,14 +17,24 @@ export class ParticipantQuestionnaire {
     }
 }
 
+export class SuitabilityAnswerGroup {
+    readonly title: string;
+    readonly answers: SuitabilityAnswer[];
+
+    constructor(group: SuitabilityAnswerGroup) {
+        this.title = group.title;
+        this.answers = group.answers;
+    }
+}
+
 export class SuitabilityAnswer {
     readonly answer: string;
     readonly notes: string;
-    readonly key: string;
+    readonly question: string;
 
     constructor(answer: SuitabilityAnswer) {
         this.answer = answer.answer;
         this.notes = answer.notes;
-        this.key = answer.key;
+        this.question = answer.question;
     }
 }

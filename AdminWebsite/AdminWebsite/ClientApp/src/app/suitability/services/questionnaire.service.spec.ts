@@ -42,5 +42,5 @@ describe('QuestionnaireService', () => {
         const thirdCall = await service.loadNext();
 
         expect(thirdCall.items).toBe([]);
-    })
+    });
 });

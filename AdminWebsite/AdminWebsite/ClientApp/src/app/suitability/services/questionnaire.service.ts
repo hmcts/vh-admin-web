@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ParticipantQuestionnaire } from '../participant-questionnaire';
+import { ParticipantQuestionnaire, SuitabilityAnswerGroup } from '../participant-questionnaire';
 
 export class QuestionnaireResponses {
     readonly items: ParticipantQuestionnaire[];
@@ -28,11 +28,18 @@ export class QuestionnaireService {
                         displayName: 'James Johnson',
                         caseNumber: 'Y231231',
                         caseName: 'Johnson Co vs HMRC',
-                        answers: [{
-                            answer: 'true',
-                            notes: 'I have an eyesight problem',
-                            key: 'ABOUT_YOU'
-                        }]
+                        answers: [
+                            new SuitabilityAnswerGroup({
+                                title: 'Equipment',
+                                answers: [
+                                    {
+                                        answer: 'true',
+                                        notes: 'I have an eyesight problem',
+                                        question: 'ABOUT_YOU'
+                                    }
+                                ]
+                            })
+                        ]
                     })
                 ],
                 false

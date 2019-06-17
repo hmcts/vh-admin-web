@@ -1,4 +1,4 @@
-import { ParticipantQuestionnaire, SuitabilityAnswer } from './../participant-questionnaire';
+import { ParticipantQuestionnaire, SuitabilityAnswer, SuitabilityAnswerGroup } from './../participant-questionnaire';
 import { Component, OnInit, Input } from '@angular/core';
 
 @Component({
@@ -30,7 +30,7 @@ export class AnswerListEntryComponent implements OnInit {
     return this.questionnaire.caseName;
   }
 
-  get answers(): SuitabilityAnswer[] {
+  get answers(): SuitabilityAnswerGroup[] {
     return this.questionnaire.answers;
   }
 }
