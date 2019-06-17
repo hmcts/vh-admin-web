@@ -1,4 +1,3 @@
-import { DebugElement, Component } from '@angular/core';
 import { async, ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { AbstractControl, Validator, Validators, FormControl } from '@angular/forms';
 import { NavigationEnd, Router } from '@angular/router';
@@ -184,7 +183,6 @@ const routerSpy = {
   events: of(new NavigationEnd(2, '/', '/'))
 };
 
-let debugElement: DebugElement;
 let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
 let participantServiceSpy: jasmine.SpyObj<ParticipantService>;
 let bookingServiceSpy: jasmine.SpyObj<BookingService>;
@@ -232,8 +230,7 @@ describe('AddParticipantComponent', () => {
 
 
     fixture = TestBed.createComponent(AddParticipantComponent);
-    debugElement = fixture.debugElement;
-    component = debugElement.componentInstance;
+    component = fixture.componentInstance;
     component.ngOnInit();
     fixture.detectChanges();
 
@@ -602,8 +599,7 @@ describe('AddParticipantComponent edit mode', () => {
 
 
     fixture = TestBed.createComponent(AddParticipantComponent);
-    debugElement = fixture.debugElement;
-    component = debugElement.componentInstance;
+    component = fixture.componentInstance;
     component.editMode = true;
     component.ngOnInit();
     fixture.detectChanges();
@@ -820,46 +816,30 @@ describe('AddParticipantComponent edit mode', () => {
 describe('AddParticipantComponent edit mode no participants added', () => {
 
   beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [
-        AddParticipantComponent,
-        BreadcrumbStubComponent,
-        SearchEmailComponent,
-        ParticipantsListComponent,
-        CancelPopupStubComponent,
-        ConfirmationPopupStubComponent,
-        RemovePopupStubComponent,
-        DiscardConfirmPopupComponent,
-      ],
-      imports: [
-        SharedModule,
-        RouterTestingModule
-      ],
-      providers: [
-        { provide: SearchService, useClass: SearchServiceStub },
-        { provide: Router, useValue: routerSpy },
-        { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
-        { provide: ParticipantService, useValue: participantServiceSpy },
-        { provide: BookingService, useValue: bookingServiceSpy },
-      ]
-    })
-      .compileComponents();
-
     const hearing = initExistHearingRequest();
+    videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>([
+      'getParticipantRoles', 'getCurrentRequest', 'setBookingHasChanged'
+    ]);
     videoHearingsServiceSpy.getParticipantRoles.and.returnValue(of(roleList));
     videoHearingsServiceSpy.getCurrentRequest.and.returnValue(hearing);
     participantServiceSpy.mapParticipantsRoles.and.returnValue(partyList);
+    bookingServiceSpy = jasmine.createSpyObj<BookingService>(['getParticipantEmail', 'isEditMode', 'setEditMode']);
     bookingServiceSpy.isEditMode.and.returnValue(true);
     bookingServiceSpy.getParticipantEmail.and.returnValue('');
 
-
-    fixture = TestBed.createComponent(AddParticipantComponent);
-    debugElement = fixture.debugElement;
-    component = debugElement.componentInstance;
+    component = new AddParticipantComponent(
+      jasmine.createSpyObj<SearchService>(['search']),
+      videoHearingsServiceSpy,
+      participantServiceSpy,
+      jasmine.createSpyObj<Router>(['navigate']),
+      bookingServiceSpy
+    );
+    component.participantsListComponent = new ParticipantsListComponent(
+      bookingServiceSpy,
+      jasmine.createSpyObj<Router>(['navigate'])
+    );
     component.editMode = true;
     component.ngOnInit();
-    fixture.detectChanges();
-
 
     role = component.form.controls['role'];
     party = component.form.controls['party'];
@@ -870,9 +850,11 @@ describe('AddParticipantComponent edit mode no participants added', () => {
     displayName = component.form.controls['displayName'];
     companyName = component.form.controls['companyName'];
   }));
-  it('should show button add participant', () => {
+  it('should show button add participant', fakeAsync(() => {
     component.ngOnInit();
-    fixture.detectChanges();
+    component.ngAfterContentInit();
+    component.ngAfterViewInit();
+    tick(600);
     expect(component.editMode).toBeTruthy();
     expect(bookingServiceSpy.getParticipantEmail).toHaveBeenCalled();
     expect(component.selectedParticipantEmail).toBe('');
@@ -881,44 +863,43 @@ describe('AddParticipantComponent edit mode no participants added', () => {
     expect(component.displayClearButton).toBeTruthy();
     expect(component.displayAddButton).toBeTruthy();
     expect(component.displayUpdateButton).toBeFalsy();
-  });
+  }));
 
   it('should recognize a participantList', async(() => {
-    fixture.detectChanges();
-    console.log(fixture.componentInstance);
-    const partList: ParticipantsListComponent = fixture.componentInstance.participantsListComponent;
-    console.log(partList);
+    component.ngAfterContentInit();
+    component.ngAfterViewInit();
+    const partList = component.participantsListComponent;
     expect(partList).toBeDefined();
   }));
   it('should show all fields if the participant selected for edit', fakeAsync(() => {
-    fixture.detectChanges();
     component.ngOnInit();
-    const partList: ParticipantsListComponent = fixture.componentInstance.participantsListComponent;
+    const partList = component.participantsListComponent;
     partList.editParticipant('test2@test.com');
     partList.selectedParticipant.emit();
     tick(600);
-    fixture.detectChanges();
+
     expect(component.showDetails).toBeTruthy();
   }));
   it('should show confirmation to remove participant', fakeAsync(() => {
-    fixture.detectChanges();
     component.ngOnInit();
-    const partList: ParticipantsListComponent = fixture.componentInstance.participantsListComponent;
+    const partList = component.participantsListComponent;
     partList.removeParticipant('test2@test.com');
     component.selectedParticipantEmail = 'test2@test.com';
     partList.selectedParticipantToRemove.emit();
     tick(600);
-    fixture.detectChanges();
+
     expect(component.showConfirmationRemoveParticipant).toBeTruthy();
   }));
-  it('should display add button if participant has no email set', () => {
-    fixture.detectChanges();
+  it('should display add button if participant has no email set', fakeAsync(() => {
+    component.ngAfterContentInit();
+    component.ngAfterViewInit();
     component.selectedParticipantEmail = '';
     component.ngOnInit();
+    tick(600);
 
     expect(component.showDetails).toBeFalsy();
     expect(component.displayAddButton).toBeTruthy();
-  });
+  }));
   it('should set existingParticipant to false', () => {
     participant.id = '';
     component.participantDetails = participant;
@@ -936,7 +917,7 @@ describe('AddParticipantComponent edit mode no participants added', () => {
     participant.id = undefined;
     participant.case_role_name = 'Claimant';
     component.participantDetails = participant;
-    fixture.detectChanges();
+
     component.resetPartyAndRole();
 
     expect(component.setupHearingRoles).toHaveBeenCalled();
