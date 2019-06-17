@@ -19,7 +19,8 @@ describe('AnswerListEntryComponent', () => {
     component = fixture.componentInstance;
     component.questionnaire = new ParticipantQuestionnaire({
       answers: [],
-      caseName: '',
+      representee: '',
+      hearingRole: '',
       caseNumber: '',
       displayName: '',
       hearingId: '',
