@@ -397,7 +397,7 @@ describe('AddParticipantComponent', () => {
     expect(component.displayClearButton).toBeFalsy();
   });
   it('saved participant added to list of participants', () => {
-    component.showDetails = true;    
+    component.showDetails = true;
     spyOn(component.searchEmail, 'validateEmail').and.returnValue(true);
     component.searchEmail.email = 'mock@email.com';
     role.setValue('Claimant LIP');
