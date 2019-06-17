@@ -1,0 +1,30 @@
+<div class="vh-roundedborder">
+  <div class="govuk-grid-row vh-row">
+    <div class="govuk-grid-column-two-thirds">
+      <a href="javascript:void(0)" (click)="toggle()" class="vh-expander" [class.expanded]="expanded">
+        <span class="chevron"></span>
+        {{ displayName }} ({{ caseNumber }})
+      </a>
+    </div>
+    <div class="govuk-grid-column-one-third"><span class="vh-date">13 June 2019 6:18
+        PM</span></div>
+  </div>
+  <div class="vh-accordion" [class.expanded]="expanded">
+    <div>
+      <div class="govuk-grid-row vh-row" *ngFor="let answerGroup of answers">
+        <div *ngFor="let answer of answerGroup.answers">
+            <div class="govuk-grid-column-two-thirds">
+                <span class="vhtable-cell" style="display:table-row">{{ answer.question }}</span>
+                <span class="govuk-hint" style="display:table-row"></span>
+              </div>
+              <div class="govuk-grid-column-one-third vh-wrap">
+                <span class="vh-date vh-wrap">{{ answer.answer }}</span>
+              </div>
+            </div>
+            <div class="govuk-grid-row vh-row">
+              <div class="rowbottom"></div>
+            </div>
+        </div>
+    </div>
+  </div>
+</div>

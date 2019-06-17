@@ -1,0 +1,30 @@
+.vh-expander .chevron {
+    display: inline-block;
+    font-size: inherit;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+}
+
+.vh-expander .chevron::after {
+    content: '❯';
+}
+
+.vh-expander.expanded .chevron {
+    -webkit-transform: rotate(-90deg);
+    -moz-transform: rotate(-90deg);
+    -ms-transform: rotate(-90deg);
+    -o-transform: rotate(-90deg);
+    transform: rotate(90deg);
+}
+
+.vh-accordion {
+    display: none;
+}
+
+.vh-accordion.expanded {
+    display: block;
+}
+
+.vh-roundedborder {
+    margin: 20px 0px;
+}

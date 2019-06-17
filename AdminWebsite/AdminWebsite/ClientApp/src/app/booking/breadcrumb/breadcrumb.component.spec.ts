@@ -11,7 +11,6 @@ import { MomentModule } from 'angular2-moment';
 
 import { routes } from '../../app-routing.module';
 import { AppComponent } from '../../app.component';
-import { CheckListComponent } from '../../check-list/check-list.component';
 import { DashboardComponent } from '../../dashboard/dashboard.component';
 import { LoginComponent } from '../../security/login.component';
 import { LogoutComponent } from '../../security/logout.component';
@@ -66,7 +65,6 @@ describe('BreadcrumbComponent', () => {
         ConfirmationPopupComponent,
         SummaryComponent,
         BookingConfirmationComponent,
-        CheckListComponent,
         UnauthorisedComponent,
         ErrorComponent,
         SignOutPopupComponent,

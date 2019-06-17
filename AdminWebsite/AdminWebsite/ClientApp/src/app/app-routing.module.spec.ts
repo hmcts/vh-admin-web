@@ -8,7 +8,6 @@ import { AdalService } from 'adal-angular4';
 
 import { routes } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { CheckListComponent } from './check-list/check-list.component';
 import { ChangesGuard } from './common/guards/changes.guard';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { AuthGuard } from './security/auth.gaurd';
@@ -46,7 +45,6 @@ describe('app routing', () => {
         AppComponent,
         LoginComponent,
         LogoutComponent,
-        CheckListComponent,
         HeaderStubComponent,
         FooterStubComponent,
         ContactUsStubComponent,
