@@ -23,8 +23,8 @@ export class QuestionnaireService {
             return Promise.resolve(new QuestionnaireResponses(
                 [
                     new ParticipantQuestionnaire({
-                        participantId: 'participantId',
-                        hearingId: 'hearingId',
+                        participantId: 'participantId_one',
+                        hearingId: 'hearingId_one',
                         displayName: 'James Johnson',
                         caseNumber: 'Y231231',
                         caseName: 'Johnson Co vs HMRC',
@@ -49,8 +49,8 @@ export class QuestionnaireService {
         return Promise.resolve(new QuestionnaireResponses(
             [
                 new ParticipantQuestionnaire({
-                    participantId: 'participantId',
-                    hearingId: 'hearingId',
+                    participantId: 'participantId_two',
+                    hearingId: 'hearingId_two',
                     displayName: 'Bob Jones',
                     caseNumber: 'X32123211',
                     caseName: 'Bob vs The State',

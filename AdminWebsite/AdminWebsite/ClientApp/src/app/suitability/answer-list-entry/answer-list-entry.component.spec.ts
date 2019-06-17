@@ -1,3 +1,4 @@
+import { ParticipantQuestionnaire } from './../participant-questionnaire';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AnswerListEntryComponent } from './answer-list-entry.component';
@@ -16,6 +17,14 @@ describe('AnswerListEntryComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(AnswerListEntryComponent);
     component = fixture.componentInstance;
+    component.questionnaire = new ParticipantQuestionnaire({
+      answers: [],
+      caseName: '',
+      caseNumber: '',
+      displayName: '',
+      hearingId: '',
+      participantId: ''
+    });
     fixture.detectChanges();
   });
 

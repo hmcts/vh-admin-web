@@ -41,6 +41,6 @@ describe('QuestionnaireService', () => {
         await service.loadNext();
         const thirdCall = await service.loadNext();
 
-        expect(thirdCall.items).toBe([]);
+        expect(thirdCall.items).toEqual([]);
     });
 });
