@@ -1,8 +1,9 @@
 export class ParticipantQuestionnaire {
     readonly displayName: string;
     readonly caseNumber: string;
-    readonly caseName: string;
+    readonly hearingRole: string;
     readonly hearingId: string;
+    readonly representee: string;
     readonly participantId: string;
 
     readonly answers: SuitabilityAnswerGroup[];
@@ -10,7 +11,8 @@ export class ParticipantQuestionnaire {
     constructor(data: ParticipantQuestionnaire) {
         this.displayName = data.displayName;
         this.caseNumber = data.caseNumber;
-        this.caseName = data.caseName;
+        this.hearingRole = data.hearingRole;
+        this.representee = data.representee;
         this.hearingId = data.hearingId;
         this.participantId = data.participantId;
         this.answers = data.answers;

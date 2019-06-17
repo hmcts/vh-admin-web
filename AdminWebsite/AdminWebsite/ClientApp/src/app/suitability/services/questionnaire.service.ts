@@ -27,7 +27,8 @@ export class QuestionnaireService {
                         hearingId: 'hearingId_one',
                         displayName: 'James Johnson',
                         caseNumber: 'Y231231',
-                        caseName: 'Johnson Co vs HMRC',
+                        hearingRole: 'Defendant',
+                        representee: '',
                         answers: [
                             new SuitabilityAnswerGroup({
                                 title: 'Equipment',
@@ -53,7 +54,8 @@ export class QuestionnaireService {
                     hearingId: 'hearingId_two',
                     displayName: 'Bob Jones',
                     caseNumber: 'X32123211',
-                    caseName: 'Bob vs The State',
+                    representee: '',
+                    hearingRole: 'Claimant',
                     answers: []
                 })
             ],

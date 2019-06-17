@@ -26,8 +26,8 @@ export class AnswerListEntryComponent implements OnInit {
     return this.questionnaire.displayName;
   }
 
-  get caseName(): string {
-    return this.questionnaire.caseName;
+  get caseNumber(): string {
+    return this.questionnaire.caseNumber;
   }
 
   get answers(): SuitabilityAnswerGroup[] {
