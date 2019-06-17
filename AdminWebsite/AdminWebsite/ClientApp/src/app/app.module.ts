@@ -1,3 +1,4 @@
+import { SuitabilityModule } from './suitability/suitability.module';
 import { DatePipe } from '@angular/common';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { APP_INITIALIZER, NgModule, ErrorHandler } from '@angular/core';
@@ -9,7 +10,6 @@ import { AppRoutingModule } from './/app-routing.module';
 import { AppComponent } from './app.component';
 import { BookingModule } from './booking/booking.module';
 import { BookingsListModule } from './bookings-list/bookings-list.module';
-import { CheckListComponent } from './check-list/check-list.component';
 import { ChangesGuard } from './common/guards/changes.guard';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { AuthGuard } from './security/auth.gaurd';
@@ -43,7 +43,6 @@ export function getSettings(configService: ConfigService) {
     DashboardComponent,
     LoginComponent,
     LogoutComponent,
-    CheckListComponent,
     UnauthorisedComponent,
     ErrorComponent,
   ],
@@ -52,9 +51,10 @@ export function getSettings(configService: ConfigService) {
     BookingModule,
     BookingsListModule,
     BrowserModule,
+    SuitabilityModule,
     AppRoutingModule,
     SharedModule,
-    PopupModule,
+    PopupModule
   ],
   providers: [
     HttpClientModule,
