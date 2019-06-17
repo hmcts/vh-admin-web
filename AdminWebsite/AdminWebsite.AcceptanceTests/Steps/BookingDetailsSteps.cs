@@ -74,7 +74,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
                 case PageUri.HearingSchedulePage:
                     _bookingDetails.HearingDate().ToLower().Should().Be(_bookingDetails.GetItems("HearingDate"));
                     _bookingDetails.CourtAddress().Should().Be($"{TestData.HearingSchedule.CourtAddress.ToList().Last()}, {TestData.HearingSchedule.Room}");
-                    _bookingDetails.HearingDuration().Should().Be("30 minutes");
+                    _bookingDetails.HearingDuration().Should().Be("listed for 30 minutes");
                     break;                
                 case PageUri.OtherInformationPage:
                     _bookingDetails.OtherInformation().Should().Be(TestData.OtherInformation.OtherInformationText);
