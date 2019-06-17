@@ -1005,30 +1005,6 @@ describe('AddParticipantComponent edit mode no participants added', () => {
 describe('AddParticipantComponent set representer', () => {
 
   beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [
-        AddParticipantComponent,
-        BreadcrumbStubComponent,
-        SearchEmailComponent,
-        ParticipantsListStubComponent,
-        CancelPopupStubComponent,
-        ConfirmationPopupStubComponent,
-        RemovePopupStubComponent,
-        DiscardConfirmPopupComponent,
-      ],
-      imports: [
-        SharedModule
-      ],
-      providers: [
-        { provide: SearchService, useClass: SearchServiceStub },
-        { provide: Router, useValue: routerSpy },
-        { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
-        { provide: ParticipantService, useValue: participantServiceSpy },
-        { provide: BookingService, useValue: bookingServiceSpy },
-      ]
-    })
-      .compileComponents();
-
     const hearing = initExistHearingRequest();
     videoHearingsServiceSpy.getParticipantRoles.and.returnValue(of(roleList));
     videoHearingsServiceSpy.getCurrentRequest.and.returnValue(hearing);
@@ -1036,12 +1012,14 @@ describe('AddParticipantComponent set representer', () => {
     bookingServiceSpy.isEditMode.and.returnValue(true);
     bookingServiceSpy.getParticipantEmail.and.returnValue('');
 
-
-    fixture = TestBed.createComponent(AddParticipantComponent);
-    debugElement = fixture.debugElement;
-    component = debugElement.componentInstance;
+    component = new AddParticipantComponent(
+      jasmine.createSpyObj<SearchService>(['search']),
+      videoHearingsServiceSpy,
+      participantServiceSpy,
+      { ...routerSpy, ...jasmine.createSpyObj<Router>(['navigate']) } as jasmine.SpyObj<Router>,
+      bookingServiceSpy
+    );
     component.ngOnInit();
-    fixture.detectChanges();
 
     role = component.form.controls['role'];
     party = component.form.controls['party'];
@@ -1054,29 +1032,24 @@ describe('AddParticipantComponent set representer', () => {
     solicitorReference = component.form.controls['solicitorReference'];
     representing = component.form.controls['representing'];
   }));
+
   it('should show solicitor reference, company and name of representing person', () => {
-    fixture.detectChanges();
     component.form.get('role').setValue('Solicitor');
 
     component.roleSelected();
-    fixture.detectChanges();
 
     expect(component.isSolicitor).toBeTruthy();
   });
   it('should clean the fields solicitor reference, company and name of representing person', () => {
-    fixture.detectChanges();
     component.form.get('role').setValue('Solicitor');
     component.roleSelected();
-    fixture.detectChanges();
+
     component.form.get('companyName').setValue('Organisation');
     component.form.get('solicitorReference').setValue('Ref1');
     component.form.get('representing').setValue('Ms X');
 
-    fixture.detectChanges();
-
     component.form.get('role').setValue('Claimant');
     component.roleSelected();
-    fixture.detectChanges();
 
     expect(component.isSolicitor).toBeFalsy();
     expect(component.form.get('companyName').value).toEqual('');
