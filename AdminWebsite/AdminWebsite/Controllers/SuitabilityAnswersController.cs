@@ -37,7 +37,7 @@ namespace AdminWebsite.Controllers
         /// <param name="limit">The max number of participants with suitability answers to be returned.</param>
         /// <returns> The participants suitability answers list</returns>
         [HttpGet]
-        [SwaggerOperation(OperationId = "GetBookingsList")]
+        [SwaggerOperation(OperationId = "GetSuitabilityAnswers")]
         [ProducesResponseType(typeof(SuitabilityAnswersResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult> GetSuitabilityAnswersList(string cursor, int limit = 100)

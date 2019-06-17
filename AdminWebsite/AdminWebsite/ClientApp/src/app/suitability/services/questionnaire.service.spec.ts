@@ -1,10 +1,13 @@
+import { BHClient } from './../../services/clients/api-client';
 import { QuestionnaireService } from './questionnaire.service';
 import { ParticipantQuestionnaire } from '../participant-questionnaire';
 
 describe('QuestionnaireService', () => {
     let service: QuestionnaireService;
+    let api: jasmine.SpyObj<BHClient>;
 
     beforeEach(() => {
+        api = jasmine.createSpyObj<BHClient>(['getSuitabilityAnswers']);
         service = new QuestionnaireService();
     });
 
