@@ -1,0 +1,19 @@
+<div class="column-one-half pl-0">
+  <a class="govuk-back-link" href="javascript:void(0)" (click)="back()">Back</a>
+</div>
+<h1 class="govuk-heading-l">Pre-hearing check results</h1>
+
+<div *ngIf="!loaded">
+    <div class="govuk-grid-column-one-third">
+        <p class="govuk-body-l">Getting checklists..</p>
+    </div>
+</div>
+
+<div *ngIf="loaded" appScrollable (scrollPosition)="loadNext()">
+  <div *ngFor="let questionnaire of answers">
+      <app-answer-list-entry [questionnaire]="questionnaire"></app-answer-list-entry>
+  </div>
+</div>
+
+<p>Temporary test button to load more until scroll position is implemented</p>
+<button (click)="loadNext()">Load more</button>
