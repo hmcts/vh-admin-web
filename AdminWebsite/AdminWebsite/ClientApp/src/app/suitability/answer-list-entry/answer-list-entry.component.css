@@ -17,14 +17,43 @@
     transform: rotate(90deg);
 }
 
-.vh-accordion {
-    display: none;
+.vh-header-entity{
+  color:#1F71F7;
+  font-weight:bold;
+  text-decoration:none;
 }
 
-.vh-accordion.expanded {
-    display: block;
+.vh-date {
+  float: right;
+  font-weight:bold;
 }
 
-.vh-roundedborder {
-    margin: 20px 0px;
+.rowbottom {
+  border-bottom: 1px solid #bfc1c3;
+  text-align: left;
 }
+
+.vh-row {
+  margin-top: 10px;
+}
+
+.vhtable-cell {
+  font-weight: 200;
+}
+
+.vh-table-row{
+  display:table-row;
+}
+
+.vh-wrap {
+  padding: 0;
+  margin-right: 0;
+  margin-left: 0;
+  overflow-wrap: break-word;
+  -ms-hyphens: auto;
+  -moz-hyphens: auto;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+}
+
+
