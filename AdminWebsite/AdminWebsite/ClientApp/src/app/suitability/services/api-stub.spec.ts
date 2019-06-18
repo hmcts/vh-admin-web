@@ -1,6 +1,6 @@
-import { SuitabilityAnswersPage, PagedSuitabilityAnswersService } from './questionnaire.service';
+import { ScrollableSuitabilityAnswersService, SuitabilityAnswersPage } from './scrollable-suitability-answers.service';
 
-export class ApiStub implements PagedSuitabilityAnswersService {
+export class ApiStub implements ScrollableSuitabilityAnswersService {
     private readonly results = new Map<String, SuitabilityAnswersPage>();
     private firstCall: SuitabilityAnswersPage;
 

@@ -1,14 +1,6 @@
 import { Injectable } from '@angular/core';
-import { ParticipantQuestionnaire } from '../participant-questionnaire';
-
-export class SuitabilityAnswersPage {
-    questionnaires: ParticipantQuestionnaire[];
-    nextCursor: string;
-}
-
-export abstract class PagedSuitabilityAnswersService {
-    abstract getSuitabilityAnswers(cursor: string, limit: number): Promise<SuitabilityAnswersPage>;
-}
+import { ParticipantQuestionnaire } from '../participant-questionnaire'
+import { ScrollableSuitabilityAnswersService } from './scrollable-suitability-answers.service';
 
 export class QuestionnaireResponses {
   readonly items: ParticipantQuestionnaire[];
@@ -22,16 +14,16 @@ export class QuestionnaireResponses {
 
 @Injectable()
 export class QuestionnaireService {
-    private nextPage: string = null;
+    private nextCursor: string = null;
 
-    constructor(private service: PagedSuitabilityAnswersService) {}
+    constructor(private service: ScrollableSuitabilityAnswersService) {}
 
     async loadNext(): Promise<QuestionnaireResponses> {
-        const page = await this.service.getSuitabilityAnswers(this.nextPage, 100);
-        this.nextPage = page.nextCursor;
+        const page = await this.service.getSuitabilityAnswers(this.nextCursor, 100);
+        this.nextCursor = page.nextCursor;
         return new QuestionnaireResponses(
             page.questionnaires,
-            this.nextPage !== null
+            this.nextCursor !== null
         );
     }
 }

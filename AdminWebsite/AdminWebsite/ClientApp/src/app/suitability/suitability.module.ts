@@ -1,11 +1,12 @@
 import { QuestionnaireApiService } from './services/questionnaire-api.service';
-import { QuestionnaireService, PagedSuitabilityAnswersService } from './services/questionnaire.service';
+import { QuestionnaireService } from './services/questionnaire.service';
 import { AnswersListComponent } from './answers-list/answers-list.component';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
 import { VhOfficerAdminGuard } from '../security/vh-officer-admin.guard';
 import { AnswerListEntryComponent } from './answer-list-entry/answer-list-entry.component';
+import { ScrollableSuitabilityAnswersService } from './services/scrollable-suitability-answers.service';
 
 export const routes: Routes = [
   { path: 'checklists', component: AnswersListComponent, canActivate: [VhOfficerAdminGuard] },
@@ -18,7 +19,7 @@ export const routes: Routes = [
   ],
   providers: [
     QuestionnaireService,
-    { provide: PagedSuitabilityAnswersService, useClass: QuestionnaireApiService }
+    { provide: ScrollableSuitabilityAnswersService, useClass: QuestionnaireApiService }
   ],
   exports: [
     RouterModule

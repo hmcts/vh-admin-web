@@ -1,11 +1,11 @@
 import { ParticipantQuestionnaire, SuitabilityAnswerGroup, SuitabilityAnswer } from './../participant-questionnaire';
 import { ParticipantSuitabilityAnswerResponse, SuitabilityAnswerResponse } from './../../services/clients/api-client';
 import { BHClient } from 'src/app/services/clients/api-client';
-import { PagedSuitabilityAnswersService, SuitabilityAnswersPage } from './questionnaire.service';
 import { Injectable } from '@angular/core';
+import { ScrollableSuitabilityAnswersService, SuitabilityAnswersPage } from './scrollable-suitability-answers.service';
 
 @Injectable()
-export class QuestionnaireApiService implements PagedSuitabilityAnswersService {
+export class QuestionnaireApiService implements ScrollableSuitabilityAnswersService {
     constructor(private client: BHClient) {}
 
     async getSuitabilityAnswers(cursor: string, limit: number): Promise<SuitabilityAnswersPage> {
