@@ -30,6 +30,12 @@ resources:
     type: github
     name: hmcts/azure-devops-templates
     endpoint: 'GitHubDevOps'
+    
+ pr:
+  autoCancel: true
+  branches:
+    include:
+    - master
 
 jobs:
 - template: jobs/angularDotNetCore.yml@azureDevOpsTemplates # Template reference
