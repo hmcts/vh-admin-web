@@ -12,7 +12,6 @@ import { ScrollableDirective } from './directives/scrollable.directive';
 import { BookingEditComponent } from './booking-edit/booking-edit.component';
 import { WindowRef } from './window-ref';
 import { LongDatetimePipe } from './directives/date-time.pipe';
-import { BH_API_BASE_URL } from '../services/clients/api-client';
 
 @NgModule({
   imports: [
@@ -32,8 +31,7 @@ import { BH_API_BASE_URL } from '../services/clients/api-client';
     LongDatetimePipe
   ],
   providers: [
-    WindowRef,
-    { provide: BH_API_BASE_URL, useFactory: () => '.' },
+    WindowRef
   ],
   exports: [
     HeaderComponent,
