@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ParticipantQuestionnaire } from '../participant-questionnaire'
+import { ParticipantQuestionnaire } from '../participant-questionnaire';
 import { ScrollableSuitabilityAnswersService } from './scrollable-suitability-answers.service';
 
 export class QuestionnaireResponses {
