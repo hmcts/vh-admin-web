@@ -1,19 +1,36 @@
-import { BHClient } from './../../services/clients/api-client';
+import { ParticipantSuitabilityAnswerResponse } from './../../services/clients/api-client';
 import { QuestionnaireService } from './questionnaire.service';
 import { ParticipantQuestionnaire } from '../participant-questionnaire';
 
+class SuitabilityAnswersPage {
+    participantAnswersResponse: ParticipantSuitabilityAnswerResponse[];
+    nextPageCursor: string;
+}
+
+interface PagedSuitabilityAnswersService {
+    getSuitabilityAnswers(cursor: string, limit: number): SuitabilityAnswersPage;
+}
+
+class MockPagedSuitabilityAnswersService implements PagedSuitabilityAnswersService {
+    private readonly pages: SuitabilityAnswersPage[] = [];
+    getSuitabilityAnswers(cursor: string, limit: number) {}
+}
+
 describe('QuestionnaireService', () => {
     let service: QuestionnaireService;
-    let api: jasmine.SpyObj<BHClient>;
+
+    const participantOneResponse = new ParticipantSuitabilityAnswerResponse({});
+    const participantTwoResponse = new ParticipantSuitabilityAnswerResponse({});
 
     beforeEach(() => {
-        api = jasmine.createSpyObj<BHClient>(['getSuitabilityAnswers']);
         service = new QuestionnaireService();
     });
 
     it('returns next page of responses on second call', async () => {
-        // if we call it once and then again
+        // if we call it once
         const first = await service.loadNext();
+
+        // and then again
         const second = await service.loadNext();
 
         // and convert each result to participants
