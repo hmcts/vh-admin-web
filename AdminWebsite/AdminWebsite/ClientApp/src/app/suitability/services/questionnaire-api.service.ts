@@ -2,7 +2,9 @@ import { ParticipantQuestionnaire, SuitabilityAnswerGroup, SuitabilityAnswer } f
 import { ParticipantSuitabilityAnswerResponse, SuitabilityAnswerResponse } from './../../services/clients/api-client';
 import { BHClient } from 'src/app/services/clients/api-client';
 import { PagedSuitabilityAnswersService, SuitabilityAnswersPage } from './questionnaire.service';
+import { Injectable } from '@angular/core';
 
+@Injectable()
 export class QuestionnaireApiService implements PagedSuitabilityAnswersService {
     constructor(private client: BHClient) {}
 
