@@ -5,7 +5,7 @@ export class ParticipantQuestionnaire {
   readonly hearingId: string;
   readonly representee: string;
   readonly participantId: string;
-  readonly updated_at: Date;
+  readonly updatedAt: Date;
 
   readonly answers: SuitabilityAnswerGroup[];
 
@@ -16,7 +16,7 @@ export class ParticipantQuestionnaire {
     this.representee = data.representee;
     this.hearingId = data.hearingId;
     this.participantId = data.participantId;
-    this.updated_at = data.updated_at;
+    this.updatedAt = data.updatedAt;
     this.answers = data.answers;
   }
 }

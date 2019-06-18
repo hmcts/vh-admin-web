@@ -10,6 +10,7 @@ describe('QuestionnaireService', () => {
         participantId: 'id1',
         hearingId: 'hearingId',
         displayName: 'participant one',
+        updatedAt: new Date(),
         caseNumber: 'a',
         hearingRole: 'Claimant',
         representee: '',
@@ -20,6 +21,7 @@ describe('QuestionnaireService', () => {
         hearingId: 'hearingId',
         displayName: 'participant two',
         caseNumber: 'a',
+        updatedAt: new Date(),
         hearingRole: 'Claimant',
         representee: '',
         answers: []
@@ -32,16 +34,16 @@ describe('QuestionnaireService', () => {
 
     it('returns next page of responses on second call', async () => {
         // if we call it once
-        apiStub.forFirstPage().returnsWithPage({
+        apiStub.forFirstCall().returnsWithResponse({
             questionnaires: [ participantOneResponse ],
-            nextPage: 'page1'
+            nextCursor: 'cursor1'
         });
         const first = await service.loadNext();
 
         // and then again
-        apiStub.forPage('page1').returnsWithPage({
+        apiStub.forCursor('cursor1').returnsWithResponse({
             questionnaires: [ participantTwoResponse ],
-            nextPage: null
+            nextCursor: null
         });
         const second = await service.loadNext();
 
@@ -59,11 +61,11 @@ describe('QuestionnaireService', () => {
         }
     });
 
-    it('has no more items after second call if service returns no next page', async () => {
+    it('has no more items after second call if service returns no next cursor', async () => {
         // when loading twice
-        apiStub.forFirstPage().returnsWithPage({
+        apiStub.forFirstCall().returnsWithResponse({
             questionnaires: [ participantOneResponse ],
-            nextPage: null
+            nextCursor: null
         });
         await service.loadNext();
         const secondResult = await service.loadNext();
@@ -72,10 +74,10 @@ describe('QuestionnaireService', () => {
         expect(secondResult.hasMore).toBe(false);
     });
 
-    it('will return no items if there is no next page', async () => {
-        apiStub.forFirstPage().returnsWithPage({
+    it('will return no items if there is no next cursor', async () => {
+        apiStub.forFirstCall().returnsWithResponse({
             questionnaires: [],
-            nextPage: null
+            nextCursor: null
         });
         await service.loadNext();
         const secondCall = await service.loadNext();

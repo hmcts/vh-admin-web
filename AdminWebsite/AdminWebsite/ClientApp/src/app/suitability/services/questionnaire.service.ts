@@ -3,7 +3,7 @@ import { ParticipantQuestionnaire } from '../participant-questionnaire';
 
 export class SuitabilityAnswersPage {
     questionnaires: ParticipantQuestionnaire[];
-    nextPage: string;
+    nextCursor: string;
 }
 
 export interface PagedSuitabilityAnswersService {
@@ -28,7 +28,7 @@ export class QuestionnaireService {
 
     async loadNext(): Promise<QuestionnaireResponses> {
         const page = await this.service.getSuitabilityAnswers(this.nextPage, 100);
-        this.nextPage = page.nextPage;
+        this.nextPage = page.nextCursor;
         return new QuestionnaireResponses(
             page.questionnaires,
             this.nextPage !== null
