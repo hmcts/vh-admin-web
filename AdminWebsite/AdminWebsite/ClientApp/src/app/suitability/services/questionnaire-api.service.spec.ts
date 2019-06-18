@@ -12,7 +12,10 @@ describe('QuestionnaireApiService', () => {
     });
 
     it('calls api', async () => {
-        const response = new SuitabilityAnswersResponse();
+        const response = new SuitabilityAnswersResponse({
+            participant_suitability_answer_response: [],
+            next_cursor: null
+        });
         client.getSuitabilityAnswers.and.returnValue(of(response));
         const x = await service.getSuitabilityAnswers('', 2);
         expect(client.getSuitabilityAnswers).toHaveBeenCalled();

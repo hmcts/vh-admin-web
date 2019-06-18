@@ -1,5 +1,5 @@
-import { ParticipantQuestionnaire } from './../participant-questionnaire';
-import { ParticipantSuitabilityAnswerResponse } from './../../services/clients/api-client';
+import { ParticipantQuestionnaire, SuitabilityAnswerGroup, SuitabilityAnswer } from './../participant-questionnaire';
+import { ParticipantSuitabilityAnswerResponse, SuitabilityAnswerResponse } from './../../services/clients/api-client';
 import { BHClient } from 'src/app/services/clients/api-client';
 import { PagedSuitabilityAnswersService, SuitabilityAnswersPage } from './questionnaire.service';
 
@@ -15,6 +15,32 @@ export class QuestionnaireApiService implements PagedSuitabilityAnswersService {
     }
 
     private map(response: ParticipantSuitabilityAnswerResponse): ParticipantQuestionnaire {
-        return null;
+        return new ParticipantQuestionnaire({
+            displayName: `${response.first_name} ${response.last_name}`,
+            caseNumber: response.case_number,
+            hearingRole: response.hearing_role,
+            representee: response.representee,
+            hearingId: 'missing',
+            participantId: response.participant_id,
+            updatedAt: response.updated_at,
+            answers: this.mapAnswerGroups(response.answers)
+        });
+    }
+
+    private mapAnswerGroups(answers: SuitabilityAnswerResponse[]): SuitabilityAnswerGroup[] {
+        return [
+            new SuitabilityAnswerGroup({
+                title: 'all answers',
+                answers: answers.map(answer => this.mapAnswer(answer))
+            })
+        ];
+    }
+
+    private mapAnswer(answer: SuitabilityAnswerResponse): SuitabilityAnswer {
+        return new SuitabilityAnswer({
+            question: `Question text for ${answer.key}`,
+            answer: answer.answer,
+            notes: answer.extended_answer
+        });
     }
 }
