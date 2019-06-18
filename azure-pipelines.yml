@@ -39,7 +39,7 @@ trigger:
     include:
     - v*
 pr:
-  - master
+  - '*'
 
 jobs:
 - template: jobs/angularDotNetCore.yml@azureDevOpsTemplates # Template reference
