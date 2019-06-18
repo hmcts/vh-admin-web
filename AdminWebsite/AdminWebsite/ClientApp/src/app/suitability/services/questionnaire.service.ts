@@ -6,8 +6,8 @@ export class SuitabilityAnswersPage {
     nextCursor: string;
 }
 
-export interface PagedSuitabilityAnswersService {
-    getSuitabilityAnswers(cursor: string, limit: number): Promise<SuitabilityAnswersPage>;
+export abstract class PagedSuitabilityAnswersService {
+    abstract getSuitabilityAnswers(cursor: string, limit: number): Promise<SuitabilityAnswersPage>;
 }
 
 export class QuestionnaireResponses {

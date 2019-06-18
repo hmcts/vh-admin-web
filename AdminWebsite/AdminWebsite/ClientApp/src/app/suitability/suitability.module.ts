@@ -1,4 +1,5 @@
-import { QuestionnaireService } from './services/questionnaire.service';
+import { QuestionnaireApiService } from './services/questionnaire-api.service';
+import { QuestionnaireService, PagedSuitabilityAnswersService } from './services/questionnaire.service';
 import { AnswersListComponent } from './answers-list/answers-list.component';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -16,7 +17,8 @@ export const routes: Routes = [
     RouterModule.forRoot(routes),
   ],
   providers: [
-    QuestionnaireService
+    QuestionnaireService,
+    { provide: PagedSuitabilityAnswersService, useClass: QuestionnaireApiService }
   ],
   exports: [
     RouterModule
