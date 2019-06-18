@@ -1,6 +1,5 @@
-import { ServicesModule } from './../../services/services.module';
 import { Injectable } from '@angular/core';
-import { ParticipantQuestionnaire, SuitabilityAnswerGroup } from '../participant-questionnaire';
+import { ParticipantQuestionnaire } from '../participant-questionnaire';
 
 export class SuitabilityAnswersPage {
     questionnaires: ParticipantQuestionnaire[];
@@ -12,13 +11,13 @@ export interface PagedSuitabilityAnswersService {
 }
 
 export class QuestionnaireResponses {
-    readonly items: ParticipantQuestionnaire[];
-    readonly hasMore: boolean;
+  readonly items: ParticipantQuestionnaire[];
+  readonly hasMore: boolean;
 
-    constructor(items: ParticipantQuestionnaire[], hasMore: boolean) {
-        this.items = items;
-        this.hasMore = hasMore;
-    }
+  constructor(items: ParticipantQuestionnaire[], hasMore: boolean) {
+    this.items = items;
+    this.hasMore = hasMore;
+  }
 }
 
 @Injectable()

@@ -11,7 +11,7 @@ export class AnswerListEntryComponent implements OnInit {
   @Input()
   questionnaire: ParticipantQuestionnaire;
 
-  expanded: boolean;
+  expanded = false;
 
   constructor() { }
 
@@ -20,14 +20,6 @@ export class AnswerListEntryComponent implements OnInit {
 
   toggle() {
     this.expanded = !this.expanded;
-  }
-
-  get displayName(): string {
-    return this.questionnaire.displayName;
-  }
-
-  get caseNumber(): string {
-    return this.questionnaire.caseNumber;
   }
 
   get answers(): SuitabilityAnswerGroup[] {
