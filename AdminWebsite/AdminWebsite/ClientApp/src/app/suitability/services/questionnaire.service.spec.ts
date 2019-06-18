@@ -1,36 +1,48 @@
-import { ParticipantSuitabilityAnswerResponse } from './../../services/clients/api-client';
 import { QuestionnaireService } from './questionnaire.service';
 import { ParticipantQuestionnaire } from '../participant-questionnaire';
-
-class SuitabilityAnswersPage {
-    participantAnswersResponse: ParticipantSuitabilityAnswerResponse[];
-    nextPageCursor: string;
-}
-
-interface PagedSuitabilityAnswersService {
-    getSuitabilityAnswers(cursor: string, limit: number): SuitabilityAnswersPage;
-}
-
-class MockPagedSuitabilityAnswersService implements PagedSuitabilityAnswersService {
-    private readonly pages: SuitabilityAnswersPage[] = [];
-    getSuitabilityAnswers(cursor: string, limit: number) {}
-}
+import { ApiStub } from './api-stub.spec';
 
 describe('QuestionnaireService', () => {
     let service: QuestionnaireService;
+    let apiStub: ApiStub;
 
-    const participantOneResponse = new ParticipantSuitabilityAnswerResponse({});
-    const participantTwoResponse = new ParticipantSuitabilityAnswerResponse({});
+    const participantOneResponse = new ParticipantQuestionnaire({
+        participantId: 'id1',
+        hearingId: 'hearingId',
+        displayName: 'participant one',
+        caseNumber: 'a',
+        hearingRole: 'Claimant',
+        representee: '',
+        answers: []
+    });
+    const participantTwoResponse = new ParticipantQuestionnaire({
+        participantId: 'id2',
+        hearingId: 'hearingId',
+        displayName: 'participant two',
+        caseNumber: 'a',
+        hearingRole: 'Claimant',
+        representee: '',
+        answers: []
+    });
 
     beforeEach(() => {
-        service = new QuestionnaireService();
+        apiStub = new ApiStub();
+        service = new QuestionnaireService(apiStub);
     });
 
     it('returns next page of responses on second call', async () => {
         // if we call it once
+        apiStub.forFirstPage().returnsWithPage({
+            questionnaires: [ participantOneResponse ],
+            nextPage: 'page1'
+        });
         const first = await service.loadNext();
 
         // and then again
+        apiStub.forPage('page1').returnsWithPage({
+            questionnaires: [ participantTwoResponse ],
+            nextPage: null
+        });
         const second = await service.loadNext();
 
         // and convert each result to participants
@@ -47,8 +59,12 @@ describe('QuestionnaireService', () => {
         }
     });
 
-    it('has no more items after second call', async () => {
+    it('has no more items after second call if service returns no next page', async () => {
         // when loading twice
+        apiStub.forFirstPage().returnsWithPage({
+            questionnaires: [ participantOneResponse ],
+            nextPage: null
+        });
         await service.loadNext();
         const secondResult = await service.loadNext();
 
@@ -56,11 +72,14 @@ describe('QuestionnaireService', () => {
         expect(secondResult.hasMore).toBe(false);
     });
 
-    it('will return no more item after second call', async () => {
+    it('will return no items if there is no next page', async () => {
+        apiStub.forFirstPage().returnsWithPage({
+            questionnaires: [],
+            nextPage: null
+        });
         await service.loadNext();
-        await service.loadNext();
-        const thirdCall = await service.loadNext();
+        const secondCall = await service.loadNext();
 
-        expect(thirdCall.items).toEqual([]);
+        expect(secondCall.items).toEqual([]);
     });
 });
