@@ -32,7 +32,8 @@ resources:
     endpoint: 'GitHubDevOps'
     
  pr:
-  autoCancel: true
+  autoCancel:
+    true
   branches:
     include:
     - master
