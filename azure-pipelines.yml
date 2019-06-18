@@ -29,7 +29,7 @@ resources:
   - repository: azureDevOpsTemplates
     type: github
     name: hmcts/azure-devops-templates
-    endpoint: 'GitHub connection 1'
+    endpoint: 'GitHubDevOps'
 
 jobs:
 - template: jobs/angularDotNetCore.yml@azureDevOpsTemplates # Template reference
