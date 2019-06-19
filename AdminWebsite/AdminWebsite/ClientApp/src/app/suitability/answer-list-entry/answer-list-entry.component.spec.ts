@@ -34,7 +34,7 @@ describe('AnswerListEntryComponent', () => {
       displayName: '',
       hearingId: '',
       participantId: '',
-      updated_at: new Date()
+      updatedAt: new Date()
     });
     fixture.detectChanges();
   });
