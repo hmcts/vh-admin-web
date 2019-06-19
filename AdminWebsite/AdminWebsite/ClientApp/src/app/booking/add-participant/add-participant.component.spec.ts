@@ -25,6 +25,7 @@ import { PartyModel } from '../../common/model/party.model';
 import { Constants } from '../../common/constants';
 import { ParticipantsListComponent } from '../participants-list/participants-list.component';
 import { ElementRef } from '@angular/core';
+import { configureTestSuite } from 'ng-bullet';
 
 let component: AddParticipantComponent;
 let fixture: ComponentFixture<AddParticipantComponent>;
@@ -545,7 +546,7 @@ describe('AddParticipantComponent', () => {
 
 describe('AddParticipantComponent edit mode', () => {
 
-  beforeEach(async(() => {
+  configureTestSuite(() => {
     videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>([
       'getCurrentRequest', 'getParticipantRoles', 'setBookingHasChanged', 'updateHearingRequest', 'cancelRequest'
     ]);
@@ -602,7 +603,8 @@ describe('AddParticipantComponent edit mode', () => {
     city = component.form.controls['city'];
     county = component.form.controls['county'];
     postcode = component.form.controls['postcode'];
-  }));
+  });
+  
   it('should set title list and get current data from session', () => {
     component.ngOnInit();
     fixture.detectChanges();

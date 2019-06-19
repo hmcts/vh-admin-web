@@ -3,7 +3,6 @@ import { async, TestBed, fakeAsync } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AdalService } from 'adal-angular4';
-import { Component, EventEmitter } from '@angular/core';
 
 import { AppComponent } from './app.component';
 import { ClientSettingsResponse } from './services/clients/api-client';
@@ -15,6 +14,7 @@ import { WindowRef, WindowLocation } from './security/window-ref';
 import { VideoHearingsService } from './services/video-hearings.service';
 import { CancelPopupStubComponent } from './testing/stubs/cancel-popup-stub';
 import { HeaderComponent } from './shared/header/header.component';
+import { configureTestSuite } from 'ng-bullet';
 
 
 const adalService = {
@@ -41,7 +41,7 @@ describe('AppComponent', () => {
     redirect_uri: '/dashboard'
   });
 
-  beforeEach(async(() => {
+  configureTestSuite(() => {
     configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['clientSettings', 'getClientSettings', 'loadConfig']);
     configServiceSpy.clientSettings.and.returnValue(clientSettings);
 
@@ -68,7 +68,8 @@ describe('AppComponent', () => {
           { provide: VideoHearingsService, useValue: videoHearingServiceSpy }
         ],
     }).compileComponents();
-  }));
+  });
+
   it('should create the app', async(() => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.debugElement.componentInstance;

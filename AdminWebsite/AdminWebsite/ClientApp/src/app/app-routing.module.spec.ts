@@ -30,6 +30,7 @@ import { CancelPopupStubComponent } from './testing/stubs/cancel-popup-stub';
 import { SaveFailedPopupComponent } from './popups/save-failed-popup/save-failed-popup.component';
 import { CancelBookingPopupComponent } from './popups/cancel-booking-popup/cancel-booking-popup.component';
 import { MomentModule } from 'angular2-moment';
+import { configureTestSuite } from 'ng-bullet';
 
 describe('app routing', () => {
   let location: Location;
@@ -37,7 +38,7 @@ describe('app routing', () => {
   let fixture: ComponentFixture<DashboardComponent>;
   let adalSvc;
 
-  beforeEach(() => {
+  configureTestSuite(() => {
     TestBed.configureTestingModule({
       imports: [ReactiveFormsModule, RouterTestingModule.withRoutes(routes), FormsModule, MomentModule],
       declarations: [
