@@ -59,17 +59,15 @@ describe('QuestionnaireService', () => {
         }
     });
 
-    it('has no more items after second call if service returns no next cursor', async () => {
+    it('has no more items if no next cursor is returned', async () => {
         // when loading twice
         apiStub.forFirstCall().returnsWithResponse({
             questionnaires: [ participantOneResponse ],
             nextCursor: ''
         });
-        await service.loadNext();
-        const secondResult = await service.loadNext();
+        const result = await service.loadNext();
 
-        // then the second response notes that there are no more responses
-        expect(secondResult.hasMore).toBe(false);
+        expect(result.hasMore).toBe(false);
     });
 
     it('will return no items if there is no next cursor', async () => {
@@ -78,6 +76,7 @@ describe('QuestionnaireService', () => {
             nextCursor: ''
         });
         await service.loadNext();
+
         const secondCall = await service.loadNext();
 
         expect(secondCall.items).toEqual([]);
