@@ -22,7 +22,6 @@ export class QuestionnaireApiService implements ScrollableSuitabilityAnswersServ
             caseNumber: response.case_number,
             hearingRole: response.hearing_role,
             representee: response.representee,
-            hearingId: 'missing',
             participantId: response.participant_id,
             updatedAt: response.updated_at,
             answers: this.mapAnswerGroups(response.answers)

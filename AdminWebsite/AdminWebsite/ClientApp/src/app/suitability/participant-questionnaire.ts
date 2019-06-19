@@ -2,7 +2,6 @@ export class ParticipantQuestionnaire {
   readonly displayName: string;
   readonly caseNumber: string;
   readonly hearingRole: string;
-  readonly hearingId: string;
   readonly representee: string;
   readonly participantId: string;
   readonly updatedAt: Date;
@@ -14,7 +13,6 @@ export class ParticipantQuestionnaire {
     this.caseNumber = data.caseNumber;
     this.hearingRole = data.hearingRole;
     this.representee = data.representee;
-    this.hearingId = data.hearingId;
     this.participantId = data.participantId;
     this.updatedAt = data.updatedAt;
     this.answers = data.answers;

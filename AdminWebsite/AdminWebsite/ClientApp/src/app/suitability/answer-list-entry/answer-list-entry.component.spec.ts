@@ -32,7 +32,6 @@ describe('AnswerListEntryComponent', () => {
       hearingRole: '',
       caseNumber: '',
       displayName: '',
-      hearingId: '',
       participantId: '',
       updatedAt: new Date()
     });

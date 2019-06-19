@@ -8,7 +8,6 @@ describe('QuestionnaireService', () => {
 
     const participantOneResponse = new ParticipantQuestionnaire({
         participantId: 'id1',
-        hearingId: 'hearingId',
         displayName: 'participant one',
         updatedAt: new Date(),
         caseNumber: 'a',
@@ -18,7 +17,6 @@ describe('QuestionnaireService', () => {
     });
     const participantTwoResponse = new ParticipantQuestionnaire({
         participantId: 'id2',
-        hearingId: 'hearingId',
         displayName: 'participant two',
         caseNumber: 'a',
         updatedAt: new Date(),
