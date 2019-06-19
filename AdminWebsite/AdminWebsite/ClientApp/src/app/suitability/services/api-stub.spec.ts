@@ -5,7 +5,7 @@ export class ApiStub implements ScrollableSuitabilityAnswersService {
     private firstCall: SuitabilityAnswersPage;
 
     getSuitabilityAnswers(cursor?: string, limit?: number): Promise<SuitabilityAnswersPage> {
-        if (cursor === null) {
+        if (cursor === null || cursor.length === 0) {
             return Promise.resolve(this.firstCall);
         }
         if (!this.results.has(cursor)) {

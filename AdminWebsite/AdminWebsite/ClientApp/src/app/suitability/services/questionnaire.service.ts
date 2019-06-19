@@ -23,7 +23,7 @@ export class QuestionnaireService {
         this.nextCursor = page.nextCursor;
         return new QuestionnaireResponses(
             page.questionnaires,
-            this.nextCursor !== ''
+            this.nextCursor !== null && this.nextCursor.length > 0
         );
     }
 }
