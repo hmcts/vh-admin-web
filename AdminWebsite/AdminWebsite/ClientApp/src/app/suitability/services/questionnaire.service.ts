@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { ParticipantQuestionnaire, SuitabilityAnswerGroup } from '../participant-questionnaire';
+import { ParticipantQuestionnaire } from '../participant-questionnaire';
+import { ScrollableSuitabilityAnswersService } from './scrollable-suitability-answers.service';
 
 export class QuestionnaireResponses {
   readonly items: ParticipantQuestionnaire[];
@@ -13,65 +14,16 @@ export class QuestionnaireResponses {
 
 @Injectable()
 export class QuestionnaireService {
-  private counter = 0;
+    private nextCursor: string = null;
 
-  loadNext(): Promise<QuestionnaireResponses> {
-    this.counter += 1;
-    if (this.counter > 2) {
-      return Promise.resolve(new QuestionnaireResponses([], false));
-    } else if (this.counter === 2) {
-      return Promise.resolve(new QuestionnaireResponses(
-        [
-          new ParticipantQuestionnaire({
-            participantId: 'participantId_one',
-            hearingId: 'hearingId_one',
-            displayName: 'James Johnson',
-            caseNumber: 'Y231231',
-            hearingRole: 'Defendant',
-            representee: '',
-            updated_at: new Date(),
-            answers: [
-              new SuitabilityAnswerGroup({
-                title: 'Equipment',
-                answers: [
-                  {
-                    answer: 'true',
-                    notes: 'I have an eyesight problem',
-                    question: 'ABOUT_YOU'
-                  }
-                ]
-              })
-            ]
-          })
-        ],
-        false
-      ));
+    constructor(private service: ScrollableSuitabilityAnswersService) {}
+
+    async loadNext(): Promise<QuestionnaireResponses> {
+        const page = await this.service.getSuitabilityAnswers(this.nextCursor, 100);
+        this.nextCursor = page.nextCursor;
+        return new QuestionnaireResponses(
+            page.questionnaires,
+            this.nextCursor !== null
+        );
     }
-
-    return Promise.resolve(new QuestionnaireResponses(
-      [
-        new ParticipantQuestionnaire({
-          participantId: 'participantId_two',
-          hearingId: 'hearingId_two',
-          displayName: 'Bob Jones',
-          caseNumber: 'X32123211',
-          representee: '',
-          hearingRole: 'Claimant',
-          updated_at: new Date(),
-          answers: [
-            new SuitabilityAnswerGroup({
-              title: 'Equipment',
-              answers: [
-                {
-                  answer: 'true',
-                  notes: 'I have an eyesight problem',
-                  question: 'ABOUT_YOU'
-                }
-              ]
-            })]
-        })
-      ],
-      true
-    ));
-  }
 }
