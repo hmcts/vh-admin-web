@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import 'rxjs/add/operator/filter';
 import 'rxjs/add/operator/pairwise';
 import 'rxjs/add/operator/map';
-import { DOCUMENT } from '@angular/platform-browser';
+import { DOCUMENT } from '@angular/common';
 
 interface ScrollPosition {
   pageYOffset: number;
@@ -21,6 +21,7 @@ export class ScrollableDirective implements AfterViewInit, OnDestroy {
   private $userScrolledDown: Observable<any>;
   private $requestCallBack: Observable<any>;
   private rootElement: ElementRef;
+  private pastBottom = false;
 
   lastPosition = 0;
 
@@ -30,16 +31,12 @@ export class ScrollableDirective implements AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    //this.streamScrollEvents();
-    //this.requestCallbackOnScroll();
   }
 
   ngOnDestroy() {
   }
 
-  private pastBottom = false;
-
-  @HostListener("window:scroll", [])
+  @HostListener('window:scroll', [])
   onWindowScroll() {
     const offset = window.pageYOffset || this.document.documentElement.scrollTop || this.document.body.scrollTop || 0;
     const scrollBottom = offset + this.document.documentElement.clientHeight;
