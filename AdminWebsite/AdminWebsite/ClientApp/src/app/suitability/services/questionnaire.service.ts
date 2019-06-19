@@ -14,7 +14,7 @@ export class QuestionnaireResponses {
 
 @Injectable()
 export class QuestionnaireService {
-    private nextCursor: string = '';
+    private nextCursor = '';
 
     constructor(private service: ScrollableSuitabilityAnswersService) {}
 
