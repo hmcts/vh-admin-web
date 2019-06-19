@@ -1,15 +1,8 @@
-import { Directive, HostListener, EventEmitter, Output, ElementRef, Inject, AfterViewInit, OnDestroy } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Directive, HostListener, EventEmitter, Output, ElementRef, Inject } from '@angular/core';
 import 'rxjs/add/operator/filter';
 import 'rxjs/add/operator/pairwise';
 import 'rxjs/add/operator/map';
 import { DOCUMENT } from '@angular/common';
-
-interface ScrollPosition {
-  pageYOffset: number;
-  innerHeight: number;
-  offsetHeight: number;
-}
 
 // Infinite scroller directive with RxJS Observables
 @Directive({
