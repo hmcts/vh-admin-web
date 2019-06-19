@@ -14,7 +14,7 @@ export class QuestionnaireResponses {
 
 @Injectable()
 export class QuestionnaireService {
-    private nextCursor: string = null;
+    private nextCursor = '';
 
     constructor(private service: ScrollableSuitabilityAnswersService) {}
 
@@ -23,7 +23,7 @@ export class QuestionnaireService {
         this.nextCursor = page.nextCursor;
         return new QuestionnaireResponses(
             page.questionnaires,
-            this.nextCursor !== null
+            this.nextCursor !== null && this.nextCursor.length > 0
         );
     }
 }

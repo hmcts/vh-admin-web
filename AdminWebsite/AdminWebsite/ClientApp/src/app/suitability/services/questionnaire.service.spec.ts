@@ -41,7 +41,7 @@ describe('QuestionnaireService', () => {
         // and then again
         apiStub.forCursor('cursor1').returnsWithResponse({
             questionnaires: [ participantTwoResponse ],
-            nextCursor: null
+            nextCursor: ''
         });
         const second = await service.loadNext();
 
@@ -63,7 +63,7 @@ describe('QuestionnaireService', () => {
         // when loading twice
         apiStub.forFirstCall().returnsWithResponse({
             questionnaires: [ participantOneResponse ],
-            nextCursor: null
+            nextCursor: ''
         });
         await service.loadNext();
         const secondResult = await service.loadNext();
@@ -75,7 +75,7 @@ describe('QuestionnaireService', () => {
     it('will return no items if there is no next cursor', async () => {
         apiStub.forFirstCall().returnsWithResponse({
             questionnaires: [],
-            nextCursor: null
+            nextCursor: ''
         });
         await service.loadNext();
         const secondCall = await service.loadNext();
