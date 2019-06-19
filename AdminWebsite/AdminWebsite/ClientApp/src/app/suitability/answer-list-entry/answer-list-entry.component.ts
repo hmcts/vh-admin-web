@@ -22,6 +22,10 @@ export class AnswerListEntryComponent implements OnInit {
     this.expanded = !this.expanded;
   }
 
+  get isRepresentative(): boolean {
+    return this.questionnaire.hearingRole.toLowerCase().indexOf('solicitor') >= 0;
+  }
+
   get answers(): SuitabilityAnswerGroup[] {
     return this.questionnaire.answers;
   }
