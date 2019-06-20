@@ -1,11 +1,11 @@
-import { WindowScrolling } from './../window-scrolling';
+import { WindowScrolling } from '../window-scrolling';
 import { ElementRef } from '@angular/core';
-import { ScrollableDirective } from './scrollable.directive'
+import { ScrollTriggerDirective } from './scroll-trigger.directive';
 
 describe('ScrollableDirective', () => {
   let elementRef: ElementRef;
   let nativeElement: any;
-  let directive: ScrollableDirective;
+  let directive: ScrollTriggerDirective;
   let windowScroll: jasmine.SpyObj<WindowScrolling>;
   let eventRaised = false;
   const documentHeight = 500;
@@ -21,8 +21,8 @@ describe('ScrollableDirective', () => {
     elementRef = {
       nativeElement: nativeElement
     };
-    directive = new ScrollableDirective(elementRef, windowScroll);
-    directive.bottomReached.subscribe(() => eventRaised = true);
+    directive = new ScrollTriggerDirective(elementRef, windowScroll);
+    directive.scrolledPast.subscribe(() => eventRaised = true);
   });
 
   const getElementBottom = (): number => {

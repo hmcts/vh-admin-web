@@ -3,7 +3,7 @@
 </div>
 <h1 class="govuk-heading-l">Pre-hearing check results</h1>
 
-<div *ngIf="loaded" id="vh-table" class="vh-table" appScrollable (bottomReached)="loadNext()">
+<div *ngIf="loaded" id="vh-table" class="vh-table" appScrollTrigger (scrolledPast)="loadNext()">
   <div *ngFor="let questionnaire of answers" style="margin-right:10px;">
     <app-answer-list-entry [questionnaire]="questionnaire"></app-answer-list-entry>
   </div>

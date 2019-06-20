@@ -1,19 +1,14 @@
-import { Directive, HostListener, EventEmitter, Output, ElementRef, Inject } from '@angular/core';
-import 'rxjs/add/operator/filter';
-import 'rxjs/add/operator/pairwise';
-import 'rxjs/add/operator/map';
-import { DOCUMENT } from '@angular/common';
+import { Directive, HostListener, EventEmitter, Output, ElementRef } from '@angular/core';
 import { WindowScrolling } from '../window-scrolling';
 
-// Infinite scroller directive with RxJS Observables
 @Directive({
-  selector: '[appScrollable]'
+  selector: '[appScrollTrigger]'
 })
-export class ScrollableDirective {
+export class ScrollTriggerDirective {
   private atBottom = false;
   private lastScrollPosition = 0;
 
-  @Output() bottomReached = new EventEmitter();
+  @Output() scrolledPast = new EventEmitter();
 
   constructor(
     private element: ElementRef,
@@ -42,7 +37,7 @@ export class ScrollableDirective {
     } else if (!this.atBottom) {
       if (this.hasScrolledPastElementBottom(currentScrollPosition)) {
           this.atBottom = true;
-          this.bottomReached.emit();
+          this.scrolledPast.emit();
       }
     }
     this.lastScrollPosition = currentScrollPosition;
