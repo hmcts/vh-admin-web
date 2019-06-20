@@ -12,6 +12,7 @@ import { ScrollableDirective } from './directives/scrollable.directive';
 import { BookingEditComponent } from './booking-edit/booking-edit.component';
 import { WindowRef } from './window-ref';
 import { LongDatetimePipe } from './directives/date-time.pipe';
+import { WindowScrolling } from './window-scrolling';
 
 @NgModule({
   imports: [
@@ -31,7 +32,8 @@ import { LongDatetimePipe } from './directives/date-time.pipe';
     LongDatetimePipe
   ],
   providers: [
-    WindowRef
+    WindowRef,
+    WindowScrolling
   ],
   exports: [
     HeaderComponent,

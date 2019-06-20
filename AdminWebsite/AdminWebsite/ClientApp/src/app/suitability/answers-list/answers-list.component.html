@@ -3,14 +3,15 @@
 </div>
 <h1 class="govuk-heading-l">Pre-hearing check results</h1>
 
-<div *ngIf="!loaded">
-  <div class="govuk-grid-column-one-third">
-    <p class="govuk-body">Getting checklists..</p>
+<div *ngIf="loaded" id="vh-table" class="vh-table" appScrollable (bottomReached)="loadNext()">
+  <div *ngFor="let questionnaire of answers" style="margin-right:10px;">
+    <app-answer-list-entry [questionnaire]="questionnaire"></app-answer-list-entry>
   </div>
 </div>
 
-<div *ngIf="loaded" id="vh-table" class="vh-table" appScrollable (scrollPosition)="loadNext()">
-  <div *ngFor="let questionnaire of answers" style="margin-right:10px;">
-    <app-answer-list-entry [questionnaire]="questionnaire"></app-answer-list-entry>
+
+<div class="govuk-grid-row" *ngIf="!loaded">
+  <div class="govuk-grid-column-full vh-loader-container">
+    <div class="vh-loader"></div>
   </div>
 </div>

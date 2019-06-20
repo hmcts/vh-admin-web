@@ -23,7 +23,7 @@ export class QuestionnaireService {
     if (!this.hasMore) {
       return new QuestionnaireResponses([], false);
     }
-    const page = await this.service.getSuitabilityAnswers(this.nextCursor, 100);
+    const page = await this.service.getSuitabilityAnswers(this.nextCursor, 5);
 
     // we need to figure out if next cursor is returned as null or not
     this.nextCursor = page.nextCursor;

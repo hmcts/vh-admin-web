@@ -3,22 +3,26 @@ import 'rxjs/add/operator/filter';
 import 'rxjs/add/operator/pairwise';
 import 'rxjs/add/operator/map';
 import { DOCUMENT } from '@angular/common';
+import { WindowScrolling } from '../window-scrolling';
 
 // Infinite scroller directive with RxJS Observables
 @Directive({
   selector: '[appScrollable]'
 })
 export class ScrollableDirective {
-  private reachedBottom = false;
+  private atBottom = false;
   private lastScrollPosition = 0;
 
-  @Output() scrollPosition = new EventEmitter();
+  @Output() bottomReached = new EventEmitter();
 
-  constructor(@Inject(DOCUMENT) private document: Document, private element: ElementRef) { }
+  constructor(
+    private element: ElementRef,
+    private scroll: WindowScrolling
+  ) { }
 
   private getScreenBottom(): number {
-    const offset = window.pageYOffset;
-    return offset + this.document.documentElement.clientHeight;
+    const offset = this.scroll.getPosition();
+    return offset + this.scroll.getWindowHeight();
   }
 
   private getElementBottom(): number {
@@ -34,11 +38,11 @@ export class ScrollableDirective {
     const currentScrollPosition = this.getScreenBottom();
     const hasScrolledUp = currentScrollPosition < this.lastScrollPosition;
     if (hasScrolledUp) {
-      this.reachedBottom = false;
-    } else if (!this.reachedBottom) {
+      this.atBottom = false;
+    } else if (!this.atBottom) {
       if (this.hasScrolledPastElementBottom(currentScrollPosition)) {
-          this.reachedBottom = true;
-          this.scrollPosition.emit();
+          this.atBottom = true;
+          this.bottomReached.emit();
       }
     }
     this.lastScrollPosition = currentScrollPosition;
