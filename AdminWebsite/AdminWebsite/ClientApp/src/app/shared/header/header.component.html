@@ -1,4 +1,4 @@
-<header class="hmcts-header" role="banner">
+<header #headerElement class="hmcts-header" [class.sticky]="isSticky" role="banner">
   <div class="hmcts-header__container">
     <div class="hmcts-header__logo">
       <span class="hmcts-header__logotype hmcts-header__link">
@@ -28,3 +28,4 @@
     </div>
   </nav>
 </header>
+<div #headerSpacing [class.sticky]="isSticky" class="header-spacing"></div>

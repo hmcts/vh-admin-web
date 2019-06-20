@@ -1,3 +1,21 @@
+.sticky {
+  width: 100%;
+  position: fixed;
+  top: 0px;
+  z-index: 100;
+}
+
+/* Ensures content padding to avoid overlapping by header */
+.header-spacing {
+  display: none;
+  position: relative;
+  height: 85px;
+}
+
+.header-spacing.sticky {
+  display: block;
+}
+
 .vh-primary-navigation__link {
   display: inline-block;
   padding-top: 12px;

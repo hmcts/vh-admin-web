@@ -1,4 +1,4 @@
-import { Component, OnInit, EventEmitter, ViewChild, Input } from '@angular/core';
+import { Component, OnInit, EventEmitter, ViewChild, Input, HostListener, ElementRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { TopMenuItems } from './topMenuItems';
 
@@ -10,14 +10,23 @@ import { TopMenuItems } from './topMenuItems';
 export class HeaderComponent implements OnInit {
   @Input() loggedIn: boolean;
 
+  @ViewChild('headerElement')
+  headerElement: ElementRef;
+
   $confirmLogout: EventEmitter<any>;
   $confirmSaveBooking: EventEmitter<any>;
 
   topMenuItems = [];
+  isSticky: boolean;
 
   constructor(private router: Router) {
     this.$confirmLogout = new EventEmitter();
     this.$confirmSaveBooking = new EventEmitter();
+   }
+
+   @HostListener('window:scroll', ['$event'])
+   checkScroll() {
+     this.isSticky = window.pageYOffset > this.headerElement.nativeElement.offsetTop;
    }
 
   selectMenuItem(indexOfItem: number) {
