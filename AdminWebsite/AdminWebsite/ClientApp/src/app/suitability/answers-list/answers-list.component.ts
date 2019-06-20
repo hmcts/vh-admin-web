@@ -1,5 +1,5 @@
 import { QuestionnaireResponses } from './../services/questionnaire.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Location } from '@angular/common';
 import { ParticipantQuestionnaire } from '../participant-questionnaire';
 import { QuestionnaireService } from '../services/questionnaire.service';
@@ -9,25 +9,23 @@ import { QuestionnaireService } from '../services/questionnaire.service';
   templateUrl: './answers-list.component.html',
   styleUrls: ['./answers-list.component.css']
 })
-export class AnswersListComponent implements OnInit {
+export class AnswersListComponent implements OnInit, OnDestroy {
 
   loaded = false;
-  hasMore = false;
+  hasMore = true;
   answers = new Array<ParticipantQuestionnaire>();
 
-  constructor(private location: Location, private questionnaireService: QuestionnaireService) { }
+  constructor(private location: Location,
+    private questionnaireService: QuestionnaireService
+  ) { }
 
   ngOnInit() {
-    this.questionnaireService.loadNext()
-      .then((responses: QuestionnaireResponses) => {
-        this.answers.push(...responses.items);
-        this.loaded = true;
-        this.hasMore = responses.hasMore;
-      });
+    this.enableFullScreen(true);
+    this.loadNext();
   }
 
   loadNext() {
-    console.log('load next called');
+    console.log('load next called-1');
     if (!this.hasMore) {
       console.log('no more items, skipping');
       return;
@@ -36,11 +34,30 @@ export class AnswersListComponent implements OnInit {
     this.questionnaireService.loadNext()
       .then((responses: QuestionnaireResponses) => {
         this.answers.push(...responses.items);
+        this.loaded = true;
         this.hasMore = responses.hasMore;
+        console.log('get more items');
       });
   }
 
   back() {
     this.location.back();
+  }
+
+  enableFullScreen(fullScreen: boolean) {
+    const mainContainer = document.getElementById('master-container');
+    if (!mainContainer) {
+      return;
+    }
+
+    if (fullScreen) {
+      mainContainer.classList.add('fullscreen');
+    } else {
+      mainContainer.classList.remove('fullscreen');
+    }
+  }
+
+  ngOnDestroy() {
+    this.enableFullScreen(false);
   }
 }
