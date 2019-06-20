@@ -17,7 +17,7 @@ export class HeaderComponent implements OnInit {
   $confirmSaveBooking: EventEmitter<any>;
 
   topMenuItems = [];
-  isSticky: boolean;
+  isSticky = false;
 
   constructor(private router: Router) {
     this.$confirmLogout = new EventEmitter();
@@ -26,6 +26,8 @@ export class HeaderComponent implements OnInit {
 
    @HostListener('window:scroll', ['$event'])
    checkScroll() {
+     console.log(`window page offset = ${window.pageYOffset}`);
+     console.log(`offsetTop = ${this.headerElement.nativeElement.offsetTop}`);
      this.isSticky = window.pageYOffset > this.headerElement.nativeElement.offsetTop;
    }
 
