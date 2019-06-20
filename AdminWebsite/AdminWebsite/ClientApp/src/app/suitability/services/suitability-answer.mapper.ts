@@ -8,8 +8,6 @@ export const IndividualQuestionKeys = {
   Camera: 'CAMERA_MICROPHONE'
 };
 
-
-
 export const RepresentativeQuestionKeys = {
   AboutYou: 'ABOUT_YOU',
   AboutYourClient: 'ABOUT_YOUR_CLIENT',
@@ -18,4 +16,10 @@ export const RepresentativeQuestionKeys = {
   Room: 'ROOM',
   Camera: 'CAMERA_MICROPHONE',
   Computer: 'COMPUTER'
+};
+
+export const SelfTestQuestionKeys = {
+  SeeYourself: 'SEE_YOURSELF',
+  Speakers: 'SPEAKERS',
+  SeeHearClearly: 'SEE_HEAR_CLEARLY'
 };

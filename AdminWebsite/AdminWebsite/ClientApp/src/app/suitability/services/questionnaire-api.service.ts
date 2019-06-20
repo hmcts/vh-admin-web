@@ -3,51 +3,51 @@ import { ParticipantSuitabilityAnswerResponse, SuitabilityAnswerResponse } from 
 import { BHClient } from 'src/app/services/clients/api-client';
 import { Injectable } from '@angular/core';
 import { ScrollableSuitabilityAnswersService, SuitabilityAnswersPage } from './scrollable-suitability-answers.service';
-import { IndividualQuestionKeys, RepresentativeQuestionKeys } from './suitability-answer.mapper';
-
+import { IndividualQuestionKeys, RepresentativeQuestionKeys, SelfTestQuestionKeys } from './suitability-answer.mapper';
 
 @Injectable()
 export class QuestionnaireApiService implements ScrollableSuitabilityAnswersService {
   constructor(private client: BHClient) { }
 
   individualSuitabilityKeysOrder = [
-    'ABOUT_YOU',
-    'INTERPRETER',
-    'COMPUTER',
-    'CAMERA_MICROPHONE',
-    'INTERNET',
-    'ROOM',
-    'CONSENT'
+    IndividualQuestionKeys.AboutYou,
+    IndividualQuestionKeys.Interpreter,
+    IndividualQuestionKeys.Computer,
+    IndividualQuestionKeys.Camera,
+    IndividualQuestionKeys.Internet,
+    IndividualQuestionKeys.Room,
+    IndividualQuestionKeys.Consent
   ];
 
   representativeSuitabilityKeysOrder = [
-    'ABOUT_YOU',
-    'ROOM',
-    'COMPUTER',
-    'CAMERA_MICROPHONE',
-    'ABOUT_YOUR_CLIENT',
-    'CLIENT_ATTENDANCE',
-    'HEARING_SUITABILITY'
+    RepresentativeQuestionKeys.AboutYou,
+    RepresentativeQuestionKeys.Room,
+    RepresentativeQuestionKeys.Computer,
+    RepresentativeQuestionKeys.Camera,
+    RepresentativeQuestionKeys.AboutYourClient,
+    RepresentativeQuestionKeys.ClientAttendance,
+    RepresentativeQuestionKeys.HearingSuitability
   ];
 
-  equipmentCheckKeyOrder = [
-    'SEE_YOURSELF',
-    'SPEAKERS',
-    'SEE_HEAR_CLEARLY'
+  selfTestKeyOrder = [
+    SelfTestQuestionKeys.SeeYourself,
+    SelfTestQuestionKeys.Speakers,
+    SelfTestQuestionKeys.SeeHearClearly,
   ];
 
-  readonly equipmentCheck = new Map<string, string>([
-    ['SEE_YOURSELF', 'Could you see yourself on the screen in the camera window?'],
-    ['SPEAKERS', 'Could you see the bar moving when you spoke?'],
-    ['SEE_HEAR_CLEARLY', 'Could you see and hear the video clearly?']
+  readonly selfTestCheck = new Map<string, string>([
+    [SelfTestQuestionKeys.SeeYourself, 'Could you see yourself on the screen in the camera window?'],
+    [SelfTestQuestionKeys.Speakers, 'Could you see the bar moving when you spoke?'],
+    [SelfTestQuestionKeys.SeeHearClearly, 'Could you see and hear the video clearly?']
   ]);
 
   readonly questionsIndividual = new Map<string, string>([
-    [IndividualQuestionKeys.AboutYou, 'Is there anything you\'d like the court to take into account when it decides which type of hearing will be suitable?'
+    [IndividualQuestionKeys.AboutYou,
+      'Is there anything you\'d like the court to take into account when it decides which type of hearing will be suitable?'
     ],
     [IndividualQuestionKeys.Interpreter, 'Will you need an interpreter for your hearing?'],
     [IndividualQuestionKeys.Computer, 'Will you have access to a laptop or desktop computer (not a mobile, not a tablet)?'],
-    [IndividualQuestionKeys.Camera, 'Does your computer have a camera and microphone'],
+    [IndividualQuestionKeys.Camera, 'Does your computer have a camera and microphone?'],
     [IndividualQuestionKeys.Internet, 'At the time of your hearing, will the computer be able to access the internet?'],
     [IndividualQuestionKeys.Room, 'At the time of your hearing, will you have access to a quiet, private room?'],
     [IndividualQuestionKeys.Consent, 'Would you be content to take part in your hearing by video?']
@@ -55,10 +55,12 @@ export class QuestionnaireApiService implements ScrollableSuitabilityAnswersServ
 
   readonly questionsRepresentative = new Map<string, string>([
     [RepresentativeQuestionKeys.AboutYou, 'Is there anything that could affect your ability to take part in a video hearing?'],
-    [RepresentativeQuestionKeys.Room, 'Will you have access to a quiet, private room where you can connect to the internet and where your client can sit with you?'],
+    [RepresentativeQuestionKeys.Room,
+      'Will you have access to a quiet, private room where you can connect to the internet and where your client can sit with you?'],
     [RepresentativeQuestionKeys.Computer, 'Will you have access to a laptop or desktop computer (not a mobile, not a tablet)?'],
-    [RepresentativeQuestionKeys.Camera, 'Does your computer have a camera and microphone'],
-    [RepresentativeQuestionKeys.AboutYourClient, 'Is there anything that could affect your client\'s ability to take part in a video hearing?'],
+    [RepresentativeQuestionKeys.Camera, 'Does your computer have a camera and microphone?'],
+    [RepresentativeQuestionKeys.AboutYourClient,
+      'Is there anything that could affect your client\'s ability to take part in a video hearing?'],
     [RepresentativeQuestionKeys.ClientAttendance, 'Will your client be attending the hearing?'],
     [RepresentativeQuestionKeys.HearingSuitability, 'Is there anything about this case you think makes it unsuitable for a video hearing?']
   ]);
@@ -79,7 +81,9 @@ export class QuestionnaireApiService implements ScrollableSuitabilityAnswersServ
       representee: response.representee,
       participantId: response.participant_id,
       updatedAt: response.updated_at,
-      answers: this.mapAnswerGroups(response.answers, response.hearing_role && response.hearing_role.toLowerCase().indexOf('solicitor') > -1),
+      answers: this.mapAnswerGroups(response.answers,
+        response.hearing_role && response.hearing_role.toLowerCase()
+          .indexOf('solicitor') > -1),
     });
   }
 
@@ -92,7 +96,7 @@ export class QuestionnaireApiService implements ScrollableSuitabilityAnswersServ
       }),
       new SuitabilityAnswerGroup({
         title: 'Equipment check',
-        answers: this.mapAnswers(answers, this.equipmentCheckKeyOrder, this.equipmentCheck)
+        answers: this.mapAnswers(answers, this.selfTestKeyOrder, this.selfTestCheck)
       }),
     ];
   }
@@ -105,7 +109,7 @@ export class QuestionnaireApiService implements ScrollableSuitabilityAnswersServ
           question: questions.get(s),
           answer: data.answer,
           notes: data.note
-        })
+        });
     });
   }
 
@@ -114,6 +118,6 @@ export class QuestionnaireApiService implements ScrollableSuitabilityAnswersServ
     return {
       answer: !!findAnswer ? findAnswer.answer : 'Not answered',
       note: !!findAnswer ? findAnswer.extended_answer : ''
-    }
+    };
   }
 }
