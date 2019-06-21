@@ -25,9 +25,7 @@ export class AnswersListComponent implements OnInit, OnDestroy {
   }
 
   loadNext() {
-    console.log('load next called-1');
     if (!this.hasMore) {
-      console.log('no more items, skipping');
       return;
     }
 
@@ -36,7 +34,6 @@ export class AnswersListComponent implements OnInit, OnDestroy {
         this.answers.push(...responses.items);
         this.loaded = true;
         this.hasMore = responses.hasMore;
-        console.log('get more items');
       });
   }
 
