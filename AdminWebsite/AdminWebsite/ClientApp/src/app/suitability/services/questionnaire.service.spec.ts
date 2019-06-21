@@ -1,3 +1,4 @@
+import { ServicesModule } from './../../services/services.module';
 import { QuestionnaireService } from './questionnaire.service';
 import { ParticipantQuestionnaire } from '../participant-questionnaire';
 import { ApiStub } from './api-stub.spec';
@@ -79,6 +80,26 @@ describe('QuestionnaireService', () => {
 
         const secondCall = await service.loadNext();
 
+        expect(secondCall.items).toEqual([]);
+    });
+
+    it('removes duplicates returned from api', async () => {
+        // given the service returns a duplicated entry on the second call
+        // which can happen due to the nature of cursors and infinite scroll api's
+        apiStub.forFirstCall().returnsWithResponse({
+            questionnaires: [ participantOneResponse ],
+            nextCursor: 'nextpage'
+        });
+        apiStub.forCursor('nextpage').returnsWithResponse({
+            questionnaires: [ participantOneResponse ],
+            nextCursor: ''
+        });
+
+        // when calling the service next
+        await service.loadNext();
+        const secondCall = await service.loadNext();
+
+        // the service deduplicates this, removing the second entry
         expect(secondCall.items).toEqual([]);
     });
 });
