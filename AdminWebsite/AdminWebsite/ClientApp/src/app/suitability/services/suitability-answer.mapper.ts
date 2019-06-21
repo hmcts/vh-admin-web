@@ -19,9 +19,9 @@ export const RepresentativeQuestionKeys = {
 };
 
 export const SelfTestQuestionKeys = {
-  SeeYourself: 'SEE_YOURSELF',
-  Speakers: 'SPEAKERS',
-  SeeHearClearly: 'SEE_HEAR_CLEARLY'
+  SeeYourself: 'KIT_SEE_YOURSELF',
+  Microphone: 'KIT_MICROPHONE',
+  SeeHearClearly: 'KIT_SEE_HEAR_CLEARLY'
 };
 
 export interface QuestionsMapAttributes {
@@ -81,13 +81,13 @@ export class SelfTestQuestionsMapAttributes implements QuestionsMapAttributes {
 
    public readonly QuestionsOrder = [
     SelfTestQuestionKeys.SeeYourself,
-    SelfTestQuestionKeys.Speakers,
+    SelfTestQuestionKeys.Microphone,
     SelfTestQuestionKeys.SeeHearClearly,
   ];
 
   public readonly Questions = new Map<string, string>([
     [SelfTestQuestionKeys.SeeYourself, 'Could you see yourself on the screen in the camera window?'],
-    [SelfTestQuestionKeys.Speakers, 'Could you see the bar moving when you spoke?'],
+    [SelfTestQuestionKeys.Microphone, 'Could you see the bar moving when you spoke?'],
     [SelfTestQuestionKeys.SeeHearClearly, 'Could you see and hear the video clearly?']
   ]);
   }

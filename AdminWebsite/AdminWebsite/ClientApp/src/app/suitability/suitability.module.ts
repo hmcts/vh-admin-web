@@ -11,7 +11,7 @@ import { ScrollableSuitabilityAnswersService } from './services/scrollable-suita
 import { QuestionnarieMapperFactory } from './services/questionnarie-mapper.factory';
 
 export const routes: Routes = [
-  { path: 'checklists', component: AnswersListComponent, canActivate: [VhOfficerAdminGuard] },
+  { path: 'questionnaire', component: AnswersListComponent, canActivate: [VhOfficerAdminGuard] },
 ];
 
 @NgModule({

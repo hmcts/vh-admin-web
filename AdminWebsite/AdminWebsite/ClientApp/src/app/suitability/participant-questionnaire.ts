@@ -5,6 +5,7 @@ export class ParticipantQuestionnaire {
   readonly representee: string;
   readonly participantId: string;
   readonly updatedAt: Date;
+ 
 
   readonly answers: SuitabilityAnswerGroup[];
 
@@ -16,6 +17,10 @@ export class ParticipantQuestionnaire {
     this.participantId = data.participantId;
     this.updatedAt = data.updatedAt;
     this.answers = data.answers;
+  }
+
+  get isRepresentative(): boolean {
+    return this.representee && this.representee.length > 0;
   }
 }
 

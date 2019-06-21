@@ -9,7 +9,7 @@ import { SelfTestQuestionnarieMapper } from './selftest-questionnarie-mapper';
 export class QuestionnarieMapperFactory {
 
   public getSuitabilityMapper(response: ParticipantSuitabilityAnswerResponse): QuestionnarieMapper {
-    if (response.hearing_role && response.hearing_role.toLowerCase().indexOf('solicitor') > -1) {
+    if (response.representee && response.representee.length > 0) {
       return new RepresentativeQuestionnarieMapper(response.answers);
     } else {
       return new IndividualQuestionnarieMapper(response.answers);
