@@ -6,6 +6,7 @@ export class ParticipantQuestionnaire {
   readonly participantId: string;
   readonly updatedAt: Date;
 
+
   readonly answers: SuitabilityAnswerGroup[];
 
   constructor(data: ParticipantQuestionnaire) {
