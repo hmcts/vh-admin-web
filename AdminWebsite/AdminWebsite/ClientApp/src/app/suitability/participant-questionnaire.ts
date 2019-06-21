@@ -18,10 +18,6 @@ export class ParticipantQuestionnaire {
     this.updatedAt = data.updatedAt;
     this.answers = data.answers;
   }
-
-  get isRepresentative(): boolean {
-    return this.representee && this.representee.length > 0;
-  }
 }
 
 export class SuitabilityAnswerGroup {

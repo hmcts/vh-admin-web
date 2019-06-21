@@ -4,17 +4,18 @@ import { ParticipantSuitabilityAnswerResponse } from './../../services/clients/a
 export class SuatabilityAnswerTestData {
 
   response = new ParticipantSuitabilityAnswerResponse({
-  case_number: '',
-  first_name: '',
-  last_name: '',
-  title: '',
-  hearing_role: 'Solicitor',
-  answers: [
-    new SuitabilityAnswerResponse({
-      answer: 'Yes',
-      extended_answer: 'Comments',
-      key: 'ABOUT_YOU'
-    })
-  ]
-});
+    case_number: '',
+    first_name: '',
+    last_name: '',
+    title: '',
+    hearing_role: 'Solicitor',
+    representee: 'Ms X',
+    answers: [
+      new SuitabilityAnswerResponse({
+        answer: 'Yes',
+        extended_answer: 'Comments',
+        key: 'ABOUT_YOU'
+      })
+    ]
+  });
 }

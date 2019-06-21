@@ -17,7 +17,7 @@ describe('QuestionnarieMapperFactory', () => {
     expect(mapper instanceof RepresentativeQuestionnarieMapper).toBeTruthy();
   });
   it('should return mapper for individual suitability questions', () => {
-    response.hearing_role = 'Claimant';
+    response.representee = '';
     const mapper = factory.getSuitabilityMapper(response);
     expect(mapper instanceof IndividualQuestionnarieMapper).toBeTruthy();
   });

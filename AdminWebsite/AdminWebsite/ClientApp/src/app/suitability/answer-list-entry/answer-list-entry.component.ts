@@ -23,7 +23,7 @@ export class AnswerListEntryComponent implements OnInit {
   }
 
   get isRepresentative(): boolean {
-    return this.questionnaire.isRepresentative;
+    return this.questionnaire.representee && this.questionnaire.representee.length > 0;
   }
 
   get answers(): SuitabilityAnswerGroup[] {

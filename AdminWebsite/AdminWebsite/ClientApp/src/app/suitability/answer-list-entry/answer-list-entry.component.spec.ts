@@ -28,7 +28,7 @@ describe('AnswerListEntryComponent', () => {
           }
         ]
       })],
-      representee: '',
+      representee: 'presenting Ms X',
       hearingRole: 'Solicitor',
       caseNumber: '',
       displayName: '',
