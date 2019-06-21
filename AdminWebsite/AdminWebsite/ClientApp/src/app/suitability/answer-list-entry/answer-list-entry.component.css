@@ -31,14 +31,7 @@
 .rowbottom {
   border-bottom: 1px solid #bfc1c3;
   text-align: left;
-}
-
-.vh-row {
-  margin-top: 10px;
-}
-
-.vhtable-cell {
-  font-weight: 200;
+  margin-bottom: 10px;
 }
 
 .vh-table-row{
