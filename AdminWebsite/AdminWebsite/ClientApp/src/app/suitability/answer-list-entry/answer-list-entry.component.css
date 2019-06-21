@@ -26,6 +26,7 @@
 .vh-date {
   float: right;
   font-weight:bold;
+  margin-bottom: 0px;
 }
 
 .rowbottom {
@@ -49,4 +50,6 @@
   hyphens: auto;
 }
 
-
+.vh-answer-group-heading {
+  margin-bottom: 5px;
+}
