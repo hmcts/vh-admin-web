@@ -5,7 +5,7 @@ export class ParticipantQuestionnaire {
   readonly representee: string;
   readonly participantId: string;
   readonly updatedAt: Date;
- 
+
 
   readonly answers: SuitabilityAnswerGroup[];
 
