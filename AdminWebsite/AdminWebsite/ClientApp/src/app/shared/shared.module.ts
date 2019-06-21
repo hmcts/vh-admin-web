@@ -8,10 +8,11 @@ import { FooterComponent } from './footer/footer.component';
 import { HeaderComponent } from './header/header.component';
 import { PaginationComponent } from './pagination/pagination.component';
 import { SharedRoutingModule } from './shared-routing.module';
-import { ScrollableDirective } from './directives/scrollable.directive';
+import { ScrollTriggerDirective } from './directives/scroll-trigger.directive';
 import { BookingEditComponent } from './booking-edit/booking-edit.component';
 import { WindowRef } from './window-ref';
 import { LongDatetimePipe } from './directives/date-time.pipe';
+import { WindowScrolling } from './window-scrolling';
 
 @NgModule({
   imports: [
@@ -26,12 +27,13 @@ import { LongDatetimePipe } from './directives/date-time.pipe';
     FooterComponent,
     ContactUsComponent,
     PaginationComponent,
-    ScrollableDirective,
+    ScrollTriggerDirective,
     BookingEditComponent,
     LongDatetimePipe
   ],
   providers: [
-    WindowRef
+    WindowRef,
+    WindowScrolling
   ],
   exports: [
     HeaderComponent,
@@ -43,7 +45,7 @@ import { LongDatetimePipe } from './directives/date-time.pipe';
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
-    ScrollableDirective,
+    ScrollTriggerDirective,
     LongDatetimePipe
   ]
 })

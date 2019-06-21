@@ -9,9 +9,10 @@ export class QuestionnaireApiService implements ScrollableSuitabilityAnswersServ
     constructor(private client: BHClient) {}
 
     async getSuitabilityAnswers(cursor: string, limit: number): Promise<SuitabilityAnswersPage> {
+        console.log(`getting page for ${cursor}`);
         const response = await this.client.getSuitabilityAnswers(cursor, limit).toPromise();
         const page = new SuitabilityAnswersPage();
-        page.nextCursor = response.next_cursor;
+        page.nextCursor = response.next_cursor || null;
         page.questionnaires = response.participant_suitability_answer_response.map(item => this.map(item));
         return page;
     }
