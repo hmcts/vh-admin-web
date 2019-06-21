@@ -9,7 +9,7 @@ Scenario: Case Admin edits hearing schedule
 	When user navigates to hearing schedule page to make changes
 	And hearing schedule is updated
 	And user proceeds to summary page 
-	Then inputted values should be displayed as expected on summary page
+	Then values should be displayed as expected on summary page
 
 @VIH-2317
 Scenario: Case Admin updates more information
@@ -17,7 +17,7 @@ Scenario: Case Admin updates more information
 	When user navigates to more information page to make changes
 	And more information detail is updated 
 	And user proceeds to summary page 
-	Then inputted values should be displayed as expected on summary page
+	Then values should be displayed as expected on summary page
 
 @VIH-2317 
 Scenario: Case Admin changes judge
@@ -25,7 +25,7 @@ Scenario: Case Admin changes judge
 	When user navigates to add judge page to make changes
 	And hearing booking is assigned to a different judge
 	And user proceeds to summary page 
-	Then inputted values should be displayed as expected on summary page
+	Then values should be displayed as expected on summary page
 	
 Scenario: Case Admin removes particpant
 	Given Case Admin is on Summary page
@@ -44,7 +44,7 @@ Scenario: Case Admin updates particpant details
 	When user navigates to add participants page to make changes
 	And participant detail is updated 
 	And user proceeds to summary page 
-	Then inputted values should be displayed as expected on summary page
+	Then values should be displayed as expected on summary page
 
 @smoketest
 Scenario: Case Admin attempts to update hearing details

@@ -197,10 +197,6 @@ namespace AdminWebsite.AcceptanceTests.Steps
                     GivenUserIsOnHearingSchedulePage();
                     UserNavigatesToBookingsList();
                     break;
-                case "HMCTS Video hearing service":
-                    GivenUserIsOnHearingSchedulePage();
-                    UserClicksTopMenuLogo();
-                    break;
             }
             _common.AddItems<string>("BookingPage", bookingPage);
         }
@@ -218,7 +214,6 @@ namespace AdminWebsite.AcceptanceTests.Steps
                 Console.WriteLine($"No user warning message is displayed: {ex.Message}");
             }           
         }
-        public void UserClicksTopMenuLogo() => _common.TopMenuHmctsLogo();
         
         [Given(@"'(.*)' with multiple (.*) wants to add a (.*) to booking")]
         public void CaseAdminWithMultipleCaseTypes(string admin, string caseTypes, string party)
