@@ -9,9 +9,9 @@ describe('AnswerListEntryComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ AnswerListEntryComponent ]
+      declarations: [AnswerListEntryComponent]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
@@ -29,7 +29,7 @@ describe('AnswerListEntryComponent', () => {
         ]
       })],
       representee: '',
-      hearingRole: '',
+      hearingRole: 'Solicitor',
       caseNumber: '',
       displayName: '',
       participantId: '',
@@ -44,5 +44,8 @@ describe('AnswerListEntryComponent', () => {
   it('should get suitability answer groups', () => {
     expect(component.answers).toBeTruthy();
     expect(component.answers.length).toBeGreaterThan(0);
+  });
+  it('should identify that a participant is representative', () => {
+    expect(component.isRepresentative).toBeTruthy();
   });
 });

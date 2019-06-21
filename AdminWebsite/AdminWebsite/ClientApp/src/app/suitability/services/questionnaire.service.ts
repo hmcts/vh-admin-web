@@ -19,7 +19,7 @@ export class QuestionnaireService {
     constructor(private service: ScrollableSuitabilityAnswersService) {}
 
     async loadNext(): Promise<QuestionnaireResponses> {
-        const page = await this.service.getSuitabilityAnswers(this.nextCursor, 100);
+        const page = await this.service.getSuitabilityAnswers(this.nextCursor, 10);
         this.nextCursor = page.nextCursor;
         return new QuestionnaireResponses(
             page.questionnaires,

@@ -8,6 +8,7 @@ import { SharedModule } from '../shared/shared.module';
 import { VhOfficerAdminGuard } from '../security/vh-officer-admin.guard';
 import { AnswerListEntryComponent } from './answer-list-entry/answer-list-entry.component';
 import { ScrollableSuitabilityAnswersService } from './services/scrollable-suitability-answers.service';
+import { QuestionnarieMapperFactory } from './services/questionnarie-mapper.factory';
 
 export const routes: Routes = [
   { path: 'checklists', component: AnswersListComponent, canActivate: [VhOfficerAdminGuard] },
@@ -21,7 +22,8 @@ export const routes: Routes = [
   ],
   providers: [
     QuestionnaireService,
-    { provide: ScrollableSuitabilityAnswersService, useClass: QuestionnaireApiService }
+    { provide: ScrollableSuitabilityAnswersService, useClass: QuestionnaireApiService },
+    QuestionnarieMapperFactory,
   ],
   exports: [
     RouterModule
