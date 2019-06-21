@@ -14,16 +14,23 @@ export class QuestionnaireResponses {
 
 @Injectable()
 export class QuestionnaireService {
-    private nextCursor = '';
+  private nextCursor = '';
+  private hasMore = true;
 
-    constructor(private service: ScrollableSuitabilityAnswersService) {}
+  constructor(private service: ScrollableSuitabilityAnswersService) { }
 
-    async loadNext(): Promise<QuestionnaireResponses> {
-        const page = await this.service.getSuitabilityAnswers(this.nextCursor, 100);
-        this.nextCursor = page.nextCursor;
-        return new QuestionnaireResponses(
-            page.questionnaires,
-            !!this.nextCursor && this.nextCursor.length > 0
-        );
+  async loadNext(): Promise<QuestionnaireResponses> {
+    if (!this.hasMore) {
+      return new QuestionnaireResponses([], false);
     }
+    const page = await this.service.getSuitabilityAnswers(this.nextCursor, 5);
+
+    // we need to figure out if next cursor is returned as null or not
+    this.nextCursor = page.nextCursor;
+    this.hasMore = !!page.nextCursor;
+    return new QuestionnaireResponses(
+      page.questionnaires,
+      this.hasMore
+    );
+  }
 }
