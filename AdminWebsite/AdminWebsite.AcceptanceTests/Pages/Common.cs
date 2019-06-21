@@ -65,7 +65,15 @@ namespace AdminWebsite.AcceptanceTests.Pages
             _browserContext.Retry(() => _browserContext.NgDriver.WaitUntilElementClickable(By.Id("bookButton")).Click());
         }
         public void CancelButton() => _browserContext.NgDriver.WaitUntilElementClickable(_cancelButton).Click();
-        public string GetElementText(By element) => _browserContext.NgDriver.WaitUntilElementVisible(element).Text.Trim();
+        public string GetElementText(By element)
+        {
+            var webElementText = string.Empty;
+            _browserContext.Retry(() =>
+            {
+                webElementText = _browserContext.NgDriver.WaitUntilElementVisible(element).Text.Trim();
+            }, 1);
+            return webElementText;
+        }
 
         protected void SelectOption(By elements, string option)
         {
@@ -123,16 +131,7 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public void ClickBreadcrumb(string breadcrumb) => SelectOption(_breadcrumbs, breadcrumb);
         public void AcceptBrowserAlert() => _browserContext.AcceptAlert();
         public void DashBoard() => ClickElement(By.Id("topItem0"));
-        public void BookingsList()
-        {            
-            _browserContext.Retry(() =>
-            {
-                var element = _browserContext.NgDriver.FindElement(By.Id("topItem1"));
-                ExecuteScript("document.getElementById('topItem1').click()");
-                element.GetAttribute("class").Should().Contain("active");
-            }, 3);
-        }
-
+        public void BookingsList() => ExecuteScript("document.getElementById('topItem1').click()");
         public void AddItems<T>(string key, T value) => _browserContext.Items.AddOrUpdate(key, value);
         public dynamic GetItems(string key) => _browserContext.Items.Get(key);
         public string GetParticipantDetails() => GetElementText(By.XPath("//*[contains(@class, 'vhtable-header')]"));
@@ -146,7 +145,6 @@ namespace AdminWebsite.AcceptanceTests.Pages
             }
             return list;
         }
-        public void TopMenuHmctsLogo() => SelectOption(By.XPath("//*[@class='hmcts-header__logotype']"));
         public string ExecuteScript(string script) => _browserContext.ExecuteJavascript(script);
         public string Page() => _browserContext.PageUrl();
         public string CancelWarningMessage() => GetElementText(By.XPath("//*[@class='content']/h1"));
