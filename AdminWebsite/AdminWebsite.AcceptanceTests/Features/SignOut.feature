@@ -42,7 +42,7 @@ Examples:
 | Other information |
 | Summary           |
 
-@bug_VIH-4159
+@VIH-2072
 Scenario Outline: Warning message to dsiplay when Case Admin tries to navigate away from booking
 	Given Case Admin logs into Vh-Admin website 
 	When user tries to navigate away from <booking> a hearing
@@ -51,4 +51,3 @@ Examples:
 | booking                     |
 | Dashboard                   |
 | Bookings List               |
-| HMCTS Video hearing service |
