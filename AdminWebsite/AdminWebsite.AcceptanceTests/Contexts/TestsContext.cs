@@ -1,5 +1,7 @@
 ﻿using AdminWebsite.AcceptanceTests.Configuration;
+using AdminWebsite.BookingsAPI.Client;
 using RestSharp;
+using System.Collections.Generic;
 using Testing.Common;
 
 namespace AdminWebsite.AcceptanceTests.Contexts
@@ -14,6 +16,8 @@ namespace AdminWebsite.AcceptanceTests.Contexts
         public string HearingId { get; set; }
         public UserAccount TestUserSecrets { get; set; }
         public SecuritySettings AzureAd { get; set; }
+        public List<ParticipantResponse> Participants { get; set; }
+
 
         public RestClient Client()
         {
