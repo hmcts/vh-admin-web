@@ -9,17 +9,10 @@ using Testing.Common;
 
 namespace AdminWebsite.AcceptanceTests.Steps
 {
-    public class SuitabilityAnswerEndpoints
-    {
-        private string ApiRoot => "suitability-answers";
-        public string GetSuitabilityAnswers(string cursor) => $"{ApiRoot}/{cursor}";
-        public string GetSuitabilityAnswerWithLimit(string cursor = "", int limit = 100) => $"{ApiRoot}/?cursor={cursor}&limit={limit}";
-    }
-
     [Binding]
     public class QuestionnarieList
     {
-        private string url = $"suitability-answers/";
+        private readonly string CaseNumberKey = "HEARING_CASE_NUMBER";
         private readonly Questionnaire _questionnarieList;
         private readonly Dashboard _dashboard;
         private readonly LoginSteps _loginSteps;
@@ -42,14 +35,15 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             var bookNewHearingRequest = CreateHearingRequest.BuildRequest();
             _testsContext.Request = _testsContext.Post("hearings", bookNewHearingRequest);
-            var response = _testsContext.Client().Execute(_testsContext.Request);
+            var response = _testsContext.Execute();
             var hearing = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<HearingDetailsResponse>(response.Content);
             var hearingId = hearing.Id.ToString();
             var participantId = hearing.Participants[0].Id.ToString();
-            _scenarioContext.Add("HEARING_CASE_NUMBER", hearing.Cases[0].Number);
-            _testsContext.Answers = CreateHearingRequest.BuildSuitabilityAnswerRequest();
-            _testsContext.Request = _testsContext.Put($"hearings/{hearingId}/participants/{participantId}/suitability-answers", _testsContext.Answers);
-            var responseAnswer = _testsContext.Client().Execute(_testsContext.Request);
+            _scenarioContext.Add(CaseNumberKey, hearing.Cases[0].Number);
+
+            var answers = CreateHearingRequest.BuildSuitabilityAnswerRequest();
+            _testsContext.Request = _testsContext.Put($"hearings/{hearingId}/participants/{participantId}/suitability-answers", answers);
+            var responseAnswer = _testsContext.Execute();
         }
 
         [Given(@"VH Officer on dashboard page")]
@@ -57,7 +51,6 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             _loginSteps.UserLogsInWithValidCredentials("VH Officer");
             _dashboard.PageUrl(PageUri.DashboardPage);
-
         }
 
         [When(@"VH Officer press questionnaire")]
@@ -69,11 +62,14 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [Then(@"Expected questionnaire with answers should be populated")]
         public void ThenExpectedQuestionnaireWithAnswersShouldBePopulated()
         {
-            var caseNumber = _scenarioContext["HEARING_CASE_NUMBER"].ToString();
+            var caseNumber = _scenarioContext[CaseNumberKey].ToString();
             _questionnarieList.Particpants().Count().Should().BeGreaterThan(0);
 
             var element = _questionnarieList.Particpants().FirstOrDefault(x => x.Text.Contains(caseNumber));
             element.Should().NotBeNull();
+
+            element.Click();
+            _questionnarieList.Answers().Where(x => x == "Yes").Count().Should().Be(2);
         }
     }
 }

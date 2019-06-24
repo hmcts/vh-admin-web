@@ -16,9 +16,6 @@ namespace AdminWebsite.AcceptanceTests.Contexts
         public string HearingId { get; set; }
         public UserAccount TestUserSecrets { get; set; }
         public SecuritySettings AzureAd { get; set; }
-        public List<ParticipantResponse> Participants { get; set; }
-        public List<SuitabilityAnswersRequest> Answers { get; set; }
-
 
         public RestClient Client()
         {
@@ -54,6 +51,11 @@ namespace AdminWebsite.AcceptanceTests.Contexts
             request.AddParameter("Application/json", ApiRequestHelper.SerialiseRequestToSnakeCaseJson(requestBody),
                 ParameterType.RequestBody);
             return request;
+        }
+
+        public IRestResponse Execute()
+        {
+            return Client().Execute(Request);
         }
     }
 }

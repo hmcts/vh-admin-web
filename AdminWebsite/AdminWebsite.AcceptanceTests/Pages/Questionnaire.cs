@@ -19,5 +19,11 @@ namespace AdminWebsite.AcceptanceTests.Pages
         {
             return GetListOfElements(By.CssSelector("span.vh-ml15")).ToList();
         }
+
+        public IList<string> Answers()
+        {
+            var answerElements = GetListOfElements(By.XPath("//*[@class='govuk-body vh-date vh-wrap vh-mr15']"));
+            return answerElements.Select(x => x.Text).ToList();
+        }
     }
 }

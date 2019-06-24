@@ -38,15 +38,20 @@ namespace AdminWebsite.AcceptanceTests.Helpers
 
         public static List<SuitabilityAnswersRequest> BuildSuitabilityAnswerRequest()
         {
-            var answer1 = new SuitabilityAnswersRequest();
-            answer1.Key = "ABOUT_YOU";
-            answer1.Extended_answer = "Comments";
-            answer1.Answer = "Yes";
+            var answer1 = new SuitabilityAnswersRequest
+            {
+                Key = "ABOUT_YOU",
+                Extended_answer = "Comments",
+                Answer = "Yes"
+            };
 
-            var answer2 = new SuitabilityAnswersRequest();
-            answer2.Key = "ROOM";
-            answer2.Extended_answer = "";
-            answer2.Answer = "Yes";
+            var answer2 = new SuitabilityAnswersRequest
+            {
+                Key = "ROOM",
+                Extended_answer = "",
+                Answer = "Yes"
+            };
+
             return new List<SuitabilityAnswersRequest> { answer1, answer2 };
         }
     }
