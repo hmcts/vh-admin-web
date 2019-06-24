@@ -1,7 +1,5 @@
 ﻿using AdminWebsite.AcceptanceTests.Configuration;
-using AdminWebsite.BookingsAPI.Client;
 using RestSharp;
-using System.Collections.Generic;
 using Testing.Common;
 
 namespace AdminWebsite.AcceptanceTests.Contexts
