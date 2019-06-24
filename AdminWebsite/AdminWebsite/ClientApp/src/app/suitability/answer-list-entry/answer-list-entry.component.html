@@ -9,7 +9,7 @@
       </a>
     </div>
     <div class="govuk-grid-column-one-third">
-      <span class="vh-date">
+      <span class="vh-date govuk-body">
         {{questionnaire.updatedAt |date: 'h:mm a, dd MMMM yyyy'}}
       </span>
     </div>
@@ -19,7 +19,7 @@
 
   <div *ngIf="expanded" class="vh-ml15">
     <div class="govuk-grid-row" *ngFor="let answerGroup of answers">
-      <span class="govuk-heading-s ">{{answerGroup.title}}</span>
+      <span class="govuk-heading-s vh-answer-group-heading">{{answerGroup.title}}</span>
 
       <div *ngFor="let answer of answerGroup.answers">
         <div class="govuk-grid-row">
