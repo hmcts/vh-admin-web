@@ -17,6 +17,7 @@ namespace AdminWebsite.AcceptanceTests.Contexts
         public UserAccount TestUserSecrets { get; set; }
         public SecuritySettings AzureAd { get; set; }
         public List<ParticipantResponse> Participants { get; set; }
+        public List<SuitabilityAnswersRequest> Answers { get; set; }
 
 
         public RestClient Client()
