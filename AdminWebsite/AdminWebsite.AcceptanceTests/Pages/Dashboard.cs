@@ -25,6 +25,7 @@ namespace AdminWebsite.AcceptanceTests.Pages
             return panelTitles;
         }
         public string UnauthorisedText() => _browserContext.NgDriver.WaitUntilElementVisible(_unauthorisedText).Text.Trim();
-        public void BookHearingPanel() => ClickElement(_bookHearingPanel);       
+        public void BookHearingPanel() => ClickElement(_bookHearingPanel);
+        public void QuestionnaireResultPanel() => ClickElement(_questionnaireResultPanel);
     }
 }

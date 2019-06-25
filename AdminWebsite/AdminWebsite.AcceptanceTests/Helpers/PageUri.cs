@@ -12,5 +12,6 @@
         public const string SummaryPage = "/summary";
         public const string BookingConfirmationPage = "/booking-confirmation";
         public const string BookingDetailsPage = "/booking-details";
+        public const string QuestionnairePage = "/questionnaire";
     }
 }                   
