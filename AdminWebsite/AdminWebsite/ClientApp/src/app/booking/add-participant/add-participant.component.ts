@@ -502,10 +502,6 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     });
   }
 
-  showErrorSummary() {
-    return !this.form.valid || !this.isRoleSelected;
-  }
-
   saveParticipant() {
     this.actionsBeforeSave();
     const validEmail = this.showDetails && (this.searchEmail ? this.searchEmail.validateEmail() : true);
@@ -702,6 +698,11 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     }
   }
 
+  /**
+   * Show validation error if not valid participant is added,
+   * if we are editing a participant, update it and go to summary
+   * otherwise proceed to next edit screen
+   */
   next() {
     if (this.checkParticipants()) {
       if (this.editMode) {

@@ -531,7 +531,7 @@ describe('AddParticipantComponent', () => {
   it('should show error summary if input data is invalid', () => {
     component.isRoleSelected = false;
     component.saveParticipant();
-    expect(component.showErrorSummary).toBeTruthy();
+    expect(component.isShowErrorSummary).toBeTruthy();
   });
   it('if cancel add participant then pop up confirmation dialog', () => {
     component.addParticipantCancel();
