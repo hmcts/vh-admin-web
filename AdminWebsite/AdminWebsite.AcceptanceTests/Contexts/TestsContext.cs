@@ -50,5 +50,10 @@ namespace AdminWebsite.AcceptanceTests.Contexts
                 ParameterType.RequestBody);
             return request;
         }
+
+        public IRestResponse Execute()
+        {
+            return Client().Execute(Request);
+        }
     }
 }
