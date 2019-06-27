@@ -197,7 +197,7 @@ describe('AddParticipantComponent', () => {
     videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>([
       'getParticipantRoles', 'getCurrentRequest', 'setBookingHasChanged', 'updateHearingRequest', 'cancelRequest'
     ]);
-    videoHearingsServiceSpy.getParticipantRoles.and.returnValue(of(roleList));
+    videoHearingsServiceSpy.getParticipantRoles.and.returnValue(Promise.resolve(roleList));
     videoHearingsServiceSpy.getCurrentRequest.and.returnValue(hearing);
     participantServiceSpy = jasmine.createSpyObj<ParticipantService>(['mapParticipantsRoles', 'checkDuplication']);
     participantServiceSpy.mapParticipantsRoles.and.returnValue(partyList);
@@ -576,7 +576,7 @@ describe('AddParticipantComponent edit mode', () => {
       .compileComponents();
 
     const hearing = initExistHearingRequest();
-    videoHearingsServiceSpy.getParticipantRoles.and.returnValue(of(roleList));
+    videoHearingsServiceSpy.getParticipantRoles.and.returnValue(Promise.resolve(roleList));
     videoHearingsServiceSpy.getCurrentRequest.and.returnValue(hearing);
     participantServiceSpy.mapParticipantsRoles.and.returnValue(partyList);
     bookingServiceSpy.isEditMode.and.returnValue(true);
@@ -804,7 +804,7 @@ describe('AddParticipantComponent edit mode no participants added', () => {
     videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>([
       'getParticipantRoles', 'getCurrentRequest', 'setBookingHasChanged'
     ]);
-    videoHearingsServiceSpy.getParticipantRoles.and.returnValue(of(roleList));
+    videoHearingsServiceSpy.getParticipantRoles.and.returnValue(Promise.resolve(roleList));
     videoHearingsServiceSpy.getCurrentRequest.and.returnValue(hearing);
     participantServiceSpy.mapParticipantsRoles.and.returnValue(partyList);
     bookingServiceSpy = jasmine.createSpyObj<BookingService>(['getParticipantEmail', 'isEditMode', 'setEditMode']);
@@ -971,7 +971,7 @@ describe('AddParticipantComponent set representer', () => {
 
   beforeEach(async(() => {
     const hearing = initExistHearingRequest();
-    videoHearingsServiceSpy.getParticipantRoles.and.returnValue(of(roleList));
+    videoHearingsServiceSpy.getParticipantRoles.and.returnValue(Promise.resolve(roleList));
     videoHearingsServiceSpy.getCurrentRequest.and.returnValue(hearing);
     participantServiceSpy.mapParticipantsRoles.and.returnValue(partyList);
     bookingServiceSpy.isEditMode.and.returnValue(true);

@@ -23,6 +23,7 @@ export class VideoHearingsService {
   private newRequestKey: string;
   private bookingHasChangesKey: string;
   private modelHearing: HearingModel;
+  private participantRoles = new Map<string, CaseAndHearingRolesResponse[]>();
 
   constructor(private bhClient: BHClient) {
     this.newRequestKey = 'bh-newRequest';
@@ -80,8 +81,13 @@ export class VideoHearingsService {
     sessionStorage.setItem(this.newRequestKey, localRequest);
   }
 
-  getParticipantRoles(caseTypeName: string): Observable<CaseAndHearingRolesResponse[]> {
-    return this.bhClient.getParticipantRoles(caseTypeName);
+  async getParticipantRoles(caseTypeName: string): Promise<CaseAndHearingRolesResponse[]> {
+    if (this.participantRoles.has(caseTypeName)) {
+      return this.participantRoles.get(caseTypeName);
+    }
+    const roles = await this.bhClient.getParticipantRoles(caseTypeName).toPromise();
+    this.participantRoles.set(caseTypeName, roles);
+    return roles;
   }
 
   cancelRequest() {
