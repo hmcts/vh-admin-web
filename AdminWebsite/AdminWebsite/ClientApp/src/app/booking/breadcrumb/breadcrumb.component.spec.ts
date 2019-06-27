@@ -1,126 +1,44 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
-import { RouterTestingModule } from '@angular/router/testing';
-import { Observable } from 'rxjs';
-import { CancelPopupComponent } from 'src/app/popups/cancel-popup/cancel-popup.component';
-import { ConfirmationPopupComponent } from 'src/app/popups/confirmation-popup/confirmation-popup.component';
-import { RemovePopupComponent } from '../../popups/remove-popup/remove-popup.component';
-import { BHClient, ClientSettingsResponse } from 'src/app/services/clients/api-client';
-import { SharedModule } from 'src/app/shared/shared.module';
-import { MomentModule } from 'angular2-moment';
-
-import { routes } from '../../app-routing.module';
-import { AppComponent } from '../../app.component';
-import { DashboardComponent } from '../../dashboard/dashboard.component';
-import { LoginComponent } from '../../security/login.component';
-import { LogoutComponent } from '../../security/logout.component';
-import { ConfigService } from '../../services/config.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
-import { AddParticipantComponent } from '../add-participant/add-participant.component';
-import { AssignJudgeComponent } from '../assign-judge/assign-judge.component';
-import { BookingConfirmationComponent } from '../booking-confirmation/booking-confirmation.component';
-import { CreateHearingComponent } from '../create-hearing/create-hearing.component';
-import { HearingScheduleComponent } from '../hearing-schedule/hearing-schedule.component';
-import { OtherInformationComponent } from '../other-information/other-information.component';
-import { ParticipantsListComponent } from '../participants-list/participants-list.component';
-import { SearchEmailComponent } from '../search-email/search-email.component';
-import { SummaryComponent } from '../summary/summary.component';
 import { BreadcrumbComponent } from './breadcrumb.component';
 import { BreadcrumbItemModel } from './breadcrumbItem.model';
-import { UnauthorisedComponent } from '../../error/unauthorised.component';
-import { ErrorComponent } from '../../error/error.component';
-import { SignOutPopupComponent } from '../../popups/sign-out-popup/sign-out-popup.component';
-import { WaitPopupComponent } from '../../popups/wait-popup/wait-popup.component';
-import { SaveFailedPopupComponent } from '../../popups/save-failed-popup/save-failed-popup.component';
-import { DiscardConfirmPopupComponent } from '../../popups/discard-confirm-popup/discard-confirm-popup.component';
+
 describe('BreadcrumbComponent', () => {
-  const videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',
-    ['getHearingMediums', 'getHearingTypes', 'getCurrentRequest', 'updateHearingRequest', 'validCurrentRequest']);
-  const bhClientSpy: jasmine.SpyObj<BHClient> = jasmine.createSpyObj<BHClient>('BHClient', ['getConfigSettings']);
+  const videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>(['validCurrentRequest']);
 
   let component: BreadcrumbComponent;
-  let fixture: ComponentFixture<BreadcrumbComponent>;
   const router = {
-    navigate: jasmine.createSpy('navigate'),
-    url: '/hearing-schedule'
-  };
-
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [
-        BreadcrumbComponent,
-        AppComponent,
-        DashboardComponent,
-        LoginComponent,
-        LogoutComponent,
-        CreateHearingComponent,
-        HearingScheduleComponent,
-        AssignJudgeComponent,
-        AddParticipantComponent,
-        OtherInformationComponent,
-        SearchEmailComponent,
-        ParticipantsListComponent,
-        CancelPopupComponent,
-        SearchEmailComponent,
-        ConfirmationPopupComponent,
-        SummaryComponent,
-        BookingConfirmationComponent,
-        UnauthorisedComponent,
-        ErrorComponent,
-        SignOutPopupComponent,
-        RemovePopupComponent,
-        WaitPopupComponent,
-        SaveFailedPopupComponent,
-        DiscardConfirmPopupComponent,
-      ],
-      providers: [
-        { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
-        { provide: Router, useValue: router },
-        ConfigService,
-        { provide: BHClient, useValue: bhClientSpy },
-      ],
-      imports: [RouterTestingModule.withRoutes(routes), SharedModule, MomentModule]
-    })
-      .compileComponents();
-  }));
+    url: '/hearing-schedule',
+    ...jasmine.createSpyObj<Router>(['navigate'])
+  } as jasmine.SpyObj<Router>;
 
   beforeEach(() => {
-    const clientSettings = new ClientSettingsResponse();
-    clientSettings.tenant_id = 'tenantId';
-    clientSettings.client_id = 'clientId';
-    clientSettings.post_logout_redirect_uri = '/dashboard';
-    clientSettings.redirect_uri = '/dashboard';
-    bhClientSpy.getConfigSettings.and.returnValue(Observable.create(clientSettings));
-
-    fixture = TestBed.createComponent(BreadcrumbComponent);
-    component = fixture.componentInstance;
+    component = new BreadcrumbComponent(router, videoHearingsServiceSpy);
     component.canNavigate = true;
-    fixture.detectChanges();
-
+    component.ngOnInit();
   });
 
   it('should create breadcrumb component', () => {
-    component.ngOnInit();
     expect(component).toBeTruthy();
   });
+
   it('breadcrumb component should have predefine navigation items', () => {
-    component.ngOnInit();
     expect(component.breadcrumbItems.length).toBeGreaterThan(0);
   });
+
   it('breadcrumb component currentItem should match the current route and be type BreadcrumbItemModel', () => {
-    component.ngOnInit();
     expect(component.currentRouter).toEqual('/hearing-schedule');
     expect(component.currentItem.Url).toEqual(component.currentRouter);
     expect(component.currentItem instanceof BreadcrumbItemModel).toBeTruthy();
 
   });
+
   it('breadcrumb component currentItem should have property Active set to true and property Value set to true', () => {
-    component.ngOnInit();
     expect(component.currentItem.Active).toBeTruthy();
     expect(component.currentItem.Value).toBeTruthy();
   });
+
   it('next items should have property Active set to false and property Value set to false', () => {
-    component.ngOnInit();
     for (const item of component.breadcrumbItems) {
       if (item.Url !== component.currentItem.Url && item.Id > component.currentItem.Id) {
         expect(item.Active).toBeFalsy();
@@ -128,9 +46,8 @@ describe('BreadcrumbComponent', () => {
       }
     }
   });
+
   it('previous items should have property Active set to true and property Value set to false', () => {
-    component.currentItem = component.breadcrumbItems[2];
-    component.ngOnInit();
     for (const item of component.breadcrumbItems) {
       if (item.Url !== component.currentItem.Url && item.Id < component.currentItem.Id) {
         expect(item.Active).toBeTruthy();
@@ -138,29 +55,29 @@ describe('BreadcrumbComponent', () => {
       }
     }
   });
+
   it('should not navigate to next route if canNavigate set to false', () => {
-    component.ngOnInit();
     component.canNavigate = false;
     const step = new BreadcrumbItemModel(2, false, 'Hearing schedule', '/hearing-schedule', false);
     component.clickBreadcrumbs(step);
     expect(router.navigate).toHaveBeenCalledTimes(0);
   });
+
   it('should not navigate to next route if the difference between next item id and the current is greater than 1', () => {
-    component.ngOnInit();
     component.canNavigate = false;
     const step = new BreadcrumbItemModel(2, false, 'Hearing schedule', '/assign-judge', false);
     component.clickBreadcrumbs(step);
     expect(router.navigate).toHaveBeenCalledTimes(0);
   });
+
   it('should not navigate to next route if the next item with the given url is not found', () => {
-    component.ngOnInit();
     component.canNavigate = false;
     const step = new BreadcrumbItemModel(2, false, 'Hearing schedule', '/some-thing', false);
     component.clickBreadcrumbs(step);
     expect(router.navigate).toHaveBeenCalledTimes(0);
   });
+
   it('should navigate to next route if canNavigate set to true and next item in correct order', () => {
-    component.ngOnInit();
     const step = new BreadcrumbItemModel(2, false, 'Hearing schedule', '/assign-judge', false);
     component.clickBreadcrumbs(step);
     expect(router.navigate).toHaveBeenCalledWith(['/assign-judge']);
