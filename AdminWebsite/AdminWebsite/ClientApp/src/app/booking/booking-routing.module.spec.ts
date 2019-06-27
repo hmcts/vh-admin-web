@@ -15,27 +15,17 @@ import { MockAdalService } from '../testing/mocks/MockAdalService';
 import { MockAdminGuard } from '../testing/mocks/MockAdminGuard';
 
 import { CreateHearingComponent } from './create-hearing/create-hearing.component';
-import { HearingScheduleComponent } from './hearing-schedule/hearing-schedule.component';
-import { AssignJudgeComponent } from './assign-judge/assign-judge.component';
-import { AddParticipantComponent } from './add-participant/add-participant.component';
-import { OtherInformationComponent } from './other-information/other-information.component';
-import { SummaryComponent } from './summary/summary.component';
-import { BookingConfirmationComponent } from './booking-confirmation/booking-confirmation.component';
-import { BreadcrumbComponent } from './breadcrumb/breadcrumb.component';
-import { SearchEmailComponent } from './search-email/search-email.component';
-import { ParticipantsListComponent } from './participants-list/participants-list.component';
 import { CancelPopupComponent } from '../popups/cancel-popup/cancel-popup.component';
 import { ConfirmationPopupComponent } from '../popups/confirmation-popup/confirmation-popup.component';
-import { BookingEditComponent } from '../shared/booking-edit/booking-edit.component';
 import { ErrorService } from '../services/error.service';
-import { RemovePopupComponent } from '../popups/remove-popup/remove-popup.component';
 import { WaitPopupComponent } from '../popups/wait-popup/wait-popup.component';
 import { SaveFailedPopupComponent } from '../popups/save-failed-popup/save-failed-popup.component';
 import { DiscardConfirmPopupComponent } from '../popups/discard-confirm-popup/discard-confirm-popup.component';
 import { MomentModule } from 'angular2-moment';
-import { LongDatetimePipe } from '../../app/shared/directives/date-time.pipe';
+import { Components } from './booking.module';
+import { SharedModule } from '../shared/shared.module';
 
-describe('app routing', () => {
+describe('BookingModuleRouting', () => {
   let location: Location;
   let router: Router;
   let fixture: ComponentFixture<CreateHearingComponent>;
@@ -47,26 +37,20 @@ describe('app routing', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [ReactiveFormsModule, RouterTestingModule.withRoutes(routes), FormsModule, MomentModule],
+      imports: [
+        ReactiveFormsModule,
+        RouterTestingModule.withRoutes(routes),
+        FormsModule,
+        MomentModule,
+        SharedModule
+      ],
       declarations: [
-        BreadcrumbComponent,
         CancelPopupComponent,
-        SearchEmailComponent,
-        ParticipantsListComponent,
-        HearingScheduleComponent,
+        DiscardConfirmPopupComponent,
         ConfirmationPopupComponent,
-        AssignJudgeComponent,
-        AddParticipantComponent,
-        OtherInformationComponent,
-        CreateHearingComponent,
-        SummaryComponent,
-        BookingConfirmationComponent,
-        BookingEditComponent,
-        RemovePopupComponent,
         WaitPopupComponent,
         SaveFailedPopupComponent,
-        DiscardConfirmPopupComponent,
-        LongDatetimePipe
+        ...Components
       ],
       providers: [
         AuthGuard,

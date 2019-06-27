@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, Component, Type } from '@angular/core';
 import { MomentModule } from 'angular2-moment';
 import { PopupModule } from '../popups/popup.module';
 import { SharedModule } from '../shared/shared.module';
@@ -15,6 +15,20 @@ import { SearchEmailComponent } from './search-email/search-email.component';
 import { SummaryComponent } from './summary/summary.component';
 import { RemovePopupComponent } from '../popups/remove-popup/remove-popup.component';
 
+export const Components: Type<any>[] = [
+  CreateHearingComponent,
+  HearingScheduleComponent,
+  AssignJudgeComponent,
+  AddParticipantComponent,
+  RemovePopupComponent,
+  OtherInformationComponent,
+  SummaryComponent,
+  BookingConfirmationComponent,
+  BreadcrumbComponent,
+  SearchEmailComponent,
+  ParticipantsListComponent
+];
+
 @NgModule({
   imports: [
     MomentModule,
@@ -22,30 +36,7 @@ import { RemovePopupComponent } from '../popups/remove-popup/remove-popup.compon
     BookingRoutingModule,
     PopupModule
   ],
-  declarations: [
-    CreateHearingComponent,
-    HearingScheduleComponent,
-    AssignJudgeComponent,
-    AddParticipantComponent,
-    RemovePopupComponent,
-    OtherInformationComponent,
-    SummaryComponent,
-    BookingConfirmationComponent,
-    BreadcrumbComponent,
-    SearchEmailComponent,
-    ParticipantsListComponent,
-  ],
-  exports: [
-    CreateHearingComponent,
-    HearingScheduleComponent,
-    AssignJudgeComponent,
-    AddParticipantComponent,
-    OtherInformationComponent,
-    SummaryComponent,
-    BookingConfirmationComponent,
-    BreadcrumbComponent,
-    SearchEmailComponent,
-    ParticipantsListComponent
-  ]
+  declarations: Components,
+  exports: Components
 })
 export class BookingModule { }
