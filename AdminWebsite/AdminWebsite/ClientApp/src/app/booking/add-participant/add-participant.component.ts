@@ -37,7 +37,8 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   selectedParticipantEmail: string = null;
   private role: FormControl;
   private party: FormControl;
-  private title: FormControl;
+  //private title: FormControl;
+  selectedTitle: string = null;
   private firstName: FormControl;
   private lastName: FormControl;
   private phone: FormControl;
@@ -175,7 +176,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
       Validators.required,
       Validators.pattern(this.constants.PleaseSelectPattern)
     ]);
-    this.title = new FormControl(this.constants.PleaseSelect);
+    //this.title = new FormControl(this.constants.PleaseSelect);
     this.firstName = new FormControl('', Validators.required);
     this.lastName = new FormControl('', Validators.required);
     this.phone = new FormControl('', [Validators.required, Validators.pattern(/^[0-9) -.]+$/)]);
@@ -192,7 +193,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     this.form = new FormGroup({
       role: this.role,
       party: this.party,
-      title: this.title,
+      //title: this.title,
       firstName: this.firstName,
       lastName: this.lastName,
       phone: this.phone,
@@ -213,7 +214,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         setTimeout(() => {
           if (self.showDetails && (self.role.value === self.constants.PleaseSelect &&
             self.party.value === self.constants.PleaseSelect &&
-            self.title.value === self.constants.PleaseSelect &&
+            self.selectedTitle === null &&
             self.firstName.value === '' &&
             self.lastName.value === '' &&
             self.phone.value === '' &&
@@ -292,10 +293,11 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     }
     this.isSolicitor = this.participantDetails.hearing_role_name === Constants.Solicitor;
 
+    this.selectedTitle = this.participantDetails.title;
     this.form.setValue({
       party: this.participantDetails.case_role_name,
       role: this.participantDetails.hearing_role_name,
-      title: (this.participantDetails.title === undefined) ? this.constants.PleaseSelect : this.participantDetails.title,
+      // title: (this.participantDetails.title === undefined) ? this.constants.PleaseSelect : this.participantDetails.title,
       firstName: this.participantDetails.first_name,
       lastName: this.participantDetails.last_name,
       phone: this.participantDetails.phone || '',
@@ -493,7 +495,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   }
 
   titleSelected() {
-    this.isTitleSelected = this.title.value !== this.constants.PleaseSelect;
+    this.isTitleSelected = this.selectedTitle !== null;
   }
 
   emailInvalid() {
@@ -591,7 +593,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     newParticipant.first_name = this.firstName.value;
     newParticipant.last_name = this.lastName.value;
     newParticipant.phone = this.phone.value;
-    newParticipant.title = (this.title.value === this.constants.PleaseSelect) ? null : this.title.value;
+    newParticipant.title = this.selectedTitle;
     newParticipant.case_role_name = this.party.value;
     newParticipant.hearing_role_name = this.role.value;
     newParticipant.email = this.searchEmail ? this.searchEmail.email : '';
@@ -661,11 +663,12 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
   clearForm() {
     this.enableFields();
+    this.selectedTitle = null;
     this.form.setValue(
       {
         role: this.constants.PleaseSelect,
         party: this.constants.PleaseSelect,
-        title: this.constants.PleaseSelect,
+        //title: this.constants.PleaseSelect,
         firstName: '',
         lastName: '',
         phone: '',

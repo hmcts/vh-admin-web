@@ -14,6 +14,7 @@ import { ParticipantsListComponent } from './participants-list/participants-list
 import { SearchEmailComponent } from './search-email/search-email.component';
 import { SummaryComponent } from './summary/summary.component';
 import { RemovePopupComponent } from '../popups/remove-popup/remove-popup.component';
+import { TitleDropDownComponent } from './title-dropdown/title-dropdown.component';
 
 @NgModule({
   imports: [
@@ -34,6 +35,7 @@ import { RemovePopupComponent } from '../popups/remove-popup/remove-popup.compon
     BreadcrumbComponent,
     SearchEmailComponent,
     ParticipantsListComponent,
+    TitleDropDownComponent
   ],
   exports: [
     CreateHearingComponent,

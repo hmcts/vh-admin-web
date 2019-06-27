@@ -25,6 +25,7 @@ import { PartyModel } from '../../common/model/party.model';
 import { Constants } from '../../common/constants';
 import { ParticipantsListComponent } from '../participants-list/participants-list.component';
 import { ElementRef } from '@angular/core';
+import { TitleDropDownComponent } from '../title-dropdown/title-dropdown.component';
 
 let component: AddParticipantComponent;
 let fixture: ComponentFixture<AddParticipantComponent>;
@@ -38,7 +39,7 @@ const partyList: PartyModel[] = [partyR];
 
 let role: AbstractControl;
 let party: AbstractControl;
-let title: AbstractControl;
+// let title: AbstractControl;
 let firstName: AbstractControl;
 let lastName: AbstractControl;
 let phone: AbstractControl;
@@ -224,7 +225,7 @@ describe('AddParticipantComponent', () => {
 
     role = component.form.controls['role'];
     party = component.form.controls['party'];
-    title = component.form.controls['title'];
+    // title = component.form.controls['title'];
     firstName = component.form.controls['firstName'];
     lastName = component.form.controls['lastName'];
     phone = component.form.controls['phone'];
@@ -266,7 +267,8 @@ describe('AddParticipantComponent', () => {
     expect(firstName.value).toBe('');
     expect(lastName.value).toBe('');
     expect(phone.value).toBe('');
-    expect(title.value).toBe('Please Select');
+    //expect(title.value).toBe('Please Select');
+    expect(component.selectedTitle).toBeNull();
     expect(companyName.value).toBe('');
     expect(houseNumber.value).toBe('');
     expect(street.value).toBe('');
@@ -359,7 +361,7 @@ describe('AddParticipantComponent', () => {
     expect(firstName.value).toBe(participant.first_name);
     expect(lastName.value).toBe(participant.last_name);
     expect(phone.value).toBe(participant.phone);
-    expect(title.value).toBe(participant.title);
+    expect(component.selectedTitle).toBe(participant.title);
     expect(displayName.value).toBe(participant.display_name);
     expect(companyName.value).toBe(participant.company);
     if (constants.IndividualRoles.indexOf(participant.hearing_role_name) > -1) {
@@ -382,7 +384,7 @@ describe('AddParticipantComponent', () => {
     expect(firstName.value).toBe('');
     expect(lastName.value).toBe('');
     expect(phone.value).toBe('');
-    expect(title.value).toBe('Please Select');
+    expect(component.selectedTitle).toBeNull();
     expect(displayName.value).toBe('');
     expect(companyName.value).toBe('');
     expect(role.untouched).toBeTruthy();
@@ -404,7 +406,8 @@ describe('AddParticipantComponent', () => {
     party.setValue('Claimant');
     firstName.setValue('Sam');
     lastName.setValue('Green');
-    title.setValue('Mrs');
+    //title.setValue('Mrs');
+    component.selectedTitle = 'Mrs';
     phone.setValue('12345');
     displayName.setValue('Sam Green');
     companyName.setValue('CC');
@@ -437,7 +440,8 @@ describe('AddParticipantComponent', () => {
     party.setValue('CaseRole');
     firstName.setValue('Sam');
     lastName.setValue('Green');
-    title.setValue('Mrs');
+    // title.setValue('Mrs');
+    component.selectedTitle = 'Mrs';
     phone.setValue('12345');
     displayName.setValue('Sam');
     companyName.setValue('CC');
@@ -519,12 +523,12 @@ describe('AddParticipantComponent', () => {
     expect(component.hearingRoleList.length).toBe(1);
   });
   it('should set to true isTitleSelected', () => {
-    title.setValue('Mr');
+    component.selectedTitle = 'Mr';
     component.titleSelected();
     expect(component.isTitleSelected).toBeTruthy();
   });
   it('should set to false isTitleSelected', () => {
-    title.setValue('Please Select');
+    component.selectedTitle = null;
     component.titleSelected();
     expect(component.isTitleSelected).toBeFalsy();
   });
@@ -561,6 +565,7 @@ describe('AddParticipantComponent edit mode', () => {
         ConfirmationPopupStubComponent,
         RemovePopupStubComponent,
         DiscardConfirmPopupComponent,
+        TitleDropDownComponent
       ],
       imports: [
         SharedModule
@@ -590,7 +595,7 @@ describe('AddParticipantComponent edit mode', () => {
 
     role = component.form.controls['role'];
     party = component.form.controls['party'];
-    title = component.form.controls['title'];
+    //title = component.form.controls['title'];
     firstName = component.form.controls['firstName'];
     lastName = component.form.controls['lastName'];
     phone = component.form.controls['phone'];
@@ -653,7 +658,8 @@ describe('AddParticipantComponent edit mode', () => {
     party.setValue('Claimant');
     firstName.setValue('Sam');
     lastName.setValue('Green');
-    title.setValue('Mrs');
+    //title.setValue('Mrs');
+    component.selectedTitle = 'Mrs';
     phone.setValue('12345');
     displayName.setValue('Sam');
     companyName.setValue('CC');
@@ -682,10 +688,11 @@ describe('AddParticipantComponent edit mode', () => {
   it('should update participant details and reset edit mode to false if method next is called', () => {
     fixture.detectChanges();
     component.searchEmail.email = participant.email;
+    component.selectedTitle = 'Ms';
     component.form.setValue({
       party: 'Claimant',
       role: 'Solicitor',
-      title: 'Ms',
+      //title: 'Ms',
       firstName: participant.first_name,
       lastName: participant.last_name,
       phone: participant.phone,
@@ -712,10 +719,11 @@ describe('AddParticipantComponent edit mode', () => {
   it('should detect that the form is invalid while performing update', () => {
     fixture.detectChanges();
     component.searchEmail.email = participant.email;
+    component.selectedTitle = null;
     component.form.setValue({
       party: 'Please Select',
       role: '',
-      title: 'Please Select',
+      //title: 'Please Select',
       firstName: participant.first_name,
       lastName: participant.last_name,
       phone: participant.phone,
@@ -827,7 +835,7 @@ describe('AddParticipantComponent edit mode no participants added', () => {
 
     role = component.form.controls['role'];
     party = component.form.controls['party'];
-    title = component.form.controls['title'];
+    //title = component.form.controls['title'];
     firstName = component.form.controls['firstName'];
     lastName = component.form.controls['lastName'];
     phone = component.form.controls['phone'];
@@ -988,7 +996,7 @@ describe('AddParticipantComponent set representer', () => {
 
     role = component.form.controls['role'];
     party = component.form.controls['party'];
-    title = component.form.controls['title'];
+    //title = component.form.controls['title'];
     firstName = component.form.controls['firstName'];
     lastName = component.form.controls['lastName'];
     phone = component.form.controls['phone'];

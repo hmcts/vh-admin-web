@@ -33,6 +33,7 @@ import { SignOutPopupComponent } from '../../popups/sign-out-popup/sign-out-popu
 import { WaitPopupComponent } from '../../popups/wait-popup/wait-popup.component';
 import { SaveFailedPopupComponent } from '../../popups/save-failed-popup/save-failed-popup.component';
 import { DiscardConfirmPopupComponent } from '../../popups/discard-confirm-popup/discard-confirm-popup.component';
+import { TitleDropDownComponent } from '../title-dropdown/title-dropdown.component';
 describe('BreadcrumbComponent', () => {
   const videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',
     ['getHearingMediums', 'getHearingTypes', 'getCurrentRequest', 'updateHearingRequest', 'validCurrentRequest']);
@@ -72,6 +73,7 @@ describe('BreadcrumbComponent', () => {
         WaitPopupComponent,
         SaveFailedPopupComponent,
         DiscardConfirmPopupComponent,
+        TitleDropDownComponent
       ],
       providers: [
         { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },

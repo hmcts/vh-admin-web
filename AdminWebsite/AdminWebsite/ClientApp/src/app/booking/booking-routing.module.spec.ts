@@ -1,3 +1,4 @@
+import { TitleDropDownComponent } from './title-dropdown/title-dropdown.component';
 import { routes } from './booking-routing.module';
 import { Location } from '@angular/common';
 import { TestBed, fakeAsync, tick, ComponentFixture } from '@angular/core/testing';
@@ -35,7 +36,7 @@ import { DiscardConfirmPopupComponent } from '../popups/discard-confirm-popup/di
 import { MomentModule } from 'angular2-moment';
 import { LongDatetimePipe } from '../../app/shared/directives/date-time.pipe';
 
-describe('app routing', () => {
+describe('BookingRouting', () => {
   let location: Location;
   let router: Router;
   let fixture: ComponentFixture<CreateHearingComponent>;
@@ -66,7 +67,8 @@ describe('app routing', () => {
         WaitPopupComponent,
         SaveFailedPopupComponent,
         DiscardConfirmPopupComponent,
-        LongDatetimePipe
+        LongDatetimePipe,
+        TitleDropDownComponent
       ],
       providers: [
         AuthGuard,
