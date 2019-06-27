@@ -86,18 +86,6 @@
         </app-search-email>
 
         <app-title-dropdown ([selectedTitle])="selectedTitle"></app-title-dropdown>
-        <!--
-        <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error': titleInvalid || !isTitleSelected}">
-          <label class="govuk-label" for="title">
-            Title
-          </label>
-          <select id="title" formControlName="title" class="govuk-select vh-input-w390">
-            <option *ngFor="let tit of titleList" [ngValue]="tit.value">
-              {{tit.value}}
-            </option>
-          </select>
-        </div>
-        -->
 
         <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':firstNameInvalid}">
 

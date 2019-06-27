@@ -37,7 +37,6 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   selectedParticipantEmail: string = null;
   private role: FormControl;
   private party: FormControl;
-  //private title: FormControl;
   selectedTitle: string = null;
   private firstName: FormControl;
   private lastName: FormControl;
@@ -176,7 +175,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
       Validators.required,
       Validators.pattern(this.constants.PleaseSelectPattern)
     ]);
-    //this.title = new FormControl(this.constants.PleaseSelect);
+
     this.firstName = new FormControl('', Validators.required);
     this.lastName = new FormControl('', Validators.required);
     this.phone = new FormControl('', [Validators.required, Validators.pattern(/^[0-9) -.]+$/)]);
@@ -297,7 +296,6 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     this.form.setValue({
       party: this.participantDetails.case_role_name,
       role: this.participantDetails.hearing_role_name,
-      // title: (this.participantDetails.title === undefined) ? this.constants.PleaseSelect : this.participantDetails.title,
       firstName: this.participantDetails.first_name,
       lastName: this.participantDetails.last_name,
       phone: this.participantDetails.phone || '',
@@ -668,7 +666,6 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
       {
         role: this.constants.PleaseSelect,
         party: this.constants.PleaseSelect,
-        //title: this.constants.PleaseSelect,
         firstName: '',
         lastName: '',
         phone: '',

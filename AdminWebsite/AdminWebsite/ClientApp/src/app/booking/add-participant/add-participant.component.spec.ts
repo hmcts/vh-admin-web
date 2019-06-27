@@ -39,7 +39,6 @@ const partyList: PartyModel[] = [partyR];
 
 let role: AbstractControl;
 let party: AbstractControl;
-// let title: AbstractControl;
 let firstName: AbstractControl;
 let lastName: AbstractControl;
 let phone: AbstractControl;
@@ -225,7 +224,6 @@ describe('AddParticipantComponent', () => {
 
     role = component.form.controls['role'];
     party = component.form.controls['party'];
-    // title = component.form.controls['title'];
     firstName = component.form.controls['firstName'];
     lastName = component.form.controls['lastName'];
     phone = component.form.controls['phone'];
@@ -267,7 +265,6 @@ describe('AddParticipantComponent', () => {
     expect(firstName.value).toBe('');
     expect(lastName.value).toBe('');
     expect(phone.value).toBe('');
-    //expect(title.value).toBe('Please Select');
     expect(component.selectedTitle).toBeNull();
     expect(companyName.value).toBe('');
     expect(houseNumber.value).toBe('');
@@ -406,7 +403,6 @@ describe('AddParticipantComponent', () => {
     party.setValue('Claimant');
     firstName.setValue('Sam');
     lastName.setValue('Green');
-    //title.setValue('Mrs');
     component.selectedTitle = 'Mrs';
     phone.setValue('12345');
     displayName.setValue('Sam Green');
@@ -440,7 +436,6 @@ describe('AddParticipantComponent', () => {
     party.setValue('CaseRole');
     firstName.setValue('Sam');
     lastName.setValue('Green');
-    // title.setValue('Mrs');
     component.selectedTitle = 'Mrs';
     phone.setValue('12345');
     displayName.setValue('Sam');
@@ -595,7 +590,6 @@ describe('AddParticipantComponent edit mode', () => {
 
     role = component.form.controls['role'];
     party = component.form.controls['party'];
-    //title = component.form.controls['title'];
     firstName = component.form.controls['firstName'];
     lastName = component.form.controls['lastName'];
     phone = component.form.controls['phone'];
@@ -658,7 +652,6 @@ describe('AddParticipantComponent edit mode', () => {
     party.setValue('Claimant');
     firstName.setValue('Sam');
     lastName.setValue('Green');
-    //title.setValue('Mrs');
     component.selectedTitle = 'Mrs';
     phone.setValue('12345');
     displayName.setValue('Sam');
@@ -692,7 +685,6 @@ describe('AddParticipantComponent edit mode', () => {
     component.form.setValue({
       party: 'Claimant',
       role: 'Solicitor',
-      //title: 'Ms',
       firstName: participant.first_name,
       lastName: participant.last_name,
       phone: participant.phone,
@@ -723,7 +715,6 @@ describe('AddParticipantComponent edit mode', () => {
     component.form.setValue({
       party: 'Please Select',
       role: '',
-      //title: 'Please Select',
       firstName: participant.first_name,
       lastName: participant.last_name,
       phone: participant.phone,
@@ -835,7 +826,6 @@ describe('AddParticipantComponent edit mode no participants added', () => {
 
     role = component.form.controls['role'];
     party = component.form.controls['party'];
-    //title = component.form.controls['title'];
     firstName = component.form.controls['firstName'];
     lastName = component.form.controls['lastName'];
     phone = component.form.controls['phone'];
@@ -996,7 +986,6 @@ describe('AddParticipantComponent set representer', () => {
 
     role = component.form.controls['role'];
     party = component.form.controls['party'];
-    //title = component.form.controls['title'];
     firstName = component.form.controls['firstName'];
     lastName = component.form.controls['lastName'];
     phone = component.form.controls['phone'];
