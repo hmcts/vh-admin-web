@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, HostListener, Output, ViewChild, OnInit } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostListener, Output, ViewChild, OnInit, Input } from '@angular/core';
 import { Subject } from 'rxjs';
 import { PersonResponse } from '../../services/clients/api-client';
 import { Constants } from '../../common/constants';
@@ -20,6 +20,10 @@ export class SearchEmailComponent implements OnInit {
   notFoundParticipant = false;
   email = '';
   isValidEmail = true;
+
+  @Input()
+  disabled: boolean = true;
+
   @Output()
   findParticipant = new EventEmitter<ParticipantModel>();
 
@@ -29,11 +33,7 @@ export class SearchEmailComponent implements OnInit {
   @Output()
   emailChanged = new EventEmitter<string>();
 
-  @ViewChild('emailInput')
-  emailInput: ElementRef;
-
-  constructor(private searchService: SearchService, private elRef: ElementRef) {
-  }
+  constructor(private searchService: SearchService) {}
 
   ngOnInit() {
     this.searchService.search(this.searchTerm)
@@ -79,7 +79,6 @@ export class SearchEmailComponent implements OnInit {
     selectedResult.is_exist_person = true;
     this.isShowResult = false;
     this.findParticipant.emit(selectedResult);
-    this.setEmailDisabled(true);
   }
 
   validateEmail() {
@@ -89,22 +88,8 @@ export class SearchEmailComponent implements OnInit {
     return this.isValidEmail;
   }
 
-  @HostListener('document:click', ['$event.target'])
-  clickedOutside(targetElement) {
-    const clickedInside = this.elRef.nativeElement.contains(targetElement);
-    if (!clickedInside) {
-      this.isShowResult = false;
-    }
-  }
-
-  setEmailDisabled(value: boolean) {
-    if (!value) {
-      this.emailInput.nativeElement.removeAttribute('disabled');
-    } else {
-      setTimeout(() => {
-        this.emailInput.nativeElement.setAttribute('disabled', 'true');
-      }, 500);
-    }
+  blur() {
+    this.isShowResult = false;
   }
 
   clearEmail() {

@@ -125,7 +125,7 @@ describe('SeachEmailComponent', () => {
 
     const emailEl = fixture.debugElement.query(By.css('#participantEmail'));
 
-    component.setEmailDisabled(true);
+    component.disabled = true;
     tick(600);
     fixture.detectChanges();
     expect(emailEl.nativeElement.disabled).toBeTruthy();
@@ -133,10 +133,10 @@ describe('SeachEmailComponent', () => {
   it('should enable email address', fakeAsync(() => {
     fixture.detectChanges();
     const emailEl = fixture.debugElement.query(By.css('#participantEmail'));
-    component.setEmailDisabled(true);
+    component.disabled = true;
     tick(600);
     fixture.detectChanges();
-    component.setEmailDisabled(false);
+    component.disabled = false;
     tick(600);
     fixture.detectChanges();
     expect(emailEl.nativeElement.disabled).toBeFalsy();

@@ -27,6 +27,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   canNavigate = true;
   constants = Constants;
 
+  emailDisabled = false;
   participantDetails: ParticipantModel;
   notFound: boolean;
   hearing: HearingModel;
@@ -159,8 +160,8 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   private setParticipantEmail() {
     this.searchEmail.email = this.participantDetails.email;
     this.searchEmail.isValidEmail = true;
-    this.searchEmail.setEmailDisabled((this.participantDetails.id && this.participantDetails.id.length > 0)
-      || this.participantDetails.is_exist_person);
+    const participantHasId = this.participantDetails.id && this.participantDetails.id.length > 0;
+    this.emailDisabled = participantHasId || this.participantDetails.is_exist_person;
   }
 
   initializeForm() {

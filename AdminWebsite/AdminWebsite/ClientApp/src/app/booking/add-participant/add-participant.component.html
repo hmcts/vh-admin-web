@@ -81,7 +81,7 @@
         </select>
       </div>
       <div *ngIf="showDetails">
-        <app-search-email (findParticipant)="getParticipant($event)" (participantsNotFound)="notFoundParticipant()"
+        <app-search-email [disabled]="emailDisabled" (findParticipant)="getParticipant($event)" (participantsNotFound)="notFoundParticipant()"
           (emailChanged)="emailChanged()">
         </app-search-email>
 
