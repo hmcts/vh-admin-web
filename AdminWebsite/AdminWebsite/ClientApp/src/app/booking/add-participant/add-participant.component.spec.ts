@@ -1,6 +1,6 @@
 import { async, ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { AbstractControl, Validators } from '@angular/forms';
-import { NavigationEnd, Router } from '@angular/router';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
 
 import { of } from 'rxjs';
 import { SharedModule } from 'src/app/shared/shared.module';
@@ -220,6 +220,9 @@ describe('AddParticipantComponent', () => {
       searchService,
       jasmine.createSpyObj<ElementRef>(['nativeElement'])
     );
+    component.participantsListComponent = new ParticipantsListComponent(
+      bookingServiceSpy, routerSpy
+    );
     component.ngOnInit();
 
     role = component.form.controls['role'];
@@ -239,9 +242,6 @@ describe('AddParticipantComponent', () => {
     representing = component.form.controls['representing'];
   }));
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
   it('should initialize edit mode as false and value of button set to next', () => {
     component.ngOnInit();
     expect(component.editMode).toBeFalsy();
@@ -556,14 +556,15 @@ describe('AddParticipantComponent edit mode', () => {
         AddParticipantComponent,
         BreadcrumbStubComponent,
         SearchEmailComponent,
-        ParticipantsListStubComponent,
+        ParticipantsListComponent,
         CancelPopupStubComponent,
         ConfirmationPopupStubComponent,
         RemovePopupStubComponent,
         DiscardConfirmPopupComponent,
       ],
       imports: [
-        SharedModule
+        SharedModule,
+        RouterModule.forChild([])
       ],
       providers: [
         { provide: SearchService, useClass: SearchServiceStub },
@@ -583,6 +584,7 @@ describe('AddParticipantComponent edit mode', () => {
     bookingServiceSpy.getParticipantEmail.and.returnValue('test3@test.com');
 
     fixture = TestBed.createComponent(AddParticipantComponent);
+    fixture.detectChanges();
     component = fixture.componentInstance;
     component.editMode = true;
     component.ngOnInit();
@@ -835,7 +837,6 @@ describe('AddParticipantComponent edit mode no participants added', () => {
     companyName = component.form.controls['companyName'];
   }));
   it('should show button add participant', fakeAsync(() => {
-    component.ngOnInit();
     component.ngAfterContentInit();
     component.ngAfterViewInit();
     tick(600);
@@ -856,7 +857,9 @@ describe('AddParticipantComponent edit mode no participants added', () => {
     expect(partList).toBeDefined();
   }));
   it('should show all fields if the participant selected for edit', fakeAsync(() => {
-    component.ngOnInit();
+    component.ngAfterContentInit();
+    component.ngAfterViewInit();
+    tick(600);
     const partList = component.participantsListComponent;
     partList.editParticipant('test2@test.com');
     partList.selectedParticipant.emit();
@@ -865,7 +868,9 @@ describe('AddParticipantComponent edit mode no participants added', () => {
     expect(component.showDetails).toBeTruthy();
   }));
   it('should show confirmation to remove participant', fakeAsync(() => {
-    component.ngOnInit();
+    component.ngAfterContentInit();
+    component.ngAfterViewInit();
+    tick(600);
     const partList = component.participantsListComponent;
     partList.removeParticipant('test2@test.com');
     component.selectedParticipantEmail = 'test2@test.com';

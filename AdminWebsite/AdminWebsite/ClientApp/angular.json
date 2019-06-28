@@ -85,7 +85,7 @@
               "src/favicon.ico",
               "src/assets"
             ],
-            "sourceMap": false
+            "sourceMap": true
           }
         },
         "lint": {
