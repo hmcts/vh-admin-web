@@ -1,10 +1,11 @@
 import { VideoHearingsService } from './video-hearings.service';
 import {
-  BHClient, HearingDetailsResponse, CaseResponse2, ParticipantResponse
+  BHClient, HearingDetailsResponse, CaseResponse2, ParticipantResponse, CaseAndHearingRolesResponse
 } from './clients/api-client';
 import { HearingModel } from '../common/model/hearing.model';
 import { CaseModel } from '../common/model/case.model';
 import { ParticipantModel } from '../common/model/participant.model';
+import { of } from 'rxjs';
 
 describe('Video hearing service', () => {
   let service: VideoHearingsService;
@@ -63,9 +64,21 @@ describe('Video hearing service', () => {
     expect(service.getCurrentRequest().hearing_id).toBe('hearingId');
   });
 
-  it('should get participants roles', () => {
-      service.getParticipantRoles('Defendant');
-      expect(clientApiSpy.getParticipantRoles).toHaveBeenCalled();
+  it('should cache participant roles', async () => {
+    // given the api responds with
+    const serverResponse = new CaseAndHearingRolesResponse({
+      name: 'Defendant',
+      hearing_roles: [ 'Solicitor', 'LIP' ]
+    });
+    clientApiSpy.getParticipantRoles.and.returnValue(of([serverResponse]));
+
+    // we get the response the first time
+    const response = await service.getParticipantRoles('Defendant');
+    expect(response).toEqual([serverResponse]);
+
+    // second time we get a cached value
+    await service.getParticipantRoles('Defendant');
+    expect(clientApiSpy.getParticipantRoles).toHaveBeenCalledTimes(1);
   });
 
   it('should remove currently cached hearing when cancelling', () => {
