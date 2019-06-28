@@ -1,109 +1,95 @@
-import { TestBed, inject } from '@angular/core/testing';
-import { HttpClientModule } from '@angular/common/http';
 import { VideoHearingsService } from './video-hearings.service';
 import {
-  BHClient, HearingDetailsResponse, CaseResponse2, ParticipantResponse
+  BHClient, HearingDetailsResponse, CaseResponse2, ParticipantResponse, CaseAndHearingRolesResponse
 } from './clients/api-client';
 import { HearingModel } from '../common/model/hearing.model';
 import { CaseModel } from '../common/model/case.model';
 import { ParticipantModel } from '../common/model/participant.model';
-
-let clientApiSpy: jasmine.SpyObj<BHClient>;
+import { of } from 'rxjs';
 
 describe('Video hearing service', () => {
+  let service: VideoHearingsService;
+  let clientApiSpy: jasmine.SpyObj<BHClient>;
   const newRequestKey = 'bh-newRequest';
-  clientApiSpy = jasmine.createSpyObj('BHClient',
-    ['getHearingTypes', 'getParticipantRoles', 'bookNewHearing']);
 
   beforeEach(() => {
-    TestBed.configureTestingModule({
-      imports: [HttpClientModule],
-      providers: [VideoHearingsService, { provide: BHClient, useValue: clientApiSpy }]
-    });
-
-    const mockSessionStorage = {
-      getItem: (key: string): string => {
-        return 'true';
-      },
-      setItem: (key: string, value: string) => {
-      },
-      removeItem: (key: string) => {
-      },
-      clear: () => {
-      }
-    };
-    spyOn(sessionStorage, 'getItem')
-      .and.callFake(mockSessionStorage.getItem);
-    spyOn(sessionStorage, 'setItem')
-      .and.callFake(mockSessionStorage.setItem);
-    spyOn(sessionStorage, 'removeItem')
-      .and.callFake(mockSessionStorage.removeItem);
+    clientApiSpy = jasmine.createSpyObj<BHClient>(['getHearingTypes', 'getParticipantRoles', 'bookNewHearing']);
+    service = new VideoHearingsService(clientApiSpy);
   });
 
   afterEach(() => {
     sessionStorage.clear();
   });
 
-  it('should create new hearing when persistence storage is empty', inject([VideoHearingsService], (service: VideoHearingsService) => {
+  it('should create new hearing when persistence storage is empty', () => {
     const currentRequest = service.getCurrentRequest();
-    const cachedRequest = sessionStorage.getItem(newRequestKey);
     expect(currentRequest).toBeDefined();
-    expect(cachedRequest).toBeTruthy();
-  }));
+  });
 
-  it('should persist hearing request on update and remove on cancellation',
-    inject([VideoHearingsService], (service: VideoHearingsService) => {
+  it('should persist hearing request on update and remove on cancellation', () => {
       const currentRequest = service.getCurrentRequest();
       service.updateHearingRequest(currentRequest);
       let cachedRequest = sessionStorage.getItem(newRequestKey);
       expect(cachedRequest).toBeDefined();
       service.cancelRequest();
       cachedRequest = sessionStorage.getItem(newRequestKey);
-      expect(cachedRequest).toBeTruthy();
-    }));
+      expect(cachedRequest).toBeNull();
+    });
 
-  it('should check if  booking has unsaved changes',
-    inject([VideoHearingsService], (service: VideoHearingsService) => {
-      service.hasUnsavedChanges();
-      expect(sessionStorage.getItem).toHaveBeenCalled();
-    }));
-  it('should save bookingHasChangesKey in the session storage',
-    inject([VideoHearingsService], (service: VideoHearingsService) => {
+  it('should have no unsaved changes if hearing has not been set', () => {
+      expect(service.hasUnsavedChanges()).toBe(false);
+  });
+
+  it('should not have changes if we set it to false', () => {
       service.setBookingHasChanged(true);
-      expect(sessionStorage.setItem).toHaveBeenCalled();
-    }));
-  it('should remove bookingHasChangesKey from the session storage',
-    inject([VideoHearingsService], (service: VideoHearingsService) => {
+      expect(service.hasUnsavedChanges()).toBe(true);
       service.setBookingHasChanged(false);
-      expect(sessionStorage.removeItem).toHaveBeenCalled();
-    }));
-  it('should get hearings types',
-    inject([VideoHearingsService], (service: VideoHearingsService) => {
+      expect(service.hasUnsavedChanges()).toBe(false);
+  });
+
+  it('should get hearings types', () => {
       service.getHearingTypes();
       expect(clientApiSpy.getHearingTypes).toHaveBeenCalled();
-    }));
-  it('should returns invalid hearing request',
-    inject([VideoHearingsService], (service: VideoHearingsService) => {
+  });
+
+  it('should returns invalid hearing request', () => {
       const currentRequest = service.validCurrentRequest();
       expect(currentRequest).toBeFalsy();
-    }));
-  it('should update hearing request in the storage',
-    inject([VideoHearingsService], (service: VideoHearingsService) => {
-      service.updateHearingRequest(new HearingModel());
-      expect(sessionStorage.setItem).toHaveBeenCalled();
-    }));
-  it('should get participants roles',
-    inject([VideoHearingsService], (service: VideoHearingsService) => {
-      service.getParticipantRoles('Defendant');
-      expect(clientApiSpy.getParticipantRoles).toHaveBeenCalled();
-    }));
-  it('should cancel hearing request and remove from storage',
-    inject([VideoHearingsService], (service: VideoHearingsService) => {
-      service.cancelRequest();
-      expect(sessionStorage.removeItem).toHaveBeenCalledTimes(2);
-    }));
-  it('should save hearing request in database',
-    inject([VideoHearingsService], (service: VideoHearingsService) => {
+  });
+
+  it('should cache current hearing request', () => {
+    const model = new HearingModel();
+    model.hearing_id = 'hearingId';
+    service.updateHearingRequest(model);
+    expect(service.getCurrentRequest().hearing_id).toBe('hearingId');
+  });
+
+  it('should cache participant roles', async () => {
+    // given the api responds with
+    const serverResponse = new CaseAndHearingRolesResponse({
+      name: 'Defendant',
+      hearing_roles: [ 'Solicitor', 'LIP' ]
+    });
+    clientApiSpy.getParticipantRoles.and.returnValue(of([serverResponse]));
+
+    // we get the response the first time
+    const response = await service.getParticipantRoles('Defendant');
+    expect(response).toEqual([serverResponse]);
+
+    // second time we get a cached value
+    await service.getParticipantRoles('Defendant');
+    expect(clientApiSpy.getParticipantRoles).toHaveBeenCalledTimes(1);
+  });
+
+  it('should remove currently cached hearing when cancelling', () => {
+    const model = new HearingModel();
+    model.hearing_id = 'hearingId';
+    service.updateHearingRequest(model);
+    service.cancelRequest();
+    expect(service.getCurrentRequest().hearing_id).not.toBe('hearingId');
+  });
+
+  it('should save hearing request in database', () => {
       const date = Date.now();
       const caseModel = new CaseModel();
       caseModel.name = 'case1';
@@ -121,9 +107,9 @@ describe('Video hearing service', () => {
 
       service.saveHearing(model);
       expect(clientApiSpy.bookNewHearing).toHaveBeenCalled();
-    }));
-  it('should map hearing request',
-    inject([VideoHearingsService], (service: VideoHearingsService) => {
+  });
+
+  it('should map hearing request', () => {
       const date = Date.now();
       const caseModel = new CaseModel();
       caseModel.name = 'case1';
@@ -151,9 +137,9 @@ describe('Video hearing service', () => {
       expect(request.cases[0].number).toBe('Number 1');
       expect(request.scheduled_date_time).toEqual(new Date(date));
       expect(request.scheduled_duration).toBe(30);
-    }));
-  it('should map HearingDetailsResponse to HearingModel',
-    inject([VideoHearingsService], (service: VideoHearingsService) => {
+  });
+
+  it('should map HearingDetailsResponse to HearingModel', () => {
       const date = Date.now();
       const caseModel = new CaseResponse2();
       caseModel.name = 'case1';
@@ -181,10 +167,9 @@ describe('Video hearing service', () => {
       expect(request.cases[0].number).toBe('Number 1');
       expect(request.scheduled_date_time).toEqual(new Date(date));
       expect(request.scheduled_duration).toBe(30);
-    }));
-  it('should map ParticipantResponse to ParticipantModel',
-    inject([VideoHearingsService], (service: VideoHearingsService) => {
+  });
 
+  it('should map ParticipantResponse to ParticipantModel', () => {
       const participants: ParticipantResponse[] = [];
       const participant = new ParticipantResponse();
       participant.title = 'Mr';
@@ -221,10 +206,9 @@ describe('Video hearing service', () => {
       expect(model[0].city).toEqual(participant.city);
       expect(model[0].county).toEqual(participant.county);
       expect(model[0].postcode).toEqual(participant.postcode);
-    }));
-  it('should map ParticipantModel toParticipantResponse',
-    inject([VideoHearingsService], (service: VideoHearingsService) => {
+  });
 
+  it('should map ParticipantModel toParticipantResponse', () => {
       const participants: ParticipantModel[] = [];
       const participant = new ParticipantModel();
       participant.title = 'Mr';
@@ -261,9 +245,9 @@ describe('Video hearing service', () => {
       expect(model[0].city).toEqual(participant.city);
       expect(model[0].county).toEqual(participant.county);
       expect(model[0].postcode).toEqual(participant.postcode);
-    }));
-  it('should map Existing hearing',
-    inject([VideoHearingsService], (service: VideoHearingsService) => {
+  });
+
+  it('should map Existing hearing', () => {
       const participants: ParticipantModel[] = [];
       const participant = new ParticipantModel();
       participant.title = 'Mr';
@@ -318,9 +302,9 @@ describe('Video hearing service', () => {
       expect(actualParticipant.postcode).toEqual(expectedParticipant.postcode);
       expect(actualCase.name).toEqual(expectedCase.name);
       expect(actualCase.number).toEqual(expectedCase.number);
-    }));
-  it('should map Existing hearing',
-    inject([VideoHearingsService], (service: VideoHearingsService) => {
+  });
+
+  it('should map Existing hearing', () => {
       const participants: ParticipantModel[] = [];
       const participant = new ParticipantModel();
       participant.title = 'Mr';
@@ -362,5 +346,5 @@ describe('Video hearing service', () => {
       expect(editHearingRequest.participants[0].case_role_name).toEqual(hearingModel.participants[0].case_role_name);
       expect(editHearingRequest.case.name).toEqual(hearingModel.cases[0].name);
       expect(editHearingRequest.case.number).toEqual(hearingModel.cases[0].number);
-    }));
+  });
 });

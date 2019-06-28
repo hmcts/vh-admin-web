@@ -126,7 +126,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     setTimeout(() => {
       const self = this;
       this.videoHearingService.getParticipantRoles(this.hearing.case_type)
-        .subscribe(
+        .then(
           (data: CaseAndHearingRolesResponse[]) => {
             self.setupRoles(data);
             if (self.editMode) {
@@ -147,7 +147,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
               }
               self.repopulateParticipantToEdit();
             }
-          }, error => console.error(error));
+          }).catch(error => console.error(error));
     }, 500);
   }
 
