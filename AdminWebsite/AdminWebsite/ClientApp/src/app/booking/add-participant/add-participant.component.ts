@@ -99,30 +99,27 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     this.checkForExistingRequest();
     this.initializeForm();
     super.ngOnInit();
-
-    if (this.participantsListComponent) {
-      const self = this;
-      self.participantsListComponent.selectedParticipant.subscribe((participantEmail) => {
-        self.selectedParticipantEmail = participantEmail;
-        self.showDetails = true;
-        setTimeout(() => {
-          self.repopulateParticipantToEdit();
-          self.displayUpdate();
-          self.localEditMode = true;
-          if (self.searchEmail) {
-            self.setParticipantEmail();
-          }
-        }, 500);
-      });
-
-      this.participantsListComponent.selectedParticipantToRemove.subscribe((participantEmail) => {
-        self.selectedParticipantEmail = participantEmail;
-        this.confirmRemoveParticipant();
-      });
-    }
   }
 
   ngAfterViewInit() {
+    this.participantsListComponent.selectedParticipant.subscribe((participantEmail) => {
+      this.selectedParticipantEmail = participantEmail;
+      this.showDetails = true;
+      setTimeout(() => {
+        this.repopulateParticipantToEdit();
+        this.displayUpdate();
+        this.localEditMode = true;
+        if (this.searchEmail) {
+          this.setParticipantEmail();
+        }
+      }, 500);
+    });
+
+    this.participantsListComponent.selectedParticipantToRemove.subscribe((participantEmail) => {
+      this.selectedParticipantEmail = participantEmail;
+      this.confirmRemoveParticipant();
+    });
+
     setTimeout(() => {
       const self = this;
       this.videoHearingService.getParticipantRoles(this.hearing.case_type)
