@@ -23,7 +23,7 @@
           <li *ngIf="role.invalid || !isRoleSelected">
             <a (click)="goToDiv('role-error')" href="javascript: void(0)">{{constants.Error.RoleErrorMsg}}</a>
           </li>
-          <li *ngIf="emailInvalid()">
+          <li *ngIf="validEmail()">
             <a (click)="goToDiv('email-error')" href="javascript: void(0)">{{constants.Error.EmailErrorMsg}}</a>
           </li>
           <li *ngIf="firstName.invalid">
