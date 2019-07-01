@@ -107,8 +107,7 @@ describe('SeachEmailComponent', () => {
   });
   it('should close drop down on the click outside', () => {
     component.isShowResult = true;
-    const elem = fixture.debugElement.nativeElement.querySelector('document');
-    component.clickedOutside(elem);
+    component.blur();
     expect(component.isShowResult).toBeFalsy();
   });
   it('select item should emit event participant found', () => {

@@ -22,7 +22,7 @@ export class SearchEmailComponent implements OnInit {
   isValidEmail = true;
 
   @Input()
-  disabled: boolean = true;
+  disabled = true;
 
   @Output()
   findParticipant = new EventEmitter<ParticipantModel>();

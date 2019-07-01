@@ -1,4 +1,4 @@
-<div>
+<div (blur)="blur()">
   <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':!isValidEmail}">
     <div *ngIf="!isValidEmail">
       <span class="govuk-error-message">
@@ -8,7 +8,7 @@
     <label class="govuk-label" for="participantEmail">
       Email
     </label>
-    <input #emailInput (blur)="blur()" [attr.disabled]="disabled ? true : null" id="participantEmail" name="participantEmail" [(ngModel)]="email" (blur)="blurEmail()" class="govuk-input govuk-input--width-20"
+    <input #emailInput [attr.disabled]="disabled ? true : null" id="participantEmail" name="participantEmail" [(ngModel)]="email" (blur)="blurEmail()" class="govuk-input govuk-input--width-20"
            (keyup)="searchTerm.next($event.target.value)" type="email" />
 
     <ul *ngIf="isShowResult" class="vh-li-email">
