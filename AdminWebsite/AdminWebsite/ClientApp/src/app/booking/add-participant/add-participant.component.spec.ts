@@ -255,6 +255,23 @@ describe('AddParticipantComponent', () => {
     expect(component.titleList.length).toBe(2);
   }));
 
+  it('considers the email valid if the field is not displayed', () => {
+    component.searchEmail = null;
+    expect(component.validEmail()).toBe(true);
+  });
+
+  it('considers email valid if an email with valid format is assigned', () => {
+    component.showDetails = true;
+    component.searchEmail.email = 'valid@email.com';
+    expect(component.validEmail()).toBe(true);
+  });
+
+  it('has invalid email if email format is wrong', () => {
+    component.showDetails = true;
+    component.searchEmail.email = 'validemail.com';
+    expect(component.validEmail()).toBe(false);
+  });
+
   it('should set initial values for fields', fakeAsync(() => {
     component.ngOnInit();
     tick(500);
