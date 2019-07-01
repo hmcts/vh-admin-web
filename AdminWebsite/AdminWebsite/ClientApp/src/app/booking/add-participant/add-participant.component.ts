@@ -336,7 +336,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   }
 
   emailChanged() {
-    if (this.form.valid && this.showDetails && this.searchEmail.validateEmail()) {
+    if (this.form.valid && this.validEmail()) {
       if (this.editMode) {
         this.displayNext();
       } else {
