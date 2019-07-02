@@ -86,7 +86,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
                 if (!tag.Contains("ExistingPerson"))
                 {
                     Address();
-                }                
+                }
             }
             _addParticipant.AddParticipantButton();
         }
@@ -158,7 +158,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
                 case (TestData.AddParticipants.Respondent):
                     _addParticipant.RoleList().Should().BeEquivalentTo(TestData.AddParticipants.RespondentRole);
                     break;
-            }        
+            }
             _addParticipant.AddItems<string>("Role", _addParticipant.GetSelectedRole());
             AddParticpantDetails();
             ClickAddParticipantsButton();
@@ -176,7 +176,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             else
             {
                 actualResult.Should().Be(expectedResult.Trim());
-            }            
+            }
         }
         public void AddParticpantDetails()
         {
@@ -191,11 +191,11 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             if (!_addParticipant.RoleValue().Contains(RoleType.Solicitor.ToString()))
                 Address();
-            _addParticipant.PartyField().Should().BeFalse();
-            _addParticipant.RoleField().Should().BeFalse();
-            _addParticipant.Email().Should().BeFalse();
-            _addParticipant.Firstname().Should().BeFalse();
-            _addParticipant.Lastname().Should().BeFalse();
+            _addParticipant.PartyFieldEnabled.Should().BeFalse();
+            _addParticipant.RoleFieldEnabled.Should().BeFalse();
+            _addParticipant.EmailEnabled.Should().BeFalse();
+            _addParticipant.FirstnameEnabled.Should().BeFalse();
+            _addParticipant.LastnameEnabled.Should().BeFalse();
         }
         private void Address()
         {
@@ -235,9 +235,9 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _addParticipant.ParticipantEmail(email.Substring(0, 3));
             _addParticipant.ExistingParticipant(email);
             _addParticipant.DisplayName(TestData.AddParticipants.DisplayName);
-            _addParticipant.Email().Should().BeFalse();
-            _addParticipant.Firstname().Should().BeFalse();
-            _addParticipant.Lastname().Should().BeFalse();
+            _addParticipant.EmailEnabled.Should().BeFalse();
+            _addParticipant.FirstnameEnabled.Should().BeFalse();
+            _addParticipant.LastnameEnabled.Should().BeFalse();
             _addParticipant.GetFieldValue("phone").Should().NotBeNullOrEmpty();
             _addParticipant.GetFieldValue("houseNumber").Should().NotBeNullOrEmpty();
             _addParticipant.GetFieldValue("street").Should().NotBeNullOrEmpty();

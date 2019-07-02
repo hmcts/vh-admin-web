@@ -32,11 +32,11 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public string PartyErrorMessage() => GetElementText(By.Id("party-error"));
         public string RoleErrorMessage() => GetElementText(By.Id("role-error"));
         public IEnumerable<string> ParticipantPageErrorMessages() => Items(By.XPath("//*[@class='govuk-list govuk-error-summary__list']/li"));
-        public bool PartyField() => IsElementEnabled(By.Id("party"));
-        public bool RoleField() => IsElementEnabled(By.Id("role"));
-        public bool Email() => IsElementEnabled(By.Id("participantEmail"));
-        public bool Firstname() => IsElementEnabled(By.Id("firstName"));
-        public bool Lastname() => IsElementEnabled(By.Id("lastName"));
+        public bool PartyFieldEnabled => IsElementEnabled(By.Id("party"));
+        public bool RoleFieldEnabled => IsElementEnabled(By.Id("role"));
+        public bool EmailEnabled => IsElementEnabled(By.Id("participantEmail"));
+        public bool FirstnameEnabled => IsElementEnabled(By.Id("firstName"));
+        public bool LastnameEnabled => IsElementEnabled(By.Id("lastName"));
         public void HouseNumber(string houseNumber) => ClearFieldInputValues(By.Id("houseNumber"), houseNumber);
         public void Street(string street) => ClearFieldInputValues(By.Id("street"), street);
         public void City(string city) => ClearFieldInputValues(By.Id("city"), city);
