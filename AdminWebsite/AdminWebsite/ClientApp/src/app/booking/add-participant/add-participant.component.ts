@@ -275,6 +275,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
     if (participantDetails.is_exist_person) {
       this.disableLastFirstNames();
+      this.emailDisabled = true;
       this.existingPersonEmails.push(participantDetails.email);
     }
     this.existingParticipant = participantDetails.id && participantDetails.id.length > 0;
@@ -744,6 +745,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     this.form.get('role').disable();
   }
   enableFields() {
+    this.emailDisabled = false;
     this.form.get('lastName').enable();
     this.form.get('firstName').enable();
     this.form.get('party').enable();
