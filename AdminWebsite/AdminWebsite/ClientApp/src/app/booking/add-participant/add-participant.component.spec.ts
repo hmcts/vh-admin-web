@@ -216,10 +216,7 @@ describe('AddParticipantComponent', () => {
       routerSpy,
       bookingServiceSpy
     );
-    component.searchEmail = new SearchEmailComponent(
-      searchService,
-      jasmine.createSpyObj<ElementRef>(['nativeElement'])
-    );
+    component.searchEmail = new SearchEmailComponent(searchService);
     component.participantsListComponent = new ParticipantsListComponent(
       bookingServiceSpy, routerSpy
     );
