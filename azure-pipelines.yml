@@ -28,6 +28,7 @@ resources:
   repositories:
   - repository: azureDevOpsTemplates
     type: github
+    ref: npm-audit-rdo-4406
     name: hmcts/azure-devops-templates
     endpoint: 'GitHubDevOps'
     
