@@ -337,7 +337,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   }
 
   emailChanged() {
-    if (this.form.valid && this.showDetails && this.searchEmail.validateEmail()) {
+    if (this.form.valid && this.validEmail()) {
       if (this.editMode) {
         this.displayNext();
       } else {
@@ -495,16 +495,13 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     this.isTitleSelected = this.title.value !== this.constants.PleaseSelect;
   }
 
-  emailInvalid() {
-    setTimeout(() => {
-      return this.showDetails && this.searchEmail ? this.searchEmail.validateEmail() : true;
-    });
+  validEmail() {
+    return this.showDetails && this.searchEmail ? this.searchEmail.validateEmail() : true;
   }
 
   saveParticipant() {
     this.actionsBeforeSave();
-    const validEmail = this.showDetails && (this.searchEmail ? this.searchEmail.validateEmail() : true);
-    if (this.form.valid && validEmail && this.isRoleSelected && this.isPartySelected && this.isTitleSelected) {
+    if (this.form.valid && this.validEmail() && this.isRoleSelected && this.isPartySelected && this.isTitleSelected) {
       this.isShowErrorSummary = false;
       this.form.markAsUntouched();
       this.form.markAsPristine();
@@ -539,9 +536,8 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
       this.saveParticipant();
       this.bookingHasParticipants = true;
     } else {
-      const validEmail = this.showDetails && this.searchEmail ? this.searchEmail.validateEmail() : true;
       this.actionsBeforeSave();
-      if (this.form.valid && validEmail && this.isRoleSelected && this.isTitleSelected) {
+      if (this.form.valid && this.validEmail() && this.isRoleSelected && this.isTitleSelected) {
         this.isShowErrorSummary = false;
         this.hearing.participants.forEach(newParticipant => {
           if (newParticipant.email === this.selectedParticipantEmail) {
