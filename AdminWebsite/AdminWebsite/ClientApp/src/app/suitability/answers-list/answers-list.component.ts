@@ -14,6 +14,7 @@ export class AnswersListComponent implements OnInit, OnDestroy {
   loaded = false;
   hasMore = true;
   answers = new Array<ParticipantQuestionnaire>();
+  nextCursor = '';
 
   constructor(private location: Location,
     private questionnaireService: QuestionnaireService
@@ -30,11 +31,12 @@ export class AnswersListComponent implements OnInit, OnDestroy {
     }
 
     this.loaded = false;
-    this.questionnaireService.loadNext()
+    this.questionnaireService.loadNext(this.hasMore, this.nextCursor)
       .then((responses: QuestionnaireResponses) => {
         this.answers.push(...responses.items);
         this.loaded = true;
         this.hasMore = responses.hasMore;
+        this.nextCursor = responses.nextCursor;
       });
   }
 

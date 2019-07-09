@@ -22,7 +22,7 @@ export class QuestionnaireApiService implements ScrollableSuitabilityAnswersServ
 
   private map(response: ParticipantSuitabilityAnswerResponse): ParticipantQuestionnaire {
     return new ParticipantQuestionnaire({
-      displayName: `${response.first_name} ${response.last_name}`,
+      displayName: `${response.title} ${response.first_name} ${response.last_name}`,
       caseNumber: response.case_number,
       hearingRole: response.hearing_role,
       representee: response.representee,
