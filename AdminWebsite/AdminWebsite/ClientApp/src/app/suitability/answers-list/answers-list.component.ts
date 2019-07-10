@@ -31,7 +31,7 @@ export class AnswersListComponent implements OnInit, OnDestroy {
     }
 
     this.loaded = false;
-    this.questionnaireService.loadNext(this.hasMore, this.nextCursor)
+    this.questionnaireService.loadNext(this.nextCursor)
       .then((responses: QuestionnaireResponses) => {
         this.answers.push(...responses.items);
         this.loaded = true;

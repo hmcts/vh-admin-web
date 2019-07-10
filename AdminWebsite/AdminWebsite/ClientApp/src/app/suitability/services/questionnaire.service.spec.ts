@@ -36,14 +36,14 @@ describe('QuestionnaireService', () => {
       questionnaires: [participantOneResponse],
       nextCursor: 'cursor1'
     });
-    const first = await service.loadNext(true, '');
+    const first = await service.loadNext('');
 
     // and then again
     apiStub.forCursor('cursor1').returnsWithResponse({
       questionnaires: [participantTwoResponse],
       nextCursor: ''
     });
-    const second = await service.loadNext(true, 'cursor1');
+    const second = await service.loadNext('cursor1');
 
     // and convert each result to participants
     const firstParticipants = first.items.map((q: ParticipantQuestionnaire) => q.participantId);
@@ -65,7 +65,7 @@ describe('QuestionnaireService', () => {
       questionnaires: [participantOneResponse],
       nextCursor: ''
     });
-    const result = await service.loadNext(true, '');
+    const result = await service.loadNext('');
 
     expect(result.hasMore).toBe(false);
   });
@@ -75,9 +75,8 @@ describe('QuestionnaireService', () => {
       questionnaires: [],
       nextCursor: ''
     });
-    await service.loadNext(true, '');
-
-    const secondCall = await service.loadNext(false, '');
+    await service.loadNext('');
+    const secondCall = await service.loadNext('');
 
     expect(secondCall.items).toEqual([]);
   });

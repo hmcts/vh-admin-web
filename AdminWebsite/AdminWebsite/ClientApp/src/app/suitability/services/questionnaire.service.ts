@@ -19,10 +19,8 @@ export class QuestionnaireService {
 
   constructor(private service: ScrollableSuitabilityAnswersService) { }
 
-  async loadNext(hasMore: boolean, nextCursor: string): Promise<QuestionnaireResponses> {
-    if (!hasMore) {
-      return new QuestionnaireResponses([], false, '');
-    }
+  async loadNext(nextCursor: string): Promise<QuestionnaireResponses> {
+
     const page = await this.service.getSuitabilityAnswers(nextCursor, 100);
 
     // we need to figure out if next cursor is returned as null or not
