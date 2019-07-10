@@ -5,32 +5,29 @@ import { ScrollableSuitabilityAnswersService } from './scrollable-suitability-an
 export class QuestionnaireResponses {
   readonly items: ParticipantQuestionnaire[];
   readonly hasMore: boolean;
+  readonly nextCursor: string;
 
-  constructor(items: ParticipantQuestionnaire[], hasMore: boolean) {
+  constructor(items: ParticipantQuestionnaire[], hasMore: boolean, nextCursor: string) {
     this.items = items;
     this.hasMore = hasMore;
+    this.nextCursor = nextCursor;
   }
 }
 
 @Injectable()
 export class QuestionnaireService {
-  private nextCursor = '';
-  private hasMore = true;
 
   constructor(private service: ScrollableSuitabilityAnswersService) { }
 
-  async loadNext(): Promise<QuestionnaireResponses> {
-    if (!this.hasMore) {
-      return new QuestionnaireResponses([], false);
-    }
-    const page = await this.service.getSuitabilityAnswers(this.nextCursor, 100);
+  async loadNext(nextCursor: string): Promise<QuestionnaireResponses> {
+
+    const page = await this.service.getSuitabilityAnswers(nextCursor, 100);
 
     // we need to figure out if next cursor is returned as null or not
-    this.nextCursor = page.nextCursor;
-    this.hasMore = !!page.nextCursor;
     return new QuestionnaireResponses(
       page.questionnaires,
-      this.hasMore
+      !!page.nextCursor,
+      page.nextCursor
     );
   }
 }
