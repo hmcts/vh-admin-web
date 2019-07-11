@@ -18,8 +18,9 @@ import { ParticipantDetailsComponent } from './participant-details/participant-d
 import { HearingDetailsComponent } from './hearing-details/hearing-details.component';
 import { CancelBookingPopupComponent } from '../popups/cancel-booking-popup/cancel-booking-popup.component';
 import { LongDatetimePipe } from '../../app/shared/directives/date-time.pipe';
+import { MomentModule } from 'ngx-moment';
 
-describe('app routing', () => {
+describe('BookingsListRouting', () => {
   let location: Location;
   let router: Router;
   let fixture: ComponentFixture<BookingsListComponent>;
@@ -29,7 +30,7 @@ describe('app routing', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [RouterTestingModule.withRoutes(routes)],
+      imports: [RouterTestingModule.withRoutes(routes), MomentModule],
       declarations: [
         BookingsListComponent,
         BookingDetailsComponent,

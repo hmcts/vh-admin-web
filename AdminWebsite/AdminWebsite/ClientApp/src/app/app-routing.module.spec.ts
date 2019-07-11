@@ -29,6 +29,7 @@ import { WaitPopupComponent } from './popups/wait-popup/wait-popup.component';
 import { CancelPopupStubComponent } from './testing/stubs/cancel-popup-stub';
 import { SaveFailedPopupComponent } from './popups/save-failed-popup/save-failed-popup.component';
 import { CancelBookingPopupComponent } from './popups/cancel-booking-popup/cancel-booking-popup.component';
+import { MomentModule } from 'ngx-moment';
 
 describe('app routing', () => {
   let location: Location;
@@ -38,7 +39,7 @@ describe('app routing', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [ReactiveFormsModule, RouterTestingModule.withRoutes(routes), FormsModule ],
+      imports: [ReactiveFormsModule, RouterTestingModule.withRoutes(routes), FormsModule, MomentModule ],
       declarations: [
         DashboardComponent,
         AppComponent,

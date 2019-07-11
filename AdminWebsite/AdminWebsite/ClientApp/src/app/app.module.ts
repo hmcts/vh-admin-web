@@ -1,3 +1,4 @@
+import { MomentModule } from 'ngx-moment';
 import { SuitabilityModule } from './suitability/suitability.module';
 import { DatePipe } from '@angular/common';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
@@ -46,6 +47,7 @@ export function getSettings(configService: ConfigService) {
     ErrorComponent,
   ],
   imports: [
+    MomentModule,
     BookingModule,
     BookingsListModule,
     BrowserModule,
