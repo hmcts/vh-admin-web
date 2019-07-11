@@ -58,7 +58,7 @@
     "karma-jasmine": "^2.0.1",
     "karma-jasmine-html-reporter": "^1.4.0",
     "karma-junit-reporter": "^1.2.0",
-    "ng-mocks": "^6.3.0",
+    "ng-mocks": "^8.0.0",
     "node-sass": "^4.12.0",
     "pa11y": "^5.1.0",
     "protractor": "^5.4.0",
