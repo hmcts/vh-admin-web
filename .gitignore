@@ -339,3 +339,6 @@ ASALocalRun/
 
 jasmine-tests
 /AdminWebsite/AdminWebsite/ClientApp/e2e
+
+# specflow generated feature files (will be created on build)
+*.feature.cs
