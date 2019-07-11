@@ -1,5 +1,4 @@
 import { NgModule } from '@angular/core';
-import { MomentModule } from 'angular2-moment';
 import { SharedModule } from '../shared/shared.module';
 import { BookingsListComponent } from './bookings-list/bookings-list.component';
 import { BookingsListRoutingModule } from './bookings-list-routing.module';
@@ -14,8 +13,7 @@ import { PopupModule } from '../popups/popup.module';
   imports: [
     SharedModule,
     BookingsListRoutingModule,
-    PopupModule,
-    MomentModule
+    PopupModule
   ],
   declarations: [
     BookingsListComponent,

@@ -11,7 +11,6 @@ import { Router } from '@angular/router';
 import { BookingPersistService } from '../../services/bookings-persist.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { HearingModel } from '../../common/model/hearing.model';
-import { MomentModule } from 'angular2-moment';
 import { LongDatetimePipe } from '../../../app/shared/directives/date-time.pipe';
 
 let component: BookingsListComponent;
@@ -193,7 +192,7 @@ describe('BookingsListComponent', () => {
 
     TestBed.configureTestingModule({
       declarations: [BookingsListComponent, ScrollableDirective, BookingDetailsComponent, LongDatetimePipe],
-      imports: [HttpClientModule, MomentModule],
+      imports: [HttpClientModule],
       providers: [
         { provide: BookingsListService, useValue: bookingsListServiceSpy },
         { provide: Router, useValue: routerSpy },
@@ -271,7 +270,7 @@ describe('BookingsListComponent with existing booking', () => {
 
     TestBed.configureTestingModule({
       declarations: [BookingsListComponent, ScrollableDirective, BookingDetailsComponent, LongDatetimePipe],
-      imports: [HttpClientModule, MomentModule],
+      imports: [HttpClientModule],
       providers: [
         { provide: BookingsListService, useValue: bookingsListServiceSpy },
         { provide: Router, useValue: routerSpy },

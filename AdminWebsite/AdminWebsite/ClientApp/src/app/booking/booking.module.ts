@@ -1,5 +1,4 @@
-import { NgModule, Component, Type } from '@angular/core';
-import { MomentModule } from 'angular2-moment';
+import { NgModule, Type } from '@angular/core';
 import { PopupModule } from '../popups/popup.module';
 import { SharedModule } from '../shared/shared.module';
 import { AddParticipantComponent } from './add-participant/add-participant.component';
@@ -31,7 +30,6 @@ export const Components: Type<any>[] = [
 
 @NgModule({
   imports: [
-    MomentModule,
     SharedModule,
     BookingRoutingModule,
     PopupModule
