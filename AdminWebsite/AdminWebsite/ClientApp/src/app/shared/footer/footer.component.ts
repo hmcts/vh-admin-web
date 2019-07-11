@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
+import { Router, ResolveEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 
 @Component({
@@ -12,10 +12,8 @@ export class FooterComponent implements OnInit {
 
   constructor(private router: Router) {
     this.router.events.pipe(
-      filter((event: Event) => event instanceof NavigationEnd)
-    ).subscribe(x => {
-      this.hideContactUs();
-    });
+      filter(event => event instanceof ResolveEnd)
+    ).subscribe(() => this.hideContactUs());
   }
 
   ngOnInit() {

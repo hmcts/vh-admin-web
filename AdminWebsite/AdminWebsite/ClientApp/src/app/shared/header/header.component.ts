@@ -10,7 +10,7 @@ import { TopMenuItems } from './topMenuItems';
 export class HeaderComponent implements OnInit {
   @Input() loggedIn: boolean;
 
-  @ViewChild('headerElement')
+  @ViewChild('headerElement', { static: true })
   headerElement: ElementRef;
 
   $confirmLogout: EventEmitter<any>;

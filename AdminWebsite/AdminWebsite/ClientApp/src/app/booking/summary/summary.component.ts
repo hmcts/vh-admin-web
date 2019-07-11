@@ -48,10 +48,10 @@ export class SummaryComponent implements OnInit {
   private newHearingSessionKey = 'newHearingId';
   isExistingBooking = false;
 
-  @ViewChild(ParticipantsListComponent)
+  @ViewChild(ParticipantsListComponent, { static: true })
   participantsListComponent: ParticipantsListComponent;
 
-  @ViewChild(RemovePopupComponent)
+  @ViewChild(RemovePopupComponent, { static: false })
   removePopupComponent: RemovePopupComponent;
 
   constructor(private hearingService: VideoHearingsService,
