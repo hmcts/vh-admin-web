@@ -55,3 +55,4 @@ jobs:
     integrationTestsAppSettingsTransform: $(integrationTestsAppSettingsTransform)
     infraKeyVaultName: $(infraKeyVaultName)
     infraSecretsFilter: $(infraSecretsFilter)
+    nodeVersion: $(nodeVersion)
