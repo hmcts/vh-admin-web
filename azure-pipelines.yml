@@ -31,7 +31,6 @@ resources:
     type: github
     name: hmcts/azure-devops-templates
     endpoint: 'GitHubDevOps'
-    ref: parameterise-node
 
 trigger:
   branches:
