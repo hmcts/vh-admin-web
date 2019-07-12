@@ -3,7 +3,7 @@ variables:
   cleanChekout: 'false'
   solutionType: angularDotNetCore # angularDotNetCore, dotNetCore
   apiDirectory: 'AdminWebsite/AdminWebsite'
-  sonarCloudPrepareExtraProperties: |  
+  sonarCloudPrepareExtraProperties: |
     sonar.exclusions=**/node_modules/**,**/*.spec.ts,*.spec.ts,**/ClientApp/src/*,**/ClientApp/coverage/**/*
     sonar.typescript.lcov.reportPaths=$(System.DefaultWorkingDirectory)/AdminWebsite/AdminWebsite/ClientApp/coverage/lcov.info
     sonar.typescript.exclusions=**/node_modules/**,**/typings.d.ts,**/main.ts,**/environments/environment*.ts,**/*routing.module.ts,**/api-client.ts
@@ -16,13 +16,13 @@ variables:
   "AzureAd:TenantId":"$(TenantId)",
   "VhServices/BookingsApiResourceId":"$(vh-bookings-api-identifieruris)",
   "VhServices/UserApiResourceId":"$(vh-user-api-identifieruris)"'
-  
+
   vhAzureKeyVault: 'https://vhwebsitepreview.vault.azure.net/' # Used during integration tests
   keyVaultName: vhcoreinfrahtpreview # Used to get secrets for integration tests
   secretsFilter: 'TenantId,vh-admin-web-appid,vh-admin-web-key,vh-bookings-api-identifieruris,vh-user-api-identifieruris' # filters out secrets returned from key vault
   infraKeyVaultName: 'vhcoreinfradev'
   infraSecretsFilter: 'vh-core-infra-AppInsightsKey'
-  
+
 # GitHub Repo that conatins build templates. Reference https://docs.microsoft.com/en-us/azure/devops/pipelines/process/templates?view=vsts#using-other-repositories
 resources:
   repositories:
@@ -30,7 +30,8 @@ resources:
     type: github
     name: hmcts/azure-devops-templates
     endpoint: 'GitHubDevOps'
-    
+    ref: parameterise-node
+
 trigger:
   branches:
     include:
