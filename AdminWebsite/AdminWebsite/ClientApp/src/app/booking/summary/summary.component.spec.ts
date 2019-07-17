@@ -1,4 +1,3 @@
-import { MomentModule } from 'angular2-moment';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { of, throwError } from 'rxjs';
@@ -111,7 +110,7 @@ describe('SummaryComponent with valid request', () => {
         SaveFailedPopupComponent,
         LongDatetimePipe
       ],
-      imports: [RouterTestingModule, MomentModule],
+      imports: [RouterTestingModule],
     })
       .compileComponents();
   }));
@@ -204,7 +203,7 @@ describe('SummaryComponent  with invalid request', () => {
         { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
         { provide: Router, useValue: routerSpy }
       ],
-      imports: [RouterTestingModule, MomentModule],
+      imports: [RouterTestingModule],
       declarations: [
         SummaryComponent,
         BreadcrumbStubComponent,
@@ -250,7 +249,7 @@ describe('SummaryComponent  with existing request', () => {
         { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
         { provide: Router, useValue: routerSpy }
       ],
-      imports: [RouterTestingModule, MomentModule],
+      imports: [RouterTestingModule],
       declarations: [
         SummaryComponent,
         BreadcrumbStubComponent,

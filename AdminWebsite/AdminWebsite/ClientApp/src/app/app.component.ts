@@ -22,7 +22,7 @@ export class AppComponent implements OnInit {
     postLogoutRedirectUri: ''
   };
 
-  @ViewChild(HeaderComponent)
+  @ViewChild(HeaderComponent, { static: true })
   headerComponent: HeaderComponent;
 
   showSignOutConfirmation = false;

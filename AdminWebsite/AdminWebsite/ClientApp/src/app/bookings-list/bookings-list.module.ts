@@ -1,5 +1,5 @@
+import { MomentModule } from 'ngx-moment';
 import { NgModule } from '@angular/core';
-import { MomentModule } from 'angular2-moment';
 import { SharedModule } from '../shared/shared.module';
 import { BookingsListComponent } from './bookings-list/bookings-list.component';
 import { BookingsListRoutingModule } from './bookings-list-routing.module';

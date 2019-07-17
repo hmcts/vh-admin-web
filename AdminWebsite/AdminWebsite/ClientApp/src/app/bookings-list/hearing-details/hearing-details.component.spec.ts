@@ -1,4 +1,3 @@
-import { MomentModule } from 'angular2-moment';
 import { DebugElement } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
@@ -18,8 +17,7 @@ describe('HearingDetailsComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [HearingDetailsComponent, LongDatetimePipe],
-      imports: [RouterTestingModule, MomentModule
-],
+      imports: [RouterTestingModule],
     })
       .compileComponents();
   }));

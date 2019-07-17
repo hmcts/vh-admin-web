@@ -12,7 +12,7 @@ export class FooterComponent implements OnInit {
 
   constructor(private router: Router) {
     this.router.events.pipe(
-      filter((event: Event) => event instanceof NavigationEnd)
+      filter(event => event instanceof NavigationEnd)
     ).subscribe(x => {
       this.hideContactUs();
     });

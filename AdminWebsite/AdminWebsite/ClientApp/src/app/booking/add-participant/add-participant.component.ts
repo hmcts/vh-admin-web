@@ -78,10 +78,10 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   showAddress = false;
   existingPersonEmails: string[] = [];
 
-  @ViewChild(SearchEmailComponent)
+  @ViewChild(SearchEmailComponent, { static: false })
   searchEmail: SearchEmailComponent;
 
-  @ViewChild(ParticipantsListComponent)
+  @ViewChild(ParticipantsListComponent, { static: true })
   participantsListComponent: ParticipantsListComponent;
 
   constructor(
