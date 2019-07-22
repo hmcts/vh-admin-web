@@ -32,6 +32,7 @@ export class QuestionnarieMapper {
     };
   }
 
+  // Translates answers into readable format
   private translateAnswer(answer: string) {
     switch (answer) {
       case 'true': return 'Yes';
