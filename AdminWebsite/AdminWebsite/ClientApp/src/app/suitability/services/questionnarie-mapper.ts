@@ -27,8 +27,17 @@ export class QuestionnarieMapper {
   private mapAnswer(key: string) {
     const findAnswer = this.answers.find(x => x.key === key);
     return {
-      answer: !!findAnswer ? findAnswer.answer : 'Not answered',
+      answer: !!findAnswer ? this.translateAnswer(findAnswer.answer) : 'Not answered',
       note: !!findAnswer ? findAnswer.extended_answer : ''
     };
+  }
+
+  // Translates answers into readable format
+  private translateAnswer(answer: string) {
+    switch (answer) {
+      case 'true': return 'Yes';
+      case 'false': return 'No';
+      default: return answer;
+    }
   }
 }
