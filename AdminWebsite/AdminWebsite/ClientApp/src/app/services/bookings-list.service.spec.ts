@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { HttpClientModule } from '@angular/common/http';
 import { BookingsListService } from './bookings-list.service';
 import { BHClient, BookingsResponse, BookingsByDateResponse, BookingsHearingResponse } from './clients/api-client';
-import { Observable } from 'rxjs';
+import { of } from 'rxjs';
 import { BookingsListModel, BookingsDetailsModel } from '../common/model/bookings-list.model';
 
 export class ResponseTestData {
@@ -97,62 +97,62 @@ export class ResponseTestData {
 }
 
 describe('bookings service', () => {
-    let bhClientSpy: jasmine.SpyObj<BHClient>;
-    let bookingsResponse: BookingsResponse;
-    let service: BookingsListService;
+  let bhClientSpy: jasmine.SpyObj<BHClient>;
+  let bookingsResponse: BookingsResponse;
+  let service: BookingsListService;
 
-    beforeEach(() => {
-        TestBed.configureTestingModule({
-            imports: [HttpClientModule],
-            providers: [BookingsListService, { provide: BHClient, useValue: bhClientSpy }]
-        });
-        bhClientSpy = jasmine.createSpyObj<BHClient>('BHClient', ['getBookingsList']);
-        bookingsResponse = new ResponseTestData().getTestData();
-
-        bhClientSpy.getBookingsList.and.returnValue(Observable.create(bookingsResponse));
-        service = TestBed.get(BookingsListService);
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      imports: [HttpClientModule],
+      providers: [BookingsListService, { provide: BHClient, useValue: bhClientSpy }]
     });
+    bhClientSpy = jasmine.createSpyObj<BHClient>('BHClient', ['getBookingsList']);
+    bookingsResponse = new ResponseTestData().getTestData();
 
-    afterEach(() => {
-        sessionStorage.clear();
-    });
+    bhClientSpy.getBookingsList.and.returnValue(of(bookingsResponse));
+    service = TestBed.get(BookingsListService);
+  });
+
+  afterEach(() => {
+    sessionStorage.clear();
+  });
 
 
-    it('should be created', () => {
-        expect(service).toBeTruthy();
-    });
+  it('should be created', () => {
+    expect(service).toBeTruthy();
+  });
 
-    it('should map response to model', () => {
-        bookingsResponse = new ResponseTestData().getBookingResponse();
-        const model = service.mapBookingsResponse(bookingsResponse);
-        expect(model).toBeTruthy();
-        expect(model.Hearings.length).toBe(1);
-        expect(model.NextCursor).toBe('1233');
-        expect(model.Hearings[0].BookingsDate.getDate()).toBe(22);
+  it('should map response to model', () => {
+    bookingsResponse = new ResponseTestData().getBookingResponse();
+    const model = service.mapBookingsResponse(bookingsResponse);
+    expect(model).toBeTruthy();
+    expect(model.Hearings.length).toBe(1);
+    expect(model.NextCursor).toBe('1233');
+    expect(model.Hearings[0].BookingsDate.getDate()).toBe(22);
 
-        expect(model.Hearings[0].BookingsDetails.length).toBe(2);
-        expect(model.Hearings[0].BookingsDetails[0].CourtRoom).toBe('12A');
-        expect(model.Hearings[0].BookingsDetails[0].Duration).toBe(45);
-        expect(model.Hearings[0].BookingsDetails[0].CourtAddress).toBe('court address');
-        expect(model.Hearings[0].BookingsDetails[0].HearingCaseName).toBe('A vs B');
-        expect(model.Hearings[0].BookingsDetails[0].HearingCaseNumber).toBe('123A');
-        expect(model.Hearings[0].BookingsDetails[0].HearingType).toBe('Tax');
-    });
+    expect(model.Hearings[0].BookingsDetails.length).toBe(2);
+    expect(model.Hearings[0].BookingsDetails[0].CourtRoom).toBe('12A');
+    expect(model.Hearings[0].BookingsDetails[0].Duration).toBe(45);
+    expect(model.Hearings[0].BookingsDetails[0].CourtAddress).toBe('court address');
+    expect(model.Hearings[0].BookingsDetails[0].HearingCaseName).toBe('A vs B');
+    expect(model.Hearings[0].BookingsDetails[0].HearingCaseNumber).toBe('123A');
+    expect(model.Hearings[0].BookingsDetails[0].HearingType).toBe('Tax');
+  });
 
-    it('should add bookings to collection', () => {
-        bookingsResponse = new ResponseTestData().getBookingResponse();
-        const model = service.mapBookingsResponse(bookingsResponse);
-        const bookings: Array<BookingsListModel> = [];
-        const result = service.addBookings(model, bookings);
-        expect(result.length).toBeGreaterThan(0);
-    });
+  it('should add bookings to collection', () => {
+    bookingsResponse = new ResponseTestData().getBookingResponse();
+    const model = service.mapBookingsResponse(bookingsResponse);
+    const bookings: Array<BookingsListModel> = [];
+    const result = service.addBookings(model, bookings);
+    expect(result.length).toBeGreaterThan(0);
+  });
 
-    it('should not add duplicated bookings to collection', () => {
-        bookingsResponse = new ResponseTestData().getBookingResponse();
-        const model = service.mapBookingsResponse(bookingsResponse);
-        const bookings: Array<BookingsListModel> = ResponseTestData.getBookingsTestData();
-        const result = service.addBookings(model, bookings);
-        expect(result.length).toBe(2);
-    });
+  it('should not add duplicated bookings to collection', () => {
+    bookingsResponse = new ResponseTestData().getBookingResponse();
+    const model = service.mapBookingsResponse(bookingsResponse);
+    const bookings: Array<BookingsListModel> = ResponseTestData.getBookingsTestData();
+    const result = service.addBookings(model, bookings);
+    expect(result.length).toBe(2);
+  });
 });
 

@@ -1,3 +1,6 @@
 .vh-text-h {
   min-height: 130px;
 }
+.vh-over{
+  overflow:hidden;
+}
