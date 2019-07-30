@@ -16,6 +16,7 @@ import { BookingService } from '../../services/booking.service';
 import { ParticipantService } from '../services/participant.service';
 import { CaseAndHearingRolesResponse } from '../../services/clients/api-client';
 import { PartyModel } from '../../common/model/party.model';
+import { Address } from './address';
 
 @Component({
   selector: 'app-add-participant',
@@ -77,6 +78,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   bookingHasParticipants: boolean;
   showAddress = false;
   existingPersonEmails: string[] = [];
+  dummyAddress: Address = new Address();
 
   @ViewChild(SearchEmailComponent, { static: false })
   searchEmail: SearchEmailComponent;
@@ -96,7 +98,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   }
 
   ngOnInit() {
-
+    this.dummyAddress.setDummyAddress();
     this.checkForExistingRequest();
     this.initializeForm();
     super.ngOnInit();
@@ -182,11 +184,11 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     this.companyNameIndividual = new FormControl('');
     this.solicitorReference = new FormControl('');
     this.representing = new FormControl('');
-    this.houseNumber = new FormControl('');
-    this.street = new FormControl('');
-    this.city = new FormControl('');
-    this.county = new FormControl('');
-    this.postcode = new FormControl('');
+    this.houseNumber = new FormControl(this.dummyAddress.houseNumber);
+    this.street = new FormControl(this.dummyAddress.street);
+    this.city = new FormControl(this.dummyAddress.city);
+    this.county = new FormControl(this.dummyAddress.county);
+    this.postcode = new FormControl(this.dummyAddress.postcode);
     this.form = new FormGroup({
       role: this.role,
       party: this.party,
@@ -303,11 +305,11 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
       companyNameIndividual: this.participantDetails.company ? this.participantDetails.company : '',
       solicitorReference: this.participantDetails.solicitorsReference ? this.participantDetails.solicitorsReference : '',
       representing: this.participantDetails.representee ? this.participantDetails.representee : '',
-      houseNumber: this.participantDetails.housenumber ? this.participantDetails.housenumber : '',
-      street: this.participantDetails.street ? this.participantDetails.street : '',
-      city: this.participantDetails.city ? this.participantDetails.city : '',
-      county: this.participantDetails.county ? this.participantDetails.county : '',
-      postcode: this.participantDetails.postcode ? this.participantDetails.postcode : ''
+      houseNumber: this.participantDetails.housenumber ? this.participantDetails.housenumber : this.dummyAddress.houseNumber,
+      street: this.participantDetails.street ? this.participantDetails.street : this.dummyAddress.street,
+      city: this.participantDetails.city ? this.participantDetails.city : this.dummyAddress.city,
+      county: this.participantDetails.county ? this.participantDetails.county : this.dummyAddress.county,
+      postcode: this.participantDetails.postcode ? this.participantDetails.postcode : this.dummyAddress.postcode
     });
 
     setTimeout(() => {
@@ -480,11 +482,11 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
       this.county.updateValueAndValidity();
       this.postcode.updateValueAndValidity();
 
-      this.houseNumber.setValue('');
-      this.street.setValue('');
-      this.city.setValue('');
-      this.county.setValue('');
-      this.postcode.setValue('');
+      this.houseNumber.setValue(this.dummyAddress.houseNumber);
+      this.street.setValue(this.dummyAddress.street);
+      this.city.setValue(this.dummyAddress.city);
+      this.county.setValue(this.dummyAddress.county);
+      this.postcode.setValue(this.dummyAddress.postcode);
       this.companyNameIndividual.setValue('');
     }
     this.showDetails = true;
@@ -669,11 +671,11 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         companyNameIndividual: '',
         solicitorReference: '',
         representing: '',
-        houseNumber: '',
-        street: '',
-        city: '',
-        county: '',
-        postcode: '',
+        houseNumber: this.dummyAddress.houseNumber,
+        street: this.dummyAddress.street,
+        city: this.dummyAddress.city,
+        county: this.dummyAddress.county,
+        postcode: this.dummyAddress.postcode,
       });
     this.form.markAsUntouched();
     this.form.markAsPristine();
