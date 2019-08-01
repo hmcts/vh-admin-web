@@ -29,6 +29,7 @@ import { WaitPopupComponent } from './popups/wait-popup/wait-popup.component';
 import { CancelPopupStubComponent } from './testing/stubs/cancel-popup-stub';
 import { SaveFailedPopupComponent } from './popups/save-failed-popup/save-failed-popup.component';
 import { CancelBookingPopupComponent } from './popups/cancel-booking-popup/cancel-booking-popup.component';
+import { UnsupportedBrowserComponent } from './shared/unsupported-browser/unsupported-browser.component';
 
 describe('app routing', () => {
   let location: Location;
@@ -54,7 +55,8 @@ describe('app routing', () => {
         WaitPopupComponent,
         SaveFailedPopupComponent,
         CancelPopupStubComponent,
-        CancelBookingPopupComponent
+        CancelBookingPopupComponent,
+        UnsupportedBrowserComponent,
       ],
       providers: [
         AuthGuard,

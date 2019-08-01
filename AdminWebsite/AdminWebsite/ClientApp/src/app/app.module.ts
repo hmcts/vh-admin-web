@@ -32,6 +32,8 @@ import { AppInsightsLogger } from './services/app-insights-logger.service';
 import { Config } from '../app/common/model/config';
 import { WindowRef } from './security/window-ref';
 import { CustomAdalInterceptor } from './custom-adal-interceptor';
+import { UnsupportedBrowserComponent } from './shared/unsupported-browser/unsupported-browser.component';
+import { DeviceDetectorModule } from 'ngx-device-detector';
 
 export function getSettings(configService: ConfigService) {
   return () => configService.loadConfig();
@@ -45,6 +47,7 @@ export function getSettings(configService: ConfigService) {
     LogoutComponent,
     UnauthorisedComponent,
     ErrorComponent,
+    UnsupportedBrowserComponent,
   ],
   imports: [
     MomentModule,
@@ -54,7 +57,9 @@ export function getSettings(configService: ConfigService) {
     SuitabilityModule,
     AppRoutingModule,
     SharedModule,
-    PopupModule
+    PopupModule,
+    DeviceDetectorModule.forRoot()
+
   ],
   providers: [
     HttpClientModule,
