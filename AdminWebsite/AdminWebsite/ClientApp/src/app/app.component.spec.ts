@@ -15,6 +15,8 @@ import { WindowRef, WindowLocation } from './security/window-ref';
 import { VideoHearingsService } from './services/video-hearings.service';
 import { CancelPopupStubComponent } from './testing/stubs/cancel-popup-stub';
 import { HeaderComponent } from './shared/header/header.component';
+import { UnsupportedBrowserComponent } from './shared/unsupported-browser/unsupported-browser.component';
+import { DeviceType } from './services/device-type';
 
 
 const adalService = {
@@ -25,7 +27,8 @@ const adalService = {
 
 describe('AppComponent', () => {
   const router = {
-    navigate: jasmine.createSpy('navigate')
+    navigate: jasmine.createSpy('navigate'),
+    navigateByUrl: jasmine.createSpy('navigateByUrl')
   };
 
   const videoHearingServiceSpy = jasmine.createSpyObj('VideoHearingsService', ['hasUnsavedChanges']);
@@ -33,6 +36,7 @@ describe('AppComponent', () => {
   let configServiceSpy: jasmine.SpyObj<ConfigService>;
   let pageTracker: jasmine.SpyObj<PageTrackerService>;
   let window: jasmine.SpyObj<WindowRef>;
+  let deviceTypeServiceSpy: jasmine.SpyObj<DeviceType>;
 
   const clientSettings = new ClientSettingsResponse({
     tenant_id: 'tenantid',
@@ -49,6 +53,9 @@ describe('AppComponent', () => {
     window.getLocation.and.returnValue(new WindowLocation('/url'));
 
     pageTracker = jasmine.createSpyObj('PageTrackerService', ['trackNavigation', 'trackPreviousPage']);
+
+    deviceTypeServiceSpy = jasmine.createSpyObj<DeviceType>(['isSupportedBrowser']);
+
     TestBed.configureTestingModule({
       imports: [HttpClientModule, RouterTestingModule],
       declarations: [
@@ -57,6 +64,7 @@ describe('AppComponent', () => {
         FooterStubComponent,
         SignOutPopupStubComponent,
         CancelPopupStubComponent,
+        UnsupportedBrowserComponent,
         ],
       providers:
         [
@@ -65,7 +73,8 @@ describe('AppComponent', () => {
           { provide: Router, useValue: router },
           { provide: PageTrackerService, useValue: pageTracker },
           { provide: WindowRef, useValue: window },
-          { provide: VideoHearingsService, useValue: videoHearingServiceSpy }
+          { provide: VideoHearingsService, useValue: videoHearingServiceSpy },
+          { provide: DeviceType, useValue: deviceTypeServiceSpy }
         ],
     }).compileComponents();
   }));
@@ -102,5 +111,13 @@ describe('AppComponent', () => {
     expect(lastRoutingArgs.url).toEqual('/login');
     expect(lastRoutingArgs.queryParams.returnUrl).toEqual('/url?search#hash');
   }));
+
+  it('should navigate to unsupported browser page if browser is not compatible', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const component = fixture.componentInstance;
+    deviceTypeServiceSpy.isSupportedBrowser.and.returnValue(false);
+    component.checkBrowser();
+    expect(router.navigateByUrl).toHaveBeenCalledWith('unsupported-browser');
+  });
 });
 
