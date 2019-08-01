@@ -62,6 +62,10 @@ export class AppComponent implements OnInit {
     this.headerComponent.confirmSaveBooking.subscribe((menuItemIndex) => { this.showConfirmationSaveBooking(menuItemIndex); });
   }
 
+  onActivate(event) {
+    window.scroll(0, 0);
+  }
+
   showConfirmation() {
     if (this.videoHearingsService.hasUnsavedChanges()) {
       this.showSignOutConfirmation = true;
