@@ -24,7 +24,7 @@ import { CaseAndHearingRolesResponse } from '../../services/clients/api-client';
 import { PartyModel } from '../../common/model/party.model';
 import { Constants } from '../../common/constants';
 import { ParticipantsListComponent } from '../participants-list/participants-list.component';
-import { ElementRef } from '@angular/core';
+import { Address } from './address';
 
 let component: AddParticipantComponent;
 let fixture: ComponentFixture<AddParticipantComponent>;
@@ -35,6 +35,7 @@ const roleList: CaseAndHearingRolesResponse[] =
 const partyR = new PartyModel('Claimant');
 partyR.hearingRoles = ['Solicitor', 'Claimant LIP'];
 const partyList: PartyModel[] = [partyR];
+const addressDummy = new Address();
 
 let role: AbstractControl;
 let party: AbstractControl;
@@ -220,6 +221,8 @@ describe('AddParticipantComponent', () => {
     component.participantsListComponent = new ParticipantsListComponent(
       bookingServiceSpy, routerSpy
     );
+
+    addressDummy.setDummyAddress();
     component.ngOnInit();
 
     role = component.form.controls['role'];
@@ -282,11 +285,11 @@ describe('AddParticipantComponent', () => {
     expect(phone.value).toBe('');
     expect(title.value).toBe('Please Select');
     expect(companyName.value).toBe('');
-    expect(houseNumber.value).toBe('');
-    expect(street.value).toBe('');
-    expect(city.value).toBe('');
-    expect(county.value).toBe('');
-    expect(postcode.value).toBe('');
+    expect(houseNumber.value).toBe(addressDummy.houseNumber);
+    expect(street.value).toBe(addressDummy.street);
+    expect(city.value).toBe(addressDummy.city);
+    expect(county.value).toBe(addressDummy.county);
+    expect(postcode.value).toBe(addressDummy.postcode);
     expect(component.showAddress).toBeFalsy();
   }));
   it('should set validation to false when form is empty', () => {
