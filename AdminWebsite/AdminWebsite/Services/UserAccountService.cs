@@ -88,8 +88,8 @@ namespace AdminWebsite.Services
         {
             var createUserRequest = new CreateUserRequest
             {
-                First_name = participant.First_name,
-                Last_name = participant.Last_name,
+                First_name = participant.First_name?.Replace(" ", string.Empty),
+                Last_name = participant.Last_name?.Replace(" ", string.Empty),
                 Recovery_email = participant.Contact_email
             };
 
