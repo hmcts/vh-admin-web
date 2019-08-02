@@ -7,6 +7,7 @@ import { WindowRef } from './security/window-ref';
 import { HeaderComponent } from './shared/header/header.component';
 import { VideoHearingsService } from './services/video-hearings.service';
 import { BookingService } from './services/booking.service';
+import { DeviceType } from './services/device-type';
 
 @Component({
   selector: 'app-root',
@@ -30,14 +31,13 @@ export class AppComponent implements OnInit {
   title = 'Book hearing';
   loggedIn: boolean;
   menuItemIndex: number;
-
-  constructor(private adalSvc: AdalService,
+ constructor(private adalSvc: AdalService,
     private configService: ConfigService,
     private router: Router,
     private window: WindowRef,
     pageTracker: PageTrackerService,
     private videoHearingsService: VideoHearingsService,
-    private bookingService: BookingService) {
+    private bookingService: BookingService, private deviceTypeService: DeviceType) {
 
     this.config.tenant = this.configService.clientSettings.tenant_id;
     this.config.clientId = this.configService.clientSettings.client_id;
@@ -50,6 +50,7 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.checkBrowser();
     const currentUrl = this.window.getLocation().href;
     this.adalSvc.handleWindowCallback();
     this.loggedIn = this.adalSvc.userInfo.authenticated;
@@ -100,6 +101,13 @@ export class AppComponent implements OnInit {
     this.videoHearingsService.cancelRequest();
     this.headerComponent.navigateToSelectedMenuItem(this.menuItemIndex);
   }
+
+  checkBrowser(): void {
+    if (!this.deviceTypeService.isSupportedBrowser()) {
+      this.router.navigateByUrl('unsupported-browser');
+    }
+  }
+
 
   @HostListener('window:beforeunload', ['$event'])
   public beforeunloadHandler($event: any) {
