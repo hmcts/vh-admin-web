@@ -3,14 +3,14 @@ import { ParticipantSuitabilityAnswerResponse } from './../../services/clients/a
 import { BHClient } from 'src/app/services/clients/api-client';
 import { Injectable } from '@angular/core';
 import { ScrollableSuitabilityAnswersService, SuitabilityAnswersPage } from './scrollable-suitability-answers.service';
-import { QuestionnarieMapper } from './questionnarie-mapper';
-import { QuestionnarieMapperFactory } from './questionnarie-mapper.factory';
+import { QuestionnaireMapper } from './questionnaire-mapper';
+import { QuestionnaireMapperFactory } from './questionnaire-mapper-factory.service';
 
 @Injectable()
 export class QuestionnaireApiService implements ScrollableSuitabilityAnswersService {
 
   constructor(private client: BHClient,
-    private mapperFactory: QuestionnarieMapperFactory) { }
+    private mapperFactory: QuestionnaireMapperFactory) { }
 
   async getSuitabilityAnswers(cursor: string, limit: number): Promise<SuitabilityAnswersPage> {
     const response = await this.client.getSuitabilityAnswers(cursor, limit).toPromise();
@@ -33,7 +33,7 @@ export class QuestionnaireApiService implements ScrollableSuitabilityAnswersServ
     });
   }
 
-  private mapAnswerGroups(suitabilityMappers: QuestionnarieMapper, selfTestMapper: QuestionnarieMapper): SuitabilityAnswerGroup[] {
+  private mapAnswerGroups(suitabilityMappers: QuestionnaireMapper, selfTestMapper: QuestionnaireMapper): SuitabilityAnswerGroup[] {
     return [
       new SuitabilityAnswerGroup({
         title: 'About you and your equipment',

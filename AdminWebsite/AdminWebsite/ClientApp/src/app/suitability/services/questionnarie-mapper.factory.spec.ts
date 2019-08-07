@@ -1,28 +1,28 @@
-import { RepresentativeQuestionnarieMapper } from './representative-questionnarie-mapper';
-import { IndividualQuestionnarieMapper } from './individual-questionnarie-mapper';
-import { SelfTestQuestionnarieMapper } from './selftest-questionnarie-mapper';
-import { QuestionnarieMapperFactory } from './questionnarie-mapper.factory';
+import { RepresentativeQuestionnaireMapper } from './representative-questionnaire-mapper';
+import { IndividualQuestionnaireMapper } from './individual-questionnaire-mapper';
+import { SelfTestQuestionnaireMapper } from './self-test-questionnaire-mapper';
+import { QuestionnaireMapperFactory } from './questionnaire-mapper-factory.service';
 import { SuatabilityAnswerTestData } from '../../testing/data/suitability-answer-test-data';
 
-describe('QuestionnarieMapperFactory', () => {
-  let factory: QuestionnarieMapperFactory;
+describe('QuestionnaireMapperFactory', () => {
+  let factory: QuestionnaireMapperFactory;
   const response = new SuatabilityAnswerTestData().response;
 
   beforeEach(() => {
-    factory = new QuestionnarieMapperFactory();
+    factory = new QuestionnaireMapperFactory();
   });
 
   it('should return mapper for representative suitability questions', () => {
     const mapper = factory.getSuitabilityMapper(response);
-    expect(mapper instanceof RepresentativeQuestionnarieMapper).toBeTruthy();
+    expect(mapper instanceof RepresentativeQuestionnaireMapper).toBeTruthy();
   });
   it('should return mapper for individual suitability questions', () => {
     response.representee = '';
     const mapper = factory.getSuitabilityMapper(response);
-    expect(mapper instanceof IndividualQuestionnarieMapper).toBeTruthy();
+    expect(mapper instanceof IndividualQuestionnaireMapper).toBeTruthy();
   });
   it('should return mapper for self test questions', () => {
     const mapper = factory.getSelfTestMapper(response);
-    expect(mapper instanceof SelfTestQuestionnarieMapper).toBeTruthy();
+    expect(mapper instanceof SelfTestQuestionnaireMapper).toBeTruthy();
   });
 });
