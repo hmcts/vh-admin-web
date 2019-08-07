@@ -1,16 +1,16 @@
 import { BHClient, SuitabilityAnswersResponse } from './../../services/clients/api-client';
 import { QuestionnaireApiService } from './questionnaire-api.service';
-import { QuestionnarieMapperFactory } from './questionnarie-mapper.factory';
+import { QuestionnaireMapperFactory } from './questionnaire-mapper-factory.service';
 import { of } from 'rxjs';
 
 describe('QuestionnaireApiService', () => {
     let service: QuestionnaireApiService;
     let client: jasmine.SpyObj<BHClient>;
-    let factory: QuestionnarieMapperFactory;
+    let factory: QuestionnaireMapperFactory;
 
     beforeEach(() => {
         client = jasmine.createSpyObj<BHClient>(['getSuitabilityAnswers']);
-        factory = new QuestionnarieMapperFactory();
+        factory = new QuestionnaireMapperFactory();
         service = new QuestionnaireApiService(client, factory);
     });
 
