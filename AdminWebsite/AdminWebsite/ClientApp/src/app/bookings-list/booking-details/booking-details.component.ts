@@ -60,16 +60,14 @@ export class BookingDetailsComponent implements OnInit {
   }
 
   setTimeObserver() {
-    const source = timer(1000, 6000);
-    source.subscribe(() => {
+    if (this.booking) {
       let now = new Date();
-      now.setMinutes(now.getMinutes() + 30); 
-      now = new Date(now); 
+      now.setMinutes(now.getMinutes() + 30);
+      now = new Date(now);
       this.isConfirmationTimeValid = this.booking.scheduled_date_time.valueOf() >= now.valueOf();
-      console.log('TIMER...' + this.isConfirmationTimeValid);
-    });
+    }
   }
- 
+
   mapHearing(hearingResponse: HearingDetailsResponse) {
     this.hearing = this.bookingDetailsService.mapBooking(hearingResponse);
     const participants_and_judges = this.bookingDetailsService.mapBookingParticipants(hearingResponse);
@@ -136,7 +134,7 @@ export class BookingDetailsComponent implements OnInit {
           if (status === UpdateBookingStatusRequestStatus.Cancelled) {
             this.showCancelBooking = false;
           }
-          console.log('Cancel error ' + error)
+          console.log('Cancel error ' + error);
           this.errorService.handleError(error);
         });
   }
@@ -148,5 +146,4 @@ export class BookingDetailsComponent implements OnInit {
     this.booking.status = status;
     this.setBookingInStorage();
   }
-
 }

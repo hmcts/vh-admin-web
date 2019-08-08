@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, async } from '@angular/core/testing';
+import { ComponentFixture, TestBed, async, fakeAsync, tick } from '@angular/core/testing';
 import { HttpClientModule } from '@angular/common/http';
 import { Router } from '@angular/router';
 
@@ -83,6 +83,10 @@ const hearingModel = new HearingModel();
 hearingModel.hearing_id = '44';
 hearingModel.cases = [caseModel];
 hearingModel.scheduled_duration = 120;
+let now = new Date();
+now.setMonth(now.getMonth() + 1);
+now = new Date(now);
+hearingModel.scheduled_date_time = now;
 
 const updateBookingStatusRequest = new UpdateBookingStatusRequest();
 updateBookingStatusRequest.status = UpdateBookingStatusRequestStatus.Cancelled;
@@ -97,7 +101,9 @@ class BookingDetailsServiceMock {
   }
 }
 
+
 describe('BookingDetailsComponent', () => {
+
   videoHearingServiceSpy = jasmine.createSpyObj('VideoHearingService',
     ['getHearingById', 'saveHearing', 'mapHearingDetailsResponseToHearingModel',
       'updateHearingRequest', 'updateBookingStatus']);
@@ -139,11 +145,11 @@ describe('BookingDetailsComponent', () => {
     fixture.detectChanges();
   }));
 
-  it('should create component', (() => {
+  it('should create component', fakeAsync(() => {
     expect(component).toBeTruthy();
   }));
 
-  it('should get hearings details', (() => {
+  it('should get hearings details', fakeAsync(() => {
     component.ngOnInit();
     expect(videoHearingServiceSpy.getHearingById).toHaveBeenCalled();
     expect(component.hearing).toBeTruthy();
