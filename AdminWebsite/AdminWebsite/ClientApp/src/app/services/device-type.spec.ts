@@ -17,4 +17,8 @@ describe('DeviceType', () => {
     const deviceType = new DeviceType(deviceDetectorService);
     expect(deviceType.isDesktop()).toBeTruthy();
   }));
+  it('should return true if browser is supported', inject([DeviceDetectorService], (deviceDetectorService: DeviceDetectorService) => {
+    const deviceType = new DeviceType(deviceDetectorService);
+    expect(deviceType.isSupportedBrowser).toBeTruthy();
+  }));
 });

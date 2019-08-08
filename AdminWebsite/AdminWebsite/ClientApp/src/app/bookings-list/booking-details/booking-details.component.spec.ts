@@ -212,5 +212,21 @@ describe('BookingDetailsComponent', () => {
     fixture.detectChanges();
     expect(component.showCancelBooking).toBeFalsy();
   });
+  it('should set confirmation button visible if hearing start time more than 30 min', () => {
+    component.setTimeObserver();
+    fixture.detectChanges();
+    expect(component.isConfirmationTimeValid).toBeTruthy();
+  });
+  it('should set confirmation button not visible if hearing start time less than 30 min', () => {
+    component.booking.scheduled_date_time = new Date(Date.now());
+    component.setTimeObserver();
+    fixture.detectChanges();
+    expect(component.isConfirmationTimeValid).toBeFalsy();
+  });
+  it('should confirm booking', () => {
+    component.confirmHearing();
+    fixture.detectChanges();
+    expect(videoHearingServiceSpy.getHearingById).toHaveBeenCalled();
+  });
 });
 
