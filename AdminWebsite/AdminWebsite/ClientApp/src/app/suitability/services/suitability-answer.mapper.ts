@@ -19,6 +19,7 @@ export const RepresentativeQuestionKeys = {
 };
 
 export const SelfTestQuestionKeys = {
+  SelfTestScore: 'KIT_SELFTEST_SCORE',
   SeeYourself: 'KIT_SEE_YOURSELF',
   Microphone: 'KIT_MICROPHONE',
   SeeHearClearly: 'KIT_SEE_HEAR_CLEARLY'
@@ -26,7 +27,7 @@ export const SelfTestQuestionKeys = {
 
 export interface QuestionsMapAttributes {
   QuestionsOrder: string[];
-  Questions: Map<string, string>;
+  Questions: Map<string, QuestionAnswer>;
 }
 
 export class IndividualQuestionsMapAttributes implements QuestionsMapAttributes {
@@ -40,16 +41,35 @@ export class IndividualQuestionsMapAttributes implements QuestionsMapAttributes 
     IndividualQuestionKeys.Consent
   ];
 
-  public readonly Questions = new Map<string, string>([
-    [IndividualQuestionKeys.AboutYou,
-      'Is there anything you\'d like the court to take into account when it decides which type of hearing will be suitable?'
+  public readonly Questions = new Map<string, QuestionAnswer>([
+    [
+      IndividualQuestionKeys.AboutYou,
+      {Question: 'Is there anything you\'d like the court to take into account when it decides which type of hearing will be suitable?'}
     ],
-    [IndividualQuestionKeys.Interpreter, 'Will you need an interpreter for your hearing?'],
-    [IndividualQuestionKeys.Computer, 'Will you have access to a laptop or desktop computer (not a mobile, not a tablet)?'],
-    [IndividualQuestionKeys.Camera, 'Does your computer have a camera and microphone?'],
-    [IndividualQuestionKeys.Internet, 'At the time of your hearing, will the computer be able to access the internet?'],
-    [IndividualQuestionKeys.Room, 'At the time of your hearing, will you have access to a quiet, private room?'],
-    [IndividualQuestionKeys.Consent, 'Would you be content to take part in your hearing by video?']
+    [
+      IndividualQuestionKeys.Interpreter,
+      {Question: 'Will you need an interpreter for your hearing?'}
+    ],
+    [
+      IndividualQuestionKeys.Computer,
+      {Question: 'Will you have access to a laptop or desktop computer (not a mobile, not a tablet)?'}
+    ],
+    [
+      IndividualQuestionKeys.Camera,
+      {Question: 'Does your computer have a camera and microphone?'}
+    ],
+    [
+      IndividualQuestionKeys.Internet,
+      {Question: 'At the time of your hearing, will the computer be able to access the internet?'}
+    ],
+    [
+      IndividualQuestionKeys.Room,
+      {Question: 'At the time of your hearing, will you have access to a quiet, private room?'}
+    ],
+    [
+      IndividualQuestionKeys.Consent,
+      {Question: 'Would you be content to take part in your hearing by video?'}
+    ]
   ]);
 }
 
@@ -64,30 +84,59 @@ export class RepresentativeQuestionsMapAttributes implements QuestionsMapAttribu
     RepresentativeQuestionKeys.HearingSuitability
   ];
 
-  public readonly Questions = new Map<string, string>([
-    [RepresentativeQuestionKeys.AboutYou, 'Is there anything that could affect your ability to take part in a video hearing?'],
-    [RepresentativeQuestionKeys.Room,
-      'Will you have access to a quiet, private room where you can connect to the internet and where your client can sit with you?'],
-    [RepresentativeQuestionKeys.Computer, 'Will you have access to a laptop or desktop computer (not a mobile, not a tablet)?'],
-    [RepresentativeQuestionKeys.Camera, 'Does your computer have a camera and microphone?'],
-    [RepresentativeQuestionKeys.AboutYourClient,
-      'Is there anything that could affect your client\'s ability to take part in a video hearing?'],
-    [RepresentativeQuestionKeys.ClientAttendance, 'Will your client be attending the hearing?'],
-    [RepresentativeQuestionKeys.HearingSuitability, 'Is there anything about this case you think makes it unsuitable for a video hearing?']
+  public readonly Questions = new Map<string, QuestionAnswer>([
+    [
+      RepresentativeQuestionKeys.AboutYou,
+      {Question: 'Is there anything that could affect your ability to take part in a video hearing?'}
+    ],
+    [
+      RepresentativeQuestionKeys.Room,
+      {
+        Question:
+          'Will you have access to a quiet, private room where you can connect to the internet and where your client can sit with you?'
+      }
+    ],
+    [
+      RepresentativeQuestionKeys.Computer,
+      {Question: 'Will you have access to a laptop or desktop computer (not a mobile, not a tablet)?'}
+    ],
+    [
+      RepresentativeQuestionKeys.Camera,
+      {Question: 'Does your computer have a camera and microphone?'}
+    ],
+    [
+      RepresentativeQuestionKeys.AboutYourClient,
+      {Question: 'Is there anything that could affect your client\'s ability to take part in a video hearing?'}
+    ],
+    [
+      RepresentativeQuestionKeys.ClientAttendance,
+      {Question: 'Will your client be attending the hearing?'}
+    ],
+    [
+      RepresentativeQuestionKeys.HearingSuitability,
+      {Question: 'Is there anything about this case you think makes it unsuitable for a video hearing?'}
+    ]
   ]);
 }
 
 export class SelfTestQuestionsMapAttributes implements QuestionsMapAttributes {
 
-   public readonly QuestionsOrder = [
+  public readonly QuestionsOrder = [
+    SelfTestQuestionKeys.SelfTestScore,
     SelfTestQuestionKeys.SeeYourself,
     SelfTestQuestionKeys.Microphone,
     SelfTestQuestionKeys.SeeHearClearly,
   ];
 
-  public readonly Questions = new Map<string, string>([
-    [SelfTestQuestionKeys.SeeYourself, 'Could you see yourself on the screen in the camera window?'],
-    [SelfTestQuestionKeys.Microphone, 'Could you see the bar moving when you spoke?'],
-    [SelfTestQuestionKeys.SeeHearClearly, 'Could you see and hear the video clearly?']
+  public readonly Questions = new Map<string, QuestionAnswer>([
+    [SelfTestQuestionKeys.SelfTestScore, {Question: 'Self test score:', DefaultAnswer: 'N/A'}],
+    [SelfTestQuestionKeys.SeeYourself, {Question: 'Could you see yourself on the screen in the camera window?'}],
+    [SelfTestQuestionKeys.Microphone, {Question: 'Could you see the bar moving when you spoke?'}],
+    [SelfTestQuestionKeys.SeeHearClearly, {Question: 'Could you see and hear the video clearly?'}]
   ]);
-  }
+}
+
+export class QuestionAnswer {
+  Question: string;
+  DefaultAnswer?: string;
+}

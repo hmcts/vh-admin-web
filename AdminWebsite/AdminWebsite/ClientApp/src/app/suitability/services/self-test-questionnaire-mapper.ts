@@ -1,8 +1,8 @@
-import { SuitabilityAnswerResponse } from './../../services/clients/api-client';
+import { SuitabilityAnswerResponse } from '../../services/clients/api-client';
 import {  SelfTestQuestionsMapAttributes} from './suitability-answer.mapper';
-import { QuestionnarieMapper } from './questionnarie-mapper';
+import { QuestionnaireMapper } from './questionnaire-mapper';
 
-export class SelfTestQuestionnarieMapper extends QuestionnarieMapper {
+export class SelfTestQuestionnaireMapper extends QuestionnaireMapper {
   constructor(answers: SuitabilityAnswerResponse[]) {
     const attributes = new SelfTestQuestionsMapAttributes();
     super(answers, attributes);

@@ -1,12 +1,12 @@
 import { IndividualQuestionsMapAttributes } from './suitability-answer.mapper';
 import { SuatabilityAnswerTestData } from '../../testing/data/suitability-answer-test-data';
-import { IndividualQuestionnarieMapper } from '../services/individual-questionnarie-mapper';
+import { IndividualQuestionnaireMapper } from './individual-questionnaire-mapper';
 
-describe('QuestionnarieMapper', () => {
+describe('QuestionnaireMapper', () => {
   const response = new SuatabilityAnswerTestData().response;
 
   it('should map all individual suitability questions to answers', async () => {
-    const mapper = new IndividualQuestionnarieMapper(response.answers);
+    const mapper = new IndividualQuestionnaireMapper(response.answers);
     const questions = mapper.mapAnswers();
     const attributes = new IndividualQuestionsMapAttributes();
 
