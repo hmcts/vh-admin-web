@@ -62,4 +62,8 @@ export class BookingsDetailsModel {
   public get isCancelled(): boolean {
     return this.Status === 'Cancelled';
   }
+
+  public get isCreated(): boolean {
+    return this.Status === 'Created';
+  }
 }

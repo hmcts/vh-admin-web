@@ -26,4 +26,5 @@ export class HearingModel {
   created_date?: Date | undefined;
   updated_by?: string | undefined;
   updated_date: Date | undefined;
+  status?: string | undefined;
 }
