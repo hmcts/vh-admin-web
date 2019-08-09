@@ -106,7 +106,7 @@ describe('BookingDetailsComponent', () => {
 
   videoHearingServiceSpy = jasmine.createSpyObj('VideoHearingService',
     ['getHearingById', 'saveHearing', 'mapHearingDetailsResponseToHearingModel',
-      'updateHearingRequest', 'updateBookingStatus']);
+      'updateHearingRequest', 'updateBookingStatus', 'getCurrentRequest']);
   routerSpy = jasmine.createSpyObj('Router', ['navigate']);
   bookingServiceSpy = jasmine.createSpyObj('BookingService', ['setEditMode',
     'resetEditMode', 'setExistingCaseType', 'removeExistingCaseType']);
@@ -118,6 +118,8 @@ describe('BookingDetailsComponent', () => {
     videoHearingServiceSpy.getHearingById.and.returnValue(of(hearingResponse));
     videoHearingServiceSpy.updateBookingStatus.and.returnValue(of());
     videoHearingServiceSpy.mapHearingDetailsResponseToHearingModel.and.returnValue(hearingModel);
+    videoHearingServiceSpy.getCurrentRequest.and.returnValue(hearingModel);
+
     bookingPersistServiceSpy.selectedHearingId.and.returnValue('44');
     userIdentityServiceSpy.getUserInformation.and.returnValue(of(true));
 
@@ -224,9 +226,30 @@ describe('BookingDetailsComponent', () => {
     expect(component.isConfirmationTimeValid).toBeFalsy();
   });
   it('should confirm booking', () => {
+    component.isVhOfficerAdmin = true;
     component.confirmHearing();
     fixture.detectChanges();
     expect(videoHearingServiceSpy.getHearingById).toHaveBeenCalled();
+  });
+  it('should not confirm booking if not the VH officer admin role', () => {
+    component.isVhOfficerAdmin = false;
+    component.confirmHearing();
+    fixture.detectChanges();
+    expect(component.booking.status).toBeFalsy();
+  });
+  it('should persist status in the model', () => {
+    component.booking = null;
+    component.persistStatus(UpdateBookingStatusRequestStatus.Created);
+    expect(component.booking.status).toBe(UpdateBookingStatusRequestStatus.Created);
+    expect(videoHearingServiceSpy.updateHearingRequest).toHaveBeenCalled();
+  });
+  it('should hide cancel button for canceled hearing', () => {
+    component.updateStatusHandler(UpdateBookingStatusRequestStatus.Cancelled);
+    expect(component.showCancelBooking).toBeFalsy();
+  });
+  it('should hide cancel button for canceled error', () => {
+    component.errorHandler('error', UpdateBookingStatusRequestStatus.Cancelled);
+    expect(component.showCancelBooking).toBeFalsy();
   });
 });
 

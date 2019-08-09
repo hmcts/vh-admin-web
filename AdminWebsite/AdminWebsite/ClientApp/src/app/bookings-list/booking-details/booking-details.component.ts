@@ -7,7 +7,6 @@ import { BookingDetailsService } from '../../services/booking-details.service';
 import { BookingService } from '../../services/booking.service';
 import { HearingDetailsResponse, UpdateBookingStatusRequest, UpdateBookingStatusRequestStatus } from '../../services/clients/api-client';
 import { UserIdentityService } from '../../services/user-identity.service';
-import { timer } from 'rxjs';
 import { HearingModel } from '../../common/model/hearing.model';
 import { PageUrls } from '../../shared/page-url.constants';
 import { BookingPersistService } from '../../services/bookings-persist.service';
@@ -98,7 +97,9 @@ export class BookingDetailsComponent implements OnInit {
   }
 
   confirmHearing() {
-    this.updateHearingStatus(UpdateBookingStatusRequestStatus.Created);
+    if (this.isVhOfficerAdmin) {
+      this.updateHearingStatus(UpdateBookingStatusRequestStatus.Created);
+    }
   }
 
   keepBooking() {
@@ -116,31 +117,38 @@ export class BookingDetailsComponent implements OnInit {
     this.videoHearingService.updateBookingStatus(this.hearingId, updateBookingStatus)
       .subscribe(
         (data) => {
-          if (status === UpdateBookingStatusRequestStatus.Cancelled) {
-            this.showCancelBooking = false;
-          }
-          this.presistStatus(status);
-          this.videoHearingService.getHearingById(this.hearingId)
-            .subscribe(
-              (newData) => {
-                this.mapHearing(newData);
-              },
-              error => {
-                this.errorService.handleError(error);
-              }
-            );
+          this.updateStatusHandler(status);
         },
         error => {
-          if (status === UpdateBookingStatusRequestStatus.Cancelled) {
-            this.showCancelBooking = false;
-          }
-          console.log('Cancel error ' + error);
-          this.errorService.handleError(error);
+          this.errorHandler(error, status);
         });
   }
 
-  presistStatus(status: UpdateBookingStatusRequestStatus) {
-    if (!!this.booking) {
+  updateStatusHandler(status: UpdateBookingStatusRequestStatus) {
+    if (status === UpdateBookingStatusRequestStatus.Cancelled) {
+      this.showCancelBooking = false;
+    }
+    this.persistStatus(status);
+    this.videoHearingService.getHearingById(this.hearingId)
+      .subscribe(
+        (newData) => {
+          this.mapHearing(newData);
+        },
+        error => {
+          this.errorService.handleError(error);
+        }
+      );
+  }
+
+  errorHandler(error, status: UpdateBookingStatusRequestStatus) {
+    if (status === UpdateBookingStatusRequestStatus.Cancelled) {
+      this.showCancelBooking = false;
+    }
+    this.errorService.handleError(error);
+  }
+
+  persistStatus(status: UpdateBookingStatusRequestStatus) {
+    if (!this.booking) {
       this.booking = this.videoHearingService.getCurrentRequest();
     }
     this.booking.status = status;
