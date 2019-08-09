@@ -75,6 +75,7 @@
   right: 0;
   background: rgba(0, 0, 0, 0.7);
   transition: opacity 500ms;
+  z-index:999;
 }
 
 .vh-popup-small {
@@ -103,6 +104,19 @@
   margin-top: 1px;
   font-size: 18px;
   font-family: "nta",Arial,sans-serif;  
+}
+
+.vh-created-booking {
+  color: #ffffff;
+  background-color: #3868C2;
+  padding-top: 7px;
+  padding-bottom: 7px;
+  width: 45%;
+  font-weight: 300;
+  text-align: center;
+  margin-top: 1px;
+  font-size: 18px;
+  font-family: "nta",Arial,sans-serif;
 }
 
 .vh-btncancel {

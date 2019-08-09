@@ -7,7 +7,6 @@ import { BookingDetailsService } from '../../services/booking-details.service';
 import { BookingService } from '../../services/booking.service';
 import { HearingDetailsResponse, UpdateBookingStatusRequest, UpdateBookingStatusRequestStatus } from '../../services/clients/api-client';
 import { UserIdentityService } from '../../services/user-identity.service';
-import { map } from 'rxjs/operators';
 import { HearingModel } from '../../common/model/hearing.model';
 import { PageUrls } from '../../shared/page-url.constants';
 import { BookingPersistService } from '../../services/bookings-persist.service';
@@ -26,6 +25,7 @@ export class BookingDetailsComponent implements OnInit {
   judges: Array<ParticipantDetailsModel> = [];
   isVhOfficerAdmin = false;
   showCancelBooking: boolean;
+  isConfirmationTimeValid = true;
   hearingId: string;
   updateBookingStatusRequest: UpdateBookingStatusRequest;
 
@@ -48,6 +48,7 @@ export class BookingDetailsComponent implements OnInit {
         // mapping to Hearing model for edit on summary page
         this.booking = this.videoHearingService.mapHearingDetailsResponseToHearingModel(data);
         this.setBookingInStorage();
+        this.setTimeObserver();
       });
     }
     this.userIdentityService.getUserInformation().subscribe(userProfile => {
@@ -55,6 +56,15 @@ export class BookingDetailsComponent implements OnInit {
         this.isVhOfficerAdmin = true;
       }
     });
+  }
+
+  setTimeObserver() {
+    if (this.booking) {
+      let now = new Date();
+      now.setMinutes(now.getMinutes() + 30);
+      now = new Date(now);
+      this.isConfirmationTimeValid = this.booking.scheduled_date_time.valueOf() >= now.valueOf();
+    }
   }
 
   mapHearing(hearingResponse: HearingDetailsResponse) {
@@ -86,32 +96,62 @@ export class BookingDetailsComponent implements OnInit {
     this.showCancelBooking = true;
   }
 
+  confirmHearing() {
+    if (this.isVhOfficerAdmin) {
+      this.updateHearingStatus(UpdateBookingStatusRequestStatus.Created);
+    }
+  }
+
   keepBooking() {
     this.showCancelBooking = false;
   }
 
   cancelBooking() {
+    this.updateHearingStatus(UpdateBookingStatusRequestStatus.Cancelled);
+  }
+
+  updateHearingStatus(status: UpdateBookingStatusRequestStatus) {
     const updateBookingStatus = new UpdateBookingStatusRequest();
-    updateBookingStatus.status = UpdateBookingStatusRequestStatus.Cancelled;
+    updateBookingStatus.status = status;
 
     this.videoHearingService.updateBookingStatus(this.hearingId, updateBookingStatus)
       .subscribe(
         (data) => {
-          this.showCancelBooking = false;
-          this.videoHearingService.getHearingById(this.hearingId)
-            .subscribe(
-              (newData) => {
-                this.mapHearing(newData);
-              },
-              error => {
-                this.errorService.handleError(error);
-              }
-            );
+          this.updateStatusHandler(status);
         },
         error => {
-          this.showCancelBooking = false;
+          this.errorHandler(error, status);
+        });
+  }
+
+  updateStatusHandler(status: UpdateBookingStatusRequestStatus) {
+    if (status === UpdateBookingStatusRequestStatus.Cancelled) {
+      this.showCancelBooking = false;
+    }
+    this.persistStatus(status);
+    this.videoHearingService.getHearingById(this.hearingId)
+      .subscribe(
+        (newData) => {
+          this.mapHearing(newData);
+        },
+        error => {
           this.errorService.handleError(error);
         }
       );
+  }
+
+  errorHandler(error, status: UpdateBookingStatusRequestStatus) {
+    if (status === UpdateBookingStatusRequestStatus.Cancelled) {
+      this.showCancelBooking = false;
+    }
+    this.errorService.handleError(error);
+  }
+
+  persistStatus(status: UpdateBookingStatusRequestStatus) {
+    if (!this.booking) {
+      this.booking = this.videoHearingService.getCurrentRequest();
+    }
+    this.booking.status = status;
+    this.setBookingInStorage();
   }
 }
