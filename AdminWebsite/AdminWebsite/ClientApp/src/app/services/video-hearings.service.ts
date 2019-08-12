@@ -116,6 +116,7 @@ export class VideoHearingsService {
     hearing.scheduled_date_time = new Date(booking.scheduled_date_time);
     hearing.scheduled_duration = booking.scheduled_duration;
     hearing.participants = this.mapParticipantModelToEditParticipantRequest(booking.participants);
+    // questionnaire_not_required
     return hearing;
   }
 
@@ -161,6 +162,7 @@ export class VideoHearingsService {
     newHearingRequest.hearing_room_name = newRequest.court_room;
     newHearingRequest.participants = this.mapParticipants(newRequest.participants);
     newHearingRequest.other_information = newRequest.other_information;
+    // newHearingRequest.questionnaire_not_required = newRequest.questionnaire_not_required;
     return newHearingRequest;
   }
 

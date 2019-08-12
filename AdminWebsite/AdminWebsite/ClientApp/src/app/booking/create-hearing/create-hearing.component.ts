@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, Validators} from '@angular/forms';
 import { Router } from '@angular/router';
 import { HearingTypeResponse } from '../../services/clients/api-client';
 import { HearingModel } from '../../common/model/hearing.model';
@@ -82,7 +82,8 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
       caseName: [firstCase.name, Validators.required],
       caseNumber: [firstCase.number, Validators.required],
       caseType: [this.selectedCaseType, [Validators.required, Validators.pattern('^((?!Please Select).)*$')]],
-      hearingType: [this.hearing.hearing_type_id, [Validators.required, Validators.min(1)]]
+      hearingType: [this.hearing.hearing_type_id, [Validators.required, Validators.min(1)]],
+      questionnaireNotRequired: [this.hearing.questionnaire_not_required]
     });
   }
 
@@ -90,6 +91,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
   get caseNumber() { return this.form.get('caseNumber'); }
   get caseType() { return this.form.get('caseType'); }
   get hearingType() { return this.form.get('hearingType'); }
+  get questionnaireNotRequired() { return this.form.get('questionnaireNotRequired').value; }
 
   get caseNameInvalid() {
     return this.caseName.invalid && (this.caseName.dirty || this.caseName.touched || this.failedSubmission);
@@ -166,6 +168,8 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
     this.hearing.case_type_id = this.form.value.caseType;
     this.hearing.hearing_type_id = this.form.value.hearingType;
     this.hearing.hearing_type_name = this.availableHearingTypes.find(c => c.id === this.hearing.hearing_type_id).name;
+    this.hearing.questionnaire_not_required = this.form.value.questionnaireNotRequired;
+
     this.hearingService.updateHearingRequest(this.hearing);
   }
 
