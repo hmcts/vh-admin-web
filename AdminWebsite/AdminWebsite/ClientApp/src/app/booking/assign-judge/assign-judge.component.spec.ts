@@ -125,7 +125,9 @@ describe('AssignJudgeComponent', () => {
   it('should get available judges', () => {
     component.ngOnInit();
     expect(component.availableJudges.length).toBeGreaterThan(1);
-    expect(component.availableJudges[0].display_name).toBe('Please Select');
+    expect(component.availableJudges[0].email).toBe('Please select');
+    expect(component.availableJudges[0].display_name).toBe('');
+
   });
   it('should hide cancel and discard pop up confirmation', () => {
     component.attemptingCancellation = true;
@@ -167,6 +169,16 @@ describe('AssignJudgeComponent', () => {
     component.cancelChanges();
     expect(component.attemptingDiscardChanges).toBeFalsy();
     expect(routerSpy.navigate).toHaveBeenCalled();
+  });
+  it('should check if the judge display name was entered and return true', () => {
+    component.judge.display_name = 'New Name Set';
+    const result = component.isJudgeDisplayNameSet();
+    expect(result).toBeTruthy();
+  });
+  it('should check if the judge display name was entered and return false', () => {
+    component.judge.display_name = 'John Doe';
+    const result = component.isJudgeDisplayNameSet();
+    expect(result).toBeFalsy();
   });
 });
 

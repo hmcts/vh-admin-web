@@ -1,7 +1,7 @@
 <app-breadcrumb [canNavigate]="canNavigate"></app-breadcrumb>
 <h1 class="govuk-heading-l">Book a video hearing</h1>
 
-<h2 class="govuk-heading-m">Assign a Judge</h2>
+<h2 class="govuk-heading-m">Assign a courtroom account</h2>
 
 <div *ngIf="failedSubmission && form.invalid" class="govuk-error-summary govuk-!-width-one-half"
   aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
@@ -11,7 +11,7 @@
   <div class="govuk-error-summary__body">
     <ul class="govuk-list govuk-error-summary__list">
       <li *ngIf="judgeName.invalid">
-        <a (click)="goToDiv('judgeName-error')">Please select a Judge</a>
+        <a (click)="goToDiv('judgeName-error')">Please select a courtroom account</a>
       </li>
     </ul>
   </div>
@@ -23,30 +23,39 @@
 
       <div [ngClass]="(judgeNameInvalid || !isJudgeSelected) ? 'govuk-form-group--error' : 'govuk-form-group'">
         <label class="govuk-label govuk-!-width-one-half" for="judgeName">
-          Judge
+          Courtroom account
         </label>
-        <select class="govuk-select govuk-input--width-20" id="judgeName" formControlName="judgeName">
-          <option *ngFor="let judge of availableJudges" [ngValue]="judge.email">{{ judge.display_name }}</option>
+        <select class="govuk-select go" id="judgeName" formControlName="judgeName">
+          <option *ngFor="let judge of availableJudges" [ngValue]="judge.email">{{ judge.email }}</option>
         </select>
         <div *ngIf="(judgeNameInvalid || !isJudgeSelected)" class="alert alert-danger">
           <span id="judgeName-error" class="govuk-error-message">
-            Please assign a judge to this hearing
+            Please assign a courtroom account to this hearing
           </span>
         </div>
       </div>
 
-      <p class="govuk-body govuk-!-margin-bottom-9"></p>
+      <p class="govuk-body govuk-!-margin-bottom-1"></p>
 
-      <details class="govuk-details vh-top-m15">
+      <details class="govuk-details">
         <summary class="govuk-details__summary">
           <span class="govuk-details__summary-text">
-            My judge is not listed
+            The courtroom is not listed
           </span>
         </summary>
         <div class="govuk-details__text">
-          Please contact the video hearings team.
+          Please contact the Video hearings team on 0300 303 0655.
         </div>
       </details>
+
+      <div class="govuk-!-margin-bottom-9">
+        <label class="govuk-label" for="judgeDisplayName">
+          Judge name
+        </label>
+        <input (focusout)="changeDisplayName()" type="text"
+               formControlName="judgeDisplayName" id="judgeDisplayName"
+               class="govuk-input govuk-input--width-20" />
+      </div>
 
       <div class="sk-top">
         <input type="button" id="nextButton" class="govuk-button vh-mr25" role="button" value="{{buttonAction}}"
