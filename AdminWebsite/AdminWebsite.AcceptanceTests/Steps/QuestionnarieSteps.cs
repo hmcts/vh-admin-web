@@ -1,60 +1,66 @@
-﻿using AdminWebsite.AcceptanceTests.Helpers;
+﻿using System;
+using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.AcceptanceTests.Pages;
 using FluentAssertions;
 using TechTalk.SpecFlow;
 using System.Linq;
 using AdminWebsite.AcceptanceTests.Contexts;
-using AdminWebsite.BookingsAPI.Client;
-using Testing.Common;
 
 namespace AdminWebsite.AcceptanceTests.Steps
 {
     [Binding]
     public class QuestionnarieList
     {
-        private readonly string CaseNumberKey = "HEARING_CASE_NUMBER";
+        private const string CaseNumberKey = "HEARING_CASE_NUMBER";
         private readonly Questionnaire _questionnarieList;
         private readonly Dashboard _dashboard;
         private readonly LoginSteps _loginSteps;
-        private readonly TestsContext _testsContext;
+        private readonly CommonSteps _commonSteps;
+        private readonly TestContext _context;
         private readonly ScenarioContext _scenarioContext;
 
         public QuestionnarieList(Questionnaire questionnarieList,
-            Dashboard dashboard, LoginSteps loginSteps, TestsContext testsContext,
-            ScenarioContext scenarioContext)
+            Dashboard dashboard, LoginSteps loginSteps, CommonSteps commonSteps, 
+            TestContext context, ScenarioContext scenarioContext)
         {
             _questionnarieList = questionnarieList;
             _dashboard = dashboard;
             _loginSteps = loginSteps;
-            _testsContext = testsContext;
+            _commonSteps = commonSteps;
+            _context = context;
             _scenarioContext = scenarioContext;
         }
 
         [Given(@"Participants answered questionnaire")]
         public void GivenParticipantsAnsweredQuestionnaire()
         {
-            var bookNewHearingRequest = CreateHearingRequest.BuildRequest();
-            _testsContext.Request = _testsContext.Post("hearings", bookNewHearingRequest);
-            var response = _testsContext.Execute();
-            var hearing = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<HearingDetailsResponse>(response.Content);
-            var hearingId = hearing.Id.ToString();
-            var participantId = hearing.Participants[0].Id.ToString();
-            _scenarioContext.Add(CaseNumberKey, hearing.Cases[0].Number);
+            _commonSteps.GivenIHaveAHearing();
 
-            var answers = CreateHearingRequest.BuildSuitabilityAnswerRequest();
-            _testsContext.Request = _testsContext.Put($"hearings/{hearingId}/participants/{participantId}/suitability-answers", answers);
-            var responseAnswer = _testsContext.Execute();
+            if(_context.Hearing.Participants.Count.Equals(0))
+                throw new DataMisalignedException("Participants must be set");
+
+            var participant = _context.Hearing.Participants.First();
+
+            if (participant.Id == null)
+                throw new DataMisalignedException("Participant Id must be set");
+
+            _scenarioContext.Add(CaseNumberKey, _context.Hearing.Cases.First().Number);
+
+            var answers = SuitabilityAnswers.Build();
+            var endpoint = new BookingsApiUriFactory().BookingsParticipantsEndpoints
+                .SuitabilityAnswers(_context.HearingId, (Guid)participant.Id);
+            _context.Request = _context.Put(endpoint, answers);
         }
 
         [Given(@"VH Officer on dashboard page")]
-        public void GivenVHOfficerOnDashboardPage()
+        public void GivenVhOfficerOnDashboardPage()
         {
             _loginSteps.UserLogsInWithValidCredentials("VH Officer");
             _dashboard.PageUrl(PageUri.DashboardPage);
         }
 
         [When(@"VH Officer press questionnaire")]
-        public void WhenVHOfficerPressQuestionnaire()
+        public void WhenVhOfficerPressQuestionnaire()
         {
             _dashboard.QuestionnaireResultPanel();
         }
@@ -63,13 +69,15 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void ThenExpectedQuestionnaireWithAnswersShouldBePopulated()
         {
             var caseNumber = _scenarioContext[CaseNumberKey].ToString();
-            _questionnarieList.Particpants().Count().Should().BeGreaterThan(0);
+            _questionnarieList.Participants().Count.Should().BeGreaterThan(0);
 
-            var element = _questionnarieList.Particpants().FirstOrDefault(x => x.Text.Contains(caseNumber));
-            element.Should().NotBeNull();
+            var element = _questionnarieList.Participants().FirstOrDefault(x => x.Text.Contains(caseNumber));
+
+            if (element == null)
+                throw new DataMisalignedException("Participant questionnaire results not found");
 
             element.Click();
-            _questionnarieList.Answers().Where(x => x == "Yes").Count().Should().Be(2);
+            _questionnarieList.Answers().Count(x => x == "Yes").Should().Be(2);
         }
     }
 }

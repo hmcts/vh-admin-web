@@ -1,4 +1,5 @@
-﻿using AdminWebsite.AcceptanceTests.Contexts;
+﻿using System;
+using AdminWebsite.AcceptanceTests.Contexts;
 using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.AcceptanceTests.Pages;
 using FluentAssertions;
@@ -9,52 +10,46 @@ namespace AdminWebsite.AcceptanceTests.Steps
     [Binding]
     public sealed class LoginSteps
     {
-        private readonly BrowserContext _browserContext;
+        private readonly Browser _browser;
         private readonly MicrosoftLoginPage _loginPage;
         private readonly ScenarioContext _scenarioContext;
-        private readonly TestsContext _testContext;
-        public LoginSteps(BrowserContext browserContext, MicrosoftLoginPage loginPage,
-            ScenarioContext injectedContext, TestsContext testContext)
+        private readonly TestContext _context;
+
+        public LoginSteps(Browser browser, MicrosoftLoginPage loginPage,
+            ScenarioContext injectedContext, TestContext context)
         {
-            _browserContext = browserContext;
+            _browser = browser;
             _loginPage = loginPage;
             _scenarioContext = injectedContext;
-            _testContext = testContext;
+            _context = context;
         }
-        public void AdminOnMicrosoftLoginPage()
+
+        public void UserOnMicrosoftLoginPage()
         {
-            _browserContext.Retry(() =>
-            {
-                _browserContext.PageUrl().Should().Contain("login.microsoftonline.com");
-            }, 10);
+            _browser.Retry(() => { _browser.PageUrl().Should().Contain("login.microsoftonline.com"); }, 10);
         }
+
         [Given(@"(.*) logs into Vh-Admin website")]
         [When(@"(.*) logs in with valid credentials")]
         public void UserLogsInWithValidCredentials(string user)
         {
-            AdminOnMicrosoftLoginPage();
-            var appSecrets = _testContext.TestUserSecrets;
-            var password = appSecrets.UserPassword;
+            UserOnMicrosoftLoginPage();
+
             switch (user)
             {
-                case "VH Officer": _loginPage.Logon(appSecrets.VhOfficerFinRemedyCivilMoneyclaims, password);
-                    _scenarioContext.Add("Username", appSecrets.VhOfficerFinRemedyCivilMoneyclaims);
-                    break;
-                case "Case Admin": _loginPage.Logon(appSecrets.CaseAdminCivilMoneyClaims, password);
-                    _scenarioContext.Add("Username", appSecrets.CaseAdminCivilMoneyClaims);
-                    break;
-                case "Non-Admin": _loginPage.Logon(appSecrets.NonAdmin, password);
-                    break;
-                case "VhOfficerCivilMoneyclaims": _loginPage.Logon(appSecrets.VhOfficerCivilMoneyclaims, password);
-                    _scenarioContext.Add("Username", appSecrets.VhOfficerCivilMoneyclaims);
-                    break;
-                case "CaseAdminFinRemedyCivilMoneyClaims":
-                    _loginPage.Logon(appSecrets.CaseAdminFinRemedyCivilMoneyClaims, password);
-                    _scenarioContext.Add("Username", appSecrets.CaseAdminFinRemedyCivilMoneyClaims);
-                    break;
+                case "VH Officer": _context.CurrentUser = _context.GetFinancialRemedyVideoHearingsOfficerUser(); break;
+                case "Case Admin": _context.GetCivilMoneyCaseAdminUser(); break;
+                case "Non-Admin": _context.GetNonAdminUser(); break;
+                case "VhOfficerCivilMoneyclaims": _context.GetCivilMoneyVideoHearingsOfficerUser(); break;
+                case "CaseAdminFinRemedyCivilMoneyClaims": _context.GetFinancialRemedyCaseAdminUser(); break;
+                default: throw new ArgumentOutOfRangeException($"No user found with user type {user}");
             }
-            _scenarioContext.Add("User", user);
+
+            _loginPage.Logon(_context.CurrentUser.Username, _context.TestUserSecrets.TestUserPassword);
+            _scenarioContext.Add("Username", _context.CurrentUser.Username);
+            _scenarioContext.Add("User", _context.CurrentUser);
         }
+
         [Then(@"user should be navigated to sign in screen")]
         public void ThenUserShouldBeNavigatedToSignInScreen()
         {

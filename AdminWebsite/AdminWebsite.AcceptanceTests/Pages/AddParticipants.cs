@@ -8,10 +8,11 @@ namespace AdminWebsite.AcceptanceTests.Pages
 {
     public class AddParticipants : Common
     {
-        public AddParticipants(BrowserContext browserContext) : base(browserContext)
+        public AddParticipants(Browser browser) : base(browser)
         {
         }
-        private By _companyName => By.Id("companyName");
+
+        private static By CompanyName => By.Id("companyName");
         public void Title() => SelectOption(CommonLocator.List("title"));
         public string GetSelectedTitle() => SelectLastItem(CommonLocator.List("title"));
         public void ParticipantEmail(string email) => ClearFieldInputValues(By.Id("participantEmail"), email);
@@ -29,8 +30,6 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public IEnumerable<string> PartyList() => Items(CommonLocator.List("party"));
         public IEnumerable<string> RoleList() => Items(CommonLocator.List("role"));
         public void ClearInput() => ClickElement(By.Id("clearFormBtn"));
-        public string PartyErrorMessage() => GetElementText(By.Id("party-error"));
-        public string RoleErrorMessage() => GetElementText(By.Id("role-error"));
         public IEnumerable<string> ParticipantPageErrorMessages() => Items(By.XPath("//*[@class='govuk-list govuk-error-summary__list']/li"));
         public bool PartyFieldEnabled => IsElementEnabled(By.Id("party"));
         public bool RoleFieldEnabled => IsElementEnabled(By.Id("role"));
@@ -43,7 +42,7 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public void County(string county) => ClearFieldInputValues(By.Id("county"), county);
         public void Postcode(string postcode) => ClearFieldInputValues(By.Id("postcode"), postcode);
         public string RoleValue() => ExecuteScript("return document.getElementById('role').value", By.Id("role"));
-        public void Organisation(string organisation) => ClearFieldInputValues(_companyName, organisation);
+        public void Organisation(string organisation) => ClearFieldInputValues(CompanyName, organisation);
         public void SoliicitorReference(string reference) => ClearFieldInputValues(By.Id("solicitorReference"), reference);
         public void ClientRepresenting(string client) => ClearFieldInputValues(By.Id("representing"), client);
         public void ExistingParticipant(string contactEmail)

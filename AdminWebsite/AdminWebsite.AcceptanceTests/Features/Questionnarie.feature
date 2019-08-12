@@ -1,4 +1,4 @@
-﻿Feature: Questionnarie
+﻿Feature: Questionnaire
 	In order to look through all the hearing bookings to find any new responses
 	As a VH Officer
 	I want to be able to quickly see any new participant questionnaire responses

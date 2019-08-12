@@ -5,7 +5,7 @@ namespace AdminWebsite.AcceptanceTests.Pages
 {
     public class Summary : Common
     {
-        public Summary(BrowserContext browserContext) : base(browserContext)
+        public Summary(Browser browser) : base(browser)
         {
         }
 

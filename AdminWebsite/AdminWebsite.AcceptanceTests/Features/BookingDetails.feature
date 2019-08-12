@@ -1,4 +1,4 @@
-﻿Feature: VH Officer/Case Admin Booking details
+﻿Feature: Booking details
 As a VH Officer/Case Admin
 I want to view or amend the details of a video hearing booking
 So that I can ensure any changes in details can be reflected in the VH system
@@ -32,7 +32,7 @@ Scenario: Participant is removed from booked hearing
 	When user removes participant on summary page
 	Then participant should be removed from the list 
 
- @smoketest @VIH-3743          
+@VIH-3743          
 Scenario: Case Admin amends participant details
 	Given Case Admin amends booking
 	When user navigates to add participants page to make changes

@@ -6,10 +6,10 @@ namespace AdminWebsite.AcceptanceTests.Pages
 {
     public class BookingConfirmation : Common
     {
-        private readonly BrowserContext _browserContext;
-        public BookingConfirmation(BrowserContext browserContext) : base(browserContext)
+        private readonly Browser _browser;
+        public BookingConfirmation(Browser browser) : base(browser)
         {
-            _browserContext = browserContext;
+            _browser = browser;
         }
         public string ConfirmationPanel() => GetElementText(By.XPath("//*[@class='govuk-panel__title']"));
         public string CaseNumber() => GetElementText(By.Id("caseNumber"));

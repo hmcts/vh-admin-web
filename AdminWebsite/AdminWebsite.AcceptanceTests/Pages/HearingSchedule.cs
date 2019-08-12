@@ -7,7 +7,7 @@ namespace AdminWebsite.AcceptanceTests.Pages
 {
     public class HearingSchedule : Common
     {
-        public HearingSchedule(BrowserContext browserContext) : base(browserContext)
+        public HearingSchedule(Browser browser) : base(browser)
         {
         }
 

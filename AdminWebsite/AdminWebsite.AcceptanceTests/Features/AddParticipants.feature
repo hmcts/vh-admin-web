@@ -1,4 +1,4 @@
-﻿Feature: Case Admin adds generic participant details to booking 
+﻿Feature: Add Participants
 		As a Case Admin
 		I need to be able to add generic details for a participant
 		So that these participant details are assigned to the hearing booking when it is created
@@ -8,9 +8,9 @@ Scenario Outline: Add participant details to booking
 	Given 'VH Officer' with multiple <CaseTypes> wants to add a <Party> to booking 
 	When admin adds participant details
 	Then Participant detail is displayed on the list
-Examples:
-| CaseTypes          | Party      |
-| Civil Money Claims | Claimant   |
+	Examples:
+	| CaseTypes          | Party      |
+	| Civil Money Claims | Claimant   |
 
 @VIH-3883
 Scenario: Case Admin clears participant details

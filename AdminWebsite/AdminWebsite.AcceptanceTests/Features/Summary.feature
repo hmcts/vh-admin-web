@@ -27,22 +27,22 @@ Scenario: Case Admin changes judge
 	And user proceeds to summary page 
 	Then values should be displayed as expected on summary page
 	
-Scenario: Case Admin removes particpant
+Scenario: Summary
 	Given Case Admin is on Summary page
 	When user removes participant on summary page
 	Then participant should be removed from the list 
 
-Scenario: Case Admin attempts to remove particpant
+Scenario: Case Admin attempts to remove participant
 	Given Case Admin is on Summary page
 	When user removes participant on summary page
 	And user cancels the process of removing participant
 	Then participant should still be in the list 
 
 @bug
-Scenario: Case Admin updates particpant details
+Scenario: Case Admin updates participant details
 	Given Case Admin is on Summary page
 	When user navigates to add participants page to make changes
-	And participant detail is updated 
+	And participant details are updated 
 	And user proceeds to summary page 
 	Then values should be displayed as expected on summary page
 

@@ -2,8 +2,9 @@
 using AdminWebsite.AcceptanceTests.Pages;
 using FluentAssertions;
 using System;
-using System.Collections.Generic;
 using System.Linq;
+using AdminWebsite.AcceptanceTests.Contexts;
+using AdminWebsite.AcceptanceTests.Data;
 using TechTalk.SpecFlow;
 
 namespace AdminWebsite.AcceptanceTests.Steps
@@ -11,10 +12,12 @@ namespace AdminWebsite.AcceptanceTests.Steps
     [Binding]
     public sealed class HearingScheduleSteps
     {
+        private readonly TestContext _context;
         private readonly HearingSchedule _hearingSchedule;
 
-        public HearingScheduleSteps(HearingSchedule hearingSchedule)
+        public HearingScheduleSteps(TestContext context, HearingSchedule hearingSchedule)
         {
+            _context = context;
             _hearingSchedule = hearingSchedule;
         }
 
@@ -27,51 +30,52 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _hearingSchedule.AddItems<string>("HearingDate", date.ToString("dddd dd MMMM yyyy, h:mmtt").ToLower());
             _hearingSchedule.HearingDate(date.ToString("yyyy-MM-dd"));
             _hearingSchedule.HearingStartTime(date.ToString("HH:mm").Split(':'));
-            InputHearingDuration(TestData.HearingSchedule.Duration);
-            _hearingSchedule.HearingVenue(TestData.HearingSchedule.CourtAddress.ToList().Last());
+            InputHearingDuration(_context.TestData.HearingScheduleData.Duration);
+            _hearingSchedule.HearingVenue(HearingScheduleData.CourtAddress.Last());
             EnterRoom();
         }
-        [Then(@"user should remain on hearing schedule page")]
+
         [When(@"Admin user is on hearing schedule page")]
+        [Then(@"user should remain on hearing schedule page")]
         public void HearingSchedulePage()
         {
             _hearingSchedule.PageUrl(PageUri.HearingSchedulePage);
         }
+
         [When(@"Input date of hearing")]
         public void InputDateOfHearing()
         {
             _hearingSchedule.HearingDate();
         }
+
         [When(@"Input hearing start time")]
         public void InputHearingStartTime()
         {
             _hearingSchedule.HearingStartTime();
         }
+
         [When(@"Input hearing duration")]
         public void InputHearingDuration(string duration = "00:30")
         {
             _hearingSchedule.HearingDuration(duration);
         }
+
         [When(@"Select hearing venue")]
         public void SelectHearingVenue()
         {
             _hearingSchedule.HearingVenue();
         }
+
         [When(@"Enter room text as (.*)")]
         public void EnterRoom(string room = "")
         {
             _hearingSchedule.HearingRoom(room);
         }
         
-        public void WhenUserProceedsToNextPage()
-        {
-            _hearingSchedule.HearingLocation().Should().BeGreaterOrEqualTo(2);
-        }
-        
         [When(@"user inputs a date in the past from the calendar")]
         public void WhenUserSelectsADateInThePastFromTheCalendar()
         {
-            string date = DateTime.Now.AddDays(-1).ToString("yyyy-MM-dd");
+            var date = DateTime.Now.AddDays(-1).ToString("yyyy-MM-dd");
             _hearingSchedule.HearingDate(date);
             InputHearingStartTime();
             InputHearingDuration();
@@ -84,19 +88,20 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             _hearingSchedule.ErrorDate().Should().Be(errormessage);
         }
+
         [Given(@"user adds hearing schedule")]
         [When(@"hearing schedule is updated")]
         public void WhenHearingScheduleIsUpdated()
         {
             HearingSchedulePage();
-            DateTime date = DateTime.UtcNow.AddDays(2);
-            string splitDate = date.ToString("yyyy-MM-dd");
+            var date = DateTime.UtcNow.AddDays(2);
+            var splitDate = date.ToString("yyyy-MM-dd");
             _hearingSchedule.AddItems<string>("HearingDate", date.ToString("dddd dd MMMM yyyy, h:mmtt").ToLower());
             _hearingSchedule.HearingDate(splitDate);
             _hearingSchedule.HearingStartTime(date.ToString("HH:mm").Split(':'));
-            InputHearingDuration(TestData.HearingSchedule.Duration1);
-            _hearingSchedule.HearingVenue(TestData.HearingSchedule.CourtAddress.ToList().Last());
-            EnterRoom(TestData.HearingSchedule.Room);
+            InputHearingDuration(_context.TestData.HearingScheduleData.Duration);
+            _hearingSchedule.HearingVenue(HearingScheduleData.CourtAddress.Last());
+            EnterRoom(_context.TestData.HearingScheduleData.Room);
         }
     }
 }

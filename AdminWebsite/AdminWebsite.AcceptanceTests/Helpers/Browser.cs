@@ -7,7 +7,7 @@ using System.Collections.Concurrent;
 
 namespace AdminWebsite.AcceptanceTests.Helpers
 {
-    public class BrowserContext
+    public class Browser
     {
 
         private string _baseUrl;
@@ -15,7 +15,7 @@ namespace AdminWebsite.AcceptanceTests.Helpers
         public NgWebDriver NgDriver;
         internal ContextItems Items { get; set; }
 
-        public BrowserContext()
+        public Browser()
         {
             Items = new ContextItems(this);
         }
@@ -57,7 +57,7 @@ namespace AdminWebsite.AcceptanceTests.Helpers
         {
             if (string.IsNullOrEmpty(_baseUrl))
             {
-                throw new InvalidOperationException("BaseUrl has not been set through BrowserSetup() yet");
+                throw new InvalidOperationException("BookingsApiBaseUrl has not been set through BrowserSetup() yet");
             }
 
             Console.WriteLine($"Navigating to {_baseUrl}");
@@ -121,9 +121,9 @@ namespace AdminWebsite.AcceptanceTests.Helpers
     internal class ContextItems
     {
         private ConcurrentDictionary<string, dynamic> _items;
-        private readonly BrowserContext _context;
+        private readonly Browser _context;
 
-        public ContextItems(BrowserContext context)
+        public ContextItems(Browser context)
         {
             _items = new ConcurrentDictionary<string, dynamic>();
             _context = context;

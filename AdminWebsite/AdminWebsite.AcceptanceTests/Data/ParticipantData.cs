@@ -1,33 +1,43 @@
 ﻿
 using System.Collections.Generic;
 
-namespace AdminWebsite.AcceptanceTests.TestData
+namespace AdminWebsite.AcceptanceTests.Data
 {
-    public static class AddParticipants
+    public class ParticipantData
     {
-        public const string Email = "dummyemail01@email.com";
-        public const string Firstname = "Dummy01";
-        public const string Lastname = "Email";
-        public const string Telephone = "01230101010";
-        public const string DisplayName = "Dummy01Email";
+        public ParticipantData()
+        {
+            Telephone = "01230101010";
+            HouseNumber = "102";
+            Street = "Petty France";
+            City = "London";
+            County = "Greater London";
+            PostCode = "SW1H 9AJ";
+        }
+
+        public string Email { get; set; }
+        public string Firstname { get; set; }
+        public string Lastname { get; set; }
+        public string Telephone { get; set; }
+        public string DisplayName { get; set; }
+        public string HouseNumber { get; set; }
+        public string Street { get; set; }
+        public string City { get; set; }
+        public string County { get; set; }
+        public string PostCode { get; set; }
+
         public static IEnumerable<string> MoneyClaimsParty = new List<string>() { "Claimant", "Defendant" };
         public static IEnumerable<string> FinancialRemedyParty = new List<string>() { "Applicant", "Respondent" };
         public static IEnumerable<string> ClaimantRole = new List<string>() { "Claimant LIP", "Solicitor" };
         public static IEnumerable<string> DefendantRole = new List<string>() { "Defendant LIP", "Solicitor" };
         public static IEnumerable<string> ApplicantRole = new List<string>() { "Applicant LIP", "Solicitor" };
         public static IEnumerable<string> RespondentRole = new List<string>() { "Respondent LIP", "Solicitor" };
+
         public const string Claimant = "Claimant";
         public const string Defendant = "Defendant";
         public const string Applicant = "Applicant";
         public const string Respondent = "Respondent";
         public const string CivilMoneyClaims = "Civil Money Claims";
         public const string FinancialRemedy = "Financial Remedy";
-        public const string PartyErrorMessage = "Please select a party";
-        public const string RoleErrorMessage = "Please select a role";
-        public const string HouseNumber = "102";
-        public const string Street = "Petty France";
-        public const string City = "London";
-        public const string County = "Greater London";
-        public const string PostCode = "SW1H 9AJ";
     }
 }

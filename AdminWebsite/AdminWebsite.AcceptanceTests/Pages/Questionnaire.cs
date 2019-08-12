@@ -7,15 +7,15 @@ namespace AdminWebsite.AcceptanceTests.Pages
 {
     public class Questionnaire : Common
     {
-        private readonly BrowserContext _browserContext;
+        private readonly Browser _browser;
         private readonly By _questionnaireList = By.Id("vh-table");
 
-        public Questionnaire(BrowserContext browserContext) : base(browserContext)
+        public Questionnaire(Browser browser) : base(browser)
         {
-            _browserContext = browserContext;
+            _browser = browser;
         }
 
-        public List<IWebElement> Particpants()
+        public List<IWebElement> Participants()
         {
             return GetListOfElements(By.CssSelector("span.vh-ml15")).ToList();
         }

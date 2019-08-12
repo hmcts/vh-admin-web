@@ -5,37 +5,41 @@ using TechTalk.SpecFlow;
 namespace AdminWebsite.AcceptanceTests.Steps
 {
     [Binding]
-    public sealed class AssignJudgeSteps
+    public sealed class AssignClerkSteps
     {
-        private readonly AssignJudge _assignJudge;
+        private readonly AssignClerk _assignClerk;
 
-        public AssignJudgeSteps(AssignJudge assignJudge)
+        public AssignClerkSteps(AssignClerk assignClerk)
         {
-            _assignJudge = assignJudge;
+            _assignClerk = assignClerk;
         }
+
         [When(@"judge is assigned to hearing")]
-        public void AssignJudgeToHearing()
+        public void AssignClerkToHearing()
         {
-            AssignJudgePage();
+            AssignClerkPage();
             SelectJudge();
         }
-        [Then(@"user should be on assign judge page")]
+
         [When(@"Admin user is on assign judge page")]
-        public void AssignJudgePage()
+        [Then(@"user should be on assign judge page")]
+        public void AssignClerkPage()
         {
-            _assignJudge.PageUrl(PageUri.AssignJudgePage);
+            _assignClerk.PageUrl(PageUri.AssignJudgePage);
         }
+
         [When(@"select judge")]
         public void SelectJudge()
         {
-            _assignJudge.Judge();
+            _assignClerk.Clerk();
         }
+
         [Given(@"hearing booking is assigned to a judge")]
         [When(@"hearing booking is assigned to a different judge")]
         public void WhenHearingBookingIsAssignedToADifferentJudge()
         {
-            AssignJudgePage();
-            _assignJudge.AddItems<string>("Judge", _assignJudge.GetSelectedJudge());
+            AssignClerkPage();
+            _assignClerk.AddItems("Clerk", _assignClerk.GetSelectedClerk());
         }
     }
 }

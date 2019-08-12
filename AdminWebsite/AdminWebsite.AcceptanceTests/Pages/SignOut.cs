@@ -6,7 +6,7 @@ namespace AdminWebsite.AcceptanceTests.Pages
 {
     public class SignOut : Common
     {
-        public SignOut(BrowserContext browserContext) : base(browserContext)
+        public SignOut(Browser browser) : base(browser)
         {
         }
         

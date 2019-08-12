@@ -5,10 +5,10 @@ namespace AdminWebsite.AcceptanceTests.Pages
 {
     public class BookingDetails : Common
     {
-        private readonly BrowserContext _browserContext;
-        public BookingDetails(BrowserContext browserContext) : base(browserContext)
+        private readonly Browser _browser;
+        public BookingDetails(Browser browser) : base(browser)
         {
-            _browserContext = browserContext;
+            _browser = browser;
         }
 
         public string HearingScheduleDate(string scheduleDate)

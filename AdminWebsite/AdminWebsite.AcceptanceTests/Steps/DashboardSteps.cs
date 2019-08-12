@@ -10,11 +10,13 @@ namespace AdminWebsite.AcceptanceTests.Steps
     {
         private readonly Dashboard _dashboard;
         private readonly ScenarioContext _scenarioContext;
+
         public DashboardSteps(Dashboard dashboard, ScenarioContext injectedContext)
         {
             _dashboard = dashboard;
             _scenarioContext = injectedContext;
         }
+
         [Then(@"(.*) panel is displayed")]
         public void ThenBookAVideoHearingPanelIsDisplayed(string panelText)
         {
@@ -31,16 +33,19 @@ namespace AdminWebsite.AcceptanceTests.Steps
                     break;
             }
         }
+
         [Then(@"Error message is displayed as (.*)")]
         public void ThenErrorMessageIsDisplayedAsYouAreNotAuthorisedToUseThisService(string errorMessage)
         {
            _dashboard.UnauthorisedText().Should().Be(errorMessage);
         }
+
         [When(@"book a video hearing panel is selected")]
         public void WhenBookAVideoHearingPanelIsSelected()
         {
             _dashboard.BookHearingPanel();
         }
+
         [Given(@"user is on dashboard page")]
         public void DashboardPage()
         {
