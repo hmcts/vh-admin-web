@@ -23,9 +23,7 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public string CreatedDate() => GetElementText(By.Id("created-date"));
         public string ParticipantEmail() => GetElementText(By.Id("//*[@id='participant_email0']/div[1]"));
         public string ParticipantUsername() => GetElementText(By.XPath("//*[@id='participant_userName0']/div[2]"));
-       // public string JudgeEmail() => GetElementText(By.Id("judge-name"));
-        public string JudgeEmail() => GetElementText(By.Id("//*[@id='participant_email0']/div[1]"));
-
+        public string JudgeEmail() => GetElementText(By.Id("judge-name"));
         public string JudgeUsername() => GetElementText(By.XPath("//*[@id='participant_userNameundefined']/div[2]"));
         public string ParticipantRole() => GetElementText(By.Id("participant_role"));
         public void EditBookingList() => ClickElement(By.Id("edit-button"));
@@ -38,10 +36,10 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public string CourtAddress() => GetElementText(By.Id("court-room-address"));
         public string HearingDuration() => GetElementText(By.Id("duration"));
         public string OtherInformation() => GetElementText(By.Id("otherInformation"));
-        public void CancelBookingButton() => ClickElement(By.Id("cancel-button")); 
-        public void PopupCancelBookingButton() => ClickElement(By.Id("btnCancelBooking"));        
+        public void CancelBookingButton() => ClickElement(By.Id("cancel-button"));
+        public void PopupCancelBookingButton() => ClickElement(By.Id("btnCancelBooking"));
         public void PopupKeepBookingButton() => ClickElement(By.Id("btnKeepBooking"));
-        public string CancelledLabel() => GetElementText(By.Id("lblCancelled"));        
+        public string CancelledLabel() => GetElementText(By.Id("lblCancelled"));
         public string PopupCancelBookingWarningMessage() => GetElementText(By.CssSelector("h1.govuk-heading-m"));
     }
 }
