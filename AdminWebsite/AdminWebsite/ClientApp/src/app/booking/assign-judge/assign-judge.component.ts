@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
+import { FormBuilder, Validators, FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { JudgeResponse } from '../../services/clients/api-client';
 import { HearingModel } from '../../common/model/hearing.model';
@@ -87,7 +87,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
   private initForm() {
     const find_judge = this.hearing.participants.find(x => x.is_judge === true);
     if (!find_judge) {
-      this.judge = new JudgeResponse({ email: 'Please select', display_name: '' });
+      this.judge = new JudgeResponse({ email: this.constants.PleaseSelect, display_name: '' });
     } else {
       this.judge = AssignJudgeComponent.mapJudge(find_judge);
       this.canNavigate = true;
@@ -215,7 +215,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         (data: JudgeResponse[]) => {
           this.availableJudges = data.filter(x => x.first_name && x.last_name);
           const userResponse = new JudgeResponse();
-          userResponse.email = 'Please select';
+          userResponse.email = this.constants.PleaseSelect;
           userResponse.display_name = '';
           this.availableJudges.unshift(userResponse);
         },

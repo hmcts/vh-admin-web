@@ -16,6 +16,7 @@ import { ParticipantsListStubComponent } from '../../testing/stubs/participant-l
 import { HearingModel } from '../../common/model/hearing.model';
 import { ParticipantModel } from '../../common/model/participant.model';
 import { By } from '@angular/platform-browser';
+import { Constants } from 'src/app/common/constants';
 
 function initHearingRequest(): HearingModel {
 
@@ -125,7 +126,7 @@ describe('AssignJudgeComponent', () => {
   it('should get available judges', () => {
     component.ngOnInit();
     expect(component.availableJudges.length).toBeGreaterThan(1);
-    expect(component.availableJudges[0].email).toBe('Please select');
+    expect(component.availableJudges[0].email).toBe(Constants.PleaseSelect);
     expect(component.availableJudges[0].display_name).toBe('');
 
   });
