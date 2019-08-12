@@ -18,7 +18,7 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public string OtherInformation() => GetElementText(By.Id("otherInformation"));
         private By _border => By.XPath("//a[@class='vhlink']");
 
-        public string Judge() => GetElementText(By.Id("judgeName"));
+        public string Judge() => GetElementText(By.Id("judge-name"));
         public void Book() => ClickElement(By.Id("bookButton"));
         public void EditRoundedBorder(string uri) => SelectOption(_border, uri);
         public void RemoveParticipant() => ClickElement(By.Id("btn-remove"));
