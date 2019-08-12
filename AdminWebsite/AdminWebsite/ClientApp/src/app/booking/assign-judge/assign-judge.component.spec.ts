@@ -181,5 +181,31 @@ describe('AssignJudgeComponent', () => {
     const result = component.isJudgeDisplayNameSet();
     expect(result).toBeFalsy();
   });
+  it('should change display name of the judge if it was entered', () => {
+    component.judge.display_name = 'John Dall';
+    component.changeDisplayName();
+    expect(component.hearing.participants[0].display_name).toBe('John Dall');
+  });
+  it('should not save judge if courtroom account is null', () => {
+    component.judge.email = null;
+    component.saveJudge();
+    expect(component.isJudgeSelected).toBeFalsy();
+  });
+  it('should not save judge if courtroom account is not selected', () => {
+    component.judge.email = Constants.PleaseSelect;
+    component.saveJudge();
+    expect(component.isJudgeSelected).toBeFalsy();
+  });
+  it('should save judge if courtroom account is selected and form is valid', () => {
+    const dropDown = fixture.debugElement.query(By.css('#judgeName')).nativeElement;
+    dropDown.value = dropDown.options[2].value;
+    dropDown.dispatchEvent(new Event('change'));
+    fixture.detectChanges();
+    expect(component.form.valid).toBeTruthy();
+
+    component.saveJudge();
+    expect(videoHearingsServiceSpy.updateHearingRequest).toHaveBeenCalled();
+  });
+
 });
 
