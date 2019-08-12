@@ -25,7 +25,7 @@
         <label class="govuk-label govuk-!-width-one-half" for="judgeName">
           Courtroom account
         </label>
-        <select class="govuk-select go" id="judgeName" formControlName="judgeName">
+        <select class="govuk-select" id="judgeName" formControlName="judgeName">
           <option *ngFor="let judge of availableJudges" [ngValue]="judge.email">{{ judge.email }}</option>
         </select>
         <div *ngIf="(judgeNameInvalid || !isJudgeSelected)" class="alert alert-danger">
