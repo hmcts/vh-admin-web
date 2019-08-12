@@ -46,7 +46,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
                     _summary.OtherInformation().Should().Be(TestData.OtherInformation.OtherInformationText);
                     break;
                 case PageUri.AssignJudgePage:
-                  //  _summary.Judge().Should().Contain(_summary.GetItems("Judge"));
+                    _summary.Judge().Should().Contain(_summary.GetItems("Judge"));
                     break;
                 case PageUri.AddParticipantsPage:
                     string expectedResult = $"{_summary.GetItems("Title")} {TestData.AddParticipants.Firstname} {_summary.GetItems("Lastname")}";
