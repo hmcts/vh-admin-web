@@ -162,12 +162,8 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
       this.failedSubmission = false;
       this.form.markAsPristine();
       this.hasSaved = true;
-      if (this.judge.display_name) {
-        const indexOfJudge = this.hearing.participants.findIndex(x => x.is_judge === true);
-        this.hearing.participants[indexOfJudge].display_name = this.judge.display_name;
-      }
+      this.changeDisplayName();
       this.hearingService.updateHearingRequest(this.hearing);
-
       if (this.editMode) {
         this.navigateToSummary();
       } else {
