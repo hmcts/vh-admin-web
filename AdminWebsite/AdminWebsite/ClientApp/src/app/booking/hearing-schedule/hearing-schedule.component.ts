@@ -46,7 +46,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
 
   private checkForExistingRequest() {
     this.hearing = this.hearingService.getCurrentRequest();
-    this.isExistinHearing = this.hearing && this.hearing.hearing_id && this.hearing.hearing_id.length > 0;
+    this.isExistinHearing = this.hearing && this.hearing.hearing_type_name && this.hearing.hearing_type_name.length > 0;
   }
 
   private initForm() {
