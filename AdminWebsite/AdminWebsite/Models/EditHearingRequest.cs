@@ -42,5 +42,10 @@ namespace AdminWebsite.Models
         ///     Any other information about the hearing
         /// </summary>
         public string OtherInformation { get; set; }
+
+        /// <summary>
+        /// QuestionnaireNotRequired
+        /// </summary>
+        public bool QuestionnaireNotRequired { get; set; }
     }
 }

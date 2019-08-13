@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import {Injectable} from '@angular/core';
+import {Observable, of} from 'rxjs';
 import {
   HearingTypeResponse, BHClient, BookNewHearingRequest, HearingDetailsResponse,
   CaseAndHearingRolesResponse, CaseRequest, ParticipantRequest, CaseResponse2,
@@ -10,10 +10,10 @@ import {
   EditParticipantRequest,
   UpdateBookingStatusRequest
 } from './clients/api-client';
-import { HearingModel } from '../common/model/hearing.model';
-import { CaseModel } from '../common/model/case.model';
-import { ParticipantModel } from '../common/model/participant.model';
-import { Constants } from '../common/constants';
+import {HearingModel} from '../common/model/hearing.model';
+import {CaseModel} from '../common/model/case.model';
+import {ParticipantModel} from '../common/model/participant.model';
+import {Constants} from '../common/constants';
 
 @Injectable({
   providedIn: 'root'
@@ -107,16 +107,19 @@ export class VideoHearingsService {
 
   mapExistingHearing(booking: HearingModel): EditHearingRequest {
     const hearing = new EditHearingRequest();
+
     if (booking.cases && booking.cases.length > 0) {
-      hearing.case = new EditCaseRequest({ name: booking.cases[0].name, number: booking.cases[0].number });
+      hearing.case = new EditCaseRequest({name: booking.cases[0].name, number: booking.cases[0].number});
     }
+
     hearing.hearing_room_name = booking.court_room;
     hearing.hearing_venue_name = booking.court_name;
     hearing.other_information = booking.other_information;
     hearing.scheduled_date_time = new Date(booking.scheduled_date_time);
     hearing.scheduled_duration = booking.scheduled_duration;
     hearing.participants = this.mapParticipantModelToEditParticipantRequest(booking.participants);
-    // questionnaire_not_required
+    hearing.questionnaire_not_required = booking.questionnaire_not_required;
+
     return hearing;
   }
 
@@ -162,7 +165,7 @@ export class VideoHearingsService {
     newHearingRequest.hearing_room_name = newRequest.court_room;
     newHearingRequest.participants = this.mapParticipants(newRequest.participants);
     newHearingRequest.other_information = newRequest.other_information;
-    // newHearingRequest.questionnaire_not_required = newRequest.questionnaire_not_required;
+    newHearingRequest.questionnaire_not_required = newRequest.questionnaire_not_required;
     return newHearingRequest;
   }
 
@@ -182,6 +185,8 @@ export class VideoHearingsService {
     hearing.created_by = response.created_by;
     hearing.updated_date = new Date(response.updated_date);
     hearing.updated_by = response.updated_by;
+    hearing.questionnaire_not_required = response.questionnaire_not_required;
+
     return hearing;
   }
 
