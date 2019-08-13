@@ -41,3 +41,7 @@
 .vh-image-50 {
     width: 50%;
 }
+
+.vh-wrap{
+  word-break:break-all;
+}

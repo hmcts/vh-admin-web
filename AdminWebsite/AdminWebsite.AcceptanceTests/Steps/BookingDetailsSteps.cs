@@ -64,9 +64,6 @@ namespace AdminWebsite.AcceptanceTests.Steps
             
             switch (_bookingDetails.GetItems("RelevantPage"))
             {
-                case PageUri.AssignJudgePage:
-                    _bookingDetails.JudgeEmail().Should().Contain(_bookingDetails.GetItems("Judge"));
-                    break;
                 case PageUri.HearingDetailsPage:
                     _bookingDetails.CaseName().Should().Be(TestData.HearingDetails.CaseName1);
                     _bookingDetails.CaseNumber().Should().Be(TestData.HearingDetails.CaseNumber1);

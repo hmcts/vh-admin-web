@@ -16,6 +16,7 @@ import { ParticipantsListStubComponent } from '../../testing/stubs/participant-l
 import { HearingModel } from '../../common/model/hearing.model';
 import { ParticipantModel } from '../../common/model/participant.model';
 import { By } from '@angular/platform-browser';
+import { Constants } from 'src/app/common/constants';
 
 function initHearingRequest(): HearingModel {
 
@@ -125,7 +126,9 @@ describe('AssignJudgeComponent', () => {
   it('should get available judges', () => {
     component.ngOnInit();
     expect(component.availableJudges.length).toBeGreaterThan(1);
-    expect(component.availableJudges[0].display_name).toBe('Please Select');
+    expect(component.availableJudges[0].email).toBe(Constants.PleaseSelect);
+    expect(component.availableJudges[0].display_name).toBe('');
+
   });
   it('should hide cancel and discard pop up confirmation', () => {
     component.attemptingCancellation = true;
@@ -168,5 +171,41 @@ describe('AssignJudgeComponent', () => {
     expect(component.attemptingDiscardChanges).toBeFalsy();
     expect(routerSpy.navigate).toHaveBeenCalled();
   });
+  it('should check if the judge display name was entered and return true', () => {
+    component.judge.display_name = 'New Name Set';
+    const result = component.isJudgeDisplayNameSet();
+    expect(result).toBeTruthy();
+  });
+  it('should check if the judge display name was entered and return false', () => {
+    component.judge.display_name = 'John Doe';
+    const result = component.isJudgeDisplayNameSet();
+    expect(result).toBeFalsy();
+  });
+  it('should change display name of the judge if it was entered', () => {
+    component.judge.display_name = 'John Dall';
+    component.changeDisplayName();
+    expect(component.hearing.participants[0].display_name).toBe('John Dall');
+  });
+  it('should not save judge if courtroom account is null', () => {
+    component.judge.email = null;
+    component.saveJudge();
+    expect(component.isJudgeSelected).toBeFalsy();
+  });
+  it('should not save judge if courtroom account is not selected', () => {
+    component.judge.email = Constants.PleaseSelect;
+    component.saveJudge();
+    expect(component.isJudgeSelected).toBeFalsy();
+  });
+  it('should save judge if courtroom account is selected and form is valid', () => {
+    const dropDown = fixture.debugElement.query(By.css('#judgeName')).nativeElement;
+    dropDown.value = dropDown.options[2].value;
+    dropDown.dispatchEvent(new Event('change'));
+    fixture.detectChanges();
+    expect(component.form.valid).toBeTruthy();
+
+    component.saveJudge();
+    expect(videoHearingsServiceSpy.updateHearingRequest).toHaveBeenCalled();
+  });
+
 });
 
