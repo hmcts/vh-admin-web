@@ -22,20 +22,20 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _summary = summary;
         }
 
-        [Then(@"hearing summary is displayed on summary page")]
+        [Then(@"hearing summary is displayed on the summary page")]
         public void ThenHearingSummaryIsDisplayedOnSummaryPage()
         {
             SummaryPage();
         }
 
-        [When(@"Admin user is on summary page")]
-        [Then(@"user should be on summary page")]
+        [When(@"Admin user is on the summary page")]
+        [Then(@"user should be on the summary page")]
         public void SummaryPage()
         {
             _summary.PageUrl(PageUri.SummaryPage);
         }
 
-        [Then(@"values should be displayed as expected on summary page")]
+        [Then(@"values should be displayed as expected on the summary page")]
         public void ThenInputtedValuesShouldBeDisplayedAsExpectedOnSummaryPage()
         {
             SummaryPage();            
@@ -89,7 +89,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _summary.AddItems<string>("RelevantPage", pageUri);
         }
 
-        [When(@"user removes participant on summary page")]
+        [When(@"user removes participant on the summary page")]
         public void GivenUserRemovesParticipantOnSummaryPage()
         {
             _summary.EditRoundedBorder("Remove");

@@ -15,7 +15,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _signOut = signOut;
         }
 
-        [When(@"user attempts to sign out of Vh-Admin website")]
+        [When(@"user attempts to sign out of the website")]
         public void WhenUserSignsOutOfVh_AdminWebsite()
         {
             _signOut.SignOutButton();

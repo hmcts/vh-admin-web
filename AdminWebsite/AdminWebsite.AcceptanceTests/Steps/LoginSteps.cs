@@ -45,16 +45,14 @@ namespace AdminWebsite.AcceptanceTests.Steps
             Login();
         }
 
-        [Given(@"Civil Money Claims user (.*) logs into the website")]
-        [When(@"Civil Money Claims user (.*) logs in with valid credentials")]
+        [Given(@"Civil Money Claims, (.*) logs in to the website")]
         public void CivilMoneyClaimsUserLogsInWithValidCredentials(string user)
         {
             _context.CurrentUser = user.Equals("VH Officer") ? _context.GetCivilMoneyVideoHearingsOfficerUser() : _context.GetCivilMoneyCaseAdminUser();
             Login();
         }
 
-        [Given(@"Financial Remedy user (.*) logs into the website")]
-        [When(@"Financial Remedy user (.*) logs in with valid credentials")]
+        [Given(@"Financial Remedy, (.*) logs in to the website")]
         public void FinancialRemedyUserLogsInWithValidCredentials(string user)
         {
             _context.CurrentUser = user.Equals("VH Officer") ? _context.GetFinancialRemedyVideoHearingsOfficerUser() : _context.GetFinancialRemedyCaseAdminUser();

@@ -52,14 +52,14 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _context.Request = _context.Put(endpoint, answers);
         }
 
-        [Given(@"VH Officer on dashboard page")]
+        [Given(@"VH Officer is on the dashboard page")]
         public void GivenVhOfficerOnDashboardPage()
         {
             _loginSteps.UserLogsInWithValidCredentials("VH Officer");
             _dashboard.PageUrl(PageUri.DashboardPage);
         }
 
-        [When(@"VH Officer press questionnaire")]
+        [When(@"VH Officer clicks on the questionnaire")]
         public void WhenVhOfficerPressQuestionnaire()
         {
             _dashboard.QuestionnaireResultPanel();

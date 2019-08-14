@@ -6,6 +6,6 @@
 @VIH-4460
 Scenario: VH Officer views questionnaire
 	Given Participants answered questionnaire 
-	And VH Officer on dashboard page
-	When VH Officer press questionnaire
+	And VH Officer is on the dashboard page
+	When VH Officer clicks on the questionnaire
 	Then Expected questionnaire with answers should be populated

@@ -35,8 +35,8 @@ namespace AdminWebsite.AcceptanceTests.Steps
             EnterRoom(_context.TestData.HearingScheduleData.Room);
         }
 
-        [When(@"Admin user is on hearing schedule page")]
-        [Then(@"user should remain on hearing schedule page")]
+        [When(@"Admin user is on the hearing schedule page")]
+        [Then(@"user should remain on the hearing schedule page")]
         public void HearingSchedulePage()
         {
             _hearingSchedule.PageUrl(PageUri.HearingSchedulePage);

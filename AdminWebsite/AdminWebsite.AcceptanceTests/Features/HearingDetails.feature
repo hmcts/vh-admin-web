@@ -5,12 +5,12 @@
 	
 @VIH-3582
 Scenario: Display no dropdown on hearing details page for one case type
-	Given Case Admin logs into Vh-Admin website 
-	And user is on hearing details page
+	Given Case Admin logs into the website 
+	And user is on the hearing details page
 	Then case type dropdown should not be populated
 
 @VIH-3582
 Scenario: Display dropdown on hearing details page for more than one case type
-	Given CaseAdminFinRemedyCivilMoneyClaims logs into Vh-Admin website 
-	And user is on hearing details page
+	Given Financial Remedy, Case Admin logs in to the website 
+	And user is on the hearing details page
 	Then case type dropdown should be populated

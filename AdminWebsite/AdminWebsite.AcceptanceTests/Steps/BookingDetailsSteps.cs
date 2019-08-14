@@ -24,13 +24,13 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _scenarioContext = scenarioContext;
         }
 
-        [When(@"user is on bookings list page")]
+        [When(@"user is on the bookings list page")]
         public void BookingsListPage()
         {
             _bookingDetails.PageUrl(PageUri.BookingListPage);
         }
 
-        [Then(@"admin user can view booking list")]
+        [Then(@"admin user can view the booking list")]
         public void ThenAdminUserCanViewBookingList()
         {
             _bookingDetails.BookingsList();

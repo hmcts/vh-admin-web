@@ -37,7 +37,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             expectedResult.ToLower().Should().Contain(actualResult.ToLower());
         }
 
-        [When(@"admin user returns to dashboard")]
+        [When(@"admin user returns to the dashboard")]
         public void BookAnotherHearing()
         {
             _bookingConfirmation.BookAnotherHearing();

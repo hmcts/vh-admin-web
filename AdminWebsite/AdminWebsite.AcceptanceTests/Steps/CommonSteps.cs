@@ -48,9 +48,9 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _bookingConfirmationStep = bookingConfirmationStep;
         }
 
-        [Given(@"user proceeds to next page")]
-        [When(@"user proceeds to summary page")]
-        [When(@"user proceeds to next page")]
+        [Given(@"user proceeds to the next page")]
+        [When(@"user proceeds to the summary page")]
+        [When(@"user proceeds to the next page")]
         [When(@"next button is clicked")]
         public void WhenNextButtonIsClicked()
         {           

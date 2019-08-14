@@ -25,8 +25,8 @@ namespace AdminWebsite.AcceptanceTests.Steps
             SelectJudge();
         }
 
-        [When(@"Admin user is on assign judge page")]
-        [Then(@"user should be on assign judge page")]
+        [When(@"Admin user is on the assign judge page")]
+        [Then(@"user should be on the assign judge page")]
         public void AssignClerkPage()
         {
             _assignClerk.PageUrl(PageUri.AssignJudgePage);
