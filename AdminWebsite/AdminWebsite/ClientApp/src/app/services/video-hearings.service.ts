@@ -180,6 +180,7 @@ export class VideoHearingsService {
     hearing.created_by = response.created_by;
     hearing.updated_date = new Date(response.updated_date);
     hearing.updated_by = response.updated_by;
+    hearing.status = response.status;
     return hearing;
   }
 

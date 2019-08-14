@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, Validators, FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { JudgeResponse } from '../../services/clients/api-client';
 import { HearingModel } from '../../common/model/hearing.model';
@@ -13,13 +13,15 @@ import { BookingBaseComponent } from '../booking-base/booking-base.component';
 
 @Component({
   selector: 'app-assign-judge',
-  templateUrl: './assign-judge.component.html'
+  templateUrl: './assign-judge.component.html',
+  styleUrls: ['./assign-judge.component.css']
 })
 
 export class AssignJudgeComponent extends BookingBaseComponent implements OnInit {
 
   hearing: HearingModel;
   judge: JudgeResponse;
+  judgeDisplayName: FormControl;
   failedSubmission: boolean;
   attemptingCancellation = false;
   attemptingDiscardChanges = false;
@@ -29,6 +31,8 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
   constants = Constants;
   availableJudges: JudgeResponse[];
   isJudgeSelected = true;
+
+  expanded = false;
 
   constructor(
     private fb: FormBuilder,
@@ -85,13 +89,16 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
   private initForm() {
     const find_judge = this.hearing.participants.find(x => x.is_judge === true);
     if (!find_judge) {
-      this.judge = new JudgeResponse({ email: null });
+      this.judge = new JudgeResponse({ email: this.constants.PleaseSelect, display_name: '' });
     } else {
       this.judge = AssignJudgeComponent.mapJudge(find_judge);
       this.canNavigate = true;
     }
+    this.judgeDisplayName = new FormControl(this.judge.display_name);
+
     this.form = this.fb.group({
       judgeName: [this.judge.email, Validators.required],
+      judgeDisplayName: this.judgeDisplayName,
     });
 
     this.judgeName.valueChanges.subscribe(judgeUserId => {
@@ -99,9 +106,14 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
       this.isJudgeSelected = judgeUserId !== null;
       this.canNavigate = this.isJudgeSelected;
     });
+
+    this.judgeDisplayName.valueChanges.subscribe(name => {
+      this.judge.display_name = name;
+    });
   }
 
   get judgeName() { return this.form.get('judgeName'); }
+
 
   get judgeNameInvalid() {
     return this.judgeName.invalid && (this.judgeName.dirty || this.judgeName.touched || this.failedSubmission);
@@ -113,8 +125,10 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
       this.judge.first_name = selectedJudge.first_name;
       this.judge.last_name = selectedJudge.last_name;
       this.judge.email = selectedJudge.email;
-      this.judge.display_name = selectedJudge.display_name;
-
+      if (!this.isJudgeDisplayNameSet()) {
+        this.judge.display_name = selectedJudge.display_name;
+      }
+      this.judgeDisplayName.patchValue(this.judge.display_name);
       const newJudge = AssignJudgeComponent.mapJudgeToModel(this.judge);
 
       const indexOfJudge = this.hearing.participants.findIndex(x => x.is_judge === true);
@@ -125,8 +139,26 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     }
   }
 
+  isJudgeDisplayNameSet(): boolean {
+    let result = false;
+    if (this.judge && this.judge.display_name) {
+      const enteredJudge = this.availableJudges.find(j => j.display_name === this.judge.display_name);
+      result = !enteredJudge;
+    }
+    return result;
+  }
+
+  changeDisplayName() {
+    if (this.judge && this.judge.display_name) {
+      const indexOfJudge = this.hearing.participants.findIndex(x => x.is_judge === true);
+      if (indexOfJudge !== -1) {
+        this.hearing.participants[indexOfJudge].display_name = this.judge.display_name;
+      }
+    }
+  }
+
   saveJudge() {
-    if (this.judge.email === null) {
+    if (!this.judge.email || this.judge.email === this.constants.PleaseSelect) {
       this.isJudgeSelected = false;
       return;
     }
@@ -134,8 +166,8 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
       this.failedSubmission = false;
       this.form.markAsPristine();
       this.hasSaved = true;
+      this.changeDisplayName();
       this.hearingService.updateHearingRequest(this.hearing);
-
       if (this.editMode) {
         this.navigateToSummary();
       } else {
@@ -187,11 +219,15 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         (data: JudgeResponse[]) => {
           this.availableJudges = data.filter(x => x.first_name && x.last_name);
           const userResponse = new JudgeResponse();
-          userResponse.display_name = 'Please Select';
-          userResponse.email = null;
+          userResponse.email = this.constants.PleaseSelect;
+          userResponse.display_name = '';
           this.availableJudges.unshift(userResponse);
         },
         error => console.error(error)
       );
+  }
+
+  toggle() {
+    this.expanded = !this.expanded;
   }
 }
