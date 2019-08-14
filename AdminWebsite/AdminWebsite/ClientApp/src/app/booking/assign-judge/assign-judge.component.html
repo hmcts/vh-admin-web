@@ -38,12 +38,12 @@
       <p class="govuk-body govuk-!-margin-bottom-1"></p>
 
       <details class="govuk-details">
-        <summary class="govuk-details__summary">
+        <summary class="govuk-details__summary"  (click)="toggle()">
           <span class="govuk-details__summary-text">
             The courtroom is not listed
           </span>
         </summary>
-        <div class="govuk-details__text">
+        <div class="govuk-details__text" *ngIf="expanded">
           Please contact the Video hearings team on 0300 303 0655.
         </div>
       </details>

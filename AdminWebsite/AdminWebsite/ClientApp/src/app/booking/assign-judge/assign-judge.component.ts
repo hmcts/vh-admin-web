@@ -32,6 +32,8 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
   availableJudges: JudgeResponse[];
   isJudgeSelected = true;
 
+  expanded = false;
+
   constructor(
     private fb: FormBuilder,
     protected router: Router,
@@ -147,9 +149,11 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
   }
 
   changeDisplayName() {
-    if (this.judge.display_name) {
+    if (this.judge && this.judge.display_name) {
       const indexOfJudge = this.hearing.participants.findIndex(x => x.is_judge === true);
-      this.hearing.participants[indexOfJudge].display_name = this.judge.display_name;
+      if (indexOfJudge !== -1) {
+        this.hearing.participants[indexOfJudge].display_name = this.judge.display_name;
+      }
     }
   }
 
@@ -221,5 +225,9 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         },
         error => console.error(error)
       );
+  }
+
+  toggle() {
+    this.expanded = !this.expanded;
   }
 }
