@@ -90,7 +90,7 @@ namespace AdminWebsite.AcceptanceTests.Pages
                 break;
             }
         }
-        protected void SelectOption(By elements)
+        protected void SelectFirstOption(By elements)
         {
             var getListOfElements = GetListOfElements(elements);
             _browser.Retry(() => getListOfElements.Count().Should().BeGreaterThan(0, "List is not populated"));

@@ -6,13 +6,13 @@ So that the hearing can take place on the time and date specified
 @VIH-2701 @smoketest
 Scenario: Case Admin creates hearing with an existing individual 
 	Given an individual is already a participant of another hearing
-	And Case Admin is on Summary page
+	And Case Admin is on the Summary page
 	When user submits the booking 
 	Then hearing should be booked
 
 @VIH-2701 @bug
 Scenario Outline: Case Admin with multiple case types saves booking
-	Given 'VH Officer' with <CaseTypes> adds participant with <Party> and <Role> to booking 
+	Given 'VH Officer' adds existing participants with <Party> and <Role> to booking 
 	When user submits the booking 
 	Then hearing should be booked
 	Examples:

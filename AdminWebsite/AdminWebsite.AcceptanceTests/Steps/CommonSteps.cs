@@ -77,7 +77,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _context.HearingId = (Guid)_context.Hearing.Id;      
         }
 
-        [Given(@"user is on hearing schedule page")]
+        [Given(@"user is on the hearing schedule page")]
         public void GivenUserIsOnHearingSchedulePage()
         {
             _dashboardStep.WhenBookAVideoHearingPanelIsSelected();
@@ -86,7 +86,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _hearingScheduleSteps.HearingSchedulePage();
         }
 
-        [Given(@"(.*) is on hearing schedule page")]
+        [Given(@"(.*) is on the hearing schedule page")]
         public void AdminIsOnHearingSchedulePage(string admin)
         {
             _loginStep.UserLogsInWithValidCredentials(admin);
@@ -96,27 +96,27 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _hearingScheduleSteps.HearingSchedulePage();
         }
 
-        [Given(@"user is on hearing details page")]
+        [Given(@"user is on the hearing details page")]
         public void UserIsOnHearingDetailsPage()
         {
             _dashboardStep.WhenBookAVideoHearingPanelIsSelected();
             _hearingDetailsSteps.HearingDetailsPage();
         }
         
-        [Given(@"user is on other information page")]
+        [Given(@"user is on the other information page")]
         public void GivenUserIsOnOtherInformationPage()
         {
             GivenUserIsOnAddParticipantsPage();
-            _addParticipantsSteps.NewParticipantIsAddedToHearing();
+            _addParticipantsSteps.UserAddsPartiesWithExistingUsers();
             _common.ClickNextButton();
             _otherInformationStep.WhenUserAddsOtherInformationToBookingHearing();
         }
 
-        [Given(@"(.*) is on other information page")]
+        [Given(@"(.*) is on the other information page")]
         public void AdminOnOtherInformationPage(string admin)
         {
             AdminIsOnAddParticipantsPage(admin);
-            _addParticipantsSteps.NewParticipantIsAddedToHearing();
+            _addParticipantsSteps.UserAddsPartiesWithExistingUsers();
             _common.ClickNextButton();
             _otherInformationStep.WhenUserAddsOtherInformationToBookingHearing();
         }
@@ -128,7 +128,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _hearingDetailsSteps.InputCaseName();
         }
         
-        [Given(@"user is on assign judge page")]
+        [Given(@"user is on the assign judge page")]
         public void GivenUserIsOnAssignJudgePage()
         {
             GivenUserIsOnHearingSchedulePage();
@@ -137,7 +137,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _assignClerkStep.AssignClerkPage();
         }
         
-        [Given(@"user is on add participants page")]
+        [Given(@"user is on the add participants page")]
         public void GivenUserIsOnAddParticipantsPage()
         {
             GivenUserIsOnAssignJudgePage();
@@ -146,7 +146,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _addParticipantsSteps.UserIsOnTheAddParticipantsPage();
         }
 
-        [Given(@"(.*) is on assign judge page")]
+        [Given(@"(.*) is on the assign judge page")]
         public void AdminIsOnAssignJudgePage(string admin)
         {
             AdminIsOnHearingSchedulePage(admin);
@@ -155,7 +155,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _assignClerkStep.AssignClerkPage();
         }
 
-        [Given(@"(.*) is on add participants page")]
+        [Given(@"(.*) is on the add participants page")]
         public void AdminIsOnAddParticipantsPage(string admin)
         {
             AdminIsOnAssignJudgePage(admin);
@@ -164,16 +164,16 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _addParticipantsSteps.UserIsOnTheAddParticipantsPage();
         }
 
-        [Given(@"user is on Summary page")]
-        [When(@"user is on Summary page")]
+        [Given(@"user is on the Summary page")]
+        [When(@"user is on the Summary page")]
         public void GivenUserIsOnSummaryPage()
         {
             GivenUserIsOnOtherInformationPage();
             _common.ClickNextButton();
         }
 
-        [Given(@"(.*) is on Summary page")]
-        [When(@"(.*) is on Summary page")]
+        [Given(@"(.*) is on the Summary page")]
+        [When(@"(.*) is on the Summary page")]
         public void AdminIsOnSummaryPage(string admin)
         {
             AdminOnOtherInformationPage(admin);
@@ -197,12 +197,12 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _bookingConfirmationStep.BookHearingConfirmation();
         }
 
-        [When(@"user navigates to dashboard")]
+        [When(@"user navigates to the dashboard")]
         public void UserNavigatesToDashboard()
         {
             _common.DashBoard();
         }
-        [When(@"user navigates to bookings list")]
+        [When(@"user navigates to the bookings list")]
         public void UserNavigatesToBookingsList()
         {
             _common.BookingsList();
@@ -238,7 +238,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
                     UserNavigatesToBookingsList();
                     break;
             }
-            _common.AddItems<string>("BookingPage", bookingPage);
+            _common.AddItems("BookingPage", bookingPage);
         }
 
         [When(@"user discards changes")]
@@ -254,33 +254,9 @@ namespace AdminWebsite.AcceptanceTests.Steps
             {
                 Console.WriteLine($"No user warning message is displayed: {ex.Message}");
             }           
-        }
-        
-        [Given(@"'(.*)' with multiple (.*) wants to add a (.*) to booking")]
-        public void CaseAdminWithMultipleCaseTypes(string admin, string caseTypes, string party)
-        {
-            _loginStep.UserLogsInWithValidCredentials(admin);
-            _dashboardStep.WhenBookAVideoHearingPanelIsSelected();
-            _hearingDetailsSteps.GivenUserSelectsCaseTypeAsCivilMoneyClaims(caseTypes);
-            _hearingScheduleSteps.WhenHearingScheduleIsUpdated();
-            WhenNextButtonIsClicked();
-            _assignClerkStep.WhenHearingBookingIsAssignedToADifferentJudge();
-            WhenNextButtonIsClicked();
-            _addParticipantsSteps.WhenUserSelects(party);
-        }
+        }      
 
-        [Given(@"'(.*)' with (.*) adds participant with (.*) and (.*) to booking")]
-        public void AddsParticipantToBooking(string admin, string caseTypes, string party, string role)
-        {
-            CaseAdminWithMultipleCaseTypes(admin, caseTypes, party);
-            _addParticipantsSteps.RoleIsSelected(role);
-            WhenNextButtonIsClicked();
-            _otherInformationStep.WhenUserAddsOtherInformationToBookingHearing();
-            WhenNextButtonIsClicked();
-            _summarySteps.SummaryPage();
-        }
-
-        [Given(@"(.*) is on booking details page")]
+        [Given(@"(.*) is on the booking details page")]
         public void GivenCaseAdminIsOnBookingDetailsPage(string admin)
         {
             HearingIsBookedByAdmin(admin);

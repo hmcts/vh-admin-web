@@ -7,7 +7,8 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public AssignClerk(Browser browser) : base(browser)
         {
         }
-        public void Clerk() => SelectOption(CommonLocator.List("judgeName"));
-        public string GetSelectedClerk() => SelectLastItem(CommonLocator.List("judgeName"));
+
+        public void Clerk(string clerkName) => SelectOption(CommonLocator.List("judgeName"), clerkName);
+        public string ChangeSelectedClerk() => SelectLastItem(CommonLocator.List("judgeName"));
     }
 }

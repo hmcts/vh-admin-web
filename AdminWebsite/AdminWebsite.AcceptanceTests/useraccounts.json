@@ -5,28 +5,32 @@
       "Firstname": "Automation01",
       "Lastname": "AW_CaseAdmin01_CMC",
       "Displayname": "Automation01_AW_CaseAdmin01_CMC",
-      "AlternativeEmail": "d1@d.com"
+      "AlternativeEmail": "d1@d.com",
+      "UserGroups": ["CivilMoneyClaims"] 
     },
     {
       "Role": "Case admin",
       "Firstname": "Automation01",
       "Lastname": "AW_CaseAdmin01_FR_CMC",
       "Displayname": "Automation01_AW_CaseAdmin01_FR_CMC",
-      "AlternativeEmail": "d7@d.com"
+      "AlternativeEmail": "d7@d.com",
+      "UserGroups": [ "CivilMoneyClaims", "FinancialRemedy" ]
     },
     {
       "Role": "Video hearings officer",
       "Firstname": "Automation01",
       "Lastname": "AW_VideoHearingsOfficer01_CMC",
       "Displayname": "Automation01_AW_VideoHearingsOfficer01_CMC",
-      "AlternativeEmail": "d8@d.com"
+      "AlternativeEmail": "d8@d.com",
+      "UserGroups": [ "CivilMoneyClaims" ]
     },
     {
       "Role": "Video hearings officer",
       "Firstname": "Automation01",
       "Lastname": "AW_VideoHearingsOfficer01_FR_CMC",
       "Displayname": "Automation01_AW_VideoHearingsOfficer01_FR_CMC",
-      "AlternativeEmail": "d9@d.com"
+      "AlternativeEmail": "d9@d.com",
+      "UserGroups": [ "CivilMoneyClaims", "FinancialRemedy" ]
     },
     {
       "Role": "Clerk",
@@ -42,8 +46,6 @@
       "Lastname": "AW_Individual01",
       "Displayname": "Automation01_AW_Individual01",
       "AlternativeEmail": "d3@d.com",
-      "CaseRoleName": "Claimant",
-      "HearingRoleName": "Claimant LIP",
       "SolicitorsReference": "Automation01_AW_Representative01"
     },
     {
@@ -52,8 +54,6 @@
       "Lastname": "AW_Individual02",
       "Displayname": "Automation01_AW_Individual02",
       "AlternativeEmail": "d4@d.com",
-      "CaseRoleName": "Defendant",
-      "HearingRoleName": "Defendant LIP",
       "SolicitorsReference": "Automation01_AW_Representative02"
     },
     {
@@ -62,8 +62,6 @@
       "Lastname": "AW_Representative01",
       "Displayname": "Automation01_AW_Representative01",
       "AlternativeEmail": "d5@d.com",
-      "CaseRoleName": "Claimant",
-      "HearingRoleName": "Solicitor",
       "Representee": "Automation01_AW_Individual01"
     },
     {
@@ -72,8 +70,6 @@
       "Lastname": "AW_Representative02",
       "Displayname": "Automation01_AW_Representative02",
       "AlternativeEmail": "d6@d.com",
-      "CaseRoleName": "Defendant",
-      "HearingRoleName": "Solicitor",
       "Representee": "Automation01_AW_Individual02"
     }
   ]

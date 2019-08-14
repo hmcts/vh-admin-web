@@ -95,7 +95,7 @@ namespace AdminWebsite.AcceptanceTests.Helpers
                 Console.WriteLine($"Cannot switch to the main window:  {ex}");
             }
         }
-        private By _pageTitle = By.XPath("//h1[@class='govuk-heading-l']");
+        private readonly By _pageTitle = By.XPath("//h1[@class='govuk-heading-l']");
         public void ValidatePage(string url, string pageTitle, By webelement = null)
         {
             if (webelement == null)
@@ -110,7 +110,7 @@ namespace AdminWebsite.AcceptanceTests.Helpers
 
         public string ExecuteJavascript(string script)
         {
-            return (String)((IJavaScriptExecutor)NgDriver).ExecuteScript($"{script};");
+            return (string)((IJavaScriptExecutor)NgDriver).ExecuteScript($"{script};");
         }
         public void AcceptAlert()
         {
@@ -120,7 +120,7 @@ namespace AdminWebsite.AcceptanceTests.Helpers
 
     internal class ContextItems
     {
-        private ConcurrentDictionary<string, dynamic> _items;
+        private readonly ConcurrentDictionary<string, dynamic> _items;
         private readonly Browser _context;
 
         public ContextItems(Browser context)
@@ -143,12 +143,7 @@ namespace AdminWebsite.AcceptanceTests.Helpers
 
         public dynamic Get(string key)
         {
-            dynamic value;
-            if (_items.TryGetValue(key, out value))
-            {
-                return value;
-            }
-            return null;
+            return _items.TryGetValue(key, out var value) ? value : null;
         }
     }
 }

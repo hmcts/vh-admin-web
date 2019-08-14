@@ -1,4 +1,6 @@
-﻿
+﻿using System.Collections.Generic;
+using AdminWebsite.AcceptanceTests.Helpers;
+
 namespace AdminWebsite.AcceptanceTests.Configuration
 {
     public class UserAccount
@@ -14,5 +16,6 @@ namespace AdminWebsite.AcceptanceTests.Configuration
         public string Representee { get; set; }
         public string SolicitorsReference { get; set; }
         public bool DefaultParticipant { get; set; }
+        public List<HearingType> UserGroups { get; set; }
     }
 }

@@ -20,8 +20,8 @@ namespace AdminWebsite.AcceptanceTests.Builders
             _request
                 .With(x => x.Representee = "")
                 .With(x => x.Solicitors_reference = "")
-                .With(x => x.Case_role_name = "Clerk")
-                .With(x => x.Hearing_role_name = "Clerk")
+                .With(x => x.Case_role_name = "Judge")
+                .With(x => x.Hearing_role_name = "Judge")
                 .With(x => x.Organisation_name = "");
 
             _request = AddSharedProperties();

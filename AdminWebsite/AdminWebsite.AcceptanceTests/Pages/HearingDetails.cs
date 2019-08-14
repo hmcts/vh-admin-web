@@ -12,11 +12,13 @@ namespace AdminWebsite.AcceptanceTests.Pages
 
         private static By CaseNumberTextfield => By.Id("caseNumber");
         private static By CaseNameTextfield => By.Id("caseName");
+        private static By RoomTextfield => By.Id("court-room");
         public void CaseNumber(string value) => ClearFieldInputValues(CaseNumberTextfield, value);
         public void CaseName(string value) => ClearFieldInputValues(CaseNameTextfield, value);
-        public void CaseTypes() => SelectOption(CommonLocator.List("caseType"));
-        public void HearingType() => SelectOption(CommonLocator.List("hearingType"));
+        public void CaseTypes() => SelectFirstOption(CommonLocator.List("caseType"));
+        public void HearingType() => SelectFirstOption(CommonLocator.List("hearingType"));
         public IEnumerable<IWebElement> CaseTypesList() => GetListOfElements(CommonLocator.List("caseType"));
         public void CaseTypes(string caseType) => SelectOption(CommonLocator.List("caseType"), caseType);
+        public void Room(string value) => ClearFieldInputValues(RoomTextfield, value);
     }
 }

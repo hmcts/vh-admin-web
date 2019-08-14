@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using AdminWebsite.AcceptanceTests.Configuration;
 using AdminWebsite.AcceptanceTests.Data;
+using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.BookingsAPI.Client;
 using RestSharp;
 using Testing.Common;
@@ -26,6 +27,12 @@ namespace AdminWebsite.AcceptanceTests.Contexts
         public TestData TestData { get; set; }
         public UserAccount CurrentUser { get; set; }
         public HearingDetailsResponse Hearing { get; set; }
+        public TargetBrowser TargetBrowser { get; set; }
+
+        public TestContext()
+        {
+            TestData =  new TestData();
+        }
 
         public RestRequest Get(string path) => new RestRequest(path, Method.GET);
 

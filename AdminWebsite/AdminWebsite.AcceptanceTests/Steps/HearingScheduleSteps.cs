@@ -27,12 +27,12 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             HearingSchedulePage();
             var date = DateTime.UtcNow.AddDays(2);
-            _hearingSchedule.AddItems<string>("HearingDate", date.ToString("dddd dd MMMM yyyy, h:mmtt").ToLower());
-            _hearingSchedule.HearingDate(date.ToString("yyyy-MM-dd"));
+            _hearingSchedule.AddItems("HearingDate", date.ToString("dddd dd MMMM yyyy, h:mmtt").ToLower());
+            _hearingSchedule.HearingDate(_context.TargetBrowser, date.ToString(DateFormats.GetHearingScheduledDate(_context.TargetBrowser)));
             _hearingSchedule.HearingStartTime(date.ToString("HH:mm").Split(':'));
             InputHearingDuration(_context.TestData.HearingScheduleData.Duration);
             _hearingSchedule.HearingVenue(HearingScheduleData.CourtAddress.Last());
-            EnterRoom();
+            EnterRoom(_context.TestData.HearingScheduleData.Room);
         }
 
         [When(@"Admin user is on hearing schedule page")]
@@ -45,7 +45,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [When(@"Input date of hearing")]
         public void InputDateOfHearing()
         {
-            _hearingSchedule.HearingDate();
+            _hearingSchedule.HearingDate(_context.TargetBrowser);
         }
 
         [When(@"Input hearing start time")]
@@ -67,7 +67,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         }
 
         [When(@"Enter room text as (.*)")]
-        public void EnterRoom(string room = "")
+        public void EnterRoom(string room)
         {
             _hearingSchedule.HearingRoom(room);
         }
@@ -75,12 +75,12 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [When(@"user inputs a date in the past from the calendar")]
         public void WhenUserSelectsADateInThePastFromTheCalendar()
         {
-            var date = DateTime.Now.AddDays(-1).ToString("yyyy-MM-dd");
-            _hearingSchedule.HearingDate(date);
+            var date = DateTime.Now.AddDays(-1).ToString(DateFormats.GetHearingScheduledDate(_context.TargetBrowser));
+            _hearingSchedule.HearingDate(_context.TargetBrowser, date);
             InputHearingStartTime();
             InputHearingDuration();
             SelectHearingVenue();
-            EnterRoom();
+            EnterRoom(_context.TestData.HearingScheduleData.Room);
         }
 
         [Then(@"an error message should be displayed as (.*)")]
@@ -95,9 +95,9 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             HearingSchedulePage();
             var date = DateTime.UtcNow.AddDays(2);
-            var splitDate = date.ToString("yyyy-MM-dd");
-            _hearingSchedule.AddItems<string>("HearingDate", date.ToString("dddd dd MMMM yyyy, h:mmtt").ToLower());
-            _hearingSchedule.HearingDate(splitDate);
+            var splitDate = date.ToString(DateFormats.GetHearingScheduledDate(_context.TargetBrowser));
+            _hearingSchedule.AddItems("HearingDate", date.ToString("dddd dd MMMM yyyy, h:mmtt").ToLower());
+            _hearingSchedule.HearingDate(_context.TargetBrowser, splitDate);
             _hearingSchedule.HearingStartTime(date.ToString("HH:mm").Split(':'));
             InputHearingDuration(_context.TestData.HearingScheduleData.Duration);
             _hearingSchedule.HearingVenue(HearingScheduleData.CourtAddress.Last());

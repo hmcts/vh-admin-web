@@ -32,12 +32,5 @@ namespace AdminWebsite.AcceptanceTests.Data
         public static IEnumerable<string> DefendantRole = new List<string>() { "Defendant LIP", "Solicitor" };
         public static IEnumerable<string> ApplicantRole = new List<string>() { "Applicant LIP", "Solicitor" };
         public static IEnumerable<string> RespondentRole = new List<string>() { "Respondent LIP", "Solicitor" };
-
-        public const string Claimant = "Claimant";
-        public const string Defendant = "Defendant";
-        public const string Applicant = "Applicant";
-        public const string Respondent = "Respondent";
-        public const string CivilMoneyClaims = "Civil Money Claims";
-        public const string FinancialRemedy = "Financial Remedy";
     }
 }

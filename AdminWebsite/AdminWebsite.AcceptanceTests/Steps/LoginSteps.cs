@@ -24,27 +24,46 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _context = context;
         }
 
-        public void UserOnMicrosoftLoginPage()
+        public void UserIsOnTheLoginPage()
         {
             _browser.Retry(() => { _browser.PageUrl().Should().Contain("login.microsoftonline.com"); }, 10);
         }
 
-        [Given(@"(.*) logs into Vh-Admin website")]
+        [Given(@"(.*) logs into the website")]
         [When(@"(.*) logs in with valid credentials")]
         public void UserLogsInWithValidCredentials(string user)
         {
-            UserOnMicrosoftLoginPage();
-
+            if (_context.CurrentUser != null) return;
             switch (user)
             {
-                case "VH Officer": _context.CurrentUser = _context.GetFinancialRemedyVideoHearingsOfficerUser(); break;
-                case "Case Admin": _context.GetCivilMoneyCaseAdminUser(); break;
-                case "Non-Admin": _context.GetNonAdminUser(); break;
-                case "VhOfficerCivilMoneyclaims": _context.GetCivilMoneyVideoHearingsOfficerUser(); break;
-                case "CaseAdminFinRemedyCivilMoneyClaims": _context.GetFinancialRemedyCaseAdminUser(); break;
+                case "VH Officer": _context.CurrentUser = _context.GetCivilMoneyVideoHearingsOfficerUser(); break;
+                case "Case Admin": _context.CurrentUser = _context.GetCivilMoneyCaseAdminUser(); break;
+                case "Non-Admin": _context.CurrentUser = _context.GetNonAdminUser(); break;
                 default: throw new ArgumentOutOfRangeException($"No user found with user type {user}");
             }
 
+            Login();
+        }
+
+        [Given(@"Civil Money Claims user (.*) logs into the website")]
+        [When(@"Civil Money Claims user (.*) logs in with valid credentials")]
+        public void CivilMoneyClaimsUserLogsInWithValidCredentials(string user)
+        {
+            _context.CurrentUser = user.Equals("VH Officer") ? _context.GetCivilMoneyVideoHearingsOfficerUser() : _context.GetCivilMoneyCaseAdminUser();
+            Login();
+        }
+
+        [Given(@"Financial Remedy user (.*) logs into the website")]
+        [When(@"Financial Remedy user (.*) logs in with valid credentials")]
+        public void FinancialRemedyUserLogsInWithValidCredentials(string user)
+        {
+            _context.CurrentUser = user.Equals("VH Officer") ? _context.GetFinancialRemedyVideoHearingsOfficerUser() : _context.GetFinancialRemedyCaseAdminUser();
+            Login();
+        }
+
+        private void Login()
+        {
+            UserIsOnTheLoginPage();
             _loginPage.Logon(_context.CurrentUser.Username, _context.TestUserSecrets.TestUserPassword);
             _scenarioContext.Add("Username", _context.CurrentUser.Username);
             _scenarioContext.Add("User", _context.CurrentUser);

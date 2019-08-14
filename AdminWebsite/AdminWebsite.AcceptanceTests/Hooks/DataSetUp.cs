@@ -50,7 +50,6 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             testContext.TestUserSecrets = testSecrets;
             testContext.UserAccounts = testAccounts;
             testContext.AzureAd = azureAdConfig;
-            testContext.TestData = new TestData();
 
             foreach (var user in testContext.UserAccounts)
             {

@@ -72,6 +72,12 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _hearingDetails.HearingType();
         }
 
+        [When(@"Select room")]
+        public void SelectRoom()
+        {
+            _hearingDetails.HearingType();
+        }
+
         [Then(@"case type dropdown should be populated")]
         [Then(@"case type dropdown should not be populated")]
         public void ThenCaseTypeDropdownShouldNotBePopulated()
