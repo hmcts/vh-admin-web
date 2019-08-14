@@ -47,6 +47,13 @@ describe('Video hearing service', () => {
       expect(service.hasUnsavedChanges()).toBe(false);
   });
 
+  it('should have changes when updating hearing request', () => {
+    const model = new HearingModel();
+    service.updateHearingRequest(model);
+
+    expect(service.hasUnsavedChanges()).toBe(true);
+  });
+
   it('should get hearings types', () => {
       service.getHearingTypes();
       expect(clientApiSpy.getHearingTypes).toHaveBeenCalled();
