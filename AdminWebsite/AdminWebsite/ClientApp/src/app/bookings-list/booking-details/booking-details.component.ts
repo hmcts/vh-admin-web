@@ -11,6 +11,7 @@ import { HearingModel } from '../../common/model/hearing.model';
 import { PageUrls } from '../../shared/page-url.constants';
 import { BookingPersistService } from '../../services/bookings-persist.service';
 import { ErrorService } from 'src/app/services/error.service';
+import { Observable, interval, Scheduler, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-booking-details',
@@ -29,6 +30,9 @@ export class BookingDetailsComponent implements OnInit {
   hearingId: string;
   updateBookingStatusRequest: UpdateBookingStatusRequest;
 
+  $timeObserver: Observable<number>;
+  timeSubscription: Subscription;
+
   constructor(
     private videoHearingService: VideoHearingsService,
     private bookingDetailsService: BookingDetailsService,
@@ -38,6 +42,7 @@ export class BookingDetailsComponent implements OnInit {
     private bookingPersistService: BookingPersistService,
     private errorService: ErrorService) {
     this.showCancelBooking = false;
+
   }
 
   ngOnInit() {
@@ -49,6 +54,9 @@ export class BookingDetailsComponent implements OnInit {
         this.booking = this.videoHearingService.mapHearingDetailsResponseToHearingModel(data);
         this.setBookingInStorage();
         this.setTimeObserver();
+        if (this.isConfirmationTimeValid) {
+          this.setSubscribers();
+        }
       });
     }
     this.userIdentityService.getUserInformation().subscribe(userProfile => {
@@ -58,12 +66,24 @@ export class BookingDetailsComponent implements OnInit {
     });
   }
 
+  setSubscribers() {
+    this.$timeObserver = interval(60000);
+    this.timeSubscription = this.$timeObserver.subscribe(x => {
+      this.setTimeObserver();
+      console.log('time observed every 1 minute: ' + x);
+    });
+  }
+
   setTimeObserver() {
     if (this.booking) {
-      let now = new Date();
-      now.setMinutes(now.getMinutes() + 30);
-      now = new Date(now);
-      this.isConfirmationTimeValid = this.booking.scheduled_date_time.valueOf() >= now.valueOf();
+      let current = new Date();
+      current.setMinutes(current.getMinutes() + 30);
+      current = new Date(current);
+      this.isConfirmationTimeValid = this.booking.scheduled_date_time.valueOf() >= current.valueOf();
+      if (!this.isConfirmationTimeValid && this.timeSubscription) {
+        this.timeSubscription.unsubscribe();
+        console.log('stop time check subscription');
+      }
     }
   }
 

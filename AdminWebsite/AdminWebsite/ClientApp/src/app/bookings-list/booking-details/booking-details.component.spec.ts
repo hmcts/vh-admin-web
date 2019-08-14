@@ -84,13 +84,12 @@ hearingModel.hearing_id = '44';
 hearingModel.cases = [caseModel];
 hearingModel.scheduled_duration = 120;
 let now = new Date();
-now.setMonth(now.getMonth() + 1);
+now.setMonth(now.getMonth());
 now = new Date(now);
 hearingModel.scheduled_date_time = now;
 
 const updateBookingStatusRequest = new UpdateBookingStatusRequest();
 updateBookingStatusRequest.status = UpdateBookingStatusRequestStatus.Cancelled;
-const exisitingId = 'f36e2912-521f-475a-b70c-6be87d0a992b';
 
 class BookingDetailsServiceMock {
   mapBooking(response) {
@@ -192,7 +191,6 @@ describe('BookingDetailsComponent', () => {
   });
   it('should update hearing status when cancel booking called', () => {
     component.ngOnInit();
-    fixture.detectChanges();
     component.cancelBooking();
     expect(component.showCancelBooking).toBeFalsy();
     console.log(videoHearingServiceSpy);
@@ -203,38 +201,27 @@ describe('BookingDetailsComponent', () => {
   });
   it('should show pop up if the cancel button was clicked', () => {
     component.cancelHearing();
-    fixture.detectChanges();
     expect(component.showCancelBooking).toBeTruthy();
   });
   it('should hide pop up if the keep booking button was clicked', () => {
     component.cancelHearing();
-    fixture.detectChanges();
     expect(component.showCancelBooking).toBeTruthy();
     component.keepBooking();
-    fixture.detectChanges();
     expect(component.showCancelBooking).toBeFalsy();
   });
-  it('should set confirmation button visible if hearing start time more than 30 min', () => {
-    component.setTimeObserver();
-    fixture.detectChanges();
-    expect(component.isConfirmationTimeValid).toBeTruthy();
-  });
-  it('should set confirmation button not visible if hearing start time less than 30 min', () => {
+  it('should set confirmation button not visible if hearing start time less than 30 min', fakeAsync(() => {
     component.booking.scheduled_date_time = new Date(Date.now());
     component.setTimeObserver();
-    fixture.detectChanges();
     expect(component.isConfirmationTimeValid).toBeFalsy();
-  });
+  }));
   it('should confirm booking', () => {
     component.isVhOfficerAdmin = true;
     component.confirmHearing();
-    fixture.detectChanges();
     expect(videoHearingServiceSpy.getHearingById).toHaveBeenCalled();
   });
   it('should not confirm booking if not the VH officer admin role', () => {
     component.isVhOfficerAdmin = false;
     component.confirmHearing();
-    fixture.detectChanges();
     expect(component.booking.status).toBeFalsy();
   });
   it('should persist status in the model', () => {
@@ -251,5 +238,14 @@ describe('BookingDetailsComponent', () => {
     component.errorHandler('error', UpdateBookingStatusRequestStatus.Cancelled);
     expect(component.showCancelBooking).toBeFalsy();
   });
+  it('should set confirmation button visible if hearing start time more than 30 min', fakeAsync(() => {
+    let current = new Date();
+    current.setMinutes(current.getMinutes() + 31);
+    current = new Date(current);
+    component.booking.scheduled_date_time = current;
+    component.setTimeObserver();
+    tick(500);
+    expect(component.isConfirmationTimeValid).toBeTruthy();
+  }));
 });
 

@@ -28,10 +28,12 @@
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
       <div *ngIf="!hearing.isCancelled">
-        <input type="button" class="govuk-button vh-mt20 vh-mr-25" value="Edit" role="button" id="edit-button"
-               (click)="editHearing()" />
-        <input type="button" class="govuk-button vh-mt20 vh-mr-25 vh-btn-cancel" value="Cancel booking" role="button"
-               id="cancel-button" (click)="cancelHearing()" />
+        <span *ngIf="!hearing.isCreated || (hearing.isCreated && isConfirmationTimeValid)">
+          <input type="button" class="govuk-button vh-mt20 vh-mr-25" value="Edit" role="button" id="edit-button"
+                 (click)="editHearing()" />
+          <input type="button" class="govuk-button vh-mt20 vh-mr-25 vh-btn-cancel" value="Cancel booking" role="button"
+                 id="cancel-button" (click)="cancelHearing()" />
+        </span>
         <input *ngIf="!hearing.isCreated && isConfirmationTimeValid && isVhOfficerAdmin" type="button" class="govuk-button vh-mt20 hmcts-button--secondary" value="Confirm and send to video app" role="button"
                id="confirm-button" (click)="confirmHearing()" />
       </div>
