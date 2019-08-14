@@ -18,6 +18,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _hearingDetails = hearingDetails;
             _scenarioContext = injectedContext;
         }
+
         [When(@"hearing details form is filled")]
         public void WhenHearingDetailsFormIsFilled()
         {
@@ -26,37 +27,52 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _hearingDetails.AddItems("CaseNumber", caseNumber);
             InputCaseNumber(caseNumber);
             InputCaseName(TestData.HearingDetails.CaseName);
+
             if (_scenarioContext.Get<string>("Username").Contains("moneyclaims_financialremedy"))
             {
                 SelectCaseType();
             }
+
             SelectHearingType();
+            SelectQuestionnaireNotRequired();
         }
+
         [When(@"Admin user is on hearing details page")]
         public void HearingDetailsPage()
         {
             _hearingDetails.PageUrl(PageUri.HearingDetailsPage);
         }
+
         [When(@"Input case number")]
         public void InputCaseNumber(string caseNumber = "12345")
         {
             _hearingDetails.CaseNumber(caseNumber);
         }
+
         [When(@"Input case name")]
         public void InputCaseName(string caseName = "12345_12345")
         {
             _hearingDetails.CaseName(caseName);
         }
+
         [When(@"Select case type")]
         public void SelectCaseType()
         {           
             _hearingDetails.CaseTypes();
         }
+
         [When(@"Select hearing type")]
         public void SelectHearingType()
         {
             _hearingDetails.HearingType();
         }
+
+        [When(@"Select questionnaire not required")]
+        public void SelectQuestionnaireNotRequired()
+        {
+            _hearingDetails.QuestionnaireNotRequired();
+        }
+
         [Then(@"case type dropdown should be populated")]
         [Then(@"case type dropdown should not be populated")]
         public void ThenCaseTypeDropdownShouldNotBePopulated()
@@ -71,6 +87,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
                     break;
             }
         }
+
         [When(@"hearing booking detail is updated")]
         public void WhenHearingBookingDetailIsUpdated()
         {
@@ -79,6 +96,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             SelectHearingType();
             InputCaseName(TestData.HearingDetails.CaseName1);            
         }
+
         [Given(@"user selects (.*)")]
         public void GivenUserSelectsCaseTypeAsCivilMoneyClaims(string caseType)
         {
@@ -91,11 +109,13 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _hearingDetails.HearingType();
             _hearingDetails.NextButton();
         }
+
         [Then(@"disabled mandatory fields should be (.*)")]
         public void ThenDisabledMandatoryFieldsShouldBeListed(int field)
         {
             _hearingDetails.DisabledFields().Should().Be(field);
         }
+
         [When(@"(.*) updates hearing booking details")]
         public void WhenCaseAdminUpdatesHearingBookingDetails(string user)
         {

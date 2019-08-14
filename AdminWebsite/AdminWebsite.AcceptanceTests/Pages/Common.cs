@@ -50,6 +50,7 @@ namespace AdminWebsite.AcceptanceTests.Pages
 
         protected void InputValues(By element, string value) => _browserContext.NgDriver.WaitUntilElementVisible(element).SendKeys(value);
         protected void ClickElement(By element) => _browserContext.NgDriver.WaitUntilElementClickable(element).Click();
+        protected void ClickCheckboxElement(By element) => _browserContext.NgDriver.FindElement(element).Click();
         protected void ClearFieldInputValues(By element, string value)
         {
             var webElement = _browserContext.NgDriver.WaitUntilElementVisible(element);
@@ -106,7 +107,9 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public void PageUrl(string url)
         {
             if (url != PageUri.BookingConfirmationPage)
-            _browserContext.Retry(() => _browserContext.NgDriver.Url.Should().Contain(url));
+            {
+                _browserContext.Retry(() => _browserContext.NgDriver.Url.Should().Contain(url));
+            }
 
             else
             {
@@ -125,7 +128,6 @@ namespace AdminWebsite.AcceptanceTests.Pages
                     }                    
                 }
             }           
-            
         }
 
         public void ClickBreadcrumb(string breadcrumb) => SelectOption(_breadcrumbs, breadcrumb);
@@ -135,6 +137,7 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public void AddItems<T>(string key, T value) => _browserContext.Items.AddOrUpdate(key, value);
         public dynamic GetItems(string key) => _browserContext.Items.Get(key);
         public string GetParticipantDetails() => GetElementText(By.XPath("//*[contains(@class, 'vhtable-header')]"));
+
         protected IEnumerable<string> Items(By elements)
         {
             var webElements = _browserContext.NgDriver.WaitUntilElementsVisible(elements);
@@ -145,6 +148,7 @@ namespace AdminWebsite.AcceptanceTests.Pages
             }
             return list;
         }
+
         public string ExecuteScript(string script) => _browserContext.ExecuteJavascript(script);
         public string Page() => _browserContext.PageUrl();
         public string CancelWarningMessage() => GetElementText(By.XPath("//*[@class='content']/h1"));
@@ -152,6 +156,7 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public int DisabledFields() => GetListOfElements(By.XPath("//*[@disabled='true']")).ToList().Count;
         public string GetAttribute(By element) => _browserContext.NgDriver.WaitUntilElementVisible(element).GetAttribute("disabled");
         public bool IsElementEnabled(By element) => _browserContext.NgDriver.WaitUntilElementVisible(element).Enabled;
+
         public string ExecuteScript(string script, By element)
         {
             _browserContext.NgDriver.WaitUntilElementVisible(element);
