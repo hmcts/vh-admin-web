@@ -86,6 +86,15 @@
       </span>
     </div>
   </div>
+  <div *ngIf="!editMode" class="govuk-checkboxes__item">
+    <input class="govuk-checkboxes__input" id="questionnaireNotRequired" name="questionnaireNotRequired"
+           type="checkbox" [checked]="questionnaireNotRequired" formControlName="questionnaireNotRequired">
+    <label class="govuk-label govuk-checkboxes__label" for="questionnaireNotRequired">
+      Do not send questionnaires
+    </label>
+  </div>
+
+  <div class="govuk-!-padding-bottom-9"></div>
 
   <div class="sk-top">
     <input type="button" id="nextButton" class="govuk-button vh-mr25" role="button" value="{{buttonAction}}"

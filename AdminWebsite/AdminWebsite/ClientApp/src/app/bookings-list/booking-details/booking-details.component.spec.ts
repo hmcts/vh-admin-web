@@ -31,7 +31,7 @@ export class BookingDetailsTestData {
   getBookingsDetailsModel() {
     return new BookingsDetailsModel('44', new Date('2019-11-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', '', '33A', 'Coronation Street',
-      'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'), 'Booked');
+      'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'), 'Booked', true);
   }
 
   getParticipants() {
@@ -87,6 +87,7 @@ let now = new Date();
 now.setMonth(now.getMonth() + 1);
 now = new Date(now);
 hearingModel.scheduled_date_time = now;
+hearingModel.questionnaire_not_required = true;
 
 const updateBookingStatusRequest = new UpdateBookingStatusRequest();
 updateBookingStatusRequest.status = UpdateBookingStatusRequestStatus.Cancelled;
@@ -158,7 +159,9 @@ describe('BookingDetailsComponent', () => {
     expect(component.hearing.HearingId).toBe('44');
     expect(component.hearing.Duration).toBe(120);
     expect(component.hearing.HearingCaseNumber).toBe('XX3456234565');
+    expect(component.hearing.QuestionnaireNotRequired).toBeTruthy();
   }));
+
   it('should get hearings details and map to HearingModel', (() => {
     component.ngOnInit();
     expect(videoHearingServiceSpy.mapHearingDetailsResponseToHearingModel).toHaveBeenCalled();
@@ -166,6 +169,7 @@ describe('BookingDetailsComponent', () => {
     expect(component.booking.hearing_id).toBe('44');
     expect(component.booking.scheduled_duration).toBe(120);
     expect(component.booking.cases[0].number).toBe('XX3456234565');
+    expect(component.hearing.QuestionnaireNotRequired).toBeTruthy();
   }));
 
   it('should get judge details', (() => {

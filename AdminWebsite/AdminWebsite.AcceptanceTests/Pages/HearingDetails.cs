@@ -17,6 +17,8 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public void CaseName(string value) => ClearFieldInputValues(CaseNameTextfield, value);
         public void CaseTypes() => SelectFirstOption(CommonLocator.List("caseType"));
         public void HearingType() => SelectFirstOption(CommonLocator.List("hearingType"));
+        public void QuestionnaireNotRequired() => ClickCheckboxElement(By.Id("questionnaireNotRequired"));
+
         public IEnumerable<IWebElement> CaseTypesList() => GetListOfElements(CommonLocator.List("caseType"));
         public void CaseTypes(string caseType) => SelectOption(CommonLocator.List("caseType"), caseType);
         public void Room(string value) => ClearFieldInputValues(RoomTextfield, value);

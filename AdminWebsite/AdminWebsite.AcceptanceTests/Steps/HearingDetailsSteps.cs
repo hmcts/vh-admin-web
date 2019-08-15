@@ -33,7 +33,9 @@ namespace AdminWebsite.AcceptanceTests.Steps
             {
                 SelectCaseType();
             }
+
             SelectHearingType();
+            SelectQuestionnaireNotRequired();
         }
 
         private bool UserHasMoreThanOneCaseTypeGroup()
@@ -76,6 +78,12 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void SelectRoom()
         {
             _hearingDetails.HearingType();
+        }
+
+        [When(@"Select questionnaire not required")]
+        public void SelectQuestionnaireNotRequired()
+        {
+            _hearingDetails.QuestionnaireNotRequired();
         }
 
         [Then(@"case type dropdown should be populated")]

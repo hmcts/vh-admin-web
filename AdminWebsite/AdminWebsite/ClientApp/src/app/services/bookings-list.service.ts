@@ -66,7 +66,8 @@ export class BookingsListService {
       hearing.created_date,
       hearing.last_edit_by,
       hearing.last_edit_date,
-      hearing.status
+      hearing.status,
+      hearing.questionnaire_not_required
       );
   }
 }

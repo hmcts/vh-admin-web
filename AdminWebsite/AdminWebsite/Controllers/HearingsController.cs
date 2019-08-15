@@ -293,14 +293,16 @@ namespace AdminWebsite.Controllers
                 Scheduled_date_time = editHearingRequest.ScheduledDateTime,
                 Scheduled_duration = editHearingRequest.ScheduledDuration,
                 Updated_by = _userIdentity.GetUserIdentityName(),
-                Cases = new List<CaseRequest>()
+                Cases = new List<CaseRequest>
                 {
                     new CaseRequest
                     {
                             Name = editHearingRequest.Case.Name,
                             Number = editHearingRequest.Case.Number
                     }
-                }
+                },
+                Questionnaire_not_required = editHearingRequest.QuestionnaireNotRequired
+
             };
             return updateHearingRequest;
         }
