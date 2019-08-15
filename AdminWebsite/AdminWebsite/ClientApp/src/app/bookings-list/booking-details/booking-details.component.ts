@@ -70,7 +70,6 @@ export class BookingDetailsComponent implements OnInit {
     this.$timeObserver = interval(60000);
     this.timeSubscription = this.$timeObserver.subscribe(x => {
       this.setTimeObserver();
-      console.log('time observed every 1 minute: ' + x);
     });
   }
 
@@ -82,7 +81,6 @@ export class BookingDetailsComponent implements OnInit {
       this.isConfirmationTimeValid = this.booking.scheduled_date_time.valueOf() >= current.valueOf();
       if (!this.isConfirmationTimeValid && this.timeSubscription) {
         this.timeSubscription.unsubscribe();
-        console.log('stop time check subscription');
       }
     }
   }

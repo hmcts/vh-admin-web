@@ -10,7 +10,7 @@ import { BookingService } from '../../services/booking.service';
 import { HearingDetailsResponse, UpdateBookingStatusRequest, UpdateBookingStatusRequestStatus } from '../../services/clients/api-client';
 import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
 import { ParticipantDetailsModel } from '../../common/model/participant-details.model';
-import { of } from 'rxjs';
+import { of, Observable } from 'rxjs';
 import { HearingModel } from '../../common/model/hearing.model';
 import { CaseModel } from '../../common/model/case.model';
 import { PageUrls } from '../../shared/page-url.constants';
@@ -166,6 +166,10 @@ describe('BookingDetailsComponent', () => {
     expect(component.booking.scheduled_duration).toBe(120);
     expect(component.booking.cases[0].number).toBe('XX3456234565');
   }));
+  it('should call service to map hearing response to HearingModel', (() => {
+    component.mapResponseToModel(new HearingDetailsResponse());
+    expect(videoHearingServiceSpy.mapHearingDetailsResponseToHearingModel).toHaveBeenCalled();
+  }));
 
   it('should get judge details', (() => {
     component.ngOnInit();
@@ -211,6 +215,7 @@ describe('BookingDetailsComponent', () => {
   });
   it('should set confirmation button not visible if hearing start time less than 30 min', fakeAsync(() => {
     component.booking.scheduled_date_time = new Date(Date.now());
+    component.timeSubscription = new Observable<any>().subscribe();
     component.setTimeObserver();
     expect(component.isConfirmationTimeValid).toBeFalsy();
   }));
