@@ -58,8 +58,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
                     _summary.Judge().Should().Contain(_summary.GetItems("Clerk"));
                     break;
                 case PageUri.AddParticipantsPage:
-                    var expectedResult = $"{_summary.GetItems("Title")} {_context.TestData.ParticipantData.Firstname} {_summary.GetItems("Lastname")}";
-                    _summary.GetParticipantDetails().Should().Contain(expectedResult.Trim());
+                    _summary.ParticipantsAreDisplayedInTheList(_context.TestData);
                     break;
             }
         }
@@ -86,7 +85,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
                     _summary.EditRoundedBorder("Edit");
                     break;
             }
-            _summary.AddItems<string>("RelevantPage", pageUri);
+            _summary.AddItems("RelevantPage", pageUri);
         }
 
         [When(@"user removes participant on the summary page")]
@@ -100,17 +99,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             _summary.ParticipantConfirmationMessage().Should().Contain("Are you sure you want to remove");
             _summary.RemoveParticipant();
-            var exception = string.Empty;
-            try
-            {
-                _summary.GetParticipantDetails().Should().NotBeNullOrEmpty();
-            }
-            catch (Exception ex)
-            {
-                if (ex.InnerException != null)
-                    exception = ex.InnerException.Message;
-            }
-            exception.ToLower().Should().Contain("unable to locate element:");
+            _summary.GetAllParticipantsDetails().Count.Should().Be(_context.TestData.ParticipantData.Count - 1);            
         }
 
         [Then(@"inputted values should not be saved")]
@@ -140,7 +129,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         }
 
         [When(@"user submits the booking")]
-        public void WhenUserSubmitBooking()
+        public void WhenUserSubmitsTheBooking()
         {
             _summary.Book();
         }

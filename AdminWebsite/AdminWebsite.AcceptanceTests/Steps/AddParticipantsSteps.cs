@@ -45,6 +45,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             AddSolicitorParty(party2);
             AddNewPerson(RoleType.Solicitor);
 
+            ThenParticipantDetailAreDisplayedInTheList();
             _addParticipant.ClickNextButton();
         }
 
@@ -55,14 +56,17 @@ namespace AdminWebsite.AcceptanceTests.Steps
             var party1 = GetPartyTypes(out var party2);
 
             AddNonSolicitorParty(party1);
-            AddExistingPerson(_context.GetIndividualUsers().First());
+            AddExistingPerson(_context.GetIndividualUsers().First(), GetLipRoleType(party1));
             AddSolicitorParty(party1);
-            AddExistingPerson(_context.GetRepresentativeUsers().First());
+            AddExistingPerson(_context.GetRepresentativeUsers().First(), RoleType.Solicitor);
 
             AddNonSolicitorParty(party2);
-            AddExistingPerson(_context.GetIndividualUsers().Last());
+            AddExistingPerson(_context.GetIndividualUsers().Last(), GetLipRoleType(party2));
             AddSolicitorParty(party2);
-            AddExistingPerson(_context.GetRepresentativeUsers().Last());
+            AddExistingPerson(_context.GetRepresentativeUsers().Last(), RoleType.Solicitor);
+
+            ThenParticipantDetailAreDisplayedInTheList();
+            _addParticipant.ClickNextButton();
         }
 
         private void NavigateToPage()
@@ -87,10 +91,10 @@ namespace AdminWebsite.AcceptanceTests.Steps
         private void RolesListMatchesUserGroups()
         {
             if (_context.CurrentUser.UserGroups.Contains(HearingType.CivilMoneyClaims))
-                _addParticipant.PartyList().Should().Contain(ParticipantData.MoneyClaimsParty);
+                _addParticipant.PartyList().Should().BeEquivalentTo(PartyTypes.MoneyClaimsParty);
 
             if (_context.CurrentUser.UserGroups.Contains(HearingType.FinancialRemedy))
-                _addParticipant.PartyList().Should().Contain(ParticipantData.FinancialRemedyParty);
+                _addParticipant.PartyList().Should().BeEquivalentTo(PartyTypes.FinancialRemedyParty);
         }
 
         private void AddNonSolicitorParty(PartyType partyType)
@@ -115,14 +119,14 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [When(@"user clears inputted values")]
         public void WhenUserClearsInputtedValues()
         {
-            _addParticipant.AddItems("Party", _addParticipant.GetSelectedParty());
-            _addParticipant.AddItems("Role", _addParticipant.GetSelectedRole());
-            _addParticipant.ParticipantEmail($"Automation_{Faker.Internet.Email()}");
-            _addParticipant.FirstName($"Automation_{Faker.Name.First()}");
-            _addParticipant.LastName(_addParticipant.GetItems("Lastname"));
-            _addParticipant.Telephone(_context.TestData.ParticipantData.Telephone);
-            _addParticipant.DisplayName($"Automation_{Faker.Name.FullName()}");
+            _context.TestData.ParticipantData.Add(new IndividualData());
+            var participant = _context.TestData.ParticipantData.Last();
+            _addParticipant.ParticipantEmail(participant.Email);
+            _addParticipant.FirstName(participant.Firstname);
+            _addParticipant.Telephone(participant.Telephone);
+            _addParticipant.DisplayName(participant.DisplayName);
             _addParticipant.ClearInput();
+            _context.TestData.ParticipantData.Remove(_context.TestData.ParticipantData.Last());
         }
 
         [Then(@"all values should be cleared from the fields")]
@@ -133,36 +137,46 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _addParticipant.ParticipantPageErrorMessages().Should().Contain(_context.TestData.ErrorMessages.RoleErrorMessage);
         }
 
-        [Then(@"Participant detail is displayed on the list")]
-        public void ThenParticipantDetailIsDisplayedOnTheList()
-        {
-            var expectedResult = $"{_addParticipant.GetItems("Title")} {_context.TestData.ParticipantData.Firstname} {_addParticipant.GetItems("Lastname")} {_addParticipant.GetItems("Role")}";
-            var actualResult = _addParticipant.GetParticipantDetails().Replace("\r\n", " ");
-            if (_addParticipant.GetItems("Role") == RoleType.Solicitor.ToString())
-            {
-                var clientRepresenting = _addParticipant.GetItems("ClientRepresenting");
-                actualResult.Should().Be($"{expectedResult}, representing {clientRepresenting}");
-            }
-            else
-            {
-                actualResult.Should().Be(expectedResult.Trim());
-            }
-        }
-
         [When(@"participant details are updated")]
-        public void WhenParticipantDetailsIsUpdated()
+        public void WhenParticipantDetailsAreUpdated()
         {
             if (!_addParticipant.RoleValue().Contains(RoleType.Solicitor.ToString()))
-                AddAddress();
-            _addParticipant.PartyFieldEnabled.Should().BeFalse();
-            _addParticipant.RoleFieldEnabled.Should().BeFalse();
+            {
+                var participant = _context.TestData.ParticipantData.First();
+                _context.TestData.ParticipantData.First().HouseNumber = participant.Update(participant.HouseNumber);
+                _context.TestData.ParticipantData.First().Street = participant.Update(participant.Street);
+                _context.TestData.ParticipantData.First().City = participant.Update(participant.City);
+                _context.TestData.ParticipantData.First().County = participant.Update(participant.County);
+                _context.TestData.ParticipantData.First().PostCode = participant.Update(participant.PostCode);
+
+                var newParticipantAddress = new IndividualData
+                {
+                    HouseNumber = _context.TestData.ParticipantData.First().HouseNumber,
+                    Street = _context.TestData.ParticipantData.First().Street,
+                    City = _context.TestData.ParticipantData.First().City,
+                    County = _context.TestData.ParticipantData.First().County,
+                    PostCode = _context.TestData.ParticipantData.First().PostCode
+                };
+                AddAddress(newParticipantAddress);
+            }
             _addParticipant.EmailEnabled.Should().BeFalse();
             _addParticipant.FirstnameEnabled.Should().BeFalse();
             _addParticipant.LastnameEnabled.Should().BeFalse();
         }
 
-        private void AddExistingPerson(UserAccount user)
+        private void AddExistingPerson(UserAccount user, RoleType roleType)
         {
+            if (user.Role.ToLower().Equals("individual"))
+            {
+                _context.TestData.ParticipantData.Add(new IndividualData());
+            }
+            else
+            {
+                _context.TestData.ParticipantData.Add(new RepresentativeData());
+            }
+            _context.TestData.ParticipantData.Last().AddUserData(user);
+            _context.TestData.ParticipantData.Last().Role = roleType;
+
             var email = user.AlternativeEmail;
             _addParticipant.ParticipantEmail(email.Substring(0, 3));          
             _addParticipant.ExistingParticipant(email);
@@ -174,15 +188,15 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
             if (_addParticipant.RoleValue().Contains("Solicitor"))
             {
-                AddSolicitorInformation(user.Representee);
+                AddSolicitorInformation(_context.TestData.ParticipantData.Last());
             }
             else
             {
-                _addParticipant.GetFieldValue("houseNumber").Should().NotBeNullOrEmpty();
-                _addParticipant.GetFieldValue("street").Should().NotBeNullOrEmpty();
-                _addParticipant.GetFieldValue("city").Should().NotBeNullOrEmpty();
-                _addParticipant.GetFieldValue("county").Should().NotBeNullOrEmpty();
-                _addParticipant.GetFieldValue("postcode").Should().NotBeNullOrEmpty();
+                _context.TestData.ParticipantData.Last().HouseNumber = _addParticipant.GetFieldValue("houseNumber");
+                _context.TestData.ParticipantData.Last().Street = _addParticipant.GetFieldValue("street");
+                _context.TestData.ParticipantData.Last().City = _addParticipant.GetFieldValue("city");
+                _context.TestData.ParticipantData.Last().County = _addParticipant.GetFieldValue("county");
+                _context.TestData.ParticipantData.Last().PostCode = _addParticipant.GetFieldValue("postcode");
             }
 
             _addParticipant.AddParticipantButton();
@@ -190,53 +204,64 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         private void AddNewPerson(RoleType roleType)
         {
-            _addParticipant.ParticipantEmail($"Automation_{Faker.Internet.Email()}");
-            _addParticipant.FirstName($"Automation_{Faker.Name.First()}");
-            _addParticipant.LastName(_addParticipant.GetItems("Lastname"));
-            _addParticipant.Telephone(_context.TestData.ParticipantData.Telephone);
-            _addParticipant.DisplayName($"Automation_{Faker.Name.FullName()}");
             if (roleType == RoleType.Solicitor)
             {
-                AddSolicitorInformation("Automtion_Representee");
+                _context.TestData.ParticipantData.Add(new RepresentativeData());
             }
             else
             {
-                AddAddress();
+                _context.TestData.ParticipantData.Add(new IndividualData());
             }
+
+            _context.TestData.ParticipantData.Last().Role = roleType;
+            var participant = _context.TestData.ParticipantData.Last();
+            _addParticipant.ParticipantEmail(participant.Email);
+            _addParticipant.Title(participant.Title);
+            _addParticipant.FirstName(participant.Firstname);
+            _addParticipant.LastName(participant.Lastname);
+            _addParticipant.Telephone(participant.Telephone);
+            _addParticipant.DisplayName(participant.DisplayName);
+            if (roleType == RoleType.Solicitor)
+            {
+                AddSolicitorInformation(participant);
+            }
+            else
+            {
+                AddAddress(participant);
+            }
+
             _addParticipant.AddParticipantButton();
         }
 
-        private void AddSolicitorInformation(string representee)
+        private void AddSolicitorInformation(ParticipantData participant)
         {
-            var organisation = $"Automation_{Faker.Company.Name()}";
-            _addParticipant.Organisation(organisation);
-            _addParticipant.AddItems("Organisation", organisation);
-            var solicitorReference = Faker.Company.CatchPhrase();
-            _addParticipant.SoliicitorReference(solicitorReference);
-            _addParticipant.AddItems("SolicitorReference", solicitorReference);
-            _addParticipant.ClientRepresenting(representee);
-            _addParticipant.AddItems("ClientRepresenting", representee);
+            _addParticipant.Organisation(participant.Organisation);
+            _addParticipant.SoliicitorReference(participant.SolicitorReference);
+            _addParticipant.ClientRepresenting(participant.ClientRepresenting);
         }
 
-        private void AddAddress()
+        private void AddAddress(ParticipantData participant)
         {
-            var houseNumber = _context.TestData.ParticipantData.HouseNumber;
-            var street = _context.TestData.ParticipantData.Street;
-            var city = _context.TestData.ParticipantData.City;
-            var county = _context.TestData.ParticipantData.County;
-            var postcode = _context.TestData.ParticipantData.PostCode;
+            _addParticipant.HouseNumber(participant.HouseNumber);
+            _addParticipant.Street(participant.Street);
+            _addParticipant.City(participant.City);
+            _addParticipant.County(participant.County);
+            _addParticipant.Postcode(participant.PostCode);
+        }
 
-            _addParticipant.AddItems("HouseNumber", houseNumber);
-            _addParticipant.AddItems("Street", street);
-            _addParticipant.AddItems("City", city);
-            _addParticipant.AddItems("County", county);
-            _addParticipant.AddItems("Postcode", postcode);
+        public void ThenParticipantDetailAreDisplayedInTheList()
+        {
+            var actualResult = _addParticipant.GetAllParticipantsDetails();
 
-            _addParticipant.HouseNumber(houseNumber);
-            _addParticipant.Street(street);
-            _addParticipant.City(city);
-            _addParticipant.County(county);
-            _addParticipant.Postcode(postcode);
+            foreach (var participant in _context.TestData.ParticipantData)
+            {
+                var expectedParticipant = $"{participant.Title} {participant.Firstname} {participant.Lastname} {participant.Role.ToString().Replace("LIP", " LIP")}";
+
+                if (participant.Role == RoleType.Solicitor)
+                    expectedParticipant = $"{expectedParticipant}, representing {participant.ClientRepresenting}";
+
+                actualResult.Any(x => x.Equals(expectedParticipant)).Should().BeTrue();
+            }
         }
     }
 }

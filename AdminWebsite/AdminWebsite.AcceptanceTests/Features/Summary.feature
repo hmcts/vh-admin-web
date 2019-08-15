@@ -1,4 +1,4 @@
-﻿Feature: Case Admin views booking summary screen
+﻿Feature: Summary
 		As a Case Admin
 		I want to view a summary of the hearing details
 		So that I can check the details before making the booking
@@ -26,9 +26,10 @@ Scenario: Case Admin changes judge
 	And hearing booking is assigned to a different judge
 	And user proceeds to the summary page 
 	Then values should be displayed as expected on the summary page
-	
-Scenario: Summary
-	Given Case Admin is on the Summary page
+
+@smoketest
+Scenario: VH Officer removes participant
+	Given VH Officer is on the Summary page
 	When user removes participant on the summary page
 	Then participant should be removed from the list 
 
@@ -38,7 +39,7 @@ Scenario: Case Admin attempts to remove participant
 	And user cancels the process of removing participant
 	Then participant should still be in the list 
 
-@bug
+@smoketest
 Scenario: Case Admin updates participant details
 	Given Case Admin is on the Summary page
 	When user navigates to add participants page to make changes
@@ -46,7 +47,7 @@ Scenario: Case Admin updates participant details
 	And user proceeds to the summary page 
 	Then values should be displayed as expected on the summary page
 
-@smoketest
+@bug
 Scenario: Case Admin attempts to update hearing details
 	Given Case Admin is on the Summary page
 	When user navigates to hearing details page to make changes

@@ -2,10 +2,12 @@
 using AdminWebsite.AcceptanceTests.Pages;
 using FluentAssertions;
 using System;
+using System.Linq;
 using System.Net;
 using System.Runtime.Serialization;
 using AdminWebsite.AcceptanceTests.Builders;
 using AdminWebsite.AcceptanceTests.Contexts;
+using AdminWebsite.AcceptanceTests.Data;
 using AdminWebsite.BookingsAPI.Client;
 using TechTalk.SpecFlow;
 using Testing.Common;
@@ -108,7 +110,6 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             GivenUserIsOnAddParticipantsPage();
             _addParticipantsSteps.UserAddsPartiesWithExistingUsers();
-            _common.ClickNextButton();
             _otherInformationStep.WhenUserAddsOtherInformationToBookingHearing();
         }
 
@@ -117,7 +118,6 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             AdminIsOnAddParticipantsPage(admin);
             _addParticipantsSteps.UserAddsPartiesWithExistingUsers();
-            _common.ClickNextButton();
             _otherInformationStep.WhenUserAddsOtherInformationToBookingHearing();
         }
 
@@ -184,7 +184,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void AdminAmendsBooking(string admin)
         {
             AdminIsOnSummaryPage(admin);
-            _summarySteps.WhenUserSubmitBooking();
+            _summarySteps.WhenUserSubmitsTheBooking();
             _bookingConfirmationStep.BookHearingConfirmation();
             _bookingDetailsSteps.UpdateParticipantDetails();
         }
@@ -193,7 +193,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void HearingIsBookedByAdmin(string admin)
         {
             AdminIsOnSummaryPage(admin);
-            _summarySteps.WhenUserSubmitBooking();
+            _summarySteps.WhenUserSubmitsTheBooking();
             _bookingConfirmationStep.BookHearingConfirmation();
         }
 
@@ -262,6 +262,31 @@ namespace AdminWebsite.AcceptanceTests.Steps
             HearingIsBookedByAdmin(admin);
             _bookingConfirmationStep.BookAnotherHearing();
             _bookingDetailsSteps.ThenAdminUserCanViewBookingList();
+        }
+
+        [When(@"user adds other information and submits the booking")]
+        public void WhenUserAddsOtherInformationAndSubmitsTheBooking()
+        {
+            _otherInformationStep.WhenUserAddsOtherInformationToBookingHearing();
+            _common.ClickNextButton();
+            _summarySteps.WhenUserSubmitsTheBooking();
+            _bookingConfirmationStep.BookHearingConfirmation();
+        }
+
+        [Then(@"Participant details are displayed in the list")]
+        public void ThenParticipantDetailAreDisplayedInTheList()
+        {
+            var actualResult = _common.GetAllParticipantsDetails();
+
+            foreach (var participant in _context.TestData.ParticipantData)
+            {
+                var expectedParticipant = $"{participant.Title} {participant.Firstname} {participant.Lastname} {participant.Role.ToString().Replace("LIP", " LIP")}";
+
+                if (participant.Role == RoleType.Solicitor)
+                    expectedParticipant = $"{expectedParticipant}, representing {participant.ClientRepresenting}";
+
+                actualResult.Any(x => x.Equals(expectedParticipant)).Should().BeTrue();
+            }
         }
     }
 }

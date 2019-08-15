@@ -141,6 +141,13 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public void AddItems<T>(string key, T value) => _browser.Items.AddOrUpdate(key, value);
         public dynamic GetItems(string key) => _browser.Items.Get(key);
         public string GetParticipantDetails() => GetElementText(By.XPath("//*[contains(@class, 'vhtable-header')]"));
+
+        public List<string> GetAllParticipantsDetails()
+        {
+            var elements = _browser.NgDriver.WaitUntilElementsVisible(By.XPath("//*[contains(@class, 'vhtable-header')]"));
+            return elements.Select(element => element.Text.Trim().Replace("\r\n", " ")).ToList();
+        }
+
         protected IEnumerable<string> Items(By elements)
         {
             var webElements = _browser.NgDriver.WaitUntilElementsVisible(elements);

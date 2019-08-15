@@ -3,21 +3,21 @@ As a VH Officer/Case Admin
 I want to view or amend the details of a video hearing booking
 So that I can ensure any changes in details can be reflected in the VH system
 
-@smoketest @VIH-3461
+@VIH-3461
 Scenario: Case Admin views booking details
 	Given hearing is booked by Case Admin
 	When admin user returns to the dashboard  
 	Then admin user can view the booking list
 	And expected details should be populated
 
-@smoketest @VIH-3461
+@VIH-3461
 Scenario: Vh Officer views booking details
 	Given hearing is booked by VH Officer
 	When admin user returns to the dashboard  
 	Then admin user can view the booking list
 	And expected details should be populated
 
-@smoketest @VIH-3743
+@VIH-3743
 Scenario: Admin officer changes judge
 	Given Case Admin amends booking
 	When user navigates to add judge page to make changes

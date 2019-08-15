@@ -14,20 +14,16 @@ namespace AdminWebsite.AcceptanceTests.Pages
         }
 
         private static By CompanyName => By.Id("companyName");
-        public void Title() => SelectFirstOption(CommonLocator.List("title"));
-        public string GetSelectedTitle() => SelectLastItem(CommonLocator.List("title"));
+        public void Title(string title) => SelectOption(CommonLocator.List("title"), title);
         public void ParticipantEmail(string email) => ClearFieldInputValues(By.Id("participantEmail"), email);
         public void FirstName(string firstname) => ClearFieldInputValues(By.Id("firstName"), firstname);
         public void LastName(string lastname) => ClearFieldInputValues(By.Id("lastName"), lastname);
         public void Telephone(string phone) => ClearFieldInputValues(By.Id("phone"), phone);
         public void DisplayName(string displayname) => ClearFieldInputValues(By.Id("displayName"), displayname);
         public void AddParticipantButton() => ClickElement(By.Id("addParticipantBtn"));
-        public string GetSelectedParty() => SelectLastItem(CommonLocator.List("party"));
-        public string GetSelectedRole() => SelectLastItem(CommonLocator.List("role"));
         public void AddParty(PartyType party) => SelectOption(CommonLocator.List("party"), party.ToString());
         public void AddRole(string role) => SelectOption(CommonLocator.List("role"), role);
         public IEnumerable<string> PartyList() => Items(CommonLocator.List("party"));
-        public IEnumerable<string> RoleList() => Items(CommonLocator.List("role"));
         public void ClearInput() => ClickElement(By.Id("clearFormBtn"));
         public IEnumerable<string> ParticipantPageErrorMessages() => Items(By.XPath("//*[@class='govuk-list govuk-error-summary__list']/li"));
         public bool PartyFieldEnabled => IsElementEnabled(By.Id("party"));

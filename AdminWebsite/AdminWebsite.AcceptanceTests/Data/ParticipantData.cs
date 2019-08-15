@@ -1,21 +1,21 @@
-﻿
-using System.Collections.Generic;
+﻿using AdminWebsite.AcceptanceTests.Configuration;
 
 namespace AdminWebsite.AcceptanceTests.Data
 {
-    public class ParticipantData
+    public abstract class ParticipantData
     {
-        public ParticipantData()
+        protected ParticipantData()
         {
-            Telephone = "01230101010";
-            HouseNumber = "102";
-            Street = "Petty France";
-            City = "London";
-            County = "Greater London";
-            PostCode = "SW1H 9AJ";
+            Email = $"Automation_{Faker.Internet.Email()}";
+            Title = "Mrs";
+            Firstname = $"Automation_{Faker.Name.First()}";
+            Lastname = $"Automation_{Faker.Name.Last()}";
+            DisplayName = $"Automation_{Faker.Name.FullName()}";
+            Telephone = "01230101010";            
         }
 
         public string Email { get; set; }
+        public string Title { get; set; }
         public string Firstname { get; set; }
         public string Lastname { get; set; }
         public string Telephone { get; set; }
@@ -25,12 +25,16 @@ namespace AdminWebsite.AcceptanceTests.Data
         public string City { get; set; }
         public string County { get; set; }
         public string PostCode { get; set; }
+        public string Organisation { get; set; }
+        public string SolicitorReference { get; set; }
+        public string ClientRepresenting { get; set; }
+        public RoleType Role { get; set; }
 
-        public static IEnumerable<string> MoneyClaimsParty = new List<string>() { "Claimant", "Defendant" };
-        public static IEnumerable<string> FinancialRemedyParty = new List<string>() { "Applicant", "Respondent" };
-        public static IEnumerable<string> ClaimantRole = new List<string>() { "Claimant LIP", "Solicitor" };
-        public static IEnumerable<string> DefendantRole = new List<string>() { "Defendant LIP", "Solicitor" };
-        public static IEnumerable<string> ApplicantRole = new List<string>() { "Applicant LIP", "Solicitor" };
-        public static IEnumerable<string> RespondentRole = new List<string>() { "Respondent LIP", "Solicitor" };
+        public abstract void AddUserData(UserAccount user);
+
+        public string Update(string value)
+        {
+            return $"{value} Updated";
+        }
     }
 }

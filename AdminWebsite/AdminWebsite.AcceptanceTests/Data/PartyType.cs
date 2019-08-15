@@ -1,4 +1,4 @@
-﻿namespace AdminWebsite.AcceptanceTests.Helpers
+﻿namespace AdminWebsite.AcceptanceTests.Data
 {
     public enum PartyType
     {

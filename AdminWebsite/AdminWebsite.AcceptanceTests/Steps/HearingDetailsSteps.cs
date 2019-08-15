@@ -98,9 +98,11 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void WhenHearingBookingDetailIsUpdated()
         {
             HearingDetailsPage();
-            InputCaseNumber(_context.TestData.HearingData.UpdatedCaseNumber);
+            _context.TestData.HearingData.Update(_context.TestData.HearingData.CaseNumber);
+            InputCaseNumber(_context.TestData.HearingData.CaseNumber);
             SelectHearingType();
-            InputCaseName(_context.TestData.HearingData.UpdatedCaseName);            
+            _context.TestData.HearingData.Update(_context.TestData.HearingData.CaseName);
+            InputCaseName(_context.TestData.HearingData.CaseName);            
         }
 
         [Given(@"user selects (.*)")]
@@ -123,8 +125,10 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [When(@"(.*) updates hearing booking details")]
         public void WhenCaseAdminUpdatesHearingBookingDetails(string user)
         {
-            InputCaseNumber(_context.TestData.HearingData.UpdatedCaseNumber);
-            InputCaseName(_context.TestData.HearingData.UpdatedCaseName);
+            _context.TestData.HearingData.Update(_context.TestData.HearingData.CaseNumber);
+            InputCaseNumber(_context.TestData.HearingData.CaseNumber);
+            _context.TestData.HearingData.Update(_context.TestData.HearingData.CaseName);
+            InputCaseName(_context.TestData.HearingData.CaseName);
             switch (user)
             {
                 case "Case Admin": _hearingDetails.DisabledFields().Should().Be(1);
