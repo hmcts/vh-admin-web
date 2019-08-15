@@ -1,6 +1,8 @@
 ﻿using AdminWebsite.AcceptanceTests.Helpers;
 using TechTalk.SpecFlow;
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using AdminWebsite.AcceptanceTests.Contexts;
 
 namespace AdminWebsite.AcceptanceTests.Hooks
@@ -45,7 +47,26 @@ namespace AdminWebsite.AcceptanceTests.Hooks
                 var passed = _scenario.TestError == null;
                 SaucelabsResult.LogPassed(passed, _browser.NgDriver);
             }
+
             _browser.BrowserTearDown();
+
+            KillDriverProcesses(Process.GetProcessesByName("ChromeDriver"));
+            KillDriverProcesses(Process.GetProcessesByName("GeckoDriver"));
+        }
+
+        private static void KillDriverProcesses(IEnumerable<Process> processes)
+        {
+            foreach (var process in processes)
+            {
+                try
+                {
+                    process.Kill();
+                }
+                catch (Exception ex)
+                {
+                    NUnit.Framework.TestContext.WriteLine(ex.Message);
+                }
+            }
         }
     }
 }

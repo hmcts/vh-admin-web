@@ -95,27 +95,21 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         private void AddNonSolicitorParty(PartyType partyType)
         {
-            _addParticipant.Party(partyType);
+            _addParticipant.AddParty(partyType);
             var roleType = GetLipRoleType(partyType);
-            _addParticipant.AddRole(roleType);           
+            _addParticipant.AddRole(roleType.ToString().Replace("LIP", " LIP"));           
         }
 
         private void AddSolicitorParty(PartyType partyType)
         {
-            _addParticipant.Party(partyType);
-            _addParticipant.AddRole(RoleType.Solicitor);
+            _addParticipant.AddParty(partyType);
+            _addParticipant.AddRole(RoleType.Solicitor.ToString());
         }
 
         private static RoleType GetLipRoleType(PartyType partyType)
         {
-            switch (partyType.ToString())
-            {
-                case nameof(PartyType.Claimant): return RoleType.ClaimantLIP;
-                case nameof(PartyType.Defendant): return RoleType.DefendantLIP;
-                case nameof(PartyType.Applicant): return RoleType.ApplicantLIP;
-                case nameof(PartyType.Respondent): return RoleType.RespondentLIP;
-                default: throw new ArgumentOutOfRangeException($"Party type '{partyType}' not defined.");
-            }
+            Enum.TryParse($"{partyType.ToString()}LIP", out RoleType roleType);
+            return roleType;
         }
 
         [When(@"user clears inputted values")]
@@ -170,22 +164,27 @@ namespace AdminWebsite.AcceptanceTests.Steps
         private void AddExistingPerson(UserAccount user)
         {
             var email = user.AlternativeEmail;
-            _addParticipant.ParticipantEmail(email.Substring(0, 3));
+            _addParticipant.ParticipantEmail(email.Substring(0, 3));          
             _addParticipant.ExistingParticipant(email);
             _addParticipant.DisplayName(user.Displayname);
             _addParticipant.EmailEnabled.Should().BeFalse();
             _addParticipant.FirstnameEnabled.Should().BeFalse();
             _addParticipant.LastnameEnabled.Should().BeFalse();
             _addParticipant.GetFieldValue("phone").Should().NotBeNullOrEmpty();
-            _addParticipant.GetFieldValue("houseNumber").Should().NotBeNullOrEmpty();
-            _addParticipant.GetFieldValue("street").Should().NotBeNullOrEmpty();
-            _addParticipant.GetFieldValue("city").Should().NotBeNullOrEmpty();
-            _addParticipant.GetFieldValue("county").Should().NotBeNullOrEmpty();
-            _addParticipant.GetFieldValue("postcode").Should().NotBeNullOrEmpty();
+
             if (_addParticipant.RoleValue().Contains("Solicitor"))
             {
-                SolicitorInformation(user.Representee);
+                AddSolicitorInformation(user.Representee);
             }
+            else
+            {
+                _addParticipant.GetFieldValue("houseNumber").Should().NotBeNullOrEmpty();
+                _addParticipant.GetFieldValue("street").Should().NotBeNullOrEmpty();
+                _addParticipant.GetFieldValue("city").Should().NotBeNullOrEmpty();
+                _addParticipant.GetFieldValue("county").Should().NotBeNullOrEmpty();
+                _addParticipant.GetFieldValue("postcode").Should().NotBeNullOrEmpty();
+            }
+
             _addParticipant.AddParticipantButton();
         }
 
@@ -198,7 +197,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _addParticipant.DisplayName($"Automation_{Faker.Name.FullName()}");
             if (roleType == RoleType.Solicitor)
             {
-                SolicitorInformation();
+                AddSolicitorInformation("Automtion_Representee");
             }
             else
             {
@@ -207,14 +206,14 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _addParticipant.AddParticipantButton();
         }
 
-        private void SolicitorInformation(string representee = "MadeUp")
+        private void AddSolicitorInformation(string representee)
         {
             var organisation = $"Automation_{Faker.Company.Name()}";
             _addParticipant.Organisation(organisation);
             _addParticipant.AddItems("Organisation", organisation);
             var solicitorReference = Faker.Company.CatchPhrase();
             _addParticipant.SoliicitorReference(solicitorReference);
-            _addParticipant.AddItems("Company", solicitorReference);
+            _addParticipant.AddItems("SolicitorReference", solicitorReference);
             _addParticipant.ClientRepresenting(representee);
             _addParticipant.AddItems("ClientRepresenting", representee);
         }

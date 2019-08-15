@@ -24,8 +24,8 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public void AddParticipantButton() => ClickElement(By.Id("addParticipantBtn"));
         public string GetSelectedParty() => SelectLastItem(CommonLocator.List("party"));
         public string GetSelectedRole() => SelectLastItem(CommonLocator.List("role"));
-        public void Party(PartyType party) => SelectOption(CommonLocator.List("party"), party.ToString());
-        public void AddRole(RoleType role) => SelectOption(CommonLocator.List("role"), role.ToString());
+        public void AddParty(PartyType party) => SelectOption(CommonLocator.List("party"), party.ToString());
+        public void AddRole(string role) => SelectOption(CommonLocator.List("role"), role);
         public IEnumerable<string> PartyList() => Items(CommonLocator.List("party"));
         public IEnumerable<string> RoleList() => Items(CommonLocator.List("role"));
         public void ClearInput() => ClickElement(By.Id("clearFormBtn"));

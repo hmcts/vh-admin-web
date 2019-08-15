@@ -22,7 +22,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void AssignClerkToHearing()
         {
             AssignClerkPage();
-            SelectJudge();
+            SelectCourtroomAccount();
         }
 
         [When(@"Admin user is on the assign judge page")]
@@ -32,10 +32,10 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _assignClerk.PageUrl(PageUri.AssignJudgePage);
         }
 
-        [When(@"select judge")]
-        public void SelectJudge()
+        [When(@"select a courtroom account")]
+        public void SelectCourtroomAccount()
         {
-            _assignClerk.Clerk(_context.GetClerkUser().Displayname);
+            _assignClerk.Clerk(_context.GetClerkUser().Username);
         }
 
         [When(@"hearing booking is assigned to a different judge")]

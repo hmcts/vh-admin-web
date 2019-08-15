@@ -23,22 +23,22 @@ Scenario: Admin officer changes judge
 	When user navigates to add judge page to make changes
 	And hearing booking is assigned to a different judge
 	And user proceeds to the summary page 
-	Then values should be displayed as expected on summary page
+	Then values should be displayed as expected on the summary page
 	And amended values should be saved
 
  @VIH-3743
 Scenario: Participant is removed from booked hearing
 	Given Case Admin amends booking
-	When user removes participant on summary page
+	When user removes participant on the summary page
 	Then participant should be removed from the list 
 
 @VIH-3743          
 Scenario: Case Admin amends participant details
 	Given Case Admin amends booking
 	When user navigates to add participants page to make changes
-	And participant details is updated 
+	And participant details are updated 
 	And user proceeds to the summary page
-	Then values should be displayed as expected on summary page
+	Then values should be displayed as expected on the summary page
 	And amended values should be saved
 
 @VIH-3743
@@ -47,7 +47,7 @@ Scenario: Admin amends hearing details
 	When user navigates to hearing details page to make changes	
 	And Case Admin updates hearing booking details
 	And user proceeds to the summary page
-	Then values should be displayed as expected on summary page
+	Then values should be displayed as expected on the summary page
 	And amended values should be saved
 
 @VIH-3743
@@ -56,7 +56,7 @@ Scenario: Case Admin amends more information
 	When user navigates to more information page to make changes
 	And more information detail is updated 
 	And user proceeds to the summary page 
-	Then values should be displayed as expected on summary page
+	Then values should be displayed as expected on the summary page
 	And amended values should be saved
 
 @VIH-3743 @bug
@@ -65,7 +65,7 @@ Scenario: Case Admin amends hearing schedule
 	When user navigates to hearing schedule page to make changes
 	And hearing schedule is updated
 	And user proceeds to the summary page 
-	Then values should be displayed as expected on summary page
+	Then values should be displayed as expected on the summary page
 	And amended values should be saved
 
 @VIH-3731
@@ -83,5 +83,5 @@ Examples:
 Scenario: Case Admin amends existing hearing with an existing participant
 	Given Case Admin amends booking
 	When user adds existing participant to the hearing  
-	Then values should be displayed as expected on summary page
+	Then values should be displayed as expected on the summary page
 	And values should be displayed as expected on edit view
