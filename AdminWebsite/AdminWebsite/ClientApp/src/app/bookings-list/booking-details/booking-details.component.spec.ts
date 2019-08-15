@@ -243,9 +243,19 @@ describe('BookingDetailsComponent', () => {
     component.updateStatusHandler(UpdateBookingStatusRequestStatus.Cancelled);
     expect(component.showCancelBooking).toBeFalsy();
   });
+  it('should not hide cancel button for not canceled hearing', () => {
+    component.showCancelBooking = true;
+    component.updateStatusHandler(UpdateBookingStatusRequestStatus.Created);
+    expect(component.showCancelBooking).toBeTruthy();
+  });
   it('should hide cancel button for canceled error', () => {
     component.errorHandler('error', UpdateBookingStatusRequestStatus.Cancelled);
     expect(component.showCancelBooking).toBeFalsy();
+  });
+  it('should not hide cancel button for not canceled error', () => {
+    component.showCancelBooking = true;
+    component.errorHandler('error', UpdateBookingStatusRequestStatus.Created);
+    expect(component.showCancelBooking).toBeTruthy();
   });
   it('should set confirmation button visible if hearing start time more than 30 min', fakeAsync(() => {
     let current = new Date();
@@ -253,7 +263,7 @@ describe('BookingDetailsComponent', () => {
     current = new Date(current);
     component.booking.scheduled_date_time = current;
     component.setTimeObserver();
-    tick(500);
+    tick();
     expect(component.isConfirmationTimeValid).toBeTruthy();
   }));
 });

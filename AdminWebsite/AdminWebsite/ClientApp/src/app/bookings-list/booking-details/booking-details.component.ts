@@ -32,6 +32,7 @@ export class BookingDetailsComponent implements OnInit {
 
   $timeObserver: Observable<number>;
   timeSubscription: Subscription;
+  timerInterval = 60000;
 
   constructor(
     private videoHearingService: VideoHearingsService,
@@ -67,7 +68,7 @@ export class BookingDetailsComponent implements OnInit {
   }
 
   setSubscribers() {
-    this.$timeObserver = interval(60000);
+    this.$timeObserver = interval(this.timerInterval);
     this.timeSubscription = this.$timeObserver.subscribe(x => {
       this.setTimeObserver();
     });
