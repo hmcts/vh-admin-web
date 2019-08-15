@@ -11,7 +11,7 @@ namespace AdminWebsite.AcceptanceTests.Data
             Firstname = $"Automation_{Faker.Name.First()}";
             Lastname = $"Automation_{Faker.Name.Last()}";
             DisplayName = $"Automation_{Faker.Name.FullName()}";
-            Telephone = "01230101010";            
+            Telephone = "+44(0)7969325908";            
         }
 
         public string Email { get; set; }

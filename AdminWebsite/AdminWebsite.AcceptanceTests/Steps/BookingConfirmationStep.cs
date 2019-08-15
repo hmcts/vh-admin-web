@@ -68,7 +68,6 @@ namespace AdminWebsite.AcceptanceTests.Steps
         private static void AssertParticipantData(ParticipantData expected, ParticipantResponse actual)
         {
             actual.City.Should().Be(expected.City);
-            actual.Contact_email.Should().Be(expected.Email);
             actual.County.Should().Be(expected.County);
             actual.Display_name.Should().Be(expected.DisplayName);
             actual.First_name.Should().Be(expected.Firstname);

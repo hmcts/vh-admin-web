@@ -15,6 +15,7 @@ namespace AdminWebsite.AcceptanceTests.Configuration
         public string HearingRoleName { get; set; }
         public string Representee { get; set; }
         public string SolicitorsReference { get; set; }
+        public string Telephone { get; set; }
         public bool DefaultParticipant { get; set; }
         public List<HearingType> UserGroups { get; set; }
     }
