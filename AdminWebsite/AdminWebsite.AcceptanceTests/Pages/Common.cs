@@ -61,15 +61,16 @@ namespace AdminWebsite.AcceptanceTests.Pages
 
         public void ClickNextButton()
         {
-            _browser.Retry(() => _browser.NgDriver.WaitUntilElementClickable(NextButton).Click());
+            _browser.NgDriver.ExecuteScript("arguments[0].scrollIntoView(true);", _browser.NgDriver.FindElement(NextButton));
+            _browser.Retry(() => _browser.NgDriver.ClickAndWaitForPageToLoad(NextButton));
         }
 
         public void ClickBookButton()
         {
-            _browser.Retry(() => _browser.NgDriver.WaitUntilElementClickable(By.Id("bookButton")).Click());
+            _browser.Retry(() => _browser.NgDriver.ClickAndWaitForPageToLoad(By.Id("bookButton")));
         }
 
-        public void ClickCancelButton() => _browser.NgDriver.WaitUntilElementClickable(CancelButton).Click();
+        public void ClickCancelButton() => _browser.NgDriver.ClickAndWaitForPageToLoad(CancelButton);
 
         public string GetElementText(By element)
         {
