@@ -5,7 +5,10 @@ import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
 import { ParticipantDetailsModel } from '../../common/model/participant-details.model';
 import { BookingDetailsService } from '../../services/booking-details.service';
 import { BookingService } from '../../services/booking.service';
-import { HearingDetailsResponse, UpdateBookingStatusRequest, UpdateBookingStatusRequestStatus } from '../../services/clients/api-client';
+import {
+  HearingDetailsResponse, UpdateBookingStatusRequest,
+  UpdateBookingStatusRequestStatus, UserProfileResponse
+} from '../../services/clients/api-client';
 import { UserIdentityService } from '../../services/user-identity.service';
 import { HearingModel } from '../../common/model/hearing.model';
 import { PageUrls } from '../../shared/page-url.constants';
@@ -61,10 +64,12 @@ export class BookingDetailsComponent implements OnInit {
       });
     }
     this.userIdentityService.getUserInformation().subscribe(userProfile => {
-      if (userProfile && userProfile.is_vh_officer_administrator_role) {
-        this.isVhOfficerAdmin = true;
-      }
+      this.getUserRole(userProfile);
     });
+  }
+
+  getUserRole(userProfile: UserProfileResponse) {
+    this.isVhOfficerAdmin = userProfile && userProfile.is_vh_officer_administrator_role;
   }
 
   setSubscribers() {

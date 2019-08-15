@@ -7,7 +7,10 @@ import { BookingDetailsComponent } from './booking-details.component';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { BookingDetailsService } from '../../services/booking-details.service';
 import { BookingService } from '../../services/booking.service';
-import { HearingDetailsResponse, UpdateBookingStatusRequest, UpdateBookingStatusRequestStatus } from '../../services/clients/api-client';
+import {
+  HearingDetailsResponse, UpdateBookingStatusRequest,
+  UpdateBookingStatusRequestStatus, UserProfileResponse
+} from '../../services/clients/api-client';
 import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
 import { ParticipantDetailsModel } from '../../common/model/participant-details.model';
 import { of, Observable } from 'rxjs';
@@ -18,6 +21,7 @@ import { CancelBookingPopupComponent } from 'src/app/popups/cancel-booking-popup
 import { BookingPersistService } from '../../services/bookings-persist.service';
 import { UserIdentityService } from '../../services/user-identity.service';
 import { ErrorService } from 'src/app/services/error.service';
+
 
 let component: BookingDetailsComponent;
 let fixture: ComponentFixture<BookingDetailsComponent>;
@@ -223,10 +227,26 @@ describe('BookingDetailsComponent', () => {
     component.setTimeObserver();
     expect(component.isConfirmationTimeValid).toBeFalsy();
   }));
+  it('should not reset confirmation button if current booking is not set', fakeAsync(() => {
+    component.booking = undefined;
+    component.isConfirmationTimeValid = true;
+    component.setTimeObserver();
+    expect(component.isConfirmationTimeValid).toBeTruthy();
+  }));
   it('should confirm booking', () => {
     component.isVhOfficerAdmin = true;
     component.confirmHearing();
     expect(videoHearingServiceSpy.getHearingById).toHaveBeenCalled();
+  });
+  it('should show that user role is Vh office admin', () => {
+    const profile = new UserProfileResponse({ is_vh_officer_administrator_role: true });
+    component.getUserRole(profile);
+    expect(component.isVhOfficerAdmin).toBeTruthy();
+  });
+  it('should show that user role is not Vh office admin', () => {
+    const profile = new UserProfileResponse({ is_vh_officer_administrator_role: false });
+    component.getUserRole(profile);
+    expect(component.isVhOfficerAdmin).toBeFalsy();
   });
   it('should not confirm booking if not the VH officer admin role', () => {
     component.isVhOfficerAdmin = false;
@@ -256,6 +276,10 @@ describe('BookingDetailsComponent', () => {
     component.showCancelBooking = true;
     component.errorHandler('error', UpdateBookingStatusRequestStatus.Created);
     expect(component.showCancelBooking).toBeTruthy();
+  });
+  it('should navigate back', () => {
+    component.navigateBack();
+    expect(routerSpy.navigate).toHaveBeenCalled();
   });
   it('should set confirmation button visible if hearing start time more than 30 min', fakeAsync(() => {
     let current = new Date();
