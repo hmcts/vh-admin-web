@@ -1,4 +1,7 @@
-import { ComponentFixture, TestBed, async, fakeAsync, tick } from '@angular/core/testing';
+import {
+  ComponentFixture, TestBed, async, fakeAsync, tick,
+  flush, discardPeriodicTasks
+} from '@angular/core/testing';
 import { HttpClientModule } from '@angular/common/http';
 import { Router } from '@angular/router';
 
@@ -104,7 +107,6 @@ class BookingDetailsServiceMock {
     return new BookingDetailsTestData().getParticipants();
   }
 }
-
 
 describe('BookingDetailsComponent', () => {
 
@@ -281,6 +283,16 @@ describe('BookingDetailsComponent', () => {
     component.navigateBack();
     expect(routerSpy.navigate).toHaveBeenCalled();
   });
+  it('should set subscription to check hearing start time', fakeAsync(() => {
+    component.isConfirmationTimeValid = true;
+    component.$timeObserver = new Observable<any>();
+    component.setSubscribers();
+    expect(component.$timeObserver).toBeTruthy();
+  }));
+  it('should destroy the subscription to check hearing start time', fakeAsync(() => {
+    component.ngOnDestroy();
+    expect(component.timeSubscription).toBeFalsy();
+  }));
   it('should set confirmation button visible if hearing start time more than 30 min', fakeAsync(() => {
     let current = new Date();
     current.setMinutes(current.getMinutes() + 31);

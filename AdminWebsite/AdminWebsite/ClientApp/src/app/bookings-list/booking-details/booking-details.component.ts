@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
@@ -14,14 +14,14 @@ import { HearingModel } from '../../common/model/hearing.model';
 import { PageUrls } from '../../shared/page-url.constants';
 import { BookingPersistService } from '../../services/bookings-persist.service';
 import { ErrorService } from 'src/app/services/error.service';
-import { Observable, interval, Scheduler, Subscription } from 'rxjs';
+import { interval, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-booking-details',
   templateUrl: 'booking-details.component.html',
   styleUrls: ['booking-details.component.css']
 })
-export class BookingDetailsComponent implements OnInit {
+export class BookingDetailsComponent implements OnInit, OnDestroy {
 
   hearing: BookingsDetailsModel;
   booking: HearingModel;
@@ -33,9 +33,8 @@ export class BookingDetailsComponent implements OnInit {
   hearingId: string;
   updateBookingStatusRequest: UpdateBookingStatusRequest;
 
-  $timeObserver: Observable<number>;
+  $timeObserver = interval(60000);
   timeSubscription: Subscription;
-  timerInterval = 60000;
 
   constructor(
     private videoHearingService: VideoHearingsService,
@@ -58,9 +57,7 @@ export class BookingDetailsComponent implements OnInit {
         this.booking = this.videoHearingService.mapHearingDetailsResponseToHearingModel(data);
         this.setBookingInStorage();
         this.setTimeObserver();
-        if (this.isConfirmationTimeValid) {
-          this.setSubscribers();
-        }
+        this.setSubscribers();
       });
     }
     this.userIdentityService.getUserInformation().subscribe(userProfile => {
@@ -73,10 +70,13 @@ export class BookingDetailsComponent implements OnInit {
   }
 
   setSubscribers() {
-    this.$timeObserver = interval(this.timerInterval);
-    this.timeSubscription = this.$timeObserver.subscribe(x => {
-      this.setTimeObserver();
-    });
+    if (this.isConfirmationTimeValid) {
+      // this.$timeObserver = interval(this.timerInterval);
+      this.timeSubscription = this.$timeObserver.subscribe(x => {
+        this.setTimeObserver();
+        console.log('Time is going: ' + x);
+      });
+    }
   }
 
   setTimeObserver() {
@@ -177,5 +177,11 @@ export class BookingDetailsComponent implements OnInit {
     }
     this.booking.status = status;
     this.setBookingInStorage();
+  }
+
+  ngOnDestroy() {
+    if (this.timeSubscription) {
+      this.timeSubscription.unsubscribe();
+    }
   }
 }
