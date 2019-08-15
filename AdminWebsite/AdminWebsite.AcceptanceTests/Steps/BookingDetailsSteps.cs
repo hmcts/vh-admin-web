@@ -19,11 +19,13 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _bookingDetails = bookingDetails;
             _scenarioContext = scenarioContext;
         }
+
         [When(@"user is on bookings list page")]
         public void BookingsListPage()
         {
             _bookingDetails.PageUrl(PageUri.BookingListPage);
         }
+
         [Then(@"admin user can view booking list")]
         public void ThenAdminUserCanViewBookingList()
         {
@@ -31,6 +33,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             BookingsListPage();
             _bookingDetails.SelectHearing(_bookingDetails.GetItems("CaseNumber"));
         }
+
         [When(@"admin user tries to amend booking")]
         public void UpdateParticipantDetails()
         {            
@@ -40,6 +43,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _bookingDetails.EditBookingList();
             _bookingDetails.BookingDetailsTitle().Should().Be(_bookingDetails.GetItems("CaseNumber"));
         }
+
         [Then(@"expected details should be populated")]
         public void ThenExpectedDetailsShouldBePopulated()
         {
@@ -55,6 +59,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             
             _bookingDetails.CreatedBy().Should().Be(username);
         }
+
         [Then(@"values should be displayed as expected on edit view")]
         [Then(@"amended values should be saved")]
         public void AmendedValuesShouldBeSaved()
@@ -79,6 +84,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             }
             _bookingDetails.EditedBy().Should().Be(_scenarioContext.Get<string>("Username"));
         }
+
         [When(@"the admin cancels hearing")]
         public void WhenTheAdminCancelsHearing()
         {
@@ -86,11 +92,13 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _bookingDetails.PopupCancelBookingWarningMessage().Should().Be(TestData.BookingDetails.CancelBookingWarningMessage);
             _bookingDetails.PopupCancelBookingButton();
         }
+
         [Then(@"cancelled label should be shown on booking details page")]
         public void ThenCancelledLabelShouldBeShownOnHearing()
         {
             _bookingDetails.CancelledLabel().Should().Be(TestData.BookingDetails.CancelledLabel);
         }
+
         [Then(@"booking details page should be displayed without the Edit or Cancel buttons")]
         public void NoEditOrCancelButtons()
         {

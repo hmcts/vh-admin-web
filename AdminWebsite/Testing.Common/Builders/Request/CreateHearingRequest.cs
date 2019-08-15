@@ -32,6 +32,7 @@ namespace Testing.Common.Builders.Request
                 .With(x => x.Participants = participant)
                 .With(x => x.Cases = cases)
                 .With(x => x.Created_by = "caseAdmin@emailaddress.com")
+                .With(x => x.Questionnaire_not_required = true)
                 .Build();
         }
     }

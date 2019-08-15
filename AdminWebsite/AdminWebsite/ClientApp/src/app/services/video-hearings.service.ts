@@ -1,27 +1,30 @@
-import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import {Injectable} from '@angular/core';
+import {Observable} from 'rxjs';
 import {
-  HearingTypeResponse, BHClient, BookNewHearingRequest, HearingDetailsResponse,
-  CaseAndHearingRolesResponse, CaseRequest, ParticipantRequest, CaseResponse2,
-  ParticipantResponse,
-
-  EditHearingRequest,
+  BHClient,
+  BookNewHearingRequest,
+  CaseAndHearingRolesResponse,
+  CaseRequest,
+  CaseResponse2,
   EditCaseRequest,
+  EditHearingRequest,
   EditParticipantRequest,
+  HearingDetailsResponse,
+  HearingTypeResponse,
+  ParticipantRequest,
+  ParticipantResponse,
   UpdateBookingStatusRequest
 } from './clients/api-client';
-import { HearingModel } from '../common/model/hearing.model';
-import { CaseModel } from '../common/model/case.model';
-import { ParticipantModel } from '../common/model/participant.model';
-import { Constants } from '../common/constants';
+import {HearingModel} from '../common/model/hearing.model';
+import {CaseModel} from '../common/model/case.model';
+import {ParticipantModel} from '../common/model/participant.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class VideoHearingsService {
-
-  private newRequestKey: string;
-  private bookingHasChangesKey: string;
+  private readonly newRequestKey: string;
+  private readonly bookingHasChangesKey: string;
   private modelHearing: HearingModel;
   private participantRoles = new Map<string, CaseAndHearingRolesResponse[]>();
 
@@ -42,11 +45,14 @@ export class VideoHearingsService {
   hasUnsavedChanges(): boolean {
     const request = sessionStorage.getItem(this.newRequestKey);
     let existingHearing = false;
+
     if (request) {
       const model: HearingModel = JSON.parse(request);
       existingHearing = model.hearing_id && model.hearing_id.length > 0;
     }
+
     const keyChanges = sessionStorage.getItem(this.bookingHasChangesKey);
+
     return (request !== null && !existingHearing) || keyChanges === 'true';
   }
 
@@ -69,10 +75,10 @@ export class VideoHearingsService {
 
   validCurrentRequest() {
     const localRequest = this.getCurrentRequest();
-    const valid = localRequest.scheduled_date_time && localRequest.scheduled_duration > 0 &&
+
+    return localRequest.scheduled_date_time && localRequest.scheduled_duration > 0 &&
       localRequest.participants.length > 1 && localRequest.hearing_venue_id > 0 &&
       localRequest.hearing_type_id > 0;
-    return valid;
   }
 
   updateHearingRequest(updatedRequest: HearingModel) {
@@ -107,15 +113,19 @@ export class VideoHearingsService {
 
   mapExistingHearing(booking: HearingModel): EditHearingRequest {
     const hearing = new EditHearingRequest();
+
     if (booking.cases && booking.cases.length > 0) {
-      hearing.case = new EditCaseRequest({ name: booking.cases[0].name, number: booking.cases[0].number });
+      hearing.case = new EditCaseRequest({name: booking.cases[0].name, number: booking.cases[0].number});
     }
+
     hearing.hearing_room_name = booking.court_room;
     hearing.hearing_venue_name = booking.court_name;
     hearing.other_information = booking.other_information;
     hearing.scheduled_date_time = new Date(booking.scheduled_date_time);
     hearing.scheduled_duration = booking.scheduled_duration;
     hearing.participants = this.mapParticipantModelToEditParticipantRequest(booking.participants);
+    hearing.questionnaire_not_required = booking.questionnaire_not_required;
+
     return hearing;
   }
 
@@ -147,6 +157,7 @@ export class VideoHearingsService {
     editParticipant.city = participant.city;
     editParticipant.county = participant.county;
     editParticipant.postcode = participant.postcode;
+
     return editParticipant;
   }
 
@@ -161,6 +172,8 @@ export class VideoHearingsService {
     newHearingRequest.hearing_room_name = newRequest.court_room;
     newHearingRequest.participants = this.mapParticipants(newRequest.participants);
     newHearingRequest.other_information = newRequest.other_information;
+    newHearingRequest.questionnaire_not_required = newRequest.questionnaire_not_required;
+
     return newHearingRequest;
   }
 
@@ -180,7 +193,9 @@ export class VideoHearingsService {
     hearing.created_by = response.created_by;
     hearing.updated_date = new Date(response.updated_date);
     hearing.updated_by = response.updated_by;
+    hearing.questionnaire_not_required = response.questionnaire_not_required;
     hearing.status = response.status;
+
     return hearing;
   }
 
