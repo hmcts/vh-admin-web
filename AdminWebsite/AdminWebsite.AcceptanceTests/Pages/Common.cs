@@ -61,7 +61,6 @@ namespace AdminWebsite.AcceptanceTests.Pages
 
         public void ClickNextButton()
         {
-            _browser.NgDriver.ExecuteScript("arguments[0].scrollIntoView(true);", _browser.NgDriver.FindElement(NextButton));
             _browser.Retry(() => _browser.NgDriver.ClickAndWaitForPageToLoad(NextButton));
         }
 
