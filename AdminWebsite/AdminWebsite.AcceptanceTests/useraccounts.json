@@ -6,7 +6,7 @@
       "Lastname": "AW_CaseAdmin01_CMC",
       "Displayname": "Automation01_AW_CaseAdmin01_CMC",
       "AlternativeEmail": "d1@d.com",
-      "UserGroups": ["CivilMoneyClaims"] 
+      "UserGroups": [ "CivilMoneyClaims" ]
     },
     {
       "Role": "Case admin",
@@ -46,6 +46,8 @@
       "Lastname": "AW_Individual01",
       "Displayname": "Automation01_AW_Individual01",
       "AlternativeEmail": "d3@d.com",
+      "CaseRoleName": "Claimant",
+      "HearingRoleName": "Claimant LIP",
       "SolicitorsReference": "Automation01_AW_Representative01"
     },
     {
@@ -54,6 +56,8 @@
       "Lastname": "AW_Individual02",
       "Displayname": "Automation01_AW_Individual02",
       "AlternativeEmail": "d4@d.com",
+      "CaseRoleName": "Defendant",
+      "HearingRoleName": "Defendant LIP",
       "SolicitorsReference": "Automation01_AW_Representative02"
     },
     {
@@ -62,6 +66,8 @@
       "Lastname": "AW_Representative01",
       "Displayname": "Automation01_AW_Representative01",
       "AlternativeEmail": "d5@d.com",
+      "CaseRoleName": "Claimant",
+      "HearingRoleName": "Solicitor",
       "Representee": "Automation01_AW_Individual01"
     },
     {
@@ -70,6 +76,8 @@
       "Lastname": "AW_Representative02",
       "Displayname": "Automation01_AW_Representative02",
       "AlternativeEmail": "d6@d.com",
+      "CaseRoleName": "Defendant",
+      "HearingRoleName": "Solicitor",
       "Representee": "Automation01_AW_Individual02"
     }
   ]
