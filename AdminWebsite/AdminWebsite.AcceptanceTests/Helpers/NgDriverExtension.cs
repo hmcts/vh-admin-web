@@ -22,6 +22,7 @@ namespace AdminWebsite.AcceptanceTests.Helpers
                 return ((NgWebElement)(elem));
             });
         }
+
         public static ReadOnlyCollection<IWebElement> FindElements(this IWebDriver driver, By elementLocator, int timeout = 10)
         {
             try
@@ -34,6 +35,7 @@ namespace AdminWebsite.AcceptanceTests.Helpers
                 throw new NoSuchElementException($"Element with locator: '{elementLocator}' was not found in current context page.", ex);
             }
         }
+
         public static IWebElement WaitUntilElementClickable(this IWebDriver driver, By elementLocator, int timeout = 20)
         {
             try

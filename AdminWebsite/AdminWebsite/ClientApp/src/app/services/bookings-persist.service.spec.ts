@@ -25,7 +25,8 @@ function MockBookedHearing(): BookingsDetailsModel {
     new Date(),
     'last.edit@admin.com',
     new Date(),
-    'booked'
+    'booked',
+    false
   );
 }
 
@@ -39,7 +40,8 @@ describe('BookingsPersistService', () => {
   describe('#updateBooking', () => {
     it('should not update if there are no loaded hearings', () => {
       const model: HearingModel = {
-        updated_date: new Date()
+        updated_date: new Date(),
+        questionnaire_not_required: false
       };
       service.updateBooking(model);
       expect(service.bookingList.length).toBe(0);
