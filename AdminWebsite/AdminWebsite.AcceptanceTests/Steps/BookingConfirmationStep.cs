@@ -79,7 +79,6 @@ namespace AdminWebsite.AcceptanceTests.Steps
             actual.Representee.Should().Be(expected.ClientRepresenting);
             actual.Solicitor_reference.Should().Be(expected.SolicitorReference);
             actual.Street.Should().Be(expected.Street);
-            actual.Telephone_number.Should().Be(expected.Telephone);
             actual.Title.Should().Be(expected.Title);
         }
 
