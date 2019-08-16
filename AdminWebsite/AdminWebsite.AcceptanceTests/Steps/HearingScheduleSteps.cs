@@ -28,7 +28,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             HearingSchedulePage();
             var date = DateTime.UtcNow.AddDays(2);
             _hearingSchedule.AddItems("HearingDate", date.ToString("dddd dd MMMM yyyy, h:mmtt").ToLower());
-            _hearingSchedule.HearingDate(_context.TargetBrowser, date.ToString(DateFormats.GetHearingScheduledDate(_context.TargetBrowser)));
+            _hearingSchedule.HearingDate(_context.TargetBrowser, _context.RunWithSaucelabs, date.ToString(DateFormats.GetHearingScheduledDate(_context.TargetBrowser, _context.RunWithSaucelabs)));
             _hearingSchedule.HearingStartTime(date.ToString("HH:mm").Split(':'));
             InputHearingDuration(_context.TestData.HearingScheduleData.Duration);
             _hearingSchedule.HearingVenue(HearingScheduleData.CourtAddress.Last());
@@ -45,7 +45,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [When(@"Input date of hearing")]
         public void InputDateOfHearing()
         {
-            _hearingSchedule.HearingDate(_context.TargetBrowser);
+            _hearingSchedule.HearingDate(_context.TargetBrowser, _context.RunWithSaucelabs);
         }
 
         [When(@"Input hearing start time")]
@@ -75,8 +75,8 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [When(@"user inputs a date in the past from the calendar")]
         public void WhenUserSelectsADateInThePastFromTheCalendar()
         {
-            var date = DateTime.Now.AddDays(-1).ToString(DateFormats.GetHearingScheduledDate(_context.TargetBrowser));
-            _hearingSchedule.HearingDate(_context.TargetBrowser, date);
+            var date = DateTime.Now.AddDays(-1).ToString(DateFormats.GetHearingScheduledDate(_context.TargetBrowser, _context.RunWithSaucelabs));
+            _hearingSchedule.HearingDate(_context.TargetBrowser, _context.RunWithSaucelabs, date);
             InputHearingStartTime();
             InputHearingDuration();
             SelectHearingVenue();
@@ -95,9 +95,9 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             HearingSchedulePage();
             var date = DateTime.UtcNow.AddDays(2);
-            var splitDate = date.ToString(DateFormats.GetHearingScheduledDate(_context.TargetBrowser));
+            var splitDate = date.ToString(DateFormats.GetHearingScheduledDate(_context.TargetBrowser, _context.RunWithSaucelabs));
             _hearingSchedule.AddItems("HearingDate", date.ToString("dddd dd MMMM yyyy, h:mmtt").ToLower());
-            _hearingSchedule.HearingDate(_context.TargetBrowser, splitDate);
+            _hearingSchedule.HearingDate(_context.TargetBrowser, _context.RunWithSaucelabs, splitDate);
             _hearingSchedule.HearingStartTime(date.ToString("HH:mm").Split(':'));
             InputHearingDuration(_context.TestData.HearingScheduleData.Duration);
             _hearingSchedule.HearingVenue(HearingScheduleData.CourtAddress.Last());

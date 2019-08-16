@@ -19,10 +19,10 @@ namespace AdminWebsite.AcceptanceTests.Pages
         private static readonly By Room = By.Id("court-room");
         private static readonly By ErrorDateText = By.Id("hearingDate-error");
         
-        public void HearingDate(TargetBrowser browser, string currentdate = null)
+        public void HearingDate(TargetBrowser browser, bool runningWithSaucelabs, string currentdate = null)
         {
             if (currentdate == null)
-                currentdate = DateFormats.GetHearingScheduledDate(browser);
+                currentdate = DateFormats.GetHearingScheduledDate(browser, runningWithSaucelabs);
             InputValues(HearingDateTextfield, currentdate);       
         }
 
