@@ -278,12 +278,12 @@ describe('AddParticipantComponent', () => {
   it('should set initial values for fields', fakeAsync(() => {
     component.ngOnInit();
     tick(500);
-    expect(role.value).toBe('Please Select');
-    expect(party.value).toBe('Please Select');
+    expect(role.value).toBe(Constants.PleaseSelect);
+    expect(party.value).toBe(Constants.PleaseSelect);
     expect(firstName.value).toBe('');
     expect(lastName.value).toBe('');
     expect(phone.value).toBe('');
-    expect(title.value).toBe('Please Select');
+    expect(title.value).toBe(Constants.PleaseSelect);
     expect(companyName.value).toBe('');
     expect(houseNumber.value).toBe(addressDummy.houseNumber);
     expect(street.value).toBe(addressDummy.street);
@@ -316,7 +316,7 @@ describe('AddParticipantComponent', () => {
     expect(phone.valid).toBeTruthy();
   });
   it('should check if the role is valid role', () => {
-    role.setValue('Please Select');
+    role.setValue(Constants.PleaseSelect);
     component.roleSelected();
     expect(role.valid && component.isRoleSelected).toBeFalsy();
     role.setValue('Appellant');
@@ -342,16 +342,16 @@ describe('AddParticipantComponent', () => {
   it('should validate postcode', () => {
     isAddressControlValid(postcode, 'TE1 5NR');
   });
-  it('should reset undefined value for party and role to Please Select', () => {
+  it('should reset undefined value for party and role to Please select', () => {
     participant.case_role_name = undefined;
     participant.hearing_role_name = undefined;
     component.getParticipant(participant);
 
     expect(component.participantDetails.case_role_name).toBeTruthy();
-    expect(component.participantDetails.case_role_name).toEqual('Please Select');
-    expect(component.participantDetails.hearing_role_name).toEqual('Please Select');
+    expect(component.participantDetails.case_role_name).toEqual(Constants.PleaseSelect);
+    expect(component.participantDetails.hearing_role_name).toEqual(Constants.PleaseSelect);
   });
-  it('should reset empty party and role to Please Select', () => {
+  it('should reset empty party and role to Please select', () => {
     participant.case_role_name = '';
     participant.hearing_role_name = '';
 
@@ -360,8 +360,8 @@ describe('AddParticipantComponent', () => {
     component.getParticipant(participant);
 
     expect(component.participantDetails.case_role_name).toBeTruthy();
-    expect(component.participantDetails.case_role_name).toEqual('Please Select');
-    expect(component.participantDetails.hearing_role_name).toEqual('Please Select');
+    expect(component.participantDetails.case_role_name).toEqual(Constants.PleaseSelect);
+    expect(component.participantDetails.hearing_role_name).toEqual(Constants.PleaseSelect);
   });
   it('should populate the form fields if the participant is found in data store', () => {
     participant.id = '2345';
@@ -394,12 +394,12 @@ describe('AddParticipantComponent', () => {
   it('should clear all fields and reset to initial value', () => {
     component.getParticipant(participant);
     component.clearForm();
-    expect(role.value).toBe('Please Select');
-    expect(party.value).toBe('Please Select');
+    expect(role.value).toBe(Constants.PleaseSelect);
+    expect(party.value).toBe(Constants.PleaseSelect);
     expect(firstName.value).toBe('');
     expect(lastName.value).toBe('');
     expect(phone.value).toBe('');
-    expect(title.value).toBe('Please Select');
+    expect(title.value).toBe(Constants.PleaseSelect);
     expect(displayName.value).toBe('');
     expect(companyName.value).toBe('');
     expect(role.untouched).toBeTruthy();
@@ -507,10 +507,10 @@ describe('AddParticipantComponent', () => {
   it('the case roles and hearing roles were populated', () => {
     component.setupRoles(roleList);
     expect(component.roleList.length).toBe(2);
-    expect(component.roleList[0]).toEqual('Please Select');
+    expect(component.roleList[0]).toEqual(Constants.PleaseSelect);
 
     expect(component.hearingRoleList.length).toBe(3);
-    expect(component.hearingRoleList[0]).toEqual('Please Select');
+    expect(component.hearingRoleList[0]).toEqual(Constants.PleaseSelect);
   });
   it('party selected will reset hearing roles', () => {
     role.setValue('Claimant');
@@ -520,7 +520,7 @@ describe('AddParticipantComponent', () => {
   });
   it('should not add second time value: Please select to a hearing role list', () => {
     const partyL = new PartyModel('Claimant');
-    partyL.hearingRoles = ['Please Select', 'Solicitor'];
+    partyL.hearingRoles = [Constants.PleaseSelect, 'Solicitor'];
     const partyLst: PartyModel[] = [partyL];
     component.caseAndHearingRoles = partyLst;
     role.setValue('Claimant');
@@ -529,7 +529,7 @@ describe('AddParticipantComponent', () => {
   });
   it('the hearing role list should be empty if selected party name was not found, ', () => {
     const partyL = new PartyModel('Claimant');
-    partyL.hearingRoles = ['Please Select', 'Solicitor'];
+    partyL.hearingRoles = [Constants.PleaseSelect, 'Solicitor'];
     const partyLst: PartyModel[] = [partyL];
     component.caseAndHearingRoles = partyLst;
     component.setupHearingRoles('Defendant');
@@ -541,7 +541,7 @@ describe('AddParticipantComponent', () => {
     expect(component.isTitleSelected).toBeTruthy();
   });
   it('should set to false isTitleSelected', () => {
-    title.setValue('Please Select');
+    title.setValue(Constants.PleaseSelect);
     component.titleSelected();
     expect(component.isTitleSelected).toBeFalsy();
   });
@@ -732,9 +732,9 @@ describe('AddParticipantComponent edit mode', () => {
     fixture.detectChanges();
     component.searchEmail.email = participant.email;
     component.form.setValue({
-      party: 'Please Select',
+      party: Constants.PleaseSelect,
       role: '',
-      title: 'Please Select',
+      title: Constants.PleaseSelect,
       firstName: participant.first_name,
       lastName: participant.last_name,
       phone: participant.phone,
@@ -936,7 +936,7 @@ describe('AddParticipantComponent edit mode no participants added', () => {
 
     component.resetPartyAndRole();
     expect(component.participantDetails.case_role_name).toBeTruthy();
-    expect(component.participantDetails.case_role_name).toEqual('Please Select');
+    expect(component.participantDetails.case_role_name).toEqual(Constants.PleaseSelect);
   });
   it('should set hearing role value from the input field', () => {
     participant.id = undefined;
@@ -946,7 +946,7 @@ describe('AddParticipantComponent edit mode no participants added', () => {
 
     component.resetPartyAndRole();
     expect(component.participantDetails.hearing_role_name).toBeTruthy();
-    expect(component.participantDetails.hearing_role_name).toEqual('Please Select');
+    expect(component.participantDetails.hearing_role_name).toEqual(Constants.PleaseSelect);
   });
   it('should set houseNumber field to invalid', () => {
     component.form.get('houseNumber').setErrors({ 'incorrect': true });

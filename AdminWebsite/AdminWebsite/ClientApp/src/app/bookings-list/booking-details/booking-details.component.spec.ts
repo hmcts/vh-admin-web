@@ -1,4 +1,7 @@
-import { ComponentFixture, TestBed, async, fakeAsync, tick } from '@angular/core/testing';
+import {
+  ComponentFixture, TestBed, async, fakeAsync, tick,
+  flush, discardPeriodicTasks
+} from '@angular/core/testing';
 import { HttpClientModule } from '@angular/common/http';
 import { Router } from '@angular/router';
 
@@ -7,10 +10,13 @@ import { BookingDetailsComponent } from './booking-details.component';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { BookingDetailsService } from '../../services/booking-details.service';
 import { BookingService } from '../../services/booking.service';
-import { HearingDetailsResponse, UpdateBookingStatusRequest, UpdateBookingStatusRequestStatus } from '../../services/clients/api-client';
+import {
+  HearingDetailsResponse, UpdateBookingStatusRequest,
+  UpdateBookingStatusRequestStatus, UserProfileResponse
+} from '../../services/clients/api-client';
 import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
 import { ParticipantDetailsModel } from '../../common/model/participant-details.model';
-import { of } from 'rxjs';
+import { of, Observable } from 'rxjs';
 import { HearingModel } from '../../common/model/hearing.model';
 import { CaseModel } from '../../common/model/case.model';
 import { PageUrls } from '../../shared/page-url.constants';
@@ -18,6 +24,7 @@ import { CancelBookingPopupComponent } from 'src/app/popups/cancel-booking-popup
 import { BookingPersistService } from '../../services/bookings-persist.service';
 import { UserIdentityService } from '../../services/user-identity.service';
 import { ErrorService } from 'src/app/services/error.service';
+
 
 let component: BookingDetailsComponent;
 let fixture: ComponentFixture<BookingDetailsComponent>;
@@ -84,14 +91,13 @@ hearingModel.hearing_id = '44';
 hearingModel.cases = [caseModel];
 hearingModel.scheduled_duration = 120;
 let now = new Date();
-now.setMonth(now.getMonth() + 1);
+now.setMonth(now.getMonth());
 now = new Date(now);
 hearingModel.scheduled_date_time = now;
 hearingModel.questionnaire_not_required = true;
 
 const updateBookingStatusRequest = new UpdateBookingStatusRequest();
 updateBookingStatusRequest.status = UpdateBookingStatusRequestStatus.Cancelled;
-const exisitingId = 'f36e2912-521f-475a-b70c-6be87d0a992b';
 
 class BookingDetailsServiceMock {
   mapBooking(response) {
@@ -101,7 +107,6 @@ class BookingDetailsServiceMock {
     return new BookingDetailsTestData().getParticipants();
   }
 }
-
 
 describe('BookingDetailsComponent', () => {
 
@@ -171,6 +176,10 @@ describe('BookingDetailsComponent', () => {
     expect(component.booking.cases[0].number).toBe('XX3456234565');
     expect(component.hearing.QuestionnaireNotRequired).toBeTruthy();
   }));
+  it('should call service to map hearing response to HearingModel', (() => {
+    component.mapResponseToModel(new HearingDetailsResponse());
+    expect(videoHearingServiceSpy.mapHearingDetailsResponseToHearingModel).toHaveBeenCalled();
+  }));
 
   it('should get judge details', (() => {
     component.ngOnInit();
@@ -196,7 +205,6 @@ describe('BookingDetailsComponent', () => {
   });
   it('should update hearing status when cancel booking called', () => {
     component.ngOnInit();
-    fixture.detectChanges();
     component.cancelBooking();
     expect(component.showCancelBooking).toBeFalsy();
     console.log(videoHearingServiceSpy);
@@ -207,38 +215,44 @@ describe('BookingDetailsComponent', () => {
   });
   it('should show pop up if the cancel button was clicked', () => {
     component.cancelHearing();
-    fixture.detectChanges();
     expect(component.showCancelBooking).toBeTruthy();
   });
   it('should hide pop up if the keep booking button was clicked', () => {
     component.cancelHearing();
-    fixture.detectChanges();
     expect(component.showCancelBooking).toBeTruthy();
     component.keepBooking();
-    fixture.detectChanges();
     expect(component.showCancelBooking).toBeFalsy();
   });
-  it('should set confirmation button visible if hearing start time more than 30 min', () => {
-    component.setTimeObserver();
-    fixture.detectChanges();
-    expect(component.isConfirmationTimeValid).toBeTruthy();
-  });
-  it('should set confirmation button not visible if hearing start time less than 30 min', () => {
+  it('should set confirmation button not visible if hearing start time less than 30 min', fakeAsync(() => {
     component.booking.scheduled_date_time = new Date(Date.now());
+    component.timeSubscription = new Observable<any>().subscribe();
     component.setTimeObserver();
-    fixture.detectChanges();
     expect(component.isConfirmationTimeValid).toBeFalsy();
-  });
+  }));
+  it('should not reset confirmation button if current booking is not set', fakeAsync(() => {
+    component.booking = undefined;
+    component.isConfirmationTimeValid = true;
+    component.setTimeObserver();
+    expect(component.isConfirmationTimeValid).toBeTruthy();
+  }));
   it('should confirm booking', () => {
     component.isVhOfficerAdmin = true;
     component.confirmHearing();
-    fixture.detectChanges();
     expect(videoHearingServiceSpy.getHearingById).toHaveBeenCalled();
+  });
+  it('should show that user role is Vh office admin', () => {
+    const profile = new UserProfileResponse({ is_vh_officer_administrator_role: true });
+    component.getUserRole(profile);
+    expect(component.isVhOfficerAdmin).toBeTruthy();
+  });
+  it('should show that user role is not Vh office admin', () => {
+    const profile = new UserProfileResponse({ is_vh_officer_administrator_role: false });
+    component.getUserRole(profile);
+    expect(component.isVhOfficerAdmin).toBeFalsy();
   });
   it('should not confirm booking if not the VH officer admin role', () => {
     component.isVhOfficerAdmin = false;
     component.confirmHearing();
-    fixture.detectChanges();
     expect(component.booking.status).toBeFalsy();
   });
   it('should persist status in the model', () => {
@@ -251,9 +265,42 @@ describe('BookingDetailsComponent', () => {
     component.updateStatusHandler(UpdateBookingStatusRequestStatus.Cancelled);
     expect(component.showCancelBooking).toBeFalsy();
   });
+  it('should not hide cancel button for not canceled hearing', () => {
+    component.showCancelBooking = true;
+    component.updateStatusHandler(UpdateBookingStatusRequestStatus.Created);
+    expect(component.showCancelBooking).toBeTruthy();
+  });
   it('should hide cancel button for canceled error', () => {
     component.errorHandler('error', UpdateBookingStatusRequestStatus.Cancelled);
     expect(component.showCancelBooking).toBeFalsy();
   });
+  it('should not hide cancel button for not canceled error', () => {
+    component.showCancelBooking = true;
+    component.errorHandler('error', UpdateBookingStatusRequestStatus.Created);
+    expect(component.showCancelBooking).toBeTruthy();
+  });
+  it('should navigate back', () => {
+    component.navigateBack();
+    expect(routerSpy.navigate).toHaveBeenCalled();
+  });
+  it('should set subscription to check hearing start time', fakeAsync(() => {
+    component.isConfirmationTimeValid = true;
+    component.$timeObserver = new Observable<any>();
+    component.setSubscribers();
+    expect(component.$timeObserver).toBeTruthy();
+  }));
+  it('should destroy the subscription to check hearing start time', fakeAsync(() => {
+    component.ngOnDestroy();
+    expect(component.timeSubscription).toBeFalsy();
+  }));
+  it('should set confirmation button visible if hearing start time more than 30 min', fakeAsync(() => {
+    let current = new Date();
+    current.setMinutes(current.getMinutes() + 31);
+    current = new Date(current);
+    component.booking.scheduled_date_time = current;
+    component.setTimeObserver();
+    tick();
+    expect(component.isConfirmationTimeValid).toBeTruthy();
+  }));
 });
 

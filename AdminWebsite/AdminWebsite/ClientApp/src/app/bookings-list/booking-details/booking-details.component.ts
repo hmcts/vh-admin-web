@@ -1,23 +1,27 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
 import { ParticipantDetailsModel } from '../../common/model/participant-details.model';
 import { BookingDetailsService } from '../../services/booking-details.service';
 import { BookingService } from '../../services/booking.service';
-import { HearingDetailsResponse, UpdateBookingStatusRequest, UpdateBookingStatusRequestStatus } from '../../services/clients/api-client';
+import {
+  HearingDetailsResponse, UpdateBookingStatusRequest,
+  UpdateBookingStatusRequestStatus, UserProfileResponse
+} from '../../services/clients/api-client';
 import { UserIdentityService } from '../../services/user-identity.service';
 import { HearingModel } from '../../common/model/hearing.model';
 import { PageUrls } from '../../shared/page-url.constants';
 import { BookingPersistService } from '../../services/bookings-persist.service';
 import { ErrorService } from 'src/app/services/error.service';
+import { interval, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-booking-details',
   templateUrl: 'booking-details.component.html',
   styleUrls: ['booking-details.component.css']
 })
-export class BookingDetailsComponent implements OnInit {
+export class BookingDetailsComponent implements OnInit, OnDestroy {
 
   hearing: BookingsDetailsModel;
   booking: HearingModel;
@@ -28,6 +32,9 @@ export class BookingDetailsComponent implements OnInit {
   isConfirmationTimeValid = true;
   hearingId: string;
   updateBookingStatusRequest: UpdateBookingStatusRequest;
+
+  $timeObserver = interval(60000);
+  timeSubscription: Subscription;
 
   constructor(
     private videoHearingService: VideoHearingsService,
@@ -49,21 +56,35 @@ export class BookingDetailsComponent implements OnInit {
         this.booking = this.videoHearingService.mapHearingDetailsResponseToHearingModel(data);
         this.setBookingInStorage();
         this.setTimeObserver();
+        this.setSubscribers();
       });
     }
     this.userIdentityService.getUserInformation().subscribe(userProfile => {
-      if (userProfile && userProfile.is_vh_officer_administrator_role) {
-        this.isVhOfficerAdmin = true;
-      }
+      this.getUserRole(userProfile);
     });
+  }
+
+  getUserRole(userProfile: UserProfileResponse) {
+    this.isVhOfficerAdmin = userProfile && userProfile.is_vh_officer_administrator_role;
+  }
+
+  setSubscribers() {
+    if (this.isConfirmationTimeValid) {
+      this.timeSubscription = this.$timeObserver.subscribe(x => {
+        this.setTimeObserver();
+      });
+    }
   }
 
   setTimeObserver() {
     if (this.booking) {
-      let now = new Date();
-      now.setMinutes(now.getMinutes() + 30);
-      now = new Date(now);
-      this.isConfirmationTimeValid = this.booking.scheduled_date_time.valueOf() >= now.valueOf();
+      let current = new Date();
+      current.setMinutes(current.getMinutes() + 30);
+      current = new Date(current);
+      this.isConfirmationTimeValid = this.booking.scheduled_date_time.valueOf() >= current.valueOf();
+      if (!this.isConfirmationTimeValid && this.timeSubscription) {
+        this.timeSubscription.unsubscribe();
+      }
     }
   }
 
@@ -153,5 +174,11 @@ export class BookingDetailsComponent implements OnInit {
     }
     this.booking.status = status;
     this.setBookingInStorage();
+  }
+
+  ngOnDestroy() {
+    if (this.timeSubscription) {
+      this.timeSubscription.unsubscribe();
+    }
   }
 }
