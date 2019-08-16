@@ -269,7 +269,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             _otherInformationStep.WhenUserAddsOtherInformationToBookingHearing();
             _common.ClickNextButton();
-            _summarySteps.WhenUserSubmitsTheBooking();
+            _common.ClickBookButton();
             _bookingConfirmationStep.BookHearingConfirmation();
         }
 
