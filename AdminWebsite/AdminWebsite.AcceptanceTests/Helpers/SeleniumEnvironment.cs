@@ -4,6 +4,7 @@ using OpenQA.Selenium.Remote;
 using System;
 using System.IO;
 using System.Reflection;
+using OpenQA.Selenium.Chrome;
 using TechTalk.SpecFlow;
 
 namespace AdminWebsite.AcceptanceTests.Helpers
@@ -44,6 +45,12 @@ namespace AdminWebsite.AcceptanceTests.Helpers
                     caps.SetCapability("platform", "Windows 10");
                     caps.SetCapability("version", "11.285");
                     break;
+                default:
+                    caps.SetCapability("browserName", "Chrome");
+                    caps.SetCapability("platform", "Windows 10");
+                    caps.SetCapability("version", "74.0");
+                    caps.SetCapability("autoAcceptAlerts", true);
+                    break;
             }
 
             caps.SetCapability("name", _scenario.Title);
@@ -51,7 +58,7 @@ namespace AdminWebsite.AcceptanceTests.Helpers
 #pragma warning restore 618
 
             // It can take quite a bit of time for some commands to execute remotely so this is higher than default
-            var commandTimeout = TimeSpan.FromMinutes(3);
+            var commandTimeout = TimeSpan.FromMinutes(1.5);
 
             var remoteUrl = new System.Uri(_saucelabsSettings.RemoteServerUrl);
 
@@ -60,19 +67,27 @@ namespace AdminWebsite.AcceptanceTests.Helpers
 
         private IWebDriver InitLocalDriver()
         {
-            var options = new FirefoxOptions
+            if (_targetBrowser == TargetBrowser.Firefox)
             {
-                AcceptInsecureCertificates = true
-            };
-            return new FirefoxDriver(FireFoxDriverPath, options);
+                var firefoxOptions = new FirefoxOptions
+                {
+                    AcceptInsecureCertificates = true
+                };
+                return new FirefoxDriver(GetBuildPath, firefoxOptions);
+            }
+
+            var chromeOptions = new ChromeOptions();
+            chromeOptions.AddArgument("ignore -certificate-errors");
+            var commandTimeout = TimeSpan.FromSeconds(30);
+            return new ChromeDriver(GetBuildPath, chromeOptions, commandTimeout);
         }
 
-        private string FireFoxDriverPath
+        private static string GetBuildPath
         {
             get
             {
                 const string osxPath = "/usr/local/bin";
-                string assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                var assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
                 return Directory.Exists(osxPath) ? osxPath : assemblyPath;
             }
         }

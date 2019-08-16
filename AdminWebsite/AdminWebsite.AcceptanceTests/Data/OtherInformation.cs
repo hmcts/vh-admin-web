@@ -1,4 +1,4 @@
-﻿namespace AdminWebsite.AcceptanceTests.TestData
+﻿namespace AdminWebsite.AcceptanceTests.Data
 {
     public static class OtherInformation
     {

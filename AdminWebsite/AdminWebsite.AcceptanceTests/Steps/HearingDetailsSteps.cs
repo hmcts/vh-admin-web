@@ -3,6 +3,7 @@ using AdminWebsite.AcceptanceTests.Pages;
 using FluentAssertions;
 using System;
 using System.Linq;
+using AdminWebsite.AcceptanceTests.Contexts;
 using TechTalk.SpecFlow;
 
 namespace AdminWebsite.AcceptanceTests.Steps
@@ -10,11 +11,13 @@ namespace AdminWebsite.AcceptanceTests.Steps
     [Binding]
     public sealed class HearingDetailsSteps
     {
+        private readonly TestContext _context;
         private readonly HearingDetails _hearingDetails;
         private readonly ScenarioContext _scenarioContext;
 
-        public HearingDetailsSteps(HearingDetails hearingDetails, ScenarioContext injectedContext)
+        public HearingDetailsSteps(TestContext context, HearingDetails hearingDetails, ScenarioContext injectedContext)
         {
+            _context = context;
             _hearingDetails = hearingDetails;
             _scenarioContext = injectedContext;
         }
@@ -23,18 +26,22 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void WhenHearingDetailsFormIsFilled()
         {
             HearingDetailsPage();
-            var caseNumber = $"AutomatedTest_{Guid.NewGuid().ToString()}";
-            _hearingDetails.AddItems("CaseNumber", caseNumber);
-            InputCaseNumber(caseNumber);
-            InputCaseName(TestData.HearingDetails.CaseName);
-
-            if (_scenarioContext.Get<string>("Username").Contains("moneyclaims_financialremedy"))
+            _hearingDetails.AddItems("CaseNumber", _context.TestData.HearingData.CaseNumber);
+            InputCaseNumber(_context.TestData.HearingData.CaseNumber);
+            InputCaseName(_context.TestData.HearingData.CaseName);
+            if (UserHasMoreThanOneCaseTypeGroup())
             {
                 SelectCaseType();
             }
 
             SelectHearingType();
             SelectQuestionnaireNotRequired();
+        }
+
+        private bool UserHasMoreThanOneCaseTypeGroup()
+        {
+            return _context.CurrentUser.Username.Contains("CMC") &&
+                   _context.CurrentUser.Username.Contains("FR");
         }
 
         [When(@"Admin user is on hearing details page")]
@@ -67,6 +74,12 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _hearingDetails.HearingType();
         }
 
+        [When(@"Select room")]
+        public void SelectRoom()
+        {
+            _hearingDetails.HearingType();
+        }
+
         [When(@"Select questionnaire not required")]
         public void SelectQuestionnaireNotRequired()
         {
@@ -85,6 +98,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
                 case "Case Admin":
                     _hearingDetails.CaseTypesList().Should().BeEmpty();
                     break;
+                default: throw new ArgumentOutOfRangeException($"User {_scenarioContext.Get<string>("User")} not defined");
             }
         }
 
@@ -92,22 +106,22 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void WhenHearingBookingDetailIsUpdated()
         {
             HearingDetailsPage();
-            InputCaseNumber(TestData.HearingDetails.CaseNumber1);
+            _context.TestData.HearingData.Update(_context.TestData.HearingData.CaseNumber);
+            InputCaseNumber(_context.TestData.HearingData.CaseNumber);
             SelectHearingType();
-            InputCaseName(TestData.HearingDetails.CaseName1);            
+            _context.TestData.HearingData.Update(_context.TestData.HearingData.CaseName);
+            InputCaseName(_context.TestData.HearingData.CaseName);            
         }
 
         [Given(@"user selects (.*)")]
         public void GivenUserSelectsCaseTypeAsCivilMoneyClaims(string caseType)
         {
-            _hearingDetails.AddItems<string>("CaseType", caseType);
-            var caseNumber = $"AutomatedTest_{Guid.NewGuid().ToString()}";
-            _hearingDetails.AddItems("CaseNumber", caseNumber);
-            InputCaseNumber(caseNumber);
-            InputCaseName(TestData.HearingDetails.CaseName);
+            _hearingDetails.AddItems("CaseTypes", caseType);
+            InputCaseNumber(_context.TestData.HearingData.CaseNumber);
+            InputCaseName(_context.TestData.HearingData.CaseName);
             _hearingDetails.CaseTypes(caseType);
             _hearingDetails.HearingType();
-            _hearingDetails.NextButton();
+            _hearingDetails.ClickNextButton();
         }
 
         [Then(@"disabled mandatory fields should be (.*)")]
@@ -119,14 +133,17 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [When(@"(.*) updates hearing booking details")]
         public void WhenCaseAdminUpdatesHearingBookingDetails(string user)
         {
-            InputCaseNumber(TestData.HearingDetails.CaseNumber1);
-            InputCaseName(TestData.HearingDetails.CaseName1);
+            _context.TestData.HearingData.Update(_context.TestData.HearingData.CaseNumber);
+            InputCaseNumber(_context.TestData.HearingData.CaseNumber);
+            _context.TestData.HearingData.Update(_context.TestData.HearingData.CaseName);
+            InputCaseName(_context.TestData.HearingData.CaseName);
             switch (user)
             {
                 case "Case Admin": _hearingDetails.DisabledFields().Should().Be(1);
                     break;
                 case "CaseAdminFinRemedyCivilMoneyClaims": _hearingDetails.DisabledFields().Should().Be(2);
                     break;
+                default: throw new ArgumentOutOfRangeException($"User '{user}' is not defined");
             }
         }
     }

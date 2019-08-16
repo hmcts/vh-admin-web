@@ -7,7 +7,7 @@ using System.Collections.Concurrent;
 
 namespace AdminWebsite.AcceptanceTests.Helpers
 {
-    public class BrowserContext
+    public class Browser
     {
 
         private string _baseUrl;
@@ -15,7 +15,7 @@ namespace AdminWebsite.AcceptanceTests.Helpers
         public NgWebDriver NgDriver;
         internal ContextItems Items { get; set; }
 
-        public BrowserContext()
+        public Browser()
         {
             Items = new ContextItems(this);
         }
@@ -57,7 +57,7 @@ namespace AdminWebsite.AcceptanceTests.Helpers
         {
             if (string.IsNullOrEmpty(_baseUrl))
             {
-                throw new InvalidOperationException("BaseUrl has not been set through BrowserSetup() yet");
+                throw new InvalidOperationException("BookingsApiBaseUrl has not been set through BrowserSetup() yet");
             }
 
             Console.WriteLine($"Navigating to {_baseUrl}");
@@ -95,7 +95,7 @@ namespace AdminWebsite.AcceptanceTests.Helpers
                 Console.WriteLine($"Cannot switch to the main window:  {ex}");
             }
         }
-        private By _pageTitle = By.XPath("//h1[@class='govuk-heading-l']");
+        private readonly By _pageTitle = By.XPath("//h1[@class='govuk-heading-l']");
         public void ValidatePage(string url, string pageTitle, By webelement = null)
         {
             if (webelement == null)
@@ -110,7 +110,7 @@ namespace AdminWebsite.AcceptanceTests.Helpers
 
         public string ExecuteJavascript(string script)
         {
-            return (String)((IJavaScriptExecutor)NgDriver).ExecuteScript($"{script};");
+            return (string)((IJavaScriptExecutor)NgDriver).ExecuteScript($"{script};");
         }
         public void AcceptAlert()
         {
@@ -120,10 +120,10 @@ namespace AdminWebsite.AcceptanceTests.Helpers
 
     internal class ContextItems
     {
-        private ConcurrentDictionary<string, dynamic> _items;
-        private readonly BrowserContext _context;
+        private readonly ConcurrentDictionary<string, dynamic> _items;
+        private readonly Browser _context;
 
-        public ContextItems(BrowserContext context)
+        public ContextItems(Browser context)
         {
             _items = new ConcurrentDictionary<string, dynamic>();
             _context = context;
@@ -143,12 +143,7 @@ namespace AdminWebsite.AcceptanceTests.Helpers
 
         public dynamic Get(string key)
         {
-            dynamic value;
-            if (_items.TryGetValue(key, out value))
-            {
-                return value;
-            }
-            return null;
+            return _items.TryGetValue(key, out var value) ? value : null;
         }
     }
 }

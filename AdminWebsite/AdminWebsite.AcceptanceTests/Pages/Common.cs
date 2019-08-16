@@ -9,36 +9,37 @@ namespace AdminWebsite.AcceptanceTests.Pages
 {
     public class Common
     {
-        private readonly BrowserContext _browserContext;
-        public Common(BrowserContext browserContext)
+        private readonly Browser _browser;
+
+        public Common(Browser browser)
         {
-            _browserContext = browserContext;
+            _browser = browser;
         }
 
-        private By _breadcrumbs => By.XPath("//li[@class='vh-breadcrumbs']/a");
-        private By _nextButton => By.Id(("nextButton"));
-        private By _cancelButton => By.Id(("cancelButton"));
-        private By _primaryNavItems => By.XPath("//*[@class='vh-primary-navigation__link']");
-        private By _tryAgain => By.Id("btnTryAgain");
-        private By _tryAgainMessage => By.XPath("//*[@class='govuk-heading-m vh-ml70 vh-mr70']");
+        private static By Breadcrumbs => By.XPath("//li[@class='vh-breadcrumbs']/a");
+        private static By NextButton => By.Id(("nextButton"));
+        private static By CancelButton => By.Id(("cancelButton"));
+        private static By BookButton => By.Id(("bookButton"));
+        private static By TryAgainButton => By.Id("btnTryAgain");
+        private static By TryAgainMessage => By.XPath("//*[@class='govuk-heading-m vh-ml70 vh-mr70']");
 
         protected IEnumerable<IWebElement> GetListOfElements(By elements)
         {
             IEnumerable<IWebElement> webElements = null;
             try
             {
-                webElements = _browserContext.NgDriver.WaitUntilElementsVisible(elements);
+                webElements = _browser.NgDriver.WaitUntilElementsVisible(elements);
             }
             catch (Exception ex)
             {
-                webElements = _browserContext.NgDriver.FindElements(elements);
+                webElements = _browser.NgDriver.FindElements(elements);
                 Console.WriteLine(ex);
             }
             return webElements;
         }
         protected string GetBreadcrumbAttribute(string breadcrumb)
         {
-            var getListOfElements = GetListOfElements(_breadcrumbs);
+            var getListOfElements = GetListOfElements(Breadcrumbs);
             string breadcrumbAttribute = null;
             foreach (var element in getListOfElements)
             {
@@ -48,30 +49,36 @@ namespace AdminWebsite.AcceptanceTests.Pages
             return breadcrumbAttribute;
         }
 
-        protected void InputValues(By element, string value) => _browserContext.NgDriver.WaitUntilElementVisible(element).SendKeys(value);
-        protected void ClickElement(By element) => _browserContext.NgDriver.WaitUntilElementClickable(element).Click();
-        protected void ClickCheckboxElement(By element) => _browserContext.NgDriver.FindElement(element).Click();
+        protected void InputValues(By element, string value) => _browser.NgDriver.WaitUntilElementVisible(element).SendKeys(value);
+        protected void ClickElement(By element) => _browser.NgDriver.WaitUntilElementVisible(element).Click();
+        protected void ClickCheckboxElement(By element) => _browser.NgDriver.FindElement(element).Click();
+
         protected void ClearFieldInputValues(By element, string value)
         {
-            var webElement = _browserContext.NgDriver.WaitUntilElementVisible(element);
+            var webElement = _browser.NgDriver.WaitUntilElementVisible(element);
             webElement.Clear();
             webElement.SendKeys(value);
         }
-        public void NextButton()
+
+        public void ClickNextButton()
         {
-            _browserContext.Retry(() => _browserContext.NgDriver.WaitUntilElementClickable(_nextButton).Click());
+            _browser.Retry(() => _browser.NgDriver.ClickAndWaitForPageToLoad(NextButton));
         }
-        public void BookButton()
+
+        public void ClickBookButton()
         {
-            _browserContext.Retry(() => _browserContext.NgDriver.WaitUntilElementClickable(By.Id("bookButton")).Click());
+            _browser.NgDriver.ExecuteScript("arguments[0].scrollIntoView(true);", _browser.NgDriver.FindElement(BookButton));
+            _browser.Retry(() => _browser.NgDriver.ClickAndWaitForPageToLoad(BookButton));
         }
-        public void CancelButton() => _browserContext.NgDriver.WaitUntilElementClickable(_cancelButton).Click();
+
+        public void ClickCancelButton() => _browser.NgDriver.ClickAndWaitForPageToLoad(CancelButton);
+
         public string GetElementText(By element)
         {
             var webElementText = string.Empty;
-            _browserContext.Retry(() =>
+            _browser.Retry(() =>
             {
-                webElementText = _browserContext.NgDriver.WaitUntilElementVisible(element).Text.Trim();
+                webElementText = _browser.NgDriver.WaitUntilElementVisible(element).Text.Trim();
             }, 1);
             return webElementText;
         }
@@ -79,27 +86,29 @@ namespace AdminWebsite.AcceptanceTests.Pages
         protected void SelectOption(By elements, string option)
         {
             var getListOfElements = GetListOfElements(elements);
-            _browserContext.Retry(() => getListOfElements.ToArray().Count().Should().BeGreaterThan(0, "List is not populated"));
+            _browser.Retry(() => getListOfElements.Count().Should().BeGreaterThan(0, "List is not populated"));
             foreach (var element in getListOfElements)
             {
-                if (option == element.Text.Trim())
-                {
-                    _browserContext.NgDriver.WaitUntilElementClickable(element).Click();
-                    break;
-                }
+                if (option != element.Text.Trim()) continue;
+                _browser.NgDriver.WaitUntilElementClickable(element).Click();
+                break;
             }
         }
-        protected void SelectOption(By elements)
+        protected void SelectFirstOption(By elements)
         {
             var getListOfElements = GetListOfElements(elements);
-            _browserContext.Retry(() => getListOfElements.ToArray().Count().Should().BeGreaterThan(0, "List is not populated"));
-            _browserContext.NgDriver.WaitUntilElementClickable(getListOfElements.ToArray().First()).Click();
+            _browser.Retry(() => getListOfElements.Count().Should().BeGreaterThan(0, "List is not populated"));
+            _browser.NgDriver.WaitUntilElementClickable(getListOfElements.First()).Click();
         }
+
         protected string SelectLastItem(By elements)
         {
             var getListOfElements = GetListOfElements(elements);
-            _browserContext.Retry(() => getListOfElements.ToArray().Count().Should().BeGreaterThan(0, "List is not populated"));
-            var lastItem = _browserContext.NgDriver.WaitUntilElementClickable(getListOfElements.ToArray().Last());
+            var listOfElements = getListOfElements as IWebElement[] ?? getListOfElements.ToArray();
+            var list1 = listOfElements.ToList();
+            _browser.Retry(() => list1.Count.Should().BeGreaterThan(0, "List is not populated"));
+            var list = listOfElements.ToList();
+            var lastItem = _browser.NgDriver.WaitUntilElementClickable(list.Last());
             lastItem.Click();
             return lastItem.Text.Trim();
         }
@@ -108,59 +117,57 @@ namespace AdminWebsite.AcceptanceTests.Pages
         {
             if (url != PageUri.BookingConfirmationPage)
             {
-                _browserContext.Retry(() => _browserContext.NgDriver.Url.Should().Contain(url));
+                _browser.Retry(() => _browser.NgDriver.Url.Should().Contain(url));
             }
-
             else
             {
                 try
                 {
-                    _browserContext.Retry(() => _browserContext.NgDriver.Url.Should().Contain(url));
+                    _browser.Retry(() => _browser.NgDriver.Url.Should().Contain(url));
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine($"Re-submit booking: {ex}");
-                    if (GetElementText(_tryAgainMessage) == TestData.BookingConfirmation.TryAgainMessage)                  
+                    if (GetElementText(TryAgainMessage) == Data.BookingConfirmation.TryAgainMessage)                  
 
                     {
-                        ClickElement(_tryAgain);
-                        _browserContext.Retry(() => _browserContext.NgDriver.Url.Should().Contain(url), 2);
+                        ClickElement(TryAgainButton);
+                        _browser.Retry(() => _browser.NgDriver.Url.Should().Contain(url), 2);
                     }                    
                 }
-            }           
+            }                      
         }
 
-        public void ClickBreadcrumb(string breadcrumb) => SelectOption(_breadcrumbs, breadcrumb);
-        public void AcceptBrowserAlert() => _browserContext.AcceptAlert();
+        public void ClickBreadcrumb(string breadcrumb) => SelectOption(Breadcrumbs, breadcrumb);
+        public void AcceptBrowserAlert() => _browser.AcceptAlert();
         public void DashBoard() => ClickElement(By.Id("topItem0"));
         public void BookingsList() => ExecuteScript("document.getElementById('topItem1').click()");
-        public void AddItems<T>(string key, T value) => _browserContext.Items.AddOrUpdate(key, value);
-        public dynamic GetItems(string key) => _browserContext.Items.Get(key);
+        public void AddItems<T>(string key, T value) => _browser.Items.AddOrUpdate(key, value);
+        public dynamic GetItems(string key) => _browser.Items.Get(key);
         public string GetParticipantDetails() => GetElementText(By.XPath("//*[contains(@class, 'vhtable-header')]"));
+
+        public List<string> GetAllParticipantsDetails()
+        {
+            var elements = _browser.NgDriver.WaitUntilElementsVisible(By.XPath("//*[contains(@class, 'vhtable-header')]"));
+            return elements.Select(element => element.Text.Trim().Replace("\r\n", " ")).ToList();
+        }
 
         protected IEnumerable<string> Items(By elements)
         {
-            var webElements = _browserContext.NgDriver.WaitUntilElementsVisible(elements);
-            IList<string> list = new List<string>();
-            foreach (var element in webElements)
-            {
-                list.Add(element.Text.Trim());
-            }
-            return list;
+            var webElements = _browser.NgDriver.WaitUntilElementsVisible(elements);
+            return webElements.Select(element => element.Text.Trim()).ToList();
         }
-
-        public string ExecuteScript(string script) => _browserContext.ExecuteJavascript(script);
-        public string Page() => _browserContext.PageUrl();
+        public string ExecuteScript(string script) => _browser.ExecuteJavascript(script);
+        public string Page() => _browser.PageUrl();
         public string CancelWarningMessage() => GetElementText(By.XPath("//*[@class='content']/h1"));
         public void DiscardChanges() => ClickElement(By.Id("btn-discard-changes"));       
         public int DisabledFields() => GetListOfElements(By.XPath("//*[@disabled='true']")).ToList().Count;
-        public string GetAttribute(By element) => _browserContext.NgDriver.WaitUntilElementVisible(element).GetAttribute("disabled");
-        public bool IsElementEnabled(By element) => _browserContext.NgDriver.WaitUntilElementVisible(element).Enabled;
-
+        public string GetAttribute(By element) => _browser.NgDriver.WaitUntilElementVisible(element).GetAttribute("disabled");
+        public bool IsElementEnabled(By element) => _browser.NgDriver.WaitUntilElementVisible(element).Enabled;
         public string ExecuteScript(string script, By element)
         {
-            _browserContext.NgDriver.WaitUntilElementVisible(element);
-           return  _browserContext.ExecuteJavascript(script);
+            _browser.NgDriver.WaitUntilElementVisible(element);
+           return  _browser.ExecuteJavascript(script);
         }
     }
 }

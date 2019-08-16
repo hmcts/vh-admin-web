@@ -15,22 +15,23 @@
     <PackageReference Include="DotNetSeleniumExtras.PageObjects" Version="3.11.0" />
     <PackageReference Include="DotNetSeleniumExtras.WaitHelpers" Version="3.11.0" />
     <PackageReference Include="Faker.Net" Version="1.1.1" />
-    <PackageReference Include="FluentAssertions" Version="5.6.0" />
+    <PackageReference Include="FluentAssertions" Version="5.8.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="2.2.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
-    <PackageReference Include="NUnit" Version="3.11.0" />
-    <PackageReference Include="NUnit3TestAdapter" Version="3.13.0" />
-    <PackageReference Include="Polly" Version="7.0.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
+    <PackageReference Include="NUnit" Version="3.12.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.14.0" />
+    <PackageReference Include="Polly" Version="7.1.0" />
     <PackageReference Include="Protractor.Net.Standard" Version="0.12.0" />
-    <PackageReference Include="RestSharp" Version="106.6.9" />
+    <PackageReference Include="RestSharp" Version="106.6.10" />
     <PackageReference Include="Selenium.Support" Version="3.141.0" />
     <PackageReference Include="Selenium.WebDriver" Version="3.141.0" />
-    <PackageReference Include="SpecFlow" Version="3.0.169-beta" />
-    <PackageReference Include="SpecFlow.Tools.MsBuild.Generation" Version="3.0.169-beta" />
-    <PackageReference Include="WebDriver.ChromeDriver.win32" Version="2.46.0" />
+    <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="76.0.3809.6801" />
+    <PackageReference Include="Selenium.WebDriver.GeckoDriver" Version="0.24.0" />
+    <PackageReference Include="SpecFlow" Version="3.0.225" />
+    <PackageReference Include="SpecFlow.Tools.MsBuild.Generation" Version="3.0.225" />
   </ItemGroup>
 
   <ItemGroup>
@@ -59,29 +60,11 @@
     <None Update="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Features\BookingDetails.feature">
-      <Generator></Generator>
-    </None>
-    <None Update="Features\HearingDetails.feature">
-      <Generator></Generator>
-    </None>
-    <None Update="Features\HearingSchedule.feature">
-      <Generator></Generator>
-    </None>
-    <None Update="Features\OtherInformation.feature">
-      <Generator></Generator>
-    </None>
-    <None Update="Features\Questionnarie.feature">
-      <Generator></Generator>
-    </None>
-    <None Update="Features\SignOut.feature">
-      <Generator></Generator>
-    </None>
     <None Update="parameters.runsettings">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Features\Login.feature">
-      <Generator></Generator>
+    <None Update="useraccounts.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 

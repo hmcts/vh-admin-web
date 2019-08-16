@@ -14,30 +14,34 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             _otherInformation = otherInformation;
         }
+
         [When(@"Admin user is on hmore information page")]
         public void MoreInformationPage()
         {
             _otherInformation.PageUrl(PageUri.OtherInformationPage);
         }
+
         [When(@"user adds other information to the Video Hearing booking")]
         public void WhenUserAddsOtherInformationToBookingHearing()
         {
             MoreInformationPage();
-            _otherInformation.GetOtherInformationHeading().Should().Be(TestData.OtherInformation.OtherInformationText);
-            _otherInformation.AddOtherInformation(TestData.OtherInformation.OtherInformationText);
+            _otherInformation.GetOtherInformationHeading().Should().Be(Data.OtherInformation.OtherInformationText);
+            _otherInformation.AddOtherInformation(Data.OtherInformation.OtherInformationText);
         }
+
         [When(@"user continues booking without adding other information")]
         public void UserAddsNoOtherInformationToBookingHearing()
         {
             MoreInformationPage();
-            _otherInformation.GetOtherInformationHeading().Should().Be(TestData.OtherInformation.OtherInformationText);
+            _otherInformation.GetOtherInformationHeading().Should().Be(Data.OtherInformation.OtherInformationText);
             _otherInformation.AddOtherInformation("");
         }
+
         [When(@"more information detail is updated")]
         public void WhenMoreInformationDetailIsUpdated()
         {
             MoreInformationPage();
-            _otherInformation.AddOtherInformation(TestData.OtherInformation.OtherInformationText);
+            _otherInformation.AddOtherInformation(Data.OtherInformation.OtherInformationText);
         }
     }
 }
