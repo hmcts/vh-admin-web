@@ -41,7 +41,8 @@ Scenario: Case Admin attempts to remove participant
 
 @smoketest
 Scenario: Case Admin updates participant details
-	Given Case Admin is on the Summary page
+	Given an individual is already a participant of another hearing
+	And Case Admin is on the Summary page
 	When user navigates to add participants page to make changes
 	And participant details are updated 
 	And user proceeds to the summary page 

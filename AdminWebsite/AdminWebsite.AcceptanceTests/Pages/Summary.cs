@@ -22,7 +22,7 @@ namespace AdminWebsite.AcceptanceTests.Pages
         private static By Border => By.XPath("//a[@class='vhlink']");
 
         public string Judge() => GetElementText(By.Id("judge-name"));
-        public void Book() => ClickElement(By.Id("bookButton"));
+        public void Book() => ClickBookButton();
         public void EditRoundedBorder(string uri) => SelectOption(Border, uri);
         public void RemoveParticipant() => ClickElement(By.Id("btn-remove"));
         public void CancelRemoveParticipant() => ClickElement(By.Id("btn-cancel"));

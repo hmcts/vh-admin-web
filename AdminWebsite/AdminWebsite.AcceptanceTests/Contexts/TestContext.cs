@@ -28,6 +28,7 @@ namespace AdminWebsite.AcceptanceTests.Contexts
         public UserAccount CurrentUser { get; set; }
         public HearingDetailsResponse Hearing { get; set; }
         public TargetBrowser TargetBrowser { get; set; }
+        public bool RunWithSaucelabs { get; set; }
 
         public TestContext()
         {

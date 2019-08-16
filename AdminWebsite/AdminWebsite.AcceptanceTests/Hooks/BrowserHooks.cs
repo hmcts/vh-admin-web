@@ -35,6 +35,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             var appTestContext = _context.AzureAd;
             SetTargetBrowser(_context);
             var environment = new SeleniumEnvironment(_saucelabsSettings, _scenario.ScenarioInfo, _context.TargetBrowser);
+            _context.RunWithSaucelabs = _saucelabsSettings.RunWithSaucelabs;
             _browser.BrowserSetup(appTestContext.RedirectUri, environment);
             _browser.LaunchSite();           
         }

@@ -2,6 +2,7 @@
 using OpenQA.Selenium;
 using System;
 using System.Linq;
+using AdminWebsite.AcceptanceTests.Data;
 
 namespace AdminWebsite.AcceptanceTests.Pages
 {
