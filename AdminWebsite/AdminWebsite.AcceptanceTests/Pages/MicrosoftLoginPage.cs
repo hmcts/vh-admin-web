@@ -7,10 +7,10 @@ namespace AdminWebsite.AcceptanceTests.Pages
 {
     public class MicrosoftLoginPage
     {
-        private BrowserContext _context;
-        public MicrosoftLoginPage(BrowserContext browserContext)
+        private Browser _context;
+        public MicrosoftLoginPage(Browser browser)
         {
-            _context = browserContext;
+            _context = browser;
         }
 
         private By _usernameTextfield => By.CssSelector("#i0116");

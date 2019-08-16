@@ -1,31 +1,31 @@
 ﻿using AdminWebsite.AcceptanceTests.Helpers;
 using OpenQA.Selenium;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace AdminWebsite.AcceptanceTests.Pages
 {
     public class Dashboard : Common
     {
-        private readonly BrowserContext _browserContext;
-        public Dashboard(BrowserContext browserContext) : base(browserContext)
+        private readonly Browser _browser;
+
+        public Dashboard(Browser browser) : base(browser)
         {
-            _browserContext = browserContext;
+            _browser = browser;
         }
 
-        private By _vhPanelTitle => By.XPath("//*[@class='vhpanel-title']");
-        private By _bookHearingPanel => By.XPath("//*[@id='vhpanel-green']/h1");
-        private By _questionnaireResultPanel => By.XPath("//*[@id='vhpanel-blue']/h1");
-        private By _unauthorisedText => By.XPath("//*[@class='govuk-heading-xl']");
+        private static By Title => By.XPath("//*[@class='vhpanel-title']");
+        private static By BookHearingPanelButton => By.XPath("//*[@id='vhpanel-green']/h1");
+        private static By QuestionnaireResultPanelButton => By.XPath("//*[@id='vhpanel-blue']/h1");
+        private static By UnauthorisedErrorText => By.XPath("//*[@class='govuk-heading-xl']");
 
         public List<string> VhPanelTitle()
         {
-            var panelTitles = new List<string>();
-            foreach (var panel in _browserContext.NgDriver.WaitUntilElementsVisible(_vhPanelTitle))
-                panelTitles.Add(panel.Text);
-            return panelTitles;
+            return _browser.NgDriver.WaitUntilElementsVisible(Title).Select(panel => panel.Text).ToList();
         }
-        public string UnauthorisedText() => _browserContext.NgDriver.WaitUntilElementVisible(_unauthorisedText).Text.Trim();
-        public void BookHearingPanel() => ClickElement(_bookHearingPanel);
-        public void QuestionnaireResultPanel() => ClickElement(_questionnaireResultPanel);
+
+        public string UnauthorisedText() => _browser.NgDriver.WaitUntilElementVisible(UnauthorisedErrorText).Text.Trim();
+        public void BookHearingPanel() => ClickElement(BookHearingPanelButton);
+        public void QuestionnaireResultPanel() => ClickElement(QuestionnaireResultPanelButton);
     }
 }

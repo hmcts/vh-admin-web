@@ -2,35 +2,35 @@
 using OpenQA.Selenium;
 using System;
 using System.Linq;
+using AdminWebsite.AcceptanceTests.Data;
 
 namespace AdminWebsite.AcceptanceTests.Pages
 {
     public class HearingSchedule : Common
     {
-        public HearingSchedule(BrowserContext browserContext) : base(browserContext)
+        public HearingSchedule(Browser browser) : base(browser)
         {
         }
 
-        private By _hearingDate => By.Id("hearingDate");
-        private By _hearingStartTime => By.XPath("//input[@id='hearingStartTimeHour'or @id='hearingStartTimeMinute']");
-        private By _hearingDuration => By.XPath("//input[@id='hearingDurationHour' or @id='hearingDurationMinute']");
-        private string CurrentDate() => DateTime.Now.ToString("yyyy-MM-dd");
-        private string[] CurrentTime() => DateTime.Now.AddMinutes(30).ToString("HH:mm").Split(':');
-        private By _room = By.Id("court-room");
-        private By _errorDate = By.Id("hearingDate-error");
+        private static By HearingDateTextfield => By.Id("hearingDate");
+        private static By HearingStartTimeTextfield => By.XPath("//input[@id='hearingStartTimeHour'or @id='hearingStartTimeMinute']");
+        private static By HearingDurationTextfield => By.XPath("//input[@id='hearingDurationHour' or @id='hearingDurationMinute']");
+        private static string[] CurrentTime() => DateTime.Now.AddMinutes(30).ToString("HH:mm").Split(':');
+        private static readonly By Room = By.Id("court-room");
+        private static readonly By ErrorDateText = By.Id("hearingDate-error");
         
-        public void HearingDate(string currentdate = null)
+        public void HearingDate(TargetBrowser browser, bool runningWithSaucelabs, string currentdate = null)
         {
             if (currentdate == null)
-                currentdate = CurrentDate();
-                InputValues(_hearingDate, currentdate);       
+                currentdate = DateFormats.GetHearingScheduledDate(browser, runningWithSaucelabs);
+            InputValues(HearingDateTextfield, currentdate);       
         }
 
         public void HearingStartTime(string[] currentTime = null)
         {
             if (currentTime == null)
                 currentTime = CurrentTime();
-            var startTime = GetListOfElements(_hearingStartTime).ToArray();
+            var startTime = GetListOfElements(HearingStartTimeTextfield).ToArray();
             for (var i = 0; i < startTime.Length; i++)
             {
                 startTime[i].Clear();
@@ -39,7 +39,7 @@ namespace AdminWebsite.AcceptanceTests.Pages
         }
         public void HearingDuration(string hearingDuration)
         {
-            var duration = GetListOfElements(_hearingDuration).ToArray();
+            var duration = GetListOfElements(HearingDurationTextfield).ToArray();
             var hearingduration = hearingDuration.Split(':');
             for (var i = 0; i < duration.Length; i++)
             {
@@ -47,10 +47,9 @@ namespace AdminWebsite.AcceptanceTests.Pages
                 duration[i].SendKeys(hearingduration[i]);
             }
         }
-        public void HearingVenue() => SelectOption(CommonLocator.List("courtAddress"));
+        public void HearingVenue() => SelectFirstOption(CommonLocator.List("courtAddress"));
         public void HearingVenue(string venue) => SelectOption(CommonLocator.List("courtAddress"), venue);
-        public int HearingLocation() => GetListOfElements(CommonLocator.List("courtAddress")).ToList().Count();
-        public void HearingRoom(string room) => ClearFieldInputValues(_room, room);
-        public string ErrorDate() => GetElementText(_errorDate);
+        public void HearingRoom(string room) => ClearFieldInputValues(Room, room);
+        public string ErrorDate() => GetElementText(ErrorDateText);
     }
 }

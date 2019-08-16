@@ -1,8 +1,11 @@
-﻿using AdminWebsite.AcceptanceTests.Helpers;
+﻿using System;
+using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.AcceptanceTests.Pages;
 using FluentAssertions;
-using System;
 using System.Linq;
+using AdminWebsite.AcceptanceTests.Configuration;
+using AdminWebsite.AcceptanceTests.Contexts;
+using AdminWebsite.AcceptanceTests.Data;
 using TechTalk.SpecFlow;
 
 namespace AdminWebsite.AcceptanceTests.Steps
@@ -10,271 +13,255 @@ namespace AdminWebsite.AcceptanceTests.Steps
     [Binding]
     public sealed class AddParticipantsSteps
     {
+        private readonly TestContext _context;
         private readonly AddParticipants _addParticipant;
-        private readonly ScenarioContext _scenarioContext;
 
-        public AddParticipantsSteps(AddParticipants addParticipant, ScenarioContext scenarioContext)
+        public AddParticipantsSteps(TestContext context, AddParticipants addParticipant)
         {
+            _context = context;
             _addParticipant = addParticipant;
-            _scenarioContext = scenarioContext;
         }
-        [When(@"professional participant is added to hearing")]
-        public void ProfessionalParticipantIsAddedToHearing()
-        {
-            AddParticipantsPage();
-            SelectParty();
-            SelectRole();
-            AddParticpantDetails();
-            ClickAddParticipantsButton();
-        }
+
         [When(@"Admin user is on add participant page")]
-        public void AddParticipantsPage()
+        public void UserIsOnTheAddParticipantsPage()
         {
             _addParticipant.PageUrl(PageUri.AddParticipantsPage);
         }
-        [When(@"input email address")]
-        public void InputEmailAddress(string email)
+
+        [When(@"the admin adds parties with new users")]
+        public void UserAddsPartiesWithNewUsers()
         {
-            if (email == null)
-            {
-                email = Faker.Internet.Email();
-                _addParticipant.AddItems<string>("ParticipantEmail", email);
-            }
-            _addParticipant.ParticipantEmail(email);
+            NavigateToPage();
+
+            var party1 = GetPartyTypes(out var party2);
+
+            AddNonSolicitorParty(party1);
+            AddNewPerson(GetLipRoleType(party1));
+            AddSolicitorParty(party1);
+            AddNewPerson(RoleType.Solicitor);
+
+            AddNonSolicitorParty(party2);
+            AddNewPerson(GetLipRoleType(party2));
+            AddSolicitorParty(party2);
+            AddNewPerson(RoleType.Solicitor);
+
+            ThenParticipantDetailAreDisplayedInTheList();
+            _addParticipant.ClickNextButton();
         }
-        [When(@"select a role")]
-        public void SelectRole()
+
+        [When(@"the admin adds parties with existing users")]
+        public void UserAddsPartiesWithExistingUsers()
         {
-            _addParticipant.Role();
+            NavigateToPage();
+            var party1 = GetPartyTypes(out var party2);
+
+            AddNonSolicitorParty(party1);
+            AddExistingPerson(_context.GetIndividualUsers().First(), GetLipRoleType(party1));
+            AddSolicitorParty(party1);
+            AddExistingPerson(_context.GetRepresentativeUsers().First(), RoleType.Solicitor);
+
+            AddNonSolicitorParty(party2);
+            AddExistingPerson(_context.GetIndividualUsers().Last(), GetLipRoleType(party2));
+            AddSolicitorParty(party2);
+            AddExistingPerson(_context.GetRepresentativeUsers().Last(), RoleType.Solicitor);
+
+            ThenParticipantDetailAreDisplayedInTheList();
+            _addParticipant.ClickNextButton();
         }
-        [When(@"select a title")]
-        public void SelectTitle()
+
+        private void NavigateToPage()
         {
-            _addParticipant.Title();
+            _addParticipant.AddItems("RelevantPage", PageUri.AddParticipantsPage);
+            _addParticipant.ClickBreadcrumb("Add participants");
+            RolesListMatchesUserGroups();
         }
-        [When(@"input firstname")]
-        public void InputFirstname(string firstname = "Dummy")
+
+        private PartyType GetPartyTypes(out PartyType party2)
         {
-            _addParticipant.FirstName(firstname);
+            var party1 = PartyType.Claimant;
+            party2 = PartyType.Defendant;
+
+            if (!_context.CurrentUser.UserGroups.Contains(HearingType.FinancialRemedy)) return party1;
+            party1 = PartyType.Applicant;
+            party2 = PartyType.Respondent;
+
+            return party1;
         }
-        [When(@"input lastname")]
-        public void InputLastname(string lastname)
+
+        private void RolesListMatchesUserGroups()
         {
-            if (lastname == null)
-            {
-                lastname = Faker.Name.Last();
-                _addParticipant.AddItems<string>("Lastname", lastname);
-            }
-            _addParticipant.LastName(lastname);
+            if (_context.CurrentUser.UserGroups.Contains(HearingType.CivilMoneyClaims))
+                _addParticipant.PartyList().Should().BeEquivalentTo(PartyTypes.MoneyClaimsParty);
+
+            if (_context.CurrentUser.UserGroups.Contains(HearingType.FinancialRemedy))
+                _addParticipant.PartyList().Should().BeEquivalentTo(PartyTypes.FinancialRemedyParty);
         }
-        [When(@"input telephone")]
-        public void InputTelephone(string phone = "0123456789")
+
+        private void AddNonSolicitorParty(PartyType partyType)
         {
-            _addParticipant.Phone(phone);
+            _addParticipant.AddParty(partyType);
+            var roleType = GetLipRoleType(partyType);
+            _addParticipant.AddRole(roleType.ToString().Replace("LIP", " LIP"));           
         }
-        [When(@"input displayname")]
-        public void InputDisplayname(string displayname = "Dummy Email")
+
+        private void AddSolicitorParty(PartyType partyType)
         {
-            _addParticipant.DisplayName(displayname);
+            _addParticipant.AddParty(partyType);
+            _addParticipant.AddRole(RoleType.Solicitor.ToString());
         }
-        [When(@"click add participants button")]
-        public void ClickAddParticipantsButton()
+
+        private static RoleType GetLipRoleType(PartyType partyType)
         {
-            var tag = _scenarioContext.ScenarioInfo.Tags;
-            if (!_addParticipant.RoleValue().Contains(RoleType.Solicitor.ToString()))
-            {
-                if (!tag.Contains("ExistingPerson"))
-                {
-                    Address();
-                }
-            }
-            _addParticipant.AddParticipantButton();
+            Enum.TryParse($"{partyType.ToString()}LIP", out RoleType roleType);
+            return roleType;
         }
-        [When(@"select a party")]
-        public void SelectParty()
-        {
-            _addParticipant.Party();
-        }
-        [When(@"participant detail is updated")]
-        public void WhenPaticipantDetailIsUpdated()
-        {
-            AddParticipantsPage();
-            _addParticipant.AddItems<string>("Party", _addParticipant.GetSelectedParty());
-            _addParticipant.AddItems<string>("Role", _addParticipant.GetSelectedRole());
-            AddParticpantDetails();
-        }
-        [When(@"user selects (.*)")]
-        public void WhenUserSelects(string party)
-        {
-            _addParticipant.AddItems<string>("Party", party);
-            switch (_addParticipant.GetItems("CaseType"))
-            {
-                case (TestData.AddParticipants.CivilMoneyClaims):
-                    _addParticipant.PartyList().Should().BeEquivalentTo(TestData.AddParticipants.MoneyClaimsParty);
-                    break;
-                case (TestData.AddParticipants.FinancialRemedy):
-                    _addParticipant.PartyList().Should().BeEquivalentTo(TestData.AddParticipants.FinancialRemedyParty);
-                    break;
-            }
-            _addParticipant.Party(party);
-        }
-        [When(@"associated (.*) is selected")]
-        public void RoleIsSelected(string role)
-        {
-            _addParticipant.Role(role);
-            AddParticpantDetails();
-            ClickAddParticipantsButton();
-        }
+
         [When(@"user clears inputted values")]
         public void WhenUserClearsInputtedValues()
         {
-            _addParticipant.AddItems<string>("Party", _addParticipant.GetSelectedParty());
-            _addParticipant.AddItems<string>("Role", _addParticipant.GetSelectedRole());
-            AddParticpantDetails();
+            _context.TestData.ParticipantData.Add(new IndividualData());
+            var participant = _context.TestData.ParticipantData.Last();
+            _addParticipant.ParticipantEmail(participant.Email);
+            _addParticipant.FirstName(participant.Firstname);
+            _addParticipant.Telephone(participant.Telephone);
+            _addParticipant.DisplayName(participant.DisplayName);
             _addParticipant.ClearInput();
+            _context.TestData.ParticipantData.Remove(_context.TestData.ParticipantData.Last());
         }
+
         [Then(@"all values should be cleared from the fields")]
         public void ThenAllValuesShouldBeClearedFromTheFields()
         {
-            _addParticipant.NextButton();
-            _addParticipant.ParticipantPageErrorMessages().Should().Contain(TestData.AddParticipants.PartyErrorMessage);
-            _addParticipant.ParticipantPageErrorMessages().Should().Contain(TestData.AddParticipants.RoleErrorMessage);
+            _addParticipant.ClickNextButton();
+            _addParticipant.ParticipantPageErrorMessages().Should().Contain(_context.TestData.ErrorMessages.PartyErrorMessage);
+            _addParticipant.ParticipantPageErrorMessages().Should().Contain(_context.TestData.ErrorMessages.RoleErrorMessage);
         }
-        [When(@"admin adds participant details")]
-        [When(@"use adds participant")]
-        public void WhenUseAddsParticipant()
-        {
-            switch (_addParticipant.GetItems("Party"))
-            {
-                case (TestData.AddParticipants.Claimant):
-                    _addParticipant.RoleList().Should().BeEquivalentTo(TestData.AddParticipants.ClaimantRole);
-                    break;
-                case (TestData.AddParticipants.Defendant):
-                    _addParticipant.RoleList().Should().BeEquivalentTo(TestData.AddParticipants.DefendantRole);
-                    break;
-                case (TestData.AddParticipants.Applicant):
-                    _addParticipant.RoleList().Should().BeEquivalentTo(TestData.AddParticipants.ApplicantRole);
-                    break;
-                case (TestData.AddParticipants.Respondent):
-                    _addParticipant.RoleList().Should().BeEquivalentTo(TestData.AddParticipants.RespondentRole);
-                    break;
-            }
-            _addParticipant.AddItems<string>("Role", _addParticipant.GetSelectedRole());
-            AddParticpantDetails();
-            ClickAddParticipantsButton();
-        }
-        [Then(@"Participant detail is displayed on the list")]
-        public void ThenParticipantDetailIsDisplayedOnTheList()
-        {
-            string expectedResult = $"{_addParticipant.GetItems("Title")} {TestData.AddParticipants.Firstname} {_addParticipant.GetItems("Lastname")} {_addParticipant.GetItems("Role")}";
-            var actualResult = _addParticipant.GetParticipantDetails().Replace("\r\n", " ");
-            if (_addParticipant.GetItems("Role") == RoleType.Solicitor.ToString())
-            {
-                var clientRepresenting = _addParticipant.GetItems("ClientRepresenting");
-                actualResult.Should().Be($"{expectedResult}, representing {clientRepresenting}");
-            }
-            else
-            {
-                actualResult.Should().Be(expectedResult.Trim());
-            }
-        }
-        public void AddParticpantDetails()
-        {
-            var tag = _scenarioContext.ScenarioInfo.Tags;
-            if (tag.Contains("ExistingPerson"))
-                ExistingPerson();
-            else
-                NonExistingPerson();
-        }
-        [When(@"participant details is updated")]
-        public void WhenParticipantDetailsIsUpdated()
+
+        [When(@"participant details are updated")]
+        public void WhenParticipantDetailsAreUpdated()
         {
             if (!_addParticipant.RoleValue().Contains(RoleType.Solicitor.ToString()))
-                Address();
-            _addParticipant.PartyFieldEnabled.Should().BeFalse();
-            _addParticipant.RoleFieldEnabled.Should().BeFalse();
+            {
+                var participant = _context.TestData.ParticipantData.First();
+                _context.TestData.ParticipantData.First().HouseNumber = participant.Update(participant.HouseNumber);
+                _context.TestData.ParticipantData.First().Street = participant.Update(participant.Street);
+                _context.TestData.ParticipantData.First().City = participant.Update(participant.City);
+                _context.TestData.ParticipantData.First().County = participant.Update(participant.County);
+                _context.TestData.ParticipantData.First().PostCode = participant.Update(participant.PostCode);
+
+                var newParticipantAddress = new IndividualData
+                {
+                    HouseNumber = _context.TestData.ParticipantData.First().HouseNumber,
+                    Street = _context.TestData.ParticipantData.First().Street,
+                    City = _context.TestData.ParticipantData.First().City,
+                    County = _context.TestData.ParticipantData.First().County,
+                    PostCode = _context.TestData.ParticipantData.First().PostCode
+                };
+                AddAddress(newParticipantAddress);
+            }
             _addParticipant.EmailEnabled.Should().BeFalse();
             _addParticipant.FirstnameEnabled.Should().BeFalse();
             _addParticipant.LastnameEnabled.Should().BeFalse();
         }
-        private void Address()
-        {
-            var houseNumber = Faker.RandomNumber.Next().ToString();
-            var street = Faker.Address.StreetAddress();
-            var city = Faker.Address.City();
-            var county = Faker.Address.UkCountry();
-            var postcode = Faker.Address.UkPostCode();
 
-            _addParticipant.AddItems("HouseNumber", houseNumber);
-            _addParticipant.AddItems("Street", street);
-            _addParticipant.AddItems("City", city);
-            _addParticipant.AddItems("County", county);
-            _addParticipant.AddItems("Postcode", postcode);
+        private void AddExistingPerson(UserAccount user, RoleType roleType)
+        {
+            if (user.Role.ToLower().Equals("individual"))
+            {
+                _context.TestData.ParticipantData.Add(new IndividualData());
+            }
+            else
+            {
+                _context.TestData.ParticipantData.Add(new RepresentativeData());
+            }
+            _context.TestData.ParticipantData.Last().AddUserData(user);
+            _context.TestData.ParticipantData.Last().Role = roleType;
 
-            _addParticipant.HouseNumber(houseNumber);
-            _addParticipant.Street(street);
-            _addParticipant.City(city);
-            _addParticipant.County(county);
-            _addParticipant.Postcode(postcode);
-        }
-        [When(@"user adds existing participant to hearing")]
-        public void WhenUserAddsExistingParticipantToHearing()
-        {
-            _addParticipant.AddItems<string>("RelevantPage", PageUri.AddParticipantsPage);
-            _addParticipant.ClickBreadcrumb("Add participants");
-            _addParticipant.Party(TestData.AddParticipants.Defendant);
-            _addParticipant.Role(TestData.AddParticipants.DefendantRole.First());
-            ExistingPerson();
-            ClickAddParticipantsButton();
-            _addParticipant.NextButton();
-            _addParticipant.ClickBreadcrumb("Summary");
-        }
-        private void ExistingPerson()
-        {
-            var email = TestData.AddParticipants.Email;
-            _addParticipant.ParticipantEmail(email.Substring(0, 3));
+            var email = user.AlternativeEmail;
+            _addParticipant.ParticipantEmail(email.Substring(0, 3));          
             _addParticipant.ExistingParticipant(email);
-            _addParticipant.DisplayName(TestData.AddParticipants.DisplayName);
+            _addParticipant.DisplayName(user.Displayname);
             _addParticipant.EmailEnabled.Should().BeFalse();
             _addParticipant.FirstnameEnabled.Should().BeFalse();
             _addParticipant.LastnameEnabled.Should().BeFalse();
             _addParticipant.GetFieldValue("phone").Should().NotBeNullOrEmpty();
-            _addParticipant.GetFieldValue("houseNumber").Should().NotBeNullOrEmpty();
-            _addParticipant.GetFieldValue("street").Should().NotBeNullOrEmpty();
-            _addParticipant.GetFieldValue("city").Should().NotBeNullOrEmpty();
-            _addParticipant.GetFieldValue("county").Should().NotBeNullOrEmpty();
-            _addParticipant.GetFieldValue("postcode").Should().NotBeNullOrEmpty();
+
             if (_addParticipant.RoleValue().Contains("Solicitor"))
             {
-                SolicitorInformation();
+                AddSolicitorInformation(_context.TestData.ParticipantData.Last());
             }
-        }
-        private void NonExistingPerson()
-        {
-            var email = Faker.Internet.Email();
-            _addParticipant.AddItems<string>("ParticipantEmail", email);
-            InputEmailAddress(email);
-            _addParticipant.AddItems<string>("Title", _addParticipant.GetSelectedTitle());
-            InputFirstname(TestData.AddParticipants.Firstname);
-            InputLastname(_addParticipant.GetItems("Lastname"));
-            InputTelephone(TestData.AddParticipants.Telephone);
-            InputDisplayname(TestData.AddParticipants.DisplayName);
-            if (_addParticipant.RoleValue().Contains("Solicitor"))
+            else
             {
-                SolicitorInformation();
+                _context.TestData.ParticipantData.Last().HouseNumber = _addParticipant.GetFieldValue("houseNumber");
+                _context.TestData.ParticipantData.Last().Street = _addParticipant.GetFieldValue("street");
+                _context.TestData.ParticipantData.Last().City = _addParticipant.GetFieldValue("city");
+                _context.TestData.ParticipantData.Last().County = _addParticipant.GetFieldValue("county");
+                _context.TestData.ParticipantData.Last().PostCode = _addParticipant.GetFieldValue("postcode");
             }
+
+            _addParticipant.AddParticipantButton();
         }
-        private void SolicitorInformation()
+
+        private void AddNewPerson(RoleType roleType)
         {
-            var organisation = Faker.Company.Name();
-            _addParticipant.Organisation(organisation);
-            _addParticipant.AddItems<string>("Organisation", organisation);
-            var solicitorReference = Faker.Company.CatchPhrase();
-            _addParticipant.SoliicitorReference(solicitorReference);
-            _addParticipant.AddItems<string>("Company", solicitorReference);
-            var clientDetails = Faker.Name.FullName();
-            _addParticipant.ClientRepresenting(clientDetails);
-            _addParticipant.AddItems<string>("ClientRepresenting", clientDetails);
+            if (roleType == RoleType.Solicitor)
+            {
+                _context.TestData.ParticipantData.Add(new RepresentativeData());
+            }
+            else
+            {
+                _context.TestData.ParticipantData.Add(new IndividualData());
+            }
+
+            _context.TestData.ParticipantData.Last().Role = roleType;
+            var participant = _context.TestData.ParticipantData.Last();
+            _addParticipant.ParticipantEmail(participant.Email);
+            _addParticipant.Title(participant.Title);
+            _addParticipant.FirstName(participant.Firstname);
+            _addParticipant.LastName(participant.Lastname);
+            _addParticipant.Telephone(participant.Telephone);
+            _addParticipant.DisplayName(participant.DisplayName);
+            if (roleType == RoleType.Solicitor)
+            {
+                AddSolicitorInformation(participant);
+            }
+            else
+            {
+                AddAddress(participant);
+            }
+
+            _addParticipant.AddParticipantButton();
+        }
+
+        private void AddSolicitorInformation(ParticipantData participant)
+        {
+            _addParticipant.Organisation(participant.Organisation);
+            _addParticipant.SoliicitorReference(participant.SolicitorReference);
+            _addParticipant.ClientRepresenting(participant.ClientRepresenting);
+        }
+
+        private void AddAddress(ParticipantData participant)
+        {
+            _addParticipant.HouseNumber(participant.HouseNumber);
+            _addParticipant.Street(participant.Street);
+            _addParticipant.City(participant.City);
+            _addParticipant.County(participant.County);
+            _addParticipant.Postcode(participant.PostCode);
+        }
+
+        public void ThenParticipantDetailAreDisplayedInTheList()
+        {
+            var actualResult = _addParticipant.GetAllParticipantsDetails();
+
+            foreach (var participant in _context.TestData.ParticipantData)
+            {
+                var expectedParticipant = $"{participant.Title} {participant.Firstname} {participant.Lastname} {participant.Role.ToString().Replace("LIP", " LIP")}";
+
+                if (participant.Role == RoleType.Solicitor)
+                    expectedParticipant = $"{expectedParticipant}, representing {participant.ClientRepresenting}";
+
+                actualResult.Any(x => x.Equals(expectedParticipant)).Should().BeTrue();
+            }
         }
     }
 }

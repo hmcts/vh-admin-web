@@ -3,57 +3,66 @@ using AdminWebsite.AcceptanceTests.Pages;
 using FluentAssertions;
 using System;
 using System.Linq;
+using AdminWebsite.AcceptanceTests.Contexts;
+using AdminWebsite.AcceptanceTests.Data;
 using TechTalk.SpecFlow;
+using OtherInformation = AdminWebsite.AcceptanceTests.Data.OtherInformation;
 
 namespace AdminWebsite.AcceptanceTests.Steps
 {
     [Binding]
     public sealed class SummarySteps
     {
+        private readonly TestContext _context;
         private readonly Summary _summary;
-        public SummarySteps(Summary summary)
+
+        public SummarySteps(TestContext context, Summary summary)
         {
+            _context = context;
             _summary = summary;
         }
-        [Then(@"hearing summary is displayed on summary page")]
+
+        [Then(@"hearing summary is displayed on the summary page")]
         public void ThenHearingSummaryIsDisplayedOnSummaryPage()
         {
             SummaryPage();
         }
-        [Then(@"user should be on summary page")]
-        [When(@"Admin user is on summary page")]
+
+        [When(@"Admin user is on the summary page")]
+        [Then(@"user should be on the summary page")]
         public void SummaryPage()
         {
             _summary.PageUrl(PageUri.SummaryPage);
         }
-        [Then(@"values should be displayed as expected on summary page")]
+
+        [Then(@"values should be displayed as expected on the summary page")]
         public void ThenInputtedValuesShouldBeDisplayedAsExpectedOnSummaryPage()
         {
             SummaryPage();            
             switch (_summary.GetItems("RelevantPage"))
             {
                 case PageUri.HearingDetailsPage :
-                    _summary.CaseName().Should().Be(TestData.HearingDetails.CaseName1);
-                    _summary.CaseNumber().Should().Be(TestData.HearingDetails.CaseNumber1);
-                    _summary.CaseHearingType().Should().Be(TestData.HearingDetails.CaseHearingType);
+                    _summary.CaseName().Should().Be(_context.TestData.HearingData.CaseName);
+                    _summary.CaseNumber().Should().Be(_context.TestData.HearingData.CaseNumber);
+                    _summary.CaseHearingType().Should().Be(_context.TestData.HearingData.CaseHearingType);
                     break;
                 case PageUri.HearingSchedulePage:
                     _summary.HearingDate().ToLower().Should().Be(_summary.GetItems("HearingDate"));
-                    _summary.CourtAddress().Should().Be($"{TestData.HearingSchedule.CourtAddress.ToList().Last()}, {TestData.HearingSchedule.Room}");
+                    _summary.CourtAddress().Should().Be($"{HearingScheduleData.CourtAddress.Last()}, {_context.TestData.HearingScheduleData.Room}");
                     _summary.HearingDuration().Should().Be("listed for 30 minutes");
                     break;
                 case PageUri.OtherInformationPage:
-                    _summary.OtherInformation().Should().Be(TestData.OtherInformation.OtherInformationText);
+                    _summary.OtherInformation().Should().Be(OtherInformation.OtherInformationText);
                     break;
                 case PageUri.AssignJudgePage:
-                    _summary.Judge().Should().Contain(_summary.GetItems("Judge"));
+                    _summary.Judge().Should().Contain(_summary.GetItems("Clerk"));
                     break;
                 case PageUri.AddParticipantsPage:
-                    string expectedResult = $"{_summary.GetItems("Title")} {TestData.AddParticipants.Firstname} {_summary.GetItems("Lastname")}";
-                    _summary.GetParticipantDetails().Should().Contain(expectedResult.Trim());
+                    _summary.ParticipantsAreDisplayedInTheList(_context.TestData);
                     break;
             }
         }
+
         [When(@"user navigates to (.*) page to make changes")]
         public void UserNavigatesToRelevantPage(string relevantPage)
         {
@@ -76,29 +85,23 @@ namespace AdminWebsite.AcceptanceTests.Steps
                     _summary.EditRoundedBorder("Edit");
                     break;
             }
-            _summary.AddItems<string>("RelevantPage", pageUri);
+            _summary.AddItems("RelevantPage", pageUri);
         }
-        [When(@"user removes participant on summary page")]
+
+        [When(@"user removes participant on the summary page")]
         public void GivenUserRemovesParticipantOnSummaryPage()
         {
             _summary.EditRoundedBorder("Remove");
         }
+
         [Then(@"participant should be removed from the list")]
         public void ThenParticipantShouldBeRemovedFromTheList()
         {
             _summary.ParticipantConfirmationMessage().Should().Contain("Are you sure you want to remove");
             _summary.RemoveParticipant();
-            var exception = string.Empty;
-            try
-            {
-                _summary.GetParticipantDetails().Should().NotBeNullOrEmpty();
-            }
-            catch (Exception ex)
-            {
-                exception = ex.InnerException.Message;
-            }
-            exception.ToLower().Should().Contain("unable to locate element:");
+            _summary.GetAllParticipantsDetails().Count.Should().Be(_context.TestData.ParticipantData.Count - 1);            
         }
+
         [Then(@"inputted values should not be saved")]
         public void ThenInputtedValuesShouldNotBeSaved()
         {
@@ -106,11 +109,12 @@ namespace AdminWebsite.AcceptanceTests.Steps
             switch (_summary.GetItems("RelevantPage"))
             {
                 case PageUri.HearingDetailsPage:
-                    _summary.CaseName().Should().NotBe(TestData.HearingDetails.CaseName1);
-                    _summary.CaseNumber().Should().NotBe(TestData.HearingDetails.CaseNumber1);
+                    _summary.CaseName().Should().NotBe(_context.TestData.HearingData.CaseName);
+                    _summary.CaseNumber().Should().NotBe(_context.TestData.HearingData.CaseNumber);
                     break;
             }
         }
+
         [When(@"user cancels the process of removing participant")]
         public void WhenUserCancelsTheProcessOfRemovingParticipant()
         {
@@ -123,14 +127,11 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             _summary.GetParticipantDetails().Should().NotBeNullOrEmpty();
         }
-        [When(@"user submit booking")]
-        public void WhenUserSubmitBooking()
+
+        [When(@"user submits the booking")]
+        public void WhenUserSubmitsTheBooking()
         {
             _summary.Book();
-        }
-        [Then(@"")]
-        public void UpdateParticipantDetails()
-        {
         }
     }
 }

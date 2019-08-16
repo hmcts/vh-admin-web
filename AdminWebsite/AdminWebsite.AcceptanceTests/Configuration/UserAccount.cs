@@ -1,16 +1,21 @@
-﻿
+﻿using System.Collections.Generic;
+using AdminWebsite.AcceptanceTests.Helpers;
+
 namespace AdminWebsite.AcceptanceTests.Configuration
 {
     public class UserAccount
     {
-        public string VhOfficerUsername { get; set; }
-        public string VhOfficerFinRemedy { get; set; }
-        public string VhOfficerCivilMoneyclaims { get; set; }
-        public string VhOfficerFinRemedyCivilMoneyclaims { get; set; }
-        public string CaseAdminFinRemedy { get; set; }
-        public string CaseAdminCivilMoneyClaims { get; set; }
-        public string CaseAdminFinRemedyCivilMoneyClaims { get; set; }
-        public string NonAdmin { get; set; }
-        public string UserPassword { get; set; }
+        public string Role { get; set; }
+        public string AlternativeEmail { get; set; }
+        public string Firstname { get; set; }
+        public string Lastname { get; set; }
+        public string Displayname { get; set; }
+        public string Username { get; set; }
+        public string CaseRoleName { get; set; }
+        public string HearingRoleName { get; set; }
+        public string Representee { get; set; }
+        public string SolicitorsReference { get; set; }
+        public bool DefaultParticipant { get; set; }
+        public List<HearingType> UserGroups { get; set; }
     }
 }

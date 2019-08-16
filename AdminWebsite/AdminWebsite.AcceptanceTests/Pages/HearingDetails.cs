@@ -1,24 +1,26 @@
 ﻿using AdminWebsite.AcceptanceTests.Helpers;
 using OpenQA.Selenium;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace AdminWebsite.AcceptanceTests.Pages
 {
     public class HearingDetails : Common
     {
-        public HearingDetails(BrowserContext browserContext) : base(browserContext)
+        public HearingDetails(Browser browser) : base(browser)
         {
         }
-        private By _caseNumber => By.Id("caseNumber");
-        private By _caseName => By.Id("caseName");
-        public void CaseNumber(string value) => ClearFieldInputValues(_caseNumber, value);
-        public void CaseName(string value) => ClearFieldInputValues(_caseName, value);
-        public void CaseTypes() => SelectOption(CommonLocator.List("caseType"));
-        public void HearingType() => SelectOption(CommonLocator.List("hearingType"));
+
+        private static By CaseNumberTextfield => By.Id("caseNumber");
+        private static By CaseNameTextfield => By.Id("caseName");
+        private static By RoomTextfield => By.Id("court-room");
+        public void CaseNumber(string value) => ClearFieldInputValues(CaseNumberTextfield, value);
+        public void CaseName(string value) => ClearFieldInputValues(CaseNameTextfield, value);
+        public void CaseTypes() => SelectFirstOption(CommonLocator.List("caseType"));
+        public void HearingType() => SelectFirstOption(CommonLocator.List("hearingType"));
         public void QuestionnaireNotRequired() => ClickCheckboxElement(By.Id("questionnaireNotRequired"));
+
         public IEnumerable<IWebElement> CaseTypesList() => GetListOfElements(CommonLocator.List("caseType"));
         public void CaseTypes(string caseType) => SelectOption(CommonLocator.List("caseType"), caseType);
-        public int DisabledHearingDetailsFields() => GetListOfElements(By.XPath("//*[@disabled='true']")).ToList().Count;
+        public void Room(string value) => ClearFieldInputValues(RoomTextfield, value);
     }
 }

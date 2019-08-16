@@ -1,6 +1,6 @@
-﻿namespace AdminWebsite.AcceptanceTests.TestData
+﻿namespace AdminWebsite.AcceptanceTests.Data
 {
-    public class BookingDetails
+    public static class BookingDetails
     {
         public const string CancelBookingWarningMessage = "Are you sure you want to cancel this booking?";
         public const string CancelledLabel = "Cancelled";
