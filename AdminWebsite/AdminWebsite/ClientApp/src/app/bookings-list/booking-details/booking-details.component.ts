@@ -45,7 +45,6 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
     private bookingPersistService: BookingPersistService,
     private errorService: ErrorService) {
     this.showCancelBooking = false;
-
   }
 
   ngOnInit() {
@@ -71,10 +70,8 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
 
   setSubscribers() {
     if (this.isConfirmationTimeValid) {
-      // this.$timeObserver = interval(this.timerInterval);
       this.timeSubscription = this.$timeObserver.subscribe(x => {
         this.setTimeObserver();
-        console.log('Time is going: ' + x);
       });
     }
   }
