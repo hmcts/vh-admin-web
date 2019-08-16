@@ -19,6 +19,7 @@ namespace AdminWebsite.AcceptanceTests.Pages
         private static By Breadcrumbs => By.XPath("//li[@class='vh-breadcrumbs']/a");
         private static By NextButton => By.Id(("nextButton"));
         private static By CancelButton => By.Id(("cancelButton"));
+        private static By BookButton => By.Id(("bookButton"));
         private static By TryAgainButton => By.Id("btnTryAgain");
         private static By TryAgainMessage => By.XPath("//*[@class='govuk-heading-m vh-ml70 vh-mr70']");
 
@@ -49,7 +50,7 @@ namespace AdminWebsite.AcceptanceTests.Pages
         }
 
         protected void InputValues(By element, string value) => _browser.NgDriver.WaitUntilElementVisible(element).SendKeys(value);
-        protected void ClickElement(By element) => _browser.NgDriver.WaitUntilElementClickable(element).Click();
+        protected void ClickElement(By element) => _browser.NgDriver.WaitUntilElementVisible(element).Click();
         protected void ClickCheckboxElement(By element) => _browser.NgDriver.FindElement(element).Click();
 
         protected void ClearFieldInputValues(By element, string value)
@@ -66,7 +67,8 @@ namespace AdminWebsite.AcceptanceTests.Pages
 
         public void ClickBookButton()
         {
-            _browser.Retry(() => _browser.NgDriver.ClickAndWaitForPageToLoad(By.Id("bookButton")));
+            _browser.NgDriver.ExecuteScript("arguments[0].scrollIntoView(true);", _browser.NgDriver.FindElement(BookButton));
+            _browser.Retry(() => _browser.NgDriver.ClickAndWaitForPageToLoad(BookButton));
         }
 
         public void ClickCancelButton() => _browser.NgDriver.ClickAndWaitForPageToLoad(CancelButton);
