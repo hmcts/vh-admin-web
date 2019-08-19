@@ -22,7 +22,8 @@ export const Constants = {
     PostcodeErrorMsg: 'Please enter a postcode',
     CompanyErrorMsg: 'Please enter an organisation name',
     SolicitorReferenceMsg: 'Please enter a solicitor reference',
-    RepresenteeErrorMsg: 'Please enter a representee'
+    RepresenteeErrorMsg: 'Please enter a representee',
+    JudgeDisplayNameErrorMsg: 'Please enter a judge name'
   },
   Contact: {
     phone: '0300 303 0655',

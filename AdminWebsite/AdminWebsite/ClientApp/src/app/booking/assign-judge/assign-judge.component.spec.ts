@@ -113,6 +113,17 @@ describe('AssignJudgeComponent', () => {
     expect(component.form.valid).toBeTruthy();
   });
 
+  it('should fail validation if a judge display name is not entered', () => {
+    component.ngOnInit();
+    component.judgeDisplayName.setValue('');
+    expect(component.form.valid).toBeFalsy();
+  });
+  it('should succeeded validation if a judge display name is entered', () => {
+    component.ngOnInit();
+    component.judgeDisplayName.setValue('judge name');
+    expect(component.judgeDisplayNameInvalid).toBeFalsy();
+  });
+
   it('should get current booking and judge details', () => {
     component.ngOnInit();
     expect(component.failedSubmission).toBeFalsy();
