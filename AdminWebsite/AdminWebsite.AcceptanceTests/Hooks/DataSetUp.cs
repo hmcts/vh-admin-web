@@ -105,17 +105,13 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         }
 
         [AfterScenario(Order = 10)]
-        public static void RemoveHearing(TestContext testContext)
+        public static void RemoveHearing(TestContext context, HearingsEndpoints endpoints)
         {
-            var hearingId = testContext.HearingId;
-            if (hearingId.Equals(Guid.Empty)) return;
-            var endpoint = new BookingsApiUriFactory().HearingsEndpoints;
-            testContext.Request = testContext.Delete(endpoint.RemoveHearing(hearingId));
-            testContext.Response = testContext.BookingsApiClient().Execute(testContext.Request);
-            testContext.Response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+            if (context.HearingId == Guid.Empty) return;
+            context.Request = context.Delete(endpoints.RemoveHearing(context.HearingId));
+            context.Response = context.BookingsApiClient().Execute(context.Request);
+            context.Response.IsSuccessful.Should().BeTrue("New hearing has been deleted after the test");
+            context.HearingId = Guid.Empty;
         }
-
-        //-- Delete Users from AD
-        // RemoveUsers
     }
 }
