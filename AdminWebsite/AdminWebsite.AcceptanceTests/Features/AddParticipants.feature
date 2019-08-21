@@ -8,7 +8,7 @@ Scenario Outline: Civil Money Claims users add new participants to booking
 	Given Civil Money Claims, <User> logs in to the website
 	And <User> is on add the participants page
 	When the admin adds parties with new users
-	Then Participant detail is displayed on the list
+	Then Participant details are displayed in the list
 	Examples:
 	| User		 |
 	| VH Officer |
@@ -19,7 +19,7 @@ Scenario Outline: Civil Money Claims users add existing participants to booking
 	Given Civil Money Claims, <User> logs in to the website
 	And <User> is on add the participants page
 	When the admin adds parties with existing users
-	Then Participant detail is displayed on the list
+	Then Participant details are displayed in the list
 	Examples:
 	| User		 |
 	| VH Officer |
@@ -30,7 +30,7 @@ Scenario Outline: Financial Remedy users add new participants to booking
 	Given Financial Remedy, <User> logs in to the website
 	And <User> is on add the participants page
 	When the admin adds parties with new users
-	Then Participant detail is displayed on the list
+	Then Participant details are displayed in the list
 	Examples:
 	| User		 |
 	| VH Officer |
@@ -41,7 +41,7 @@ Scenario Outline: Financial Remedy users add existing participants to booking
 	Given Financial Remedy, <User> logs in to the website
 	And <User> is on add the participants page
 	When the admin adds parties with existing users
-	Then Participant detail is displayed on the list
+	Then Participant details are displayed in the list
 	Examples:
 	| User		 |
 	| VH Officer |

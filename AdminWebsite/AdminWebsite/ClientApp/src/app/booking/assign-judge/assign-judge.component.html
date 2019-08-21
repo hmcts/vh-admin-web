@@ -4,7 +4,7 @@
 <h2 class="govuk-heading-m">Assign a courtroom account</h2>
 
 <div *ngIf="failedSubmission && form.invalid" class="govuk-error-summary govuk-!-width-one-half"
-  aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+     aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
   <h2 class="govuk-error-summary__title" id="error-summary-title">
     Please complete the missing information
   </h2>
@@ -12,6 +12,9 @@
     <ul class="govuk-list govuk-error-summary__list">
       <li *ngIf="judgeName.invalid">
         <a (click)="goToDiv('judgeName-error')">Please select a courtroom account</a>
+      </li>
+      <li *ngIf="judgeDisplayNameInvalid">
+        <a (click)="goToDiv('judgeDisplayName-error')">{{constants.Error.JudgeDisplayNameErrorMsg}}</a>
       </li>
     </ul>
   </div>
@@ -38,7 +41,7 @@
       <p class="govuk-body govuk-!-margin-bottom-1"></p>
 
       <details class="govuk-details">
-        <summary class="govuk-details__summary"  (click)="toggle()">
+        <summary class="govuk-details__summary" (click)="toggle()">
           <span class="govuk-details__summary-text">
             The courtroom is not listed
           </span>
@@ -48,20 +51,26 @@
         </div>
       </details>
 
-      <div class="govuk-!-margin-bottom-9">
+      <div class="govuk-!-margin-bottom-9" [ngClass]="{'govuk-form-group--error':judgeDisplayNameInvalid}">
+        <legend id="judgeDisplayName-error" *ngIf="judgeDisplayNameInvalid">
+          <span class="govuk-error-message">
+            {{constants.Error.JudgeDisplayNameErrorMsg}}
+          </span>
+        </legend>
         <label class="govuk-label" for="judgeDisplayName">
           Judge name
         </label>
-        <input (focusout)="changeDisplayName()" type="text"
+        <input (focusout)="changeDisplayName()" type="text" 
                formControlName="judgeDisplayName" id="judgeDisplayName"
                class="govuk-input govuk-input--width-20" />
+        <div class="govuk-body">Please enter TBC if you don't know the name of the judge</div>
       </div>
 
       <div class="sk-top">
         <input type="button" id="nextButton" class="govuk-button vh-mr25" role="button" value="{{buttonAction}}"
-          (click)="saveJudge()" alt="Save judge details and view add participant" />
+               (click)="saveJudge()" alt="Save judge details and view add participant" />
         <input type="button" id="cancelButton" class="govuk-button hmcts-button--secondary" role="button" value="Cancel"
-          (click)="confirmCancelBooking()" alt="Confirm cancellation of new booking and return to dashboard" />
+               (click)="confirmCancelBooking()" alt="Confirm cancellation of new booking and return to dashboard" />
       </div>
     </form>
   </div>
