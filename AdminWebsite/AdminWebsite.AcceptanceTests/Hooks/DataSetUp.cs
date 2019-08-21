@@ -99,7 +99,6 @@ namespace AdminWebsite.AcceptanceTests.Hooks
                 {
                     context.Request = context.Delete(endpoints.RemoveHearing(hearing.Id));
                     context.Response = context.BookingsApiClient().Execute(context.Request);
-                   // context.Response.IsSuccessful.Should().BeTrue($"Hearing {hearing.Id} has been deleted");
                 }
             }
         }
