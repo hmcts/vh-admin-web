@@ -25,6 +25,9 @@ export class SearchService {
         value: 'Mrs'
       },
       {
+        value: 'Miss'
+      },
+      {
         value: 'Ms'
       },
       {
