@@ -7,47 +7,8 @@
 <div class="govuk-grid-row">
 
   <div class="govuk-grid-column-one-half">
-
     <h2 class="govuk-heading-m">Add a participant</h2>
-
-    <div *ngIf="isShowErrorSummary || displayErrorNoParticipants" class="govuk-error-summary"
-      aria-labelledby="error-summary-title" role="alert" data-module="error-summary">
-      <h2 class="govuk-error-summary__title" id="error-summary-title">
-        Please complete the missing information
-      </h2>
-      <div class="govuk-error-summary__body">
-        <ul class="govuk-list govuk-error-summary__list">
-          <li *ngIf="party.invalid || !isPartySelected">
-            <a (click)="goToDiv('party-error')" href="javascript: void(0)">{{constants.Error.PartyErrorMsg}}</a>
-          </li>
-          <li *ngIf="role.invalid || !isRoleSelected">
-            <a (click)="goToDiv('role-error')" href="javascript: void(0)">{{constants.Error.RoleErrorMsg}}</a>
-          </li>
-          <li *ngIf="!validEmail()">
-            <a (click)="goToDiv('email-error')" href="javascript: void(0)">{{constants.Error.EmailErrorMsg}}</a>
-          </li>
-          <li *ngIf="firstName.invalid">
-            <a (click)="goToDiv('firstName-error')" href="javascript: void(0)">{{constants.Error.FirstNameErrorMsg}}</a>
-          </li>
-          <li *ngIf="lastName.invalid">
-            <a (click)="goToDiv('lastName-error')" href="javascript: void(0)">{{constants.Error.LastNameErrorMsg}}</a>
-          </li>
-          <li *ngIf="phone.invalid">
-            <a (click)="goToDiv('phone-error')" href="javascript: void(0)">{{constants.Error.PhoneErrorMsg}}</a>
-          </li>
-          <li *ngIf="displayName.invalid">
-            <a (click)="goToDiv('display-name-error')"
-              href="javascript: void(0)">{{constants.Error.DisplaNameErrorMsg}}</a>
-          </li>
-          <li *ngIf="displayErrorNoParticipants">
-            <a href="javascript: void(0)">{{constants.Error.NoParticipantsErrorMsg}}</a>
-          </li>
-        </ul>
-      </div>
-    </div>
-
     <form [formGroup]="form" (ngSubmit)="saveParticipant()" autocomplete="off">
-
       <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error': partyInvalid || !isPartySelected}">
         <legend id="party-error" *ngIf="partyInvalid || !isPartySelected">
           <span class="govuk-error-message">
@@ -148,7 +109,7 @@
 
           <legend id="display-name-error" *ngIf="displayNameInvalid">
             <span class="govuk-error-message">
-              {{constants.Error.DisplaNameErrorMsg}}
+              {{constants.Error.DisplayNameErrorMsg}}
             </span>
           </legend>
           <label class="govuk-label" for="displayName">
