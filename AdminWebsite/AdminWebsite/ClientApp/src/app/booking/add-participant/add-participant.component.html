@@ -87,7 +87,7 @@
 
         <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error': titleInvalid || !isTitleSelected}">
           <label class="govuk-label" for="title">
-            Title
+            Title <span class="govuk-hint vh-inline">(optional)</span>
           </label>
           <select id="title" formControlName="title" class="govuk-select vh-input-w390">
             <option *ngFor="let tit of titleList" [ngValue]="tit.value">
