@@ -3,6 +3,7 @@
 .vh-top-m15 {
   margin-top: 15px;
 }
+
 .vh-top-m30 {
   margin-top: 30px;
 }
@@ -40,7 +41,7 @@
   -moz-osx-font-smoothing: grayscale;
   font-size: 18px;
   line-height: 1;
-  float:left;
+  float: left;
 }
 
 .vhlink:visited {
@@ -64,7 +65,7 @@
   width: 50%;
   position: relative;
   transition: all 2s ease-in-out;
-  text-align:center;
+  text-align: center;
 }
 
 .vh-popup-overlay {
@@ -75,15 +76,18 @@
   right: 0;
   background: rgba(0, 0, 0, 0.7);
   transition: opacity 500ms;
-  z-index:999;
+  z-index: 999;
 }
 
 .vh-popup-small {
   max-width: 600px !important;
+  text-align: center;
 }
+
 .vh-popup-xsmall {
   max-width: 500px !important;
 }
+
 .vh-text-color-black {
   color: #0b0c0c;
 }
@@ -103,7 +107,7 @@
   text-align: center;
   margin-top: 1px;
   font-size: 18px;
-  font-family: "nta",Arial,sans-serif;  
+  font-family: "nta",Arial,sans-serif;
 }
 
 .vh-created-booking {
@@ -123,9 +127,11 @@
   background-color: #dee0e2 !important;
   color: #0b0b0b !important;
 }
-.vh-btncancel:hover, .vh-btncancel:focus {
-  background-color: #bfc1c3 !important;
-}
+
+  .vh-btncancel:hover, .vh-btncancel:focus {
+    background-color: #bfc1c3 !important;
+  }
+
 .popup {
   margin: 70px auto;
   padding: 30px;
@@ -154,15 +160,17 @@ p {
   background: rgba(0, 0, 0, 0.7);
   transition: opacity 500ms;
 }
+
 .popup-small {
   max-width: 600px !important;
+  text-align: center;
 }
 
-.vh-mr{
+.vh-mr {
   margin-right: 30px;
 }
 
-.vh-top{
+.vh-top {
   margin-top: 30px;
 }
 
@@ -194,10 +202,10 @@ p {
 
 @keyframes spin {
   0% {
-      transform: rotate(0deg);
+    transform: rotate(0deg);
   }
 
   100% {
-      transform: rotate(360deg);
+    transform: rotate(360deg);
   }
 }
