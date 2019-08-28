@@ -4,6 +4,7 @@ import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import { IDropDownModel } from '../common/model/drop-down.model';
 import { ParticipantModel } from '../common/model/participant.model';
 import { BHClient, PersonResponse } from '../services/clients/api-client';
+import { Constants } from '../common/constants';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +17,7 @@ export class SearchService {
   TitleList: IDropDownModel[] =
     [
       {
-        value: 'Please Select'
+        value: Constants.PleaseSelect
       },
       {
         value: 'Mr'
