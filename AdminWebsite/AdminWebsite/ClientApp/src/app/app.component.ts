@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, HostListener, ElementRef, Renderer2} from '@angular/core';
+import { Component, OnInit, ViewChild, HostListener, ElementRef, Renderer} from '@angular/core';
 import { Router } from '@angular/router';
 import { AdalService } from 'adal-angular4';
 import { ConfigService } from './services/config.service';
@@ -41,7 +41,7 @@ export class AppComponent implements OnInit {
     pageTracker: PageTrackerService,
     private videoHearingsService: VideoHearingsService,
    private bookingService: BookingService, private deviceTypeService: DeviceType,
-   private renderer: Renderer2) {
+   private renderer: Renderer) {
 
     this.config.tenant = this.configService.clientSettings.tenant_id;
     this.config.clientId = this.configService.clientSettings.client_id;
@@ -111,7 +111,6 @@ export class AppComponent implements OnInit {
       this.router.navigateByUrl('unsupported-browser');
     }
   }
-
 
   @HostListener('window:beforeunload', ['$event'])
   public beforeunloadHandler($event: any) {
