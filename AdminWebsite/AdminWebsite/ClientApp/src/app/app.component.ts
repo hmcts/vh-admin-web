@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, HostListener, Input } from '@angular/core';
+import { Component, OnInit, ViewChild, HostListener, ElementRef, Renderer2} from '@angular/core';
 import { Router } from '@angular/router';
 import { AdalService } from 'adal-angular4';
 import { ConfigService } from './services/config.service';
@@ -15,6 +15,9 @@ import { DeviceType } from './services/device-type';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
+
+  @ViewChild('maincontent', { static: true })
+  main: ElementRef;
 
   private config = {
     tenant: '',
@@ -37,7 +40,8 @@ export class AppComponent implements OnInit {
     private window: WindowRef,
     pageTracker: PageTrackerService,
     private videoHearingsService: VideoHearingsService,
-    private bookingService: BookingService, private deviceTypeService: DeviceType) {
+   private bookingService: BookingService, private deviceTypeService: DeviceType,
+   private renderer: Renderer2) {
 
     this.config.tenant = this.configService.clientSettings.tenant_id;
     this.config.clientId = this.configService.clientSettings.client_id;
@@ -117,5 +121,9 @@ export class AppComponent implements OnInit {
       // return value should not be empty to show browser leave pop up
       $event.returnValue = 'save';
     }
+  }
+
+  skipToContent() {
+    this.renderer.invokeElementMethod(this.main.nativeElement, 'focus');
   }
 }
