@@ -10,7 +10,7 @@ export class CancelPopupComponent implements OnInit {
   @Output() cancelBooking: EventEmitter<any> = new EventEmitter<any>();
 
   @Input()
-  message = 'You will lose all your booking details if you continue';
+  message = 'Are you sure you want to discard them?';
 
   constructor() { }
 
