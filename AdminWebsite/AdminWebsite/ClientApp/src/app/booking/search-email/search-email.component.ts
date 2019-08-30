@@ -36,12 +36,16 @@ export class SearchEmailComponent implements OnInit {
   constructor(private searchService: SearchService) {}
 
   ngOnInit() {
-    this.searchService.search(this.searchTerm)
-      .subscribe(data => {
+     this.searchService.search(this.searchTerm)
+       .subscribe(data => {
         if (data && data.length > 0) {
           this.getData(data);
         } else {
-          this.noDataFound();
+          if (this.email.length > 2) {
+            this.noDataFound();
+          }
+          this.isShowResult = false;
+          this.results = undefined;
         }
       });
 
