@@ -9,6 +9,7 @@ import { BookingBaseComponent } from '../booking-base/booking-base.component';
 import { BookingService } from '../../services/booking.service';
 import { ErrorService } from 'src/app/services/error.service';
 import { PageUrls } from 'src/app/shared/page-url.constants';
+import { Constants } from 'src/app/common/constants';
 
 @Component({
   selector: 'app-create-hearing',
@@ -59,7 +60,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
       this.selectedCaseType = this.hearing.case_type;
       this.hasSaved = true;
     } else {
-      this.selectedCaseType = 'Please Select';
+      this.selectedCaseType = Constants.PleaseSelect;
     }
   }
 
@@ -199,7 +200,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
       this.selectedCaseType = this.availableCaseTypes[0];
       this.form.get('caseType').setValue(this.selectedCaseType);
     } else {
-      this.availableCaseTypes.unshift('Please Select');
+      this.availableCaseTypes.unshift(Constants.PleaseSelect);
     }
   }
 
@@ -209,7 +210,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
       this.filteredHearingTypes = this.availableHearingTypes.filter(h => h.group === this.selectedCaseType);
     }
     const pleaseSelect = new HearingTypeResponse();
-    pleaseSelect.name = 'Please Select';
+    pleaseSelect.name = Constants.PleaseSelect;
     pleaseSelect.id = null;
     this.filteredHearingTypes.unshift(pleaseSelect);
   }
