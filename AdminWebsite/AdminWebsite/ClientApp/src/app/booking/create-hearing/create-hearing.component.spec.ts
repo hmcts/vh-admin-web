@@ -90,7 +90,7 @@ describe('CreateHearingComponent with multiple case types', () => {
     expect(component).toBeTruthy();
     expect(component.caseNumber.value).toBeNull();
     expect(component.caseName.value).toBeNull();
-    expect(component.caseType.value).toBe('Please Select');
+    expect(component.caseType.value).toBe('Please select');
     expect(component.hearingType.value).toBe(-1);
   });
 

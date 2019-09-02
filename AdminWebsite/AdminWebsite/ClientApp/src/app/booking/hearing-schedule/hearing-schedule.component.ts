@@ -10,6 +10,7 @@ import { BookingService } from '../../services/booking.service';
 import { ErrorService } from 'src/app/services/error.service';
 import { HearingVenueResponse } from '../../services/clients/api-client';
 import { PageUrls } from 'src/app/shared/page-url.constants';
+import { Constants } from 'src/app/common/constants';
 
 @Component({
   selector: 'app-hearing-schedule',
@@ -165,7 +166,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
         (data: HearingVenueResponse[]) => {
           this.availableCourts = data;
           const pleaseSelect = new HearingVenueResponse();
-          pleaseSelect.name = 'Please Select';
+          pleaseSelect.name = Constants.PleaseSelect;
           pleaseSelect.id = -1;
           this.availableCourts.unshift(pleaseSelect);
           this.setVenueForExistingHearing();
