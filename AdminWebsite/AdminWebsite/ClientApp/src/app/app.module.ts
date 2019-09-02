@@ -29,7 +29,7 @@ import { ErrorService } from './services/error.service';
 import { LoggerService } from './services/logger.service';
 import { PageTrackerService } from './services/page-tracker.service';
 import { AppInsightsLogger } from './services/app-insights-logger.service';
-import { Config } from '../app/common/model/config';
+import { Config } from './common/model/config';
 import { WindowRef } from './security/window-ref';
 import { CustomAdalInterceptor } from './custom-adal-interceptor';
 import { UnsupportedBrowserComponent } from './shared/unsupported-browser/unsupported-browser.component';

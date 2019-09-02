@@ -1,8 +1,32 @@
 <div class="govuk-grid-row">
-    <div class="govuk-grid-column-full">
-        <h1 class="govuk-heading-xl">You are not authorised to use this service</h1>
-    </div>
+  <div class="govuk-grid-column-full">
+    <h1 class="govuk-heading-xl" i18n="@@unauthorised_h1">You are not authorised to use this service</h1>
+    <p class="govuk-body"  i18n="@@unauthorised_p_1">It looks like you are not registered for this service.</p>
+    <p class="govuk-body"  i18n="@@unauthorised_p_2">If you think this is a mistake and you need to speak to someone, please contact us using the options below. </p>
+  </div>
 </div>
 
+<div class="govuk-!-margin-top-7">
+  <details class="govuk-details">
+    <summary class="govuk-details__summary" (click)="toggle()">
+        <span class="govuk-details__summary-text" id="citizen-contact-details" i18n="@@contactUs_p_1">
+          Contact us for help
+        </span>
+    </summary>
+    <div class="govuk-details__text" *ngIf="expanded">
+      <p class="govuk-body govuk-!-margin-bottom-0" i18n="@@contactUs_p_2">Call the video hearings team on <strong>0300 303 0655</strong> and quote your case number</p>
+      <span id="contact-us-telephone-times-hint" class="govuk-hint" i18n="@@contactUs_p_3">
+            (available between 9am and 5pm, Monday to Friday)
+        </span>
 
- 
+      <p class="govuk-body govuk-!-margin-bottom-0">
+        <span i18n="@@contactUs_p_4">Email us at </span>
+        <a class="govuk-link" target="_blank" href="mailto:{{contactUsEmail}}" data-hsupport="email">{{contactUsEmail}}</a>
+        <span i18n="@@contactUs_p_5"> quoting your case number</span>
+      </p>
+      <span id="contact-us-email-times-hint" class="govuk-hint" i18n="@@contactUs_p_6">
+            (available between 9am and 5pm, Monday to Friday)
+        </span>
+    </div>
+  </details>
+</div>

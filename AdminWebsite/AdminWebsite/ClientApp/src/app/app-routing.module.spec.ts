@@ -78,6 +78,6 @@ describe('app routing', () => {
     adalSvc.setAuthenticated(false);
     router.navigate(['/dashboard']);
     tick();
-    expect(location.path()).toBe('/login');
+    expect(location.path()).toBe('/unauthorised');
   }));
 });
