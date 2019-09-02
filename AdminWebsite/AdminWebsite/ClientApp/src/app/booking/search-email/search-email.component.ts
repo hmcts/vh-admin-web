@@ -43,6 +43,8 @@ export class SearchEmailComponent implements OnInit {
         } else {
           if (this.email.length > 2) {
             this.noDataFound();
+          } else {
+            this.lessThanThreeLetters();
           }
           this.isShowResult = false;
           this.results = undefined;
@@ -63,6 +65,11 @@ export class SearchEmailComponent implements OnInit {
     this.isShowResult = false;
     this.notFoundParticipant = true;
     this.participantsNotFound.emit();
+  }
+
+  lessThanThreeLetters() {
+    this.isShowResult = false;
+    this.notFoundParticipant = false;
   }
 
   selectItemClick(result: ParticipantModel) {
