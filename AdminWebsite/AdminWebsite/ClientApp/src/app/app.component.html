@@ -4,7 +4,7 @@
   <app-header [loggedIn]="loggedIn"></app-header>
 
   <div class="govuk-width-container vh-content" id="master-container">
-    <main #maincontent class="govuk-main-wrapper" id="main-content" role="main" tabindex="-1">
+    <main #maincontent class="govuk-main-wrapper" id="main-content" role="main" tabindex="-1" >
       <router-outlet (activate)="onActivate($event)"></router-outlet>
     </main>
   </div>
