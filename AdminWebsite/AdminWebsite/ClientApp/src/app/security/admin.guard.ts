@@ -22,7 +22,7 @@ export class AdminGuard implements CanActivate {
       }),
       catchError((err) => {
         console.error(`Could not get user identity: ${err}`);
-        this.router.navigate(['/login']);
+        this.router.navigate(['/unauthorised']);
         return of(false);
       })
     );
