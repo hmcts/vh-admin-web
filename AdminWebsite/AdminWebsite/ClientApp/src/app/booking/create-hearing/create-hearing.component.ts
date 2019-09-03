@@ -82,7 +82,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
     this.form = this.fb.group({
       caseName: [firstCase.name, Validators.required],
       caseNumber: [firstCase.number, Validators.required],
-      caseType: [this.selectedCaseType, [Validators.required, Validators.pattern('^((?!Please Select).)*$')]],
+      caseType: [this.selectedCaseType, [Validators.required, Validators.pattern('^((?!Please select).)*$')]],
       hearingType: [this.hearing.hearing_type_id, [Validators.required, Validators.min(1)]],
       questionnaireNotRequired: [this.hearing.questionnaire_not_required]
     });
@@ -111,7 +111,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
   }
 
   saveHearingDetails() {
-    if (this.form.valid) {
+    if (this.form.valid && this.caseType.value !== Constants.PleaseSelect) {
       this.failedSubmission = false;
       this.updateHearingRequest();
       this.form.markAsPristine();
