@@ -211,4 +211,9 @@ describe('SeachEmailComponent', () => {
     expect(component.notFoundParticipant).toBeTruthy();
     expect(component.participantsNotFound.emit).toHaveBeenCalled();
   });
+  it('should set notFoundParticipant to false if less that 3 letters input', () => {
+    component.lessThanThreeLetters();
+    expect(component.isShowResult).toBeFalsy();
+    expect(component.notFoundParticipant).toBeFalsy();
+  });
 });

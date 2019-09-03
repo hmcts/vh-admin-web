@@ -36,12 +36,18 @@ export class SearchEmailComponent implements OnInit {
   constructor(private searchService: SearchService) {}
 
   ngOnInit() {
-    this.searchService.search(this.searchTerm)
-      .subscribe(data => {
+     this.searchService.search(this.searchTerm)
+       .subscribe(data => {
         if (data && data.length > 0) {
           this.getData(data);
         } else {
-          this.noDataFound();
+          if (this.email.length > 2) {
+            this.noDataFound();
+          } else {
+            this.lessThanThreeLetters();
+          }
+          this.isShowResult = false;
+          this.results = undefined;
         }
       });
 
@@ -59,6 +65,11 @@ export class SearchEmailComponent implements OnInit {
     this.isShowResult = false;
     this.notFoundParticipant = true;
     this.participantsNotFound.emit();
+  }
+
+  lessThanThreeLetters() {
+    this.isShowResult = false;
+    this.notFoundParticipant = false;
   }
 
   selectItemClick(result: ParticipantModel) {

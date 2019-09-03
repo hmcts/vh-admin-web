@@ -1,10 +1,10 @@
 <div>
-  <a href="#main-content" class="govuk-skip-link">Skip to main content</a>
+  <a href="javascript:void(0)" class="govuk-skip-link" (click)="skipToContent()">Skip to main content</a>
 
   <app-header [loggedIn]="loggedIn"></app-header>
 
   <div class="govuk-width-container vh-content" id="master-container">
-    <main class="govuk-main-wrapper " id="main-content" role="main">
+    <main #maincontent class="govuk-main-wrapper" id="main-content" role="main" tabindex="-1" >
       <router-outlet (activate)="onActivate($event)"></router-outlet>
     </main>
   </div>
