@@ -48,7 +48,7 @@ Scenario Outline: Financial Remedy users add existing participants to booking
 	| Case Admin |
 
 @VIH-3883
-Scenario: Case Admin clears existing participant details
+Scenario: Case Admin clears participant details
 	Given Case Admin is on the add participants page
     And the admin adds parties with existing users
 	When the user follows the clear details call to action
