@@ -70,7 +70,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _addParticipant.ClickNextButton();
         }
 
-        [Given(@"the admin adds parties with (.*) users")]
+        [Given(@"the admin added participants using (.*) user details")]
         public void UserAddsParticipantDetails(string userType)
         {
             var party1 = GetPartyTypes(out var party2);
@@ -80,12 +80,15 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
             switch (userType)
             {
+                case "any":
                 case "new":
-                    AddNewPerson(GetLipRoleType(party1));
+                    AddNewPerson(GetLipRoleType(party1), clickAdd);
                     break;
                 case "existing":
                     AddExistingPerson(_context.GetIndividualUsers().First(), GetLipRoleType(party1), clickAdd);
                     break;
+                default:
+                    throw new NotSupportedException($"The user type (userType) is not supported");
             }
 
         }
@@ -236,7 +239,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             }
         }
 
-        private void AddNewPerson(RoleType roleType)
+        private void AddNewPerson(RoleType roleType, bool clickAdd = true)
         {
             if (roleType == RoleType.Solicitor)
             {
@@ -264,7 +267,10 @@ namespace AdminWebsite.AcceptanceTests.Steps
                 AddAddress(participant);
             }
 
-            _addParticipant.AddParticipantButton();
+            if (clickAdd)
+            {
+                _addParticipant.AddParticipantButton();
+            }
         }
 
         private void AddSolicitorInformation(ParticipantData participant)
