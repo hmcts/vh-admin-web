@@ -260,7 +260,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
                 if (participant.Role == RoleType.Solicitor)
                     expectedParticipant = $"{expectedParticipant}, representing {participant.ClientRepresenting}";
 
-                actualResult.Any(x => x.Equals(expectedParticipant)).Should().BeTrue();
+                actualResult.Any(x => x.Replace(Environment.NewLine, " ").Equals(expectedParticipant)).Should().BeTrue();
             }
         }
     }
