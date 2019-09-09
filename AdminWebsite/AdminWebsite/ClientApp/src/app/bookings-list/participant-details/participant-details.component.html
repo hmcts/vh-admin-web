@@ -17,8 +17,7 @@
     <div *ngIf="participant?.HearingRoleName !== 'Judge'">
       {{participant?.fullName}}
       <div [attr.id]="'participant_role' + participant?.IndexInList" class="govuk-hint">
-        {{participant?.HearingRoleName}}
-        <span *ngIf="participant.isRepresent">, representing</span>
+        {{participant?.HearingRoleName}}<span *ngIf="participant.isRepresent">, representing</span>
         <div class="vh-text-color-black">{{participant.Representee}}</div>
       </div>
     </div>
