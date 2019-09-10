@@ -16,17 +16,17 @@
           <div class="govuk-form-group textarea-top-margin">
             <label class="govuk-label govuk-!-width-one-half" for="hidden-other-text"></label>
             <textarea class="govuk-textarea vh-text-h" id="details-other-information" name="otherInformation" rows="14"
-              cols="80" formControlName="otherInformation" title="hidden-other-text" aria-label="hidden-other-text"
-              aria-labelledby="other-information-text"></textarea>
+                      cols="80" formControlName="otherInformation" aria-label="hidden-other-text"
+                      aria-labelledby="other-information-text"></textarea>
           </div>
         </fieldset>
 
         <div class="vh-mt50">
           <input id="nextButton" type="button" class="govuk-button vh-mr25" role="button" value="{{buttonAction}}"
-            (click)="next()" alt="Save hearing other information and go to summary" />
+                 (click)="next()" alt="Save hearing other information and go to summary" />
           <input id="cancelButton" type="button" class="govuk-button hmcts-button--secondary" role="button"
-            value="Cancel" (click)="confirmCancelBooking()"
-            alt="Confirm cancellation of new booking and return to dashboard" />
+                 value="Cancel" (click)="confirmCancelBooking()"
+                 alt="Confirm cancellation of new booking and return to dashboard" />
         </div>
 
       </form>
