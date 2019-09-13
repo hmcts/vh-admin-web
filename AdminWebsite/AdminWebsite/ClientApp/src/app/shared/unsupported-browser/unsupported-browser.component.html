@@ -2,12 +2,12 @@
   <div class="govuk-grid-column-full">
     <h2 class="govuk-heading-l">You've signed in using an unsupported browser</h2>
     <p class="supported-browser-body">
-      It looks like you've signed in using {{ browserName }} Unfortunately this browser is not currrently supported by
+      It looks like you've signed in using {{ browserName }}. Unfortunately this browser is not currrently supported by
       our
       system.
     </p>
     <div>
-      <p class="supported-browser-body">Please sign out and sign in again using any of the following.</p>
+      <p class="supported-browser-body">Please sign out and sign in again using the following browser:</p>
       <ul class="govuk-list">
         <li *ngFor="let browser of supportedBrowsers">
           <div class="govuk-grid-column-full">

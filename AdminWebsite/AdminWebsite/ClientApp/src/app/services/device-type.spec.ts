@@ -3,7 +3,7 @@ import { DeviceType } from './device-type';
 import { DeviceDetectorService } from 'ngx-device-detector';
 
 class MockDeviceDetectorService {
-  browser = 'FireFox';
+  browser = 'Chrome';
   isMobile() { return false; }
   isTablet() { return false; }
   isDesktop() { return true; }
@@ -30,7 +30,7 @@ describe('DeviceType', () => {
   }));
   it('should return browser name', inject([DeviceDetectorService], (deviceDetectorService: DeviceDetectorService) => {
     const deviceType = new DeviceType(deviceDetectorService);
-    expect(deviceType.getBrowserName()).toBe('FireFox');
+    expect(deviceType.getBrowserName()).toBe('Chrome');
   }));
   it('should return true if browser is supported', inject([DeviceDetectorService], (deviceDetectorService: DeviceDetectorService) => {
     const deviceType = new DeviceType(deviceDetectorService);
