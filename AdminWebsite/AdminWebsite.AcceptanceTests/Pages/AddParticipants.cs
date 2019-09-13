@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using AdminWebsite.AcceptanceTests.Data;
+using System.Collections;
 
 namespace AdminWebsite.AcceptanceTests.Pages
 {
@@ -38,7 +39,7 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public void Postcode(string postcode) => ClearFieldInputValues(By.Id("postcode"), postcode);
         public string RoleValue() => ExecuteScript("return document.getElementById('role').value", By.Id("role"));
         public void Organisation(string organisation) => ClearFieldInputValues(CompanyName, organisation);
-        public void SoliicitorReference(string reference) => ClearFieldInputValues(By.Id("solicitorReference"), reference);
+        public void SolicitorReference(string reference) => ClearFieldInputValues(By.Id("solicitorReference"), reference);
         public void ClientRepresenting(string client) => ClearFieldInputValues(By.Id("representing"), client);
         public void ExistingParticipant(string contactEmail)
         {
@@ -53,5 +54,76 @@ namespace AdminWebsite.AcceptanceTests.Pages
             }
         }
         public string GetFieldValue(string field) => ExecuteScript($"return document.getElementById('{field}').value");
+
+        public ArrayList ValidateAddParticipantFormIsCleared()
+        {
+            string[] dropdownFormFields = { "party", "role"};
+            var errorFields = CheckDropDownsAreReset(dropdownFormFields);
+
+            string[] participantDetailsFormFields = { "participantEmail", "title", "firstName", "lastName",
+                                                "companyNameIndividual", "phone", "displayName"};
+            errorFields.AddRange(CheckHiddenInputFieldsAreNotDisplayed(participantDetailsFormFields));
+
+            string[] addressDetailsFormFields = { "houseNumber", "street", "city", "county", "postcode" };
+            errorFields.AddRange(CheckHiddenInputFieldsAreNotDisplayed(addressDetailsFormFields));
+
+            return errorFields;
+        }
+
+        private ArrayList CheckHiddenInputFieldsAreNotDisplayed(string[] hiddenFormFieldsAddressDetails)
+        {
+            var errorFields = new ArrayList();
+
+            foreach (string field in hiddenFormFieldsAddressDetails)
+            {
+                try
+                {
+                    var value = GetFieldValue(field);
+                    if (!string.IsNullOrEmpty(value))
+                        errorFields.Add(field);
+                }
+                catch(WebDriverException exception)
+                {
+                    if (!exception.Message.Contains("javascript error: Cannot read property 'value' of null"))
+                        errorFields.Add(field);
+                }
+            }
+
+            return errorFields;
+        }
+
+        private ArrayList CheckDropDownsAreReset(string[] formFields)
+        {
+            var errorFields = new ArrayList();
+
+            foreach (string field in formFields)
+            {
+                var value = GetFieldValue(field);
+                if(value != "0: Please select")
+                {
+                    errorFields.Add(field);
+                }
+            }
+
+            return errorFields;
+        }
+
+        internal void WaitForAddParticipantDetailsFormHidden()
+        {
+            try
+            {
+                var count = 0;
+                var value = GetFieldValue("participantEmail");
+                while (!string.IsNullOrEmpty(value) || count < 3) {
+                    System.Threading.Thread.Sleep(10000);
+                    value = GetFieldValue("participantEmail");
+                    count++;
+                }
+            }
+            catch (WebDriverException)
+            {
+                return;
+            }
+        }
     }
 }
