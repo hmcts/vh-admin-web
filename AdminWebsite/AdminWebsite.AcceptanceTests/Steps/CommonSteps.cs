@@ -109,7 +109,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void GivenUserIsOnOtherInformationPage()
         {
             GivenUserIsOnAddParticipantsPage();
-            _addParticipantsSteps.UserAddsPartiesWithExistingUsers();
+            _addParticipantsSteps.UserAddsPartiesWithNewUsers();
             _otherInformationStep.WhenUserAddsOtherInformationToBookingHearing();
         }
 
@@ -117,7 +117,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void AdminOnOtherInformationPage(string admin)
         {
             AdminIsOnAddParticipantsPage(admin);
-            _addParticipantsSteps.UserAddsPartiesWithExistingUsers();
+            _addParticipantsSteps.UserAddsPartiesWithNewUsers();
             _otherInformationStep.WhenUserAddsOtherInformationToBookingHearing();
         }
 
