@@ -49,7 +49,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
                 case PageUri.HearingSchedulePage:
                     _summary.HearingDate().ToLower().Should().Be(_summary.GetItems("HearingDate"));
                     _summary.CourtAddress().Should().Be($"{HearingScheduleData.CourtAddress.Last()}, {_context.TestData.HearingScheduleData.Room}");
-                    _summary.HearingDuration().Should().Be("listed for 30 minutes");
+                    _summary.HearingDuration().Should().Be(_context.TestData.HearingScheduleData.GetHearingDurationAsText());
                     break;
                 case PageUri.OtherInformationPage:
                     _summary.OtherInformation().Should().Be(OtherInformation.OtherInformationText);

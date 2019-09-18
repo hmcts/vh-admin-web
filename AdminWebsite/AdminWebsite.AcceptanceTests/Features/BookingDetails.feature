@@ -64,7 +64,7 @@ Scenario: Case Admin amends more information
 Scenario: Case Admin amends hearing schedule
 	Given Case Admin amends booking
 	When user navigates to hearing schedule page to make changes
-	And hearing schedule is updated
+	And hearing schedule is updated to 02:30
 	And user proceeds to the summary page 
 	Then values should be displayed as expected on the summary page
 	And amended values should be saved
