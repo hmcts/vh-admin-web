@@ -178,6 +178,7 @@ export class SummaryComponent implements OnInit {
     this.hearingService.updateHearing(this.hearing)
       .subscribe((hearingDetailsResponse: HearingDetailsResponse) => {
         this.showWaitSaving = false;
+        this.hearingService.setBookingHasChanged(false);
         this.router.navigate([PageUrls.BookingDetails]);
       }, error => {
         this.setError(error);

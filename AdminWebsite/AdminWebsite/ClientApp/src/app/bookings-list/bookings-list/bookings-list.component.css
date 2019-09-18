@@ -1,3 +1,7 @@
+p {
+  overflow: hidden;
+}
+
 .vh-sml {
     font-size: smaller;
 }

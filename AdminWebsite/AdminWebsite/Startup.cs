@@ -103,8 +103,15 @@ namespace AdminWebsite
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
-
             app.UseAuthentication();
+
+            // HTTP Response Headers
+            app.UseXContentTypeOptions();
+            app.UseReferrerPolicy(opts => opts.NoReferrer());
+            app.UseXXssProtection(options => options.EnabledWithBlockMode());
+            app.UseNoCacheHttpHeaders();
+            app.UseHsts(options => options.MaxAge(365).IncludeSubdomains());
+            app.UseXfo(options => options.SameOrigin());
 
             app.UseMvc(routes =>
             {
@@ -112,7 +119,7 @@ namespace AdminWebsite
                     name: "default",
                     template: "{controller}/{action=Index}/{id?}");
             });
-            app.UseNoCacheHttpHeaders();
+
             app.UseSpa(spa =>
             {
                 // To learn more about options for serving an Angular SPA from ASP.NET Core,

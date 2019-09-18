@@ -49,6 +49,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _addParticipant.ClickNextButton();
         }
 
+
         [When(@"the admin adds parties with existing users")]
         public void UserAddsPartiesWithExistingUsers()
         {
@@ -67,6 +68,29 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
             ThenParticipantDetailAreDisplayedInTheList();
             _addParticipant.ClickNextButton();
+        }
+
+        [Given(@"the admin added participants using (.*) user details")]
+        public void UserAddsParticipantDetails(string userType)
+        {
+            var party1 = GetPartyTypes(out var party2);
+
+            AddNonSolicitorParty(party1);
+            bool clickAdd = false;
+
+            switch (userType)
+            {
+                case "any":
+                case "new":
+                    AddNewPerson(GetLipRoleType(party1), clickAdd);
+                    break;
+                case "existing":
+                    AddExistingPerson(_context.GetIndividualUsers().First(), GetLipRoleType(party1), clickAdd);
+                    break;
+                default:
+                    throw new NotSupportedException($"The user type (userType) is not supported");
+            }
+
         }
 
         private void NavigateToPage()
@@ -101,7 +125,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             _addParticipant.AddParty(partyType);
             var roleType = GetLipRoleType(partyType);
-            _addParticipant.AddRole(roleType.ToString().Replace("LIP", " LIP"));           
+            _addParticipant.AddRole(roleType.ToString().Replace("LIP", " LIP"));
         }
 
         private void AddSolicitorParty(PartyType partyType)
@@ -121,12 +145,22 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             _context.TestData.ParticipantData.Add(new IndividualData());
             var participant = _context.TestData.ParticipantData.Last();
-            _addParticipant.ParticipantEmail(participant.Email);
-            _addParticipant.FirstName(participant.Firstname);
-            _addParticipant.Telephone(participant.Telephone);
-            _addParticipant.DisplayName(participant.DisplayName);
+            ClearInputData(participant);
             _addParticipant.ClearInput();
-            _context.TestData.ParticipantData.Remove(_context.TestData.ParticipantData.Last());
+            _addParticipant.WaitForAddParticipantDetailsFormHidden();
+        }
+
+        [When(@"the user follows the clear details call to action")]
+        public void WhenUserFollowsClearDetailsCTA()
+        {
+            _addParticipant.ClearInput();
+        }
+
+        [Then(@"add participant form values should be cleared")]
+        public void ThenAddParticipantFormValuesShouldBeCleared()
+        {
+            var errorFields = _addParticipant.ValidateAddParticipantFormIsCleared();
+            errorFields.Should().BeNullOrEmpty();
         }
 
         [Then(@"all values should be cleared from the fields")]
@@ -164,7 +198,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _addParticipant.LastnameEnabled.Should().BeFalse();
         }
 
-        private void AddExistingPerson(UserAccount user, RoleType roleType)
+        private void AddExistingPerson(UserAccount user, RoleType roleType, bool clickAdd = true)
         {
             if (user.Role.ToLower().Equals("individual"))
             {
@@ -178,7 +212,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _context.TestData.ParticipantData.Last().Role = roleType;
 
             var email = user.AlternativeEmail;
-            _addParticipant.ParticipantEmail(email.Substring(0, 3));          
+            _addParticipant.ParticipantEmail(email.Substring(0, 3));
             _addParticipant.ExistingParticipant(email);
             _addParticipant.DisplayName(user.Displayname);
             _addParticipant.EmailEnabled.Should().BeFalse();
@@ -199,10 +233,13 @@ namespace AdminWebsite.AcceptanceTests.Steps
                 _context.TestData.ParticipantData.Last().PostCode = _addParticipant.GetFieldValue("postcode");
             }
 
-            _addParticipant.AddParticipantButton();
+            if (clickAdd)
+            {
+                _addParticipant.AddParticipantButton();
+            }
         }
 
-        private void AddNewPerson(RoleType roleType)
+        private void AddNewPerson(RoleType roleType, bool clickAdd = true)
         {
             if (roleType == RoleType.Solicitor)
             {
@@ -230,13 +267,16 @@ namespace AdminWebsite.AcceptanceTests.Steps
                 AddAddress(participant);
             }
 
-            _addParticipant.AddParticipantButton();
+            if (clickAdd)
+            {
+                _addParticipant.AddParticipantButton();
+            }
         }
 
         private void AddSolicitorInformation(ParticipantData participant)
         {
             _addParticipant.Organisation(participant.Organisation);
-            _addParticipant.SoliicitorReference(participant.SolicitorReference);
+            _addParticipant.SolicitorReference(participant.SolicitorReference);
             _addParticipant.ClientRepresenting(participant.ClientRepresenting);
         }
 
@@ -262,6 +302,15 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
                 actualResult.Any(x => x.Replace(Environment.NewLine, " ").Equals(expectedParticipant)).Should().BeTrue();
             }
+        }
+
+        public void ClearInputData(ParticipantData participant)
+        {
+            _addParticipant.ParticipantEmail(participant.Email);
+            _addParticipant.FirstName(participant.Firstname);
+            _addParticipant.Telephone(participant.Telephone);
+            _addParticipant.DisplayName(participant.DisplayName);
+            _context.TestData.ParticipantData.Remove(participant);
         }
     }
 }
