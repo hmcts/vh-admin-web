@@ -18,38 +18,82 @@ export class BookingsListService {
   }
 
   mapBookingsResponse(bookingsResponse: BookingsResponse): BookingsModel {
-     const model = new BookingsModel(bookingsResponse.next_cursor);
-     model.Hearings = bookingsResponse.hearings.map(x => this.mapBookings(x));
-     return model;
-    }
+    const model = new BookingsModel(bookingsResponse.next_cursor);
+    model.Hearings = bookingsResponse.hearings.map(x => this.mapBookings(x));
+    return model;
+  }
 
-    addBookings(bookingsModel: BookingsModel, bookings: Array<BookingsListModel>): Array<BookingsListModel> {
-        bookingsModel.Hearings.forEach(element => {
-            this.addRecords(element, bookings);
-        });
+  addBookings(bookingsModel: BookingsModel, bookings: Array<BookingsListModel>): Array<BookingsListModel> {
+    bookingsModel.Hearings.forEach(element => {
+      this.addRecords(element, bookings);
+    });
 
-        return bookings;
-    }
+    return bookings;
+  }
 
-    private addRecords(element: BookingsListModel, bookings: Array<BookingsListModel>) {
-        const subSet = bookings.findIndex(s => s.BookingsDate.toString() === element.BookingsDate.toString());
-        if (subSet > -1) {
-            element.BookingsDetails.forEach(item => {
-                const record = bookings[subSet].BookingsDetails.find(x => x.HearingId === item.HearingId);
-                if (!record) {
-                    bookings[subSet].BookingsDetails.push(item);
-                }
-            });
-        } else {
-            bookings.push(element);
+  // append a new portion of data to list
+  private addRecords(element: BookingsListModel, bookings: Array<BookingsListModel>) {
+    const subSet = bookings.findIndex(s => s.BookingsDate.toString() === element.BookingsDate.toString());
+    if (subSet > -1) {
+      element.BookingsDetails.forEach(item => {
+        const record = bookings[subSet].BookingsDetails.find(x => x.HearingId === item.HearingId);
+        if (!record) {
+          this.insertBookingIntoGroup(item, bookings[subSet]);
         }
+      });
+    } else {
+      // The group with the date is not found, we have to check
+      // if the record date was edited or it's a new record with a new date group.
+      this.deleteDuplicatedRecord(element, bookings);
+      this.insertDateGroup(element, bookings);
     }
+  }
+
+  private deleteDuplicatedRecord(element: BookingsListModel, bookings: Array<BookingsListModel>) {
+    const hearings = element.BookingsDetails;
+    const groupsToDelete: number[] = [];
+    hearings.forEach(hearing => {
+      for (let j = 0; j < bookings.length; j++) {
+        for (let i = 0; i < bookings[j].BookingsDetails.length; i++) {
+
+          if (bookings[j].BookingsDetails[i].HearingId === hearing.HearingId) {
+            bookings[j].BookingsDetails.splice(i, 1);
+          }
+          if (!bookings[j].BookingsDetails || bookings[j].BookingsDetails.length === 0) {
+            groupsToDelete.push(j);
+          }
+        }
+      }
+    });
+    groupsToDelete.forEach(g => {
+      // remove empty group
+      bookings.splice(g, 1);
+    });
+  }
+
+  private insertBookingIntoGroup(element: BookingsDetailsModel, groupBookings: BookingsListModel) {
+    groupBookings.BookingsDetails.push(element);
+    groupBookings.BookingsDetails.sort((a, b) => {
+      if (new Date(a.StartTime) < new Date(b.StartTime)) { return -1; }
+      if (new Date(a.StartTime) > new Date(b.StartTime)) { return 1; }
+      if (new Date(a.StartTime) === new Date(b.StartTime)) { return 0; }
+    });
+  }
+
+  private insertDateGroup(element: BookingsListModel, bookings: Array<BookingsListModel>) {
+    bookings.push(element);
+    bookings.sort((a, b) => {
+      if (new Date(a.BookingsDate) < new Date(b.BookingsDate)) { return -1; }
+      if (new Date(a.BookingsDate) > new Date(b.BookingsDate)) { return 1; }
+      if (new Date(a.BookingsDate) === new Date(b.BookingsDate)) { return 0; }
+    });
+  }
 
   private mapBookings(bookingsByDate: BookingsByDateResponse): BookingsListModel {
     const model = new BookingsListModel(bookingsByDate.scheduled_date);
     model.BookingsDetails = bookingsByDate.hearings.map(hearing => this.mapBookingsDetails(hearing));
     return model;
-}
+  }
 
   private mapBookingsDetails(hearing: BookingsHearingResponse) {
     return new BookingsDetailsModel(
@@ -68,7 +112,7 @@ export class BookingsListService {
       hearing.last_edit_date,
       hearing.status,
       hearing.questionnaire_not_required
-      );
+    );
   }
 }
 
