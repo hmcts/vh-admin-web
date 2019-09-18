@@ -18,7 +18,6 @@ Scenario: Vh Officer views booking details
 	And expected details should be populated
 
 @VIH-3743
-# this test validates the Judge email, but that is not displayed in the summary page, only once you press edit
 Scenario: Admin officer changes judge
 	Given Case Admin amends booking
 	When user navigates to add judge page to make changes

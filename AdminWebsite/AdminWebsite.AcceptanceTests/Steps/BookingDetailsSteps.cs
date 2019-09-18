@@ -7,6 +7,7 @@ using AdminWebsite.AcceptanceTests.Data;
 using TechTalk.SpecFlow;
 using BookingDetails = AdminWebsite.AcceptanceTests.Pages.BookingDetails;
 using TestContext = AdminWebsite.AcceptanceTests.Contexts.TestContext;
+using System;
 
 namespace AdminWebsite.AcceptanceTests.Steps
 {
@@ -74,7 +75,9 @@ namespace AdminWebsite.AcceptanceTests.Steps
             switch (_bookingDetails.GetItems("RelevantPage"))
             {
                 case PageUri.AssignJudgePage:
-                    _bookingDetails.JudgeEmail().Should().Contain(_bookingDetails.GetItems("Clerk"));
+                    var expectedClerk = _bookingDetails.GetItems("Clerk").Replace(".", "");
+                    expectedClerk = expectedClerk.Substring(0, expectedClerk.IndexOf("@") - 1);
+                    _bookingDetails.JudgeEmail().Replace(" ", "").Should().Contain(expectedClerk);
                     break;
                 case PageUri.HearingDetailsPage:
                     _bookingDetails.CaseName().Should().Be(_context.TestData.HearingData.CaseName);
