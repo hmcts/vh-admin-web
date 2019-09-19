@@ -4,8 +4,23 @@ import { BookingsListService } from './bookings-list.service';
 import { BHClient, BookingsResponse, BookingsByDateResponse, BookingsHearingResponse } from './clients/api-client';
 import { of } from 'rxjs';
 import { BookingsListModel, BookingsDetailsModel } from '../common/model/bookings-list.model';
+import { BookingsModel } from '../common/model/bookings.model';
 
 export class ResponseTestData {
+
+  static getEditingBookings(): Array<BookingsListModel> {
+    const listModel: Array<BookingsListModel> = [];
+    const model = new BookingsListModel(new Date('2019-12-22 13:58:40.3730067'));
+    const lists: Array<BookingsDetailsModel> = [];
+    const b1 = new BookingsDetailsModel('1', new Date('2019-12-22 13:58:40.3730067'),
+      120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JadgeGreen', '33A', 'Coronation Street',
+      'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'), 'Booked', false);
+
+    lists.push(b1);
+    model.BookingsDetails = lists;
+    listModel.push(model);
+    return listModel;
+  }
 
   static getBookingsTestData(): Array<BookingsListModel> {
     const listModel: Array<BookingsListModel> = [];
@@ -14,10 +29,10 @@ export class ResponseTestData {
     const b1 = new BookingsDetailsModel('1', new Date('2019-10-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JadgeGreen', '33A', 'Coronation Street',
       'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'), 'Booked', false);
-    const b2 = new BookingsDetailsModel('12', new Date('2019-10-22 13:58:40.3730067'),
+    const b2 = new BookingsDetailsModel('12', new Date('2019-10-22 14:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JadgeGreen', '33A', 'Coronation Street',
       'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'), 'Booked', false);
-    const b3 = new BookingsDetailsModel('33', new Date('2019-10-22 13:58:40.3730067'),
+    const b3 = new BookingsDetailsModel('33', new Date('2019-10-22 14:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JadgeGreen', '33A', 'Coronation Street',
       'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'), 'Booked', false);
 
@@ -28,10 +43,10 @@ export class ResponseTestData {
     const b11 = new BookingsDetailsModel('44', new Date('2019-11-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JadgeGreen', '33A', 'Coronation Street',
       'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'), 'Booked', false);
-    const b21 = new BookingsDetailsModel('45', new Date('2019-11-22 13:58:40.3730067'),
+    const b21 = new BookingsDetailsModel('45', new Date('2019-11-22 14:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JadgeGreen', '33A', 'Coronation Street',
       'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'), 'Booked', false);
-    const b31 = new BookingsDetailsModel('46', new Date('2019-11-22 13:58:40.3730067'),
+    const b31 = new BookingsDetailsModel('46', new Date('2019-11-22 15:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JadgeGreen', '33A', 'Coronation Street',
       'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'), 'Booked', false);
     lists.push(b11);
@@ -153,6 +168,35 @@ describe('bookings service', () => {
     const bookings: Array<BookingsListModel> = ResponseTestData.getBookingsTestData();
     const result = service.addBookings(model, bookings);
     expect(result.length).toBe(2);
+    expect(result[0].BookingsDetails.length).toBe(2);
+    expect(result[1].BookingsDetails.length).toBe(6);
   });
 });
 
+describe('Booking list service functionality', () => {
+  let bhClientSpy: jasmine.SpyObj<BHClient>;
+  bhClientSpy = jasmine.createSpyObj<BHClient>('BHClient', ['getBookingsList']);
+  const bookingsResponse = new ResponseTestData().getTestData();
+
+  bhClientSpy.getBookingsList.and.returnValue(of(bookingsResponse));
+  const service = new BookingsListService(bhClientSpy);
+
+  it('should append new date group with 1 record to list and remove duplicated record', () => {
+    const model = new BookingsModel('234');
+    model.Hearings = ResponseTestData.getEditingBookings();
+    const bookings: Array<BookingsListModel> = ResponseTestData.getBookingsTestData();
+    service.bookingsList = bookings;
+    // initially we have two date groups with 0 and 6 records
+    expect(service.bookingsList.length).toBe(2);
+    expect(service.bookingsList[0].BookingsDetails.length).toBe(0);
+    expect(service.bookingsList[1].BookingsDetails.length).toBe(6);
+
+    // we change date for one record, it should result in 3 groups
+    const result = service.addBookings(model, bookings);
+    expect(result.length).toBe(3);
+    expect(result[0].BookingsDetails.length).toBe(0);
+    expect(result[1].BookingsDetails.length).toBe(5);
+    expect(result[2].BookingsDetails.length).toBe(1);
+
+  });
+});
