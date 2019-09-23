@@ -20,6 +20,8 @@ namespace AdminWebsite.UnitTests
                 TenantId = "TenantId",
                 ClientSecret = "ClientSecret",
                 Authority = "Authority",
+                RedirectUri = "https://vh-admin-web.azurewebsites.net/login",
+                PostLogoutRedirectUri = "https://vh-admin-web.azurewebsites.net/"
             };
 
             var httpContext = new DefaultHttpContext();
@@ -39,7 +41,8 @@ namespace AdminWebsite.UnitTests
             
             clientSettings.ClientId.Should().Be(securitySettings.ClientId);
             clientSettings.TenantId.Should().Be(securitySettings.TenantId);
-            clientSettings.RedirectUri.Should().Be("https://vh-admin-web.azurewebsites.net/login");
+            clientSettings.RedirectUri.Should().Be(securitySettings.RedirectUri);
+            clientSettings.PostLogoutRedirectUri.Should().Be(securitySettings.PostLogoutRedirectUri);
         }
     }
 }
