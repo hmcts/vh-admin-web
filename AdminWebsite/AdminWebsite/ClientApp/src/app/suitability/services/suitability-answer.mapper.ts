@@ -109,7 +109,8 @@ export class RepresentativeQuestionsMapAttributes implements QuestionsMapAttribu
   ]);
 
   public readonly AnswerOverrides = new Map<string, string>([
-    ['rep', 'representative']
+    ['A barrister has been/will be appointed', 'Yes'],
+    ['A barrister will not be appointed', 'No']
   ]);
 }
 

@@ -53,14 +53,24 @@ export abstract class QuestionnaireMapper {
     if (questionAnswer.EmbeddedAnswersInNotes !== undefined && questionAnswer.EmbeddedAnswersInNotes.length > 0) {
       const map = new Array<EmbeddedSuitabilityQuestionAnswer>();
       questionAnswer.EmbeddedAnswersInNotes.forEach(x => {
-        const question = this.attributes.Questions.get(x);
-        const findAnswer = this.answers.find(y => y.key === x);
-        map.push({question: question.Question, answer: findAnswer.answer});
+
+        if (this.attributes.Questions.has(x)) {
+          const question = this.attributes.Questions.get(x);
+          const findAnswer = this.answers.find(y => y.key === x);
+
+          map.push({question: question.Question, answer: findAnswer !== undefined ? findAnswer.answer : ''});
+        }
       });
 
       return map;
     }
   }
 
-  protected abstract getFromTranslationMap(answer: string): string;
+  protected getFromTranslationMap(answer: string): string {
+    if (this.attributes.AnswerOverrides.has(answer)) {
+      return this.attributes.AnswerOverrides.get(answer);
+    }
+
+    return answer;
+  }
 }
