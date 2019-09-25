@@ -1,9 +1,9 @@
 import { SelfTestQuestionsMapAttributes } from './suitability-answer.mapper';
-import { SuatabilityAnswerTestData } from '../../testing/data/suitability-answer-test-data';
+import { SuitabilityAnswerTestData } from '../../testing/data/suitability-answer-test-data';
 import { SelfTestQuestionnaireMapper } from './self-test-questionnaire-mapper';
 
 describe('QuestionnaireMapper', () => {
-  const response = new SuatabilityAnswerTestData().response;
+  const response = new SuitabilityAnswerTestData().plainResponse;
 
   it('should map all self test questions to answers', async () => {
     const mapper = new SelfTestQuestionnaireMapper(response.answers);

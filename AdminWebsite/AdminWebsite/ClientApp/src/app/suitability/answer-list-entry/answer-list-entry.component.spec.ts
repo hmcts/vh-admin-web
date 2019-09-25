@@ -1,4 +1,4 @@
-import { ParticipantQuestionnaire, SuitabilityAnswerGroup } from './../participant-questionnaire';
+import {EmbeddedSuitabilityQuestionAnswer, ParticipantQuestionnaire, SuitabilityAnswerGroup} from './../participant-questionnaire';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AnswerListEntryComponent } from './answer-list-entry.component';
@@ -24,7 +24,8 @@ describe('AnswerListEntryComponent', () => {
           {
             answer: 'true',
             notes: 'I have an eyesight problem',
-            question: 'ABOUT_YOU'
+            question: 'ABOUT_YOU',
+            embeddedQuestionAnswers: new Array<EmbeddedSuitabilityQuestionAnswer>()
           }
         ]
       })],

@@ -2,11 +2,11 @@ import { RepresentativeQuestionnaireMapper } from './representative-questionnair
 import { IndividualQuestionnaireMapper } from './individual-questionnaire-mapper';
 import { SelfTestQuestionnaireMapper } from './self-test-questionnaire-mapper';
 import { QuestionnaireMapperFactory } from './questionnaire-mapper-factory.service';
-import { SuatabilityAnswerTestData } from '../../testing/data/suitability-answer-test-data';
+import { SuitabilityAnswerTestData } from '../../testing/data/suitability-answer-test-data';
 
 describe('QuestionnaireMapperFactory', () => {
   let factory: QuestionnaireMapperFactory;
-  const response = new SuatabilityAnswerTestData().response;
+  const response = new SuitabilityAnswerTestData().plainResponse;
 
   beforeEach(() => {
     factory = new QuestionnaireMapperFactory();
