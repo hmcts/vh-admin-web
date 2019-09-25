@@ -26,6 +26,7 @@ export const SelfTestQuestionKeys = {
 export interface QuestionsMapAttributes {
   QuestionsOrder: string[];
   Questions: Map<string, QuestionAnswer>;
+  AnswerOverrides: Map<string, string>;
 }
 
 export class IndividualQuestionsMapAttributes implements QuestionsMapAttributes {
@@ -69,6 +70,10 @@ export class IndividualQuestionsMapAttributes implements QuestionsMapAttributes 
       {Question: 'Would you be content to take part in your hearing by video?'}
     ]
   ]);
+
+  public readonly AnswerOverrides = new Map<string, string>([
+    ['ind', 'individual']
+  ]);
 }
 
 export class RepresentativeQuestionsMapAttributes implements QuestionsMapAttributes {
@@ -102,6 +107,10 @@ export class RepresentativeQuestionsMapAttributes implements QuestionsMapAttribu
       }
     ]
   ]);
+
+  public readonly AnswerOverrides = new Map<string, string>([
+    ['rep', 'representative']
+  ]);
 }
 
 export class SelfTestQuestionsMapAttributes implements QuestionsMapAttributes {
@@ -118,6 +127,10 @@ export class SelfTestQuestionsMapAttributes implements QuestionsMapAttributes {
     [SelfTestQuestionKeys.SeeYourself, {Question: 'Could you see yourself on the screen in the camera window?'}],
     [SelfTestQuestionKeys.Microphone, {Question: 'Could you see the bar moving when you spoke?'}],
     [SelfTestQuestionKeys.SeeHearClearly, {Question: 'Could you see and hear the video clearly?'}]
+  ]);
+
+  public readonly AnswerOverrides = new Map<string, string>([
+    ['self', 'selftest']
   ]);
 }
 

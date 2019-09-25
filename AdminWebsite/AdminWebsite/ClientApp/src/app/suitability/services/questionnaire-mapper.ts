@@ -2,15 +2,15 @@ import {EmbeddedSuitabilityQuestionAnswer, SuitabilityAnswer} from '../participa
 import {SuitabilityAnswerResponse} from '../../services/clients/api-client';
 import {QuestionAnswer, QuestionsMapAttributes} from './suitability-answer.mapper';
 
-export class QuestionnaireMapper {
+export abstract class QuestionnaireMapper {
 
-  constructor(answers: SuitabilityAnswerResponse[], mapAttributes: QuestionsMapAttributes) {
+  protected constructor(answers: SuitabilityAnswerResponse[], mapAttributes: QuestionsMapAttributes) {
     this.answers = answers;
     this.attributes = mapAttributes;
   }
 
-  answers: SuitabilityAnswerResponse[];
-  attributes: QuestionsMapAttributes;
+  protected answers: SuitabilityAnswerResponse[];
+  protected attributes: QuestionsMapAttributes;
 
   public mapAnswers(): SuitabilityAnswer[] {
     return this.attributes.QuestionsOrder.map(s => {
@@ -38,7 +38,6 @@ export class QuestionnaireMapper {
     };
   }
 
-  // Translates answers into readable format
   private translateAnswer(answer: string) {
     switch (answer) {
       case 'true':
@@ -46,7 +45,7 @@ export class QuestionnaireMapper {
       case 'false':
         return 'No';
       default:
-        return answer;
+        return this.getFromTranslationMap(answer);
     }
   }
 
@@ -62,4 +61,6 @@ export class QuestionnaireMapper {
       return map;
     }
   }
+
+  protected abstract getFromTranslationMap(answer: string): string;
 }

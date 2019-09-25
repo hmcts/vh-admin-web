@@ -7,4 +7,8 @@ export class SelfTestQuestionnaireMapper extends QuestionnaireMapper {
     const attributes = new SelfTestQuestionsMapAttributes();
     super(answers, attributes);
   }
+
+  protected getFromTranslationMap(answer: string): string {
+    return 'SelfTestQuestionnaireMapper';
+  }
 }

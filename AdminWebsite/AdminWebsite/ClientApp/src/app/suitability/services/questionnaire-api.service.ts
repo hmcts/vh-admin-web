@@ -1,5 +1,5 @@
-import { ParticipantQuestionnaire, SuitabilityAnswerGroup } from './../participant-questionnaire';
-import { ParticipantSuitabilityAnswerResponse } from './../../services/clients/api-client';
+import { ParticipantQuestionnaire, SuitabilityAnswerGroup } from '../participant-questionnaire';
+import { ParticipantSuitabilityAnswerResponse } from '../../services/clients/api-client';
 import { BHClient } from 'src/app/services/clients/api-client';
 import { Injectable } from '@angular/core';
 import { ScrollableSuitabilityAnswersService, SuitabilityAnswersPage } from './scrollable-suitability-answers.service';
