@@ -33,11 +33,11 @@ export class QuestionnaireApiService implements ScrollableSuitabilityAnswersServ
     });
   }
 
-  private mapAnswerGroups(suitabilityMappers: QuestionnaireMapper, selfTestMapper: QuestionnaireMapper): SuitabilityAnswerGroup[] {
+  private mapAnswerGroups(suitabilityMapper: QuestionnaireMapper, selfTestMapper: QuestionnaireMapper): SuitabilityAnswerGroup[] {
     return [
       new SuitabilityAnswerGroup({
         title: 'About you and your equipment',
-        answers: suitabilityMappers.mapAnswers()
+        answers: suitabilityMapper.mapAnswers()
       }),
       new SuitabilityAnswerGroup({
         title: 'Equipment check',

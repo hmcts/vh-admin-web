@@ -26,6 +26,14 @@
           <div class="govuk-grid-column-two-thirds">
             <span class="govuk-body vh-table-row">{{ answer.question }}</span>
             <span class="govuk-hint vh-table-row">{{answer.notes}}</span>
+            <div *ngFor="let embeddedQuestionAnswer of answer.embeddedQuestionAnswers">
+              <div class="govuk-grid-column-one-third embeddedQuestionAnswer">
+                <span class="govuk-hint">{{ embeddedQuestionAnswer.question }}</span>
+              </div>
+              <div class="govuk-grid-column-two-third embeddedQuestionAnswer">
+                <span class="govuk-hint">{{ embeddedQuestionAnswer.answer }}</span>
+              </div>
+            </div>
           </div>
           <div class="govuk-grid-column-one-third">
             <span class="govuk-body vh-date vh-wrap vh-mr15" >{{ answer.answer }}</span>

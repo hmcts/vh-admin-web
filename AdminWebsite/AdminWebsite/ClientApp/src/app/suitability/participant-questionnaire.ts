@@ -5,8 +5,6 @@ export class ParticipantQuestionnaire {
   readonly representee: string;
   readonly participantId: string;
   readonly updatedAt: Date;
-
-
   readonly answers: SuitabilityAnswerGroup[];
 
   constructor(data: ParticipantQuestionnaire) {
@@ -34,10 +32,17 @@ export class SuitabilityAnswer {
   readonly answer: string;
   readonly notes: string;
   readonly question: string;
+  readonly embeddedQuestionAnswers: EmbeddedSuitabilityQuestionAnswer[];
 
   constructor(answer: SuitabilityAnswer) {
     this.answer = answer.answer;
     this.notes = answer.notes;
     this.question = answer.question;
+    this.embeddedQuestionAnswers = answer.embeddedQuestionAnswers;
   }
+}
+
+export class EmbeddedSuitabilityQuestionAnswer {
+  readonly answer: string;
+  readonly question: string;
 }

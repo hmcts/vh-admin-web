@@ -9,13 +9,11 @@ export const IndividualQuestionKeys = {
 };
 
 export const RepresentativeQuestionKeys = {
-  AboutYou: 'ABOUT_YOU',
-  AboutYourClient: 'ABOUT_YOUR_CLIENT',
-  ClientAttendance: 'CLIENT_ATTENDANCE',
-  HearingSuitability: 'HEARING_SUITABILITY',
-  Room: 'ROOM',
-  Camera: 'CAMERA_MICROPHONE',
-  Computer: 'COMPUTER'
+  Barrister: 'APPOINTING_BARRISTER',
+  BarristerName: 'BARRISTER_NAME',
+  BarristerChambers: 'BARRISTER_CHAMBERS',
+  BarristerEmail: 'BARRISTER_EMAIL',
+  OtherInformation: 'OTHER_INFORMATION'
 };
 
 export const SelfTestQuestionKeys = {
@@ -75,46 +73,33 @@ export class IndividualQuestionsMapAttributes implements QuestionsMapAttributes 
 
 export class RepresentativeQuestionsMapAttributes implements QuestionsMapAttributes {
   public readonly QuestionsOrder = [
-    RepresentativeQuestionKeys.AboutYou,
-    RepresentativeQuestionKeys.Room,
-    RepresentativeQuestionKeys.Computer,
-    RepresentativeQuestionKeys.Camera,
-    RepresentativeQuestionKeys.AboutYourClient,
-    RepresentativeQuestionKeys.ClientAttendance,
-    RepresentativeQuestionKeys.HearingSuitability
+    RepresentativeQuestionKeys.Barrister,
+    RepresentativeQuestionKeys.OtherInformation
   ];
 
   public readonly Questions = new Map<string, QuestionAnswer>([
     [
-      RepresentativeQuestionKeys.AboutYou,
-      {Question: 'Is there anything that could affect your ability to take part in a video hearing?'}
-    ],
-    [
-      RepresentativeQuestionKeys.Room,
+      RepresentativeQuestionKeys.Barrister,
       {
-        Question:
-          'Will you have access to a quiet, private room where you can connect to the internet and where your client can sit with you?'
+        Question: 'Appointing a barrister?',
+        DefaultAnswer: 'No',
+        EmbeddedAnswersInNotes:
+          [
+            RepresentativeQuestionKeys.BarristerName,
+            RepresentativeQuestionKeys.BarristerChambers,
+            RepresentativeQuestionKeys.BarristerEmail
+          ]
       }
     ],
+    [RepresentativeQuestionKeys.BarristerName, {Question: 'Barrister name:'}],
+    [RepresentativeQuestionKeys.BarristerChambers, {Question: 'Barrister Chambers:'}],
+    [RepresentativeQuestionKeys.BarristerEmail, {Question: 'Barrister Email:'}],
     [
-      RepresentativeQuestionKeys.Computer,
-      {Question: 'Will you have access to a laptop or desktop computer (not a mobile, not a tablet)?'}
-    ],
-    [
-      RepresentativeQuestionKeys.Camera,
-      {Question: 'Does your computer have a camera and microphone?'}
-    ],
-    [
-      RepresentativeQuestionKeys.AboutYourClient,
-      {Question: 'Is there anything that could affect your client\'s ability to take part in a video hearing?'}
-    ],
-    [
-      RepresentativeQuestionKeys.ClientAttendance,
-      {Question: 'Will your client be attending the hearing?'}
-    ],
-    [
-      RepresentativeQuestionKeys.HearingSuitability,
-      {Question: 'Is there anything about this case you think makes it unsuitable for a video hearing?'}
+      RepresentativeQuestionKeys.OtherInformation,
+      {
+        Question: 'Is there anything you\'d like the court to know that could affect this hearing taking place by video?',
+        DefaultAnswer: ''
+      }
     ]
   ]);
 }
@@ -139,4 +124,5 @@ export class SelfTestQuestionsMapAttributes implements QuestionsMapAttributes {
 export class QuestionAnswer {
   Question: string;
   DefaultAnswer?: string;
+  EmbeddedAnswersInNotes?: string[];
 }
