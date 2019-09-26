@@ -28,10 +28,13 @@
             <span class="govuk-hint vh-table-row">{{answer.notes}}</span>
             <div *ngFor="let embeddedQuestionAnswer of answer.embeddedQuestionAnswers">
               <div class="govuk-grid-column-one-third embeddedQuestionAnswer">
-                <span class="govuk-hint">{{ embeddedQuestionAnswer.question }}</span>
+                <span class="govuk-hint">&nbsp;{{ embeddedQuestionAnswer.question }}</span>
               </div>
-              <div class="govuk-grid-column-two-third embeddedQuestionAnswer">
-                <span class="govuk-hint">{{ embeddedQuestionAnswer.answer }}</span>
+              <div class="govuk-grid-column-one-third embeddedQuestionAnswer">
+                <span class="govuk-hint">&nbsp;{{ embeddedQuestionAnswer.answer }}</span>
+              </div>
+              <div class="govuk-grid-column-one-third embeddedQuestionAnswer">
+                <span class="govuk-hint">&nbsp;</span>
               </div>
             </div>
           </div>

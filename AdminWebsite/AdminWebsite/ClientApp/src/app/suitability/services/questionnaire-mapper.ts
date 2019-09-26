@@ -50,19 +50,26 @@ export abstract class QuestionnaireMapper {
   }
 
   private getEmbeddedNotes(questionAnswer: QuestionAnswer) {
+    let hasAnyAnswers = false;
+    const map = new Array<EmbeddedSuitabilityQuestionAnswer>();
+
     if (questionAnswer.EmbeddedAnswersInNotes !== undefined && questionAnswer.EmbeddedAnswersInNotes.length > 0) {
-      const map = new Array<EmbeddedSuitabilityQuestionAnswer>();
       questionAnswer.EmbeddedAnswersInNotes.forEach(x => {
 
         if (this.attributes.Questions.has(x)) {
           const question = this.attributes.Questions.get(x);
           const findAnswer = this.answers.find(y => y.key === x);
+          const answer = findAnswer !== undefined ? findAnswer.answer : '';
 
-          map.push({question: question.Question, answer: findAnswer !== undefined ? findAnswer.answer : ''});
+          if (answer !== '') {
+            hasAnyAnswers = true;
+          }
+
+          map.push({question: question.Question, answer: answer});
         }
       });
 
-      return map;
+      return hasAnyAnswers ? map : null;
     }
   }
 
