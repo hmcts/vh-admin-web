@@ -53,3 +53,11 @@
 .vh-answer-group-heading {
   margin-bottom: 5px;
 }
+
+.embeddedQuestionAnswer{
+  padding: 0;
+}
+
+.embeddedQuestionAnswer span{
+  margin-bottom: 0px;
+}
