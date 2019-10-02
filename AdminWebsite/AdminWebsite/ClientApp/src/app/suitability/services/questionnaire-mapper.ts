@@ -1,42 +1,43 @@
-import {SuitabilityAnswer} from '../participant-questionnaire';
+import {EmbeddedSuitabilityQuestionAnswer, SuitabilityAnswer} from '../participant-questionnaire';
 import {SuitabilityAnswerResponse} from '../../services/clients/api-client';
-import {QuestionsMapAttributes} from './suitability-answer.mapper';
+import {QuestionAnswer, QuestionsMapAttributes} from './suitability-answer.mapper';
 
-export class QuestionnaireMapper {
+export abstract class QuestionnaireMapper {
 
-  constructor(answers: SuitabilityAnswerResponse[], mapAttributes: QuestionsMapAttributes) {
+  protected constructor(answers: SuitabilityAnswerResponse[], mapAttributes: QuestionsMapAttributes) {
     this.answers = answers;
     this.attributes = mapAttributes;
   }
 
-  answers: SuitabilityAnswerResponse[];
-  attributes: QuestionsMapAttributes;
+  protected answers: SuitabilityAnswerResponse[];
+  protected attributes: QuestionsMapAttributes;
 
   public mapAnswers(): SuitabilityAnswer[] {
     return this.attributes.QuestionsOrder.map(s => {
       const questionAnswer = this.attributes.Questions.get(s);
-      const data = this.mapAnswer(s, questionAnswer.DefaultAnswer);
+      const data = this.mapAnswer(s, questionAnswer);
 
       return new SuitabilityAnswer(
         {
           question: questionAnswer.Question,
           answer: data.answer,
-          notes: data.note
+          notes: data.note,
+          embeddedQuestionAnswers: data.embeddedQuestionAnswers
         });
     });
   }
 
-  private mapAnswer(key: string, defaultAnswer: string) {
+  private mapAnswer(key: string, questionAnswer: QuestionAnswer) {
     const findAnswer = this.answers.find(x => x.key === key);
     return {
       answer: !!findAnswer
         ? this.translateAnswer(findAnswer.answer)
-        : defaultAnswer === undefined ? 'Not answered' : defaultAnswer,
-      note: !!findAnswer ? findAnswer.extended_answer : ''
+        : questionAnswer.DefaultAnswer === undefined ? 'Not answered' : questionAnswer.DefaultAnswer,
+      note: !!findAnswer ? findAnswer.extended_answer : '',
+      embeddedQuestionAnswers: this.getEmbeddedNotes(questionAnswer)
     };
   }
 
-  // Translates answers into readable format
   private translateAnswer(answer: string) {
     switch (answer) {
       case 'true':
@@ -44,7 +45,39 @@ export class QuestionnaireMapper {
       case 'false':
         return 'No';
       default:
-        return answer;
+        return this.getFromTranslationMap(answer);
     }
+  }
+
+  private getEmbeddedNotes(questionAnswer: QuestionAnswer) {
+    let hasAnyAnswers = false;
+    const map = new Array<EmbeddedSuitabilityQuestionAnswer>();
+
+    if (questionAnswer.EmbeddedAnswersInNotes !== undefined && questionAnswer.EmbeddedAnswersInNotes.length > 0) {
+      questionAnswer.EmbeddedAnswersInNotes.forEach(x => {
+
+        if (this.attributes.Questions.has(x)) {
+          const question = this.attributes.Questions.get(x);
+          const findAnswer = this.answers.find(y => y.key === x);
+          const answer = findAnswer !== undefined ? findAnswer.answer : '';
+
+          if (answer !== '') {
+            hasAnyAnswers = true;
+          }
+
+          map.push({question: question.Question, answer: answer});
+        }
+      });
+
+      return hasAnyAnswers ? map : null;
+    }
+  }
+
+  protected getFromTranslationMap(answer: string): string {
+    if (this.attributes.AnswerOverrides.has(answer)) {
+      return this.attributes.AnswerOverrides.get(answer);
+    }
+
+    return answer;
   }
 }

@@ -1,4 +1,4 @@
-import { ParticipantQuestionnaire, SuitabilityAnswerGroup } from './../participant-questionnaire';
+import { ParticipantQuestionnaire, SuitabilityAnswerGroup } from '../participant-questionnaire';
 import { Component, OnInit, Input } from '@angular/core';
 
 @Component({

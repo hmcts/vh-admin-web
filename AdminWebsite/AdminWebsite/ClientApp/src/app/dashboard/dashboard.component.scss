@@ -47,7 +47,7 @@ $govuk-global-styles: true;
     font-weight: 700;
     font-size: 72px;
 }
-  
+
 .vhpanel-body {
     font-family: "nta", Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
@@ -73,7 +73,7 @@ $govuk-global-styles: true;
 
 #vhpanel-red {
     color: #ffffff;
-    background: #b10e1e;
+    background: #d4351c;
 }
 
 .vhpanel-link:link {
@@ -154,7 +154,7 @@ $govuk-global-styles: true;
 
 #cellred {
     font-size: 14px;
-    color: #b10e1e;
+    color: #d4351c;
     font-weight: 400;
 }
 
@@ -194,7 +194,7 @@ h3.vhheading {
 }
 
 #vhredbutton {
-  background-color: #b10e1e;
+  background-color: #d4351c;
   -webkit-box-shadow: 0 2px 0 #360000;
   box-shadow: 0 2px 0 #360000;
   margin-bottom: 0px;
@@ -212,7 +212,7 @@ h3.vhheading {
     box-shadow: 0 2px 0 #6f777b;
     color: #0b0c0c;
 }
-  
+
 #vh2button:hover {
     background-color: #bfc1c3;
 }
@@ -237,7 +237,7 @@ h3.vhheading {
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
     display: none !important;
   }
-  
+
   .vh-breadcrumbs {
     display: inline-block;
     position: relative;
@@ -248,7 +248,7 @@ h3.vhheading {
     float: left;
     list-style-type: none;
     font-size: 18px;
-    
+
   }
   .vh-breadcrumbs:after {
     content: "";

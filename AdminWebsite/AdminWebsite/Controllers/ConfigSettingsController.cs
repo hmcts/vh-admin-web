@@ -30,14 +30,12 @@ namespace AdminWebsite.Controllers
         [SwaggerOperation(OperationId = "GetConfigSettings")]
         public ActionResult<ClientSettingsResponse> Get()
         {
-            var baseUrl = $"{Request.Scheme}://{Request.Host}{Request.PathBase}";
-
             var clientSettings = new ClientSettingsResponse
             {
                 ClientId = _securitySettings.ClientId,
                 TenantId = _securitySettings.TenantId,
-                RedirectUri = $"{baseUrl}/login",
-                PostLogoutRedirectUri = $"{baseUrl}/",
+                RedirectUri = _securitySettings.RedirectUri,
+                PostLogoutRedirectUri = _securitySettings.PostLogoutRedirectUri,
                 InstrumentationKey = _securitySettings.InstrumentationKey
             };
 

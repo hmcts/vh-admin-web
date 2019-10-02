@@ -74,6 +74,7 @@ export class BookingsListComponent implements OnInit, AfterViewInit {
   }
 
   private loadData(bookingsResponse: BookingsResponse) {
+    // we get new portion of data
     if (!bookingsResponse) {
       this.error = true;
       return;
@@ -86,6 +87,7 @@ export class BookingsListComponent implements OnInit, AfterViewInit {
     this.cursor = bookingsModel.NextCursor;
 
     if (bookingsModel.Hearings) {
+      // append a new portion of data to list
       this.bookings = this.bookingsListService.addBookings(bookingsModel, this.bookings);
     }
     this.bookingResponse = bookingsModel;

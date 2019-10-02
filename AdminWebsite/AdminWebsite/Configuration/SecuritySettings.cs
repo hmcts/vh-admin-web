@@ -39,5 +39,15 @@
         /// Application insights instrumentation key to specify target of logging
         /// </summary>
         public string InstrumentationKey { get; set; }
+
+        /// <summary>
+        /// The redirect uri on successful login
+        /// </summary>
+        public string RedirectUri { get; set; }
+        
+        /// <summary>
+        /// The redirect uri on successful logout
+        /// </summary>
+        public string PostLogoutRedirectUri { get; set; }
     }
 }
