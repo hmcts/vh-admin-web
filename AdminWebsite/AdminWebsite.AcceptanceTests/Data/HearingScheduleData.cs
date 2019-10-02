@@ -18,32 +18,5 @@ namespace AdminWebsite.AcceptanceTests.Data
 
         public string Room { get; set; }
         public string Duration { get; set; }
-
-        public string GetHearingDurationAsText()
-        {
-            int hours = int.Parse(Duration.Substring(0, 2));
-            int minutes = int.Parse(Duration.Substring(3));
-            return $"listed for {hours} {GetHoursText(hours)} {minutes} {GetMinutesText(minutes)}";
-        }
-
-        private string GetHoursText(int hours)
-        {
-            if (hours == 0)
-                return "";
-            else if (hours > 1)
-                return "hours";
-            else
-                return "hour";
-        }
-
-        private string GetMinutesText(int minutes)
-        {
-            if (minutes == 0)
-                return "";
-            else if(minutes > 1)
-                return "minutes";
-            else
-                return "minute";
-        }
-    }  
+    }
 }

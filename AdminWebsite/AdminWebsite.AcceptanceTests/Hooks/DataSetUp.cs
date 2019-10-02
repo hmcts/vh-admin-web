@@ -68,7 +68,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             var endpoint = new BookingsApiUriFactory().HealthCheckEndpoints;
             testContext.Request = testContext.Get(endpoint.HealthCheck);
             testContext.Response = testContext.BookingsApiClient().Execute(testContext.Request);
-            testContext.Response.StatusCode.Should().Be(HttpStatusCode.OK, "Unable to connect to the Bookings Api at " + testContext.BookingsApiBaseUrl);
+            testContext.Response.StatusCode.Should().Be(HttpStatusCode.OK, "Unable to connect to the Bookings Api");
         }
 
         public static void CheckUserApiHealth(TestContext testContext)
@@ -76,7 +76,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             var endpoint = new UserApiUriFactory().HealthCheckEndpoints;
             testContext.Request = testContext.Get(endpoint.CheckServiceHealth());
             testContext.Response = testContext.UserApiClient().Execute(testContext.Request);
-            testContext.Response.StatusCode.Should().Be(HttpStatusCode.OK, "Unable to connect to the User Api at " + testContext.UserApiBaseUrl);
+            testContext.Response.StatusCode.Should().Be(HttpStatusCode.OK, "Unable to connect to the User Api");
         }
 
         [BeforeScenario(Order = 2)]

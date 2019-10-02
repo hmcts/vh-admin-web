@@ -7,7 +7,6 @@ using AdminWebsite.AcceptanceTests.Data;
 using TechTalk.SpecFlow;
 using BookingDetails = AdminWebsite.AcceptanceTests.Pages.BookingDetails;
 using TestContext = AdminWebsite.AcceptanceTests.Contexts.TestContext;
-using System;
 
 namespace AdminWebsite.AcceptanceTests.Steps
 {
@@ -75,9 +74,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             switch (_bookingDetails.GetItems("RelevantPage"))
             {
                 case PageUri.AssignJudgePage:
-                    var expectedClerk = _bookingDetails.GetItems("Clerk").Replace(".", "");
-                    expectedClerk = expectedClerk.Substring(0, expectedClerk.IndexOf("@") - 1);
-                    _bookingDetails.JudgeEmail().Replace(" ", "").Should().Contain(expectedClerk);
+                    _bookingDetails.JudgeEmail().Should().Contain(_bookingDetails.GetItems("Clerk"));
                     break;
                 case PageUri.HearingDetailsPage:
                     _bookingDetails.CaseName().Should().Be(_context.TestData.HearingData.CaseName);
@@ -86,7 +83,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
                 case PageUri.HearingSchedulePage:
                     _bookingDetails.HearingDate().ToLower().Should().Be(_bookingDetails.GetItems("HearingDate"));
                     _bookingDetails.CourtAddress().Should().Be($"{HearingScheduleData.CourtAddress.Last()}, {_context.TestData.HearingScheduleData.Room}");
-                    _bookingDetails.HearingDuration().Should().Be(_context.TestData.HearingScheduleData.GetHearingDurationAsText());
+                    _bookingDetails.HearingDuration().Should().Be("listed for 30 minutes");
                     break;                
                 case PageUri.OtherInformationPage:
                     _bookingDetails.OtherInformation().Should().Be(OtherInformation.OtherInformationText);

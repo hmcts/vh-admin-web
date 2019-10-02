@@ -29,7 +29,6 @@ namespace AdminWebsite.AcceptanceTests.Helpers
             NgDriver = new NgWebDriver(driver);
             TryMaximize();
             NgDriver.IgnoreSynchronization = true;
-            NgDriver.Manage().Timeouts().AsynchronousJavaScript = TimeSpan.FromSeconds(10);
             _baseUrl = baseUrl;
         }
 

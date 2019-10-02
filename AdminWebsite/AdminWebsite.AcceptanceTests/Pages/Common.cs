@@ -50,25 +50,12 @@ namespace AdminWebsite.AcceptanceTests.Pages
         }
 
         protected void InputValues(By element, string value) => _browser.NgDriver.WaitUntilElementVisible(element).SendKeys(value);
-        protected void ClickElement(By element)
-        {
-            _browser.Retry(() => _browser.NgDriver.WaitUntilElementClickable(element).Click());
-        }
-        protected void ClickCheckboxElement(By element)
-        {
-            _browser.Retry(() => _browser.NgDriver.FindElement(element).Click());
-        }
+        protected void ClickElement(By element) => _browser.NgDriver.WaitUntilElementVisible(element).Click();
+        protected void ClickCheckboxElement(By element) => _browser.NgDriver.FindElement(element).Click();
 
         protected void ClearFieldInputValues(By element, string value)
         {
-            IWebElement webElement = null;
-
-            _browser.Retry(() =>
-            {
-                _browser.NgDriver.WaitUntilElementVisible(element);
-                webElement = _browser.NgDriver.WaitUntilElementClickable(element);
-            }, 1);
-
+            var webElement = _browser.NgDriver.WaitUntilElementVisible(element);
             webElement.Clear();
             webElement.SendKeys(value);
         }

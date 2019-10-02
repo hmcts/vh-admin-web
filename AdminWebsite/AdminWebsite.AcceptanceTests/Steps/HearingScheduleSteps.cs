@@ -90,8 +90,8 @@ namespace AdminWebsite.AcceptanceTests.Steps
         }
 
         [Given(@"user adds hearing schedule")]
-        [When(@"hearing schedule is updated to (.*)")]
-        public void WhenHearingScheduleIsUpdated(string duration)
+        [When(@"hearing schedule is updated")]
+        public void WhenHearingScheduleIsUpdated()
         {
             HearingSchedulePage();
             var date = DateTime.UtcNow.AddDays(2);
@@ -99,8 +99,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _hearingSchedule.AddItems("HearingDate", date.ToString("dddd dd MMMM yyyy, h:mmtt").ToLower());
             _hearingSchedule.HearingDate(_context.TargetBrowser, _context.RunWithSaucelabs, splitDate);
             _hearingSchedule.HearingStartTime(date.ToString("HH:mm").Split(':'));
-            InputHearingDuration(_context.TestData.HearingScheduleData.Duration = duration);
-            Console.WriteLine($"Hearing schedule updated to {_context.TestData.HearingScheduleData.Duration}");
+            InputHearingDuration(_context.TestData.HearingScheduleData.Duration);
             _hearingSchedule.HearingVenue(HearingScheduleData.CourtAddress.Last());
             EnterRoom(_context.TestData.HearingScheduleData.Room);
         }
