@@ -68,7 +68,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             var endpoint = new BookingsApiUriFactory().HealthCheckEndpoints;
             testContext.Request = testContext.Get(endpoint.HealthCheck);
             testContext.Response = testContext.BookingsApiClient().Execute(testContext.Request);
-            testContext.Response.StatusCode.Should().Be(HttpStatusCode.OK, "Unable to connect to the Bookings Api");
+            testContext.Response.StatusCode.Should().Be(HttpStatusCode.OK, $"Unable to connect to the Bookings Api at {testContext.BookingsApiBaseUrl}");
         }
 
         public static void CheckUserApiHealth(TestContext testContext)
@@ -82,35 +82,17 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         [BeforeScenario(Order = 2)]
         public static void ClearAnyHearings(TestContext context, HearingsEndpoints endpoints)
         {
-            ClearHearings(context, endpoints, context.GetIndividualUsers());
-            ClearHearings(context, endpoints, context.GetRepresentativeUsers());
-        }
-
-        private static void ClearHearings(TestContext context, HearingsEndpoints endpoints, IEnumerable<UserAccount> users)
-        {
-            foreach (var user in users)
-            {
-                context.Request = context.Get(endpoints.GetHearingsByUsername(user.Username));
-                context.Response = context.BookingsApiClient().Execute(context.Request);
-                var hearings =
-                    ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<List<HearingDetailsResponse>>(context.Response
-                        .Content);
-                foreach (var hearing in hearings)
-                {
-                    context.Request = context.Delete(endpoints.RemoveHearing(hearing.Id));
-                    context.Response = context.BookingsApiClient().Execute(context.Request);
-                }
-            }
+            DataSetupHelper dataSetupHelper = new DataSetupHelper();
+            dataSetupHelper.ClearHearings(context, endpoints, context.GetIndividualUsers());
+            dataSetupHelper.ClearHearings(context, endpoints, context.GetRepresentativeUsers());
         }
 
         [AfterScenario(Order = 10)]
         public static void RemoveHearing(TestContext context, HearingsEndpoints endpoints)
         {
-            if (context.HearingId == Guid.Empty) return;
-            context.Request = context.Delete(endpoints.RemoveHearing(context.HearingId));
-            context.Response = context.BookingsApiClient().Execute(context.Request);
-            context.Response.IsSuccessful.Should().BeTrue("New hearing has been deleted after the test");
-            context.HearingId = Guid.Empty;
+            DataSetupHelper dataSetupHelper = new DataSetupHelper();
+            dataSetupHelper.ClearHearings(context, endpoints, context.GetIndividualUsers());
+            dataSetupHelper.ClearHearings(context, endpoints, context.GetRepresentativeUsers());
         }
     }
 }
