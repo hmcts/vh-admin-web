@@ -119,9 +119,19 @@ namespace AdminWebsite.AcceptanceTests.Contexts
             return UserAccounts.First(x => x.Role.StartsWith("Video hearings officer") && x.Displayname.Contains("FR"));
         }
 
+        public UserAccount GetIndividualUser()
+        {
+            return UserAccounts.First(x => x.Role.StartsWith("Individual"));
+        }
+
         public List<UserAccount> GetIndividualUsers()
         {
             return UserAccounts.Where(x => x.Role.StartsWith("Individual")).ToList();
+        }
+        
+        public UserAccount GetRepresentativeUser()
+        {
+            return UserAccounts.First(x => x.Role.StartsWith("Representative"));
         }
 
         public List<UserAccount> GetRepresentativeUsers()
