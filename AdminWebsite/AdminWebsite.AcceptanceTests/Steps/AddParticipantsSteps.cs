@@ -7,6 +7,7 @@ using AdminWebsite.AcceptanceTests.Configuration;
 using AdminWebsite.AcceptanceTests.Contexts;
 using AdminWebsite.AcceptanceTests.Data;
 using TechTalk.SpecFlow;
+using System.Collections.Generic;
 
 namespace AdminWebsite.AcceptanceTests.Steps
 {
@@ -53,6 +54,8 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [When(@"the admin adds parties with existing users")]
         public void UserAddsPartiesWithExistingUsers()
         {
+            AddExistingParticipantToDb();
+
             NavigateToPage();
             var party1 = GetPartyTypes(out var party2);
 
@@ -68,6 +71,17 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
             ThenParticipantDetailAreDisplayedInTheList();
             _addParticipant.ClickNextButton();
+        }
+
+        private void AddExistingParticipantToDb()
+        {
+            var endpoints = new HearingsEndpoints();
+            DataSetupHelper dataSetupHelper = new DataSetupHelper();
+
+            if (dataSetupHelper.GetParticipantsNotInTheDb(_context).Count() > 0)
+            {
+                dataSetupHelper.CreateNewHearingRequest(_context, endpoints);
+            }
         }
 
         [Given(@"the admin added participants using (.*) user details")]

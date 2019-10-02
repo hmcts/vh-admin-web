@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -13,8 +13,35 @@ namespace AdminWebsite.AcceptanceTests.Helpers
 {
     public class DataSetupHelper
     {
-        public DataSetupHelper()
+        public PersonResponse GetPersonByUsername(TestContext context, string username, PersonEndpoints endpoints)
         {
+            context.Request = context.Get(endpoints.GetPersonByUsername(username));
+            context.Response = context.BookingsApiClient().Execute(context.Request);
+            var person =
+                ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<PersonResponse>(context.Response
+                    .Content);
+
+            return person;
+        }
+
+        public IEnumerable<UserAccount> GetParticipantsNotInTheDb(TestContext testContext)
+        {
+            var endpoints = new PersonEndpoints();
+            List<UserAccount> participantsToAddToDb = new List<UserAccount>();
+
+            foreach (var user in testContext.UserAccounts)
+            {
+                if (user.Role.Equals("individual", StringComparison.OrdinalIgnoreCase)
+                    || user.Role.Equals("representative", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (GetPersonByUsername(testContext, user.Username, endpoints) == null)
+                    {
+                        participantsToAddToDb.Add(user);
+                    }
+                }
+            }
+
+            return participantsToAddToDb;
         }
 
         public void CreateNewHearingRequest(TestContext testContext, HearingsEndpoints endpoints)
@@ -32,28 +59,7 @@ namespace AdminWebsite.AcceptanceTests.Helpers
             testContext.GetRepresentativeUser().Id = (Guid)representative.Id;
         }
 
-        public IEnumerable<UserAccount> GetParticipantsNotInTheDb(TestContext testContext)
-        {
-            var endpoints = new PersonEndpoints();
-            var personHelper = new PersonHelper();
-            List<UserAccount> participantsToAddToDb = new List<UserAccount>();
-
-            foreach (var user in testContext.UserAccounts)
-            {
-                if (user.Role.Equals("individual", StringComparison.OrdinalIgnoreCase)
-                    || user.Role.Equals("representative", StringComparison.OrdinalIgnoreCase))
-                {
-                    if (personHelper.GetPersonByUsername(testContext, user.Username, endpoints) == null)
-                    {
-                        participantsToAddToDb.Add(user);
-                    }
-                }
-            }
-
-            return participantsToAddToDb;
-        }
-
-        public static void ClearHearings(TestContext context, HearingsEndpoints endpoints, IEnumerable<UserAccount> users)
+        public void ClearHearings(TestContext context, HearingsEndpoints endpoints, IEnumerable<UserAccount> users)
         {
             foreach (var user in users)
             {
@@ -62,11 +68,7 @@ namespace AdminWebsite.AcceptanceTests.Helpers
                 var hearings =
                     ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<List<HearingDetailsResponse>>(context.Response
                         .Content);
-                foreach (var hearing in hearings)
-                {
-                    context.Request = context.Delete(endpoints.RemoveHearing(hearing.Id));
-                    context.Response = context.BookingsApiClient().Execute(context.Request);
-                }
+                RemoveHearings(context, endpoints, hearings);
             }
         }
 
@@ -78,6 +80,16 @@ namespace AdminWebsite.AcceptanceTests.Helpers
                 context.Response = context.BookingsApiClient().Execute(context.Request);
                 context.Response.IsSuccessful.Should().BeTrue("Test hearings should have been deleted");
             }
+        }
+
+
+        public void RemoveHearing(TestContext context, HearingsEndpoints endpoints, IEnumerable<HearingDetailsResponse> hearingsList)
+        {
+            if (context.HearingId == Guid.Empty) return;
+            context.Request = context.Delete(endpoints.RemoveHearing(context.HearingId));
+            context.Response = context.BookingsApiClient().Execute(context.Request);
+            context.Response.IsSuccessful.Should().BeTrue("New hearing has been deleted after the test");
+            context.HearingId = Guid.Empty;
         }
     }
 }
