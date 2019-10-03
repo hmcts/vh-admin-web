@@ -194,7 +194,10 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
 
     this.availableHearingTypes = hearingTypes;
     this.availableHearingTypes.sort(this.dynamicSort('name'));
-    this.availableCaseTypes = this.availableHearingTypes.map(h => h.group);
+    this.availableCaseTypes = this.availableHearingTypes
+      .map(h => h.group)
+      .filter((value, index, self) => self.indexOf(value) === index)
+      .sort();
 
     if (this.availableCaseTypes.length === 1) {
       this.selectedCaseType = this.availableCaseTypes[0];
