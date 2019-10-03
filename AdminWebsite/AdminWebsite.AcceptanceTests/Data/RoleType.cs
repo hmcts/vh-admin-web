@@ -6,6 +6,8 @@
         ClaimantLIP,
         DefendantLIP,
         RespondentLIP,
-        Solicitor
+        Solicitor,
+        Individual,
+        Representative
     }
 }
