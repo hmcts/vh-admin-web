@@ -5,6 +5,7 @@ using System;
 using System.Linq;
 using AdminWebsite.AcceptanceTests.Contexts;
 using TechTalk.SpecFlow;
+using AdminWebsite.AcceptanceTests.Configuration;
 
 namespace AdminWebsite.AcceptanceTests.Steps
 {
@@ -90,7 +91,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [Then(@"case type dropdown should not be populated")]
         public void ThenCaseTypeDropdownShouldNotBePopulated()
         {
-            switch (_scenarioContext.Get<string>("User"))
+            switch (_scenarioContext.Get<UserAccount>("User").Role)
             {
                 case "CaseAdminFinRemedyCivilMoneyClaims":
                     _hearingDetails.CaseTypesList().ToList().Count.Should().Be(2);
