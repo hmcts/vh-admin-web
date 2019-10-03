@@ -3,13 +3,14 @@ import { ParticipantModel } from '../../common/model/participant.model';
 import { HearingModel } from '../../common/model/hearing.model';
 import { CaseAndHearingRolesResponse } from '../../services/clients/api-client';
 import { PartyModel } from '../../common/model/party.model';
+import { Logger } from '../../services/logger';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ParticipantService {
 
-  constructor() { }
+  constructor(private logger: Logger) { }
 
   mapParticipantsRoles(caseRoles: CaseAndHearingRolesResponse[]) {
     const participantRoles = caseRoles.map(s => {
@@ -22,6 +23,7 @@ export class ParticipantService {
 
   public checkDuplication(email: string, participants: ParticipantModel[]): boolean {
     if (!email) {
+      this.logger.error('Cannot check for duplication on undefined email', new Error());
       throw new Error(`Cannot check for duplication on undefined email`);
     }
     let existParticipant = false;

@@ -17,6 +17,7 @@ import { ParticipantService } from '../services/participant.service';
 import { CaseAndHearingRolesResponse } from '../../services/clients/api-client';
 import { PartyModel } from '../../common/model/party.model';
 import { Address } from './address';
+import { Logger } from '../../services/logger';
 
 @Component({
   selector: 'app-add-participant',
@@ -91,7 +92,8 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     protected videoHearingService: VideoHearingsService,
     private participantService: ParticipantService,
     protected router: Router,
-    protected bookingService: BookingService) {
+    protected bookingService: BookingService,
+    private logger: Logger) {
 
     super(bookingService, router, videoHearingService);
     this.titleList = searchService.TitleList;
@@ -147,7 +149,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
               }
               self.repopulateParticipantToEdit();
             }
-          }).catch(error => console.error(error));
+          }).catch(error => this.logger.error('Error to get participant case and hearing roles.',error));
     }, 500);
   }
 

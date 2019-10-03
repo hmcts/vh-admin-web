@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { HearingDetailsResponse } from 'src/app/services/clients/api-client';
 import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 import { PageUrls } from 'src/app/shared/page-url.constants';
+import { Logger } from '../../services/logger';
 
 @Component({
   selector: 'app-booking-confirmation',
@@ -21,7 +22,8 @@ export class BookingConfirmationComponent implements OnInit {
 
   constructor(
     private hearingService: VideoHearingsService,
-    private router: Router) { }
+    private router: Router,
+    private logger: Logger) { }
 
   ngOnInit() {
     this.retrieveSavedHearing();
@@ -36,7 +38,7 @@ export class BookingConfirmationComponent implements OnInit {
           this.caseName = data.cases[0].name;
           this.hearingDate = new Date(data.scheduled_date_time);
         },
-        error => console.error(error)
+        error => this.logger.error('Cannot get the hearing by Id.', error)
       );
   }
 

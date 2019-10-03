@@ -9,6 +9,8 @@ import { ParticipantModel } from 'src/app/common/model/participant.model';
 import { of } from 'rxjs';
 import { CaseModel } from 'src/app/common/model/case.model';
 import { LongDatetimePipe } from '../../../app/shared/directives/date-time.pipe';
+import { Logger } from '../../services/logger';
+import { Route } from '@angular/compiler/src/core';
 
 function initHearingRequest(): HearingModel {
 
@@ -74,7 +76,8 @@ function initHearingRequest(): HearingModel {
 describe('BookingConfirmationComponent', () => {
   let component: BookingConfirmationComponent;
   let fixture: ComponentFixture<BookingConfirmationComponent>;
-  let routerSpy: jasmine.SpyObj<Router>;
+  let routerSpy: jasmine.SpyObj<Route>;
+  let loggerSpy: jasmine.SpyObj<Logger>;
   let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
   const newHearing = initHearingRequest();
 
@@ -90,6 +93,7 @@ describe('BookingConfirmationComponent', () => {
       imports: [RouterTestingModule],
       providers: [
         { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
+        { provide: Logger, useValue: loggerSpy },
       ]
     })
       .compileComponents();

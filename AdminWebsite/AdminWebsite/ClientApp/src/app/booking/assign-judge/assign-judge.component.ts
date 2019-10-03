@@ -10,6 +10,7 @@ import { Constants } from 'src/app/common/constants';
 import { JudgeDataService } from 'src/app/booking/services/judge-data.service';
 import { BookingService } from '../../services/booking.service';
 import { BookingBaseComponent } from '../booking-base/booking-base.component';
+import { Logger } from '../../services/logger';
 
 @Component({
   selector: 'app-assign-judge',
@@ -39,7 +40,8 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     protected router: Router,
     protected hearingService: VideoHearingsService,
     private judgeService: JudgeDataService,
-    protected bookingService: BookingService) {
+    protected bookingService: BookingService,
+    private logger: Logger) {
     super(bookingService, router, hearingService);
   }
 
@@ -231,7 +233,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
           userResponse.display_name = '';
           this.availableJudges.unshift(userResponse);
         },
-        error => console.error(error)
+        error => this.logger.error('Error to get list of judges.', error)
       );
   }
 

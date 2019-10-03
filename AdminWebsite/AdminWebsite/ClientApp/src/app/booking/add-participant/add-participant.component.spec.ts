@@ -7,7 +7,6 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { BreadcrumbStubComponent } from 'src/app/testing/stubs/breadcrumb-stub';
 import { CancelPopupStubComponent } from 'src/app/testing/stubs/cancel-popup-stub';
 import { ConfirmationPopupStubComponent } from 'src/app/testing/stubs/confirmation-popup-stub';
-import { ParticipantsListStubComponent } from 'src/app/testing/stubs/participant-list-stub';
 import { RemovePopupStubComponent } from '../../testing/stubs/remove-popup-stub';
 import { DiscardConfirmPopupComponent } from '../../popups/discard-confirm-popup/discard-confirm-popup.component';
 
@@ -25,6 +24,7 @@ import { PartyModel } from '../../common/model/party.model';
 import { Constants } from '../../common/constants';
 import { ParticipantsListComponent } from '../participants-list/participants-list.component';
 import { Address } from './address';
+import { Logger } from '../../services/logger';
 
 let component: AddParticipantComponent;
 let fixture: ComponentFixture<AddParticipantComponent>;
@@ -48,6 +48,7 @@ let companyName: AbstractControl;
 let companyNameIndividual: AbstractControl;
 let representing: AbstractControl;
 let solicitorReference: AbstractControl;
+
 let houseNumber: AbstractControl;
 let street: AbstractControl;
 let city: AbstractControl;
@@ -130,8 +131,6 @@ p4.city = 'Test City';
 p4.county = 'Test County';
 p3.id = '1234';
 
-
-
 participants.push(p1);
 participants.push(p2);
 participants.push(p3);
@@ -187,6 +186,7 @@ const routerSpy: jasmine.SpyObj<Router> = {
 let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
 let participantServiceSpy: jasmine.SpyObj<ParticipantService>;
 let bookingServiceSpy: jasmine.SpyObj<BookingService>;
+let loggerSpy: jasmine.SpyObj<Logger>;
 
 participantServiceSpy = jasmine.createSpyObj<ParticipantService>('ParticipantService',
   ['checkDuplication', 'getAllParticipants', 'removeParticipant', 'mapParticipantsRoles']);
@@ -215,7 +215,8 @@ describe('AddParticipantComponent', () => {
       videoHearingsServiceSpy,
       participantServiceSpy,
       routerSpy,
-      bookingServiceSpy
+      bookingServiceSpy,
+      loggerSpy
     );
     component.searchEmail = new SearchEmailComponent(searchService);
     component.participantsListComponent = new ParticipantsListComponent(
@@ -589,6 +590,7 @@ describe('AddParticipantComponent edit mode', () => {
         { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
         { provide: ParticipantService, useValue: participantServiceSpy },
         { provide: BookingService, useValue: bookingServiceSpy },
+        { provide: Logger, useValue: loggerSpy },
       ]
     })
       .compileComponents();
@@ -835,7 +837,8 @@ describe('AddParticipantComponent edit mode no participants added', () => {
       videoHearingsServiceSpy,
       participantServiceSpy,
       jasmine.createSpyObj<Router>(['navigate']),
-      bookingServiceSpy
+      bookingServiceSpy,
+      loggerSpy
     );
     component.participantsListComponent = new ParticipantsListComponent(
       bookingServiceSpy,
@@ -1004,7 +1007,8 @@ describe('AddParticipantComponent set representer', () => {
       videoHearingsServiceSpy,
       participantServiceSpy,
       { ...routerSpy, ...jasmine.createSpyObj<Router>(['navigate']) } as jasmine.SpyObj<Router>,
-      bookingServiceSpy
+      bookingServiceSpy,
+      loggerSpy
     );
     component.ngOnInit();
 

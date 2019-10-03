@@ -26,9 +26,11 @@ import { PopupModule } from './popups/popup.module';
 import { SharedModule } from './shared/shared.module';
 import { ErrorComponent } from './error/error.component';
 import { ErrorService } from './services/error.service';
-import { LoggerService } from './services/logger.service';
+import { LoggerService, LOG_ADAPTER } from './services/logger.service';
 import { PageTrackerService } from './services/page-tracker.service';
 import { AppInsightsLogger } from './services/app-insights-logger.service';
+import { Logger } from './services/logger';
+import { ConsoleLogger } from './services/console-logger';
 import { Config } from './common/model/config';
 import { WindowRef } from './security/window-ref';
 import { CustomAdalInterceptor } from './custom-adal-interceptor';
@@ -68,6 +70,9 @@ export function getSettings(configService: ConfigService) {
     { provide: APP_INITIALIZER, useFactory: getSettings, deps: [ConfigService], multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: CustomAdalInterceptor, multi: true },
     { provide: BH_API_BASE_URL, useFactory: () => '.' },
+    { provide: LOG_ADAPTER, useClass: ConsoleLogger, multi: true },
+    { provide: LOG_ADAPTER, useClass: AppInsightsLogger, multi: true },
+    { provide: Logger, useClass: LoggerService },
     AdalService,
     AdalGuard,
     AdalInterceptor,

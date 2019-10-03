@@ -17,6 +17,7 @@ import { HearingModel } from '../../common/model/hearing.model';
 import { ParticipantModel } from '../../common/model/participant.model';
 import { By } from '@angular/platform-browser';
 import { Constants } from 'src/app/common/constants';
+import { Logger } from '../../services/logger';
 
 function initHearingRequest(): HearingModel {
 
@@ -36,7 +37,6 @@ function initHearingRequest(): HearingModel {
   p2.last_name = 'last2';
   p2.is_judge = false;
   p2.title = 'Mr.';
-
 
   participants.push(p1);
   participants.push(p2);
@@ -60,6 +60,7 @@ let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
 let judgeDataServiceSpy: jasmine.SpyObj<JudgeDataService>;
 let routerSpy: jasmine.SpyObj<Router>;
 let bookingServiseSpy: jasmine.SpyObj<BookingService>;
+let loggerSpy: jasmine.SpyObj<Logger>;
 
 describe('AssignJudgeComponent', () => {
 
@@ -85,6 +86,7 @@ describe('AssignJudgeComponent', () => {
         { provide: JudgeDataService, useValue: judgeDataServiceSpy },
         { provide: Router, useValue: routerSpy },
         { provide: BookingService, useValue: bookingServiseSpy },
+        { provide: Logger, useValue: loggerSpy },
       ],
       declarations: [AssignJudgeComponent, BreadcrumbStubComponent,
         CancelPopupComponent, ParticipantsListStubComponent, DiscardConfirmPopupComponent]

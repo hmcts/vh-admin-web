@@ -2,15 +2,16 @@ import { TestBed, inject } from '@angular/core/testing';
 import { ParticipantService } from './participant.service';
 import { HttpClientModule } from '@angular/common/http';
 import { CaseAndHearingRolesResponse } from '../../services/clients/api-client';
-import { PartyModel } from '../../common/model/party.model';
 import { ParticipantModel } from '../../common/model/participant.model';
 import { HearingModel } from '../../common/model/hearing.model';
+import { Logger } from '../../services/logger';
 
 describe('ParticipantService', () => {
+  let loggerSpy: jasmine.SpyObj<Logger>;
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientModule],
-      providers: [ParticipantService]
+      providers: [ParticipantService, { provide: Logger, useValue: loggerSpy }]
     });
   });
 
