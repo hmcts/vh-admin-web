@@ -39,6 +39,9 @@ export class ParticipantService {
   public removeParticipant(hearing: HearingModel, email: string) {
     const indexOfParticipant = hearing.participants.findIndex(x => x.email.toLowerCase() === email.toLowerCase());
     if (indexOfParticipant > -1) {
+      if (hearing.hearing_id && hearing.participants[indexOfParticipant].id) {
+        this.logger.info(`Participant Id: ${hearing.participants[indexOfParticipant].id} is removed from hearing Id: ${hearing.hearing_id}`);
+      }
       hearing.participants.splice(indexOfParticipant, 1);
     }
   }

@@ -103,6 +103,9 @@ export class SummaryComponent implements OnInit {
     const indexOfParticipant = this.hearing.participants
       .findIndex(x => x.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase());
     if (indexOfParticipant > -1) {
+      if (this.hearing.hearing_id && this.hearing.participants[indexOfParticipant].id) {
+        this.logger.info(`Participant Id: ${this.hearing.participants[indexOfParticipant].id} is removed from hearing Id: ${this.hearing.hearing_id}`);
+      }
       this.hearing.participants.splice(indexOfParticipant, 1);
       this.hearingService.updateHearingRequest(this.hearing);
       this.hearingService.setBookingHasChanged(true);
@@ -167,7 +170,7 @@ export class SummaryComponent implements OnInit {
             this.router.navigate([PageUrls.BookingConfirmation]);
           },
           error => {
-            this.logger.error('Error saving hearing.', error);
+            this.logger.error('Error saving new hearing.', error);
             this.setError(error);
           }
         );
@@ -181,7 +184,7 @@ export class SummaryComponent implements OnInit {
         this.hearingService.setBookingHasChanged(false);
         this.router.navigate([PageUrls.BookingDetails]);
       }, error => {
-        this.logger.error('Error updating hearing.', error);
+        this.logger.error(`Error updating hearing with ID: ${this.hearing.hearing_id}`, error);
         this.setError(error);
       });
   }

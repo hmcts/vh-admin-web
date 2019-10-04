@@ -52,7 +52,6 @@ export class AppInsightsLogger implements LogAdapter {
   }
 
   trackException(message: string, err: Error, properties: any) {
-    console.log('APP INS TRACK XXXXXX');
     properties = properties || {};
     properties.message = message;
 
