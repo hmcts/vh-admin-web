@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, HostListener, Output, ViewChild, OnInit, Input } from '@angular/core';
+import { Component, EventEmitter, Output, OnInit, Input } from '@angular/core';
 import { Subject } from 'rxjs';
 import { PersonResponse } from '../../services/clients/api-client';
 import { Constants } from '../../common/constants';

@@ -1,10 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
 
 import { Constants } from '../../common/constants';
-import { CanDeactiveComponent } from '../../common/guards/changes.guard';
 import { HearingTypeResponse } from '../../services/clients/api-client';
 import { HearingModel } from '../../common/model/hearing.model';
 import { ParticipantsListComponent } from '../participants-list/participants-list.component';
@@ -15,6 +13,7 @@ import { HearingDetailsResponse } from '../../services/clients/api-client';
 import { BookingService } from '../../services/booking.service';
 import { RemovePopupComponent } from '../../popups/remove-popup/remove-popup.component';
 import { FormatShortDuration } from '../../common/formatters/format-short-duration';
+import { Logger } from '../../services/logger';
 
 @Component({
   selector: 'app-summary',
@@ -57,8 +56,8 @@ export class SummaryComponent implements OnInit {
   constructor(private hearingService: VideoHearingsService,
     private router: Router,
     private referenceDataService: ReferenceDataService,
-    private bookingService: BookingService
-  ) {
+    private bookingService: BookingService,
+    private logger: Logger) {
     this.attemptingCancellation = false;
     this.showErrorSaving = false;
   }
@@ -168,6 +167,7 @@ export class SummaryComponent implements OnInit {
             this.router.navigate([PageUrls.BookingConfirmation]);
           },
           error => {
+            this.logger.error('Error saving hearing.', error);
             this.setError(error);
           }
         );
@@ -181,6 +181,7 @@ export class SummaryComponent implements OnInit {
         this.hearingService.setBookingHasChanged(false);
         this.router.navigate([PageUrls.BookingDetails]);
       }, error => {
+        this.logger.error('Error updating hearing.', error);
         this.setError(error);
       });
   }

@@ -82,7 +82,7 @@ describe('BookingConfirmationComponent', () => {
   const newHearing = initHearingRequest();
 
   beforeEach(async(() => {
-
+    loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error']);
     routerSpy = jasmine.createSpyObj('Router', ['navigate']);
     videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',
       ['getHearingMediums', 'getHearingTypes', 'getCurrentRequest', 'updateHearingRequest', 'getHearingById']);

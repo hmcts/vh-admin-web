@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { UserProfileResponse } from '../services/clients/api-client';
 import { UserIdentityService } from '../services/user-identity.service';
 import { of } from 'rxjs';
+import { Logger } from '../services/logger';
 
 const userProfileResponse: UserProfileResponse = new UserProfileResponse();
 
@@ -20,13 +21,15 @@ describe('admin-guard', () => {
   const router = {
     navigate: jasmine.createSpy('navigate')
   };
+  const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error']);
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
         AdminGuard,
         { provide: Router, useValue: router },
-        { provide: UserIdentityService, useClass: UserIdentityServiceSpy }
+        { provide: UserIdentityService, useClass: UserIdentityServiceSpy },
+        { provide: Logger, useValue: loggerSpy }
       ],
     }).compileComponents();
     adminGuard = TestBed.get(AdminGuard);

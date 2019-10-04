@@ -149,7 +149,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
               }
               self.repopulateParticipantToEdit();
             }
-          }).catch(error => this.logger.error('Error to get participant case and hearing roles.',error));
+          }).catch(error => this.logger.error('Error to get participant case and hearing roles.', error));
     }, 500);
   }
 

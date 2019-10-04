@@ -13,6 +13,7 @@ describe('ParticipantService', () => {
       imports: [HttpClientModule],
       providers: [ParticipantService, { provide: Logger, useValue: loggerSpy }]
     });
+    loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error']);
   });
 
   it('should be created', inject([ParticipantService], (service: ParticipantService) => {

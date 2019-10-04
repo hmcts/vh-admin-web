@@ -3,6 +3,7 @@ import { ClientSettingsResponse } from '../services/clients/api-client';
 import { Observable, of } from 'rxjs';
 import { HttpClient, HttpBackend } from '@angular/common/http';
 import { Config } from '../common/model/config';
+import { Logger } from '../services/logger';
 
 export let ENVIRONMENT_CONFIG: Config = new Config();
 
@@ -12,7 +13,7 @@ export class ConfigService {
   private settingsSessionKey = 'clientSettings';
   private httpClient: HttpClient;
 
-  constructor(handler: HttpBackend) {
+  constructor(handler: HttpBackend, private logger: Logger) {
     this.httpClient = new HttpClient(handler);
   }
 
@@ -32,7 +33,10 @@ export class ConfigService {
         this.parse(data);
         sessionStorage.setItem(this.settingsSessionKey, JSON.stringify(data));
         resolve(true);
-      }, err => reject(err));
+      }, err => {
+        this.logger.error('Cannot get configuration settings.', err);
+        reject(err);
+      });
     });
   }
 

@@ -30,16 +30,19 @@ import { CancelPopupStubComponent } from './testing/stubs/cancel-popup-stub';
 import { SaveFailedPopupComponent } from './popups/save-failed-popup/save-failed-popup.component';
 import { CancelBookingPopupComponent } from './popups/cancel-booking-popup/cancel-booking-popup.component';
 import { UnsupportedBrowserComponent } from './shared/unsupported-browser/unsupported-browser.component';
+import { Logger } from './services/logger';
 
 describe('app routing', () => {
   let location: Location;
   let router: Router;
   let fixture: ComponentFixture<DashboardComponent>;
   let adalSvc;
+  let loggerSpy: jasmine.SpyObj<Logger>;
+  loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error']);
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [ReactiveFormsModule, RouterTestingModule.withRoutes(routes), FormsModule ],
+      imports: [ReactiveFormsModule, RouterTestingModule.withRoutes(routes), FormsModule],
       declarations: [
         DashboardComponent,
         AppComponent,
@@ -63,7 +66,8 @@ describe('app routing', () => {
         AdminGuard,
         { provide: AdalService, useClass: MockAdalService },
         { provide: ChangesGuard, useClass: MockChangesGuard }, HttpClient, HttpHandler,
-        ErrorService
+        ErrorService,
+        { provide: Logger, useValue: loggerSpy }
       ],
     }).compileComponents();
 

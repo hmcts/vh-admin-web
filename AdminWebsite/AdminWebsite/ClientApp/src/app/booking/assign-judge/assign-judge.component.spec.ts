@@ -68,6 +68,7 @@ describe('AssignJudgeComponent', () => {
     const newHearing = initHearingRequest();
     routerSpy = jasmine.createSpyObj('Router', ['navigate', 'url']);
     routerSpy.url.and.returnValue('/summary');
+    loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error']);
 
     videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',
       ['getHearingMediums', 'getHearingTypes', 'getCurrentRequest',

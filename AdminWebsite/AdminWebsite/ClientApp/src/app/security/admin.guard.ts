@@ -1,14 +1,16 @@
-﻿import { Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { CanActivate, Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { UserIdentityService } from '../services/user-identity.service';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-
+import { Logger } from '../services/logger';
 
 @Injectable()
 export class AdminGuard implements CanActivate {
 
-  constructor(private userIdentityService: UserIdentityService, private router: Router) { }
+  constructor(private userIdentityService: UserIdentityService,
+    private router: Router,
+    private logger: Logger) { }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
     return this.userIdentityService.getUserInformation().pipe(
@@ -16,12 +18,13 @@ export class AdminGuard implements CanActivate {
         if (userProfile && (userProfile.is_vh_officer_administrator_role || userProfile.is_case_administrator)) {
           return true;
         } else {
+          this.logger.warn('User is not in administrator role');
           this.router.navigate(['/unauthorised']);
           return false;
         }
       }),
       catchError((err) => {
-        console.error(`Could not get user identity: ${err}`);
+        this.logger.error('Could not get user identity.', err);
         this.router.navigate(['/unauthorised']);
         return of(false);
       })

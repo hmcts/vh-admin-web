@@ -18,6 +18,7 @@ import { WaitPopupComponent } from '../../popups/wait-popup/wait-popup.component
 import { SaveFailedPopupComponent } from 'src/app/popups/save-failed-popup/save-failed-popup.component';
 import { HearingDetailsResponse } from '../../services/clients/api-client';
 import { LongDatetimePipe } from '../../../app/shared/directives/date-time.pipe';
+import { Logger } from '../../services/logger';
 
 function initExistingHearingRequest(): HearingModel {
 
@@ -69,8 +70,10 @@ function initBadHearingRequest(): HearingModel {
 let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
 let referenceDataServiceServiceSpy: jasmine.SpyObj<ReferenceDataService>;
 let routerSpy: jasmine.SpyObj<Router>;
+let loggerSpy: jasmine.SpyObj<Logger>;
 
 routerSpy = jasmine.createSpyObj('Router', ['navigate', 'url']);
+loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error']);
 
 referenceDataServiceServiceSpy = jasmine.createSpyObj<ReferenceDataService>('ReferenceDataService',
   ['getCourts']);
@@ -97,7 +100,8 @@ describe('SummaryComponent with valid request', () => {
       providers: [
         { provide: ReferenceDataService, useValue: referenceDataServiceServiceSpy },
         { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
-        { provide: Router, useValue: routerSpy }
+        { provide: Router, useValue: routerSpy },
+        { provide: Logger, useValue: loggerSpy },
       ],
       declarations: [
         SummaryComponent,
@@ -201,7 +205,8 @@ describe('SummaryComponent  with invalid request', () => {
       providers: [
         { provide: ReferenceDataService, useValue: referenceDataServiceServiceSpy },
         { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
-        { provide: Router, useValue: routerSpy }
+        { provide: Router, useValue: routerSpy },
+        { provide: Logger, useValue: loggerSpy },
       ],
       imports: [RouterTestingModule],
       declarations: [
@@ -247,7 +252,8 @@ describe('SummaryComponent  with existing request', () => {
       providers: [
         { provide: ReferenceDataService, useValue: referenceDataServiceServiceSpy },
         { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
-        { provide: Router, useValue: routerSpy }
+        { provide: Router, useValue: routerSpy },
+        { provide: Logger, useValue: loggerSpy },
       ],
       imports: [RouterTestingModule],
       declarations: [
@@ -313,6 +319,5 @@ describe('SummaryComponent  with existing request', () => {
 
     expect(videoHearingsServiceSpy.updateHearing).toHaveBeenCalled();
   });
-
 });
 

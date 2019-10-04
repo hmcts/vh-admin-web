@@ -188,6 +188,7 @@ let participantServiceSpy: jasmine.SpyObj<ParticipantService>;
 let bookingServiceSpy: jasmine.SpyObj<BookingService>;
 let loggerSpy: jasmine.SpyObj<Logger>;
 
+loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error']);
 participantServiceSpy = jasmine.createSpyObj<ParticipantService>('ParticipantService',
   ['checkDuplication', 'getAllParticipants', 'removeParticipant', 'mapParticipantsRoles']);
 
