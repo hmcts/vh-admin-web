@@ -91,15 +91,16 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [Then(@"case type dropdown should not be populated")]
         public void ThenCaseTypeDropdownShouldNotBePopulated()
         {
-            switch (_scenarioContext.Get<UserAccount>("User").Role)
+            _scenarioContext.Get<UserAccount>("User").Should().NotBeNull("user account should not be null");
+            switch (_scenarioContext.Get<UserAccount>("User").Role.ToLower())
             {
-                case "CaseAdminFinRemedyCivilMoneyClaims":
+                case "caseadminfinremedycivilmoneyclaims":
                     _hearingDetails.CaseTypesList().ToList().Count.Should().Be(2);
                     break;
-                case "Case Admin":
+                case "case admin":
                     _hearingDetails.CaseTypesList().Should().BeEmpty();
                     break;
-                default: throw new ArgumentOutOfRangeException($"User {_scenarioContext.Get<string>("User")} not defined");
+                default: throw new ArgumentOutOfRangeException($"User {_scenarioContext.Get<UserAccount>("User").Role} not defined");
             }
         }
 

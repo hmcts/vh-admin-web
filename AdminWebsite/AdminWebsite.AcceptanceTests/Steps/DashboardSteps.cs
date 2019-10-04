@@ -22,6 +22,8 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void ThenBookAVideoHearingPanelIsDisplayed(string panelText)
         {
             var panels = _dashboard.VhPanelTitle();
+
+            _scenarioContext.Get<UserAccount>("User").Should().NotBeNull("user account should not be null");
             switch (_scenarioContext.Get<UserAccount>("User").Role)
             {
                 case "VH Officer":

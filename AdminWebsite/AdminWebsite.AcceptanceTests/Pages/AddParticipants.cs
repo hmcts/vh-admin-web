@@ -43,7 +43,17 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public void ClientRepresenting(string client) => ClearFieldInputValues(By.Id("representing"), client);
         public void ExistingParticipant(string contactEmail)
         {
-            var webElement = GetListOfElements(By.CssSelector("a.vh-a-email")).Single(u => u.Text == contactEmail);
+            IWebElement webElement = null;
+
+            try
+            {
+                webElement = GetListOfElements(By.CssSelector("a.vh-a-email")).Single(u => u.Text == contactEmail);
+            } catch (InvalidOperationException exception)
+            {
+                Console.WriteLine(exception.Message);
+                webElement = null;
+            }
+
             if (webElement == null)
             {
                 throw new Exception($"Failed to find an existing person in response matching contact email: {contactEmail}");
