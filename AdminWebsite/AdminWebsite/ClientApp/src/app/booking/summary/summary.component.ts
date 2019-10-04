@@ -104,7 +104,9 @@ export class SummaryComponent implements OnInit {
       .findIndex(x => x.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase());
     if (indexOfParticipant > -1) {
       if (this.hearing.hearing_id && this.hearing.participants[indexOfParticipant].id) {
-        this.logger.info(`Participant Id: ${this.hearing.participants[indexOfParticipant].id} is removed from hearing Id: ${this.hearing.hearing_id}`);
+        const id = this.hearing.participants[indexOfParticipant].id;
+        this.logger.info(
+          `Participant Id: ${id} is removed from hearing Id: ${this.hearing.hearing_id}`);
       }
       this.hearing.participants.splice(indexOfParticipant, 1);
       this.hearingService.updateHearingRequest(this.hearing);
