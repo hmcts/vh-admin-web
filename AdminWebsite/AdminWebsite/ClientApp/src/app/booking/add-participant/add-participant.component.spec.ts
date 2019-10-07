@@ -1002,9 +1002,10 @@ describe('AddParticipantComponent set representer', () => {
     participantServiceSpy.mapParticipantsRoles.and.returnValue(partyList);
     bookingServiceSpy.isEditMode.and.returnValue(true);
     bookingServiceSpy.getParticipantEmail.and.returnValue('');
+    const searchServiceStab = jasmine.createSpyObj<SearchService>(['search']);
 
     component = new AddParticipantComponent(
-      jasmine.createSpyObj<SearchService>(['search']),
+      searchServiceStab,
       videoHearingsServiceSpy,
       participantServiceSpy,
       { ...routerSpy, ...jasmine.createSpyObj<Router>(['navigate']) } as jasmine.SpyObj<Router>,
@@ -1047,6 +1048,13 @@ describe('AddParticipantComponent set representer', () => {
     expect(component.form.get('companyName').value).toEqual('');
     expect(component.form.get('solicitorReference').value).toEqual('');
     expect(component.form.get('representing').value).toEqual('');
+  });
+  it('should set email of existing participant after initialize content of the component', () => {
+    component.editMode = true;
+    component.searchEmail = new SearchEmailComponent(jasmine.createSpyObj<SearchService>(['search']));
+    component.participantDetails = participants[0];
+    component.ngAfterContentInit();
+    expect(component.searchEmail.email).toBeTruthy();
   });
 });
 
