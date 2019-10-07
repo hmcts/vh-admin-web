@@ -3,16 +3,21 @@ import { HttpClientModule } from '@angular/common/http';
 import { ConfigService } from './config.service';
 import { BHClient, ClientSettingsResponse } from '../services/clients/api-client';
 import { of } from 'rxjs';
+import { Logger } from '../services/logger';
 
 describe('config service', () => {
   let bhClientSpy: jasmine.SpyObj<BHClient>;
   let clientSettings: ClientSettingsResponse;
   let configService: ConfigService;
+  const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error']);
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientModule],
-      providers: [ConfigService, { provide: BHClient, useValue: bhClientSpy }]
+      providers: [ConfigService,
+        { provide: BHClient, useValue: bhClientSpy },
+        { provide: Logger, useValue: loggerSpy },
+      ]
     });
     bhClientSpy = jasmine.createSpyObj<BHClient>('BHClient', ['getConfigSettings']);
     clientSettings = new ClientSettingsResponse();

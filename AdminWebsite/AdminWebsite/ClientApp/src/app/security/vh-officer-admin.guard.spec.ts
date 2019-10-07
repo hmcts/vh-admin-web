@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { AdminGuard } from './admin.guard';
+import { VhOfficerAdminGuard } from './vh-officer-admin.guard';
 import { Router } from '@angular/router';
 import { UserProfileResponse } from '../services/clients/api-client';
 import { UserIdentityService } from '../services/user-identity.service';
@@ -10,40 +10,37 @@ const userProfileResponse: UserProfileResponse = new UserProfileResponse();
 
 class UserIdentityServiceSpy {
   getUserInformation() {
-    userProfileResponse.is_case_administrator = true;
     userProfileResponse.is_vh_officer_administrator_role = true;
     return of(userProfileResponse);
   }
 }
-
-describe('admin-guard', () => {
-  let adminGuard: AdminGuard;
-  const router = {
-    navigate: jasmine.createSpy('navigate')
-  };
-  const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error']);
-
+class UserIdentityServiceSpy1 {
+  getUserInformation() {
+    userProfileResponse.is_vh_officer_administrator_role = false;
+    return of(userProfileResponse);
+  }
+}
+let vhOfficerGuard: VhOfficerAdminGuard;
+const router = {
+  navigate: jasmine.createSpy('navigate')
+};
+const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'warn']);
+describe('vh-officer-admin-guard', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
-        AdminGuard,
+        VhOfficerAdminGuard,
         { provide: Router, useValue: router },
         { provide: UserIdentityService, useClass: UserIdentityServiceSpy },
         { provide: Logger, useValue: loggerSpy }
       ],
     }).compileComponents();
-    adminGuard = TestBed.get(AdminGuard);
+    vhOfficerGuard = TestBed.get(VhOfficerAdminGuard);
   });
 
   describe('when logged in with vh office admin role', () => {
     it('canActivate should return true', () => {
-      expect(adminGuard.canActivate(null, null)).toBeTruthy();
-    });
-  });
-
-  describe('when login with case admin or vh officer admin role', () => {
-    it('canActivate should return true', () => {
-      expect(adminGuard.canActivate(null, null)).toBeTruthy();
+      expect(vhOfficerGuard.canActivate(null, null)).toBeTruthy();
     });
   });
 });

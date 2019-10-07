@@ -2,15 +2,18 @@ import { TestBed, inject } from '@angular/core/testing';
 import { ParticipantService } from './participant.service';
 import { HttpClientModule } from '@angular/common/http';
 import { CaseAndHearingRolesResponse } from '../../services/clients/api-client';
-import { PartyModel } from '../../common/model/party.model';
 import { ParticipantModel } from '../../common/model/participant.model';
 import { HearingModel } from '../../common/model/hearing.model';
+import { Logger } from '../../services/logger';
 
 describe('ParticipantService', () => {
+  let loggerSpy: jasmine.SpyObj<Logger>;
+  loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'info']);
+
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientModule],
-      providers: [ParticipantService]
+      providers: [ParticipantService, { provide: Logger, useValue: loggerSpy }]
     });
   });
 
@@ -82,6 +85,18 @@ describe('ParticipantService', () => {
     hearing.participants = participants;
     const result = service.removeParticipant(hearing, 'bb@bb.bb');
     expect(hearing.participants.length).toBe(1);
+  }));
+  it('should remove participant and log a message', inject([ParticipantService], (service: ParticipantService) => {
+    const hearing: HearingModel = new HearingModel();
+    hearing.hearing_id = '12345';
+    const part1 = new ParticipantModel();
+    part1.email = 'aa@aa.aa';
+    part1.id = '123';
+    const participants: ParticipantModel[] = [];
+    participants.push(part1);
+    hearing.participants = participants;
+    const result = service.removeParticipant(hearing, 'aa@aa.aa');
+    expect(loggerSpy.info).toHaveBeenCalled();
   }));
 });
 

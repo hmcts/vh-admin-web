@@ -17,6 +17,8 @@ import { HearingModel } from '../../common/model/hearing.model';
 import { ParticipantModel } from '../../common/model/participant.model';
 import { By } from '@angular/platform-browser';
 import { Constants } from 'src/app/common/constants';
+import { Logger } from '../../services/logger';
+import { JudgeResponse } from '../../services/clients/api-client';
 
 function initHearingRequest(): HearingModel {
 
@@ -36,7 +38,6 @@ function initHearingRequest(): HearingModel {
   p2.last_name = 'last2';
   p2.is_judge = false;
   p2.title = 'Mr.';
-
 
   participants.push(p1);
   participants.push(p2);
@@ -60,6 +61,7 @@ let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
 let judgeDataServiceSpy: jasmine.SpyObj<JudgeDataService>;
 let routerSpy: jasmine.SpyObj<Router>;
 let bookingServiseSpy: jasmine.SpyObj<BookingService>;
+let loggerSpy: jasmine.SpyObj<Logger>;
 
 describe('AssignJudgeComponent', () => {
 
@@ -67,6 +69,7 @@ describe('AssignJudgeComponent', () => {
     const newHearing = initHearingRequest();
     routerSpy = jasmine.createSpyObj('Router', ['navigate', 'url']);
     routerSpy.url.and.returnValue('/summary');
+    loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error']);
 
     videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',
       ['getHearingMediums', 'getHearingTypes', 'getCurrentRequest',
@@ -85,6 +88,7 @@ describe('AssignJudgeComponent', () => {
         { provide: JudgeDataService, useValue: judgeDataServiceSpy },
         { provide: Router, useValue: routerSpy },
         { provide: BookingService, useValue: bookingServiseSpy },
+        { provide: Logger, useValue: loggerSpy },
       ],
       declarations: [AssignJudgeComponent, BreadcrumbStubComponent,
         CancelPopupComponent, ParticipantsListStubComponent, DiscardConfirmPopupComponent]
@@ -192,6 +196,14 @@ describe('AssignJudgeComponent', () => {
     const result = component.isJudgeDisplayNameSet();
     expect(result).toBeFalsy();
   });
+  it('should add judge with display name was entered', () => {
+    component.judge.display_name = 'New Name Set';
+    component.hearing = new HearingModel();
+    component.hearing.participants = [];
+    component.availableJudges = [new JudgeResponse({ display_name: 'New Name Set', email: 'email@email.com' })];
+    component.addJudge('email@email.com');
+    expect(component.hearing.participants.length).toBeGreaterThan(0);
+  });
   it('should change display name of the judge if it was entered', () => {
     component.judge.display_name = 'John Dall';
     component.changeDisplayName();
@@ -217,6 +229,9 @@ describe('AssignJudgeComponent', () => {
     component.saveJudge();
     expect(videoHearingsServiceSpy.updateHearingRequest).toHaveBeenCalled();
   });
-
+  it('should log error message if no judges to load', () => {
+    component.onErrorLoadJudges(new Error());
+    expect(loggerSpy.error).toHaveBeenCalled();
+  });
 });
 
