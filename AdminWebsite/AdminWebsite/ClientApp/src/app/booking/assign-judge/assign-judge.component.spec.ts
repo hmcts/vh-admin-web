@@ -229,6 +229,9 @@ describe('AssignJudgeComponent', () => {
     component.saveJudge();
     expect(videoHearingsServiceSpy.updateHearingRequest).toHaveBeenCalled();
   });
-
+  it('should log error message if no judges to load', () => {
+    component.onErrorLoadJudges(new Error());
+    expect(loggerSpy.error).toHaveBeenCalled();
+  });
 });
 

@@ -233,8 +233,12 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
           userResponse.display_name = '';
           this.availableJudges.unshift(userResponse);
         },
-        error => this.logger.error('Error to get list of judges.', error)
+        error => this.onErrorLoadJudges(error)
       );
+  }
+
+  onErrorLoadJudges(error) {
+    this.logger.error('Error to get list of judges.', error);
   }
 
   toggle() {
