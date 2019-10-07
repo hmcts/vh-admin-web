@@ -47,19 +47,19 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         [Given(@"I am an authorised '([^']*)' with (\d+) case type assigned")]
         [Given(@"I am an authorised '([^']*)' with (\d+) case types assigned")]
-        [Given(@"I am an authorised '([^']*)' with all case types assigned by default")]
         public void UserLogsInWithValidCredentials(string user, int caseTypeCount)
         {
             if (_context.CurrentUser != null) return;
 
             switch (user)
             {
-                case "VH Officer": _context.CurrentUser = _context.GetDefaultVideoHearingsOfficerUser(); break;
+                case "VH Officer":
+                    _context.CurrentUser = _context.GetDefaultVideoHearingsOfficerUser();
+                    break;
                 case "Case Admin":
                     if (caseTypeCount <= 1)
                     {
                         _context.CurrentUser = _context.GetCivilMoneyCaseAdminUser();
-                        
                     } else
                     {
                         _context.CurrentUser = _context.GetFinancialRemedyCaseAdminUser();
@@ -67,8 +67,14 @@ namespace AdminWebsite.AcceptanceTests.Steps
                     break;
                 default: throw new ArgumentOutOfRangeException($"No user found with user type {user}");
             }
-
             Login();
+        }
+
+
+        [Given(@"I am an authorised '([^']*)' with all case types assigned by default")]
+        public void UserLogsInAs(string user)
+        {
+            UserLogsInWithValidCredentials(user,0);
         }
 
         [Given(@"Civil Money Claims, (.*) logs in to the website")]

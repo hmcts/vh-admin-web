@@ -6,6 +6,7 @@ using System.Linq;
 using AdminWebsite.AcceptanceTests.Contexts;
 using TechTalk.SpecFlow;
 using AdminWebsite.AcceptanceTests.Configuration;
+using System.Collections.Generic;
 
 namespace AdminWebsite.AcceptanceTests.Steps
 {
@@ -92,20 +93,20 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void ThenCaseTypeDropdownShouldNotBePopulated()
         {
             var caseTypes = _hearingDetails.CaseTypesList();
-            Console.WriteLine($"Case Types List: {caseTypes}");
+            var currentUser = _scenarioContext.Get<UserAccount>("User");
 
-            switch (_context.CurrentUser.Role.ToLower())
+            switch (currentUser.Role.ToLower())
             {
                 case "vh officer":
                 case "video hearings officer":
-                    caseTypes.ToList().Count.Should().Be(_context.CurrentUser.UserGroups.Count);
+                    caseTypes.ToList().Count.Should().Be(currentUser.UserGroups.Count);
                     break;
                 case "case admin":
                     if (_context.CurrentUser.UserGroups.Count <= 1)
                         caseTypes.Should().BeEmpty();
                     else
                     {
-                        caseTypes.ToList().Count.Should().Be(_context.CurrentUser.UserGroups.Count);
+                        caseTypes.ToList().Count.Should().Be(currentUser.UserGroups.Count);
                     }
                     break;
                 default: throw new ArgumentOutOfRangeException($"User role {_context.CurrentUser.Role} not defined");
@@ -118,23 +119,23 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void ThenCaseTypeDropdownVisible()
         {
             var caseTypes = _hearingDetails.CaseTypesList();
-            Console.WriteLine($"Case Types List: {caseTypes}");
+            var currentUser = _scenarioContext.Get<UserAccount>("User");
 
-            switch (_context.CurrentUser.Role.ToLower())
+            switch (currentUser.Role.ToLower())
             {
                 case "vh officer":
                 case "video hearings officer":
-                    caseTypes.ToList().Count.Should().Be(_context.CurrentUser.UserGroups.Count);
+                    caseTypes.ToList().Count.Should().Be(currentUser.UserGroups.Count);
                     break;
                 case "case admin":
                     if (_context.CurrentUser.UserGroups.Count <= 1)
                         caseTypes.Should().BeEmpty();
                     else
                     {
-                        caseTypes.ToList().Count.Should().Be(_context.CurrentUser.UserGroups.Count);
+                        caseTypes.ToList().Count.Should().Be(currentUser.UserGroups.Count);
                     }
                     break;
-                default: throw new ArgumentOutOfRangeException($"User role {_context.CurrentUser.Role} not defined");
+                default: throw new ArgumentOutOfRangeException($"User role {currentUser.Role} not defined");
             }
         }
 
@@ -191,9 +192,16 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [Then(@"I see all case types in the case type dropdown")]
         public void ThenIseeCaseTypesInTheCaseTypeDropdown()
         {
-            foreach (var group in _context.CurrentUser.UserGroups)
+            var caseTypes = _hearingDetails.CaseTypesList();
+            var currentUser = _scenarioContext.Get<UserAccount>("User");
+
+            caseTypes.ToList().Count.Should().Be(currentUser.UserGroups.Count);
+
+            foreach (var group in currentUser.UserGroups)
             {
-                _hearingDetails.CaseTypesList().Should().Contain(group.ToString());
+                caseTypes.First(x => x.Text.Replace(" ", "").Contains(group.ToString()))
+                                                                            .Should()
+                                                                            .NotBeNull($"could not find group {group} in case type dropdown");
             }
         }
     }

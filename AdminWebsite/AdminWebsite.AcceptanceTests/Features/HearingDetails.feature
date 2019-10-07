@@ -16,7 +16,7 @@ Scenario: Case Admin with more than one case type can see the case type dropdown
 	Then I do not see the case type dropdown on this page
 
 @VIH-3582
-Scenario: Case Admin with more than one case type can only see associated case type in dropdown items on hearing details page
+Scenario: Case Admin with more than one case type can only see associated case types in dropdown items on hearing details page
     Given I am an authorised 'Case Admin' with 2 case types assigned
     When I go to the hearing details page
     Then I see all associated case types in the case type dropdown
