@@ -87,19 +87,32 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _hearingDetails.QuestionnaireNotRequired();
         }
 
-        [Then(@"case type dropdown should be populated")]
-        [Then(@"case type dropdown should not be populated")]
+        [Then(@"case type dropdown should be visible")]
+        [Then(@"case type dropdown should not be visible")]
         public void ThenCaseTypeDropdownShouldNotBePopulated()
         {
-            switch (_scenarioContext.Get<UserAccount>("User").Role)
+            var caseTypes = _hearingDetails.CaseTypesList();
+            Console.WriteLine($"Case Types List: {caseTypes}");
+
+            var user = _scenarioContext.Get<UserAccount>("User");
+
+            var userRole = user.Role.ToLower();
+
+            switch (userRole)
             {
-                case "CaseAdminFinRemedyCivilMoneyClaims":
-                    _hearingDetails.CaseTypesList().ToList().Count.Should().Be(2);
+                case "vh officer":
+                case "video hearings officer":
+                    caseTypes.ToList().Count.Should().Be(user.UserGroups.Count);
                     break;
-                case "Case Admin":
-                    _hearingDetails.CaseTypesList().Should().BeEmpty();
+                case "case admin":
+                    if (user.UserGroups.Count >= 1)
+                        caseTypes.Should().BeEmpty();
+                    else
+                    {
+                        caseTypes.ToList().Count.Should().Be(user.UserGroups.Count);
+                    }
                     break;
-                default: throw new ArgumentOutOfRangeException($"User {_scenarioContext.Get<string>("User")} not defined");
+                default: throw new ArgumentOutOfRangeException($"User role {userRole} not defined");
             }
         }
 
