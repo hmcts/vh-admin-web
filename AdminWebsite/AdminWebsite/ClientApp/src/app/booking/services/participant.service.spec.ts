@@ -8,12 +8,13 @@ import { Logger } from '../../services/logger';
 
 describe('ParticipantService', () => {
   let loggerSpy: jasmine.SpyObj<Logger>;
+  loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'info']);
+
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientModule],
       providers: [ParticipantService, { provide: Logger, useValue: loggerSpy }]
     });
-    loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error']);
   });
 
   it('should be created', inject([ParticipantService], (service: ParticipantService) => {
@@ -84,6 +85,18 @@ describe('ParticipantService', () => {
     hearing.participants = participants;
     const result = service.removeParticipant(hearing, 'bb@bb.bb');
     expect(hearing.participants.length).toBe(1);
+  }));
+  it('should remove participant and log a message', inject([ParticipantService], (service: ParticipantService) => {
+    const hearing: HearingModel = new HearingModel();
+    hearing.hearing_id = '12345';
+    const part1 = new ParticipantModel();
+    part1.email = 'aa@aa.aa';
+    part1.id = '123';
+    const participants: ParticipantModel[] = [];
+    participants.push(part1);
+    hearing.participants = participants;
+    const result = service.removeParticipant(hearing, 'aa@aa.aa');
+    expect(loggerSpy.info).toHaveBeenCalled();
   }));
 });
 
