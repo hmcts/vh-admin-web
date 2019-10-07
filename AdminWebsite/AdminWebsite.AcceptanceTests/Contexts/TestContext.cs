@@ -109,6 +109,11 @@ namespace AdminWebsite.AcceptanceTests.Contexts
             return UserAccounts.First(x => x.Role.StartsWith("Case admin") && x.Displayname.Contains("FR"));
         }
 
+        public UserAccount GetDefaultVideoHearingsOfficerUser()
+        {
+            return UserAccounts.FirstOrDefault(x => x.Role.StartsWith("Video hearings officer"));
+        }
+
         public UserAccount GetCivilMoneyVideoHearingsOfficerUser()
         {
             return UserAccounts.First(x => x.Role.StartsWith("Video hearings officer") && x.Displayname.Contains("CMC") && !x.Displayname.Contains("FR"));

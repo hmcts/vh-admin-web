@@ -99,6 +99,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         }
 
         [Given(@"user is on the hearing details page")]
+        [When(@"I go to the hearing details page")]
         public void UserIsOnHearingDetailsPage()
         {
             _dashboardStep.WhenBookAVideoHearingPanelIsSelected();

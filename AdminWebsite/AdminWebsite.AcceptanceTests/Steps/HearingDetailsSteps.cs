@@ -65,7 +65,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         [When(@"Select case type")]
         public void SelectCaseType()
-        {           
+        {
             _hearingDetails.CaseTypes();
         }
 
@@ -87,34 +87,58 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _hearingDetails.QuestionnaireNotRequired();
         }
 
-        [Then(@"case type dropdown should be visible")]
-        [Then(@"case type dropdown should not be visible")]
+        [Then(@"case type dropdown should be populated")]
+        [Then(@"case type dropdown should not be populated")]
         public void ThenCaseTypeDropdownShouldNotBePopulated()
         {
             var caseTypes = _hearingDetails.CaseTypesList();
             Console.WriteLine($"Case Types List: {caseTypes}");
 
-            var user = _scenarioContext.Get<UserAccount>("User");
-
-            var userRole = user.Role.ToLower();
-
-            switch (userRole)
+            switch (_context.CurrentUser.Role.ToLower())
             {
                 case "vh officer":
                 case "video hearings officer":
-                    caseTypes.ToList().Count.Should().Be(user.UserGroups.Count);
+                    caseTypes.ToList().Count.Should().Be(_context.CurrentUser.UserGroups.Count);
                     break;
                 case "case admin":
-                    if (user.UserGroups.Count >= 1)
+                    if (_context.CurrentUser.UserGroups.Count <= 1)
                         caseTypes.Should().BeEmpty();
                     else
                     {
-                        caseTypes.ToList().Count.Should().Be(user.UserGroups.Count);
+                        caseTypes.ToList().Count.Should().Be(_context.CurrentUser.UserGroups.Count);
                     }
                     break;
-                default: throw new ArgumentOutOfRangeException($"User role {userRole} not defined");
+                default: throw new ArgumentOutOfRangeException($"User role {_context.CurrentUser.Role} not defined");
             }
         }
+
+
+        [Then(@"I see the case type dropdown on this page")]
+        [Then(@"I do not see the case type dropdown on this page")]
+        public void ThenCaseTypeDropdownVisible()
+        {
+            var caseTypes = _hearingDetails.CaseTypesList();
+            Console.WriteLine($"Case Types List: {caseTypes}");
+
+            switch (_context.CurrentUser.Role.ToLower())
+            {
+                case "vh officer":
+                case "video hearings officer":
+                    caseTypes.ToList().Count.Should().Be(_context.CurrentUser.UserGroups.Count);
+                    break;
+                case "case admin":
+                    if (_context.CurrentUser.UserGroups.Count <= 1)
+                        caseTypes.Should().BeEmpty();
+                    else
+                    {
+                        caseTypes.ToList().Count.Should().Be(_context.CurrentUser.UserGroups.Count);
+                    }
+                    break;
+                default: throw new ArgumentOutOfRangeException($"User role {_context.CurrentUser.Role} not defined");
+            }
+        }
+
+
 
         [When(@"hearing booking detail is updated")]
         public void WhenHearingBookingDetailIsUpdated()
@@ -124,7 +148,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             InputCaseNumber(_context.TestData.HearingData.CaseNumber);
             SelectHearingType();
             _context.TestData.HearingData.Update(_context.TestData.HearingData.CaseName);
-            InputCaseName(_context.TestData.HearingData.CaseName);            
+            InputCaseName(_context.TestData.HearingData.CaseName);
         }
 
         [Given(@"user selects (.*)")]
@@ -153,11 +177,23 @@ namespace AdminWebsite.AcceptanceTests.Steps
             InputCaseName(_context.TestData.HearingData.CaseName);
             switch (user)
             {
-                case "Case Admin": _hearingDetails.DisabledFields().Should().Be(1);
+                case "Case Admin":
+                    _hearingDetails.DisabledFields().Should().Be(1);
                     break;
-                case "CaseAdminFinRemedyCivilMoneyClaims": _hearingDetails.DisabledFields().Should().Be(2);
+                case "CaseAdminFinRemedyCivilMoneyClaims":
+                    _hearingDetails.DisabledFields().Should().Be(2);
                     break;
                 default: throw new ArgumentOutOfRangeException($"User '{user}' is not defined");
+            }
+        }
+
+        [Then(@"I see all associated case types in the case type dropdown")]
+        [Then(@"I see all case types in the case type dropdown")]
+        public void ThenIseeCaseTypesInTheCaseTypeDropdown()
+        {
+            foreach (var group in _context.CurrentUser.UserGroups)
+            {
+                _hearingDetails.CaseTypesList().Should().Contain(group.ToString());
             }
         }
     }
