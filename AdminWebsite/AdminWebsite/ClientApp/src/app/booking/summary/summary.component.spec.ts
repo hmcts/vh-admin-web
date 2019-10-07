@@ -73,7 +73,7 @@ let routerSpy: jasmine.SpyObj<Router>;
 let loggerSpy: jasmine.SpyObj<Logger>;
 
 routerSpy = jasmine.createSpyObj('Router', ['navigate', 'url']);
-loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error']);
+loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'info']);
 
 referenceDataServiceServiceSpy = jasmine.createSpyObj<ReferenceDataService>('ReferenceDataService',
   ['getCourts']);
@@ -147,14 +147,7 @@ describe('SummaryComponent with valid request', () => {
     expect(component.hearing.participants.length).toBe(0);
     expect(videoHearingsServiceSpy.updateHearingRequest).toHaveBeenCalled();
   });
-  it('should remove existing participant', () => {
-    component.hearing = initExistingHearingRequest();
-    component.selectedParticipantEmail = 'aa@aa.aa';
-    component.removeParticipant();
-    fixture.detectChanges();
-    expect(loggerSpy.info).toHaveBeenCalled();
-  });
-  it('should not remove participant by not existing email', () => {
+   it('should not remove participant by not existing email', () => {
     component.ngOnInit();
     const pat1 = new ParticipantModel();
     pat1.email = 'aa@aa.aa';
@@ -325,6 +318,15 @@ describe('SummaryComponent  with existing request', () => {
     expect(routerSpy.navigate).toHaveBeenCalled();
 
     expect(videoHearingsServiceSpy.updateHearing).toHaveBeenCalled();
+  });
+  it('should remove existing participant', () => {
+    component.hearing = initExistingHearingRequest();
+    component.hearing.hearing_id = '12345';
+    component.hearing.participants[0].id = '678';
+    component.selectedParticipantEmail = 'aa@aa.aa';
+    component.removeParticipant();
+    fixture.detectChanges();
+    expect(loggerSpy.info).toHaveBeenCalled();
   });
 });
 
