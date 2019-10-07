@@ -18,6 +18,7 @@ export class VhOfficerAdminGuard implements CanActivate {
         if (userProfile && userProfile.is_vh_officer_administrator_role) {
           return true;
         } else {
+         
           this.logger.warn('User is not the VH officer administrator');
           this.router.navigate(['/login']);
           return false;

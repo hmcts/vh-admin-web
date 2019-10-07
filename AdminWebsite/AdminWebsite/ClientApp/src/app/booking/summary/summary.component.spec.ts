@@ -147,6 +147,13 @@ describe('SummaryComponent with valid request', () => {
     expect(component.hearing.participants.length).toBe(0);
     expect(videoHearingsServiceSpy.updateHearingRequest).toHaveBeenCalled();
   });
+  it('should remove existing participant', () => {
+    component.hearing = initExistingHearingRequest();
+    component.selectedParticipantEmail = 'aa@aa.aa';
+    component.removeParticipant();
+    fixture.detectChanges();
+    expect(loggerSpy.info).toHaveBeenCalled();
+  });
   it('should not remove participant by not existing email', () => {
     component.ngOnInit();
     const pat1 = new ParticipantModel();

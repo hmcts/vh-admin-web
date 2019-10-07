@@ -14,14 +14,18 @@ class UserIdentityServiceSpy {
     return of(userProfileResponse);
   }
 }
-
+class UserIdentityServiceSpy1 {
+  getUserInformation() {
+    userProfileResponse.is_vh_officer_administrator_role = false;
+    return of(userProfileResponse);
+  }
+}
+let vhOfficerGuard: VhOfficerAdminGuard;
+const router = {
+  navigate: jasmine.createSpy('navigate')
+};
+const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'warn']);
 describe('vh-officer-admin-guard', () => {
-  let vhOfficerGuard: VhOfficerAdminGuard;
-  const router = {
-    navigate: jasmine.createSpy('navigate')
-  };
-  const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error']);
-
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
