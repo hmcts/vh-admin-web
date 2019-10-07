@@ -38,7 +38,7 @@ export class BookingConfirmationComponent implements OnInit {
           this.caseName = data.cases[0].name;
           this.hearingDate = new Date(data.scheduled_date_time);
         },
-        error => this.logger.error('Cannot get the hearing by Id.', error)
+        error => this.logger.error(`Cannot get the hearing by Id: ${hearingId}.`, error)
       );
   }
 

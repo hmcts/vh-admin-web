@@ -76,16 +76,16 @@ function initHearingRequest(): HearingModel {
 describe('BookingConfirmationComponent', () => {
   let component: BookingConfirmationComponent;
   let fixture: ComponentFixture<BookingConfirmationComponent>;
-  let routerSpy: jasmine.SpyObj<Route>;
+  let routerSpy: jasmine.SpyObj<Router>;
   let loggerSpy: jasmine.SpyObj<Logger>;
   let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
   const newHearing = initHearingRequest();
 
   beforeEach(async(() => {
     loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error']);
-    routerSpy = jasmine.createSpyObj('Router', ['navigate']);
+    routerSpy = jasmine.createSpyObj<Router>('Router', ['navigate']);
     videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',
-      ['getHearingMediums', 'getHearingTypes', 'getCurrentRequest', 'updateHearingRequest', 'getHearingById']);
+      ['getHearingMediums', 'getHearingTypes', 'getCurrentRequest', 'updateHearingRequest', 'getHearingById', 'cancelRequest']);
     videoHearingsServiceSpy.getHearingById.and.returnValue(of(newHearing));
 
     TestBed.configureTestingModule({
@@ -94,6 +94,7 @@ describe('BookingConfirmationComponent', () => {
       providers: [
         { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
         { provide: Logger, useValue: loggerSpy },
+        { provide: Router, useValue: routerSpy }
       ]
     })
       .compileComponents();
@@ -115,5 +116,15 @@ describe('BookingConfirmationComponent', () => {
     expect(component.caseNumber).toEqual(newHearing.cases[0].number);
     expect(component.caseName).toEqual(newHearing.cases[0].name);
     expect(component.hearingDate).toEqual(newHearing.scheduled_date_time);
+  });
+  it('should navigate to book another hearing', () => {
+    component.bookAnotherHearing();
+    expect(videoHearingsServiceSpy.cancelRequest).toHaveBeenCalled();
+    expect(routerSpy.navigate).toHaveBeenCalled();
+  });
+  it('should navigate to dashboard', () => {
+    component.returnToDashboard();
+    expect(videoHearingsServiceSpy.cancelRequest).toHaveBeenCalled();
+    expect(routerSpy.navigate).toHaveBeenCalled();
   });
 });
