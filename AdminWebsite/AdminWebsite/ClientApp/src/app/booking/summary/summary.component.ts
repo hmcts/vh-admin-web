@@ -105,8 +105,8 @@ export class SummaryComponent implements OnInit {
     if (indexOfParticipant > -1) {
       if (this.hearing.hearing_id && this.hearing.participants[indexOfParticipant].id) {
         const id = this.hearing.participants[indexOfParticipant].id;
-        this.logger.info(
-          `Participant Id: ${id} is removed from hearing Id: ${this.hearing.hearing_id}`);
+        this.logger.event(
+          'Participant removed from hearing.', { hearingId: this.hearing.hearing_id, participantId: id });
       }
       this.hearing.participants.splice(indexOfParticipant, 1);
       this.hearingService.updateHearingRequest(this.hearing);
@@ -169,6 +169,7 @@ export class SummaryComponent implements OnInit {
             sessionStorage.setItem(this.newHearingSessionKey, hearingDetailsResponse.id);
             this.hearingService.cancelRequest();
             this.showWaitSaving = false;
+            this.logger.event('Hearing booking saved', { hearingId: hearingDetailsResponse.id });
             this.router.navigate([PageUrls.BookingConfirmation]);
           },
           error => {
@@ -184,6 +185,8 @@ export class SummaryComponent implements OnInit {
       .subscribe((hearingDetailsResponse: HearingDetailsResponse) => {
         this.showWaitSaving = false;
         this.hearingService.setBookingHasChanged(false);
+        this.logger.event('Hearing booking updated', { hearingId: hearingDetailsResponse.id });
+
         this.router.navigate([PageUrls.BookingDetails]);
       }, error => {
         this.logger.error(`Error updating hearing with ID: ${this.hearing.hearing_id}`, error);

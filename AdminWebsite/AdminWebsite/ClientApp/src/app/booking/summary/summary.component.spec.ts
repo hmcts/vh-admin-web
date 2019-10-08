@@ -73,7 +73,7 @@ let routerSpy: jasmine.SpyObj<Router>;
 let loggerSpy: jasmine.SpyObj<Logger>;
 
 routerSpy = jasmine.createSpyObj('Router', ['navigate', 'url']);
-loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'info']);
+loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'info', 'event']);
 
 referenceDataServiceServiceSpy = jasmine.createSpyObj<ReferenceDataService>('ReferenceDataService',
   ['getCourts']);
@@ -147,7 +147,7 @@ describe('SummaryComponent with valid request', () => {
     expect(component.hearing.participants.length).toBe(0);
     expect(videoHearingsServiceSpy.updateHearingRequest).toHaveBeenCalled();
   });
-   it('should not remove participant by not existing email', () => {
+  it('should not remove participant by not existing email', () => {
     component.ngOnInit();
     const pat1 = new ParticipantModel();
     pat1.email = 'aa@aa.aa';
@@ -326,7 +326,7 @@ describe('SummaryComponent  with existing request', () => {
     component.selectedParticipantEmail = 'aa@aa.aa';
     component.removeParticipant();
     fixture.detectChanges();
-    expect(loggerSpy.info).toHaveBeenCalled();
+    expect(loggerSpy.event).toHaveBeenCalled();
   });
 });
 
