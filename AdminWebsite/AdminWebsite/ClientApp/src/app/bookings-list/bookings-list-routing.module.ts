@@ -9,7 +9,7 @@ import { BookingDetailsComponent } from './booking-details/booking-details.compo
 
 export const routes: Routes = [
   { path: 'bookings-list', component: BookingsListComponent, canActivate: [AuthGuard, AdminGuard] },
-  { path: 'booking-details', component: BookingDetailsComponent, canActivate: [AuthGuard, AdminGuard] },
+  { path: 'booking-details/:id', component: BookingDetailsComponent, canActivate: [AuthGuard, AdminGuard] },
 
 ];
 

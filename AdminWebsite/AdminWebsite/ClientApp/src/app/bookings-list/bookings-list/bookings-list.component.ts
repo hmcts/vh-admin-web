@@ -103,7 +103,7 @@ export class BookingsListComponent implements OnInit, AfterViewInit {
     this.setSelectedRow(groupByDate, indexHearing);
     this.videoHearingService.cancelRequest();
     this.persistInformation();
-    this.router.navigate([PageUrls.BookingDetails]);
+    this.router.navigate([PageUrls.BookingDetails, this.selectedHearingId]);
   }
 
   setSelectedRow(groupByDate, indexHearing) {

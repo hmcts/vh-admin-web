@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
 import { ParticipantDetailsModel } from '../../common/model/participant-details.model';
@@ -41,6 +41,7 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
     private bookingDetailsService: BookingDetailsService,
     private userIdentityService: UserIdentityService,
     private router: Router,
+    private route:ActivatedRoute,
     private bookingService: BookingService,
     private bookingPersistService: BookingPersistService,
     private errorService: ErrorService) {
@@ -48,8 +49,16 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.hearingId = this.bookingPersistService.selectedHearingId;
-    if (this.hearingId) {
+    this.route.params.subscribe(params => {
+      const id = params['id']; 
+      this.hearingId = this.bookingPersistService.selectedHearingId;
+      if (this.hearingId && id && this.hearingId === id) {
+        this.loadDetails();
+      }
+    });
+  }
+
+  loadDetails() {
       this.videoHearingService.getHearingById(this.hearingId).subscribe(data => {
         this.mapHearing(data);
         // mapping to Hearing model for edit on summary page
@@ -58,7 +67,6 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
         this.setTimeObserver();
         this.setSubscribers();
       });
-    }
     this.userIdentityService.getUserInformation().subscribe(userProfile => {
       this.getUserRole(userProfile);
     });
