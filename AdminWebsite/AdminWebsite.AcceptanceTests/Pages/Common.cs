@@ -86,7 +86,7 @@ namespace AdminWebsite.AcceptanceTests.Pages
         protected void SelectOption(By elements, string option)
         {
             var getListOfElements = GetListOfElements(elements);
-            _browser.Retry(() => getListOfElements.Count().Should().BeGreaterThan(0, "List is not populated"));
+            _browser.Retry(() => getListOfElements.Count().Should().BeGreaterThan(0, $"{elements.GetType()} list should be populated"));
             foreach (var element in getListOfElements)
             {
                 if (option != element.Text.Trim()) continue;
@@ -94,11 +94,13 @@ namespace AdminWebsite.AcceptanceTests.Pages
                 break;
             }
         }
-        protected void SelectFirstOption(By elements)
+        protected string SelectFirstOption(By elements)
         {
             var getListOfElements = GetListOfElements(elements);
-            _browser.Retry(() => getListOfElements.Count().Should().BeGreaterThan(0, "List is not populated"));
+            _browser.Retry(() => getListOfElements.Count().Should().BeGreaterThan(0, $"{elements.ToString()} list should be populated"));
             _browser.NgDriver.WaitUntilElementClickable(getListOfElements.First()).Click();
+            var selectedElement = getListOfElements.First().Text;
+            return selectedElement.Replace(" ", "");
         }
 
         protected string SelectLastItem(By elements)

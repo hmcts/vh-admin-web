@@ -42,8 +42,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         private bool UserHasMoreThanOneCaseTypeGroup()
         {
-            return _context.CurrentUser.Username.Contains("CMC") &&
-                   _context.CurrentUser.Username.Contains("FR");
+            return _context.CurrentUser.UserGroups.Count() > 1;
         }
 
         [When(@"Admin user is on hearing details page")]
@@ -67,7 +66,9 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [When(@"Select case type")]
         public void SelectCaseType()
         {
-            _hearingDetails.CaseTypes();
+            var selectedCaseType =_hearingDetails.CaseTypes();
+            Console.WriteLine("selectedCaseType " + selectedCaseType);
+            _context.SelectedCaseType = selectedCaseType;
         }
 
         [When(@"Select hearing type")]

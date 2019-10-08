@@ -20,6 +20,7 @@ namespace AdminWebsite.AcceptanceTests.Contexts
         public string UserApiBaseUrl { get; set; }
         public string Json { get; set; }
         public Guid HearingId { get; set; }
+        public string SelectedCaseType { get; set; }
         public TestSettings TestUserSecrets { get; set; }
         public SecuritySettings AzureAd { get; set; }
         public List<UserAccount> UserAccounts { get; set; }

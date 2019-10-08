@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using AdminWebsite.AcceptanceTests.Configuration;
 using AdminWebsite.AcceptanceTests.Contexts;
-using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Configuration;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
@@ -11,7 +10,6 @@ using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using System.Net;
 using AdminWebsite.AcceptanceTests.Helpers;
 using TechTalk.SpecFlow;
-using Testing.Common;
 using SecuritySettings = AdminWebsite.AcceptanceTests.Configuration.SecuritySettings;
 
 namespace AdminWebsite.AcceptanceTests.Hooks

@@ -7,8 +7,6 @@ using AdminWebsite.AcceptanceTests.Configuration;
 using AdminWebsite.AcceptanceTests.Contexts;
 using AdminWebsite.AcceptanceTests.Data;
 using TechTalk.SpecFlow;
-using System.Collections.Generic;
-using System.Threading;
 
 namespace AdminWebsite.AcceptanceTests.Steps
 {
@@ -120,7 +118,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             var party1 = PartyType.Claimant;
             party2 = PartyType.Defendant;
 
-            if (!_context.CurrentUser.UserGroups.Contains(HearingType.FinancialRemedy)) return party1;
+            if (!_context.SelectedCaseType.Equals(HearingType.FinancialRemedy.ToString())) return party1;
             party1 = PartyType.Applicant;
             party2 = PartyType.Respondent;
 
@@ -129,10 +127,9 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         private void RolesListMatchesUserGroups()
         {
-            if (_context.CurrentUser.UserGroups.Contains(HearingType.CivilMoneyClaims))
+            if (_context.SelectedCaseType.Equals(HearingType.CivilMoneyClaims.ToString()))
                 _addParticipant.PartyList().Should().BeEquivalentTo(PartyTypes.MoneyClaimsParty);
-
-            if (_context.CurrentUser.UserGroups.Contains(HearingType.FinancialRemedy))
+            else
                 _addParticipant.PartyList().Should().BeEquivalentTo(PartyTypes.FinancialRemedyParty);
         }
 
