@@ -3,6 +3,11 @@
     public enum HearingType
     {
         CivilMoneyClaims,
-        FinancialRemedy
+        FinancialRemedy,
+        Generic,
+        ChildrenAct,
+        Tax,
+        FamilyLawAct,
+        Tribunal
     }
 }

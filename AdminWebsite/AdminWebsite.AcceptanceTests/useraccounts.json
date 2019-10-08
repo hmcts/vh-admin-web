@@ -22,7 +22,7 @@
       "Lastname": "AW_VideoHearingsOfficer01_CMC",
       "Displayname": "Automation01_AW_VideoHearingsOfficer01_CMC",
       "AlternativeEmail": "d8@d.com",
-      "UserGroups": [ "CivilMoneyClaims", "FinancialRemedy", "Generic", "Children", "Act", "Tax", "FamilyLawAct", "Tribunal"]
+      "UserGroups": [ "CivilMoneyClaims", "FinancialRemedy", "Generic", "ChildrenAct", "Tax", "FamilyLawAct", "Tribunal"]
     },
     {
       "Role": "Video hearings officer",
@@ -30,7 +30,7 @@
       "Lastname": "AW_VideoHearingsOfficer01_FR_CMC",
       "Displayname": "Automation01_AW_VideoHearingsOfficer01_FR_CMC",
       "AlternativeEmail": "d9@d.com",
-      "UserGroups": [ "CivilMoneyClaims", "FinancialRemedy", "Generic", "Children", "Act", "Tax", "FamilyLawAct", "Tribunal" ]
+      "UserGroups": [ "CivilMoneyClaims", "FinancialRemedy", "Generic", "ChildrenAct", "Tax", "FamilyLawAct", "Tribunal" ]
     },
     {
       "Role": "Clerk",

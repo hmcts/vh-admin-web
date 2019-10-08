@@ -93,7 +93,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void ThenCaseTypeDropdownShouldNotBePopulated()
         {
             var caseTypes = _hearingDetails.CaseTypesList();
-            var currentUser = _scenarioContext.Get<UserAccount>("User");
+            var currentUser = _context.CurrentUser;
 
             switch (currentUser.Role.ToLower())
             {
@@ -193,7 +193,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void ThenIseeCaseTypesInTheCaseTypeDropdown()
         {
             var caseTypes = _hearingDetails.CaseTypesList();
-            var currentUser = _scenarioContext.Get<UserAccount>("User");
+            var currentUser = _context.CurrentUser;
 
             caseTypes.ToList().Count.Should().Be(currentUser.UserGroups.Count);
 
