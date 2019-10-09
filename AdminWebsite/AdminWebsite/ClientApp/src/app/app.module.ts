@@ -68,6 +68,7 @@ export function getSettings(configService: ConfigService) {
     ReactiveFormsModule,
     AppRoutingModule,
     { provide: APP_INITIALIZER, useFactory: getSettings, deps: [ConfigService], multi: true },
+    { provide: Config, useFactory: () => ENVIRONMENT_CONFIG },
     { provide: HTTP_INTERCEPTORS, useClass: CustomAdalInterceptor, multi: true },
     { provide: BH_API_BASE_URL, useFactory: () => '.' },
     { provide: LOG_ADAPTER, useClass: ConsoleLogger, multi: true },
@@ -89,7 +90,6 @@ export function getSettings(configService: ConfigService) {
     PageTrackerService,
     AppInsightsLogger,
     WindowRef,
-    { provide: Config, useFactory: () => ENVIRONMENT_CONFIG },
   ],
   bootstrap: [AppComponent]
 })
