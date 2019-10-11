@@ -18,7 +18,7 @@ let component: BookingsListComponent;
 let fixture: ComponentFixture<BookingsListComponent>;
 let bookingsListServiceSpy: jasmine.SpyObj<BookingsListService>;
 bookingsListServiceSpy = jasmine.createSpyObj<BookingsListService>('BookingsListService',
-  ['getBookingsList', 'mapBookingsResponse', 'addBookings']);
+  ['getBookingsList', 'mapBookingsResponse', 'addBookings', 'replaceBookingRecord']);
 let videoHearingServiceSpy: jasmine.SpyObj<VideoHearingsService>;
 videoHearingServiceSpy = jasmine.createSpyObj('VideoHearingService',
   ['getCurrentRequest', 'cancelRequest']);
@@ -172,7 +172,14 @@ export class BookingPersistServiceSpy {
   get nextCursor() { return '12345'; }
   get selectedGroupIndex() { return 0; }
   get selectedItemIndex() { return 0; }
-  updateBooking(hearing: HearingModel) { }
+  updateBooking(hearing: HearingModel) {
+    const booking = new BookingsDetailsModel('1', new Date('2019-10-22 13:58:40.3730067'),
+      120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JadgeGreen', '33A', 'Coronation Street',
+      'John Smith', new Date('2018-10-22 13:58:40.3730067'),
+      'Roy Ben', new Date('2018-10-22 13:58:40.3730067'), 'Booked', false);
+    booking.IsStartTimeChanged = true;
+    return booking;
+  }
   resetAll() { }
 }
 
@@ -268,6 +275,9 @@ describe('BookingsListComponent with existing booking', () => {
     bookingsListServiceSpy.mapBookingsResponse.and.returnValues(model1, model1, model1, model2);
     bookingsListServiceSpy.addBookings.and.returnValue(listModel);
     routerSpy = jasmine.createSpyObj('Router', ['navigate']);
+    const hearingModel = new HearingModel();
+    hearingModel.hearing_id = "1";
+    videoHearingServiceSpy.getCurrentRequest.and.returnValue(hearingModel);
 
     TestBed.configureTestingModule({
       declarations: [BookingsListComponent, ScrollableDirective, BookingDetailsComponent, LongDatetimePipe],
@@ -287,7 +297,6 @@ describe('BookingsListComponent with existing booking', () => {
   }));
 
   it('should update selected item', (() => {
-
     component.ngOnInit();
     fixture.detectChanges();
 

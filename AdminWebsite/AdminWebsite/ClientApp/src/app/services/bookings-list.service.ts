@@ -23,6 +23,14 @@ export class BookingsListService {
     return model;
   }
 
+  replaceBookingRecord(booking: BookingsDetailsModel, bookings: Array<BookingsListModel>) {
+    const dateOnly = new Date(booking.StartTime.valueOf())
+    const dateNoTime = new Date(dateOnly.setHours(0, 0, 0, 0));
+    const bookingModel = new BookingsListModel(dateNoTime);
+    bookingModel.BookingsDetails = [booking];
+    this.addRecords(bookingModel, bookings);
+  }
+
   addBookings(bookingsModel: BookingsModel, bookings: Array<BookingsListModel>): Array<BookingsListModel> {
     bookingsModel.Hearings.forEach(element => {
       this.addRecords(element, bookings);
@@ -38,6 +46,11 @@ export class BookingsListService {
       element.BookingsDetails.forEach(item => {
         const record = bookings[subSet].BookingsDetails.find(x => x.HearingId === item.HearingId);
         if (!record) {
+          // if it's edited record and start date was changed
+          // we need to look for duplication, before insert in the new date group
+          if (item.IsStartTimeChanged) {
+            this.deleteDuplicatedRecord(element, bookings);
+          }
           this.insertBookingIntoGroup(item, bookings[subSet]);
         }
       });
@@ -90,7 +103,9 @@ export class BookingsListService {
   }
 
   private mapBookings(bookingsByDate: BookingsByDateResponse): BookingsListModel {
-    const model = new BookingsListModel(bookingsByDate.scheduled_date);
+    const dateOnly = new Date(bookingsByDate.scheduled_date.valueOf())
+    const dateNoTime = new Date(dateOnly.setHours(0, 0, 0, 0));
+    const model = new BookingsListModel(dateNoTime);
     model.BookingsDetails = bookingsByDate.hearings.map(hearing => this.mapBookingsDetails(hearing));
     return model;
   }

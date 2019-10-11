@@ -35,11 +35,17 @@ export class BookingsListComponent implements OnInit, AfterViewInit {
     private router: Router,
     @Inject(DOCUMENT) document) { }
 
-  ngOnInit() {
+  async ngOnInit() {
     if (this.bookingPersistService.bookingList.length > 0) {
       this.cursor = this.bookingPersistService.nextCursor;
-      const editHearing = this.videoHearingService.getCurrentRequest();
-      this.bookingPersistService.updateBooking(editHearing);
+      let editHearing = this.videoHearingService.getCurrentRequest();
+      if (!editHearing.hearing_id) {
+        editHearing = await this.getEditedBookingFromStorage();
+      }
+      const updatedBooking = this.bookingPersistService.updateBooking(editHearing);
+      if (updatedBooking.IsStartTimeChanged) {
+        this.bookingsListService.replaceBookingRecord(updatedBooking, this.bookingPersistService.bookingList);
+      }
       this.videoHearingService.cancelRequest();
       this.bookings = this.bookingPersistService.bookingList;
       this.loaded = true;
@@ -51,6 +57,13 @@ export class BookingsListComponent implements OnInit, AfterViewInit {
     } else {
       this.getList();
     }
+  }
+
+  async getEditedBookingFromStorage() {
+    const selectedRecord = this.bookingPersistService.bookingList[this.bookingPersistService.selectedGroupIndex].BookingsDetails[this.bookingPersistService.selectedItemIndex];
+    const response = await this.videoHearingService.getHearingById(selectedRecord.HearingId).toPromise();
+    const editHearing = this.videoHearingService.mapHearingDetailsResponseToHearingModel(response);
+    return editHearing
   }
 
   ngAfterViewInit() {
@@ -128,7 +141,10 @@ export class BookingsListComponent implements OnInit, AfterViewInit {
   closeHearingDetails() {
     setTimeout(() => {
       this.selectedElement = document.getElementById(this.selectedGroupIndex + '_' + this.selectedItemIndex);
-      this.selectedElement.scrollIntoView(false);
+      if (this.selectedElement) {
+        this.selectedElement.scrollIntoView(false);
+      }
     }, 500);
   }
+
 }

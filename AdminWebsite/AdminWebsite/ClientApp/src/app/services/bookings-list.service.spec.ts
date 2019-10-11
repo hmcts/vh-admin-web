@@ -124,7 +124,7 @@ export class ResponseTestData {
   }
 }
 
-describe('bookings service', () => {
+describe('bookings list service', () => {
   let bhClientSpy: jasmine.SpyObj<BHClient>;
   let bookingsResponse: BookingsResponse;
   let service: BookingsListService;

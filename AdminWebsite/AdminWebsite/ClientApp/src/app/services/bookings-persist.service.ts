@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BookingsListModel } from '../common/model/bookings-list.model';
+import { BookingsListModel, BookingsDetailsModel } from '../common/model/bookings-list.model';
 import { HearingModel } from '../common/model/hearing.model';
 import { ParticipantModel } from '../common/model/participant.model';
 
@@ -20,14 +20,18 @@ export class BookingPersistService {
     sessionStorage.removeItem(this.SelectedHearingIdKey);
   }
 
-  updateBooking(hearing: HearingModel) {
+  updateBooking(hearing: HearingModel): BookingsDetailsModel {
     if (this._bookingList.length > this._selectedGroupIndex &&
       this._bookingList[this._selectedGroupIndex].BookingsDetails.length > this._selectedItemIndex) {
       const hearingUpdate = this._bookingList[this._selectedGroupIndex].BookingsDetails[this.selectedItemIndex];
       if (hearingUpdate.HearingId === hearing.hearing_id) {
+        const newStartDate = new Date(hearing.scheduled_date_time);
+
+        hearingUpdate.IsStartTimeChanged = hearingUpdate.StartTime !== newStartDate;
+
         hearingUpdate.HearingCaseName = hearing.cases && hearing.cases.length > 0 ? hearing.cases[0].name : '';
         hearingUpdate.HearingCaseNumber = hearing.cases && hearing.cases.length > 0 ? hearing.cases[0].number : '';
-        hearingUpdate.StartTime = new Date(hearing.scheduled_date_time);
+        hearingUpdate.StartTime = newStartDate;
         hearingUpdate.Duration = hearing.scheduled_duration;
         hearingUpdate.CourtAddress = hearing.court_name;
         hearingUpdate.CourtRoom = hearing.court_room;
@@ -42,6 +46,7 @@ export class BookingPersistService {
           hearingUpdate.LastEditDate = new Date(hearing.updated_date);
         }
         hearingUpdate.JudgeName = this.getJudgeName(hearing.participants);
+        return hearingUpdate;
       }
     }
   }
