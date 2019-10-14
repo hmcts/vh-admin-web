@@ -24,7 +24,7 @@ export class BookingsListService {
   }
 
   replaceBookingRecord(booking: BookingsDetailsModel, bookings: Array<BookingsListModel>) {
-    const dateOnly = new Date(booking.StartTime.valueOf())
+    const dateOnly = new Date(booking.StartTime.valueOf());
     const dateNoTime = new Date(dateOnly.setHours(0, 0, 0, 0));
     const bookingModel = new BookingsListModel(dateNoTime);
     bookingModel.BookingsDetails = [booking];
@@ -39,7 +39,7 @@ export class BookingsListService {
     return bookings;
   }
 
-  // append a new portion of data to list
+  // append a new set of data to list
   private addRecords(element: BookingsListModel, bookings: Array<BookingsListModel>) {
     const subSet = bookings.findIndex(s => s.BookingsDate.toString() === element.BookingsDate.toString());
     if (subSet > -1) {
@@ -103,7 +103,7 @@ export class BookingsListService {
   }
 
   private mapBookings(bookingsByDate: BookingsByDateResponse): BookingsListModel {
-    const dateOnly = new Date(bookingsByDate.scheduled_date.valueOf())
+    const dateOnly = new Date(bookingsByDate.scheduled_date.valueOf());
     const dateNoTime = new Date(dateOnly.setHours(0, 0, 0, 0));
     const model = new BookingsListModel(dateNoTime);
     model.BookingsDetails = bookingsByDate.hearings.map(hearing => this.mapBookingsDetails(hearing));

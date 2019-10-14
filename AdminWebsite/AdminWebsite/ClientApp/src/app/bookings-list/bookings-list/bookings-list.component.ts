@@ -60,10 +60,11 @@ export class BookingsListComponent implements OnInit, AfterViewInit {
   }
 
   async getEditedBookingFromStorage() {
-    const selectedRecord = this.bookingPersistService.bookingList[this.bookingPersistService.selectedGroupIndex].BookingsDetails[this.bookingPersistService.selectedItemIndex];
+    const selectedRecord = this.bookingPersistService.bookingList[this.bookingPersistService.selectedGroupIndex]
+      .BookingsDetails[this.bookingPersistService.selectedItemIndex];
     const response = await this.videoHearingService.getHearingById(selectedRecord.HearingId).toPromise();
     const editHearing = this.videoHearingService.mapHearingDetailsResponseToHearingModel(response);
-    return editHearing
+    return editHearing;
   }
 
   ngAfterViewInit() {

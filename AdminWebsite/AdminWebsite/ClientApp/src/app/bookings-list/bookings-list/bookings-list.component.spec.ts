@@ -276,7 +276,7 @@ describe('BookingsListComponent with existing booking', () => {
     bookingsListServiceSpy.addBookings.and.returnValue(listModel);
     routerSpy = jasmine.createSpyObj('Router', ['navigate']);
     const hearingModel = new HearingModel();
-    hearingModel.hearing_id = "1";
+    hearingModel.hearing_id = '1';
     videoHearingServiceSpy.getCurrentRequest.and.returnValue(hearingModel);
 
     TestBed.configureTestingModule({
