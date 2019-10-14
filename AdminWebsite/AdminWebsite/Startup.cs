@@ -87,8 +87,11 @@ namespace AdminWebsite
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            app.UseSwagger();
-            app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "Book A Hearing Client"); });
+            if (!env.IsProduction()) // disable swagger url for production
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI(c => { c.SwaggerEndpoint($"/swagger/v1/swagger.json", "Book A Hearing Client"); });
+            }
 
             if (env.IsDevelopment())
             {
