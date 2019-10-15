@@ -1,6 +1,6 @@
-import { Component, OnInit, Inject, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Inject} from '@angular/core';
 import { BookingsListService } from '../../services/bookings-list.service';
-import { BookingsListModel } from '../../common/model/bookings-list.model';
+import { BookingsListModel, BookingsDetailsModel } from '../../common/model/bookings-list.model';
 import { BookingsResponse } from '../../services/clients/api-client';
 import { DOCUMENT } from '@angular/common';
 import { BookingPersistService } from '../../services/bookings-persist.service';
@@ -14,7 +14,7 @@ import { VideoHearingsService } from '../../services/video-hearings.service';
   templateUrl: './bookings-list.component.html',
   styleUrls: ['./bookings-list.component.css']
 })
-export class BookingsListComponent implements OnInit, AfterViewInit {
+export class BookingsListComponent implements OnInit {
   bookings: Array<BookingsListModel> = [];
   loaded = false;
   error = false;
@@ -38,21 +38,26 @@ export class BookingsListComponent implements OnInit, AfterViewInit {
   async ngOnInit() {
     if (this.bookingPersistService.bookingList.length > 0) {
       this.cursor = this.bookingPersistService.nextCursor;
-      let editHearing = this.videoHearingService.getCurrentRequest();
-      if (!editHearing.hearing_id) {
-        editHearing = await this.getEditedBookingFromStorage();
-      }
+
+      const editHearing = await this.getEditedBookingFromStorage();
+
+      // update item in the list by item from database
       const updatedBooking = this.bookingPersistService.updateBooking(editHearing);
+
       if (updatedBooking.IsStartTimeChanged) {
         this.bookingsListService.replaceBookingRecord(updatedBooking, this.bookingPersistService.bookingList);
       }
+
       this.videoHearingService.cancelRequest();
-      this.bookings = this.bookingPersistService.bookingList;
+      Object.assign(this.bookings, this.bookingPersistService.bookingList);
       this.loaded = true;
       this.recordsLoaded = true;
       setTimeout(() => {
-        this.setSelectedRow(this.bookingPersistService.selectedGroupIndex, this.bookingPersistService.selectedItemIndex);
+        this.unselectRows(this.bookingPersistService.selectedGroupIndex, this.bookingPersistService.selectedItemIndex);
         this.bookingPersistService.resetAll();
+        this.resetBookingIndex(updatedBooking);
+
+        this.closeHearingDetails();
       }, 500);
     } else {
       this.getList();
@@ -67,9 +72,12 @@ export class BookingsListComponent implements OnInit, AfterViewInit {
     return editHearing;
   }
 
-  ngAfterViewInit() {
-    if (this.bookingPersistService.bookingList.length > 0) {
-      this.closeHearingDetails();
+  resetBookingIndex(booking: BookingsDetailsModel) {
+    const dateOnly = new Date(booking.StartTime.valueOf());
+    const dateNoTime = new Date(dateOnly.setHours(0, 0, 0, 0));
+    this.selectedGroupIndex = this.bookings.findIndex(s => s.BookingsDate.toString() === dateNoTime.toString());
+    if (this.selectedGroupIndex > -1) {
+      this.selectedItemIndex = this.bookings[this.selectedGroupIndex].BookingsDetails.findIndex(x => x.HearingId === booking.HearingId);
     }
   }
 
@@ -124,10 +132,18 @@ export class BookingsListComponent implements OnInit, AfterViewInit {
     if (this.selectedGroupIndex > -1 && this.selectedItemIndex > -1) {
       this.bookings[this.selectedGroupIndex].BookingsDetails[this.selectedItemIndex].Selected = false;
     }
-    this.bookings[groupByDate].BookingsDetails[indexHearing].Selected = true;
-    this.selectedHearingId = this.bookings[groupByDate].BookingsDetails[indexHearing].HearingId;
-    this.selectedGroupIndex = groupByDate;
-    this.selectedItemIndex = indexHearing;
+    if (groupByDate < this.bookings.length && indexHearing < this.bookings[groupByDate].BookingsDetails.length) {
+      this.bookings[groupByDate].BookingsDetails[indexHearing].Selected = true;
+      this.selectedHearingId = this.bookings[groupByDate].BookingsDetails[indexHearing].HearingId;
+      this.selectedGroupIndex = groupByDate;
+      this.selectedItemIndex = indexHearing;
+    }
+  }
+
+    unselectRows(groupByDate, indexHearing) {
+      if (groupByDate > -1 && indexHearing > -1) {
+        this.bookings[groupByDate].BookingsDetails[indexHearing].Selected = false;
+      }
   }
 
   persistInformation() {

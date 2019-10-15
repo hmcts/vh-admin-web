@@ -9,7 +9,6 @@ import { BookingsModel } from '../common/model/bookings.model';
 })
 export class BookingsListService {
   bookingsList: Array<BookingsListModel> = [];
-  indexBook = 1;
 
   constructor(private bhClient: BHClient) { }
 
@@ -28,6 +27,9 @@ export class BookingsListService {
     const dateNoTime = new Date(dateOnly.setHours(0, 0, 0, 0));
     const bookingModel = new BookingsListModel(dateNoTime);
     bookingModel.BookingsDetails = [booking];
+    if (booking.IsStartTimeChanged) {
+      this.deleteDuplicatedRecord(bookingModel, bookings);
+    }
     this.addRecords(bookingModel, bookings);
   }
 
@@ -46,11 +48,6 @@ export class BookingsListService {
       element.BookingsDetails.forEach(item => {
         const record = bookings[subSet].BookingsDetails.find(x => x.HearingId === item.HearingId);
         if (!record) {
-          // if it's edited record and start date was changed
-          // we need to look for duplication, before insert in the new date group
-          if (item.IsStartTimeChanged) {
-            this.deleteDuplicatedRecord(element, bookings);
-          }
           this.insertBookingIntoGroup(item, bookings[subSet]);
         }
       });

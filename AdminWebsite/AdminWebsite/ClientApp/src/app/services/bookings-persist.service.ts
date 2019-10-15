@@ -27,7 +27,8 @@ export class BookingPersistService {
       if (hearingUpdate.HearingId === hearing.hearing_id) {
         const newStartDate = new Date(hearing.scheduled_date_time);
 
-        hearingUpdate.IsStartTimeChanged = hearingUpdate.StartTime !== newStartDate;
+        hearingUpdate.IsStartTimeChanged = hearingUpdate.StartTime.toString() !== newStartDate.toString();
+        hearingUpdate.Selected = true;
 
         hearingUpdate.HearingCaseName = hearing.cases && hearing.cases.length > 0 ? hearing.cases[0].name : '';
         hearingUpdate.HearingCaseNumber = hearing.cases && hearing.cases.length > 0 ? hearing.cases[0].number : '';
