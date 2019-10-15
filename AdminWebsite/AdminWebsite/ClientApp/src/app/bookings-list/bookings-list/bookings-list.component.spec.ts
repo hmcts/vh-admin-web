@@ -21,7 +21,7 @@ bookingsListServiceSpy = jasmine.createSpyObj<BookingsListService>('BookingsList
   ['getBookingsList', 'mapBookingsResponse', 'addBookings', 'replaceBookingRecord']);
 let videoHearingServiceSpy: jasmine.SpyObj<VideoHearingsService>;
 videoHearingServiceSpy = jasmine.createSpyObj('VideoHearingService',
-  ['getCurrentRequest', 'cancelRequest']);
+  ['getCurrentRequest', 'cancelRequest', 'getHearingById']);
 export class ResponseTestData {
 
   getTestData(): BookingsResponse {
@@ -264,46 +264,3 @@ describe('BookingsListComponent', () => {
 
 });
 
-describe('BookingsListComponent with existing booking', () => {
-  beforeEach(async(() => {
-    const data = new ResponseTestData().getTestData();
-
-    bookingsListServiceSpy.getBookingsList.and.returnValue(of(data));
-    const model1 = new BookingslistTestData().getBookings();
-    const model2 = new BookingslistTestData().getBookings1();
-    const listModel = new ArrayBookingslistModelTestData().getTestData();
-    bookingsListServiceSpy.mapBookingsResponse.and.returnValues(model1, model1, model1, model2);
-    bookingsListServiceSpy.addBookings.and.returnValue(listModel);
-    routerSpy = jasmine.createSpyObj('Router', ['navigate']);
-    const hearingModel = new HearingModel();
-    hearingModel.hearing_id = '1';
-    videoHearingServiceSpy.getCurrentRequest.and.returnValue(hearingModel);
-
-    TestBed.configureTestingModule({
-      declarations: [BookingsListComponent, ScrollableDirective, BookingDetailsComponent, LongDatetimePipe],
-      imports: [HttpClientModule, MomentModule],
-      providers: [
-        { provide: BookingsListService, useValue: bookingsListServiceSpy },
-        { provide: Router, useValue: routerSpy },
-        { provide: BookingPersistService, useClass: BookingPersistServiceSpy },
-        { provide: VideoHearingsService, useValue: videoHearingServiceSpy },
-      ]
-    }).compileComponents();
-
-    fixture = TestBed.createComponent(BookingsListComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-
-  }));
-
-  it('should update selected item', (() => {
-    component.ngOnInit();
-    fixture.detectChanges();
-
-    expect(component.loaded).toBeTruthy();
-    expect(component.bookings).toBeTruthy();
-    expect(component.selectedGroupIndex).toBe(0);
-    expect(component.selectedItemIndex).toBe(0);
-    expect(component.selectedHearingId).toBe('1');
-  }));
-});
