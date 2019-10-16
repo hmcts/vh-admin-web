@@ -13,6 +13,7 @@ import { VideoHearingsService } from '../../services/video-hearings.service';
 import { HearingModel } from '../../common/model/hearing.model';
 import { LongDatetimePipe } from '../../../app/shared/directives/date-time.pipe';
 import { MomentModule } from 'ngx-moment';
+import { HearingDetailsResponse } from '../../services/clients/api-client';
 
 let component: BookingsListComponent;
 let fixture: ComponentFixture<BookingsListComponent>;
@@ -21,9 +22,9 @@ bookingsListServiceSpy = jasmine.createSpyObj<BookingsListService>('BookingsList
   ['getBookingsList', 'mapBookingsResponse', 'addBookings', 'replaceBookingRecord']);
 let videoHearingServiceSpy: jasmine.SpyObj<VideoHearingsService>;
 videoHearingServiceSpy = jasmine.createSpyObj('VideoHearingService',
-  ['getCurrentRequest', 'cancelRequest', 'getHearingById']);
-export class ResponseTestData {
+  ['getCurrentRequest', 'cancelRequest', 'getHearingById', 'mapHearingDetailsResponseToHearingModel']);
 
+export class ResponseTestData {
   getTestData(): BookingsResponse {
     const response = new BookingsResponse();
     const byDate = new BookingsByDateResponse();
@@ -51,18 +52,15 @@ export class ResponseTestData {
 }
 
 export class BookingslistTestData {
-
   getBookings(): BookingsModel {
     const model = new BookingsModel('1233');
     model.Hearings.push(this.getTestData());
-
     return model;
   }
 
   getBookings1(): BookingsModel {
     const model = new BookingsModel('1234');
     model.Hearings.push(this.getTestData1());
-
     return model;
   }
 
@@ -80,7 +78,6 @@ export class BookingslistTestData {
     const b3 = new BookingsDetailsModel('3', new Date('2019-10-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JadgeGreen', '33A', 'Coronation Street',
       'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'), 'Booked', false);
-
     lists.push(b1);
     lists.push(b2);
     lists.push(b3);
@@ -102,7 +99,6 @@ export class BookingslistTestData {
     const b3 = new BookingsDetailsModel('6', new Date('2019-10-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JadgeGreen', '33A', 'Coronation Street',
       'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'), 'Booked', false);
-
     lists.push(b1);
     lists.push(b2);
     lists.push(b3);
@@ -112,14 +108,11 @@ export class BookingslistTestData {
 }
 
 export class ArrayBookingslistModelTestData {
-
   getTestData(): Array<BookingsListModel> {
     const listModel: Array<BookingsListModel> = [];
-
     const date = new Date('2019-10-22 00:00:00.0000000');
     const dateNoTime = new Date(date.setHours(0, 0, 0, 0));
     const model = new BookingsListModel(dateNoTime);
-
     const lists: Array<BookingsDetailsModel> = [];
     const b1 = new BookingsDetailsModel('11', new Date('2019-10-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JadgeGreen', '33A', 'Coronation Street',
@@ -130,12 +123,10 @@ export class ArrayBookingslistModelTestData {
     const b3 = new BookingsDetailsModel('33', new Date('2019-10-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JadgeGreen', '33A', 'Coronation Street',
       'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'), 'Booked', false);
-
     lists.push(b1);
     lists.push(b2);
     lists.push(b3);
     model.BookingsDetails = lists;
-
     const lists1: Array<BookingsDetailsModel> = [];
     const date1 = new Date('2019-11-22 00:00:00.0000000');
     const dateNoTime1 = new Date(date1.setHours(0, 0, 0, 0));
@@ -174,16 +165,27 @@ class BookingDetailsComponent {
 
 export class BookingPersistServiceSpy {
   private _bookingList: Array<BookingsListModel> = [];
+  private _nextCuror = '12345';
+  private _selectedGroupIndex = 0;
+  private _selectedItemIndex = 0;
 
   get bookingList() {
     const listItem = new BookingslistTestData().getTestData();
+    this._bookingList = [];
     this._bookingList.push(listItem);
     return this._bookingList;
   }
 
-  get nextCursor() { return '12345'; }
-  get selectedGroupIndex() { return 0; }
-  get selectedItemIndex() { return 0; }
+  set bookingList(value) {
+    this._bookingList = value;
+  }
+
+  get nextCursor() { return this._nextCuror; }
+  set nextCursor(value) { this._nextCuror = value; }
+  get selectedGroupIndex() { return this._selectedGroupIndex; }
+  get selectedItemIndex() { return this._selectedItemIndex; }
+  set selectedGroupIndex(value) { this._selectedGroupIndex = value; }
+  set selectedItemIndex(value) { this._selectedItemIndex = value; }
   updateBooking(hearing: HearingModel) {
     const booking = new BookingsDetailsModel('1', new Date('2019-10-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JadgeGreen', '33A', 'Coronation Street',
@@ -210,6 +212,7 @@ describe('BookingsListComponent', () => {
     bookingsListServiceSpy.addBookings.and.returnValue(listModel);
     routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
+    videoHearingServiceSpy.getHearingById.and.returnValue(of(new HearingDetailsResponse()));
     TestBed.configureTestingModule({
       declarations: [BookingsListComponent, ScrollableDirective, BookingDetailsComponent, LongDatetimePipe],
       imports: [HttpClientModule, MomentModule],
@@ -217,6 +220,7 @@ describe('BookingsListComponent', () => {
         { provide: BookingsListService, useValue: bookingsListServiceSpy },
         { provide: Router, useValue: routerSpy },
         { provide: VideoHearingsService, useValue: videoHearingServiceSpy },
+        { provide: BookingPersistService, useClass: BookingPersistServiceSpy },
       ]
     }).compileComponents();
 
@@ -234,9 +238,8 @@ describe('BookingsListComponent', () => {
     component.ngOnInit();
     expect(component.endOfData).toBeFalsy();
     expect(component.error).toBeFalsy();
-    expect(component.loaded).toBeTruthy();
     expect(component.recordsLoaded).toBeTruthy();
-    expect(component.bookings.length).toBe(2);
+    expect(component.bookings.length).toBe(1);
     expect(component.loaded).toBeTruthy();
   }));
 
@@ -259,12 +262,6 @@ describe('BookingsListComponent', () => {
     component.scrollHandler(null);
     expect(component.bookings.length).toBe(2);
   }));
-
-  it('should get error', async(() => {
-    bookingsListServiceSpy.getBookingsList.and.returnValue(throwError('bad request'));
-    component.ngOnInit();
-    expect(component.error).toBeTruthy();
-  }));
   it('should select row', () => {
     component.bookings = new ArrayBookingslistModelTestData().getTestData();
     component.rowSelected(1, 0);
@@ -273,10 +270,17 @@ describe('BookingsListComponent', () => {
   });
   it('should not select row if out of range', () => {
     component.bookings = new ArrayBookingslistModelTestData().getTestData();
+    component.selectedGroupIndex = -1;
+    component.selectedItemIndex = -1;
     component.rowSelected(5, 6);
     expect(component.selectedGroupIndex).toBe(-1);
     expect(component.selectedItemIndex).toBe(-1);
+
+    component.rowSelected(-1, -1);
+    expect(component.selectedGroupIndex).toBe(-1);
+    expect(component.selectedItemIndex).toBe(-1);
   });
+
   it('should set row to unselected', () => {
     component.bookings = new ArrayBookingslistModelTestData().getTestData();
     component.rowSelected(1, 0);
@@ -305,5 +309,10 @@ describe('BookingsListComponent', () => {
     expect(component.selectedGroupIndex).toBe(-1);
     expect(component.selectedItemIndex).toBe(-1);
   });
+  it('should read booking data by Id from data storage', fakeAsync(async () => {
+    await component.getEditedBookingFromStorage();
+    expect(videoHearingServiceSpy.getHearingById).toHaveBeenCalled();
+    expect(videoHearingServiceSpy.mapHearingDetailsResponseToHearingModel).toHaveBeenCalled();
+  }));
 });
 

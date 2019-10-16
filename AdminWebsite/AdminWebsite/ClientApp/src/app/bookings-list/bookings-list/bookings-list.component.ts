@@ -134,7 +134,9 @@ export class BookingsListComponent implements OnInit {
     if (this.selectedGroupIndex > -1 && this.selectedItemIndex > -1) {
       this.bookings[this.selectedGroupIndex].BookingsDetails[this.selectedItemIndex].Selected = false;
     }
-    if (groupByDate < this.bookings.length && indexHearing < this.bookings[groupByDate].BookingsDetails.length) {
+    if (groupByDate > -1 && indexHearing > -1 &&
+      groupByDate < this.bookings.length &&
+      indexHearing < this.bookings[groupByDate].BookingsDetails.length) {
       this.bookings[groupByDate].BookingsDetails[indexHearing].Selected = true;
       this.selectedHearingId = this.bookings[groupByDate].BookingsDetails[indexHearing].HearingId;
       this.selectedGroupIndex = groupByDate;
