@@ -67,8 +67,9 @@ export class BookingslistTestData {
   }
 
   getTestData(): BookingsListModel {
-
-    const model = new BookingsListModel(new Date('2019-10-22 13:58:40.3730067'));
+    const date = new Date('2019-10-22 00:00:00.0000000');
+    const dateNoTime = new Date(date.setHours(0, 0, 0, 0));
+    const model = new BookingsListModel(dateNoTime);
     const lists: Array<BookingsDetailsModel> = [];
     const b1 = new BookingsDetailsModel('1', new Date('2019-10-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JadgeGreen', '33A', 'Coronation Street',
@@ -88,8 +89,9 @@ export class BookingslistTestData {
   }
 
   getTestData1(): BookingsListModel {
-
-    const model = new BookingsListModel(new Date('2019-10-22 13:58:40.3730067'));
+    const date = new Date('2019-10-22 00:00:00.0000000');
+    const dateNoTime = new Date(date.setHours(0, 0, 0, 0));
+    const model = new BookingsListModel(dateNoTime);
     const lists: Array<BookingsDetailsModel> = [];
     const b1 = new BookingsDetailsModel('1', new Date('2019-10-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JadgeGreen', '33A', 'Coronation Street',
@@ -113,7 +115,11 @@ export class ArrayBookingslistModelTestData {
 
   getTestData(): Array<BookingsListModel> {
     const listModel: Array<BookingsListModel> = [];
-    const model = new BookingsListModel(new Date('2019-10-22 13:58:40.3730067'));
+
+    const date = new Date('2019-10-22 00:00:00.0000000');
+    const dateNoTime = new Date(date.setHours(0, 0, 0, 0));
+    const model = new BookingsListModel(dateNoTime);
+
     const lists: Array<BookingsDetailsModel> = [];
     const b1 = new BookingsDetailsModel('11', new Date('2019-10-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JadgeGreen', '33A', 'Coronation Street',
@@ -128,7 +134,12 @@ export class ArrayBookingslistModelTestData {
     lists.push(b1);
     lists.push(b2);
     lists.push(b3);
-    const model1 = new BookingsListModel(new Date('2019-11-22 15:58:40.3730067'));
+    model.BookingsDetails = lists;
+
+    const lists1: Array<BookingsDetailsModel> = [];
+    const date1 = new Date('2019-11-22 00:00:00.0000000');
+    const dateNoTime1 = new Date(date1.setHours(0, 0, 0, 0));
+    const model1 = new BookingsListModel(dateNoTime1);
     const b11 = new BookingsDetailsModel('44', new Date('2019-11-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JadgeGreen', '33A', 'Coronation Street',
       'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'), 'Booked', false);
@@ -138,10 +149,11 @@ export class ArrayBookingslistModelTestData {
     const b31 = new BookingsDetailsModel('46', new Date('2019-11-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JadgeGreen', '33A', 'Coronation Street',
       'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'), 'Booked', false);
-    lists.push(b11);
-    lists.push(b21);
-    lists.push(b31);
-    model1.BookingsDetails = lists;
+    lists1.push(b11);
+    lists1.push(b21);
+    lists1.push(b31);
+    model1.BookingsDetails = lists1;
+
     listModel.push(model);
     listModel.push(model1);
     return listModel;
@@ -255,12 +267,43 @@ describe('BookingsListComponent', () => {
   }));
   it('should select row', () => {
     component.bookings = new ArrayBookingslistModelTestData().getTestData();
-    component.ngOnInit();
-    fixture.detectChanges();
     component.rowSelected(1, 0);
     expect(component.selectedGroupIndex).toBe(1);
     expect(component.selectedItemIndex).toBe(0);
   });
+  it('should not select row if out of range', () => {
+    component.bookings = new ArrayBookingslistModelTestData().getTestData();
+    component.rowSelected(5, 6);
+    expect(component.selectedGroupIndex).toBe(-1);
+    expect(component.selectedItemIndex).toBe(-1);
+  });
+  it('should set row to unselected', () => {
+    component.bookings = new ArrayBookingslistModelTestData().getTestData();
+    component.rowSelected(1, 0);
+    expect(component.bookings[1].BookingsDetails[0].Selected).toBeTruthy();
 
+    component.unselectRows(1, 0);
+    expect(component.bookings[1].BookingsDetails[0].Selected).toBeFalsy();
+  });
+  it('should find position of edited record in the bookings list', () => {
+    component.bookings = new ArrayBookingslistModelTestData().getTestData();
+    const booking = new BookingsDetailsModel('33', new Date('2019-10-22 13:58:40.3730067'),
+      120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JadgeGreen', '33A', 'Coronation Street',
+      'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'), 'Booked', false);
+
+    component.resetBookingIndex(booking);
+    expect(component.selectedGroupIndex).toBe(0);
+    expect(component.selectedItemIndex).toBe(2);
+  });
+  it('should set to -1 indexes if edited record is not found in the bookings list', () => {
+    component.bookings = new ArrayBookingslistModelTestData().getTestData();
+    const booking = new BookingsDetailsModel('3', new Date('2019-12-22 13:58:40.3730067'),
+      120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JadgeGreen', '33A', 'Coronation Street',
+      'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'), 'Booked', false);
+
+    component.resetBookingIndex(booking);
+    expect(component.selectedGroupIndex).toBe(-1);
+    expect(component.selectedItemIndex).toBe(-1);
+  });
 });
 

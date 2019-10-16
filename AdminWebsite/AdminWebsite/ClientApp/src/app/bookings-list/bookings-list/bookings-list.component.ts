@@ -78,6 +78,8 @@ export class BookingsListComponent implements OnInit {
     this.selectedGroupIndex = this.bookings.findIndex(s => s.BookingsDate.toString() === dateNoTime.toString());
     if (this.selectedGroupIndex > -1) {
       this.selectedItemIndex = this.bookings[this.selectedGroupIndex].BookingsDetails.findIndex(x => x.HearingId === booking.HearingId);
+    } else {
+      this.selectedItemIndex = -1;
     }
   }
 
