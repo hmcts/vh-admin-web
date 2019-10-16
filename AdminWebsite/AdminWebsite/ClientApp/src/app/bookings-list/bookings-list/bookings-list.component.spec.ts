@@ -268,7 +268,7 @@ describe('BookingsListComponent', () => {
     expect(component.selectedGroupIndex).toBe(1);
     expect(component.selectedItemIndex).toBe(0);
   });
-  it('should not select row if out of range', () => {
+  it('should not select row if index is out of range', () => {
     component.bookings = new ArrayBookingslistModelTestData().getTestData();
     component.selectedGroupIndex = -1;
     component.selectedItemIndex = -1;
