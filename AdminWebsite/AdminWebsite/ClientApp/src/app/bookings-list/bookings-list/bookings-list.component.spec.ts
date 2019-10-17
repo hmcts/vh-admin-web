@@ -289,7 +289,7 @@ describe('BookingsListComponent', () => {
     component.unselectRows(1, 0);
     expect(component.bookings[1].BookingsDetails[0].Selected).toBeFalsy();
   });
-  it('should find position of edited record in the bookings list', () => {
+  it('should find the record position in the bookings list', () => {
     component.bookings = new ArrayBookingslistModelTestData().getTestData();
     const booking = new BookingsDetailsModel('33', new Date('2019-10-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JadgeGreen', '33A', 'Coronation Street',
@@ -299,7 +299,7 @@ describe('BookingsListComponent', () => {
     expect(component.selectedGroupIndex).toBe(0);
     expect(component.selectedItemIndex).toBe(2);
   });
-  it('should set to -1 indexes if edited record is not found in the bookings list', () => {
+  it('should set selected group and item indexes to -1, if the record is not found in the list', () => {
     component.bookings = new ArrayBookingslistModelTestData().getTestData();
     const booking = new BookingsDetailsModel('3', new Date('2019-12-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JadgeGreen', '33A', 'Coronation Street',
@@ -309,7 +309,7 @@ describe('BookingsListComponent', () => {
     expect(component.selectedGroupIndex).toBe(-1);
     expect(component.selectedItemIndex).toBe(-1);
   });
-  it('should read booking data by Id from data storage', fakeAsync(async () => {
+  it('should get booking details by Id from data store', fakeAsync(async () => {
     await component.getEditedBookingFromStorage();
     expect(videoHearingServiceSpy.getHearingById).toHaveBeenCalled();
     expect(videoHearingServiceSpy.mapHearingDetailsResponseToHearingModel).toHaveBeenCalled();
