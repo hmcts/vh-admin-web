@@ -299,7 +299,7 @@ describe('BookingsListComponent', () => {
     expect(component.selectedGroupIndex).toBe(0);
     expect(component.selectedItemIndex).toBe(2);
   });
-  it('should set selected group and item indexes to -1, if the record is not found in the list', () => {
+  it('should set the selected group index and item index to -1 for record is not found in the list', () => {
     component.bookings = new ArrayBookingslistModelTestData().getTestData();
     const booking = new BookingsDetailsModel('3', new Date('2019-12-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JudgeGreen', '33A', 'Coronation Street',
