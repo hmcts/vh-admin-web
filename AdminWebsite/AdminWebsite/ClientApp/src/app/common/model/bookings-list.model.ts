@@ -56,6 +56,7 @@ export class BookingsDetailsModel {
   OtherInformation: string;
   Status: string;
   QuestionnaireNotRequired: boolean;
+  IsStartTimeChanged: boolean;
 
   get DurationInHoursAndMinutes(): string {
     return FormatShortDuration(this.Duration);

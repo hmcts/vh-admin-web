@@ -9,7 +9,6 @@ import { BookingsModel } from '../common/model/bookings.model';
 })
 export class BookingsListService {
   bookingsList: Array<BookingsListModel> = [];
-  indexBook = 1;
 
   constructor(private bhClient: BHClient) { }
 
@@ -23,6 +22,17 @@ export class BookingsListService {
     return model;
   }
 
+  replaceBookingRecord(booking: BookingsDetailsModel, bookings: Array<BookingsListModel>) {
+    const dateOnly = new Date(booking.StartTime.valueOf());
+    const dateNoTime = new Date(dateOnly.setHours(0, 0, 0, 0));
+    const bookingModel = new BookingsListModel(dateNoTime);
+    bookingModel.BookingsDetails = [booking];
+    if (booking.IsStartTimeChanged) {
+      this.deleteDuplicatedRecord(bookingModel, bookings);
+    }
+    this.addRecords(bookingModel, bookings);
+  }
+
   addBookings(bookingsModel: BookingsModel, bookings: Array<BookingsListModel>): Array<BookingsListModel> {
     bookingsModel.Hearings.forEach(element => {
       this.addRecords(element, bookings);
@@ -31,7 +41,7 @@ export class BookingsListService {
     return bookings;
   }
 
-  // append a new portion of data to list
+  // append a new set of data to list
   private addRecords(element: BookingsListModel, bookings: Array<BookingsListModel>) {
     const subSet = bookings.findIndex(s => s.BookingsDate.toString() === element.BookingsDate.toString());
     if (subSet > -1) {
@@ -90,7 +100,9 @@ export class BookingsListService {
   }
 
   private mapBookings(bookingsByDate: BookingsByDateResponse): BookingsListModel {
-    const model = new BookingsListModel(bookingsByDate.scheduled_date);
+    const dateOnly = new Date(bookingsByDate.scheduled_date.valueOf());
+    const dateNoTime = new Date(dateOnly.setHours(0, 0, 0, 0));
+    const model = new BookingsListModel(dateNoTime);
     model.BookingsDetails = bookingsByDate.hearings.map(hearing => this.mapBookingsDetails(hearing));
     return model;
   }

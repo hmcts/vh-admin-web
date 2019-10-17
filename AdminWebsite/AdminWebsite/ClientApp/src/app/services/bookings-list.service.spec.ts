@@ -10,7 +10,7 @@ export class ResponseTestData {
 
   static getEditingBookings(): Array<BookingsListModel> {
     const listModel: Array<BookingsListModel> = [];
-    const model = new BookingsListModel(new Date('2019-12-22 13:58:40.3730067'));
+    const model = new BookingsListModel(new Date('2019-12-22 00:00:00.0000000'));
     const lists: Array<BookingsDetailsModel> = [];
     const b1 = new BookingsDetailsModel('1', new Date('2019-12-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JadgeGreen', '33A', 'Coronation Street',
@@ -33,7 +33,7 @@ export class ResponseTestData {
   static getBookingsTestData(): Array<BookingsListModel> {
     const listModel: Array<BookingsListModel> = [];
 
-    const model = new BookingsListModel(new Date('2019-10-22 13:58:40.3730067'));
+    const model = new BookingsListModel(new Date('2019-10-22 00:00:00.0000000'));
     const lists: Array<BookingsDetailsModel> = [];
     const b1 = new BookingsDetailsModel('1', new Date('2019-10-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JadgeGreen', '33A', 'Coronation Street',
@@ -51,7 +51,7 @@ export class ResponseTestData {
     model.BookingsDetails = lists;
 
     const lists1: Array<BookingsDetailsModel> = [];
-    const model1 = new BookingsListModel(new Date('2019-11-22 15:58:40.3730067'));
+    const model1 = new BookingsListModel(new Date('2019-11-22 00:00:00.0000000'));
     const b11 = new BookingsDetailsModel('44', new Date('2019-11-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JadgeGreen', '33A', 'Coronation Street',
       'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'), 'Booked', false);
@@ -115,7 +115,7 @@ export class ResponseTestData {
     bhr1.last_edit_by = 'Sam';
 
     const byDate = new BookingsByDateResponse();
-    byDate.scheduled_date = new Date('2019-10-22 13:58:40.3730067');
+    byDate.scheduled_date = new Date('2019-10-22 00:00:00.0000000');
     byDate.hearings = new Array<BookingsHearingResponse>();
     byDate.hearings.push(bhr);
     byDate.hearings.push(bhr1);
@@ -124,7 +124,7 @@ export class ResponseTestData {
   }
 }
 
-describe('bookings service', () => {
+describe('bookings list service', () => {
   let bhClientSpy: jasmine.SpyObj<BHClient>;
   let bookingsResponse: BookingsResponse;
   let service: BookingsListService;
@@ -210,6 +210,42 @@ describe('Booking list service functionality', () => {
     expect(result.length).toBe(2);
     expect(result[0].BookingsDetails.length).toBe(3);
     expect(result[1].BookingsDetails.length).toBe(3);
+
+  });
+  it('should replace the edited record to the existing correct date group', () => {
+    const bookingsList = ResponseTestData.getBookingsTestData();
+    const bookingEdited = new BookingsDetailsModel('1', new Date('2019-11-22 13:58:40.3730067'),
+      120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JadgeGreen', '33A', 'Coronation Street',
+      'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'), 'Booked', false);
+    bookingEdited.IsStartTimeChanged = true;
+
+    expect(bookingsList.length).toBe(2);
+    expect(bookingsList[0].BookingsDetails.length).toBe(3);
+    expect(bookingsList[1].BookingsDetails.length).toBe(3);
+
+    service.replaceBookingRecord(bookingEdited, bookingsList);
+
+    expect(bookingsList.length).toBe(2);
+    expect(bookingsList[0].BookingsDetails.length).toBe(2);
+    expect(bookingsList[1].BookingsDetails.length).toBe(4);
+
+  });
+  it('should remove from date group record and add a new date group for the edited record', () => {
+    const bookingsList = ResponseTestData.getBookingsTestData();
+    const bookingEdited = new BookingsDetailsModel('1', new Date('2019-12-22 13:58:40.3730067'),
+      120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JadgeGreen', '33A', 'Coronation Street',
+      'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'), 'Booked', false);
+    bookingEdited.IsStartTimeChanged = true;
+
+    expect(bookingsList.length).toBe(2);
+    expect(bookingsList[0].BookingsDetails.length).toBe(3);
+    expect(bookingsList[1].BookingsDetails.length).toBe(3);
+
+    service.replaceBookingRecord(bookingEdited, bookingsList);
+
+    expect(bookingsList.length).toBe(3);
+    expect(bookingsList[0].BookingsDetails.length).toBe(2);
+    expect(bookingsList[1].BookingsDetails.length).toBe(3);
 
   });
 });
