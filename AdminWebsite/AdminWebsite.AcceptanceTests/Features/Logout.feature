@@ -5,14 +5,14 @@
 
 @VIH-2072 @logout
 Scenario Outline: (User) When signs out from Dashboard screen then is redirected to the sign in screen
-	Given <user> logs into Vh-Admin website 
+	Given <user> logs into the website  
 	And user is on dashboard page 
 	When user attempts to sign out of the website
 	Then user should be navigated to sign in screen
 	Examples: 
-	| user                      |
-	| Case Admin                |
-	| VhOfficerCivilMoneyclaims |
+	| user       |
+	| VH Officer |
+	| Case Admin |
 
 @VIH-2072 @logout
 Scenario Outline: Case Admin When signs out half way through booking a hearing from a (Screen) Then the correct warning message is displayed
