@@ -1,4 +1,5 @@
-﻿using AdminWebsite.AcceptanceTests.Helpers;
+﻿using AdminWebsite.AcceptanceTests.Configuration;
+using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.AcceptanceTests.Pages;
 using FluentAssertions;
 using TechTalk.SpecFlow;
@@ -21,7 +22,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void ThenBookAVideoHearingPanelIsDisplayed(string panelText)
         {
             var panels = _dashboard.VhPanelTitle();
-            switch (_scenarioContext.Get<string>("User"))
+            switch (_scenarioContext.Get<UserAccount>("User").Role)
             {
                 case "VH Officer":
                     panels.Count.Should().Be(2);

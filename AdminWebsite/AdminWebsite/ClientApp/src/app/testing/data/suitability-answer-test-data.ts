@@ -1,9 +1,9 @@
-import { SuitabilityAnswerResponse } from './../../services/clients/api-client';
-import { ParticipantSuitabilityAnswerResponse } from './../../services/clients/api-client';
+import {SuitabilityAnswerResponse} from '../../services/clients/api-client';
+import {ParticipantSuitabilityAnswerResponse} from '../../services/clients/api-client';
 
-export class SuatabilityAnswerTestData {
+export class SuitabilityAnswerTestData {
 
-  response = new ParticipantSuitabilityAnswerResponse({
+  plainResponse = new ParticipantSuitabilityAnswerResponse({
     case_number: '',
     first_name: '',
     last_name: '',
@@ -15,6 +15,33 @@ export class SuatabilityAnswerTestData {
         answer: 'Yes',
         extended_answer: 'Comments',
         key: 'ABOUT_YOU'
+      })
+    ]
+  });
+
+  barristerWillBeAppointed = new ParticipantSuitabilityAnswerResponse({
+    case_number: '1234',
+    first_name: 'John',
+    last_name: 'Conner',
+    title: 'Mr',
+    hearing_role: 'Solicitor',
+    representee: 'Ms X',
+    answers: [
+      new SuitabilityAnswerResponse({
+        answer: 'A barrister has been/will be appointed',
+        key: 'APPOINTING_BARRISTER'
+      }),
+      new SuitabilityAnswerResponse({
+        answer: 'Philip Hammond',
+        key: 'BARRISTER_NAME'
+      }),
+      new SuitabilityAnswerResponse({
+        answer: 'Westminister Chambers',
+        key: 'BARRISTER_CHAMBERS'
+      }),
+      new SuitabilityAnswerResponse({
+        answer: 'chambers@west.co.uk',
+        key: 'BARRISTER_EMAIL'
       })
     ]
   });

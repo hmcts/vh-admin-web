@@ -1,5 +1,5 @@
-import { ParticipantQuestionnaire, SuitabilityAnswerGroup } from './../participant-questionnaire';
-import { ParticipantSuitabilityAnswerResponse } from './../../services/clients/api-client';
+import { ParticipantQuestionnaire, SuitabilityAnswerGroup } from '../participant-questionnaire';
+import { ParticipantSuitabilityAnswerResponse } from '../../services/clients/api-client';
 import { BHClient } from 'src/app/services/clients/api-client';
 import { Injectable } from '@angular/core';
 import { ScrollableSuitabilityAnswersService, SuitabilityAnswersPage } from './scrollable-suitability-answers.service';
@@ -33,11 +33,11 @@ export class QuestionnaireApiService implements ScrollableSuitabilityAnswersServ
     });
   }
 
-  private mapAnswerGroups(suitabilityMappers: QuestionnaireMapper, selfTestMapper: QuestionnaireMapper): SuitabilityAnswerGroup[] {
+  private mapAnswerGroups(suitabilityMapper: QuestionnaireMapper, selfTestMapper: QuestionnaireMapper): SuitabilityAnswerGroup[] {
     return [
       new SuitabilityAnswerGroup({
         title: 'About you and your equipment',
-        answers: suitabilityMappers.mapAnswers()
+        answers: suitabilityMapper.mapAnswers()
       }),
       new SuitabilityAnswerGroup({
         title: 'Equipment check',

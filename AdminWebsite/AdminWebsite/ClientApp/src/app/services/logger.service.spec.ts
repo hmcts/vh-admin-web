@@ -1,32 +1,56 @@
-import { TestBed, async, inject } from '@angular/core/testing';
-
-import { LoggerService } from './logger.service';
-import { Config } from '../common/model/config';
-import { AppInsightsLogger } from './app-insights-logger.service';
+import { LogAdapter } from './log-adapter';
+import { TestBed } from '@angular/core/testing';
+import { LoggerService, LOG_ADAPTER } from './logger.service';
+import { Logger } from './logger';
 
 describe('LoggerService', () => {
-
-  let logger: LoggerService;
-  let appInsightsLogger: jasmine.SpyObj<AppInsightsLogger>;
+  let logger: Logger;
+  let logAdapter: jasmine.SpyObj<LogAdapter>;
 
   beforeEach(() => {
-    appInsightsLogger = jasmine.createSpyObj('AppInsightsLogger', ['trackException', 'trackEvent']);
+    logAdapter = jasmine.createSpyObj<LogAdapter>(['debug', 'info', 'warn', 'trackException', 'trackEvent']);
 
+    // Set up the entire testing module as to test the injection token works properly
     TestBed.configureTestingModule({
       providers: [
-        LoggerService,
-        { provide: AppInsightsLogger, useValue: appInsightsLogger }
+        { provide: Logger, useClass: LoggerService },
+        { provide: LOG_ADAPTER, useValue: logAdapter, multi: true }
       ]
     });
 
-    logger = TestBed.get(LoggerService);
+    logger = TestBed.get(Logger);
   });
 
-  it('should be created', inject([LoggerService], (service: LoggerService) => {
-    expect(service).toBeTruthy();
-  }));
+  it('logs debug to all adapters', () => {
+    logger.debug('debug');
 
-  it('waits until initialized before logging', () => {
-    logger.event('testing');
+    expect(logAdapter.debug).toHaveBeenCalledWith('debug');
+  });
+
+  it('logs info to all adapters', () => {
+    logger.info('info');
+
+    expect(logAdapter.info).toHaveBeenCalledWith('info');
+  });
+
+  it('logs warns to all adapters', () => {
+    logger.warn('warn');
+
+    expect(logAdapter.warn).toHaveBeenCalledWith('warn');
+  });
+
+  it('logs events to all adapters', () => {
+    const properties = {};
+    logger.event('event', properties);
+
+    expect(logAdapter.trackEvent).toHaveBeenCalledWith('event', properties);
+  });
+
+  it('logs errors to all adapters', () => {
+    const error = new Error();
+    const properties = {};
+    logger.error('error', error, properties);
+
+    expect(logAdapter.trackException).toHaveBeenCalledWith('error', error, properties);
   });
 });

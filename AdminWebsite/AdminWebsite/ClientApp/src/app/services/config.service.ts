@@ -32,7 +32,10 @@ export class ConfigService {
         this.parse(data);
         sessionStorage.setItem(this.settingsSessionKey, JSON.stringify(data));
         resolve(true);
-      }, err => reject(err));
+      }, err => {
+        console.log('Cannot get configuration settings.', err);
+        reject(err);
+      });
     });
   }
 

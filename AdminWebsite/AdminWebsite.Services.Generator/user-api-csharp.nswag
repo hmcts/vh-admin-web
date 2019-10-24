@@ -3,7 +3,7 @@
   "defaultVariables": null,
   "documentGenerator": {
     "fromDocument": {
-      "url": "http://localhost:5301/swagger/v1/swagger.json",
+      "url": "https://vh-user-api-dev.azurewebsites.net/swagger/v1/swagger.json",
       "output": null
     }
   },
@@ -17,7 +17,7 @@
       "disposeHttpClient": false,
       "protectedMethods": [],
       "generateExceptionClasses": true,
-      "exceptionClass": "BookingsApiException",
+      "exceptionClass": "UserServiceException",
       "wrapDtoExceptions": true,
       "useHttpClientCreationMethod": false,
       "httpClientType": "System.Net.Http.HttpClient",
@@ -29,13 +29,13 @@
       "clientClassAccessModifier": "public",
       "typeAccessModifier": "public",
       "generateContractsOutput": false,
-      "contractsNamespace": "AdminWebsite.BookingsAPI.Client",
-      "contractsOutputFilePath": "BookingsApiContracts.cs",
+      "contractsNamespace": "AdminWebsite.UserAPI.Client",
+      "contractsOutputFilePath": "",
       "parameterDateTimeFormat": "s",
       "generateUpdateJsonSerializerSettingsMethod": true,
       "serializeTypeInformation": false,
       "queryNullValue": "",
-      "className": "BookingsApiClient",
+      "className": "UserApiClient",
       "operationGenerationMode": "SingleClientFromOperationId",
       "additionalNamespaceUsages": [],
       "additionalContractNamespaceUsages": [],
@@ -49,8 +49,8 @@
       "wrapResponses": false,
       "wrapResponseMethods": [],
       "generateResponseClasses": true,
-      "responseClass": "BookingsApiResponse",
-      "namespace": "AdminWebsite.BookingsAPI.Client",
+      "responseClass": "UserApiResponse",
+      "namespace": "AdminWebsite.UserAPI.Client",
       "requiredPropertiesMustBeDefined": true,
       "dateType": "System.DateTime",
       "jsonConverters": null,
@@ -78,13 +78,14 @@
       "inlineNamedTuples": true,
       "inlineNamedAny": false,
       "generateDtoTypes": true,
+      "generateOptionalPropertiesAsNullable": false,
       "templateDirectory": null,
       "typeNameGeneratorType": null,
       "propertyNameGeneratorType": null,
       "enumNameGeneratorType": null,
-      "serviceHost": "http://localhost:5301",
+      "serviceHost": "https://localhost:5200",
       "serviceSchemes": null,
-      "output": "BookingsApiClient.cs"
+      "output": "../AdminWebsite.UserAPI.Client/UserApiClient.cs"
     }
   }
 }

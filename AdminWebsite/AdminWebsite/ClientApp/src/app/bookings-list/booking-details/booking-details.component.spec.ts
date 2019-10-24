@@ -23,8 +23,7 @@ import { PageUrls } from '../../shared/page-url.constants';
 import { CancelBookingPopupComponent } from 'src/app/popups/cancel-booking-popup/cancel-booking-popup.component';
 import { BookingPersistService } from '../../services/bookings-persist.service';
 import { UserIdentityService } from '../../services/user-identity.service';
-import { ErrorService } from 'src/app/services/error.service';
-
+import { Logger } from '../../services/logger';
 
 let component: BookingDetailsComponent;
 let fixture: ComponentFixture<BookingDetailsComponent>;
@@ -118,7 +117,7 @@ describe('BookingDetailsComponent', () => {
     'resetEditMode', 'setExistingCaseType', 'removeExistingCaseType']);
   bookingPersistServiceSpy = jasmine.createSpyObj('BookingPersistService', ['selectedHearingId']);
   userIdentityServiceSpy = jasmine.createSpyObj('UserIdentityService', ['getUserInformation']);
-  const errorService: jasmine.SpyObj<ErrorService> = jasmine.createSpyObj('ErrorService', ['handleError']);
+  const loggerSpy: jasmine.SpyObj<Logger> = jasmine.createSpyObj('Logger', ['error', 'event']);
 
   beforeEach(async(() => {
     videoHearingServiceSpy.getHearingById.and.returnValue(of(hearingResponse));
@@ -144,7 +143,7 @@ describe('BookingDetailsComponent', () => {
         { provide: BookingService, useValue: bookingServiceSpy },
         { provide: BookingPersistService, useValue: bookingPersistServiceSpy },
         { provide: UserIdentityService, useValue: userIdentityServiceSpy },
-        { provide: ErrorService, useValue: errorService },
+        { provide: Logger, useValue: loggerSpy },
       ]
     }).compileComponents();
     fixture = TestBed.createComponent(BookingDetailsComponent);
@@ -207,7 +206,6 @@ describe('BookingDetailsComponent', () => {
     component.ngOnInit();
     component.cancelBooking();
     expect(component.showCancelBooking).toBeFalsy();
-    console.log(videoHearingServiceSpy);
     expect(videoHearingServiceSpy.updateBookingStatus)
       .toHaveBeenCalledWith(bookingPersistServiceSpy.selectedHearingId, updateBookingStatusRequest);
     expect(videoHearingServiceSpy.getHearingById)

@@ -1,6 +1,18 @@
-import { Logger } from './logger';
+import { LogAdapter } from './log-adapter';
 
-export class ConsoleLogger implements Logger {
+export class ConsoleLogger implements LogAdapter {
+  debug(message: string): void {
+    console.log(`[DEBUG] ${message}`);
+  }
+
+  info(message: string): void {
+    console.log(`[INFO] ${message}`);
+  }
+
+  warn(message: string): void {
+    console.log(`[WARN] ${message}`);
+  }
+
   trackEvent(eventName: string, properties: any = null) {
     const propertiesFormatted = properties ? JSON.stringify(properties) : '';
     console.log(`[EVENT:${eventName}] ${propertiesFormatted}`.trim());

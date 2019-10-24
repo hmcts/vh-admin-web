@@ -1,10 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
 
 import { Constants } from '../../common/constants';
-import { CanDeactiveComponent } from '../../common/guards/changes.guard';
 import { HearingTypeResponse } from '../../services/clients/api-client';
 import { HearingModel } from '../../common/model/hearing.model';
 import { ParticipantsListComponent } from '../participants-list/participants-list.component';
@@ -15,6 +13,7 @@ import { HearingDetailsResponse } from '../../services/clients/api-client';
 import { BookingService } from '../../services/booking.service';
 import { RemovePopupComponent } from '../../popups/remove-popup/remove-popup.component';
 import { FormatShortDuration } from '../../common/formatters/format-short-duration';
+import { Logger } from '../../services/logger';
 
 @Component({
   selector: 'app-summary',
@@ -57,8 +56,8 @@ export class SummaryComponent implements OnInit {
   constructor(private hearingService: VideoHearingsService,
     private router: Router,
     private referenceDataService: ReferenceDataService,
-    private bookingService: BookingService
-  ) {
+    private bookingService: BookingService,
+    private logger: Logger) {
     this.attemptingCancellation = false;
     this.showErrorSaving = false;
   }
@@ -104,6 +103,11 @@ export class SummaryComponent implements OnInit {
     const indexOfParticipant = this.hearing.participants
       .findIndex(x => x.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase());
     if (indexOfParticipant > -1) {
+      if (this.hearing.hearing_id && this.hearing.participants[indexOfParticipant].id) {
+        const id = this.hearing.participants[indexOfParticipant].id;
+        this.logger.event(
+          'Participant removed from hearing.', { hearingId: this.hearing.hearing_id, participantId: id });
+      }
       this.hearing.participants.splice(indexOfParticipant, 1);
       this.hearingService.updateHearingRequest(this.hearing);
       this.hearingService.setBookingHasChanged(true);
@@ -165,9 +169,11 @@ export class SummaryComponent implements OnInit {
             sessionStorage.setItem(this.newHearingSessionKey, hearingDetailsResponse.id);
             this.hearingService.cancelRequest();
             this.showWaitSaving = false;
+            this.logger.event('Hearing booking saved', { hearingId: hearingDetailsResponse.id });
             this.router.navigate([PageUrls.BookingConfirmation]);
           },
           error => {
+            this.logger.error('Error saving new hearing.', error);
             this.setError(error);
           }
         );
@@ -179,8 +185,11 @@ export class SummaryComponent implements OnInit {
       .subscribe((hearingDetailsResponse: HearingDetailsResponse) => {
         this.showWaitSaving = false;
         this.hearingService.setBookingHasChanged(false);
+        this.logger.event('Hearing booking updated', { hearingId: hearingDetailsResponse.id });
+
         this.router.navigate([PageUrls.BookingDetails]);
       }, error => {
+        this.logger.error(`Error updating hearing with ID: ${this.hearing.hearing_id}`, error);
         this.setError(error);
       });
   }

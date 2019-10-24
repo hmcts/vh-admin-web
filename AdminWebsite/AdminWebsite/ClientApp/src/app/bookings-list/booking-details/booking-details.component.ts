@@ -13,8 +13,8 @@ import { UserIdentityService } from '../../services/user-identity.service';
 import { HearingModel } from '../../common/model/hearing.model';
 import { PageUrls } from '../../shared/page-url.constants';
 import { BookingPersistService } from '../../services/bookings-persist.service';
-import { ErrorService } from 'src/app/services/error.service';
 import { interval, Subscription } from 'rxjs';
+import { Logger } from '../../services/logger';
 
 @Component({
   selector: 'app-booking-details',
@@ -43,7 +43,7 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
     private router: Router,
     private bookingService: BookingService,
     private bookingPersistService: BookingPersistService,
-    private errorService: ErrorService) {
+    private logger: Logger) {
     this.showCancelBooking = false;
   }
 
@@ -139,6 +139,7 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
       .subscribe(
         (data) => {
           this.updateStatusHandler(status);
+          this.logger.event('Hearing status changed', { hearingId: this.hearingId, status: status });
         },
         error => {
           this.errorHandler(error, status);
@@ -156,7 +157,7 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
           this.mapHearing(newData);
         },
         error => {
-          this.errorService.handleError(error);
+          this.logger.error(`Error to get hearing Id: ${this.hearingId}`, error);
         }
       );
   }
@@ -165,7 +166,7 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
     if (status === UpdateBookingStatusRequestStatus.Cancelled) {
       this.showCancelBooking = false;
     }
-    this.errorService.handleError(error);
+    this.logger.error('Error update hearing status', error);
   }
 
   persistStatus(status: UpdateBookingStatusRequestStatus) {
