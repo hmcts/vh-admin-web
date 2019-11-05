@@ -1,0 +1,267 @@
+{
+	"info": {
+		"_postman_id": "5ac7e73b-97db-40f1-90c1-a699df2d5756",
+		"name": "MoJ",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Booking API",
+			"item": [
+				{
+					"name": "Get Hearing",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6InU0T2ZORlBId0VCb3NIanRyYXVPYlY4NExuWSIsImtpZCI6InU0T2ZORlBId0VCb3NIanRyYXVPYlY4NExuWSJ9.eyJhdWQiOiJodHRwczovL2hlYXJpbmdzLnJlZm9ybS5obWN0cy5uZXQvNDllNjI3MmItNzM2Yi00Yzk2LTgwN2MtMjJlZDk3ZmVhZjdkIiwiaXNzIjoiaHR0cHM6Ly9zdHMud2luZG93cy5uZXQvZmI2ZTBlMjItMGRhMy00YzM1LTk3MmEtOWQ2MWViMjU2NTA4LyIsImlhdCI6MTU2NTcwMjc0NywibmJmIjoxNTY1NzAyNzQ3LCJleHAiOjE1NjU3MDY2NDcsImFpbyI6IjQyRmdZRml6K3M0L3BxV0xVK0pudkRTU1dsUndGQUE9IiwiYXBwaWQiOiJkODNmODMzNi0zZDU5LTQ5YjYtOGUyYy1lZmNkYzZlY2Q0ZjMiLCJhcHBpZGFjciI6IjEiLCJpZHAiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC9mYjZlMGUyMi0wZGEzLTRjMzUtOTcyYS05ZDYxZWIyNTY1MDgvIiwib2lkIjoiMTRhYWI2ZmItMDExNS00YzZmLTgzNjktMDc5OTQ3NWNiODE3Iiwic3ViIjoiMTRhYWI2ZmItMDExNS00YzZmLTgzNjktMDc5OTQ3NWNiODE3IiwidGlkIjoiZmI2ZTBlMjItMGRhMy00YzM1LTk3MmEtOWQ2MWViMjU2NTA4IiwidXRpIjoiQVRjM1BCQlpHMGVsbkdodEI3dHNBQSIsInZlciI6IjEuMCJ9.jrT-i1PWPE_L88XP_u3sWnker93Okv8eRCHREGhcB-wontI419tKiPgSEDKo7jlDhsl6kh0qtyTe1AIftmemdUXmo4qVyt5v80p6LoTAJOKsqRTHNmau52xm7y3fkBY1DYOH6VHkGLVNX8gJ4tcTQoZCRcLyOeAAmu0Ivw06b15dK_v0QJpVcbV-QDlgychZxQdnVQnYZoMuWhpWVfI1wqqLVlBPVFshPpnZW7-DTdlyVlrCF1gYikwKOM8eOEeRTuCKFAIdLGsdjzsdL1JJvH75H7OUDwrCOXd8gsrHaARVXcufit-S93jqHfqPn7FdpQC7lTvWFuOYvoecHqdiIg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{Endpoint}}/hearings/0d622615-fb0e-49ef-b0c6-ebd35f3d223d",
+							"host": [
+								"{{Endpoint}}"
+							],
+							"path": [
+								"hearings",
+								"0d622615-fb0e-49ef-b0c6-ebd35f3d223d"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "casetypes",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6InU0T2ZORlBId0VCb3NIanRyYXVPYlY4NExuWSIsImtpZCI6InU0T2ZORlBId0VCb3NIanRyYXVPYlY4NExuWSJ9.eyJhdWQiOiJodHRwczovL2hlYXJpbmdzLnJlZm9ybS5obWN0cy5uZXQvNDllNjI3MmItNzM2Yi00Yzk2LTgwN2MtMjJlZDk3ZmVhZjdkIiwiaXNzIjoiaHR0cHM6Ly9zdHMud2luZG93cy5uZXQvZmI2ZTBlMjItMGRhMy00YzM1LTk3MmEtOWQ2MWViMjU2NTA4LyIsImlhdCI6MTU2NTY5MzE5MCwibmJmIjoxNTY1NjkzMTkwLCJleHAiOjE1NjU2OTcwOTAsImFpbyI6IjQyRmdZSkMyV1ZWdThxRHNCbS9jZ1JzSmtuOEVBQT09IiwiYXBwaWQiOiJkODNmODMzNi0zZDU5LTQ5YjYtOGUyYy1lZmNkYzZlY2Q0ZjMiLCJhcHBpZGFjciI6IjEiLCJpZHAiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC9mYjZlMGUyMi0wZGEzLTRjMzUtOTcyYS05ZDYxZWIyNTY1MDgvIiwib2lkIjoiMTRhYWI2ZmItMDExNS00YzZmLTgzNjktMDc5OTQ3NWNiODE3Iiwic3ViIjoiMTRhYWI2ZmItMDExNS00YzZmLTgzNjktMDc5OTQ3NWNiODE3IiwidGlkIjoiZmI2ZTBlMjItMGRhMy00YzM1LTk3MmEtOWQ2MWViMjU2NTA4IiwidXRpIjoiWmh1UmV6ZjFqVVNUbGNWMnpqUmpBQSIsInZlciI6IjEuMCJ9.TYxsxLr8TBCmRyxZu7lPYSyF64zaB-szfpdagD-y8cOazykw4l1dEf_WDnEyyCyVTRNQgLb17rvy5YWiidHEKs5B_1lx6ZQcMc9lT6eQgfhJNjM-sFmmFgPt0F950-WEuVsZC7Lzl4SPX6UMvQsLzhsV7JO8C0kWHT7_0eUeY99wf-B4wHgU6BGZkMsaU1af-x1bvZyKN1mRFtxr0woooYH9o1MapJPbrlTZ-FmFynLVrxrag4DRd6NRZhyf2hNYK9lnLtavZH8o52ovv56tTUUqUn776SdF9smRRYmL92f-ECd8a4XGS8jhkyS21Djw735tbvo3-vDAy8eVaLYlNg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{Endpoint}}/casetypes",
+							"host": [
+								"{{Endpoint}}"
+							],
+							"path": [
+								"casetypes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create New Hearing",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6InU0T2ZORlBId0VCb3NIanRyYXVPYlY4NExuWSIsImtpZCI6InU0T2ZORlBId0VCb3NIanRyYXVPYlY4NExuWSJ9.eyJhdWQiOiJodHRwczovL2hlYXJpbmdzLnJlZm9ybS5obWN0cy5uZXQvNDllNjI3MmItNzM2Yi00Yzk2LTgwN2MtMjJlZDk3ZmVhZjdkIiwiaXNzIjoiaHR0cHM6Ly9zdHMud2luZG93cy5uZXQvZmI2ZTBlMjItMGRhMy00YzM1LTk3MmEtOWQ2MWViMjU2NTA4LyIsImlhdCI6MTU2NTY5MzE5MCwibmJmIjoxNTY1NjkzMTkwLCJleHAiOjE1NjU2OTcwOTAsImFpbyI6IjQyRmdZSkMyV1ZWdThxRHNCbS9jZ1JzSmtuOEVBQT09IiwiYXBwaWQiOiJkODNmODMzNi0zZDU5LTQ5YjYtOGUyYy1lZmNkYzZlY2Q0ZjMiLCJhcHBpZGFjciI6IjEiLCJpZHAiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC9mYjZlMGUyMi0wZGEzLTRjMzUtOTcyYS05ZDYxZWIyNTY1MDgvIiwib2lkIjoiMTRhYWI2ZmItMDExNS00YzZmLTgzNjktMDc5OTQ3NWNiODE3Iiwic3ViIjoiMTRhYWI2ZmItMDExNS00YzZmLTgzNjktMDc5OTQ3NWNiODE3IiwidGlkIjoiZmI2ZTBlMjItMGRhMy00YzM1LTk3MmEtOWQ2MWViMjU2NTA4IiwidXRpIjoiWmh1UmV6ZjFqVVNUbGNWMnpqUmpBQSIsInZlciI6IjEuMCJ9.TYxsxLr8TBCmRyxZu7lPYSyF64zaB-szfpdagD-y8cOazykw4l1dEf_WDnEyyCyVTRNQgLb17rvy5YWiidHEKs5B_1lx6ZQcMc9lT6eQgfhJNjM-sFmmFgPt0F950-WEuVsZC7Lzl4SPX6UMvQsLzhsV7JO8C0kWHT7_0eUeY99wf-B4wHgU6BGZkMsaU1af-x1bvZyKN1mRFtxr0woooYH9o1MapJPbrlTZ-FmFynLVrxrag4DRd6NRZhyf2hNYK9lnLtavZH8o52ovv56tTUUqUn776SdF9smRRYmL92f-ECd8a4XGS8jhkyS21Djw735tbvo3-vDAy8eVaLYlNg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"scheduled_date_time\": \"2025-05-10T20:10:38.548Z\",\r\n    \"scheduled_duration\": 45,\r\n    \"hearing_venue_name\": \"Birmingham Civil and Family Justice Centre\",\r\n    \"case_type_name\": \"Civil Money Claims\",\r\n    \"hearing_type_name\": \"Application to Set Judgment Aside\",\r\n    \"cases\": [\r\n      {\r\n        \"number\": \"12344567\",\r\n        \"name\": \"Test Questionnaire required 1\",\r\n        \"is_lead_case\": true\r\n      }\r\n    ],\r\n    \"participants\": [\r\n      {\r\n        \"title\": \"Mr\",\r\n        \"first_name\": \"Atif\",\r\n        \"middle_names\": \"\",\r\n        \"last_name\": \"Representative\",\r\n        \"contact_email\": \"atif.representative@hearings.reform.hmcts.net\",\r\n        \"telephone_number\": \"0739053837\",\r\n        \"username\": \"atif.representative@hearings.reform.hmcts.net\",\r\n        \"display_name\": \"atif individual\",\r\n        \"case_role_name\": \"Defendant\",\r\n        \"hearing_role_name\": \"Solicitor\",\r\n        \"solicitors_reference\": \"\",\r\n        \"representee\": \"\",\r\n        \"organisation_name\": \"\",\r\n        \"house_number\": \"123\",\r\n        \"street\": \"Oseney Court\",\r\n        \"postcode\": \"NW5 2BA\",\r\n        \"city\": \"London\",\r\n        \"county\": \"Greater London\"\r\n      },\r\n      {\r\n          \"title\": \"Mr\",\r\n          \"first_name\": \"Judge\",\r\n          \"middle_names\": \"\",\r\n          \"last_name\": \"Lannister\",\r\n          \"contact_email\": \"judge.lannister@hearings.reform.hmcts.net\",\r\n          \"telephone_number\": \"23124t32342\",\r\n          \"username\": \"judge.lannister@hearings.reform.hmcts.net\",\r\n          \"display_name\": \"Judge Lannister\",\r\n          \"case_role_name\": \"Judge\",\r\n          \"hearing_role_name\": \"Judge\",\r\n          \"solicitors_reference\": \"\",\r\n          \"representee\": \"\",\r\n          \"organisation_name\": \"\",\r\n          \"house_number\": \"\",\r\n          \"street\": \"\",\r\n          \"postcode\": \"\",\r\n          \"city\": \"\",\r\n          \"county\": \"\"\r\n        }\r\n    ],\r\n    \"hearing_room_name\": \"Room1\",\r\n    \"other_information\": \"\",\r\n    \"created_by\": \"atif.rehman@hearings.reform.hmcts.net\",\r\n    \"questionnaire_not_required\": true\r\n  }"
+						},
+						"url": {
+							"raw": "{{Endpoint}}/hearings",
+							"host": [
+								"{{Endpoint}}"
+							],
+							"path": [
+								"hearings"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Admin Web",
+			"item": [
+				{
+					"name": "Create Hearing",
+					"item": [
+						{
+							"name": "Create Hearing",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "a974c530-7182-4306-a083-5816a052f5e5",
+										"exec": [
+											"console.log('Have you set the bearer token in the folder pre-request scripts?');",
+											"pm.globals.set(\"scheduled_date_time\", \"2020-08-18 20:10:38\");"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"id": "270139f2-27ca-47e9-8c51-63a8f5720502",
+										"exec": [
+											"pm.test(\"Successful POST request\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([201,202]);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{bearerToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Connection",
+										"value": "keep-alive"
+									},
+									{
+										"key": "Pragma",
+										"value": "no-cache"
+									},
+									{
+										"key": "Cache-Control",
+										"value": "no-cache"
+									},
+									{
+										"key": "Origin",
+										"value": "https://localhost:5400"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "User-Agent",
+										"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.70 Safari/537.36"
+									},
+									{
+										"key": "Request-Id",
+										"value": "|Yilo6.WU4SY"
+									},
+									{
+										"key": "DNT",
+										"value": "1"
+									},
+									{
+										"key": "Request-Context",
+										"value": "appId=cid-v1:11da21f3-e3c7-4b8c-88bc-9249f4cbeb10"
+									},
+									{
+										"key": "Sec-Fetch-Site",
+										"value": "same-origin"
+									},
+									{
+										"key": "Sec-Fetch-Mode",
+										"value": "cors"
+									},
+									{
+										"key": "Accept-Encoding",
+										"value": "gzip, deflate, br"
+									},
+									{
+										"key": "Accept-Language",
+										"value": "en-GB,en-US;q=0.9,en;q=0.8"
+									},
+									{
+										"key": "Cookie",
+										"value": "ai_user=uldnG|2019-11-04T13:13:46.916Z; ai_session=n8caC|1572873233293.36|1572873425692.385"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"scheduled_date_time\": \"{{scheduled_date_time}}\",\n    \"scheduled_duration\": 45,\n    \"hearing_venue_name\": \"Birmingham Civil and Family Justice Centre\",\n    \"case_type_name\": \"Civil Money Claims\",\n    \"hearing_type_name\": \"First Application\",\n    \"cases\": [\n        {\n            \"number\": \"12345\",\n            \"name\": \"Rehman vs Rehman\",\n            \"is_lead_case\": false\n        }\n    ],\n    \"participants\": [\n        {\n            \"title\": \"Judge\",\n            \"first_name\": \"Birmingham\",\n            \"middle_names\": \"\",\n            \"last_name\": \"Courtroom115\",\n            \"contact_email\": \"BirminghamCFJCcourt115@hearings.reform.hmcts.net\",\n            \"telephone_number\": \"\",\n            \"username\": \"BirminghamCFJCcourt115@hearings.reform.hmcts.net\",\n            \"display_name\": \"Birmingham Courtroom115\",\n            \"case_role_name\": \"Judge\",\n            \"hearing_role_name\": \"Judge\",\n            \"house_number\": null,\n            \"street\": null,\n            \"postcode\": null,\n            \"city\": null,\n            \"county\": null\n        },\n        {\n            \"title\": \"Mr\",\n            \"first_name\": \"Atif\",\n            \"last_name\": \"Representative\",\n            \"contact_email\": \"atif.representative@hearings.reform.hmcts.net\",\n            \"telephone_number\": \"0739053837\",\n            \"username\": \"atif.representative@hearings.reform.hmcts.net\",\n            \"display_name\": \"Atif Rep\",\n            \"case_role_name\": \"Claimant\",\n            \"hearing_role_name\": \"Claimant LIP\",\n            \"solicitors_reference\": \"\",\n            \"representee\": \"\",\n            \"organisation_name\": \"MyCompany\",\n            \"house_number\": \"123\",\n            \"street\": \"London Road\",\n            \"postcode\": \"SW1 1WS\",\n            \"city\": \"London\",\n            \"county\": \"London\"\n        },\n        {\n            \"title\": \"Mr\",\n            \"first_name\": \"Atif\",\n            \"last_name\": \"Individual\",\n            \"contact_email\": \"atif.individual@hearings.reform.hmcts.net\",\n            \"telephone_number\": \"0739053837\",\n            \"username\": \"atif.individual@hearings.reform.hmcts.net\",\n            \"display_name\": \"Atif Indv\",\n            \"case_role_name\": \"Defendant\",\n            \"hearing_role_name\": \"Defendant LIP\",\n            \"solicitors_reference\": \"\",\n            \"representee\": \"\",\n            \"organisation_name\": \"\",\n            \"house_number\": \"123\",\n            \"street\": \"Oseney Court\",\n            \"postcode\": \"NW5 2BA\",\n            \"city\": \"London\",\n            \"county\": \"Greater London\"\n        }\n    ],\n    \"hearing_room_name\": \"Room 6.41C\",\n    \"other_information\": \"test1\",\n    \"questionnaire_not_required\": null\n}"
+								},
+								"url": {
+									"raw": "{{Endpoint}}/api/hearings/",
+									"host": [
+										"{{Endpoint}}"
+									],
+									"path": [
+										"api",
+										"hearings",
+										""
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "9a50a0ca-e0b6-4c33-9d75-b37d0613621f",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"bearerToken\",'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6ImFQY3R3X29kdlJPb0VOZzNWb09sSWgydGlFcyIsImtpZCI6ImFQY3R3X29kdlJPb0VOZzNWb09sSWgydGlFcyJ9.eyJhdWQiOiJkODNmODMzNi0zZDU5LTQ5YjYtOGUyYy1lZmNkYzZlY2Q0ZjMiLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC9mYjZlMGUyMi0wZGEzLTRjMzUtOTcyYS05ZDYxZWIyNTY1MDgvIiwiaWF0IjoxNTcyOTYzNTUyLCJuYmYiOjE1NzI5NjM1NTIsImV4cCI6MTU3Mjk2NzQ1MiwiYWlvIjoiQVNRQTIvOE5BQUFBb0crQjFCTU5KeFFEN2RSdWtPWG9qVkNRQThQMDJ4U2ozdHg2NmN2MW1rdz0iLCJhbXIiOlsicHdkIl0sImZhbWlseV9uYW1lIjoidmhvZmZpY2VyX2ZpbmFuY2lhbHJlbWVkeV9tb25leWNsYWltcyIsImdpdmVuX25hbWUiOiJhdXRvIiwiaGFzZ3JvdXBzIjoidHJ1ZSIsImlwYWRkciI6Ijc3Ljk5LjIzMS42NyIsIm5hbWUiOiJhdXRvIHZob2ZmaWNlcl9maW5hbmNpYWxyZW1lZHlfbW9uZXljbGFpbXMiLCJub25jZSI6IjEyOWVhMTQ4LWJjYjItNGU2Ni05ZWQwLWM0MjZhYzcwYWQ5OSIsIm9pZCI6IjE2ZGQxODIyLWNlYmYtNDJmOS05MDI0LWM4ZTgxY2M5ZWQ4NCIsInN1YiI6InRTRmJmRzh1bDUwYnBDeWRsZlJJSmNkYmpyZ2d0bjN3Z3BpMG1SOHBxODgiLCJ0aWQiOiJmYjZlMGUyMi0wZGEzLTRjMzUtOTcyYS05ZDYxZWIyNTY1MDgiLCJ1bmlxdWVfbmFtZSI6ImF1dG8udmhvZmZpY2VyX2ZpbmFuY2lhbHJlbWVkeV9tb25leWNsYWltc0BoZWFyaW5ncy5yZWZvcm0uaG1jdHMubmV0IiwidXBuIjoiYXV0by52aG9mZmljZXJfZmluYW5jaWFscmVtZWR5X21vbmV5Y2xhaW1zQGhlYXJpbmdzLnJlZm9ybS5obWN0cy5uZXQiLCJ1dGkiOiJSSkQ2MTFsU3ZVU2czWkwtaDg1cEFBIiwidmVyIjoiMS4wIn0.PqERYdO9ZtImaMvDBfVZ10NelWSK1R_PQx09IqimuA7KtnASUtjxmReASWBI5mAsZdseiWY9hPivZ3GLc3d2xHE_yqTkERF5r6r6cYDHkArmPuZuKPtow3zxJP4LQPCMmpsQ55E3Ddjx89-dLRcUSDX5IdVJHI5SUqqjGK_V8pZnlOYNWTDjGLbijwu3oGozhMJvYxMYT6XPKEHJ5GYuUJ6diwZcs3k798UHNG11hnPUVLKsi23dDHkLl9Hhh1iNbFG-tB7XQ0MivpM9ecvO4laTf7lpKyLePn996ghNnZiXvfLYoCR5u578EPAncz8o3kByzYOZgNVo9yh7KDJZqg');"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "bba7965c-5564-4335-844a-8d99f95cbe12",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				}
+			]
+		}
+	]
+}
