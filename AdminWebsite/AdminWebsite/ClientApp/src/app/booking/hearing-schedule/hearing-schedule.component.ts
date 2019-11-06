@@ -91,7 +91,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
       hearingDurationHour: [durationHour, [Validators.required, Validators.min(0), Validators.max(23)]],
       hearingDurationMinute: [durationMinute, [Validators.required, Validators.min(0), Validators.max(59)]],
       courtAddress: [this.hearing.hearing_venue_id, [Validators.required, Validators.min(1)]],
-      courtRoom: [room],
+      courtRoom: [room, [Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)]],
     });
 
     this.courtAddress.valueChanges.subscribe(val => {
@@ -158,6 +158,10 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
 
   get courtAddressInvalid() {
     return this.courtAddress.invalid && (this.courtAddress.dirty || this.courtAddress.touched || this.failedSubmission);
+  }
+
+  get courtRoomInvalid() {
+    return this.courtRoom.invalid && (this.courtRoom.dirty || this.courtRoom.touched || this.failedSubmission);
   }
 
   private retrieveCourts() {

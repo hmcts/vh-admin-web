@@ -12,8 +12,8 @@
     <app-booking-edit [title]="'Hearing details'" [editLink]="'book-hearing'" [elementId]="'hearing-details-id'">
     </app-booking-edit>
     <div class="govuk-form-group vhtable">
-      <div id="caseNumber">{{ caseNumber }}</div>
-      <div id="caseName">{{ caseName }}</div>
+      <div id="caseNumber" class="vh-text-break">{{ caseNumber }}</div>
+      <div id="caseName" class="vh-text-break">{{ caseName }}</div>
       <div id="caseHearingType">{{ caseHearingType }}</div>
     </div>
 
@@ -21,7 +21,7 @@
     </app-booking-edit>
     <div class="govuk-form-group vhtable">
       <div id="hearingDate">{{ hearingDate | appLongDatetime }}</div>
-      <div id="courtAddress">{{ courtRoomAddress }}</div>
+      <div id="courtAddress" class="vh-text-break">{{ courtRoomAddress }}</div>
       <div id="hearingDuration">{{ hearingDuration }}</div>
     </div>
 

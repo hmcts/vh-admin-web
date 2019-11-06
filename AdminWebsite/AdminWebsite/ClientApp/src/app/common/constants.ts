@@ -3,6 +3,9 @@ export const Constants = {
   PleaseSelect: 'Please select',
   Solicitor: 'Solicitor',
   PleaseSelectPattern: '^((?!Please select).)*$',
+  TextInputPattern: /^[ A-Za-z0-9()[\]&"'+-_*/]*$/,
+  PostCodePattern: /^[a-zA-Z]{1,2}([0-9]{1,2}|[0-9][a-zA-Z])\s*[0-9][a-zA-Z]{2}$/,
+  PhonePattern: /^[0-9() +-.]*$/,
   Judge: 'Judge',
   Citizen: 'Citizen',
   Professional: 'Professional',
@@ -24,7 +27,9 @@ export const Constants = {
     SolicitorReferenceMsg: 'Please enter a solicitor reference',
     RepresenteeErrorMsg: 'Please enter a representee',
     JudgeDisplayNameErrorMsg: 'Please enter a judge name',
-    DisplayNameErrorMsg: 'Please enter a display name'
+    DisplayNameErrorMsg: 'Please enter a display name',
+    CompanyNameErrorMsg: 'Please enter a valid company name',
+    OtherInformationErrorMsg: 'Please enter a valid other information text',
   },
   Contact: {
     phone: '0300 303 0655',

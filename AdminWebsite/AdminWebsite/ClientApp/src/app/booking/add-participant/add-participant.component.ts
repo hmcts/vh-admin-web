@@ -178,19 +178,23 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
       Validators.pattern(this.constants.PleaseSelectPattern)
     ]);
     this.title = new FormControl(this.constants.PleaseSelect);
-    this.firstName = new FormControl('', Validators.required);
-    this.lastName = new FormControl('', Validators.required);
-    this.phone = new FormControl('', [Validators.required, Validators.pattern(/^[0-9) -.]+$/)]);
-    this.displayName = new FormControl('', Validators.required);
+    this.firstName = new FormControl('', [Validators.required, Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)]);
+    this.lastName = new FormControl('', [Validators.required, Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)]);
+    this.phone = new FormControl('', [Validators.required, Validators.pattern(Constants.PhonePattern)]);
+    this.displayName = new FormControl('', [Validators.required, Validators.pattern(Constants.TextInputPattern),
+    Validators.maxLength(255)]);
     this.companyName = new FormControl('');
-    this.companyNameIndividual = new FormControl('');
-    this.solicitorReference = new FormControl('');
-    this.representing = new FormControl('');
+    this.companyNameIndividual = new FormControl('', [Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)]);
+    this.solicitorReference = new FormControl('', [Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)]);
+    this.representing = new FormControl('', [Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)]);
     this.houseNumber = new FormControl(this.dummyAddress.houseNumber);
     this.street = new FormControl(this.dummyAddress.street);
     this.city = new FormControl(this.dummyAddress.city);
     this.county = new FormControl(this.dummyAddress.county);
-    this.postcode = new FormControl(this.dummyAddress.postcode);
+    this.postcode = new FormControl(this.dummyAddress.postcode, {
+      validators: [Validators.required,
+      Validators.pattern(Constants.PostCodePattern), Validators.maxLength(10)], updateOn: 'blur'
+    });
     this.form = new FormGroup({
       role: this.role,
       party: this.party,
@@ -420,13 +424,18 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     return this.postcode.invalid && (this.postcode.dirty || this.postcode.touched || this.isShowErrorSummary);
   }
   get solicitorReferenceInvalid() {
-    return this.solicitorReference.invalid && (this.solicitorReference.dirty || this.solicitorReference.touched || this.isShowErrorSummary);
+    return this.solicitorReference.invalid &&
+      (this.solicitorReference.dirty || this.solicitorReference.touched || this.isShowErrorSummary);
   }
   get representeeInvalid() {
     return this.representing.invalid && (this.representing.dirty || this.representing.touched || this.isShowErrorSummary);
   }
   get companyInvalid() {
     return this.companyName.invalid && (this.companyName.dirty || this.companyName.touched || this.isShowErrorSummary);
+  }
+  get companyIndividualInvalid() {
+    return this.companyNameIndividual.invalid &&
+      (this.companyNameIndividual.dirty || this.companyNameIndividual.touched || this.isShowErrorSummary);
   }
   partySelected() {
     this.isPartySelected = this.party.value !== this.constants.PleaseSelect;
@@ -438,17 +447,15 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     if (this.role.value !== this.constants.Solicitor) {
       this.showAddress = true;
 
-      this.houseNumber.setValidators([Validators.required]);
-      this.street.setValidators([Validators.required]);
-      this.city.setValidators([Validators.required]);
-      this.county.setValidators([Validators.required]);
-      this.postcode.setValidators([Validators.required]);
+      this.houseNumber.setValidators([Validators.required, Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)]);
+      this.street.setValidators([Validators.required, Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)]);
+      this.city.setValidators([Validators.required, Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)]);
+      this.county.setValidators([Validators.required, Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)]);
 
       this.houseNumber.updateValueAndValidity();
       this.street.updateValueAndValidity();
       this.city.updateValueAndValidity();
       this.county.updateValueAndValidity();
-      this.postcode.updateValueAndValidity();
 
       this.companyName.clearValidators();
       this.solicitorReference.clearValidators();
@@ -464,9 +471,12 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     } else {
       this.showAddress = false;
 
-      this.companyName.setValidators([Validators.required]);
-      this.solicitorReference.setValidators([Validators.required]);
-      this.representing.setValidators([Validators.required]);
+      this.companyName.setValidators([Validators.required, Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)]);
+      this.solicitorReference.setValidators([
+        Validators.required,
+        Validators.pattern(Constants.TextInputPattern),
+        Validators.maxLength(255)]);
+      this.representing.setValidators([Validators.required, Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)]);
 
       this.companyName.updateValueAndValidity();
       this.solicitorReference.updateValueAndValidity();
@@ -476,13 +486,11 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
       this.street.clearValidators();
       this.city.clearValidators();
       this.county.clearValidators();
-      this.postcode.clearValidators();
 
       this.houseNumber.updateValueAndValidity();
       this.street.updateValueAndValidity();
       this.city.updateValueAndValidity();
       this.county.updateValueAndValidity();
-      this.postcode.updateValueAndValidity();
 
       this.houseNumber.setValue(this.dummyAddress.houseNumber);
       this.street.setValue(this.dummyAddress.street);

@@ -43,7 +43,7 @@
       </div>
       <div *ngIf="showDetails">
         <app-search-email [disabled]="emailDisabled" (findParticipant)="getParticipant($event)" (participantsNotFound)="notFoundParticipant()"
-          (emailChanged)="emailChanged()">
+                          (emailChanged)="emailChanged()">
         </app-search-email>
 
         <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error': titleInvalid || !isTitleSelected}">
@@ -84,12 +84,17 @@
         </div>
 
         <div *ngIf="showAddress">
-          <div class="govuk-form-group">
+          <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':companyIndividualInvalid}">
+            <legend id="companyIndividualName-error" *ngIf="companyIndividualInvalid">
+              <span class="govuk-error-message">
+                {{constants.Error.CompanyNameErrorMsg}}
+              </span>
+            </legend>
             <label class="govuk-label" for="companyNameIndividual">
               Organisation <span class="govuk-hint vh-inline">(optional)</span>
             </label>
             <input id="companyNameIndividual" formControlName="companyNameIndividual"
-              class="govuk-input govuk-input--width-20" type="text" />
+                   class="govuk-input govuk-input--width-20" type="text" />
           </div>
         </div>
 
@@ -106,7 +111,6 @@
         </div>
 
         <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':displayNameInvalid}">
-
           <legend id="display-name-error" *ngIf="displayNameInvalid">
             <span class="govuk-error-message">
               {{constants.Error.DisplayNameErrorMsg}}
@@ -117,6 +121,7 @@
           </label>
           <input id="displayName" formControlName="displayName" class="govuk-input govuk-input--width-20" type="text" />
         </div>
+
         <div *ngIf="showAddress">
           <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':houseNumberInvalid}">
 
@@ -129,9 +134,9 @@
               Building and street
             </label>
             <input id="houseNumber" formControlName="houseNumber" class="govuk-input govuk-input--width-20"
-              type="text" />
-
+                   type="text" />
           </div>
+
           <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':streetInvalid}">
 
             <legend id="display-name-error" *ngIf="streetInvalid">
@@ -194,7 +199,7 @@
               Organisation
             </label>
             <input id="companyName" formControlName="companyName" class="govuk-input govuk-input--width-20"
-              type="text" />
+                   type="text" />
           </div>
 
           <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':solicitorReferenceInvalid}">
@@ -207,7 +212,7 @@
               Solicitor reference
             </label>
             <input id="solicitorReference" formControlName="solicitorReference"
-              class="govuk-input govuk-input--width-20" type="text" />
+                   class="govuk-input govuk-input--width-20" type="text" />
           </div>
           <h2 class="govuk-heading-m">Client details</h2>
           <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':representeeInvalid}">
@@ -220,7 +225,7 @@
               Representing
             </label>
             <input id="representing" formControlName="representing" class="govuk-input govuk-input--width-20"
-              type="text" />
+                   type="text" />
           </div>
         </div>
 
@@ -231,7 +236,7 @@
           <img src="assets/images/AddIcon.png" alt="Add icon with sign plus" />
           <span class="vh-vert-top-m15">
             <a href="javascript:void(0)" (click)="saveParticipant()" type="submit" id="addParticipantBtn"
-              class="govuk-link govuk-body">
+               class="govuk-link govuk-body">
               Add participant
             </a>
           </span>
@@ -241,7 +246,7 @@
           <img src="assets/images/AddIcon.png" alt="Add icon with sign plus" />
           <span class="vh-vert-top-m15">
             <a href="javascript:void(0)" (click)="updateParticipantAction()" type="submit" id="updateParticipantBtn"
-              class="govuk-link govuk-body">
+               class="govuk-link govuk-body">
               Update participant
             </a>
           </span>
@@ -259,9 +264,9 @@
     </form>
     <div class="vh-top">
       <input *ngIf="displayNextButton" id="nextButton" type="button" class="govuk-button vh-mr25" role="button"
-        value="{{buttonAction}}" (click)="next()" />
+             value="{{buttonAction}}" (click)="next()" />
       <input id="cancelBtn" type="button" class="govuk-button hmcts-button--secondary" role="button" value="Cancel"
-        (click)="addParticipantCancel()" />
+             (click)="addParticipantCancel()" />
     </div>
   </div>
 
@@ -281,7 +286,7 @@
 
 <div *ngIf="showConfirmationRemoveParticipant">
   <app-remove-popup (continueRemove)="handleContinueRemove()" (cancelRemove)="handleCancelRemove()"
-    [fullName]="removerFullName" [isLastParticipant]="isAnyParticipants"></app-remove-popup>
+                    [fullName]="removerFullName" [isLastParticipant]="isAnyParticipants"></app-remove-popup>
 </div>
 
 <div *ngIf="attemptingDiscardChanges">

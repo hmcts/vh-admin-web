@@ -96,7 +96,13 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
       this.judge = AssignJudgeComponent.mapJudge(find_judge);
       this.canNavigate = true;
     }
-    this.judgeDisplayName = new FormControl(this.judge.display_name, { validators: Validators.required, updateOn: 'blur' });
+    this.judgeDisplayName = new FormControl(this.judge.display_name, {
+      validators: [
+        Validators.required,
+        Validators.pattern(Constants.TextInputPattern),
+        Validators.maxLength(255)
+      ], updateOn: 'blur'
+    });
 
     this.form = this.fb.group({
       judgeName: [this.judge.email, Validators.required],
@@ -122,7 +128,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
   }
 
   get judgeDisplayNameInvalid() {
-    return this.judgeDisplayName.invalid && (this.judgeDisplayName.dirty || this.judgeDisplayName.touched);
+    return this.judgeDisplayName.invalid && (this.judgeDisplayName.dirty || this.judgeDisplayName.touched || this.failedSubmission);
   }
 
   public addJudge(judgeId: string) {
