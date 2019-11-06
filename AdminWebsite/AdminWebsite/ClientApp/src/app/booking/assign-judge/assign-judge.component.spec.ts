@@ -119,8 +119,11 @@ describe('AssignJudgeComponent', () => {
 
   it('should fail validation if a judge display name is not entered', () => {
     component.ngOnInit();
+    expect(component.judgeDisplayName).toBeTruthy();
+    expect(component.judgeDisplayName.validator).toBeTruthy();
     component.judgeDisplayName.setValue('');
     expect(component.form.valid).toBeFalsy();
+
   });
   it('should succeeded validation if a judge display name is entered', () => {
     component.ngOnInit();
