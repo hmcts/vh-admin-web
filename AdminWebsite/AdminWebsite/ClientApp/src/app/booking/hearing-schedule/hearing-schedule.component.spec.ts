@@ -165,6 +165,12 @@ describe('HearingScheduleComponent first visit', () => {
     expect(courtControl.valid).toBeTruthy();
   });
 
+  it('should validate court room and return invalid as value has invalid spec characters', () => {
+    component.form.controls['courtRoom'].setValue('%');
+    component.failedSubmission = true;
+    expect(component.courtRoomInvalid).toBe(true);
+  });
+
   it('court room field validity pattern', () => {
     let errors = {};
     component.form.controls['courtRoom'].setValue('%');

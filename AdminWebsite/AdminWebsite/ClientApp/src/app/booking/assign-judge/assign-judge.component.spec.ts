@@ -116,6 +116,11 @@ describe('AssignJudgeComponent', () => {
     expect(component.judge.email).toBe('John2.Doe@hearings.reform.hmcts.net');
     expect(component.form.valid).toBeTruthy();
   });
+  it('should initialize form and create judgeDisplayName control', () => {
+    component.ngOnInit();
+    expect(component.judgeDisplayName).toBeTruthy();
+    expect(component.judgeDisplayName.updateOn).toBe('blur');
+  });
   it('judge display name field validity required', () => {
     let errors = {};
     component.form.controls['judgeDisplayName'].setValue('');
@@ -143,11 +148,19 @@ describe('AssignJudgeComponent', () => {
     component.judgeDisplayName.setValue('judge name');
     expect(component.judgeDisplayNameInvalid).toBeFalsy();
   });
+  it('should not succeeded validation if a judge display name' +
+    'is entered with not allowed characters', () => {
+      component.ngOnInit();
+      component.judgeDisplayName.setValue('%');
+      component.failedSubmission = true;
+      expect(component.judgeDisplayNameInvalid).toBeTruthy();
+    });
   it('should return judgeDisplayNameInvalid is false if form is valid', () => {
     component.ngOnInit();
     component.judgeDisplayName.setValue('a');
     component.judgeDisplayName.markAsUntouched();
     component.judgeDisplayName.markAsPristine();
+    component.failedSubmission = false;
     expect(component.judgeDisplayNameInvalid).toBeFalsy();
   });
 
