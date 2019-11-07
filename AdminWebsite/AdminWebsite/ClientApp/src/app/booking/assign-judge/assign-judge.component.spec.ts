@@ -116,7 +116,20 @@ describe('AssignJudgeComponent', () => {
     expect(component.judge.email).toBe('John2.Doe@hearings.reform.hmcts.net');
     expect(component.form.valid).toBeTruthy();
   });
-
+  it('judge display name field validity required', () => {
+    let errors = {};
+    component.form.controls['judgeDisplayName'].setValue('');
+    const judge_display_name = component.form.controls['judgeDisplayName'];
+    errors = judge_display_name.errors || {};
+    expect(errors['required']).toBeTruthy();
+  });
+  it('judge display name field validity pattern', () => {
+    let errors = {};
+    component.form.controls['judgeDisplayName'].setValue('%');
+    const judge_display_name = component.form.controls['judgeDisplayName'];
+    errors = judge_display_name.errors || {};
+    expect(errors['pattern']).toBeTruthy();
+  });
   it('should fail validation if a judge display name is not entered', () => {
     component.ngOnInit();
     expect(component.judgeDisplayName).toBeTruthy();
@@ -128,6 +141,13 @@ describe('AssignJudgeComponent', () => {
   it('should succeeded validation if a judge display name is entered', () => {
     component.ngOnInit();
     component.judgeDisplayName.setValue('judge name');
+    expect(component.judgeDisplayNameInvalid).toBeFalsy();
+  });
+  it('should return judgeDisplayNameInvalid is false if form is valid', () => {
+    component.ngOnInit();
+    component.judgeDisplayName.setValue('a');
+    component.judgeDisplayName.markAsUntouched();
+    component.judgeDisplayName.markAsPristine();
     expect(component.judgeDisplayNameInvalid).toBeFalsy();
   });
 
