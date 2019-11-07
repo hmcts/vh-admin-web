@@ -625,6 +625,13 @@ describe('AddParticipantComponent edit mode', () => {
     county = component.form.controls['county'];
     postcode = component.form.controls['postcode'];
   }));
+  it('should initialize form controls', () => {
+    component.initializeForm();
+    expect(component.form.controls['firstName']).toBeTruthy();
+    expect(component.form.controls['firstName'].errors['required']).toBeTruthy();
+    expect(component.form.controls['lastName']).toBeTruthy();
+    expect(component.form.controls['lastName'].errors['required']).toBeTruthy();
+  });
   it('should set title list and get current data from session', () => {
     component.ngOnInit();
     fixture.detectChanges();
