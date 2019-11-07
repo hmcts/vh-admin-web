@@ -1063,6 +1063,26 @@ describe('AddParticipantComponent set representer', () => {
     component.ngAfterContentInit();
     expect(component.searchEmail.email).toBeTruthy();
   });
+  it('should validate solicitorReference field and return invalid as it has not permitted characters', () => {
+    component.form.controls['solicitorReference'].setValue('%');
+    component.form.controls['solicitorReference'].markAsDirty();
+
+    expect(component.solicitorReferenceInvalid).toBe(true);
+  });
+  it('should validate solicitorReference field and return valid', () => {
+    component.form.controls['solicitorReference'].setValue('a');
+    expect(component.solicitorReferenceInvalid).toBe(false);
+  });
+  it('should validate companyNameIndividual field and return invalid as it has not permitted characters', () => {
+    component.form.controls['companyNameIndividual'].setValue('%');
+    component.form.controls['companyNameIndividual'].markAsDirty();
+
+    expect(component.companyIndividualInvalid).toBe(true);
+  });
+  it('should validate companyNameIndividual field and return valid', () => {
+    component.form.controls['companyNameIndividual'].setValue('a');
+    expect(component.companyIndividualInvalid).toBe(false);
+  });
 });
 
 function isAddressControlValid(control: AbstractControl, controlValue: string) {

@@ -66,7 +66,16 @@ describe('OtherInformationComponent', () => {
     expect(routerSpy.navigate).toHaveBeenCalledWith(['/summary']);
     expect(videoHearingsServiceSpy.getCurrentRequest).toHaveBeenCalled();
     expect(videoHearingsServiceSpy.updateHearingRequest).toHaveBeenCalled();
+  });
+  it('should validate otherInformation field and return invalid as it has not permitted characters', () => {
+    component.form.controls['otherInformation'].setValue('%');
+    component.form.controls['otherInformation'].markAsDirty();
 
+    expect(component.otherInformationInvalid).toBe(true);
+  });
+  it('should validate otherInformation field and return valid', () => {
+    component.form.controls['otherInformation'].setValue('a');
+    expect(component.otherInformationInvalid).toBe(false);
   });
   it('if press cancel button should remove other information from storage and navigate to dashboard page.', () => {
     component.ngOnInit();
