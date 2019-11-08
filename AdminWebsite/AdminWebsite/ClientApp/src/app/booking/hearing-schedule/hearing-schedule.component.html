@@ -111,7 +111,7 @@
       Room
     </label>
     <input class="govuk-input govuk-!-width-one-half" id="court-room" name="court-room" type="text"
-           formControlName="courtRoom">
+           formControlName="courtRoom" (blur)="courtRoomOnBlur()">
     <div *ngIf="courtRoomInvalid" class="alert alert-danger">
       <span id="courtRoom-error" class="govuk-error-message">
         Please enter a valid court room

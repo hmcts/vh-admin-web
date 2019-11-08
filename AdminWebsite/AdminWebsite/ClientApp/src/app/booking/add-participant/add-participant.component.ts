@@ -18,6 +18,7 @@ import { CaseAndHearingRolesResponse } from '../../services/clients/api-client';
 import { PartyModel } from '../../common/model/party.model';
 import { Address } from './address';
 import { Logger } from '../../services/logger';
+import { SanitizeInputText } from '../../common/formatters/sanitize-input-text';
 
 @Component({
   selector: 'app-add-participant',
@@ -762,6 +763,59 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     this.form.get('firstName').enable();
     this.form.get('party').enable();
     this.form.get('role').enable();
+  }
+
+  firstNameOnBlur() {
+    const text = SanitizeInputText(this.firstName.value);
+    this.firstName.setValue(text);
+  }
+
+  lastNameOnBlur() {
+    const text = SanitizeInputText(this.lastName.value);
+    this.lastName.setValue(text);
+  }
+
+  companyNameIndividualOnBlur() {
+    const text = SanitizeInputText(this.companyNameIndividual.value);
+    this.companyNameIndividual.setValue(text);
+  }
+
+  displayNameOnBlur() {
+    const text = SanitizeInputText(this.displayName.value);
+    this.displayName.setValue(text);
+  }
+
+  houseNumberOnBlur() {
+    const text = SanitizeInputText(this.houseNumber.value);
+    this.houseNumber.setValue(text);
+  }
+
+  streetOnBlur() {
+    const text = SanitizeInputText(this.street.value);
+    this.street.setValue(text);
+  }
+  cityOnBlur() {
+    const text = SanitizeInputText(this.city.value);
+    this.city.setValue(text);
+  }
+  countyOnBlur() {
+    const text = SanitizeInputText(this.county.value);
+    this.county.setValue(text);
+  }
+
+  companyNameOnBlur() {
+    const text = SanitizeInputText(this.companyName.value);
+    this.companyName.setValue(text);
+  }
+
+  solicitorReferenceOnBlur() {
+    const text = SanitizeInputText(this.solicitorReference.value);
+    this.solicitorReference.setValue(text);
+  }
+
+  representingOnBlur() {
+    const text = SanitizeInputText(this.representing.value);
+    this.representing.setValue(text);
   }
 
   ngOnDestroy() {

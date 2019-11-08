@@ -63,6 +63,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="ClientApp\src\app\common\formatters\sanitize-input-text.ts" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\AdminWebsite.BookingsAPI.Client\AdminWebsite.BookingsAPI.Client.csproj" />
     <ProjectReference Include="..\AdminWebsite.UserAPI.Client\AdminWebsite.UserAPI.Client.csproj" />
   </ItemGroup>
@@ -76,6 +80,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <TypeScriptCompile Include="ClientApp\src\app\common\formatters\sanitize-input-text.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\common\model\case-request.model.ts" />
   </ItemGroup>
 

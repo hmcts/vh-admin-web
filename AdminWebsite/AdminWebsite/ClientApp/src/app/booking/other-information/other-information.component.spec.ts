@@ -120,4 +120,9 @@ describe('OtherInformationComponent', () => {
     expect(component.attemptingDiscardChanges).toBeFalsy();
     expect(routerSpy.navigate).toHaveBeenCalled();
   });
+  it('should sanitize text for other information', () => {
+    component.form.controls['otherInformation'].setValue('<script>text select delete</script>');
+    component.otherInformationOnBlur();
+    expect(component.form.controls['otherInformation'].value).toBe('text  ');
+  });
 });

@@ -317,4 +317,11 @@ describe('HearingScheduleComponent returning to page', () => {
 
     expect(component.selectedCourtName).toBe('aa@bb.kk1');
   });
+
+  it('should sanitize text for court room', () => {
+    component.courtRoom.setValue('<script>text select delete</script>');
+    component.courtRoomOnBlur();
+    fixture.detectChanges();
+    expect(component.courtRoom.value).toBe('text  ');
+  });
 });

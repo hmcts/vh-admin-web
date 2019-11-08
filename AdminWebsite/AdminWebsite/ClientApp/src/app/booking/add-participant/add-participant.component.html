@@ -67,7 +67,8 @@
           <label class="govuk-label" for="firstName">
             First name
           </label>
-          <input id="firstName" formControlName="firstName" class="govuk-input govuk-input--width-20" type="text" />
+          <input id="firstName" formControlName="firstName" class="govuk-input govuk-input--width-20"
+                 type="text" (blur)="firstNameOnBlur()" />
 
         </div>
 
@@ -80,7 +81,8 @@
           <label class="govuk-label" for="lastName">
             Last name
           </label>
-          <input id="lastName" formControlName="lastName" class="govuk-input govuk-input--width-20" type="text" />
+          <input id="lastName" formControlName="lastName" class="govuk-input govuk-input--width-20"
+                 type="text" (blur)="lastNameOnBlur()"/>
         </div>
 
         <div *ngIf="showAddress">
@@ -94,7 +96,7 @@
               Organisation <span class="govuk-hint vh-inline">(optional)</span>
             </label>
             <input id="companyNameIndividual" formControlName="companyNameIndividual"
-                   class="govuk-input govuk-input--width-20" type="text" />
+                   class="govuk-input govuk-input--width-20" type="text" (blur)="companyNameIndividualOnBlur()" />
           </div>
         </div>
 
@@ -119,7 +121,8 @@
           <label class="govuk-label" for="displayName">
             Display Name
           </label>
-          <input id="displayName" formControlName="displayName" class="govuk-input govuk-input--width-20" type="text" />
+          <input id="displayName" formControlName="displayName" class="govuk-input govuk-input--width-20"
+                 type="text" (blur)="displayNameOnBlur()"/>
         </div>
 
         <div *ngIf="showAddress">
@@ -134,7 +137,7 @@
               Building and street
             </label>
             <input id="houseNumber" formControlName="houseNumber" class="govuk-input govuk-input--width-20"
-                   type="text" />
+                   type="text" (blur)="houseNumberOnBlur()" />
           </div>
 
           <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':streetInvalid}">
@@ -144,7 +147,8 @@
                 {{constants.Error.StreetErrorMsg}}
               </span>
             </legend>
-            <input id="street" formControlName="street" class="govuk-input govuk-input--width-20" type="text" />
+            <input id="street" formControlName="street" class="govuk-input govuk-input--width-20"
+                   type="text" (blur)="streetOnBlur()"/>
 
           </div>
           <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':cityInvalid}">
@@ -157,7 +161,8 @@
             <label class="govuk-label" for="city">
               Town or city
             </label>
-            <input id="city" formControlName="city" class="govuk-input govuk-input--width-20" type="text" />
+            <input id="city" formControlName="city" class="govuk-input govuk-input--width-20"
+                   type="text" (blur)="cityOnBlur()" />
 
           </div>
           <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':countyInvalid}">
@@ -169,7 +174,8 @@
             <label class="govuk-label" for="county">
               County
             </label>
-            <input id="county" formControlName="county" class="govuk-input govuk-input--width-20" type="text" />
+            <input id="county" formControlName="county" class="govuk-input govuk-input--width-20"
+                   type="text" (blur)="countyOnBlur()" />
           </div>
 
           <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':postcodeInvalid}">
@@ -199,7 +205,7 @@
               Organisation
             </label>
             <input id="companyName" formControlName="companyName" class="govuk-input govuk-input--width-20"
-                   type="text" />
+                   type="text" (blur)="companyNameOnBlur()"/>
           </div>
 
           <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':solicitorReferenceInvalid}">
@@ -212,7 +218,7 @@
               Solicitor reference
             </label>
             <input id="solicitorReference" formControlName="solicitorReference"
-                   class="govuk-input govuk-input--width-20" type="text" />
+                   class="govuk-input govuk-input--width-20" type="text" (blur)="solicitorReferenceOnBlur()"/>
           </div>
           <h2 class="govuk-heading-m">Client details</h2>
           <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':representeeInvalid}">
@@ -225,7 +231,7 @@
               Representing
             </label>
             <input id="representing" formControlName="representing" class="govuk-input govuk-input--width-20"
-                   type="text" />
+                   type="text" (blur)="representingOnBlur()"/>
           </div>
         </div>
 

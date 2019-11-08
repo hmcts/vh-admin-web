@@ -240,7 +240,12 @@ describe('AssignJudgeComponent', () => {
     component.addJudge('email@email.com');
     expect(component.hearing.participants.length).toBeGreaterThan(0);
   });
-  it('should change display name of the judge if it was entered', () => {
+  it('should sanitize display name of the judge if it was entered', () => {
+    component.judgeDisplayName.setValue('<script>text select delete</script>');
+    component.changeDisplayName();
+    expect(component.judgeDisplayName.value).toBe('text  ');
+  });
+  it('should change display name of the judge if it was selected', () => {
     component.judge.display_name = 'John Dall';
     component.changeDisplayName();
     expect(component.hearing.participants[0].display_name).toBe('John Dall');

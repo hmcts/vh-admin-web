@@ -11,6 +11,7 @@ import { ErrorService } from 'src/app/services/error.service';
 import { HearingVenueResponse } from '../../services/clients/api-client';
 import { PageUrls } from 'src/app/shared/page-url.constants';
 import { Constants } from 'src/app/common/constants';
+import { SanitizeInputText } from '../../common/formatters/sanitize-input-text';
 
 @Component({
   selector: 'app-hearing-schedule',
@@ -255,5 +256,10 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
 
   goToDiv(fragment: string): void {
     window.document.getElementById(fragment).parentElement.parentElement.scrollIntoView();
+  }
+
+  courtRoomOnBlur() {
+    const text = SanitizeInputText(this.courtRoom.value);
+    this.courtRoom.setValue(text);
   }
 }

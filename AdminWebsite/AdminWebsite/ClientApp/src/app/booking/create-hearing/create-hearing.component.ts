@@ -10,6 +10,7 @@ import { BookingService } from '../../services/booking.service';
 import { ErrorService } from 'src/app/services/error.service';
 import { PageUrls } from 'src/app/shared/page-url.constants';
 import { Constants } from 'src/app/common/constants';
+import { SanitizeInputText } from '../../common/formatters/sanitize-input-text';
 
 @Component({
   selector: 'app-create-hearing',
@@ -228,5 +229,15 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
       const result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
       return result * sortOrder;
     };
+  }
+
+  caseNumberOnBlur() {
+    const text = SanitizeInputText(this.caseNumber.value);
+    this.caseNumber.setValue(text);
+  }
+
+  caseNameOnBlur() {
+    const text = SanitizeInputText(this.caseName.value);
+    this.caseName.setValue(text);
   }
 }

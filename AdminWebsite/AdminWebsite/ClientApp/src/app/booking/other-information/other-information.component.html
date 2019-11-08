@@ -23,7 +23,7 @@
             <label class="govuk-label govuk-!-width-one-half" for="hidden-other-text"></label>
             <textarea class="govuk-textarea vh-text-h" id="details-other-information" name="otherInformation" rows="14"
                       cols="80" formControlName="otherInformation" aria-label="hidden-other-text"
-                      aria-labelledby="other-information-text"></textarea>
+                      aria-labelledby="other-information-text" (blur)="otherInformationOnBlur()"></textarea>
           </div>
 
         </fieldset>

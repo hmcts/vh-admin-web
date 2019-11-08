@@ -7,6 +7,7 @@ import { BookingBaseComponent } from '../booking-base/booking-base.component';
 import { BookingService } from '../../services/booking.service';
 import { PageUrls } from 'src/app/shared/page-url.constants';
 import { Constants } from '../../common/constants';
+import { SanitizeInputText } from '../../common/formatters/sanitize-input-text';
 
 @Component({
   selector: 'app-other-information',
@@ -89,5 +90,10 @@ export class OtherInformationComponent extends BookingBaseComponent implements O
     } else {
       this.attemptingCancellation = true;
     }
+  }
+
+  otherInformationOnBlur() {
+    const text = SanitizeInputText(this.otherInformation.value);
+    this.otherInformation.setValue(text);
   }
 }
