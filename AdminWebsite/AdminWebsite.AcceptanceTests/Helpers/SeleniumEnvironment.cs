@@ -2,10 +2,10 @@
 using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.Remote;
 using System;
-using System.IO;
 using System.Reflection;
 using OpenQA.Selenium.Chrome;
 using TechTalk.SpecFlow;
+using System.IO;
 
 namespace AdminWebsite.AcceptanceTests.Helpers
 {
@@ -60,7 +60,7 @@ namespace AdminWebsite.AcceptanceTests.Helpers
             // It can take quite a bit of time for some commands to execute remotely so this is higher than default
             var commandTimeout = TimeSpan.FromMinutes(1.5);
 
-            var remoteUrl = new System.Uri(_saucelabsSettings.RemoteServerUrl);
+            var remoteUrl = new Uri(_saucelabsSettings.RemoteServerUrl);
 
             return new RemoteWebDriver(remoteUrl, caps, commandTimeout);
         }
@@ -86,9 +86,8 @@ namespace AdminWebsite.AcceptanceTests.Helpers
         {
             get
             {
-                const string osxPath = "/usr/local/bin";
-                var assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-                return Directory.Exists(osxPath) ? osxPath : assemblyPath;
+                var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                return path;
             }
         }
     }
