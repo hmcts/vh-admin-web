@@ -4,9 +4,11 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using AdminWebsite.BookingsAPI.Client;
+using AdminWebsite.Extensions;
 using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
+using AdminWebsite.Validators;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -37,19 +39,26 @@ namespace AdminWebsite.Controllers
         /// <summary>
         /// Create a hearing
         /// </summary>
-        /// <param name="hearingRequest">Hearing Request object</param>
+        /// <param name="request">Hearing Request object</param>
         /// <returns>VideoHearingId</returns>
         [HttpPost]
         [SwaggerOperation(OperationId = "BookNewHearing")]
         [ProducesResponseType(typeof(HearingDetailsResponse), (int)HttpStatusCode.Created)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult<HearingDetailsResponse>> Post([FromBody] BookNewHearingRequest hearingRequest)
+        public async Task<ActionResult<HearingDetailsResponse>> Post([FromBody] BookNewHearingRequest request)
         {
+            var result = new BookNewHearingRequestValidator().Validate(request);
+            if (!result.IsValid)
+            {
+                ModelState.AddFluentValidationErrors(result.Errors);
+                return BadRequest(ModelState);
+            }
+
             try
             {
-                if (hearingRequest.Participants != null)
+                if (request.Participants != null)
                 {
-                    foreach (var participant in hearingRequest.Participants)
+                    foreach (var participant in request.Participants)
                     {
                         if (participant.Case_role_name == "Judge") continue;
 
@@ -57,8 +66,8 @@ namespace AdminWebsite.Controllers
                     }
                 }
 
-                hearingRequest.Created_by = _userIdentity.GetUserIdentityName();
-                var hearingDetailsResponse = await _bookingsApiClient.BookNewHearingAsync(hearingRequest);
+                request.Created_by = _userIdentity.GetUserIdentityName();
+                var hearingDetailsResponse = await _bookingsApiClient.BookNewHearingAsync(request);
                 return Created("", hearingDetailsResponse);
             }
             catch (BookingsApiException e)

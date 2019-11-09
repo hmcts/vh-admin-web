@@ -1,0 +1,170 @@
+{
+	"info": {
+		"_postman_id": "409ddcf3-c923-463f-8a70-886a281016b7",
+		"name": "Admin Web",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create Hearings",
+			"item": [
+				{
+					"name": "Create Hearings Successful",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "a974c530-7182-4306-a083-5816a052f5e5",
+								"exec": [
+									"console.log('Have you set the bearer token in the folder pre-request scripts?');",
+									"",
+									"pm.globals.set(\"caseType\", \"Civil Money Claims\");",
+									"pm.globals.set(\"hearingType\", \"First Application\");",
+									"pm.globals.set(\"caseNumber\", \"11111\");",
+									"pm.globals.set(\"caseName\", \"one\");",
+									"pm.globals.set(\"doNotSendQuestionnaire\", \"True\");",
+									"pm.globals.set(\"scheduledDateTime\", \"2020-08-18 20:10:38\");",
+									"pm.globals.set(\"hearingRoomName\", \"Room 6.41C\");",
+									"pm.globals.set(\"judgeName\", \"Birmingham Courtroom115\");",
+									"pm.globals.set(\"emailJudge\", \"BirminghamCFJCcourt115@hearings.reform.hmcts.net\");",
+									"pm.globals.set(\"emailParticipant1\", \"atif.representative@hearings.reform.hmcts.net\");",
+									"pm.globals.set(\"emailParticipant2\", \"atif.individual@hearings.reform.hmcts.net\");"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "270139f2-27ca-47e9-8c51-63a8f5720502",
+								"exec": [
+									"pm.test(\"Successful POST request\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([201,202]);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearerToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Connection",
+								"value": "keep-alive"
+							},
+							{
+								"key": "Pragma",
+								"value": "no-cache"
+							},
+							{
+								"key": "Cache-Control",
+								"value": "no-cache"
+							},
+							{
+								"key": "Origin",
+								"value": "https://localhost:5400"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "User-Agent",
+								"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.70 Safari/537.36"
+							},
+							{
+								"key": "Request-Id",
+								"value": "|Yilo6.WU4SY"
+							},
+							{
+								"key": "DNT",
+								"value": "1"
+							},
+							{
+								"key": "Request-Context",
+								"value": "appId=cid-v1:11da21f3-e3c7-4b8c-88bc-9249f4cbeb10"
+							},
+							{
+								"key": "Sec-Fetch-Site",
+								"value": "same-origin"
+							},
+							{
+								"key": "Sec-Fetch-Mode",
+								"value": "cors"
+							},
+							{
+								"key": "Accept-Encoding",
+								"value": "gzip, deflate, br"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "en-GB,en-US;q=0.9,en;q=0.8"
+							},
+							{
+								"key": "Cookie",
+								"value": "ai_user=uldnG|2019-11-04T13:13:46.916Z; ai_session=n8caC|1572873233293.36|1572873425692.385"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"scheduled_date_time\": \"{{scheduledDateTime}}\",\n    \"scheduled_duration\": 45,\n    \"hearing_venue_name\": \"Birmingham Civil and Family Justice Centre\",\n    \"case_type_name\": \"{{caseType}}\",\n    \"hearing_type_name\": \"{{hearingType}}\",\n    \"cases\": [\n        {\n            \"number\": \"{{caseNumber}}\",\n            \"name\": \"{{caseName}}\",\n            \"is_lead_case\": false\n        }\n    ],\n    \"participants\": [\n        {\n            \"title\": \"Judge\",\n            \"first_name\": \"Birmingham\",\n            \"middle_names\": \"\",\n            \"last_name\": \"Courtroom115\",\n            \"contact_email\": \"{{emailJudge}}\",\n            \"telephone_number\": \"\",\n            \"username\":\"{{emailJudge}}\",\n            \"display_name\": \"{{judgeName}}\",\n            \"case_role_name\": \"Judge\",\n            \"hearing_role_name\": \"Judge\",\n            \"house_number\": null,\n            \"street\": null,\n            \"postcode\": null,\n            \"city\": null,\n            \"county\": null\n        },\n        {\n            \"title\": \"Mr\",\n            \"first_name\": \"Atif\",\n            \"last_name\": \"Representative\",\n            \"contact_email\": \"{{emailParticipant1}}\",\n            \"telephone_number\": \"0739053837\",\n            \"username\": \"{{emailParticipant1}}\",\n            \"display_name\": \"Atif Rep\",\n            \"case_role_name\": \"Claimant\",\n            \"hearing_role_name\": \"Claimant LIP\",\n            \"solicitors_reference\": \"\",\n            \"representee\": \"\",\n            \"organisation_name\": \"MyCompany\",\n            \"house_number\": \"123\",\n            \"street\": \"London Road\",\n            \"postcode\": \"SW1 1WS\",\n            \"city\": \"London\",\n            \"county\": \"London\"\n        },\n        {\n            \"title\": \"Mr\",\n            \"first_name\": \"Atif\",\n            \"last_name\": \"Individual\",\n            \"contact_email\":\"{{emailParticipant2}}\",\n            \"telephone_number\": \"0739053837\",\n            \"username\": \"{{emailParticipant2}}\",\n            \"display_name\": \"Atif Indv\",\n            \"case_role_name\": \"Defendant\",\n            \"hearing_role_name\": \"Defendant LIP\",\n            \"solicitors_reference\": \"\",\n            \"representee\": \"\",\n            \"organisation_name\": \"\",\n            \"house_number\": \"123\",\n            \"street\": \"Oseney Court\",\n            \"postcode\": \"NW5 2BA\",\n            \"city\": \"London\",\n            \"county\": \"Greater London\"\n        }\n    ],\n    \"hearing_room_name\": \"{{hearingRoomName}}\",\n    \"other_information\": \"test1\",\n    \"questionnaire_not_required\": \"{{doNotSendQuestionnaire}}\"\n}"
+						},
+						"url": {
+							"raw": "{{Endpoint}}/api/hearings/",
+							"host": [
+								"{{Endpoint}}"
+							],
+							"path": [
+								"api",
+								"hearings",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "9a50a0ca-e0b6-4c33-9d75-b37d0613621f",
+						"type": "text/javascript",
+						"exec": [
+							"pm.environment.set(\"bearerToken\",'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IkJCOENlRlZxeWFHckdOdWVoSklpTDRkZmp6dyIsImtpZCI6IkJCOENlRlZxeWFHckdOdWVoSklpTDRkZmp6dyJ9.eyJhdWQiOiJkODNmODMzNi0zZDU5LTQ5YjYtOGUyYy1lZmNkYzZlY2Q0ZjMiLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC9mYjZlMGUyMi0wZGEzLTRjMzUtOTcyYS05ZDYxZWIyNTY1MDgvIiwiaWF0IjoxNTczMTU2MjYzLCJuYmYiOjE1NzMxNTYyNjMsImV4cCI6MTU3MzE2MDE2MywiYWlvIjoiNDJWZ1lGamdLTDJ4UXUvVitqMzFGN3JLLzFRMFA0aXlLZTArSEMyWmNVYmQ1NC9HN0NzQSIsImFtciI6WyJwd2QiXSwiZmFtaWx5X25hbWUiOiJ2aG9mZmljZXJfZmluYW5jaWFscmVtZWR5X21vbmV5Y2xhaW1zIiwiZ2l2ZW5fbmFtZSI6ImF1dG8iLCJoYXNncm91cHMiOiJ0cnVlIiwiaXBhZGRyIjoiNzcuOTkuMjMxLjY3IiwibmFtZSI6ImF1dG8gdmhvZmZpY2VyX2ZpbmFuY2lhbHJlbWVkeV9tb25leWNsYWltcyIsIm5vbmNlIjoiMjkzOWExNWQtMWQzNi00ZDMwLTliMjMtNDQyY2MxNzAzODI2Iiwib2lkIjoiMTZkZDE4MjItY2ViZi00MmY5LTkwMjQtYzhlODFjYzllZDg0Iiwic3ViIjoidFNGYmZHOHVsNTBicEN5ZGxmUklKY2RianJnZ3RuM3dncGkwbVI4cHE4OCIsInRpZCI6ImZiNmUwZTIyLTBkYTMtNGMzNS05NzJhLTlkNjFlYjI1NjUwOCIsInVuaXF1ZV9uYW1lIjoiYXV0by52aG9mZmljZXJfZmluYW5jaWFscmVtZWR5X21vbmV5Y2xhaW1zQGhlYXJpbmdzLnJlZm9ybS5obWN0cy5uZXQiLCJ1cG4iOiJhdXRvLnZob2ZmaWNlcl9maW5hbmNpYWxyZW1lZHlfbW9uZXljbGFpbXNAaGVhcmluZ3MucmVmb3JtLmhtY3RzLm5ldCIsInV0aSI6IjdnSnNRdXl1OFVhdkE0VmEtNDBvQUEiLCJ2ZXIiOiIxLjAifQ.HKEuKfMH4_3rH1F3ImWx4LQ5s6varwE4JkRi1ib9fQwJ9xfss1z44LXTSV3WqK5RHkhqePjLwbVuO4razEFTbcDbqtde7B43hEFhkbl8LF7cSLxKZDeZdmW6brNSNWsp0EOtXuLWmZJWCYufdiIX2Atyz-dl0mQh0BhCccCDpovJdmsHj3hlkZe4JEUIYcfLHV5UPYBdJiWkilbLY-xzl4Ai0TucsjZef3UwwHl9POCKnBvbNym8tNSfUalezrvuajcUQaXMj-4B0U_ZSdrgOikOCEXUl6m5udN7FUV_dsm-nXpwOWpbYXO91edHO9uvCbj7DhwWSLP8CBW3Py4bUA');"
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "bba7965c-5564-4335-844a-8d99f95cbe12",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"protocolProfileBehavior": {}
+}
