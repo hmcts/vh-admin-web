@@ -9,6 +9,7 @@ using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
 using AdminWebsite.Validators;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -25,15 +26,18 @@ namespace AdminWebsite.Controllers
         private readonly IBookingsApiClient _bookingsApiClient;
         private readonly IUserIdentity _userIdentity;
         private readonly IUserAccountService _userAccountService;
+        private readonly AbstractValidator<BookNewHearingRequest> _bookNewHearingRequestValidator;
 
         /// <summary>
         /// Instantiates the controller
         /// </summary>
-        public HearingsController(IBookingsApiClient bookingsApiClient, IUserIdentity userIdentity, IUserAccountService userAccountService)
+        public HearingsController(IBookingsApiClient bookingsApiClient, IUserIdentity userIdentity, IUserAccountService userAccountService,
+            AbstractValidator<BookNewHearingRequest> bookNewHearingRequestValidator)
         {
             _bookingsApiClient = bookingsApiClient;
             _userIdentity = userIdentity;
             _userAccountService = userAccountService;
+            _bookNewHearingRequestValidator = bookNewHearingRequestValidator;
         }
 
         /// <summary>
@@ -47,7 +51,8 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult<HearingDetailsResponse>> Post([FromBody] BookNewHearingRequest request)
         {
-            var result = new BookNewHearingRequestValidator().Validate(request);
+            var result = _bookNewHearingRequestValidator.Validate(request);
+
             if (!result.IsValid)
             {
                 ModelState.AddFluentValidationErrors(result.Errors);
