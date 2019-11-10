@@ -7,19 +7,17 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
 using System;
-using System.Collections.Generic;
-using System.Net;
 using System.Threading.Tasks;
-using Testing.Common;
+using FluentValidation;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {
     public class CancelHearingTests
     {
-        private Mock<IUserApiClient> _userApiClient;
         private Mock<IBookingsApiClient> _bookingsApiClient;
         private Mock<IUserIdentity> _userIdentity;
         private Mock<IUserAccountService> _userAccountService;
+        private Mock<IValidator<BookNewHearingRequest>> _bookNewHearingRequestValidator;
         private AdminWebsite.Controllers.HearingsController _controller;
         private Guid _guid;
         private UpdateBookingStatusRequest _updateBookingStatusRequest;
@@ -29,11 +27,10 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         {
             _bookingsApiClient = new Mock<IBookingsApiClient>();
             _userIdentity = new Mock<IUserIdentity>();
-            _userApiClient = new Mock<IUserApiClient>();
-            _userApiClient = new Mock<IUserApiClient>();
             _userAccountService = new Mock<IUserAccountService>();
-            _controller = new AdminWebsite.Controllers.HearingsController(_bookingsApiClient.Object, 
-                _userIdentity.Object, _userAccountService.Object);
+            _bookNewHearingRequestValidator = new Mock<IValidator<BookNewHearingRequest>>();
+
+            _controller = new AdminWebsite.Controllers.HearingsController(_bookingsApiClient.Object, _userIdentity.Object, _userAccountService.Object, _bookNewHearingRequestValidator.Object);
             _guid = Guid.NewGuid();
 
             _updateBookingStatusRequest = new UpdateBookingStatusRequest() { Status = UpdateBookingStatusRequestStatus.Cancelled, Updated_by = "admin user" };

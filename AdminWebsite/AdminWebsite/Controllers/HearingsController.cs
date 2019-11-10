@@ -8,7 +8,6 @@ using AdminWebsite.Extensions;
 using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
-using AdminWebsite.Validators;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
@@ -26,13 +25,13 @@ namespace AdminWebsite.Controllers
         private readonly IBookingsApiClient _bookingsApiClient;
         private readonly IUserIdentity _userIdentity;
         private readonly IUserAccountService _userAccountService;
-        private readonly AbstractValidator<BookNewHearingRequest> _bookNewHearingRequestValidator;
+        private readonly IValidator<BookNewHearingRequest> _bookNewHearingRequestValidator;
 
         /// <summary>
         /// Instantiates the controller
         /// </summary>
         public HearingsController(IBookingsApiClient bookingsApiClient, IUserIdentity userIdentity, IUserAccountService userAccountService,
-            AbstractValidator<BookNewHearingRequest> bookNewHearingRequestValidator)
+            IValidator<BookNewHearingRequest> bookNewHearingRequestValidator)
         {
             _bookingsApiClient = bookingsApiClient;
             _userIdentity = userIdentity;

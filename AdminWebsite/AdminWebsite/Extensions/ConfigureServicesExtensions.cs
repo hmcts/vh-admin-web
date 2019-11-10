@@ -82,7 +82,7 @@ namespace AdminWebsite.Extensions
                 return new UserIdentity(userPrincipal);
             });
 
-            serviceCollection.AddSingleton<AbstractValidator<BookNewHearingRequest>, BookNewHearingRequestValidator>();
+            serviceCollection.AddSingleton<IValidator<BookNewHearingRequest>, BookNewHearingRequestValidator>();
 
             return serviceCollection;
         }

@@ -8,6 +8,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Net;
+using FluentValidation;
 using Testing.Common;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
@@ -17,6 +18,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private Mock<IBookingsApiClient> _bookingsApiClient;
         private Mock<IUserIdentity> _userIdentity;
         private Mock<IUserAccountService> _userAccountService;
+        private Mock<IValidator<BookNewHearingRequest>> _bookNewHearingRequestValidator;
 
         private AdminWebsite.Controllers.HearingsController _controller;
         private HearingDetailsResponse _vhExistingHearing;
@@ -28,8 +30,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _bookingsApiClient = new Mock<IBookingsApiClient>();
             _userIdentity = new Mock<IUserIdentity>();
             _userAccountService = new Mock<IUserAccountService>();
-            _controller = new AdminWebsite.Controllers.HearingsController(_bookingsApiClient.Object,
-                _userIdentity.Object, _userAccountService.Object);
+            _bookNewHearingRequestValidator = new Mock<IValidator<BookNewHearingRequest>>();
+
+            _controller = new AdminWebsite.Controllers.HearingsController(_bookingsApiClient.Object, _userIdentity.Object, _userAccountService.Object, _bookNewHearingRequestValidator.Object);
 
             _vhExistingHearing = new HearingDetailsResponse
             {
