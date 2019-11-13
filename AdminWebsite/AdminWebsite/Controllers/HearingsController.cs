@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using AdminWebsite.Attributes;
 using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Extensions;
 using AdminWebsite.Models;
@@ -48,6 +49,7 @@ namespace AdminWebsite.Controllers
         [SwaggerOperation(OperationId = "BookNewHearing")]
         [ProducesResponseType(typeof(HearingDetailsResponse), (int)HttpStatusCode.Created)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [HearingInputSanitizer]
         public async Task<ActionResult<HearingDetailsResponse>> Post([FromBody] BookNewHearingRequest request)
         {
             var result = _bookNewHearingRequestValidator.Validate(request);
@@ -88,7 +90,7 @@ namespace AdminWebsite.Controllers
         /// Edit a hearing
         /// </summary>
         /// <param name="hearingId">The id of the hearing to update</param>
-        /// <param name="editHearingRequest">Hearing Request object for edit operation</param>
+        /// <param name="request">Hearing Request object for edit operation</param>
         /// <returns>VideoHearingId</returns>
         [HttpPut("{hearingId}")]
         [SwaggerOperation(OperationId = "EditHearing")]
@@ -96,7 +98,8 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
-        public async Task<ActionResult<HearingDetailsResponse>> EditHearing(Guid hearingId, [FromBody] EditHearingRequest editHearingRequest)
+        [HearingInputSanitizer]
+        public async Task<ActionResult<HearingDetailsResponse>> EditHearing(Guid hearingId, [FromBody] EditHearingRequest request)
         {
             //Validation
             if (hearingId == Guid.Empty)
@@ -105,13 +108,13 @@ namespace AdminWebsite.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (editHearingRequest.Case == null)
+            if (request.Case == null)
             {
-                ModelState.AddModelError(nameof(editHearingRequest.Case), "Please provide valid case details");
+                ModelState.AddModelError(nameof(request.Case), "Please provide valid case details");
                 return BadRequest(ModelState);
             }
 
-            if (editHearingRequest.Participants == null || !editHearingRequest.Participants.Any())
+            if (request.Participants == null || !request.Participants.Any())
             {
                 ModelState.AddModelError("Participants", "Please provide at least one participant");
                 return BadRequest(ModelState);
@@ -133,12 +136,12 @@ namespace AdminWebsite.Controllers
             try
             {
                 //Save hearing details
-                var updateHearingRequest = MapHearingUpdateRequest(editHearingRequest);
+                var updateHearingRequest = MapHearingUpdateRequest(request);
                 await _bookingsApiClient.UpdateHearingDetailsAsync(hearingId, updateHearingRequest);
 
                 var newParticipantList = new List<ParticipantRequest>();
                 
-                foreach (var participant in editHearingRequest.Participants)
+                foreach (var participant in request.Participants)
                 {
                     if(!participant.Id.HasValue)
                     {
@@ -184,7 +187,7 @@ namespace AdminWebsite.Controllers
                 }
 
                 // Delete existing participants if the request doesn't contain any update information
-                var deleteParticipantList = hearing.Participants.Where(p => editHearingRequest.Participants.All(rp => rp.ContactEmail != p.Contact_email));
+                var deleteParticipantList = hearing.Participants.Where(p => request.Participants.All(rp => rp.ContactEmail != p.Contact_email));
                 foreach (var participantToDelete in deleteParticipantList)
                 {
                     await _bookingsApiClient.RemoveParticipantFromHearingAsync(hearingId, participantToDelete.Id.Value);
