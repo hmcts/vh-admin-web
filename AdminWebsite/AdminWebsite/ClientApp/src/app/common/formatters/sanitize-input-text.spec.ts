@@ -2,6 +2,7 @@ import { SanitizeInputText } from './sanitize-input-text';
 
 describe('SanitizeInputText', () => {
   it('should remove html tags', () => {
+
     const textTest = '<scrpt>test goes here</script>';
     expect(SanitizeInputText(textTest)).toBe('test goes here');
 
