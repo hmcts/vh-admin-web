@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Security;
@@ -20,14 +21,17 @@ namespace AdminWebsite.Controllers
     {
         private readonly IBookingsApiClient _bookingsApiClient;
         private readonly IUserIdentity _userIdentity;
+        private readonly UrlEncoder _urlEncoder;
 
         /// <summary>
         /// Instantiates the controller
         /// </summary>
-        public SuitabilityAnswersController(IBookingsApiClient bookingsApiClient, IUserIdentity userIdentity)
+        public SuitabilityAnswersController(IBookingsApiClient bookingsApiClient, IUserIdentity userIdentity,
+            UrlEncoder urlEncoder)
         {
             _bookingsApiClient = bookingsApiClient;
             _userIdentity = userIdentity;
+            _urlEncoder = urlEncoder;
         }
 
         /// <summary>
@@ -42,6 +46,7 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult> GetSuitabilityAnswersList(string cursor, int limit = 100)
         {
+            cursor = _urlEncoder.Encode(cursor);
 
             if (!_userIdentity.IsVhOfficerAdministratorRole())
             {

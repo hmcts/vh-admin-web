@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using AdminWebsite.Attributes;
 using AdminWebsite.BookingsAPI.Client;
@@ -27,17 +28,19 @@ namespace AdminWebsite.Controllers
         private readonly IUserIdentity _userIdentity;
         private readonly IUserAccountService _userAccountService;
         private readonly IValidator<BookNewHearingRequest> _bookNewHearingRequestValidator;
+        private readonly UrlEncoder _urlEncoder;
 
         /// <summary>
         /// Instantiates the controller
         /// </summary>
         public HearingsController(IBookingsApiClient bookingsApiClient, IUserIdentity userIdentity, IUserAccountService userAccountService,
-            IValidator<BookNewHearingRequest> bookNewHearingRequestValidator)
+            IValidator<BookNewHearingRequest> bookNewHearingRequestValidator, UrlEncoder urlEncoder)
         {
             _bookingsApiClient = bookingsApiClient;
             _userIdentity = userIdentity;
             _userAccountService = userAccountService;
             _bookNewHearingRequestValidator = bookNewHearingRequestValidator;
+            _urlEncoder = urlEncoder;
         }
 
         /// <summary>
@@ -250,6 +253,8 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public ActionResult GetBookingsList(string cursor, int limit = 100)
         {
+            cursor = _urlEncoder.Encode(cursor);
+
             IEnumerable<string> caseTypes = null;
             
             if (_userIdentity.IsAdministratorRole())
@@ -378,8 +383,7 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult> UpdateBookingStatus(Guid hearingId, 
-            UpdateBookingStatusRequest updateBookingStatusRequest)
+        public async Task<ActionResult> UpdateBookingStatus(Guid hearingId, UpdateBookingStatusRequest updateBookingStatusRequest)
         {
             try
             {
