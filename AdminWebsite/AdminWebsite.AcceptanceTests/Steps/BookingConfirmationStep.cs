@@ -102,6 +102,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             actual.Title.Should().Be(expected.Title);
         }
 
+
         [When(@"admin user returns to the dashboard")]
         public void BookAnotherHearing()
         {
