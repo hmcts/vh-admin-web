@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
-using AdminWebsite.BookingsAPI.Client;
+﻿using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Security;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using System.Net;
+using System.Text.Encodings.Web;
+using System.Threading.Tasks;
 
 namespace AdminWebsite.Controllers
 {
@@ -20,14 +18,17 @@ namespace AdminWebsite.Controllers
     {
         private readonly IBookingsApiClient _bookingsApiClient;
         private readonly IUserIdentity _userIdentity;
+        private readonly JavaScriptEncoder _encoder;
 
         /// <summary>
         /// Instantiates the controller
         /// </summary>
-        public SuitabilityAnswersController(IBookingsApiClient bookingsApiClient, IUserIdentity userIdentity)
+        public SuitabilityAnswersController(IBookingsApiClient bookingsApiClient, IUserIdentity userIdentity,
+            JavaScriptEncoder encoder)
         {
             _bookingsApiClient = bookingsApiClient;
             _userIdentity = userIdentity;
+            _encoder = encoder;
         }
 
         /// <summary>
@@ -42,6 +43,7 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult> GetSuitabilityAnswersList(string cursor, int limit = 100)
         {
+            cursor = _encoder.Encode(cursor);
 
             if (!_userIdentity.IsVhOfficerAdministratorRole())
             {
