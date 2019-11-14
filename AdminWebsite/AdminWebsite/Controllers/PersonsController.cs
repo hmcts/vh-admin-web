@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
 using System.Net;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 
 namespace AdminWebsite.Controllers
@@ -16,13 +17,15 @@ namespace AdminWebsite.Controllers
     public class PersonsController : ControllerBase
     {
         private readonly IBookingsApiClient _bookingsApiClient;
+        private readonly UrlEncoder _urlEncoder;
 
         /// <summary>
         /// Instantiates the controller
         /// </summary>
-        public PersonsController(IBookingsApiClient bookingsApiClient)
+        public PersonsController(IBookingsApiClient bookingsApiClient, UrlEncoder urlEncoder)
         {
             _bookingsApiClient = bookingsApiClient;
+            _urlEncoder = urlEncoder;
         }
 
         /// <summary>
@@ -38,6 +41,8 @@ namespace AdminWebsite.Controllers
         {
             try
             {
+                term = _urlEncoder.Encode(term);
+
                 var personsResponse = await _bookingsApiClient.GetPersonBySearchTermAsync(term);
                 return Ok(personsResponse);
             }

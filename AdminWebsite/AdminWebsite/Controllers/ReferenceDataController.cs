@@ -1,13 +1,12 @@
+using AdminWebsite.BookingsAPI.Client;
+using AdminWebsite.Models;
+using AdminWebsite.Security;
+using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
-using AdminWebsite.BookingsAPI.Client;
-using AdminWebsite.Contracts.Responses;
-using AdminWebsite.Models;
-using AdminWebsite.Security;
-using AdminWebsite.Services;
-using Microsoft.AspNetCore.Mvc;
 using HearingTypeResponse = AdminWebsite.Contracts.Responses.HearingTypeResponse;
 
 namespace AdminWebsite.Controllers
@@ -22,23 +21,25 @@ namespace AdminWebsite.Controllers
     {
         private readonly IBookingsApiClient _bookingsApiClient;
         private readonly IUserIdentity _identity;
+        private readonly UrlEncoder _urlEncoder;
 
         /// <summary>
         /// Instantiate the controller
         /// </summary>
-        public ReferenceDataController(IBookingsApiClient bookingsApiClient, IUserIdentity identity)
+        public ReferenceDataController(IBookingsApiClient bookingsApiClient, IUserIdentity identity, UrlEncoder urlEncoder)
         {
             _bookingsApiClient = bookingsApiClient;
             _identity = identity;
+            _urlEncoder = urlEncoder;
         }
-        
+
         /// <summary>
         ///     Gets a list hearing types
         /// </summary>
         /// <returns>List of hearing types</returns>
         [HttpGet("types", Name = "GetHearingTypes")]
-        [ProducesResponseType(typeof (IList<HearingTypeResponse>), (int) HttpStatusCode.OK)]
-        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(IList<HearingTypeResponse>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<ActionResult<IList<HearingTypeResponse>>> GetHearingTypes()
         {
             var allowedTypes = _identity.GetAdministratorCaseTypes();
@@ -58,10 +59,12 @@ namespace AdminWebsite.Controllers
         /// </summary>
         /// <returns>List of valid participant roles</returns>
         [HttpGet("participantroles", Name = "GetParticipantRoles")]
-        [ProducesResponseType(typeof(IList<CaseAndHearingRolesResponse>), (int) HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(IList<CaseAndHearingRolesResponse>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<ActionResult<IList<CaseAndHearingRolesResponse>>> GetParticipantRoles(string caseTypeName)
         {
+            caseTypeName = _urlEncoder.Encode(caseTypeName);
+
             var response = new List<CaseAndHearingRolesResponse>();
 
             var caseRoles = await _bookingsApiClient.GetCaseRolesForCaseTypeAsync(caseTypeName);
@@ -69,8 +72,7 @@ namespace AdminWebsite.Controllers
             {
                 foreach (var item in caseRoles)
                 {
-                    var caseRole = new CaseAndHearingRolesResponse();
-                    caseRole.Name = item.Name;
+                    var caseRole = new CaseAndHearingRolesResponse { Name = item.Name };
 
                     var hearingRoles = await _bookingsApiClient.GetHearingRolesForCaseRoleAsync(caseTypeName, item.Name);
                     caseRole.HearingRoles = hearingRoles.Select(x => x.Name).ToList();
@@ -86,8 +88,8 @@ namespace AdminWebsite.Controllers
         /// </summary>
         /// <returns>List of courts</returns>
         [HttpGet("courts", Name = "GetCourts")]
-        [ProducesResponseType(typeof(IList<HearingVenueResponse>), (int) HttpStatusCode.OK)]
-        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(IList<HearingVenueResponse>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<ActionResult<IList<HearingVenueResponse>>> GetCourts()
         {
             var response = await _bookingsApiClient.GetHearingVenuesAsync();

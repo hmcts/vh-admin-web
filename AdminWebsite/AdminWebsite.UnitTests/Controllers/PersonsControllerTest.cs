@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Models;
@@ -27,7 +28,7 @@ namespace AdminWebsite.UnitTests.Controllers
         public void Setup()
         {
             _bookingsApiClient = new Mock<IBookingsApiClient>();
-            _controller = new AdminWebsite.Controllers.PersonsController(_bookingsApiClient.Object);
+            _controller = new AdminWebsite.Controllers.PersonsController(_bookingsApiClient.Object, UrlEncoder.Default);
 
             _response = new List<PersonResponse>
             {

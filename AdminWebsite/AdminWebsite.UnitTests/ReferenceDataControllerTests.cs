@@ -8,6 +8,7 @@ using Moq;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Encodings.Web;
 
 namespace AdminWebsite.UnitTests
 {
@@ -22,7 +23,7 @@ namespace AdminWebsite.UnitTests
         {
             _bookingsApiClientMock = new Mock<IBookingsApiClient>();
             _userIdentityMock = new Mock<IUserIdentity>();
-            _controller = new ReferenceDataController(_bookingsApiClientMock.Object, _userIdentityMock.Object);
+            _controller = new ReferenceDataController(_bookingsApiClientMock.Object, _userIdentityMock.Object, UrlEncoder.Default);
         }
 
         [Test]

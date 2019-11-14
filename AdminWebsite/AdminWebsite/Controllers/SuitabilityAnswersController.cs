@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text.Encodings.Web;
-using System.Threading.Tasks;
-using AdminWebsite.BookingsAPI.Client;
+﻿using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Security;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using System.Net;
+using System.Text.Encodings.Web;
+using System.Threading.Tasks;
 
 namespace AdminWebsite.Controllers
 {
