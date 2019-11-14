@@ -23,6 +23,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private Mock<IUserIdentity> _userIdentity;
         private Mock<IUserAccountService> _userAccountService;
         private Mock<IValidator<BookNewHearingRequest>> _bookNewHearingRequestValidator;
+        private Mock<IValidator<EditHearingRequest>> _editHearingRequestValidator;
 
         private Guid _validId;
         private EditHearingRequest _request;
@@ -37,8 +38,14 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _userIdentity = new Mock<IUserIdentity>();
             _userAccountService = new Mock<IUserAccountService>();
             _bookNewHearingRequestValidator = new Mock<IValidator<BookNewHearingRequest>>();
+            _editHearingRequestValidator = new Mock<IValidator<EditHearingRequest>>();
 
-            _controller = new AdminWebsite.Controllers.HearingsController(_bookingsApiClient.Object, _userIdentity.Object, _userAccountService.Object, _bookNewHearingRequestValidator.Object, UrlEncoder.Default);
+            _controller = new AdminWebsite.Controllers.HearingsController(_bookingsApiClient.Object,
+                _userIdentity.Object,
+                _userAccountService.Object,
+                _bookNewHearingRequestValidator.Object,
+                _editHearingRequestValidator.Object,
+                UrlEncoder.Default);
 
             _validId = Guid.NewGuid();
             _request = new EditHearingRequest

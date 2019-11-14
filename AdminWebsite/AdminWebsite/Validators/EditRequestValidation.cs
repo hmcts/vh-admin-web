@@ -1,11 +1,11 @@
-﻿using AdminWebsite.BookingsAPI.Client;
+﻿using AdminWebsite.Models;
 using FluentValidation;
 
 namespace AdminWebsite.Validators
 {
-    public class CaseRequestValidation : AbstractValidator<CaseRequest>
+    public class EditRequestValidation : AbstractValidator<EditCaseRequest>
     {
-        public CaseRequestValidation()
+        public EditRequestValidation()
         {
             RuleFor(x => x.Number)
                 .NotEmpty()

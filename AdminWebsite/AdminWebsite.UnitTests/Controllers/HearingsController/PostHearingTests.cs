@@ -3,6 +3,7 @@ using System.Net;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using AdminWebsite.BookingsAPI.Client;
+using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
 using FluentAssertions;
@@ -21,6 +22,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private Mock<IUserIdentity> _userIdentity;
         private Mock<IUserAccountService> _userAccountService;
         private Mock<IValidator<BookNewHearingRequest>> _bookNewHearingRequestValidator;
+        private Mock<IValidator<EditHearingRequest>> _editHearingRequestValidator;
 
         private AdminWebsite.Controllers.HearingsController _controller;
 
@@ -31,8 +33,14 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _userIdentity = new Mock<IUserIdentity>();
             _userAccountService = new Mock<IUserAccountService>();
             _bookNewHearingRequestValidator = new Mock<IValidator<BookNewHearingRequest>>();
+            _editHearingRequestValidator = new Mock<IValidator<EditHearingRequest>>();
 
-            _controller = new AdminWebsite.Controllers.HearingsController(_bookingsApiClient.Object, _userIdentity.Object, _userAccountService.Object, _bookNewHearingRequestValidator.Object, UrlEncoder.Default);
+            _controller = new AdminWebsite.Controllers.HearingsController(_bookingsApiClient.Object,
+                _userIdentity.Object,
+                _userAccountService.Object,
+                _bookNewHearingRequestValidator.Object,
+                _editHearingRequestValidator.Object,
+                UrlEncoder.Default);
         }
 
         [Test]

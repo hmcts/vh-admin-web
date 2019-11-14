@@ -9,6 +9,7 @@ using NUnit.Framework;
 using System;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using AdminWebsite.Models;
 using FluentValidation;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
@@ -19,6 +20,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private Mock<IUserIdentity> _userIdentity;
         private Mock<IUserAccountService> _userAccountService;
         private Mock<IValidator<BookNewHearingRequest>> _bookNewHearingRequestValidator;
+        private Mock<IValidator<EditHearingRequest>> _editHearingRequestValidator;
         private AdminWebsite.Controllers.HearingsController _controller;
         private Guid _guid;
         private UpdateBookingStatusRequest _updateBookingStatusRequest;
@@ -30,8 +32,15 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _userIdentity = new Mock<IUserIdentity>();
             _userAccountService = new Mock<IUserAccountService>();
             _bookNewHearingRequestValidator = new Mock<IValidator<BookNewHearingRequest>>();
+            _editHearingRequestValidator = new Mock<IValidator<EditHearingRequest>>();
 
-            _controller = new AdminWebsite.Controllers.HearingsController(_bookingsApiClient.Object, _userIdentity.Object, _userAccountService.Object, _bookNewHearingRequestValidator.Object, UrlEncoder.Default);
+            _controller = new AdminWebsite.Controllers.HearingsController(_bookingsApiClient.Object,
+                _userIdentity.Object,
+                _userAccountService.Object,
+                _bookNewHearingRequestValidator.Object,
+                _editHearingRequestValidator.Object,
+                UrlEncoder.Default);
+                
             _guid = Guid.NewGuid();
 
             _updateBookingStatusRequest = new UpdateBookingStatusRequest() { Status = UpdateBookingStatusRequestStatus.Cancelled, Updated_by = "admin user" };

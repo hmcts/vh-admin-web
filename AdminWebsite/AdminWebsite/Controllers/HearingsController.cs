@@ -28,18 +28,21 @@ namespace AdminWebsite.Controllers
         private readonly IUserIdentity _userIdentity;
         private readonly IUserAccountService _userAccountService;
         private readonly IValidator<BookNewHearingRequest> _bookNewHearingRequestValidator;
+        private readonly IValidator<EditHearingRequest> _editHearingRequestValidator;
         private readonly UrlEncoder _urlEncoder;
 
         /// <summary>
         /// Instantiates the controller
         /// </summary>
         public HearingsController(IBookingsApiClient bookingsApiClient, IUserIdentity userIdentity, IUserAccountService userAccountService,
-            IValidator<BookNewHearingRequest> bookNewHearingRequestValidator, UrlEncoder urlEncoder)
+            IValidator<BookNewHearingRequest> bookNewHearingRequestValidator, IValidator<EditHearingRequest> editHearingRequestValidator, 
+            UrlEncoder urlEncoder)
         {
             _bookingsApiClient = bookingsApiClient;
             _userIdentity = userIdentity;
             _userAccountService = userAccountService;
             _bookNewHearingRequestValidator = bookNewHearingRequestValidator;
+            _editHearingRequestValidator = editHearingRequestValidator;
             _urlEncoder = urlEncoder;
         }
 
@@ -104,22 +107,17 @@ namespace AdminWebsite.Controllers
         [HearingInputSanitizer]
         public async Task<ActionResult<HearingDetailsResponse>> EditHearing(Guid hearingId, [FromBody] EditHearingRequest request)
         {
-            //Validation
             if (hearingId == Guid.Empty)
             {
                 ModelState.AddModelError(nameof(hearingId), $"Please provide a valid {nameof(hearingId)}");
                 return BadRequest(ModelState);
             }
-
-            if (request.Case == null)
+            
+            var result = _editHearingRequestValidator.Validate(request);
+            
+            if (!result.IsValid)
             {
-                ModelState.AddModelError(nameof(request.Case), "Please provide valid case details");
-                return BadRequest(ModelState);
-            }
-
-            if (request.Participants == null || !request.Participants.Any())
-            {
-                ModelState.AddModelError("Participants", "Please provide at least one participant");
+                ModelState.AddFluentValidationErrors(result.Errors);
                 return BadRequest(ModelState);
             }
 
