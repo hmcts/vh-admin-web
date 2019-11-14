@@ -7,6 +7,7 @@ using System.Reflection;
 using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Configuration;
 using AdminWebsite.Helper;
+using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
 using AdminWebsite.Swagger;
@@ -83,6 +84,7 @@ namespace AdminWebsite.Extensions
             });
 
             serviceCollection.AddSingleton<IValidator<BookNewHearingRequest>, BookNewHearingRequestValidator>();
+            serviceCollection.AddSingleton<IValidator<EditHearingRequest>, EditHearingRequestValidator>();
 
             return serviceCollection;
         }

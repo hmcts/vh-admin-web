@@ -14,7 +14,7 @@ namespace AdminWebsite.Validators
             RuleFor(x => x.Case).NotNull().SetValidator(new EditRequestValidation());
             
             RuleFor(x => x.Participants)
-                .Must(x => x.Count > 0)
+                .Must(x => x != null && x.Count > 0)
                 .WithMessage("Please provide at least one participant");
             
             RuleForEach(x => x.Participants).NotNull().SetValidator(new EditParticipantRequestValidation());

@@ -10,6 +10,7 @@ using AdminWebsite.Security;
 using AdminWebsite.Services;
 using FluentAssertions;
 using FluentValidation;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
@@ -80,6 +81,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             
             _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(_existingHearing);
+            
+            _bookNewHearingRequestValidator.Setup(x => x.Validate(It.IsAny<BookNewHearingRequest>())).Returns(new ValidationResult());
+            _editHearingRequestValidator.Setup(x => x.Validate(It.IsAny<EditHearingRequest>())).Returns(new ValidationResult());
         }
         
         [Test]
@@ -95,6 +99,12 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task should_return_bad_request_if_case_is_not_given()
         {
+            _editHearingRequestValidator.Setup(x => x.Validate(It.IsAny<EditHearingRequest>()))
+                .Returns(new ValidationResult(new[]
+                {
+                    new ValidationFailure("case", "Please provide valid case details", new object())
+                }));
+            
             _request.Case = null;
 
             var result = await _controller.EditHearing(_validId, _request);
@@ -106,6 +116,12 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task should_return_bad_request_if_no_participants_are_given()
         {
+            _editHearingRequestValidator.Setup(x => x.Validate(It.IsAny<EditHearingRequest>()))
+                .Returns(new ValidationResult(new[]
+                {
+                    new ValidationFailure("participants", "Please provide at least one participant", new object())
+                }));
+            
             _request.Participants.Clear();
             var result = await _controller.EditHearing(_validId, _request);
             var badRequestResult = (BadRequestObjectResult) result.Result;

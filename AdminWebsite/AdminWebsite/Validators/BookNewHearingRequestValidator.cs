@@ -11,8 +11,13 @@ namespace AdminWebsite.Validators
                 .MaximumLength(255)
                 .WithMessage("Room name should be between 1 - 255 characters");
             
-            RuleForEach(x => x.Cases).SetValidator(new CaseRequestValidation());
-            RuleForEach(x => x.Participants).SetValidator(new ParticipantRequestValidation());
+            RuleForEach(x => x.Cases)
+                .NotNull()
+                .SetValidator(new CaseRequestValidation());
+            
+            RuleForEach(x => x.Participants)
+                .NotNull()
+                .SetValidator(new ParticipantRequestValidation());
         }
     }
 }

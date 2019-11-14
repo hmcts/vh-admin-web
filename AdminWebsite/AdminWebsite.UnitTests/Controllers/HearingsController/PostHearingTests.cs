@@ -46,7 +46,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task should_update_participant_user_details()
         {
-            _bookNewHearingRequestValidator.Setup(x => x.Validate(It.IsAny<BookNewHearingRequest>())).Returns(new ValidationResult());
+            _bookNewHearingRequestValidator.Setup(x => x.Validate(It.IsAny<BookNewHearingRequest>()))
+                .Returns(new ValidationResult());
 
             var participant = new BookingsAPI.Client.ParticipantRequest
             {
@@ -63,7 +64,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task should_not_update_user_details_for_judge()
         {
-            _bookNewHearingRequestValidator.Setup(x => x.Validate(It.IsAny<BookNewHearingRequest>())).Returns(new ValidationResult());
+            _bookNewHearingRequestValidator.Setup(x => x.Validate(It.IsAny<BookNewHearingRequest>()))
+                .Returns(new ValidationResult());
 
             var participant = new BookingsAPI.Client.ParticipantRequest
             {
@@ -80,7 +82,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task should_pass_bad_request_from_bookings_api()
         {
-            _bookNewHearingRequestValidator.Setup(x => x.Validate(It.IsAny<BookNewHearingRequest>())).Returns(new ValidationResult());
+            _bookNewHearingRequestValidator.Setup(x => x.Validate(It.IsAny<BookNewHearingRequest>()))
+                .Returns(new ValidationResult());
 
             var hearing = new BookNewHearingRequest
             {
@@ -97,7 +100,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task should_pass_current_user_as_created_by_to_service()
         {
-            _bookNewHearingRequestValidator.Setup(x => x.Validate(It.IsAny<BookNewHearingRequest>())).Returns(new ValidationResult());
+            _bookNewHearingRequestValidator.Setup(x => x.Validate(It.IsAny<BookNewHearingRequest>()))
+                .Returns(new ValidationResult());
 
             const string currentUsername = "test@user.com";
             _userIdentity.Setup(x => x.GetUserIdentityName()).Returns(currentUsername);
@@ -111,7 +115,11 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task should_return_bad_request_on_validation_failure()
         {
-            _bookNewHearingRequestValidator.Setup(x => x.Validate(It.IsAny<BookNewHearingRequest>())).Returns(new ValidationResult(new []{ new ValidationFailure("dsfs", "asda", new object()) }));
+            _bookNewHearingRequestValidator.Setup(x => x.Validate(It.IsAny<BookNewHearingRequest>()))
+                .Returns(new ValidationResult(new[]
+                {
+                    new ValidationFailure("dsfs", "asda", new object())
+                }));
 
             var participant = new BookingsAPI.Client.ParticipantRequest
             {
