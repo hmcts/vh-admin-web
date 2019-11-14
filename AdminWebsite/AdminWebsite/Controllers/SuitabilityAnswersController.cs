@@ -18,17 +18,17 @@ namespace AdminWebsite.Controllers
     {
         private readonly IBookingsApiClient _bookingsApiClient;
         private readonly IUserIdentity _userIdentity;
-        private readonly UrlEncoder _urlEncoder;
+        private readonly JavaScriptEncoder _encoder;
 
         /// <summary>
         /// Instantiates the controller
         /// </summary>
         public SuitabilityAnswersController(IBookingsApiClient bookingsApiClient, IUserIdentity userIdentity,
-            UrlEncoder urlEncoder)
+            JavaScriptEncoder encoder)
         {
             _bookingsApiClient = bookingsApiClient;
             _userIdentity = userIdentity;
-            _urlEncoder = urlEncoder;
+            _encoder = encoder;
         }
 
         /// <summary>
@@ -43,7 +43,7 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult> GetSuitabilityAnswersList(string cursor, int limit = 100)
         {
-            cursor = _urlEncoder.Encode(cursor);
+            cursor = _encoder.Encode(cursor);
 
             if (!_userIdentity.IsVhOfficerAdministratorRole())
             {

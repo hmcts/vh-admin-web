@@ -41,7 +41,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 _userAccountService.Object,
                 _bookNewHearingRequestValidator.Object,
                 _editHearingRequestValidator.Object,
-                UrlEncoder.Default);
+                JavaScriptEncoder.Default);
 
             _vhExistingHearing = new HearingDetailsResponse
             {

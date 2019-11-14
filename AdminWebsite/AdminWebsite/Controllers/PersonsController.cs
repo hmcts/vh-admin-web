@@ -17,15 +17,15 @@ namespace AdminWebsite.Controllers
     public class PersonsController : ControllerBase
     {
         private readonly IBookingsApiClient _bookingsApiClient;
-        private readonly UrlEncoder _urlEncoder;
+        private readonly JavaScriptEncoder _encoder;
 
         /// <summary>
         /// Instantiates the controller
         /// </summary>
-        public PersonsController(IBookingsApiClient bookingsApiClient, UrlEncoder urlEncoder)
+        public PersonsController(IBookingsApiClient bookingsApiClient, JavaScriptEncoder encoder)
         {
             _bookingsApiClient = bookingsApiClient;
-            _urlEncoder = urlEncoder;
+            _encoder = encoder;
         }
 
         /// <summary>
@@ -41,7 +41,7 @@ namespace AdminWebsite.Controllers
         {
             try
             {
-                term = _urlEncoder.Encode(term);
+                term = _encoder.Encode(term);
 
                 var personsResponse = await _bookingsApiClient.GetPersonBySearchTermAsync(term);
                 return Ok(personsResponse);

@@ -29,21 +29,21 @@ namespace AdminWebsite.Controllers
         private readonly IUserAccountService _userAccountService;
         private readonly IValidator<BookNewHearingRequest> _bookNewHearingRequestValidator;
         private readonly IValidator<EditHearingRequest> _editHearingRequestValidator;
-        private readonly UrlEncoder _urlEncoder;
+        private readonly JavaScriptEncoder _encoder;
 
         /// <summary>
         /// Instantiates the controller
         /// </summary>
         public HearingsController(IBookingsApiClient bookingsApiClient, IUserIdentity userIdentity, IUserAccountService userAccountService,
             IValidator<BookNewHearingRequest> bookNewHearingRequestValidator, IValidator<EditHearingRequest> editHearingRequestValidator, 
-            UrlEncoder urlEncoder)
+            JavaScriptEncoder encoder)
         {
             _bookingsApiClient = bookingsApiClient;
             _userIdentity = userIdentity;
             _userAccountService = userAccountService;
             _bookNewHearingRequestValidator = bookNewHearingRequestValidator;
             _editHearingRequestValidator = editHearingRequestValidator;
-            _urlEncoder = urlEncoder;
+            _encoder = encoder;
         }
 
         /// <summary>
@@ -251,7 +251,7 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public ActionResult GetBookingsList(string cursor, int limit = 100)
         {
-            cursor = _urlEncoder.Encode(cursor);
+            cursor = _encoder.Encode(cursor);
 
             IEnumerable<string> caseTypes = null;
             

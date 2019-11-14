@@ -46,7 +46,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 _userAccountService.Object,
                 _bookNewHearingRequestValidator.Object,
                 _editHearingRequestValidator.Object,
-                UrlEncoder.Default);
+                JavaScriptEncoder.Default);
 
             _validId = Guid.NewGuid();
             _request = new EditHearingRequest

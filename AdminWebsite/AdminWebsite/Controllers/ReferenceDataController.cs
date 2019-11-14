@@ -21,16 +21,16 @@ namespace AdminWebsite.Controllers
     {
         private readonly IBookingsApiClient _bookingsApiClient;
         private readonly IUserIdentity _identity;
-        private readonly UrlEncoder _urlEncoder;
+        private readonly JavaScriptEncoder _encoder;
 
         /// <summary>
         /// Instantiate the controller
         /// </summary>
-        public ReferenceDataController(IBookingsApiClient bookingsApiClient, IUserIdentity identity, UrlEncoder urlEncoder)
+        public ReferenceDataController(IBookingsApiClient bookingsApiClient, IUserIdentity identity, JavaScriptEncoder encoder)
         {
             _bookingsApiClient = bookingsApiClient;
             _identity = identity;
-            _urlEncoder = urlEncoder;
+            _encoder = encoder;
         }
 
         /// <summary>
@@ -63,7 +63,7 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<ActionResult<IList<CaseAndHearingRolesResponse>>> GetParticipantRoles(string caseTypeName)
         {
-            caseTypeName = _urlEncoder.Encode(caseTypeName);
+            caseTypeName = _encoder.Encode(caseTypeName);
 
             var response = new List<CaseAndHearingRolesResponse>();
 

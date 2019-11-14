@@ -23,7 +23,7 @@ namespace AdminWebsite.UnitTests
         {
             _bookingsApiClientMock = new Mock<IBookingsApiClient>();
             _userIdentityMock = new Mock<IUserIdentity>();
-            _controller = new ReferenceDataController(_bookingsApiClientMock.Object, _userIdentityMock.Object, UrlEncoder.Default);
+            _controller = new ReferenceDataController(_bookingsApiClientMock.Object, _userIdentityMock.Object, JavaScriptEncoder.Default);
         }
 
         [Test]

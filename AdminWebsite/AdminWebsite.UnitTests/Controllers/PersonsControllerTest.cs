@@ -28,7 +28,7 @@ namespace AdminWebsite.UnitTests.Controllers
         public void Setup()
         {
             _bookingsApiClient = new Mock<IBookingsApiClient>();
-            _controller = new AdminWebsite.Controllers.PersonsController(_bookingsApiClient.Object, UrlEncoder.Default);
+            _controller = new AdminWebsite.Controllers.PersonsController(_bookingsApiClient.Object, JavaScriptEncoder.Default);
 
             _response = new List<PersonResponse>
             {

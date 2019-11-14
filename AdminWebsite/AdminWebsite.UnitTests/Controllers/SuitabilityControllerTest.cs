@@ -24,7 +24,7 @@ namespace AdminWebsite.UnitTests.Controllers
         {
             _bookingsApiClientMock = new Mock<IBookingsApiClient>();
             _userIdentityMock = new Mock<IUserIdentity>();
-            _controller = new SuitabilityAnswersController(_bookingsApiClientMock.Object, _userIdentityMock.Object, UrlEncoder.Default);
+            _controller = new SuitabilityAnswersController(_bookingsApiClientMock.Object, _userIdentityMock.Object, JavaScriptEncoder.Default);
         }
 
         [Test]
