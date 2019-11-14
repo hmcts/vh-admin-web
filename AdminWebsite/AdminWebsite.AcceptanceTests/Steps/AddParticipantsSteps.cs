@@ -196,7 +196,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
                 _context.TestData.ParticipantData.First().Street = participant.Update(participant.Street);
                 _context.TestData.ParticipantData.First().City = participant.Update(participant.City);
                 _context.TestData.ParticipantData.First().County = participant.Update(participant.County);
-                _context.TestData.ParticipantData.First().PostCode = participant.Update(participant.PostCode);
+                _context.TestData.ParticipantData.First().PostCode = participant.PostCode;
 
                 var newParticipantAddress = new IndividualData
                 {

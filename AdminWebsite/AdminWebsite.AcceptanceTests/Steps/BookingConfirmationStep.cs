@@ -87,18 +87,58 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         private static void AssertParticipantData(ParticipantData expected, ParticipantResponse actual)
         {
-            actual.City.Should().Be(expected.City);
-            actual.County.Should().Be(expected.County);
+            if (!string.IsNullOrEmpty(expected.City))
+            {
+                actual.City.Should().ContainEquivalentOf(expected.City);
+            }
+            else
+            {
+                actual.City.Should().Be(expected.City);
+            }
+
+            if (!string.IsNullOrEmpty(expected.County))
+            {
+                actual.County.Should().ContainEquivalentOf(expected.County);
+            }
+            else
+            {
+                actual.County.Should().Be(expected.County);
+            }
+
+            if (!string.IsNullOrEmpty(expected.HouseNumber))
+            {
+                actual.House_number.Should().ContainEquivalentOf(expected.HouseNumber);
+            }
+            else
+            {
+                actual.House_number.Should().Be(expected.HouseNumber);
+            }
+
+            if (!string.IsNullOrEmpty(expected.Street))
+            {
+                actual.Street.Should().ContainEquivalentOf(expected.Street);
+            }
+            else
+            {
+                actual.Street.Should().Be(expected.Street);
+            }
+
             actual.Display_name.Should().Be(expected.DisplayName);
             actual.First_name.Should().Be(expected.Firstname);
             actual.Hearing_role_name.Should().Be(expected.Role.ToString().Replace("LIP", " LIP"));
-            actual.House_number.Should().Be(expected.HouseNumber);
             actual.Last_name.Should().Be(expected.Lastname);
-            actual.Organisation.Should().Be(expected.Organisation);
+            if (!string.IsNullOrEmpty(expected.Organisation))
+            {
+                actual.Organisation.Should().ContainEquivalentOf(expected.Organisation);
+            }
+            else
+            {
+                actual.Organisation.Should().Be(expected.Organisation);
+            }
+            
             actual.Postcode.Should().Be(expected.PostCode);
             actual.Representee.Should().Be(expected.ClientRepresenting);
             actual.Solicitor_reference.Should().Be(expected.SolicitorReference);
-            actual.Street.Should().Be(expected.Street);
             actual.Title.Should().Be(expected.Title);
         }
 
