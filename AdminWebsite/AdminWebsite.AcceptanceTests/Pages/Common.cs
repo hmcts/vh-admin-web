@@ -60,6 +60,31 @@ namespace AdminWebsite.AcceptanceTests.Pages
             webElement.SendKeys(value);
         }
 
+        protected void ClearFieldInputValuesKeyboard(By element, string value)
+        {
+            var webElement = _browser.NgDriver.WaitUntilElementVisible(element);
+            var text = webElement.GetAttribute("value");
+
+            Console.WriteLine($"Current element {element} text is {text}");
+
+            while (!string.IsNullOrEmpty(text))
+            {
+                try
+                {
+                    webElement.SendKeys(Keys.Backspace);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"An exception occurred when sending Keys.Backspace to element {element}");
+                    Console.WriteLine(ex.Message);
+                }
+                
+                text = webElement.GetAttribute("value");
+            }
+            
+            webElement.SendKeys(value);
+        }
+
         public void ClickNextButton()
         {
             _browser.Retry(() => _browser.NgDriver.ClickAndWaitForPageToLoad(NextButton));
