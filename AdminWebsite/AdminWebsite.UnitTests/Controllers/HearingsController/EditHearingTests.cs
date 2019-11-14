@@ -2,13 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
-using AdminWebsite.UserAPI.Client;
 using FluentAssertions;
+using FluentValidation;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
@@ -21,7 +23,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private Mock<IBookingsApiClient> _bookingsApiClient;
         private Mock<IUserIdentity> _userIdentity;
         private Mock<IUserAccountService> _userAccountService;
-        
+        private Mock<IValidator<BookNewHearingRequest>> _bookNewHearingRequestValidator;
+        private Mock<IValidator<EditHearingRequest>> _editHearingRequestValidator;
+
         private Guid _validId;
         private EditHearingRequest _request;
         private HearingDetailsResponse _existingHearing;
@@ -34,7 +38,15 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _bookingsApiClient = new Mock<IBookingsApiClient>();
             _userIdentity = new Mock<IUserIdentity>();
             _userAccountService = new Mock<IUserAccountService>();
-            _controller = new AdminWebsite.Controllers.HearingsController(_bookingsApiClient.Object, _userIdentity.Object, _userAccountService.Object);
+            _bookNewHearingRequestValidator = new Mock<IValidator<BookNewHearingRequest>>();
+            _editHearingRequestValidator = new Mock<IValidator<EditHearingRequest>>();
+
+            _controller = new AdminWebsite.Controllers.HearingsController(_bookingsApiClient.Object,
+                _userIdentity.Object,
+                _userAccountService.Object,
+                _bookNewHearingRequestValidator.Object,
+                _editHearingRequestValidator.Object,
+                JavaScriptEncoder.Default);
 
             _validId = Guid.NewGuid();
             _request = new EditHearingRequest
@@ -69,6 +81,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             
             _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(_existingHearing);
+            
+            _bookNewHearingRequestValidator.Setup(x => x.Validate(It.IsAny<BookNewHearingRequest>())).Returns(new ValidationResult());
+            _editHearingRequestValidator.Setup(x => x.Validate(It.IsAny<EditHearingRequest>())).Returns(new ValidationResult());
         }
         
         [Test]
@@ -84,6 +99,12 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task should_return_bad_request_if_case_is_not_given()
         {
+            _editHearingRequestValidator.Setup(x => x.Validate(It.IsAny<EditHearingRequest>()))
+                .Returns(new ValidationResult(new[]
+                {
+                    new ValidationFailure("case", "Please provide valid case details", new object())
+                }));
+            
             _request.Case = null;
 
             var result = await _controller.EditHearing(_validId, _request);
@@ -95,6 +116,12 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task should_return_bad_request_if_no_participants_are_given()
         {
+            _editHearingRequestValidator.Setup(x => x.Validate(It.IsAny<EditHearingRequest>()))
+                .Returns(new ValidationResult(new[]
+                {
+                    new ValidationFailure("participants", "Please provide at least one participant", new object())
+                }));
+            
             _request.Participants.Clear();
             var result = await _controller.EditHearing(_validId, _request);
             var badRequestResult = (BadRequestObjectResult) result.Result;

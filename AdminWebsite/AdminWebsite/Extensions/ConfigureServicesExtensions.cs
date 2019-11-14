@@ -7,10 +7,13 @@ using System.Reflection;
 using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Configuration;
 using AdminWebsite.Helper;
+using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
 using AdminWebsite.Swagger;
 using AdminWebsite.UserAPI.Client;
+using AdminWebsite.Validators;
+using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -79,7 +82,10 @@ namespace AdminWebsite.Extensions
 
                 return new UserIdentity(userPrincipal);
             });
-            
+
+            serviceCollection.AddSingleton<IValidator<BookNewHearingRequest>, BookNewHearingRequestValidator>();
+            serviceCollection.AddSingleton<IValidator<EditHearingRequest>, EditHearingRequestValidator>();
+
             return serviceCollection;
         }
         

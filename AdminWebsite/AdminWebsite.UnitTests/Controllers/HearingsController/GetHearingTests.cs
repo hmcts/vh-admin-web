@@ -8,6 +8,9 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Text.Encodings.Web;
+using AdminWebsite.Models;
+using FluentValidation;
 using Testing.Common;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
@@ -17,6 +20,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private Mock<IBookingsApiClient> _bookingsApiClient;
         private Mock<IUserIdentity> _userIdentity;
         private Mock<IUserAccountService> _userAccountService;
+        private Mock<IValidator<BookNewHearingRequest>> _bookNewHearingRequestValidator;
+        private Mock<IValidator<EditHearingRequest>> _editHearingRequestValidator;
 
         private AdminWebsite.Controllers.HearingsController _controller;
         private HearingDetailsResponse _vhExistingHearing;
@@ -28,8 +33,15 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _bookingsApiClient = new Mock<IBookingsApiClient>();
             _userIdentity = new Mock<IUserIdentity>();
             _userAccountService = new Mock<IUserAccountService>();
+            _bookNewHearingRequestValidator = new Mock<IValidator<BookNewHearingRequest>>();
+            _editHearingRequestValidator = new Mock<IValidator<EditHearingRequest>>();
+
             _controller = new AdminWebsite.Controllers.HearingsController(_bookingsApiClient.Object,
-                _userIdentity.Object, _userAccountService.Object);
+                _userIdentity.Object,
+                _userAccountService.Object,
+                _bookNewHearingRequestValidator.Object,
+                _editHearingRequestValidator.Object,
+                JavaScriptEncoder.Default);
 
             _vhExistingHearing = new HearingDetailsResponse
             {

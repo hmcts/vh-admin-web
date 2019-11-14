@@ -3,7 +3,6 @@ using AdminWebsite.Security;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Net;
-using System.Threading.Tasks;
 
 namespace AdminWebsite.Controllers
 {
@@ -28,7 +27,7 @@ namespace AdminWebsite.Controllers
                 IsVhOfficerAdministratorRole = _userIdentity.IsVhOfficerAdministratorRole(),
                 IsCaseAdministrator = _userIdentity.IsCaseAdministratorRole()
             };
-           
+
             return Ok(profile);
         }
     }
