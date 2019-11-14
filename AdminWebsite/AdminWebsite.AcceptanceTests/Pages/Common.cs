@@ -142,6 +142,7 @@ namespace AdminWebsite.AcceptanceTests.Pages
         {
             if (url != PageUri.BookingConfirmationPage)
             {
+                _browser.NgDriver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(15);
                 _browser.Retry(() => _browser.NgDriver.Url.Should().Contain(url));
             }
             else
@@ -153,14 +154,14 @@ namespace AdminWebsite.AcceptanceTests.Pages
                 catch (Exception ex)
                 {
                     Console.WriteLine($"Re-submit booking: {ex}");
-                    if (GetElementText(TryAgainMessage) == Data.BookingConfirmation.TryAgainMessage)                  
+                    if (GetElementText(TryAgainMessage) == Data.BookingConfirmation.TryAgainMessage)
 
                     {
                         ClickElement(TryAgainButton);
                         _browser.Retry(() => _browser.NgDriver.Url.Should().Contain(url), 2);
-                    }                    
+                    }
                 }
-            }                      
+            }
         }
 
         public void ClickBreadcrumb(string breadcrumb) => SelectOption(Breadcrumbs, breadcrumb);
@@ -185,14 +186,14 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public string ExecuteScript(string script) => _browser.ExecuteJavascript(script);
         public string Page() => _browser.PageUrl();
         public string CancelWarningMessage() => GetElementText(By.XPath("//*[@class='content']/h1"));
-        public void DiscardChanges() => ClickElement(By.Id("btn-discard-changes"));       
+        public void DiscardChanges() => ClickElement(By.Id("btn-discard-changes"));
         public int DisabledFields() => GetListOfElements(By.XPath("//*[@disabled='true']")).ToList().Count;
         public string GetAttribute(By element) => _browser.NgDriver.WaitUntilElementVisible(element).GetAttribute("disabled");
         public bool IsElementEnabled(By element) => _browser.NgDriver.WaitUntilElementVisible(element).Enabled;
         public string ExecuteScript(string script, By element)
         {
             _browser.NgDriver.WaitUntilElementVisible(element);
-           return  _browser.ExecuteJavascript(script);
+            return _browser.ExecuteJavascript(script);
         }
     }
 }

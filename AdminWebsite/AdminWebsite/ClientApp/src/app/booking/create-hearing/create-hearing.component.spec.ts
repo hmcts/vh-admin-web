@@ -311,15 +311,15 @@ describe('CreateHearingComponent with existing request in session', () => {
     expect(routerSpy.navigate).toHaveBeenCalled();
   });
   it('should sanitize text for case number', () => {
-    component.caseNumber.setValue('<script>text select delete</script>');
+    component.caseNumber.setValue('<script>text</script>');
     component.caseNumberOnBlur();
     fixture.detectChanges();
-    expect(component.caseNumber.value).toBe('text  ');
+    expect(component.caseNumber.value).toBe('text');
   });
   it('should sanitize text for case name', () => {
-    component.caseName.setValue('<script>text select delete</script>');
+    component.caseName.setValue('<script>text</script>');
     component.caseNameOnBlur();
     fixture.detectChanges();
-    expect(component.caseName.value).toBe('text  ');
+    expect(component.caseName.value).toBe('text');
   });
 });
