@@ -2,11 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using AdminWebsite.Attributes;
 using AdminWebsite.BookingsAPI.Client;
+using AdminWebsite.Extensions;
 using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -23,33 +27,50 @@ namespace AdminWebsite.Controllers
         private readonly IBookingsApiClient _bookingsApiClient;
         private readonly IUserIdentity _userIdentity;
         private readonly IUserAccountService _userAccountService;
+        private readonly IValidator<BookNewHearingRequest> _bookNewHearingRequestValidator;
+        private readonly IValidator<EditHearingRequest> _editHearingRequestValidator;
+        private readonly JavaScriptEncoder _encoder;
 
         /// <summary>
         /// Instantiates the controller
         /// </summary>
-        public HearingsController(IBookingsApiClient bookingsApiClient, IUserIdentity userIdentity, IUserAccountService userAccountService)
+        public HearingsController(IBookingsApiClient bookingsApiClient, IUserIdentity userIdentity, IUserAccountService userAccountService,
+            IValidator<BookNewHearingRequest> bookNewHearingRequestValidator, IValidator<EditHearingRequest> editHearingRequestValidator, 
+            JavaScriptEncoder encoder)
         {
             _bookingsApiClient = bookingsApiClient;
             _userIdentity = userIdentity;
             _userAccountService = userAccountService;
+            _bookNewHearingRequestValidator = bookNewHearingRequestValidator;
+            _editHearingRequestValidator = editHearingRequestValidator;
+            _encoder = encoder;
         }
 
         /// <summary>
         /// Create a hearing
         /// </summary>
-        /// <param name="hearingRequest">Hearing Request object</param>
+        /// <param name="request">Hearing Request object</param>
         /// <returns>VideoHearingId</returns>
         [HttpPost]
         [SwaggerOperation(OperationId = "BookNewHearing")]
         [ProducesResponseType(typeof(HearingDetailsResponse), (int)HttpStatusCode.Created)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult<HearingDetailsResponse>> Post([FromBody] BookNewHearingRequest hearingRequest)
+        [HearingInputSanitizer]
+        public async Task<ActionResult<HearingDetailsResponse>> Post([FromBody] BookNewHearingRequest request)
         {
+            var result = _bookNewHearingRequestValidator.Validate(request);
+
+            if (!result.IsValid)
+            {
+                ModelState.AddFluentValidationErrors(result.Errors);
+                return BadRequest(ModelState);
+            }
+
             try
             {
-                if (hearingRequest.Participants != null)
+                if (request.Participants != null)
                 {
-                    foreach (var participant in hearingRequest.Participants)
+                    foreach (var participant in request.Participants)
                     {
                         if (participant.Case_role_name == "Judge") continue;
 
@@ -57,8 +78,8 @@ namespace AdminWebsite.Controllers
                     }
                 }
 
-                hearingRequest.Created_by = _userIdentity.GetUserIdentityName();
-                var hearingDetailsResponse = await _bookingsApiClient.BookNewHearingAsync(hearingRequest);
+                request.Created_by = _userIdentity.GetUserIdentityName();
+                var hearingDetailsResponse = await _bookingsApiClient.BookNewHearingAsync(request);
                 return Created("", hearingDetailsResponse);
             }
             catch (BookingsApiException e)
@@ -75,7 +96,7 @@ namespace AdminWebsite.Controllers
         /// Edit a hearing
         /// </summary>
         /// <param name="hearingId">The id of the hearing to update</param>
-        /// <param name="editHearingRequest">Hearing Request object for edit operation</param>
+        /// <param name="request">Hearing Request object for edit operation</param>
         /// <returns>VideoHearingId</returns>
         [HttpPut("{hearingId}")]
         [SwaggerOperation(OperationId = "EditHearing")]
@@ -83,24 +104,20 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
-        public async Task<ActionResult<HearingDetailsResponse>> EditHearing(Guid hearingId, [FromBody] EditHearingRequest editHearingRequest)
+        [HearingInputSanitizer]
+        public async Task<ActionResult<HearingDetailsResponse>> EditHearing(Guid hearingId, [FromBody] EditHearingRequest request)
         {
-            //Validation
             if (hearingId == Guid.Empty)
             {
                 ModelState.AddModelError(nameof(hearingId), $"Please provide a valid {nameof(hearingId)}");
                 return BadRequest(ModelState);
             }
-
-            if (editHearingRequest.Case == null)
+            
+            var result = _editHearingRequestValidator.Validate(request);
+            
+            if (!result.IsValid)
             {
-                ModelState.AddModelError(nameof(editHearingRequest.Case), "Please provide valid case details");
-                return BadRequest(ModelState);
-            }
-
-            if (editHearingRequest.Participants == null || !editHearingRequest.Participants.Any())
-            {
-                ModelState.AddModelError("Participants", "Please provide at least one participant");
+                ModelState.AddFluentValidationErrors(result.Errors);
                 return BadRequest(ModelState);
             }
 
@@ -120,12 +137,12 @@ namespace AdminWebsite.Controllers
             try
             {
                 //Save hearing details
-                var updateHearingRequest = MapHearingUpdateRequest(editHearingRequest);
+                var updateHearingRequest = MapHearingUpdateRequest(request);
                 await _bookingsApiClient.UpdateHearingDetailsAsync(hearingId, updateHearingRequest);
 
                 var newParticipantList = new List<ParticipantRequest>();
                 
-                foreach (var participant in editHearingRequest.Participants)
+                foreach (var participant in request.Participants)
                 {
                     if(!participant.Id.HasValue)
                     {
@@ -171,7 +188,7 @@ namespace AdminWebsite.Controllers
                 }
 
                 // Delete existing participants if the request doesn't contain any update information
-                var deleteParticipantList = hearing.Participants.Where(p => editHearingRequest.Participants.All(rp => rp.ContactEmail != p.Contact_email));
+                var deleteParticipantList = hearing.Participants.Where(p => request.Participants.All(rp => rp.ContactEmail != p.Contact_email));
                 foreach (var participantToDelete in deleteParticipantList)
                 {
                     await _bookingsApiClient.RemoveParticipantFromHearingAsync(hearingId, participantToDelete.Id.Value);
@@ -234,6 +251,8 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public ActionResult GetBookingsList(string cursor, int limit = 100)
         {
+            cursor = _encoder.Encode(cursor);
+
             IEnumerable<string> caseTypes = null;
             
             if (_userIdentity.IsAdministratorRole())
@@ -362,8 +381,7 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult> UpdateBookingStatus(Guid hearingId, 
-            UpdateBookingStatusRequest updateBookingStatusRequest)
+        public async Task<ActionResult> UpdateBookingStatus(Guid hearingId, UpdateBookingStatusRequest updateBookingStatusRequest)
         {
             try
             {

@@ -8,6 +8,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 
 namespace AdminWebsite.UnitTests.Controllers
@@ -23,7 +24,7 @@ namespace AdminWebsite.UnitTests.Controllers
         {
             _bookingsApiClientMock = new Mock<IBookingsApiClient>();
             _userIdentityMock = new Mock<IUserIdentity>();
-            _controller = new SuitabilityAnswersController(_bookingsApiClientMock.Object, _userIdentityMock.Object);
+            _controller = new SuitabilityAnswersController(_bookingsApiClientMock.Object, _userIdentityMock.Object, JavaScriptEncoder.Default);
         }
 
         [Test]
