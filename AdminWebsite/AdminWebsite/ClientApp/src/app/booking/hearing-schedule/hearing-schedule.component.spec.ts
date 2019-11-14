@@ -319,9 +319,9 @@ describe('HearingScheduleComponent returning to page', () => {
   });
 
   it('should sanitize text for court room', () => {
-    component.courtRoom.setValue('<script>text select delete</script>');
+    component.courtRoom.setValue('<script>text</script>');
     component.courtRoomOnBlur();
     fixture.detectChanges();
-    expect(component.courtRoom.value).toBe('text  ');
+    expect(component.courtRoom.value).toBe('text');
   });
 });
