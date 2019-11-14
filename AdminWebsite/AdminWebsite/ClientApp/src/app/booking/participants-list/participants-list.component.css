@@ -45,3 +45,8 @@
 .vh-wrap{
   word-break:break-all;
 }
+
+.vh-wrap-text{
+ word-break:break-all;
+ overflow-wrap:break-word;
+}

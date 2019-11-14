@@ -31,7 +31,8 @@
     <label class="govuk-label govuk-!-width-one-half" for="caseNumber">
       Case number
     </label>
-    <input id="caseNumber" class="govuk-input govuk-!-width-one-half" type="text" formControlName="caseNumber" required>
+    <input id="caseNumber" class="govuk-input govuk-!-width-one-half"
+           type="text" formControlName="caseNumber" required (blur)="caseNumberOnBlur()">
     <div *ngIf="caseNumberInvalid" class="alert alert-danger">
       <span id="caseNumber-error" class="govuk-error-message">
         Please enter a case number
@@ -44,7 +45,7 @@
       Case name
     </label>
     <input id="caseName" placeholder="e.g. Ms A Smith vs HMRC" class="govuk-input govuk-!-width-one-half" type="text"
-      formControlName="caseName" required>
+      formControlName="caseName" required (blur)="caseNameOnBlur()">
     <div *ngIf="caseNameInvalid" class="alert alert-danger">
       <span id="caseName-error" class="govuk-error-message">
         Please enter a case name

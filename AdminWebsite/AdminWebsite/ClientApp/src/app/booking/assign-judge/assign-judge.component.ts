@@ -11,6 +11,7 @@ import { JudgeDataService } from 'src/app/booking/services/judge-data.service';
 import { BookingService } from '../../services/booking.service';
 import { BookingBaseComponent } from '../booking-base/booking-base.component';
 import { Logger } from '../../services/logger';
+import { SanitizeInputText } from '../../common/formatters/sanitize-input-text';
 
 @Component({
   selector: 'app-assign-judge',
@@ -96,7 +97,13 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
       this.judge = AssignJudgeComponent.mapJudge(find_judge);
       this.canNavigate = true;
     }
-    this.judgeDisplayName = new FormControl(this.judge.display_name, { validators: Validators.required, updateOn: 'blur' });
+    this.judgeDisplayName = new FormControl(this.judge.display_name, {
+      validators: [
+        Validators.required,
+        Validators.pattern(Constants.TextInputPattern),
+        Validators.maxLength(255)
+      ], updateOn: 'blur'
+    });
 
     this.form = this.fb.group({
       judgeName: [this.judge.email, Validators.required],
@@ -122,7 +129,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
   }
 
   get judgeDisplayNameInvalid() {
-    return this.judgeDisplayName.invalid && (this.judgeDisplayName.dirty || this.judgeDisplayName.touched);
+    return this.judgeDisplayName.invalid && (this.judgeDisplayName.dirty || this.judgeDisplayName.touched || this.failedSubmission);
   }
 
   public addJudge(judgeId: string) {
@@ -161,6 +168,8 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         this.hearing.participants[indexOfJudge].display_name = this.judge.display_name;
       }
     }
+    const text = SanitizeInputText(this.judgeDisplayName.value);
+    this.judgeDisplayName.setValue(text);
   }
 
   saveJudge() {
@@ -244,4 +253,5 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
   toggle() {
     this.expanded = !this.expanded;
   }
+
 }

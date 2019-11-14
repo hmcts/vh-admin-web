@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, Validators} from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HearingTypeResponse } from '../../services/clients/api-client';
 import { HearingModel } from '../../common/model/hearing.model';
@@ -10,6 +10,7 @@ import { BookingService } from '../../services/booking.service';
 import { ErrorService } from 'src/app/services/error.service';
 import { PageUrls } from 'src/app/shared/page-url.constants';
 import { Constants } from 'src/app/common/constants';
+import { SanitizeInputText } from '../../common/formatters/sanitize-input-text';
 
 @Component({
   selector: 'app-create-hearing',
@@ -80,8 +81,8 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
       firstCase = new CaseModel();
     }
     this.form = this.fb.group({
-      caseName: [firstCase.name, Validators.required],
-      caseNumber: [firstCase.number, Validators.required],
+      caseName: [firstCase.name, [Validators.required, Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)]],
+      caseNumber: [firstCase.number, [Validators.required, Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)]],
       caseType: [this.selectedCaseType, [Validators.required, Validators.pattern('^((?!Please select).)*$')]],
       hearingType: [this.hearing.hearing_type_id, [Validators.required, Validators.min(1)]],
       questionnaireNotRequired: [this.hearing.questionnaire_not_required]
@@ -228,5 +229,15 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
       const result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
       return result * sortOrder;
     };
+  }
+
+  caseNumberOnBlur() {
+    const text = SanitizeInputText(this.caseNumber.value);
+    this.caseNumber.setValue(text);
+  }
+
+  caseNameOnBlur() {
+    const text = SanitizeInputText(this.caseName.value);
+    this.caseName.setValue(text);
   }
 }

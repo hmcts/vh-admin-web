@@ -1,11 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { HearingModel } from '../../common/model/hearing.model';
 import { BookingBaseComponent } from '../booking-base/booking-base.component';
 import { BookingService } from '../../services/booking.service';
 import { PageUrls } from 'src/app/shared/page-url.constants';
+import { Constants } from '../../common/constants';
+import { SanitizeInputText } from '../../common/formatters/sanitize-input-text';
 
 @Component({
   selector: 'app-other-information',
@@ -13,12 +15,14 @@ import { PageUrls } from 'src/app/shared/page-url.constants';
   styleUrls: ['./other-information.component.css']
 })
 export class OtherInformationComponent extends BookingBaseComponent implements OnInit {
+  constants = Constants;
   hearing: HearingModel;
   attemptingCancellation = false;
   attemptingDiscardChanges = false;
   canNavigate = true;
 
   otherInformationText: string;
+  otherInformation: FormControl;
 
   constructor(private fb: FormBuilder, protected videoHearingService: VideoHearingsService,
     protected router: Router, protected bookingService: BookingService) {
@@ -32,9 +36,16 @@ export class OtherInformationComponent extends BookingBaseComponent implements O
   }
 
   private initForm() {
+    this.otherInformation = new FormControl(this.otherInformationText ? this.otherInformationText : '',
+      Validators.pattern(Constants.TextInputPattern));
+
     this.form = this.fb.group({
-      otherInformation: [this.otherInformationText !== null ? this.otherInformationText : ''],
+      otherInformation: this.otherInformation,
     });
+  }
+
+  get otherInformationInvalid() {
+    return this.otherInformation.invalid && (this.otherInformation.dirty || this.otherInformation.touched);
   }
 
   private checkForExistingRequest() {
@@ -43,7 +54,7 @@ export class OtherInformationComponent extends BookingBaseComponent implements O
   }
 
   next() {
-    this.hearing.other_information = this.form.value.otherInformation;
+    this.hearing.other_information = this.otherInformation.value;
     this.videoHearingService.updateHearingRequest(this.hearing);
     this.form.markAsPristine();
     if (this.editMode) {
@@ -79,5 +90,10 @@ export class OtherInformationComponent extends BookingBaseComponent implements O
     } else {
       this.attemptingCancellation = true;
     }
+  }
+
+  otherInformationOnBlur() {
+    const text = SanitizeInputText(this.otherInformation.value);
+    this.otherInformation.setValue(text);
   }
 }
