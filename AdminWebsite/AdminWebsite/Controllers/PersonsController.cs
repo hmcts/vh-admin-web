@@ -4,6 +4,7 @@ using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
+using System.Text.Encodings.Web;
 
 namespace AdminWebsite.Controllers
 {
@@ -16,13 +17,15 @@ namespace AdminWebsite.Controllers
     public class PersonsController : ControllerBase
     {
         private readonly IBookingsApiClient _bookingsApiClient;
+        private readonly JavaScriptEncoder _encoder;
 
         /// <summary>
         /// Instantiates the controller
         /// </summary>
-        public PersonsController(IBookingsApiClient bookingsApiClient)
+        public PersonsController(IBookingsApiClient bookingsApiClient, JavaScriptEncoder encoder)
         {
             _bookingsApiClient = bookingsApiClient;
+            _encoder = encoder;
         }
             
         /// <summary>
@@ -38,6 +41,7 @@ namespace AdminWebsite.Controllers
         {
             try
             {
+                term = _encoder.Encode(term);
                 var personsResponse = await _bookingsApiClient.PostPersonBySearchTermAsync(term);
 
                 return Ok(personsResponse);

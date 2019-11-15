@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using Testing.Common;
+using System.Text.Encodings.Web;
 
 namespace AdminWebsite.UnitTests.Controllers
 {
@@ -22,7 +23,7 @@ namespace AdminWebsite.UnitTests.Controllers
         public void Setup()
         {
             _bookingsApiClient = new Mock<IBookingsApiClient>();
-            _controller = new AdminWebsite.Controllers.PersonsController(_bookingsApiClient.Object);
+            _controller = new AdminWebsite.Controllers.PersonsController(_bookingsApiClient.Object, JavaScriptEncoder.Default);
 
             _response = new List<PersonResponse>
             {
