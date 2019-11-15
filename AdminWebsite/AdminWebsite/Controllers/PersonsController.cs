@@ -42,7 +42,12 @@ namespace AdminWebsite.Controllers
             try
             {
                 term = _encoder.Encode(term);
-                var personsResponse = await _bookingsApiClient.PostPersonBySearchTermAsync(term);
+                var searchTerm = new SearchTermRequest
+                {
+                    Term = term
+                };
+
+                var personsResponse = await _bookingsApiClient.PostPersonBySearchTermAsync(searchTerm);
 
                 return Ok(personsResponse);
             }
