@@ -86,9 +86,8 @@ namespace AdminWebsite.AcceptanceTests.Helpers
         {
             get
             {
-                const string osxPath = "/usr/local/bin";
                 var assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-                return Directory.Exists(osxPath) ? osxPath : assemblyPath;
+                return assemblyPath;
             }
         }
     }
