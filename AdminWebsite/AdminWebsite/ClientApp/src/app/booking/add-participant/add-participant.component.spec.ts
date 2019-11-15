@@ -625,6 +625,13 @@ describe('AddParticipantComponent edit mode', () => {
     county = component.form.controls['county'];
     postcode = component.form.controls['postcode'];
   }));
+  it('should initialize form controls', () => {
+    component.initializeForm();
+    expect(component.form.controls['firstName']).toBeTruthy();
+    expect(component.form.controls['firstName'].errors['required']).toBeTruthy();
+    expect(component.form.controls['lastName']).toBeTruthy();
+    expect(component.form.controls['lastName'].errors['required']).toBeTruthy();
+  });
   it('should set title list and get current data from session', () => {
     component.ngOnInit();
     fixture.detectChanges();
@@ -1055,6 +1062,81 @@ describe('AddParticipantComponent set representer', () => {
     component.participantDetails = participants[0];
     component.ngAfterContentInit();
     expect(component.searchEmail.email).toBeTruthy();
+  });
+  it('should validate solicitorReference field and return invalid as it has not permitted characters', () => {
+    component.form.controls['solicitorReference'].setValue('%');
+    component.form.controls['solicitorReference'].markAsDirty();
+
+    expect(component.solicitorReferenceInvalid).toBe(true);
+  });
+  it('should validate solicitorReference field and return valid', () => {
+    component.form.controls['solicitorReference'].setValue('a');
+    expect(component.solicitorReferenceInvalid).toBe(false);
+  });
+  it('should validate companyNameIndividual field and return invalid as it has not permitted characters', () => {
+    component.form.controls['companyNameIndividual'].setValue('%');
+    component.form.controls['companyNameIndividual'].markAsDirty();
+
+    expect(component.companyIndividualInvalid).toBe(true);
+  });
+  it('should validate companyNameIndividual field and return valid', () => {
+    component.form.controls['companyNameIndividual'].setValue('a');
+    expect(component.companyIndividualInvalid).toBe(false);
+  });
+  it('should sanitize text for first name', () => {
+    component.form.controls['firstName'].setValue('<script>text</script>');
+    component.firstNameOnBlur();
+    expect(component.form.controls['firstName'].value).toBe('text');
+  });
+  it('should sanitize text for last name', () => {
+    component.form.controls['lastName'].setValue('<script>text</script>');
+    component.lastNameOnBlur();
+    expect(component.form.controls['lastName'].value).toBe('text');
+  });
+  it('should sanitize text for companyNameIndividual', () => {
+    component.form.controls['companyNameIndividual'].setValue('<script>text</script>');
+    component.companyNameIndividualOnBlur();
+    expect(component.form.controls['companyNameIndividual'].value).toBe('text');
+  });
+  it('should sanitize text for displayName', () => {
+    component.form.controls['displayName'].setValue('<script>text</script>');
+    component.displayNameOnBlur();
+    expect(component.form.controls['displayName'].value).toBe('text');
+  });
+  it('should sanitize text for houseNumber', () => {
+    component.form.controls['houseNumber'].setValue('<script>text</script>');
+    component.houseNumberOnBlur();
+    expect(component.form.controls['houseNumber'].value).toBe('text');
+  });
+  it('should sanitize text for street', () => {
+    component.form.controls['street'].setValue('<script>text</script>');
+    component.streetOnBlur();
+    expect(component.form.controls['street'].value).toBe('text');
+  });
+  it('should sanitize text for city', () => {
+    component.form.controls['city'].setValue('<script>text</script>');
+    component.cityOnBlur();
+    expect(component.form.controls['city'].value).toBe('text');
+  });
+  it('should sanitize text for county', () => {
+    component.form.controls['county'].setValue('<script>text</script>');
+    component.countyOnBlur();
+    expect(component.form.controls['county'].value).toBe('text');
+  });
+  it('should sanitize text for companyName', () => {
+    component.form.controls['companyName'].setValue('<script>text</script>');
+    component.companyNameOnBlur();
+    expect(component.form.controls['companyName'].value).toBe('text');
+  });
+  it('should sanitize text for solicitorReference', () => {
+    component.form.controls['solicitorReference'].setValue('<script>text</script>');
+    component.solicitorReferenceOnBlur();
+    expect(component.form.controls['solicitorReference'].value).toBe('text');
+  });
+  it('should sanitize text for representing', () => {
+    component.form.controls['representing'].setValue('<script>text</script>');
+    component.representingOnBlur();
+    expect(component.form.controls['representing'].value).toBe('text');
   });
 });
 

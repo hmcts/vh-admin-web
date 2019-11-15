@@ -23,6 +23,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="FluentValidation.AspNetCore" Version="8.5.1" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.6.1" />
     <PackageReference Include="Microsoft.AspNetCore.All" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
@@ -63,6 +64,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="ClientApp\src\app\common\formatters\sanitize-input-text.ts" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\AdminWebsite.BookingsAPI.Client\AdminWebsite.BookingsAPI.Client.csproj" />
     <ProjectReference Include="..\AdminWebsite.UserAPI.Client\AdminWebsite.UserAPI.Client.csproj" />
   </ItemGroup>
@@ -76,6 +81,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <TypeScriptCompile Include="ClientApp\src\app\common\formatters\sanitize-input-text.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\common\model\case-request.model.ts" />
   </ItemGroup>
 

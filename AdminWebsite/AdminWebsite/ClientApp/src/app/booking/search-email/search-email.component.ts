@@ -33,11 +33,11 @@ export class SearchEmailComponent implements OnInit {
   @Output()
   emailChanged = new EventEmitter<string>();
 
-  constructor(private searchService: SearchService) {}
+  constructor(private searchService: SearchService) { }
 
   ngOnInit() {
-     this.searchService.search(this.searchTerm)
-       .subscribe(data => {
+    this.searchService.search(this.searchTerm)
+      .subscribe(data => {
         if (data && data.length > 0) {
           this.getData(data);
         } else {
@@ -95,7 +95,7 @@ export class SearchEmailComponent implements OnInit {
   validateEmail() {
     /* tslint:disable: max-line-length */
     const pattern = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    this.isValidEmail = this.email && this.email.length > 0 && pattern.test(this.email.toLowerCase());
+    this.isValidEmail = this.email && this.email.length > 0 && this.email.length < 256 && pattern.test(this.email.toLowerCase());
     return this.isValidEmail;
   }
 
@@ -110,7 +110,7 @@ export class SearchEmailComponent implements OnInit {
   }
 
   blurEmail() {
-    if (!this.results  || this.results.length === 0) {
+    if (!this.results || this.results.length === 0) {
       this.validateEmail();
       this.emailChanged.emit(this.email);
       this.notFoundParticipant = false;
