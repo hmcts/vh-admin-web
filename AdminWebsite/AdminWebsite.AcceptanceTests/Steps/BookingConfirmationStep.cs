@@ -56,6 +56,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _context.Hearing = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<HearingDetailsResponse>(_context.Json);
             _context.Hearing.Should().NotBeNull();
 
+
             foreach (var participant in _context.TestData.ParticipantData)
             {
                 var foundParticipant = _context.Hearing.Participants.Find(x => x.Display_name.Equals(participant.DisplayName));
