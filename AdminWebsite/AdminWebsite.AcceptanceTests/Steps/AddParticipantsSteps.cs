@@ -7,8 +7,6 @@ using AdminWebsite.AcceptanceTests.Configuration;
 using AdminWebsite.AcceptanceTests.Contexts;
 using AdminWebsite.AcceptanceTests.Data;
 using TechTalk.SpecFlow;
-using System.Collections.Generic;
-using System.Threading;
 
 namespace AdminWebsite.AcceptanceTests.Steps
 {
