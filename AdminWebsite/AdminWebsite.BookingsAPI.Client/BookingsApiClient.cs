@@ -444,20 +444,20 @@ namespace AdminWebsite.BookingsAPI.Client
         /// <param name="term">Partial string to match contact email with, case-insensitive.</param>
         /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.List<PersonResponse>> GetPersonBySearchTermAsync(string term);
+        System.Threading.Tasks.Task<System.Collections.Generic.List<PersonResponse>> PostPersonBySearchTermAsync(SearchTermRequest term);
     
         /// <summary>Find persons with contact email matching a search term.</summary>
         /// <param name="term">Partial string to match contact email with, case-insensitive.</param>
         /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Collections.Generic.List<PersonResponse> GetPersonBySearchTerm(string term);
+        System.Collections.Generic.List<PersonResponse> PostPersonBySearchTerm(SearchTermRequest term);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Find persons with contact email matching a search term.</summary>
         /// <param name="term">Partial string to match contact email with, case-insensitive.</param>
         /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.List<PersonResponse>> GetPersonBySearchTermAsync(string term, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<System.Collections.Generic.List<PersonResponse>> PostPersonBySearchTermAsync(SearchTermRequest term, System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Get a list of suitability answers for a given person</summary>
         /// <param name="username">The username of the person</param>
@@ -2663,18 +2663,18 @@ namespace AdminWebsite.BookingsAPI.Client
         /// <param name="term">Partial string to match contact email with, case-insensitive.</param>
         /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<System.Collections.Generic.List<PersonResponse>> GetPersonBySearchTermAsync(string term)
+        public System.Threading.Tasks.Task<System.Collections.Generic.List<PersonResponse>> PostPersonBySearchTermAsync(SearchTermRequest term)
         {
-            return GetPersonBySearchTermAsync(term, System.Threading.CancellationToken.None);
+            return PostPersonBySearchTermAsync(term, System.Threading.CancellationToken.None);
         }
     
         /// <summary>Find persons with contact email matching a search term.</summary>
         /// <param name="term">Partial string to match contact email with, case-insensitive.</param>
         /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public System.Collections.Generic.List<PersonResponse> GetPersonBySearchTerm(string term)
+        public System.Collections.Generic.List<PersonResponse> PostPersonBySearchTerm(SearchTermRequest term)
         {
-            return System.Threading.Tasks.Task.Run(async () => await GetPersonBySearchTermAsync(term, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
+            return System.Threading.Tasks.Task.Run(async () => await PostPersonBySearchTermAsync(term, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
         }
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -2682,21 +2682,20 @@ namespace AdminWebsite.BookingsAPI.Client
         /// <param name="term">Partial string to match contact email with, case-insensitive.</param>
         /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task<System.Collections.Generic.List<PersonResponse>> GetPersonBySearchTermAsync(string term, System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task<System.Collections.Generic.List<PersonResponse>> PostPersonBySearchTermAsync(SearchTermRequest term, System.Threading.CancellationToken cancellationToken)
         {
-            if (term == null)
-                throw new System.ArgumentNullException("term");
-    
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/persons/search/{term}");
-            urlBuilder_.Replace("{term}", System.Uri.EscapeDataString(ConvertToString(term, System.Globalization.CultureInfo.InvariantCulture)));
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/persons");
     
             var client_ = _httpClient;
             try
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    var content_ = new System.Net.Http.StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(term, _settings.Value));
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
                     request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
     
                     PrepareRequest(client_, request_, urlBuilder_);
@@ -3974,6 +3973,24 @@ namespace AdminWebsite.BookingsAPI.Client
         public static PersonResponse FromJson(string data)
         {
             return Newtonsoft.Json.JsonConvert.DeserializeObject<PersonResponse>(data);
+        }
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.27.0 (Newtonsoft.Json v11.0.0.0)")]
+    public partial class SearchTermRequest 
+    {
+        [Newtonsoft.Json.JsonProperty("term", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Term { get; set; }
+    
+        public string ToJson() 
+        {
+            return Newtonsoft.Json.JsonConvert.SerializeObject(this);
+        }
+    
+        public static SearchTermRequest FromJson(string data)
+        {
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<SearchTermRequest>(data);
         }
     
     }

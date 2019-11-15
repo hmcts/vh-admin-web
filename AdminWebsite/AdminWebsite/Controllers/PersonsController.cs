@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
 using System.Net;
-using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using System.Text.Encodings.Web;
 
 namespace AdminWebsite.Controllers
 {
@@ -27,23 +27,28 @@ namespace AdminWebsite.Controllers
             _bookingsApiClient = bookingsApiClient;
             _encoder = encoder;
         }
-
+            
         /// <summary>
-        /// Gets person list by email search term.
+        /// Find person list by email search term.
         /// </summary>
-        /// <param name="term">The email address search term.</param>
+        /// <param name = "term" > The email address search term.</param>
         /// <returns> The list of person</returns>
-        [HttpGet("search/{term}")]
-        [SwaggerOperation(OperationId = "GetPersonBySearchTerm")]
+        [HttpPost]
+        [SwaggerOperation(OperationId = "PostPersonBySearchTerm")]
         [ProducesResponseType(typeof(List<PersonResponse>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult<IList<PersonResponse>>> GetPersonBySearchTerm(string term)
+        public async Task<ActionResult<IList<PersonResponse>>> PostPersonBySearchTerm([FromBody] string term)
         {
             try
             {
                 term = _encoder.Encode(term);
+                var searchTerm = new SearchTermRequest
+                {
+                    Term = term
+                };
 
-                var personsResponse = await _bookingsApiClient.GetPersonBySearchTermAsync(term);
+                var personsResponse = await _bookingsApiClient.PostPersonBySearchTermAsync(searchTerm);
+
                 return Ok(personsResponse);
             }
             catch (BookingsApiException e)

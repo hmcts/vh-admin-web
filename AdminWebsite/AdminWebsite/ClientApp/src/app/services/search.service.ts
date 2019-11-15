@@ -72,7 +72,7 @@ export class SearchService {
   searchEntries(term): Observable<Array<PersonResponse>> {
     const allResults: PersonResponse[] = [];
     if (term.length > 2) {
-      return this.bhClient.getPersonBySearchTerm(term);
+      return this.bhClient.postPersonBySearchTerm(term);
     }
     return of(allResults);
   }

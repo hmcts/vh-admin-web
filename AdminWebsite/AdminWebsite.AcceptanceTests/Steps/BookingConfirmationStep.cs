@@ -37,7 +37,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [Then(@"hearing should be booked")]
         public void BookHearingConfirmation()
         {
-            BookingsListPage();     
+            BookingsListPage();
             var expectedResult = $"{Data.BookingConfirmation.BookingConfirmationMessage} {_bookingConfirmation.GetItems("CaseNumber")} {_context.TestData.HearingData.CaseName} {_bookingConfirmation.GetItems("HearingDate")}";
             var hearingId = _bookingConfirmation.ExecuteScript("return sessionStorage.getItem('newHearingId')");
             _bookingConfirmation.AddItems("HearingId", hearingId);
@@ -56,10 +56,11 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _context.Hearing = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<HearingDetailsResponse>(_context.Json);
             _context.Hearing.Should().NotBeNull();
 
+
             foreach (var participant in _context.TestData.ParticipantData)
             {
                 var foundParticipant = _context.Hearing.Participants.Find(x => x.Display_name.Equals(participant.DisplayName));
-                AssertParticipantData(participant, foundParticipant);               
+                AssertParticipantData(participant, foundParticipant);
             }
 
             if (_context.Hearing.Id == null)
@@ -87,61 +88,20 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         private static void AssertParticipantData(ParticipantData expected, ParticipantResponse actual)
         {
-            if (!string.IsNullOrEmpty(expected.City))
-            {
-                actual.City.Should().ContainEquivalentOf(expected.City);
-            }
-            else
-            {
-                actual.City.Should().Be(expected.City);
-            }
-
-            if (!string.IsNullOrEmpty(expected.County))
-            {
-                actual.County.Should().ContainEquivalentOf(expected.County);
-            }
-            else
-            {
-                actual.County.Should().Be(expected.County);
-            }
-
-            if (!string.IsNullOrEmpty(expected.HouseNumber))
-            {
-                actual.House_number.Should().ContainEquivalentOf(expected.HouseNumber);
-            }
-            else
-            {
-                actual.House_number.Should().Be(expected.HouseNumber);
-            }
-
-            if (!string.IsNullOrEmpty(expected.Street))
-            {
-                actual.Street.Should().ContainEquivalentOf(expected.Street);
-            }
-            else
-            {
-                actual.Street.Should().Be(expected.Street);
-            }
-
+            actual.City.Should().Be(expected.City);
+            actual.County.Should().Be(expected.County);
+            actual.House_number.Should().Be(expected.HouseNumber);
+            actual.Street.Should().Be(expected.Street);
             actual.Display_name.Should().Be(expected.DisplayName);
             actual.First_name.Should().Be(expected.Firstname);
             actual.Hearing_role_name.Should().Be(expected.Role.ToString().Replace("LIP", " LIP"));
             actual.Last_name.Should().Be(expected.Lastname);
-            if (!string.IsNullOrEmpty(expected.Organisation))
-            {
-                actual.Organisation.Should().ContainEquivalentOf(expected.Organisation);
-            }
-            else
-            {
-                actual.Organisation.Should().Be(expected.Organisation);
-            }
-            
+            actual.Organisation.Should().Be(expected.Organisation);
             actual.Postcode.Should().Be(expected.PostCode);
             actual.Representee.Should().Be(expected.ClientRepresenting);
             actual.Solicitor_reference.Should().Be(expected.SolicitorReference);
             actual.Title.Should().Be(expected.Title);
         }
-
 
         [When(@"admin user returns to the dashboard")]
         public void BookAnotherHearing()
