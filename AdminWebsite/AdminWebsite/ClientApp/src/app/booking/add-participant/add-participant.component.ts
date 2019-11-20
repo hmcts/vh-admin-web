@@ -179,8 +179,14 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
       Validators.pattern(this.constants.PleaseSelectPattern)
     ]);
     this.title = new FormControl(this.constants.PleaseSelect);
-    this.firstName = new FormControl('', [Validators.required, Validators.pattern(Constants.TextInputPatternName), Validators.maxLength(255)]);
-    this.lastName = new FormControl('', [Validators.required, Validators.pattern(Constants.TextInputPatternName), Validators.maxLength(255)]);
+      this.firstName = new FormControl('', [
+          Validators.required,
+          Validators.pattern(Constants.TextInputPatternName),
+          Validators.maxLength(255)]);
+      this.lastName = new FormControl('', [
+          Validators.required,
+          Validators.pattern(Constants.TextInputPatternName),
+          Validators.maxLength(255)]);
     this.phone = new FormControl('', [Validators.required, Validators.pattern(Constants.PhonePattern)]);
     this.displayName = new FormControl('', [Validators.required, Validators.pattern(Constants.TextInputPatternName),
     Validators.maxLength(255)]);
