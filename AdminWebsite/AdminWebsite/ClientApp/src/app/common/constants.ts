@@ -4,6 +4,7 @@ export const Constants = {
     Solicitor: 'Solicitor',
     PleaseSelectPattern: '^((?!Please select).)*$',
     TextInputPattern: /^[^%{}~|]+$/,
+    TextInputPatternName: /^([-A-Za-z0-9 ',._])*$/,
     PostCodePattern: /^([a-zA-Z]{1,2}([0-9]{1,2}|[0-9][a-zA-Z])\s*[0-9][a-zA-Z]{2})$/,
     PhonePattern: /^([0-9() +-.])*$/,
     Judge: 'Judge',
