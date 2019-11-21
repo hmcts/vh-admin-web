@@ -43,7 +43,10 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult> GetSuitabilityAnswersList(string cursor, int limit = 100)
         {
-            cursor = _encoder.Encode(cursor);
+            if (cursor != null)
+            {
+                cursor = _encoder.Encode(cursor);
+            }
 
             if (!_userIdentity.IsVhOfficerAdministratorRole())
             {

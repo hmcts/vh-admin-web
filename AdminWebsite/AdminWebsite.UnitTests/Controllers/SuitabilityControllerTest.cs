@@ -42,6 +42,22 @@ namespace AdminWebsite.UnitTests.Controllers
             var objectResult = (ObjectResult)result;
             objectResult.StatusCode.Should().Be((int)HttpStatusCode.OK);
         }
+        
+        [Test]
+        public async Task Should_retrieve_the_suitability_answers_cursor_null()
+        {
+            var response = new SuitabilityAnswersResponse();
+
+            _userIdentityMock.Setup(s => s.IsVhOfficerAdministratorRole()).Returns(true);
+            _bookingsApiClientMock.Setup(s => s.GetSuitabilityAnswersAsync(null, 1)).ReturnsAsync(response);
+
+
+            var result = await _controller.GetSuitabilityAnswersList(null, 1);
+
+            result.Should().NotBeNull();
+            var objectResult = (ObjectResult)result;
+            objectResult.StatusCode.Should().Be((int)HttpStatusCode.OK);
+        }
 
         [Test]
         public async Task Should_return_unauthorized()
