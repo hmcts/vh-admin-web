@@ -49,7 +49,7 @@ namespace AdminWebsite.UnitTests.Controllers
             var response = new SuitabilityAnswersResponse();
 
             _userIdentityMock.Setup(s => s.IsVhOfficerAdministratorRole()).Returns(true);
-            _bookingsApiClientMock.Setup(s => s.GetSuitabilityAnswersAsync("", 1)).ReturnsAsync(response);
+            _bookingsApiClientMock.Setup(s => s.GetSuitabilityAnswersAsync(null, 1)).ReturnsAsync(response);
 
 
             var result = await _controller.GetSuitabilityAnswersList(null, 1);
