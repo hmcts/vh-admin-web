@@ -4,7 +4,7 @@ import {RepresentativeQuestionnaireMapper} from './representative-questionnaire-
 
 describe('QuestionnaireMapper', () => {
   it('should map all representative suitability questions to answers', async () => {
-    const verboseResponse = new SuitabilityAnswerTestData().barristerWillBeAppointed;
+    const verboseResponse = new SuitabilityAnswerTestData().someoneRepresentingTheCase;
     const mapper = new RepresentativeQuestionnaireMapper(verboseResponse.answers);
     const questions = mapper.mapAnswers();
     const attributes = new RepresentativeQuestionsMapAttributes();
@@ -12,7 +12,7 @@ describe('QuestionnaireMapper', () => {
     expect(questions).toBeTruthy();
     expect(questions.length).toBeGreaterThan(0);
 
-    const appointQuestion = questions.find(x => x.question === 'Appointing a barrister?');
+    const appointQuestion = questions.find(x => x.question === 'Someone will be representing the case?');
     expect(appointQuestion).toBeDefined();
     expect(appointQuestion.answer).toBe('Yes');
     expect(appointQuestion.embeddedQuestionAnswers).toBeDefined();

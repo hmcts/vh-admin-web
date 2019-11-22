@@ -19,7 +19,7 @@ export class SuitabilityAnswerTestData {
     ]
   });
 
-  barristerWillBeAppointed = new ParticipantSuitabilityAnswerResponse({
+  someoneRepresentingTheCase = new ParticipantSuitabilityAnswerResponse({
     case_number: '1234',
     first_name: 'John',
     last_name: 'Conner',
@@ -28,20 +28,17 @@ export class SuitabilityAnswerTestData {
     representee: 'Ms X',
     answers: [
       new SuitabilityAnswerResponse({
-        answer: 'A barrister has been/will be appointed',
-        key: 'APPOINTING_BARRISTER'
+        answer: 'Someone will be representing the case',
+        key: 'PRESENTING_THE_CASE'
       }),
       new SuitabilityAnswerResponse({
         answer: 'Philip Hammond',
-        key: 'BARRISTER_NAME'
+        key: 'PRESENTING_NAME'
       }),
-      new SuitabilityAnswerResponse({
-        answer: 'Westminister Chambers',
-        key: 'BARRISTER_CHAMBERS'
-      }),
+      
       new SuitabilityAnswerResponse({
         answer: 'chambers@west.co.uk',
-        key: 'BARRISTER_EMAIL'
+        key: 'PRESENTING_EMAIL'
       })
     ]
   });
