@@ -42,7 +42,10 @@ export class IndividualQuestionsMapAttributes implements QuestionsMapAttributes 
     public readonly Questions = new Map<string, QuestionAnswer>([
         [
             IndividualQuestionKeys.AboutYou,
-            { Question: 'Is there anything you\'d like the court to take into account when it decides which type of hearing will be suitable?' }
+            {
+                Question:
+                'Is there anything you\'d like the court to take into account when it decides which type of hearing will be suitable?'
+            }
         ],
         [
             IndividualQuestionKeys.Interpreter,
