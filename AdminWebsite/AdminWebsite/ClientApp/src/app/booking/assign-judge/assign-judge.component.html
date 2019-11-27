@@ -50,32 +50,7 @@
           Please contact the Video hearings team on 0300 303 0655.
         </div>
       </details>
-      <div *ngIf="displayOpenObserver">
-        <div>
-          <p class="govuk-body" i18n="@@video_working_p_1">Hearing open to observers in court</p>
-        </div>
 
-        <div class="govuk-fieldset">
-          <div class="govuk-radios" data-module="radios">
-            <div class="govuk-radios__item">
-              <input formControlName="openObserver" class="govuk-radios__input" id="openObserver-yes" type="radio" [value]="true" 
-                     data-aria-controls="conditional-how-contacted-conditional">
-              <label class="govuk-label govuk-radios__label" for="openObserver-yes">
-                Yes
-              </label>
-            </div>
-
-            <div class="govuk-radios__item">
-              <input formControlName="openObserver" class="govuk-radios__input" id="openObserver-no" type="radio" [value]="false"
-                     data-aria-controls="conditional-how-contacted">
-              <label class="govuk-label govuk-radios__label" for="openObserver-no">
-                No
-              </label>
-            </div>
-
-          </div>
-        </div>
-      </div>
       <div class="govuk-!-margin-bottom-9" [ngClass]="{'govuk-form-group--error':judgeDisplayNameInvalid}">
         <legend id="judgeDisplayName-error" *ngIf="judgeDisplayNameInvalid">
           <span class="govuk-error-message">
@@ -85,7 +60,7 @@
         <label class="govuk-label" for="judgeDisplayName">
           Judge name
         </label>
-        <input (focusout)="changeDisplayName()" type="text"
+        <input (focusout)="changeDisplayName()" type="text" 
                formControlName="judgeDisplayName" id="judgeDisplayName"
                class="govuk-input govuk-input--width-20" />
         <div class="govuk-body">Please enter TBC if you don't know the name of the judge</div>
