@@ -115,13 +115,23 @@ describe('CreateHearingComponent with multiple case types', () => {
     caseNameControl.setValue('Captain America vs The World');
     expect(caseNameControl.valid).toBeTruthy();
   });
-
+  it('should validate case name and returns false for not permitted characters', () => {
+    expect(caseNameControl.valid).toBeFalsy();
+    caseNameControl.setValue('%Captain America vs The World');
+    component.failedSubmission = true;
+    expect(component.caseNameInvalid).toBeTruthy();
+  });
   it('should validate case number', () => {
     expect(caseNumberControl.valid).toBeFalsy();
     caseNumberControl.setValue('12345');
     expect(caseNumberControl.valid).toBeTruthy();
   });
-
+  it('should validate case number and returns false for not permitted characters', () => {
+    expect(caseNumberControl.valid).toBeFalsy();
+    caseNumberControl.setValue('%1234');
+    component.failedSubmission = true;
+    expect(component.caseNumberInvalid).toBeTruthy();
+  });
   it('should validate case type', () => {
     const caseTypeValue = 'Tax';
     expect(caseNumberControl.valid).toBeFalsy();
@@ -299,5 +309,17 @@ describe('CreateHearingComponent with existing request in session', () => {
     component.cancelChanges();
     expect(component.attemptingDiscardChanges).toBeFalsy();
     expect(routerSpy.navigate).toHaveBeenCalled();
+  });
+  it('should sanitize text for case number', () => {
+    component.caseNumber.setValue('<script>text</script>');
+    component.caseNumberOnBlur();
+    fixture.detectChanges();
+    expect(component.caseNumber.value).toBe('text');
+  });
+  it('should sanitize text for case name', () => {
+    component.caseName.setValue('<script>text</script>');
+    component.caseNameOnBlur();
+    fixture.detectChanges();
+    expect(component.caseName.value).toBe('text');
   });
 });

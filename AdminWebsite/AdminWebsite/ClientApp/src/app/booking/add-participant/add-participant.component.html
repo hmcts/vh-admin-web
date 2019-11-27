@@ -43,7 +43,7 @@
       </div>
       <div *ngIf="showDetails">
         <app-search-email [disabled]="emailDisabled" (findParticipant)="getParticipant($event)" (participantsNotFound)="notFoundParticipant()"
-          (emailChanged)="emailChanged()">
+                          (emailChanged)="emailChanged()">
         </app-search-email>
 
         <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error': titleInvalid || !isTitleSelected}">
@@ -67,7 +67,8 @@
           <label class="govuk-label" for="firstName">
             First name
           </label>
-          <input id="firstName" formControlName="firstName" class="govuk-input govuk-input--width-20" type="text" />
+          <input id="firstName" formControlName="firstName" class="govuk-input govuk-input--width-20"
+                 type="text" (blur)="firstNameOnBlur()" />
 
         </div>
 
@@ -80,16 +81,22 @@
           <label class="govuk-label" for="lastName">
             Last name
           </label>
-          <input id="lastName" formControlName="lastName" class="govuk-input govuk-input--width-20" type="text" />
+          <input id="lastName" formControlName="lastName" class="govuk-input govuk-input--width-20"
+                 type="text" (blur)="lastNameOnBlur()"/>
         </div>
 
         <div *ngIf="showAddress">
-          <div class="govuk-form-group">
+          <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':companyIndividualInvalid}">
+            <legend id="companyIndividualName-error" *ngIf="companyIndividualInvalid">
+              <span class="govuk-error-message">
+                {{constants.Error.CompanyNameErrorMsg}}
+              </span>
+            </legend>
             <label class="govuk-label" for="companyNameIndividual">
               Organisation <span class="govuk-hint vh-inline">(optional)</span>
             </label>
             <input id="companyNameIndividual" formControlName="companyNameIndividual"
-              class="govuk-input govuk-input--width-20" type="text" />
+                   class="govuk-input govuk-input--width-20" type="text" (blur)="companyNameIndividualOnBlur()" />
           </div>
         </div>
 
@@ -106,7 +113,6 @@
         </div>
 
         <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':displayNameInvalid}">
-
           <legend id="display-name-error" *ngIf="displayNameInvalid">
             <span class="govuk-error-message">
               {{constants.Error.DisplayNameErrorMsg}}
@@ -115,8 +121,10 @@
           <label class="govuk-label" for="displayName">
             Display Name
           </label>
-          <input id="displayName" formControlName="displayName" class="govuk-input govuk-input--width-20" type="text" />
+          <input id="displayName" formControlName="displayName" class="govuk-input govuk-input--width-20"
+                 type="text" (blur)="displayNameOnBlur()"/>
         </div>
+
         <div *ngIf="showAddress">
           <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':houseNumberInvalid}">
 
@@ -129,9 +137,9 @@
               Building and street
             </label>
             <input id="houseNumber" formControlName="houseNumber" class="govuk-input govuk-input--width-20"
-              type="text" />
-
+                   type="text" (blur)="houseNumberOnBlur()" />
           </div>
+
           <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':streetInvalid}">
 
             <legend id="display-name-error" *ngIf="streetInvalid">
@@ -139,7 +147,8 @@
                 {{constants.Error.StreetErrorMsg}}
               </span>
             </legend>
-            <input id="street" formControlName="street" class="govuk-input govuk-input--width-20" type="text" />
+            <input id="street" formControlName="street" class="govuk-input govuk-input--width-20"
+                   type="text" (blur)="streetOnBlur()"/>
 
           </div>
           <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':cityInvalid}">
@@ -152,7 +161,8 @@
             <label class="govuk-label" for="city">
               Town or city
             </label>
-            <input id="city" formControlName="city" class="govuk-input govuk-input--width-20" type="text" />
+            <input id="city" formControlName="city" class="govuk-input govuk-input--width-20"
+                   type="text" (blur)="cityOnBlur()" />
 
           </div>
           <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':countyInvalid}">
@@ -164,7 +174,8 @@
             <label class="govuk-label" for="county">
               County
             </label>
-            <input id="county" formControlName="county" class="govuk-input govuk-input--width-20" type="text" />
+            <input id="county" formControlName="county" class="govuk-input govuk-input--width-20"
+                   type="text" (blur)="countyOnBlur()" />
           </div>
 
           <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':postcodeInvalid}">
@@ -194,7 +205,7 @@
               Organisation
             </label>
             <input id="companyName" formControlName="companyName" class="govuk-input govuk-input--width-20"
-              type="text" />
+                   type="text" (blur)="companyNameOnBlur()"/>
           </div>
 
           <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':solicitorReferenceInvalid}">
@@ -207,7 +218,7 @@
               Solicitor reference
             </label>
             <input id="solicitorReference" formControlName="solicitorReference"
-              class="govuk-input govuk-input--width-20" type="text" />
+                   class="govuk-input govuk-input--width-20" type="text" (blur)="solicitorReferenceOnBlur()"/>
           </div>
           <h2 class="govuk-heading-m">Client details</h2>
           <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':representeeInvalid}">
@@ -220,7 +231,7 @@
               Representing
             </label>
             <input id="representing" formControlName="representing" class="govuk-input govuk-input--width-20"
-              type="text" />
+                   type="text" (blur)="representingOnBlur()"/>
           </div>
         </div>
 
@@ -231,7 +242,7 @@
           <img src="assets/images/AddIcon.png" alt="Add icon with sign plus" />
           <span class="vh-vert-top-m15">
             <a href="javascript:void(0)" (click)="saveParticipant()" type="submit" id="addParticipantBtn"
-              class="govuk-link govuk-body">
+               class="govuk-link govuk-body">
               Add participant
             </a>
           </span>
@@ -241,7 +252,7 @@
           <img src="assets/images/AddIcon.png" alt="Add icon with sign plus" />
           <span class="vh-vert-top-m15">
             <a href="javascript:void(0)" (click)="updateParticipantAction()" type="submit" id="updateParticipantBtn"
-              class="govuk-link govuk-body">
+               class="govuk-link govuk-body">
               Update participant
             </a>
           </span>
@@ -259,9 +270,9 @@
     </form>
     <div class="vh-top">
       <input *ngIf="displayNextButton" id="nextButton" type="button" class="govuk-button vh-mr25" role="button"
-        value="{{buttonAction}}" (click)="next()" />
+             value="{{buttonAction}}" (click)="next()" />
       <input id="cancelBtn" type="button" class="govuk-button hmcts-button--secondary" role="button" value="Cancel"
-        (click)="addParticipantCancel()" />
+             (click)="addParticipantCancel()" />
     </div>
   </div>
 
@@ -281,7 +292,7 @@
 
 <div *ngIf="showConfirmationRemoveParticipant">
   <app-remove-popup (continueRemove)="handleContinueRemove()" (cancelRemove)="handleCancelRemove()"
-    [fullName]="removerFullName" [isLastParticipant]="isAnyParticipants"></app-remove-popup>
+                    [fullName]="removerFullName" [isLastParticipant]="isAnyParticipants"></app-remove-popup>
 </div>
 
 <div *ngIf="attemptingDiscardChanges">

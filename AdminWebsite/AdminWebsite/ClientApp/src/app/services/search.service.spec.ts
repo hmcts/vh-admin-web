@@ -35,7 +35,7 @@ const participantList: PersonResponse[] = JSON.parse(
 let clientApiSpy: jasmine.SpyObj<BHClient>;
 
 describe('SearchService', () => {
-  clientApiSpy = jasmine.createSpyObj('BHClient', ['getPersonBySearchTerm']);
+  clientApiSpy = jasmine.createSpyObj('BHClient', ['postPersonBySearchTerm']);
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientModule],
@@ -45,7 +45,7 @@ describe('SearchService', () => {
 
   it('should return result', inject([SearchService], (service: SearchService) => {
     const terms = 'abc';
-    clientApiSpy.getPersonBySearchTerm.and.returnValue(of(participantList));
+    clientApiSpy.postPersonBySearchTerm.and.returnValue(of(participantList));
     service.search(of(terms)).subscribe(x => expect(x).toBeTruthy());
   }));
   it('should method searchEntries not call api and return empty array', inject([SearchService], (service: SearchService) => {
@@ -54,7 +54,7 @@ describe('SearchService', () => {
   }));
   it('should method searchEntries call api and return persons response array', inject([SearchService], (service: SearchService) => {
     const terms = 'abc';
-    clientApiSpy.getPersonBySearchTerm.and.returnValue(of(participantList));
+    clientApiSpy.postPersonBySearchTerm.and.returnValue(of(participantList));
     service.searchEntries(terms).subscribe(x => expect(x.length).toBe(2));
   }));
   it('should return title list', inject([SearchService], (service: SearchService) => {

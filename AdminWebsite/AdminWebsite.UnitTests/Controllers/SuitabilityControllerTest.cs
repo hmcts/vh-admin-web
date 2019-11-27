@@ -8,6 +8,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 
 namespace AdminWebsite.UnitTests.Controllers
@@ -23,7 +24,7 @@ namespace AdminWebsite.UnitTests.Controllers
         {
             _bookingsApiClientMock = new Mock<IBookingsApiClient>();
             _userIdentityMock = new Mock<IUserIdentity>();
-            _controller = new SuitabilityAnswersController(_bookingsApiClientMock.Object, _userIdentityMock.Object);
+            _controller = new SuitabilityAnswersController(_bookingsApiClientMock.Object, _userIdentityMock.Object, JavaScriptEncoder.Default);
         }
 
         [Test]
@@ -36,6 +37,22 @@ namespace AdminWebsite.UnitTests.Controllers
 
 
             var result = await _controller.GetSuitabilityAnswersList("", 1);
+
+            result.Should().NotBeNull();
+            var objectResult = (ObjectResult)result;
+            objectResult.StatusCode.Should().Be((int)HttpStatusCode.OK);
+        }
+        
+        [Test]
+        public async Task Should_retrieve_the_suitability_answers_cursor_null()
+        {
+            var response = new SuitabilityAnswersResponse();
+
+            _userIdentityMock.Setup(s => s.IsVhOfficerAdministratorRole()).Returns(true);
+            _bookingsApiClientMock.Setup(s => s.GetSuitabilityAnswersAsync(null, 1)).ReturnsAsync(response);
+
+
+            var result = await _controller.GetSuitabilityAnswersList(null, 1);
 
             result.Should().NotBeNull();
             var objectResult = (ObjectResult)result;

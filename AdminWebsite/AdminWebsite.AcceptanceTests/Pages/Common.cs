@@ -60,6 +60,31 @@ namespace AdminWebsite.AcceptanceTests.Pages
             webElement.SendKeys(value);
         }
 
+        protected void ClearFieldInputValuesKeyboard(By element, string value)
+        {
+            var webElement = _browser.NgDriver.WaitUntilElementVisible(element);
+            var text = webElement.GetAttribute("value");
+
+            Console.WriteLine($"Current element {element} text is {text}");
+
+            while (!string.IsNullOrEmpty(text))
+            {
+                try
+                {
+                    webElement.SendKeys(Keys.Backspace);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"An exception occurred when sending Keys.Backspace to element {element}");
+                    Console.WriteLine(ex.Message);
+                }
+
+                text = webElement.GetAttribute("value");
+            }
+
+            webElement.SendKeys(value);
+        }
+
         public void ClickNextButton()
         {
             _browser.Retry(() => _browser.NgDriver.ClickAndWaitForPageToLoad(NextButton));
@@ -117,6 +142,7 @@ namespace AdminWebsite.AcceptanceTests.Pages
         {
             if (url != PageUri.BookingConfirmationPage)
             {
+                _browser.NgDriver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(15);
                 _browser.Retry(() => _browser.NgDriver.Url.Should().Contain(url));
             }
             else
@@ -128,14 +154,14 @@ namespace AdminWebsite.AcceptanceTests.Pages
                 catch (Exception ex)
                 {
                     Console.WriteLine($"Re-submit booking: {ex}");
-                    if (GetElementText(TryAgainMessage) == Data.BookingConfirmation.TryAgainMessage)                  
+                    if (GetElementText(TryAgainMessage) == Data.BookingConfirmation.TryAgainMessage)
 
                     {
                         ClickElement(TryAgainButton);
                         _browser.Retry(() => _browser.NgDriver.Url.Should().Contain(url), 2);
-                    }                    
+                    }
                 }
-            }                      
+            }
         }
 
         public void ClickBreadcrumb(string breadcrumb) => SelectOption(Breadcrumbs, breadcrumb);
@@ -160,14 +186,14 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public string ExecuteScript(string script) => _browser.ExecuteJavascript(script);
         public string Page() => _browser.PageUrl();
         public string CancelWarningMessage() => GetElementText(By.XPath("//*[@class='content']/h1"));
-        public void DiscardChanges() => ClickElement(By.Id("btn-discard-changes"));       
+        public void DiscardChanges() => ClickElement(By.Id("btn-discard-changes"));
         public int DisabledFields() => GetListOfElements(By.XPath("//*[@disabled='true']")).ToList().Count;
         public string GetAttribute(By element) => _browser.NgDriver.WaitUntilElementVisible(element).GetAttribute("disabled");
         public bool IsElementEnabled(By element) => _browser.NgDriver.WaitUntilElementVisible(element).Enabled;
         public string ExecuteScript(string script, By element)
         {
             _browser.NgDriver.WaitUntilElementVisible(element);
-           return  _browser.ExecuteJavascript(script);
+            return _browser.ExecuteJavascript(script);
         }
     }
 }

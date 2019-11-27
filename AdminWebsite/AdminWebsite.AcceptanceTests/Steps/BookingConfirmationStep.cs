@@ -37,7 +37,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [Then(@"hearing should be booked")]
         public void BookHearingConfirmation()
         {
-            BookingsListPage();     
+            BookingsListPage();
             var expectedResult = $"{Data.BookingConfirmation.BookingConfirmationMessage} {_bookingConfirmation.GetItems("CaseNumber")} {_context.TestData.HearingData.CaseName} {_bookingConfirmation.GetItems("HearingDate")}";
             var hearingId = _bookingConfirmation.ExecuteScript("return sessionStorage.getItem('newHearingId')");
             _bookingConfirmation.AddItems("HearingId", hearingId);
@@ -56,10 +56,11 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _context.Hearing = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<HearingDetailsResponse>(_context.Json);
             _context.Hearing.Should().NotBeNull();
 
+
             foreach (var participant in _context.TestData.ParticipantData)
             {
                 var foundParticipant = _context.Hearing.Participants.Find(x => x.Display_name.Equals(participant.DisplayName));
-                AssertParticipantData(participant, foundParticipant);               
+                AssertParticipantData(participant, foundParticipant);
             }
 
             if (_context.Hearing.Id == null)
@@ -89,16 +90,16 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             actual.City.Should().Be(expected.City);
             actual.County.Should().Be(expected.County);
+            actual.House_number.Should().Be(expected.HouseNumber);
+            actual.Street.Should().Be(expected.Street);
             actual.Display_name.Should().Be(expected.DisplayName);
             actual.First_name.Should().Be(expected.Firstname);
             actual.Hearing_role_name.Should().Be(expected.Role.ToString().Replace("LIP", " LIP"));
-            actual.House_number.Should().Be(expected.HouseNumber);
             actual.Last_name.Should().Be(expected.Lastname);
             actual.Organisation.Should().Be(expected.Organisation);
             actual.Postcode.Should().Be(expected.PostCode);
             actual.Representee.Should().Be(expected.ClientRepresenting);
             actual.Solicitor_reference.Should().Be(expected.SolicitorReference);
-            actual.Street.Should().Be(expected.Street);
             actual.Title.Should().Be(expected.Title);
         }
 

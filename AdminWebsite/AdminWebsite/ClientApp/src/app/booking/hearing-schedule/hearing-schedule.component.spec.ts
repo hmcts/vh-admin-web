@@ -16,6 +16,7 @@ import { MockValues } from '../../testing/data/test-objects';
 import { HearingScheduleComponent } from './hearing-schedule.component';
 import { HearingModel } from '../../common/model/hearing.model';
 import { ErrorService } from '../../services/error.service';
+import { HearingVenueResponse } from 'src/app/services/clients/api-client';
 
 const newHearing = new HearingModel();
 
@@ -26,7 +27,7 @@ function initExistingHearingRequest(): HearingModel {
   const existingRequest = new HearingModel();
   existingRequest.hearing_type_id = 2;
   existingRequest.hearing_venue_id = 1,
-  existingRequest.scheduled_date_time = today;
+    existingRequest.scheduled_date_time = today;
   existingRequest.scheduled_duration = 80;
   return existingRequest;
 }
@@ -164,6 +165,21 @@ describe('HearingScheduleComponent first visit', () => {
     expect(courtControl.valid).toBeTruthy();
   });
 
+  it('should validate court room and return invalid as value has invalid spec characters', () => {
+    component.form.controls['courtRoom'].setValue('%');
+    component.failedSubmission = true;
+    expect(component.courtRoomInvalid).toBe(true);
+  });
+
+  it('court room field validity pattern', () => {
+    let errors = {};
+    component.form.controls['courtRoom'].setValue('%');
+    const court_room = component.form.controls['courtRoom'];
+    errors = court_room.errors || {};
+    expect(errors['pattern']).toBeTruthy();
+  });
+
+
   it('should update hearing request when form is valid', () => {
     expect(component.form.valid).toBeFalsy();
 
@@ -290,5 +306,22 @@ describe('HearingScheduleComponent returning to page', () => {
     component.cancelChanges();
     expect(component.attemptingDiscardChanges).toBeFalsy();
     expect(routerSpy.navigate).toHaveBeenCalled();
+  });
+  it('should set venue for existing hearing', () => {
+    component.availableCourts = [new HearingVenueResponse({ id: 1, name: 'aa@bb.kk' }),
+    new HearingVenueResponse({ id: 2, name: 'aa@bb.kk1' })];
+    component.hearing = new HearingModel();
+    component.hearing.court_name = 'aa@bb.kk1';
+    component.isExistinHearing = true;
+    component.setVenueForExistingHearing();
+
+    expect(component.selectedCourtName).toBe('aa@bb.kk1');
+  });
+
+  it('should sanitize text for court room', () => {
+    component.courtRoom.setValue('<script>text</script>');
+    component.courtRoomOnBlur();
+    fixture.detectChanges();
+    expect(component.courtRoom.value).toBe('text');
   });
 });
