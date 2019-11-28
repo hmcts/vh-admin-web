@@ -234,14 +234,14 @@ export class BHClient {
 
     /**
      * Create a hearing
-     * @param hearingRequest (optional) Hearing Request object
+     * @param request (optional) Hearing Request object
      * @return Success
      */
-    bookNewHearing(hearingRequest: BookNewHearingRequest | null | undefined): Observable<HearingDetailsResponse> {
+    bookNewHearing(request: BookNewHearingRequest | null | undefined): Observable<HearingDetailsResponse> {
         let url_ = this.baseUrl + "/api/hearings";
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(hearingRequest);
+        const content_ = JSON.stringify(request);
 
         let options_ : any = {
             body: content_,
@@ -377,17 +377,17 @@ export class BHClient {
     /**
      * Edit a hearing
      * @param hearingId The id of the hearing to update
-     * @param editHearingRequest (optional) Hearing Request object for edit operation
+     * @param request (optional) Hearing Request object for edit operation
      * @return Success
      */
-    editHearing(hearingId: string, editHearingRequest: EditHearingRequest | null | undefined): Observable<HearingDetailsResponse> {
+    editHearing(hearingId: string, request: EditHearingRequest | null | undefined): Observable<HearingDetailsResponse> {
         let url_ = this.baseUrl + "/api/hearings/{hearingId}";
         if (hearingId === undefined || hearingId === null)
             throw new Error("The parameter 'hearingId' must be defined.");
         url_ = url_.replace("{hearingId}", encodeURIComponent("" + hearingId)); 
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(editHearingRequest);
+        const content_ = JSON.stringify(request);
 
         let options_ : any = {
             body: content_,
@@ -1495,6 +1495,7 @@ export class BookNewHearingRequest implements IBookNewHearingRequest {
     other_information?: string | undefined;
     created_by?: string | undefined;
     questionnaire_not_required?: boolean | undefined;
+    streaming_flag?: boolean | undefined;
 
     constructor(data?: IBookNewHearingRequest) {
         if (data) {
@@ -1526,6 +1527,7 @@ export class BookNewHearingRequest implements IBookNewHearingRequest {
             this.other_information = _data["other_information"];
             this.created_by = _data["created_by"];
             this.questionnaire_not_required = _data["questionnaire_not_required"];
+            this.streaming_flag = _data["streaming_flag"];
         }
     }
 
@@ -1557,6 +1559,7 @@ export class BookNewHearingRequest implements IBookNewHearingRequest {
         data["other_information"] = this.other_information;
         data["created_by"] = this.created_by;
         data["questionnaire_not_required"] = this.questionnaire_not_required;
+        data["streaming_flag"] = this.streaming_flag;
         return data; 
     }
 }
@@ -1573,6 +1576,7 @@ export interface IBookNewHearingRequest {
     other_information?: string | undefined;
     created_by?: string | undefined;
     questionnaire_not_required?: boolean | undefined;
+    streaming_flag?: boolean | undefined;
 }
 
 export class CaseRequest implements ICaseRequest {
@@ -1740,6 +1744,7 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
     updated_date?: Date | undefined;
     status?: HearingDetailsResponseStatus | undefined;
     questionnaire_not_required?: boolean | undefined;
+    streaming_flag?: boolean | undefined;
 
     constructor(data?: IHearingDetailsResponse) {
         if (data) {
@@ -1776,6 +1781,7 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
             this.updated_date = _data["updated_date"] ? new Date(_data["updated_date"].toString()) : <any>undefined;
             this.status = _data["status"];
             this.questionnaire_not_required = _data["questionnaire_not_required"];
+            this.streaming_flag = _data["streaming_flag"];
         }
     }
 
@@ -1812,6 +1818,7 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
         data["updated_date"] = this.updated_date ? this.updated_date.toISOString() : <any>undefined;
         data["status"] = this.status;
         data["questionnaire_not_required"] = this.questionnaire_not_required;
+        data["streaming_flag"] = this.streaming_flag;
         return data; 
     }
 }
@@ -1833,6 +1840,7 @@ export interface IHearingDetailsResponse {
     updated_date?: Date | undefined;
     status?: HearingDetailsResponseStatus | undefined;
     questionnaire_not_required?: boolean | undefined;
+    streaming_flag?: boolean | undefined;
 }
 
 export class CaseResponse2 implements ICaseResponse2 {
@@ -2117,6 +2125,7 @@ export class BookingsHearingResponse implements IBookingsHearingResponse {
     hearing_date?: Date | undefined;
     status?: BookingsHearingResponseStatus | undefined;
     questionnaire_not_required?: boolean | undefined;
+    streaming_flag?: boolean | undefined;
 
     constructor(data?: IBookingsHearingResponse) {
         if (data) {
@@ -2146,6 +2155,7 @@ export class BookingsHearingResponse implements IBookingsHearingResponse {
             this.hearing_date = _data["hearing_date"] ? new Date(_data["hearing_date"].toString()) : <any>undefined;
             this.status = _data["status"];
             this.questionnaire_not_required = _data["questionnaire_not_required"];
+            this.streaming_flag = _data["streaming_flag"];
         }
     }
 
@@ -2175,6 +2185,7 @@ export class BookingsHearingResponse implements IBookingsHearingResponse {
         data["hearing_date"] = this.hearing_date ? this.hearing_date.toISOString() : <any>undefined;
         data["status"] = this.status;
         data["questionnaire_not_required"] = this.questionnaire_not_required;
+        data["streaming_flag"] = this.streaming_flag;
         return data; 
     }
 }
@@ -2197,6 +2208,7 @@ export interface IBookingsHearingResponse {
     hearing_date?: Date | undefined;
     status?: BookingsHearingResponseStatus | undefined;
     questionnaire_not_required?: boolean | undefined;
+    streaming_flag?: boolean | undefined;
 }
 
 /** Request for updating an existing hearing */
@@ -2217,6 +2229,8 @@ export class EditHearingRequest implements IEditHearingRequest {
     other_information?: string | undefined;
     /** QuestionnaireNotRequired */
     questionnaire_not_required?: boolean | undefined;
+    /** Gets or sets the streaming flag */
+    streaming_flag?: boolean | undefined;
 
     constructor(data?: IEditHearingRequest) {
         if (data) {
@@ -2241,6 +2255,7 @@ export class EditHearingRequest implements IEditHearingRequest {
             }
             this.other_information = _data["other_information"];
             this.questionnaire_not_required = _data["questionnaire_not_required"];
+            this.streaming_flag = _data["streaming_flag"];
         }
     }
 
@@ -2265,6 +2280,7 @@ export class EditHearingRequest implements IEditHearingRequest {
         }
         data["other_information"] = this.other_information;
         data["questionnaire_not_required"] = this.questionnaire_not_required;
+        data["streaming_flag"] = this.streaming_flag;
         return data; 
     }
 }
@@ -2287,6 +2303,8 @@ export interface IEditHearingRequest {
     other_information?: string | undefined;
     /** QuestionnaireNotRequired */
     questionnaire_not_required?: boolean | undefined;
+    /** Gets or sets the streaming flag */
+    streaming_flag?: boolean | undefined;
 }
 
 /** Case request */

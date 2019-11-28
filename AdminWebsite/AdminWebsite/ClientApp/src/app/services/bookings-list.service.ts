@@ -123,8 +123,9 @@ export class BookingsListService {
       hearing.last_edit_by,
       hearing.last_edit_date,
       hearing.status,
-      hearing.questionnaire_not_required
-    );
+      hearing.questionnaire_not_required,
+      hearing.streaming_flag
+      );
   }
 }
 

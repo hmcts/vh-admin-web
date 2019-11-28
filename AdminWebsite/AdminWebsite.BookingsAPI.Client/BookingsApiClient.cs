@@ -3542,6 +3542,10 @@ namespace AdminWebsite.BookingsAPI.Client
         [Newtonsoft.Json.JsonProperty("questionnaire_not_required", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public bool? Questionnaire_not_required { get; set; }
     
+        /// <summary>Gets or sets the streaming flag indicated that the video streaming on/off</summary>
+        [Newtonsoft.Json.JsonProperty("streaming_flag", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool? Streaming_flag { get; set; }
+    
         public string ToJson() 
         {
             return Newtonsoft.Json.JsonConvert.SerializeObject(this);
@@ -3616,6 +3620,10 @@ namespace AdminWebsite.BookingsAPI.Client
         /// <summary>QuestionnaireNotRequired</summary>
         [Newtonsoft.Json.JsonProperty("questionnaire_not_required", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public bool? Questionnaire_not_required { get; set; }
+    
+        /// <summary>Gets or sets the streaming flag indicated that the video streaming on/off</summary>
+        [Newtonsoft.Json.JsonProperty("streaming_flag", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool? Streaming_flag { get; set; }
     
         public string ToJson() 
         {
@@ -3726,6 +3734,10 @@ namespace AdminWebsite.BookingsAPI.Client
         /// <summary>QuestionnaireNotRequired</summary>
         [Newtonsoft.Json.JsonProperty("questionnaire_not_required", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public bool? Questionnaire_not_required { get; set; }
+    
+        /// <summary>Gets or sets the streaming flag indicated that the video streaming on/off</summary>
+        [Newtonsoft.Json.JsonProperty("streaming_flag", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool? Streaming_flag { get; set; }
     
         public string ToJson() 
         {
@@ -3871,6 +3883,10 @@ namespace AdminWebsite.BookingsAPI.Client
         /// <summary>QuestionnaireNotRequired</summary>
         [Newtonsoft.Json.JsonProperty("questionnaire_not_required", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public bool? Questionnaire_not_required { get; set; }
+    
+        /// <summary>Gets or sets the streaming flag indicated that the video streaming on/off</summary>
+        [Newtonsoft.Json.JsonProperty("streaming_flag", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool? Streaming_flag { get; set; }
     
         public string ToJson() 
         {

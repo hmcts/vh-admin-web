@@ -47,5 +47,10 @@ namespace AdminWebsite.Models
         /// QuestionnaireNotRequired
         /// </summary>
         public bool QuestionnaireNotRequired { get; set; }
+
+        /// <summary>
+        /// Gets or sets the streaming flag
+        /// </summary>
+        public bool StreamingFlag { get; set; }
     }
 }
