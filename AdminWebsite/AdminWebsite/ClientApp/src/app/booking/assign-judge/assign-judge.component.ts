@@ -92,16 +92,18 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
   }
 
   private initForm() {
-    const find_judge = this.hearing.participants.find(x => x.is_judge === true);
-    if (!find_judge) {
-      this.judge = new JudgeResponse({ email: this.constants.PleaseSelect, display_name: '' });
-    } else {
-      this.judge = AssignJudgeComponent.mapJudge(find_judge);
-      this.canNavigate = true;
-      var judgeId = find_judge.email.split('@');
-      this.displayOpenObserver = judgeId[0].toUpperCase() ==='TAYLORHOUSECOURT28'
-        console.log("Saved Stream flag ======" + this.hearing.streaming_flag);
+      const find_judge = this.hearing.participants.find(x => x.is_judge === true);
+      
+      if (!find_judge) {
+          this.judge = new JudgeResponse({ email: this.constants.PleaseSelect, display_name: '' });
+      } else {
 
+          
+      this.judge = AssignJudgeComponent.mapJudge(find_judge);
+          this.canNavigate = true;
+          const judgeId = find_judge.email.split('@');
+          console.log("Find Judge Email ============== " + find_judge.email);
+      this.displayOpenObserver = judgeId[0].toUpperCase() === 'TAYLORHOUSECOURT28';
     }
       this.judgeDisplayName = new FormControl(this.judge.display_name, { validators: Validators.required, updateOn: 'blur' });
       this.openObserver = new FormControl(this.hearing.streaming_flag);
@@ -118,23 +120,17 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
       this.addJudge(judgeUserId);
       this.isJudgeSelected = judgeUserId !== null;
       this.canNavigate = this.isJudgeSelected;
-      var judeEmail = judgeUserId.split('@');
-       this.displayOpenObserver = judeEmail[0].toUpperCase() === 'TAYLORHOUSECOURT28';
-        if (this.displayOpenObserver) {
-            this.openObserver.setValue(true);
-            this.form.value.openObserver = true;
-            this.form.get('openObserver').setValue(true);
-            console.log(this.form.value.openObserver);
-            //this.form.value.openObserver.setValue(true)
+       
+        if (this.isJudgeSelected) {
+            const judeEmail = judgeUserId.split('@');
+            this.displayOpenObserver = judeEmail[0].toUpperCase() === 'TAYLORHOUSECOURT28';
         }
-        else {
+      
+        if (this.displayOpenObserver) {
+           this.form.get('openObserver').setValue(true);
+        } else {
             this.form.get('openObserver').setValue(null);
         }
-
-        console.log(this.form.value);
-        console.log(this.form);
-      //this.openObserver.setValue('True');
-        
     });
 
     this.judgeDisplayName.valueChanges.subscribe(name => {
@@ -205,12 +201,9 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         this.form.markAsPristine();
         if (this.form.value.openObserver) {
             this.hearing.streaming_flag = this.form.value.openObserver;
-        }
-      else
-        {
+        } else {
             this.hearing.streaming_flag = null;
         }
-        console.log("GGGGGGGGG bbbb" + this.form.value.openObserver);
       this.hasSaved = true;
       this.changeDisplayName();
       this.hearingService.updateHearingRequest(this.hearing);
@@ -222,12 +215,12 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     } else {
       this.failedSubmission = true;
       }
-      
+
       console.log(this.form.value.openObserver);
-      console.log("Stream flag ======" + this.hearing.streaming_flag);
-      console.log("hearing " + this.hearing.questionnaire_not_required);
-      console.log("hearing 2 " + this.hearing.streaming_flag);
-     
+      console.log('Stream flag ======' + this.hearing.streaming_flag);
+      console.log('hearing ' + this.hearing.questionnaire_not_required);
+      console.log('hearing 2 ' + this.hearing.streaming_flag);
+
   }
 
   confirmCancelBooking() {
@@ -245,7 +238,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
   continueBooking() {
     this.attemptingCancellation = false;
       this.attemptingDiscardChanges = false;
-     
+
   }
 
   cancelAssignJudge() {

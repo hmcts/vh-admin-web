@@ -113,7 +113,8 @@ describe('AssignJudgeComponent', () => {
     dropDown.dispatchEvent(new Event('change'));
     fixture.detectChanges();
 
-    expect(component.judge.email).toBe('John2.Doe@hearings.reform.hmcts.net');
+      expect(component.judge.email).toBe('John2.Doe@hearings.reform.hmcts.net');
+      expect(component.hearing.streaming_flag).toBeUndefined();
     expect(component.form.valid).toBeTruthy();
   });
 

@@ -45,7 +45,8 @@ export class SummaryComponent implements OnInit {
   showWaitSaving = false;
   showErrorSaving: boolean;
   private newHearingSessionKey = 'newHearingId';
-  isExistingBooking = false;
+    isExistingBooking = false;
+    displayOpenObserver: boolean = false;
 
   @ViewChild(ParticipantsListComponent, { static: true })
   participantsListComponent: ParticipantsListComponent;
@@ -63,7 +64,8 @@ export class SummaryComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.checkForExistingRequest();
+      this.checkForExistingRequest();
+      this.displayOpenObserver = this.hearing.streaming_flag !== null;
     this.retrieveHearingSummary();
     if (this.participantsListComponent) {
       this.participantsListComponent.isEditMode = this.isExistingBooking;
