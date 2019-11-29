@@ -29,6 +29,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution", "Solution", "{36
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdminWebsite.Services.Generator", "AdminWebsite.Services.Generator\AdminWebsite.Services.Generator.csproj", "{29FB2372-E224-48FB-9FD2-27415F03139E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdminWebsite.AcceptanceTests.NuGet", "AdminWebsite.AcceptanceTests.NuGet\AdminWebsite.AcceptanceTests.NuGet.csproj", "{5468D4EE-967E-452D-A49C-D19A2FC8C14A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -67,6 +69,10 @@ Global
 		{29FB2372-E224-48FB-9FD2-27415F03139E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{29FB2372-E224-48FB-9FD2-27415F03139E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{29FB2372-E224-48FB-9FD2-27415F03139E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5468D4EE-967E-452D-A49C-D19A2FC8C14A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5468D4EE-967E-452D-A49C-D19A2FC8C14A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5468D4EE-967E-452D-A49C-D19A2FC8C14A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5468D4EE-967E-452D-A49C-D19A2FC8C14A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -76,6 +82,7 @@ Global
 		{E0824E5E-991B-4D0F-864D-2777BBD92515} = {B1E4EC16-6651-4638-A259-206EECE90BFE}
 		{BE8F819B-E6E1-4764-85DC-0A14773ECBE3} = {B1E4EC16-6651-4638-A259-206EECE90BFE}
 		{4D14899D-EFF3-4AF0-9814-4FAA686F325D} = {B1E4EC16-6651-4638-A259-206EECE90BFE}
+		{5468D4EE-967E-452D-A49C-D19A2FC8C14A} = {B1E4EC16-6651-4638-A259-206EECE90BFE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8DFE452A-DB6C-4F8B-A87E-CF5B7D4BE125}

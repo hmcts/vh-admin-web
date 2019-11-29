@@ -1,0 +1,65 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Features\" />
+    <Folder Include="Steps\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="appsettings.json" />
+    <None Remove="resources\adminwebsite\adminwebsite.useraccounts.json" />
+    <None Remove="resources\adminwebsite\adminwebsite.firefox.desktop.runsettings.xml" />
+    <None Remove="resources\adminwebsite\adminwebsite.safari.desktop.runsettings.xml" />
+    <None Remove="resources\adminwebsite\adminwebsite.edge.desktop.runsettings.xml" />
+    <None Remove="resources\adminwebsite\adminwebsite.appsettings.json" />
+    <None Remove="resources\adminwebsite\adminwebsite.chrome.desktop.runsettings.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Features\BookingConfirmation.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>BookingConfirmation.feature.cs</LastGenOutput>
+    </None>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Steps\StepsBase.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Features\BookingConfirmation.feature.cs">
+      <DependentUpon>BookingConfirmation.feature</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\adminwebsite\adminwebsite.useraccounts.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\adminwebsite\adminwebsite.firefox.desktop.runsettings.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\adminwebsite\adminwebsite.safari.desktop.runsettings.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\adminwebsite\adminwebsite.edge.desktop.runsettings.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\adminwebsite\adminwebsite.appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\adminwebsite\adminwebsite.chrome.desktop.runsettings.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="VH.AcceptanceTests.Tests" Version="1.0.0" />
+  </ItemGroup>
+</Project>

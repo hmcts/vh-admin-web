@@ -41,19 +41,7 @@
 
   <ItemGroup>
     <Compile Update="Hooks\Browser.cs" />
-    <Compile Update="Hooks\SaucelabsResult.cs" />
-    <Compile Update="Steps\AddParticipantsSteps.cs" />
     <Compile Update="Steps\AssignJudgeSteps.cs" />
-    <Compile Update="Steps\BookingConfirmationStep.cs" />
-    <Compile Update="Steps\BookingDetailsSteps.cs" />
-    <Compile Update="Steps\CommonSteps.cs" />
-    <Compile Update="Steps\DashboardSteps.cs" />
-    <Compile Update="Steps\HearingDetailsSteps.cs" />
-    <Compile Update="Steps\HearingScheduleSteps.cs" />
-    <Compile Update="Steps\LoginSteps.cs" />
-    <Compile Update="Steps\OtherInformationSteps.cs" />
-    <Compile Update="Steps\SignOutSteps.cs" />
-    <Compile Update="Steps\SummarySteps.cs" />
   </ItemGroup>
 
   <ItemGroup>
