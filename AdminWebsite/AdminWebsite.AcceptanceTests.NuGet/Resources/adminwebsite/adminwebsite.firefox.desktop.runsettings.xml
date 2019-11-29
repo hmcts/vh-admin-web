@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+  <!-- Parameters used by tests at run time -->
+  <TestRunParameters>
+      <Parameter name="TargetApp" value="AdminWebsite" />
+      <Parameter name="TargetBrowser" value="Firefox" />
+      <Parameter name="TargetPlatform" value="Desktop" />
+  </TestRunParameters>
+</RunSettings>
