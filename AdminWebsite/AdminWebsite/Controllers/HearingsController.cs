@@ -251,7 +251,10 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public ActionResult GetBookingsList(string cursor, int limit = 100)
         {
-            cursor = _encoder.Encode(cursor);
+            if (cursor != null)
+            {
+                cursor = _encoder.Encode(cursor);
+            }
 
             IEnumerable<string> caseTypes = null;
             
