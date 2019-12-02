@@ -88,7 +88,7 @@ export class RepresentativeQuestionsMapAttributes implements QuestionsMapAttribu
         [
             RepresentativeQuestionKeys.PresentingTheCase,
             {
-                Question: 'Someone will be presenting the case?',
+                Question: 'Will someone be presenting the case?',
                 DefaultAnswer: 'I will be presenting the case',
                 EmbeddedAnswersInNotes:
                     [
@@ -109,7 +109,7 @@ export class RepresentativeQuestionsMapAttributes implements QuestionsMapAttribu
     ]);
 
     public readonly AnswerOverrides = new Map<string, string>([
-        ['Someone will be presenting the case', 'Yes']
+        ['Will someone be presenting the case', 'Yes']
     ]);
 }
 
