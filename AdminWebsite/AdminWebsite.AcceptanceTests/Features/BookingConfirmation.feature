@@ -24,7 +24,7 @@ Scenario: VH Officer creates hearing with new participants
 	And user adds other information and submits the booking 
 	Then hearing should be booked
 
-@VIH-2701 @smoketest
+@VIH-2701
 Scenario: VH Officer creates hearing with existing participants
 	Given an individual is already a participant of another hearing
 	And VH Officer is on the Summary page
