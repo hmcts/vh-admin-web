@@ -1,5 +1,5 @@
-﻿using AdminWebsite.BookingsAPI.Client;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using AdminWebsite.BookingsAPI.Client;
 
 namespace AdminWebsite.AcceptanceTests.Helpers
 {

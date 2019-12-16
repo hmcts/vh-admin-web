@@ -1,7 +1,7 @@
-﻿using System.Text.RegularExpressions;
-using AdminWebsite.BookingsAPI.Client;
+﻿using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Models;
 using Microsoft.AspNetCore.Mvc.Filters;
+using System.Text.RegularExpressions;
 
 namespace AdminWebsite.Attributes
 {

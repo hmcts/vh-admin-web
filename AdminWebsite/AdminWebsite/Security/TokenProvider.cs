@@ -1,7 +1,7 @@
-﻿using System;
-using AdminWebsite.Configuration;
+﻿using AdminWebsite.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
+using System;
 
 namespace AdminWebsite.Security
 {

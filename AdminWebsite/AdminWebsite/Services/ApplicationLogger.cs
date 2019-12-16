@@ -1,9 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Security.Principal;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.DataContracts;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Security.Principal;
 
 namespace AdminWebsite.Services
 {
@@ -39,7 +39,7 @@ namespace AdminWebsite.Services
             }
 
             TelemetryClient.TrackTrace(telemetry);
-          
+
         }
 
         public static void TraceWithObject(string traceCategory, string eventTitle, string user, object valueToSerialized)

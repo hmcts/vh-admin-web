@@ -9,7 +9,7 @@
         /// The case number
         /// </summary>
         public string Number { get; set; }
-        
+
         /// <summary>
         /// The case name
         /// </summary>

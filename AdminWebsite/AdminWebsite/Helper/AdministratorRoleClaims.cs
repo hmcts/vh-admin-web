@@ -41,7 +41,7 @@ namespace AdminWebsite.Helper
             IsVhOfficerAdministratorRole = GetValue(vhAdminRoleClaim);
             IsCaseAdministratorRole = GetValue(caseAdminRoleClaim);
             IsAdministratorRole = IsVhOfficerAdministratorRole || IsCaseAdministratorRole;
-            UserCaseTypes = userCaseTypes?.Value.Split(",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries) 
+            UserCaseTypes = userCaseTypes?.Value.Split(",".ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
                             ??
                             Enumerable.Empty<string>();
             Claims = claimsList;

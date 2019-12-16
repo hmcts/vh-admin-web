@@ -1,32 +1,15 @@
 ﻿Feature: Booking Confirmation
-As a Case Admin
-I want to confirm the booking and see a confirmation of the booking
-So that the hearing can take place on the time and date specified
+	As a Case Admin or VH-Officer
+	I need to be able to check that the information is correct before I submit the form
+	So that I can reduce the chances of mistakes on the booking
 
-@VIH-2701 @smoketest
-Scenario: Case Admin creates hearing with new participants
-	Given Case Admin is on the add participants page
-	When the admin adds parties with new users
-	And user adds other information and submits the booking 
-	Then hearing should be booked
+Scenario: Booking Confirmation
+	Given the Video Hearings Officer user has progressed to the Booking Confirmation page
+	When the user views the booking confirmation form
+	Then the user is on the Dashboard page
 
-@VIH-2701
-Scenario: Case Admin creates hearing with existing participants
-	Given an individual is already a participant of another hearing
-	And Case Admin is on the Summary page
-	When user submits the booking 
-	Then hearing should be booked
-
-@VIH-2701
-Scenario: VH Officer creates hearing with new participants
-	Given VH Officer is on the add participants page
-	When the admin adds parties with new users
-	And user adds other information and submits the booking 
-	Then hearing should be booked
-
-@VIH-2701
-Scenario: VH Officer creates hearing with existing participants
-	Given an individual is already a participant of another hearing
-	And VH Officer is on the Summary page
-	When user submits the booking 
-	Then hearing should be booked
+Scenario: Booking Confirmation Book Another Hearing
+	Given the Video Hearings Officer user has progressed to the Booking Confirmation page
+	When the user views the booking confirmation form
+	And the user clicks the Book another hearing button
+	Then the user is on the Hearing Details page

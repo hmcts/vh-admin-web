@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<DefaultData>
+  <HearingDetails>
+    <CaseType>Civil Money Claims</CaseType>
+    <HearingType>Application to set Judgment Aside</HearingType>
+    <DoNotSendQuestionnaires>true</DoNotSendQuestionnaires>
+  </HearingDetails>
+  <HearingSchedule>
+    <DurationHours>00</DurationHours>
+    <DurationMinutes>45</DurationMinutes>
+    <HearingVenue>Birmingham Civil and Family Justice Centre</HearingVenue>
+    <Room>1</Room>
+  </HearingSchedule>
+  <AddParticipant>
+    <Participant>
+      <NewUserPrefix>Automation_</NewUserPrefix>
+      <Title>Mrs</Title>
+      <Phone>01234567890</Phone>
+      <Organisation>MoJ</Organisation>
+      <SolicitorsReference>1</SolicitorsReference>
+    </Participant>
+    <Address>
+      <HouseNumber>123</HouseNumber>
+      <Street>London Road</Street>
+      <City>London</City>
+      <County>London</County>
+      <Postcode>SW1 1WS</Postcode>
+    </Address>
+  </AddParticipant>
+  <OtherInformation>
+    <Other>Other Info</Other>
+  </OtherInformation>
+  <Questionnaire>
+    <Question1>Is there anything you'd like the court to take into account when it decides which type of hearing will be suitable?</Question1>
+    <Question2>At the time of your hearing, will you have access to a quiet, private room?</Question2>
+  </Questionnaire>
+</DefaultData>

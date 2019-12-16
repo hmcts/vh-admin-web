@@ -16,8 +16,8 @@ namespace AdminWebsite.Security
         /// <param name="serviceSettings"></param>
         /// <param name="memoryCache"></param>
         /// <param name="tokenProvider"></param>
-        public UserApiTokenHandler(IOptions<SecuritySettings> securitySettings, 
-            IOptions<ServiceSettings> serviceSettings, IMemoryCache memoryCache, 
+        public UserApiTokenHandler(IOptions<SecuritySettings> securitySettings,
+            IOptions<ServiceSettings> serviceSettings, IMemoryCache memoryCache,
             ITokenProvider tokenProvider)
             : base(securitySettings, serviceSettings, memoryCache, tokenProvider)
         {

@@ -1,47 +1,32 @@
-﻿using AdminWebsite.AcceptanceTests.Helpers;
+﻿using System.Collections.Generic;
+using AcceptanceTests.Common.Driver.Browser;
+using AcceptanceTests.Common.Driver.Helpers;
+using AcceptanceTests.Common.Test.Steps;
+using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.AcceptanceTests.Pages;
-using FluentAssertions;
 using TechTalk.SpecFlow;
 
 namespace AdminWebsite.AcceptanceTests.Steps
 {
     [Binding]
-    public sealed class OtherInformationSteps
+    public class OtherInformationSteps : ISteps
     {
-        private readonly OtherInformation _otherInformation;
-
-        public OtherInformationSteps(OtherInformation otherInformation)
+        private readonly TestContext _c;
+        private readonly Dictionary<string, UserBrowser> _browsers;
+        private readonly OtherInformationPage _otherInformationPage;
+        public OtherInformationSteps(TestContext testContext, Dictionary<string, UserBrowser> browsers, OtherInformationPage otherInformationPage)
         {
-            _otherInformation = otherInformation;
+            _c = testContext;
+            _browsers = browsers;
+            _otherInformationPage = otherInformationPage;
         }
 
-        [When(@"Admin user is on hmore information page")]
-        public void MoreInformationPage()
+        [When(@"the user completes the other information form")]
+        public void ProgressToNextPage()
         {
-            _otherInformation.PageUrl(PageUri.OtherInformationPage);
-        }
-
-        [When(@"user adds other information to the Video Hearing booking")]
-        public void WhenUserAddsOtherInformationToBookingHearing()
-        {
-            MoreInformationPage();
-            _otherInformation.GetOtherInformationHeading().Should().Be(Data.OtherInformation.OtherInformationText);
-            _otherInformation.AddOtherInformation(Data.OtherInformation.OtherInformationText);
-        }
-
-        [When(@"user continues booking without adding other information")]
-        public void UserAddsNoOtherInformationToBookingHearing()
-        {
-            MoreInformationPage();
-            _otherInformation.GetOtherInformationHeading().Should().Be(Data.OtherInformation.OtherInformationText);
-            _otherInformation.AddOtherInformation("");
-        }
-
-        [When(@"more information detail is updated")]
-        public void WhenMoreInformationDetailIsUpdated()
-        {
-            MoreInformationPage();
-            _otherInformation.AddOtherInformation(Data.OtherInformation.OtherInformationText);
+            var otherInformation = _c.AdminWebConfig.TestConfig.TestData.OtherInformation.Other;
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_otherInformationPage.OtherInformationTextfield).SendKeys(otherInformation);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_otherInformationPage.NextButton).Click();
         }
     }
 }

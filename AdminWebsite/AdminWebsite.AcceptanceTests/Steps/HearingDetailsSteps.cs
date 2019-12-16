@@ -1,150 +1,77 @@
-﻿using AdminWebsite.AcceptanceTests.Helpers;
+﻿using System;
+using System.Collections.Generic;
+using AcceptanceTests.Common.Data.Helpers;
+using AcceptanceTests.Common.Driver.Browser;
+using AcceptanceTests.Common.Driver.Helpers;
+using AcceptanceTests.Common.Model.Hearing;
+using AcceptanceTests.Common.Test.Steps;
+using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.AcceptanceTests.Pages;
-using FluentAssertions;
-using System;
-using System.Linq;
-using AdminWebsite.AcceptanceTests.Contexts;
 using TechTalk.SpecFlow;
-using AdminWebsite.AcceptanceTests.Configuration;
 
 namespace AdminWebsite.AcceptanceTests.Steps
 {
     [Binding]
-    public sealed class HearingDetailsSteps
+    public class HearingDetailsSteps : ISteps
     {
-        private readonly TestContext _context;
-        private readonly HearingDetails _hearingDetails;
-        private readonly ScenarioContext _scenarioContext;
+        private readonly TestContext _c;
+        private readonly Dictionary<string, UserBrowser> _browsers;
+        private readonly HearingDetailsPage _hearingDetailsPage;
+        private readonly CommonSharedSteps _commonSharedSteps;
+        private readonly Random _fromRandomNumber;
 
-        public HearingDetailsSteps(TestContext context, HearingDetails hearingDetails, ScenarioContext injectedContext)
+        public HearingDetailsSteps(TestContext testContext, Dictionary<string, UserBrowser> browsers, HearingDetailsPage hearingDetailsPage, CommonSharedSteps commonSharedSteps)
         {
-            _context = context;
-            _hearingDetails = hearingDetails;
-            _scenarioContext = injectedContext;
+            _fromRandomNumber = new Random();
+            _c = testContext;
+            _browsers = browsers;
+            _hearingDetailsPage = hearingDetailsPage;
+            _commonSharedSteps = commonSharedSteps;
         }
 
-        [When(@"hearing details form is filled")]
-        public void WhenHearingDetailsFormIsFilled()
+        [When(@"the user completes the hearing details form")]
+        public void ProgressToNextPage()
         {
-            HearingDetailsPage();
-            _hearingDetails.AddItems("CaseNumber", _context.TestData.HearingData.CaseNumber);
-            InputCaseNumber(_context.TestData.HearingData.CaseNumber);
-            InputCaseName(_context.TestData.HearingData.CaseName);
-            if (UserHasMoreThanOneCaseTypeGroup())
+            SetHearingDetails();
+            SetHearingType();
+            SendQuestionnaires(_c.AdminWebConfig.TestConfig.TestData.HearingDetails.DoNotSendQuestionnaires);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_hearingDetailsPage.NextButton).Click();
+        }
+
+        public void SetHearingDetails()
+        {
+            _c.Test.Hearing.CaseNumber = $"{GenerateRandom.CaseNumber(_fromRandomNumber)}";
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_hearingDetailsPage.CaseNumberTextfield).SendKeys(_c.Test.Hearing.CaseNumber);
+
+            _c.Test.Hearing.CaseName = $"Admin Web Automated Test {GenerateRandom.Letters(_fromRandomNumber)}";
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_hearingDetailsPage.CaseNameTextfield).SendKeys(_c.Test.Hearing.CaseName);
+        }
+
+        public void SetHearingType(HearingType hearingType = null)
+        {
+            if (hearingType == null)
+                hearingType = HearingType.FromString(_c.AdminWebConfig.TestConfig.TestData.HearingDetails.HearingType);
+
+            _c.Test.Hearing.HearingType = hearingType;
+            _commonSharedSteps.WhenTheUserSelectsTheOptionFromTheDropdown(_browsers[_c.CurrentUser.Key].Driver, _hearingDetailsPage.HearingTypeDropdown, HearingType.ToString(hearingType));
+        }
+
+        public void SendQuestionnaires(bool doNotSendQuestionnaires)
+        {
+            var isCheckboxSelected = _browsers[_c.CurrentUser.Key].Driver.WaitUntilElementExists(_hearingDetailsPage.SendQuestionnairesCheckbox).Selected;
+            if (doNotSendQuestionnaires)
             {
-                SelectCaseType();
+                if (!isCheckboxSelected)
+                {
+                    _browsers[_c.CurrentUser.Key].Driver.WaitUntilElementExists(_hearingDetailsPage.SendQuestionnairesCheckbox).Click();
+                }
             }
-
-            SelectHearingType();
-            SelectQuestionnaireNotRequired();
-        }
-
-        private bool UserHasMoreThanOneCaseTypeGroup()
-        {
-            return _context.CurrentUser.Username.Contains("CMC") &&
-                   _context.CurrentUser.Username.Contains("FR");
-        }
-
-        [When(@"Admin user is on hearing details page")]
-        public void HearingDetailsPage()
-        {
-            _hearingDetails.PageUrl(PageUri.HearingDetailsPage);
-        }
-
-        [When(@"Input case number")]
-        public void InputCaseNumber(string caseNumber = "12345")
-        {
-            _hearingDetails.CaseNumber(caseNumber);
-        }
-
-        [When(@"Input case name")]
-        public void InputCaseName(string caseName = "12345_12345")
-        {
-            _hearingDetails.CaseName(caseName);
-        }
-
-        [When(@"Select case type")]
-        public void SelectCaseType()
-        {           
-            _hearingDetails.CaseTypes();
-        }
-
-        [When(@"Select hearing type")]
-        public void SelectHearingType()
-        {
-            _hearingDetails.HearingType();
-        }
-
-        [When(@"Select room")]
-        public void SelectRoom()
-        {
-            _hearingDetails.HearingType();
-        }
-
-        [When(@"Select questionnaire not required")]
-        public void SelectQuestionnaireNotRequired()
-        {
-            _hearingDetails.QuestionnaireNotRequired();
-        }
-
-        [Then(@"case type dropdown should be populated")]
-        [Then(@"case type dropdown should not be populated")]
-        public void ThenCaseTypeDropdownShouldNotBePopulated()
-        {
-            switch (_scenarioContext.Get<UserAccount>("User").Role)
+            else
             {
-                case "CaseAdminFinRemedyCivilMoneyClaims":
-                    _hearingDetails.CaseTypesList().ToList().Count.Should().Be(2);
-                    break;
-                case "Case Admin":
-                    _hearingDetails.CaseTypesList().Should().BeEmpty();
-                    break;
-                default: throw new ArgumentOutOfRangeException($"User {_scenarioContext.Get<string>("User")} not defined");
-            }
-        }
-
-        [When(@"hearing booking detail is updated")]
-        public void WhenHearingBookingDetailIsUpdated()
-        {
-            HearingDetailsPage();
-            _context.TestData.HearingData.Update(_context.TestData.HearingData.CaseNumber);
-            InputCaseNumber(_context.TestData.HearingData.CaseNumber);
-            SelectHearingType();
-            _context.TestData.HearingData.Update(_context.TestData.HearingData.CaseName);
-            InputCaseName(_context.TestData.HearingData.CaseName);            
-        }
-
-        [Given(@"user selects (.*)")]
-        public void GivenUserSelectsCaseTypeAsCivilMoneyClaims(string caseType)
-        {
-            _hearingDetails.AddItems("CaseTypes", caseType);
-            InputCaseNumber(_context.TestData.HearingData.CaseNumber);
-            InputCaseName(_context.TestData.HearingData.CaseName);
-            _hearingDetails.CaseTypes(caseType);
-            _hearingDetails.HearingType();
-            _hearingDetails.ClickNextButton();
-        }
-
-        [Then(@"disabled mandatory fields should be (.*)")]
-        public void ThenDisabledMandatoryFieldsShouldBeListed(int field)
-        {
-            _hearingDetails.DisabledFields().Should().Be(field);
-        }
-
-        [When(@"(.*) updates hearing booking details")]
-        public void WhenCaseAdminUpdatesHearingBookingDetails(string user)
-        {
-            _context.TestData.HearingData.Update(_context.TestData.HearingData.CaseNumber);
-            InputCaseNumber(_context.TestData.HearingData.CaseNumber);
-            _context.TestData.HearingData.Update(_context.TestData.HearingData.CaseName);
-            InputCaseName(_context.TestData.HearingData.CaseName);
-            switch (user)
-            {
-                case "Case Admin": _hearingDetails.DisabledFields().Should().Be(1);
-                    break;
-                case "CaseAdminFinRemedyCivilMoneyClaims": _hearingDetails.DisabledFields().Should().Be(2);
-                    break;
-                default: throw new ArgumentOutOfRangeException($"User '{user}' is not defined");
+                if (isCheckboxSelected)
+                {
+                    _browsers[_c.CurrentUser.Key].Driver.WaitUntilElementExists(_hearingDetailsPage.SendQuestionnairesCheckbox).Click();
+                }
             }
         }
     }

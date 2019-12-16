@@ -37,7 +37,7 @@ namespace AdminWebsite.Models
         ///     List of participants in hearing
         /// </summary>
         public List<EditParticipantRequest> Participants { get; set; }
-        
+
         /// <summary>
         ///     Any other information about the hearing
         /// </summary>

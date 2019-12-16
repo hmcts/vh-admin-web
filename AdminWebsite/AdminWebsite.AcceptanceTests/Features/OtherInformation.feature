@@ -1,18 +1,9 @@
 ﻿Feature: Other Information
-		As a Case Admin
-		I want to be able to add any other information to the Video Hearing booking
-		So that any other details that might be relevant to the booking can be included
+	As a Case Admin or VH-Officer
+	I need to be able to add other information to a hearing
+	So that I can keep a note of any extra hearing information
 
-@VIH-2641
-Scenario: Case Admin adds Other information to the Video Hearing booking
-	Given Case Admin is on the other information page 
-	When user adds other information to the Video Hearing booking  
-	And user proceeds to the next page 
-	Then user should be on the summary page 
-	
-@VIH-2641
-Scenario: Case Admin continues booking without adding Other information
-	Given Case Admin is on the other information page 
-	When user continues booking without adding other information  
-	And user proceeds to the next page 
-	Then user should be on the summary page 
+Scenario: Other Information
+	Given the Video Hearings Officer user has progressed to the Other Information page
+	When the user completes the other information form
+	Then the user is on the Summary page

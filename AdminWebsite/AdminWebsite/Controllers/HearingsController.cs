@@ -1,9 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text.Encodings.Web;
-using System.Threading.Tasks;
 using AdminWebsite.Attributes;
 using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Extensions;
@@ -13,6 +7,12 @@ using AdminWebsite.Services;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Text.Encodings.Web;
+using System.Threading.Tasks;
 
 namespace AdminWebsite.Controllers
 {
@@ -35,7 +35,7 @@ namespace AdminWebsite.Controllers
         /// Instantiates the controller
         /// </summary>
         public HearingsController(IBookingsApiClient bookingsApiClient, IUserIdentity userIdentity, IUserAccountService userAccountService,
-            IValidator<BookNewHearingRequest> bookNewHearingRequestValidator, IValidator<EditHearingRequest> editHearingRequestValidator, 
+            IValidator<BookNewHearingRequest> bookNewHearingRequestValidator, IValidator<EditHearingRequest> editHearingRequestValidator,
             JavaScriptEncoder encoder)
         {
             _bookingsApiClient = bookingsApiClient;
@@ -112,9 +112,9 @@ namespace AdminWebsite.Controllers
                 ModelState.AddModelError(nameof(hearingId), $"Please provide a valid {nameof(hearingId)}");
                 return BadRequest(ModelState);
             }
-            
+
             var result = _editHearingRequestValidator.Validate(request);
-            
+
             if (!result.IsValid)
             {
                 ModelState.AddFluentValidationErrors(result.Errors);
@@ -128,12 +128,12 @@ namespace AdminWebsite.Controllers
             }
             catch (BookingsApiException e)
             {
-                if (e.StatusCode != (int) HttpStatusCode.NotFound)
+                if (e.StatusCode != (int)HttpStatusCode.NotFound)
                     throw;
-                
-                return NotFound($"No hearing with id found [{hearingId}]");   
+
+                return NotFound($"No hearing with id found [{hearingId}]");
             }
-            
+
             try
             {
                 //Save hearing details
@@ -141,10 +141,10 @@ namespace AdminWebsite.Controllers
                 await _bookingsApiClient.UpdateHearingDetailsAsync(hearingId, updateHearingRequest);
 
                 var newParticipantList = new List<ParticipantRequest>();
-                
+
                 foreach (var participant in request.Participants)
                 {
-                    if(!participant.Id.HasValue)
+                    if (!participant.Id.HasValue)
                     {
                         // Add a new participant
                         // Map the request except the username
@@ -152,7 +152,7 @@ namespace AdminWebsite.Controllers
                         // Judge is manually created in AD, no need to create one
                         if (participant.CaseRoleName == "Judge")
                         {
-                            if(hearing.Participants.Any(p => p.Username.Equals(participant.ContactEmail)))
+                            if (hearing.Participants.Any(p => p.Username.Equals(participant.ContactEmail)))
                             {
                                 //If the judge already exists in the database, there is no need to add again.
                                 continue;
@@ -169,7 +169,7 @@ namespace AdminWebsite.Controllers
                     else
                     {
                         var existingParticipant = hearing.Participants.FirstOrDefault(p => p.Id.Equals(participant.Id));
-                        if(existingParticipant != null && (existingParticipant.User_role_name == "Individual" || existingParticipant.User_role_name == "Representative"))
+                        if (existingParticipant != null && (existingParticipant.User_role_name == "Individual" || existingParticipant.User_role_name == "Representative"))
                         {
                             //Update participant
                             var updateParticipantRequest = MapUpdateParticipantRequest(participant);
@@ -257,7 +257,7 @@ namespace AdminWebsite.Controllers
             }
 
             IEnumerable<string> caseTypes = null;
-            
+
             if (_userIdentity.IsAdministratorRole())
             {
                 caseTypes = _userIdentity.GetGroupDisplayNames();
