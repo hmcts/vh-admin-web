@@ -35,6 +35,17 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             SetHearingDetails();
             SetHearingType();
+            _c.Test.HearingDetails.DoNotSendQuestionnaires = _c.AdminWebConfig.TestConfig.TestData.HearingDetails.DoNotSendQuestionnaires;
+            SendQuestionnaires();
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_hearingDetailsPage.NextButton).Click();
+        }
+
+        [When(@"the user elects to send the questionnaires")]
+        public void WhenTheUserSelectsToSendTheQuestionnaires()
+        {
+            SetHearingDetails();
+            SetHearingType();
+            _c.Test.HearingDetails.DoNotSendQuestionnaires = false;
             SendQuestionnaires();
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_hearingDetailsPage.NextButton).Click();
         }
@@ -67,22 +78,16 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         public void SendQuestionnaires()
         {
-            _c.Test.HearingDetails.DoNotSendQuestionnaires = _c.AdminWebConfig.TestConfig.TestData.HearingDetails.DoNotSendQuestionnaires;
-
             var isCheckboxSelected = _browsers[_c.CurrentUser.Key].Driver.WaitUntilElementExists(_hearingDetailsPage.SendQuestionnairesCheckbox).Selected;
             if (_c.Test.HearingDetails.DoNotSendQuestionnaires)
             {
                 if (!isCheckboxSelected)
-                {
                     _browsers[_c.CurrentUser.Key].Driver.WaitUntilElementExists(_hearingDetailsPage.SendQuestionnairesCheckbox).Click();
-                }
             }
             else
             {
                 if (isCheckboxSelected)
-                {
                     _browsers[_c.CurrentUser.Key].Driver.WaitUntilElementExists(_hearingDetailsPage.SendQuestionnairesCheckbox).Click();
-                }
             }
         }
     }

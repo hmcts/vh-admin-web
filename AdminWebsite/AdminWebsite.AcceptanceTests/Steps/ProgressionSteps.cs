@@ -62,7 +62,13 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void GivenIAmOnThePage(string user, string page)
         {
             _browsersSteps.GivenANewBrowserIsOpenFor(user);
-            Progression(FromString(page), page);
+            Progression(FromString(page), "Login", page);
+        }
+
+        [When(@"progresses from the (.*) page to the (.*) page")]
+        public void WhenProgressesFromPageToAnotherPage(string from, string to)
+        {
+            Progression(FromString(to), from, to);
         }
 
         private static Journey FromString(string page)
@@ -74,9 +80,11 @@ namespace AdminWebsite.AcceptanceTests.Steps
             return page.ToLower().Equals("questionnaire") ? Journey.Questionnaire : Journey.BookingConfirmation;
         }
 
-        private void Progression(Journey userJourney, string pageAsString)
+        private void Progression(Journey userJourney, string startPageAsString, string endPageAsString)
         {
-            var endPage = Page.FromString(pageAsString);
+            var startPage = Page.FromString(startPageAsString);
+            var startPageReached = false;
+            var endPage = Page.FromString(endPageAsString);
             var journeys = new Dictionary<Journey, IJourney>
             {
                 {Journey.BookingConfirmation, new BookingsConfirmationJourney()},
@@ -90,6 +98,17 @@ namespace AdminWebsite.AcceptanceTests.Steps
             var steps = Steps();
             foreach (var page in journey)
             {
+                if (!startPageReached)
+                {
+                    if (page.Equals(startPage))
+                    {
+                        startPageReached = true;
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }
                 if (page != Page.Login) _browsersSteps.ThenTheUserIsOnThePage(page.Name);
                 if (page.Equals(endPage)) break;
                 steps[page].ProgressToNextPage();

@@ -96,6 +96,13 @@ namespace AdminWebsite.AcceptanceTests.Steps
             VerifyBookingUpdated();
         }
 
+
+        [Then(@"the questionnaires have been sent")]
+        public void ThenTheQuestionnairesHaveBeenSent()
+        {
+            ProgressToNextPage();
+        }
+
         private void VerifyHearingDetails()
         {
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_summaryPage.CaseNumber).Text.Should().Be(_c.Test.HearingDetails.CaseNumber);
