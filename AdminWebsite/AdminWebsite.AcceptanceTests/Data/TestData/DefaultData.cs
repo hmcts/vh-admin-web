@@ -1,4 +1,6 @@
-﻿namespace AdminWebsite.AcceptanceTests.Data.TestData
+﻿using System;
+
+namespace AdminWebsite.AcceptanceTests.Data.TestData
 {
     public class DefaultData
     {
@@ -18,10 +20,11 @@
 
     public class HearingSchedule
     {
-        public int DurationHours { get; set; }
-        public int DurationMinutes { get; set; }
+        public int DurationHours { get; set; } = 0;
+        public int DurationMinutes { get; set; } = 0;
         public string HearingVenue { get; set; }
         public string Room { get; set; }
+        public DateTime ScheduledDate { get; set; }
     }
 
     public class AddParticipant

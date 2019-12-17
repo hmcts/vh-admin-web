@@ -8,4 +8,3 @@ Scenario: Bookings List
 	When the user views the bookings list
 	And selects a booking
 	Then the user is on the Booking Details page
-

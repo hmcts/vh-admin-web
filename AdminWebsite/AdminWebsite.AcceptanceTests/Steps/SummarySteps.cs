@@ -28,11 +28,22 @@ namespace AdminWebsite.AcceptanceTests.Steps
         private readonly TestContext _c;
         private readonly Dictionary<string, UserBrowser> _browsers;
         private readonly SummaryPage _summaryPage;
-        public SummarySteps(TestContext testContext, Dictionary<string, UserBrowser> browsers, SummaryPage summaryPage)
+        private readonly BookingDetailsSteps _bookingDetailsSteps;
+        private readonly HearingDetailsSteps _hearingDetailsSteps;
+        private readonly HearingScheduleSteps _hearingScheduleSteps;
+        private readonly AddParticipantSteps _addParticipantSteps;
+        private readonly OtherInformationSteps _otherInformationSteps;
+
+        public SummarySteps(TestContext testContext, Dictionary<string, UserBrowser> browsers, SummaryPage summaryPage, BookingDetailsSteps bookingDetailsSteps, HearingDetailsSteps hearingDetailsSteps, OtherInformationSteps otherInformationSteps, HearingScheduleSteps hearingScheduleSteps, AddParticipantSteps addParticipantSteps)
         {
             _c = testContext;
             _browsers = browsers;
             _summaryPage = summaryPage;
+            _bookingDetailsSteps = bookingDetailsSteps;
+            _hearingDetailsSteps = hearingDetailsSteps;
+            _hearingScheduleSteps = hearingScheduleSteps;
+            _addParticipantSteps = addParticipantSteps;
+            _otherInformationSteps = otherInformationSteps;
         }
 
         [When(@"the user views the information on the summary form")]
@@ -46,26 +57,65 @@ namespace AdminWebsite.AcceptanceTests.Steps
             VerifyNewUsersCreatedInAad();
         }
 
+        [When(@"the user edits the (.*)")]
+        public void WhenTheUserEditsTheHearing(string screen)
+        {
+            _bookingDetailsSteps.ClickEdit();
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_summaryPage.EditScreenLink(screen)).Click();
+
+            if (screen.Equals("hearing details"))
+            {
+                _hearingDetailsSteps.EditHearingDetails();
+            }
+            else if (screen.Equals("hearing schedule"))
+            {
+                _hearingScheduleSteps.ProgressToNextPage();
+            }
+            else if (screen.Equals("other information"))
+            {
+                _otherInformationSteps.ProgressToNextPage();
+            }
+        }
+
+        [When(@"the user edits a new participant")]
+        public void WhenTheUserEditsANewParticipant()
+        {
+            _bookingDetailsSteps.ClickEdit();
+            var newUserToEdit = UserManager.GetUserFromDisplayName(_c.Test.HearingParticipants, _c.Test.AddParticipant.Participant.NewUserPrefix);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_summaryPage.EditParticipantLink(newUserToEdit.Firstname)).Click();
+            _addParticipantSteps.EditANewParticipant(newUserToEdit.AlternativeEmail);
+        }
+
+        [Then(@"the details are updated")]
+        public void ThenTheHearingIsUpdated()
+        {
+            VerifyHearingDetails();
+            VerifyHearingSchedule();
+            VerifyOtherInformation();
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_summaryPage.BookButton).Click();
+            VerifyBookingUpdated();
+        }
+
         private void VerifyHearingDetails()
         {
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_summaryPage.CaseNumber).Text.Should().Be(_c.Test.Hearing.CaseNumber);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_summaryPage.CaseName).Text.Should().Be(_c.Test.Hearing.CaseName);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_summaryPage.CaseHearingType).Text.Should().Be(_c.Test.Hearing.HearingType.Name);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_summaryPage.CaseNumber).Text.Should().Be(_c.Test.HearingDetails.CaseNumber);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_summaryPage.CaseName).Text.Should().Be(_c.Test.HearingDetails.CaseName);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_summaryPage.CaseHearingType).Text.Should().Be(_c.Test.HearingDetails.HearingType.Name);
         }
 
         private void VerifyHearingSchedule()
         {
-            var scheduleDate = _c.Test.Hearing.ScheduledDate.ToString(DateFormats.HearingSummaryDate);
+            var scheduleDate = _c.Test.HearingSchedule.ScheduledDate.ToString(DateFormats.HearingSummaryDate);
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_summaryPage.HearingDate).Text.ToLower().Should().Be(scheduleDate.ToLower());
-            var courtAddress = $"{_c.AdminWebConfig.TestConfig.TestData.HearingSchedule.HearingVenue}, {_c.AdminWebConfig.TestConfig.TestData.HearingSchedule.Room}";
+            var courtAddress = $"{_c.Test.HearingSchedule.HearingVenue}, {_c.Test.HearingSchedule.Room}";
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_summaryPage.CourtAddress).Text.Should().Be(courtAddress);
-            var listedFor = $"listed for {_c.AdminWebConfig.TestConfig.TestData.HearingSchedule.DurationMinutes} minutes";
+            var listedFor = $"listed for {_c.Test.HearingSchedule.DurationMinutes} minutes";
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_summaryPage.HearingDuration).Text.Should().Be(listedFor);
         }
 
         private void VerifyOtherInformation()
         {
-            var otherInformation = _c.AdminWebConfig.TestConfig.TestData.OtherInformation.Other;
+            var otherInformation = _c.Test.OtherInformation;
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_summaryPage.OtherInformation).Text.Should().Be(otherInformation);
         }
 
@@ -77,11 +127,26 @@ namespace AdminWebsite.AcceptanceTests.Steps
             var hearing = PollForHearing(request, client);
             var assertHearing = new AssertHearing()
                 .WithHearing(hearing)
-                .WithTestData(_c.AdminWebConfig.TestConfig.TestData)
+                .WithTestData(_c.Test)
                 .CreatedBy(_c.CurrentUser.Username);
-            assertHearing.AssertHearingDataMatches(_c.Test.Hearing);
+            assertHearing.AssertHearingDataMatches();
             assertHearing.AssertParticipantDataMatches(_c.Test.HearingParticipants);
             assertHearing.AssertHearingStatus(HearingDetailsResponseStatus.Booked);
+        }
+
+        private void VerifyBookingUpdated()
+        {
+            var endpoint = new HearingsEndpoints().GetHearingsByUsername(UserManager.GetClerkUser(_c.AdminWebConfig.UserAccounts).Username);
+            var request = new RequestBuilder().Get(endpoint);
+            var client = new ApiClient(_c.AdminWebConfig.VhServices.BookingsApiUrl, _c.Tokens.BookingsApiBearerToken).GetClient();
+            var hearing = PollForHearing(request, client);
+            var assertHearing = new AssertHearing()
+                .WithHearing(hearing)
+                .WithTestData(_c.Test)
+                .CreatedBy(_c.CurrentUser.Username);
+            assertHearing.AssertHearingDataMatches();
+            assertHearing.AssertParticipantDataMatches(_c.Test.HearingParticipants);
+            assertHearing.AssertUpdatedStatus(_c.CurrentUser.Username, DateTime.Now);
         }
 
         private HearingDetailsResponse PollForHearing(IRestRequest request, RestClient client)
@@ -93,7 +158,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
                 if (hearings != null)
                 {
                     foreach (var hearing in hearings.Where(hearing =>
-                        hearing.Cases.First().Name.Equals(_c.Test.Hearing.CaseName)))
+                        hearing.Cases.First().Name.Equals(_c.Test.HearingDetails.CaseName)))
                     {
                         return hearing;
                     }

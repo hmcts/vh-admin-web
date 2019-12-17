@@ -13,5 +13,6 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public By CourtRoomTextfield = By.Id("court-room");
         public By NextButton = By.Id("nextButton");
         public By CancelButton = By.Id("cancelButton");
+        public By HearingDateError = By.Id("hearingDate-error");
     }
 }

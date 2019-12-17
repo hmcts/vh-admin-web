@@ -27,31 +27,31 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [When(@"selects a booking")]
         public void ProgressToNextPage()
         {
-            _rowId = GetRowId(_c.Test.Hearing.CaseNumber);
+            _rowId = GetRowId(_c.Test.HearingDetails.CaseNumber);
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_bookingsListPage.RowWithId(_rowId)).Click();
         }
 
         [When(@"the user views the bookings list")]
         public void WhenTheUserViewsTheBookingsList()
         {
-            _rowId = GetRowId(_c.Test.Hearing.CaseNumber);
+            _rowId = GetRowId(_c.Test.HearingDetails.CaseNumber);
 
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_bookingsListPage.ScheduledTime(_rowId)).Text.ToLower()
-                .Should().Be(_c.Test.Hearing.ScheduledDate.ToShortTimeString().ToLower());
+                .Should().Be(_c.Test.HearingSchedule.ScheduledDate.ToShortTimeString().ToLower());
 
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_bookingsListPage.ScheduledDuration(_rowId)).Text
                 .Should().Contain($"listed for {_c.AdminWebConfig.TestConfig.TestData.HearingSchedule.DurationMinutes} minutes");
 
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_bookingsListPage.CaseName(_rowId, _c.Test.Hearing.CaseName))
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_bookingsListPage.CaseName(_rowId, _c.Test.HearingDetails.CaseName))
                 .Displayed.Should().BeTrue();
 
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_bookingsListPage.CaseNumber(_rowId, _c.Test.Hearing.CaseNumber))
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_bookingsListPage.CaseNumber(_rowId, _c.Test.HearingDetails.CaseNumber))
                 .Displayed.Should().BeTrue();
 
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_bookingsListPage.HearingType(_rowId, _c.Test.Hearing.HearingType.Name))
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_bookingsListPage.HearingType(_rowId, _c.Test.HearingDetails.HearingType.Name))
                 .Displayed.Should().BeTrue();
 
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_bookingsListPage.HearingType(_rowId, _c.Test.Hearing.HearingType.Name))
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_bookingsListPage.HearingType(_rowId, _c.Test.HearingDetails.HearingType.Name))
                 .Displayed.Should().BeTrue();
 
             var judge = UserManager.GetClerkUser(_c.AdminWebConfig.UserAccounts);

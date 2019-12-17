@@ -7,3 +7,8 @@ Scenario: Other Information
 	Given the Video Hearings Officer user has progressed to the Other Information page
 	When the user completes the other information form
 	Then the user is on the Summary page
+
+Scenario: Edit Other Information
+	Given the Video Hearings Officer user has progressed to the Booking Details page
+	When the user edits the other information
+	Then the details are updated

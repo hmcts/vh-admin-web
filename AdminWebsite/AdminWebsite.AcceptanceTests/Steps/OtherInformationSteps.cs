@@ -24,9 +24,15 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [When(@"the user completes the other information form")]
         public void ProgressToNextPage()
         {
-            var otherInformation = _c.AdminWebConfig.TestConfig.TestData.OtherInformation.Other;
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_otherInformationPage.OtherInformationTextfield).SendKeys(otherInformation);
+            SetOtherInformation();
+            _browsers[_c.CurrentUser.Key].Clear(_otherInformationPage.OtherInformationTextfield);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_otherInformationPage.OtherInformationTextfield).SendKeys(_c.Test.OtherInformation);
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_otherInformationPage.NextButton).Click();
+        }
+
+        private void SetOtherInformation()
+        {
+            _c.Test.OtherInformation = _c.Test.OtherInformation != null ? "Updated other information" : _c.AdminWebConfig.TestConfig.TestData.OtherInformation.Other;
         }
     }
 }

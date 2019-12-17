@@ -10,6 +10,7 @@ using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using TechTalk.SpecFlow;
+using HearingDetails = AdminWebsite.AcceptanceTests.Data.HearingDetails;
 
 namespace AdminWebsite.AcceptanceTests.Hooks
 {
@@ -31,6 +32,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             RegisterAzureSecrets(context);
             RegisterTestUserSecrets(context);
             RegisterTestUsers(context);
+            RegisterDefaultData(context);
             RegisterHearingServices(context);
             RegisterSauceLabsSettings(context);
             RunningAdminWebLocally(context);
@@ -53,7 +55,6 @@ namespace AdminWebsite.AcceptanceTests.Hooks
 
         private void RegisterTestUsers(TestContext context)
         {
-            context.Test = new Test { HearingParticipants = new List<UserAccount>(), Hearing = new Hearing() };
             context.AdminWebConfig.UserAccounts = Options.Create(_configRoot.GetSection("UserAccounts").Get<List<UserAccount>>()).Value;
             context.AdminWebConfig.UserAccounts.Should().NotBeNullOrEmpty();
             foreach (var user in context.AdminWebConfig.UserAccounts)
@@ -61,6 +62,12 @@ namespace AdminWebsite.AcceptanceTests.Hooks
                 user.Key = user.Lastname;
                 user.Username = $"{user.DisplayName.Replace(" ", "").Replace("ClerkJudge", "Clerk")}{context.AdminWebConfig.TestConfig.TestUsernameStem}";
             }
+        }
+
+        private void RegisterDefaultData(TestContext context)
+        {
+            context.Test = new Test { HearingParticipants = new List<UserAccount>(), HearingDetails = new HearingDetails(), HearingSchedule = new HearingSchedule(), AddParticipant = new AddParticipant() };
+            context.Test.AddParticipant = context.AdminWebConfig.TestConfig.TestData.AddParticipant;
         }
 
         private void RegisterHearingServices(TestContext context)

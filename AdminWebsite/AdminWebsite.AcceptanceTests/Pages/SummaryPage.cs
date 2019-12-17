@@ -15,9 +15,8 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public By RemoveParticipant = By.Id("btn-remove");
         public By CancelRemoveParticipant = By.Id("btn-cancel");
         public By ParticipantConfirmationMessage = By.XPath("//h1[contains(text(),'hearing booking')]");
-        public By EditHearingDetails = By.Id("edit-linkhearing-details-id");
-        public By EditScheduleDetails = By.Id("edit-linkhearing-schedule-id");
-        public By EditMoreInformation = By.Id("edit-linkother-information-id");
         public By BookButton = By.Id("bookButton");
+        public By EditScreenLink(string screen) => By.Id($"edit-link{screen.ToLower().Replace(" ", "-")}-id");
+        public By EditParticipantLink(string firstName) => By.XPath($"//div[contains(text(),'{firstName}')]/parent::div//a[text()='Edit']");
     }
 }

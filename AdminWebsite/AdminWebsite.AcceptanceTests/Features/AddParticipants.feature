@@ -7,3 +7,8 @@ Scenario: Add Participants
 	Given the Video Hearings Officer user has progressed to the Add Participants page
 	When the user completes the add participants form
 	Then the user is on the Other Information page
+
+Scenario: Edit New Participant
+	Given the Video Hearings Officer user has progressed to the Booking Details page
+	When the user edits a new participant
+	Then the details are updated

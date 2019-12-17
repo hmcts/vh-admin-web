@@ -316,5 +316,14 @@ namespace AdminWebsite.AcceptanceTests.Steps
             var elements = _browsers[_c.CurrentUser.Key].Driver.WaitUntilElementsVisible(_addParticipantsPage.ParticipantsList);
             return elements.Select(element => element.Text.Trim().Replace("\r\n", " ")).ToList();
         }
+
+        public void EditANewParticipant(string alternativeEmail)
+        {
+            _c.Test.HearingParticipants.First(x => x.AlternativeEmail.ToLower().Equals(alternativeEmail.ToLower())).DisplayName = $"{_c.Test.AddParticipant.Participant.NewUserPrefix}Updated display name";
+            _browsers[_c.CurrentUser.Key].Clear(_addParticipantsPage.DisplayNameTextfield);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_addParticipantsPage.DisplayNameTextfield).SendKeys(_c.Test.HearingParticipants.First(x => x.AlternativeEmail.ToLower().Equals(alternativeEmail.ToLower())).DisplayName);
+            _browsers[_c.CurrentUser.Key].ScrollTo(_addParticipantsPage.NextButton);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilElementClickable(_addParticipantsPage.NextButton).Click();
+        }
     }
 }

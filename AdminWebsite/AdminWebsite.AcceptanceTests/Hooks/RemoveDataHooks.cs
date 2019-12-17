@@ -75,7 +75,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             var request = new RequestBuilder().Delete(endpoint);
             var client = new ApiClient(_bookingApiUrl, _bookingsApiBearerToken).GetClient();
             var response = new RequestExecutor(request).SendToApi(client);
-            response.IsSuccessful.Should().BeTrue($"Hearing {hearingId} has been deleted. Status {response.StatusCode}. {response.Content}");
+            response.IsSuccessful.Should().BeTrue($"HearingDetails {hearingId} has been deleted. Status {response.StatusCode}. {response.Content}");
         }
 
         private void ClearClosedConferencesForClerk()
