@@ -25,7 +25,6 @@ namespace AdminWebsite.AcceptanceTests.Steps
         private readonly QuestionnaireSteps _questionnaireSteps;
         private readonly SummarySteps _summarySteps;
 
-
         public ProgressionSteps(
             TestContext testContext,
             AddParticipantSteps addParticipantSteps,
