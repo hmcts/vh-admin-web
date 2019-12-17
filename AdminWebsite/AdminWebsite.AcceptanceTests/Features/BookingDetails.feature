@@ -3,7 +3,7 @@
 	I need to be able to view the details of a booking
 	So that I can access the hearing information
 
-@smoketest
+@Smoketest
 Scenario: Bookings Details
 	Given the Video Hearings Officer user has progressed to the Booking Details page
 	When the user views the booking details
