@@ -23,7 +23,7 @@ variables:
   secretsFilter: 'TenantId,vh-admin-web-appid,vh-admin-web-key,vh-bookings-api-identifieruris,vh-user-api-identifieruris' # filters out secrets returned from key vault
   infraKeyVaultName: 'vhcoreinfradev'
   infraSecretsFilter: 'vh-core-infra-AppInsightsKey'
-  dotnetVersion: 3.1
+  dotnetVersion: 3.x
 
 # GitHub Repo that conatins build templates. Reference https://docs.microsoft.com/en-us/azure/devops/pipelines/process/templates?view=vsts#using-other-repositories
 resources:
