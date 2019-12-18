@@ -64,7 +64,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             }
         }
 
-        private void RegisterDefaultData(TestContext context)
+        private static void RegisterDefaultData(TestContext context)
         {
             context.Test = new Test { HearingParticipants = new List<UserAccount>(), HearingDetails = new HearingDetails(), HearingSchedule = new HearingSchedule(), AddParticipant = new AddParticipant() };
             context.Test.AddParticipant = context.AdminWebConfig.TestConfig.TestData.AddParticipant;
