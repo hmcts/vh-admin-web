@@ -101,10 +101,6 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             context.Tokens.VideoApiBearerToken = await ConfigurationManager.GetBearerToken(
                 context.AdminWebConfig.AzureAdConfiguration, context.AdminWebConfig.VhServices.VideoApiResourceId);
             context.Tokens.VideoApiBearerToken.Should().NotBeNullOrEmpty();
-
-            context.Tokens.GraphApiToken = await ConfigurationManager.GetBearerToken(
-                context.AdminWebConfig.AzureAdConfiguration, "https://graph.microsoft.com");
-            context.Tokens.GraphApiToken.Should().NotBeNullOrEmpty();
         }
     }
 }
