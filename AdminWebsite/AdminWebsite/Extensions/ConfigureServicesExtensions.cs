@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net.Http;
-using System.Reflection;
-using AdminWebsite.BookingsAPI.Client;
+﻿using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Configuration;
 using AdminWebsite.Helper;
 using AdminWebsite.Models;
@@ -20,6 +14,12 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using Swashbuckle.AspNetCore.Swagger;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net.Http;
+using System.Reflection;
 
 namespace AdminWebsite.Extensions
 {
@@ -33,15 +33,15 @@ namespace AdminWebsite.Extensions
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 c.IncludeXmlComments(xmlPath);
 
-                c.SwaggerDoc("v1", new Info {Title = "Book A Hearing Client", Version = "v1"});
+                c.SwaggerDoc("v1", new Info { Title = "Book A Hearing Client", Version = "v1" });
                 c.EnableAnnotations();
-                
+
                 // Quick fix to avoid conflicts between bookings contract and the local contract
                 // this should be deleted as we introduce local modals and not expose bookings api contracts
                 c.CustomSchemaIds(i => i.FullName);
-                
+
                 c.OperationFilter<AuthResponsesOperationFilter>();
-                
+
                 c.AddSecurityDefinition("Bearer", new ApiKeyScheme { In = "header", Description = "Please enter JWT with Bearer into field", Name = "Authorization", Type = "apiKey" });
                 c.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>> {
                     { "Bearer", Enumerable.Empty<string>() },
@@ -50,7 +50,7 @@ namespace AdminWebsite.Extensions
 
             return serviceCollection;
         }
-        
+
         public static IServiceCollection AddCustomTypes(this IServiceCollection serviceCollection)
         {
             serviceCollection.AddMemoryCache();
@@ -67,7 +67,7 @@ namespace AdminWebsite.Extensions
             // Build the hearings api client using a reusable HttpClient factory and predefined base url
             var container = serviceCollection.BuildServiceProvider();
             var settings = container.GetService<IOptions<ServiceSettings>>().Value;
-            
+
             serviceCollection.AddHttpClient<IBookingsApiClient, BookingsApiClient>()
                 .AddHttpMessageHandler(() => container.GetService<HearingApiTokenHandler>())
                 .AddTypedClient(httpClient => BuildHearingApiClient(httpClient, settings));
@@ -88,7 +88,7 @@ namespace AdminWebsite.Extensions
 
             return serviceCollection;
         }
-        
+
         private static IBookingsApiClient BuildHearingApiClient(HttpClient httpClient, ServiceSettings serviceSettings)
         {
             return new BookingsApiClient(httpClient) { BaseUrl = serviceSettings.BookingsApiUrl };

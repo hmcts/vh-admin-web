@@ -1,8 +1,8 @@
-﻿using System.Net.Http;
-using System.Net.Http.Headers;
-using AdminWebsite.Configuration;
+﻿using AdminWebsite.Configuration;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
 
 namespace AdminWebsite.Security
 {

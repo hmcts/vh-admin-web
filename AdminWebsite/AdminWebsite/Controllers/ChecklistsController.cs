@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Threading.Tasks;
-using AdminWebsite.Models;
+﻿using AdminWebsite.Models;
 using AdminWebsite.Security;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace AdminWebsite.Controllers
 {
@@ -26,7 +26,7 @@ namespace AdminWebsite.Controllers
         {
             _userIdentity = userIdentity;
         }
-        
+
         /// <summary>
         /// Gets list of all submitted participant checklists including participant and hearing details.
         /// Ordered by checklist submission date, most recent checklist first.
@@ -41,7 +41,7 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetAllParticipantsChecklists(int pageSize = 5, int page = 1)
         {
-            if (! _userIdentity.IsVhOfficerAdministratorRole())
+            if (!_userIdentity.IsVhOfficerAdministratorRole())
                 return Unauthorized();
 
             var response = new ChecklistsResponse

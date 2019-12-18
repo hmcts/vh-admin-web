@@ -1,4 +1,7 @@
-﻿using AdminWebsite.AcceptanceTests.Configuration;
+﻿using System.Collections.Generic;
+using AcceptanceTests.Common.Driver.Browser;
+using AcceptanceTests.Common.Driver.Helpers;
+using AcceptanceTests.Common.Test.Steps;
 using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.AcceptanceTests.Pages;
 using FluentAssertions;
@@ -7,50 +10,60 @@ using TechTalk.SpecFlow;
 namespace AdminWebsite.AcceptanceTests.Steps
 {
     [Binding]
-    public sealed class DashboardSteps
+    public class DashboardSteps : ISteps
     {
-        private readonly Dashboard _dashboard;
-        private readonly ScenarioContext _scenarioContext;
-
-        public DashboardSteps(Dashboard dashboard, ScenarioContext injectedContext)
+        private readonly TestContext _c;
+        private readonly Dictionary<string, UserBrowser> _browsers;
+        private readonly DashboardPage _dashboardPage;
+        private readonly CommonAdminWebPage _commonAdminWebPage;
+        public DashboardSteps(TestContext testContext, Dictionary<string, UserBrowser> browsers, DashboardPage dashboardPage, CommonAdminWebPage commonAdminWebPage)
         {
-            _dashboard = dashboard;
-            _scenarioContext = injectedContext;
+            _c = testContext;
+            _browsers = browsers;
+            _dashboardPage = dashboardPage;
+            _commonAdminWebPage = commonAdminWebPage;
         }
 
-        [Then(@"(.*) panel is displayed")]
-        public void ThenBookAVideoHearingPanelIsDisplayed(string panelText)
+        public void ProgressToNextPage()
         {
-            var panels = _dashboard.VhPanelTitle();
-            switch (_scenarioContext.Get<UserAccount>("User").Role)
+            if (_c.RouteAfterDashboard.Equals(Page.HearingDetails))
             {
-                case "VH Officer":
-                    panels.Count.Should().Be(2);
-                    panels.Should().Contain(panelText);
-                    break;
-                case "Case Admin":
-                    panels.Count.Should().Be(1);
-                    panels[0].Should().Be(panelText);
-                    break;
+                _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_dashboardPage.BookVideoHearingPanel).Click();
+            }
+            else if (_c.RouteAfterDashboard.Equals(Page.BookingsList))
+            {
+                _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_commonAdminWebPage.BookingsListLink).Click();
+            }
+            else
+            {
+                _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_dashboardPage.QuestionnaireResultsPanel).Click();
             }
         }
 
-        [Then(@"Error message is displayed as (.*)")]
-        public void ThenErrorMessageIsDisplayedAsYouAreNotAuthorisedToUseThisService(string errorMessage)
+        [Then(@"there are various dashboard options available")]
+        public void ThenThereAreVariousDashboardOptionsAvailable()
         {
-           _dashboard.UnauthorisedText().Should().Be(errorMessage);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_dashboardPage.BookVideoHearingPanel)
+                .Displayed.Should().BeTrue();
+            OnlyVhosCanSeeTheQuestionnaireResults();
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_commonAdminWebPage.DashboardLink)
+                .Displayed.Should().BeTrue();
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_commonAdminWebPage.BookingsListLink)
+                .Displayed.Should().BeTrue();
         }
 
-        [When(@"book a video hearing panel is selected")]
-        public void WhenBookAVideoHearingPanelIsSelected()
+        private void OnlyVhosCanSeeTheQuestionnaireResults()
         {
-            _dashboard.BookHearingPanel();
-        }
-
-        [Given(@"user is on dashboard page")]
-        public void DashboardPage()
-        {
-            _dashboard.PageUrl(PageUri.DashboardPage);
+            if (_c.CurrentUser.Role.ToLower().Equals("video hearings officer"))
+            {
+                _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_dashboardPage.QuestionnaireResultsPanel)
+                    .Displayed.Should().BeTrue();
+            }
+            else
+            {
+                _browsers[_c.CurrentUser.Key].Driver
+                    .WaitUntilElementNotVisible(_dashboardPage.QuestionnaireResultsPanel).Should().BeTrue();
+            }
         }
     }
 }

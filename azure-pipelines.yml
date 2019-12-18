@@ -14,7 +14,7 @@ variables:
   "AzureAd/Authority":"https://login.microsoftonline.com/$(TenantId)",
   "AzureAd/ClientId":"$(vh-admin-web-appid)",
   "AzureAd/ClientSecret":"$(vh-admin-web-key)",
-  "AzureAd:TenantId":"$(TenantId)",
+  "AzureAd/TenantId":"$(TenantId)",
   "VhServices/BookingsApiResourceId":"$(vh-bookings-api-identifieruris)",
   "VhServices/UserApiResourceId":"$(vh-user-api-identifieruris)"'
 
@@ -23,6 +23,7 @@ variables:
   secretsFilter: 'TenantId,vh-admin-web-appid,vh-admin-web-key,vh-bookings-api-identifieruris,vh-user-api-identifieruris' # filters out secrets returned from key vault
   infraKeyVaultName: 'vhcoreinfradev'
   infraSecretsFilter: 'vh-core-infra-AppInsightsKey'
+  dotnetVersion: 3.x
 
 # GitHub Repo that conatins build templates. Reference https://docs.microsoft.com/en-us/azure/devops/pipelines/process/templates?view=vsts#using-other-repositories
 resources:
@@ -56,3 +57,4 @@ jobs:
     infraKeyVaultName: $(infraKeyVaultName)
     infraSecretsFilter: $(infraSecretsFilter)
     nodeVersion: $(nodeVersion)
+    dotNetCoreVersion: $(dotnetVersion)

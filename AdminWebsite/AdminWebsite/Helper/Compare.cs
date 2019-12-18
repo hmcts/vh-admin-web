@@ -16,7 +16,7 @@ namespace AdminWebsite.Helper
             _condition = condition;
             _hashCode = hashCode;
         }
-        
+
         public bool Equals(TType x, TType y)
         {
             return _condition(x, y);
@@ -26,10 +26,10 @@ namespace AdminWebsite.Helper
         {
             return _hashCode(obj);
         }
-        
+
         public static Compare<TType> By(Func<TType, TType, bool> condition, Func<TType, int> hashCode)
         {
             return new Compare<TType>(condition, hashCode);
-        } 
+        }
     }
 }

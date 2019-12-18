@@ -2,15 +2,19 @@
 	As a Case Admin or VH-Officer
 	I need to be able to add hearing details
 	So that the correct information is available to all participants who are joining the hearing
-	
-@VIH-3582
-Scenario: Display no dropdown on hearing details page for one case type
-	Given Case Admin logs into the website 
-	And user is on the hearing details page
-	Then case type dropdown should not be populated
 
-@VIH-3582
-Scenario: Display dropdown on hearing details page for more than one case type
-	Given Financial Remedy, Case Admin logs in to the website 
-	And user is on the hearing details page
-	Then case type dropdown should be populated
+Scenario: Hearing Details
+	Given the Video Hearings Officer user has progressed to the Hearing Details page
+	When the user completes the hearing details form
+	Then the user is on the Hearing Schedule page
+
+Scenario: Edit Hearing Details
+	Given the Video Hearings Officer user has progressed to the Booking Details page
+	When the user edits the hearing details
+	Then the details are updated
+
+Scenario: Hearing details send questionnaires
+	Given the Video Hearings Officer user has progressed to the Hearing Details page
+	When the user elects to send the questionnaires
+	And progresses from the Hearing Schedule page to the Summary page
+	Then the questionnaires have been sent

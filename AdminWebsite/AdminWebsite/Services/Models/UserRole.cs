@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using AdminWebsite.Security;
+﻿using AdminWebsite.Security;
+using System.Collections.Generic;
 
 namespace AdminWebsite.Services.Models
 {

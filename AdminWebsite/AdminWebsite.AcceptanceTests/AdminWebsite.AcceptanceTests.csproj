@@ -1,79 +1,60 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
 
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-  </PropertyGroup>
-
-  
   <ItemGroup>
-    <PackageReference Include="DotNetSeleniumExtras.PageObjects" Version="3.11.0" />
-    <PackageReference Include="DotNetSeleniumExtras.WaitHelpers" Version="3.11.0" />
     <PackageReference Include="Faker.Net" Version="1.1.1" />
-    <PackageReference Include="FluentAssertions" Version="5.8.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.2.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.2.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="2.2.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
-    <PackageReference Include="NUnit" Version="3.12.0" />
-    <PackageReference Include="NUnit3TestAdapter" Version="3.14.0" />
-    <PackageReference Include="Polly" Version="7.1.0" />
-    <PackageReference Include="Protractor.Net.Standard" Version="0.12.0" />
-    <PackageReference Include="RestSharp" Version="106.6.10" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="3.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="3.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="3.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="3.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="3.1.0" />
+    <PackageReference Include="NBuilder" Version="6.1.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="nunit" Version="3.12.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.15.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.4.0" />
+    <PackageReference Include="Polly" Version="7.2.0" />
+    <PackageReference Include="Protractor" Version="0.13.0" />
+    <PackageReference Include="Selenium.Axe" Version="1.3.0" />
+    <PackageReference Include="Selenium.Firefox.WebDriver" Version="0.26.0" />
     <PackageReference Include="Selenium.Support" Version="3.141.0" />
     <PackageReference Include="Selenium.WebDriver" Version="3.141.0" />
-    <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="78.0.3904.7000" />
-    <PackageReference Include="Selenium.WebDriver.GeckoDriver" Version="0.24.0" />
-    <PackageReference Include="SpecFlow" Version="3.0.225" />
-    <PackageReference Include="SpecFlow.Tools.MsBuild.Generation" Version="3.0.225" />
+    <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="79.0.3945.3600" />
+    <PackageReference Include="Selenium.WebDriver.IEDriver" Version="3.150.1" />
+    <PackageReference Include="Selenium.WebDriver.MicrosoftDriver" Version="17.17134.0" />
+    <PackageReference Include="SpecFlow" Version="3.1.67" />
+    <PackageReference Include="SpecFlow.NUnit" Version="3.1.67" />
+    <PackageReference Include="SpecFlow.Tools.MsBuild.Generation" Version="3.1.67" />
+    <PackageReference Include="VH.AcceptanceTests.Common" Version="1.0.12" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\AdminWebsite.BookingsAPI.Client\AdminWebsite.BookingsAPI.Client.csproj" />
-    <ProjectReference Include="..\Testing.Common\Testing.Common.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="Hooks\Browser.cs" />
-    <Compile Update="Hooks\SaucelabsResult.cs" />
-    <Compile Update="Steps\AddParticipantsSteps.cs" />
-    <Compile Update="Steps\AssignJudgeSteps.cs" />
-    <Compile Update="Steps\BookingConfirmationStep.cs" />
-    <Compile Update="Steps\BookingDetailsSteps.cs" />
-    <Compile Update="Steps\CommonSteps.cs" />
-    <Compile Update="Steps\DashboardSteps.cs" />
-    <Compile Update="Steps\HearingDetailsSteps.cs" />
-    <Compile Update="Steps\HearingScheduleSteps.cs" />
-    <Compile Update="Steps\LoginSteps.cs" />
-    <Compile Update="Steps\OtherInformationSteps.cs" />
-    <Compile Update="Steps\SignOutSteps.cs" />
-    <Compile Update="Steps\SummarySteps.cs" />
+    <ProjectReference Include="..\AdminWebsite.UserAPI.Client\AdminWebsite.UserAPI.Client.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <None Update="appsettings.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="parameters.runsettings">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <None Update="Data\TestData\CommonData.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\TestData\DefaultData.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="useraccounts.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 
-  
-  <Target Name="AfterUpdateFeatureFilesInProject">
-    <!-- include any generated SpecFlow files in the compilation of the project if not included yet -->
-    <ItemGroup>
-        <Compile Include="**\*.feature.cs" Exclude="@(Compile)" />
-    </ItemGroup>
-</Target>
+  <ProjectExtensions><VisualStudio><UserProperties useraccounts_1json__JsonSchema="9" /></VisualStudio></ProjectExtensions>
 
 </Project>

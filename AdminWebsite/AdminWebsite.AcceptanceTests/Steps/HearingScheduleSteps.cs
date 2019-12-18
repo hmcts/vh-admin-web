@@ -1,107 +1,99 @@
-﻿using AdminWebsite.AcceptanceTests.Helpers;
+﻿using System;
+using System.Collections.Generic;
+using AcceptanceTests.Common.Driver.Browser;
+using AcceptanceTests.Common.Driver.Helpers;
+using AcceptanceTests.Common.Test.Steps;
+using AdminWebsite.AcceptanceTests.Data;
+using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.AcceptanceTests.Pages;
 using FluentAssertions;
-using System;
-using System.Linq;
-using AdminWebsite.AcceptanceTests.Contexts;
-using AdminWebsite.AcceptanceTests.Data;
 using TechTalk.SpecFlow;
 
 namespace AdminWebsite.AcceptanceTests.Steps
 {
     [Binding]
-    public sealed class HearingScheduleSteps
+    public class HearingScheduleSteps : ISteps
     {
-        private readonly TestContext _context;
-        private readonly HearingSchedule _hearingSchedule;
+        private readonly TestContext _c;
+        private readonly Dictionary<string, UserBrowser> _browsers;
+        private readonly HearingSchedulePage _hearingSchedulePage;
+        private readonly CommonSharedSteps _commonSharedSteps;
 
-        public HearingScheduleSteps(TestContext context, HearingSchedule hearingSchedule)
+        public HearingScheduleSteps(TestContext testContext, Dictionary<string, UserBrowser> browsers, HearingSchedulePage hearingSchedulePage, CommonSharedSteps commonSharedSteps)
         {
-            _context = context;
-            _hearingSchedule = hearingSchedule;
+            _c = testContext;
+            _browsers = browsers;
+            _hearingSchedulePage = hearingSchedulePage;
+            _commonSharedSteps = commonSharedSteps;
         }
 
-        [When(@"user enters video hearing schedule details")]
-        [When(@"hearing schedule form is filled")]
-        public void WhenHearingScheduleFormIsFilled()
+        [When(@"the user completes the hearing schedule form")]
+        public void ProgressToNextPage()
         {
-            HearingSchedulePage();
-            var date = DateTime.UtcNow.AddDays(2);
-            _hearingSchedule.AddItems("HearingDate", date.ToString("dddd dd MMMM yyyy, h:mmtt").ToLower());
-            _hearingSchedule.HearingDate(_context.TargetBrowser, _context.RunWithSaucelabs, date.ToString(DateFormats.GetHearingScheduledDate(_context.TargetBrowser, _context.RunWithSaucelabs)));
-            _hearingSchedule.HearingStartTime(date.ToString("HH:mm").Split(':'));
-            InputHearingDuration(_context.TestData.HearingScheduleData.Duration);
-            _hearingSchedule.HearingVenue(HearingScheduleData.CourtAddress.Last());
-            EnterRoom(_context.TestData.HearingScheduleData.Room);
+            SetHearingScheduleDetails();
+            AddHearingDate();
+            AddHearingTime();
+            AddHearingScheduleDetails();
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_hearingSchedulePage.NextButton).Click();
         }
 
-        [When(@"Admin user is on the hearing schedule page")]
-        [Then(@"user should remain on the hearing schedule page")]
-        public void HearingSchedulePage()
+        public void AddHearingDate()
         {
-            _hearingSchedule.PageUrl(PageUri.HearingSchedulePage);
+            var date = _c.Test.HearingSchedule.ScheduledDate.Date.ToString(DateFormats.FormatDateToLocalDateFormat(_c.AdminWebConfig.TestConfig.TargetBrowser,
+                 _c.AdminWebConfig.SauceLabsConfiguration.RunningOnSauceLabs()));
+            _browsers[_c.CurrentUser.Key].Clear(_hearingSchedulePage.HearingDateTextfield);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_hearingSchedulePage.HearingDateTextfield).SendKeys(date);
         }
 
-        [When(@"Input date of hearing")]
-        public void InputDateOfHearing()
+        private void AddHearingTime()
         {
-            _hearingSchedule.HearingDate(_context.TargetBrowser, _context.RunWithSaucelabs);
+            _browsers[_c.CurrentUser.Key].Clear(_hearingSchedulePage.HearingStartTimeHourTextfield);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_hearingSchedulePage.HearingStartTimeHourTextfield).SendKeys(_c.Test.HearingSchedule.ScheduledDate.Hour.ToString());
+            _browsers[_c.CurrentUser.Key].Clear(_hearingSchedulePage.HearingStartTimeMinuteTextfield);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_hearingSchedulePage.HearingStartTimeMinuteTextfield).SendKeys(_c.Test.HearingSchedule.ScheduledDate.Minute.ToString());
         }
 
-        [When(@"Input hearing start time")]
-        public void InputHearingStartTime()
+        private void AddHearingScheduleDetails()
         {
-            _hearingSchedule.HearingStartTime();
+            _browsers[_c.CurrentUser.Key].Clear(_hearingSchedulePage.HearingDurationHourTextfield);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_hearingSchedulePage.HearingDurationHourTextfield).SendKeys(_c.Test.HearingSchedule.DurationHours.ToString());
+            _browsers[_c.CurrentUser.Key].Clear(_hearingSchedulePage.HearingDurationMinuteTextfield);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_hearingSchedulePage.HearingDurationMinuteTextfield).SendKeys(_c.Test.HearingSchedule.DurationMinutes.ToString());
+            _commonSharedSteps.WhenTheUserSelectsTheOptionFromTheDropdown(_browsers[_c.CurrentUser.Key].Driver, _hearingSchedulePage.CourtAddressDropdown, _c.Test.HearingSchedule.HearingVenue);
+            _browsers[_c.CurrentUser.Key].Clear(_hearingSchedulePage.CourtRoomTextfield);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_hearingSchedulePage.CourtRoomTextfield).SendKeys(_c.Test.HearingSchedule.Room);
         }
 
-        [When(@"Input hearing duration")]
-        public void InputHearingDuration(string duration = "00:30")
+        public void SetHearingScheduleDetails()
         {
-            _hearingSchedule.HearingDuration(duration);
+            _c.Test.HearingSchedule.ScheduledDate = _c.Test.HearingSchedule.ScheduledDate == default ? DateTime.Today.AddDays(1).AddMinutes(-1) : DateTime.Today.AddDays(1).AddMinutes(-10);
+            _c.Test.HearingSchedule.DurationHours = _c.Test.HearingSchedule.DurationHours == 0 ? 0 : _c.AdminWebConfig.TestConfig.TestData.HearingSchedule.DurationHours;
+            _c.Test.HearingSchedule.DurationMinutes = _c.Test.HearingSchedule.DurationMinutes == 0 ? 25 : _c.AdminWebConfig.TestConfig.TestData.HearingSchedule.DurationMinutes;
+            _c.Test.HearingSchedule.HearingVenue = _c.Test.HearingSchedule.HearingVenue != null ? "Manchester Civil and Family Justice Centre" : _c.AdminWebConfig.TestConfig.TestData.HearingSchedule.HearingVenue;
+            _c.Test.HearingSchedule.Room = _c.Test.HearingSchedule.Room != null ? "2" : _c.AdminWebConfig.TestConfig.TestData.HearingSchedule.Room;
         }
 
-        [When(@"Select hearing venue")]
-        public void SelectHearingVenue()
+        [When(@"the user attempts to set a date in the past")]
+        public void WhenTheUserAttemptsToSetADateInThePast()
         {
-            _hearingSchedule.HearingVenue();
+            SetHearingScheduleDetails();
+            _c.Test.HearingSchedule.ScheduledDate = DateTime.MinValue;
+            AddHearingDate();
+            AddHearingTime();
+            AddHearingScheduleDetails();
         }
 
-        [When(@"Enter room text as (.*)")]
-        public void EnterRoom(string room)
+        [Then(@"an error message appears to enter a future date")]
+        public void ThenAnErrorMessageAppearsToEnterAFutureDate()
         {
-            _hearingSchedule.HearingRoom(room);
-        }
-        
-        [When(@"user inputs a date in the past from the calendar")]
-        public void WhenUserSelectsADateInThePastFromTheCalendar()
-        {
-            var date = DateTime.Now.AddDays(-1).ToString(DateFormats.GetHearingScheduledDate(_context.TargetBrowser, _context.RunWithSaucelabs));
-            _hearingSchedule.HearingDate(_context.TargetBrowser, _context.RunWithSaucelabs, date);
-            InputHearingStartTime();
-            InputHearingDuration();
-            SelectHearingVenue();
-            EnterRoom(_context.TestData.HearingScheduleData.Room);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_hearingSchedulePage.HearingDateError).Displayed.Should().BeTrue();
         }
 
-        [Then(@"an error message should be displayed as (.*)")]
-        public void ThenAnErrorMessageShouldBeDisplayedAsPleaseEnterADateInTheFuture(string errormessage)
+        [Then(@"the user cannot proceed to the next page")]
+        public void ThenTheUserCannotProceedToTheNextPage()
         {
-            _hearingSchedule.ErrorDate().Should().Be(errormessage);
-        }
-
-        [Given(@"user adds hearing schedule")]
-        [When(@"hearing schedule is updated")]
-        public void WhenHearingScheduleIsUpdated()
-        {
-            HearingSchedulePage();
-            var date = DateTime.UtcNow.AddDays(2);
-            var splitDate = date.ToString(DateFormats.GetHearingScheduledDate(_context.TargetBrowser, _context.RunWithSaucelabs));
-            _hearingSchedule.AddItems("HearingDate", date.ToString("dddd dd MMMM yyyy, h:mmtt").ToLower());
-            _hearingSchedule.HearingDate(_context.TargetBrowser, _context.RunWithSaucelabs, splitDate);
-            _hearingSchedule.HearingStartTime(date.ToString("HH:mm").Split(':'));
-            InputHearingDuration(_context.TestData.HearingScheduleData.Duration);
-            _hearingSchedule.HearingVenue(HearingScheduleData.CourtAddress.Last());
-            EnterRoom(_context.TestData.HearingScheduleData.Room);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_hearingSchedulePage.NextButton).Click();
+            _browsers[_c.CurrentUser.Key].PageUrl(Page.AssignJudge.Url, true);
         }
     }
 }

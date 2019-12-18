@@ -1,55 +1,14 @@
 ﻿Feature: Add Participants
-		As a Case Admin
-		I need to be able to add generic details for a participant
-		So that these participant details are assigned to the hearing booking when it is created
+	As a Case Admin or VH-Officer
+	I need to be able to assign a courtroom account to a hearing
+	So that a judge is assigned the hearing
 
-@VIH-3883
-Scenario Outline: Civil Money Claims users add new participants to booking
-	Given Civil Money Claims, <User> logs in to the website
-	And <User> is on add the participants page
-	When the admin adds parties with new users
-	Then Participant details are displayed in the list
-	Examples:
-	| User		 |
-	| VH Officer |
-	| Case Admin |
+Scenario: Add Participants
+	Given the Video Hearings Officer user has progressed to the Add Participants page
+	When the user completes the add participants form
+	Then the user is on the Other Information page
 
-@VIH-3883
-Scenario Outline: Civil Money Claims users add existing participants to booking
-	Given Civil Money Claims, <User> logs in to the website
-	And <User> is on add the participants page
-	When the admin adds parties with existing users
-	Then Participant details are displayed in the list
-	Examples:
-	| User		 |
-	| VH Officer |
-	| Case Admin |
-
-@VIH-3883
-Scenario Outline: Financial Remedy users add new participants to booking
-	Given Financial Remedy, <User> logs in to the website
-	And <User> is on add the participants page
-	When the admin adds parties with new users
-	Then Participant details are displayed in the list
-	Examples:
-	| User		 |
-	| VH Officer |
-	| Case Admin |
-
-@VIH-3883
-Scenario Outline: Financial Remedy users add existing participants to booking
-	Given Financial Remedy, <User> logs in to the website
-	And <User> is on add the participants page
-	When the admin adds parties with existing users
-	Then Participant details are displayed in the list
-	Examples:
-	| User		 |
-	| VH Officer |
-	| Case Admin |
-
-@VIH-3883
-Scenario: Case Admin clears participant details on the add participant page
-	Given Case Admin is on the add participants page
-    And the admin added participants using any user details
-	When the user follows the clear details call to action
-	Then add participant form values should be cleared
+Scenario: Edit New Participant
+	Given the Video Hearings Officer user has progressed to the Booking Details page
+	When the user edits a new participant
+	Then the details are updated

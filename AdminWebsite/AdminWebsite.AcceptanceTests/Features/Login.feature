@@ -1,17 +1,28 @@
 ﻿Feature: Login
-	As a Case Admin/VH Officer
-	I would like to login to VH-Admin Web
-	So that I can book a hearing/view Questionnaire results
+	As a registered video hearings user
+	I would like to login and Logout
+	So that I can access and sign out of the application
 
-Scenario: Case admin logs in to Vh-admin web
-	When Case Admin logs in with valid credentials
-	Then Book a video hearing panel is displayed
+Scenario: Case Admin login
+	Given a new browser is open for a Case Admin
+	When the user logs in with valid credentials
+	Then the user is on the Dashboard page
+	When the user attempts to logout
+	Then the user should be navigated to sign in screen
 
-Scenario: VH Officer logs in to Vh-admin web
-	When VH Officer logs in with valid credentials 
-	Then Book a video hearing panel is displayed 
-	And Questionnaire results panel is displayed
+Scenario: Video Hearings Officer login
+	Given a new browser is open for a Video Hearings Officer
+	When the user logs in with valid credentials
+	Then the user is on the Dashboard page
+	When the user attempts to logout
+	Then the user should be navigated to sign in screen
 
-Scenario: Non-Admin user logs in to Vh-admin web
-	When Non-Admin logs in with valid credentials
-	Then Error message is displayed as You are not authorised to use this service 
+Scenario: Clerk login denied
+	Given a new browser is open for a Clerk
+	When the user logs in with valid credentials
+	Then the user is on the Unauthorised page
+
+Scenario: Participant login denied
+	Given a new browser is open for a Participant
+	When the user logs in with valid credentials
+	Then the user is on the Unauthorised page

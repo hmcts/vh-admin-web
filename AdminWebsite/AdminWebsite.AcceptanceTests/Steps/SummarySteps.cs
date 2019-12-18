@@ -1,137 +1,189 @@
-﻿using AdminWebsite.AcceptanceTests.Helpers;
-using AdminWebsite.AcceptanceTests.Pages;
-using FluentAssertions;
-using System;
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Linq;
-using AdminWebsite.AcceptanceTests.Contexts;
+using System.Threading;
+using AcceptanceTests.Common.Api.Clients;
+using AcceptanceTests.Common.Api.Requests;
+using AcceptanceTests.Common.Api.Uris;
+using AcceptanceTests.Common.Api.Users;
+using AcceptanceTests.Common.Configuration.Users;
+using AcceptanceTests.Common.Driver.Browser;
+using AcceptanceTests.Common.Driver.Helpers;
+using AcceptanceTests.Common.Test.Steps;
 using AdminWebsite.AcceptanceTests.Data;
+using AdminWebsite.AcceptanceTests.Helpers;
+using AdminWebsite.AcceptanceTests.Pages;
+using AdminWebsite.BookingsAPI.Client;
+using FluentAssertions;
+using RestSharp;
 using TechTalk.SpecFlow;
-using OtherInformation = AdminWebsite.AcceptanceTests.Data.OtherInformation;
 
 namespace AdminWebsite.AcceptanceTests.Steps
 {
     [Binding]
-    public sealed class SummarySteps
+    public class SummarySteps : ISteps
     {
-        private readonly TestContext _context;
-        private readonly Summary _summary;
+        private const int Timeout = 60;
+        private readonly TestContext _c;
+        private readonly Dictionary<string, UserBrowser> _browsers;
+        private readonly SummaryPage _summaryPage;
+        private readonly BookingDetailsSteps _bookingDetailsSteps;
+        private readonly HearingDetailsSteps _hearingDetailsSteps;
+        private readonly HearingScheduleSteps _hearingScheduleSteps;
+        private readonly AddParticipantSteps _addParticipantSteps;
+        private readonly OtherInformationSteps _otherInformationSteps;
 
-        public SummarySteps(TestContext context, Summary summary)
+        public SummarySteps(TestContext testContext, Dictionary<string, UserBrowser> browsers, SummaryPage summaryPage, BookingDetailsSteps bookingDetailsSteps, HearingDetailsSteps hearingDetailsSteps, OtherInformationSteps otherInformationSteps, HearingScheduleSteps hearingScheduleSteps, AddParticipantSteps addParticipantSteps)
         {
-            _context = context;
-            _summary = summary;
+            _c = testContext;
+            _browsers = browsers;
+            _summaryPage = summaryPage;
+            _bookingDetailsSteps = bookingDetailsSteps;
+            _hearingDetailsSteps = hearingDetailsSteps;
+            _hearingScheduleSteps = hearingScheduleSteps;
+            _addParticipantSteps = addParticipantSteps;
+            _otherInformationSteps = otherInformationSteps;
         }
 
-        [Then(@"hearing summary is displayed on the summary page")]
-        public void ThenHearingSummaryIsDisplayedOnSummaryPage()
+        [When(@"the user views the information on the summary form")]
+        public void ProgressToNextPage()
         {
-            SummaryPage();
+            VerifyHearingDetails();
+            VerifyHearingSchedule();
+            VerifyOtherInformation();
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_summaryPage.BookButton).Click();
+            VerifyBookingCreated();
+            VerifyNewUsersCreatedInAad();
         }
 
-        [When(@"Admin user is on the summary page")]
-        [Then(@"user should be on the summary page")]
-        public void SummaryPage()
+        [When(@"the user edits the (.*)")]
+        public void WhenTheUserEditsTheHearing(string screen)
         {
-            _summary.PageUrl(PageUri.SummaryPage);
-        }
+            _bookingDetailsSteps.ClickEdit();
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_summaryPage.EditScreenLink(screen)).Click();
 
-        [Then(@"values should be displayed as expected on the summary page")]
-        public void ThenInputtedValuesShouldBeDisplayedAsExpectedOnSummaryPage()
-        {
-            SummaryPage();            
-            switch (_summary.GetItems("RelevantPage"))
+            if (screen.Equals("hearing details"))
             {
-                case PageUri.HearingDetailsPage :
-                    _summary.CaseName().Should().Be(_context.TestData.HearingData.CaseName);
-                    _summary.CaseNumber().Should().Be(_context.TestData.HearingData.CaseNumber);
-                    _summary.CaseHearingType().Should().Be(_context.TestData.HearingData.CaseHearingType);
-                    break;
-                case PageUri.HearingSchedulePage:
-                    _summary.HearingDate().ToLower().Should().Be(_summary.GetItems("HearingDate"));
-                    _summary.CourtAddress().Should().Be($"{HearingScheduleData.CourtAddress.Last()}, {_context.TestData.HearingScheduleData.Room}");
-                    _summary.HearingDuration().Should().Be("listed for 30 minutes");
-                    break;
-                case PageUri.OtherInformationPage:
-                    _summary.OtherInformation().Should().Be(OtherInformation.OtherInformationText);
-                    break;
-                case PageUri.AssignJudgePage:
-                    _summary.Judge().Should().Contain(_summary.GetItems("Clerk"));
-                    break;
-                case PageUri.AddParticipantsPage:
-                    _summary.ParticipantsAreDisplayedInTheList(_context.TestData);
-                    break;
+                _hearingDetailsSteps.EditHearingDetails();
+            }
+            else if (screen.Equals("hearing schedule"))
+            {
+                _hearingScheduleSteps.ProgressToNextPage();
+            }
+            else if (screen.Equals("other information"))
+            {
+                _otherInformationSteps.ProgressToNextPage();
             }
         }
 
-        [When(@"user navigates to (.*) page to make changes")]
-        public void UserNavigatesToRelevantPage(string relevantPage)
+        [When(@"the user edits a new participant")]
+        public void WhenTheUserEditsANewParticipant()
         {
-            string pageUri = null;
-            switch (relevantPage)
+            _bookingDetailsSteps.ClickEdit();
+            var newUserToEdit = UserManager.GetUserFromDisplayName(_c.Test.HearingParticipants, _c.Test.AddParticipant.Participant.NewUserPrefix);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_summaryPage.EditParticipantLink(newUserToEdit.Firstname)).Click();
+            _addParticipantSteps.EditANewParticipant(newUserToEdit.AlternativeEmail);
+        }
+
+        [Then(@"the details are updated")]
+        public void ThenTheHearingIsUpdated()
+        {
+            VerifyHearingDetails();
+            VerifyHearingSchedule();
+            VerifyOtherInformation();
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_summaryPage.BookButton).Click();
+            VerifyBookingUpdated();
+        }
+
+
+        [Then(@"the questionnaires have been sent")]
+        public void ThenTheQuestionnairesHaveBeenSent()
+        {
+            ProgressToNextPage();
+        }
+
+        private void VerifyHearingDetails()
+        {
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_summaryPage.CaseNumber).Text.Should().Be(_c.Test.HearingDetails.CaseNumber);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_summaryPage.CaseName).Text.Should().Be(_c.Test.HearingDetails.CaseName);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_summaryPage.CaseHearingType).Text.Should().Be(_c.Test.HearingDetails.HearingType.Name);
+        }
+
+        private void VerifyHearingSchedule()
+        {
+            var scheduleDate = _c.Test.HearingSchedule.ScheduledDate.ToString(DateFormats.HearingSummaryDate);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_summaryPage.HearingDate).Text.ToLower().Should().Be(scheduleDate.ToLower());
+            var courtAddress = $"{_c.Test.HearingSchedule.HearingVenue}, {_c.Test.HearingSchedule.Room}";
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_summaryPage.CourtAddress).Text.Should().Be(courtAddress);
+            var listedFor = $"listed for {_c.Test.HearingSchedule.DurationMinutes} minutes";
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_summaryPage.HearingDuration).Text.Should().Be(listedFor);
+        }
+
+        private void VerifyOtherInformation()
+        {
+            var otherInformation = _c.Test.OtherInformation;
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_summaryPage.OtherInformation).Text.Should().Be(otherInformation);
+        }
+
+        private void VerifyBookingCreated()
+        {
+            var endpoint = new HearingsEndpoints().GetHearingsByUsername(UserManager.GetClerkUser(_c.AdminWebConfig.UserAccounts).Username);
+            var request = new RequestBuilder().Get(endpoint);
+            var client = new ApiClient(_c.AdminWebConfig.VhServices.BookingsApiUrl, _c.Tokens.BookingsApiBearerToken).GetClient();
+            var hearing = PollForHearing(request, client);
+            var assertHearing = new AssertHearing()
+                .WithHearing(hearing)
+                .WithTestData(_c.Test)
+                .CreatedBy(_c.CurrentUser.Username);
+            assertHearing.AssertHearingDataMatches();
+            assertHearing.AssertParticipantDataMatches(_c.Test.HearingParticipants);
+            assertHearing.AssertHearingStatus(HearingDetailsResponseStatus.Booked);
+        }
+
+        private void VerifyBookingUpdated()
+        {
+            var endpoint = new HearingsEndpoints().GetHearingsByUsername(UserManager.GetClerkUser(_c.AdminWebConfig.UserAccounts).Username);
+            var request = new RequestBuilder().Get(endpoint);
+            var client = new ApiClient(_c.AdminWebConfig.VhServices.BookingsApiUrl, _c.Tokens.BookingsApiBearerToken).GetClient();
+            var hearing = PollForHearing(request, client);
+            var assertHearing = new AssertHearing()
+                .WithHearing(hearing)
+                .WithTestData(_c.Test)
+                .CreatedBy(_c.CurrentUser.Username);
+            assertHearing.AssertHearingDataMatches();
+            assertHearing.AssertParticipantDataMatches(_c.Test.HearingParticipants);
+            assertHearing.AssertUpdatedStatus(_c.CurrentUser.Username, DateTime.Now);
+        }
+
+        private HearingDetailsResponse PollForHearing(IRestRequest request, RestClient client)
+        {
+            for (var i = 0; i < Timeout; i++)
             {
-                case "hearing details": pageUri = PageUri.HearingDetailsPage;
-                    _summary.EditHearingDetails();
-                    break;
-                case "hearing schedule": pageUri = PageUri.HearingSchedulePage;
-                    _summary.EditScheduleDetails();
-                    break;
-                case "more information": pageUri = PageUri.OtherInformationPage;
-                    _summary.EditMoreInformation();
-                    break;
-                case "add judge": pageUri = PageUri.AssignJudgePage;
-                    _summary.EditRoundedBorder("Change");
-                    break;
-                case "add participants": pageUri = PageUri.AddParticipantsPage;
-                    _summary.EditRoundedBorder("Edit");
-                    break;
+                var response = new RequestExecutor(request).SendToApi(client);
+                var hearings = RequestHelper.DeserialiseSnakeCaseJsonToResponse<List<HearingDetailsResponse>>(response.Content);
+                if (hearings != null)
+                {
+                    foreach (var hearing in hearings.Where(hearing =>
+                        hearing.Cases.First().Name.Equals(_c.Test.HearingDetails.CaseName)))
+                    {
+                        return hearing;
+                    }
+                }
+
+                Thread.Sleep(TimeSpan.FromSeconds(1));
             }
-            _summary.AddItems("RelevantPage", pageUri);
+
+            throw new DataException("Created hearing could not be found in the bookings api");
         }
 
-        [When(@"user removes participant on the summary page")]
-        public void GivenUserRemovesParticipantOnSummaryPage()
+        private void VerifyNewUsersCreatedInAad()
         {
-            _summary.EditRoundedBorder("Remove");
-        }
-
-        [Then(@"participant should be removed from the list")]
-        public void ThenParticipantShouldBeRemovedFromTheList()
-        {
-            _summary.ParticipantConfirmationMessage().Should().Contain("Are you sure you want to remove");
-            _summary.RemoveParticipant();
-            _summary.GetAllParticipantsDetails().Count.Should().Be(_context.TestData.ParticipantData.Count - 1);            
-        }
-
-        [Then(@"inputted values should not be saved")]
-        public void ThenInputtedValuesShouldNotBeSaved()
-        {
-            SummaryPage();
-            switch (_summary.GetItems("RelevantPage"))
+            var userApiManager = new UserApiManager(_c.AdminWebConfig.VhServices.UserApiUrl, _c.Tokens.UserApiBearerToken);
+            foreach (var participant in _c.Test.HearingParticipants.Where(participant => participant.DisplayName.Contains(_c.AdminWebConfig.TestConfig.TestData.AddParticipant.Participant.NewUserPrefix)))
             {
-                case PageUri.HearingDetailsPage:
-                    _summary.CaseName().Should().NotBe(_context.TestData.HearingData.CaseName);
-                    _summary.CaseNumber().Should().NotBe(_context.TestData.HearingData.CaseNumber);
-                    break;
+                userApiManager.CheckIfParticipantExistsInAad(participant.AlternativeEmail, Timeout);
             }
-        }
-
-        [When(@"user cancels the process of removing participant")]
-        public void WhenUserCancelsTheProcessOfRemovingParticipant()
-        {
-            _summary.ParticipantConfirmationMessage().Should().Contain("Are you sure you want to remove");
-            _summary.CancelRemoveParticipant();
-        }
-
-        [Then(@"participant should still be in the list")]
-        public void ThenParticipantShouldStillBeInTheList()
-        {
-            _summary.GetParticipantDetails().Should().NotBeNullOrEmpty();
-        }
-
-        [When(@"user submits the booking")]
-        public void WhenUserSubmitsTheBooking()
-        {
-            _summary.Book();
         }
     }
 }

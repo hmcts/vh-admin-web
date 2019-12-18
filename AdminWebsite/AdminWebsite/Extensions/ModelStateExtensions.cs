@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using AdminWebsite.Validators;
+﻿using AdminWebsite.Validators;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System.Collections.Generic;
 using ValidationFailure = FluentValidation.Results.ValidationFailure;
 
 namespace AdminWebsite.Extensions

@@ -1,10 +1,10 @@
-using System.Net;
 using AdminWebsite.Configuration;
 using AdminWebsite.Contracts.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Annotations;
+using System.Net;
 
 namespace AdminWebsite.Controllers
 {
@@ -26,7 +26,7 @@ namespace AdminWebsite.Controllers
         /// <returns></returns>
         [HttpGet]
         [AllowAnonymous]
-        [ProducesResponseType(typeof(ClientSettingsResponse), (int) HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ClientSettingsResponse), (int)HttpStatusCode.OK)]
         [SwaggerOperation(OperationId = "GetConfigSettings")]
         public ActionResult<ClientSettingsResponse> Get()
         {

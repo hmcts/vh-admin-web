@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
 using System.Net;
-using System.Threading.Tasks;
 using System.Text.Encodings.Web;
+using System.Threading.Tasks;
 
 namespace AdminWebsite.Controllers
 {
@@ -27,7 +27,7 @@ namespace AdminWebsite.Controllers
             _bookingsApiClient = bookingsApiClient;
             _encoder = encoder;
         }
-            
+
         /// <summary>
         /// Find person list by email search term.
         /// </summary>
