@@ -14,7 +14,7 @@ variables:
   "AzureAd/Authority":"https://login.microsoftonline.com/$(TenantId)",
   "AzureAd/ClientId":"$(vh-admin-web-appid)",
   "AzureAd/ClientSecret":"$(vh-admin-web-key)",
-  "AzureAd:TenantId":"$(TenantId)",
+  "AzureAd/TenantId":"$(TenantId)",
   "VhServices/BookingsApiResourceId":"$(vh-bookings-api-identifieruris)",
   "VhServices/UserApiResourceId":"$(vh-user-api-identifieruris)"'
 
