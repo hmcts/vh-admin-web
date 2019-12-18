@@ -42,7 +42,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         private void RegisterAzureSecrets(TestContext context)
         {
             context.AdminWebConfig.AzureAdConfiguration = Options.Create(_configRoot.GetSection("AzureAd").Get<AdminWebSecurityConfiguration>()).Value;
-            ConfigurationManager.VerifyConfigValuesSet(context.AdminWebConfig.AzureAdConfiguration).Should().BeTrue();
+            ConfigurationManager.VerifyConfigValuesSet(context.AdminWebConfig.AzureAdConfiguration);
         }
 
         private void RegisterTestUserSecrets(TestContext context)
@@ -50,7 +50,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             context.AdminWebConfig.TestConfig = Options.Create(_configRoot.GetSection("TestUserSecrets").Get<AdminWebTestConfig>()).Value;
             context.AdminWebConfig.TestConfig.CommonData = new LoadXmlFile().SerialiseCommonData();
             context.AdminWebConfig.TestConfig.TestData = new DefaultDataManager().SerialiseTestData();
-            ConfigurationManager.VerifyConfigValuesSet(context.AdminWebConfig.TestConfig).Should().BeTrue();
+            ConfigurationManager.VerifyConfigValuesSet(context.AdminWebConfig.TestConfig);
         }
 
         private void RegisterTestUsers(TestContext context)
@@ -73,7 +73,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         private void RegisterHearingServices(TestContext context)
         {
             context.AdminWebConfig.VhServices = Options.Create(_configRoot.GetSection("VhServices").Get<AdminWebVhServiceConfig>()).Value;
-            ConfigurationManager.VerifyConfigValuesSet(context.AdminWebConfig.VhServices).Should().BeTrue();
+            ConfigurationManager.VerifyConfigValuesSet(context.AdminWebConfig.VhServices);
         }
 
         private void RegisterSauceLabsSettings(TestContext context)
