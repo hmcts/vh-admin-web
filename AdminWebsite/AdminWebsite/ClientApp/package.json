@@ -41,7 +41,7 @@
     "snyk": "^1.258.2"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "~0.801.1",
+    "@angular-devkit/build-angular": "~0.803.21",
     "@angular/cli": "^8.1.1",
     "@angular/compiler-cli": "^8.1.1",
     "@angular/language-service": "^8.1.1",
