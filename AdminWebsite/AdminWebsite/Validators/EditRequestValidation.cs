@@ -11,7 +11,7 @@ namespace AdminWebsite.Validators
                 .NotEmpty()
                 .MaximumLength(255)
                 .WithMessage("Case number is required between 1 - 255 characters");
-            
+
             RuleFor(x => x.Name)
                 .NotEmpty()
                 .MaximumLength(255)

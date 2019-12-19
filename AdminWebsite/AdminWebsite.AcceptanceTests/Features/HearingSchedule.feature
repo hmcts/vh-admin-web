@@ -1,19 +1,20 @@
 ﻿Feature: Hearing Schedule
-	As a person who books a video hearing (e.g. Case Admin or VH Officer)
-	I want to be presented with an appropriate form for schedule & location details
-	So that I am able to enter time, date and location of the video hearing I am requesting
+	As a Case Admin or VH-Officer
+	I need to be able to add hearing schedule details
+	So that the correct information is available to all participants who are joining the hearing
 
-@VIH-2619
-Scenario: Case Admin enters time date and location of the video hearing
-	Given Case Admin is on the hearing schedule page
-	When user enters video hearing schedule details 
-	And user proceeds to the next page 
-	Then user should be on the assign judge page
+Scenario: Hearing Schedule
+	Given the Video Hearings Officer user has progressed to the Hearing Schedule page
+	When the user completes the hearing schedule form
+	Then the user is on the Assign Judge page
 
-@VIH-2619 @Bug-VIH-4126
-Scenario: User to proceed until a valid date is entered
-	Given Case Admin is on the hearing schedule page
-	When user inputs a date in the past from the calendar 
-	And user proceeds to the next page
-	Then an error message should be displayed as Please enter a date in the future
-	And user should remain on the hearing schedule page 
+Scenario: Edit Hearing Schedule
+	Given the Video Hearings Officer user has progressed to the Booking Details page
+	When the user edits the hearing schedule
+	Then the details are updated
+
+Scenario: Hearing schedule date must be in the future
+	Given the Video Hearings Officer user has progressed to the Hearing Schedule page
+	When the user attempts to set a date in the past
+	Then an error message appears to enter a future date
+	And the user cannot proceed to the next page

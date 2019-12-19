@@ -1,10 +1,10 @@
-﻿using System;
+﻿using AdminWebsite.BookingsAPI.Client;
+using AdminWebsite.Services;
+using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
-using AdminWebsite.BookingsAPI.Client;
-using AdminWebsite.Services;
-using Microsoft.AspNetCore.Http;
 
 namespace AdminWebsite.Middleware
 {
@@ -28,7 +28,7 @@ namespace AdminWebsite.Middleware
             }
             catch (BookingsApiException apiException)
             {
-                var properties = new Dictionary<string, string> {{"response", apiException.Response}};
+                var properties = new Dictionary<string, string> { { "response", apiException.Response } };
                 ApplicationLogger.TraceException(TraceCategory.Dependency.ToString(), "Bookings API Client Exception", apiException, null, properties);
                 await HandleExceptionAsync(httpContext, apiException);
             }
@@ -43,7 +43,7 @@ namespace AdminWebsite.Middleware
         private static Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
             context.Response.ContentType = "application/json";
-            context.Response.StatusCode = (int) HttpStatusCode.InternalServerError;
+            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
             return context.Response.WriteAsync(exception.Message);
         }

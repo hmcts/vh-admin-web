@@ -29,13 +29,13 @@
     <div class="govuk-grid-column-full">
       <div *ngIf="!hearing.isCancelled">
         <span *ngIf="!hearing.isCreated || (hearing.isCreated && isConfirmationTimeValid)">
-          <input type="button" class="govuk-button vh-mt20 vh-mr-25" value="Edit" role="button" id="edit-button"
-                 (click)="editHearing()" />
-          <input type="button" class="govuk-button vh-mt20 vh-mr-25 vh-btn-cancel" value="Cancel booking" role="button"
-                 id="cancel-button" (click)="cancelHearing()" />
+          <button class="govuk-button vh-mt20 vh-mr-25" data-module="govuk-button" id="edit-button"
+                  (click)="editHearing()">Edit</button>
+          <button class="govuk-button vh-mt20 vh-mr-25 vh-btn-cancel" data-module="govuk-button"
+                  id="cancel-button" (click)="cancelHearing()">Cancel booking</button>
         </span>
-        <input *ngIf="!hearing.isCreated && isConfirmationTimeValid && isVhOfficerAdmin" type="button" class="govuk-button vh-mt20 hmcts-button--secondary" value="Confirm and send to video app" role="button"
-               id="confirm-button" (click)="confirmHearing()" />
+        <button *ngIf="!hearing.isCreated && isConfirmationTimeValid && isVhOfficerAdmin" data-module="govuk-button" class="govuk-button vh-mt20 hmcts-button--secondary"
+                id="confirm-button" (click)="confirmHearing()">Confirm and send to video app</button>
       </div>
     </div>
 

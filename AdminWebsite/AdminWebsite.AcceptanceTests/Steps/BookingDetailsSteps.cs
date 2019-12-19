@@ -1,116 +1,185 @@
-﻿using AdminWebsite.AcceptanceTests.Helpers;
-using FluentAssertions;
-using NUnit.Framework;
-using OpenQA.Selenium;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using AcceptanceTests.Common.Api.Hearings;
+using AcceptanceTests.Common.Api.Requests;
+using AcceptanceTests.Common.Configuration.Users;
+using AcceptanceTests.Common.Driver.Browser;
+using AcceptanceTests.Common.Driver.Helpers;
+using AcceptanceTests.Common.Test.Steps;
 using AdminWebsite.AcceptanceTests.Data;
+using AdminWebsite.AcceptanceTests.Helpers;
+using AdminWebsite.AcceptanceTests.Pages;
+using AdminWebsite.BookingsAPI.Client;
+using FluentAssertions;
 using TechTalk.SpecFlow;
-using BookingDetails = AdminWebsite.AcceptanceTests.Pages.BookingDetails;
-using TestContext = AdminWebsite.AcceptanceTests.Contexts.TestContext;
 
 namespace AdminWebsite.AcceptanceTests.Steps
 {
     [Binding]
-    public sealed class BookingDetailsSteps
+    public class BookingDetailsSteps : ISteps
     {
-        private readonly TestContext _context;
-        private readonly BookingDetails _bookingDetails;
-        private readonly ScenarioContext _scenarioContext;
-
-        public BookingDetailsSteps(TestContext context, BookingDetails bookingDetails, ScenarioContext scenarioContext)
+        private const int Timeout = 30;
+        private readonly TestContext _c;
+        private readonly Dictionary<string, UserBrowser> _browsers;
+        private readonly BookingDetailsPage _bookingDetailsPage;
+        private readonly BookingsApiManager _bookingsApiManager;
+        private readonly VideoApiManager _videoApiManager;
+        public BookingDetailsSteps(TestContext testContext, Dictionary<string, UserBrowser> browsers, BookingDetailsPage bookingDetailsPage)
         {
-            _context = context;
-            _bookingDetails = bookingDetails;
-            _scenarioContext = scenarioContext;
+            _c = testContext;
+            _browsers = browsers;
+            _bookingDetailsPage = bookingDetailsPage;
+            _bookingsApiManager = new BookingsApiManager(_c.AdminWebConfig.VhServices.BookingsApiUrl, _c.Tokens.BookingsApiBearerToken);
+            _videoApiManager = new VideoApiManager(_c.AdminWebConfig.VhServices.VideoApiUrl, _c.Tokens.VideoApiBearerToken);
         }
 
-        [When(@"user is on the bookings list page")]
-        public void BookingsListPage()
+        public void ProgressToNextPage()
         {
-            _bookingDetails.PageUrl(PageUri.BookingListPage);
+            WhenTheUserConfirmsTheBooking();
+            ThenTheHearingIsAvailableInTheVideoWeb();
         }
 
-        [Then(@"admin user can view the booking list")]
-        public void ThenAdminUserCanViewBookingList()
+        [When(@"the user views the booking details")]
+        public void WhenTheUserViewsTheBookingDetails()
         {
-            _bookingDetails.BookingsList();
-            BookingsListPage();
-            _bookingDetails.SelectHearing(_bookingDetails.GetItems("CaseNumber"));
+            PollForHearingStatus(HearingDetailsResponseStatus.Booked);
+            VerifyTheBookingDetails();
+            VerifyJudgeInParticipantsList();
+            VerifyTheParticipantDetails();
         }
 
-        [When(@"admin user tries to amend booking")]
-        public void UpdateParticipantDetails()
-        {            
-            _bookingDetails.BookingsList();
-            BookingsListPage();
-            _bookingDetails.SelectHearing(_bookingDetails.GetItems("CaseNumber"));
-            _bookingDetails.EditBookingList();
-            _bookingDetails.BookingDetailsTitle().Should().Be(_bookingDetails.GetItems("CaseNumber"));
+        private void VerifyTheBookingDetails()
+        {
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_bookingDetailsPage.CaseNumberTitle).Text
+                .Should().Be(_c.Test.HearingDetails.CaseNumber);
+
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_bookingDetailsPage.CreatedBy).Text
+                .Should().Be(_c.CurrentUser.Username);
+
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_bookingDetailsPage.CreatedDate).Text
+                .Should().NotBeNullOrWhiteSpace();
+
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_bookingDetailsPage.CaseNumber).Text
+                .Should().Be(_c.Test.HearingDetails.CaseNumber);
+
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_bookingDetailsPage.CaseName).Text
+                .Should().Be(_c.Test.HearingDetails.CaseName);
+
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_bookingDetailsPage.HearingType).Text
+                .Should().Be(_c.Test.HearingDetails.HearingType.Name);
+
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_bookingDetailsPage.HearingStartDate).Text.ToLower()
+                .Should().Be(_c.Test.HearingSchedule.ScheduledDate.ToLocalTime().ToString(DateFormats.HearingSummaryDate).ToLower());
+
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_bookingDetailsPage.CourtroomAddress).Text
+                .Should().Be($"{_c.Test.HearingSchedule.HearingVenue}, {_c.Test.HearingSchedule.Room}");
+
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_bookingDetailsPage.Duration).Text
+                .Should().Contain($"listed for {_c.Test.HearingSchedule.DurationMinutes} minutes");
+
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_bookingDetailsPage.OtherInformation).Text
+                .Should().Be(_c.Test.OtherInformation);
         }
 
-        [Then(@"expected details should be populated")]
-        public void ThenExpectedDetailsShouldBePopulated()
+        private void VerifyJudgeInParticipantsList()
         {
-            var username = _scenarioContext.Get<string>("Username");
-            if (username.Contains("vhofficer"))
+            var judge = UserManager.GetClerkUser(_c.Test.HearingParticipants);
+
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_bookingDetailsPage.JudgeName).Text
+                .Should().Contain(judge.DisplayName);
+
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_bookingDetailsPage.JudgeEmail).Text
+                .Should().Be(judge.AlternativeEmail);
+
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_bookingDetailsPage.JudgeUsername).Text
+                .Should().Be(judge.Username);
+        }
+
+        private void VerifyTheParticipantDetails()
+        {
+            for (var i = 0; i < _c.Test.HearingParticipants.Count - 1; i++)
             {
-                _bookingDetails.ParticipantUsername().Should().Contain("reform");
+                var email = _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_bookingDetailsPage.ParticipantEmail(i)).Text;
+                var participant = _c.Test.HearingParticipants.First(x => x.AlternativeEmail.ToLower().Equals(email.ToLower()));
+
+                _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_bookingDetailsPage.ParticipantName(i)).Text
+                    .Should().Contain($"{_c.AdminWebConfig.TestConfig.TestData.AddParticipant.Participant.Title} {participant.Firstname} {participant.Lastname}");
+
+                _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_bookingDetailsPage.ParticipantRole(i)).Text
+                    .Should().Contain(participant.HearingRoleName);
+
+                _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_bookingDetailsPage.ParticipantUsername(i)).Text.ToLower()
+                    .Should().Be(participant.Username.ToLower());
             }
-            if (username.Contains("caseadmin"))
+        }
+
+        [When(@"the user confirms the booking")]
+        public void WhenTheUserConfirmsTheBooking()
+        {
+            _browsers[_c.CurrentUser.Key].ScrollTo(_bookingDetailsPage.ConfirmButton);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilElementClickable(_bookingDetailsPage.ConfirmButton).Click();
+            _browsers[_c.CurrentUser.Key].ScrollTo(_bookingDetailsPage.ConfirmedLabel);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_bookingDetailsPage.ConfirmedLabel).Displayed.Should().BeTrue();
+        }
+
+        [Then(@"the hearing is available in the video web")]
+        public void ThenTheHearingIsAvailableInTheVideoWeb()
+        {
+            PollForHearingStatus(HearingDetailsResponseStatus.Created).Should().BeTrue();
+            var hearing = GetHearing();
+            _videoApiManager.PollForConference(hearing.Id).Should().BeTrue();
+        }
+
+        [When(@"the user cancels the hearing")]
+        public void WhenTheUserAttemptsToCancelTheHearing()
+        {
+            _browsers[_c.CurrentUser.Key].ScrollTo(_bookingDetailsPage.CancelButton);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilElementClickable(_bookingDetailsPage.CancelButton).Click();
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilElementClickable(_bookingDetailsPage.ConfirmCancelButton).Click();
+        }
+
+        [Then(@"the hearing is cancelled")]
+        public void ThenTheHearingIsCancelled()
+        {
+            PollForHearingStatus(HearingDetailsResponseStatus.Cancelled).Should().BeTrue();
+        }
+
+        [Then(@"the conference is deleted")]
+        public void ThenTheConferenceIsDeleted()
+        {
+            var hearing = GetHearing();
+            _videoApiManager.PollForConference(hearing.Id, Timeout).Should().BeFalse();
+        }
+
+        private HearingDetailsResponse GetHearing()
+        {
+            var clerkUsername = UserManager.GetClerkUser(_c.AdminWebConfig.UserAccounts).Username;
+            var hearingResponse = _bookingsApiManager.GetHearingsForUsername(clerkUsername);
+            var hearings = RequestHelper.DeserialiseSnakeCaseJsonToResponse<List<HearingDetailsResponse>>(hearingResponse.Content);
+            return hearings.First(x => x.Cases.First().Name.Equals(_c.Test.HearingDetails.CaseName));
+        }
+
+        private bool PollForHearingStatus(HearingDetailsResponseStatus expectedStatus)
+        {
+            for (var i = 0; i < Timeout; i++)
             {
-                Assert.Throws<WebDriverTimeoutException>(() => _bookingDetails.ParticipantUsername());
+                var hearing = GetHearing();
+                if (hearing.Status.Equals(expectedStatus))
+                {
+                    return true;
+                }
+                Thread.Sleep(TimeSpan.FromSeconds(1));
             }
-            
-            _bookingDetails.CreatedBy().Should().Be(username);
+
+            return false;
         }
 
-        [Then(@"values should be displayed as expected on edit view")]
-        [Then(@"amended values should be saved")]
-        public void AmendedValuesShouldBeSaved()
+        public void ClickEdit()
         {
-            _bookingDetails.ClickBookButton();
-            _bookingDetails.PageUrl(PageUri.BookingDetailsPage);
-            
-            switch (_bookingDetails.GetItems("RelevantPage"))
-            {
-                case PageUri.AssignJudgePage:
-                    _bookingDetails.JudgeEmail().Should().Contain(_bookingDetails.GetItems("Clerk"));
-                    break;
-                case PageUri.HearingDetailsPage:
-                    _bookingDetails.CaseName().Should().Be(_context.TestData.HearingData.CaseName);
-                    _bookingDetails.CaseNumber().Should().Be(_context.TestData.HearingData.CaseNumber);
-                    break;
-                case PageUri.HearingSchedulePage:
-                    _bookingDetails.HearingDate().ToLower().Should().Be(_bookingDetails.GetItems("HearingDate"));
-                    _bookingDetails.CourtAddress().Should().Be($"{HearingScheduleData.CourtAddress.Last()}, {_context.TestData.HearingScheduleData.Room}");
-                    _bookingDetails.HearingDuration().Should().Be("listed for 30 minutes");
-                    break;                
-                case PageUri.OtherInformationPage:
-                    _bookingDetails.OtherInformation().Should().Be(OtherInformation.OtherInformationText);
-                    break;
-            }
-            _bookingDetails.EditedBy().Should().Be(_scenarioContext.Get<string>("Username"));
-        }
-
-        [When(@"the admin cancels hearing")]
-        public void WhenTheAdminCancelsHearing()
-        {
-            _bookingDetails.CancelBookingButton();
-            _bookingDetails.PopupCancelBookingWarningMessage().Should().Be(Data.BookingDetails.CancelBookingWarningMessage);
-            _bookingDetails.PopupCancelBookingButton();
-        }
-
-        [Then(@"cancelled label should be shown on booking details page")]
-        public void ThenCancelledLabelShouldBeShownOnHearing()
-        {
-            _bookingDetails.CancelledLabel().Should().Be(Data.BookingDetails.CancelledLabel);
-        }
-
-        [Then(@"booking details page should be displayed without the Edit or Cancel buttons")]
-        public void NoEditOrCancelButtons()
-        {
-            Assert.Throws<WebDriverTimeoutException>(() => _bookingDetails.EditBookingList());
-            Assert.Throws<WebDriverTimeoutException>(() => _bookingDetails.CancelBookingButton());
+            _browsers[_c.CurrentUser.Key].ScrollTo(_bookingDetailsPage.EditButton);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilElementClickable(_bookingDetailsPage.EditButton).Click();
         }
     }
 }

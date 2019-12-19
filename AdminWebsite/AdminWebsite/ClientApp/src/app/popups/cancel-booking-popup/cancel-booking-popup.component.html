@@ -5,10 +5,12 @@
     <div class="content">
       <div class="govuk-grid-row">
         <div class="vh-top">
-          <input type="button" id="btnCancelBooking" class="govuk-button vh-mr25" role="button" value="Cancel booking"
-            (click)="cancelHearing()" alt="Cancel the booking" />
-          <input type="button" id="btnKeepBooking" class="govuk-button hmcts-button--secondary" role="button"
-            value="Keep booking" (click)="keepHearing()" alt="Keep the booking" />
+          <button id="btnCancelBooking" class="govuk-button vh-mr25" data-module="govuk-button"
+                  (click)="cancelHearing()" alt="Cancel the booking">
+          Cancel booking</button>
+          <button id="btnKeepBooking" class="govuk-button hmcts-button--secondary" data-module="govuk-button"
+                  (click)="keepHearing()" alt="Keep the booking">
+          Keep booking</button>
         </div>
       </div>
     </div>

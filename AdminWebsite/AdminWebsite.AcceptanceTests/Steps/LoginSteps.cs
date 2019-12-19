@@ -1,76 +1,56 @@
-﻿using System;
-using AdminWebsite.AcceptanceTests.Contexts;
+﻿using System.Collections.Generic;
+using AcceptanceTests.Common.Driver.Browser;
+using AcceptanceTests.Common.Driver.Helpers;
+using AcceptanceTests.Common.PageObject.Pages;
+using AcceptanceTests.Common.Test.Steps;
 using AdminWebsite.AcceptanceTests.Helpers;
-using AdminWebsite.AcceptanceTests.Pages;
 using FluentAssertions;
 using TechTalk.SpecFlow;
 
 namespace AdminWebsite.AcceptanceTests.Steps
 {
     [Binding]
-    public sealed class LoginSteps
+    public sealed class LoginSteps : ISteps
     {
-        private readonly Browser _browser;
-        private readonly MicrosoftLoginPage _loginPage;
-        private readonly ScenarioContext _scenarioContext;
-        private readonly TestContext _context;
+        private LoginSharedSteps _loginSharedSteps;
+        private readonly Dictionary<string, UserBrowser> _browsers;
+        private readonly TestContext _c;
+        private readonly LoginPage _loginPage;
+        private readonly CommonPages _commonPages;
+        private const int ReachedThePageRetries = 2;
 
-        public LoginSteps(Browser browser, MicrosoftLoginPage loginPage,
-            ScenarioContext injectedContext, TestContext context)
+        public LoginSteps(Dictionary<string, UserBrowser> browsers, TestContext testContext,
+            LoginPage loginPage, CommonPages commonPages)
         {
-            _browser = browser;
+            _browsers = browsers;
+            _c = testContext;
             _loginPage = loginPage;
-            _scenarioContext = injectedContext;
-            _context = context;
+            _commonPages = commonPages;
         }
 
-        public void UserIsOnTheLoginPage()
+        [When(@"the user logs in with valid credentials")]
+        public void ProgressToNextPage()
         {
-            _browser.Retry(() => { _browser.PageUrl().Should().Contain("login.microsoftonline.com"); }, 10);
+            _loginSharedSteps = new LoginSharedSteps(_browsers[_c.CurrentUser.Key].Driver, _loginPage, _commonPages, _c.CurrentUser.Username, _c.AdminWebConfig.TestConfig.TestUserPassword);
+            _loginSharedSteps.ProgressToNextPage();
         }
 
-        [Given(@"(.*) logs into the website")]
-        [When(@"(.*) logs in with valid credentials")]
-        public void UserLogsInWithValidCredentials(string user)
+        [When(@"the user attempts to logout")]
+        public void WhenTheUserAttemptsToLogout()
         {
-            if (_context.CurrentUser != null) return;
-            switch (user)
-            {
-                case "VH Officer": _context.CurrentUser = _context.GetCivilMoneyVideoHearingsOfficerUser(); break;
-                case "Case Admin": _context.CurrentUser = _context.GetCivilMoneyCaseAdminUser(); break;
-                case "Non-Admin": _context.CurrentUser = _context.GetNonAdminUser(); break;
-                default: throw new ArgumentOutOfRangeException($"No user found with user type {user}");
-            }
-
-            Login();
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilElementClickable(_commonPages.SignOutLink).Click();
         }
 
-        [Given(@"Civil Money Claims, (.*) logs in to the website")]
-        public void CivilMoneyClaimsUserLogsInWithValidCredentials(string user)
+        [Then(@"the sign out link is displayed")]
+        public void ThenTheSignOutLinkIsDisplayed()
         {
-            _context.CurrentUser = user.Equals("VH Officer") ? _context.GetCivilMoneyVideoHearingsOfficerUser() : _context.GetCivilMoneyCaseAdminUser();
-            Login();
+            _loginSharedSteps.ThenTheSignOutLinkIsDisplayed();
         }
 
-        [Given(@"Financial Remedy, (.*) logs in to the website")]
-        public void FinancialRemedyUserLogsInWithValidCredentials(string user)
+        [Then(@"the user should be navigated to sign in screen")]
+        public void ThenTheUserShouldBeNavigatedToSignInScreen()
         {
-            _context.CurrentUser = user.Equals("VH Officer") ? _context.GetFinancialRemedyVideoHearingsOfficerUser() : _context.GetFinancialRemedyCaseAdminUser();
-            Login();
-        }
-
-        private void Login()
-        {
-            UserIsOnTheLoginPage();
-            _loginPage.Logon(_context.CurrentUser.Username, _context.TestUserSecrets.TestUserPassword);
-            _scenarioContext.Add("Username", _context.CurrentUser.Username);
-            _scenarioContext.Add("User", _context.CurrentUser);
-        }
-
-        [Then(@"user should be navigated to sign in screen")]
-        public void ThenUserShouldBeNavigatedToSignInScreen()
-        {
-            _loginPage.SignInTitle();
+            _browsers[_c.CurrentUser.Key].Retry(() => _browsers[_c.CurrentUser.Key].Driver.Title.Trim().Should().Be(_loginPage.SignInTitle), ReachedThePageRetries);
         }
     }
 }

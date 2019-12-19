@@ -1,12 +1,12 @@
-﻿using System;
+﻿using AdminWebsite.Configuration;
+using AdminWebsite.Services;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Options;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using AdminWebsite.Configuration;
-using AdminWebsite.Services;
-using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Options;
 
 namespace AdminWebsite.Security
 {
@@ -16,11 +16,11 @@ namespace AdminWebsite.Security
         private readonly IMemoryCache _memoryCache;
         private readonly SecuritySettings _securitySettings;
         protected readonly ServiceSettings ServiceSettings;
-        
+
         protected abstract string TokenCacheKey { get; }
         protected abstract string ClientResource { get; }
 
-        protected BaseServiceTokenHandler(IOptions<SecuritySettings> securitySettings, 
+        protected BaseServiceTokenHandler(IOptions<SecuritySettings> securitySettings,
             IOptions<ServiceSettings> serviceSettings, IMemoryCache memoryCache, ITokenProvider tokenProvider)
         {
             _securitySettings = securitySettings.Value;
@@ -28,12 +28,12 @@ namespace AdminWebsite.Security
             _memoryCache = memoryCache;
             _tokenProvider = tokenProvider;
         }
-        
+
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request,
             CancellationToken cancellationToken)
         {
             var properties = new Dictionary<string, string>();
-            
+
             var token = _memoryCache.Get<string>(TokenCacheKey);
             if (string.IsNullOrEmpty(token))
             {
@@ -43,7 +43,7 @@ namespace AdminWebsite.Security
                 var tokenExpireDateTime = authenticationResult.ExpiresOn.DateTime.AddMinutes(-1);
                 _memoryCache.Set(TokenCacheKey, token, tokenExpireDateTime);
             }
-            
+
             request.Headers.Add("Authorization", $"Bearer {token}");
             try
             {

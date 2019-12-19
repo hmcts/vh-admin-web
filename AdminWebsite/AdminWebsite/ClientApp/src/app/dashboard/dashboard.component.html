@@ -1,17 +1,14 @@
-<div class="govuk-width-container">
-
-
-  <main class="govuk-main-wrapper">
-
+<main class="govuk-main-wrapper">
+  <div class="govuk-width-container">
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-one-third" *ngIf="showBooking">
-      <a class="vhpanel-link" [routerLink]="['/book-hearing']">
-        <div class="vhpanel" id="vhpanel-green">
-          <h1 class="vhpanel-title">Book a video hearing</h1>
-          <div>
-           <img alt="Begin booking a new hearing" src="assets/images/bookicon.png" style="width:64px">
+        <a class="vhpanel-link" [routerLink]="['/book-hearing']">
+          <div class="vhpanel" id="vhpanel-green">
+            <h1 class="vhpanel-title">Book a video hearing</h1>
+            <div>
+              <img alt="Begin booking a new hearing" src="assets/images/bookicon.png" style="width:64px">
+            </div>
           </div>
-        </div>
         </a>
       </div>
       <div class="govuk-grid-column-one-third" *ngIf="showCheckList">
@@ -19,13 +16,11 @@
           <div class="vhpanel" id="vhpanel-blue">
             <h1 class="vhpanel-title">Questionnaire results</h1>
             <div>
-            <img alt="Begin booking a new hearing" src="assets/images/VHO_questionnaire_icon.png" style="width:64px">
+              <img alt="Begin booking a new hearing" src="assets/images/VHO_questionnaire_icon.png" style="width:64px">
             </div>
           </div>
-          </a>
-        </div>
-
+        </a>
+      </div>
     </div>
-
-  </main>
-</div>
+  </div>
+</main>
