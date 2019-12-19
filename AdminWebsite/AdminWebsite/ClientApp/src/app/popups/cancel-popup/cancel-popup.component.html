@@ -5,8 +5,8 @@
             <h1 class="govuk-heading-m"> {{message}}</h1>
             <div class="govuk-grid-row">
                 <div class="vh-top">
-                    <input id="btncancel" class="govuk-button hmcts-button--secondary vh-mr" type="submit" value="Continue editing" (click)="continueAddParticipant()">
-                    <input id="btnsubmit" class="govuk-button" type="submit" value="Discard changes" (click)="cancelBookingHearing()">
+                  <button id="btncancel" class="govuk-button hmcts-button--secondary vh-mr" type="submit" data-module="govuk-button" (click)="continueAddParticipant()">Continue editing</button>
+                  <button id="btnsubmit" class="govuk-button" type="submit" data-module="govuk-button" (click)="cancelBookingHearing()">Discard changes</button>
                 </div>
             </div>
         </div>

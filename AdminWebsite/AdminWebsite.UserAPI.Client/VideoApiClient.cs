@@ -147,6 +147,44 @@ namespace AdminWebsite.VideoAPI.Client
         /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<ConferenceDetailsResponse> GetConferenceByHearingRefIdAsync(System.Guid hearingRefId, System.Threading.CancellationToken cancellationToken);
     
+        /// <summary>Get conferences where the scheduledDate is lower or equal to the scheduled date time and which are open. i.e. not in the state 'closed'</summary>
+        /// <param name="scheduledDate">The conference scheduled date time e.g 2019-09-13 16:13</param>
+        /// <returns>Success</returns>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<System.Collections.Generic.List<ConferenceSummaryResponse>> GetOpenConferencesByScheduledDateAsync(System.DateTime? scheduledDate);
+    
+        /// <summary>Get conferences where the scheduledDate is lower or equal to the scheduled date time and which are open. i.e. not in the state 'closed'</summary>
+        /// <param name="scheduledDate">The conference scheduled date time e.g 2019-09-13 16:13</param>
+        /// <returns>Success</returns>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
+        System.Collections.Generic.List<ConferenceSummaryResponse> GetOpenConferencesByScheduledDate(System.DateTime? scheduledDate);
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Get conferences where the scheduledDate is lower or equal to the scheduled date time and which are open. i.e. not in the state 'closed'</summary>
+        /// <param name="scheduledDate">The conference scheduled date time e.g 2019-09-13 16:13</param>
+        /// <returns>Success</returns>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<System.Collections.Generic.List<ConferenceSummaryResponse>> GetOpenConferencesByScheduledDateAsync(System.DateTime? scheduledDate, System.Threading.CancellationToken cancellationToken);
+    
+        /// <summary>Close a conference, set its state to closed</summary>
+        /// <param name="conferenceId">conference id</param>
+        /// <returns>Success</returns>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task CloseConferenceAsync(System.Guid conferenceId);
+    
+        /// <summary>Close a conference, set its state to closed</summary>
+        /// <param name="conferenceId">conference id</param>
+        /// <returns>Success</returns>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
+        void CloseConference(System.Guid conferenceId);
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Close a conference, set its state to closed</summary>
+        /// <param name="conferenceId">conference id</param>
+        /// <returns>Success</returns>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task CloseConferenceAsync(System.Guid conferenceId, System.Threading.CancellationToken cancellationToken);
+    
         /// <summary>Raise or answer to a private consultation request with another participant</summary>
         /// <param name="request">Private consultation request with or without an answer</param>
         /// <returns>Success</returns>
@@ -1079,6 +1117,190 @@ namespace AdminWebsite.VideoAPI.Client
                         }
             
                         return default(ConferenceDetailsResponse);
+                    }
+                    finally
+                    {
+                        if (response_ != null)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+            }
+        }
+    
+        /// <summary>Get conferences where the scheduledDate is lower or equal to the scheduled date time and which are open. i.e. not in the state 'closed'</summary>
+        /// <param name="scheduledDate">The conference scheduled date time e.g 2019-09-13 16:13</param>
+        /// <returns>Success</returns>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
+        public System.Threading.Tasks.Task<System.Collections.Generic.List<ConferenceSummaryResponse>> GetOpenConferencesByScheduledDateAsync(System.DateTime? scheduledDate)
+        {
+            return GetOpenConferencesByScheduledDateAsync(scheduledDate, System.Threading.CancellationToken.None);
+        }
+    
+        /// <summary>Get conferences where the scheduledDate is lower or equal to the scheduled date time and which are open. i.e. not in the state 'closed'</summary>
+        /// <param name="scheduledDate">The conference scheduled date time e.g 2019-09-13 16:13</param>
+        /// <returns>Success</returns>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
+        public System.Collections.Generic.List<ConferenceSummaryResponse> GetOpenConferencesByScheduledDate(System.DateTime? scheduledDate)
+        {
+            return System.Threading.Tasks.Task.Run(async () => await GetOpenConferencesByScheduledDateAsync(scheduledDate, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
+        }
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Get conferences where the scheduledDate is lower or equal to the scheduled date time and which are open. i.e. not in the state 'closed'</summary>
+        /// <param name="scheduledDate">The conference scheduled date time e.g 2019-09-13 16:13</param>
+        /// <returns>Success</returns>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
+        public async System.Threading.Tasks.Task<System.Collections.Generic.List<ConferenceSummaryResponse>> GetOpenConferencesByScheduledDateAsync(System.DateTime? scheduledDate, System.Threading.CancellationToken cancellationToken)
+        {
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/conferences/fromdate?");
+            if (scheduledDate != null) 
+            {
+                urlBuilder_.Append(System.Uri.EscapeDataString("scheduledDate") + "=").Append(System.Uri.EscapeDataString(scheduledDate.Value.ToString("s", System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+            }
+            urlBuilder_.Length--;
+    
+            var client_ = _httpClient;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+    
+                    PrepareRequest(client_, request_, urlBuilder_);
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+                    PrepareRequest(client_, request_, url_);
+    
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+    
+                        ProcessResponse(client_, response_);
+    
+                        var status_ = ((int)response_.StatusCode).ToString();
+                        if (status_ == "200") 
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.List<ConferenceSummaryResponse>>(response_, headers_).ConfigureAwait(false);
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == "401") 
+                        {
+                            string responseText_ = ( response_.Content == null ) ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new VideoApiServiceException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
+                        }
+                        else
+                        if (status_ != "200" && status_ != "204")
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new VideoApiServiceException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+            
+                        return default(System.Collections.Generic.List<ConferenceSummaryResponse>);
+                    }
+                    finally
+                    {
+                        if (response_ != null)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+            }
+        }
+    
+        /// <summary>Close a conference, set its state to closed</summary>
+        /// <param name="conferenceId">conference id</param>
+        /// <returns>Success</returns>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
+        public System.Threading.Tasks.Task CloseConferenceAsync(System.Guid conferenceId)
+        {
+            return CloseConferenceAsync(conferenceId, System.Threading.CancellationToken.None);
+        }
+    
+        /// <summary>Close a conference, set its state to closed</summary>
+        /// <param name="conferenceId">conference id</param>
+        /// <returns>Success</returns>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
+        public void CloseConference(System.Guid conferenceId)
+        {
+            System.Threading.Tasks.Task.Run(async () => await CloseConferenceAsync(conferenceId, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
+        }
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Close a conference, set its state to closed</summary>
+        /// <param name="conferenceId">conference id</param>
+        /// <returns>Success</returns>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
+        public async System.Threading.Tasks.Task CloseConferenceAsync(System.Guid conferenceId, System.Threading.CancellationToken cancellationToken)
+        {
+            if (conferenceId == null)
+                throw new System.ArgumentNullException("conferenceId");
+    
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/conferences/{conferenceId}/close");
+            urlBuilder_.Replace("{conferenceId}", System.Uri.EscapeDataString(ConvertToString(conferenceId, System.Globalization.CultureInfo.InvariantCulture)));
+    
+            var client_ = _httpClient;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Content = new System.Net.Http.StringContent(string.Empty, System.Text.Encoding.UTF8, "application/json");
+                    request_.Method = new System.Net.Http.HttpMethod("PUT");
+    
+                    PrepareRequest(client_, request_, urlBuilder_);
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+                    PrepareRequest(client_, request_, url_);
+    
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+    
+                        ProcessResponse(client_, response_);
+    
+                        var status_ = ((int)response_.StatusCode).ToString();
+                        if (status_ == "204") 
+                        {
+                            return;
+                        }
+                        else
+                        if (status_ == "400") 
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            throw new VideoApiServiceException<ProblemDetails>("Bad Request", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == "401") 
+                        {
+                            string responseText_ = ( response_.Content == null ) ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new VideoApiServiceException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
+                        }
+                        else
+                        if (status_ != "200" && status_ != "204")
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new VideoApiServiceException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
                     }
                     finally
                     {

@@ -11,4 +11,4 @@ Scenario: Add Participants
 Scenario: Edit New Participant
 	Given the Video Hearings Officer user has progressed to the Booking Details page
 	When the user edits a new participant
-	Then the details are updated
+	Then the participant details are updated

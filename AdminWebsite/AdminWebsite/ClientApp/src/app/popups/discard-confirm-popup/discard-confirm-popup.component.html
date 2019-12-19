@@ -5,8 +5,9 @@
       <h1 class="govuk-heading-m"> Are you sure you want to discard them?</h1>
       <div class="govuk-grid-row">
         <div class="vh-top">
-          <input id="btn-continue" class="govuk-button hmcts-button--secondary vh-mr25" type="submit" value="Continue editing" (click)="continueEditingBooking()">
-          <input id="btn-discard-changes" class="govuk-button" type="submit" value="Discard changes" (click)="cancelBookingChanges()">
+          <button id="btn-continue" class="govuk-button hmcts-button--secondary vh-mr25" data-module="govuk-button" type="submit" (click)="continueEditingBooking()">
+          Continue editing</button>
+          <button id="btn-discard-changes" class="govuk-button" data-module="govuk-button" type="submit" (click)="cancelBookingChanges()">Discard changes</button>
         </div>
       </div>
     </div>

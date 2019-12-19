@@ -6,6 +6,7 @@
 Scenario: Booking Confirmation
 	Given the Video Hearings Officer user has progressed to the Booking Confirmation page
 	When the user views the booking confirmation form
+	And the user clicks the Return to dashboard link
 	Then the user is on the Dashboard page
 
 Scenario: Booking Confirmation Book Another Hearing

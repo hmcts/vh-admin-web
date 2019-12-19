@@ -33,6 +33,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         private readonly HearingScheduleSteps _hearingScheduleSteps;
         private readonly AddParticipantSteps _addParticipantSteps;
         private readonly OtherInformationSteps _otherInformationSteps;
+        private UserAccount _newUserToEdit;
 
         public SummarySteps(TestContext testContext, Dictionary<string, UserBrowser> browsers, SummaryPage summaryPage, BookingDetailsSteps bookingDetailsSteps, HearingDetailsSteps hearingDetailsSteps, OtherInformationSteps otherInformationSteps, HearingScheduleSteps hearingScheduleSteps, AddParticipantSteps addParticipantSteps)
         {
@@ -81,9 +82,9 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void WhenTheUserEditsANewParticipant()
         {
             _bookingDetailsSteps.ClickEdit();
-            var newUserToEdit = UserManager.GetUserFromDisplayName(_c.Test.HearingParticipants, _c.Test.AddParticipant.Participant.NewUserPrefix);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_summaryPage.EditParticipantLink(newUserToEdit.Firstname)).Click();
-            _addParticipantSteps.EditANewParticipant(newUserToEdit.AlternativeEmail);
+            _newUserToEdit = UserManager.GetUserFromDisplayName(_c.Test.HearingParticipants, _c.Test.AddParticipant.Participant.NewUserPrefix);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_summaryPage.EditParticipantLink(_newUserToEdit.Firstname)).Click();
+            _addParticipantSteps.EditANewParticipant(_newUserToEdit.AlternativeEmail);
         }
 
         [Then(@"the details are updated")]
@@ -96,6 +97,33 @@ namespace AdminWebsite.AcceptanceTests.Steps
             VerifyBookingUpdated();
         }
 
+        [Then(@"the participant details are updated")]
+        public void ThenTheParticipantDetailsAreUpdated()
+        {
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_summaryPage.BookButton).Click();
+            var endpoint = new HearingsEndpoints().GetHearingsByUsername(UserManager.GetClerkUser(_c.AdminWebConfig.UserAccounts).Username);
+            var request = new RequestBuilder().Get(endpoint);
+            var client = new ApiClient(_c.AdminWebConfig.VhServices.BookingsApiUrl, _c.Tokens.BookingsApiBearerToken).GetClient();
+            ParticipantUpdated(request, client, $"{_c.Test.AddParticipant.Participant.NewUserPrefix}Updated display name")
+                .Should().BeTrue();
+        }
+
+        private bool ParticipantUpdated(IRestRequest request, RestClient client, string updatedDisplayName)
+        {
+            for (var i = 0; i < Timeout; i++)
+            {
+                var hearing = PollForHearing(request, client);
+
+                if (hearing.Participants.Any(x => x.Display_name.ToLower().Equals(updatedDisplayName.ToLower())))
+                {
+                    return true;
+                }
+
+                Thread.Sleep(TimeSpan.FromSeconds(1));
+            }
+
+            throw new DataException("Participant details were not updated");
+        }
 
         [Then(@"the questionnaires have been sent")]
         public void ThenTheQuestionnairesHaveBeenSent()

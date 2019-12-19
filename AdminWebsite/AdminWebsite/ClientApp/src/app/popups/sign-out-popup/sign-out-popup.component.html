@@ -5,8 +5,8 @@
       <h1 class="govuk-heading-m"> You will lose all your booking details if you sign out.</h1>
       <div class="govuk-grid-row">
         <div class="vh-top">
-          <input id="btn-signout" class="govuk-button vh-mr" type="submit" value="Sign out" (click)="logout()">
-          <input id="btn-cancel" class="govuk-button vh-btncancel " type="submit" value="Continue" (click)="continueBooking()">
+          <button id="btn-signout" class="govuk-button vh-mr" data-module="govuk-button" type="submit" (click)="logout()">Sign out</button>
+          <button id="btn-cancel" class="govuk-button vh-btncancel" data-module="govuk-button" type="submit" (click)="continueBooking()">Continue</button>
         </div>
       </div>
     </div>

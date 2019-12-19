@@ -24,8 +24,8 @@ Scenario: Assign Judge page accessibility
 	Then the page should be accessible
 
 @Accessibility
-Scenario: Add Participant page accessibility
-	Given the Video Hearings Officer user has progressed to the Add Participant page
+Scenario: Add Participants page accessibility
+	Given the Video Hearings Officer user has progressed to the Add Participants page
 	Then the page should be accessible
 
 @Accessibility
