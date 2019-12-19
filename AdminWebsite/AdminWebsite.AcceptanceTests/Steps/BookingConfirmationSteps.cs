@@ -25,20 +25,26 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _commonAdminWebPage = commonAdminWebPage;
         }
 
-        [When(@"the user views the booking confirmation form")]
         public void ProgressToNextPage()
         {
             VerifyBookingWasSuccessful();
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_commonAdminWebPage.BookingsListLink).Click();
         }
 
-        private void VerifyBookingWasSuccessful()
+        [When(@"the user views the booking confirmation form")]
+        public void VerifyBookingWasSuccessful()
         {
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_bookingConfirmationPage.SuccessMessage).Displayed.Should().BeTrue();
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_bookingConfirmationPage.CaseNumber).Text.Should().Be(_c.Test.HearingDetails.CaseNumber);
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_bookingConfirmationPage.CaseName).Text.Should().Be(_c.Test.HearingDetails.CaseName);
             var scheduleDate = _c.Test.HearingSchedule.ScheduledDate.ToString(DateFormats.HearingSummaryDate);
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_bookingConfirmationPage.HearingDate).Text.ToLower().Should().Be(scheduleDate.ToLower());
+        }
+
+        [When(@"the user clicks the Return to dashboard link")]
+        public void WhenTheUserClicksTheDashboardLink()
+        {
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_bookingConfirmationPage.ReturnToDashboardLink).Click();
         }
 
         [When(@"the user clicks the Book another hearing button")]

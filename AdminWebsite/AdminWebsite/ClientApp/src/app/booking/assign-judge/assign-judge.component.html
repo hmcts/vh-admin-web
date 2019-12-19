@@ -67,11 +67,13 @@
       </div>
 
       <div class="sk-top">
-        <input type="button" id="nextButton" class="govuk-button vh-mr25" role="button" value="{{buttonAction}}"
-               (click)="saveJudge()" alt="Save judge details and view add participant" />
-        <input type="button" id="cancelButton" class="govuk-button hmcts-button--secondary" role="button" value="Cancel"
-               (click)="confirmCancelBooking()" alt="Confirm cancellation of new booking and return to dashboard" />
-      </div>
+        <button id="nextButton" class="govuk-button vh-mr25" data-module="govuk-button"
+                (click)="saveJudge()" alt="Save judge details and view add participant">
+        {{buttonAction}}</button>
+        <button id="cancelButton" class="govuk-button hmcts-button--secondary" data-module="govuk-button"
+                (click)="confirmCancelBooking()" alt="Confirm cancellation of new booking and return to dashboard">
+        Cancel</button>
+</div>
     </form>
   </div>
   <div class="govuk-grid-column-one-half" style="margin: 0;">

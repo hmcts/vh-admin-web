@@ -30,8 +30,8 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         [BeforeScenario(Order = (int)HooksSequence.ConfigureDriverHooks)]
         private void ConfigureDriver(TestContext context, ScenarioContext scenarioContext)
         {
-            context.AdminWebConfig.TestConfig.TargetBrowser = _driverManager.GetTargetBrowser();
-            context.AdminWebConfig.TestConfig.TargetDevice = _driverManager.GetTargetDevice();
+            context.AdminWebConfig.TestConfig.TargetBrowser = _driverManager.GetTargetBrowser(NUnit.Framework.TestContext.Parameters["TargetBrowser"]);
+            context.AdminWebConfig.TestConfig.TargetDevice = _driverManager.GetTargetDevice(NUnit.Framework.TestContext.Parameters["TargetDevice"]);
             _driverManager.KillAnyLocalDriverProcesses(context.AdminWebConfig.TestConfig.TargetBrowser, context.AdminWebConfig.SauceLabsConfiguration.RunningOnSauceLabs());
             context.Driver = new DriverSetup(context.AdminWebConfig.SauceLabsConfiguration, scenarioContext.ScenarioInfo, context.AdminWebConfig.TestConfig.TargetBrowser);
         }

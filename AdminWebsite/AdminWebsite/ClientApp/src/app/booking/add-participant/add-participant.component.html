@@ -259,7 +259,7 @@
         </div>
 
         <div class="govuk-grid-column-one-half" *ngIf="displayClearButton">
-          <img src="assets/images/ClearIcon.png" alt="Clear fiealds icon" />
+          <img src="assets/images/ClearIcon.png" alt="Clear fields icon" />
           <span class="vh-vert-top-m15">
             <a href="javascript:void(0)" id="clearFormBtn" class="govuk-link govuk-body" (click)="clearForm()">
               Clear details
@@ -269,11 +269,11 @@
       </div>
     </form>
     <div class="vh-top">
-      <input *ngIf="displayNextButton" id="nextButton" type="button" class="govuk-button vh-mr25" role="button"
-             value="{{buttonAction}}" (click)="next()" />
-      <input id="cancelBtn" type="button" class="govuk-button hmcts-button--secondary" role="button" value="Cancel"
-             (click)="addParticipantCancel()" />
-    </div>
+      <button *ngIf="displayNextButton" id="nextButton" class="govuk-button vh-mr25" data-module="govuk-button"
+              value="" (click)="next()">{{buttonAction}}</button>
+      <button id="cancelBtn" class="govuk-button hmcts-button--secondary" data-module="govuk-button"
+              (click)="addParticipantCancel()">Cancel</button>
+</div>
   </div>
 
   <div class="govuk-grid-column-one-half" style="margin: 0;">
