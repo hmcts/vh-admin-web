@@ -32,10 +32,20 @@ namespace AdminWebsite.AcceptanceTests.Steps
         private readonly HearingDetailsSteps _hearingDetailsSteps;
         private readonly HearingScheduleSteps _hearingScheduleSteps;
         private readonly AddParticipantSteps _addParticipantSteps;
+        private readonly AssignJudgeSteps _assignJudgeSteps;
         private readonly OtherInformationSteps _otherInformationSteps;
         private UserAccount _newUserToEdit;
 
-        public SummarySteps(TestContext testContext, Dictionary<string, UserBrowser> browsers, SummaryPage summaryPage, BookingDetailsSteps bookingDetailsSteps, HearingDetailsSteps hearingDetailsSteps, OtherInformationSteps otherInformationSteps, HearingScheduleSteps hearingScheduleSteps, AddParticipantSteps addParticipantSteps)
+        public SummarySteps(
+            TestContext testContext, 
+            Dictionary<string, UserBrowser> browsers, 
+            SummaryPage summaryPage, 
+            BookingDetailsSteps bookingDetailsSteps, 
+            HearingDetailsSteps hearingDetailsSteps,
+            HearingScheduleSteps hearingScheduleSteps,
+            AssignJudgeSteps assignJudgeSteps,
+            AddParticipantSteps addParticipantSteps,
+            OtherInformationSteps otherInformationSteps)
         {
             _c = testContext;
             _browsers = browsers;
@@ -43,6 +53,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _bookingDetailsSteps = bookingDetailsSteps;
             _hearingDetailsSteps = hearingDetailsSteps;
             _hearingScheduleSteps = hearingScheduleSteps;
+            _assignJudgeSteps = assignJudgeSteps;
             _addParticipantSteps = addParticipantSteps;
             _otherInformationSteps = otherInformationSteps;
         }
@@ -67,10 +78,17 @@ namespace AdminWebsite.AcceptanceTests.Steps
             if (screen.Equals("hearing details"))
             {
                 _hearingDetailsSteps.EditHearingDetails();
+                _hearingScheduleSteps.ClickNext();
+                _assignJudgeSteps.ClickNext();
+                _addParticipantSteps.ClickNext();
+                _otherInformationSteps.ClickNext();
             }
             else if (screen.Equals("hearing schedule"))
             {
                 _hearingScheduleSteps.ProgressToNextPage();
+                _assignJudgeSteps.ClickNext();
+                _addParticipantSteps.ClickNext();
+                _otherInformationSteps.ClickNext();
             }
             else if (screen.Equals("other information"))
             {

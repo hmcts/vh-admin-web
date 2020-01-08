@@ -29,7 +29,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void ProgressToNextPage()
         {
             SetTheJudge();
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_assignJudgePage.NextButton).Click();
+            ClickNext();
         }
 
         private void SetTheJudge()
@@ -39,6 +39,11 @@ namespace AdminWebsite.AcceptanceTests.Steps
             judge.HearingRoleName = PartyRole.Judge.Name;
             _commonSharedSteps.WhenTheUserSelectsTheOptionFromTheDropdown(_browsers[_c.CurrentUser.Key].Driver, _assignJudgePage.JudgeNameDropdown, judge.Username);
             _c.Test.HearingParticipants.Add(judge);
+        }
+
+        public void ClickNext()
+        {
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_assignJudgePage.NextButton).Click();
         }
     }
 }
