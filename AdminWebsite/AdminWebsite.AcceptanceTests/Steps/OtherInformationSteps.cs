@@ -27,12 +27,17 @@ namespace AdminWebsite.AcceptanceTests.Steps
             SetOtherInformation();
             _browsers[_c.CurrentUser.Key].Clear(_otherInformationPage.OtherInformationTextfield);
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_otherInformationPage.OtherInformationTextfield).SendKeys(_c.Test.OtherInformation);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_otherInformationPage.NextButton).Click();
+            ClickNext();
         }
 
         private void SetOtherInformation()
         {
             _c.Test.OtherInformation = _c.Test.OtherInformation != null ? "Updated other information" : _c.AdminWebConfig.TestConfig.TestData.OtherInformation.Other;
+        }
+
+        public void ClickNext()
+        {
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_otherInformationPage.NextButton).Click();
         }
     }
 }

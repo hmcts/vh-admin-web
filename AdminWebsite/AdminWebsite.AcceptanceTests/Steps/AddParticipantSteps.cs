@@ -39,6 +39,11 @@ namespace AdminWebsite.AcceptanceTests.Steps
             AddNewDefendantIndividual();
             AddNewDefendantRep();
             VerifyUsersAreAddedToTheParticipantsList();
+            ClickNext();
+        }
+
+        public void ClickNext()
+        {
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_addParticipantsPage.NextButton).Click();
         }
 

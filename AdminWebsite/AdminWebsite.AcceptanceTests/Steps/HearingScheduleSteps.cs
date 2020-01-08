@@ -34,6 +34,11 @@ namespace AdminWebsite.AcceptanceTests.Steps
             AddHearingDate();
             AddHearingTime();
             AddHearingScheduleDetails();
+            ClickNext();
+        }
+
+        public void ClickNext()
+        {
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_hearingSchedulePage.NextButton).Click();
         }
 
