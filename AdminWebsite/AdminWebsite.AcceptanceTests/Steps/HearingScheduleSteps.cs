@@ -37,11 +37,6 @@ namespace AdminWebsite.AcceptanceTests.Steps
             ClickNext();
         }
 
-        public void ClickNext()
-        {
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_hearingSchedulePage.NextButton).Click();
-        }
-
         public void AddHearingDate()
         {
             var date = _c.Test.HearingSchedule.ScheduledDate.Date.ToString(DateFormats.FormatDateToLocalDateFormat(_c.AdminWebConfig.TestConfig.TargetBrowser));
@@ -96,8 +91,13 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [Then(@"the user cannot proceed to the next page")]
         public void ThenTheUserCannotProceedToTheNextPage()
         {
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_hearingSchedulePage.NextButton).Click();
+            ClickNext();
             _browsers[_c.CurrentUser.Key].PageUrl(Page.AssignJudge.Url, true);
+        }
+
+        public void ClickNext()
+        {
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_hearingSchedulePage.NextButton).Click();
         }
     }
 }
