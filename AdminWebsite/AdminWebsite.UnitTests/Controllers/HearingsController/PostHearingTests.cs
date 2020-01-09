@@ -6,13 +6,13 @@ using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
+using AdminWebsite.UnitTests.Helper;
 using FluentAssertions;
 using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
-using Testing.Common;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {
@@ -44,7 +44,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
 
         [Test]
-        public async Task should_update_participant_user_details()
+        public async Task Should_update_participant_user_details()
         {
             _bookNewHearingRequestValidator.Setup(x => x.Validate(It.IsAny<BookNewHearingRequest>()))
                 .Returns(new ValidationResult());
@@ -62,7 +62,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
         
         [Test]
-        public async Task should_not_update_user_details_for_judge()
+        public async Task Should_not_update_user_details_for_judge()
         {
             _bookNewHearingRequestValidator.Setup(x => x.Validate(It.IsAny<BookNewHearingRequest>()))
                 .Returns(new ValidationResult());
@@ -80,7 +80,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
         
         [Test]
-        public async Task should_pass_bad_request_from_bookings_api()
+        public async Task Should_pass_bad_request_from_bookings_api()
         {
             _bookNewHearingRequestValidator.Setup(x => x.Validate(It.IsAny<BookNewHearingRequest>()))
                 .Returns(new ValidationResult());
@@ -98,7 +98,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
 
         [Test]
-        public async Task should_pass_current_user_as_created_by_to_service()
+        public async Task Should_pass_current_user_as_created_by_to_service()
         {
             _bookNewHearingRequestValidator.Setup(x => x.Validate(It.IsAny<BookNewHearingRequest>()))
                 .Returns(new ValidationResult());
@@ -113,7 +113,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
 
         [Test]
-        public async Task should_return_bad_request_on_validation_failure()
+        public async Task Should_return_bad_request_on_validation_failure()
         {
             _bookNewHearingRequestValidator.Setup(x => x.Validate(It.IsAny<BookNewHearingRequest>()))
                 .Returns(new ValidationResult(new[]

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Threading;
 using AcceptanceTests.Common.Api.Clients;
 using AcceptanceTests.Common.Api.Requests;
 using AcceptanceTests.Common.Api.Uris;
@@ -9,7 +10,6 @@ using AcceptanceTests.Common.Api.Users;
 using AcceptanceTests.Common.Configuration.Users;
 using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.BookingsAPI.Client;
-using AdminWebsite.UserAPI.Client;
 using AdminWebsite.VideoAPI.Client;
 using FluentAssertions;
 using TechTalk.SpecFlow;
@@ -19,6 +19,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
     [Binding]
     public sealed class RemoveDataHooks
     {
+        private const int Timeout = 30;
         private string _clerkUsername;
         private string _bookingApiUrl;
         private string _bookingsApiBearerToken;
@@ -45,15 +46,23 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             if (context.Test.HearingParticipants.Count <= 0) return;
             foreach (var participant in context.Test.HearingParticipants.Where(participant => participant.DisplayName.StartsWith(context.AdminWebConfig.TestConfig.TestData.AddParticipant.Participant.NewUserPrefix)))
             {
-                // TODO: VIH-5433 Add the user api delete endpoint once it is available
+                PollToDeleteTheNewUser(context.AdminWebConfig.VhServices.UserApiUrl, context.Tokens.UserApiBearerToken, participant.Username)
+                    .Should().BeTrue("New user was deleted from AAD");
             }
         }
 
-        private static string GetTheUserIdFromTheUserApi(string vhServicesUserApiUrl, string userApiBearerToken, string alternativeEmail)
+        private static bool PollToDeleteTheNewUser(string vhServicesUserApiUrl, string userApiBearerToken, string username)
         {
-            var response = new UserApiManager(vhServicesUserApiUrl, userApiBearerToken).GetUser(alternativeEmail);
-            var model = RequestHelper.DeserialiseSnakeCaseJsonToResponse<NewUserResponse>(response.Content);
-            return model.User_id;
+            for (var i = 0; i < Timeout; i++)
+            {
+                var response = new UserApiManager(vhServicesUserApiUrl, userApiBearerToken).DeleteUserFromAad(username);
+                if (response.StatusCode == HttpStatusCode.NoContent)
+                {
+                    return true;
+                }
+                Thread.Sleep(TimeSpan.FromSeconds(1));
+            }
+            return false;
         }
 
         private void ClearHearingsForClerk()
