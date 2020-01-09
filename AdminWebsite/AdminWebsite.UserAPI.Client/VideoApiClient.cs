@@ -435,6 +435,25 @@ namespace AdminWebsite.VideoAPI.Client
         /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         System.Threading.Tasks.Task RaiseVideoEventAsync(ConferenceEventRequest request, System.Threading.CancellationToken cancellationToken);
     
+        /// <summary>Remove a virtual court room</summary>
+        /// <param name="virtualCourtRoomId">The virtual court room id</param>
+        /// <returns>Success</returns>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task RemoveVirtualCourtRoomAsync(System.Guid virtualCourtRoomId);
+    
+        /// <summary>Remove a virtual court room</summary>
+        /// <param name="virtualCourtRoomId">The virtual court room id</param>
+        /// <returns>Success</returns>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
+        void RemoveVirtualCourtRoom(System.Guid virtualCourtRoomId);
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Remove a virtual court room</summary>
+        /// <param name="virtualCourtRoomId">The virtual court room id</param>
+        /// <returns>Success</returns>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task RemoveVirtualCourtRoomAsync(System.Guid virtualCourtRoomId, System.Threading.CancellationToken cancellationToken);
+    
     }
     
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "13.1.3.0 (NJsonSchema v10.0.27.0 (Newtonsoft.Json v11.0.0.0))")]
@@ -2575,6 +2594,104 @@ namespace AdminWebsite.VideoAPI.Client
             }
         }
     
+        /// <summary>Remove a virtual court room</summary>
+        /// <param name="virtualCourtRoomId">The virtual court room id</param>
+        /// <returns>Success</returns>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
+        public System.Threading.Tasks.Task RemoveVirtualCourtRoomAsync(System.Guid virtualCourtRoomId)
+        {
+            return RemoveVirtualCourtRoomAsync(virtualCourtRoomId, System.Threading.CancellationToken.None);
+        }
+    
+        /// <summary>Remove a virtual court room</summary>
+        /// <param name="virtualCourtRoomId">The virtual court room id</param>
+        /// <returns>Success</returns>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
+        public void RemoveVirtualCourtRoom(System.Guid virtualCourtRoomId)
+        {
+            System.Threading.Tasks.Task.Run(async () => await RemoveVirtualCourtRoomAsync(virtualCourtRoomId, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
+        }
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Remove a virtual court room</summary>
+        /// <param name="virtualCourtRoomId">The virtual court room id</param>
+        /// <returns>Success</returns>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
+        public async System.Threading.Tasks.Task RemoveVirtualCourtRoomAsync(System.Guid virtualCourtRoomId, System.Threading.CancellationToken cancellationToken)
+        {
+            if (virtualCourtRoomId == null)
+                throw new System.ArgumentNullException("virtualCourtRoomId");
+    
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/virtualCourtRooms/{virtualCourtRoomId}");
+            urlBuilder_.Replace("{virtualCourtRoomId}", System.Uri.EscapeDataString(ConvertToString(virtualCourtRoomId, System.Globalization.CultureInfo.InvariantCulture)));
+    
+            var client_ = _httpClient;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("DELETE");
+    
+                    PrepareRequest(client_, request_, urlBuilder_);
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+                    PrepareRequest(client_, request_, url_);
+    
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+    
+                        ProcessResponse(client_, response_);
+    
+                        var status_ = ((int)response_.StatusCode).ToString();
+                        if (status_ == "204") 
+                        {
+                            return;
+                        }
+                        else
+                        if (status_ == "400") 
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            throw new VideoApiServiceException<ProblemDetails>("Bad Request", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == "404") 
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            throw new VideoApiServiceException<ProblemDetails>("Not Found", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == "401") 
+                        {
+                            string responseText_ = ( response_.Content == null ) ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new VideoApiServiceException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
+                        }
+                        else
+                        if (status_ != "200" && status_ != "204")
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new VideoApiServiceException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (response_ != null)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+            }
+        }
+    
         protected struct ObjectResponseResult<T>
         {
             public ObjectResponseResult(T responseObject, string responseText)
@@ -3053,6 +3170,9 @@ namespace AdminWebsite.VideoAPI.Client
     
         [Newtonsoft.Json.JsonProperty("pending_tasks", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public int? Pending_tasks { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("hearing_ref_id", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid? Hearing_ref_id { get; set; }
     
     
     }

@@ -1,9 +1,9 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Net;
 using AdminWebsite.BookingsAPI.Client;
 
-namespace Testing.Common
+namespace AdminWebsite.UnitTests.Helper
 {
     /// <summary>
     /// Helper to generate API client exceptions
@@ -13,8 +13,8 @@ namespace Testing.Common
         public static BookingsApiException ForBookingsAPI(HttpStatusCode statusCode)
         {
             return new BookingsApiException(
-                statusCode.ToString(), 
-                (int) statusCode,
+                statusCode.ToString(),
+                (int)statusCode,
                 statusCode.ToString(),
                 new Dictionary<string, IEnumerable<string>>(),
                 null
@@ -24,8 +24,8 @@ namespace Testing.Common
         public static Exception ForUserService(HttpStatusCode statusCode)
         {
             return new AdminWebsite.UserAPI.Client.UserServiceException(
-                statusCode.ToString(), 
-                (int) statusCode, 
+                statusCode.ToString(),
+                (int)statusCode,
                 statusCode.ToString(),
                 new Dictionary<string, IEnumerable<string>>(),
                 null

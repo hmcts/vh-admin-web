@@ -7,8 +7,8 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
-using Testing.Common;
 using System.Text.Encodings.Web;
+using AdminWebsite.UnitTests.Helper;
 
 namespace AdminWebsite.UnitTests.Controllers
 {

@@ -42,7 +42,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AdminWebsite\AdminWebsite.csproj" />
-    <ProjectReference Include="..\Testing.Common\Testing.Common.csproj" />
   </ItemGroup>
 
   <ItemGroup>

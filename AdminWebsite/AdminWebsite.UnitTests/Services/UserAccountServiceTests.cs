@@ -10,7 +10,7 @@ using NUnit.Framework;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
-using Testing.Common;
+using AdminWebsite.UnitTests.Helper;
 
 namespace AdminWebsite.UnitTests.Services
 {
@@ -42,7 +42,7 @@ namespace AdminWebsite.UnitTests.Services
         }
 
         [Test]
-        public void should_fail_if_we_cannot_figure_out_user_existence()
+        public void Should_fail_if_we_cannot_figure_out_user_existence()
         {
             _userApiClient.Setup(x => x.GetUserByEmailAsync(It.IsAny<string>()))
                 .Throws(ClientException.ForUserService(HttpStatusCode.InternalServerError));
@@ -52,7 +52,7 @@ namespace AdminWebsite.UnitTests.Services
         }
 
         [Test]
-        public async Task should_add_new_individuals_to_external_group()
+        public async Task Should_add_new_individuals_to_external_group()
         {
             _userApiClient.Setup(x => x.CreateUserAsync(It.IsAny<CreateUserRequest>()))
                 .ReturnsAsync(new NewUserResponse());
@@ -69,7 +69,7 @@ namespace AdminWebsite.UnitTests.Services
         }
 
         [Test]
-        public async Task should_add_solicitor_to_professional_user_group()
+        public async Task Should_add_solicitor_to_professional_user_group()
         {
             _userApiClient.Setup(x => x.CreateUserAsync(It.IsAny<CreateUserRequest>()))
                 .ReturnsAsync(new NewUserResponse());
@@ -87,7 +87,7 @@ namespace AdminWebsite.UnitTests.Services
         }
 
         [Test]
-        public async Task should_not_create_users_that_already_exists()
+        public async Task Should_not_create_users_that_already_exists()
         {
             var participant = new BookingsAPI.Client.ParticipantRequest
             {

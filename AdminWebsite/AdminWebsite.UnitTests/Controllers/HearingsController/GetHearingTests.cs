@@ -10,8 +10,8 @@ using System.Collections.Generic;
 using System.Net;
 using System.Text.Encodings.Web;
 using AdminWebsite.Models;
+using AdminWebsite.UnitTests.Helper;
 using FluentValidation;
-using Testing.Common;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {
@@ -72,7 +72,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
 
         [Test]
-        public void should_return_ok_status_if_hearing_id_is_valid()
+        public void Should_return_ok_status_if_hearing_id_is_valid()
         {
             _bookingsApiClient.Setup(x => x.GetHearingDetailsById(It.IsAny<Guid>()))
                 .Returns(_vhExistingHearing);
@@ -86,7 +86,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
 
         [Test]
-        public void should_return_bad_request_if_hearing_id_is_empty()
+        public void Should_return_bad_request_if_hearing_id_is_empty()
         {
             GivenApiThrowsExceptionOnGetHearing(HttpStatusCode.BadRequest);
 
