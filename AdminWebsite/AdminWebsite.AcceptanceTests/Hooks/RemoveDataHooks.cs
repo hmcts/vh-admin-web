@@ -46,12 +46,12 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             if (context.Test.HearingParticipants.Count <= 0) return;
             foreach (var participant in context.Test.HearingParticipants.Where(participant => participant.DisplayName.StartsWith(context.AdminWebConfig.TestConfig.TestData.AddParticipant.Participant.NewUserPrefix)))
             {
-                DeleteTheNewUser(context.AdminWebConfig.VhServices.UserApiUrl, context.Tokens.UserApiBearerToken, participant.Username)
+                PollToDeleteTheNewUser(context.AdminWebConfig.VhServices.UserApiUrl, context.Tokens.UserApiBearerToken, participant.Username)
                     .Should().BeTrue("New user was deleted from AAD");
             }
         }
 
-        private static bool DeleteTheNewUser(string vhServicesUserApiUrl, string userApiBearerToken, string username)
+        private static bool PollToDeleteTheNewUser(string vhServicesUserApiUrl, string userApiBearerToken, string username)
         {
             for (var i = 0; i < Timeout; i++)
             {
