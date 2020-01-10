@@ -6,15 +6,11 @@ namespace AdminWebsite.AcceptanceTests.Data
 {
     public class Test
     {
-        public Test()
-        {
-            SubmittedAndCreatedNewAadUsers = false;
-        }
         public List<UserAccount> HearingParticipants { get; set; }
         public HearingDetails HearingDetails { get; set; }
         public HearingSchedule HearingSchedule { get; set; }
         public string OtherInformation { get; set; }
         public AddParticipant AddParticipant { get; set; }
-        public bool SubmittedAndCreatedNewAadUsers { get; set; }
+        public bool SubmittedAndCreatedNewAadUsers { get; set; } = false;
     }
 }
