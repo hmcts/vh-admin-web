@@ -124,7 +124,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void ThenTheParticipantDetailsAreUpdated()
         {
             ClickBook();
-            var endpoint = new HearingsEndpoints().GetHearingsByUsername(UserManager.GetClerkUser(_c.AdminWebConfig.UserAccounts).Username);
+            var endpoint = new HearingsEndpoints().GetHearingsByUsername(UserManager.GetClerkUser(_c.UserAccounts).Username);
             var request = new RequestBuilder().Get(endpoint);
             var client = new ApiClient(_c.AdminWebConfig.VhServices.BookingsApiUrl, _c.Tokens.BookingsApiBearerToken).GetClient();
             ParticipantUpdated(request, client, $"{_c.Test.AddParticipant.Participant.NewUserPrefix}Updated display name")
@@ -179,7 +179,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         private void VerifyBookingCreated()
         {
-            var endpoint = new HearingsEndpoints().GetHearingsByUsername(UserManager.GetClerkUser(_c.AdminWebConfig.UserAccounts).Username);
+            var endpoint = new HearingsEndpoints().GetHearingsByUsername(UserManager.GetClerkUser(_c.UserAccounts).Username);
             var request = new RequestBuilder().Get(endpoint);
             var client = new ApiClient(_c.AdminWebConfig.VhServices.BookingsApiUrl, _c.Tokens.BookingsApiBearerToken).GetClient();
             var hearing = PollForHearing(request, client);
@@ -194,7 +194,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         private void VerifyBookingUpdated()
         {
-            var endpoint = new HearingsEndpoints().GetHearingsByUsername(UserManager.GetClerkUser(_c.AdminWebConfig.UserAccounts).Username);
+            var endpoint = new HearingsEndpoints().GetHearingsByUsername(UserManager.GetClerkUser(_c.UserAccounts).Username);
             var request = new RequestBuilder().Get(endpoint);
             var client = new ApiClient(_c.AdminWebConfig.VhServices.BookingsApiUrl, _c.Tokens.BookingsApiBearerToken).GetClient();
             var hearing = PollForHearing(request, client);

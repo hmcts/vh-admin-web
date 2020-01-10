@@ -54,7 +54,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_bookingsListPage.HearingType(_rowId, _c.Test.HearingDetails.HearingType.Name))
                 .Displayed.Should().BeTrue();
 
-            var judge = UserManager.GetClerkUser(_c.AdminWebConfig.UserAccounts);
+            var judge = UserManager.GetClerkUser(_c.UserAccounts);
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_bookingsListPage.Judge(_rowId, judge.DisplayName))
                 .Displayed.Should().BeTrue();
 
