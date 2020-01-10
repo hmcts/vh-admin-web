@@ -64,9 +64,14 @@ namespace AdminWebsite.AcceptanceTests.Steps
             VerifyHearingDetails();
             VerifyHearingSchedule();
             VerifyOtherInformation();
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_summaryPage.BookButton).Click();
+            ClickBook();
             VerifyBookingCreated();
             VerifyNewUsersCreatedInAad();
+        }
+
+        public void ClickBook()
+        {
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_summaryPage.BookButton).Click();
         }
 
         [When(@"the user edits the (.*)")]
@@ -111,14 +116,14 @@ namespace AdminWebsite.AcceptanceTests.Steps
             VerifyHearingDetails();
             VerifyHearingSchedule();
             VerifyOtherInformation();
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_summaryPage.BookButton).Click();
+            ClickBook();
             VerifyBookingUpdated();
         }
 
         [Then(@"the participant details are updated")]
         public void ThenTheParticipantDetailsAreUpdated()
         {
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_summaryPage.BookButton).Click();
+            ClickBook();
             var endpoint = new HearingsEndpoints().GetHearingsByUsername(UserManager.GetClerkUser(_c.AdminWebConfig.UserAccounts).Username);
             var request = new RequestBuilder().Get(endpoint);
             var client = new ApiClient(_c.AdminWebConfig.VhServices.BookingsApiUrl, _c.Tokens.BookingsApiBearerToken).GetClient();
@@ -230,6 +235,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             {
                 userApiManager.CheckIfParticipantExistsInAad(participant.AlternativeEmail, Timeout);
             }
+            _c.Test.SubmittedAndCreatedNewAadUsers = true;
         }
     }
 }
