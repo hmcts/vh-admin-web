@@ -65,7 +65,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         private HearingDetailsResponse CreateHearing()
         {
             var hearingRequest = new HearingRequestBuilder()
-                .WithUserAccounts(_c.AdminWebConfig.UserAccounts)
+                .WithUserAccounts(_c.UserAccounts)
                 .Build();
 
             _bookingsApiManager = new BookingsApiManager(_c.AdminWebConfig.VhServices.BookingsApiUrl, _c.Tokens.BookingsApiBearerToken);

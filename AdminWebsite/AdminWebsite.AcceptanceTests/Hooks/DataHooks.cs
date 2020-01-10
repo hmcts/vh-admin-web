@@ -41,7 +41,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         {
             var exist = false;
 
-            foreach (var response in UserManager.GetNonClerkParticipantUsers(_c.AdminWebConfig.UserAccounts).Select(participant => _userApiManager.GetUser(participant.Username)))
+            foreach (var response in UserManager.GetNonClerkParticipantUsers(_c.UserAccounts).Select(participant => _userApiManager.GetUser(participant.Username)))
             {
                 exist = response.StatusCode == HttpStatusCode.OK;
             }
@@ -51,7 +51,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         private void CreateHearing()
         {
             var hearingRequest = new HearingRequestBuilder()
-                .WithUserAccounts(_c.AdminWebConfig.UserAccounts)
+                .WithUserAccounts(_c.UserAccounts)
                 .Build();
 
             var hearingResponse = _bookingsApiManager.CreateHearing(hearingRequest);
@@ -60,7 +60,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             hearing.Should().NotBeNull();
 
             ParticipantExistsInTheDb(hearing.Id).Should().BeTrue();
-            _userApiManager.ParticipantsExistInAad(_c.AdminWebConfig.UserAccounts, Timeout).Should().BeTrue();
+            _userApiManager.ParticipantsExistInAad(_c.UserAccounts, Timeout).Should().BeTrue();
         }
 
         private bool ParticipantExistsInTheDb(Guid? hearingId)
@@ -69,7 +69,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             var hearing = RequestHelper.DeserialiseSnakeCaseJsonToResponse<HearingDetailsResponse>(hearingResponse.Content);
             hearing.Should().NotBeNull();
             return hearing.Participants.Any(x =>
-                x.Username.ToLower().Equals(UserManager.GetDefaultParticipantUser(_c.AdminWebConfig.UserAccounts).Username.ToLower()));
+                x.Username.ToLower().Equals(UserManager.GetDefaultParticipantUser(_c.UserAccounts).Username.ToLower()));
         }
     }
 }

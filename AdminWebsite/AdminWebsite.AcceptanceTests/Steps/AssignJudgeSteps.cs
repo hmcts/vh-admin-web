@@ -34,7 +34,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         private void SetTheJudge()
         {
-            var judge = UserManager.GetClerkUser(_c.AdminWebConfig.UserAccounts);
+            var judge = UserManager.GetClerkUser(_c.UserAccounts);
             judge.CaseRoleName = Party.Judge.Name;
             judge.HearingRoleName = PartyRole.Judge.Name;
             _commonSharedSteps.WhenTheUserSelectsTheOptionFromTheDropdown(_browsers[_c.CurrentUser.Key].Driver, _assignJudgePage.JudgeNameDropdown, judge.Username);

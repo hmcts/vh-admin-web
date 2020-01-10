@@ -155,7 +155,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         private HearingDetailsResponse GetHearing()
         {
-            var clerkUsername = UserManager.GetClerkUser(_c.AdminWebConfig.UserAccounts).Username;
+            var clerkUsername = UserManager.GetClerkUser(_c.UserAccounts).Username;
             var hearingResponse = _bookingsApiManager.GetHearingsForUsername(clerkUsername);
             var hearings = RequestHelper.DeserialiseSnakeCaseJsonToResponse<List<HearingDetailsResponse>>(hearingResponse.Content);
             return hearings.First(x => x.Cases.First().Name.Equals(_c.Test.HearingDetails.CaseName));

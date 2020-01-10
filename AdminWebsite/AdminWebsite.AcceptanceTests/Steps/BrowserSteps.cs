@@ -70,12 +70,12 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         private UserAccount GetDefaultParticipant()
         {
-            return UserManager.GetDefaultParticipantUser(_c.AdminWebConfig.UserAccounts);
+            return UserManager.GetDefaultParticipantUser(_c.UserAccounts);
         }
 
         private UserAccount GetMatchingDisplayName(string user)
         {
-            return UserManager.GetUserFromDisplayName(_c.AdminWebConfig.UserAccounts, user);
+            return UserManager.GetUserFromDisplayName(_c.UserAccounts, user);
         }
 
         [When(@"switches to the (.*) tab")]

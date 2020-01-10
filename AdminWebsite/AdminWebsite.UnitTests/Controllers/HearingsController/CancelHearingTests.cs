@@ -1,7 +1,6 @@
 ﻿using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
-using AdminWebsite.UserAPI.Client;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -47,7 +46,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
 
         [Test]
-        public async Task should_update_status_of_hearing_to_cancelled_given_status_and_updatedby()
+        public async Task Should_update_status_of_hearing_to_cancelled_given_status_and_updatedby()
         {
             var result = await _controller.UpdateBookingStatus(_guid, _updateBookingStatusRequest);
             var noContentResult = (NoContentResult)result;

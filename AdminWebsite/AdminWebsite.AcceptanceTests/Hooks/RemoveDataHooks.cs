@@ -28,9 +28,9 @@ namespace AdminWebsite.AcceptanceTests.Hooks
 
         [BeforeScenario(Order = (int)HooksSequence.RemoveDataHooks)]
         [AfterScenario]
-        private void RemovePreviousHearings(TestContext context)
+        public void RemovePreviousHearings(TestContext context)
         {
-            _clerkUsername = UserManager.GetClerkUser(context.AdminWebConfig.UserAccounts).Username;
+            _clerkUsername = UserManager.GetClerkUser(context.UserAccounts).Username;
             _bookingApiUrl = context.AdminWebConfig.VhServices.BookingsApiUrl;
             _bookingsApiBearerToken = context.Tokens.BookingsApiBearerToken;
             _videoApiUrl = context.AdminWebConfig.VhServices.VideoApiUrl;
@@ -40,7 +40,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         }
 
         [AfterScenario]
-        private static void RemoveNewUsersFromAad(TestContext context)
+        public static void RemoveNewUsersFromAad(TestContext context)
         {
             if (context.Test?.HearingParticipants == null) return;
             if (context.Test.HearingParticipants.Count <= 0 || !context.Test.SubmittedAndCreatedNewAadUsers) return;
@@ -54,7 +54,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
 
         private static bool UserHasBeenCreatedInAad(TestContext context)
         {
-            return new UserApiManager(context.AdminWebConfig.VhServices.UserApiUrl, context.Tokens.UserApiBearerToken).ParticipantsExistInAad(context.AdminWebConfig.UserAccounts, Timeout);
+            return new UserApiManager(context.AdminWebConfig.VhServices.UserApiUrl, context.Tokens.UserApiBearerToken).ParticipantsExistInAad(context.UserAccounts, Timeout);
         }
 
         private static bool PollToDeleteTheNewUser(string vhServicesUserApiUrl, string userApiBearerToken, string username)

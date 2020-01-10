@@ -22,12 +22,13 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         public ConfigHooks(TestContext context)
         {
             _configRoot = new ConfigurationManager("f99a3fe8-cf72-486a-b90f-b65c27da84ee").BuildConfig();
-            context.AdminWebConfig = new AdminWebConfig { UserAccounts = new List<UserAccount>() };
+            context.AdminWebConfig = new AdminWebConfig();
+            context.UserAccounts = new List<UserAccount>();
             context.Tokens = new AdminWebTokens();
         }
 
         [BeforeScenario(Order = (int)HooksSequence.ConfigHooks)]
-        private void RegisterSecrets(TestContext context)
+        public void RegisterSecrets(TestContext context)
         {
             RegisterAzureSecrets(context);
             RegisterTestUserSecrets(context);
@@ -55,9 +56,9 @@ namespace AdminWebsite.AcceptanceTests.Hooks
 
         private void RegisterTestUsers(TestContext context)
         {
-            context.AdminWebConfig.UserAccounts = Options.Create(_configRoot.GetSection("UserAccounts").Get<List<UserAccount>>()).Value;
-            context.AdminWebConfig.UserAccounts.Should().NotBeNullOrEmpty();
-            foreach (var user in context.AdminWebConfig.UserAccounts)
+            context.UserAccounts = Options.Create(_configRoot.GetSection("UserAccounts").Get<List<UserAccount>>()).Value;
+            context.UserAccounts.Should().NotBeNullOrEmpty();
+            foreach (var user in context.UserAccounts)
             {
                 user.Key = user.Lastname;
                 user.Username = $"{user.DisplayName.Replace(" ", "").Replace("ClerkJudge", "Clerk")}{context.AdminWebConfig.TestConfig.TestUsernameStem}";

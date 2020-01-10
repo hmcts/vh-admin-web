@@ -49,7 +49,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         private void AddExistingClaimantIndividual()
         {
-            var individual = UserManager.GetIndividualUsers(_c.AdminWebConfig.UserAccounts)[0];
+            var individual = UserManager.GetIndividualUsers(_c.UserAccounts)[0];
             individual.CaseRoleName = Party.Claimant.Name;
             individual.HearingRoleName = PartyRole.ClaimantLip.Name;
             _c.Test.HearingParticipants.Add(individual);
@@ -60,59 +60,13 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         private void AddExistingClaimantRep()
         {
-            var rep = UserManager.GetRepresentativeUsers(_c.AdminWebConfig.UserAccounts)[0];
+            var rep = UserManager.GetRepresentativeUsers(_c.UserAccounts)[0];
             rep.CaseRoleName = Party.Claimant.Name;
             rep.HearingRoleName = PartyRole.Solicitor.Name;
             _c.Test.HearingParticipants.Add(rep);
             SetParty(rep.CaseRoleName);
             SetRole(rep.HearingRoleName);
             SetExistingRepDetails(rep);
-        }
-
-        private void AddExistingDefendantIndividual()
-        {
-            var individual = UserManager.GetIndividualUsers(_c.AdminWebConfig.UserAccounts)[1];
-            individual.CaseRoleName = Party.Defendant.Name;
-            individual.HearingRoleName = PartyRole.DefendantLip.Name;
-            _c.Test.HearingParticipants.Add(individual);
-            SetParty(individual.CaseRoleName);
-            SetRole(individual.HearingRoleName);
-            SetExistingIndividualDetails(individual);
-        }
-
-        private void AddExistingDefendantRep()
-        {
-            var rep = UserManager.GetRepresentativeUsers(_c.AdminWebConfig.UserAccounts)[1];
-            rep.CaseRoleName = Party.Defendant.Name;
-            rep.HearingRoleName = PartyRole.Solicitor.Name;
-            _c.Test.HearingParticipants.Add(rep);
-            SetParty(rep.CaseRoleName);
-            SetRole(rep.HearingRoleName);
-            SetExistingRepDetails(rep);
-        }
-
-        private void AddNewClaimantIndividual()
-        {
-            var individual = CreateNewUser("Individual");
-            individual.CaseRoleName = Party.Claimant.Name;
-            individual.HearingRoleName = PartyRole.ClaimantLip.Name;
-            _individualDisplayName = individual.DisplayName;
-            _c.Test.HearingParticipants.Add(individual);
-            SetParty(individual.CaseRoleName);
-            SetRole(individual.HearingRoleName);
-            SetNewIndividualDetails(individual);
-        }
-
-        private void AddNewClaimantRep()
-        {
-            var rep = CreateNewUser("Representative");
-            rep.CaseRoleName = Party.Claimant.Name;
-            rep.HearingRoleName = PartyRole.Solicitor.Name;
-            rep.Representee = _individualDisplayName;
-            _c.Test.HearingParticipants.Add(rep);
-            SetParty(rep.CaseRoleName);
-            SetRole(rep.HearingRoleName);
-            SetNewRepDetails(rep);
         }
 
         private void AddNewDefendantIndividual()
@@ -294,7 +248,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         private void VerifyUsersAreAddedToTheParticipantsList()
         {
-            var clerk = UserManager.GetClerkUser(_c.AdminWebConfig.UserAccounts);
+            var clerk = UserManager.GetClerkUser(_c.UserAccounts);
             _browsers[_c.CurrentUser.Key].Driver
                 .WaitUntilVisible(_addParticipantsPage.ClerkUserParticipantsList(clerk.Username))
                 .Displayed.Should().BeTrue();
