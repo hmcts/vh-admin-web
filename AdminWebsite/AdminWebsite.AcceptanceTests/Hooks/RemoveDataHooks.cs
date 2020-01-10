@@ -43,12 +43,18 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         private static void RemoveNewUsersFromAad(TestContext context)
         {
             if (context.Test?.HearingParticipants == null) return;
-            if (context.Test.HearingParticipants.Count <= 0) return;
+            if (context.Test.HearingParticipants.Count <= 0 || !context.Test.SubmittedAndCreatedNewAadUsers) return;
             foreach (var participant in context.Test.HearingParticipants.Where(participant => participant.DisplayName.StartsWith(context.AdminWebConfig.TestConfig.TestData.AddParticipant.Participant.NewUserPrefix)))
             {
-                PollToDeleteTheNewUser(context.AdminWebConfig.VhServices.UserApiUrl, context.Tokens.UserApiBearerToken, participant.Username)
-                    .Should().BeTrue("New user was deleted from AAD");
+                if (UserHasBeenCreatedInAad(context))
+                    PollToDeleteTheNewUser(context.AdminWebConfig.VhServices.UserApiUrl, context.Tokens.UserApiBearerToken, participant.Username)
+                        .Should().BeTrue("New user was deleted from AAD");
             }
+        }
+
+        private static bool UserHasBeenCreatedInAad(TestContext context)
+        {
+            return new UserApiManager(context.AdminWebConfig.VhServices.UserApiUrl, context.Tokens.UserApiBearerToken).ParticipantsExistInAad(context.AdminWebConfig.UserAccounts, Timeout);
         }
 
         private static bool PollToDeleteTheNewUser(string vhServicesUserApiUrl, string userApiBearerToken, string username)

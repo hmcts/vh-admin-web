@@ -11,5 +11,6 @@ namespace AdminWebsite.AcceptanceTests.Data
         public HearingSchedule HearingSchedule { get; set; }
         public string OtherInformation { get; set; }
         public AddParticipant AddParticipant { get; set; }
+        public bool SubmittedAndCreatedNewAadUsers { get; set; } = false;
     }
 }
