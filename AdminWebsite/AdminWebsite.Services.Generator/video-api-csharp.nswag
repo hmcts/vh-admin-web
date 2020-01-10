@@ -85,7 +85,7 @@
       "enumNameGeneratorType": null,
       "serviceHost": "http://localhost:5670",
       "serviceSchemes": null,
-      "output": "../AdminWebsite.UserAPI.Client/VideoApiClient.cs"
+      "output": "../AdminWebsite.VideoAPI.Client/VideoApiClient.cs"
     }
   }
 }
