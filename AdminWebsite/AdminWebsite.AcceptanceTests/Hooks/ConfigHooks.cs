@@ -22,6 +22,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         public ConfigHooks(TestContext context)
         {
             _configRoot = new ConfigurationManager("f99a3fe8-cf72-486a-b90f-b65c27da84ee").BuildConfig();
+            context.AdminWebConfig = new AdminWebConfig();
             context.UserAccounts = new List<UserAccount>();
             context.Tokens = new AdminWebTokens();
         }
