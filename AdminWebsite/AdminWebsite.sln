@@ -27,6 +27,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdminWebsite.Services.Gener
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdminWebsite.AcceptanceTests", "AdminWebsite.AcceptanceTests\AdminWebsite.AcceptanceTests.csproj", "{CE4F0CBB-8EBC-4EE3-927E-FF8B54BA257C}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdminWebsite.VideoAPI.Client", "AdminWebsite.VideoAPI.Client\AdminWebsite.VideoAPI.Client.csproj", "{83BD2BB1-63D0-4571-87BC-56051E0D3169}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -61,6 +63,10 @@ Global
 		{CE4F0CBB-8EBC-4EE3-927E-FF8B54BA257C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CE4F0CBB-8EBC-4EE3-927E-FF8B54BA257C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CE4F0CBB-8EBC-4EE3-927E-FF8B54BA257C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{83BD2BB1-63D0-4571-87BC-56051E0D3169}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{83BD2BB1-63D0-4571-87BC-56051E0D3169}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{83BD2BB1-63D0-4571-87BC-56051E0D3169}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83BD2BB1-63D0-4571-87BC-56051E0D3169}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
