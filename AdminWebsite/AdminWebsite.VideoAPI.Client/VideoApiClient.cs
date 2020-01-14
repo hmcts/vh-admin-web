@@ -2809,6 +2809,9 @@ namespace AdminWebsite.VideoAPI.Client
         [Newtonsoft.Json.JsonProperty("participants", Required = Newtonsoft.Json.Required.Always)]
         public System.Collections.Generic.List<ParticipantRequest> Participants { get; set; } = new System.Collections.Generic.List<ParticipantRequest>();
     
+        [Newtonsoft.Json.JsonProperty("hearing_venue_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Hearing_venue_name { get; set; }
+    
     
     }
     
@@ -2913,6 +2916,9 @@ namespace AdminWebsite.VideoAPI.Client
         /// <summary>The Kinly meeting room details</summary>
         [Newtonsoft.Json.JsonProperty("meeting_room", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public MeetingRoomResponse Meeting_room { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("hearing_venue_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Hearing_venue_name { get; set; }
     
     
     }
@@ -3134,6 +3140,9 @@ namespace AdminWebsite.VideoAPI.Client
         [Newtonsoft.Json.JsonProperty("scheduled_duration", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public int? Scheduled_duration { get; set; }
     
+        [Newtonsoft.Json.JsonProperty("hearing_venue_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Hearing_venue_name { get; set; }
+    
     
     }
     
@@ -3173,6 +3182,9 @@ namespace AdminWebsite.VideoAPI.Client
     
         [Newtonsoft.Json.JsonProperty("hearing_ref_id", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.Guid? Hearing_ref_id { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("hearing_venue_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Hearing_venue_name { get; set; }
     
     
     }
