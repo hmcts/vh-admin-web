@@ -1,12 +1,11 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ChangePasswordComponent } from './change-password.component';
-import { AbstractControl } from '@angular/forms';
 import { SharedModule } from '../shared/shared.module';
 import { RouterTestingModule } from '@angular/router/testing';
 import { UpdateUserPopupComponent } from '../popups/update-user-popup/update-user-popup.component';
 import { Logger } from '../services/logger';
 import { UserDataService } from '../services/user-data.service';
-import { of, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 
 describe('ChangePasswordComponent', () => {
   let component: ChangePasswordComponent;

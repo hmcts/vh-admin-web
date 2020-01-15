@@ -54,7 +54,7 @@ export class ChangePasswordComponent implements OnInit {
 
       this.userDataService.updateUser(this.userName.value)
         .subscribe(
-          (data) => {
+          (data: void) => {
             this.popupMessage = 'User\'s password has been changed';
             this.showUpdateSuccess = true;
             this.logger.event('User\'s password has been changed.');
