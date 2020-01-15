@@ -12,7 +12,7 @@ describe('ChangePasswordComponent', () => {
   let component: ChangePasswordComponent;
   let fixture: ComponentFixture<ChangePasswordComponent>;
   let loggerSpy: jasmine.SpyObj<Logger>;
-  let userDataServiceSpy = jasmine.createSpyObj<UserDataService>('UserDataService', ['updateUser']);
+  const userDataServiceSpy = jasmine.createSpyObj<UserDataService>('UserDataService', ['updateUser']);
 
   beforeEach(async(() => {
     loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error']);

@@ -41,7 +41,7 @@ export class ChangePasswordComponent implements OnInit {
   }
 
   userNameOnBlur() {
-    let userNameText = this.userName.value;
+    const userNameText = this.userName.value;
     /* tslint:disable: max-line-length */
     const pattern = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
     this.isValidEmail = userNameText && userNameText.length > 0 && userNameText.length < 256 && pattern.test(userNameText.toLowerCase());
