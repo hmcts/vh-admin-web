@@ -6,16 +6,22 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { UpdateUserPopupComponent } from '../popups/update-user-popup/update-user-popup.component';
 import { Logger } from '../services/logger';
 import { UserDataService } from '../services/user-data.service';
-import { of } from 'rxjs';
+import { of, Observable } from 'rxjs';
 
 describe('ChangePasswordComponent', () => {
   let component: ChangePasswordComponent;
   let fixture: ComponentFixture<ChangePasswordComponent>;
   let loggerSpy: jasmine.SpyObj<Logger>;
-  const userDataServiceSpy = jasmine.createSpyObj<UserDataService>('UserDataService', ['updateUser']);
+  let userDataServiceSpy: jasmine.SpyObj<UserDataService>;
 
   beforeEach(async(() => {
     loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error']);
+    userDataServiceSpy = jasmine.createSpyObj<UserDataService>('UserDataService', ['updateUser']);
+
+    userDataServiceSpy.updateUser.and.callFake(() => {
+      return new Observable<void>();
+    });
+
     TestBed.configureTestingModule({
       imports: [
         SharedModule,
@@ -53,5 +59,11 @@ describe('ChangePasswordComponent', () => {
     component.updateUser();
     fixture.detectChanges();
     expect(component.failedSubmission).toBe(true);
+  });
+  it('should show a save success if password was updated.', () => {
+    component.userName.setValue('user.name@domain.com');
+    component.updateUser();
+    fixture.detectChanges();
+    expect(userDataServiceSpy.updateUser).toHaveBeenCalled();
   });
 });
