@@ -89,6 +89,7 @@ namespace AdminWebsite.AcceptanceTests.Data
                 .With(x => x.Participants = _participants)
                 .With(x => x.Cases = cases)
                 .With(x => x.Created_by = UserManager.GetCaseAdminUser(_userAccounts).Username)
+                .With(x => x.Questionnaire_not_required = true)
                 .Build();
 
             return _request;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using AcceptanceTests.Common.Api.Hearings;
 using AcceptanceTests.Common.Api.Requests;
 using AcceptanceTests.Common.Driver.Browser;
@@ -57,7 +58,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             CheckQuestionHasBeenAnswered(UnansweredQuestion, UnansweredAnswer, allQuestionsAndAnswers);
         }
 
-        private void CheckQuestionHasBeenAnswered(string question, string answer, Dictionary<string, string> allQuestionsAndAnswers)
+        private static void CheckQuestionHasBeenAnswered(string question, string answer, IReadOnlyDictionary<string, string> allQuestionsAndAnswers)
         {
             allQuestionsAndAnswers[question].Should().Be(answer);
         }
@@ -70,6 +71,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
             _bookingsApiManager = new BookingsApiManager(_c.AdminWebConfig.VhServices.BookingsApiUrl, _c.Tokens.BookingsApiBearerToken);
             var hearingResponse = _bookingsApiManager.CreateHearing(hearingRequest);
+            hearingResponse.StatusCode.Should().Be(HttpStatusCode.Created);
             var hearing = RequestHelper.DeserialiseSnakeCaseJsonToResponse<HearingDetailsResponse>(hearingResponse.Content);
             hearing.Should().NotBeNull();
             return hearing;
@@ -78,7 +80,8 @@ namespace AdminWebsite.AcceptanceTests.Steps
         private void AddSuitabilityAnswers(Guid? hearingId, Guid? participantId)
         {
             var answers = SuitabilityAnswers.Build();
-            _bookingsApiManager.SetSuitabilityAnswers(hearingId, participantId, answers);
+            var response = _bookingsApiManager.SetSuitabilityAnswers(hearingId, participantId, answers);
+            response.Should().Be(HttpStatusCode.OK);
         }
 
         private Dictionary<string, string> GetQuestionsAndAnswers()
