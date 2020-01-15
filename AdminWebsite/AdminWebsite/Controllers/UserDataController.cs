@@ -3,6 +3,10 @@ using AdminWebsite.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Net;
+using Swashbuckle.AspNetCore.Annotations;
+using System.Threading.Tasks;
+using System;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace AdminWebsite.Controllers
 {
@@ -27,6 +31,32 @@ namespace AdminWebsite.Controllers
         {
             var response = _userAccountService.GetJudgeUsers();
             return Ok(response);
+        }
+
+        [HttpPatch("updateUser")]
+        [SwaggerOperation(OperationId = "UpdateUser")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<ActionResult> UpdateUser([FromBody]string userName)
+        {
+            try
+            {
+                await _userAccountService.UpdateParticipantPassword(userName);
+                return NoContent();
+            }
+            catch (UserAPI.Client.UserServiceException e)
+            {
+                if (e.StatusCode == (int)HttpStatusCode.BadRequest)
+                {
+                    return BadRequest(e.Response);
+                }
+                if (e.StatusCode == (int)HttpStatusCode.NotFound)
+                {
+                    return NotFound(e.Response);
+                }
+                throw;
+            }
         }
     }
 }

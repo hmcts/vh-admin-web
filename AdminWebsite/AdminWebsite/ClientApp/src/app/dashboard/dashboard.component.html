@@ -21,6 +21,13 @@
           </div>
         </a>
       </div>
+      <div class="govuk-grid-column-one-third" *ngIf="showCheckList">
+        <a class="vhpanel-link" [routerLink]="['/change-password']">
+          <div class="vhpanel" id="vhpanel-purple">
+            <h1 class="vhpanel-title">Change user password</h1>
+          </div>
+        </a>
+      </div>
     </div>
   </div>
 </main>

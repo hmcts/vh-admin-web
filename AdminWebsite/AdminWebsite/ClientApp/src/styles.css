@@ -209,3 +209,34 @@ p {
     transform: rotate(360deg);
   }
 }
+
+.vh-popup-message {
+  margin: 270px auto;
+  padding: 30px;
+  background: #fff;
+  border-radius: 0px;
+  width: 50%;
+  position: relative;
+  transition: all 2s ease-in-out;
+  text-align: center;
+}
+
+.vh-popup-message-overlay {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.7);
+  transition: opacity 500ms;
+  z-index: 999;
+}
+
+.vh-popup-message-small {
+  max-width: 600px !important;
+  text-align: center;
+}
+
+.vh-popup-message-xsmall {
+  max-width: 500px !important;
+}

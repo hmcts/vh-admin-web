@@ -31,6 +31,8 @@ import { SaveFailedPopupComponent } from './popups/save-failed-popup/save-failed
 import { CancelBookingPopupComponent } from './popups/cancel-booking-popup/cancel-booking-popup.component';
 import { UnsupportedBrowserComponent } from './shared/unsupported-browser/unsupported-browser.component';
 import { Logger } from './services/logger';
+import { ChangePasswordComponent } from './change-password/change-password.component';
+import { UpdateUserPopupComponent } from './popups/update-user-popup/update-user-popup.component';
 
 describe('app routing', () => {
   let location: Location;
@@ -60,6 +62,8 @@ describe('app routing', () => {
         CancelPopupStubComponent,
         CancelBookingPopupComponent,
         UnsupportedBrowserComponent,
+        ChangePasswordComponent,
+        UpdateUserPopupComponent
       ],
       providers: [
         AuthGuard,

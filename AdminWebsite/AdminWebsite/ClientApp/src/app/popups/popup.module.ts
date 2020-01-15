@@ -8,6 +8,7 @@ import { SaveFailedPopupComponent } from './save-failed-popup/save-failed-popup.
 import { CancelBookingPopupComponent } from './cancel-booking-popup/cancel-booking-popup.component';
 import { WaitPopupComponent } from './wait-popup/wait-popup.component';
 import { DiscardConfirmPopupComponent } from './discard-confirm-popup/discard-confirm-popup.component';
+import { UpdateUserPopupComponent } from './update-user-popup/update-user-popup.component';
 
 @NgModule({
   imports: [
@@ -21,6 +22,7 @@ import { DiscardConfirmPopupComponent } from './discard-confirm-popup/discard-co
     CancelBookingPopupComponent,
     WaitPopupComponent,
     DiscardConfirmPopupComponent,
+    UpdateUserPopupComponent,
   ],
   exports: [
     CancelPopupComponent,
@@ -29,7 +31,8 @@ import { DiscardConfirmPopupComponent } from './discard-confirm-popup/discard-co
     WaitPopupComponent,
     SaveFailedPopupComponent,
     DiscardConfirmPopupComponent,
-    CancelBookingPopupComponent
+    CancelBookingPopupComponent,
+    UpdateUserPopupComponent
   ]
 })
 export class PopupModule { }

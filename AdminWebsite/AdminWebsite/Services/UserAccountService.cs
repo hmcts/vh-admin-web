@@ -28,6 +28,8 @@ namespace AdminWebsite.Services
         Task UpdateParticipantUsername(ParticipantRequest participant);
 
         Task<UserRole> GetUserRoleAsync(string userName);
+
+        Task UpdateParticipantPassword(string userName);
     }
 
     public class UserAccountService : IUserAccountService
@@ -129,6 +131,15 @@ namespace AdminWebsite.Services
                 DisplayName = x.Display_name,
                 Email = x.Email
             }).ToList();
+        }
+
+        public async Task UpdateParticipantPassword(string userName)
+        {
+            var userProfile = await _userApiClient.GetUserByAdUserNameAsync(userName);
+            if (userProfile != null)
+            {
+                await _userApiClient.UpdateUserAsync(userName);
+            }
         }
     }
 }
