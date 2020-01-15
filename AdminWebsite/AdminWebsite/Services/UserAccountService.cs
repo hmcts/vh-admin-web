@@ -29,6 +29,11 @@ namespace AdminWebsite.Services
 
         Task<UserRole> GetUserRoleAsync(string userName);
 
+        /// <summary>
+        ///     Updates the users AAD password
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <returns></returns>
         Task UpdateParticipantPassword(string userName);
     }
 
@@ -133,6 +138,7 @@ namespace AdminWebsite.Services
             }).ToList();
         }
 
+        /// <inheritdoc />
         public async Task UpdateParticipantPassword(string userName)
         {
             var userProfile = await _userApiClient.GetUserByAdUserNameAsync(userName);

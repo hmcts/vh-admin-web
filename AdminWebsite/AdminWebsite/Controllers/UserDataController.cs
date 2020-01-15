@@ -1,12 +1,10 @@
 ﻿using AdminWebsite.Contracts.Responses;
 using AdminWebsite.Services;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
 using System.Net;
-using Swashbuckle.AspNetCore.Annotations;
 using System.Threading.Tasks;
-using System;
-using Microsoft.AspNetCore.JsonPatch;
 
 namespace AdminWebsite.Controllers
 {
@@ -33,6 +31,11 @@ namespace AdminWebsite.Controllers
             return Ok(response);
         }
 
+        /// <summary>
+        ///     Updates the users AAD password.
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <returns></returns>
         [HttpPatch("updateUser")]
         [SwaggerOperation(OperationId = "UpdateUser")]
         [ProducesResponseType((int)HttpStatusCode.OK)]

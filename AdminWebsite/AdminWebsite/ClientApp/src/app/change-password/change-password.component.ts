@@ -41,13 +41,10 @@ export class ChangePasswordComponent implements OnInit {
   }
 
   userNameOnBlur() {
-    const text = this.validateEmail(this.userName.value);
-  }
-
-  validateEmail(inputValue: string) {
+    let userNameText = this.userName.value;
     /* tslint:disable: max-line-length */
     const pattern = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
-    this.isValidEmail = inputValue && inputValue.length > 0 && inputValue.length < 256 && pattern.test(inputValue.toLowerCase());
+    this.isValidEmail = userNameText && userNameText.length > 0 && userNameText.length < 256 && pattern.test(userNameText.toLowerCase());
   }
 
   updateUser() {
@@ -57,7 +54,7 @@ export class ChangePasswordComponent implements OnInit {
 
       this.userDataService.updateUser(this.userName.value)
         .subscribe(
-          () => {
+          (data) => {
             this.popupMessage = 'User\'s password has been changed';
             this.showUpdateSuccess = true;
             this.logger.event('User\'s password has been changed.');
