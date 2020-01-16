@@ -69,5 +69,5 @@ describe('ChangePasswordComponent', () => {
     component.okay();
     fixture.detectChanges();
     expect(component.showUpdateSuccess).toBeFalsy();
-  });  
+  });
 });
