@@ -2,7 +2,7 @@ import { TestBed, inject } from '@angular/core/testing';
 import { UserDataService } from './user-data.service';
 import { HttpClientModule } from '@angular/common/http';
 
-describe('JudgeDataService', () => {
+describe('UserDataService', () => {
     beforeEach(() => {
         TestBed.configureTestingModule({
             imports: [HttpClientModule],
