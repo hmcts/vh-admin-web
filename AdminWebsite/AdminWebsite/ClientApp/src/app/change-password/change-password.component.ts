@@ -57,13 +57,13 @@ export class ChangePasswordComponent implements OnInit {
           (data: void) => {
             this.popupMessage = 'User\'s password has been changed';
             this.showUpdateSuccess = true;
-            this.logger.event('User\'s password has been changed.');
+            // this.logger.event('User\'s password has been changed.');
             this.saveSuccess = true;
           },
           error => {
             this.popupMessage = 'User does not exist - please try again';
             this.showUpdateSuccess = true;
-            this.logger.error('User does not exist.', error);
+            // this.logger.error('User does not exist.', error);
           }
         );
 

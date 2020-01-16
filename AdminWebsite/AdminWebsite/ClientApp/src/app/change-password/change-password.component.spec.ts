@@ -65,4 +65,9 @@ describe('ChangePasswordComponent', () => {
     fixture.detectChanges();
     expect(userDataServiceSpy.updateUser).toHaveBeenCalled();
   });
+  it('should hide pop up if okay pressed', () => {
+    component.okay();
+    fixture.detectChanges();
+    expect(component.showUpdateSuccess).toBeFalsy();
+  });  
 });
