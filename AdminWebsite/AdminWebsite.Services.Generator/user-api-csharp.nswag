@@ -3,7 +3,8 @@
   "defaultVariables": null,
   "documentGenerator": {
     "fromDocument": {
-      "url": "https://vh-user-api-dev.azurewebsites.net/swagger/v1/swagger.json",
+      //"url": "https://vh-user-api-dev.azurewebsites.net/swagger/v1/swagger.json",
+      "url": "https://localhost:5200/swagger/v1/swagger.json",
       "output": null
     }
   },

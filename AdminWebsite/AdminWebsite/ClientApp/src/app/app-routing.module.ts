@@ -8,6 +8,7 @@ import { UnauthorisedComponent } from './error/unauthorised.component';
 import { ErrorComponent } from './error/error.component';
 import { AdminGuard } from './security/admin.guard';
 import { UnsupportedBrowserComponent } from './shared/unsupported-browser/unsupported-browser.component';
+import { ChangePasswordComponent } from './change-password/change-password.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
@@ -17,6 +18,7 @@ export const routes: Routes = [
   { path: 'unauthorised', component: UnauthorisedComponent },
   { path: 'error', component: ErrorComponent },
   { path: 'unsupported-browser', component: UnsupportedBrowserComponent },
+  { path: 'change-password', component: ChangePasswordComponent, canActivate: [AdminGuard] },
   { path: '**', redirectTo: 'dashboard', pathMatch: 'full', canActivate: [AdminGuard] }
 ];
 

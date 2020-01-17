@@ -36,6 +36,7 @@ import { WindowRef } from './security/window-ref';
 import { CustomAdalInterceptor } from './custom-adal-interceptor';
 import { UnsupportedBrowserComponent } from './shared/unsupported-browser/unsupported-browser.component';
 import { DeviceDetectorModule } from 'ngx-device-detector';
+import { ChangePasswordComponent } from './change-password/change-password.component';
 
 export function getSettings(configService: ConfigService) {
   return () => configService.loadConfig();
@@ -50,6 +51,7 @@ export function getSettings(configService: ConfigService) {
     UnauthorisedComponent,
     ErrorComponent,
     UnsupportedBrowserComponent,
+    ChangePasswordComponent,
   ],
   imports: [
     MomentModule,

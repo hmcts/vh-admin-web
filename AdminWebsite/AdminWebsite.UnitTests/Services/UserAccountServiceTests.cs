@@ -118,5 +118,13 @@ namespace AdminWebsite.UnitTests.Services
             result.UserRoleType.Should().Be(userRole);
             result.CaseTypes.Should().BeEquivalentTo(caseType);
         }
+
+        [Test]
+        public async Task should_update_password_if_a_user_was_found_in_aad()
+        {
+            _userApiClient.Setup(x => x.GetUserByAdUserNameAsync(It.IsAny<string>())).ReturnsAsync(new UserProfile { User_name = "existingUser@email.com" });
+            await _service.UpdateParticipantPassword("exisitngUser");
+            _userApiClient.Verify(x => x.UpdateUserAsync(It.IsAny<string>()), Times.Once);
+        }
     }
 }
