@@ -256,7 +256,7 @@ namespace AdminWebsite.Controllers
                 cursor = _encoder.Encode(cursor);
             }
 
-            IEnumerable<string> caseTypes;
+            IEnumerable<string> caseTypes = null;
 
             if (_userIdentity.IsAdministratorRole())
             {
@@ -286,13 +286,20 @@ namespace AdminWebsite.Controllers
         }
 
 
-        private IEnumerable<int> GetHearingTypesId(IEnumerable<string> caseTypes)
+        private List<int> GetHearingTypesId(IEnumerable<string> caseTypes)
         {
             var typeIds = new List<int>();
             var types = _bookingsApiClient.GetCaseTypes();
             if (types != null && types.Any())
             {
-                typeIds.AddRange(from item in caseTypes select types.FirstOrDefault(s => s.Name == item) into case_type where case_type != null select case_type.Id);
+                foreach (var item in caseTypes)
+                {
+                    var case_type = types.FirstOrDefault(s => s.Name == item);
+                    if (case_type != null)
+                    {
+                        typeIds.Add(case_type.Id);
+                    }
+                }
             }
 
             return typeIds;
