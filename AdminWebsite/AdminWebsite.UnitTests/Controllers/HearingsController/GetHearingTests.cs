@@ -62,7 +62,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 },
                 Scheduled_date_time = DateTime.UtcNow.AddDays(10),
                 Scheduled_duration = 60,
-                Status = HearingDetailsResponseStatus.Booked,
+                Status = BookingStatus.Booked,
                 Updated_by = string.Empty,
                 Updated_date = DateTime.UtcNow
             };

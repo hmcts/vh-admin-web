@@ -169,12 +169,12 @@ namespace AdminWebsite.Controllers
                     else
                     {
                         var existingParticipant = hearing.Participants.FirstOrDefault(p => p.Id.Equals(participant.Id));
-                        if (existingParticipant != null && (existingParticipant.User_role_name == "Individual" || existingParticipant.User_role_name == "Representative"))
-                        {
-                            //Update participant
-                            var updateParticipantRequest = MapUpdateParticipantRequest(participant);
-                            await _bookingsApiClient.UpdateParticipantDetailsAsync(hearingId, participant.Id.Value, updateParticipantRequest);
-                        }
+                        if (existingParticipant == null ||
+                            (existingParticipant.User_role_name != "Individual" &&
+                             existingParticipant.User_role_name != "Representative")) continue;
+                        //Update participant
+                        var updateParticipantRequest = MapUpdateParticipantRequest(participant);
+                        await _bookingsApiClient.UpdateParticipantDetailsAsync(hearingId, participant.Id.Value, updateParticipantRequest);
                     }
                 }
 
@@ -191,7 +191,7 @@ namespace AdminWebsite.Controllers
                 var deleteParticipantList = hearing.Participants.Where(p => request.Participants.All(rp => rp.ContactEmail != p.Contact_email));
                 foreach (var participantToDelete in deleteParticipantList)
                 {
-                    await _bookingsApiClient.RemoveParticipantFromHearingAsync(hearingId, participantToDelete.Id.Value);
+                    await _bookingsApiClient.RemoveParticipantFromHearingAsync(hearingId, participantToDelete.Id);
                 }
 
                 return Ok(await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId));
@@ -256,7 +256,7 @@ namespace AdminWebsite.Controllers
                 cursor = _encoder.Encode(cursor);
             }
 
-            IEnumerable<string> caseTypes = null;
+            IEnumerable<string> caseTypes;
 
             if (_userIdentity.IsAdministratorRole())
             {
@@ -286,20 +286,13 @@ namespace AdminWebsite.Controllers
         }
 
 
-        private List<int> GetHearingTypesId(IEnumerable<string> caseTypes)
+        private IEnumerable<int> GetHearingTypesId(IEnumerable<string> caseTypes)
         {
             var typeIds = new List<int>();
             var types = _bookingsApiClient.GetCaseTypes();
             if (types != null && types.Any())
             {
-                foreach (var item in caseTypes)
-                {
-                    var case_type = types.FirstOrDefault(s => s.Name == item);
-                    if (case_type != null)
-                    {
-                        typeIds.Add(case_type.Id.Value);
-                    }
-                }
+                typeIds.AddRange(from item in caseTypes select types.FirstOrDefault(s => s.Name == item) into case_type where case_type != null select case_type.Id);
             }
 
             return typeIds;

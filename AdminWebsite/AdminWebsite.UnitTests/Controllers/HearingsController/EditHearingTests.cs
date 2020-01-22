@@ -87,7 +87,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
         
         [Test]
-        public async Task should_return_bad_request_if_invalid_hearing_id()
+        public async Task Should_return_bad_request_if_invalid_hearing_id()
         {
             var invalidId = Guid.Empty;
             var result = await _controller.EditHearing(invalidId, _request);
@@ -97,7 +97,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
         
         [Test]
-        public async Task should_return_bad_request_if_case_is_not_given()
+        public async Task Should_return_bad_request_if_case_is_not_given()
         {
             _editHearingRequestValidator.Setup(x => x.Validate(It.IsAny<EditHearingRequest>()))
                 .Returns(new ValidationResult(new[]
@@ -114,7 +114,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
         
         [Test]
-        public async Task should_return_bad_request_if_no_participants_are_given()
+        public async Task Should_return_bad_request_if_no_participants_are_given()
         {
             _editHearingRequestValidator.Setup(x => x.Validate(It.IsAny<EditHearingRequest>()))
                 .Returns(new ValidationResult(new[]
@@ -130,7 +130,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
 
         [Test]
-        public async Task should_return_not_found_if_hearing_is_missing()
+        public async Task Should_return_not_found_if_hearing_is_missing()
         {
             _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
                 .Throws(ClientException.ForBookingsAPI(HttpStatusCode.NotFound));
@@ -141,7 +141,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
 
         [Test]
-        public async Task should_add_participants_without_id()
+        public async Task Should_add_participants_without_id()
         {
             _request.Participants[0].FirstName = "New user firstname";
             
@@ -151,7 +151,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
         
         [Test]
-        public async Task should_update_existing_participants()
+        public async Task Should_update_existing_participants()
         {
             _request.Participants[0].Id = _existingHearing.Participants[0].Id;
             
@@ -161,9 +161,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
         
         [Test]
-        public async Task should_delete_missing_participants()
+        public async Task Should_delete_missing_participants()
         {
-            var removedUserId = _existingHearing.Participants[0].Id.Value;
+            var removedUserId = _existingHearing.Participants[0].Id;
             
             var result = await _controller.EditHearing(_validId, _request);
             ((OkObjectResult) result.Result).StatusCode.Should().Be(200);
@@ -171,7 +171,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
 
         [Test]
-        public async Task should_return_updated_hearing()
+        public async Task Should_return_updated_hearing()
         {
             var result = await _controller.EditHearing(_validId, _request);
             var hearing = (HearingDetailsResponse) ((OkObjectResult) result.Result).Value;
@@ -179,7 +179,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
         
         [Test]
-        public async Task should_pass_on_bad_request_from_bookings_api()
+        public async Task Should_pass_on_bad_request_from_bookings_api()
         {
             GivenApiThrowsExceptionOnUpdate(HttpStatusCode.BadRequest);
 
@@ -188,7 +188,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
         
         [Test]
-        public async Task should_pass_on_not_found_request_from_bookings_api()
+        public async Task Should_pass_on_not_found_request_from_bookings_api()
         {
             GivenApiThrowsExceptionOnUpdate(HttpStatusCode.NotFound);
 
@@ -197,7 +197,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
 
         [Test]
-        public async Task should_replace_judge_based_on_email()
+        public async Task Should_replace_judge_based_on_email()
         {
             var existingJudgeId = Guid.NewGuid();
             _existingHearing.Participants.Add(new ParticipantResponse
