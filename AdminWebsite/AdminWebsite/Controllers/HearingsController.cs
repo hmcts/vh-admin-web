@@ -169,12 +169,12 @@ namespace AdminWebsite.Controllers
                     else
                     {
                         var existingParticipant = hearing.Participants.FirstOrDefault(p => p.Id.Equals(participant.Id));
-                        if (existingParticipant == null ||
-                            (existingParticipant.User_role_name != "Individual" &&
-                             existingParticipant.User_role_name != "Representative")) continue;
-                        //Update participant
-                        var updateParticipantRequest = MapUpdateParticipantRequest(participant);
-                        await _bookingsApiClient.UpdateParticipantDetailsAsync(hearingId, participant.Id.Value, updateParticipantRequest);
+                        if (existingParticipant != null && (existingParticipant.User_role_name == "Individual" || existingParticipant.User_role_name == "Representative"))
+                        {
+                            //Update participant
+                            var updateParticipantRequest = MapUpdateParticipantRequest(participant);
+                            await _bookingsApiClient.UpdateParticipantDetailsAsync(hearingId, participant.Id.Value, updateParticipantRequest);
+                        }
                     }
                 }
 
