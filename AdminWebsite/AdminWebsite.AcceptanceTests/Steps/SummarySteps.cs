@@ -231,7 +231,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         private void VerifyNewUsersCreatedInAad()
         {
             var userApiManager = new UserApiManager(_c.AdminWebConfig.VhServices.UserApiUrl, _c.Tokens.UserApiBearerToken);
-            foreach (var participant in _c.Test.HearingParticipants.Where(participant => participant.DisplayName.Contains(_c.AdminWebConfig.TestConfig.TestData.AddParticipant.Participant.NewUserPrefix)))
+            foreach (var participant in _c.Test.HearingParticipants.Where(participant => participant.DisplayName.Contains(_c.Test.TestData.AddParticipant.Participant.NewUserPrefix)))
             {
                 userApiManager.CheckIfParticipantExistsInAad(participant.AlternativeEmail, Timeout);
             }

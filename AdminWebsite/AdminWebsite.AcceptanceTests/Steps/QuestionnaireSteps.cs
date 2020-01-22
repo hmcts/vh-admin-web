@@ -19,7 +19,6 @@ namespace AdminWebsite.AcceptanceTests.Steps
     [Binding]
     public class QuestionnaireSteps : ISteps
     {
-        private const string UnansweredQuestion = "Will you need an interpreter for your hearing?";
         private const string UnansweredAnswer = "Not answered";
         private readonly TestContext _c;
         private readonly Dictionary<string, UserBrowser> _browsers;
@@ -40,22 +39,27 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_commonAdminWebPage.DashboardLink).Click();
         }
 
-        [Given(@"there is a hearing where participants have completed some questionnaire answers")]
-        public void GivenThereIsAHearingWhereParticipantsHaveCompletedSomeQuestionnaireAnswers()
+        [Given(@"there is a hearing where an (.*) participant has completed some questionnaire answers")]
+        public void GivenThereIsAHearingWhereParticipantsHaveCompletedSomeQuestionnaireAnswers(string role)
         {
             var hearing = CreateHearing();
-            _participantResponse = hearing.Participants.First(x => x.User_role_name.ToLower().Equals("individual"));
-            AddSuitabilityAnswers(hearing.Id, _participantResponse.Id);
+            _participantResponse = hearing.Participants.First(x => x.User_role_name.ToLower().Equals(role.ToLower()));
+            AddSuitabilityAnswers(hearing.Id, _participantResponse.Id, role.ToLower());
         }
 
-        [Then(@"the user can see a list of answers")]
-        public void ThenTheUserCanSeeAListOfAnswers()
+        [Then(@"the user can see a list of answers including the (.*) specific answer")]
+        public void ThenTheUserCanSeeAListOfAnswers(string role)
         {
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_questionnairePage.QuestionnaireLink(_participantResponse.Last_name)).Click();
             var allQuestionsAndAnswers = GetQuestionsAndAnswers();
-            CheckQuestionHasBeenAnswered(_c.AdminWebConfig.TestConfig.TestData.Questionnaire.Question1, "Yes", allQuestionsAndAnswers);
-            CheckQuestionHasBeenAnswered(_c.AdminWebConfig.TestConfig.TestData.Questionnaire.Question2, "Yes", allQuestionsAndAnswers);
-            CheckQuestionHasBeenAnswered(UnansweredQuestion, UnansweredAnswer, allQuestionsAndAnswers);
+            CheckQuestionHasBeenAnswered(_c.Test.TestData.Questionnaire.SelfTestQuestion1, "Yes", allQuestionsAndAnswers);
+            CheckQuestionHasBeenAnswered(_c.Test.TestData.Questionnaire.SelfTestQuestion2, "Yes", allQuestionsAndAnswers);
+            CheckQuestionHasBeenAnswered(
+                role.ToLower().Equals("individual")
+                    ? _c.Test.TestData.Questionnaire.IndividualQuestion
+                    : _c.Test.TestData.Questionnaire.RepresentativeQuestion, "Yes", allQuestionsAndAnswers);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_questionnairePage.ExtendedAnswer(_c.Test.TestData.Questionnaire.ExtendedAnswer)).Displayed.Should().BeTrue();
+            CheckQuestionHasBeenAnswered(_c.Test.TestData.Questionnaire.UnansweredQuestion, UnansweredAnswer, allQuestionsAndAnswers);
         }
 
         private static void CheckQuestionHasBeenAnswered(string question, string answer, IReadOnlyDictionary<string, string> allQuestionsAndAnswers)
@@ -77,11 +81,11 @@ namespace AdminWebsite.AcceptanceTests.Steps
             return hearing;
         }
 
-        private void AddSuitabilityAnswers(Guid? hearingId, Guid? participantId)
+        private void AddSuitabilityAnswers(Guid? hearingId, Guid? participantId, string role)
         {
-            var answers = SuitabilityAnswers.Build();
+            var answers = SuitabilityAnswers.Build(role, _c.Test.TestData.Questionnaire.ExtendedAnswer);
             var response = _bookingsApiManager.SetSuitabilityAnswers(hearingId, participantId, answers);
-            response.Should().Be(HttpStatusCode.OK);
+            response.StatusCode.Should().Be(HttpStatusCode.NoContent);
         }
 
         private Dictionary<string, string> GetQuestionsAndAnswers()

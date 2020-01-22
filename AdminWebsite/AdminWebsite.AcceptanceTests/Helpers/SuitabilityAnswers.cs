@@ -1,27 +1,42 @@
 ﻿using System.Collections.Generic;
+using AcceptanceTests.Common.Data.Questions;
 using AdminWebsite.BookingsAPI.Client;
 
 namespace AdminWebsite.AcceptanceTests.Helpers
 {
     internal static class SuitabilityAnswers
     {
-        public static List<SuitabilityAnswersRequest> Build()
+        public static List<SuitabilityAnswersRequest> Build(string role, string extendedAnswer)
         {
             var answer1 = new SuitabilityAnswersRequest
             {
-                Key = "ABOUT_YOU",
-                Extended_answer = "Comments",
-                Answer = "Yes"
+                Key = SelfTestQuestionKeys.SeeYourselfQuestion,
+                Extended_answer = null,
+                Answer = "true"
             };
 
             var answer2 = new SuitabilityAnswersRequest
             {
-                Key = "ROOM",
-                Extended_answer = "",
-                Answer = "Yes"
+                Key = SelfTestQuestionKeys.MicrophoneQuestion,
+                Extended_answer = null,
+                Answer = "true"
             };
 
-            return new List<SuitabilityAnswersRequest> { answer1, answer2 };
+            var answer3 = new SuitabilityAnswersRequest();
+            if (role.ToLower().Equals("individual"))
+            {
+                answer3.Key = IndividualQuestionKeys.AboutYouQuestion;
+                answer3.Extended_answer = extendedAnswer;
+                answer3.Answer = "true";
+            }
+            else
+            {
+                answer3.Key = RepresentativeQuestionKeys.OtherInformation;
+                answer3.Extended_answer = extendedAnswer;
+                answer3.Answer = "true";
+            }
+
+            return new List<SuitabilityAnswersRequest> { answer1, answer2, answer3 };
         }
     }
 }

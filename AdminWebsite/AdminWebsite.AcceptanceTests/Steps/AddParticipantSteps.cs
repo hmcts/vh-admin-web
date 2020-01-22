@@ -107,7 +107,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         private UserAccount CreateNewUser(string role)
         {
             var user = new UserAccount();
-            var prefix = _c.AdminWebConfig.TestConfig.TestData.AddParticipant.Participant.NewUserPrefix;
+            var prefix = _c.Test.TestData.AddParticipant.Participant.NewUserPrefix;
             user.AlternativeEmail = $"{prefix}{Faker.Internet.Email()}";
             var firstname = Faker.Name.First();
             var lastname = Faker.Name.Last();
@@ -123,24 +123,24 @@ namespace AdminWebsite.AcceptanceTests.Steps
         private void SetNewIndividualDetails(UserAccount user)
         {
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_addParticipantsPage.ParticipantEmailTextfield).SendKeys(user.AlternativeEmail);
-            var title = _c.AdminWebConfig.TestConfig.TestData.AddParticipant.Participant.Title;
+            var title = _c.Test.TestData.AddParticipant.Participant.Title;
             _commonSharedSteps.WhenTheUserSelectsTheOptionFromTheDropdown(_browsers[_c.CurrentUser.Key].Driver, _addParticipantsPage.TitleDropdown, title);
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_addParticipantsPage.FirstNameTextfield).SendKeys(user.Firstname);
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_addParticipantsPage.LastNameTextfield).SendKeys(user.Lastname);
-            var organisation = _c.AdminWebConfig.TestConfig.TestData.AddParticipant.Participant.Organisation;
+            var organisation = _c.Test.TestData.AddParticipant.Participant.Organisation;
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_addParticipantsPage.IndividualOrganisationTextfield).SendKeys(organisation);
-            var telephone = _c.AdminWebConfig.TestConfig.TestData.AddParticipant.Participant.Phone;
+            var telephone = _c.Test.TestData.AddParticipant.Participant.Phone;
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_addParticipantsPage.PhoneTextfield).SendKeys(telephone);
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_addParticipantsPage.DisplayNameTextfield).SendKeys(user.DisplayName);
-            var houseNumber = _c.AdminWebConfig.TestConfig.TestData.AddParticipant.Address.HouseNumber;
+            var houseNumber = _c.Test.TestData.AddParticipant.Address.HouseNumber;
             EnterTextIfFieldIsNotPrePopulated(_addParticipantsPage.HouseNumberTextfield, houseNumber);
-            var street = _c.AdminWebConfig.TestConfig.TestData.AddParticipant.Address.Street;
+            var street = _c.Test.TestData.AddParticipant.Address.Street;
             EnterTextIfFieldIsNotPrePopulated(_addParticipantsPage.StreetTextfield, street);
-            var city = _c.AdminWebConfig.TestConfig.TestData.AddParticipant.Address.Street;
+            var city = _c.Test.TestData.AddParticipant.Address.Street;
             EnterTextIfFieldIsNotPrePopulated(_addParticipantsPage.CityTextfield, city);
-            var county = _c.AdminWebConfig.TestConfig.TestData.AddParticipant.Address.County;
+            var county = _c.Test.TestData.AddParticipant.Address.County;
             EnterTextIfFieldIsNotPrePopulated(_addParticipantsPage.CountyTextfield, county);
-            var postcode = _c.AdminWebConfig.TestConfig.TestData.AddParticipant.Address.Postcode;
+            var postcode = _c.Test.TestData.AddParticipant.Address.Postcode;
             EnterTextIfFieldIsNotPrePopulated(_addParticipantsPage.PostcodeTextfield, postcode);
             _browsers[_c.CurrentUser.Key].ScrollTo(_addParticipantsPage.AddParticipantLink);
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilElementClickable(_addParticipantsPage.AddParticipantLink).Click();
@@ -157,16 +157,16 @@ namespace AdminWebsite.AcceptanceTests.Steps
         private void SetNewRepDetails(UserAccount user)
         {
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_addParticipantsPage.ParticipantEmailTextfield).SendKeys(user.AlternativeEmail);
-            var title = _c.AdminWebConfig.TestConfig.TestData.AddParticipant.Participant.Title;
+            var title = _c.Test.TestData.AddParticipant.Participant.Title;
             _commonSharedSteps.WhenTheUserSelectsTheOptionFromTheDropdown(_browsers[_c.CurrentUser.Key].Driver, _addParticipantsPage.TitleDropdown, title);
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_addParticipantsPage.FirstNameTextfield).SendKeys(user.Firstname);
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_addParticipantsPage.LastNameTextfield).SendKeys(user.Lastname);
-            var telephone = _c.AdminWebConfig.TestConfig.TestData.AddParticipant.Participant.Phone;
+            var telephone = _c.Test.TestData.AddParticipant.Participant.Phone;
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_addParticipantsPage.PhoneTextfield).SendKeys(telephone);
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_addParticipantsPage.DisplayNameTextfield).SendKeys(user.DisplayName);
-            var organisation = _c.AdminWebConfig.TestConfig.TestData.AddParticipant.Participant.Organisation;
+            var organisation = _c.Test.TestData.AddParticipant.Participant.Organisation;
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_addParticipantsPage.RepOrganisationTextfield).SendKeys(organisation);
-            var solicitorsReference = _c.AdminWebConfig.TestConfig.TestData.AddParticipant.Participant.SolicitorsReference;
+            var solicitorsReference = _c.Test.TestData.AddParticipant.Participant.SolicitorsReference;
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_addParticipantsPage.SolicitorReferenceTextfield).SendKeys(solicitorsReference);
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_addParticipantsPage.RepresentingTextfield).SendKeys(user.Representee);
             _browsers[_c.CurrentUser.Key].ScrollTo(_addParticipantsPage.AddParticipantLink);
@@ -187,9 +187,9 @@ namespace AdminWebsite.AcceptanceTests.Steps
             ExistingUserEmailIsSelected(user.AlternativeEmail).Should().BeTrue("Existing user email appeared in the dropdown list retrieved from AAD");
             RepFieldsAreSet(user);
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_addParticipantsPage.DisplayNameTextfield).SendKeys(user.DisplayName);
-            var organisation = _c.AdminWebConfig.TestConfig.TestData.AddParticipant.Participant.Organisation;
+            var organisation = _c.Test.TestData.AddParticipant.Participant.Organisation;
             EnterTextIfFieldIsNotPrePopulated(_addParticipantsPage.RepOrganisationTextfield, organisation);
-            var solicitorsReference = _c.AdminWebConfig.TestConfig.TestData.AddParticipant.Participant.SolicitorsReference;
+            var solicitorsReference = _c.Test.TestData.AddParticipant.Participant.SolicitorsReference;
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_addParticipantsPage.SolicitorReferenceTextfield).SendKeys(solicitorsReference);
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_addParticipantsPage.RepresentingTextfield).SendKeys(user.Representee);
             _browsers[_c.CurrentUser.Key].ScrollTo(_addParticipantsPage.AddParticipantLink);
@@ -220,17 +220,17 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_addParticipantsPage.FirstNameTextfield).GetAttribute("value").Should().Be(user.Firstname);
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_addParticipantsPage.LastNameTextfield).GetAttribute("value").Should().Be(user.Lastname);
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_addParticipantsPage.PhoneTextfield).GetAttribute("value").Should().NotBeNullOrWhiteSpace();
-            var organisation = _c.AdminWebConfig.TestConfig.TestData.AddParticipant.Participant.Organisation;
+            var organisation = _c.Test.TestData.AddParticipant.Participant.Organisation;
             EnterTextIfFieldIsNotPrePopulated(_addParticipantsPage.IndividualOrganisationTextfield, organisation);
-            var houseNumber = _c.AdminWebConfig.TestConfig.TestData.AddParticipant.Address.HouseNumber;
+            var houseNumber = _c.Test.TestData.AddParticipant.Address.HouseNumber;
             EnterTextIfFieldIsNotPrePopulated(_addParticipantsPage.HouseNumberTextfield, houseNumber);
-            var street = _c.AdminWebConfig.TestConfig.TestData.AddParticipant.Address.Street;
+            var street = _c.Test.TestData.AddParticipant.Address.Street;
             EnterTextIfFieldIsNotPrePopulated(_addParticipantsPage.StreetTextfield, street);
-            var city = _c.AdminWebConfig.TestConfig.TestData.AddParticipant.Address.Street;
+            var city = _c.Test.TestData.AddParticipant.Address.Street;
             EnterTextIfFieldIsNotPrePopulated(_addParticipantsPage.CityTextfield, city);
-            var county = _c.AdminWebConfig.TestConfig.TestData.AddParticipant.Address.County;
+            var county = _c.Test.TestData.AddParticipant.Address.County;
             EnterTextIfFieldIsNotPrePopulated(_addParticipantsPage.CountyTextfield, county);
-            var postcode = _c.AdminWebConfig.TestConfig.TestData.AddParticipant.Address.Postcode;
+            var postcode = _c.Test.TestData.AddParticipant.Address.Postcode;
             EnterTextIfFieldIsNotPrePopulated(_addParticipantsPage.PostcodeTextfield, postcode);
         }
 
@@ -254,7 +254,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
                 .Displayed.Should().BeTrue();
 
             var actualResult = GetAllParticipantsDetails();
-            var title = _c.AdminWebConfig.TestConfig.TestData.AddParticipant.Participant.Title;
+            var title = _c.Test.TestData.AddParticipant.Participant.Title;
 
             foreach (var participant in _c.Test.HearingParticipants)
             {

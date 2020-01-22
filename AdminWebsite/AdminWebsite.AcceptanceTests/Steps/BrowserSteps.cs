@@ -40,7 +40,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             browser.NavigateToPage();
 
             if (_c.AdminWebConfig.TestConfig.TargetBrowser != TargetBrowser.Ie11)
-                browser.PageUrl(_c.AdminWebConfig.TestConfig.CommonData.CommonUris.LoginUri);
+                browser.PageUrl(_c.Test.CommonData.CommonUris.LoginUri);
         }
 
         [Given(@"in (.*)'s browser")]

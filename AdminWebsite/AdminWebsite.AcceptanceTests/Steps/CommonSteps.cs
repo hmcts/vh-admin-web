@@ -37,9 +37,9 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _browsers[_c.CurrentUser.Key].SwitchTab(Page.ContactUs.Url);
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_commonAdminWebPage.ContactUsTitle).Displayed.Should().BeTrue();
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_commonAdminWebPage
-                .ContactUsPhoneNumber(_c.AdminWebConfig.TestConfig.CommonData.CommonOnScreenData.VhoPhone)).Displayed.Should().BeTrue();
+                .ContactUsPhoneNumber(_c.Test.CommonData.CommonOnScreenData.VhoPhone)).Displayed.Should().BeTrue();
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_commonAdminWebPage
-                .ContactUsEmail(_c.AdminWebConfig.TestConfig.CommonData.CommonOnScreenData.VhoEmail)).Displayed.Should().BeTrue();
+                .ContactUsEmail(_c.Test.CommonData.CommonOnScreenData.VhoEmail)).Displayed.Should().BeTrue();
             _browsers[_c.CurrentUser.Key].CloseTab();
         }
 

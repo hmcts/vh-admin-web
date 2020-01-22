@@ -35,7 +35,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             SetHearingDetails();
             SetHearingType();
-            _c.Test.HearingDetails.DoNotSendQuestionnaires = _c.AdminWebConfig.TestConfig.TestData.HearingDetails.DoNotSendQuestionnaires;
+            _c.Test.HearingDetails.DoNotSendQuestionnaires = _c.Test.TestData.HearingDetails.DoNotSendQuestionnaires;
             SendQuestionnaires();
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_hearingDetailsPage.NextButton).Click();
         }
@@ -69,10 +69,10 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void SetHearingType(HearingType hearingType = null)
         {
             if (hearingType == null)
-                hearingType = HearingType.FromString(_c.AdminWebConfig.TestConfig.TestData.HearingDetails.HearingType);
+                hearingType = HearingType.FromString(_c.Test.TestData.HearingDetails.HearingType);
 
             _c.Test.HearingDetails.HearingType = hearingType;
-            _c.Test.HearingDetails.CaseType = CaseType.FromString(_c.AdminWebConfig.TestConfig.TestData.HearingDetails.CaseType);
+            _c.Test.HearingDetails.CaseType = CaseType.FromString(_c.Test.TestData.HearingDetails.CaseType);
             _commonSharedSteps.WhenTheUserSelectsTheOptionFromTheDropdown(_browsers[_c.CurrentUser.Key].Driver, _hearingDetailsPage.HearingTypeDropdown, HearingType.ToString(hearingType));
         }
 

@@ -105,7 +105,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
                 var participant = _c.Test.HearingParticipants.First(x => x.AlternativeEmail.ToLower().Equals(email.ToLower()));
 
                 _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_bookingDetailsPage.ParticipantName(i)).Text
-                    .Should().Contain($"{_c.AdminWebConfig.TestConfig.TestData.AddParticipant.Participant.Title} {participant.Firstname} {participant.Lastname}");
+                    .Should().Contain($"{_c.Test.TestData.AddParticipant.Participant.Title} {participant.Firstname} {participant.Lastname}");
 
                 _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_bookingDetailsPage.ParticipantRole(i)).Text
                     .Should().Contain(participant.HearingRoleName);

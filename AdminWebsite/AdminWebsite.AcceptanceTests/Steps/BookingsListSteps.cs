@@ -40,7 +40,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
                 .Should().Be(_c.Test.HearingSchedule.ScheduledDate.ToShortTimeString().ToLower());
 
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_bookingsListPage.ScheduledDuration(_rowId)).Text
-                .Should().Contain($"listed for {_c.AdminWebConfig.TestConfig.TestData.HearingSchedule.DurationMinutes} minutes");
+                .Should().Contain($"listed for {_c.Test.TestData.HearingSchedule.DurationMinutes} minutes");
 
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_bookingsListPage.CaseName(_rowId, _c.Test.HearingDetails.CaseName))
                 .Displayed.Should().BeTrue();
@@ -58,7 +58,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_bookingsListPage.Judge(_rowId, judge.DisplayName))
                 .Displayed.Should().BeTrue();
 
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_bookingsListPage.Venue(_rowId, _c.AdminWebConfig.TestConfig.TestData.HearingSchedule.HearingVenue))
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_bookingsListPage.Venue(_rowId, _c.Test.TestData.HearingSchedule.HearingVenue))
                 .Displayed.Should().BeTrue();
         }
 

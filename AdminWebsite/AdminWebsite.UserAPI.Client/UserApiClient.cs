@@ -68,18 +68,18 @@ namespace AdminWebsite.UserAPI.Client
         /// <summary>Add a user to a group</summary>
         /// <returns>Success</returns>
         /// <exception cref="UserServiceException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task AddUserToGroupAsync(AddUserToGroupRequest request);
+        System.Threading.Tasks.Task AddUserToGroupAsync(AddUserToGroupRequest body);
     
         /// <summary>Add a user to a group</summary>
         /// <returns>Success</returns>
         /// <exception cref="UserServiceException">A server side error occurred.</exception>
-        void AddUserToGroup(AddUserToGroupRequest request);
+        void AddUserToGroup(AddUserToGroupRequest body);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Add a user to a group</summary>
         /// <returns>Success</returns>
         /// <exception cref="UserServiceException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task AddUserToGroupAsync(AddUserToGroupRequest request, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task AddUserToGroupAsync(AddUserToGroupRequest body, System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Run a health check of the service</summary>
         /// <returns>Success</returns>
@@ -98,39 +98,39 @@ namespace AdminWebsite.UserAPI.Client
         System.Threading.Tasks.Task CheckServiceHealthAsync(System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Create a new hearings reforms user account</summary>
-        /// <param name="request">Details of a new user</param>
+        /// <param name="body">Details of a new user</param>
         /// <returns>Success</returns>
         /// <exception cref="UserServiceException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<NewUserResponse> CreateUserAsync(CreateUserRequest request);
+        System.Threading.Tasks.Task<NewUserResponse> CreateUserAsync(CreateUserRequest body);
     
         /// <summary>Create a new hearings reforms user account</summary>
-        /// <param name="request">Details of a new user</param>
+        /// <param name="body">Details of a new user</param>
         /// <returns>Success</returns>
         /// <exception cref="UserServiceException">A server side error occurred.</exception>
-        NewUserResponse CreateUser(CreateUserRequest request);
+        NewUserResponse CreateUser(CreateUserRequest body);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Create a new hearings reforms user account</summary>
-        /// <param name="request">Details of a new user</param>
+        /// <param name="body">Details of a new user</param>
         /// <returns>Success</returns>
         /// <exception cref="UserServiceException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<NewUserResponse> CreateUserAsync(CreateUserRequest request, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<NewUserResponse> CreateUserAsync(CreateUserRequest body, System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Updates an AAD user</summary>
         /// <returns>Success</returns>
         /// <exception cref="UserServiceException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task UpdateUserAsync(string username);
+        System.Threading.Tasks.Task UpdateUserAsync(string body);
     
         /// <summary>Updates an AAD user</summary>
         /// <returns>Success</returns>
         /// <exception cref="UserServiceException">A server side error occurred.</exception>
-        void UpdateUser(string username);
+        void UpdateUser(string body);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Updates an AAD user</summary>
         /// <returns>Success</returns>
         /// <exception cref="UserServiceException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task UpdateUserAsync(string username, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task UpdateUserAsync(string body, System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Get User by AD User ID</summary>
         /// <returns>Success</returns>
@@ -309,8 +309,8 @@ namespace AdminWebsite.UserAPI.Client
                         else
                         if (status_ == "404") 
                         {
-                            string responseText_ = ( response_.Content == null ) ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new UserServiceException("Not Found", (int)response_.StatusCode, responseText_, headers_, null);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            throw new UserServiceException<ProblemDetails>("Not Found", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == "401") 
@@ -402,8 +402,8 @@ namespace AdminWebsite.UserAPI.Client
                         else
                         if (status_ == "404") 
                         {
-                            string responseText_ = ( response_.Content == null ) ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new UserServiceException("Not Found", (int)response_.StatusCode, responseText_, headers_, null);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            throw new UserServiceException<ProblemDetails>("Not Found", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == "401") 
@@ -495,8 +495,8 @@ namespace AdminWebsite.UserAPI.Client
                         else
                         if (status_ == "404") 
                         {
-                            string responseText_ = ( response_.Content == null ) ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new UserServiceException("Not Found", (int)response_.StatusCode, responseText_, headers_, null);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            throw new UserServiceException<ProblemDetails>("Not Found", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == "401") 
@@ -528,24 +528,24 @@ namespace AdminWebsite.UserAPI.Client
         /// <summary>Add a user to a group</summary>
         /// <returns>Success</returns>
         /// <exception cref="UserServiceException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task AddUserToGroupAsync(AddUserToGroupRequest request)
+        public System.Threading.Tasks.Task AddUserToGroupAsync(AddUserToGroupRequest body)
         {
-            return AddUserToGroupAsync(request, System.Threading.CancellationToken.None);
+            return AddUserToGroupAsync(body, System.Threading.CancellationToken.None);
         }
     
         /// <summary>Add a user to a group</summary>
         /// <returns>Success</returns>
         /// <exception cref="UserServiceException">A server side error occurred.</exception>
-        public void AddUserToGroup(AddUserToGroupRequest request)
+        public void AddUserToGroup(AddUserToGroupRequest body)
         {
-            System.Threading.Tasks.Task.Run(async () => await AddUserToGroupAsync(request, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
+            System.Threading.Tasks.Task.Run(async () => await AddUserToGroupAsync(body, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
         }
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Add a user to a group</summary>
         /// <returns>Success</returns>
         /// <exception cref="UserServiceException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task AddUserToGroupAsync(AddUserToGroupRequest request, System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task AddUserToGroupAsync(AddUserToGroupRequest body, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/accounts/user/group");
@@ -555,8 +555,8 @@ namespace AdminWebsite.UserAPI.Client
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-                    var content_ = new System.Net.Http.StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(request, _settings.Value));
-                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    var content_ = new System.Net.Http.StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(body, _settings.Value));
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json-patch+json");
                     request_.Content = content_;
                     request_.Method = new System.Net.Http.HttpMethod("PATCH");
     
@@ -585,14 +585,14 @@ namespace AdminWebsite.UserAPI.Client
                         else
                         if (status_ == "400") 
                         {
-                            string responseText_ = ( response_.Content == null ) ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new UserServiceException("Bad Request", (int)response_.StatusCode, responseText_, headers_, null);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            throw new UserServiceException<ProblemDetails>("Bad Request", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == "404") 
                         {
-                            string responseText_ = ( response_.Content == null ) ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new UserServiceException("Not Found", (int)response_.StatusCode, responseText_, headers_, null);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            throw new UserServiceException<ProblemDetails>("Not Found", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == "401") 
@@ -680,6 +680,12 @@ namespace AdminWebsite.UserAPI.Client
                             throw new UserServiceException("Server Error", (int)response_.StatusCode, responseText_, headers_, null);
                         }
                         else
+                        if (status_ == "401") 
+                        {
+                            string responseText_ = ( response_.Content == null ) ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new UserServiceException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
+                        }
+                        else
                         if (status_ != "200" && status_ != "204")
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
@@ -699,29 +705,29 @@ namespace AdminWebsite.UserAPI.Client
         }
     
         /// <summary>Create a new hearings reforms user account</summary>
-        /// <param name="request">Details of a new user</param>
+        /// <param name="body">Details of a new user</param>
         /// <returns>Success</returns>
         /// <exception cref="UserServiceException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<NewUserResponse> CreateUserAsync(CreateUserRequest request)
+        public System.Threading.Tasks.Task<NewUserResponse> CreateUserAsync(CreateUserRequest body)
         {
-            return CreateUserAsync(request, System.Threading.CancellationToken.None);
+            return CreateUserAsync(body, System.Threading.CancellationToken.None);
         }
     
         /// <summary>Create a new hearings reforms user account</summary>
-        /// <param name="request">Details of a new user</param>
+        /// <param name="body">Details of a new user</param>
         /// <returns>Success</returns>
         /// <exception cref="UserServiceException">A server side error occurred.</exception>
-        public NewUserResponse CreateUser(CreateUserRequest request)
+        public NewUserResponse CreateUser(CreateUserRequest body)
         {
-            return System.Threading.Tasks.Task.Run(async () => await CreateUserAsync(request, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
+            return System.Threading.Tasks.Task.Run(async () => await CreateUserAsync(body, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
         }
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Create a new hearings reforms user account</summary>
-        /// <param name="request">Details of a new user</param>
+        /// <param name="body">Details of a new user</param>
         /// <returns>Success</returns>
         /// <exception cref="UserServiceException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task<NewUserResponse> CreateUserAsync(CreateUserRequest request, System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task<NewUserResponse> CreateUserAsync(CreateUserRequest body, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/users");
@@ -731,8 +737,8 @@ namespace AdminWebsite.UserAPI.Client
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-                    var content_ = new System.Net.Http.StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(request, _settings.Value));
-                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    var content_ = new System.Net.Http.StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(body, _settings.Value));
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json-patch+json");
                     request_.Content = content_;
                     request_.Method = new System.Net.Http.HttpMethod("POST");
                     request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
@@ -763,8 +769,8 @@ namespace AdminWebsite.UserAPI.Client
                         else
                         if (status_ == "404") 
                         {
-                            string responseText_ = ( response_.Content == null ) ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new UserServiceException("Not Found", (int)response_.StatusCode, responseText_, headers_, null);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            throw new UserServiceException<ProblemDetails>("Not Found", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == "401") 
@@ -796,24 +802,24 @@ namespace AdminWebsite.UserAPI.Client
         /// <summary>Updates an AAD user</summary>
         /// <returns>Success</returns>
         /// <exception cref="UserServiceException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task UpdateUserAsync(string username)
+        public System.Threading.Tasks.Task UpdateUserAsync(string body)
         {
-            return UpdateUserAsync(username, System.Threading.CancellationToken.None);
+            return UpdateUserAsync(body, System.Threading.CancellationToken.None);
         }
     
         /// <summary>Updates an AAD user</summary>
         /// <returns>Success</returns>
         /// <exception cref="UserServiceException">A server side error occurred.</exception>
-        public void UpdateUser(string username)
+        public void UpdateUser(string body)
         {
-            System.Threading.Tasks.Task.Run(async () => await UpdateUserAsync(username, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
+            System.Threading.Tasks.Task.Run(async () => await UpdateUserAsync(body, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
         }
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Updates an AAD user</summary>
         /// <returns>Success</returns>
         /// <exception cref="UserServiceException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task UpdateUserAsync(string username, System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task UpdateUserAsync(string body, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/users");
@@ -823,8 +829,8 @@ namespace AdminWebsite.UserAPI.Client
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-                    var content_ = new System.Net.Http.StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(username, _settings.Value));
-                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    var content_ = new System.Net.Http.StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(body, _settings.Value));
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json-patch+json");
                     request_.Content = content_;
                     request_.Method = new System.Net.Http.HttpMethod("PATCH");
     
@@ -853,14 +859,14 @@ namespace AdminWebsite.UserAPI.Client
                         else
                         if (status_ == "400") 
                         {
-                            string responseText_ = ( response_.Content == null ) ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new UserServiceException("Bad Request", (int)response_.StatusCode, responseText_, headers_, null);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            throw new UserServiceException<ProblemDetails>("Bad Request", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == "404") 
                         {
-                            string responseText_ = ( response_.Content == null ) ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new UserServiceException("Not Found", (int)response_.StatusCode, responseText_, headers_, null);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            throw new UserServiceException<ProblemDetails>("Not Found", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == "401") 
@@ -950,8 +956,8 @@ namespace AdminWebsite.UserAPI.Client
                         else
                         if (status_ == "404") 
                         {
-                            string responseText_ = ( response_.Content == null ) ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new UserServiceException("Not Found", (int)response_.StatusCode, responseText_, headers_, null);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            throw new UserServiceException<ProblemDetails>("Not Found", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == "401") 
@@ -1043,8 +1049,8 @@ namespace AdminWebsite.UserAPI.Client
                         else
                         if (status_ == "404") 
                         {
-                            string responseText_ = ( response_.Content == null ) ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new UserServiceException("Not Found", (int)response_.StatusCode, responseText_, headers_, null);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            throw new UserServiceException<ProblemDetails>("Not Found", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == "401") 
@@ -1134,14 +1140,14 @@ namespace AdminWebsite.UserAPI.Client
                         else
                         if (status_ == "400") 
                         {
-                            string responseText_ = ( response_.Content == null ) ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new UserServiceException("Bad Request", (int)response_.StatusCode, responseText_, headers_, null);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            throw new UserServiceException<ProblemDetails>("Bad Request", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == "404") 
                         {
-                            string responseText_ = ( response_.Content == null ) ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new UserServiceException("Not Found", (int)response_.StatusCode, responseText_, headers_, null);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            throw new UserServiceException<ProblemDetails>("Not Found", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == "401") 
@@ -1231,8 +1237,8 @@ namespace AdminWebsite.UserAPI.Client
                         else
                         if (status_ == "404") 
                         {
-                            string responseText_ = ( response_.Content == null ) ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new UserServiceException("Not Found", (int)response_.StatusCode, responseText_, headers_, null);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            throw new UserServiceException<ProblemDetails>("Not Found", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == "401") 
@@ -1320,8 +1326,8 @@ namespace AdminWebsite.UserAPI.Client
                         else
                         if (status_ == "404") 
                         {
-                            string responseText_ = ( response_.Content == null ) ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new UserServiceException("Not Found", (int)response_.StatusCode, responseText_, headers_, null);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            throw new UserServiceException<ProblemDetails>("Not Found", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == "401") 
@@ -1465,12 +1471,45 @@ namespace AdminWebsite.UserAPI.Client
     }
     
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.27.0 (Newtonsoft.Json v11.0.0.0)")]
+    public partial class ProblemDetails 
+    {
+        [Newtonsoft.Json.JsonProperty("type", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Type { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("title", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Title { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("status", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int? Status { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("detail", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Detail { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("instance", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Instance { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("extensions", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.Dictionary<string, object> Extensions { get; set; }
+    
+        public string ToJson() 
+        {
+            return Newtonsoft.Json.JsonConvert.SerializeObject(this);
+        }
+    
+        public static ProblemDetails FromJson(string data)
+        {
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<ProblemDetails>(data);
+        }
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.27.0 (Newtonsoft.Json v11.0.0.0)")]
     public partial class AddUserToGroupRequest 
     {
-        [Newtonsoft.Json.JsonProperty("user_id", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("user_id", Required = Newtonsoft.Json.Required.AllowNull)]
         public string User_id { get; set; }
     
-        [Newtonsoft.Json.JsonProperty("group_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("group_name", Required = Newtonsoft.Json.Required.AllowNull)]
         public string Group_name { get; set; }
     
         public string ToJson() 
@@ -1488,13 +1527,13 @@ namespace AdminWebsite.UserAPI.Client
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.27.0 (Newtonsoft.Json v11.0.0.0)")]
     public partial class CreateUserRequest 
     {
-        [Newtonsoft.Json.JsonProperty("first_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("first_name", Required = Newtonsoft.Json.Required.AllowNull)]
         public string First_name { get; set; }
     
-        [Newtonsoft.Json.JsonProperty("last_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("last_name", Required = Newtonsoft.Json.Required.AllowNull)]
         public string Last_name { get; set; }
     
-        [Newtonsoft.Json.JsonProperty("recovery_email", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("recovery_email", Required = Newtonsoft.Json.Required.AllowNull)]
         public string Recovery_email { get; set; }
     
         public string ToJson() 
@@ -1576,15 +1615,12 @@ namespace AdminWebsite.UserAPI.Client
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.27.0 (Newtonsoft.Json v11.0.0.0)")]
     public partial class UserResponse 
     {
-        /// <summary>Judge first name</summary>
         [Newtonsoft.Json.JsonProperty("first_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string First_name { get; set; }
     
-        /// <summary>Judge last name</summary>
         [Newtonsoft.Json.JsonProperty("last_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Last_name { get; set; }
     
-        /// <summary>Judge display name as in the identity system</summary>
         [Newtonsoft.Json.JsonProperty("display_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Display_name { get; set; }
     

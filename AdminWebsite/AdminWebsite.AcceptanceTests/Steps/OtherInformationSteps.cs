@@ -32,7 +32,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         private void SetOtherInformation()
         {
-            _c.Test.OtherInformation = _c.Test.OtherInformation != null ? "Updated other information" : _c.AdminWebConfig.TestConfig.TestData.OtherInformation.Other;
+            _c.Test.OtherInformation = _c.Test.OtherInformation != null ? "Updated other information" : _c.Test.TestData.OtherInformation.Other;
         }
 
         public void ClickNext()
