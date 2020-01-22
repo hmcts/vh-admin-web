@@ -15,20 +15,18 @@ namespace AdminWebsite.AcceptanceTests.Steps
     {
         private readonly TestContext _c;
         private readonly Dictionary<string, UserBrowser> _browsers;
-        private readonly BookingsListPage _bookingsListPage;
         private string _rowId;
-        public BookingsListSteps(TestContext testContext, Dictionary<string, UserBrowser> browsers, BookingsListPage bookingsListPage)
+        public BookingsListSteps(TestContext testContext, Dictionary<string, UserBrowser> browsers)
         {
             _c = testContext;
             _browsers = browsers;
-            _bookingsListPage = bookingsListPage;
         }
 
         [When(@"selects a booking")]
         public void ProgressToNextPage()
         {
             _rowId = GetRowId(_c.Test.HearingDetails.CaseNumber);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_bookingsListPage.RowWithId(_rowId)).Click();
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingsListPage.RowWithId(_rowId)).Click();
         }
 
         [When(@"the user views the bookings list")]
@@ -36,35 +34,35 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             _rowId = GetRowId(_c.Test.HearingDetails.CaseNumber);
 
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_bookingsListPage.ScheduledTime(_rowId)).Text.ToLower()
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingsListPage.ScheduledTime(_rowId)).Text.ToLower()
                 .Should().Be(_c.Test.HearingSchedule.ScheduledDate.ToShortTimeString().ToLower());
 
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_bookingsListPage.ScheduledDuration(_rowId)).Text
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingsListPage.ScheduledDuration(_rowId)).Text
                 .Should().Contain($"listed for {_c.Test.TestData.HearingSchedule.DurationMinutes} minutes");
 
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_bookingsListPage.CaseName(_rowId, _c.Test.HearingDetails.CaseName))
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingsListPage.CaseName(_rowId, _c.Test.HearingDetails.CaseName))
                 .Displayed.Should().BeTrue();
 
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_bookingsListPage.CaseNumber(_rowId, _c.Test.HearingDetails.CaseNumber))
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingsListPage.CaseNumber(_rowId, _c.Test.HearingDetails.CaseNumber))
                 .Displayed.Should().BeTrue();
 
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_bookingsListPage.HearingType(_rowId, _c.Test.HearingDetails.HearingType.Name))
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingsListPage.HearingType(_rowId, _c.Test.HearingDetails.HearingType.Name))
                 .Displayed.Should().BeTrue();
 
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_bookingsListPage.HearingType(_rowId, _c.Test.HearingDetails.HearingType.Name))
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingsListPage.HearingType(_rowId, _c.Test.HearingDetails.HearingType.Name))
                 .Displayed.Should().BeTrue();
 
             var judge = UserManager.GetClerkUser(_c.UserAccounts);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_bookingsListPage.Judge(_rowId, judge.DisplayName))
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingsListPage.Judge(_rowId, judge.DisplayName))
                 .Displayed.Should().BeTrue();
 
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_bookingsListPage.Venue(_rowId, _c.Test.TestData.HearingSchedule.HearingVenue))
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingsListPage.Venue(_rowId, _c.Test.TestData.HearingSchedule.HearingVenue))
                 .Displayed.Should().BeTrue();
         }
 
         private string GetRowId(string caseNumber)
         {
-            return _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_bookingsListPage.Row(caseNumber)).GetAttribute("id");
+            return _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingsListPage.Row(caseNumber)).GetAttribute("id");
         }
     }
 }

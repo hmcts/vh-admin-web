@@ -3,13 +3,13 @@ using OpenQA.Selenium;
 
 namespace AdminWebsite.AcceptanceTests.Pages
 {
-    public class BookingConfirmationPage
+    public static class BookingConfirmationPage
     {
-        public By SuccessMessage = CommonLocators.ElementContainingText("Your hearing booking was successful");
-        public By CaseNumber = By.Id("caseNumber");
-        public By CaseName = By.Id("caseName");
-        public By HearingDate = By.Id("hearingDate");
-        public By BookAnotherHearingButton = By.Id("btnBookAnotherHearing");
-        public By ReturnToDashboardLink = By.PartialLinkText("Return to dashboard");
+        public static By SuccessMessage = CommonLocators.ElementContainingText("Your hearing booking was successful");
+        public static By CaseNumber = By.Id("caseNumber");
+        public static By CaseName = By.Id("caseName");
+        public static By HearingDate = By.Id("hearingDate");
+        public static By BookAnotherHearingButton = By.Id("btnBookAnotherHearing");
+        public static By ReturnToDashboardLink = By.PartialLinkText("Return to dashboard");
     }
 }

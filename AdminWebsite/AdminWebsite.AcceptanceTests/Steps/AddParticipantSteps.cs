@@ -20,14 +20,12 @@ namespace AdminWebsite.AcceptanceTests.Steps
         private const int TimeoutToRetrieveUserFromAad = 60;
         private readonly TestContext _c;
         private readonly Dictionary<string, UserBrowser> _browsers;
-        private readonly AddParticipantsPage _addParticipantsPage;
         private string _individualDisplayName = "Representing";
         private readonly CommonSharedSteps _commonSharedSteps;
-        public AddParticipantSteps(TestContext testContext, Dictionary<string, UserBrowser> browsers, AddParticipantsPage addParticipantsPage, CommonSharedSteps commonSharedSteps)
+        public AddParticipantSteps(TestContext testContext, Dictionary<string, UserBrowser> browsers, CommonSharedSteps commonSharedSteps)
         {
             _c = testContext;
             _browsers = browsers;
-            _addParticipantsPage = addParticipantsPage;
             _commonSharedSteps = commonSharedSteps;
         }
 
@@ -44,7 +42,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         public void ClickNext()
         {
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_addParticipantsPage.NextButton).Click();
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.NextButton).Click();
         }
 
         private void AddExistingClaimantIndividual()
@@ -96,12 +94,12 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         private void SetParty(string party)
         {
-            _commonSharedSteps.WhenTheUserSelectsTheOptionFromTheDropdown(_browsers[_c.CurrentUser.Key].Driver, _addParticipantsPage.PartyDropdown, Party.FromString(party).Name);
+            _commonSharedSteps.WhenTheUserSelectsTheOptionFromTheDropdown(_browsers[_c.CurrentUser.Key].Driver, AddParticipantsPage.PartyDropdown, Party.FromString(party).Name);
         }
 
         private void SetRole(string role)
         {
-            _commonSharedSteps.WhenTheUserSelectsTheOptionFromTheDropdown(_browsers[_c.CurrentUser.Key].Driver, _addParticipantsPage.RoleDropdown, PartyRole.FromString(role).Name);
+            _commonSharedSteps.WhenTheUserSelectsTheOptionFromTheDropdown(_browsers[_c.CurrentUser.Key].Driver, AddParticipantsPage.RoleDropdown, PartyRole.FromString(role).Name);
         }
 
         private UserAccount CreateNewUser(string role)
@@ -122,28 +120,28 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         private void SetNewIndividualDetails(UserAccount user)
         {
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_addParticipantsPage.ParticipantEmailTextfield).SendKeys(user.AlternativeEmail);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.ParticipantEmailTextfield).SendKeys(user.AlternativeEmail);
             var title = _c.Test.TestData.AddParticipant.Participant.Title;
-            _commonSharedSteps.WhenTheUserSelectsTheOptionFromTheDropdown(_browsers[_c.CurrentUser.Key].Driver, _addParticipantsPage.TitleDropdown, title);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_addParticipantsPage.FirstNameTextfield).SendKeys(user.Firstname);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_addParticipantsPage.LastNameTextfield).SendKeys(user.Lastname);
+            _commonSharedSteps.WhenTheUserSelectsTheOptionFromTheDropdown(_browsers[_c.CurrentUser.Key].Driver, AddParticipantsPage.TitleDropdown, title);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.FirstNameTextfield).SendKeys(user.Firstname);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.LastNameTextfield).SendKeys(user.Lastname);
             var organisation = _c.Test.TestData.AddParticipant.Participant.Organisation;
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_addParticipantsPage.IndividualOrganisationTextfield).SendKeys(organisation);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.IndividualOrganisationTextfield).SendKeys(organisation);
             var telephone = _c.Test.TestData.AddParticipant.Participant.Phone;
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_addParticipantsPage.PhoneTextfield).SendKeys(telephone);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_addParticipantsPage.DisplayNameTextfield).SendKeys(user.DisplayName);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.PhoneTextfield).SendKeys(telephone);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.DisplayNameTextfield).SendKeys(user.DisplayName);
             var houseNumber = _c.Test.TestData.AddParticipant.Address.HouseNumber;
-            EnterTextIfFieldIsNotPrePopulated(_addParticipantsPage.HouseNumberTextfield, houseNumber);
+            EnterTextIfFieldIsNotPrePopulated(AddParticipantsPage.HouseNumberTextfield, houseNumber);
             var street = _c.Test.TestData.AddParticipant.Address.Street;
-            EnterTextIfFieldIsNotPrePopulated(_addParticipantsPage.StreetTextfield, street);
+            EnterTextIfFieldIsNotPrePopulated(AddParticipantsPage.StreetTextfield, street);
             var city = _c.Test.TestData.AddParticipant.Address.Street;
-            EnterTextIfFieldIsNotPrePopulated(_addParticipantsPage.CityTextfield, city);
+            EnterTextIfFieldIsNotPrePopulated(AddParticipantsPage.CityTextfield, city);
             var county = _c.Test.TestData.AddParticipant.Address.County;
-            EnterTextIfFieldIsNotPrePopulated(_addParticipantsPage.CountyTextfield, county);
+            EnterTextIfFieldIsNotPrePopulated(AddParticipantsPage.CountyTextfield, county);
             var postcode = _c.Test.TestData.AddParticipant.Address.Postcode;
-            EnterTextIfFieldIsNotPrePopulated(_addParticipantsPage.PostcodeTextfield, postcode);
-            _browsers[_c.CurrentUser.Key].ScrollTo(_addParticipantsPage.AddParticipantLink);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilElementClickable(_addParticipantsPage.AddParticipantLink).Click();
+            EnterTextIfFieldIsNotPrePopulated(AddParticipantsPage.PostcodeTextfield, postcode);
+            _browsers[_c.CurrentUser.Key].ScrollTo(AddParticipantsPage.AddParticipantLink);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilElementClickable(AddParticipantsPage.AddParticipantLink).Click();
         }
 
         private void EnterTextIfFieldIsNotPrePopulated(By element, string value)
@@ -156,50 +154,50 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         private void SetNewRepDetails(UserAccount user)
         {
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_addParticipantsPage.ParticipantEmailTextfield).SendKeys(user.AlternativeEmail);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.ParticipantEmailTextfield).SendKeys(user.AlternativeEmail);
             var title = _c.Test.TestData.AddParticipant.Participant.Title;
-            _commonSharedSteps.WhenTheUserSelectsTheOptionFromTheDropdown(_browsers[_c.CurrentUser.Key].Driver, _addParticipantsPage.TitleDropdown, title);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_addParticipantsPage.FirstNameTextfield).SendKeys(user.Firstname);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_addParticipantsPage.LastNameTextfield).SendKeys(user.Lastname);
+            _commonSharedSteps.WhenTheUserSelectsTheOptionFromTheDropdown(_browsers[_c.CurrentUser.Key].Driver, AddParticipantsPage.TitleDropdown, title);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.FirstNameTextfield).SendKeys(user.Firstname);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.LastNameTextfield).SendKeys(user.Lastname);
             var telephone = _c.Test.TestData.AddParticipant.Participant.Phone;
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_addParticipantsPage.PhoneTextfield).SendKeys(telephone);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_addParticipantsPage.DisplayNameTextfield).SendKeys(user.DisplayName);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.PhoneTextfield).SendKeys(telephone);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.DisplayNameTextfield).SendKeys(user.DisplayName);
             var organisation = _c.Test.TestData.AddParticipant.Participant.Organisation;
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_addParticipantsPage.RepOrganisationTextfield).SendKeys(organisation);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.RepOrganisationTextfield).SendKeys(organisation);
             var solicitorsReference = _c.Test.TestData.AddParticipant.Participant.SolicitorsReference;
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_addParticipantsPage.SolicitorReferenceTextfield).SendKeys(solicitorsReference);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_addParticipantsPage.RepresentingTextfield).SendKeys(user.Representee);
-            _browsers[_c.CurrentUser.Key].ScrollTo(_addParticipantsPage.AddParticipantLink);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilElementClickable(_addParticipantsPage.AddParticipantLink).Click();
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.SolicitorReferenceTextfield).SendKeys(solicitorsReference);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.RepresentingTextfield).SendKeys(user.Representee);
+            _browsers[_c.CurrentUser.Key].ScrollTo(AddParticipantsPage.AddParticipantLink);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilElementClickable(AddParticipantsPage.AddParticipantLink).Click();
         }
 
         private void SetExistingIndividualDetails(UserAccount user)
         {
             ExistingUserEmailIsSelected(user.AlternativeEmail).Should().BeTrue("Existing user email appeared in the dropdown list retrieved from AAD");
             IndividualFieldsAreSet(user);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_addParticipantsPage.DisplayNameTextfield).SendKeys(user.DisplayName);
-            _browsers[_c.CurrentUser.Key].ScrollTo(_addParticipantsPage.AddParticipantLink);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilElementClickable(_addParticipantsPage.AddParticipantLink).Click();
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.DisplayNameTextfield).SendKeys(user.DisplayName);
+            _browsers[_c.CurrentUser.Key].ScrollTo(AddParticipantsPage.AddParticipantLink);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilElementClickable(AddParticipantsPage.AddParticipantLink).Click();
         }
 
         private void SetExistingRepDetails(UserAccount user)
         {
             ExistingUserEmailIsSelected(user.AlternativeEmail).Should().BeTrue("Existing user email appeared in the dropdown list retrieved from AAD");
             RepFieldsAreSet(user);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_addParticipantsPage.DisplayNameTextfield).SendKeys(user.DisplayName);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.DisplayNameTextfield).SendKeys(user.DisplayName);
             var organisation = _c.Test.TestData.AddParticipant.Participant.Organisation;
-            EnterTextIfFieldIsNotPrePopulated(_addParticipantsPage.RepOrganisationTextfield, organisation);
+            EnterTextIfFieldIsNotPrePopulated(AddParticipantsPage.RepOrganisationTextfield, organisation);
             var solicitorsReference = _c.Test.TestData.AddParticipant.Participant.SolicitorsReference;
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_addParticipantsPage.SolicitorReferenceTextfield).SendKeys(solicitorsReference);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_addParticipantsPage.RepresentingTextfield).SendKeys(user.Representee);
-            _browsers[_c.CurrentUser.Key].ScrollTo(_addParticipantsPage.AddParticipantLink);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilElementClickable(_addParticipantsPage.AddParticipantLink).Click();
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.SolicitorReferenceTextfield).SendKeys(solicitorsReference);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.RepresentingTextfield).SendKeys(user.Representee);
+            _browsers[_c.CurrentUser.Key].ScrollTo(AddParticipantsPage.AddParticipantLink);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilElementClickable(AddParticipantsPage.AddParticipantLink).Click();
         }
 
         private bool ExistingUserEmailIsSelected(string alternativeEmail)
         {
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_addParticipantsPage.ParticipantEmailTextfield).SendKeys(alternativeEmail);
-            var retrievedListOfEmails = _browsers[_c.CurrentUser.Key].Driver.WaitUntilElementsVisible(_addParticipantsPage.ExistingEmailLinks, TimeoutToRetrieveUserFromAad);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.ParticipantEmailTextfield).SendKeys(alternativeEmail);
+            var retrievedListOfEmails = _browsers[_c.CurrentUser.Key].Driver.WaitUntilElementsVisible(AddParticipantsPage.ExistingEmailLinks, TimeoutToRetrieveUserFromAad);
             retrievedListOfEmails.Count.Should().BeGreaterThan(0);
             foreach (var email in retrievedListOfEmails)
             {
@@ -213,44 +211,44 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         private void IndividualFieldsAreSet(UserAccount user)
         {
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_addParticipantsPage.ParticipantEmailTextfield).Enabled.Should().BeFalse();
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_addParticipantsPage.FirstNameTextfield).Enabled.Should().BeFalse();
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_addParticipantsPage.LastNameTextfield).Enabled.Should().BeFalse();
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_addParticipantsPage.ParticipantEmailTextfield).GetAttribute("value").Should().Be(user.AlternativeEmail);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_addParticipantsPage.FirstNameTextfield).GetAttribute("value").Should().Be(user.Firstname);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_addParticipantsPage.LastNameTextfield).GetAttribute("value").Should().Be(user.Lastname);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_addParticipantsPage.PhoneTextfield).GetAttribute("value").Should().NotBeNullOrWhiteSpace();
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.ParticipantEmailTextfield).Enabled.Should().BeFalse();
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.FirstNameTextfield).Enabled.Should().BeFalse();
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.LastNameTextfield).Enabled.Should().BeFalse();
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.ParticipantEmailTextfield).GetAttribute("value").Should().Be(user.AlternativeEmail);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.FirstNameTextfield).GetAttribute("value").Should().Be(user.Firstname);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.LastNameTextfield).GetAttribute("value").Should().Be(user.Lastname);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.PhoneTextfield).GetAttribute("value").Should().NotBeNullOrWhiteSpace();
             var organisation = _c.Test.TestData.AddParticipant.Participant.Organisation;
-            EnterTextIfFieldIsNotPrePopulated(_addParticipantsPage.IndividualOrganisationTextfield, organisation);
+            EnterTextIfFieldIsNotPrePopulated(AddParticipantsPage.IndividualOrganisationTextfield, organisation);
             var houseNumber = _c.Test.TestData.AddParticipant.Address.HouseNumber;
-            EnterTextIfFieldIsNotPrePopulated(_addParticipantsPage.HouseNumberTextfield, houseNumber);
+            EnterTextIfFieldIsNotPrePopulated(AddParticipantsPage.HouseNumberTextfield, houseNumber);
             var street = _c.Test.TestData.AddParticipant.Address.Street;
-            EnterTextIfFieldIsNotPrePopulated(_addParticipantsPage.StreetTextfield, street);
+            EnterTextIfFieldIsNotPrePopulated(AddParticipantsPage.StreetTextfield, street);
             var city = _c.Test.TestData.AddParticipant.Address.Street;
-            EnterTextIfFieldIsNotPrePopulated(_addParticipantsPage.CityTextfield, city);
+            EnterTextIfFieldIsNotPrePopulated(AddParticipantsPage.CityTextfield, city);
             var county = _c.Test.TestData.AddParticipant.Address.County;
-            EnterTextIfFieldIsNotPrePopulated(_addParticipantsPage.CountyTextfield, county);
+            EnterTextIfFieldIsNotPrePopulated(AddParticipantsPage.CountyTextfield, county);
             var postcode = _c.Test.TestData.AddParticipant.Address.Postcode;
-            EnterTextIfFieldIsNotPrePopulated(_addParticipantsPage.PostcodeTextfield, postcode);
+            EnterTextIfFieldIsNotPrePopulated(AddParticipantsPage.PostcodeTextfield, postcode);
         }
 
         private void RepFieldsAreSet(UserAccount user)
         {
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_addParticipantsPage.ParticipantEmailTextfield).Enabled.Should().BeFalse();
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_addParticipantsPage.FirstNameTextfield).Enabled.Should().BeFalse();
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_addParticipantsPage.LastNameTextfield).Enabled.Should().BeFalse();
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_addParticipantsPage.ParticipantEmailTextfield).GetAttribute("value").Should().Be(user.AlternativeEmail);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_addParticipantsPage.FirstNameTextfield).GetAttribute("value").Should().Be(user.Firstname);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_addParticipantsPage.LastNameTextfield).GetAttribute("value").Should().Be(user.Lastname);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_addParticipantsPage.PhoneTextfield).GetAttribute("value").Should().NotBeNullOrWhiteSpace();
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_addParticipantsPage.RepOrganisationTextfield).GetAttribute("value").Should().NotBeNullOrWhiteSpace();
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.ParticipantEmailTextfield).Enabled.Should().BeFalse();
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.FirstNameTextfield).Enabled.Should().BeFalse();
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.LastNameTextfield).Enabled.Should().BeFalse();
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.ParticipantEmailTextfield).GetAttribute("value").Should().Be(user.AlternativeEmail);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.FirstNameTextfield).GetAttribute("value").Should().Be(user.Firstname);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.LastNameTextfield).GetAttribute("value").Should().Be(user.Lastname);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.PhoneTextfield).GetAttribute("value").Should().NotBeNullOrWhiteSpace();
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.RepOrganisationTextfield).GetAttribute("value").Should().NotBeNullOrWhiteSpace();
         }
 
         private void VerifyUsersAreAddedToTheParticipantsList()
         {
             var clerk = UserManager.GetClerkUser(_c.UserAccounts);
             _browsers[_c.CurrentUser.Key].Driver
-                .WaitUntilVisible(_addParticipantsPage.ClerkUserParticipantsList(clerk.Username))
+                .WaitUntilVisible(AddParticipantsPage.ClerkUserParticipantsList(clerk.Username))
                 .Displayed.Should().BeTrue();
 
             var actualResult = GetAllParticipantsDetails();
@@ -272,17 +270,17 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         public List<string> GetAllParticipantsDetails()
         {
-            var elements = _browsers[_c.CurrentUser.Key].Driver.WaitUntilElementsVisible(_addParticipantsPage.ParticipantsList);
+            var elements = _browsers[_c.CurrentUser.Key].Driver.WaitUntilElementsVisible(AddParticipantsPage.ParticipantsList);
             return elements.Select(element => element.Text.Trim().Replace("\r\n", " ")).ToList();
         }
 
         public void EditANewParticipant(string alternativeEmail)
         {
             _c.Test.HearingParticipants.First(x => x.AlternativeEmail.ToLower().Equals(alternativeEmail.ToLower())).DisplayName = $"{_c.Test.AddParticipant.Participant.NewUserPrefix}Updated display name";
-            _browsers[_c.CurrentUser.Key].Clear(_addParticipantsPage.DisplayNameTextfield);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_addParticipantsPage.DisplayNameTextfield).SendKeys(_c.Test.HearingParticipants.First(x => x.AlternativeEmail.ToLower().Equals(alternativeEmail.ToLower())).DisplayName);
-            _browsers[_c.CurrentUser.Key].ScrollTo(_addParticipantsPage.NextButton);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilElementClickable(_addParticipantsPage.NextButton).Click();
+            _browsers[_c.CurrentUser.Key].Clear(AddParticipantsPage.DisplayNameTextfield);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.DisplayNameTextfield).SendKeys(_c.Test.HearingParticipants.First(x => x.AlternativeEmail.ToLower().Equals(alternativeEmail.ToLower())).DisplayName);
+            _browsers[_c.CurrentUser.Key].ScrollTo(AddParticipantsPage.NextButton);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilElementClickable(AddParticipantsPage.NextButton).Click();
         }
     }
 }

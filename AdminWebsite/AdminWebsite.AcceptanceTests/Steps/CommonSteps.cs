@@ -14,31 +14,29 @@ namespace AdminWebsite.AcceptanceTests.Steps
     {
         private readonly TestContext _c;
         private readonly Dictionary<string, UserBrowser> _browsers;
-        private readonly CommonAdminWebPage _commonAdminWebPage;
-        public CommonSteps(TestContext testContext, Dictionary<string, UserBrowser> browsers, CommonAdminWebPage commonAdminWebPage)
+        public CommonSteps(TestContext testContext, Dictionary<string, UserBrowser> browsers)
         {
             _c = testContext;
             _browsers = browsers;
-            _commonAdminWebPage = commonAdminWebPage;
         }
 
         [Then(@"they can navigate to the Open Government licence")]
         public void ThenTheyCanNavigateToTheOpenGovernmentLicence()
         {
-            _browsers[_c.CurrentUser.Key].ScrollTo(_commonAdminWebPage.OpenGovernmentLicenceLink);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_commonAdminWebPage.OpenGovernmentLicenceLink).Click();
+            _browsers[_c.CurrentUser.Key].ScrollTo(CommonAdminWebPage.OpenGovernmentLicenceLink);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(CommonAdminWebPage.OpenGovernmentLicenceLink).Click();
             _browsers[_c.CurrentUser.Key].NavigateBack();
         }
 
         [Then(@"they can navigate to Contact us")]
         public void ThenTheyCanNavigateToContactUs()
         {
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_commonAdminWebPage.ContactUsLink).Click();
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(CommonAdminWebPage.ContactUsLink).Click();
             _browsers[_c.CurrentUser.Key].SwitchTab(Page.ContactUs.Url);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_commonAdminWebPage.ContactUsTitle).Displayed.Should().BeTrue();
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_commonAdminWebPage
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(CommonAdminWebPage.ContactUsTitle).Displayed.Should().BeTrue();
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(CommonAdminWebPage
                 .ContactUsPhoneNumber(_c.Test.CommonData.CommonOnScreenData.VhoPhone)).Displayed.Should().BeTrue();
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_commonAdminWebPage
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(CommonAdminWebPage
                 .ContactUsEmail(_c.Test.CommonData.CommonOnScreenData.VhoEmail)).Displayed.Should().BeTrue();
             _browsers[_c.CurrentUser.Key].CloseTab();
         }
