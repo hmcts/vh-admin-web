@@ -189,7 +189,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
                 .CreatedBy(_c.CurrentUser.Username);
             assertHearing.AssertHearingDataMatches();
             assertHearing.AssertParticipantDataMatches(_c.Test.HearingParticipants);
-            assertHearing.AssertHearingStatus(HearingDetailsResponseStatus.Booked);
+            assertHearing.AssertHearingStatus(BookingStatus.Booked);
         }
 
         private void VerifyBookingUpdated()

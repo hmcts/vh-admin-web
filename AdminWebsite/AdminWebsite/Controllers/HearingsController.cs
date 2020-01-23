@@ -191,7 +191,7 @@ namespace AdminWebsite.Controllers
                 var deleteParticipantList = hearing.Participants.Where(p => request.Participants.All(rp => rp.ContactEmail != p.Contact_email));
                 foreach (var participantToDelete in deleteParticipantList)
                 {
-                    await _bookingsApiClient.RemoveParticipantFromHearingAsync(hearingId, participantToDelete.Id.Value);
+                    await _bookingsApiClient.RemoveParticipantFromHearingAsync(hearingId, participantToDelete.Id);
                 }
 
                 return Ok(await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId));
@@ -297,7 +297,7 @@ namespace AdminWebsite.Controllers
                     var case_type = types.FirstOrDefault(s => s.Name == item);
                     if (case_type != null)
                     {
-                        typeIds.Add(case_type.Id.Value);
+                        typeIds.Add(case_type.Id);
                     }
                 }
             }

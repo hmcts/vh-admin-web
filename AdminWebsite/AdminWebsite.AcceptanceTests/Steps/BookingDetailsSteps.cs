@@ -44,7 +44,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [When(@"the user views the booking details")]
         public void WhenTheUserViewsTheBookingDetails()
         {
-            PollForHearingStatus(HearingDetailsResponseStatus.Booked);
+            PollForHearingStatus(BookingStatus.Booked);
             VerifyTheBookingDetails();
             VerifyJudgeInParticipantsList();
             VerifyTheParticipantDetails();
@@ -127,7 +127,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [Then(@"the hearing is available in the video web")]
         public void ThenTheHearingIsAvailableInTheVideoWeb()
         {
-            PollForHearingStatus(HearingDetailsResponseStatus.Created).Should().BeTrue();
+            PollForHearingStatus(BookingStatus.Created).Should().BeTrue();
             var hearing = GetHearing();
             _videoApiManager.PollForConference(hearing.Id).Should().BeTrue();
         }
@@ -143,7 +143,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [Then(@"the hearing is cancelled")]
         public void ThenTheHearingIsCancelled()
         {
-            PollForHearingStatus(HearingDetailsResponseStatus.Cancelled).Should().BeTrue();
+            PollForHearingStatus(BookingStatus.Cancelled).Should().BeTrue();
         }
 
         [Then(@"the conference is deleted")]
@@ -161,7 +161,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             return hearings.First(x => x.Cases.First().Name.Equals(_c.Test.HearingDetails.CaseName));
         }
 
-        private bool PollForHearingStatus(HearingDetailsResponseStatus expectedStatus)
+        private bool PollForHearingStatus(BookingStatus expectedStatus)
         {
             for (var i = 0; i < Timeout; i++)
             {
