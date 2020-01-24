@@ -97,6 +97,7 @@ hearingModel.questionnaire_not_required = true;
 
 const updateBookingStatusRequest = new UpdateBookingStatusRequest();
 updateBookingStatusRequest.status = UpdateBookingStatusRequestStatus.Cancelled;
+updateBookingStatusRequest.updated_by = '';
 
 class BookingDetailsServiceMock {
   mapBooking(response) {
