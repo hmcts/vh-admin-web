@@ -77,7 +77,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             return hearing;
         }
 
-        private void AddSuitabilityAnswers(Guid? hearingId, Guid? participantId, string role)
+        private void AddSuitabilityAnswers(Guid hearingId, Guid participantId, string role)
         {
             var answers = SuitabilityAnswers.Build(role, _c.Test.TestData.Questionnaire.ExtendedAnswer);
             var response = _bookingsApiManager.SetSuitabilityAnswers(hearingId, participantId, answers);

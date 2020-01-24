@@ -127,7 +127,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             PollForHearingStatus(BookingStatus.Created).Should().BeTrue();
             var hearing = GetHearing();
-            _videoApiManager.PollForConference(hearing.Id).Should().BeTrue();
+            _videoApiManager.PollForConferenceExists(hearing.Id).Should().BeTrue();
         }
 
         [When(@"the user cancels the hearing")]
@@ -148,7 +148,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void ThenTheConferenceIsDeleted()
         {
             var hearing = GetHearing();
-            _videoApiManager.PollForConference(hearing.Id, Timeout).Should().BeFalse();
+            _videoApiManager.PollForConferenceExists(hearing.Id, Timeout).Should().BeFalse();
         }
 
         private HearingDetailsResponse GetHearing()

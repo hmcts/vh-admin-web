@@ -3062,21 +3062,17 @@ namespace AdminWebsite.BookingsAPI.Client
         }
     }
 
-    /// <summary>A case type and the hearing types possible</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.27.0 (Newtonsoft.Json v11.0.0.0)")]
-    public partial class CaseTypeResponse 
+    /// <summary>A hearing type</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.4.0 (Newtonsoft.Json v11.0.0.0)")]
+    public partial class HearingTypeResponse 
     {
         /// <summary>The hearing type display name</summary>
         [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Name { get; set; }
     
-        /// <summary>Unique identifier</summary>
-        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public int? Id { get; set; }
-    
-        /// <summary>The hearing types</summary>
-        [Newtonsoft.Json.JsonProperty("hearing_types", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Collections.Generic.List<HearingTypeResponse> Hearing_types { get; set; }
+        /// <summary>Unique identifier for the hearing type</summary>
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int Id { get; set; }
     
         public string ToJson() 
         {
@@ -3090,17 +3086,17 @@ namespace AdminWebsite.BookingsAPI.Client
     
     }
     
-    /// <summary>A hearing type</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.27.0 (Newtonsoft.Json v11.0.0.0)")]
-    public partial class HearingTypeResponse 
+    /// <summary>A case type and the hearing types possible</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.4.0 (Newtonsoft.Json v11.0.0.0)")]
+    public partial class CaseTypeResponse 
     {
         /// <summary>The case type display name</summary>
         [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Name { get; set; }
     
-        /// <summary>Unique identifier for the hearing type</summary>
-        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public int? Id { get; set; }
+        /// <summary>Unique identifier</summary>
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int Id { get; set; }
     
         [Newtonsoft.Json.JsonProperty("hearing_types", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.Collections.Generic.List<HearingTypeResponse> Hearing_types { get; set; }
@@ -3137,13 +3133,11 @@ namespace AdminWebsite.BookingsAPI.Client
     
     }
     
-    /// <summary>Hearing role model</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.27.0 (Newtonsoft.Json v11.0.0.0)")]
-    public partial class HearingRoleResponse 
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.4.0 (Newtonsoft.Json v11.0.0.0)")]
+    public partial class ProblemDetails 
     {
-        /// <summary>Name of a hearing role</summary>
-        [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Name { get; set; }
+        [Newtonsoft.Json.JsonProperty("type", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Type { get; set; }
     
         [Newtonsoft.Json.JsonProperty("title", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Title { get; set; }
@@ -3172,8 +3166,9 @@ namespace AdminWebsite.BookingsAPI.Client
     
     }
     
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.27.0 (Newtonsoft.Json v11.0.0.0)")]
-    public partial class BookingsApiHealthResponse 
+    /// <summary>Hearing role model</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.4.0 (Newtonsoft.Json v11.0.0.0)")]
+    public partial class HearingRoleResponse 
     {
         /// <summary>Name of a hearing role</summary>
         [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -3215,7 +3210,25 @@ namespace AdminWebsite.BookingsAPI.Client
     
     }
     
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.27.0 (Newtonsoft.Json v11.0.0.0)")]
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.4.0 (Newtonsoft.Json v11.0.0.0)")]
+    public partial class BookingsApiHealthResponse 
+    {
+        [Newtonsoft.Json.JsonProperty("database_health", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public HealthCheck Database_health { get; set; }
+    
+        public string ToJson() 
+        {
+            return Newtonsoft.Json.JsonConvert.SerializeObject(this);
+        }
+    
+        public static BookingsApiHealthResponse FromJson(string data)
+        {
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<BookingsApiHealthResponse>(data);
+        }
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.4.0 (Newtonsoft.Json v11.0.0.0)")]
     public partial class ParticipantResponse 
     {
         /// <summary>Participant Id</summary>
@@ -3299,26 +3312,7 @@ namespace AdminWebsite.BookingsAPI.Client
     
     }
     
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.27.0 (Newtonsoft.Json v11.0.0.0)")]
-    public partial class AddParticipantsToHearingRequest 
-    {
-        /// <summary>List of participants</summary>
-        [Newtonsoft.Json.JsonProperty("participants", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Collections.Generic.List<ParticipantRequest> Participants { get; set; }
-    
-        public string ToJson() 
-        {
-            return Newtonsoft.Json.JsonConvert.SerializeObject(this);
-        }
-    
-        public static AddParticipantsToHearingRequest FromJson(string data)
-        {
-            return Newtonsoft.Json.JsonConvert.DeserializeObject<AddParticipantsToHearingRequest>(data);
-        }
-    
-    }
-    
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.27.0 (Newtonsoft.Json v11.0.0.0)")]
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.4.0 (Newtonsoft.Json v11.0.0.0)")]
     public partial class ParticipantRequest 
     {
         /// <summary>Participant Title.</summary>
@@ -3394,7 +3388,26 @@ namespace AdminWebsite.BookingsAPI.Client
     
     }
     
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.27.0 (Newtonsoft.Json v11.0.0.0)")]
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.4.0 (Newtonsoft.Json v11.0.0.0)")]
+    public partial class AddParticipantsToHearingRequest 
+    {
+        /// <summary>List of participants</summary>
+        [Newtonsoft.Json.JsonProperty("participants", Required = Newtonsoft.Json.Required.AllowNull)]
+        public System.Collections.Generic.List<ParticipantRequest> Participants { get; set; }
+    
+        public string ToJson() 
+        {
+            return Newtonsoft.Json.JsonConvert.SerializeObject(this);
+        }
+    
+        public static AddParticipantsToHearingRequest FromJson(string data)
+        {
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<AddParticipantsToHearingRequest>(data);
+        }
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.4.0 (Newtonsoft.Json v11.0.0.0)")]
     public partial class UpdateParticipantRequest 
     {
         /// <summary>Participant Title.</summary>
@@ -3515,47 +3528,6 @@ namespace AdminWebsite.BookingsAPI.Client
     
     }
     
-    /// <summary>Case Information</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.27.0 (Newtonsoft.Json v11.0.0.0)")]
-    public partial class CaseResponse 
-    {
-        /// <summary>The case number</summary>
-        [Newtonsoft.Json.JsonProperty("number", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Number { get; set; }
-    
-        /// <summary>The case name</summary>
-        [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Name { get; set; }
-    
-        [Newtonsoft.Json.JsonProperty("is_lead_case", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public bool Is_lead_case { get; set; }
-    
-        public string ToJson() 
-        {
-            return Newtonsoft.Json.JsonConvert.SerializeObject(this);
-        }
-    
-        public static CaseResponse FromJson(string data)
-        {
-            return Newtonsoft.Json.JsonConvert.DeserializeObject<CaseResponse>(data);
-        }
-    
-    }
-    
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.27.0 (Newtonsoft.Json v11.0.0.0)")]
-    public enum BookingStatus
-    {
-        [System.Runtime.Serialization.EnumMember(Value = @"Booked")]
-        Booked = 0,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"Created")]
-        Created = 1,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"Cancelled")]
-        Cancelled = 2,
-    
-    }
-    
     /// <summary>Detailed information of a hearing</summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.4.0 (Newtonsoft.Json v11.0.0.0)")]
     public partial class HearingDetailsResponse 
@@ -3625,9 +3597,8 @@ namespace AdminWebsite.BookingsAPI.Client
     
     }
     
-    /// <summary>Case Information</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.27.0 (Newtonsoft.Json v11.0.0.0)")]
-    public partial class CaseResponse 
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.4.0 (Newtonsoft.Json v11.0.0.0)")]
+    public partial class CaseRequest 
     {
         /// <summary>The case number</summary>
         [Newtonsoft.Json.JsonProperty("number", Required = Newtonsoft.Json.Required.AllowNull)]
@@ -3692,34 +3663,19 @@ namespace AdminWebsite.BookingsAPI.Client
     
     }
     
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.27.0 (Newtonsoft.Json v11.0.0.0)")]
-    public partial class CaseRequest 
+    /// <summary>Booking status to update</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.4.0 (Newtonsoft.Json v11.0.0.0)")]
+    public enum UpdateBookingStatus
     {
-        /// <summary>The case number</summary>
-        [Newtonsoft.Json.JsonProperty("number", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Number { get; set; }
+        [System.Runtime.Serialization.EnumMember(Value = @"Created")]
+        Created = 0,
     
-        /// <summary>The case name</summary>
-        [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Name { get; set; }
-    
-        /// <summary>Is lead case for hearing</summary>
-        [Newtonsoft.Json.JsonProperty("is_lead_case", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public bool? Is_lead_case { get; set; }
-    
-        public string ToJson() 
-        {
-            return Newtonsoft.Json.JsonConvert.SerializeObject(this);
-        }
-    
-        public static CaseRequest FromJson(string data)
-        {
-            return Newtonsoft.Json.JsonConvert.DeserializeObject<CaseRequest>(data);
-        }
+        [System.Runtime.Serialization.EnumMember(Value = @"Cancelled")]
+        Cancelled = 1,
     
     }
     
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.27.0 (Newtonsoft.Json v11.0.0.0)")]
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.4.0 (Newtonsoft.Json v11.0.0.0)")]
     public partial class UpdateBookingStatusRequest 
     {
         [Newtonsoft.Json.JsonProperty("updated_by", Required = Newtonsoft.Json.Required.AllowNull)]
@@ -3792,147 +3748,70 @@ namespace AdminWebsite.BookingsAPI.Client
     
     }
     
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.27.0 (Newtonsoft.Json v11.0.0.0)")]
-    public partial class BookingsResponse 
-    {
-        /// <summary>Gets or sets list of bookings hearings.</summary>
-        [Newtonsoft.Json.JsonProperty("hearings", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Collections.Generic.List<BookingsByDateResponse> Hearings { get; set; }
-    
-        /// <summary>Gets or sets a unique sequential value to get next set of records. 
-        /// value is set to 0 if no records to return.</summary>
-        [Newtonsoft.Json.JsonProperty("next_cursor", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Next_cursor { get; set; }
-    
-        /// <summary>Gets or sets the maximum number of items returned for the page.</summary>
-        [Newtonsoft.Json.JsonProperty("limit", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public int? Limit { get; set; }
-    
-        /// <summary>Absolute url to the previous page of items.
-        /// Will be null for the first page.</summary>
-        [Newtonsoft.Json.JsonProperty("prev_page_url", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Prev_page_url { get; set; }
-    
-        /// <summary>Absolute url for the next page of items.
-        /// Will be null for the last page.</summary>
-        [Newtonsoft.Json.JsonProperty("next_page_url", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Next_page_url { get; set; }
-    
-        public string ToJson() 
-        {
-            return Newtonsoft.Json.JsonConvert.SerializeObject(this);
-        }
-    
-        public static BookingsResponse FromJson(string data)
-        {
-            return Newtonsoft.Json.JsonConvert.DeserializeObject<BookingsResponse>(data);
-        }
-    
-    }
-    
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.27.0 (Newtonsoft.Json v11.0.0.0)")]
-    public partial class BookingsByDateResponse 
-    {
-        /// <summary>The hearings grouped by date without time.</summary>
-        [Newtonsoft.Json.JsonProperty("scheduled_date", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.DateTime? Scheduled_date { get; set; }
-    
-        /// <summary>Gets or sets list of bookings hearings.</summary>
-        [Newtonsoft.Json.JsonProperty("hearings", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Collections.Generic.List<BookingsHearingResponse> Hearings { get; set; }
-    
-        public string ToJson() 
-        {
-            return Newtonsoft.Json.JsonConvert.SerializeObject(this);
-        }
-    
-        public static BookingsByDateResponse FromJson(string data)
-        {
-            return Newtonsoft.Json.JsonConvert.DeserializeObject<BookingsByDateResponse>(data);
-        }
-    
-    }
-    
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.27.0 (Newtonsoft.Json v11.0.0.0)")]
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.4.0 (Newtonsoft.Json v11.0.0.0)")]
     public partial class BookingsHearingResponse 
     {
-        /// <summary>Gets or sets the hearing ID.</summary>
-        [Newtonsoft.Json.JsonProperty("hearing_id", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Guid? Hearing_id { get; set; }
+        [Newtonsoft.Json.JsonProperty("hearing_id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid Hearing_id { get; set; }
     
-        /// <summary>Gets or sets the hearing number/reference.</summary>
         [Newtonsoft.Json.JsonProperty("hearing_number", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Hearing_number { get; set; }
     
-        /// <summary>Gets or sets the hearing title/name.</summary>
         [Newtonsoft.Json.JsonProperty("hearing_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Hearing_name { get; set; }
     
-        /// <summary>Gets or sets the hearing scheduled date and time.</summary>
-        [Newtonsoft.Json.JsonProperty("scheduled_date_time", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.DateTime? Scheduled_date_time { get; set; }
+        [Newtonsoft.Json.JsonProperty("scheduled_date_time", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTime Scheduled_date_time { get; set; }
     
-        /// <summary>Gets or sets the hearing duration.</summary>
-        [Newtonsoft.Json.JsonProperty("scheduled_duration", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public int? Scheduled_duration { get; set; }
+        [Newtonsoft.Json.JsonProperty("scheduled_duration", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int Scheduled_duration { get; set; }
     
-        /// <summary>Gets or sets the name of the case type.</summary>
         [Newtonsoft.Json.JsonProperty("case_type_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Case_type_name { get; set; }
     
-        /// <summary>Gets or sets the hearing case type.</summary>
         [Newtonsoft.Json.JsonProperty("hearing_type_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Hearing_type_name { get; set; }
     
-        /// <summary>Gets or sets the court room.</summary>
         [Newtonsoft.Json.JsonProperty("court_room", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Court_room { get; set; }
     
-        /// <summary>Gets or sets the court address.</summary>
         [Newtonsoft.Json.JsonProperty("court_address", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Court_address { get; set; }
     
-        /// <summary>Gets or sets Judge name.</summary>
         [Newtonsoft.Json.JsonProperty("judge_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Judge_name { get; set; }
     
-        /// <summary>Gets or sets the name/email person who create the hearing.</summary>
         [Newtonsoft.Json.JsonProperty("created_by", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Created_by { get; set; }
     
-        /// <summary>Gets or sets the created date of hearing.</summary>
-        [Newtonsoft.Json.JsonProperty("created_date", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.DateTime? Created_date { get; set; }
+        [Newtonsoft.Json.JsonProperty("created_date", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTime Created_date { get; set; }
     
-        /// <summary>Gets or sets the name/email person who last edit the hearing.</summary>
         [Newtonsoft.Json.JsonProperty("last_edit_by", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Last_edit_by { get; set; }
     
-        /// <summary>Gets or sets the last edited date of hearing.</summary>
         [Newtonsoft.Json.JsonProperty("last_edit_date", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.DateTime? Last_edit_date { get; set; }
     
-        /// <summary>Gets the scheduled date without time.</summary>
-        [Newtonsoft.Json.JsonProperty("hearing_date", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.DateTime? Hearing_date { get; set; }
+        [Newtonsoft.Json.JsonProperty("hearing_date", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTime Hearing_date { get; set; }
     
         /// <summary>Gets or sets the booking status of the hearing.</summary>
-        [Newtonsoft.Json.JsonProperty("status", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("status", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public BookingsHearingResponseStatus? Status { get; set; }
+        public BookingStatus Status { get; set; }
     
-        /// <summary>QuestionnaireNotRequired</summary>
-        [Newtonsoft.Json.JsonProperty("questionnaire_not_required", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public bool? Questionnaire_not_required { get; set; }
+        [Newtonsoft.Json.JsonProperty("questionnaire_not_required", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool Questionnaire_not_required { get; set; }
     
         public string ToJson() 
         {
             return Newtonsoft.Json.JsonConvert.SerializeObject(this);
         }
     
-        public static BookingsResponse FromJson(string data)
+        public static BookingsHearingResponse FromJson(string data)
         {
-            return Newtonsoft.Json.JsonConvert.DeserializeObject<BookingsResponse>(data);
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<BookingsHearingResponse>(data);
         }
     
     }
@@ -4123,8 +4002,8 @@ namespace AdminWebsite.BookingsAPI.Client
     
     }
     
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.27.0 (Newtonsoft.Json v11.0.0.0)")]
-    public partial class SuitabilityAnswersResponse 
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.4.0 (Newtonsoft.Json v11.0.0.0)")]
+    public partial class PersonSuitabilityAnswerResponse 
     {
         [Newtonsoft.Json.JsonProperty("hearing_id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.Guid Hearing_id { get; set; }
@@ -4201,8 +4080,8 @@ namespace AdminWebsite.BookingsAPI.Client
     
     }
     
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.0.27.0 (Newtonsoft.Json v11.0.0.0)")]
-    public enum HearingDetailsResponseStatus
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.4.0 (Newtonsoft.Json v11.0.0.0)")]
+    public partial class SuitabilityAnswersResponse 
     {
         [Newtonsoft.Json.JsonProperty("participant_suitability_answer_response", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.Collections.Generic.List<ParticipantSuitabilityAnswerResponse> Participant_suitability_answer_response { get; set; }
