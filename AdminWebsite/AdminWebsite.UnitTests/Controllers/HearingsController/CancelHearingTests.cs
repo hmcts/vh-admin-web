@@ -42,7 +42,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 
             _guid = Guid.NewGuid();
 
-            _updateBookingStatusRequest = new UpdateBookingStatusRequest() { Status = UpdateBookingStatusRequestStatus.Cancelled, Updated_by = "admin user" };
+            _updateBookingStatusRequest = new UpdateBookingStatusRequest() { Status = UpdateBookingStatus.Cancelled, Updated_by = "admin user" };
         }
 
         [Test]

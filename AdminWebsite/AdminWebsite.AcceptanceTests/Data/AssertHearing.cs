@@ -70,16 +70,15 @@ namespace AdminWebsite.AcceptanceTests.Data
             }
         }
 
-        public void AssertHearingStatus(HearingDetailsResponseStatus expectedStatus)
+        public void AssertHearingStatus(BookingStatus expectedStatus)
         {
             _hearing.Status.Should().Be(expectedStatus);
         }
 
-        public void AssertUpdatedStatus(string updatedBy, DateTime? updatedDate)
+        public void AssertUpdatedStatus(string updatedBy, DateTime updatedDate)
         {
             _hearing.Updated_by.Should().Be(updatedBy);
-            if (updatedDate != null)
-                _hearing.Updated_date?.ToLocalTime().ToShortTimeString().Should().BeOneOf(updatedDate?.ToLocalTime().ToShortTimeString(), updatedDate?.ToLocalTime().AddMinutes(1).ToShortTimeString());
+            _hearing.Updated_date.ToLocalTime().ToShortTimeString().Should().BeOneOf(updatedDate.ToLocalTime().ToShortTimeString(), updatedDate.ToLocalTime().AddMinutes(1).ToShortTimeString());
         }
 
         public static void VerifyTimeSpansMatch(int? actual, int hours, int minutes)

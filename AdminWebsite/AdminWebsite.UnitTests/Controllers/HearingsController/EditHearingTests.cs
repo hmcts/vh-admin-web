@@ -163,7 +163,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task should_delete_missing_participants()
         {
-            var removedUserId = _existingHearing.Participants[0].Id.Value;
+            var removedUserId = _existingHearing.Participants[0].Id;
             
             var result = await _controller.EditHearing(_validId, _request);
             ((OkObjectResult) result.Result).StatusCode.Should().Be(200);

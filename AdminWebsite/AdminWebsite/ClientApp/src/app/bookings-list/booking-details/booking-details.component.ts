@@ -134,6 +134,7 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
   updateHearingStatus(status: UpdateBookingStatusRequestStatus) {
     const updateBookingStatus = new UpdateBookingStatusRequest();
     updateBookingStatus.status = status;
+    updateBookingStatus.updated_by = '';
 
     this.videoHearingService.updateBookingStatus(this.hearingId, updateBookingStatus)
       .subscribe(
