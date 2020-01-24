@@ -16,14 +16,12 @@ namespace AdminWebsite.AcceptanceTests.Steps
     {
         private readonly TestContext _c;
         private readonly Dictionary<string, UserBrowser> _browsers;
-        private readonly HearingSchedulePage _hearingSchedulePage;
         private readonly CommonSharedSteps _commonSharedSteps;
 
-        public HearingScheduleSteps(TestContext testContext, Dictionary<string, UserBrowser> browsers, HearingSchedulePage hearingSchedulePage, CommonSharedSteps commonSharedSteps)
+        public HearingScheduleSteps(TestContext testContext, Dictionary<string, UserBrowser> browsers, CommonSharedSteps commonSharedSteps)
         {
             _c = testContext;
             _browsers = browsers;
-            _hearingSchedulePage = hearingSchedulePage;
             _commonSharedSteps = commonSharedSteps;
         }
 
@@ -40,36 +38,36 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void AddHearingDate()
         {
             var date = _c.Test.HearingSchedule.ScheduledDate.Date.ToString(DateFormats.FormatDateToLocalDateFormat(_c.AdminWebConfig.TestConfig.TargetBrowser));
-            _browsers[_c.CurrentUser.Key].Clear(_hearingSchedulePage.HearingDateTextfield);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_hearingSchedulePage.HearingDateTextfield).SendKeys(date);
+            _browsers[_c.CurrentUser.Key].Clear(HearingSchedulePage.HearingDateTextfield);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(HearingSchedulePage.HearingDateTextfield).SendKeys(date);
         }
 
         private void AddHearingTime()
         {
-            _browsers[_c.CurrentUser.Key].Clear(_hearingSchedulePage.HearingStartTimeHourTextfield);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_hearingSchedulePage.HearingStartTimeHourTextfield).SendKeys(_c.Test.HearingSchedule.ScheduledDate.Hour.ToString());
-            _browsers[_c.CurrentUser.Key].Clear(_hearingSchedulePage.HearingStartTimeMinuteTextfield);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_hearingSchedulePage.HearingStartTimeMinuteTextfield).SendKeys(_c.Test.HearingSchedule.ScheduledDate.Minute.ToString());
+            _browsers[_c.CurrentUser.Key].Clear(HearingSchedulePage.HearingStartTimeHourTextfield);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(HearingSchedulePage.HearingStartTimeHourTextfield).SendKeys(_c.Test.HearingSchedule.ScheduledDate.Hour.ToString());
+            _browsers[_c.CurrentUser.Key].Clear(HearingSchedulePage.HearingStartTimeMinuteTextfield);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(HearingSchedulePage.HearingStartTimeMinuteTextfield).SendKeys(_c.Test.HearingSchedule.ScheduledDate.Minute.ToString());
         }
 
         private void AddHearingScheduleDetails()
         {
-            _browsers[_c.CurrentUser.Key].Clear(_hearingSchedulePage.HearingDurationHourTextfield);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_hearingSchedulePage.HearingDurationHourTextfield).SendKeys(_c.Test.HearingSchedule.DurationHours.ToString());
-            _browsers[_c.CurrentUser.Key].Clear(_hearingSchedulePage.HearingDurationMinuteTextfield);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_hearingSchedulePage.HearingDurationMinuteTextfield).SendKeys(_c.Test.HearingSchedule.DurationMinutes.ToString());
-            _commonSharedSteps.WhenTheUserSelectsTheOptionFromTheDropdown(_browsers[_c.CurrentUser.Key].Driver, _hearingSchedulePage.CourtAddressDropdown, _c.Test.HearingSchedule.HearingVenue);
-            _browsers[_c.CurrentUser.Key].Clear(_hearingSchedulePage.CourtRoomTextfield);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_hearingSchedulePage.CourtRoomTextfield).SendKeys(_c.Test.HearingSchedule.Room);
+            _browsers[_c.CurrentUser.Key].Clear(HearingSchedulePage.HearingDurationHourTextfield);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(HearingSchedulePage.HearingDurationHourTextfield).SendKeys(_c.Test.HearingSchedule.DurationHours.ToString());
+            _browsers[_c.CurrentUser.Key].Clear(HearingSchedulePage.HearingDurationMinuteTextfield);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(HearingSchedulePage.HearingDurationMinuteTextfield).SendKeys(_c.Test.HearingSchedule.DurationMinutes.ToString());
+            _commonSharedSteps.WhenTheUserSelectsTheOptionFromTheDropdown(_browsers[_c.CurrentUser.Key].Driver, HearingSchedulePage.CourtAddressDropdown, _c.Test.HearingSchedule.HearingVenue);
+            _browsers[_c.CurrentUser.Key].Clear(HearingSchedulePage.CourtRoomTextfield);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(HearingSchedulePage.CourtRoomTextfield).SendKeys(_c.Test.HearingSchedule.Room);
         }
 
         public void SetHearingScheduleDetails()
         {
             _c.Test.HearingSchedule.ScheduledDate = _c.Test.HearingSchedule.ScheduledDate == default ? DateTime.Today.AddDays(1).AddMinutes(-1) : DateTime.Today.AddDays(1).AddMinutes(-10);
-            _c.Test.HearingSchedule.DurationHours = _c.Test.HearingSchedule.DurationHours == 0 ? _c.AdminWebConfig.TestConfig.TestData.HearingSchedule.DurationHours : 0;
-            _c.Test.HearingSchedule.DurationMinutes = _c.Test.HearingSchedule.DurationMinutes == 0 ? _c.AdminWebConfig.TestConfig.TestData.HearingSchedule.DurationMinutes : 25;
-            _c.Test.HearingSchedule.HearingVenue = _c.Test.HearingSchedule.HearingVenue != null ? "Manchester Civil and Family Justice Centre" : _c.AdminWebConfig.TestConfig.TestData.HearingSchedule.HearingVenue;
-            _c.Test.HearingSchedule.Room = _c.Test.HearingSchedule.Room != null ? "2" : _c.AdminWebConfig.TestConfig.TestData.HearingSchedule.Room;
+            _c.Test.HearingSchedule.DurationHours = _c.Test.HearingSchedule.DurationHours == 0 ? _c.Test.TestData.HearingSchedule.DurationHours : 0;
+            _c.Test.HearingSchedule.DurationMinutes = _c.Test.HearingSchedule.DurationMinutes == 0 ? _c.Test.TestData.HearingSchedule.DurationMinutes : 25;
+            _c.Test.HearingSchedule.HearingVenue = _c.Test.HearingSchedule.HearingVenue != null ? "Manchester Civil and Family Justice Centre" : _c.Test.TestData.HearingSchedule.HearingVenue;
+            _c.Test.HearingSchedule.Room = _c.Test.HearingSchedule.Room != null ? "2" : _c.Test.TestData.HearingSchedule.Room;
         }
 
         [When(@"the user attempts to set a date in the past")]
@@ -85,7 +83,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [Then(@"an error message appears to enter a future date")]
         public void ThenAnErrorMessageAppearsToEnterAFutureDate()
         {
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_hearingSchedulePage.HearingDateError).Displayed.Should().BeTrue();
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(HearingSchedulePage.HearingDateError).Displayed.Should().BeTrue();
         }
 
         [Then(@"the user cannot proceed to the next page")]
@@ -97,7 +95,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         public void ClickNext()
         {
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_hearingSchedulePage.NextButton).Click();
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(HearingSchedulePage.NextButton).Click();
         }
     }
 }

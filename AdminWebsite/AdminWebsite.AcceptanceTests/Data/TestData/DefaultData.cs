@@ -58,7 +58,11 @@ namespace AdminWebsite.AcceptanceTests.Data.TestData
 
     public class Questionnaire
     {
-        public string Question1 { get; set; }
-        public string Question2 { get; set; }
+        public string SelfTestQuestion1 { get; set; }
+        public string SelfTestQuestion2 { get; set; }
+        public string IndividualQuestion { get; set; }
+        public string RepresentativeQuestion { get; set; }
+        public string ExtendedAnswer { get; set; }
+        public string UnansweredQuestion { get; set; }
     }
 }

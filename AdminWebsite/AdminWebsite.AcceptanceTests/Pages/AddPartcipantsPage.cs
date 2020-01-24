@@ -3,31 +3,31 @@ using OpenQA.Selenium;
 
 namespace AdminWebsite.AcceptanceTests.Pages
 {
-    public class AddParticipantsPage
+    public static class AddParticipantsPage
     {
-        public By PartyDropdown = By.Id("party");
-        public By RoleDropdown = By.Id("role");
-        public By ParticipantEmailTextfield = By.Id("participantEmail");
-        public By TitleDropdown = By.Id("title");
-        public By FirstNameTextfield = By.Id("firstName");
-        public By LastNameTextfield = By.Id("lastName");
-        public By IndividualOrganisationTextfield = By.Id("companyNameIndividual");
-        public By RepOrganisationTextfield = By.Id("companyName");
-        public By PhoneTextfield = By.Id("phone");
-        public By DisplayNameTextfield = By.Id("displayName");
-        public By HouseNumberTextfield = By.Id("houseNumber");
-        public By StreetTextfield = By.Id("street");
-        public By CityTextfield = By.Id("city");
-        public By CountyTextfield = By.Id("county");
-        public By PostcodeTextfield = By.Id("postcode");
-        public By SolicitorReferenceTextfield = By.Id("solicitorReference");
-        public By RepresentingTextfield = By.Id("representing");
-        public By AddParticipantLink = By.Id("addParticipantBtn");
-        public By ClearDetailsLink = By.PartialLinkText("Clear details");
-        public By NextButton = By.Id(("nextButton"));
-        public By CancelButton = By.Id("cancelButton");
-        public By ExistingEmailLinks = By.XPath("//li[@class='vk-showlist-m30']/a");
-        public By ParticipantsList = By.XPath("//*[contains(@class, 'vhtable-header')]");
-        public By ClerkUserParticipantsList(string username) => CommonLocators.ElementContainingText(username);
+        public static By PartyDropdown = By.Id("party");
+        public static By RoleDropdown = By.Id("role");
+        public static By ParticipantEmailTextfield = By.Id("participantEmail");
+        public static By TitleDropdown = By.Id("title");
+        public static By FirstNameTextfield = By.Id("firstName");
+        public static By LastNameTextfield = By.Id("lastName");
+        public static By IndividualOrganisationTextfield = By.Id("companyNameIndividual");
+        public static By RepOrganisationTextfield = By.Id("companyName");
+        public static By PhoneTextfield = By.Id("phone");
+        public static By DisplayNameTextfield = By.Id("displayName");
+        public static By HouseNumberTextfield = By.Id("houseNumber");
+        public static By StreetTextfield = By.Id("street");
+        public static By CityTextfield = By.Id("city");
+        public static By CountyTextfield = By.Id("county");
+        public static By PostcodeTextfield = By.Id("postcode");
+        public static By SolicitorReferenceTextfield = By.Id("solicitorReference");
+        public static By RepresentingTextfield = By.Id("representing");
+        public static By AddParticipantLink = By.Id("addParticipantBtn");
+        public static By ClearDetailsLink = By.PartialLinkText("Clear details");
+        public static By NextButton = By.Id(("nextButton"));
+        public static By CancelButton = By.Id("cancelButton");
+        public static By ExistingEmailLinks = By.XPath("//li[@class='vk-showlist-m30']/a");
+        public static By ParticipantsList = By.XPath("//*[contains(@class, 'vhtable-header')]");
+        public static By ClerkUserParticipantsList(string username) => CommonLocators.ElementContainingText(username);
     }
 }

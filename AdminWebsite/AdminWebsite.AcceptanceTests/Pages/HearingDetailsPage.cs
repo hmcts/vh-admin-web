@@ -2,14 +2,14 @@
 
 namespace AdminWebsite.AcceptanceTests.Pages
 {
-    public class HearingDetailsPage
+    public static class HearingDetailsPage
     {
-        public By CaseNumberTextfield = By.Id("caseNumber");
-        public By CaseNameTextfield = By.Id("caseName");
-        public By CaseTypeDropdown = By.Id("caseType");
-        public By HearingTypeDropdown = By.Id("hearingType");
-        public By SendQuestionnairesCheckbox = By.Id("questionnaireNotRequired");
-        public By NextButton = By.Id("nextButton");
-        public By CancelButton = By.Id("cancelButton");
+        public static By CaseNumberTextfield = By.Id("caseNumber");
+        public static By CaseNameTextfield = By.Id("caseName");
+        public static By CaseTypeDropdown = By.Id("caseType");
+        public static By HearingTypeDropdown = By.Id("hearingType");
+        public static By SendQuestionnairesCheckbox = By.Id("questionnaireNotRequired");
+        public static By NextButton = By.Id("nextButton");
+        public static By CancelButton = By.Id("cancelButton");
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using AcceptanceTests.Common.Configuration.Users;
+using AcceptanceTests.Common.Data.TestData;
 using AdminWebsite.AcceptanceTests.Data.TestData;
 
 namespace AdminWebsite.AcceptanceTests.Data
@@ -12,5 +13,7 @@ namespace AdminWebsite.AcceptanceTests.Data
         public string OtherInformation { get; set; }
         public AddParticipant AddParticipant { get; set; }
         public bool SubmittedAndCreatedNewAadUsers { get; set; } = false;
+        public CommonData CommonData { get; set; }
+        public DefaultData TestData { get; set; }
     }
 }
