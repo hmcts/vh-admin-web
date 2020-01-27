@@ -76,5 +76,5 @@ describe('ChangePasswordComponent', () => {
     component.goToDiv('userName');
     const input = fixture.nativeElement.querySelector('#userName:focus');
     expect(input).toBeTruthy();
-  })
+  });
 });
