@@ -13,14 +13,12 @@ namespace AdminWebsite.AcceptanceTests.Steps
     {
         private readonly TestContext _c;
         private readonly Dictionary<string, UserBrowser> _browsers;
-        private readonly ErrorPage _errorPage;
         private readonly LoginSteps _loginSteps;
-        public ErrorSteps(TestContext testContext, Dictionary<string, UserBrowser> browsers, LoginSteps loginSteps, ErrorPage errorPage)
+        public ErrorSteps(TestContext testContext, Dictionary<string, UserBrowser> browsers, LoginSteps loginSteps)
         {
             _c = testContext;
             _browsers = browsers;
             _loginSteps = loginSteps;
-            _errorPage = errorPage;
         }
 
         [When(@"the user attempts to access the page on their unsupported browser")]
@@ -33,7 +31,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void ThenTheUserIsOnTheUnsupportedBrowserErrorPageWithTextOfHowToRectifyTheProblem()
         {
             _browsers[_c.CurrentUser.Key].Driver.Url.Should().NotContain(Page.Dashboard.Url);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_errorPage.UnsupportedBrowserTitle)
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(ErrorPage.UnsupportedBrowserTitle)
                 .Displayed.Should().BeTrue();
         }
     }

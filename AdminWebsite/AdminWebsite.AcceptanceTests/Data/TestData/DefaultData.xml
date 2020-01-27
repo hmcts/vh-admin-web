@@ -31,7 +31,11 @@
     <Other>Other Info</Other>
   </OtherInformation>
   <Questionnaire>
-    <Question1>Is there anything you'd like the court to take into account when it decides which type of hearing will be suitable?</Question1>
-    <Question2>At the time of your hearing, will you have access to a quiet, private room?</Question2>
+    <SelfTestQuestion1>Could you see yourself on the screen in the camera window?</SelfTestQuestion1>
+    <SelfTestQuestion2>Could you see the bar moving when you spoke?</SelfTestQuestion2>
+    <IndividualQuestion>Is there anything you'd like the court to take into account when it decides which type of hearing will be suitable?</IndividualQuestion>
+    <RepresentativeQuestion>Is there anything you'd like the court to know that could affect this hearing taking place by video?</RepresentativeQuestion>
+    <ExtendedAnswer>An extended answer</ExtendedAnswer>
+    <UnansweredQuestion>Could you see and hear the video clearly?</UnansweredQuestion>
   </Questionnaire>
 </DefaultData>

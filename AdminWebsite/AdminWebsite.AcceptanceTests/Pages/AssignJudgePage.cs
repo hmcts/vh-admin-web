@@ -2,11 +2,11 @@
 
 namespace AdminWebsite.AcceptanceTests.Pages
 {
-    public class AssignJudgePage
+    public static class AssignJudgePage
     {
-        public By JudgeNameDropdown = By.Id("judgeName");
-        public By JudgeDisplayNameTextfield = By.Id("judgeDisplayName");
-        public By NextButton = By.Id("nextButton");
-        public By CancelButton = By.Id("cancelButton");
+        public static By JudgeNameDropdown = By.Id("judgeName");
+        public static By JudgeDisplayNameTextfield = By.Id("judgeDisplayName");
+        public static By NextButton = By.Id("nextButton");
+        public static By CancelButton = By.Id("cancelButton");
     }
 }

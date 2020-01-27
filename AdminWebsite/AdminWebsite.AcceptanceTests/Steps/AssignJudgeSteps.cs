@@ -15,13 +15,11 @@ namespace AdminWebsite.AcceptanceTests.Steps
     {
         private readonly TestContext _c;
         private readonly Dictionary<string, UserBrowser> _browsers;
-        private readonly AssignJudgePage _assignJudgePage;
         private readonly CommonSharedSteps _commonSharedSteps;
-        public AssignJudgeSteps(TestContext testContext, Dictionary<string, UserBrowser> browsers, AssignJudgePage assignJudgePage, CommonSharedSteps commonSharedSteps)
+        public AssignJudgeSteps(TestContext testContext, Dictionary<string, UserBrowser> browsers, CommonSharedSteps commonSharedSteps)
         {
             _c = testContext;
             _browsers = browsers;
-            _assignJudgePage = assignJudgePage;
             _commonSharedSteps = commonSharedSteps;
         }
 
@@ -37,13 +35,13 @@ namespace AdminWebsite.AcceptanceTests.Steps
             var judge = UserManager.GetClerkUser(_c.UserAccounts);
             judge.CaseRoleName = Party.Judge.Name;
             judge.HearingRoleName = PartyRole.Judge.Name;
-            _commonSharedSteps.WhenTheUserSelectsTheOptionFromTheDropdown(_browsers[_c.CurrentUser.Key].Driver, _assignJudgePage.JudgeNameDropdown, judge.Username);
+            _commonSharedSteps.WhenTheUserSelectsTheOptionFromTheDropdown(_browsers[_c.CurrentUser.Key].Driver, AssignJudgePage.JudgeNameDropdown, judge.Username);
             _c.Test.HearingParticipants.Add(judge);
         }
 
         public void ClickNext()
         {
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_assignJudgePage.NextButton).Click();
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AssignJudgePage.NextButton).Click();
         }
     }
 }

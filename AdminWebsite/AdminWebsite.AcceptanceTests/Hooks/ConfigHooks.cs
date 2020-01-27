@@ -49,8 +49,6 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         private void RegisterTestUserSecrets(TestContext context)
         {
             context.AdminWebConfig.TestConfig = Options.Create(_configRoot.GetSection("TestUserSecrets").Get<AdminWebTestConfig>()).Value;
-            context.AdminWebConfig.TestConfig.CommonData = new LoadXmlFile().SerialiseCommonData();
-            context.AdminWebConfig.TestConfig.TestData = new DefaultDataManager().SerialiseTestData();
             ConfigurationManager.VerifyConfigValuesSet(context.AdminWebConfig.TestConfig);
         }
 
@@ -67,8 +65,16 @@ namespace AdminWebsite.AcceptanceTests.Hooks
 
         private static void RegisterDefaultData(TestContext context)
         {
-            context.Test = new Test { HearingParticipants = new List<UserAccount>(), HearingDetails = new HearingDetails(), HearingSchedule = new HearingSchedule(), AddParticipant = new AddParticipant() };
-            context.Test.AddParticipant = context.AdminWebConfig.TestConfig.TestData.AddParticipant;
+            context.Test = new Test
+            {
+                HearingParticipants = new List<UserAccount>(),
+                HearingDetails = new HearingDetails(),
+                HearingSchedule = new HearingSchedule(),
+                AddParticipant = new AddParticipant(),
+                CommonData = new LoadXmlFile().SerialiseCommonData(),
+                TestData = new DefaultDataManager().SerialiseTestData()
+            };
+            context.Test.AddParticipant = context.Test.TestData.AddParticipant;
         }
 
         private void RegisterHearingServices(TestContext context)
@@ -81,7 +87,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         {
             context.AdminWebConfig.SauceLabsConfiguration = Options.Create(_configRoot.GetSection("Saucelabs").Get<SauceLabsSettingsConfig>()).Value;
             if (context.AdminWebConfig.SauceLabsConfiguration.RunningOnSauceLabs())
-                context.AdminWebConfig.SauceLabsConfiguration.SetRemoteServerUrlForDesktop(context.AdminWebConfig.TestConfig.CommonData.CommonConfig.SauceLabsServerUrl);
+                context.AdminWebConfig.SauceLabsConfiguration.SetRemoteServerUrlForDesktop(context.Test.CommonData.CommonConfig.SauceLabsServerUrl);
         }
 
         private static void RunningAdminWebLocally(TestContext context)

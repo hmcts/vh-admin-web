@@ -44,7 +44,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         {
             if (context.Test?.HearingParticipants == null) return;
             if (context.Test.HearingParticipants.Count <= 0 || !context.Test.SubmittedAndCreatedNewAadUsers) return;
-            foreach (var participant in context.Test.HearingParticipants.Where(participant => participant.DisplayName.StartsWith(context.AdminWebConfig.TestConfig.TestData.AddParticipant.Participant.NewUserPrefix)))
+            foreach (var participant in context.Test.HearingParticipants.Where(participant => participant.DisplayName.StartsWith(context.Test.TestData.AddParticipant.Participant.NewUserPrefix)))
             {
                 if (UserHasBeenCreatedInAad(context))
                     PollToDeleteTheNewUser(context.AdminWebConfig.VhServices.UserApiUrl, context.Tokens.UserApiBearerToken, participant.Username)

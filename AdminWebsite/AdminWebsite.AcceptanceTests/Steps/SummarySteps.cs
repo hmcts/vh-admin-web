@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Threading;
-using AcceptanceTests.Common.Api.Clients;
+using AcceptanceTests.Common.Api.Hearings;
 using AcceptanceTests.Common.Api.Requests;
-using AcceptanceTests.Common.Api.Uris;
 using AcceptanceTests.Common.Api.Users;
 using AcceptanceTests.Common.Configuration.Users;
 using AcceptanceTests.Common.Driver.Browser;
@@ -16,7 +14,6 @@ using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.AcceptanceTests.Pages;
 using AdminWebsite.BookingsAPI.Client;
 using FluentAssertions;
-using RestSharp;
 using TechTalk.SpecFlow;
 
 namespace AdminWebsite.AcceptanceTests.Steps
@@ -27,7 +24,6 @@ namespace AdminWebsite.AcceptanceTests.Steps
         private const int Timeout = 60;
         private readonly TestContext _c;
         private readonly Dictionary<string, UserBrowser> _browsers;
-        private readonly SummaryPage _summaryPage;
         private readonly BookingDetailsSteps _bookingDetailsSteps;
         private readonly HearingDetailsSteps _hearingDetailsSteps;
         private readonly HearingScheduleSteps _hearingScheduleSteps;
@@ -38,8 +34,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         public SummarySteps(
             TestContext testContext, 
-            Dictionary<string, UserBrowser> browsers, 
-            SummaryPage summaryPage, 
+            Dictionary<string, UserBrowser> browsers,
             BookingDetailsSteps bookingDetailsSteps, 
             HearingDetailsSteps hearingDetailsSteps,
             HearingScheduleSteps hearingScheduleSteps,
@@ -49,7 +44,6 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             _c = testContext;
             _browsers = browsers;
-            _summaryPage = summaryPage;
             _bookingDetailsSteps = bookingDetailsSteps;
             _hearingDetailsSteps = hearingDetailsSteps;
             _hearingScheduleSteps = hearingScheduleSteps;
@@ -71,14 +65,14 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         public void ClickBook()
         {
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_summaryPage.BookButton).Click();
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(SummaryPage.BookButton).Click();
         }
 
         [When(@"the user edits the (.*)")]
         public void WhenTheUserEditsTheHearing(string screen)
         {
             _bookingDetailsSteps.ClickEdit();
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_summaryPage.EditScreenLink(screen)).Click();
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(SummaryPage.EditScreenLink(screen)).Click();
 
             if (screen.Equals("hearing details"))
             {
@@ -106,7 +100,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             _bookingDetailsSteps.ClickEdit();
             _newUserToEdit = UserManager.GetUserFromDisplayName(_c.Test.HearingParticipants, _c.Test.AddParticipant.Participant.NewUserPrefix);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_summaryPage.EditParticipantLink(_newUserToEdit.Firstname)).Click();
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(SummaryPage.EditParticipantLink(_newUserToEdit.Firstname)).Click();
             _addParticipantSteps.EditANewParticipant(_newUserToEdit.AlternativeEmail);
         }
 
@@ -124,28 +118,8 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void ThenTheParticipantDetailsAreUpdated()
         {
             ClickBook();
-            var endpoint = new HearingsEndpoints().GetHearingsByUsername(UserManager.GetClerkUser(_c.UserAccounts).Username);
-            var request = new RequestBuilder().Get(endpoint);
-            var client = new ApiClient(_c.AdminWebConfig.VhServices.BookingsApiUrl, _c.Tokens.BookingsApiBearerToken).GetClient();
-            ParticipantUpdated(request, client, $"{_c.Test.AddParticipant.Participant.NewUserPrefix}Updated display name")
-                .Should().BeTrue();
-        }
-
-        private bool ParticipantUpdated(IRestRequest request, RestClient client, string updatedDisplayName)
-        {
-            for (var i = 0; i < Timeout; i++)
-            {
-                var hearing = PollForHearing(request, client);
-
-                if (hearing.Participants.Any(x => x.Display_name.ToLower().Equals(updatedDisplayName.ToLower())))
-                {
-                    return true;
-                }
-
-                Thread.Sleep(TimeSpan.FromSeconds(1));
-            }
-
-            throw new DataException("Participant details were not updated");
+            var bookingsApiManager = new BookingsApiManager(_c.AdminWebConfig.VhServices.BookingsApiUrl, _c.Tokens.BookingsApiBearerToken);
+            bookingsApiManager.PollForParticipantNameUpdated(UserManager.GetClerkUser(_c.UserAccounts).Username, _c.Test.AddParticipant.Participant.NewUserPrefix).Should().BeTrue();
         }
 
         [Then(@"the questionnaires have been sent")]
@@ -156,50 +130,48 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         private void VerifyHearingDetails()
         {
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_summaryPage.CaseNumber).Text.Should().Be(_c.Test.HearingDetails.CaseNumber);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_summaryPage.CaseName).Text.Should().Be(_c.Test.HearingDetails.CaseName);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_summaryPage.CaseHearingType).Text.Should().Be(_c.Test.HearingDetails.HearingType.Name);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(SummaryPage.CaseNumber).Text.Should().Be(_c.Test.HearingDetails.CaseNumber);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(SummaryPage.CaseName).Text.Should().Be(_c.Test.HearingDetails.CaseName);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(SummaryPage.CaseHearingType).Text.Should().Be(_c.Test.HearingDetails.HearingType.Name);
         }
 
         private void VerifyHearingSchedule()
         {
             var scheduleDate = _c.Test.HearingSchedule.ScheduledDate.ToString(DateFormats.HearingSummaryDate);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_summaryPage.HearingDate).Text.ToLower().Should().Be(scheduleDate.ToLower());
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(SummaryPage.HearingDate).Text.ToLower().Should().Be(scheduleDate.ToLower());
             var courtAddress = $"{_c.Test.HearingSchedule.HearingVenue}, {_c.Test.HearingSchedule.Room}";
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_summaryPage.CourtAddress).Text.Should().Be(courtAddress);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(SummaryPage.CourtAddress).Text.Should().Be(courtAddress);
             var listedFor = $"listed for {_c.Test.HearingSchedule.DurationMinutes} minutes";
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_summaryPage.HearingDuration).Text.Should().Be(listedFor);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(SummaryPage.HearingDuration).Text.Should().Be(listedFor);
         }
 
         private void VerifyOtherInformation()
         {
             var otherInformation = _c.Test.OtherInformation;
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_summaryPage.OtherInformation).Text.Should().Be(otherInformation);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(SummaryPage.OtherInformation).Text.Should().Be(otherInformation);
         }
 
         private void VerifyBookingCreated()
         {
-            var endpoint = new HearingsEndpoints().GetHearingsByUsername(UserManager.GetClerkUser(_c.UserAccounts).Username);
-            var request = new RequestBuilder().Get(endpoint);
-            var client = new ApiClient(_c.AdminWebConfig.VhServices.BookingsApiUrl, _c.Tokens.BookingsApiBearerToken).GetClient();
-            var hearing = PollForHearing(request, client);
+            var bookingsApiManager = new BookingsApiManager(_c.AdminWebConfig.VhServices.BookingsApiUrl, _c.Tokens.BookingsApiBearerToken);
+            var response = bookingsApiManager.PollForHearingByUsername(UserManager.GetClerkUser(_c.UserAccounts).Username, _c.Test.HearingDetails.CaseName);
+            var hearings = RequestHelper.DeserialiseSnakeCaseJsonToResponse<List<HearingDetailsResponse>>(response.Content);
             var assertHearing = new AssertHearing()
-                .WithHearing(hearing)
+                .WithHearing(GetHearingFromHearings(hearings))
                 .WithTestData(_c.Test)
                 .CreatedBy(_c.CurrentUser.Username);
             assertHearing.AssertHearingDataMatches();
             assertHearing.AssertParticipantDataMatches(_c.Test.HearingParticipants);
-            assertHearing.AssertHearingStatus(HearingDetailsResponseStatus.Booked);
+            assertHearing.AssertHearingStatus(BookingStatus.Booked);
         }
 
         private void VerifyBookingUpdated()
         {
-            var endpoint = new HearingsEndpoints().GetHearingsByUsername(UserManager.GetClerkUser(_c.UserAccounts).Username);
-            var request = new RequestBuilder().Get(endpoint);
-            var client = new ApiClient(_c.AdminWebConfig.VhServices.BookingsApiUrl, _c.Tokens.BookingsApiBearerToken).GetClient();
-            var hearing = PollForHearing(request, client);
+            var bookingsApiManager = new BookingsApiManager(_c.AdminWebConfig.VhServices.BookingsApiUrl, _c.Tokens.BookingsApiBearerToken);
+            var response = bookingsApiManager.PollForHearingByUsername(UserManager.GetClerkUser(_c.UserAccounts).Username, _c.Test.HearingDetails.CaseName);
+            var hearings = RequestHelper.DeserialiseSnakeCaseJsonToResponse<List<HearingDetailsResponse>>(response.Content);
             var assertHearing = new AssertHearing()
-                .WithHearing(hearing)
+                .WithHearing(GetHearingFromHearings(hearings))
                 .WithTestData(_c.Test)
                 .CreatedBy(_c.CurrentUser.Username);
             assertHearing.AssertHearingDataMatches();
@@ -207,31 +179,19 @@ namespace AdminWebsite.AcceptanceTests.Steps
             assertHearing.AssertUpdatedStatus(_c.CurrentUser.Username, DateTime.Now);
         }
 
-        private HearingDetailsResponse PollForHearing(IRestRequest request, RestClient client)
+        private HearingDetailsResponse GetHearingFromHearings(IEnumerable<HearingDetailsResponse> hearings)
         {
-            for (var i = 0; i < Timeout; i++)
+            foreach (var hearing in hearings.Where(hearing => hearing.Cases.First().Name.Equals(_c.Test.HearingDetails.CaseName)))
             {
-                var response = new RequestExecutor(request).SendToApi(client);
-                var hearings = RequestHelper.DeserialiseSnakeCaseJsonToResponse<List<HearingDetailsResponse>>(response.Content);
-                if (hearings != null)
-                {
-                    foreach (var hearing in hearings.Where(hearing =>
-                        hearing.Cases.First().Name.Equals(_c.Test.HearingDetails.CaseName)))
-                    {
-                        return hearing;
-                    }
-                }
-
-                Thread.Sleep(TimeSpan.FromSeconds(1));
+                return hearing;
             }
-
             throw new DataException("Created hearing could not be found in the bookings api");
         }
 
         private void VerifyNewUsersCreatedInAad()
         {
             var userApiManager = new UserApiManager(_c.AdminWebConfig.VhServices.UserApiUrl, _c.Tokens.UserApiBearerToken);
-            foreach (var participant in _c.Test.HearingParticipants.Where(participant => participant.DisplayName.Contains(_c.AdminWebConfig.TestConfig.TestData.AddParticipant.Participant.NewUserPrefix)))
+            foreach (var participant in _c.Test.HearingParticipants.Where(participant => participant.DisplayName.Contains(_c.Test.TestData.AddParticipant.Participant.NewUserPrefix)))
             {
                 userApiManager.CheckIfParticipantExistsInAad(participant.AlternativeEmail, Timeout);
             }

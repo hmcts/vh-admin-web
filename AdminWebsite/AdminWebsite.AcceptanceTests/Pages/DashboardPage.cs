@@ -2,9 +2,9 @@
 
 namespace AdminWebsite.AcceptanceTests.Pages
 {
-    public class DashboardPage
+    public static class DashboardPage
     {
-        public By BookVideoHearingPanel = By.Id("vhpanel-green");
-        public By QuestionnaireResultsPanel = By.Id("vhpanel-blue");
+        public static By BookVideoHearingPanel = By.Id("vhpanel-green");
+        public static By QuestionnaireResultsPanel = By.Id("vhpanel-blue");
     }
 }

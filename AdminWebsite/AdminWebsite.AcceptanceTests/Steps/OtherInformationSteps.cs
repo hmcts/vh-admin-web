@@ -13,31 +13,29 @@ namespace AdminWebsite.AcceptanceTests.Steps
     {
         private readonly TestContext _c;
         private readonly Dictionary<string, UserBrowser> _browsers;
-        private readonly OtherInformationPage _otherInformationPage;
-        public OtherInformationSteps(TestContext testContext, Dictionary<string, UserBrowser> browsers, OtherInformationPage otherInformationPage)
+        public OtherInformationSteps(TestContext testContext, Dictionary<string, UserBrowser> browsers)
         {
             _c = testContext;
             _browsers = browsers;
-            _otherInformationPage = otherInformationPage;
         }
 
         [When(@"the user completes the other information form")]
         public void ProgressToNextPage()
         {
             SetOtherInformation();
-            _browsers[_c.CurrentUser.Key].Clear(_otherInformationPage.OtherInformationTextfield);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_otherInformationPage.OtherInformationTextfield).SendKeys(_c.Test.OtherInformation);
+            _browsers[_c.CurrentUser.Key].Clear(OtherInformationPage.OtherInformationTextfield);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(OtherInformationPage.OtherInformationTextfield).SendKeys(_c.Test.OtherInformation);
             ClickNext();
         }
 
         private void SetOtherInformation()
         {
-            _c.Test.OtherInformation = _c.Test.OtherInformation != null ? "Updated other information" : _c.AdminWebConfig.TestConfig.TestData.OtherInformation.Other;
+            _c.Test.OtherInformation = _c.Test.OtherInformation != null ? "Updated other information" : _c.Test.TestData.OtherInformation.Other;
         }
 
         public void ClickNext()
         {
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(_otherInformationPage.NextButton).Click();
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(OtherInformationPage.NextButton).Click();
         }
     }
 }

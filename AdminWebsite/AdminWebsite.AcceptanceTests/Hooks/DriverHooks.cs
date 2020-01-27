@@ -40,9 +40,14 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         public void AfterScenario(TestContext context, ScenarioContext scenarioContext)
         {
             _driverManager.RunningOnSauceLabs(context.AdminWebConfig.SauceLabsConfiguration.RunningOnSauceLabs());
-            _driverManager.LogTestResult(
-                _browsers.Count > 0 ? _browsers[context.CurrentUser.Key].Driver : context.Driver.GetDriver(""),
-                scenarioContext.TestError == null);
+            if (_browsers != null)
+            {
+                _driverManager.LogTestResult(_browsers.Count > 0 ? _browsers[context.CurrentUser.Key].Driver : context.Driver.GetDriver(""), scenarioContext.TestError == null);
+            }
+            else
+            {
+                _driverManager.LogTestResult(context.Driver.GetDriver(""), scenarioContext.TestError == null);
+            }
             _driverManager.TearDownBrowsers(_browsers);
             _driverManager.KillAnyLocalDriverProcesses(context.AdminWebConfig.TestConfig.TargetBrowser, context.AdminWebConfig.SauceLabsConfiguration.RunningOnSauceLabs());
         }
