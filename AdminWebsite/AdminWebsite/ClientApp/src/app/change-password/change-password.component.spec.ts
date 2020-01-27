@@ -6,6 +6,7 @@ import { UpdateUserPopupComponent } from '../popups/update-user-popup/update-use
 import { Logger } from '../services/logger';
 import { UserDataService } from '../services/user-data.service';
 import { Observable } from 'rxjs';
+import { By } from '@angular/platform-browser';
 
 describe('ChangePasswordComponent', () => {
   let component: ChangePasswordComponent;
@@ -69,5 +70,11 @@ describe('ChangePasswordComponent', () => {
     component.okay();
     fixture.detectChanges();
     expect(component.showUpdateSuccess).toBeFalsy();
+  });
+  it('should input box to have focus if the input is invalid', () => {
+    fixture.detectChanges();
+    component.goToDiv('userName');
+    const input = fixture.nativeElement.querySelector('#userName:focus');
+    expect(input).toBeTruthy();
   });
 });

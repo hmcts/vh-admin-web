@@ -80,4 +80,8 @@ export class ChangePasswordComponent implements OnInit {
       });
     }
   }
+
+  goToDiv(fragment: string): void {
+    window.document.getElementById(fragment).focus();
+  }
 }
