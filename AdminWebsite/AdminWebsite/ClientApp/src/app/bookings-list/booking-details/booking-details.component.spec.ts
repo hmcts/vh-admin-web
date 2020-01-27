@@ -126,7 +126,7 @@ describe('BookingDetailsComponent', () => {
     videoHearingServiceSpy.mapHearingDetailsResponseToHearingModel.and.returnValue(hearingModel);
     videoHearingServiceSpy.getCurrentRequest.and.returnValue(hearingModel);
 
-    bookingPersistServiceSpy.selectedHearingId.and.returnValue('44');
+    bookingPersistServiceSpy.selectedHearingId = '44';
     userIdentityServiceSpy.getUserInformation.and.returnValue(of(true));
 
     TestBed.configureTestingModule({

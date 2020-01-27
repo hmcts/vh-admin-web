@@ -21,7 +21,13 @@
             "assets": [
               "src/favicon.ico",
               "src/assets",
-              "src/web.config"
+              "src/web.config",
+              "src/assets",
+              {
+                "glob": "*",
+                "input": "node_modules/govuk-frontend/govuk/assets/fonts",
+                "output": "assets/fonts/"
+              }
             ],
             "styles": [
               "src/styles.css",
@@ -83,7 +89,13 @@
             "scripts": [],
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              "src/assets",
+              {
+                "glob": "*",
+                "input": "node_modules/govuk-frontend/govuk/assets/fonts",
+                "output": "assets/fonts/"
+              }
             ],
             "sourceMap": false
           }

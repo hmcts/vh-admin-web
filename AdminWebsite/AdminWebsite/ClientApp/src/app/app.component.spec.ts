@@ -3,7 +3,6 @@ import { async, TestBed, fakeAsync } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AdalService } from 'adal-angular4';
-import { Component, EventEmitter } from '@angular/core';
 
 import { AppComponent } from './app.component';
 import { ClientSettingsResponse } from './services/clients/api-client';
@@ -47,7 +46,7 @@ describe('AppComponent', () => {
 
   beforeEach(async(() => {
     configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['clientSettings', 'getClientSettings', 'loadConfig']);
-    configServiceSpy.clientSettings.and.returnValue(clientSettings);
+    configServiceSpy.clientSettings = clientSettings;
 
     window = jasmine.createSpyObj('WindowRef', ['getLocation']);
     window.getLocation.and.returnValue(new WindowLocation('/url'));
@@ -65,7 +64,7 @@ describe('AppComponent', () => {
         SignOutPopupStubComponent,
         CancelPopupStubComponent,
         UnsupportedBrowserComponent,
-        ],
+      ],
       providers:
         [
           { provide: AdalService, useValue: adalService },

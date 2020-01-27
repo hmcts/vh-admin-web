@@ -67,12 +67,10 @@ describe('AssignJudgeComponent', () => {
 
   beforeEach(async(() => {
     const newHearing = initHearingRequest();
-    routerSpy = jasmine.createSpyObj('Router', ['navigate', 'url']);
-    routerSpy.url.and.returnValue('/summary');
     loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error']);
 
     videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',
-      ['getHearingMediums', 'getHearingTypes', 'getCurrentRequest',
+      ['getHearingTypes', 'getCurrentRequest',
         'updateHearingRequest', 'cancelRequest', 'setBookingHasChanged']);
     videoHearingsServiceSpy.getCurrentRequest.and.returnValue(newHearing);
 
@@ -86,7 +84,12 @@ describe('AssignJudgeComponent', () => {
       providers: [
         { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
         { provide: JudgeDataService, useValue: judgeDataServiceSpy },
-        { provide: Router, useValue: routerSpy },
+        {
+          provide: Router, useValue: {
+            url: '/summary',
+            navigate: jasmine.createSpy('navigate')
+          }
+        },
         { provide: BookingService, useValue: bookingServiseSpy },
         { provide: Logger, useValue: loggerSpy },
       ],
@@ -96,6 +99,7 @@ describe('AssignJudgeComponent', () => {
       .compileComponents();
 
     fixture = TestBed.createComponent(AssignJudgeComponent);
+    routerSpy = TestBed.get(Router);
     component = fixture.componentInstance;
     fixture.detectChanges();
     component.ngOnInit();

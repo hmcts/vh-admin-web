@@ -1,16 +1,14 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { BookingConfirmationComponent } from './booking-confirmation.component';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { VideoHearingsService } from 'src/app/services/video-hearings.service';
-import { HearingModel } from 'src/app/common/model/hearing.model';
-import { ParticipantModel } from 'src/app/common/model/participant.model';
 import { of } from 'rxjs';
 import { CaseModel } from 'src/app/common/model/case.model';
+import { HearingModel } from 'src/app/common/model/hearing.model';
+import { ParticipantModel } from 'src/app/common/model/participant.model';
+import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 import { LongDatetimePipe } from '../../../app/shared/directives/date-time.pipe';
 import { Logger } from '../../services/logger';
-import { Route } from '@angular/compiler/src/core';
+import { BookingConfirmationComponent } from './booking-confirmation.component';
 
 function initHearingRequest(): HearingModel {
 
@@ -85,7 +83,7 @@ describe('BookingConfirmationComponent', () => {
     loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error']);
     routerSpy = jasmine.createSpyObj<Router>('Router', ['navigate']);
     videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',
-      ['getHearingMediums', 'getHearingTypes', 'getCurrentRequest', 'updateHearingRequest', 'getHearingById', 'cancelRequest']);
+      ['getHearingTypes', 'getCurrentRequest', 'updateHearingRequest', 'getHearingById', 'cancelRequest']);
     videoHearingsServiceSpy.getHearingById.and.returnValue(of(newHearing));
 
     TestBed.configureTestingModule({
