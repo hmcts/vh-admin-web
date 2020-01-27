@@ -170,8 +170,9 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
     this.hearing.case_type_id = this.form.value.caseType;
     this.hearing.hearing_type_id = this.form.value.hearingType;
     this.hearing.hearing_type_name = this.availableHearingTypes.find(c => c.id === this.hearing.hearing_type_id).name;
-    this.hearing.questionnaire_not_required = this.form.value.questionnaireNotRequired === null ? false : this.form.value.questionnaireNotRequired;
- 
+    this.hearing.questionnaire_not_required = this.form.value.questionnaireNotRequired === null ? false
+      : this.form.value.questionnaireNotRequired;
+
     this.hearingService.updateHearingRequest(this.hearing);
   }
 
