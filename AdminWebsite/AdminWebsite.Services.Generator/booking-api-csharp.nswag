@@ -1,10 +1,10 @@
 ﻿{
-  "runtime": "NetCore22",
+  "runtime": "NetCore31",
   "defaultVariables": null,
   "documentGenerator": {
     "fromDocument": {
-    "url": "https://vh-bookings-api-dev.azurewebsites.net/swagger/v1/swagger.json",
-    "output": null
+      "url": "https://vh-bookings-api-dev.azurewebsites.net/swagger/v1/swagger.json",
+      "output": null
     }
   },
   "codeGenerators": {
@@ -29,7 +29,7 @@
       "clientClassAccessModifier": "public",
       "typeAccessModifier": "public",
       "generateContractsOutput": false,
-      "contractsNamespace": "AdminWebsite.BookingsAPI.Client",
+      "contractsNamespace": "BookHearingClient.Services",
       "contractsOutputFilePath": "",
       "parameterDateTimeFormat": "s",
       "generateUpdateJsonSerializerSettingsMethod": true,
@@ -40,7 +40,7 @@
       "additionalNamespaceUsages": [],
       "additionalContractNamespaceUsages": [],
       "generateOptionalParameters": false,
-      "generateJsonMethods": true,
+      "generateJsonMethods": false,
       "enforceFlagEnums": false,
       "parameterArrayType": "System.Collections.Generic.IEnumerable",
       "parameterDictionaryType": "System.Collections.Generic.IDictionary",
@@ -50,7 +50,7 @@
       "wrapResponseMethods": [],
       "generateResponseClasses": true,
       "responseClass": "BookingsApiResponse",
-      "namespace": "AdminWebsite.BookingsAPI.Client",
+      "namespace": "VideoWeb.Services.Bookings",
       "requiredPropertiesMustBeDefined": true,
       "dateType": "System.DateTime",
       "jsonConverters": null,
@@ -65,7 +65,7 @@
       "arrayBaseType": "System.Collections.Generic.List",
       "dictionaryBaseType": "System.Collections.Generic.Dictionary",
       "classStyle": "Poco",
-      "generateDefaultValues": true,
+      "generateDefaultValues": false,
       "generateDataAnnotations": false,
       "excludedTypeNames": [],
       "excludedParameterNames": [],
@@ -82,9 +82,9 @@
       "typeNameGeneratorType": null,
       "propertyNameGeneratorType": null,
       "enumNameGeneratorType": null,
-      "serviceHost": "http://localhost:5301",
+      "serviceHost": "http://localhost:5300",
       "serviceSchemes": null,
-      "output": "../AdminWebsite.BookingsAPI.Client/BookingsApiClient.cs"
+      "output": "../VideoWeb.Services/BookingsApiClient.cs"
     }
   }
 }

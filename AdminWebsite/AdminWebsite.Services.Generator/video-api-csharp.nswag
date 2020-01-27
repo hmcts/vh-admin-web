@@ -1,9 +1,9 @@
 ﻿{
-  "runtime": "NetCore22",
+  "runtime": "NetCore31",
   "defaultVariables": null,
   "documentGenerator": {
     "fromDocument": {
-      "url": "https://vh-video-api-dev.azurewebsites.net/swagger/v1/swagger.json",
+      "url": "https://vh-video-api-dev.hearings.reform.hmcts.net/swagger/v1/swagger.json",
       "output": null
     }
   },
@@ -14,10 +14,10 @@
       "generateClientClasses": true,
       "generateClientInterfaces": true,
       "injectHttpClient": true,
-      "disposeHttpClient": false,
+      "disposeHttpClient": true,
       "protectedMethods": [],
       "generateExceptionClasses": true,
-      "exceptionClass": "VideoApiServiceException",
+      "exceptionClass": "VideoApiException",
       "wrapDtoExceptions": true,
       "useHttpClientCreationMethod": false,
       "httpClientType": "System.Net.Http.HttpClient",
@@ -29,7 +29,7 @@
       "clientClassAccessModifier": "public",
       "typeAccessModifier": "public",
       "generateContractsOutput": false,
-      "contractsNamespace": "AdminWebsite.VideoAPI.Client",
+      "contractsNamespace": "BookHearingClient.Services",
       "contractsOutputFilePath": "",
       "parameterDateTimeFormat": "s",
       "generateUpdateJsonSerializerSettingsMethod": true,
@@ -50,7 +50,7 @@
       "wrapResponseMethods": [],
       "generateResponseClasses": true,
       "responseClass": "VideoApiResponse",
-      "namespace": "AdminWebsite.VideoAPI.Client",
+      "namespace": "VideoWeb.Services.Video",
       "requiredPropertiesMustBeDefined": true,
       "dateType": "System.DateTime",
       "jsonConverters": null,
@@ -65,7 +65,7 @@
       "arrayBaseType": "System.Collections.Generic.List",
       "dictionaryBaseType": "System.Collections.Generic.Dictionary",
       "classStyle": "Poco",
-      "generateDefaultValues": true,
+      "generateDefaultValues": false,
       "generateDataAnnotations": false,
       "excludedTypeNames": [],
       "excludedParameterNames": [],
@@ -78,14 +78,13 @@
       "inlineNamedTuples": true,
       "inlineNamedAny": false,
       "generateDtoTypes": true,
-      "generateOptionalPropertiesAsNullable": false,
       "templateDirectory": null,
       "typeNameGeneratorType": null,
       "propertyNameGeneratorType": null,
       "enumNameGeneratorType": null,
       "serviceHost": "http://localhost:5670",
       "serviceSchemes": null,
-      "output": "../AdminWebsite.VideoAPI.Client/VideoApiClient.cs"
+      "output": "../VideoWeb.Services/VideoApiClient.cs"
     }
   }
 }

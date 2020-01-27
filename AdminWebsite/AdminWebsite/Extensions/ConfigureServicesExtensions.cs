@@ -17,9 +17,11 @@ using Swashbuckle.AspNetCore.Swagger;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Reflection;
+using AdminWebsite.Contracts.Responses;
+using Microsoft.OpenApi.Models;
+using Newtonsoft.Json;
 
 namespace AdminWebsite.Extensions
 {
@@ -27,26 +29,42 @@ namespace AdminWebsite.Extensions
     {
         public static IServiceCollection AddSwagger(this IServiceCollection serviceCollection)
         {
+            var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+            var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+
+            var contractsXmlFile = $"{typeof(ClientSettingsResponse).Assembly.GetName().Name}.xml";
+            var contractsXmlPath = Path.Combine(AppContext.BaseDirectory, contractsXmlFile);
+
             serviceCollection.AddSwaggerGen(c =>
             {
-                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.CustomSchemaIds((type) => type.FullName);
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Book A Hearing Client", Version = "v1" });
+                c.AddFluentValidationRules();
                 c.IncludeXmlComments(xmlPath);
-
-                c.SwaggerDoc("v1", new Info { Title = "Book A Hearing Client", Version = "v1" });
+                c.IncludeXmlComments(contractsXmlPath);
                 c.EnableAnnotations();
 
-                // Quick fix to avoid conflicts between bookings contract and the local contract
-                // this should be deleted as we introduce local modals and not expose bookings api contracts
-                c.CustomSchemaIds(i => i.FullName);
+                c.AddSecurityDefinition("Bearer",
+                    new OpenApiSecurityScheme
+                    {
+                        Description = "Please enter JWT with Bearer into field",
+                        Type = SecuritySchemeType.Http,
+                        Scheme = "bearer"
+                    });
 
-                c.OperationFilter<AuthResponsesOperationFilter>();
-
-                c.AddSecurityDefinition("Bearer", new ApiKeyScheme { In = "header", Description = "Please enter JWT with Bearer into field", Name = "Authorization", Type = "apiKey" });
-                c.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>> {
-                    { "Bearer", Enumerable.Empty<string>() },
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement{
+                    {
+                        new OpenApiSecurityScheme{
+                            Reference = new OpenApiReference{
+                                Id = "Bearer",
+                                Type = ReferenceType.SecurityScheme
+                            }
+                        },new List<string>()
+                    }
                 });
+                c.OperationFilter<AuthResponsesOperationFilter>();
             });
+            serviceCollection.AddSwaggerGenNewtonsoftSupport();
 
             return serviceCollection;
         }
@@ -106,11 +124,50 @@ namespace AdminWebsite.Extensions
                 NamingStrategy = new SnakeCaseNamingStrategy()
             };
 
+
             serviceCollection.AddMvc()
-                .AddJsonOptions(options => options.SerializerSettings.ContractResolver = contractResolver)
-                .AddJsonOptions(options => options.SerializerSettings.Converters.Add(new StringEnumConverter()));
+                .AddNewtonsoftJson(options =>
+                {
+                    options.SerializerSettings.ContractResolver = contractResolver;
+                    options.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
+                    options.SerializerSettings.Converters.Add(new StringEnumConverter());
+                });
 
             return serviceCollection;
+        }
+        
+        /// <summary>
+        /// Temporary work-around until typed-client bug is restored
+        /// https://github.com/dotnet/aspnetcore/issues/13346#issuecomment-535544207
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="factory"></param>
+        /// <typeparam name="TClient"></typeparam>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        private static IHttpClientBuilder AddTypedClient<TClient>(this IHttpClientBuilder builder,
+            Func<HttpClient, TClient> factory)
+            where TClient : class
+        {
+            if (builder == null)
+            {
+                throw new ArgumentNullException(nameof(builder));
+            }
+
+            if (factory == null)
+            {
+                throw new ArgumentNullException(nameof(factory));
+            }
+
+            builder.Services.AddTransient(s =>
+            {
+                var httpClientFactory = s.GetRequiredService<IHttpClientFactory>();
+                var httpClient = httpClientFactory.CreateClient(builder.Name);
+
+                return factory(httpClient);
+            });
+
+            return builder;
         }
     }
 }
