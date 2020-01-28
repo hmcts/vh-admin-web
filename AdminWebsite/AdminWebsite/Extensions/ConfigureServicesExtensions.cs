@@ -71,6 +71,7 @@ namespace AdminWebsite.Extensions
 
         public static IServiceCollection AddCustomTypes(this IServiceCollection serviceCollection)
         {
+            serviceCollection.AddHttpContextAccessor();
             serviceCollection.AddMemoryCache();
             serviceCollection.AddTransient<HearingApiTokenHandler>();
             serviceCollection.AddTransient<UserApiTokenHandler>();
