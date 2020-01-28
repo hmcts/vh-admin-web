@@ -78,6 +78,7 @@ namespace AdminWebsite
                 options.TokenValidationParameters.ValidateLifetime = true;
                 options.Audience = securitySettings.ClientId;
                 options.TokenValidationParameters.ClockSkew = TimeSpan.Zero;
+                options.Events = new JwtBearerEvents { OnTokenValidated = OnTokenValidated };
             });
 
             serviceCollection.AddAuthorization();
