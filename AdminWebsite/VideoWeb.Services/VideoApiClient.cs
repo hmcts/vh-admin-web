@@ -10,7 +10,7 @@
 #pragma warning disable 1573 // Disable "CS1573 Parameter '...' has no matching param tag in the XML comment for ...
 #pragma warning disable 1591 // Disable "CS1591 Missing XML comment for publicly visible type or member ..."
 
-namespace VideoWeb.Services.Video
+namespace AdminWebsite.VideoAPI.Client
 {
     using System = global::System;
     
@@ -20,241 +20,241 @@ namespace VideoWeb.Services.Video
         /// <summary>Request to book a conference</summary>
         /// <param name="body">Details of a conference</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<ConferenceDetailsResponse> BookNewConferenceAsync(BookNewConferenceRequest body);
     
         /// <summary>Request to book a conference</summary>
         /// <param name="body">Details of a conference</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         ConferenceDetailsResponse BookNewConference(BookNewConferenceRequest body);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Request to book a conference</summary>
         /// <param name="body">Details of a conference</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<ConferenceDetailsResponse> BookNewConferenceAsync(BookNewConferenceRequest body, System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Updates a conference</summary>
         /// <param name="body">Details of a conference</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         System.Threading.Tasks.Task UpdateConferenceAsync(UpdateConferenceRequest body);
     
         /// <summary>Updates a conference</summary>
         /// <param name="body">Details of a conference</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         void UpdateConference(UpdateConferenceRequest body);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Updates a conference</summary>
         /// <param name="body">Details of a conference</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         System.Threading.Tasks.Task UpdateConferenceAsync(UpdateConferenceRequest body, System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Get non-closed conferences for a participant by their username</summary>
         /// <param name="username">person username</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<System.Collections.Generic.List<ConferenceSummaryResponse>> GetConferencesForUsernameAsync(string username);
     
         /// <summary>Get non-closed conferences for a participant by their username</summary>
         /// <param name="username">person username</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         System.Collections.Generic.List<ConferenceSummaryResponse> GetConferencesForUsername(string username);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Get non-closed conferences for a participant by their username</summary>
         /// <param name="username">person username</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<System.Collections.Generic.List<ConferenceSummaryResponse>> GetConferencesForUsernameAsync(string username, System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Get the details of a conference</summary>
         /// <param name="conferenceId">Id of the conference</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<ConferenceDetailsResponse> GetConferenceDetailsByIdAsync(System.Guid conferenceId);
     
         /// <summary>Get the details of a conference</summary>
         /// <param name="conferenceId">Id of the conference</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         ConferenceDetailsResponse GetConferenceDetailsById(System.Guid conferenceId);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Get the details of a conference</summary>
         /// <param name="conferenceId">Id of the conference</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<ConferenceDetailsResponse> GetConferenceDetailsByIdAsync(System.Guid conferenceId, System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Remove an existing conference</summary>
         /// <param name="conferenceId">The conference id</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         System.Threading.Tasks.Task RemoveConferenceAsync(System.Guid conferenceId);
     
         /// <summary>Remove an existing conference</summary>
         /// <param name="conferenceId">The conference id</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         void RemoveConference(System.Guid conferenceId);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Remove an existing conference</summary>
         /// <param name="conferenceId">The conference id</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         System.Threading.Tasks.Task RemoveConferenceAsync(System.Guid conferenceId, System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Get todays conferences</summary>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<System.Collections.Generic.List<ConferenceSummaryResponse>> GetConferencesTodayAsync();
     
         /// <summary>Get todays conferences</summary>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         System.Collections.Generic.List<ConferenceSummaryResponse> GetConferencesToday();
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Get todays conferences</summary>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<System.Collections.Generic.List<ConferenceSummaryResponse>> GetConferencesTodayAsync(System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Get conferences by hearing ref id</summary>
         /// <param name="hearingRefId">Hearing ID</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<ConferenceDetailsResponse> GetConferenceByHearingRefIdAsync(System.Guid hearingRefId);
     
         /// <summary>Get conferences by hearing ref id</summary>
         /// <param name="hearingRefId">Hearing ID</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         ConferenceDetailsResponse GetConferenceByHearingRefId(System.Guid hearingRefId);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Get conferences by hearing ref id</summary>
         /// <param name="hearingRefId">Hearing ID</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<ConferenceDetailsResponse> GetConferenceByHearingRefIdAsync(System.Guid hearingRefId, System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Get list of expired conferences</summary>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<System.Collections.Generic.List<ExpiredConferencesResponse>> GetExpiredOpenConferencesAsync();
     
         /// <summary>Get list of expired conferences</summary>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         System.Collections.Generic.List<ExpiredConferencesResponse> GetExpiredOpenConferences();
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Get list of expired conferences</summary>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<System.Collections.Generic.List<ExpiredConferencesResponse>> GetExpiredOpenConferencesAsync(System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Close a conference, set its state to closed</summary>
         /// <param name="conferenceId">conference id</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         System.Threading.Tasks.Task CloseConferenceAsync(System.Guid conferenceId);
     
         /// <summary>Close a conference, set its state to closed</summary>
         /// <param name="conferenceId">conference id</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         void CloseConference(System.Guid conferenceId);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Close a conference, set its state to closed</summary>
         /// <param name="conferenceId">conference id</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         System.Threading.Tasks.Task CloseConferenceAsync(System.Guid conferenceId, System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Raise or answer to a private consultation request with another participant</summary>
         /// <param name="body">Private consultation request with or without an answer</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         System.Threading.Tasks.Task HandleConsultationRequestAsync(ConsultationRequest body);
     
         /// <summary>Raise or answer to a private consultation request with another participant</summary>
         /// <param name="body">Private consultation request with or without an answer</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         void HandleConsultationRequest(ConsultationRequest body);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Raise or answer to a private consultation request with another participant</summary>
         /// <param name="body">Private consultation request with or without an answer</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         System.Threading.Tasks.Task HandleConsultationRequestAsync(ConsultationRequest body, System.Threading.CancellationToken cancellationToken);
     
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         System.Threading.Tasks.Task LeavePrivateConsultationAsync(LeaveConsultationRequest body);
     
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         void LeavePrivateConsultation(LeaveConsultationRequest body);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         System.Threading.Tasks.Task LeavePrivateConsultationAsync(LeaveConsultationRequest body, System.Threading.CancellationToken cancellationToken);
     
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         System.Threading.Tasks.Task RespondToAdminConsultationRequestAsync(AdminConsultationRequest body);
     
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         void RespondToAdminConsultationRequest(AdminConsultationRequest body);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         System.Threading.Tasks.Task RespondToAdminConsultationRequestAsync(AdminConsultationRequest body, System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Check Service Health</summary>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<HealthCheckResponse> CheckServiceHealthAsync();
     
         /// <summary>Check Service Health</summary>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         HealthCheckResponse CheckServiceHealth();
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Check Service Health</summary>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<HealthCheckResponse> CheckServiceHealthAsync(System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Add participants to a conference</summary>
         /// <param name="conferenceId">The id of the conference to add participants to</param>
         /// <param name="body">Details of the participant</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         System.Threading.Tasks.Task AddParticipantsToConferenceAsync(System.Guid conferenceId, AddParticipantsToConferenceRequest body);
     
         /// <summary>Add participants to a conference</summary>
         /// <param name="conferenceId">The id of the conference to add participants to</param>
         /// <param name="body">Details of the participant</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         void AddParticipantsToConference(System.Guid conferenceId, AddParticipantsToConferenceRequest body);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -262,7 +262,7 @@ namespace VideoWeb.Services.Video
         /// <param name="conferenceId">The id of the conference to add participants to</param>
         /// <param name="body">Details of the participant</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         System.Threading.Tasks.Task AddParticipantsToConferenceAsync(System.Guid conferenceId, AddParticipantsToConferenceRequest body, System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Update participant details</summary>
@@ -270,7 +270,7 @@ namespace VideoWeb.Services.Video
         /// <param name="participantId">Id of participant to remove</param>
         /// <param name="body">The participant information to update</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         System.Threading.Tasks.Task UpdateParticipantDetailsAsync(System.Guid conferenceId, System.Guid participantId, UpdateParticipantRequest body);
     
         /// <summary>Update participant details</summary>
@@ -278,7 +278,7 @@ namespace VideoWeb.Services.Video
         /// <param name="participantId">Id of participant to remove</param>
         /// <param name="body">The participant information to update</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         void UpdateParticipantDetails(System.Guid conferenceId, System.Guid participantId, UpdateParticipantRequest body);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -287,21 +287,21 @@ namespace VideoWeb.Services.Video
         /// <param name="participantId">Id of participant to remove</param>
         /// <param name="body">The participant information to update</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         System.Threading.Tasks.Task UpdateParticipantDetailsAsync(System.Guid conferenceId, System.Guid participantId, UpdateParticipantRequest body, System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Remove participants from a conference</summary>
         /// <param name="conferenceId">The id of the conference to remove participants from</param>
         /// <param name="participantId">The id of the participant to remove</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         System.Threading.Tasks.Task RemoveParticipantFromConferenceAsync(System.Guid conferenceId, System.Guid participantId);
     
         /// <summary>Remove participants from a conference</summary>
         /// <param name="conferenceId">The id of the conference to remove participants from</param>
         /// <param name="participantId">The id of the participant to remove</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         void RemoveParticipantFromConference(System.Guid conferenceId, System.Guid participantId);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -309,21 +309,21 @@ namespace VideoWeb.Services.Video
         /// <param name="conferenceId">The id of the conference to remove participants from</param>
         /// <param name="participantId">The id of the participant to remove</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         System.Threading.Tasks.Task RemoveParticipantFromConferenceAsync(System.Guid conferenceId, System.Guid participantId, System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Get the test call result for a participant</summary>
         /// <param name="conferenceId">The id of the conference</param>
         /// <param name="participantId">The id of the participant</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<TestCallScoreResponse> GetTestCallResultForParticipantAsync(System.Guid conferenceId, System.Guid participantId);
     
         /// <summary>Get the test call result for a participant</summary>
         /// <param name="conferenceId">The id of the conference</param>
         /// <param name="participantId">The id of the participant</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         TestCallScoreResponse GetTestCallResultForParticipant(System.Guid conferenceId, System.Guid participantId);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -331,61 +331,61 @@ namespace VideoWeb.Services.Video
         /// <param name="conferenceId">The id of the conference</param>
         /// <param name="participantId">The id of the participant</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<TestCallScoreResponse> GetTestCallResultForParticipantAsync(System.Guid conferenceId, System.Guid participantId, System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Retrieves the independent self test result without saving it</summary>
         /// <param name="participantId">The id of the participant</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<TestCallScoreResponse> GetIndependentTestCallResultAsync(System.Guid? participantId);
     
         /// <summary>Retrieves the independent self test result without saving it</summary>
         /// <param name="participantId">The id of the participant</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         TestCallScoreResponse GetIndependentTestCallResult(System.Guid? participantId);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Retrieves the independent self test result without saving it</summary>
         /// <param name="participantId">The id of the participant</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<TestCallScoreResponse> GetIndependentTestCallResultAsync(System.Guid? participantId, System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Get the pexip service configuration.</summary>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<PexipConfigResponse> GetPexipServicesConfigurationAsync();
     
         /// <summary>Get the pexip service configuration.</summary>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         PexipConfigResponse GetPexipServicesConfiguration();
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Get the pexip service configuration.</summary>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<PexipConfigResponse> GetPexipServicesConfigurationAsync(System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Get tasks for a conference</summary>
         /// <param name="conferenceId">The id of the conference to retrieve tasks from</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<System.Collections.Generic.List<TaskResponse>> GetTasksForConferenceAsync(System.Guid conferenceId);
     
         /// <summary>Get tasks for a conference</summary>
         /// <param name="conferenceId">The id of the conference to retrieve tasks from</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         System.Collections.Generic.List<TaskResponse> GetTasksForConference(System.Guid conferenceId);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Get tasks for a conference</summary>
         /// <param name="conferenceId">The id of the conference to retrieve tasks from</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<System.Collections.Generic.List<TaskResponse>> GetTasksForConferenceAsync(System.Guid conferenceId, System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Update existing tasks</summary>
@@ -393,7 +393,7 @@ namespace VideoWeb.Services.Video
         /// <param name="taskId">The id of the task to update</param>
         /// <param name="body">username of who completed the task</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<TaskResponse> UpdateTaskStatusAsync(System.Guid conferenceId, long taskId, UpdateTaskRequest body);
     
         /// <summary>Update existing tasks</summary>
@@ -401,7 +401,7 @@ namespace VideoWeb.Services.Video
         /// <param name="taskId">The id of the task to update</param>
         /// <param name="body">username of who completed the task</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         TaskResponse UpdateTaskStatus(System.Guid conferenceId, long taskId, UpdateTaskRequest body);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -410,26 +410,26 @@ namespace VideoWeb.Services.Video
         /// <param name="taskId">The id of the task to update</param>
         /// <param name="body">username of who completed the task</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<TaskResponse> UpdateTaskStatusAsync(System.Guid conferenceId, long taskId, UpdateTaskRequest body, System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Accepts video conference events and publishes to internal clients/services</summary>
         /// <param name="body">Details of the event</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         System.Threading.Tasks.Task RaiseVideoEventAsync(ConferenceEventRequest body);
     
         /// <summary>Accepts video conference events and publishes to internal clients/services</summary>
         /// <param name="body">Details of the event</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         void RaiseVideoEvent(ConferenceEventRequest body);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Accepts video conference events and publishes to internal clients/services</summary>
         /// <param name="body">Details of the event</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         System.Threading.Tasks.Task RaiseVideoEventAsync(ConferenceEventRequest body, System.Threading.CancellationToken cancellationToken);
     
     }
@@ -471,7 +471,7 @@ namespace VideoWeb.Services.Video
         /// <summary>Request to book a conference</summary>
         /// <param name="body">Details of a conference</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public System.Threading.Tasks.Task<ConferenceDetailsResponse> BookNewConferenceAsync(BookNewConferenceRequest body)
         {
             return BookNewConferenceAsync(body, System.Threading.CancellationToken.None);
@@ -480,7 +480,7 @@ namespace VideoWeb.Services.Video
         /// <summary>Request to book a conference</summary>
         /// <param name="body">Details of a conference</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public ConferenceDetailsResponse BookNewConference(BookNewConferenceRequest body)
         {
             return System.Threading.Tasks.Task.Run(async () => await BookNewConferenceAsync(body, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
@@ -490,7 +490,7 @@ namespace VideoWeb.Services.Video
         /// <summary>Request to book a conference</summary>
         /// <param name="body">Details of a conference</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public async System.Threading.Tasks.Task<ConferenceDetailsResponse> BookNewConferenceAsync(BookNewConferenceRequest body, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
@@ -534,19 +534,19 @@ namespace VideoWeb.Services.Video
                         if (status_ == "400") 
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            throw new VideoApiException<ProblemDetails>("Bad Request", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new VideoApiServiceException<ProblemDetails>("Bad Request", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == "401") 
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new VideoApiException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
+                            throw new VideoApiServiceException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
                         }
                         else
                         if (status_ != "200" && status_ != "204")
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new VideoApiException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                            throw new VideoApiServiceException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
                         }
             
                         return default(ConferenceDetailsResponse);
@@ -566,7 +566,7 @@ namespace VideoWeb.Services.Video
         /// <summary>Updates a conference</summary>
         /// <param name="body">Details of a conference</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public System.Threading.Tasks.Task UpdateConferenceAsync(UpdateConferenceRequest body)
         {
             return UpdateConferenceAsync(body, System.Threading.CancellationToken.None);
@@ -575,7 +575,7 @@ namespace VideoWeb.Services.Video
         /// <summary>Updates a conference</summary>
         /// <param name="body">Details of a conference</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public void UpdateConference(UpdateConferenceRequest body)
         {
             System.Threading.Tasks.Task.Run(async () => await UpdateConferenceAsync(body, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
@@ -585,7 +585,7 @@ namespace VideoWeb.Services.Video
         /// <summary>Updates a conference</summary>
         /// <param name="body">Details of a conference</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public async System.Threading.Tasks.Task UpdateConferenceAsync(UpdateConferenceRequest body, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
@@ -627,19 +627,19 @@ namespace VideoWeb.Services.Video
                         if (status_ == "400") 
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            throw new VideoApiException<ProblemDetails>("Bad Request", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new VideoApiServiceException<ProblemDetails>("Bad Request", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == "401") 
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new VideoApiException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
+                            throw new VideoApiServiceException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
                         }
                         else
                         if (status_ != "200" && status_ != "204")
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new VideoApiException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                            throw new VideoApiServiceException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -657,7 +657,7 @@ namespace VideoWeb.Services.Video
         /// <summary>Get non-closed conferences for a participant by their username</summary>
         /// <param name="username">person username</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public System.Threading.Tasks.Task<System.Collections.Generic.List<ConferenceSummaryResponse>> GetConferencesForUsernameAsync(string username)
         {
             return GetConferencesForUsernameAsync(username, System.Threading.CancellationToken.None);
@@ -666,7 +666,7 @@ namespace VideoWeb.Services.Video
         /// <summary>Get non-closed conferences for a participant by their username</summary>
         /// <param name="username">person username</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public System.Collections.Generic.List<ConferenceSummaryResponse> GetConferencesForUsername(string username)
         {
             return System.Threading.Tasks.Task.Run(async () => await GetConferencesForUsernameAsync(username, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
@@ -676,7 +676,7 @@ namespace VideoWeb.Services.Video
         /// <summary>Get non-closed conferences for a participant by their username</summary>
         /// <param name="username">person username</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public async System.Threading.Tasks.Task<System.Collections.Generic.List<ConferenceSummaryResponse>> GetConferencesForUsernameAsync(string username, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
@@ -722,19 +722,19 @@ namespace VideoWeb.Services.Video
                         if (status_ == "400") 
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            throw new VideoApiException<ProblemDetails>("Bad Request", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new VideoApiServiceException<ProblemDetails>("Bad Request", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == "401") 
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new VideoApiException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
+                            throw new VideoApiServiceException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
                         }
                         else
                         if (status_ != "200" && status_ != "204")
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new VideoApiException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                            throw new VideoApiServiceException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
                         }
             
                         return default(System.Collections.Generic.List<ConferenceSummaryResponse>);
@@ -754,7 +754,7 @@ namespace VideoWeb.Services.Video
         /// <summary>Get the details of a conference</summary>
         /// <param name="conferenceId">Id of the conference</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public System.Threading.Tasks.Task<ConferenceDetailsResponse> GetConferenceDetailsByIdAsync(System.Guid conferenceId)
         {
             return GetConferenceDetailsByIdAsync(conferenceId, System.Threading.CancellationToken.None);
@@ -763,7 +763,7 @@ namespace VideoWeb.Services.Video
         /// <summary>Get the details of a conference</summary>
         /// <param name="conferenceId">Id of the conference</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public ConferenceDetailsResponse GetConferenceDetailsById(System.Guid conferenceId)
         {
             return System.Threading.Tasks.Task.Run(async () => await GetConferenceDetailsByIdAsync(conferenceId, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
@@ -773,7 +773,7 @@ namespace VideoWeb.Services.Video
         /// <summary>Get the details of a conference</summary>
         /// <param name="conferenceId">Id of the conference</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public async System.Threading.Tasks.Task<ConferenceDetailsResponse> GetConferenceDetailsByIdAsync(System.Guid conferenceId, System.Threading.CancellationToken cancellationToken)
         {
             if (conferenceId == null)
@@ -818,25 +818,25 @@ namespace VideoWeb.Services.Video
                         if (status_ == "404") 
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            throw new VideoApiException<ProblemDetails>("Not Found", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new VideoApiServiceException<ProblemDetails>("Not Found", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == "400") 
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            throw new VideoApiException<ProblemDetails>("Bad Request", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new VideoApiServiceException<ProblemDetails>("Bad Request", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == "401") 
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new VideoApiException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
+                            throw new VideoApiServiceException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
                         }
                         else
                         if (status_ != "200" && status_ != "204")
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new VideoApiException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                            throw new VideoApiServiceException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
                         }
             
                         return default(ConferenceDetailsResponse);
@@ -856,7 +856,7 @@ namespace VideoWeb.Services.Video
         /// <summary>Remove an existing conference</summary>
         /// <param name="conferenceId">The conference id</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public System.Threading.Tasks.Task RemoveConferenceAsync(System.Guid conferenceId)
         {
             return RemoveConferenceAsync(conferenceId, System.Threading.CancellationToken.None);
@@ -865,7 +865,7 @@ namespace VideoWeb.Services.Video
         /// <summary>Remove an existing conference</summary>
         /// <param name="conferenceId">The conference id</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public void RemoveConference(System.Guid conferenceId)
         {
             System.Threading.Tasks.Task.Run(async () => await RemoveConferenceAsync(conferenceId, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
@@ -875,7 +875,7 @@ namespace VideoWeb.Services.Video
         /// <summary>Remove an existing conference</summary>
         /// <param name="conferenceId">The conference id</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public async System.Threading.Tasks.Task RemoveConferenceAsync(System.Guid conferenceId, System.Threading.CancellationToken cancellationToken)
         {
             if (conferenceId == null)
@@ -918,25 +918,25 @@ namespace VideoWeb.Services.Video
                         if (status_ == "400") 
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            throw new VideoApiException<ProblemDetails>("Bad Request", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new VideoApiServiceException<ProblemDetails>("Bad Request", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == "404") 
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            throw new VideoApiException<ProblemDetails>("Not Found", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new VideoApiServiceException<ProblemDetails>("Not Found", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == "401") 
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new VideoApiException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
+                            throw new VideoApiServiceException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
                         }
                         else
                         if (status_ != "200" && status_ != "204")
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new VideoApiException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                            throw new VideoApiServiceException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -953,7 +953,7 @@ namespace VideoWeb.Services.Video
     
         /// <summary>Get todays conferences</summary>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public System.Threading.Tasks.Task<System.Collections.Generic.List<ConferenceSummaryResponse>> GetConferencesTodayAsync()
         {
             return GetConferencesTodayAsync(System.Threading.CancellationToken.None);
@@ -961,7 +961,7 @@ namespace VideoWeb.Services.Video
     
         /// <summary>Get todays conferences</summary>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public System.Collections.Generic.List<ConferenceSummaryResponse> GetConferencesToday()
         {
             return System.Threading.Tasks.Task.Run(async () => await GetConferencesTodayAsync(System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
@@ -970,7 +970,7 @@ namespace VideoWeb.Services.Video
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Get todays conferences</summary>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public async System.Threading.Tasks.Task<System.Collections.Generic.List<ConferenceSummaryResponse>> GetConferencesTodayAsync(System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
@@ -1011,13 +1011,13 @@ namespace VideoWeb.Services.Video
                         if (status_ == "401") 
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new VideoApiException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
+                            throw new VideoApiServiceException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
                         }
                         else
                         if (status_ != "200" && status_ != "204")
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new VideoApiException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                            throw new VideoApiServiceException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
                         }
             
                         return default(System.Collections.Generic.List<ConferenceSummaryResponse>);
@@ -1037,7 +1037,7 @@ namespace VideoWeb.Services.Video
         /// <summary>Get conferences by hearing ref id</summary>
         /// <param name="hearingRefId">Hearing ID</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public System.Threading.Tasks.Task<ConferenceDetailsResponse> GetConferenceByHearingRefIdAsync(System.Guid hearingRefId)
         {
             return GetConferenceByHearingRefIdAsync(hearingRefId, System.Threading.CancellationToken.None);
@@ -1046,7 +1046,7 @@ namespace VideoWeb.Services.Video
         /// <summary>Get conferences by hearing ref id</summary>
         /// <param name="hearingRefId">Hearing ID</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public ConferenceDetailsResponse GetConferenceByHearingRefId(System.Guid hearingRefId)
         {
             return System.Threading.Tasks.Task.Run(async () => await GetConferenceByHearingRefIdAsync(hearingRefId, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
@@ -1056,7 +1056,7 @@ namespace VideoWeb.Services.Video
         /// <summary>Get conferences by hearing ref id</summary>
         /// <param name="hearingRefId">Hearing ID</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public async System.Threading.Tasks.Task<ConferenceDetailsResponse> GetConferenceByHearingRefIdAsync(System.Guid hearingRefId, System.Threading.CancellationToken cancellationToken)
         {
             if (hearingRefId == null)
@@ -1101,19 +1101,19 @@ namespace VideoWeb.Services.Video
                         if (status_ == "400") 
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            throw new VideoApiException<ProblemDetails>("Bad Request", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new VideoApiServiceException<ProblemDetails>("Bad Request", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == "401") 
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new VideoApiException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
+                            throw new VideoApiServiceException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
                         }
                         else
                         if (status_ != "200" && status_ != "204")
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new VideoApiException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                            throw new VideoApiServiceException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
                         }
             
                         return default(ConferenceDetailsResponse);
@@ -1132,7 +1132,7 @@ namespace VideoWeb.Services.Video
     
         /// <summary>Get list of expired conferences</summary>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public System.Threading.Tasks.Task<System.Collections.Generic.List<ExpiredConferencesResponse>> GetExpiredOpenConferencesAsync()
         {
             return GetExpiredOpenConferencesAsync(System.Threading.CancellationToken.None);
@@ -1140,7 +1140,7 @@ namespace VideoWeb.Services.Video
     
         /// <summary>Get list of expired conferences</summary>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public System.Collections.Generic.List<ExpiredConferencesResponse> GetExpiredOpenConferences()
         {
             return System.Threading.Tasks.Task.Run(async () => await GetExpiredOpenConferencesAsync(System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
@@ -1149,7 +1149,7 @@ namespace VideoWeb.Services.Video
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Get list of expired conferences</summary>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public async System.Threading.Tasks.Task<System.Collections.Generic.List<ExpiredConferencesResponse>> GetExpiredOpenConferencesAsync(System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
@@ -1190,13 +1190,13 @@ namespace VideoWeb.Services.Video
                         if (status_ == "401") 
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new VideoApiException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
+                            throw new VideoApiServiceException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
                         }
                         else
                         if (status_ != "200" && status_ != "204")
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new VideoApiException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                            throw new VideoApiServiceException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
                         }
             
                         return default(System.Collections.Generic.List<ExpiredConferencesResponse>);
@@ -1216,7 +1216,7 @@ namespace VideoWeb.Services.Video
         /// <summary>Close a conference, set its state to closed</summary>
         /// <param name="conferenceId">conference id</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public System.Threading.Tasks.Task CloseConferenceAsync(System.Guid conferenceId)
         {
             return CloseConferenceAsync(conferenceId, System.Threading.CancellationToken.None);
@@ -1225,7 +1225,7 @@ namespace VideoWeb.Services.Video
         /// <summary>Close a conference, set its state to closed</summary>
         /// <param name="conferenceId">conference id</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public void CloseConference(System.Guid conferenceId)
         {
             System.Threading.Tasks.Task.Run(async () => await CloseConferenceAsync(conferenceId, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
@@ -1235,7 +1235,7 @@ namespace VideoWeb.Services.Video
         /// <summary>Close a conference, set its state to closed</summary>
         /// <param name="conferenceId">conference id</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public async System.Threading.Tasks.Task CloseConferenceAsync(System.Guid conferenceId, System.Threading.CancellationToken cancellationToken)
         {
             if (conferenceId == null)
@@ -1279,19 +1279,19 @@ namespace VideoWeb.Services.Video
                         if (status_ == "400") 
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            throw new VideoApiException<ProblemDetails>("Bad Request", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new VideoApiServiceException<ProblemDetails>("Bad Request", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == "401") 
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new VideoApiException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
+                            throw new VideoApiServiceException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
                         }
                         else
                         if (status_ != "200" && status_ != "204")
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new VideoApiException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                            throw new VideoApiServiceException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -1309,7 +1309,7 @@ namespace VideoWeb.Services.Video
         /// <summary>Raise or answer to a private consultation request with another participant</summary>
         /// <param name="body">Private consultation request with or without an answer</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public System.Threading.Tasks.Task HandleConsultationRequestAsync(ConsultationRequest body)
         {
             return HandleConsultationRequestAsync(body, System.Threading.CancellationToken.None);
@@ -1318,7 +1318,7 @@ namespace VideoWeb.Services.Video
         /// <summary>Raise or answer to a private consultation request with another participant</summary>
         /// <param name="body">Private consultation request with or without an answer</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public void HandleConsultationRequest(ConsultationRequest body)
         {
             System.Threading.Tasks.Task.Run(async () => await HandleConsultationRequestAsync(body, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
@@ -1328,7 +1328,7 @@ namespace VideoWeb.Services.Video
         /// <summary>Raise or answer to a private consultation request with another participant</summary>
         /// <param name="body">Private consultation request with or without an answer</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public async System.Threading.Tasks.Task HandleConsultationRequestAsync(ConsultationRequest body, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
@@ -1370,19 +1370,19 @@ namespace VideoWeb.Services.Video
                         if (status_ == "400") 
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            throw new VideoApiException<ProblemDetails>("Bad Request", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new VideoApiServiceException<ProblemDetails>("Bad Request", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == "401") 
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new VideoApiException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
+                            throw new VideoApiServiceException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
                         }
                         else
                         if (status_ != "200" && status_ != "204")
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new VideoApiException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                            throw new VideoApiServiceException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -1398,14 +1398,14 @@ namespace VideoWeb.Services.Video
         }
     
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public System.Threading.Tasks.Task LeavePrivateConsultationAsync(LeaveConsultationRequest body)
         {
             return LeavePrivateConsultationAsync(body, System.Threading.CancellationToken.None);
         }
     
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public void LeavePrivateConsultation(LeaveConsultationRequest body)
         {
             System.Threading.Tasks.Task.Run(async () => await LeavePrivateConsultationAsync(body, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
@@ -1413,7 +1413,7 @@ namespace VideoWeb.Services.Video
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public async System.Threading.Tasks.Task LeavePrivateConsultationAsync(LeaveConsultationRequest body, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
@@ -1455,25 +1455,25 @@ namespace VideoWeb.Services.Video
                         if (status_ == "404") 
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            throw new VideoApiException<ProblemDetails>("Not Found", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new VideoApiServiceException<ProblemDetails>("Not Found", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == "400") 
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            throw new VideoApiException<ProblemDetails>("Bad Request", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new VideoApiServiceException<ProblemDetails>("Bad Request", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == "401") 
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new VideoApiException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
+                            throw new VideoApiServiceException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
                         }
                         else
                         if (status_ != "200" && status_ != "204")
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new VideoApiException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                            throw new VideoApiServiceException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -1489,14 +1489,14 @@ namespace VideoWeb.Services.Video
         }
     
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public System.Threading.Tasks.Task RespondToAdminConsultationRequestAsync(AdminConsultationRequest body)
         {
             return RespondToAdminConsultationRequestAsync(body, System.Threading.CancellationToken.None);
         }
     
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public void RespondToAdminConsultationRequest(AdminConsultationRequest body)
         {
             System.Threading.Tasks.Task.Run(async () => await RespondToAdminConsultationRequestAsync(body, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
@@ -1504,7 +1504,7 @@ namespace VideoWeb.Services.Video
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public async System.Threading.Tasks.Task RespondToAdminConsultationRequestAsync(AdminConsultationRequest body, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
@@ -1546,25 +1546,25 @@ namespace VideoWeb.Services.Video
                         if (status_ == "404") 
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            throw new VideoApiException<ProblemDetails>("Not Found", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new VideoApiServiceException<ProblemDetails>("Not Found", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == "400") 
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            throw new VideoApiException<ProblemDetails>("Bad Request", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new VideoApiServiceException<ProblemDetails>("Bad Request", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == "401") 
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new VideoApiException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
+                            throw new VideoApiServiceException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
                         }
                         else
                         if (status_ != "200" && status_ != "204")
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new VideoApiException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                            throw new VideoApiServiceException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -1581,7 +1581,7 @@ namespace VideoWeb.Services.Video
     
         /// <summary>Check Service Health</summary>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public System.Threading.Tasks.Task<HealthCheckResponse> CheckServiceHealthAsync()
         {
             return CheckServiceHealthAsync(System.Threading.CancellationToken.None);
@@ -1589,7 +1589,7 @@ namespace VideoWeb.Services.Video
     
         /// <summary>Check Service Health</summary>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public HealthCheckResponse CheckServiceHealth()
         {
             return System.Threading.Tasks.Task.Run(async () => await CheckServiceHealthAsync(System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
@@ -1598,7 +1598,7 @@ namespace VideoWeb.Services.Video
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Check Service Health</summary>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public async System.Threading.Tasks.Task<HealthCheckResponse> CheckServiceHealthAsync(System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
@@ -1639,19 +1639,19 @@ namespace VideoWeb.Services.Video
                         if (status_ == "500") 
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<HealthCheckResponse>(response_, headers_).ConfigureAwait(false);
-                            throw new VideoApiException<HealthCheckResponse>("Server Error", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new VideoApiServiceException<HealthCheckResponse>("Server Error", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == "401") 
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new VideoApiException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
+                            throw new VideoApiServiceException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
                         }
                         else
                         if (status_ != "200" && status_ != "204")
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new VideoApiException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                            throw new VideoApiServiceException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
                         }
             
                         return default(HealthCheckResponse);
@@ -1672,7 +1672,7 @@ namespace VideoWeb.Services.Video
         /// <param name="conferenceId">The id of the conference to add participants to</param>
         /// <param name="body">Details of the participant</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public System.Threading.Tasks.Task AddParticipantsToConferenceAsync(System.Guid conferenceId, AddParticipantsToConferenceRequest body)
         {
             return AddParticipantsToConferenceAsync(conferenceId, body, System.Threading.CancellationToken.None);
@@ -1682,7 +1682,7 @@ namespace VideoWeb.Services.Video
         /// <param name="conferenceId">The id of the conference to add participants to</param>
         /// <param name="body">Details of the participant</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public void AddParticipantsToConference(System.Guid conferenceId, AddParticipantsToConferenceRequest body)
         {
             System.Threading.Tasks.Task.Run(async () => await AddParticipantsToConferenceAsync(conferenceId, body, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
@@ -1693,7 +1693,7 @@ namespace VideoWeb.Services.Video
         /// <param name="conferenceId">The id of the conference to add participants to</param>
         /// <param name="body">Details of the participant</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public async System.Threading.Tasks.Task AddParticipantsToConferenceAsync(System.Guid conferenceId, AddParticipantsToConferenceRequest body, System.Threading.CancellationToken cancellationToken)
         {
             if (conferenceId == null)
@@ -1739,25 +1739,25 @@ namespace VideoWeb.Services.Video
                         if (status_ == "404") 
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            throw new VideoApiException<ProblemDetails>("Not Found", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new VideoApiServiceException<ProblemDetails>("Not Found", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == "400") 
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            throw new VideoApiException<ProblemDetails>("Bad Request", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new VideoApiServiceException<ProblemDetails>("Bad Request", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == "401") 
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new VideoApiException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
+                            throw new VideoApiServiceException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
                         }
                         else
                         if (status_ != "200" && status_ != "204")
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new VideoApiException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                            throw new VideoApiServiceException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -1777,7 +1777,7 @@ namespace VideoWeb.Services.Video
         /// <param name="participantId">Id of participant to remove</param>
         /// <param name="body">The participant information to update</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public System.Threading.Tasks.Task UpdateParticipantDetailsAsync(System.Guid conferenceId, System.Guid participantId, UpdateParticipantRequest body)
         {
             return UpdateParticipantDetailsAsync(conferenceId, participantId, body, System.Threading.CancellationToken.None);
@@ -1788,7 +1788,7 @@ namespace VideoWeb.Services.Video
         /// <param name="participantId">Id of participant to remove</param>
         /// <param name="body">The participant information to update</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public void UpdateParticipantDetails(System.Guid conferenceId, System.Guid participantId, UpdateParticipantRequest body)
         {
             System.Threading.Tasks.Task.Run(async () => await UpdateParticipantDetailsAsync(conferenceId, participantId, body, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
@@ -1800,7 +1800,7 @@ namespace VideoWeb.Services.Video
         /// <param name="participantId">Id of participant to remove</param>
         /// <param name="body">The participant information to update</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public async System.Threading.Tasks.Task UpdateParticipantDetailsAsync(System.Guid conferenceId, System.Guid participantId, UpdateParticipantRequest body, System.Threading.CancellationToken cancellationToken)
         {
             if (conferenceId == null)
@@ -1850,25 +1850,25 @@ namespace VideoWeb.Services.Video
                         if (status_ == "400") 
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            throw new VideoApiException<ProblemDetails>("Bad Request", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new VideoApiServiceException<ProblemDetails>("Bad Request", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == "404") 
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            throw new VideoApiException<ProblemDetails>("Not Found", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new VideoApiServiceException<ProblemDetails>("Not Found", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == "401") 
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new VideoApiException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
+                            throw new VideoApiServiceException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
                         }
                         else
                         if (status_ != "200" && status_ != "204")
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new VideoApiException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                            throw new VideoApiServiceException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -1887,7 +1887,7 @@ namespace VideoWeb.Services.Video
         /// <param name="conferenceId">The id of the conference to remove participants from</param>
         /// <param name="participantId">The id of the participant to remove</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public System.Threading.Tasks.Task RemoveParticipantFromConferenceAsync(System.Guid conferenceId, System.Guid participantId)
         {
             return RemoveParticipantFromConferenceAsync(conferenceId, participantId, System.Threading.CancellationToken.None);
@@ -1897,7 +1897,7 @@ namespace VideoWeb.Services.Video
         /// <param name="conferenceId">The id of the conference to remove participants from</param>
         /// <param name="participantId">The id of the participant to remove</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public void RemoveParticipantFromConference(System.Guid conferenceId, System.Guid participantId)
         {
             System.Threading.Tasks.Task.Run(async () => await RemoveParticipantFromConferenceAsync(conferenceId, participantId, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
@@ -1908,7 +1908,7 @@ namespace VideoWeb.Services.Video
         /// <param name="conferenceId">The id of the conference to remove participants from</param>
         /// <param name="participantId">The id of the participant to remove</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public async System.Threading.Tasks.Task RemoveParticipantFromConferenceAsync(System.Guid conferenceId, System.Guid participantId, System.Threading.CancellationToken cancellationToken)
         {
             if (conferenceId == null)
@@ -1955,25 +1955,25 @@ namespace VideoWeb.Services.Video
                         if (status_ == "404") 
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            throw new VideoApiException<ProblemDetails>("Not Found", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new VideoApiServiceException<ProblemDetails>("Not Found", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == "400") 
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            throw new VideoApiException<ProblemDetails>("Bad Request", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new VideoApiServiceException<ProblemDetails>("Bad Request", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == "401") 
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new VideoApiException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
+                            throw new VideoApiServiceException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
                         }
                         else
                         if (status_ != "200" && status_ != "204")
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new VideoApiException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                            throw new VideoApiServiceException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -1992,7 +1992,7 @@ namespace VideoWeb.Services.Video
         /// <param name="conferenceId">The id of the conference</param>
         /// <param name="participantId">The id of the participant</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public System.Threading.Tasks.Task<TestCallScoreResponse> GetTestCallResultForParticipantAsync(System.Guid conferenceId, System.Guid participantId)
         {
             return GetTestCallResultForParticipantAsync(conferenceId, participantId, System.Threading.CancellationToken.None);
@@ -2002,7 +2002,7 @@ namespace VideoWeb.Services.Video
         /// <param name="conferenceId">The id of the conference</param>
         /// <param name="participantId">The id of the participant</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public TestCallScoreResponse GetTestCallResultForParticipant(System.Guid conferenceId, System.Guid participantId)
         {
             return System.Threading.Tasks.Task.Run(async () => await GetTestCallResultForParticipantAsync(conferenceId, participantId, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
@@ -2013,7 +2013,7 @@ namespace VideoWeb.Services.Video
         /// <param name="conferenceId">The id of the conference</param>
         /// <param name="participantId">The id of the participant</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public async System.Threading.Tasks.Task<TestCallScoreResponse> GetTestCallResultForParticipantAsync(System.Guid conferenceId, System.Guid participantId, System.Threading.CancellationToken cancellationToken)
         {
             if (conferenceId == null)
@@ -2062,19 +2062,19 @@ namespace VideoWeb.Services.Video
                         if (status_ == "404") 
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            throw new VideoApiException<ProblemDetails>("Not Found", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new VideoApiServiceException<ProblemDetails>("Not Found", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == "401") 
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new VideoApiException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
+                            throw new VideoApiServiceException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
                         }
                         else
                         if (status_ != "200" && status_ != "204")
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new VideoApiException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                            throw new VideoApiServiceException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
                         }
             
                         return default(TestCallScoreResponse);
@@ -2094,7 +2094,7 @@ namespace VideoWeb.Services.Video
         /// <summary>Retrieves the independent self test result without saving it</summary>
         /// <param name="participantId">The id of the participant</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public System.Threading.Tasks.Task<TestCallScoreResponse> GetIndependentTestCallResultAsync(System.Guid? participantId)
         {
             return GetIndependentTestCallResultAsync(participantId, System.Threading.CancellationToken.None);
@@ -2103,7 +2103,7 @@ namespace VideoWeb.Services.Video
         /// <summary>Retrieves the independent self test result without saving it</summary>
         /// <param name="participantId">The id of the participant</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public TestCallScoreResponse GetIndependentTestCallResult(System.Guid? participantId)
         {
             return System.Threading.Tasks.Task.Run(async () => await GetIndependentTestCallResultAsync(participantId, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
@@ -2113,7 +2113,7 @@ namespace VideoWeb.Services.Video
         /// <summary>Retrieves the independent self test result without saving it</summary>
         /// <param name="participantId">The id of the participant</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public async System.Threading.Tasks.Task<TestCallScoreResponse> GetIndependentTestCallResultAsync(System.Guid? participantId, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
@@ -2159,19 +2159,19 @@ namespace VideoWeb.Services.Video
                         if (status_ == "404") 
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            throw new VideoApiException<ProblemDetails>("Not Found", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new VideoApiServiceException<ProblemDetails>("Not Found", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == "401") 
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new VideoApiException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
+                            throw new VideoApiServiceException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
                         }
                         else
                         if (status_ != "200" && status_ != "204")
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new VideoApiException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                            throw new VideoApiServiceException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
                         }
             
                         return default(TestCallScoreResponse);
@@ -2190,7 +2190,7 @@ namespace VideoWeb.Services.Video
     
         /// <summary>Get the pexip service configuration.</summary>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public System.Threading.Tasks.Task<PexipConfigResponse> GetPexipServicesConfigurationAsync()
         {
             return GetPexipServicesConfigurationAsync(System.Threading.CancellationToken.None);
@@ -2198,7 +2198,7 @@ namespace VideoWeb.Services.Video
     
         /// <summary>Get the pexip service configuration.</summary>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public PexipConfigResponse GetPexipServicesConfiguration()
         {
             return System.Threading.Tasks.Task.Run(async () => await GetPexipServicesConfigurationAsync(System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
@@ -2207,7 +2207,7 @@ namespace VideoWeb.Services.Video
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Get the pexip service configuration.</summary>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public async System.Threading.Tasks.Task<PexipConfigResponse> GetPexipServicesConfigurationAsync(System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
@@ -2248,19 +2248,19 @@ namespace VideoWeb.Services.Video
                         if (status_ == "404") 
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            throw new VideoApiException<ProblemDetails>("Not Found", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new VideoApiServiceException<ProblemDetails>("Not Found", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == "401") 
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new VideoApiException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
+                            throw new VideoApiServiceException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
                         }
                         else
                         if (status_ != "200" && status_ != "204")
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new VideoApiException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                            throw new VideoApiServiceException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
                         }
             
                         return default(PexipConfigResponse);
@@ -2280,7 +2280,7 @@ namespace VideoWeb.Services.Video
         /// <summary>Get tasks for a conference</summary>
         /// <param name="conferenceId">The id of the conference to retrieve tasks from</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public System.Threading.Tasks.Task<System.Collections.Generic.List<TaskResponse>> GetTasksForConferenceAsync(System.Guid conferenceId)
         {
             return GetTasksForConferenceAsync(conferenceId, System.Threading.CancellationToken.None);
@@ -2289,7 +2289,7 @@ namespace VideoWeb.Services.Video
         /// <summary>Get tasks for a conference</summary>
         /// <param name="conferenceId">The id of the conference to retrieve tasks from</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public System.Collections.Generic.List<TaskResponse> GetTasksForConference(System.Guid conferenceId)
         {
             return System.Threading.Tasks.Task.Run(async () => await GetTasksForConferenceAsync(conferenceId, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
@@ -2299,7 +2299,7 @@ namespace VideoWeb.Services.Video
         /// <summary>Get tasks for a conference</summary>
         /// <param name="conferenceId">The id of the conference to retrieve tasks from</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public async System.Threading.Tasks.Task<System.Collections.Generic.List<TaskResponse>> GetTasksForConferenceAsync(System.Guid conferenceId, System.Threading.CancellationToken cancellationToken)
         {
             if (conferenceId == null)
@@ -2344,13 +2344,13 @@ namespace VideoWeb.Services.Video
                         if (status_ == "401") 
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new VideoApiException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
+                            throw new VideoApiServiceException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
                         }
                         else
                         if (status_ != "200" && status_ != "204")
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new VideoApiException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                            throw new VideoApiServiceException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
                         }
             
                         return default(System.Collections.Generic.List<TaskResponse>);
@@ -2372,7 +2372,7 @@ namespace VideoWeb.Services.Video
         /// <param name="taskId">The id of the task to update</param>
         /// <param name="body">username of who completed the task</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public System.Threading.Tasks.Task<TaskResponse> UpdateTaskStatusAsync(System.Guid conferenceId, long taskId, UpdateTaskRequest body)
         {
             return UpdateTaskStatusAsync(conferenceId, taskId, body, System.Threading.CancellationToken.None);
@@ -2383,7 +2383,7 @@ namespace VideoWeb.Services.Video
         /// <param name="taskId">The id of the task to update</param>
         /// <param name="body">username of who completed the task</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public TaskResponse UpdateTaskStatus(System.Guid conferenceId, long taskId, UpdateTaskRequest body)
         {
             return System.Threading.Tasks.Task.Run(async () => await UpdateTaskStatusAsync(conferenceId, taskId, body, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
@@ -2395,7 +2395,7 @@ namespace VideoWeb.Services.Video
         /// <param name="taskId">The id of the task to update</param>
         /// <param name="body">username of who completed the task</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public async System.Threading.Tasks.Task<TaskResponse> UpdateTaskStatusAsync(System.Guid conferenceId, long taskId, UpdateTaskRequest body, System.Threading.CancellationToken cancellationToken)
         {
             if (conferenceId == null)
@@ -2447,25 +2447,25 @@ namespace VideoWeb.Services.Video
                         if (status_ == "404") 
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new VideoApiException("Not Found", (int)response_.StatusCode, responseText_, headers_, null);
+                            throw new VideoApiServiceException("Not Found", (int)response_.StatusCode, responseText_, headers_, null);
                         }
                         else
                         if (status_ == "400") 
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new VideoApiException("Bad Request", (int)response_.StatusCode, responseText_, headers_, null);
+                            throw new VideoApiServiceException("Bad Request", (int)response_.StatusCode, responseText_, headers_, null);
                         }
                         else
                         if (status_ == "401") 
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new VideoApiException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
+                            throw new VideoApiServiceException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
                         }
                         else
                         if (status_ != "200" && status_ != "204")
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new VideoApiException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                            throw new VideoApiServiceException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
                         }
             
                         return default(TaskResponse);
@@ -2485,7 +2485,7 @@ namespace VideoWeb.Services.Video
         /// <summary>Accepts video conference events and publishes to internal clients/services</summary>
         /// <param name="body">Details of the event</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public System.Threading.Tasks.Task RaiseVideoEventAsync(ConferenceEventRequest body)
         {
             return RaiseVideoEventAsync(body, System.Threading.CancellationToken.None);
@@ -2494,7 +2494,7 @@ namespace VideoWeb.Services.Video
         /// <summary>Accepts video conference events and publishes to internal clients/services</summary>
         /// <param name="body">Details of the event</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public void RaiseVideoEvent(ConferenceEventRequest body)
         {
             System.Threading.Tasks.Task.Run(async () => await RaiseVideoEventAsync(body, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
@@ -2504,7 +2504,7 @@ namespace VideoWeb.Services.Video
         /// <summary>Accepts video conference events and publishes to internal clients/services</summary>
         /// <param name="body">Details of the event</param>
         /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public async System.Threading.Tasks.Task RaiseVideoEventAsync(ConferenceEventRequest body, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
@@ -2546,19 +2546,19 @@ namespace VideoWeb.Services.Video
                         if (status_ == "400") 
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            throw new VideoApiException<ProblemDetails>("Bad Request", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new VideoApiServiceException<ProblemDetails>("Bad Request", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == "401") 
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new VideoApiException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
+                            throw new VideoApiServiceException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
                         }
                         else
                         if (status_ != "200" && status_ != "204")
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new VideoApiException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                            throw new VideoApiServiceException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -2606,7 +2606,7 @@ namespace VideoWeb.Services.Video
                 catch (Newtonsoft.Json.JsonException exception)
                 {
                     var message = "Could not deserialize the response body string as " + typeof(T).FullName + ".";
-                    throw new VideoApiException(message, (int)response.StatusCode, responseText, headers, exception);
+                    throw new VideoApiServiceException(message, (int)response.StatusCode, responseText, headers, exception);
                 }
             }
             else
@@ -2625,7 +2625,7 @@ namespace VideoWeb.Services.Video
                 catch (Newtonsoft.Json.JsonException exception)
                 {
                     var message = "Could not deserialize the response body stream as " + typeof(T).FullName + ".";
-                    throw new VideoApiException(message, (int)response.StatusCode, string.Empty, headers, exception);
+                    throw new VideoApiServiceException(message, (int)response.StatusCode, string.Empty, headers, exception);
                 }
             }
         }
@@ -3399,7 +3399,7 @@ namespace VideoWeb.Services.Video
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "13.2.2.0 (NJsonSchema v10.1.4.0 (Newtonsoft.Json v12.0.0.0))")]
-    public partial class VideoApiException : System.Exception
+    public partial class VideoApiServiceException : System.Exception
     {
         public int StatusCode { get; private set; }
 
@@ -3407,7 +3407,7 @@ namespace VideoWeb.Services.Video
 
         public System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IEnumerable<string>> Headers { get; private set; }
 
-        public VideoApiException(string message, int statusCode, string response, System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IEnumerable<string>> headers, System.Exception innerException) 
+        public VideoApiServiceException(string message, int statusCode, string response, System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IEnumerable<string>> headers, System.Exception innerException) 
             : base(message + "\n\nStatus: " + statusCode + "\nResponse: \n" + response.Substring(0, response.Length >= 512 ? 512 : response.Length), innerException)
         {
             StatusCode = statusCode;
@@ -3422,11 +3422,11 @@ namespace VideoWeb.Services.Video
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "13.2.2.0 (NJsonSchema v10.1.4.0 (Newtonsoft.Json v12.0.0.0))")]
-    public partial class VideoApiException<TResult> : VideoApiException
+    public partial class VideoApiServiceException<TResult> : VideoApiServiceException
     {
         public TResult Result { get; private set; }
 
-        public VideoApiException(string message, int statusCode, string response, System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IEnumerable<string>> headers, TResult result, System.Exception innerException) 
+        public VideoApiServiceException(string message, int statusCode, string response, System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IEnumerable<string>> headers, TResult result, System.Exception innerException) 
             : base(message, statusCode, response, headers, innerException)
         {
             Result = result;

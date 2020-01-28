@@ -110,7 +110,6 @@ namespace AdminWebsite
             {
                 app.UseSpaStaticFiles();
             }
-            app.UseSpaStaticFiles();
             app.UseAuthentication();
 
             // HTTP Response Headers

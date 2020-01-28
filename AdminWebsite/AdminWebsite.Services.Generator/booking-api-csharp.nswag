@@ -29,7 +29,7 @@
       "clientClassAccessModifier": "public",
       "typeAccessModifier": "public",
       "generateContractsOutput": false,
-      "contractsNamespace": "BookHearingClient.Services",
+      "contractsNamespace": "AdminWebsite.BookingsAPI.Client",
       "contractsOutputFilePath": "",
       "parameterDateTimeFormat": "s",
       "generateUpdateJsonSerializerSettingsMethod": true,
@@ -50,7 +50,7 @@
       "wrapResponseMethods": [],
       "generateResponseClasses": true,
       "responseClass": "BookingsApiResponse",
-      "namespace": "VideoWeb.Services.Bookings",
+      "namespace": "AdminWebsite.BookingsAPI.Client",
       "requiredPropertiesMustBeDefined": true,
       "dateType": "System.DateTime",
       "jsonConverters": null,
@@ -82,9 +82,9 @@
       "typeNameGeneratorType": null,
       "propertyNameGeneratorType": null,
       "enumNameGeneratorType": null,
-      "serviceHost": "http://localhost:5300",
+      "serviceHost": "http://localhost:5301",
       "serviceSchemes": null,
-      "output": "../VideoWeb.Services/BookingsApiClient.cs"
+      "output": "../AdminWebsite.BookingsAPI.Client/BookingsApiClient.cs"
     }
   }
 }
