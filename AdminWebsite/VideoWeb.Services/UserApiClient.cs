@@ -10,7 +10,7 @@
 #pragma warning disable 1573 // Disable "CS1573 Parameter '...' has no matching param tag in the XML comment for ...
 #pragma warning disable 1591 // Disable "CS1591 Missing XML comment for publicly visible type or member ..."
 
-namespace AdminWebsite.UserAPI.Client
+namespace VideoWeb.Services.User
 {
     using System = global::System;
     
@@ -19,197 +19,197 @@ namespace AdminWebsite.UserAPI.Client
     {
         /// <summary>Get AD Group By Name</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<GroupsResponse> GetGroupByNameAsync(string name);
     
         /// <summary>Get AD Group By Name</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         GroupsResponse GetGroupByName(string name);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Get AD Group By Name</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<GroupsResponse> GetGroupByNameAsync(string name, System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Get AD Group By Id</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<GroupsResponse> GetGroupByIdAsync(string groupId);
     
         /// <summary>Get AD Group By Id</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         GroupsResponse GetGroupById(string groupId);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Get AD Group By Id</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<GroupsResponse> GetGroupByIdAsync(string groupId, System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Get AD Group For a User</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<System.Collections.Generic.List<GroupsResponse>> GetGroupsForUserAsync(string userId);
     
         /// <summary>Get AD Group For a User</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         System.Collections.Generic.List<GroupsResponse> GetGroupsForUser(string userId);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Get AD Group For a User</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<System.Collections.Generic.List<GroupsResponse>> GetGroupsForUserAsync(string userId, System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Add a user to a group</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task AddUserToGroupAsync(AddUserToGroupRequest body);
     
         /// <summary>Add a user to a group</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         void AddUserToGroup(AddUserToGroupRequest body);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Add a user to a group</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task AddUserToGroupAsync(AddUserToGroupRequest body, System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Run a health check of the service</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task CheckServiceHealthAsync();
     
         /// <summary>Run a health check of the service</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         void CheckServiceHealth();
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Run a health check of the service</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task CheckServiceHealthAsync(System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Create a new hearings reforms user account</summary>
         /// <param name="body">Details of a new user</param>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<NewUserResponse> CreateUserAsync(CreateUserRequest body);
     
         /// <summary>Create a new hearings reforms user account</summary>
         /// <param name="body">Details of a new user</param>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         NewUserResponse CreateUser(CreateUserRequest body);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Create a new hearings reforms user account</summary>
         /// <param name="body">Details of a new user</param>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<NewUserResponse> CreateUserAsync(CreateUserRequest body, System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Updates an AAD user</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task UpdateUserAsync(string body);
     
         /// <summary>Updates an AAD user</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         void UpdateUser(string body);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Updates an AAD user</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task UpdateUserAsync(string body, System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Get User by AD User ID</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<UserProfile> GetUserByAdUserIdAsync(string userId);
     
         /// <summary>Get User by AD User ID</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         UserProfile GetUserByAdUserId(string userId);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Get User by AD User ID</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<UserProfile> GetUserByAdUserIdAsync(string userId, System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Get User by User principal name</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<UserProfile> GetUserByAdUserNameAsync(string userName);
     
         /// <summary>Get User by User principal name</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         UserProfile GetUserByAdUserName(string userName);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Get User by User principal name</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<UserProfile> GetUserByAdUserNameAsync(string userName, System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Delete an AAD user</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task DeleteUserAsync(string username);
     
         /// <summary>Delete an AAD user</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         void DeleteUser(string username);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Delete an AAD user</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task DeleteUserAsync(string username, System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Get user profile by email</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<UserProfile> GetUserByEmailAsync(string email);
     
         /// <summary>Get user profile by email</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         UserProfile GetUserByEmail(string email);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Get user profile by email</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<UserProfile> GetUserByEmailAsync(string email, System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Get Judges from AD</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<System.Collections.Generic.List<UserResponse>> GetJudgesAsync();
     
         /// <summary>Get Judges from AD</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         System.Collections.Generic.List<UserResponse> GetJudges();
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Get Judges from AD</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<System.Collections.Generic.List<UserResponse>> GetJudgesAsync(System.Threading.CancellationToken cancellationToken);
     
     }
@@ -217,7 +217,7 @@ namespace AdminWebsite.UserAPI.Client
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "13.2.2.0 (NJsonSchema v10.1.4.0 (Newtonsoft.Json v12.0.0.0))")]
     public partial class UserApiClient : IUserApiClient
     {
-        private string _baseUrl = "https://localhost:5200";
+        private string _baseUrl = "http://localhost:5400";
         private System.Net.Http.HttpClient _httpClient;
         private System.Lazy<Newtonsoft.Json.JsonSerializerSettings> _settings;
     
@@ -250,7 +250,7 @@ namespace AdminWebsite.UserAPI.Client
     
         /// <summary>Get AD Group By Name</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         public System.Threading.Tasks.Task<GroupsResponse> GetGroupByNameAsync(string name)
         {
             return GetGroupByNameAsync(name, System.Threading.CancellationToken.None);
@@ -258,7 +258,7 @@ namespace AdminWebsite.UserAPI.Client
     
         /// <summary>Get AD Group By Name</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         public GroupsResponse GetGroupByName(string name)
         {
             return System.Threading.Tasks.Task.Run(async () => await GetGroupByNameAsync(name, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
@@ -267,7 +267,7 @@ namespace AdminWebsite.UserAPI.Client
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Get AD Group By Name</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         public async System.Threading.Tasks.Task<GroupsResponse> GetGroupByNameAsync(string name, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
@@ -313,19 +313,19 @@ namespace AdminWebsite.UserAPI.Client
                         if (status_ == "404") 
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            throw new UserServiceException<ProblemDetails>("Not Found", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new UserApiException<ProblemDetails>("Not Found", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == "401") 
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new UserServiceException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
+                            throw new UserApiException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
                         }
                         else
                         if (status_ != "200" && status_ != "204")
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new UserServiceException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                            throw new UserApiException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
                         }
             
                         return default(GroupsResponse);
@@ -344,7 +344,7 @@ namespace AdminWebsite.UserAPI.Client
     
         /// <summary>Get AD Group By Id</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         public System.Threading.Tasks.Task<GroupsResponse> GetGroupByIdAsync(string groupId)
         {
             return GetGroupByIdAsync(groupId, System.Threading.CancellationToken.None);
@@ -352,7 +352,7 @@ namespace AdminWebsite.UserAPI.Client
     
         /// <summary>Get AD Group By Id</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         public GroupsResponse GetGroupById(string groupId)
         {
             return System.Threading.Tasks.Task.Run(async () => await GetGroupByIdAsync(groupId, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
@@ -361,7 +361,7 @@ namespace AdminWebsite.UserAPI.Client
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Get AD Group By Id</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         public async System.Threading.Tasks.Task<GroupsResponse> GetGroupByIdAsync(string groupId, System.Threading.CancellationToken cancellationToken)
         {
             if (groupId == null)
@@ -406,19 +406,19 @@ namespace AdminWebsite.UserAPI.Client
                         if (status_ == "404") 
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            throw new UserServiceException<ProblemDetails>("Not Found", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new UserApiException<ProblemDetails>("Not Found", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == "401") 
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new UserServiceException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
+                            throw new UserApiException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
                         }
                         else
                         if (status_ != "200" && status_ != "204")
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new UserServiceException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                            throw new UserApiException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
                         }
             
                         return default(GroupsResponse);
@@ -437,7 +437,7 @@ namespace AdminWebsite.UserAPI.Client
     
         /// <summary>Get AD Group For a User</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         public System.Threading.Tasks.Task<System.Collections.Generic.List<GroupsResponse>> GetGroupsForUserAsync(string userId)
         {
             return GetGroupsForUserAsync(userId, System.Threading.CancellationToken.None);
@@ -445,7 +445,7 @@ namespace AdminWebsite.UserAPI.Client
     
         /// <summary>Get AD Group For a User</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         public System.Collections.Generic.List<GroupsResponse> GetGroupsForUser(string userId)
         {
             return System.Threading.Tasks.Task.Run(async () => await GetGroupsForUserAsync(userId, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
@@ -454,7 +454,7 @@ namespace AdminWebsite.UserAPI.Client
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Get AD Group For a User</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         public async System.Threading.Tasks.Task<System.Collections.Generic.List<GroupsResponse>> GetGroupsForUserAsync(string userId, System.Threading.CancellationToken cancellationToken)
         {
             if (userId == null)
@@ -499,19 +499,19 @@ namespace AdminWebsite.UserAPI.Client
                         if (status_ == "404") 
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            throw new UserServiceException<ProblemDetails>("Not Found", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new UserApiException<ProblemDetails>("Not Found", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == "401") 
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new UserServiceException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
+                            throw new UserApiException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
                         }
                         else
                         if (status_ != "200" && status_ != "204")
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new UserServiceException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                            throw new UserApiException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
                         }
             
                         return default(System.Collections.Generic.List<GroupsResponse>);
@@ -530,7 +530,7 @@ namespace AdminWebsite.UserAPI.Client
     
         /// <summary>Add a user to a group</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         public System.Threading.Tasks.Task AddUserToGroupAsync(AddUserToGroupRequest body)
         {
             return AddUserToGroupAsync(body, System.Threading.CancellationToken.None);
@@ -538,7 +538,7 @@ namespace AdminWebsite.UserAPI.Client
     
         /// <summary>Add a user to a group</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         public void AddUserToGroup(AddUserToGroupRequest body)
         {
             System.Threading.Tasks.Task.Run(async () => await AddUserToGroupAsync(body, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
@@ -547,7 +547,7 @@ namespace AdminWebsite.UserAPI.Client
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Add a user to a group</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         public async System.Threading.Tasks.Task AddUserToGroupAsync(AddUserToGroupRequest body, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
@@ -589,25 +589,25 @@ namespace AdminWebsite.UserAPI.Client
                         if (status_ == "400") 
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            throw new UserServiceException<ProblemDetails>("Bad Request", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new UserApiException<ProblemDetails>("Bad Request", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == "404") 
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            throw new UserServiceException<ProblemDetails>("Not Found", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new UserApiException<ProblemDetails>("Not Found", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == "401") 
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new UserServiceException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
+                            throw new UserApiException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
                         }
                         else
                         if (status_ != "200" && status_ != "204")
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new UserServiceException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                            throw new UserApiException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -624,7 +624,7 @@ namespace AdminWebsite.UserAPI.Client
     
         /// <summary>Run a health check of the service</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         public System.Threading.Tasks.Task CheckServiceHealthAsync()
         {
             return CheckServiceHealthAsync(System.Threading.CancellationToken.None);
@@ -632,7 +632,7 @@ namespace AdminWebsite.UserAPI.Client
     
         /// <summary>Run a health check of the service</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         public void CheckServiceHealth()
         {
             System.Threading.Tasks.Task.Run(async () => await CheckServiceHealthAsync(System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
@@ -641,7 +641,7 @@ namespace AdminWebsite.UserAPI.Client
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Run a health check of the service</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         public async System.Threading.Tasks.Task CheckServiceHealthAsync(System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
@@ -680,19 +680,19 @@ namespace AdminWebsite.UserAPI.Client
                         if (status_ == "500") 
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new UserServiceException("Server Error", (int)response_.StatusCode, responseText_, headers_, null);
+                            throw new UserApiException("Server Error", (int)response_.StatusCode, responseText_, headers_, null);
                         }
                         else
                         if (status_ == "401") 
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new UserServiceException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
+                            throw new UserApiException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
                         }
                         else
                         if (status_ != "200" && status_ != "204")
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new UserServiceException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                            throw new UserApiException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -710,7 +710,7 @@ namespace AdminWebsite.UserAPI.Client
         /// <summary>Create a new hearings reforms user account</summary>
         /// <param name="body">Details of a new user</param>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         public System.Threading.Tasks.Task<NewUserResponse> CreateUserAsync(CreateUserRequest body)
         {
             return CreateUserAsync(body, System.Threading.CancellationToken.None);
@@ -719,7 +719,7 @@ namespace AdminWebsite.UserAPI.Client
         /// <summary>Create a new hearings reforms user account</summary>
         /// <param name="body">Details of a new user</param>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         public NewUserResponse CreateUser(CreateUserRequest body)
         {
             return System.Threading.Tasks.Task.Run(async () => await CreateUserAsync(body, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
@@ -729,7 +729,7 @@ namespace AdminWebsite.UserAPI.Client
         /// <summary>Create a new hearings reforms user account</summary>
         /// <param name="body">Details of a new user</param>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         public async System.Threading.Tasks.Task<NewUserResponse> CreateUserAsync(CreateUserRequest body, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
@@ -773,19 +773,19 @@ namespace AdminWebsite.UserAPI.Client
                         if (status_ == "404") 
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            throw new UserServiceException<ProblemDetails>("Not Found", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new UserApiException<ProblemDetails>("Not Found", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == "401") 
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new UserServiceException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
+                            throw new UserApiException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
                         }
                         else
                         if (status_ != "200" && status_ != "204")
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new UserServiceException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                            throw new UserApiException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
                         }
             
                         return default(NewUserResponse);
@@ -804,7 +804,7 @@ namespace AdminWebsite.UserAPI.Client
     
         /// <summary>Updates an AAD user</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         public System.Threading.Tasks.Task UpdateUserAsync(string body)
         {
             return UpdateUserAsync(body, System.Threading.CancellationToken.None);
@@ -812,7 +812,7 @@ namespace AdminWebsite.UserAPI.Client
     
         /// <summary>Updates an AAD user</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         public void UpdateUser(string body)
         {
             System.Threading.Tasks.Task.Run(async () => await UpdateUserAsync(body, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
@@ -821,7 +821,7 @@ namespace AdminWebsite.UserAPI.Client
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Updates an AAD user</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         public async System.Threading.Tasks.Task UpdateUserAsync(string body, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
@@ -863,25 +863,25 @@ namespace AdminWebsite.UserAPI.Client
                         if (status_ == "400") 
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            throw new UserServiceException<ProblemDetails>("Bad Request", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new UserApiException<ProblemDetails>("Bad Request", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == "404") 
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            throw new UserServiceException<ProblemDetails>("Not Found", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new UserApiException<ProblemDetails>("Not Found", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == "401") 
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new UserServiceException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
+                            throw new UserApiException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
                         }
                         else
                         if (status_ != "200" && status_ != "204")
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new UserServiceException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                            throw new UserApiException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -898,7 +898,7 @@ namespace AdminWebsite.UserAPI.Client
     
         /// <summary>Get User by AD User ID</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         public System.Threading.Tasks.Task<UserProfile> GetUserByAdUserIdAsync(string userId)
         {
             return GetUserByAdUserIdAsync(userId, System.Threading.CancellationToken.None);
@@ -906,7 +906,7 @@ namespace AdminWebsite.UserAPI.Client
     
         /// <summary>Get User by AD User ID</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         public UserProfile GetUserByAdUserId(string userId)
         {
             return System.Threading.Tasks.Task.Run(async () => await GetUserByAdUserIdAsync(userId, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
@@ -915,7 +915,7 @@ namespace AdminWebsite.UserAPI.Client
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Get User by AD User ID</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         public async System.Threading.Tasks.Task<UserProfile> GetUserByAdUserIdAsync(string userId, System.Threading.CancellationToken cancellationToken)
         {
             if (userId == null)
@@ -960,19 +960,19 @@ namespace AdminWebsite.UserAPI.Client
                         if (status_ == "404") 
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            throw new UserServiceException<ProblemDetails>("Not Found", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new UserApiException<ProblemDetails>("Not Found", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == "401") 
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new UserServiceException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
+                            throw new UserApiException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
                         }
                         else
                         if (status_ != "200" && status_ != "204")
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new UserServiceException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                            throw new UserApiException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
                         }
             
                         return default(UserProfile);
@@ -991,7 +991,7 @@ namespace AdminWebsite.UserAPI.Client
     
         /// <summary>Get User by User principal name</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         public System.Threading.Tasks.Task<UserProfile> GetUserByAdUserNameAsync(string userName)
         {
             return GetUserByAdUserNameAsync(userName, System.Threading.CancellationToken.None);
@@ -999,7 +999,7 @@ namespace AdminWebsite.UserAPI.Client
     
         /// <summary>Get User by User principal name</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         public UserProfile GetUserByAdUserName(string userName)
         {
             return System.Threading.Tasks.Task.Run(async () => await GetUserByAdUserNameAsync(userName, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
@@ -1008,7 +1008,7 @@ namespace AdminWebsite.UserAPI.Client
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Get User by User principal name</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         public async System.Threading.Tasks.Task<UserProfile> GetUserByAdUserNameAsync(string userName, System.Threading.CancellationToken cancellationToken)
         {
             if (userName == null)
@@ -1053,19 +1053,19 @@ namespace AdminWebsite.UserAPI.Client
                         if (status_ == "404") 
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            throw new UserServiceException<ProblemDetails>("Not Found", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new UserApiException<ProblemDetails>("Not Found", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == "401") 
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new UserServiceException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
+                            throw new UserApiException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
                         }
                         else
                         if (status_ != "200" && status_ != "204")
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new UserServiceException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                            throw new UserApiException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
                         }
             
                         return default(UserProfile);
@@ -1084,7 +1084,7 @@ namespace AdminWebsite.UserAPI.Client
     
         /// <summary>Delete an AAD user</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         public System.Threading.Tasks.Task DeleteUserAsync(string username)
         {
             return DeleteUserAsync(username, System.Threading.CancellationToken.None);
@@ -1092,7 +1092,7 @@ namespace AdminWebsite.UserAPI.Client
     
         /// <summary>Delete an AAD user</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         public void DeleteUser(string username)
         {
             System.Threading.Tasks.Task.Run(async () => await DeleteUserAsync(username, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
@@ -1101,7 +1101,7 @@ namespace AdminWebsite.UserAPI.Client
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Delete an AAD user</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         public async System.Threading.Tasks.Task DeleteUserAsync(string username, System.Threading.CancellationToken cancellationToken)
         {
             if (username == null)
@@ -1144,25 +1144,25 @@ namespace AdminWebsite.UserAPI.Client
                         if (status_ == "400") 
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            throw new UserServiceException<ProblemDetails>("Bad Request", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new UserApiException<ProblemDetails>("Bad Request", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == "404") 
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            throw new UserServiceException<ProblemDetails>("Not Found", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new UserApiException<ProblemDetails>("Not Found", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == "401") 
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new UserServiceException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
+                            throw new UserApiException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
                         }
                         else
                         if (status_ != "200" && status_ != "204")
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new UserServiceException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                            throw new UserApiException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
                         }
                     }
                     finally
@@ -1179,7 +1179,7 @@ namespace AdminWebsite.UserAPI.Client
     
         /// <summary>Get user profile by email</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         public System.Threading.Tasks.Task<UserProfile> GetUserByEmailAsync(string email)
         {
             return GetUserByEmailAsync(email, System.Threading.CancellationToken.None);
@@ -1187,7 +1187,7 @@ namespace AdminWebsite.UserAPI.Client
     
         /// <summary>Get user profile by email</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         public UserProfile GetUserByEmail(string email)
         {
             return System.Threading.Tasks.Task.Run(async () => await GetUserByEmailAsync(email, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
@@ -1196,7 +1196,7 @@ namespace AdminWebsite.UserAPI.Client
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Get user profile by email</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         public async System.Threading.Tasks.Task<UserProfile> GetUserByEmailAsync(string email, System.Threading.CancellationToken cancellationToken)
         {
             if (email == null)
@@ -1241,19 +1241,19 @@ namespace AdminWebsite.UserAPI.Client
                         if (status_ == "404") 
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            throw new UserServiceException<ProblemDetails>("Not Found", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new UserApiException<ProblemDetails>("Not Found", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == "401") 
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new UserServiceException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
+                            throw new UserApiException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
                         }
                         else
                         if (status_ != "200" && status_ != "204")
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new UserServiceException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                            throw new UserApiException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
                         }
             
                         return default(UserProfile);
@@ -1272,7 +1272,7 @@ namespace AdminWebsite.UserAPI.Client
     
         /// <summary>Get Judges from AD</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         public System.Threading.Tasks.Task<System.Collections.Generic.List<UserResponse>> GetJudgesAsync()
         {
             return GetJudgesAsync(System.Threading.CancellationToken.None);
@@ -1280,7 +1280,7 @@ namespace AdminWebsite.UserAPI.Client
     
         /// <summary>Get Judges from AD</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         public System.Collections.Generic.List<UserResponse> GetJudges()
         {
             return System.Threading.Tasks.Task.Run(async () => await GetJudgesAsync(System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
@@ -1289,7 +1289,7 @@ namespace AdminWebsite.UserAPI.Client
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Get Judges from AD</summary>
         /// <returns>Success</returns>
-        /// <exception cref="UserServiceException">A server side error occurred.</exception>
+        /// <exception cref="UserApiException">A server side error occurred.</exception>
         public async System.Threading.Tasks.Task<System.Collections.Generic.List<UserResponse>> GetJudgesAsync(System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
@@ -1330,19 +1330,19 @@ namespace AdminWebsite.UserAPI.Client
                         if (status_ == "404") 
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            throw new UserServiceException<ProblemDetails>("Not Found", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new UserApiException<ProblemDetails>("Not Found", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == "401") 
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new UserServiceException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
+                            throw new UserApiException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
                         }
                         else
                         if (status_ != "200" && status_ != "204")
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new UserServiceException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                            throw new UserApiException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
                         }
             
                         return default(System.Collections.Generic.List<UserResponse>);
@@ -1392,7 +1392,7 @@ namespace AdminWebsite.UserAPI.Client
                 catch (Newtonsoft.Json.JsonException exception)
                 {
                     var message = "Could not deserialize the response body string as " + typeof(T).FullName + ".";
-                    throw new UserServiceException(message, (int)response.StatusCode, responseText, headers, exception);
+                    throw new UserApiException(message, (int)response.StatusCode, responseText, headers, exception);
                 }
             }
             else
@@ -1411,7 +1411,7 @@ namespace AdminWebsite.UserAPI.Client
                 catch (Newtonsoft.Json.JsonException exception)
                 {
                     var message = "Could not deserialize the response body stream as " + typeof(T).FullName + ".";
-                    throw new UserServiceException(message, (int)response.StatusCode, string.Empty, headers, exception);
+                    throw new UserApiException(message, (int)response.StatusCode, string.Empty, headers, exception);
                 }
             }
         }
@@ -1581,7 +1581,7 @@ namespace AdminWebsite.UserAPI.Client
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "13.2.2.0 (NJsonSchema v10.1.4.0 (Newtonsoft.Json v12.0.0.0))")]
-    public partial class UserServiceException : System.Exception
+    public partial class UserApiException : System.Exception
     {
         public int StatusCode { get; private set; }
 
@@ -1589,7 +1589,7 @@ namespace AdminWebsite.UserAPI.Client
 
         public System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IEnumerable<string>> Headers { get; private set; }
 
-        public UserServiceException(string message, int statusCode, string response, System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IEnumerable<string>> headers, System.Exception innerException) 
+        public UserApiException(string message, int statusCode, string response, System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IEnumerable<string>> headers, System.Exception innerException) 
             : base(message + "\n\nStatus: " + statusCode + "\nResponse: \n" + response.Substring(0, response.Length >= 512 ? 512 : response.Length), innerException)
         {
             StatusCode = statusCode;
@@ -1604,11 +1604,11 @@ namespace AdminWebsite.UserAPI.Client
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "13.2.2.0 (NJsonSchema v10.1.4.0 (Newtonsoft.Json v12.0.0.0))")]
-    public partial class UserServiceException<TResult> : UserServiceException
+    public partial class UserApiException<TResult> : UserApiException
     {
         public TResult Result { get; private set; }
 
-        public UserServiceException(string message, int statusCode, string response, System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IEnumerable<string>> headers, TResult result, System.Exception innerException) 
+        public UserApiException(string message, int statusCode, string response, System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IEnumerable<string>> headers, TResult result, System.Exception innerException) 
             : base(message, statusCode, response, headers, innerException)
         {
             Result = result;

@@ -1,21 +1,21 @@
-import {HttpClientModule} from '@angular/common/http';
-import {ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
-import {AbstractControl, ReactiveFormsModule} from '@angular/forms';
-import {Router} from '@angular/router';
-import {RouterTestingModule} from '@angular/router/testing';
-import {of} from 'rxjs';
-import {CancelPopupComponent} from '../../popups/cancel-popup/cancel-popup.component';
-import {DiscardConfirmPopupComponent} from '../../popups/discard-confirm-popup/discard-confirm-popup.component';
-import {SharedModule} from '../../shared/shared.module';
+import { HttpClientModule } from '@angular/common/http';
+import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { AbstractControl, ReactiveFormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { RouterTestingModule } from '@angular/router/testing';
+import { of } from 'rxjs';
+import { CancelPopupComponent } from '../../popups/cancel-popup/cancel-popup.component';
+import { DiscardConfirmPopupComponent } from '../../popups/discard-confirm-popup/discard-confirm-popup.component';
+import { SharedModule } from '../../shared/shared.module';
 
-import {VideoHearingsService} from '../../services/video-hearings.service';
-import {MockValues} from '../../testing/data/test-objects';
-import {BreadcrumbComponent} from '../breadcrumb/breadcrumb.component';
-import {CreateHearingComponent} from './create-hearing.component';
-import {HearingModel} from '../../common/model/hearing.model';
-import {CaseModel} from '../../common/model/case.model';
-import {ErrorService} from '../../services/error.service';
-import {BookingService} from '../../services/booking.service';
+import { VideoHearingsService } from '../../services/video-hearings.service';
+import { MockValues } from '../../testing/data/test-objects';
+import { BreadcrumbComponent } from '../breadcrumb/breadcrumb.component';
+import { CreateHearingComponent } from './create-hearing.component';
+import { HearingModel } from '../../common/model/hearing.model';
+import { CaseModel } from '../../common/model/case.model';
+import { ErrorService } from '../../services/error.service';
+import { BookingService } from '../../services/booking.service';
 
 function initHearingRequest(): HearingModel {
   const newHearing = new HearingModel();
@@ -52,7 +52,7 @@ describe('CreateHearingComponent with multiple case types', () => {
 
   beforeEach(() => {
     videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',
-      ['getHearingMediums', 'getHearingTypes', 'getCurrentRequest', 'updateHearingRequest', 'setBookingHasChanged']);
+      ['getHearingTypes', 'getCurrentRequest', 'updateHearingRequest', 'setBookingHasChanged']);
     routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
     videoHearingsServiceSpy.getCurrentRequest.and.returnValue(newHearing);
@@ -62,10 +62,10 @@ describe('CreateHearingComponent with multiple case types', () => {
     TestBed.configureTestingModule({
       imports: [SharedModule, RouterTestingModule],
       providers: [
-        {provide: VideoHearingsService, useValue: videoHearingsServiceSpy},
-        {provide: Router, useValue: routerSpy},
-        {provide: ErrorService, useValue: errorService},
-        {provide: BookingService, useValue: bookingServiceSpy},
+        { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
+        { provide: Router, useValue: routerSpy },
+        { provide: ErrorService, useValue: errorService },
+        { provide: BookingService, useValue: bookingServiceSpy },
       ],
       declarations: [CreateHearingComponent, BreadcrumbComponent,
         CancelPopupComponent, DiscardConfirmPopupComponent]
@@ -172,8 +172,7 @@ describe('CreateHearingComponent with single case type', () => {
 
   beforeEach(() => {
     videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',
-      ['getHearingMediums', 'getHearingTypes', 'getCurrentRequest',
-        'updateHearingRequest', 'cancelRequest', 'setBookingHasChanged']);
+      ['getHearingTypes', 'getCurrentRequest', 'updateHearingRequest', 'cancelRequest', 'setBookingHasChanged']);
     routerSpy = jasmine.createSpyObj('Router', ['navigate']);
     bookingServiceSpy = jasmine.createSpyObj('BookingSErvice', ['isEditMode', 'resetEditMode']);
     videoHearingsServiceSpy.getCurrentRequest.and.returnValue(newHearing);
@@ -182,10 +181,10 @@ describe('CreateHearingComponent with single case type', () => {
     TestBed.configureTestingModule({
       imports: [HttpClientModule, ReactiveFormsModule, RouterTestingModule],
       providers: [
-        {provide: VideoHearingsService, useValue: videoHearingsServiceSpy},
-        {provide: Router, useValue: routerSpy},
-        {provide: ErrorService, useValue: errorService},
-        {provide: BookingService, useValue: bookingServiceSpy},
+        { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
+        { provide: Router, useValue: routerSpy },
+        { provide: ErrorService, useValue: errorService },
+        { provide: BookingService, useValue: bookingServiceSpy },
       ],
       declarations: [CreateHearingComponent, BreadcrumbComponent,
         CancelPopupComponent, DiscardConfirmPopupComponent]
@@ -223,8 +222,7 @@ describe('CreateHearingComponent with existing request in session', () => {
 
   beforeEach(() => {
     videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',
-      ['getHearingMediums', 'getHearingTypes', 'getCurrentRequest',
-        'updateHearingRequest', 'cancelRequest', 'setBookingHasChanged']);
+      ['getHearingTypes', 'getCurrentRequest', 'updateHearingRequest', 'cancelRequest', 'setBookingHasChanged']);
     routerSpy = jasmine.createSpyObj('Router', ['navigate']);
     bookingServiceSpy = jasmine.createSpyObj('BookingSErvice', ['isEditMode', 'resetEditMode']);
 
@@ -234,10 +232,10 @@ describe('CreateHearingComponent with existing request in session', () => {
     TestBed.configureTestingModule({
       imports: [HttpClientModule, ReactiveFormsModule, RouterTestingModule],
       providers: [
-        {provide: VideoHearingsService, useValue: videoHearingsServiceSpy},
-        {provide: Router, useValue: routerSpy},
-        {provide: ErrorService, useValue: errorService},
-        {provide: BookingService, useValue: bookingServiceSpy},
+        { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
+        { provide: Router, useValue: routerSpy },
+        { provide: ErrorService, useValue: errorService },
+        { provide: BookingService, useValue: bookingServiceSpy },
       ],
       declarations: [CreateHearingComponent, BreadcrumbComponent,
         CancelPopupComponent, DiscardConfirmPopupComponent]

@@ -1,10 +1,10 @@
 ﻿{
-  "runtime": "NetCore22",
+  "runtime": "NetCore31",
   "defaultVariables": null,
   "documentGenerator": {
     "fromDocument": {
-    "url": "https://vh-bookings-api-dev.azurewebsites.net/swagger/v1/swagger.json",
-    "output": null
+      "url": "https://vh-bookings-api-dev.azurewebsites.net/swagger/v1/swagger.json",
+      "output": null
     }
   },
   "codeGenerators": {
@@ -40,7 +40,7 @@
       "additionalNamespaceUsages": [],
       "additionalContractNamespaceUsages": [],
       "generateOptionalParameters": false,
-      "generateJsonMethods": true,
+      "generateJsonMethods": false,
       "enforceFlagEnums": false,
       "parameterArrayType": "System.Collections.Generic.IEnumerable",
       "parameterDictionaryType": "System.Collections.Generic.IDictionary",
@@ -65,7 +65,7 @@
       "arrayBaseType": "System.Collections.Generic.List",
       "dictionaryBaseType": "System.Collections.Generic.Dictionary",
       "classStyle": "Poco",
-      "generateDefaultValues": true,
+      "generateDefaultValues": false,
       "generateDataAnnotations": false,
       "excludedTypeNames": [],
       "excludedParameterNames": [],

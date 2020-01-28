@@ -1,11 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>netstandard2.1</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="NSwag.MSBuild" Version="13.2.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
@@ -14,7 +14,7 @@
 
   <Target Name="NSwag" AfterTargets="Build">
     <Copy SourceFiles="@(ReferencePath)" DestinationFolder="$(OutDir)References" />
-    <Exec Command="$(NSwagExe_Core22) run /variables:Configuration=$(Configuration),OutDir=$(OutDir)" />
+    <Exec Command="$(NSwagExe_Core31) run /runtime:NetCore31 /variables:Configuration=$(Configuration)" />
     <RemoveDir Directories="$(OutDir)References" />
   </Target>
   

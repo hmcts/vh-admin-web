@@ -190,7 +190,7 @@ let loggerSpy: jasmine.SpyObj<Logger>;
 
 loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error']);
 participantServiceSpy = jasmine.createSpyObj<ParticipantService>('ParticipantService',
-    ['checkDuplication', 'getAllParticipants', 'removeParticipant', 'mapParticipantsRoles']);
+    ['checkDuplication', 'removeParticipant', 'mapParticipantsRoles']);
 
 describe('AddParticipantComponent', () => {
 

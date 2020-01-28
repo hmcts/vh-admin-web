@@ -1,24 +1,33 @@
-using Microsoft.AspNetCore;
+using System.IO;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace AdminWebsite
 {
     public class Program
     {
-        protected Program()
-        {
-
-        }
-
         public static void Main(string[] args)
         {
             CreateWebHostBuilder(args).Build().Run();
         }
-
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
-                .UseApplicationInsights()
-                .UseKestrel(c => c.AddServerHeader = false)
-                .UseStartup<Startup>();
+        
+        private static IHostBuilder CreateWebHostBuilder(string[] args)
+        {
+            return Host.CreateDefaultBuilder(args)
+                .ConfigureWebHostDefaults(webBuilder => {
+                    webBuilder.UseContentRoot(Directory.GetCurrentDirectory());
+                    webBuilder.UseIISIntegration();
+                    webBuilder.UseStartup<Startup>();
+                    webBuilder.ConfigureLogging((hostingContext, logging) =>
+                    {
+                        logging.AddEventSourceLogger();
+                        logging
+                            .AddFilter<Microsoft.Extensions.Logging.ApplicationInsights.
+                                    ApplicationInsightsLoggerProvider>
+                                ("", LogLevel.Trace);
+                    });
+                });
+        }
     }
 }

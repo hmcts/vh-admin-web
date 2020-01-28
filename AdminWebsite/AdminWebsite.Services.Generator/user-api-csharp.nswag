@@ -1,5 +1,5 @@
 ﻿{
-  "runtime": "NetCore22",
+  "runtime": "NetCore31",
   "defaultVariables": null,
   "documentGenerator": {
     "fromDocument": {
@@ -14,7 +14,7 @@
       "generateClientClasses": true,
       "generateClientInterfaces": true,
       "injectHttpClient": true,
-      "disposeHttpClient": false,
+      "disposeHttpClient": true,
       "protectedMethods": [],
       "generateExceptionClasses": true,
       "exceptionClass": "UserServiceException",
@@ -40,7 +40,7 @@
       "additionalNamespaceUsages": [],
       "additionalContractNamespaceUsages": [],
       "generateOptionalParameters": false,
-      "generateJsonMethods": true,
+      "generateJsonMethods": false,
       "enforceFlagEnums": false,
       "parameterArrayType": "System.Collections.Generic.IEnumerable",
       "parameterDictionaryType": "System.Collections.Generic.IDictionary",
@@ -65,7 +65,7 @@
       "arrayBaseType": "System.Collections.Generic.List",
       "dictionaryBaseType": "System.Collections.Generic.Dictionary",
       "classStyle": "Poco",
-      "generateDefaultValues": true,
+      "generateDefaultValues": false,
       "generateDataAnnotations": false,
       "excludedTypeNames": [],
       "excludedParameterNames": [],
@@ -78,7 +78,6 @@
       "inlineNamedTuples": true,
       "inlineNamedAny": false,
       "generateDtoTypes": true,
-      "generateOptionalPropertiesAsNullable": false,
       "templateDirectory": null,
       "typeNameGeneratorType": null,
       "propertyNameGeneratorType": null,

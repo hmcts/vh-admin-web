@@ -10,7 +10,7 @@
 #pragma warning disable 1573 // Disable "CS1573 Parameter '...' has no matching param tag in the XML comment for ...
 #pragma warning disable 1591 // Disable "CS1591 Missing XML comment for publicly visible type or member ..."
 
-namespace AdminWebsite.BookingsAPI.Client
+namespace VideoWeb.Services.Bookings
 {
     using System = global::System;
     
@@ -505,7 +505,7 @@ namespace AdminWebsite.BookingsAPI.Client
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "13.2.2.0 (NJsonSchema v10.1.4.0 (Newtonsoft.Json v12.0.0.0))")]
     public partial class BookingsApiClient : IBookingsApiClient
     {
-        private string _baseUrl = "http://localhost:5301";
+        private string _baseUrl = "http://localhost:5300";
         private System.Net.Http.HttpClient _httpClient;
         private System.Lazy<Newtonsoft.Json.JsonSerializerSettings> _settings;
     
