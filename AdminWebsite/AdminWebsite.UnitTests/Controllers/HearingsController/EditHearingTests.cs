@@ -159,7 +159,37 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             ((OkObjectResult) result.Result).StatusCode.Should().Be(200);
             _bookingsApiClient.Verify(x => x.UpdateParticipantDetailsAsync(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<UpdateParticipantRequest>()), Times.Once);
         }
-        
+
+        [Test]
+        public async Task Should_update_judge_display_name()
+        {
+            var existingJudgeId = Guid.NewGuid();
+            _existingHearing.Participants.Add(new ParticipantResponse
+            {
+                First_name = "Existing",
+                Last_name = "Judge",
+                Contact_email = "existing@judge.com",
+                Username = "existing@judge.com",
+                Case_role_name = "Judge",
+                User_role_name = "Judge",
+                Id = existingJudgeId
+            });
+
+            const string newJudgeEmail = "new@judge.com";
+            _request.Participants.Add(new EditParticipantRequest
+            {
+                CaseRoleName = "Judge",
+                FirstName = "New",
+                LastName = "Judge",
+                ContactEmail = newJudgeEmail
+            });
+            _request.Participants[1].Id = _existingHearing.Participants[1].Id;
+
+            var result = await _controller.EditHearing(_validId, _request);
+            ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
+            _bookingsApiClient.Verify(x => x.UpdateParticipantDetailsAsync(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<UpdateParticipantRequest>()), Times.Once);
+        }
+
         [Test]
         public async Task Should_delete_missing_participants()
         {
