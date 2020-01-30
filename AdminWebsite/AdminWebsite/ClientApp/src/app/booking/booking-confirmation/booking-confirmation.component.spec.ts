@@ -125,4 +125,8 @@ describe('BookingConfirmationComponent', () => {
     expect(videoHearingsServiceSpy.cancelRequest).toHaveBeenCalled();
     expect(routerSpy.navigate).toHaveBeenCalled();
   });
+  it('should navigate to booking details', () => {
+    component.viewBookingDetails();
+    expect(routerSpy.navigate).toHaveBeenCalled();
+  });
 });
