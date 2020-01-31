@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 
 import { HearingDetailsResponse } from 'src/app/services/clients/api-client';
 import { VideoHearingsService } from 'src/app/services/video-hearings.service';
+import { BookingPersistService } from '../../services/bookings-persist.service';
 import { PageUrls } from 'src/app/shared/page-url.constants';
 import { Logger } from '../../services/logger';
 
@@ -22,6 +23,7 @@ export class BookingConfirmationComponent implements OnInit {
 
   constructor(
     private hearingService: VideoHearingsService,
+    private bookingPersistService: BookingPersistService,
     private router: Router,
     private logger: Logger) { }
 
@@ -40,6 +42,11 @@ export class BookingConfirmationComponent implements OnInit {
         },
         error => this.logger.error(`Cannot get the hearing by Id: ${hearingId}.`, error)
       );
+  }
+
+  viewBookingDetails(): void {
+    this.bookingPersistService.selectedHearingId = sessionStorage.getItem(this.newHearingSessionKey);
+    this.router.navigate([PageUrls.BookingDetails]);
   }
 
   bookAnotherHearing(): void {
