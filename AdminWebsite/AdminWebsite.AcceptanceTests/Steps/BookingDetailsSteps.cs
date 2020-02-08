@@ -23,14 +23,11 @@ namespace AdminWebsite.AcceptanceTests.Steps
         private const int Timeout = 60;
         private readonly TestContext _c;
         private readonly Dictionary<string, UserBrowser> _browsers;
-        private readonly BookingsApiManager _bookingsApiManager;
-        private readonly VideoApiManager _videoApiManager;
+
         public BookingDetailsSteps(TestContext testContext, Dictionary<string, UserBrowser> browsers)
         {
             _c = testContext;
             _browsers = browsers;
-            _bookingsApiManager = new BookingsApiManager(_c.AdminWebConfig.VhServices.BookingsApiUrl, _c.Tokens.BookingsApiBearerToken);
-            _videoApiManager = new VideoApiManager(_c.AdminWebConfig.VhServices.VideoApiUrl, _c.Tokens.VideoApiBearerToken);
         }
 
         public void ProgressToNextPage()
@@ -108,7 +105,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void ThenTheHearingIsAvailableInTheVideoWeb()
         {
             PollForHearingStatus(BookingStatus.Created).Should().BeTrue();
-            _videoApiManager.PollForConferenceExists(GetHearing().Id).Should().BeTrue();
+            _c.Apis.VideoApi.PollForConferenceExists(GetHearing().Id).Should().BeTrue();
         }
 
         [When(@"the user cancels the hearing")]
@@ -129,13 +126,13 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void ThenTheConferenceIsDeleted()
         {
             var hearing = GetHearing();
-            _videoApiManager.PollForConferenceDeleted(hearing.Id, Timeout).Should().BeTrue();
+            _c.Apis.VideoApi.PollForConferenceDeleted(hearing.Id, Timeout).Should().BeTrue();
         }
 
         private HearingDetailsResponse GetHearing()
         {
             var clerkUsername = UserManager.GetClerkUser(_c.UserAccounts).Username;
-            var hearingResponse = _bookingsApiManager.GetHearingsForUsername(clerkUsername);
+            var hearingResponse = _c.Apis.BookingsApi.GetHearingsForUsername(clerkUsername);
             var hearings = RequestHelper.DeserialiseSnakeCaseJsonToResponse<List<HearingDetailsResponse>>(hearingResponse.Content);
             return hearings.First(x => x.Cases.First().Name.Equals(_c.Test.HearingDetails.CaseName));
         }
