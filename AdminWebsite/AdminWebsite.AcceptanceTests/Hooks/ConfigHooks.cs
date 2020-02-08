@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using AcceptanceTests.Common.Configuration;
 using AcceptanceTests.Common.Configuration.Users;
 using AcceptanceTests.Common.Data.TestData;
@@ -21,14 +22,19 @@ namespace AdminWebsite.AcceptanceTests.Hooks
 
         public ConfigHooks(TestContext context)
         {
-            _configRoot = new ConfigurationManager("f99a3fe8-cf72-486a-b90f-b65c27da84ee").BuildConfig();
+            _configRoot = new ConfigurationManager("f99a3fe8-cf72-486a-b90f-b65c27da84ee").BuildConfig(GetTargetEnvironment());
             context.AdminWebConfig = new AdminWebConfig();
             context.UserAccounts = new List<UserAccount>();
             context.Tokens = new AdminWebTokens();
         }
 
+        private static string GetTargetEnvironment()
+        {
+            return NUnit.Framework.TestContext.Parameters["TargetEnvironment"] ?? "";
+        }
+
         [BeforeScenario(Order = (int)HooksSequence.ConfigHooks)]
-        public void RegisterSecrets(TestContext context)
+        public async Task RegisterSecrets(TestContext context)
         {
             RegisterAzureSecrets(context);
             RegisterTestUserSecrets(context);
@@ -37,7 +43,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             RegisterHearingServices(context);
             RegisterSauceLabsSettings(context);
             RunningAdminWebLocally(context);
-            GenerateBearerTokens(context);
+            await GenerateBearerTokens(context);
         }
 
         private void RegisterAzureSecrets(TestContext context)
@@ -95,7 +101,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             context.AdminWebConfig.VhServices.RunningAdminWebLocally = context.AdminWebConfig.VhServices.AdminWebUrl.Contains("localhost");
         }
 
-        private static async void GenerateBearerTokens(TestContext context)
+        private static async Task GenerateBearerTokens(TestContext context)
         {
             context.Tokens.BookingsApiBearerToken = await ConfigurationManager.GetBearerToken(
                 context.AdminWebConfig.AzureAdConfiguration, context.AdminWebConfig.VhServices.BookingsApiResourceId);

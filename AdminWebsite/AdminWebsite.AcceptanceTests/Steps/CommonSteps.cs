@@ -45,7 +45,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void ThenThePageShouldBeAccessible()
         {
             var axeResult = new AxeBuilder(_browsers[_c.CurrentUser.Key].Driver).Analyze();
-            axeResult.Violations.Should().BeEmpty();            
+            axeResult.Violations.Should().BeEmpty();
         }
     }
 }

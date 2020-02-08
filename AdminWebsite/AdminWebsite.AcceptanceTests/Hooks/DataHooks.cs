@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Net;
-using AcceptanceTests.Common.Api.Hearings;
 using AcceptanceTests.Common.Api.Requests;
-using AcceptanceTests.Common.Api.Users;
 using AcceptanceTests.Common.Configuration.Users;
 using AdminWebsite.AcceptanceTests.Data;
 using AdminWebsite.AcceptanceTests.Helpers;
@@ -18,14 +16,10 @@ namespace AdminWebsite.AcceptanceTests.Hooks
     {
         private const int Timeout = 60;
         private readonly TestContext _c;
-        private readonly UserApiManager _userApiManager;
-        private readonly BookingsApiManager _bookingsApiManager;
 
         public DataHooks(TestContext context)
         {
             _c = context;
-            _bookingsApiManager = new BookingsApiManager(_c.AdminWebConfig.VhServices.BookingsApiUrl, _c.Tokens.BookingsApiBearerToken);
-            _userApiManager = new UserApiManager(_c.AdminWebConfig.VhServices.UserApiUrl, _c.Tokens.UserApiBearerToken);
         }
 
         [BeforeScenario(Order = (int)HooksSequence.DataHooks)]
@@ -41,7 +35,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         {
             var exist = false;
 
-            foreach (var response in UserManager.GetNonClerkParticipantUsers(_c.UserAccounts).Select(participant => _userApiManager.GetUser(participant.Username)))
+            foreach (var response in UserManager.GetNonClerkParticipantUsers(_c.UserAccounts).Select(participant => _c.Apis.UserApi.GetUser(participant.Username)))
             {
                 exist = response.StatusCode == HttpStatusCode.OK;
             }
@@ -54,18 +48,18 @@ namespace AdminWebsite.AcceptanceTests.Hooks
                 .WithUserAccounts(_c.UserAccounts)
                 .Build();
 
-            var hearingResponse = _bookingsApiManager.CreateHearing(hearingRequest);
+            var hearingResponse = _c.Apis.BookingsApi.CreateHearing(hearingRequest);
             hearingResponse.StatusCode.Should().Be(HttpStatusCode.Created);
             var hearing = RequestHelper.DeserialiseSnakeCaseJsonToResponse<HearingDetailsResponse>(hearingResponse.Content);
             hearing.Should().NotBeNull();
 
             ParticipantExistsInTheDb(hearing.Id).Should().BeTrue();
-            _userApiManager.ParticipantsExistInAad(_c.UserAccounts, Timeout).Should().BeTrue();
+            _c.Apis.UserApi.ParticipantsExistInAad(_c.UserAccounts, Timeout).Should().BeTrue();
         }
 
         private bool ParticipantExistsInTheDb(Guid hearingId)
         {
-            var hearingResponse = _bookingsApiManager.GetHearing(hearingId);
+            var hearingResponse = _c.Apis.BookingsApi.GetHearing(hearingId);
             var hearing = RequestHelper.DeserialiseSnakeCaseJsonToResponse<HearingDetailsResponse>(hearingResponse.Content);
             hearing.Should().NotBeNull();
             return hearing.Participants.Any(x =>
