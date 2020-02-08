@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using AcceptanceTests.Common.Configuration;
 using AcceptanceTests.Common.Configuration.Users;
 using AcceptanceTests.Common.Data.TestData;
@@ -33,7 +34,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         }
 
         [BeforeScenario(Order = (int)HooksSequence.ConfigHooks)]
-        public void RegisterSecrets(TestContext context)
+        public async Task RegisterSecrets(TestContext context)
         {
             RegisterAzureSecrets(context);
             RegisterTestUserSecrets(context);
@@ -42,7 +43,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             RegisterHearingServices(context);
             RegisterSauceLabsSettings(context);
             RunningAdminWebLocally(context);
-            GenerateBearerTokens(context);
+            await GenerateBearerTokens(context);
         }
 
         private void RegisterAzureSecrets(TestContext context)
@@ -100,7 +101,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             context.AdminWebConfig.VhServices.RunningAdminWebLocally = context.AdminWebConfig.VhServices.AdminWebUrl.Contains("localhost");
         }
 
-        private static async void GenerateBearerTokens(TestContext context)
+        private static async Task GenerateBearerTokens(TestContext context)
         {
             context.Tokens.BookingsApiBearerToken = await ConfigurationManager.GetBearerToken(
                 context.AdminWebConfig.AzureAdConfiguration, context.AdminWebConfig.VhServices.BookingsApiResourceId);
