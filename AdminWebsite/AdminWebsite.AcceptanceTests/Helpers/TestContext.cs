@@ -10,6 +10,7 @@ namespace AdminWebsite.AcceptanceTests.Helpers
     public class TestContext
     {
         public AdminWebConfig AdminWebConfig { get; set; }
+        public Apis Apis { get; set; }
         public AdminWebTokens Tokens { get; set; }
         public DriverSetup Driver { get; set; }
         public UserAccount CurrentUser { get; set; }

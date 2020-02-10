@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
@@ -22,20 +21,20 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.4.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
     <PackageReference Include="Polly" Version="7.2.0" />
     <PackageReference Include="Protractor" Version="0.13.0" />
     <PackageReference Include="Selenium.Axe" Version="1.4.0" />
     <PackageReference Include="Selenium.Firefox.WebDriver" Version="0.26.0" />
     <PackageReference Include="Selenium.Support" Version="3.141.0" />
     <PackageReference Include="Selenium.WebDriver" Version="3.141.0" />
-    <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="79.0.3945.3600" />
+    <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="80.0.3987.1600" />
     <PackageReference Include="Selenium.WebDriver.IEDriver" Version="3.150.1" />
     <PackageReference Include="Selenium.WebDriver.MicrosoftDriver" Version="17.17134.0" />
-    <PackageReference Include="SpecFlow" Version="3.1.78" />
-    <PackageReference Include="SpecFlow.NUnit" Version="3.1.78" />
-    <PackageReference Include="SpecFlow.Tools.MsBuild.Generation" Version="3.1.78" />
-    <PackageReference Include="VH.AcceptanceTests.Common" Version="1.0.34" />
+    <PackageReference Include="SpecFlow" Version="3.1.82" />
+    <PackageReference Include="SpecFlow.NUnit" Version="3.1.82" />
+    <PackageReference Include="SpecFlow.Tools.MsBuild.Generation" Version="3.1.82" />
+    <PackageReference Include="VH.AcceptanceTests.Common" Version="1.0.57" />
   </ItemGroup>
 
   <ItemGroup>
@@ -57,6 +56,26 @@
     <None Update="useraccounts.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <ContentWithTargetPath Include="Configuration\Environments\appsettings.aat.json" Condition="Exists('Configuration\Environments\appsettings.aat.json')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>appsettings.aat.json</TargetPath>
+    </ContentWithTargetPath>
+    <ContentWithTargetPath Include="Configuration\Environments\appsettings.dev.json" Condition="Exists('Configuration\Environments\appsettings.dev.json')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>appsettings.dev.json</TargetPath>
+    </ContentWithTargetPath>
+    <ContentWithTargetPath Include="Configuration\Environments\appsettings.local.json" Condition="Exists('Configuration\Environments\appsettings.local.json')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>appsettings.local.json</TargetPath>
+    </ContentWithTargetPath>
+    <ContentWithTargetPath Include="Configuration\Environments\appsettings.localapis.json" Condition="Exists('Configuration\Environments\appsettings.localapis.json')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>appsettings.localapis.json</TargetPath>
+    </ContentWithTargetPath>
+    <ContentWithTargetPath Include="Configuration\Environments\appsettings.preview.json" Condition="Exists('Configuration\Environments\appsettings.preview.json')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>appsettings.preview.json</TargetPath>
+    </ContentWithTargetPath>
   </ItemGroup>
 
   <ItemGroup>
