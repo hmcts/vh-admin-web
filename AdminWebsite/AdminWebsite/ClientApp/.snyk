@@ -8,3 +8,6 @@ patch:
         patched: '2019-12-11T23:13:48.687Z'
     - '@angular-devkit/build-angular > @ngtools/webpack > tree-kill':
         patched: '2019-12-11T23:13:48.687Z'
+  SNYK-JS-HTTPSPROXYAGENT-469131:
+    - pa11y > puppeteer > https-proxy-agent:
+        patched: '2020-02-10T16:03:59.773Z'
