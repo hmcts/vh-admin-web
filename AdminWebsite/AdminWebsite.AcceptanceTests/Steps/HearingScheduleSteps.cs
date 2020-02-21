@@ -95,7 +95,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         public void ClickNext()
         {
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(HearingSchedulePage.NextButton).Click();
+            _browsers[_c.CurrentUser.Key].Click(HearingSchedulePage.NextButton);
         }
     }
 }

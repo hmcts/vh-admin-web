@@ -24,14 +24,14 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void ThenTheyCanNavigateToTheOpenGovernmentLicence()
         {
             _browsers[_c.CurrentUser.Key].ScrollTo(CommonAdminWebPage.OpenGovernmentLicenceLink);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(CommonAdminWebPage.OpenGovernmentLicenceLink).Click();
+            _browsers[_c.CurrentUser.Key].ClickLink(CommonAdminWebPage.OpenGovernmentLicenceLink);
             _browsers[_c.CurrentUser.Key].NavigateBack();
         }
 
         [Then(@"they can navigate to Contact us")]
         public void ThenTheyCanNavigateToContactUs()
         {
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(CommonAdminWebPage.ContactUsLink).Click();
+            _browsers[_c.CurrentUser.Key].ClickLink(CommonAdminWebPage.ContactUsLink);
             _browsers[_c.CurrentUser.Key].SwitchTab(Page.ContactUs.Url);
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(CommonAdminWebPage.ContactUsTitle).Displayed.Should().BeTrue();
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(CommonAdminWebPage

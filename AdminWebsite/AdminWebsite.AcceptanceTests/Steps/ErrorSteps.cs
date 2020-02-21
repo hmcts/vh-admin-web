@@ -31,8 +31,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void ThenTheUserIsOnTheUnsupportedBrowserErrorPageWithTextOfHowToRectifyTheProblem()
         {
             _browsers[_c.CurrentUser.Key].Driver.Url.Should().NotContain(Page.Dashboard.Url);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(ErrorPage.UnsupportedBrowserTitle)
-                .Displayed.Should().BeTrue();
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(ErrorPage.UnsupportedBrowserTitle).Displayed.Should().BeTrue();
         }
     }
 }

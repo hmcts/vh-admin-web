@@ -32,7 +32,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         public void ProgressToNextPage()
         {
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(CommonAdminWebPage.DashboardLink).Click();
+            _browsers[_c.CurrentUser.Key].Click(CommonAdminWebPage.DashboardLink);
         }
 
         [Given(@"there is a hearing where an (.*) participant has completed some questionnaire answers")]
@@ -46,7 +46,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [Then(@"the user can see a list of answers including the (.*) specific answer")]
         public void ThenTheUserCanSeeAListOfAnswers(string role)
         {
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(QuestionnairePage.QuestionnaireLink(_participantResponse.Last_name)).Click();
+            _browsers[_c.CurrentUser.Key].Click(QuestionnairePage.QuestionnaireLink(_participantResponse.Last_name));
             var allQuestionsAndAnswers = GetQuestionsAndAnswers();
             CheckQuestionHasBeenAnswered(_c.Test.TestData.Questionnaire.SelfTestQuestion1, "Yes", allQuestionsAndAnswers);
             CheckQuestionHasBeenAnswered(_c.Test.TestData.Questionnaire.SelfTestQuestion2, "Yes", allQuestionsAndAnswers);
