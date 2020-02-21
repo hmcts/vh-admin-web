@@ -41,7 +41,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         public void ClickNext()
         {
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AssignJudgePage.NextButton).Click();
+            _browsers[_c.CurrentUser.Key].Click(AssignJudgePage.NextButton);
         }
     }
 }
