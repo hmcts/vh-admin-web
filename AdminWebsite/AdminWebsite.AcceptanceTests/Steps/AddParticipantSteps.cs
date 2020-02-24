@@ -42,6 +42,8 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         public void ClickNext()
         {
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.PartyDropdown).SendKeys(Keys.Tab);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.NextButton);
             _browsers[_c.CurrentUser.Key].Click(AddParticipantsPage.NextButton);
         }
 
