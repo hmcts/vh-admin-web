@@ -224,12 +224,29 @@ describe('HearingScheduleComponent first visit', () => {
     durationHourControl.setValue(1);
     durationMinuteControl.setValue(30);
     courtControl.setValue(1);
-
+    component.isStartHoursInPast = false;
+    component.isStartMinutesInPast = false;
     expect(component.form.valid).toBeTruthy();
 
     component.saveScheduleAndLocation();
 
     expect(component.hasSaved).toBeTruthy();
+  });
+  it('should not update hearing request and move next page when hearing start tieme is not valid', () => {
+    dateControl.setValue('9999-12-30');
+    startTimeHourControl.setValue(10);
+    startTimeMinuteControl.setValue(30);
+    durationHourControl.setValue(1);
+    durationMinuteControl.setValue(30);
+    courtControl.setValue(1);
+    component.isStartHoursInPast = true;
+    component.isStartMinutesInPast = true;
+    component.hasSaved = false;
+    expect(component.form.valid).toBeTruthy();
+    component.saveScheduleAndLocation();
+
+    expect(component.failedSubmission).toBeTruthy();
+    expect(component.hasSaved).toBeFalsy();
   });
 });
 

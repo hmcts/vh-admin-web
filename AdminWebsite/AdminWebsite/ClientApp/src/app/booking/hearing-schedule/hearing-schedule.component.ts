@@ -211,7 +211,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
   }
 
   saveScheduleAndLocation() {
-    if (this.form.valid && !this.hearingDateInvalid) {
+    if (this.form.valid && !this.hearingDateInvalid && !this.isStartHoursInPast && !this.isStartMinutesInPast) {
       this.failedSubmission = false;
       this.updateHearingRequest();
       this.form.markAsPristine();
