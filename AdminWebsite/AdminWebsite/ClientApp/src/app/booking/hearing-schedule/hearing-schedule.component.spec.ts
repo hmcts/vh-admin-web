@@ -147,12 +147,15 @@ describe('HearingScheduleComponent first visit', () => {
       todayHours = new Date().getHours();
       dateControl.setValue(todayDate);
       startTimeHourControl.setValue(todayHours);
-      expect(component.startHoursInPast()).toBeFalsy();
-    }
-    else {
+      startTimeHourControl.markAsTouched();
+      component.startHoursInPast();
+      expect(component.isStartHoursInPast).toBeFalsy();
+    } else {
       dateControl.setValue(todayDate);
       startTimeHourControl.setValue(todayHours);
-      expect(component.startHoursInPast()).toBeTruthy();
+      startTimeHourControl.markAsTouched();
+      component.startHoursInPast();
+      expect(component.isStartHoursInPast).toBeTruthy();
     }
   });
   it('should set invalid hearing start minutes time if it is in the past', () => {
@@ -165,11 +168,12 @@ describe('HearingScheduleComponent first visit', () => {
     dateControl.setValue(todayDate);
     startTimeHourControl.setValue(todayHours);
     startTimeMinuteControl.setValue(todayMinutes);
-    
-    expect(component.startMinutesInPast).toBeTruthy();
+    startTimeMinuteControl.markAsTouched();
+    component.startMinutesInPast();
+    expect(component.isStartMinutesInPast).toBeTruthy();
 
   });
-  
+
   it('should validate hearing duration', () => {
     expect(durationHourControl.valid).toBeFalsy();
     expect(durationMinuteControl.valid).toBeFalsy();

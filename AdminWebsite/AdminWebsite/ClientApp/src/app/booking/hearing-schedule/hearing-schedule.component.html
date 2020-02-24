@@ -18,7 +18,7 @@
     </div>
   </div>
 
-  <div [ngClass]="hearingStartTimeHourInvalid || hearingStartTimeMinuteInvalid ? 'govuk-form-group--error' : 'govuk-form-group'">
+  <div [ngClass]="hearingStartTimeHourInvalid || hearingStartTimeMinuteInvalid || isStartHoursInPast || isStartMinutesInPast ? 'govuk-form-group--error' : 'govuk-form-group'">
     <label class="govuk-label govuk-!-width-one-half" for="hearingStartTime">
       Hearing start time (use the 24 hour clock)
     </label>
@@ -30,7 +30,7 @@
             <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="hearingStartTimeHour"
                    name="hearingStartTimeHour" type="number" min="0" max="23" placeholder="HH"
                    formControlName="hearingStartTimeHour" title="hearingStartTimeHour" aria-label="hearingStartTimeHour"
-                   aria-labelledby="hearingStartTimeHour" />
+                   aria-labelledby="hearingStartTimeHour" (blur)="startHoursInPast()" />
           </div>
         </div>
         <div class="govuk-date-input__item">
@@ -38,7 +38,7 @@
             <input class="govuk-input govuk-date-input__input govuk-input--width-2 minutes" id="hearingStartTimeMinute"
                    name="hearingStartTimeMinute" type="number" min="0" max="59" placeholder="MM"
                    title="hearingStartTimeMinute" formControlName="hearingStartTimeMinute"
-                   aria-label="hearingStartTimeMinute" aria-labelledby="hearingStartTimeMinute" />
+                   aria-label="hearingStartTimeMinute" aria-labelledby="hearingStartTimeMinute" (blur)="startMinutesInPast()" />
           </div>
         </div>
       </div>
@@ -51,6 +51,11 @@
     <div *ngIf="hearingStartTimeMinuteInvalid" class="alert alert-danger">
       <span id="hearingStartTimeMinute-error" class="govuk-error-message">
         Provide a value for start minutes between 0 and 59
+      </span>
+    </div>
+    <div *ngIf="isStartMinutesInPast || isStartHoursInPast" class="alert alert-danger">
+      <span id="hearingStartTimeMinute-error" class="govuk-error-message">
+        Provide time in the future
       </span>
     </div>
   </div>

@@ -30,6 +30,8 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
   canNavigate = true;
   selectedCourtName: string;
   isExistinHearing: boolean;
+  isStartHoursInPast = false;
+  isStartMinutesInPast = false;
 
   constructor(private refDataService: ReferenceDataService, protected hearingService: VideoHearingsService,
     private fb: FormBuilder, protected router: Router,
@@ -138,7 +140,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
   }
 
   get hearingStartTimeHourInvalid() {
-    return (this.hearingStartTimeHour.invalid || this.startHoursInPast()) &&
+    return this.hearingStartTimeHour.invalid &&
       (this.hearingStartTimeHour.dirty || this.hearingStartTimeHour.touched || this.failedSubmission);
   }
 
@@ -146,8 +148,9 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     const todayDate = new Date(new Date().setHours(0, 0, 0, 0));
     const realDate = new Date(new Date(this.hearingDate.value).setHours(0, 0, 0, 0));
     const todayHours = new Date().getHours();
-    
-    return realDate.toString() === todayDate.toString() && this.hearingStartTimeHour.value < todayHours;
+
+    this.isStartHoursInPast = realDate.toString() === todayDate.toString() && this.hearingStartTimeHour.value < todayHours
+      && (this.hearingStartTimeHour.dirty || this.hearingStartTimeHour.touched);
   }
 
   startMinutesInPast() {
@@ -155,12 +158,12 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     const realDate = new Date(new Date(this.hearingDate.value).setHours(0, 0, 0, 0));
     const todayHours = new Date().getHours();
     const todayMinutes = new Date().getMinutes();
-    return realDate.toString() === todayDate.toString() && this.hearingStartTimeHour.value === todayHours
-      && this.hearingStartTimeMinute.value <= todayMinutes;
+    this.isStartMinutesInPast = realDate.toString() === todayDate.toString() && this.hearingStartTimeHour.value === todayHours
+      && this.hearingStartTimeMinute.value <= todayMinutes && (this.hearingStartTimeMinute.dirty || this.hearingStartTimeMinute.touched);
   }
 
   get hearingStartTimeMinuteInvalid() {
-    return (this.hearingStartTimeMinute.invalid  || this.startMinutesInPast()) &&
+    return this.hearingStartTimeMinute.invalid &&
       (this.hearingStartTimeMinute.dirty || this.hearingStartTimeMinute.touched || this.failedSubmission);
   }
 
