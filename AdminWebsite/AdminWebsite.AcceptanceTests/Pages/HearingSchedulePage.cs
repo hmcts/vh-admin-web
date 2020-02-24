@@ -14,5 +14,6 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public static By NextButton = By.Id("nextButton");
         public static By CancelButton = By.Id("cancelButton");
         public static By HearingDateError = By.Id("hearingDate-error");
+        public static By HearingTimeError = By.Id("hearingTime-error");
     }
 }

@@ -18,3 +18,9 @@ Scenario: Hearing schedule date must be in the future
 	When the user attempts to set a date in the past
 	Then an error message appears to enter a future date
 	And the user cannot proceed to the next page
+
+Scenario: Hearing schedule time must be in the future
+	Given the Video Hearings Officer user has progressed to the Hearing Schedule page
+	When the user attempts to set a time in the past
+	Then an error message appears to enter a future time
+	And the user cannot proceed to the next page
