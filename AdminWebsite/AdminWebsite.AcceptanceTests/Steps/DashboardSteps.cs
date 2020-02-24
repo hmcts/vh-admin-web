@@ -24,41 +24,36 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             if (_c.RouteAfterDashboard.Equals(Page.HearingDetails))
             {
-                _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(DashboardPage.BookVideoHearingPanel).Click();
+                _browsers[_c.CurrentUser.Key].Click(DashboardPage.BookVideoHearingPanel);
             }
             else if (_c.RouteAfterDashboard.Equals(Page.BookingsList))
             {
-                _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(CommonAdminWebPage.BookingsListLink).Click();
+                _browsers[_c.CurrentUser.Key].Click(CommonAdminWebPage.BookingsListLink);
             }
             else
             {
-                _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(DashboardPage.QuestionnaireResultsPanel).Click();
+                _browsers[_c.CurrentUser.Key].Click(DashboardPage.QuestionnaireResultsPanel);
             }
         }
 
         [Then(@"there are various dashboard options available")]
         public void ThenThereAreVariousDashboardOptionsAvailable()
         {
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(DashboardPage.BookVideoHearingPanel)
-                .Displayed.Should().BeTrue();
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(DashboardPage.BookVideoHearingPanel).Displayed.Should().BeTrue();
             OnlyVhosCanSeeTheQuestionnaireResults();
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(CommonAdminWebPage.DashboardLink)
-                .Displayed.Should().BeTrue();
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(CommonAdminWebPage.BookingsListLink)
-                .Displayed.Should().BeTrue();
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(CommonAdminWebPage.DashboardLink).Displayed.Should().BeTrue();
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(CommonAdminWebPage.BookingsListLink).Displayed.Should().BeTrue();
         }
 
         private void OnlyVhosCanSeeTheQuestionnaireResults()
         {
             if (_c.CurrentUser.Role.ToLower().Equals("video hearings officer"))
             {
-                _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(DashboardPage.QuestionnaireResultsPanel)
-                    .Displayed.Should().BeTrue();
+                _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(DashboardPage.QuestionnaireResultsPanel).Displayed.Should().BeTrue();
             }
             else
             {
-                _browsers[_c.CurrentUser.Key].Driver
-                    .WaitUntilElementNotVisible(DashboardPage.QuestionnaireResultsPanel).Should().BeTrue();
+                _browsers[_c.CurrentUser.Key].Driver.WaitUntilElementNotVisible(DashboardPage.QuestionnaireResultsPanel).Should().BeTrue();
             }
         }
     }

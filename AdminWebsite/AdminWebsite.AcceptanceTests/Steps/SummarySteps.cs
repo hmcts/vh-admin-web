@@ -65,14 +65,14 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         public void ClickBook()
         {
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(SummaryPage.BookButton).Click();
+            _browsers[_c.CurrentUser.Key].Click(SummaryPage.BookButton);
         }
 
         [When(@"the user edits the (.*)")]
         public void WhenTheUserEditsTheHearing(string screen)
         {
             _bookingDetailsSteps.ClickEdit();
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(SummaryPage.EditScreenLink(screen)).Click();
+            _browsers[_c.CurrentUser.Key].Click(SummaryPage.EditScreenLink(screen));
 
             if (screen.Equals("hearing details"))
             {
@@ -100,7 +100,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             _bookingDetailsSteps.ClickEdit();
             _newUserToEdit = UserManager.GetUserFromDisplayName(_c.Test.HearingParticipants, _c.Test.AddParticipant.Participant.NewUserPrefix);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(SummaryPage.EditParticipantLink(_newUserToEdit.Firstname)).Click();
+            _browsers[_c.CurrentUser.Key].Click(SummaryPage.EditParticipantLink(_newUserToEdit.Firstname));
             _addParticipantSteps.EditANewParticipant(_newUserToEdit.AlternativeEmail);
         }
 

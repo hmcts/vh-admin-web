@@ -42,7 +42,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         public void ClickNext()
         {
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.NextButton).Click();
+            _browsers[_c.CurrentUser.Key].Click(AddParticipantsPage.NextButton);
         }
 
         private void AddExistingClaimantIndividual()
@@ -141,15 +141,13 @@ namespace AdminWebsite.AcceptanceTests.Steps
             var postcode = _c.Test.TestData.AddParticipant.Address.Postcode;
             EnterTextIfFieldIsNotPrePopulated(AddParticipantsPage.PostcodeTextfield, postcode);
             _browsers[_c.CurrentUser.Key].ScrollTo(AddParticipantsPage.AddParticipantLink);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilElementClickable(AddParticipantsPage.AddParticipantLink).Click();
+            _browsers[_c.CurrentUser.Key].ClickLink(AddParticipantsPage.AddParticipantLink);
         }
 
         private void EnterTextIfFieldIsNotPrePopulated(By element, string value)
         {
             if (_browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(element).GetAttribute("value").Length.Equals(0))
-            {
                 _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(element).SendKeys(value);
-            }
         }
 
         private void SetNewRepDetails(UserAccount user)
@@ -168,7 +166,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.SolicitorReferenceTextfield).SendKeys(solicitorsReference);
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.RepresentingTextfield).SendKeys(user.Representee);
             _browsers[_c.CurrentUser.Key].ScrollTo(AddParticipantsPage.AddParticipantLink);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilElementClickable(AddParticipantsPage.AddParticipantLink).Click();
+            _browsers[_c.CurrentUser.Key].ClickLink(AddParticipantsPage.AddParticipantLink);
         }
 
         private void SetExistingIndividualDetails(UserAccount user)
@@ -177,7 +175,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             IndividualFieldsAreSet(user);
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.DisplayNameTextfield).SendKeys(user.DisplayName);
             _browsers[_c.CurrentUser.Key].ScrollTo(AddParticipantsPage.AddParticipantLink);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilElementClickable(AddParticipantsPage.AddParticipantLink).Click();
+            _browsers[_c.CurrentUser.Key].ClickLink(AddParticipantsPage.AddParticipantLink);
         }
 
         private void SetExistingRepDetails(UserAccount user)
@@ -191,7 +189,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.SolicitorReferenceTextfield).SendKeys(solicitorsReference);
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.RepresentingTextfield).SendKeys(user.Representee);
             _browsers[_c.CurrentUser.Key].ScrollTo(AddParticipantsPage.AddParticipantLink);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilElementClickable(AddParticipantsPage.AddParticipantLink).Click();
+            _browsers[_c.CurrentUser.Key].ClickLink(AddParticipantsPage.AddParticipantLink);
         }
 
         private bool ExistingUserEmailIsSelected(string alternativeEmail)
@@ -280,7 +278,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _browsers[_c.CurrentUser.Key].Clear(AddParticipantsPage.DisplayNameTextfield);
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.DisplayNameTextfield).SendKeys(_c.Test.HearingParticipants.First(x => x.AlternativeEmail.ToLower().Equals(alternativeEmail.ToLower())).DisplayName);
             _browsers[_c.CurrentUser.Key].ScrollTo(AddParticipantsPage.NextButton);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilElementClickable(AddParticipantsPage.NextButton).Click();
+            _browsers[_c.CurrentUser.Key].Click(AddParticipantsPage.NextButton);
         }
     }
 }

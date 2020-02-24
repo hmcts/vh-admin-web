@@ -35,7 +35,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             SetHearingType();
             _c.Test.HearingDetails.DoNotSendQuestionnaires = _c.Test.TestData.HearingDetails.DoNotSendQuestionnaires;
             SendQuestionnaires();
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(HearingDetailsPage.NextButton).Click();
+            _browsers[_c.CurrentUser.Key].Click(HearingDetailsPage.NextButton);
         }
 
         [When(@"the user elects to send the questionnaires")]
@@ -45,13 +45,13 @@ namespace AdminWebsite.AcceptanceTests.Steps
             SetHearingType();
             _c.Test.HearingDetails.DoNotSendQuestionnaires = false;
             SendQuestionnaires();
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(HearingDetailsPage.NextButton).Click();
+            _browsers[_c.CurrentUser.Key].Click(HearingDetailsPage.NextButton);
         }
 
         public void EditHearingDetails()
         {
             SetHearingDetails();
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(HearingDetailsPage.NextButton).Click();
+            _browsers[_c.CurrentUser.Key].Click(HearingDetailsPage.NextButton);
         }
 
         public void SetHearingDetails()
@@ -80,12 +80,12 @@ namespace AdminWebsite.AcceptanceTests.Steps
             if (_c.Test.HearingDetails.DoNotSendQuestionnaires)
             {
                 if (!isCheckboxSelected)
-                    _browsers[_c.CurrentUser.Key].Driver.WaitUntilElementExists(HearingDetailsPage.SendQuestionnairesCheckbox).Click();
+                    _browsers[_c.CurrentUser.Key].ClickCheckbox(HearingDetailsPage.SendQuestionnairesCheckbox);
             }
             else
             {
                 if (isCheckboxSelected)
-                    _browsers[_c.CurrentUser.Key].Driver.WaitUntilElementExists(HearingDetailsPage.SendQuestionnairesCheckbox).Click();
+                    _browsers[_c.CurrentUser.Key].ClickCheckbox(HearingDetailsPage.SendQuestionnairesCheckbox);
             }
         }
     }

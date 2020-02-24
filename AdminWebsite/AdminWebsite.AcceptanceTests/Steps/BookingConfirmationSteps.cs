@@ -24,7 +24,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void ProgressToNextPage()
         {
             VerifyBookingWasSuccessful();
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(CommonAdminWebPage.BookingsListLink).Click();
+            _browsers[_c.CurrentUser.Key].ClickLink(CommonAdminWebPage.BookingsListLink);
         }
 
         [When(@"the user views the booking confirmation form")]
@@ -40,13 +40,13 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [When(@"the user clicks the Return to dashboard link")]
         public void WhenTheUserClicksTheDashboardLink()
         {
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingConfirmationPage.ReturnToDashboardLink).Click();
+            _browsers[_c.CurrentUser.Key].ClickLink(BookingConfirmationPage.ReturnToDashboardLink);
         }
 
         [When(@"the user clicks the Book another hearing button")]
         public void WhenTheUserClicksTheBookAnotherHearingButton()
         {
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingConfirmationPage.BookAnotherHearingButton).Click();
+            _browsers[_c.CurrentUser.Key].Click(BookingConfirmationPage.BookAnotherHearingButton);
         }
     }
 }

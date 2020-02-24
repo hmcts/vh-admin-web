@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using AcceptanceTests.Common.Api.Hearings;
 using AcceptanceTests.Common.Api.Requests;
 using AcceptanceTests.Common.Configuration.Users;
 using AcceptanceTests.Common.Driver.Browser;
@@ -47,26 +46,16 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         private void VerifyTheBookingDetails()
         {
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.CaseNumberTitle).Text
-                .Should().Be(_c.Test.HearingDetails.CaseNumber);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.CreatedBy).Text
-                .Should().Be(_c.CurrentUser.Username);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.CreatedDate).Text
-                .Should().NotBeNullOrWhiteSpace();
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.CaseNumber).Text
-                .Should().Be(_c.Test.HearingDetails.CaseNumber);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.CaseName).Text
-                .Should().Be(_c.Test.HearingDetails.CaseName);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.HearingType).Text
-                .Should().Be(_c.Test.HearingDetails.HearingType.Name);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.HearingStartDate).Text.ToLower()
-                .Should().Be(_c.Test.HearingSchedule.ScheduledDate.ToLocalTime().ToString(DateFormats.HearingSummaryDate).ToLower());
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.CourtroomAddress).Text
-                .Should().Be($"{_c.Test.HearingSchedule.HearingVenue}, {_c.Test.HearingSchedule.Room}");
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.Duration).Text
-                .Should().Contain($"listed for {_c.Test.HearingSchedule.DurationMinutes} minutes");
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.OtherInformation).Text
-                .Should().Be(_c.Test.OtherInformation);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.CaseNumberTitle).Text.Should().Be(_c.Test.HearingDetails.CaseNumber);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.CreatedBy).Text.Should().Be(_c.CurrentUser.Username);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.CreatedDate).Text.Should().NotBeNullOrWhiteSpace();
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.CaseNumber).Text.Should().Be(_c.Test.HearingDetails.CaseNumber);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.CaseName).Text.Should().Be(_c.Test.HearingDetails.CaseName);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.HearingType).Text.Should().Be(_c.Test.HearingDetails.HearingType.Name);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.HearingStartDate).Text.ToLower().Should().Be(_c.Test.HearingSchedule.ScheduledDate.ToLocalTime().ToString(DateFormats.HearingSummaryDate).ToLower());
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.CourtroomAddress).Text.Should().Be($"{_c.Test.HearingSchedule.HearingVenue}, {_c.Test.HearingSchedule.Room}");
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.Duration).Text.Should().Contain($"listed for {_c.Test.HearingSchedule.DurationMinutes} minutes");
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.OtherInformation).Text.Should().Be(_c.Test.OtherInformation);
         }
 
         private void VerifyJudgeInParticipantsList()
@@ -83,12 +72,9 @@ namespace AdminWebsite.AcceptanceTests.Steps
             {
                 var email = _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.ParticipantEmail(i)).Text;
                 var participant = _c.Test.HearingParticipants.First(x => x.AlternativeEmail.ToLower().Equals(email.ToLower()));
-                _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.ParticipantName(i)).Text
-                    .Should().Contain($"{_c.Test.TestData.AddParticipant.Participant.Title} {participant.Firstname} {participant.Lastname}");
-                _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.ParticipantRole(i)).Text
-                    .Should().Contain(participant.HearingRoleName);
-                _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.ParticipantUsername(i)).Text.ToLower()
-                    .Should().Be(participant.Username.ToLower());
+                _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.ParticipantName(i)).Text.Should().Contain($"{_c.Test.TestData.AddParticipant.Participant.Title} {participant.Firstname} {participant.Lastname}");
+                _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.ParticipantRole(i)).Text.Should().Contain(participant.HearingRoleName);
+                _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.ParticipantUsername(i)).Text.ToLower().Should().Be(participant.Username.ToLower());
             }
         }
 
@@ -96,7 +82,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void WhenTheUserConfirmsTheBooking()
         {
             _browsers[_c.CurrentUser.Key].ScrollTo(BookingDetailsPage.ConfirmButton);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilElementClickable(BookingDetailsPage.ConfirmButton).Click();
+            _browsers[_c.CurrentUser.Key].Click(BookingDetailsPage.ConfirmButton);
             _browsers[_c.CurrentUser.Key].ScrollTo(BookingDetailsPage.ConfirmedLabel);
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.ConfirmedLabel).Displayed.Should().BeTrue();
         }
@@ -112,8 +98,8 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void WhenTheUserAttemptsToCancelTheHearing()
         {
             _browsers[_c.CurrentUser.Key].ScrollTo(BookingDetailsPage.CancelButton);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilElementClickable(BookingDetailsPage.CancelButton).Click();
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilElementClickable(BookingDetailsPage.ConfirmCancelButton).Click();
+            _browsers[_c.CurrentUser.Key].Click(BookingDetailsPage.CancelButton);
+            _browsers[_c.CurrentUser.Key].Click(BookingDetailsPage.ConfirmCancelButton);
         }
 
         [Then(@"the hearing is cancelled")]
@@ -155,7 +141,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void ClickEdit()
         {
             _browsers[_c.CurrentUser.Key].ScrollTo(BookingDetailsPage.EditButton);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilElementClickable(BookingDetailsPage.EditButton).Click();
+            _browsers[_c.CurrentUser.Key].Click(BookingDetailsPage.EditButton);
         }
     }
 }
