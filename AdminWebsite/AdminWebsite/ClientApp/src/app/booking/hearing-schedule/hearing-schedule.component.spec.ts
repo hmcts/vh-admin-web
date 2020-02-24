@@ -138,6 +138,38 @@ describe('HearingScheduleComponent first visit', () => {
     expect(startTimeMinuteControl.valid).toBeTruthy();
   });
 
+  it('should set invalid hearing start hours time if hours are in the past', () => {
+    const todayDate = new Date(new Date().setHours(0, 0, 0, 0));
+    let todayHours = new Date().getHours() - 1;
+
+    if (todayHours < 0) {
+      // if current hour then its valid depend on minutes
+      todayHours = new Date().getHours();
+      dateControl.setValue(todayDate);
+      startTimeHourControl.setValue(todayHours);
+      expect(component.startHoursInPast()).toBeFalsy();
+    }
+    else {
+      dateControl.setValue(todayDate);
+      startTimeHourControl.setValue(todayHours);
+      expect(component.startHoursInPast()).toBeTruthy();
+    }
+  });
+  it('should set invalid hearing start minutes time if it is in the past', () => {
+    expect(startTimeHourControl.valid).toBeFalsy();
+    expect(startTimeMinuteControl.valid).toBeFalsy();
+    const todayDate = new Date(new Date().setHours(0, 0, 0, 0));
+    const todayHours = new Date().getHours();
+    const todayMinutes = new Date().getMinutes();
+
+    dateControl.setValue(todayDate);
+    startTimeHourControl.setValue(todayHours);
+    startTimeMinuteControl.setValue(todayMinutes);
+    
+    expect(component.startMinutesInPast).toBeTruthy();
+
+  });
+  
   it('should validate hearing duration', () => {
     expect(durationHourControl.valid).toBeFalsy();
     expect(durationMinuteControl.valid).toBeFalsy();

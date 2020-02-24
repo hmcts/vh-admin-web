@@ -138,12 +138,29 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
   }
 
   get hearingStartTimeHourInvalid() {
-    return this.hearingStartTimeHour.invalid &&
+    return (this.hearingStartTimeHour.invalid || this.startHoursInPast()) &&
       (this.hearingStartTimeHour.dirty || this.hearingStartTimeHour.touched || this.failedSubmission);
   }
 
+  startHoursInPast() {
+    const todayDate = new Date(new Date().setHours(0, 0, 0, 0));
+    const realDate = new Date(new Date(this.hearingDate.value).setHours(0, 0, 0, 0));
+    const todayHours = new Date().getHours();
+    
+    return realDate.toString() === todayDate.toString() && this.hearingStartTimeHour.value < todayHours;
+  }
+
+  startMinutesInPast() {
+    const todayDate = new Date(new Date().setHours(0, 0, 0, 0));
+    const realDate = new Date(new Date(this.hearingDate.value).setHours(0, 0, 0, 0));
+    const todayHours = new Date().getHours();
+    const todayMinutes = new Date().getMinutes();
+    return realDate.toString() === todayDate.toString() && this.hearingStartTimeHour.value === todayHours
+      && this.hearingStartTimeMinute.value <= todayMinutes;
+  }
+
   get hearingStartTimeMinuteInvalid() {
-    return this.hearingStartTimeMinute.invalid &&
+    return (this.hearingStartTimeMinute.invalid  || this.startMinutesInPast()) &&
       (this.hearingStartTimeMinute.dirty || this.hearingStartTimeMinute.touched || this.failedSubmission);
   }
 
