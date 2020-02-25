@@ -96,7 +96,6 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         public void ClickNext()
         {
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(HearingSchedulePage.CourtRoomTextfield).SendKeys(Keys.Tab);
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(HearingSchedulePage.NextButton);
             _browsers[_c.CurrentUser.Key].Click(HearingSchedulePage.NextButton);
         }

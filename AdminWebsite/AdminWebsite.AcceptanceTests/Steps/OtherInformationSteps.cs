@@ -36,8 +36,6 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         public void ClickNext()
         {
-            _browsers[_c.CurrentUser.Key].WaitForPageToLoad();
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(OtherInformationPage.OtherInformationTextfield).SendKeys(Keys.Tab);
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(OtherInformationPage.NextButton);
             _browsers[_c.CurrentUser.Key].Click(OtherInformationPage.NextButton);
         }
