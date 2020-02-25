@@ -8,7 +8,6 @@ using AcceptanceTests.Common.Model.Hearing;
 using AcceptanceTests.Common.Test.Steps;
 using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.AcceptanceTests.Pages;
-using OpenQA.Selenium;
 using TechTalk.SpecFlow;
 
 namespace AdminWebsite.AcceptanceTests.Steps

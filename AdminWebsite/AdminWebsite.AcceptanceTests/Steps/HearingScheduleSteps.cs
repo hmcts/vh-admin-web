@@ -7,7 +7,6 @@ using AdminWebsite.AcceptanceTests.Data;
 using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.AcceptanceTests.Pages;
 using FluentAssertions;
-using OpenQA.Selenium;
 using TechTalk.SpecFlow;
 
 namespace AdminWebsite.AcceptanceTests.Steps
