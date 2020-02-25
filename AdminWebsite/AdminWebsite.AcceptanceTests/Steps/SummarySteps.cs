@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Threading;
 using AcceptanceTests.Common.Api.Hearings;
 using AcceptanceTests.Common.Api.Requests;
 using AcceptanceTests.Common.Api.Users;
@@ -65,6 +66,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         public void ClickBook()
         {
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(SummaryPage.BookButton);
             _browsers[_c.CurrentUser.Key].Click(SummaryPage.BookButton);
         }
 
@@ -167,6 +169,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         private void VerifyBookingUpdated()
         {
+            Thread.Sleep(TimeSpan.FromSeconds(0.5));
             var bookingsApiManager = new BookingsApiManager(_c.AdminWebConfig.VhServices.BookingsApiUrl, _c.Tokens.BookingsApiBearerToken);
             var response = bookingsApiManager.PollForHearingByUsername(UserManager.GetClerkUser(_c.UserAccounts).Username, _c.Test.HearingDetails.CaseName);
             var hearings = RequestHelper.DeserialiseSnakeCaseJsonToResponse<List<HearingDetailsResponse>>(response.Content);

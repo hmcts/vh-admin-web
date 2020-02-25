@@ -42,7 +42,6 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         public void ClickNext()
         {
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AssignJudgePage.JudgeNameDropdown).SendKeys(Keys.Tab);
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AssignJudgePage.NextButton);
             _browsers[_c.CurrentUser.Key].Click(AssignJudgePage.NextButton);
         }
