@@ -87,6 +87,22 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(HearingSchedulePage.HearingDateError).Displayed.Should().BeTrue();
         }
 
+        [When(@"the user attempts to set a time in the past")]
+        public void WhenTheUserAttemptsToSetATimeInThePast()
+        {
+            SetHearingScheduleDetails();
+            _c.Test.HearingSchedule.ScheduledDate = DateTime.Today;
+            AddHearingDate();
+            AddHearingTime();
+            AddHearingScheduleDetails();
+        }
+
+        [Then(@"an error message appears to enter a future time")]
+        public void ThenAnErrorMessageAppearsToEnterAFutureTime()
+        {
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(HearingSchedulePage.HearingTimeError).Displayed.Should().BeTrue();
+        }
+
         [Then(@"the user cannot proceed to the next page")]
         public void ThenTheUserCannotProceedToTheNextPage()
         {

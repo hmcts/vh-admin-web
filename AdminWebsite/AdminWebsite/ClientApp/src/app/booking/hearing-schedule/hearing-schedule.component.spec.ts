@@ -138,6 +138,42 @@ describe('HearingScheduleComponent first visit', () => {
     expect(startTimeMinuteControl.valid).toBeTruthy();
   });
 
+  it('should set invalid hearing start hours time if hours are in the past', () => {
+    const todayDate = new Date(new Date().setHours(0, 0, 0, 0));
+    let todayHours = new Date().getHours() - 1;
+
+    if (todayHours < 0) {
+      // if current hour then its valid depend on minutes
+      todayHours = new Date().getHours();
+      dateControl.setValue(todayDate);
+      startTimeHourControl.setValue(todayHours);
+      startTimeHourControl.markAsTouched();
+      component.startHoursInPast();
+      expect(component.isStartHoursInPast).toBeFalsy();
+    } else {
+      dateControl.setValue(todayDate);
+      startTimeHourControl.setValue(todayHours);
+      startTimeHourControl.markAsTouched();
+      component.startHoursInPast();
+      expect(component.isStartHoursInPast).toBeTruthy();
+    }
+  });
+  it('should set invalid hearing start minutes time if it is in the past', () => {
+    expect(startTimeHourControl.valid).toBeFalsy();
+    expect(startTimeMinuteControl.valid).toBeFalsy();
+    const todayDate = new Date(new Date().setHours(0, 0, 0, 0));
+    const todayHours = new Date().getHours();
+    const todayMinutes = new Date().getMinutes();
+
+    dateControl.setValue(todayDate);
+    startTimeHourControl.setValue(todayHours);
+    startTimeMinuteControl.setValue(todayMinutes);
+    startTimeMinuteControl.markAsTouched();
+    component.startMinutesInPast();
+    expect(component.isStartMinutesInPast).toBeTruthy();
+
+  });
+
   it('should validate hearing duration', () => {
     expect(durationHourControl.valid).toBeFalsy();
     expect(durationMinuteControl.valid).toBeFalsy();
@@ -188,12 +224,29 @@ describe('HearingScheduleComponent first visit', () => {
     durationHourControl.setValue(1);
     durationMinuteControl.setValue(30);
     courtControl.setValue(1);
-
+    component.isStartHoursInPast = false;
+    component.isStartMinutesInPast = false;
     expect(component.form.valid).toBeTruthy();
 
     component.saveScheduleAndLocation();
 
     expect(component.hasSaved).toBeTruthy();
+  });
+  it('should not update hearing request and move next page when hearing start tieme is not valid', () => {
+    dateControl.setValue('9999-12-30');
+    startTimeHourControl.setValue(10);
+    startTimeMinuteControl.setValue(30);
+    durationHourControl.setValue(1);
+    durationMinuteControl.setValue(30);
+    courtControl.setValue(1);
+    component.isStartHoursInPast = true;
+    component.isStartMinutesInPast = true;
+    component.hasSaved = false;
+    expect(component.form.valid).toBeTruthy();
+    component.saveScheduleAndLocation();
+
+    expect(component.failedSubmission).toBeTruthy();
+    expect(component.hasSaved).toBeFalsy();
   });
 });
 
