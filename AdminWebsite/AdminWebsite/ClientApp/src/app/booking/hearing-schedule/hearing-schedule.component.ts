@@ -30,6 +30,8 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
   canNavigate = true;
   selectedCourtName: string;
   isExistinHearing: boolean;
+  isStartHoursInPast = false;
+  isStartMinutesInPast = false;
 
   constructor(private refDataService: ReferenceDataService, protected hearingService: VideoHearingsService,
     private fb: FormBuilder, protected router: Router,
@@ -142,6 +144,24 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
       (this.hearingStartTimeHour.dirty || this.hearingStartTimeHour.touched || this.failedSubmission);
   }
 
+  startHoursInPast() {
+    const todayDate = new Date(new Date().setHours(0, 0, 0, 0));
+    const realDate = new Date(new Date(this.hearingDate.value).setHours(0, 0, 0, 0));
+    const todayHours = new Date().getHours();
+
+    this.isStartHoursInPast = realDate.toString() === todayDate.toString() && this.hearingStartTimeHour.value < todayHours
+      && (this.hearingStartTimeHour.dirty || this.hearingStartTimeHour.touched);
+  }
+
+  startMinutesInPast() {
+    const todayDate = new Date(new Date().setHours(0, 0, 0, 0));
+    const realDate = new Date(new Date(this.hearingDate.value).setHours(0, 0, 0, 0));
+    const todayHours = new Date().getHours();
+    const todayMinutes = new Date().getMinutes();
+    this.isStartMinutesInPast = realDate.toString() === todayDate.toString() && this.hearingStartTimeHour.value === todayHours
+      && this.hearingStartTimeMinute.value <= todayMinutes && (this.hearingStartTimeMinute.dirty || this.hearingStartTimeMinute.touched);
+  }
+
   get hearingStartTimeMinuteInvalid() {
     return this.hearingStartTimeMinute.invalid &&
       (this.hearingStartTimeMinute.dirty || this.hearingStartTimeMinute.touched || this.failedSubmission);
@@ -191,7 +211,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
   }
 
   saveScheduleAndLocation() {
-    if (this.form.valid && !this.hearingDateInvalid) {
+    if (this.form.valid && !this.hearingDateInvalid && !this.isStartHoursInPast && !this.isStartMinutesInPast) {
       this.failedSubmission = false;
       this.updateHearingRequest();
       this.form.markAsPristine();
