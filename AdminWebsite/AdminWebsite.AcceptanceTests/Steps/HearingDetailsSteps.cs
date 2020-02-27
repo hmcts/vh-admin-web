@@ -8,7 +8,6 @@ using AcceptanceTests.Common.Model.Hearing;
 using AcceptanceTests.Common.Test.Steps;
 using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.AcceptanceTests.Pages;
-using OpenQA.Selenium;
 using TechTalk.SpecFlow;
 
 namespace AdminWebsite.AcceptanceTests.Steps
@@ -64,7 +63,6 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _c.Test.HearingDetails.CaseName = $"Admin Web Automated Test {GenerateRandom.Letters(_fromRandomNumber)}";
             _browsers[_c.CurrentUser.Key].Clear(HearingDetailsPage.CaseNameTextfield);
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(HearingDetailsPage.CaseNameTextfield).SendKeys(_c.Test.HearingDetails.CaseName);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(HearingDetailsPage.CaseNameTextfield).SendKeys(Keys.Tab);
         }
 
         public void SetHearingType(HearingType hearingType = null)

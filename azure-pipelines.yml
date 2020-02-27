@@ -31,18 +31,16 @@ resources:
   - repository: azureDevOpsTemplates
     type: github
     name: hmcts/azure-devops-templates
-    endpoint: 'GitHubDevOps'
+    endpoint: hmcts
 
 trigger:
   branches:
     include:
     - master
     - release/*
-  tags:
-    include:
-    - v*
+    - hotfix/*
 pr:
-  - '*'
+  - master
 
 jobs:
 - template: jobs/angularDotNetCore.yml@azureDevOpsTemplates # Template reference
