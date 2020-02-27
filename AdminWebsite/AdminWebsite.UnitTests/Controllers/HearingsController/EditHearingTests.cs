@@ -161,6 +161,95 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
 
         [Test]
+        public async Task Should_not_update_existing_participants_if_participnt_not_found_in_hearing()
+        {
+            _request.Participants[0].Id = Guid.NewGuid();
+
+            var result = await _controller.EditHearing(_validId, _request);
+            ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
+            _bookingsApiClient.Verify(x => x.UpdateParticipantDetailsAsync(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<UpdateParticipantRequest>()), Times.Never);
+        }
+
+        [Test]
+        public async Task Should_not_update_existing_participants_if_user_role_is_not_defined()
+        {
+            _request.Participants[0].Id = _existingHearing.Participants[0].Id;
+            _existingHearing.Participants[0].User_role_name = "";
+
+            var result = await _controller.EditHearing(_validId, _request);
+            ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
+            _bookingsApiClient.Verify(x => x.UpdateParticipantDetailsAsync(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<UpdateParticipantRequest>()), Times.Never);
+        }
+
+        [Test]
+        public async Task Should_add_judge_if_no_any_records_for_judge_exists_in_database()
+        {
+            _request.Participants.ForEach(x => { x.ContactEmail = "existing@judge.com"; x.CaseRoleName = "Judge"; });
+            _existingHearing.Participants.ForEach(x => x.Username = "notexisting@judge.com");
+            _existingHearing.Participants.Add(new ParticipantResponse
+            {
+                Id = Guid.NewGuid(),
+                User_role_name = "Individual",
+                Contact_email = "old@user.com",
+                Username = "other@judge.com"
+            });
+
+            var result = await _controller.EditHearing(_validId, _request);
+            ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
+            _bookingsApiClient.Verify(x => x.AddParticipantsToHearingAsync(It.IsAny<Guid>(),  It.IsAny<AddParticipantsToHearingRequest>()), Times.Once);
+        }
+
+        [Test]
+        public async Task Should_not_add_judge_if_the_records_for_judge_exists_in_database()
+        {
+            _request.Participants.ForEach(x => { x.ContactEmail = "existing@judge.com"; x.CaseRoleName = "Judge"; });
+            _existingHearing.Participants.ForEach(x => x.Username = "existing@judge.com");
+            _existingHearing.Participants.Add(new ParticipantResponse
+            {
+                Id = Guid.NewGuid(),
+                User_role_name = "Individual",
+                Contact_email = "old@user.com",
+                Username = "existing@judge.com"
+            });
+
+            var result = await _controller.EditHearing(_validId, _request);
+            ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
+            _bookingsApiClient.Verify(x => x.AddParticipantsToHearingAsync(It.IsAny<Guid>(), It.IsAny<AddParticipantsToHearingRequest>()), Times.Never);
+        }
+        [Test]
+        public async Task Should_not_add_judge_if_one_record_for_judge_exists_in_database()
+        {
+            _request.Participants.ForEach(x => { x.ContactEmail = "existing@judge.com"; x.CaseRoleName = "Judge"; });
+            _existingHearing.Participants.ForEach(x => x.Username = "existing@judge.com");
+
+            var result = await _controller.EditHearing(_validId, _request);
+            ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
+            _bookingsApiClient.Verify(x => x.AddParticipantsToHearingAsync(It.IsAny<Guid>(), It.IsAny<AddParticipantsToHearingRequest>()), Times.Never);
+        }
+
+        [Test]
+        public async Task Should_add_judge_if_participants_list_of_the_hearing_null()
+        {
+            _request.Participants.ForEach(x => { x.ContactEmail = "existing@judge.com"; x.CaseRoleName = "Judge"; });
+            _existingHearing.Participants = null;
+
+            var result = await _controller.EditHearing(_validId, _request);
+            ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
+            _bookingsApiClient.Verify(x => x.AddParticipantsToHearingAsync(It.IsAny<Guid>(), It.IsAny<AddParticipantsToHearingRequest>()), Times.Once);
+        }
+
+        [Test]
+        public async Task Should_add_judge_if_no_any_participants_in_the_list_for_the_hearing()
+        {
+            _request.Participants.ForEach(x => { x.ContactEmail = "existing@judge.com"; x.CaseRoleName = "Judge"; });
+            _existingHearing.Participants = new List<ParticipantResponse>();
+
+            var result = await _controller.EditHearing(_validId, _request);
+            ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
+            _bookingsApiClient.Verify(x => x.AddParticipantsToHearingAsync(It.IsAny<Guid>(), It.IsAny<AddParticipantsToHearingRequest>()), Times.Once);
+        }
+
+        [Test]
         public async Task Should_update_judge_display_name()
         {
             var existingJudgeId = Guid.NewGuid();
@@ -198,6 +287,71 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var result = await _controller.EditHearing(_validId, _request);
             ((OkObjectResult) result.Result).StatusCode.Should().Be(200);
             _bookingsApiClient.Verify(x => x.RemoveParticipantFromHearingAsync(It.IsAny<Guid>(), removedUserId), Times.Once);
+        }
+
+        [Test]
+        public async Task Should_not_delete_missing_participant_if_no_any_participants_in_the_list_for_the_hearing()
+        {
+            _existingHearing.Participants = new List<ParticipantResponse>();
+
+            var result = await _controller.EditHearing(_validId, _request);
+            ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
+            _bookingsApiClient.Verify(x => x.RemoveParticipantFromHearingAsync(It.IsAny<Guid>(), It.IsAny<Guid>()), Times.Never);
+        }
+        [Test]
+        public async Task Should_delete_missing_participant_from_hearing_if_no_any_participants_in_the_request()
+        {
+            _request.Participants = new List<EditParticipantRequest>();
+
+            var result = await _controller.EditHearing(_validId, _request);
+            ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
+            _bookingsApiClient.Verify(x => x.RemoveParticipantFromHearingAsync(It.IsAny<Guid>(), It.IsAny<Guid>()), Times.Once);
+        }
+        [Test]
+        public async Task Should_not_delete_missing_participant_if_no_any_participants()
+        {
+            _existingHearing.Participants = new List<ParticipantResponse>();
+            _request.Participants = new List<EditParticipantRequest>();
+            var result = await _controller.EditHearing(_validId, _request);
+            ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
+            _bookingsApiClient.Verify(x => x.RemoveParticipantFromHearingAsync(It.IsAny<Guid>(), It.IsAny<Guid>()), Times.Never);
+        }
+
+        [Test]
+        public async Task Should_delete_two_missing_participant_if_two_with_no_matching_contact_email_exist_for_the_hearing()
+        {
+            _request.Participants.ForEach(x => { x.ContactEmail = "existing@judge.com"; x.CaseRoleName = "Judge"; });
+            _existingHearing.Participants.ForEach(x => x.Contact_email= "old@judge.com");
+            _existingHearing.Participants.Add(new ParticipantResponse
+            {
+                Id = Guid.NewGuid(),
+                User_role_name = "Individual",
+                Contact_email = "old@judge.com",
+                Username = "old@judge.com"
+            });
+
+            var result = await _controller.EditHearing(_validId, _request);
+            ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
+            _bookingsApiClient.Verify(x => x.RemoveParticipantFromHearingAsync(It.IsAny<Guid>(), It.IsAny<Guid>()), Times.Exactly(2));
+        }
+
+        [Test]
+        public async Task Should_not_delete_missing_participant_if_all_match_contact_email_for_updated_hearing()
+        {
+            _request.Participants.ForEach(x => { x.ContactEmail = "old@judge.com"; x.CaseRoleName = "Judge"; });
+            _request.Participants.Add(new EditParticipantRequest { ContactEmail = "old@judge.com" });
+            _existingHearing.Participants.ForEach(x => x.Contact_email = "old@judge.com");
+            _existingHearing.Participants.Add(new ParticipantResponse
+            {
+                Id = Guid.NewGuid(),
+                User_role_name = "Individual",
+                Contact_email = "old@judge.com",
+                Username = "old@judge.com"
+            });
+
+            var result = await _controller.EditHearing(_validId, _request);
+            ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
+            _bookingsApiClient.Verify(x => x.RemoveParticipantFromHearingAsync(It.IsAny<Guid>(), It.IsAny<Guid>()), Times.Never);
         }
 
         [Test]

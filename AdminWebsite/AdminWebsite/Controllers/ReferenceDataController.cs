@@ -68,7 +68,7 @@ namespace AdminWebsite.Controllers
             var response = new List<CaseAndHearingRolesResponse>();
 
             var caseRoles = await _bookingsApiClient.GetCaseRolesForCaseTypeAsync(caseTypeName);
-            if (caseRoles.Any())
+            if (caseRoles != null && caseRoles.Any())
             {
                 foreach (var item in caseRoles)
                 {

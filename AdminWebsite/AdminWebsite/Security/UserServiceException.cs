@@ -7,6 +7,9 @@ namespace AdminWebsite.Security
     [Serializable]
     public class UserServiceException : Exception
     {
+        private const string REASON = "Reason";
+        private const string INFO = "info";
+
         public string Reason { get; set; }
         public UserServiceException(string message, string reason) : base($"{message}: {reason}")
         {
@@ -17,7 +20,7 @@ namespace AdminWebsite.Security
         protected UserServiceException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
-            Reason = info.GetString("Reason");
+            Reason = info.GetString(REASON);
         }
 
         public UserServiceException()
@@ -29,10 +32,10 @@ namespace AdminWebsite.Security
         {
             if (info == null)
             {
-                throw new ArgumentNullException("info");
+                throw new ArgumentNullException(INFO);
             }
 
-            info.AddValue("Reason", this.Reason);
+            info.AddValue(REASON, this.Reason);
 
             // MUST call through to the base class to let it save its own state
             base.GetObjectData(info, context);

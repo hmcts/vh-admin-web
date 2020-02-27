@@ -76,7 +76,6 @@ namespace AdminWebsite.Extensions
             serviceCollection.AddTransient<HearingApiTokenHandler>();
             serviceCollection.AddTransient<UserApiTokenHandler>();
             serviceCollection.AddScoped<ITokenProvider, TokenProvider>();
-            serviceCollection.AddScoped<IActiveDirectoryGroup, ActiveDirectoryGroup>();
             serviceCollection.AddScoped<IUserAccountService, UserAccountService>();
             serviceCollection.AddScoped<SecuritySettings>();
             serviceCollection.AddScoped<AppConfigSettings>();

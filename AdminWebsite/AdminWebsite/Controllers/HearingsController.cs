@@ -152,7 +152,7 @@ namespace AdminWebsite.Controllers
                         // Judge is manually created in AD, no need to create one
                         if (participant.CaseRoleName == "Judge")
                         {
-                            if (hearing.Participants.Any(p => p.Username.Equals(participant.ContactEmail)))
+                            if (hearing.Participants != null && hearing.Participants.Any(p => p.Username.Equals(participant.ContactEmail)))
                             {
                                 //If the judge already exists in the database, there is no need to add again.
                                 continue;
@@ -180,7 +180,8 @@ namespace AdminWebsite.Controllers
                             else if (existingParticipant.User_role_name == "Judge")
                             {
                                 //Update Judge
-                                var updateParticipantRequest = new UpdateParticipantRequest { 
+                                var updateParticipantRequest = new UpdateParticipantRequest
+                                {
                                     Display_name = participant.DisplayName
                                 };
                                 await _bookingsApiClient.UpdateParticipantDetailsAsync(hearingId, participant.Id.Value, updateParticipantRequest);
@@ -199,6 +200,10 @@ namespace AdminWebsite.Controllers
                 }
 
                 // Delete existing participants if the request doesn't contain any update information
+                if (hearing.Participants == null)
+                { 
+                    hearing.Participants = new List<ParticipantResponse>();
+                }
                 var deleteParticipantList = hearing.Participants.Where(p => request.Participants.All(rp => rp.ContactEmail != p.Contact_email));
                 foreach (var participantToDelete in deleteParticipantList)
                 {
@@ -306,7 +311,7 @@ namespace AdminWebsite.Controllers
                 foreach (var item in caseTypes)
                 {
                     var case_type = types.FirstOrDefault(s => s.Name == item);
-                    if (case_type != null)
+                    if (case_type != null && !typeIds.Any(s => s == case_type.Id))
                     {
                         typeIds.Add(case_type.Id);
                     }

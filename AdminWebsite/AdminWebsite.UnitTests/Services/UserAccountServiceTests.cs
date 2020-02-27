@@ -59,11 +59,14 @@ namespace AdminWebsite.UnitTests.Services
 
             var participant = new BookingsAPI.Client.ParticipantRequest
             {
-                Username = "existin@user.com"
+                Username = "existin@user.com",
+                First_name ="Steve David",
+                Last_name ="Some Name",
             };
 
             await _service.UpdateParticipantUsername(participant);
 
+            _userApiClient.Verify(x => x.CreateUserAsync(It.Is<CreateUserRequest>(x => x.First_name == "SteveDavid" && x.Last_name == "SomeName")), Times.Once);
             _userApiClient.Verify(x => x.AddUserToGroupAsync(It.Is<AddUserToGroupRequest>(y => y.Group_name == "External")),
                 Times.Once);
         }

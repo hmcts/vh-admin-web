@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Text.Encodings.Web;
@@ -52,15 +53,15 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var participant = new BookingsAPI.Client.ParticipantRequest
             {
                 Username = "username",
-                Case_role_name= "Claimant",
+                Case_role_name = "Claimant",
                 Hearing_role_name = "Solicitor"
             };
 
             await PostWithParticipants(participant);
-            
+
             _userAccountService.Verify(x => x.UpdateParticipantUsername(participant), Times.Once);
         }
-        
+
         [Test]
         public async Task Should_not_update_user_details_for_judge()
         {
@@ -70,15 +71,15 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var participant = new BookingsAPI.Client.ParticipantRequest
             {
                 Username = "username",
-                Case_role_name= "Judge",
+                Case_role_name = "Judge",
                 Hearing_role_name = "Judge"
             };
-            
+
             await PostWithParticipants(participant);
-            
-            _userAccountService.Verify(x => x.UpdateParticipantUsername(participant), Times.Never);   
+
+            _userAccountService.Verify(x => x.UpdateParticipantUsername(participant), Times.Never);
         }
-        
+
         [Test]
         public async Task Should_pass_bad_request_from_bookings_api()
         {
@@ -94,7 +95,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 .Throws(ClientException.ForBookingsAPI(HttpStatusCode.BadRequest));
 
             var result = await _controller.Post(hearing);
-            result.Result.Should().BeOfType<BadRequestObjectResult>();   
+            result.Result.Should().BeOfType<BadRequestObjectResult>();
         }
 
         [Test]
@@ -106,7 +107,11 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             const string currentUsername = "test@user.com";
             _userIdentity.Setup(x => x.GetUserIdentityName()).Returns(currentUsername);
 
-            await PostNewHearing();
+            var result = await PostNewHearing();
+
+            result.Result.Should().BeOfType<CreatedResult>();
+            var createdResult = (CreatedResult)result.Result;
+            createdResult.Location.Should().Be("");
 
             _bookingsApiClient.Verify(x => x.BookNewHearingAsync(It.Is<BookNewHearingRequest>(
                 request => request.Created_by == currentUsername)), Times.Once);
@@ -132,6 +137,43 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             response.Result.Should().BeOfType<BadRequestObjectResult>();
 
             _userAccountService.Verify(x => x.UpdateParticipantUsername(participant), Times.Never);
+        }
+
+        [Test]
+        public async Task Should_update_booking_status()
+        {
+            _userIdentity.Setup(x => x.GetUserIdentityName()).Returns("admin@email.com");
+            _bookingsApiClient.Setup(x => x.UpdateBookingStatusAsync(It.IsAny<Guid>(), It.IsAny<UpdateBookingStatusRequest>())).Verifiable();
+
+            var response = await _controller.UpdateBookingStatus(Guid.NewGuid(), new UpdateBookingStatusRequest());
+
+            response.Should().BeOfType<NoContentResult>();
+
+            _bookingsApiClient.Verify(x => x.UpdateBookingStatusAsync(It.IsAny<Guid>(), It.IsAny<UpdateBookingStatusRequest>()), Times.Once);
+        }
+
+        [Test]
+        public async Task Should_catch_BookingsApiException_by_updating_booking_status_and_returns_bad_result()
+        {
+            _userIdentity.Setup(x => x.GetUserIdentityName()).Returns("admin@email.com");
+            _bookingsApiClient.Setup(x => x.UpdateBookingStatusAsync(It.IsAny<Guid>(), It.IsAny<UpdateBookingStatusRequest>()))
+                .Throws(new BookingsApiException("Error",400,"response",null, null));
+
+            var response = await _controller.UpdateBookingStatus(Guid.NewGuid(), new UpdateBookingStatusRequest());
+
+            response.Should().BeOfType<BadRequestObjectResult>();
+        }
+
+        [Test]
+        public async Task Should_catch_BookingsApiException_by_updating_booking_status_and_returns_not_found_result()
+        {
+            _userIdentity.Setup(x => x.GetUserIdentityName()).Returns("admin@email.com");
+            _bookingsApiClient.Setup(x => x.UpdateBookingStatusAsync(It.IsAny<Guid>(), It.IsAny<UpdateBookingStatusRequest>()))
+                .Throws(new BookingsApiException("Error", 404, "response", null, null));
+
+            var response = await _controller.UpdateBookingStatus(Guid.NewGuid(), new UpdateBookingStatusRequest());
+
+            response.Should().BeOfType<NotFoundObjectResult>();
         }
 
         private Task<ActionResult<HearingDetailsResponse>> PostNewHearing()
