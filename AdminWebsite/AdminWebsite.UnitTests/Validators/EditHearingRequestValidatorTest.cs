@@ -1,18 +1,7 @@
-﻿using AdminWebsite.Configuration;
-using AdminWebsite.Helper;
-using AdminWebsite.Security;
-using AdminWebsite.Services;
-using AdminWebsite.UserAPI.Client;
-using FluentAssertions;
-using Microsoft.Extensions.Options;
-using Moq;
+﻿using AdminWebsite.Models;
+using AdminWebsite.Validators;
 using NUnit.Framework;
 using System.Collections.Generic;
-using System.Net;
-using System.Threading.Tasks;
-using AdminWebsite.UnitTests.Helper;
-using AdminWebsite.Validators;
-using AdminWebsite.Models;
 using System.Linq;
 
 namespace AdminWebsite.UnitTests.Validators
