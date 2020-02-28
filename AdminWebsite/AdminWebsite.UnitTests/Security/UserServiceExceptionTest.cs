@@ -1,14 +1,8 @@
 ﻿using AdminWebsite.BookingsAPI.Client;
-using AdminWebsite.Helper;
 using AdminWebsite.Security;
-using AdminWebsite.Services.Models;
-using FluentAssertions;
 using NUnit.Framework;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Security.Claims;
 
 namespace AdminWebsite.UnitTests.Security
 {
