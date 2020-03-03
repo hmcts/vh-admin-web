@@ -37,7 +37,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         public void AddHearingDate()
         {
-            var date = _c.Test.HearingSchedule.ScheduledDate.Date.ToString(DateFormats.LocalDateFormat);
+            var date = _c.Test.HearingSchedule.ScheduledDate.Date.ToString(DateFormats.LocalDateFormat(_c.AdminWebConfig.SauceLabsConfiguration.RunningOnSauceLabs()));
             _browsers[_c.CurrentUser.Key].Clear(HearingSchedulePage.HearingDateTextfield);
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(HearingSchedulePage.HearingDateTextfield).SendKeys(date);
         }
