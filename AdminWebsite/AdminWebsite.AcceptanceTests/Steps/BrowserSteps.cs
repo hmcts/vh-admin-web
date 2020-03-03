@@ -32,6 +32,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
             var browser = new UserBrowser(_c.CurrentUser)
                 .SetBaseUrl(_c.AdminWebConfig.VhServices.AdminWebUrl)
+                .SetTargetBrowser(_c.AdminWebConfig.TestConfig.TargetBrowser)
                 .SetDriver(_c.Driver);
 
             _browsers.Add(_c.CurrentUser.Key, browser);
