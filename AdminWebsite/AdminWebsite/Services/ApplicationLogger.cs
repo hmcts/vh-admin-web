@@ -14,7 +14,10 @@ namespace AdminWebsite.Services
     public static class ApplicationLogger
     {
         private static readonly TelemetryClient TelemetryClient = InitTelemetryClient();
-        
+        private const string EVENT = "Event";
+        private const string INFORMATION = "Information";
+        private const string USER = "User";
+
         private static TelemetryClient InitTelemetryClient() {
             var config = TelemetryConfiguration.CreateDefault();
             var client = new TelemetryClient(config);
@@ -24,8 +27,8 @@ namespace AdminWebsite.Services
         public static void Trace(string traceCategory, string eventTitle, string information)
         {
             var telemetry = new TraceTelemetry(traceCategory, SeverityLevel.Information);
-            telemetry.Properties.Add("Information", information);
-            telemetry.Properties.Add("Event", eventTitle);
+            telemetry.Properties.Add(INFORMATION, information);
+            telemetry.Properties.Add(EVENT, eventTitle);
             TelemetryClient.TrackTrace(telemetry);
         }
 
@@ -33,9 +36,9 @@ namespace AdminWebsite.Services
         {
             var telemetry = new TraceTelemetry(traceCategory, SeverityLevel.Information);
 
-            telemetry.Properties.Add("Event", eventTitle);
+            telemetry.Properties.Add(EVENT, eventTitle);
 
-            telemetry.Properties.Add("User", user);
+            telemetry.Properties.Add(USER, user);
 
             if (properties != null)
             {
@@ -53,9 +56,9 @@ namespace AdminWebsite.Services
         {
             var telemetry = new TraceTelemetry(traceCategory, SeverityLevel.Information);
 
-            telemetry.Properties.Add("Event", eventTitle);
+            telemetry.Properties.Add(EVENT, eventTitle);
 
-            telemetry.Properties.Add("User", user);
+            telemetry.Properties.Add(USER, user);
 
             if (valueToSerialized != null)
             {
@@ -74,11 +77,11 @@ namespace AdminWebsite.Services
 
             var exceptionTelemetry = new ExceptionTelemetry(exception);
 
-            exceptionTelemetry.Properties.Add("Event", traceCategory + " " + eventTitle);
+            exceptionTelemetry.Properties.Add(EVENT, traceCategory + " " + eventTitle);
 
             if (user?.Identity != null)
             {
-                exceptionTelemetry.Properties.Add("User", user.Identity.Name);
+                exceptionTelemetry.Properties.Add(USER, user.Identity.Name);
             }
 
             if (properties != null)

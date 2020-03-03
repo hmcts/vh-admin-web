@@ -13,7 +13,7 @@ namespace AdminWebsite.UnitTests.Helper
     public class AdministratorRoleClaimsTest
     {
         [Test]
-        public void should_return_user_case_types()
+        public void Should_return_user_case_types()
         {
             var userRole = new UserRole
             {
@@ -35,7 +35,7 @@ namespace AdminWebsite.UnitTests.Helper
         }
 
         [Test]
-        public void should_return_empty_list_of_user_case_types()
+        public void Should_return_empty_list_of_user_case_types()
         {
             var userRole = new UserRole
             {
@@ -60,7 +60,7 @@ namespace AdminWebsite.UnitTests.Helper
         [TestCase(UserRoleType.Individual, false)]
         [TestCase(UserRoleType.Judge, false)]
         [TestCase(UserRoleType.Representative, false)]
-        public void should_set_isvhofficeradministratorrole_property(UserRoleType role, bool expectedValue)
+        public void Should_set_isvhofficeradministratorrole_property(UserRoleType role, bool expectedValue)
         {
             var userGroupData = new UserRole { UserRoleType = role };
 
@@ -77,7 +77,7 @@ namespace AdminWebsite.UnitTests.Helper
         [TestCase(UserRoleType.Individual, false)]
         [TestCase(UserRoleType.Judge, false)]
         [TestCase(UserRoleType.Representative, false)]
-        public void should_set_iscaseadministratorrole_property(UserRoleType role, bool expectedValue)
+        public void Should_set_iscaseadministratorrole_property(UserRoleType role, bool expectedValue)
         {
             var userGroupData = new UserRole { UserRoleType = role };
 
@@ -94,7 +94,7 @@ namespace AdminWebsite.UnitTests.Helper
         [TestCase(UserRoleType.Individual, false)]
         [TestCase(UserRoleType.Judge, false)]
         [TestCase(UserRoleType.Representative, false)]
-        public void should_set_isadministratorrole_property(UserRoleType role, bool expectedValue)
+        public void Should_set_isadministratorrole_property(UserRoleType role, bool expectedValue)
         {
             var userGroupData = new UserRole { UserRoleType = role };
 
@@ -106,12 +106,14 @@ namespace AdminWebsite.UnitTests.Helper
         }
 
         [Test]
-        public void should_throw_argumentnullexception_when_claims_are_missing()
+        public void Should_throw_argumentnullexception_when_claims_are_missing()
         {
-            Assert.Throws<ArgumentNullException>
+            var ex = Assert.Throws<ArgumentNullException>
             (
                 () => new AdministratorRoleClaims(Enumerable.Empty<Claim>())
             );
+
+            ex.Message.Should().Contain("The claim or its value can not be null");
         }
     }
 }

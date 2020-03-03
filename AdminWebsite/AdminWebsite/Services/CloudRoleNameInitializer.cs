@@ -8,9 +8,11 @@ namespace AdminWebsite.Services
     /// </summary>
     public class CloudRoleNameInitializer : ITelemetryInitializer
     {
+        private const string ROLE_NAME = "vh-admin-web";
+
         public void Initialize(ITelemetry telemetry)
         {
-            telemetry.Context.Cloud.RoleName = "vh-admin-web";
+            telemetry.Context.Cloud.RoleName = ROLE_NAME;
         }
     }
 }

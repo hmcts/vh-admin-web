@@ -25,7 +25,7 @@ namespace AdminWebsite.UnitTests.Attributes
         [TestCase("<script>innerText</script>", "innerText")]
         public void OnActionExecuting_Strips_Out_Invalid_Characters_BookNewHearingRequest(string inputText, string expectedText)
         {
-            var context = CreateBookNewHearingRequestContext(inputText);
+            var context = CreateBookNewHearingRequestContext(inputText, "request");
 
             _hearingInputSanitizerAttribute.OnActionExecuting(context);
 
@@ -97,11 +97,27 @@ namespace AdminWebsite.UnitTests.Attributes
             );
         }
 
-        private static ActionExecutingContext CreateBookNewHearingRequestContext(string text)
+        [TestCase("<script>innerText</script>", "innerText")]
+        public void OnActionExecuting_invalid_request_will_not_sanitizer(string inputText, string expectedText)
+        {
+            var context = CreateBookNewHearingRequestContext(inputText, "nothing");
+            _hearingInputSanitizerAttribute.OnActionExecuting(context);
+            var request = context.ActionArguments
+                .Should().NotBeNull()
+                .And.ContainKey("nothing")
+                .WhichValue.As<BookNewHearingRequest>()
+                .Should().NotBeNull()
+                .And.Subject.As<BookNewHearingRequest>();
+
+            request.Hearing_room_name.Should().BeEquivalentTo(inputText);
+
+        }
+
+        private static ActionExecutingContext CreateBookNewHearingRequestContext(string text, string requestKey)
         {
             var actionArguments = new Dictionary<string, object>
             {
-                { "request", new BookNewHearingRequest
+                { requestKey, new BookNewHearingRequest
                     {
                         Hearing_room_name = text,
                         Hearing_venue_name = text,
@@ -138,6 +154,8 @@ namespace AdminWebsite.UnitTests.Attributes
 
             return context;
         }
+
+        
 
         private static ActionExecutingContext EditHearingRequestRequestContext(string text)
         {

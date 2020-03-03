@@ -9,6 +9,8 @@ namespace AdminWebsite.Security
     /// </summary>
     public class UserApiTokenHandler : BaseServiceTokenHandler
     {
+        private const string TOKEN_CACHE_KEY = "UserApiServiceToken";
+
         /// <summary>
         ///     User API token handler.
         /// </summary>
@@ -26,7 +28,7 @@ namespace AdminWebsite.Security
         /// <summary>
         ///     The User API token cache.
         /// </summary>
-        protected override string TokenCacheKey => "UserApiServiceToken";
+        protected override string TokenCacheKey => TOKEN_CACHE_KEY;
 
         /// <summary>
         ///     The User API resource Id.

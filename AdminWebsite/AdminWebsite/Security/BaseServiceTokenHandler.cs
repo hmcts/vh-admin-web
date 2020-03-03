@@ -32,6 +32,11 @@ namespace AdminWebsite.Security
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request,
             CancellationToken cancellationToken)
         {
+            const string AUTHORIZATION = "Authorization";
+            const string BEARER = "Bearer";
+            const string ERR_MSG ="BookHearing Client Exception";
+            const int MINUTES = -1;
+
             var properties = new Dictionary<string, string>();
 
             var token = _memoryCache.Get<string>(TokenCacheKey);
@@ -40,18 +45,18 @@ namespace AdminWebsite.Security
                 var authenticationResult = _tokenProvider.GetAuthorisationResult(_securitySettings.ClientId,
                     _securitySettings.ClientSecret, ClientResource);
                 token = authenticationResult.AccessToken;
-                var tokenExpireDateTime = authenticationResult.ExpiresOn.DateTime.AddMinutes(-1);
+                var tokenExpireDateTime = authenticationResult.ExpiresOn.DateTime.AddMinutes(MINUTES);
                 _memoryCache.Set(TokenCacheKey, token, tokenExpireDateTime);
             }
 
-            request.Headers.Add("Authorization", $"Bearer {token}");
+            request.Headers.Add(AUTHORIZATION, $"{BEARER} {token}");
             try
             {
                 return await base.SendAsync(request, cancellationToken);
             }
             catch (Exception e)
             {
-                ApplicationLogger.TraceException(TraceCategory.ServiceAuthentication.ToString(), "BookHearing Client Exception", e, null,
+                ApplicationLogger.TraceException(TraceCategory.ServiceAuthentication.ToString(), ERR_MSG, e, null,
                     properties);
                 throw;
             }
