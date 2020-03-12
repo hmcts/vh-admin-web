@@ -428,14 +428,14 @@ namespace AdminWebsite.VideoAPI.Client
         /// <param name="participantId">The id of the participant</param>
         /// <returns>Success</returns>
         /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<ParticipantHeartbeatResponse> GetHeartbeatDataForParticipantAsync(System.Guid conferenceId, System.Guid participantId);
+        System.Threading.Tasks.Task<System.Collections.Generic.List<ParticipantHeartbeatResponse>> GetHeartbeatDataForParticipantAsync(System.Guid conferenceId, System.Guid participantId);
     
         /// <summary>Get the Heartbeat Data For Participant</summary>
         /// <param name="conferenceId">The id of the conference</param>
         /// <param name="participantId">The id of the participant</param>
         /// <returns>Success</returns>
         /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
-        ParticipantHeartbeatResponse GetHeartbeatDataForParticipant(System.Guid conferenceId, System.Guid participantId);
+        System.Collections.Generic.List<ParticipantHeartbeatResponse> GetHeartbeatDataForParticipant(System.Guid conferenceId, System.Guid participantId);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Get the Heartbeat Data For Participant</summary>
@@ -443,7 +443,7 @@ namespace AdminWebsite.VideoAPI.Client
         /// <param name="participantId">The id of the participant</param>
         /// <returns>Success</returns>
         /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<ParticipantHeartbeatResponse> GetHeartbeatDataForParticipantAsync(System.Guid conferenceId, System.Guid participantId, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<System.Collections.Generic.List<ParticipantHeartbeatResponse>> GetHeartbeatDataForParticipantAsync(System.Guid conferenceId, System.Guid participantId, System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Post the Heartbeat Data For Participant</summary>
         /// <param name="body">The AddHeartbeatRequest</param>
@@ -2673,7 +2673,7 @@ namespace AdminWebsite.VideoAPI.Client
         /// <param name="participantId">The id of the participant</param>
         /// <returns>Success</returns>
         /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<ParticipantHeartbeatResponse> GetHeartbeatDataForParticipantAsync(System.Guid conferenceId, System.Guid participantId)
+        public System.Threading.Tasks.Task<System.Collections.Generic.List<ParticipantHeartbeatResponse>> GetHeartbeatDataForParticipantAsync(System.Guid conferenceId, System.Guid participantId)
         {
             return GetHeartbeatDataForParticipantAsync(conferenceId, participantId, System.Threading.CancellationToken.None);
         }
@@ -2683,7 +2683,7 @@ namespace AdminWebsite.VideoAPI.Client
         /// <param name="participantId">The id of the participant</param>
         /// <returns>Success</returns>
         /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
-        public ParticipantHeartbeatResponse GetHeartbeatDataForParticipant(System.Guid conferenceId, System.Guid participantId)
+        public System.Collections.Generic.List<ParticipantHeartbeatResponse> GetHeartbeatDataForParticipant(System.Guid conferenceId, System.Guid participantId)
         {
             return System.Threading.Tasks.Task.Run(async () => await GetHeartbeatDataForParticipantAsync(conferenceId, participantId, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
         }
@@ -2694,7 +2694,7 @@ namespace AdminWebsite.VideoAPI.Client
         /// <param name="participantId">The id of the participant</param>
         /// <returns>Success</returns>
         /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task<ParticipantHeartbeatResponse> GetHeartbeatDataForParticipantAsync(System.Guid conferenceId, System.Guid participantId, System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task<System.Collections.Generic.List<ParticipantHeartbeatResponse>> GetHeartbeatDataForParticipantAsync(System.Guid conferenceId, System.Guid participantId, System.Threading.CancellationToken cancellationToken)
         {
             if (conferenceId == null)
                 throw new System.ArgumentNullException("conferenceId");
@@ -2735,7 +2735,7 @@ namespace AdminWebsite.VideoAPI.Client
                         var status_ = ((int)response_.StatusCode).ToString();
                         if (status_ == "200") 
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<ParticipantHeartbeatResponse>(response_, headers_).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.List<ParticipantHeartbeatResponse>>(response_, headers_).ConfigureAwait(false);
                             return objectResponse_.Object;
                         }
                         else
@@ -2757,7 +2757,7 @@ namespace AdminWebsite.VideoAPI.Client
                             throw new VideoApiServiceException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
                         }
             
-                        return default(ParticipantHeartbeatResponse);
+                        return default(System.Collections.Generic.List<ParticipantHeartbeatResponse>);
                     }
                     finally
                     {
@@ -3681,6 +3681,10 @@ namespace AdminWebsite.VideoAPI.Client
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.4.0 (Newtonsoft.Json v12.0.0.0)")]
     public partial class ParticipantSummaryResponse 
     {
+        /// <summary>The participant id</summary>
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid Id { get; set; }
+    
         /// <summary>The participant username</summary>
         [Newtonsoft.Json.JsonProperty("username", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Username { get; set; }

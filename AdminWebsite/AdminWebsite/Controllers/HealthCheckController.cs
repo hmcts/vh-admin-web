@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Net;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace AdminWebsite.Controllers
@@ -38,7 +39,8 @@ namespace AdminWebsite.Controllers
             var response = new HealthCheckResponse
             {
                 BookingsApiHealth = { Successful = true },
-                UserApiHealth = { Successful = true }
+                UserApiHealth = { Successful = true },
+                AppVersion = GetApplicationVersion()
             };
             try
             {
@@ -74,6 +76,22 @@ namespace AdminWebsite.Controllers
             }
 
             return Ok(response);
+        }
+
+        private ApplicationVersion GetApplicationVersion()
+        {
+            var applicationVersion = new ApplicationVersion()
+            {
+                FileVersion = GetExecutingAssemblyAttribute<AssemblyFileVersionAttribute>(a => a.Version),
+                InformationVersion = GetExecutingAssemblyAttribute<AssemblyInformationalVersionAttribute>(a => a.InformationalVersion)
+            };
+            return applicationVersion;
+        }
+
+        private string GetExecutingAssemblyAttribute<T>(Func<T, string> value) where T : Attribute
+        {
+            T attribute = (T)Attribute.GetCustomAttribute(Assembly.GetExecutingAssembly(), typeof(T));
+            return value.Invoke(attribute);
         }
     }
 }
