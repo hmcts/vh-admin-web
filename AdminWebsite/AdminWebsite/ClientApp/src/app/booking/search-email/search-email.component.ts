@@ -1,5 +1,5 @@
-import { Component, EventEmitter, Output, OnInit, Input } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Component, EventEmitter, Output, OnInit, Input, OnDestroy } from '@angular/core';
+import { Subject, Subscription } from 'rxjs';
 import { PersonResponse } from '../../services/clients/api-client';
 import { Constants } from '../../common/constants';
 import { ParticipantModel } from '../../common/model/participant.model';
@@ -11,7 +11,7 @@ import { SearchService } from '../../services/search.service';
     styleUrls: ['./search-email.component.css'],
     providers: [SearchService]
 })
-export class SearchEmailComponent implements OnInit {
+export class SearchEmailComponent implements OnInit, OnDestroy {
     constants = Constants;
     participantDetails: ParticipantModel;
     searchTerm = new Subject<string>();
@@ -20,6 +20,7 @@ export class SearchEmailComponent implements OnInit {
     notFoundParticipant = false;
     email = '';
     isValidEmail = true;
+    $subscriptions: Subscription[] = [];
 
     @Input()
     disabled = true;
@@ -36,7 +37,7 @@ export class SearchEmailComponent implements OnInit {
     constructor(private searchService: SearchService) { }
 
     ngOnInit() {
-        this.searchService.search(this.searchTerm)
+        this.$subscriptions.push(this.searchService.search(this.searchTerm)
             .subscribe(data => {
                 if (data && data.length > 0) {
                     this.getData(data);
@@ -49,9 +50,9 @@ export class SearchEmailComponent implements OnInit {
                     this.isShowResult = false;
                     this.results = undefined;
                 }
-            });
+            }));
 
-        this.searchTerm.subscribe(s => this.email = s);
+        this.$subscriptions.push(this.searchTerm.subscribe(s => this.email = s));
     }
 
     getData(data: PersonResponse[]) {
@@ -140,5 +141,9 @@ export class SearchEmailComponent implements OnInit {
         }
 
         return participant;
+    }
+
+    ngOnDestroy() {
+      this.$subscriptions.forEach(subscription => { if (subscription) { subscription.unsubscribe(); } });
     }
 }

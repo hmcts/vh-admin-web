@@ -77,4 +77,10 @@ describe('ChangePasswordComponent', () => {
     const input = fixture.nativeElement.querySelector('#userName:focus');
     expect(input).toBeTruthy();
   });
+  it('should on destroy unsubscribe the subscriptions', () => {
+    component.userName.setValue('user.name@domain.com');
+    component.updateUser();
+    component.ngOnDestroy();
+    expect(component.$subcription.closed).toBeTruthy();
+  });
 });

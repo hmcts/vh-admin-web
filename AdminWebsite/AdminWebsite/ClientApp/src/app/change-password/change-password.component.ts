@@ -1,13 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { UserDataService } from '../services/user-data.service';
 import { Logger } from '../services/logger';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-change-password',
   templateUrl: './change-password.component.html'
 })
-export class ChangePasswordComponent implements OnInit {
+export class ChangePasswordComponent implements OnInit, OnDestroy {
 
   form: FormGroup;
   failedSubmission: boolean;
@@ -15,6 +16,7 @@ export class ChangePasswordComponent implements OnInit {
   showUpdateSuccess: boolean;
   popupMessage: string;
   saveSuccess: boolean;
+  $subcription: Subscription;
 
   constructor(private fb: FormBuilder,
     private userDataService: UserDataService,
@@ -52,7 +54,7 @@ export class ChangePasswordComponent implements OnInit {
       this.failedSubmission = false;
       this.saveSuccess = false;
 
-      this.userDataService.updateUser(this.userName.value)
+      this.$subcription = this.userDataService.updateUser(this.userName.value)
         .subscribe(
           (data: void) => {
             this.popupMessage = 'User\'s password has been changed';
@@ -83,5 +85,11 @@ export class ChangePasswordComponent implements OnInit {
 
   goToDiv(fragment: string): void {
     window.document.getElementById(fragment).focus();
+  }
+
+  ngOnDestroy() {
+    if (this.$subcription) {
+      this.$subcription.unsubscribe();
+    }
   }
 }

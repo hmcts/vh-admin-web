@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HearingTypeResponse } from '../../services/clients/api-client';
@@ -11,13 +11,14 @@ import { ErrorService } from 'src/app/services/error.service';
 import { PageUrls } from 'src/app/shared/page-url.constants';
 import { Constants } from 'src/app/common/constants';
 import { SanitizeInputText } from '../../common/formatters/sanitize-input-text';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-create-hearing',
   templateUrl: './create-hearing.component.html',
   styleUrls: ['./create-hearing.component.scss']
 })
-export class CreateHearingComponent extends BookingBaseComponent implements OnInit {
+export class CreateHearingComponent extends BookingBaseComponent implements OnInit, OnDestroy {
   attemptingCancellation: boolean;
   attemptingDiscardChanges = false;
   failedSubmission: boolean;
@@ -29,6 +30,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
   filteredHearingTypes: HearingTypeResponse[] = [];
   hasSaved: boolean;
   isExistingHearing: boolean;
+  $subscriptions: Subscription[] = [];
 
   constructor(protected hearingService: VideoHearingsService,
     private fb: FormBuilder,
@@ -177,7 +179,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
   }
 
   private retrieveHearingTypes() {
-    this.hearingService.getHearingTypes()
+    this.$subscriptions.push(this.hearingService.getHearingTypes()
       .subscribe(
         (data: HearingTypeResponse[]) => {
           this.setupCaseTypeAndHearingTypes(data);
@@ -185,14 +187,14 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
           this.setHearingTypeForExistingHearing();
         },
         error => this.errorService.handleError(error)
-      );
+      ));
   }
 
   private setupCaseTypeAndHearingTypes(hearingTypes: HearingTypeResponse[]) {
-    this.caseType.valueChanges.subscribe(val => {
+    this.$subscriptions.push(this.caseType.valueChanges.subscribe(val => {
       this.selectedCaseType = val;
       this.filterHearingTypes();
-    });
+    }));
 
     this.availableHearingTypes = hearingTypes;
     this.availableHearingTypes.sort(this.dynamicSort('name'));
@@ -240,5 +242,9 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
   caseNameOnBlur() {
     const text = SanitizeInputText(this.caseName.value);
     this.caseName.setValue(text);
+  }
+
+  ngOnDestroy() {
+    this.$subscriptions.forEach(subscription => { if (subscription) { subscription.unsubscribe(); } });
   }
 }

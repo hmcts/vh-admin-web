@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { BookingService } from '../../services/booking.service';
 import { AssignJudgeComponent } from './assign-judge.component';
-import { of } from 'rxjs';
+import { of, Subscription } from 'rxjs';
 import { MockValues } from '../../testing/data/test-objects';
 import { JudgeDataService } from '../services/judge-data.service';
 import { ParticipantsListStubComponent } from '../../testing/stubs/participant-list-stub';
@@ -277,6 +277,12 @@ describe('AssignJudgeComponent', () => {
   it('should log error message if no judges to load', () => {
     component.onErrorLoadJudges(new Error());
     expect(loggerSpy.error).toHaveBeenCalled();
+  });
+  it('should unsubscribe all subcriptions on destroy component', () => {
+    component.ngOnDestroy();
+
+    expect(component.$subscriptions[0].closed).toBeTruthy();
+    expect(component.$subscriptions[1].closed).toBeTruthy();
   });
 });
 

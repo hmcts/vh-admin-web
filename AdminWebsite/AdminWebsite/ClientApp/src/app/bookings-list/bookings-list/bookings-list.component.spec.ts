@@ -314,5 +314,10 @@ describe('BookingsListComponent', () => {
     expect(videoHearingServiceSpy.getHearingById).toHaveBeenCalled();
     expect(videoHearingServiceSpy.mapHearingDetailsResponseToHearingModel).toHaveBeenCalled();
   }));
+  it('should on destroy unsubscribe the subscriptions', () => {
+    component.getList();
+    component.ngOnDestroy();
+    expect(component.$subcription.closed).toBeTruthy();
+  });
 });
 

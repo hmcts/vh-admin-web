@@ -216,4 +216,9 @@ describe('SeachEmailComponent', () => {
     expect(component.isShowResult).toBeFalsy();
     expect(component.notFoundParticipant).toBeFalsy();
   });
+  it('should unsibscribe subcription on destroy', () => {
+    component.ngOnDestroy();
+    expect(component.$subscriptions[0].closed).toBe(true);
+    expect(component.$subscriptions[1].closed).toBe(true);
+  });
 });

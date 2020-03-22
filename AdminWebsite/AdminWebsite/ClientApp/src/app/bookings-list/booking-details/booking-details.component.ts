@@ -35,6 +35,7 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
 
   $timeObserver = interval(60000);
   timeSubscription: Subscription;
+  $subscriptions: Subscription[] = [];
 
   constructor(
     private videoHearingService: VideoHearingsService,
@@ -50,18 +51,18 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.hearingId = this.bookingPersistService.selectedHearingId;
     if (this.hearingId) {
-      this.videoHearingService.getHearingById(this.hearingId).subscribe(data => {
+      this.$subscriptions.push(this.videoHearingService.getHearingById(this.hearingId).subscribe(data => {
         this.mapHearing(data);
         // mapping to Hearing model for edit on summary page
         this.booking = this.videoHearingService.mapHearingDetailsResponseToHearingModel(data);
         this.setBookingInStorage();
         this.setTimeObserver();
         this.setSubscribers();
-      });
+      }));
     }
-    this.userIdentityService.getUserInformation().subscribe(userProfile => {
+    this.$subscriptions.push(this.userIdentityService.getUserInformation().subscribe(userProfile => {
       this.getUserRole(userProfile);
-    });
+    }));
   }
 
   getUserRole(userProfile: UserProfileResponse) {
@@ -136,7 +137,7 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
     updateBookingStatus.status = status;
     updateBookingStatus.updated_by = '';
 
-    this.videoHearingService.updateBookingStatus(this.hearingId, updateBookingStatus)
+    this.$subscriptions.push(this.videoHearingService.updateBookingStatus(this.hearingId, updateBookingStatus)
       .subscribe(
         (data) => {
           this.updateStatusHandler(status);
@@ -144,7 +145,7 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
         },
         error => {
           this.errorHandler(error, status);
-        });
+        }));
   }
 
   updateStatusHandler(status: UpdateBookingStatusRequestStatus) {
@@ -152,7 +153,7 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
       this.showCancelBooking = false;
     }
     this.persistStatus(status);
-    this.videoHearingService.getHearingById(this.hearingId)
+    this.$subscriptions.push(this.videoHearingService.getHearingById(this.hearingId)
       .subscribe(
         (newData) => {
           this.mapHearing(newData);
@@ -160,7 +161,7 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
         error => {
           this.logger.error(`Error to get hearing Id: ${this.hearingId}`, error);
         }
-      );
+      ));
   }
 
   errorHandler(error, status: UpdateBookingStatusRequestStatus) {
@@ -182,5 +183,7 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
     if (this.timeSubscription) {
       this.timeSubscription.unsubscribe();
     }
+
+    this.$subscriptions.forEach(subscription => { if (subscription) { subscription.unsubscribe(); } });
   }
 }

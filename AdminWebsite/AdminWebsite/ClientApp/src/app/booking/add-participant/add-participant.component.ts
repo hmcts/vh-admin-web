@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, AfterContentInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { Constants } from '../../common/constants';
 import { IDropDownModel } from '../../common/model/drop-down.model';
 import { HearingModel } from '../../common/model/hearing.model';
@@ -81,6 +81,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   showAddress = false;
   existingPersonEmails: string[] = [];
   dummyAddress: Address = new Address();
+  $subscriptions: Subscription[] = [];
 
   @ViewChild(SearchEmailComponent, { static: false })
   searchEmail: SearchEmailComponent;
@@ -108,7 +109,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   }
 
   ngAfterViewInit() {
-    this.participantsListComponent.selectedParticipant.subscribe((participantEmail) => {
+    this.$subscriptions.push(this.participantsListComponent.selectedParticipant.subscribe((participantEmail) => {
       this.selectedParticipantEmail = participantEmail;
       this.showDetails = true;
       setTimeout(() => {
@@ -119,12 +120,12 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
           this.setParticipantEmail();
         }
       }, 500);
-    });
+    }));
 
-    this.participantsListComponent.selectedParticipantToRemove.subscribe((participantEmail) => {
+   this.$subscriptions.push(this.participantsListComponent.selectedParticipantToRemove.subscribe((participantEmail) => {
       this.selectedParticipantEmail = participantEmail;
       this.confirmRemoveParticipant();
-    });
+    }));
 
     setTimeout(() => {
       const self = this;
@@ -221,7 +222,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
       postcode: this.postcode,
     });
     const self = this;
-    this.form.valueChanges.subscribe(
+    this.$subscriptions.push(this.form.valueChanges.subscribe(
       result => {
         setTimeout(() => {
           if (self.showDetails && (self.role.value === self.constants.PleaseSelect &&
@@ -245,7 +246,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
             self.displayClear();
           }
         }, 500);
-      });
+      }));
   }
 
   private repopulateParticipantToEdit() {
@@ -826,5 +827,6 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
   ngOnDestroy() {
     this.clearForm();
+    this.$subscriptions.forEach(subscription => { if (subscription) { subscription.unsubscribe(); } });
   }
 }
