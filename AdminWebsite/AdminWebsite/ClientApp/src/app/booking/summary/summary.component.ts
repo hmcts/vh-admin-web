@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -14,6 +14,7 @@ import { BookingService } from '../../services/booking.service';
 import { RemovePopupComponent } from '../../popups/remove-popup/remove-popup.component';
 import { FormatShortDuration } from '../../common/formatters/format-short-duration';
 import { Logger } from '../../services/logger';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-summary',
@@ -21,7 +22,7 @@ import { Logger } from '../../services/logger';
   styleUrls: ['./summary.component.css']
 })
 
-export class SummaryComponent implements OnInit {
+export class SummaryComponent implements OnInit, OnDestroy {
 
   constants = Constants;
   hearing: HearingModel;
@@ -46,6 +47,7 @@ export class SummaryComponent implements OnInit {
   showErrorSaving: boolean;
   private newHearingSessionKey = 'newHearingId';
   isExistingBooking = false;
+  $subscriptions: Subscription[] = [];
 
   @ViewChild(ParticipantsListComponent, { static: true })
   participantsListComponent: ParticipantsListComponent;
@@ -67,10 +69,10 @@ export class SummaryComponent implements OnInit {
     this.retrieveHearingSummary();
     if (this.participantsListComponent) {
       this.participantsListComponent.isEditMode = this.isExistingBooking;
-      this.participantsListComponent.selectedParticipantToRemove.subscribe((participantEmail) => {
+      this.$subscriptions.push(this.participantsListComponent.selectedParticipantToRemove.subscribe((participantEmail) => {
         this.selectedParticipantEmail = participantEmail;
         this.confirmRemoveParticipant();
-      });
+      }));
     }
   }
 
@@ -163,7 +165,7 @@ export class SummaryComponent implements OnInit {
     if (this.hearing.hearing_id && this.hearing.hearing_id.length > 0) {
       this.updateHearing();
     } else {
-      this.hearingService.saveHearing(this.hearing)
+      this.$subscriptions.push(this.hearingService.saveHearing(this.hearing)
         .subscribe(
           (hearingDetailsResponse: HearingDetailsResponse) => {
             sessionStorage.setItem(this.newHearingSessionKey, hearingDetailsResponse.id);
@@ -176,12 +178,12 @@ export class SummaryComponent implements OnInit {
             this.logger.error('Error saving new hearing.', error);
             this.setError(error);
           }
-        );
+        ));
     }
   }
 
   updateHearing() {
-    this.hearingService.updateHearing(this.hearing)
+    this.$subscriptions.push(this.hearingService.updateHearing(this.hearing)
       .subscribe((hearingDetailsResponse: HearingDetailsResponse) => {
         this.showWaitSaving = false;
         this.hearingService.setBookingHasChanged(false);
@@ -191,7 +193,7 @@ export class SummaryComponent implements OnInit {
       }, error => {
         this.logger.error(`Error updating hearing with ID: ${this.hearing.hearing_id}`, error);
         this.setError(error);
-      });
+      }));
   }
 
   private setError(error) {
@@ -207,5 +209,9 @@ export class SummaryComponent implements OnInit {
   tryAgain(): void {
     this.showErrorSaving = true;
     this.bookHearing();
+  }
+
+  ngOnDestroy() {
+    this.$subscriptions.forEach(subscription => { if (subscription) { subscription.unsubscribe(); } });
   }
 }

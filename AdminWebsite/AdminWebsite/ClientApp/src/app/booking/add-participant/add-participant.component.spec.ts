@@ -2,7 +2,7 @@ import { async, ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core
 import { AbstractControl, Validators } from '@angular/forms';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 
-import { of } from 'rxjs';
+import { of, Subscription } from 'rxjs';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { BreadcrumbStubComponent } from 'src/app/testing/stubs/breadcrumb-stub';
 import { CancelPopupStubComponent } from 'src/app/testing/stubs/cancel-popup-stub';
@@ -842,7 +842,7 @@ describe('AddParticipantComponent edit mode no participants added', () => {
         videoHearingsServiceSpy.getParticipantRoles.and.returnValue(Promise.resolve(roleList));
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(hearing);
         participantServiceSpy.mapParticipantsRoles.and.returnValue(partyList);
-        bookingServiceSpy = jasmine.createSpyObj<BookingService>(['getParticipantEmail', 'isEditMode', 'setEditMode']);
+        bookingServiceSpy = jasmine.createSpyObj<BookingService>(['getParticipantEmail', 'isEditMode', 'setEditMode', 'resetEditMode']);
         bookingServiceSpy.isEditMode.and.returnValue(true);
         bookingServiceSpy.getParticipantEmail.and.returnValue('');
 
@@ -1015,6 +1015,7 @@ describe('AddParticipantComponent set representer', () => {
         participantServiceSpy.mapParticipantsRoles.and.returnValue(partyList);
         bookingServiceSpy.isEditMode.and.returnValue(true);
         bookingServiceSpy.getParticipantEmail.and.returnValue('');
+
         const searchServiceStab = jasmine.createSpyObj<SearchService>(['search']);
 
         component = new AddParticipantComponent(
@@ -1143,6 +1144,16 @@ describe('AddParticipantComponent set representer', () => {
         component.form.controls['representing'].setValue('<script>text</script>');
         component.representingOnBlur();
         expect(component.form.controls['representing'].value).toBe('text');
+    });
+    it('should unsubscribe all subcriptions on destroy component', () => {
+      component.$subscriptions.push(new Subscription(), new Subscription());
+      expect(component.$subscriptions[0].closed).toBeFalsy();
+      expect(component.$subscriptions[1].closed).toBeFalsy();
+
+      component.ngOnDestroy();
+
+      expect(component.$subscriptions[0].closed).toBeTruthy();
+      expect(component.$subscriptions[1].closed).toBeTruthy();
     });
 });
 

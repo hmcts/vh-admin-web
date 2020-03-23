@@ -288,9 +288,10 @@ describe('BookingDetailsComponent', () => {
     component.setSubscribers();
     expect(component.$timeObserver).toBeTruthy();
   }));
-  it('should destroy the subscription to check hearing start time', fakeAsync(() => {
+  it('should on destroy unsubscribe the subscriptions', fakeAsync(() => {
     component.ngOnDestroy();
     expect(component.timeSubscription).toBeFalsy();
+    component.$subscriptions.forEach(s => expect(s.closed).toBeTruthy());
   }));
   it('should set confirmation button visible if hearing start time more than 30 min', fakeAsync(() => {
     let current = new Date();

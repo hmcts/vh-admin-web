@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HearingModel } from '../../common/model/hearing.model';
@@ -12,13 +12,14 @@ import { HearingVenueResponse } from '../../services/clients/api-client';
 import { PageUrls } from 'src/app/shared/page-url.constants';
 import { Constants } from 'src/app/common/constants';
 import { SanitizeInputText } from '../../common/formatters/sanitize-input-text';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-hearing-schedule',
   templateUrl: './hearing-schedule.component.html',
   styleUrls: ['./hearing-schedule.component.css']
 })
-export class HearingScheduleComponent extends BookingBaseComponent implements OnInit {
+export class HearingScheduleComponent extends BookingBaseComponent implements OnInit, OnDestroy {
 
   hearing: HearingModel;
   availableCourts: HearingVenueResponse[];
@@ -32,6 +33,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
   isExistinHearing: boolean;
   isStartHoursInPast = false;
   isStartMinutesInPast = false;
+  $subscriptions: Subscription[] = [];
 
   constructor(private refDataService: ReferenceDataService, protected hearingService: VideoHearingsService,
     private fb: FormBuilder, protected router: Router,
@@ -97,12 +99,12 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
       courtRoom: [room, [Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)]],
     });
 
-    this.courtAddress.valueChanges.subscribe(val => {
+    this.$subscriptions.push(this.courtAddress.valueChanges.subscribe(val => {
       const id = val;
       if (id !== null) {
         this.selectedCourtName = this.availableCourts.find(c => c.id === id).name;
       }
-    });
+    }));
   }
 
   get hearingDate() {
@@ -186,7 +188,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
   }
 
   private retrieveCourts() {
-    this.refDataService.getCourts()
+    this.$subscriptions.push(this.refDataService.getCourts()
       .subscribe(
         (data: HearingVenueResponse[]) => {
           this.availableCourts = data;
@@ -197,7 +199,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
           this.setVenueForExistingHearing();
         },
         error => this.errorService.handleError(error)
-      );
+      ));
   }
 
   setVenueForExistingHearing() {
@@ -281,5 +283,9 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
   courtRoomOnBlur() {
     const text = SanitizeInputText(this.courtRoom.value);
     this.courtRoom.setValue(text);
+  }
+
+  ngOnDestroy() {
+    this.$subscriptions.forEach(subscription => { if (subscription) { subscription.unsubscribe(); } });
   }
 }

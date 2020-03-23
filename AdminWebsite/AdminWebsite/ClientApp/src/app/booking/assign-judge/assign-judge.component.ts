@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, Validators, FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { JudgeResponse } from '../../services/clients/api-client';
@@ -12,6 +12,7 @@ import { BookingService } from '../../services/booking.service';
 import { BookingBaseComponent } from '../booking-base/booking-base.component';
 import { Logger } from '../../services/logger';
 import { SanitizeInputText } from '../../common/formatters/sanitize-input-text';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-assign-judge',
@@ -19,7 +20,7 @@ import { SanitizeInputText } from '../../common/formatters/sanitize-input-text';
   styleUrls: ['./assign-judge.component.css']
 })
 
-export class AssignJudgeComponent extends BookingBaseComponent implements OnInit {
+export class AssignJudgeComponent extends BookingBaseComponent implements OnInit, OnDestroy {
 
   hearing: HearingModel;
   judge: JudgeResponse;
@@ -35,6 +36,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
   isJudgeSelected = true;
 
   expanded = false;
+  $subscriptions: Subscription[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -110,15 +112,15 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
       judgeDisplayName: this.judgeDisplayName
     });
 
-    this.judgeName.valueChanges.subscribe(judgeUserId => {
+    this.$subscriptions.push(this.judgeName.valueChanges.subscribe(judgeUserId => {
       this.addJudge(judgeUserId);
       this.isJudgeSelected = judgeUserId !== null;
       this.canNavigate = this.isJudgeSelected;
-    });
+    }));
 
-    this.judgeDisplayName.valueChanges.subscribe(name => {
+    this.$subscriptions.push(this.judgeDisplayName.valueChanges.subscribe(name => {
       this.judge.display_name = name;
-    });
+    }));
   }
 
   get judgeName() { return this.form.get('judgeName'); }
@@ -233,7 +235,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
 
   private loadJudges() {
     if (this.availableJudges) { return; }
-    this.judgeService.getJudges()
+    this.$subscriptions.push(this.judgeService.getJudges()
       .subscribe(
         (data: JudgeResponse[]) => {
           this.availableJudges = data.filter(x => x.first_name && x.last_name);
@@ -243,7 +245,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
           this.availableJudges.unshift(userResponse);
         },
         error => this.onErrorLoadJudges(error)
-      );
+      ));
   }
 
   onErrorLoadJudges(error) {
@@ -254,4 +256,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     this.expanded = !this.expanded;
   }
 
+  ngOnDestroy() {
+    this.$subscriptions.forEach(subcription => { if (subcription) { subcription.unsubscribe(); } });
+  }
 }

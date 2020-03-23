@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 
 import { HearingDetailsResponse } from 'src/app/services/clients/api-client';
 import { VideoHearingsService } from 'src/app/services/video-hearings.service';
@@ -13,13 +13,14 @@ import { Logger } from '../../services/logger';
   templateUrl: './booking-confirmation.component.html',
   styleUrls: ['./booking-confirmation.component.css']
 })
-export class BookingConfirmationComponent implements OnInit {
+export class BookingConfirmationComponent implements OnInit, OnDestroy {
 
   hearing: Observable<HearingDetailsResponse>;
   caseNumber: string;
   caseName: string;
   hearingDate: Date;
   private newHearingSessionKey = 'newHearingId';
+  $hearingSubscription: Subscription;
 
   constructor(
     private hearingService: VideoHearingsService,
@@ -33,7 +34,7 @@ export class BookingConfirmationComponent implements OnInit {
 
   retrieveSavedHearing() {
     const hearingId = sessionStorage.getItem(this.newHearingSessionKey);
-    this.hearingService.getHearingById(hearingId)
+    this.$hearingSubscription = this.hearingService.getHearingById(hearingId)
       .subscribe(
         (data: HearingDetailsResponse) => {
           this.caseNumber = data.cases[0].number;
@@ -61,5 +62,11 @@ export class BookingConfirmationComponent implements OnInit {
 
   clearSessionData(): void {
     this.hearingService.cancelRequest();
+  }
+
+  ngOnDestroy() {
+    if (this.$hearingSubscription) {
+      this.$hearingSubscription.unsubscribe();
+    }
   }
 }

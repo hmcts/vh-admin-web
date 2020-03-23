@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject} from '@angular/core';
+import { Component, OnInit, Inject, OnDestroy} from '@angular/core';
 import { BookingsListService } from '../../services/bookings-list.service';
 import { BookingsListModel, BookingsDetailsModel } from '../../common/model/bookings-list.model';
 import { BookingsResponse } from '../../services/clients/api-client';
@@ -8,13 +8,14 @@ import { BookingsModel } from '../../common/model/bookings.model';
 import { Router } from '@angular/router';
 import { PageUrls } from '../../shared/page-url.constants';
 import { VideoHearingsService } from '../../services/video-hearings.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-bookings-list',
   templateUrl: './bookings-list.component.html',
   styleUrls: ['./bookings-list.component.css']
 })
-export class BookingsListComponent implements OnInit {
+export class BookingsListComponent implements OnInit, OnDestroy {
   bookings: Array<BookingsListModel> = [];
   loaded = false;
   error = false;
@@ -28,6 +29,7 @@ export class BookingsListComponent implements OnInit {
   selectedElement: HTMLElement;
   selectedHearingId = '';
   bookingResponse: BookingsModel;
+  $subcription: Subscription;
 
   constructor(private bookingsListService: BookingsListService,
     private bookingPersistService: BookingPersistService,
@@ -88,7 +90,7 @@ export class BookingsListComponent implements OnInit {
       const self = this;
       this.loaded = false;
       this.error = false;
-      this.bookingsListService.getBookingsList(this.cursor, this.limit)
+      this.$subcription = this.bookingsListService.getBookingsList(this.cursor, this.limit)
         .subscribe(book => self.loadData(book), err => self.handleError(err));
     }
   }
@@ -168,4 +170,9 @@ export class BookingsListComponent implements OnInit {
     }, 500);
   }
 
+  ngOnDestroy() {
+    if (this.$subcription) {
+      this.$subcription.unsubscribe();
+    }
+  }
 }

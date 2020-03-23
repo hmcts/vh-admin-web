@@ -129,4 +129,8 @@ describe('BookingConfirmationComponent', () => {
     component.viewBookingDetails();
     expect(routerSpy.navigate).toHaveBeenCalled();
   });
+  it('should unsibscribe subcription on destroy', () => {
+    component.ngOnDestroy();
+    expect(component.$hearingSubscription.closed).toBe(true);
+  });
 });
