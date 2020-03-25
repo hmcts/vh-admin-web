@@ -222,31 +222,33 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
       postcode: this.postcode,
     });
     const self = this;
-    this.$subscriptions.push(this.form.valueChanges.subscribe(
-      result => {
-        setTimeout(() => {
-          if (self.showDetails && (self.role.value === self.constants.PleaseSelect &&
-            self.party.value === self.constants.PleaseSelect &&
-            self.title.value === self.constants.PleaseSelect &&
-            self.firstName.value === '' &&
-            self.lastName.value === '' &&
-            self.phone.value === '' &&
-            self.displayName.value === '') || self.editMode) {
-            self.displayNext();
-          } else if (!self.showDetails && (self.role.value === self.constants.PleaseSelect
-            && self.party.value === self.constants.PleaseSelect)) {
-            self.displayNext();
-          } else if (self.showDetails && self.form.valid && (self.searchEmail && self.searchEmail.validateEmail())) {
-            if (self.localEditMode) {
-              self.displayUpdate();
+    if (this.form) {
+      this.$subscriptions.push(this.form.valueChanges.subscribe(
+        result => {
+          setTimeout(() => {
+            if (self.showDetails && (self.role.value === self.constants.PleaseSelect &&
+              self.party.value === self.constants.PleaseSelect &&
+              self.title.value === self.constants.PleaseSelect &&
+              self.firstName.value === '' &&
+              self.lastName.value === '' &&
+              self.phone.value === '' &&
+              self.displayName.value === '') || self.editMode) {
+              self.displayNext();
+            } else if (!self.showDetails && (self.role.value === self.constants.PleaseSelect
+              && self.party.value === self.constants.PleaseSelect)) {
+              self.displayNext();
+            } else if (self.showDetails && self.form.valid && (self.searchEmail && self.searchEmail.validateEmail())) {
+              if (self.localEditMode) {
+                self.displayUpdate();
+              } else {
+                self.displayAdd();
+              }
             } else {
-              self.displayAdd();
+              self.displayClear();
             }
-          } else {
-            self.displayClear();
-          }
-        }, 500);
-      }));
+          }, 500);
+        }));
+    }
   }
 
   private repopulateParticipantToEdit() {
