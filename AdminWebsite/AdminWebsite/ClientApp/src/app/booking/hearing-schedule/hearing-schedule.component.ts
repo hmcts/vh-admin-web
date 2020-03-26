@@ -99,14 +99,12 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
       courtRoom: [room, [Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)]],
     });
 
-    if (this.courtAddress) {
-      this.$subscriptions.push(this.courtAddress.valueChanges.subscribe(val => {
-        const id = val;
-        if (id !== null) {
-          this.selectedCourtName = this.availableCourts.find(c => c.id === id).name;
-        }
-      }));
-    }
+    this.$subscriptions.push(this.courtAddress.valueChanges.subscribe(val => {
+      const id = val;
+      if (id !== null) {
+        this.selectedCourtName = this.availableCourts.find(c => c.id === id).name;
+      }
+    }));
   }
 
   get hearingDate() {

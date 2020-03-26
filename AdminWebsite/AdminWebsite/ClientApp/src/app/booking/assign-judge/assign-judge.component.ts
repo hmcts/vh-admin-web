@@ -112,19 +112,17 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
       judgeDisplayName: this.judgeDisplayName
     });
 
-    if (this.judgeName) {
-      this.$subscriptions.push(this.judgeName.valueChanges.subscribe(judgeUserId => {
+    this.$subscriptions.push(this.judgeName.valueChanges.subscribe(judgeUserId => {
+      if (judgeUserId !== null) {
         this.addJudge(judgeUserId);
         this.isJudgeSelected = judgeUserId !== null;
         this.canNavigate = this.isJudgeSelected;
-      }));
-    }
+      }
+    }));
 
-    if (this.judgeDisplayName) {
-      this.$subscriptions.push(this.judgeDisplayName.valueChanges.subscribe(name => {
-        this.judge.display_name = name;
-      }));
-    }
+    this.$subscriptions.push(this.judgeDisplayName.valueChanges.subscribe(name => {
+      this.judge.display_name = name;
+    }));
   }
 
   get judgeName() { return this.form.get('judgeName'); }
