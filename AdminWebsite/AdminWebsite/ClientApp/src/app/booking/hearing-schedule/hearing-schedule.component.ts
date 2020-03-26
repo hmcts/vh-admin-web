@@ -108,7 +108,9 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
   }
 
   get hearingDate() {
-    return this.form.get('hearingDate');
+    const hearingDateValue = this.form.get('hearingDate');
+    return hearingDateValue;
+    // return this.form.get('hearingDate');
   }
 
   get hearingStartTimeHour() {

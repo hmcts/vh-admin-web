@@ -92,7 +92,11 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
   }
 
   get caseName() { return this.form.get('caseName'); }
-  get caseNumber() { return this.form.get('caseNumber'); }
+  get caseNumber() {
+    const caseNumberValue = this.form.get('caseNumber');
+    return caseNumberValue;
+    // return this.form.get('caseNumber');
+  }
   get caseType() { return this.form.get('caseType'); }
   get hearingType() { return this.form.get('hearingType'); }
   get questionnaireNotRequired() { return this.form.get('questionnaireNotRequired').value; }
