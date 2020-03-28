@@ -39,6 +39,7 @@ function initExistingHearingRequest(): HearingModel {
   existingRequest.scheduled_date_time = today;
   existingRequest.scheduled_duration = 80;
   existingRequest.other_information = 'some notes';
+  existingRequest.audio_recording_required = true;
   existingRequest.court_room = '123W';
   const hearingTypeName = MockValues.HearingTypesList.find(c => c.id === existingRequest.hearing_type_id).name;
   existingRequest.hearing_type_name = hearingTypeName;
@@ -185,6 +186,12 @@ describe('SummaryComponent with valid request', () => {
     fixture.detectChanges();
     const courtString = MockValues.Courts.find(c => c.id === existingRequest.hearing_venue_id);
     expect(component.courtRoomAddress).toEqual(`${courtString.name}`);
+  });
+  it('should display valid audio recording selected option', () => {
+    component.hearing.audio_recording_required = false;
+    component.ngOnInit();
+    fixture.detectChanges();
+    expect(component.audioChoice).toBe('No');
   });
 });
 

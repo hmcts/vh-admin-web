@@ -38,6 +38,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
   courtRoomAddress: string;
   hearingDuration: string;
   otherInformation: string;
+  audioChoice: string;
   errors: any;
   selectedHearingType: HearingTypeResponse[];
   showConfirmationRemoveParticipant = false;
@@ -133,6 +134,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
     this.hearingDuration = `listed for ${FormatShortDuration(this.hearing.scheduled_duration)}`;
     this.courtRoomAddress = this.formatCourtRoom(this.hearing.court_name, this.hearing.court_room);
     this.otherInformation = this.hearing.other_information;
+    this.audioChoice = this.hearing.audio_recording_required ? 'Yes' : 'No';
   }
 
   private formatCourtRoom(courtName, courtRoom) {

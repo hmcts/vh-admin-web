@@ -25,6 +25,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
   hearing: HearingModel;
   judge: JudgeResponse;
   judgeDisplayName: FormControl;
+  audioChoice: FormControl;
   failedSubmission: boolean;
   attemptingCancellation = false;
   attemptingDiscardChanges = false;
@@ -34,7 +35,6 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
   constants = Constants;
   availableJudges: JudgeResponse[];
   isJudgeSelected = true;
-
   expanded = false;
   $subscriptions: Subscription[] = [];
 
@@ -107,9 +107,16 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
       ], updateOn: 'blur'
     });
 
+    if (this.hearing.audio_recording_required === null || this.hearing.audio_recording_required === undefined) {
+      this.hearing.audio_recording_required = true;
+    }
+
+    this.audioChoice = new FormControl(this.hearing.audio_recording_required, Validators.required);
+
     this.form = this.fb.group({
       judgeName: [this.judge.email, Validators.required],
-      judgeDisplayName: this.judgeDisplayName
+      judgeDisplayName: this.judgeDisplayName,
+      audioChoice: this.audioChoice
     });
 
     this.$subscriptions.push(this.judgeName.valueChanges.subscribe(judgeUserId => {
@@ -183,10 +190,12 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
       this.failedSubmission = true;
       return;
     }
+
     if (this.form.valid) {
       this.failedSubmission = false;
       this.form.markAsPristine();
       this.hasSaved = true;
+      this.hearing.audio_recording_required = this.audioChoice.value;
       this.changeDisplayName();
       this.hearingService.updateHearingRequest(this.hearing);
       if (this.editMode) {

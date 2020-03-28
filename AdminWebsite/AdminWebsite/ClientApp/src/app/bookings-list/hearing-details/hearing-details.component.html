@@ -10,7 +10,7 @@
       </div>
       <div class="govuk-grid-row vh-b">
         <div class="vh-xsml" id="created-date">{{hearing?.CreatedDate | appLongDatetime}}</div>
-        
+
       </div>
     </div>
   </div>
@@ -24,7 +24,7 @@
       </div>
       <div class="govuk-grid-row">
         <div class="vh-xsml" id="edit-date">{{hearing?.LastEditDate | appLongDatetime}}</div>
-        
+
       </div>
     </div>
   </div>
@@ -55,6 +55,11 @@
   <div class="govuk-grid-row">
     <div class="govuk-body vh-sml" id="duration">listed for {{hearing?.DurationInHoursAndMinutes}}</div>
   </div>
+</div>
+
+<h2 class="govuk-heading-s remove-header-padding">Audio to be recorded</h2>
+<div class="govuk-form-group vhtable">
+  <div class="govuk-body vh-text-break" id="audioRecorded">{{ hearing?.audio_recording_required }}</div>
 </div>
 
 <h2 class="govuk-heading-s remove-header-padding">Other information</h2>

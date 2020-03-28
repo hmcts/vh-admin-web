@@ -50,7 +50,7 @@ function initHearingRequest(): HearingModel {
   newHearing.hearing_venue_id = -1;
   newHearing.scheduled_date_time = null;
   newHearing.scheduled_duration = 0;
-
+  newHearing.audio_recording_required = true;
   return newHearing;
 }
 
@@ -283,6 +283,17 @@ describe('AssignJudgeComponent', () => {
 
     expect(component.$subscriptions[0].closed).toBeTruthy();
     expect(component.$subscriptions[1].closed).toBeTruthy();
+  });
+  it('should set audio recording to true by default', () => {
+    component.hearing = null;
+    component.ngOnInit();
+    expect(component.audioChoice.value).toBe(true);
+  });
+  it('should set audio recording to false and update hearing model', () => {
+    component.ngOnInit
+    component.audioChoice.setValue(false);
+    component.saveJudge();
+    expect(component.hearing.audio_recording_required).toBe(false);
   });
 });
 
