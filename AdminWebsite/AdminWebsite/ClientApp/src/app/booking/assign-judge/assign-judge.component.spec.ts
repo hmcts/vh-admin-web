@@ -290,7 +290,7 @@ describe('AssignJudgeComponent', () => {
     expect(component.audioChoice.value).toBe(true);
   });
   it('should set audio recording to false and update hearing model', () => {
-    component.ngOnInit
+    component.ngOnInit();
     component.audioChoice.setValue(false);
     component.saveJudge();
     expect(component.hearing.audio_recording_required).toBe(false);
