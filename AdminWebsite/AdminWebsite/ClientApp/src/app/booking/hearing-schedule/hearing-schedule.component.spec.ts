@@ -29,7 +29,6 @@ function initExistingHearingRequest(): HearingModel {
   existingRequest.hearing_venue_id = 1,
     existingRequest.scheduled_date_time = today;
   existingRequest.scheduled_duration = 80;
-  existingRequest.audio_recording_required = true;
   return existingRequest;
 }
 
