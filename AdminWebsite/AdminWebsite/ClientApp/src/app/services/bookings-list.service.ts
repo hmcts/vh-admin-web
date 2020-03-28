@@ -123,8 +123,7 @@ export class BookingsListService {
       hearing.last_edit_by,
       hearing.last_edit_date,
       hearing.status,
-      hearing.questionnaire_not_required,
-      true
+      hearing.questionnaire_not_required
     );
   }
 }

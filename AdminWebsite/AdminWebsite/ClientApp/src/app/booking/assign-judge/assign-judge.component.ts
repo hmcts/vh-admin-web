@@ -37,6 +37,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
   isJudgeSelected = true;
   expanded = false;
   $subscriptions: Subscription[] = [];
+  audioRecording = true;
 
   constructor(
     private fb: FormBuilder,
@@ -111,7 +112,8 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
       this.hearing.audio_recording_required = true;
     }
 
-    this.audioChoice = new FormControl(this.hearing.audio_recording_required, Validators.required);
+    this.audioRecording = this.setInitialAudio();
+    this.audioChoice = new FormControl(this.audioRecording, Validators.required);
 
     this.form = this.fb.group({
       judgeName: [this.judge.email, Validators.required],
@@ -128,6 +130,11 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     this.$subscriptions.push(this.judgeDisplayName.valueChanges.subscribe(name => {
       this.judge.display_name = name;
     }));
+  }
+
+  private setInitialAudio() {
+    return this.hearing && this.hearing.audio_recording_required !== null && this.hearing.audio_recording_required !== undefined
+        ? this.hearing.audio_recording_required : true;
   }
 
   get judgeName() { return this.form.get('judgeName'); }

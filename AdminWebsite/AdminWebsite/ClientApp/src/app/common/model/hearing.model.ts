@@ -28,5 +28,5 @@ export class HearingModel {
   updated_date: Date | undefined;
   status?: string | undefined;
   questionnaire_not_required: boolean;
-  audio_recording_required: boolean;
+  audio_recording_required?: boolean;
 }

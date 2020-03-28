@@ -280,7 +280,6 @@ describe('AssignJudgeComponent', () => {
   });
   it('should unsubscribe all subcriptions on destroy component', () => {
     component.ngOnDestroy();
-
     expect(component.$subscriptions[0].closed).toBeTruthy();
     expect(component.$subscriptions[1].closed).toBeTruthy();
   });
@@ -292,6 +291,7 @@ describe('AssignJudgeComponent', () => {
   it('should set audio recording to false and update hearing model', () => {
     component.ngOnInit();
     component.audioChoice.setValue(false);
+    fixture.detectChanges();
     component.saveJudge();
     expect(component.hearing.audio_recording_required).toBe(false);
   });
