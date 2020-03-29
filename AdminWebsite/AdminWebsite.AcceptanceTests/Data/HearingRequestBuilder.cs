@@ -17,7 +17,6 @@ namespace AdminWebsite.AcceptanceTests.Data
         private readonly List<UserAccount> _individuals;
         private readonly List<UserAccount> _representatives;
         private readonly List<ParticipantRequest> _participants;
-        private readonly UserManager _userManager;
         private List<UserAccount> _userAccounts;
 
         public HearingRequestBuilder()
@@ -26,7 +25,6 @@ namespace AdminWebsite.AcceptanceTests.Data
             _individuals = new List<UserAccount>();
             _representatives = new List<UserAccount>();
             _participants = new List<ParticipantRequest>();
-            _userManager = new UserManager();
             _userAccounts = new List<UserAccount>();
         }
 

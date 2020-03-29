@@ -8,6 +8,9 @@
         InitialiseBrowserHooks = 4,
         ConfigureDriverHooks = 5,
         RemoveDataHooks = 6,
-        DataHooks = 7
+        DataHooks = 7,
+        SignOutHooks = 8,
+        LogResultHooks = 9,
+        TearDownBrowserHooks = 10
     }
 }

@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 using System.Threading;
 using AcceptanceTests.Common.Api.Hearings;
+using AcceptanceTests.Common.Api.Helpers;
 using AcceptanceTests.Common.Api.Requests;
 using AcceptanceTests.Common.Api.Users;
 using AcceptanceTests.Common.Configuration.Users;
