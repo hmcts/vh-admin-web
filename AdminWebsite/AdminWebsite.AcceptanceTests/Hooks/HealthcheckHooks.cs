@@ -17,15 +17,15 @@ namespace AdminWebsite.AcceptanceTests.Hooks
 
         private static void CheckBookingsApiHealth(string apiUrl, string bearerToken)
         {
-            new HealthcheckManager(apiUrl, bearerToken).CheckHealthOfBookingsApi();
+            HealthcheckManager.CheckHealthOfBookingsApi(apiUrl, bearerToken);
         }
         private static void CheckUserApiHealth(string apiUrl, string bearerToken)
         {
-            new HealthcheckManager(apiUrl, bearerToken).CheckHealthOfUserApi();
+            HealthcheckManager.CheckHealthOfUserApi(apiUrl, bearerToken);
         }
         private static void CheckVideoApiHealth(string apiUrl, string bearerToken)
         {
-            new HealthcheckManager(apiUrl, bearerToken).CheckHealthOfVideoApi();
+            HealthcheckManager.CheckHealthOfVideoApi(apiUrl, bearerToken);
         }
     }
 }
