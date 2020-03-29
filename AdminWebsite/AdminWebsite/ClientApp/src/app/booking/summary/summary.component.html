@@ -25,8 +25,15 @@
       <div id="hearingDuration">{{ hearingDuration }}</div>
     </div>
 
+    <app-booking-edit [title]="'Audio to be recorded'" [editLink]="'assign-judge'"
+                      [elementId]="'audio-recording-id'"></app-booking-edit>
+
+    <div class="govuk-form-group vhtable">
+      <div class="vh-text-break" id="audioRecording">{{ audioChoice }}</div>
+    </div>
+
     <app-booking-edit [title]="'Other information'" [editLink]="'other-information'"
-      [elementId]="'other-information-id'"></app-booking-edit>
+                      [elementId]="'other-information-id'"></app-booking-edit>
 
     <div class="govuk-form-group vhtable">
       <div class="vh-text-break" id="otherInformation">{{ otherInformation }}</div>
@@ -35,10 +42,12 @@
     <div class="sk-top">
       <button id="bookButton" class="govuk-button vh-mr25" data-module="govuk-button" (click)="bookHearing()" alt="Book a Hearing"
               [disabled]="bookingsSaving">
-      {{isExistingBooking ? 'Save' : 'Book'}}</button>
+        {{isExistingBooking ? 'Save' : 'Book'}}
+      </button>
       <button id="cancelButton" class="govuk-button hmcts-button--secondary" data-module="govuk-button"
               (click)="confirmCancelBooking()" alt="Confirm cancellation of new booking and return to dashboard">
-      Cancel</button>
+        Cancel
+      </button>
     </div>
   </div>
 
