@@ -55,25 +55,6 @@ namespace AdminWebsite.VideoAPI.Client
         /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         System.Threading.Tasks.Task UpdateConferenceAsync(UpdateConferenceRequest body, System.Threading.CancellationToken cancellationToken);
     
-        /// <summary>Get non-closed conferences for a participant by their username</summary>
-        /// <param name="username">person username</param>
-        /// <returns>Success</returns>
-        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.List<ConferenceSummaryResponse>> GetConferencesForUsernameAsync(string username);
-    
-        /// <summary>Get non-closed conferences for a participant by their username</summary>
-        /// <param name="username">person username</param>
-        /// <returns>Success</returns>
-        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
-        System.Collections.Generic.List<ConferenceSummaryResponse> GetConferencesForUsername(string username);
-    
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Get non-closed conferences for a participant by their username</summary>
-        /// <param name="username">person username</param>
-        /// <returns>Success</returns>
-        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.List<ConferenceSummaryResponse>> GetConferencesForUsernameAsync(string username, System.Threading.CancellationToken cancellationToken);
-    
         /// <summary>Get the details of a conference</summary>
         /// <param name="conferenceId">Id of the conference</param>
         /// <returns>Success</returns>
@@ -115,18 +96,56 @@ namespace AdminWebsite.VideoAPI.Client
         /// <summary>Get todays conferences</summary>
         /// <returns>Success</returns>
         /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.List<ConferenceSummaryResponse>> GetConferencesTodayAsync();
+        System.Threading.Tasks.Task<System.Collections.Generic.List<ConferenceForAdminResponse>> GetConferencesTodayForAdminAsync();
     
         /// <summary>Get todays conferences</summary>
         /// <returns>Success</returns>
         /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
-        System.Collections.Generic.List<ConferenceSummaryResponse> GetConferencesToday();
+        System.Collections.Generic.List<ConferenceForAdminResponse> GetConferencesTodayForAdmin();
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Get todays conferences</summary>
         /// <returns>Success</returns>
         /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.List<ConferenceSummaryResponse>> GetConferencesTodayAsync(System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<System.Collections.Generic.List<ConferenceForAdminResponse>> GetConferencesTodayForAdminAsync(System.Threading.CancellationToken cancellationToken);
+    
+        /// <summary>Get all conferences for a judge</summary>
+        /// <param name="username">judge username</param>
+        /// <returns>Success</returns>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<System.Collections.Generic.List<ConferenceForJudgeResponse>> GetConferencesTodayForJudgeByUsernameAsync(string username);
+    
+        /// <summary>Get all conferences for a judge</summary>
+        /// <param name="username">judge username</param>
+        /// <returns>Success</returns>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
+        System.Collections.Generic.List<ConferenceForJudgeResponse> GetConferencesTodayForJudgeByUsername(string username);
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Get all conferences for a judge</summary>
+        /// <param name="username">judge username</param>
+        /// <returns>Success</returns>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<System.Collections.Generic.List<ConferenceForJudgeResponse>> GetConferencesTodayForJudgeByUsernameAsync(string username, System.Threading.CancellationToken cancellationToken);
+    
+        /// <summary>Get non-closed conferences for a participant by their username</summary>
+        /// <param name="username">person username</param>
+        /// <returns>Success</returns>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<System.Collections.Generic.List<ConferenceForIndividualResponse>> GetConferencesTodayForIndividualByUsernameAsync(string username);
+    
+        /// <summary>Get non-closed conferences for a participant by their username</summary>
+        /// <param name="username">person username</param>
+        /// <returns>Success</returns>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
+        System.Collections.Generic.List<ConferenceForIndividualResponse> GetConferencesTodayForIndividualByUsername(string username);
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Get non-closed conferences for a participant by their username</summary>
+        /// <param name="username">person username</param>
+        /// <returns>Success</returns>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<System.Collections.Generic.List<ConferenceForIndividualResponse>> GetConferencesTodayForIndividualByUsernameAsync(string username, System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Get conferences by hearing ref id</summary>
         /// <param name="hearingRefId">Hearing ID</param>
@@ -297,18 +316,18 @@ namespace AdminWebsite.VideoAPI.Client
         /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         System.Threading.Tasks.Task RemoveInstantMessagesAsync(System.Guid conferenceId, System.Threading.CancellationToken cancellationToken);
     
-        /// <summary>Get list of closed conferenceswith instant messages (closed over 30 minutes ago)</summary>
+        /// <summary>Get list of closed conferences with instant messages (closed over 30 minutes ago)</summary>
         /// <returns>Success</returns>
         /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<System.Collections.Generic.List<ClosedConferencesResponse>> GetClosedConferencesWithInstantMessagesAsync();
     
-        /// <summary>Get list of closed conferenceswith instant messages (closed over 30 minutes ago)</summary>
+        /// <summary>Get list of closed conferences with instant messages (closed over 30 minutes ago)</summary>
         /// <returns>Success</returns>
         /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         System.Collections.Generic.List<ClosedConferencesResponse> GetClosedConferencesWithInstantMessages();
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Get list of closed conferenceswith instant messages (closed over 30 minutes ago)</summary>
+        /// <summary>Get list of closed conferences with instant messages (closed over 30 minutes ago)</summary>
         /// <returns>Success</returns>
         /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<System.Collections.Generic.List<ClosedConferencesResponse>> GetClosedConferencesWithInstantMessagesAsync(System.Threading.CancellationToken cancellationToken);
@@ -446,12 +465,16 @@ namespace AdminWebsite.VideoAPI.Client
         System.Threading.Tasks.Task<System.Collections.Generic.List<ParticipantHeartbeatResponse>> GetHeartbeatDataForParticipantAsync(System.Guid conferenceId, System.Guid participantId, System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Post the Heartbeat Data For Participant</summary>
+        /// <param name="conferenceId">The id of the conference</param>
+        /// <param name="participantId">The id of the participant</param>
         /// <param name="body">The AddHeartbeatRequest</param>
         /// <returns>Success</returns>
         /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         System.Threading.Tasks.Task SaveHeartbeatDataForParticipantAsync(System.Guid conferenceId, System.Guid participantId, AddHeartbeatRequest body);
     
         /// <summary>Post the Heartbeat Data For Participant</summary>
+        /// <param name="conferenceId">The id of the conference</param>
+        /// <param name="participantId">The id of the participant</param>
         /// <param name="body">The AddHeartbeatRequest</param>
         /// <returns>Success</returns>
         /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
@@ -459,6 +482,8 @@ namespace AdminWebsite.VideoAPI.Client
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Post the Heartbeat Data For Participant</summary>
+        /// <param name="conferenceId">The id of the conference</param>
+        /// <param name="participantId">The id of the participant</param>
         /// <param name="body">The AddHeartbeatRequest</param>
         /// <returns>Success</returns>
         /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
@@ -765,103 +790,6 @@ namespace AdminWebsite.VideoAPI.Client
             }
         }
     
-        /// <summary>Get non-closed conferences for a participant by their username</summary>
-        /// <param name="username">person username</param>
-        /// <returns>Success</returns>
-        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<System.Collections.Generic.List<ConferenceSummaryResponse>> GetConferencesForUsernameAsync(string username)
-        {
-            return GetConferencesForUsernameAsync(username, System.Threading.CancellationToken.None);
-        }
-    
-        /// <summary>Get non-closed conferences for a participant by their username</summary>
-        /// <param name="username">person username</param>
-        /// <returns>Success</returns>
-        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
-        public System.Collections.Generic.List<ConferenceSummaryResponse> GetConferencesForUsername(string username)
-        {
-            return System.Threading.Tasks.Task.Run(async () => await GetConferencesForUsernameAsync(username, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
-        }
-    
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Get non-closed conferences for a participant by their username</summary>
-        /// <param name="username">person username</param>
-        /// <returns>Success</returns>
-        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task<System.Collections.Generic.List<ConferenceSummaryResponse>> GetConferencesForUsernameAsync(string username, System.Threading.CancellationToken cancellationToken)
-        {
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/conferences?");
-            if (username != null) 
-            {
-                urlBuilder_.Append(System.Uri.EscapeDataString("username") + "=").Append(System.Uri.EscapeDataString(ConvertToString(username, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
-            }
-            urlBuilder_.Length--;
-    
-            var client_ = _httpClient;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-    
-                    PrepareRequest(client_, request_, urlBuilder_);
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-                    PrepareRequest(client_, request_, url_);
-    
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    try
-                    {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-    
-                        ProcessResponse(client_, response_);
-    
-                        var status_ = ((int)response_.StatusCode).ToString();
-                        if (status_ == "200") 
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.List<ConferenceSummaryResponse>>(response_, headers_).ConfigureAwait(false);
-                            return objectResponse_.Object;
-                        }
-                        else
-                        if (status_ == "400") 
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            throw new VideoApiServiceException<ProblemDetails>("Bad Request", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
-                        }
-                        else
-                        if (status_ == "401") 
-                        {
-                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new VideoApiServiceException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
-                        }
-                        else
-                        if (status_ != "200" && status_ != "204")
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new VideoApiServiceException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
-                        }
-            
-                        return default(System.Collections.Generic.List<ConferenceSummaryResponse>);
-                    }
-                    finally
-                    {
-                        if (response_ != null)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-            }
-        }
-    
         /// <summary>Get the details of a conference</summary>
         /// <param name="conferenceId">Id of the conference</param>
         /// <returns>Success</returns>
@@ -1065,27 +993,27 @@ namespace AdminWebsite.VideoAPI.Client
         /// <summary>Get todays conferences</summary>
         /// <returns>Success</returns>
         /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<System.Collections.Generic.List<ConferenceSummaryResponse>> GetConferencesTodayAsync()
+        public System.Threading.Tasks.Task<System.Collections.Generic.List<ConferenceForAdminResponse>> GetConferencesTodayForAdminAsync()
         {
-            return GetConferencesTodayAsync(System.Threading.CancellationToken.None);
+            return GetConferencesTodayForAdminAsync(System.Threading.CancellationToken.None);
         }
     
         /// <summary>Get todays conferences</summary>
         /// <returns>Success</returns>
         /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
-        public System.Collections.Generic.List<ConferenceSummaryResponse> GetConferencesToday()
+        public System.Collections.Generic.List<ConferenceForAdminResponse> GetConferencesTodayForAdmin()
         {
-            return System.Threading.Tasks.Task.Run(async () => await GetConferencesTodayAsync(System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
+            return System.Threading.Tasks.Task.Run(async () => await GetConferencesTodayForAdminAsync(System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
         }
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Get todays conferences</summary>
         /// <returns>Success</returns>
         /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task<System.Collections.Generic.List<ConferenceSummaryResponse>> GetConferencesTodayAsync(System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task<System.Collections.Generic.List<ConferenceForAdminResponse>> GetConferencesTodayForAdminAsync(System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/conferences/today");
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/conferences/today/vho");
     
             var client_ = _httpClient;
             try
@@ -1115,7 +1043,7 @@ namespace AdminWebsite.VideoAPI.Client
                         var status_ = ((int)response_.StatusCode).ToString();
                         if (status_ == "200") 
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.List<ConferenceSummaryResponse>>(response_, headers_).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.List<ConferenceForAdminResponse>>(response_, headers_).ConfigureAwait(false);
                             return objectResponse_.Object;
                         }
                         else
@@ -1131,7 +1059,201 @@ namespace AdminWebsite.VideoAPI.Client
                             throw new VideoApiServiceException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
                         }
             
-                        return default(System.Collections.Generic.List<ConferenceSummaryResponse>);
+                        return default(System.Collections.Generic.List<ConferenceForAdminResponse>);
+                    }
+                    finally
+                    {
+                        if (response_ != null)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+            }
+        }
+    
+        /// <summary>Get all conferences for a judge</summary>
+        /// <param name="username">judge username</param>
+        /// <returns>Success</returns>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
+        public System.Threading.Tasks.Task<System.Collections.Generic.List<ConferenceForJudgeResponse>> GetConferencesTodayForJudgeByUsernameAsync(string username)
+        {
+            return GetConferencesTodayForJudgeByUsernameAsync(username, System.Threading.CancellationToken.None);
+        }
+    
+        /// <summary>Get all conferences for a judge</summary>
+        /// <param name="username">judge username</param>
+        /// <returns>Success</returns>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
+        public System.Collections.Generic.List<ConferenceForJudgeResponse> GetConferencesTodayForJudgeByUsername(string username)
+        {
+            return System.Threading.Tasks.Task.Run(async () => await GetConferencesTodayForJudgeByUsernameAsync(username, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
+        }
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Get all conferences for a judge</summary>
+        /// <param name="username">judge username</param>
+        /// <returns>Success</returns>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
+        public async System.Threading.Tasks.Task<System.Collections.Generic.List<ConferenceForJudgeResponse>> GetConferencesTodayForJudgeByUsernameAsync(string username, System.Threading.CancellationToken cancellationToken)
+        {
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/conferences/today/judge?");
+            if (username != null) 
+            {
+                urlBuilder_.Append(System.Uri.EscapeDataString("username") + "=").Append(System.Uri.EscapeDataString(ConvertToString(username, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+            }
+            urlBuilder_.Length--;
+    
+            var client_ = _httpClient;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+    
+                    PrepareRequest(client_, request_, urlBuilder_);
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+                    PrepareRequest(client_, request_, url_);
+    
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+    
+                        ProcessResponse(client_, response_);
+    
+                        var status_ = ((int)response_.StatusCode).ToString();
+                        if (status_ == "200") 
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.List<ConferenceForJudgeResponse>>(response_, headers_).ConfigureAwait(false);
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == "400") 
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            throw new VideoApiServiceException<ProblemDetails>("Bad Request", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == "401") 
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new VideoApiServiceException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
+                        }
+                        else
+                        if (status_ != "200" && status_ != "204")
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new VideoApiServiceException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+            
+                        return default(System.Collections.Generic.List<ConferenceForJudgeResponse>);
+                    }
+                    finally
+                    {
+                        if (response_ != null)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+            }
+        }
+    
+        /// <summary>Get non-closed conferences for a participant by their username</summary>
+        /// <param name="username">person username</param>
+        /// <returns>Success</returns>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
+        public System.Threading.Tasks.Task<System.Collections.Generic.List<ConferenceForIndividualResponse>> GetConferencesTodayForIndividualByUsernameAsync(string username)
+        {
+            return GetConferencesTodayForIndividualByUsernameAsync(username, System.Threading.CancellationToken.None);
+        }
+    
+        /// <summary>Get non-closed conferences for a participant by their username</summary>
+        /// <param name="username">person username</param>
+        /// <returns>Success</returns>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
+        public System.Collections.Generic.List<ConferenceForIndividualResponse> GetConferencesTodayForIndividualByUsername(string username)
+        {
+            return System.Threading.Tasks.Task.Run(async () => await GetConferencesTodayForIndividualByUsernameAsync(username, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
+        }
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Get non-closed conferences for a participant by their username</summary>
+        /// <param name="username">person username</param>
+        /// <returns>Success</returns>
+        /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
+        public async System.Threading.Tasks.Task<System.Collections.Generic.List<ConferenceForIndividualResponse>> GetConferencesTodayForIndividualByUsernameAsync(string username, System.Threading.CancellationToken cancellationToken)
+        {
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/conferences/today/individual?");
+            if (username != null) 
+            {
+                urlBuilder_.Append(System.Uri.EscapeDataString("username") + "=").Append(System.Uri.EscapeDataString(ConvertToString(username, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+            }
+            urlBuilder_.Length--;
+    
+            var client_ = _httpClient;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+    
+                    PrepareRequest(client_, request_, urlBuilder_);
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+                    PrepareRequest(client_, request_, url_);
+    
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+    
+                        ProcessResponse(client_, response_);
+    
+                        var status_ = ((int)response_.StatusCode).ToString();
+                        if (status_ == "200") 
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.List<ConferenceForIndividualResponse>>(response_, headers_).ConfigureAwait(false);
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == "400") 
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            throw new VideoApiServiceException<ProblemDetails>("Bad Request", (int)response_.StatusCode, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == "401") 
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new VideoApiServiceException("Unauthorized", (int)response_.StatusCode, responseText_, headers_, null);
+                        }
+                        else
+                        if (status_ != "200" && status_ != "204")
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new VideoApiServiceException("The HTTP status code of the response was not expected (" + (int)response_.StatusCode + ").", (int)response_.StatusCode, responseData_, headers_, null);
+                        }
+            
+                        return default(System.Collections.Generic.List<ConferenceForIndividualResponse>);
                     }
                     finally
                     {
@@ -2065,7 +2187,7 @@ namespace AdminWebsite.VideoAPI.Client
             }
         }
     
-        /// <summary>Get list of closed conferenceswith instant messages (closed over 30 minutes ago)</summary>
+        /// <summary>Get list of closed conferences with instant messages (closed over 30 minutes ago)</summary>
         /// <returns>Success</returns>
         /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public System.Threading.Tasks.Task<System.Collections.Generic.List<ClosedConferencesResponse>> GetClosedConferencesWithInstantMessagesAsync()
@@ -2073,7 +2195,7 @@ namespace AdminWebsite.VideoAPI.Client
             return GetClosedConferencesWithInstantMessagesAsync(System.Threading.CancellationToken.None);
         }
     
-        /// <summary>Get list of closed conferenceswith instant messages (closed over 30 minutes ago)</summary>
+        /// <summary>Get list of closed conferences with instant messages (closed over 30 minutes ago)</summary>
         /// <returns>Success</returns>
         /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public System.Collections.Generic.List<ClosedConferencesResponse> GetClosedConferencesWithInstantMessages()
@@ -2082,7 +2204,7 @@ namespace AdminWebsite.VideoAPI.Client
         }
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Get list of closed conferenceswith instant messages (closed over 30 minutes ago)</summary>
+        /// <summary>Get list of closed conferences with instant messages (closed over 30 minutes ago)</summary>
         /// <returns>Success</returns>
         /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
         public async System.Threading.Tasks.Task<System.Collections.Generic.List<ClosedConferencesResponse>> GetClosedConferencesWithInstantMessagesAsync(System.Threading.CancellationToken cancellationToken)
@@ -2772,6 +2894,8 @@ namespace AdminWebsite.VideoAPI.Client
         }
     
         /// <summary>Post the Heartbeat Data For Participant</summary>
+        /// <param name="conferenceId">The id of the conference</param>
+        /// <param name="participantId">The id of the participant</param>
         /// <param name="body">The AddHeartbeatRequest</param>
         /// <returns>Success</returns>
         /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
@@ -2781,6 +2905,8 @@ namespace AdminWebsite.VideoAPI.Client
         }
     
         /// <summary>Post the Heartbeat Data For Participant</summary>
+        /// <param name="conferenceId">The id of the conference</param>
+        /// <param name="participantId">The id of the participant</param>
         /// <param name="body">The AddHeartbeatRequest</param>
         /// <returns>Success</returns>
         /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
@@ -2791,6 +2917,8 @@ namespace AdminWebsite.VideoAPI.Client
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Post the Heartbeat Data For Participant</summary>
+        /// <param name="conferenceId">The id of the conference</param>
+        /// <param name="participantId">The id of the participant</param>
         /// <param name="body">The AddHeartbeatRequest</param>
         /// <returns>Success</returns>
         /// <exception cref="VideoApiServiceException">A server side error occurred.</exception>
@@ -3488,36 +3616,6 @@ namespace AdminWebsite.VideoAPI.Client
     }
     
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.4.0 (Newtonsoft.Json v12.0.0.0)")]
-    public enum TestScore
-    {
-        [System.Runtime.Serialization.EnumMember(Value = @"Good")]
-        Good = 0,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"Okay")]
-        Okay = 1,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"Bad")]
-        Bad = 2,
-    
-    }
-    
-    /// <summary>The score of a test call</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.4.0 (Newtonsoft.Json v12.0.0.0)")]
-    public partial class TestCallScoreResponse 
-    {
-        /// <summary>The score of the test call</summary>
-        [Newtonsoft.Json.JsonProperty("score", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public TestScore Score { get; set; }
-    
-        /// <summary>Whether or not the call was successful</summary>
-        [Newtonsoft.Json.JsonProperty("passed", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public bool Passed { get; set; }
-    
-    
-    }
-    
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.4.0 (Newtonsoft.Json v12.0.0.0)")]
     public partial class ParticipantDetailsResponse 
     {
         /// <summary>The participant's UUID</summary>
@@ -3552,9 +3650,6 @@ namespace AdminWebsite.VideoAPI.Client
         [Newtonsoft.Json.JsonProperty("current_status", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
         public ParticipantState Current_status { get; set; }
-    
-        [Newtonsoft.Json.JsonProperty("self_test_score", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public TestCallScoreResponse Self_test_score { get; set; }
     
     
     }
@@ -3769,7 +3864,7 @@ namespace AdminWebsite.VideoAPI.Client
     }
     
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.4.0 (Newtonsoft.Json v12.0.0.0)")]
-    public partial class ConferenceSummaryResponse 
+    public partial class ConferenceForAdminResponse 
     {
         [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.Guid Id { get; set; }
@@ -3810,6 +3905,80 @@ namespace AdminWebsite.VideoAPI.Client
     
         [Newtonsoft.Json.JsonProperty("tasks", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.Collections.Generic.List<TaskResponse> Tasks { get; set; }
+    
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.4.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class ParticipantForJudgeResponse 
+    {
+        [Newtonsoft.Json.JsonProperty("display_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Display_name { get; set; }
+    
+        /// <summary>The participant role in conference</summary>
+        [Newtonsoft.Json.JsonProperty("role", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public UserRole Role { get; set; }
+    
+        /// <summary>The representee (if participant is a representative)</summary>
+        [Newtonsoft.Json.JsonProperty("representee", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Representee { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("case_type_group", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Case_type_group { get; set; }
+    
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.4.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class ConferenceForJudgeResponse 
+    {
+        /// <summary>Conference UUID</summary>
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid Id { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("scheduled_date_time", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTime Scheduled_date_time { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("scheduled_duration", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int Scheduled_duration { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("case_type", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Case_type { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("case_number", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Case_number { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("case_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Case_name { get; set; }
+    
+        /// <summary>The current conference status</summary>
+        [Newtonsoft.Json.JsonProperty("status", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public ConferenceState Status { get; set; }
+    
+        /// <summary>The conference participants</summary>
+        [Newtonsoft.Json.JsonProperty("participants", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.List<ParticipantForJudgeResponse> Participants { get; set; }
+    
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.4.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class ConferenceForIndividualResponse 
+    {
+        /// <summary>Conference UUID</summary>
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid Id { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("scheduled_date_time", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTime Scheduled_date_time { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("case_number", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Case_number { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("case_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Case_name { get; set; }
     
     
     }
@@ -4025,6 +4194,36 @@ namespace AdminWebsite.VideoAPI.Client
         /// <summary>Representee</summary>
         [Newtonsoft.Json.JsonProperty("representee", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Representee { get; set; }
+    
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.4.0 (Newtonsoft.Json v12.0.0.0)")]
+    public enum TestScore
+    {
+        [System.Runtime.Serialization.EnumMember(Value = @"Good")]
+        Good = 0,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Okay")]
+        Okay = 1,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Bad")]
+        Bad = 2,
+    
+    }
+    
+    /// <summary>The score of a test call</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.4.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class TestCallScoreResponse 
+    {
+        /// <summary>The score of the test call</summary>
+        [Newtonsoft.Json.JsonProperty("score", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public TestScore Score { get; set; }
+    
+        /// <summary>Whether or not the call was successful</summary>
+        [Newtonsoft.Json.JsonProperty("passed", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool Passed { get; set; }
     
     
     }
