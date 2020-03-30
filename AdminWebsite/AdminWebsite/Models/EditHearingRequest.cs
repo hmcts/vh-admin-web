@@ -47,5 +47,10 @@ namespace AdminWebsite.Models
         /// QuestionnaireNotRequired
         /// </summary>
         public bool QuestionnaireNotRequired { get; set; }
+
+        /// <summary>
+        /// Gets or sets audio recording required flag
+        /// </summary>
+        public bool AudioRecordingRequired { get; set; }
     }
 }

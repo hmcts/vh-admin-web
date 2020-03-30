@@ -7,7 +7,7 @@ import { BookingDetailsService } from '../../services/booking-details.service';
 import { BookingService } from '../../services/booking.service';
 import {
   HearingDetailsResponse, UpdateBookingStatusRequest,
-  UpdateBookingStatusRequestStatus, UserProfileResponse
+  UpdateBookingStatus, UserProfileResponse
 } from '../../services/clients/api-client';
 import { UserIdentityService } from '../../services/user-identity.service';
 import { HearingModel } from '../../common/model/hearing.model';
@@ -120,7 +120,7 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
 
   confirmHearing() {
     if (this.isVhOfficerAdmin) {
-      this.updateHearingStatus(UpdateBookingStatusRequestStatus.Created);
+      this.updateHearingStatus(UpdateBookingStatus.Created);
     }
   }
 
@@ -129,10 +129,10 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
   }
 
   cancelBooking() {
-    this.updateHearingStatus(UpdateBookingStatusRequestStatus.Cancelled);
+    this.updateHearingStatus(UpdateBookingStatus.Cancelled);
   }
 
-  updateHearingStatus(status: UpdateBookingStatusRequestStatus) {
+  updateHearingStatus(status: UpdateBookingStatus) {
     const updateBookingStatus = new UpdateBookingStatusRequest();
     updateBookingStatus.status = status;
     updateBookingStatus.updated_by = '';
@@ -148,8 +148,8 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
         }));
   }
 
-  updateStatusHandler(status: UpdateBookingStatusRequestStatus) {
-    if (status === UpdateBookingStatusRequestStatus.Cancelled) {
+  updateStatusHandler(status: UpdateBookingStatus) {
+    if (status === UpdateBookingStatus.Cancelled) {
       this.showCancelBooking = false;
     }
     this.persistStatus(status);
@@ -164,14 +164,14 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
       ));
   }
 
-  errorHandler(error, status: UpdateBookingStatusRequestStatus) {
-    if (status === UpdateBookingStatusRequestStatus.Cancelled) {
+  errorHandler(error, status: UpdateBookingStatus) {
+    if (status === UpdateBookingStatus.Cancelled) {
       this.showCancelBooking = false;
     }
     this.logger.error('Error update hearing status', error);
   }
 
-  persistStatus(status: UpdateBookingStatusRequestStatus) {
+  persistStatus(status: UpdateBookingStatus) {
     if (!this.booking) {
       this.booking = this.videoHearingService.getCurrentRequest();
     }

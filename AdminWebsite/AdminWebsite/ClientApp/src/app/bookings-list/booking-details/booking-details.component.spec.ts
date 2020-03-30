@@ -1,6 +1,5 @@
 import {
-  ComponentFixture, TestBed, async, fakeAsync, tick,
-  flush, discardPeriodicTasks
+  ComponentFixture, TestBed, async, fakeAsync, tick
 } from '@angular/core/testing';
 import { HttpClientModule } from '@angular/common/http';
 import { Router } from '@angular/router';
@@ -12,7 +11,7 @@ import { BookingDetailsService } from '../../services/booking-details.service';
 import { BookingService } from '../../services/booking.service';
 import {
   HearingDetailsResponse, UpdateBookingStatusRequest,
-  UpdateBookingStatusRequestStatus, UserProfileResponse
+  UpdateBookingStatus, UserProfileResponse
 } from '../../services/clients/api-client';
 import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
 import { ParticipantDetailsModel } from '../../common/model/participant-details.model';
@@ -37,7 +36,8 @@ export class BookingDetailsTestData {
   getBookingsDetailsModel() {
     return new BookingsDetailsModel('44', new Date('2019-11-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', '', '33A', 'Coronation Street',
-      'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'), 'Booked', true);
+      'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'),
+      'Booked', true, true);
   }
 
   getParticipants() {
@@ -94,9 +94,10 @@ now.setMonth(now.getMonth());
 now = new Date(now);
 hearingModel.scheduled_date_time = now;
 hearingModel.questionnaire_not_required = true;
+hearingModel.audio_recording_required = true;
 
 const updateBookingStatusRequest = new UpdateBookingStatusRequest();
-updateBookingStatusRequest.status = UpdateBookingStatusRequestStatus.Cancelled;
+updateBookingStatusRequest.status = UpdateBookingStatus.Cancelled;
 updateBookingStatusRequest.updated_by = '';
 
 class BookingDetailsServiceMock {
@@ -165,6 +166,7 @@ describe('BookingDetailsComponent', () => {
     expect(component.hearing.Duration).toBe(120);
     expect(component.hearing.HearingCaseNumber).toBe('XX3456234565');
     expect(component.hearing.QuestionnaireNotRequired).toBeTruthy();
+    expect(component.hearing.AudioRecordingRequired).toBeTruthy();
   }));
 
   it('should get hearings details and map to HearingModel', (() => {
@@ -175,6 +177,7 @@ describe('BookingDetailsComponent', () => {
     expect(component.booking.scheduled_duration).toBe(120);
     expect(component.booking.cases[0].number).toBe('XX3456234565');
     expect(component.hearing.QuestionnaireNotRequired).toBeTruthy();
+    expect(component.hearing.AudioRecordingRequired).toBeTruthy();
   }));
   it('should call service to map hearing response to HearingModel', (() => {
     component.mapResponseToModel(new HearingDetailsResponse());
@@ -256,26 +259,26 @@ describe('BookingDetailsComponent', () => {
   });
   it('should persist status in the model', () => {
     component.booking = null;
-    component.persistStatus(UpdateBookingStatusRequestStatus.Created);
-    expect(component.booking.status).toBe(UpdateBookingStatusRequestStatus.Created);
+    component.persistStatus(UpdateBookingStatus.Created);
+    expect(component.booking.status).toBe(UpdateBookingStatus.Created);
     expect(videoHearingServiceSpy.updateHearingRequest).toHaveBeenCalled();
   });
   it('should hide cancel button for canceled hearing', () => {
-    component.updateStatusHandler(UpdateBookingStatusRequestStatus.Cancelled);
+    component.updateStatusHandler(UpdateBookingStatus.Cancelled);
     expect(component.showCancelBooking).toBeFalsy();
   });
   it('should not hide cancel button for not canceled hearing', () => {
     component.showCancelBooking = true;
-    component.updateStatusHandler(UpdateBookingStatusRequestStatus.Created);
+    component.updateStatusHandler(UpdateBookingStatus.Created);
     expect(component.showCancelBooking).toBeTruthy();
   });
   it('should hide cancel button for canceled error', () => {
-    component.errorHandler('error', UpdateBookingStatusRequestStatus.Cancelled);
+    component.errorHandler('error', UpdateBookingStatus.Cancelled);
     expect(component.showCancelBooking).toBeFalsy();
   });
   it('should not hide cancel button for not canceled error', () => {
     component.showCancelBooking = true;
-    component.errorHandler('error', UpdateBookingStatusRequestStatus.Created);
+    component.errorHandler('error', UpdateBookingStatus.Created);
     expect(component.showCancelBooking).toBeTruthy();
   });
   it('should navigate back', () => {

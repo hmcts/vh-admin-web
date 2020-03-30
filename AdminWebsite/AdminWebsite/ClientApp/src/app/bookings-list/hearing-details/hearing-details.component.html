@@ -59,7 +59,7 @@
 
 <h2 class="govuk-heading-s remove-header-padding">Audio to be recorded</h2>
 <div class="govuk-form-group vhtable">
-  <div class="govuk-body vh-text-break" id="audioRecorded">{{ hearing?.AudioRecordingRequired }}</div>
+  <div class="govuk-body vh-text-break" id="audioRecorded">{{ hearing?.AudioRecordingRequired ? 'Yes' : 'No' }}</div>
 </div>
 
 <h2 class="govuk-heading-s remove-header-padding">Other information</h2>
