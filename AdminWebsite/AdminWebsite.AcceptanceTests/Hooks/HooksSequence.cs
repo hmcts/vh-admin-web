@@ -10,6 +10,7 @@
         RemoveDataHooks = 6,
         DataHooks = 7,
         LogResultHooks = 8,
-        TearDownBrowserHooks = 9
+        TearDownBrowserHooks = 9,
+        StopEdgeChromiumServer = 10
     }
 }

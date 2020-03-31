@@ -3,6 +3,7 @@ using AcceptanceTests.Common.Configuration.Users;
 using AcceptanceTests.Common.Driver;
 using AcceptanceTests.Common.Driver.Browser;
 using AcceptanceTests.Common.Driver.Helpers;
+using AcceptanceTests.Common.Driver.Support;
 using AcceptanceTests.Common.PageObject.Pages;
 using AdminWebsite.AcceptanceTests.Helpers;
 using BoDi;
@@ -65,6 +66,20 @@ namespace AdminWebsite.AcceptanceTests.Hooks
                 DriverManager.TearDownBrowsers(_browsers);
 
             DriverManager.KillAnyLocalDriverProcesses();
+        }
+
+        [AfterScenario(Order = (int)HooksSequence.StopEdgeChromiumServer)]
+        public void StopEdgeChromiumServer(TestContext context)
+        {
+            var targetBrowser = GetTargetBrowser();
+            if (targetBrowser.ToLower().Equals(TargetBrowser.EdgeChromium.ToString().ToLower()) &&
+                !context.AdminWebConfig.SauceLabsConfiguration.RunningOnSauceLabs())
+                _browsers?[context.CurrentUser.Key].StopEdgeChromiumServer();
+        }
+
+        private static string GetTargetBrowser()
+        {
+            return NUnit.Framework.TestContext.Parameters["TargetBrowser"] ?? "";
         }
     }
 }
