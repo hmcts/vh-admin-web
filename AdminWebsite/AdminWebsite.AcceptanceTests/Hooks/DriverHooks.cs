@@ -3,6 +3,7 @@ using AcceptanceTests.Common.Configuration.Users;
 using AcceptanceTests.Common.Driver;
 using AcceptanceTests.Common.Driver.Browser;
 using AcceptanceTests.Common.Driver.Helpers;
+using AcceptanceTests.Common.Driver.Support;
 using AcceptanceTests.Common.PageObject.Pages;
 using AdminWebsite.AcceptanceTests.Helpers;
 using BoDi;
@@ -38,34 +39,6 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             context.Driver = new DriverSetup(context.AdminWebConfig.SauceLabsConfiguration, scenarioContext.ScenarioInfo, context.AdminWebConfig.TestConfig.TargetDevice, context.AdminWebConfig.TestConfig.TargetBrowser);
         }
 
-        [AfterScenario(Order = (int)HooksSequence.SignOutHooks)]
-        public void SignOutIfPossible(TestContext context)
-        {
-            if (context.CurrentUser == null) return;
-            if (_browsers?[context.CurrentUser.Key].Driver == null) return;
-            if (SignOutLinkIsPresent(context.CurrentUser.Key))
-                SignOut(context.CurrentUser.Key);
-        }
-
-        public bool SignOutLinkIsPresent(string key)
-        {
-            try
-            {
-                _browsers[key].Driver.FindElement(CommonPages.SignOutLink, 2);
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        private void SignOut(string key)
-        {
-            _browsers[key].ClickLink(CommonPages.SignOutLink, 2);
-            _browsers[key].Retry(() => _browsers[key].Driver.Title.Trim().Should().Be(LoginPage.SignInTitle), 2);
-        }
-
         [AfterScenario(Order = (int)HooksSequence.LogResultHooks)]
         public void LogResult(TestContext context, ScenarioContext scenarioContext)
         {
@@ -93,6 +66,20 @@ namespace AdminWebsite.AcceptanceTests.Hooks
                 DriverManager.TearDownBrowsers(_browsers);
 
             DriverManager.KillAnyLocalDriverProcesses();
+        }
+
+        [AfterScenario(Order = (int)HooksSequence.StopEdgeChromiumServer)]
+        public void StopEdgeChromiumServer(TestContext context)
+        {
+            var targetBrowser = GetTargetBrowser();
+            if (targetBrowser.ToLower().Equals(TargetBrowser.EdgeChromium.ToString().ToLower()) &&
+                !context.AdminWebConfig.SauceLabsConfiguration.RunningOnSauceLabs())
+                _browsers?[context.CurrentUser.Key].StopEdgeChromiumServer();
+        }
+
+        private static string GetTargetBrowser()
+        {
+            return NUnit.Framework.TestContext.Parameters["TargetBrowser"] ?? "";
         }
     }
 }
