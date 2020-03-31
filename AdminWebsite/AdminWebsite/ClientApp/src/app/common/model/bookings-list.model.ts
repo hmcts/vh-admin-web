@@ -17,7 +17,7 @@ export class BookingsDetailsModel {
   constructor(hearingId: string, startTime: Date, duration: number, hearingCaseNumber: string,
     hearingCaseName: string, hearingType: string, judgeName: string, courtRoom: string,
     courtAddress: string, createdBy: string, createdDate: Date, lastEditBy: string,
-    lastEditDate: Date, status: string, questionnaireNotRequired: boolean
+    lastEditDate: Date, status: string, questionnaireNotRequired: boolean, audioRecordingRequired: boolean
   ) {
     this.HearingId = hearingId;
     this.StartTime = startTime;
@@ -36,6 +36,7 @@ export class BookingsDetailsModel {
     this.Status = status;
     this.Cancelled = this.Status === 'Cancelled';
     this.QuestionnaireNotRequired = questionnaireNotRequired;
+    this.AudioRecordingRequired = audioRecordingRequired;
   }
 
   HearingId: string;

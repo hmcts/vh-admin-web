@@ -23,6 +23,7 @@ export class ResponseTestData {
     response.created_by = 'stub.response@hearings.reform.hmcts.net';
     response.updated_by = 'stub.response@hearings.reform.hmcts.net';
     response.updated_date = new Date('2019-10-22 13:58:40.3730067');
+    response.audio_recording_required = true;
 
     const par1 = new ParticipantResponse();
     par1.id = '1';
@@ -80,6 +81,7 @@ describe('booking details service', () => {
     expect(model.StartTime).toEqual(new Date('2019-10-22 13:58:40.3730067'));
     expect(model.CreatedBy).toBe('stub.response@hearings.reform.hmcts.net');
     expect(model.LastEditBy).toBe('stub.response@hearings.reform.hmcts.net');
+    expect(model.AudioRecordingRequired).toBe(true);
   });
 
   it('should map response to model and set to empty string case,court, createdBy and lasteditBy if not provided', () => {
