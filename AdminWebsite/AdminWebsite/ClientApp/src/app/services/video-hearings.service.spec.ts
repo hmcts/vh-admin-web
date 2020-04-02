@@ -75,7 +75,7 @@ describe('Video hearing service', () => {
     // given the api responds with
     const serverResponse = new CaseAndHearingRolesResponse({
       name: 'Defendant',
-      hearing_roles: [ 'Solicitor', 'LIP' ]
+      hearing_roles: [ 'Representative', 'LIP' ]
     });
     clientApiSpy.getParticipantRoles.and.returnValue(of([serverResponse]));
 

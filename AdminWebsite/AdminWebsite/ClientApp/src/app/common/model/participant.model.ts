@@ -10,7 +10,7 @@ export class ParticipantModel {
   case_role_name?: string | undefined;
   hearing_role_name?: string | undefined;
   phone?: string | undefined;
-  solicitorsReference?: string | undefined;
+  reference?: string | undefined;
   representee?: string | undefined;
   company?: string | undefined;
   is_judge: boolean;
@@ -22,7 +22,7 @@ export class ParticipantModel {
   postcode?: string | undefined;
 
   get isRepresent() {
-    return this.hearing_role_name && this.hearing_role_name.indexOf('Solicitor') > -1
+    return this.hearing_role_name && this.hearing_role_name.indexOf('Representative') > -1
       && this.representee && this.representee.length > 0;
   }
 }

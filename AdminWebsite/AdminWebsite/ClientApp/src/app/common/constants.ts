@@ -1,7 +1,7 @@
 export const Constants = {
     BookHearingTitle: 'Book a video hearing',
     PleaseSelect: 'Please select',
-    Solicitor: 'Solicitor',
+    Representative: 'Representative',
     PleaseSelectPattern: '^((?!Please select).)*$',
     TextInputPattern: /^[^%{}~|]+$/,
     TextInputPatternName: /^([-A-Za-z0-9 ',._])*$/,
@@ -25,7 +25,7 @@ export const Constants = {
         CountyErrorMsg: 'Please enter a county',
         PostcodeErrorMsg: 'Please enter a postcode',
         CompanyErrorMsg: 'Please enter an organisation name',
-        SolicitorReferenceMsg: 'Please enter a solicitor reference',
+        ReferenceMsg: 'Please enter a reference',
         RepresenteeErrorMsg: 'Please enter a representee',
         JudgeDisplayNameErrorMsg: 'Please enter a judge name',
         DisplayNameErrorMsg: 'Please enter a display name',
