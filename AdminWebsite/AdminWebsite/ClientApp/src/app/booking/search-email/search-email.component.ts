@@ -131,7 +131,7 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
             participant.email = p.contact_email;
             participant.phone = p.telephone_number;
             participant.representee = '';
-            participant.solicitorsReference = '';
+            participant.reference = '';
             participant.company = p.organisation;
             participant.housenumber = p.house_number;
             participant.street = p.street;

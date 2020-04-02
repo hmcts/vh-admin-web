@@ -48,7 +48,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   private displayName: FormControl;
   private companyName: FormControl;
   private companyNameIndividual: FormControl;
-  private solicitorReference: FormControl;
+  private reference: FormControl;
   private representing: FormControl;
   private houseNumber: FormControl;
   private street: FormControl;
@@ -76,7 +76,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   isAnyParticipants: boolean;
   existingPerson: boolean;
   existingParticipant: boolean;
-  isSolicitor = false;
+  isRepresentative = false;
   bookingHasParticipants: boolean;
   showAddress = false;
   existingPersonEmails: string[] = [];
@@ -193,7 +193,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     Validators.maxLength(255)]);
     this.companyName = new FormControl('');
     this.companyNameIndividual = new FormControl('', [Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)]);
-    this.solicitorReference = new FormControl('', [Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)]);
+    this.reference = new FormControl('', [Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)]);
     this.representing = new FormControl('', [Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)]);
     this.houseNumber = new FormControl(this.dummyAddress.houseNumber);
     this.street = new FormControl(this.dummyAddress.street);
@@ -213,7 +213,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
       displayName: this.displayName,
       companyName: this.companyName,
       companyNameIndividual: this.companyNameIndividual,
-      solicitorReference: this.solicitorReference,
+      reference: this.reference,
       representing: this.representing,
       houseNumber: this.houseNumber,
       street: this.street,
@@ -305,7 +305,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     if (this.constants.IndividualRoles.indexOf(this.participantDetails.hearing_role_name) > -1) {
       this.showAddress = true;
     }
-    this.isSolicitor = this.participantDetails.hearing_role_name === Constants.Solicitor;
+    this.isRepresentative = this.participantDetails.hearing_role_name === Constants.Representative;
 
     this.form.setValue({
       party: this.participantDetails.case_role_name,
@@ -317,7 +317,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
       displayName: this.participantDetails.display_name || '',
       companyName: this.participantDetails.company ? this.participantDetails.company : '',
       companyNameIndividual: this.participantDetails.company ? this.participantDetails.company : '',
-      solicitorReference: this.participantDetails.solicitorsReference ? this.participantDetails.solicitorsReference : '',
+      reference: this.participantDetails.reference ? this.participantDetails.reference : '',
       representing: this.participantDetails.representee ? this.participantDetails.representee : '',
       houseNumber: this.participantDetails.housenumber ? this.participantDetails.housenumber : this.dummyAddress.houseNumber,
       street: this.participantDetails.street ? this.participantDetails.street : this.dummyAddress.street,
@@ -431,9 +431,9 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   get postcodeInvalid() {
     return this.postcode.invalid && (this.postcode.dirty || this.postcode.touched || this.isShowErrorSummary);
   }
-  get solicitorReferenceInvalid() {
-    return this.solicitorReference.invalid &&
-      (this.solicitorReference.dirty || this.solicitorReference.touched || this.isShowErrorSummary);
+  get referenceInvalid() {
+    return this.reference.invalid &&
+      (this.reference.dirty || this.reference.touched || this.isShowErrorSummary);
   }
   get representeeInvalid() {
     return this.representing.invalid && (this.representing.dirty || this.representing.touched || this.isShowErrorSummary);
@@ -452,7 +452,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
   roleSelected() {
     this.isRoleSelected = this.role.value !== this.constants.PleaseSelect;
-    if (this.role.value !== this.constants.Solicitor) {
+    if (this.role.value !== this.constants.Representative) {
       this.showAddress = true;
 
       this.houseNumber.setValidators([Validators.required, Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)]);
@@ -466,28 +466,28 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
       this.county.updateValueAndValidity();
 
       this.companyName.clearValidators();
-      this.solicitorReference.clearValidators();
+      this.reference.clearValidators();
       this.representing.clearValidators();
 
       this.companyName.updateValueAndValidity();
-      this.solicitorReference.updateValueAndValidity();
+      this.reference.updateValueAndValidity();
       this.representing.updateValueAndValidity();
 
       this.companyName.setValue('');
-      this.solicitorReference.setValue('');
+      this.reference.setValue('');
       this.representing.setValue('');
     } else {
       this.showAddress = false;
 
       this.companyName.setValidators([Validators.required, Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)]);
-      this.solicitorReference.setValidators([
+      this.reference.setValidators([
         Validators.required,
         Validators.pattern(Constants.TextInputPattern),
         Validators.maxLength(255)]);
       this.representing.setValidators([Validators.required, Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)]);
 
       this.companyName.updateValueAndValidity();
-      this.solicitorReference.updateValueAndValidity();
+      this.reference.updateValueAndValidity();
       this.representing.updateValueAndValidity();
 
       this.houseNumber.clearValidators();
@@ -508,7 +508,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
       this.companyNameIndividual.setValue('');
     }
     this.showDetails = true;
-    this.isSolicitor = this.role.value === this.constants.Solicitor;
+    this.isRepresentative = this.role.value === this.constants.Representative;
   }
 
   titleSelected() {
@@ -611,13 +611,13 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     newParticipant.hearing_role_name = this.role.value;
     newParticipant.email = this.searchEmail ? this.searchEmail.email : '';
     newParticipant.display_name = this.displayName.value;
-    if (this.role.value === Constants.Solicitor) {
+    if (this.role.value === Constants.Representative) {
       newParticipant.company = this.companyName.value;
     } else {
       newParticipant.company = this.companyNameIndividual.value;
     }
     newParticipant.username = this.searchEmail ? this.searchEmail.email : '';
-    newParticipant.solicitorsReference = this.solicitorReference.value;
+    newParticipant.reference = this.reference.value;
     newParticipant.representee = this.representing.value;
     newParticipant.housenumber = this.houseNumber.value;
     newParticipant.street = this.street.value;
@@ -687,7 +687,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         displayName: '',
         companyName: '',
         companyNameIndividual: '',
-        solicitorReference: '',
+        reference: '',
         representing: '',
         houseNumber: this.dummyAddress.houseNumber,
         street: this.dummyAddress.street,
@@ -815,9 +815,9 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     this.companyName.setValue(text);
   }
 
-  solicitorReferenceOnBlur() {
-    const text = SanitizeInputText(this.solicitorReference.value);
-    this.solicitorReference.setValue(text);
+  referenceOnBlur() {
+    const text = SanitizeInputText(this.reference.value);
+    this.reference.setValue(text);
   }
 
   representingOnBlur() {

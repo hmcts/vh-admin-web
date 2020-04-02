@@ -39,7 +39,7 @@ namespace AdminWebsite.AcceptanceTests.Data.TestData
         public string Title { get; set; }
         public string Phone { get; set; }
         public string Organisation { get; set; }
-        public string SolicitorsReference { get; set; }
+        public string Reference { get; set; }
     }
 
     public class Address

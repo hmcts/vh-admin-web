@@ -30,10 +30,10 @@ let component: AddParticipantComponent;
 let fixture: ComponentFixture<AddParticipantComponent>;
 
 const roleList: CaseAndHearingRolesResponse[] =
-    [new CaseAndHearingRolesResponse({ name: 'Claimant', hearing_roles: ['Solicitor', 'Claimant LIP'] })];
+    [new CaseAndHearingRolesResponse({ name: 'Claimant', hearing_roles: ['Representative', 'Claimant LIP'] })];
 
 const partyR = new PartyModel('Claimant');
-partyR.hearingRoles = ['Solicitor', 'Claimant LIP'];
+partyR.hearingRoles = ['Representative', 'Claimant LIP'];
 const partyList: PartyModel[] = [partyR];
 const addressDummy = new Address();
 
@@ -47,7 +47,7 @@ let displayName: AbstractControl;
 let companyName: AbstractControl;
 let companyNameIndividual: AbstractControl;
 let representing: AbstractControl;
-let solicitorReference: AbstractControl;
+let reference: AbstractControl;
 
 let houseNumber: AbstractControl;
 let street: AbstractControl;
@@ -65,14 +65,14 @@ p1.is_judge = true;
 p1.title = 'Mr.';
 p1.email = 'test1@test.com';
 p1.phone = '32332';
-p1.hearing_role_name = 'Solicitor';
+p1.hearing_role_name = 'Representative';
 p1.case_role_name = 'Claimant';
 p1.company = 'CN';
 p1.housenumber = '';
 p1.street = '';
 p1.postcode = '';
 p1.city = '';
-p1.solicitorsReference = 'sol ref';
+p1.reference = 'sol ref';
 p1.representee = 'representee';
 
 const p2 = new ParticipantModel();
@@ -83,14 +83,14 @@ p2.is_judge = true;
 p2.title = 'Mr.';
 p2.email = 'test2@test.com';
 p2.phone = '32332';
-p2.hearing_role_name = 'Solicitor';
+p2.hearing_role_name = 'Representative';
 p2.case_role_name = 'Claimant';
 p2.company = 'CN';
 p2.housenumber = '';
 p2.street = '';
 p2.postcode = '';
 p2.city = '';
-p2.solicitorsReference = 'sol ref';
+p2.reference = 'sol ref';
 p2.representee = 'representee';
 
 const p3 = new ParticipantModel();
@@ -101,7 +101,7 @@ p3.is_judge = false;
 p3.title = 'Mr.';
 p3.email = 'test3@test.com';
 p3.phone = '32332';
-p3.hearing_role_name = 'Solicitor';
+p3.hearing_role_name = 'Representative';
 p3.case_role_name = 'Claimant';
 p3.company = 'CN';
 
@@ -109,7 +109,7 @@ p3.housenumber = '';
 p3.street = '';
 p3.postcode = '';
 p3.city = '';
-p3.solicitorsReference = 'sol ref';
+p3.reference = 'sol ref';
 p3.id = '1234';
 p3.representee = 'representee';
 
@@ -167,7 +167,7 @@ participant.phone = '12345';
 participant.is_judge = false;
 participant.display_name = 'Sam Green';
 participant.title = 'Mr';
-participant.hearing_role_name = 'Solicitor';
+participant.hearing_role_name = 'Representative';
 participant.case_role_name = 'Claimant';
 participant.company = 'CN';
 participant.housenumber = '1';
@@ -175,7 +175,7 @@ participant.street = 'Test Street';
 participant.postcode = 'TE1 5NR';
 participant.city = 'Test City';
 participant.county = 'Test County';
-participant.solicitorsReference = 'Test sol ref';
+participant.reference = 'Test sol ref';
 participant.representee = 'test representee';
 
 const routerSpy: jasmine.SpyObj<Router> = {
@@ -240,7 +240,7 @@ describe('AddParticipantComponent', () => {
         city = component.form.controls['city'];
         county = component.form.controls['county'];
         postcode = component.form.controls['postcode'];
-        solicitorReference = component.form.controls['solicitorReference'];
+        reference = component.form.controls['reference'];
         representing = component.form.controls['representing'];
     }));
 
@@ -376,7 +376,7 @@ describe('AddParticipantComponent', () => {
         component.isPartySelected = true;
         component.form.get('party').setValue('Claimant');
         component.isRoleSelected = true;
-        component.form.get('role').setValue('Solicitor');
+        component.form.get('role').setValue('Representative');
 
         component.getParticipant(participant);
         expect(role.value).toBe(participant.hearing_role_name);
@@ -528,7 +528,7 @@ describe('AddParticipantComponent', () => {
     });
     it('should not add second time value: Please select to a hearing role list', () => {
         const partyL = new PartyModel('Claimant');
-        partyL.hearingRoles = [Constants.PleaseSelect, 'Solicitor'];
+        partyL.hearingRoles = [Constants.PleaseSelect, 'Representative'];
         const partyLst: PartyModel[] = [partyL];
         component.caseAndHearingRoles = partyLst;
         role.setValue('Claimant');
@@ -537,7 +537,7 @@ describe('AddParticipantComponent', () => {
     });
     it('the hearing role list should be empty if selected party name was not found, ', () => {
         const partyL = new PartyModel('Claimant');
-        partyL.hearingRoles = [Constants.PleaseSelect, 'Solicitor'];
+        partyL.hearingRoles = [Constants.PleaseSelect, 'Representative'];
         const partyLst: PartyModel[] = [partyL];
         component.caseAndHearingRoles = partyLst;
         component.setupHearingRoles('Defendant');
@@ -684,7 +684,7 @@ describe('AddParticipantComponent edit mode', () => {
         spyOn(component.searchEmail, 'validateEmail').and.returnValue(true);
         component.searchEmail.email = 'test3@test.com';
 
-        role.setValue('Solicitor');
+        role.setValue('Representative');
         party.setValue('Claimant');
         firstName.setValue('Sam');
         lastName.setValue('Green');
@@ -719,7 +719,7 @@ describe('AddParticipantComponent edit mode', () => {
         component.searchEmail.email = participant.email;
         component.form.setValue({
             party: 'Claimant',
-            role: 'Solicitor',
+            role: 'Representative',
             title: 'Ms',
             firstName: participant.first_name,
             lastName: participant.last_name,
@@ -732,7 +732,7 @@ describe('AddParticipantComponent edit mode', () => {
             city: participant.city,
             county: participant.county,
             postcode: participant.postcode,
-            solicitorReference: participant.solicitorsReference,
+            reference: participant.reference,
             representing: participant.representee
         });
         component.hearing = initHearingRequest();
@@ -762,7 +762,7 @@ describe('AddParticipantComponent edit mode', () => {
             city: participant.city,
             county: participant.county,
             postcode: participant.postcode,
-            solicitorReference: participant.solicitorsReference,
+            reference: participant.reference,
             representing: participant.representee
         });
         component.hearing = initHearingRequest();
@@ -1036,31 +1036,31 @@ describe('AddParticipantComponent set representer', () => {
         phone = component.form.controls['phone'];
         displayName = component.form.controls['displayName'];
         companyName = component.form.controls['companyName'];
-        solicitorReference = component.form.controls['solicitorReference'];
+        reference = component.form.controls['reference'];
         representing = component.form.controls['representing'];
     }));
 
-    it('should show solicitor reference, company and name of representing person', () => {
-        component.form.get('role').setValue('Solicitor');
+    it('should show reference, company and name of representing person', () => {
+        component.form.get('role').setValue('Representative');
 
         component.roleSelected();
 
-        expect(component.isSolicitor).toBeTruthy();
+        expect(component.isRepresentative).toBeTruthy();
     });
-    it('should clean the fields solicitor reference, company and name of representing person', () => {
-        component.form.get('role').setValue('Solicitor');
+    it('should clean the fields reference, company and name of representing person', () => {
+        component.form.get('role').setValue('Representative');
         component.roleSelected();
 
         component.form.get('companyName').setValue('Organisation');
-        component.form.get('solicitorReference').setValue('Ref1');
+        component.form.get('reference').setValue('Ref1');
         component.form.get('representing').setValue('Ms X');
 
         component.form.get('role').setValue('Claimant');
         component.roleSelected();
 
-        expect(component.isSolicitor).toBeFalsy();
+        expect(component.isRepresentative).toBeFalsy();
         expect(component.form.get('companyName').value).toEqual('');
-        expect(component.form.get('solicitorReference').value).toEqual('');
+        expect(component.form.get('reference').value).toEqual('');
         expect(component.form.get('representing').value).toEqual('');
     });
     it('should set email of existing participant after initialize content of the component', () => {
@@ -1070,15 +1070,15 @@ describe('AddParticipantComponent set representer', () => {
         component.ngAfterContentInit();
         expect(component.searchEmail.email).toBeTruthy();
     });
-    it('should validate solicitorReference field and return invalid as it has not permitted characters', () => {
-        component.form.controls['solicitorReference'].setValue('%');
-        component.form.controls['solicitorReference'].markAsDirty();
+    it('should validate reference field and return invalid as it has not permitted characters', () => {
+        component.form.controls['reference'].setValue('%');
+        component.form.controls['reference'].markAsDirty();
 
-        expect(component.solicitorReferenceInvalid).toBe(true);
+        expect(component.referenceInvalid).toBe(true);
     });
-    it('should validate solicitorReference field and return valid', () => {
-        component.form.controls['solicitorReference'].setValue('a');
-        expect(component.solicitorReferenceInvalid).toBe(false);
+    it('should validate reference field and return valid', () => {
+        component.form.controls['reference'].setValue('a');
+        expect(component.referenceInvalid).toBe(false);
     });
     it('should validate companyNameIndividual field and return invalid as it has not permitted characters', () => {
         component.form.controls['companyNameIndividual'].setValue('%');
@@ -1135,10 +1135,10 @@ describe('AddParticipantComponent set representer', () => {
         component.companyNameOnBlur();
         expect(component.form.controls['companyName'].value).toBe('text');
     });
-    it('should sanitize text for solicitorReference', () => {
-        component.form.controls['solicitorReference'].setValue('<script>text</script>');
-        component.solicitorReferenceOnBlur();
-        expect(component.form.controls['solicitorReference'].value).toBe('text');
+    it('should sanitize text for reference', () => {
+        component.form.controls['reference'].setValue('<script>text</script>');
+        component.referenceOnBlur();
+        expect(component.form.controls['reference'].value).toBe('text');
     });
     it('should sanitize text for representing', () => {
         component.form.controls['representing'].setValue('<script>text</script>');
