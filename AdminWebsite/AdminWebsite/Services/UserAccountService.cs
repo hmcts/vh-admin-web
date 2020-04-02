@@ -93,7 +93,7 @@ namespace AdminWebsite.Services
 
         private async Task<NewUserResponse> CreateNewUserInAD(ParticipantRequest participant)
         {
-            const string SOLICITOR = "Solicitor";
+            const string REPRESENTATIVE = "Representative";
             const string EXTERNAL = "External";
             const string VIRTUAL_ROOM_PROFESSIONAL_USER = "VirtualRoomProfessionalUser";
             const string BLANK = " ";
@@ -118,15 +118,17 @@ namespace AdminWebsite.Services
 
             await _userApiClient.AddUserToGroupAsync(addUserToGroupRequest);
 
-            if (participant.Hearing_role_name == SOLICITOR)
+            if (participant.Hearing_role_name == REPRESENTATIVE)
             {
-                addUserToGroupRequest = new AddUserToGroupRequest()
+                addUserToGroupRequest = new AddUserToGroupRequest
                 {
                     User_id = newUserResponse.User_id,
                     Group_name = VIRTUAL_ROOM_PROFESSIONAL_USER
                 };
+                
                 await _userApiClient.AddUserToGroupAsync(addUserToGroupRequest);
             }
+            
             return newUserResponse;
         }
 

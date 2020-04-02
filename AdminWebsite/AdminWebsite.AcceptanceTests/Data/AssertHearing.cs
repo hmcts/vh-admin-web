@@ -63,10 +63,10 @@ namespace AdminWebsite.AcceptanceTests.Data
                 actualParticipant.Last_name.Should().Be(expectedParticipant.Lastname);
                 var role = expectedParticipant.Role.ToLower().Equals("clerk") ? "Judge" : expectedParticipant.Role;
                 actualParticipant.User_role_name.Should().Be(role);
-                if (!expectedParticipant.HearingRoleName.Equals(PartyRole.Solicitor.Name)) continue;
+                if (!expectedParticipant.HearingRoleName.Equals(PartyRole.Representative.Name)) continue;
                 actualParticipant.Organisation.Should().Be(_test.AddParticipant.Participant.Organisation);
                 actualParticipant.Representee.Should().Be(expectedParticipant.Representee);
-                actualParticipant.Solicitor_reference.Should().Be(_test.AddParticipant.Participant.SolicitorsReference);
+                actualParticipant.Reference.Should().Be(_test.AddParticipant.Participant.Reference);
             }
         }
 

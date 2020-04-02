@@ -48,7 +48,7 @@
       "AlternativeEmail": "d3@d.com",
       "CaseRoleName": "Claimant",
       "HearingRoleName": "Claimant LIP",
-      "SolicitorsReference": "Automation01_AW_Representative01"
+      "Reference": "Automation01_AW_Representative01"
     },
     {
       "Role": "Individual",
@@ -58,7 +58,7 @@
       "AlternativeEmail": "d4@d.com",
       "CaseRoleName": "Claimant",
       "HearingRoleName": "Claimant LIP",
-      "SolicitorsReference": "Automation01 Representative01"
+      "Reference": "Automation01 Representative01"
     },
     {
       "Role": "Representative",
@@ -67,7 +67,7 @@
       "DisplayName": "Automation01_AW_Representative01",
       "AlternativeEmail": "d5@d.com",
       "CaseRoleName": "Claimant",
-      "HearingRoleName": "Solicitor",
+      "HearingRoleName": "Representative",
       "Representee": "Automation01_AW_Individual01"
     },
     {
@@ -77,7 +77,7 @@
       "DisplayName": "Automation01_AW_Representative02",
       "AlternativeEmail": "d6@d.com",
       "CaseRoleName": "Claimant",
-      "HearingRoleName": "Solicitor",
+      "HearingRoleName": "Representative",
       "Representee": "Automation01_AW_Individual02"
     }
   ]

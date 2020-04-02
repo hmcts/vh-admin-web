@@ -37,7 +37,7 @@ namespace AdminWebsite.Attributes
                             x.City = Sanitize(x.City);
                             x.Postcode = Sanitize(x.Postcode);
                             x.County = Sanitize(x.County);
-                            x.Solicitors_reference = Sanitize(x.Solicitors_reference);
+                            x.Reference = Sanitize(x.Reference);
                             x.Representee = Sanitize(x.Representee);
                             x.Organisation_name = Sanitize(x.Organisation_name);
                         });
@@ -66,7 +66,7 @@ namespace AdminWebsite.Attributes
                             x.City = Sanitize(x.City);
                             x.Postcode = Sanitize(x.Postcode);
                             x.County = Sanitize(x.County);
-                            x.SolicitorsReference = Sanitize(x.SolicitorsReference);
+                            x.Reference = Sanitize(x.Reference);
                             x.Representee = Sanitize(x.Representee);
                             x.OrganisationName = Sanitize(x.OrganisationName);
                         });
