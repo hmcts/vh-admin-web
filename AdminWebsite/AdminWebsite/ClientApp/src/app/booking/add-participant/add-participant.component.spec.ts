@@ -393,6 +393,7 @@ describe('AddParticipantComponent', () => {
             expect(city.value).toBe(participant.city);
             expect(county.value).toBe(participant.county);
             expect(postcode.value).toBe(participant.postcode);
+            expect(false).toBe(participant.isRepresenting);
         }
         expect(component.displayNextButton).toBeFalsy();
         expect(component.displayClearButton).toBeTruthy();

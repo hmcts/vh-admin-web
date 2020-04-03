@@ -30,7 +30,7 @@ describe('participant details model', () => {
       'user_role_name', 'username', 'contact_email', 'case_role_name', 'Representative',
       'display_name', 'middle_names', 'organisation', 'reference', 'representee');
 
-    expect(model.isRepresent).toBeTruthy();
+    expect(model.isRepresenting).toBeTruthy();
   });
 
   it('should return false when user is not representative', () => {
@@ -38,6 +38,6 @@ describe('participant details model', () => {
       'user_role_name', 'username', 'contact_email', 'case_role_name', 'Individual',
       'display_name', 'middle_names', 'organisation', 'reference', 'representee');
 
-    expect(model.isRepresent).toBeFalsy();
+    expect(model.isRepresenting).toBeFalsy();
   });
 });

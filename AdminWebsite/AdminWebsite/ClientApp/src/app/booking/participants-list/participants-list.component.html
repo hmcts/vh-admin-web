@@ -33,8 +33,11 @@
         <div class="govuk-grid-row vh-row">
           <div class="govuk-grid-column-two-thirds vhtable-header">
             {{pat.title}} {{pat.first_name}} {{pat.last_name}}
-            <div>
-              {{pat.hearing_role_name}}<span *ngIf="pat.representee">, representing</span>
+            <div *ngIf="!pat.isRepresenting">
+              {{pat.hearing_role_name}}
+            </div>
+            <div *ngIf="pat.isRepresenting">
+              <span>Representing</span>
             </div>
             <div><strong>{{pat.representee}}</strong></div>
           </div>
