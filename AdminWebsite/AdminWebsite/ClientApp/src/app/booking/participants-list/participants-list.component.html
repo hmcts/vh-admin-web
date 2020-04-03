@@ -33,12 +33,12 @@
         <div class="govuk-grid-row vh-row">
           <div class="govuk-grid-column-two-thirds vhtable-header">
             {{pat.title}} {{pat.first_name}} {{pat.last_name}}
-            <div *ngIf="!pat.isRepresenting">
+            <div *ngIf="!pat.isRepresenting; else isRepresenting">
               {{pat.hearing_role_name}}
             </div>
-            <div *ngIf="pat.isRepresenting">
+            <ng-template #isRepresenting>
               <span>Representing</span>
-            </div>
+            </ng-template>
             <div><strong>{{pat.representee}}</strong></div>
           </div>
           <div class="govuk-grid-column-one-third vhtable-cell" *ngIf="isEditRemoveVisible">
