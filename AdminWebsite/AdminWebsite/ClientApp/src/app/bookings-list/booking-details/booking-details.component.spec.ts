@@ -37,7 +37,7 @@ export class BookingDetailsTestData {
     return new BookingsDetailsModel('44', new Date('2019-11-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', '', '33A', 'Coronation Street',
       'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'),
-      'Booked', true, true);
+      'Booked', true, true, 'reason');
   }
 
   getParticipants() {
@@ -99,6 +99,7 @@ hearingModel.audio_recording_required = true;
 const updateBookingStatusRequest = new UpdateBookingStatusRequest();
 updateBookingStatusRequest.status = UpdateBookingStatus.Cancelled;
 updateBookingStatusRequest.updated_by = '';
+updateBookingStatusRequest.cancel_reason = 'Online abandonment (incomplete registration)';
 
 class BookingDetailsServiceMock {
   mapBooking(response) {

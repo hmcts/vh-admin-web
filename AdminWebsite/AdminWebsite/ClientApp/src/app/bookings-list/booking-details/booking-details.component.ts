@@ -136,6 +136,7 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
     const updateBookingStatus = new UpdateBookingStatusRequest();
     updateBookingStatus.status = status;
     updateBookingStatus.updated_by = '';
+    updateBookingStatus.cancel_reason = 'Online abandonment (incomplete registration)';
 
     this.$subscriptions.push(this.videoHearingService.updateBookingStatus(this.hearingId, updateBookingStatus)
       .subscribe(
