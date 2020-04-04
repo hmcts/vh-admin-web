@@ -18,9 +18,10 @@ namespace AdminWebsite.AcceptanceTests.Steps
     public class AddParticipantSteps : ISteps
     {
         private const int TimeoutToRetrieveUserFromAad = 60;
+        private const string RepresentingText = "Representing";
         private readonly TestContext _c;
         private readonly Dictionary<string, UserBrowser> _browsers;
-        private string _individualDisplayName = "Representing";
+        private string _individualDisplayName = RepresentingText;
         private readonly CommonSharedSteps _commonSharedSteps;
         public AddParticipantSteps(TestContext testContext, Dictionary<string, UserBrowser> browsers, CommonSharedSteps commonSharedSteps)
         {
@@ -256,11 +257,14 @@ namespace AdminWebsite.AcceptanceTests.Steps
             foreach (var participant in _c.Test.HearingParticipants)
             {
                 if (participant.Role.ToLower().Equals("clerk") || participant.Role.ToLower().Equals("judge")) continue;
-                var expectedParticipant =
-                    $"{title} {participant.Firstname} {participant.Lastname} {participant.HearingRoleName}";
+
+                var fullNameTitle = $"{title} {participant.Firstname} {participant.Lastname}";
+                var expectedParticipant = $"{fullNameTitle} {participant.HearingRoleName}";
 
                 if (participant.HearingRoleName == PartyRole.Representative.Name)
-                    expectedParticipant = $"{expectedParticipant}, representing {participant.Representee}";
+                {
+                    expectedParticipant = $"{fullNameTitle} {RepresentingText} {participant.Representee}";
+                }
 
                 actualResult.Any(x => x.Replace(Environment.NewLine, " ").Equals(expectedParticipant)).Should()
                     .BeTrue($"expected participant matches {expectedParticipant}");
