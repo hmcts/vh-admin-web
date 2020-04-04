@@ -23,6 +23,8 @@ import { CancelBookingPopupComponent } from 'src/app/popups/cancel-booking-popup
 import { BookingPersistService } from '../../services/bookings-persist.service';
 import { UserIdentityService } from '../../services/user-identity.service';
 import { Logger } from '../../services/logger';
+import { ReactiveFormsModule } from '@angular/forms';
+import { RouterTestingModule } from '@angular/router/testing';
 
 let component: BookingDetailsComponent;
 let fixture: ComponentFixture<BookingDetailsComponent>;
@@ -138,7 +140,7 @@ describe('BookingDetailsComponent', () => {
         HearingDetailsMockComponent,
         CancelBookingPopupComponent
       ],
-      imports: [HttpClientModule],
+      imports: [HttpClientModule, ReactiveFormsModule, RouterTestingModule],
       providers: [
         { provide: VideoHearingsService, useValue: videoHearingServiceSpy },
         { provide: BookingDetailsService, useClass: BookingDetailsServiceMock },
@@ -209,7 +211,7 @@ describe('BookingDetailsComponent', () => {
   });
   it('should update hearing status when cancel booking called', () => {
     component.ngOnInit();
-    component.cancelBooking();
+    component.cancelBooking('Online abandonment (incomplete registration)');
     expect(component.showCancelBooking).toBeFalsy();
     expect(videoHearingServiceSpy.updateBookingStatus)
       .toHaveBeenCalledWith(bookingPersistServiceSpy.selectedHearingId, updateBookingStatusRequest);

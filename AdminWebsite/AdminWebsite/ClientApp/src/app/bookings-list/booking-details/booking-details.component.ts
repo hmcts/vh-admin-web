@@ -36,6 +36,7 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
   $timeObserver = interval(60000);
   timeSubscription: Subscription;
   $subscriptions: Subscription[] = [];
+  cancelReason: string;
 
   constructor(
     private videoHearingService: VideoHearingsService,
@@ -120,7 +121,7 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
 
   confirmHearing() {
     if (this.isVhOfficerAdmin) {
-      this.updateHearingStatus(UpdateBookingStatus.Created);
+      this.updateHearingStatus(UpdateBookingStatus.Created, '');
     }
   }
 
@@ -128,15 +129,15 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
     this.showCancelBooking = false;
   }
 
-  cancelBooking() {
-    this.updateHearingStatus(UpdateBookingStatus.Cancelled);
+  cancelBooking(cancelReason: string) {
+    this.updateHearingStatus(UpdateBookingStatus.Cancelled, cancelReason);
   }
 
-  updateHearingStatus(status: UpdateBookingStatus) {
+  updateHearingStatus(status: UpdateBookingStatus, reason: string) {
     const updateBookingStatus = new UpdateBookingStatusRequest();
     updateBookingStatus.status = status;
     updateBookingStatus.updated_by = '';
-    updateBookingStatus.cancel_reason = 'Online abandonment (incomplete registration)';
+    updateBookingStatus.cancel_reason = reason;
 
     this.$subscriptions.push(this.videoHearingService.updateBookingStatus(this.hearingId, updateBookingStatus)
       .subscribe(
