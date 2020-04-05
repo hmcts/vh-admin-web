@@ -38,5 +38,9 @@
     <ExtendedAnswer>An extended answer</ExtendedAnswer>
     <UnansweredQuestion>Could you see and hear the video clearly?</UnansweredQuestion>
   </Questionnaire>
-  <CancelReason>Abandonment (not heard from all parties)</CancelReason>
+  <BookingDetailsPage>
+    <CancelReason>Abandonment (not heard from all parties)</CancelReason>
+    <CancelReason2>Other (please provide details)</CancelReason2>
+    <DetailReason>Hearing cancelled due to unprecedented circumstances!</DetailReason>
+  </BookingDetailsPage>
 </DefaultData>
