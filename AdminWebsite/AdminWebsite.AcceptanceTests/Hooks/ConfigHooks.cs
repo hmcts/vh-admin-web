@@ -22,7 +22,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
 
         public ConfigHooks(TestContext context)
         {
-            _configRoot = new ConfigurationManager("f99a3fe8-cf72-486a-b90f-b65c27da84ee").BuildConfig(GetTargetEnvironment());
+            _configRoot = ConfigurationManager.BuildConfig("f99a3fe8-cf72-486a-b90f-b65c27da84ee", GetTargetEnvironment());
             context.AdminWebConfig = new AdminWebConfig();
             context.UserAccounts = new List<UserAccount>();
             context.Tokens = new AdminWebTokens();
@@ -73,11 +73,11 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         {
             context.Test = new Test
             {
-                HearingParticipants = new List<UserAccount>(),
-                HearingDetails = new HearingDetails(),
-                HearingSchedule = new HearingSchedule(),
                 AddParticipant = new AddParticipant(),
-                CommonData = new LoadXmlFile().SerialiseCommonData(),
+                CommonData = LoadXmlFile.SerialiseCommonData(),
+                HearingDetails = new HearingDetails(),
+                HearingParticipants = new List<UserAccount>(),
+                HearingSchedule = new HearingSchedule(),
                 TestData = new DefaultDataManager().SerialiseTestData()
             };
             context.Test.AddParticipant = context.Test.TestData.AddParticipant;

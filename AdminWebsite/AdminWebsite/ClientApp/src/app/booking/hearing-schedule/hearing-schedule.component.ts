@@ -143,6 +143,12 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
       && (this.hearingDate.dirty || this.hearingDate.touched || this.failedSubmission);
   }
 
+  get durationInvalid() {
+    let hearingDuration = (parseInt(this.form.value.hearingDurationHour, 10) * 60);
+    hearingDuration += parseInt(this.form.value.hearingDurationMinute, 10);
+    return hearingDuration <= 0;
+  }
+
   get hearingStartTimeHourInvalid() {
     return this.hearingStartTimeHour.invalid &&
       (this.hearingStartTimeHour.dirty || this.hearingStartTimeHour.touched || this.failedSubmission);
@@ -215,7 +221,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
   }
 
   saveScheduleAndLocation() {
-    if (this.form.valid && !this.hearingDateInvalid && !this.isStartHoursInPast && !this.isStartMinutesInPast) {
+    if (this.form.valid && !this.hearingDateInvalid && !this.isStartHoursInPast && !this.isStartMinutesInPast && !this.durationInvalid) {
       this.failedSubmission = false;
       this.updateHearingRequest();
       this.form.markAsPristine();

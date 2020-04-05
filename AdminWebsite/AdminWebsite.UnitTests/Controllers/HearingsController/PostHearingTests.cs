@@ -54,7 +54,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             {
                 Username = "username",
                 Case_role_name = "Claimant",
-                Hearing_role_name = "Solicitor"
+                Hearing_role_name = "Representative"
             };
 
             await PostWithParticipants(participant);
@@ -130,7 +130,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             {
                 Username = "username",
                 Case_role_name = "Claimant",
-                Hearing_role_name = "Solicitor"
+                Hearing_role_name = "Representative"
             };
 
             var response = await PostWithParticipants(participant);

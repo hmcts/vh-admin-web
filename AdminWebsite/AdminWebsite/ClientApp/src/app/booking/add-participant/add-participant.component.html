@@ -193,7 +193,7 @@
           </div>
         </div>
 
-        <div *ngIf="isSolicitor">
+        <div *ngIf="isRepresentative">
 
           <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':companyInvalid}">
             <legend id="display-name-error" *ngIf="companyInvalid">
@@ -208,17 +208,17 @@
                    type="text" (blur)="companyNameOnBlur()"/>
           </div>
 
-          <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':solicitorReferenceInvalid}">
-            <legend id="display-name-error" *ngIf="solicitorReferenceInvalid">
+          <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':referenceInvalid}">
+            <legend id="display-name-error" *ngIf="referenceInvalid">
               <span class="govuk-error-message">
-                {{constants.Error.SolicitorReferenceMsg}}
+                {{constants.Error.ReferenceMsg}}
               </span>
             </legend>
-            <label class="govuk-label" for="solicitorReference">
-              Solicitor reference
+            <label class="govuk-label" for="reference">
+              Reference
             </label>
-            <input id="solicitorReference" formControlName="solicitorReference"
-                   class="govuk-input govuk-input--width-20" type="text" (blur)="solicitorReferenceOnBlur()"/>
+            <input id="reference" formControlName="reference"
+                   class="govuk-input govuk-input--width-20" type="text" (blur)="referenceOnBlur()"/>
           </div>
           <h2 class="govuk-heading-m">Client details</h2>
           <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':representeeInvalid}">

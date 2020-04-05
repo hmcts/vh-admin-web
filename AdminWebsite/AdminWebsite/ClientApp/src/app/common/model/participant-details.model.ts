@@ -1,7 +1,7 @@
 export class ParticipantDetailsModel {
   constructor(participantId: string, title: string, firstName: string, lastName: string,
     role: string, userName: string, email: string, caseRoleName: string, hearingRoleName: string,
-    displayName: string, middleNames: string, organisation: string, solicitorReference: string,
+    displayName: string, middleNames: string, organisation: string, reference: string,
     representee: string) {
     this.ParticipantId = participantId;
     this.FirstName = firstName;
@@ -15,7 +15,7 @@ export class ParticipantDetailsModel {
     this.HearingRoleName = hearingRoleName;
     this.DisplayName = displayName;
     this.MiddleNames = middleNames;
-    this.SolicitorsReference = solicitorReference;
+    this.Reference = reference;
     this.Representee = representee;
     this.Company = organisation;
   }
@@ -31,7 +31,7 @@ export class ParticipantDetailsModel {
   HearingRoleName: string;
   DisplayName: string;
   MiddleNames: string;
-  SolicitorsReference: string;
+  Reference: string;
   Representee: string;
   Company: string;
 
@@ -51,8 +51,8 @@ export class ParticipantDetailsModel {
     return fullName;
   }
 
-  get isRepresent() {
-    return this.HearingRoleName && this.HearingRoleName.indexOf('Solicitor') > -1
+  get isRepresenting() {
+    return this.HearingRoleName && this.HearingRoleName.indexOf('Representative') > -1
       && this.Representee && this.Representee.length > 0;
   }
 }

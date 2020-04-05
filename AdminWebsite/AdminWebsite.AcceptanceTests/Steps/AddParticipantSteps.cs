@@ -18,9 +18,10 @@ namespace AdminWebsite.AcceptanceTests.Steps
     public class AddParticipantSteps : ISteps
     {
         private const int TimeoutToRetrieveUserFromAad = 60;
+        private const string RepresentingText = "Representing";
         private readonly TestContext _c;
         private readonly Dictionary<string, UserBrowser> _browsers;
-        private string _individualDisplayName = "Representing";
+        private string _individualDisplayName = RepresentingText;
         private readonly CommonSharedSteps _commonSharedSteps;
         public AddParticipantSteps(TestContext testContext, Dictionary<string, UserBrowser> browsers, CommonSharedSteps commonSharedSteps)
         {
@@ -61,7 +62,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             var rep = UserManager.GetRepresentativeUsers(_c.UserAccounts)[0];
             rep.CaseRoleName = Party.Claimant.Name;
-            rep.HearingRoleName = PartyRole.Solicitor.Name;
+            rep.HearingRoleName = PartyRole.Representative.Name;
             _c.Test.HearingParticipants.Add(rep);
             SetParty(rep.CaseRoleName);
             SetRole(rep.HearingRoleName);
@@ -85,7 +86,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             var rep = CreateNewUser("Representative");
             rep.CaseRoleName = Party.Defendant.Name;
-            rep.HearingRoleName = PartyRole.Solicitor.Name;
+            rep.HearingRoleName = PartyRole.Representative.Name;
             rep.Representee = _individualDisplayName;
             _c.Test.HearingParticipants.Add(rep);
             SetParty(rep.CaseRoleName);
@@ -163,8 +164,8 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.DisplayNameTextfield).SendKeys(user.DisplayName);
             var organisation = _c.Test.TestData.AddParticipant.Participant.Organisation;
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.RepOrganisationTextfield).SendKeys(organisation);
-            var solicitorsReference = _c.Test.TestData.AddParticipant.Participant.SolicitorsReference;
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.SolicitorReferenceTextfield).SendKeys(solicitorsReference);
+            var reference = _c.Test.TestData.AddParticipant.Participant.Reference;
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.ReferenceTextfield).SendKeys(reference);
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.RepresentingTextfield).SendKeys(user.Representee);
             _browsers[_c.CurrentUser.Key].ScrollTo(AddParticipantsPage.AddParticipantLink);
             _browsers[_c.CurrentUser.Key].ClickLink(AddParticipantsPage.AddParticipantLink);
@@ -186,8 +187,8 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.DisplayNameTextfield).SendKeys(user.DisplayName);
             var organisation = _c.Test.TestData.AddParticipant.Participant.Organisation;
             EnterTextIfFieldIsNotPrePopulated(AddParticipantsPage.RepOrganisationTextfield, organisation);
-            var solicitorsReference = _c.Test.TestData.AddParticipant.Participant.SolicitorsReference;
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.SolicitorReferenceTextfield).SendKeys(solicitorsReference);
+            var reference = _c.Test.TestData.AddParticipant.Participant.Reference;
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.ReferenceTextfield).SendKeys(reference);
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.RepresentingTextfield).SendKeys(user.Representee);
             _browsers[_c.CurrentUser.Key].ScrollTo(AddParticipantsPage.AddParticipantLink);
             _browsers[_c.CurrentUser.Key].ClickLink(AddParticipantsPage.AddParticipantLink);
@@ -256,11 +257,14 @@ namespace AdminWebsite.AcceptanceTests.Steps
             foreach (var participant in _c.Test.HearingParticipants)
             {
                 if (participant.Role.ToLower().Equals("clerk") || participant.Role.ToLower().Equals("judge")) continue;
-                var expectedParticipant =
-                    $"{title} {participant.Firstname} {participant.Lastname} {participant.HearingRoleName}";
 
-                if (participant.HearingRoleName == PartyRole.Solicitor.Name)
-                    expectedParticipant = $"{expectedParticipant}, representing {participant.Representee}";
+                var fullNameTitle = $"{title} {participant.Firstname} {participant.Lastname}";
+                var expectedParticipant = $"{fullNameTitle} {participant.HearingRoleName}";
+
+                if (participant.HearingRoleName == PartyRole.Representative.Name)
+                {
+                    expectedParticipant = $"{fullNameTitle} {RepresentingText} {participant.Representee}";
+                }
 
                 actualResult.Any(x => x.Replace(Environment.NewLine, " ").Equals(expectedParticipant)).Should()
                     .BeTrue($"expected participant matches {expectedParticipant}");

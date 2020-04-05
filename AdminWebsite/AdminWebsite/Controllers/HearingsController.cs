@@ -339,8 +339,8 @@ namespace AdminWebsite.Controllers
                             Number = editHearingRequest.Case.Number
                     }
                 },
-                Questionnaire_not_required = editHearingRequest.QuestionnaireNotRequired
-
+                Questionnaire_not_required = editHearingRequest.QuestionnaireNotRequired,
+                Audio_recording_required = editHearingRequest.AudioRecordingRequired
             };
             return updateHearingRequest;
         }
@@ -359,7 +359,7 @@ namespace AdminWebsite.Controllers
                 Street = participant.Street,
                 Telephone_number = participant.TelephoneNumber,
                 Representee = participant.Representee,
-                Solicitors_reference = participant.SolicitorsReference
+                Reference = participant.Reference
             };
             return updateParticipantRequest;
         }
@@ -376,7 +376,7 @@ namespace AdminWebsite.Controllers
                 Hearing_role_name = participant.HearingRoleName,
                 Middle_names = participant.MiddleNames,
                 Representee = participant.Representee,
-                Solicitors_reference = participant.SolicitorsReference,
+                Reference = participant.Reference,
                 Telephone_number = participant.TelephoneNumber,
                 Title = participant.Title,
                 Organisation_name = participant.OrganisationName,

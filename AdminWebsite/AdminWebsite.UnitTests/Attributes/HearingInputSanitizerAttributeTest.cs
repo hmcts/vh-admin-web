@@ -53,7 +53,7 @@ namespace AdminWebsite.UnitTests.Attributes
                 x.City == expectedText &&
                 x.Postcode == expectedText &&
                 x.County == expectedText &&
-                x.Solicitors_reference == expectedText &&
+                x.Reference == expectedText &&
                 x.Representee == expectedText &&
                 x.Organisation_name == expectedText
             );
@@ -91,7 +91,7 @@ namespace AdminWebsite.UnitTests.Attributes
                 x.City == expectedText &&
                 x.Postcode == expectedText &&
                 x.County == expectedText &&
-                x.SolicitorsReference == expectedText &&
+                x.Reference == expectedText &&
                 x.Representee == expectedText &&
                 x.OrganisationName == expectedText
             );
@@ -141,7 +141,7 @@ namespace AdminWebsite.UnitTests.Attributes
                                 City = text,
                                 Postcode = text,
                                 County = text,
-                                Solicitors_reference = text,
+                                Reference = text,
                                 Representee = text,
                                 Organisation_name = text
                             }
@@ -185,7 +185,7 @@ namespace AdminWebsite.UnitTests.Attributes
                                 City = text,
                                 Postcode = text,
                                 County = text,
-                                SolicitorsReference = text,
+                                Reference = text,
                                 Representee = text,
                                 OrganisationName = text
                             }

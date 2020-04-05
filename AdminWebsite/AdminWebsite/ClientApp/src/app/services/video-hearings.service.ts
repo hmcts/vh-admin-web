@@ -5,7 +5,7 @@ import {
   BookNewHearingRequest,
   CaseAndHearingRolesResponse,
   CaseRequest,
-  CaseResponse2,
+  CaseResponse,
   EditCaseRequest,
   EditHearingRequest,
   EditParticipantRequest,
@@ -125,7 +125,7 @@ export class VideoHearingsService {
     hearing.scheduled_duration = booking.scheduled_duration;
     hearing.participants = this.mapParticipantModelToEditParticipantRequest(booking.participants);
     hearing.questionnaire_not_required = booking.questionnaire_not_required;
-
+    hearing.audio_recording_required = booking.audio_recording_required;
     return hearing;
   }
 
@@ -148,7 +148,7 @@ export class VideoHearingsService {
     editParticipant.hearing_role_name = participant.hearing_role_name;
     editParticipant.middle_names = participant.middle_names;
     editParticipant.representee = participant.representee;
-    editParticipant.solicitors_reference = participant.solicitorsReference;
+    editParticipant.reference = participant.reference;
     editParticipant.telephone_number = participant.phone;
     editParticipant.title = participant.title;
     editParticipant.organisation_name = participant.company;
@@ -173,14 +173,14 @@ export class VideoHearingsService {
     newHearingRequest.participants = this.mapParticipants(newRequest.participants);
     newHearingRequest.other_information = newRequest.other_information;
     newHearingRequest.questionnaire_not_required = newRequest.questionnaire_not_required;
-
+    newHearingRequest.audio_recording_required = newRequest.audio_recording_required;
     return newHearingRequest;
   }
 
   mapHearingDetailsResponseToHearingModel(response: HearingDetailsResponse): HearingModel {
     const hearing = new HearingModel();
     hearing.hearing_id = response.id;
-    hearing.cases = this.mapCaseResponse2ToCaseModel(response.cases);
+    hearing.cases = this.mapCaseResponseToCaseModel(response.cases);
     hearing.hearing_type_name = response.hearing_type_name;
     hearing.case_type = response.case_type_name;
     hearing.scheduled_date_time = new Date(response.scheduled_date_time);
@@ -195,7 +195,7 @@ export class VideoHearingsService {
     hearing.updated_by = response.updated_by;
     hearing.questionnaire_not_required = response.questionnaire_not_required;
     hearing.status = response.status;
-
+    hearing.audio_recording_required = response.audio_recording_required;
     return hearing;
   }
 
@@ -212,7 +212,7 @@ export class VideoHearingsService {
     return cases;
   }
 
-  mapCaseResponse2ToCaseModel(casesResponse: CaseResponse2[]): CaseModel[] {
+  mapCaseResponseToCaseModel(casesResponse: CaseResponse[]): CaseModel[] {
     const cases: CaseModel[] = [];
     let caseRequest: CaseModel;
     if (casesResponse && casesResponse.length > 0) {
@@ -244,7 +244,7 @@ export class VideoHearingsService {
         participant.case_role_name = p.case_role_name;
         participant.hearing_role_name = p.hearing_role_name;
         participant.representee = p.representee;
-        participant.solicitors_reference = p.solicitorsReference;
+        participant.reference = p.reference;
         participant.organisation_name = p.company;
         participant.house_number = p.housenumber;
         participant.street = p.street;
@@ -275,7 +275,7 @@ export class VideoHearingsService {
         participant.case_role_name = p.case_role_name;
         participant.hearing_role_name = p.hearing_role_name;
         participant.representee = p.representee;
-        participant.solicitorsReference = p.solicitor_reference;
+        participant.reference = p.reference;
         participant.company = p.organisation;
         participant.is_judge = p.case_role_name === 'Judge';
         participant.housenumber = p.house_number;

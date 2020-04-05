@@ -25,6 +25,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
   hearing: HearingModel;
   judge: JudgeResponse;
   judgeDisplayName: FormControl;
+  audioChoice: FormControl;
   failedSubmission: boolean;
   attemptingCancellation = false;
   attemptingDiscardChanges = false;
@@ -34,9 +35,9 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
   constants = Constants;
   availableJudges: JudgeResponse[];
   isJudgeSelected = true;
-
   expanded = false;
   $subscriptions: Subscription[] = [];
+  audioRecording = true;
 
   constructor(
     private fb: FormBuilder,
@@ -107,9 +108,17 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
       ], updateOn: 'blur'
     });
 
+    if (this.hearing.audio_recording_required === null || this.hearing.audio_recording_required === undefined) {
+      this.hearing.audio_recording_required = true;
+    }
+
+    this.audioRecording = this.setInitialAudio();
+    this.audioChoice = new FormControl(this.audioRecording, Validators.required);
+
     this.form = this.fb.group({
       judgeName: [this.judge.email, Validators.required],
-      judgeDisplayName: this.judgeDisplayName
+      judgeDisplayName: this.judgeDisplayName,
+      audioChoice: this.audioChoice
     });
 
     if (this.judgeName) {
@@ -123,6 +132,11 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     this.$subscriptions.push(this.judgeDisplayName.valueChanges.subscribe(name => {
       this.judge.display_name = name;
     }));
+  }
+
+  private setInitialAudio() {
+    return this.hearing && this.hearing.audio_recording_required !== null && this.hearing.audio_recording_required !== undefined
+        ? this.hearing.audio_recording_required : true;
   }
 
   get judgeName() { return this.form.get('judgeName'); }
@@ -185,10 +199,12 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
       this.failedSubmission = true;
       return;
     }
+
     if (this.form.valid) {
       this.failedSubmission = false;
       this.form.markAsPristine();
       this.hasSaved = true;
+      this.hearing.audio_recording_required = this.audioChoice.value;
       this.changeDisplayName();
       this.hearingService.updateHearingRequest(this.hearing);
       if (this.editMode) {

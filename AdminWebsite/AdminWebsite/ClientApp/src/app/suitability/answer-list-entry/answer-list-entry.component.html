@@ -3,8 +3,12 @@
     <div class="govuk-grid-column-two-thirds">
       <a href="javascript:void(0)" (click)="toggle()" class="vh-header-entity govuk-body vh-expander" [class.expanded]="expanded">
         <span class="chevron"></span>
-        <span class="vh-ml15 " *ngIf="!isRepresentative">{{ questionnaire.displayName }} - {{questionnaire.hearingRole}} ({{ questionnaire.caseNumber }})</span>
-        <span class="vh-ml15 " *ngIf="isRepresentative">{{ questionnaire.displayName }} - {{questionnaire.hearingRole}} representing {{questionnaire.representee}} ({{ questionnaire.caseNumber }})</span>
+        <span class="vh-ml15 " *ngIf="!isRepresentative">
+          {{ questionnaire.displayName }} - {{questionnaire.hearingRole}} ({{ questionnaire.caseNumber }})
+        </span>
+        <span class="vh-ml15 " *ngIf="isRepresentative">
+          {{ questionnaire.displayName }} - Representing {{questionnaire.representee}} ({{ questionnaire.caseNumber }})
+        </span>
 
       </a>
     </div>

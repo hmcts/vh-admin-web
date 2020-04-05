@@ -11,7 +11,7 @@ namespace AdminWebsite.UnitTests.Security
     public class TokenProviderTests
     {
         private readonly TokenProvider _provider;
-        private Mock<IOptions<SecuritySettings>> _securitySettings;
+        private readonly Mock<IOptions<SecuritySettings>> _securitySettings;
 
         public TokenProviderTests()
         {

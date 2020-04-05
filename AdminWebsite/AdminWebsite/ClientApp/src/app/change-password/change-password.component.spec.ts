@@ -71,10 +71,10 @@ describe('ChangePasswordComponent', () => {
     fixture.detectChanges();
     expect(component.showUpdateSuccess).toBeFalsy();
   });
-  it('should input box to have focus if the input is invalid', () => {
-    fixture.detectChanges();
+  it('should input box to have focus if the input is invalid', async() => {
     component.goToDiv('userName');
     const input = fixture.nativeElement.querySelector('#userName:focus');
+    fixture.detectChanges();
     expect(input).toBeTruthy();
   });
   it('should on destroy unsubscribe the subscriptions', () => {

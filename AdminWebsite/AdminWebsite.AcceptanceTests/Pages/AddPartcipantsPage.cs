@@ -20,7 +20,7 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public static By CityTextfield = By.Id("city");
         public static By CountyTextfield = By.Id("county");
         public static By PostcodeTextfield = By.Id("postcode");
-        public static By SolicitorReferenceTextfield = By.Id("solicitorReference");
+        public static By ReferenceTextfield = By.Id("reference");
         public static By RepresentingTextfield = By.Id("representing");
         public static By AddParticipantLink = By.Id("addParticipantBtn");
         public static By ClearDetailsLink = By.PartialLinkText("Clear details");

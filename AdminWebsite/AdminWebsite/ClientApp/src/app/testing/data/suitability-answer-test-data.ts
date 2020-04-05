@@ -8,7 +8,7 @@ export class SuitabilityAnswerTestData {
         first_name: '',
         last_name: '',
         title: '',
-        hearing_role: 'Solicitor',
+        hearing_role: 'Representative',
         representee: 'Ms X',
         answers: [
             new SuitabilityAnswerResponse({
@@ -24,7 +24,7 @@ export class SuitabilityAnswerTestData {
         first_name: 'John',
         last_name: 'Conner',
         title: 'Mr',
-        hearing_role: 'Solicitor',
+        hearing_role: 'Representative',
         representee: 'Ms X',
         answers: [
             new SuitabilityAnswerResponse({
