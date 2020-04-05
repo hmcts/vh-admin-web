@@ -1,4 +1,4 @@
-<form [formGroup]="cancelHearingForm" class="govuk-form-group" (ngSubmit)="cancelHearing()">
+<form [formGroup]="cancelHearingForm" class="govuk-form-group">
   <div id="saveFailedPopup" class="vh-popup-overlay">
     <div class="vh-popup vh-popup-xsmall">
       <div class="content">
@@ -31,7 +31,7 @@
           </div>
 
           <div class="vh-top">
-            <button id="btnCancelBooking" class="govuk-button vh-mr25" data-module="govuk-button"
+            <button id="btnCancelBooking" class="govuk-button vh-mr25" data-module="govuk-button" (click)="cancelHearing()"
               alt="Cancel the booking">
               Confirm cancellation
             </button>

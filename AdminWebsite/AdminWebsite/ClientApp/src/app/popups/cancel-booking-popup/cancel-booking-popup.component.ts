@@ -46,7 +46,7 @@ export class CancelBookingPopupComponent implements OnInit, OnDestroy {
     this.$subscriptions.push(this.cancelReason.valueChanges.subscribe(val => {
       this.selectedCancelReason = val;
       this.showDetails = this.selectedCancelReason === 'Other (please provide details)';
-
+      console.log(this.selectedCancelReason);
       if (this.showDetails) {
         this.cancelReasonDetails.setValidators(
           [Validators.required, ValidateForWhiteSpace, Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)]);

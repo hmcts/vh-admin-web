@@ -38,4 +38,5 @@
     <ExtendedAnswer>An extended answer</ExtendedAnswer>
     <UnansweredQuestion>Could you see and hear the video clearly?</UnansweredQuestion>
   </Questionnaire>
+  <CancelReason>Abandonment (not heard from all parties)</CancelReason>
 </DefaultData>

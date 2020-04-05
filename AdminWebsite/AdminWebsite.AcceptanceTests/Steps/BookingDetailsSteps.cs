@@ -24,11 +24,13 @@ namespace AdminWebsite.AcceptanceTests.Steps
         private const string RepresentingText = "Representing";
         private readonly TestContext _c;
         private readonly Dictionary<string, UserBrowser> _browsers;
+        private readonly CommonSharedSteps _commonSharedSteps;
 
-        public BookingDetailsSteps(TestContext testContext, Dictionary<string, UserBrowser> browsers)
+        public BookingDetailsSteps(TestContext testContext, Dictionary<string, UserBrowser> browsers, CommonSharedSteps commonSharedSteps)
         {
             _c = testContext;
             _browsers = browsers;
+            _commonSharedSteps = commonSharedSteps;
         }
 
         public void ProgressToNextPage()
@@ -106,6 +108,9 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             _browsers[_c.CurrentUser.Key].ScrollTo(BookingDetailsPage.CancelButton);
             _browsers[_c.CurrentUser.Key].Click(BookingDetailsPage.CancelButton);
+
+            _commonSharedSteps.WhenTheUserSelectsTheOptionFromTheDropdown(_browsers[_c.CurrentUser.Key].Driver,
+                BookingDetailsPage.CancelReasonDropdown, _c.Test.TestData.CancelReason);
             _browsers[_c.CurrentUser.Key].Click(BookingDetailsPage.ConfirmCancelButton);
         }
 

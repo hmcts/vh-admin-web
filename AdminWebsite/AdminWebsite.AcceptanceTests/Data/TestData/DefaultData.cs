@@ -9,6 +9,7 @@ namespace AdminWebsite.AcceptanceTests.Data.TestData
         public AddParticipant AddParticipant { get; set; }
         public OtherInformation OtherInformation { get; set; }
         public Questionnaire Questionnaire { get; set; }
+        public string CancelReason { get; set; }
     }
 
     public class HearingDetails

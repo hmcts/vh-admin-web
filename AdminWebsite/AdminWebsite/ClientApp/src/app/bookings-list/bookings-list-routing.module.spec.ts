@@ -19,6 +19,7 @@ import { HearingDetailsComponent } from './hearing-details/hearing-details.compo
 import { CancelBookingPopupComponent } from '../popups/cancel-booking-popup/cancel-booking-popup.component';
 import { LongDatetimePipe } from '../../app/shared/directives/date-time.pipe';
 import { MomentModule } from 'ngx-moment';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 describe('BookingsListRouting', () => {
   let location: Location;
@@ -30,7 +31,7 @@ describe('BookingsListRouting', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [RouterTestingModule.withRoutes(routes), MomentModule],
+      imports: [RouterTestingModule.withRoutes(routes), MomentModule, ReactiveFormsModule],
       declarations: [
         BookingsListComponent,
         BookingDetailsComponent,
