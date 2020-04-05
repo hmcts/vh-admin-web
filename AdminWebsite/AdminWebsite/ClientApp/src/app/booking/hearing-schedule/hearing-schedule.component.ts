@@ -225,7 +225,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
       this.form.markAsPristine();
       this.hasSaved = true;
       if (this.editMode) {
-        this.navigateToSummary();
+        this.router.navigate([PageUrls.Summary]);
       } else {
         this.router.navigate([PageUrls.AssignJudge]);
       }
@@ -292,6 +292,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
   }
 
   ngOnDestroy() {
+    this.bookingService.removeEditMode();
     this.$subscriptions.forEach(subscription => { if (subscription) { subscription.unsubscribe(); } });
   }
 }

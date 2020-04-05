@@ -57,7 +57,7 @@ describe('CreateHearingComponent with multiple case types', () => {
 
     videoHearingsServiceSpy.getCurrentRequest.and.returnValue(newHearing);
     videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
-    bookingServiceSpy = jasmine.createSpyObj('BookingSErvice', ['isEditMode', 'resetEditMode']);
+    bookingServiceSpy = jasmine.createSpyObj('BookingSErvice', ['isEditMode', 'resetEditMode', 'removeEditMode']);
 
     TestBed.configureTestingModule({
       imports: [SharedModule, RouterTestingModule],
@@ -174,7 +174,7 @@ describe('CreateHearingComponent with single case type', () => {
     videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',
       ['getHearingTypes', 'getCurrentRequest', 'updateHearingRequest', 'cancelRequest', 'setBookingHasChanged']);
     routerSpy = jasmine.createSpyObj('Router', ['navigate']);
-    bookingServiceSpy = jasmine.createSpyObj('BookingSErvice', ['isEditMode', 'resetEditMode']);
+    bookingServiceSpy = jasmine.createSpyObj('BookingSErvice', ['isEditMode', 'resetEditMode', 'removeEditMode']);
     videoHearingsServiceSpy.getCurrentRequest.and.returnValue(newHearing);
     videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesSingle));
 
@@ -224,7 +224,7 @@ describe('CreateHearingComponent with existing request in session', () => {
     videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',
       ['getHearingTypes', 'getCurrentRequest', 'updateHearingRequest', 'cancelRequest', 'setBookingHasChanged']);
     routerSpy = jasmine.createSpyObj('Router', ['navigate']);
-    bookingServiceSpy = jasmine.createSpyObj('BookingSErvice', ['isEditMode', 'resetEditMode']);
+    bookingServiceSpy = jasmine.createSpyObj('BookingSErvice', ['isEditMode', 'resetEditMode', 'removeEditMode']);
 
     videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
     videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));

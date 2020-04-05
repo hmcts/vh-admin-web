@@ -120,7 +120,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
       this.form.markAsPristine();
       this.hasSaved = true;
       if (this.editMode) {
-        this.navigateToSummary();
+        this.router.navigate([PageUrls.Summary]);
       } else {
         this.router.navigate([PageUrls.HearingSchedule]);
       }
@@ -139,7 +139,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
       if (this.form.dirty || this.form.touched) {
         this.attemptingDiscardChanges = true;
       } else {
-        this.navigateToSummary();
+        this.router.navigate([PageUrls.Summary]);
       }
     } else {
       if (this.form.dirty || this.form.touched) {
@@ -245,6 +245,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
   }
 
   ngOnDestroy() {
+    this.bookingService.removeEditMode();
     this.$subscriptions.forEach(subscription => { if (subscription) { subscription.unsubscribe(); } });
   }
 }
