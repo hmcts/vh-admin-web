@@ -36,7 +36,7 @@
         <div class="govuk-date-input__item">
           <div class="govuk-form-group">
             <input class="govuk-input govuk-date-input__input govuk-input--width-2 minutes" id="hearingStartTimeMinute"
-                   name="hearingStartTimeMinute" type="number" min="0" max="59" placeholder="MM"
+                   name="hearingStartTimeMinute" type="number" min="1" max="59" placeholder="MM"
                    title="hearingStartTimeMinute" formControlName="hearingStartTimeMinute"
                    aria-label="hearingStartTimeMinute" aria-labelledby="hearingStartTimeMinute" (blur)="startMinutesInPast()" />
           </div>
@@ -60,7 +60,7 @@
     </div>
   </div>
 
-  <div [ngClass]="hearingDurationHourInvalid || hearingDurationMinuteInvalid ? 'govuk-form-group--error' : 'govuk-form-group'">
+  <div [ngClass]="hearingDurationHourInvalid || hearingDurationMinuteInvalid || durationInvalid ? 'govuk-form-group--error' : 'govuk-form-group'">
     <label class="govuk-label govuk-!-width-one-half" for="hearingDuration">
       Duration
     </label>
@@ -93,6 +93,11 @@
     <div *ngIf="hearingDurationMinuteInvalid" class="alert alert-danger">
       <span id="hearingDurationMinute-error" class="govuk-error-message">
         Provide a value for duration minutes between 0 and 59
+      </span>
+    </div>
+    <div *ngIf="durationInvalid" class="alert alert-danger">
+      <span id="duration-error" class="govuk-error-message">
+        Duration cannot be zero
       </span>
     </div>
   </div>
