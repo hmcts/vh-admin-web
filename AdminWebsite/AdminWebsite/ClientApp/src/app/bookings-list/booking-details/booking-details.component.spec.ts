@@ -23,6 +23,8 @@ import { CancelBookingPopupComponent } from 'src/app/popups/cancel-booking-popup
 import { BookingPersistService } from '../../services/bookings-persist.service';
 import { UserIdentityService } from '../../services/user-identity.service';
 import { Logger } from '../../services/logger';
+import { ReactiveFormsModule } from '@angular/forms';
+import { RouterTestingModule } from '@angular/router/testing';
 
 let component: BookingDetailsComponent;
 let fixture: ComponentFixture<BookingDetailsComponent>;
@@ -37,7 +39,7 @@ export class BookingDetailsTestData {
     return new BookingsDetailsModel('44', new Date('2019-11-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', '', '33A', 'Coronation Street',
       'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'),
-      'Booked', true, true);
+      'Booked', true, true, 'reason');
   }
 
   getParticipants() {
@@ -99,6 +101,7 @@ hearingModel.audio_recording_required = true;
 const updateBookingStatusRequest = new UpdateBookingStatusRequest();
 updateBookingStatusRequest.status = UpdateBookingStatus.Cancelled;
 updateBookingStatusRequest.updated_by = '';
+updateBookingStatusRequest.cancel_reason = 'Online abandonment (incomplete registration)';
 
 class BookingDetailsServiceMock {
   mapBooking(response) {
@@ -137,7 +140,7 @@ describe('BookingDetailsComponent', () => {
         HearingDetailsMockComponent,
         CancelBookingPopupComponent
       ],
-      imports: [HttpClientModule],
+      imports: [HttpClientModule, ReactiveFormsModule, RouterTestingModule],
       providers: [
         { provide: VideoHearingsService, useValue: videoHearingServiceSpy },
         { provide: BookingDetailsService, useClass: BookingDetailsServiceMock },
@@ -208,7 +211,7 @@ describe('BookingDetailsComponent', () => {
   });
   it('should update hearing status when cancel booking called', () => {
     component.ngOnInit();
-    component.cancelBooking();
+    component.cancelBooking('Online abandonment (incomplete registration)');
     expect(component.showCancelBooking).toBeFalsy();
     expect(videoHearingServiceSpy.updateBookingStatus)
       .toHaveBeenCalledWith(bookingPersistServiceSpy.selectedHearingId, updateBookingStatusRequest);

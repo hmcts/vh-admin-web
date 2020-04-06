@@ -26,5 +26,10 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public static By ParticipantRole(int index) => By.Id($"participant_role{index}");
         public static By ParticipantEmail(int index) => By.XPath($"//div[@id='participant_email{index}']/div[2]");
         public static By ParticipantUsername(int index) => By.XPath($"//div[@id='participant_userName{index}']/div[2]");
+        public static By CancelReasonDropdown = By.Id("cancel-reason");
+        public static By CancelReasonDropdownErrorLabel = By.Id("cancelReason-error");
+        public static By CancelReasonDetailsErrorLabel = By.Id("more-detail-error");
+        public static By CancelReasonTextfield = By.Id("cancelReason-detail");
+        public static By KeepBookingButton = By.Id("btnKeepBooking");
     }
 }

@@ -24,11 +24,13 @@ namespace AdminWebsite.AcceptanceTests.Steps
         private const string RepresentingText = "Representing";
         private readonly TestContext _c;
         private readonly Dictionary<string, UserBrowser> _browsers;
+        private readonly CommonSharedSteps _commonSharedSteps;
 
-        public BookingDetailsSteps(TestContext testContext, Dictionary<string, UserBrowser> browsers)
+        public BookingDetailsSteps(TestContext testContext, Dictionary<string, UserBrowser> browsers, CommonSharedSteps commonSharedSteps)
         {
             _c = testContext;
             _browsers = browsers;
+            _commonSharedSteps = commonSharedSteps;
         }
 
         public void ProgressToNextPage()
@@ -101,12 +103,50 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _c.Apis.VideoApi.PollForConferenceExists(GetHearing().Id).Should().BeTrue();
         }
 
+        [When(@"the user cancels the hearing without a cancel reason")]
+        public void WhenTheUserCancelsTheHearingWithotACancelReason()
+        {
+            _browsers[_c.CurrentUser.Key].ScrollTo(BookingDetailsPage.CancelButton);
+            _browsers[_c.CurrentUser.Key].Click(BookingDetailsPage.CancelButton);
+            _browsers[_c.CurrentUser.Key].Click(BookingDetailsPage.ConfirmCancelButton);
+        }
+
+        [Then(@"an error message is diplay and hearing is not cancelled")]
+        public void ThenAnErrorMessageIsDiplayAndHearingIsNotCancelled()
+        {
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.CancelReasonDropdownErrorLabel).Displayed.Should().BeTrue();
+            PollForHearingStatus(BookingStatus.Cancelled).Should().BeFalse();
+            _browsers[_c.CurrentUser.Key].Click(BookingDetailsPage.KeepBookingButton);
+        }
+
         [When(@"the user cancels the hearing")]
         public void WhenTheUserAttemptsToCancelTheHearing()
         {
             _browsers[_c.CurrentUser.Key].ScrollTo(BookingDetailsPage.CancelButton);
             _browsers[_c.CurrentUser.Key].Click(BookingDetailsPage.CancelButton);
+
+            _commonSharedSteps.WhenTheUserSelectsTheOptionFromTheDropdown(_browsers[_c.CurrentUser.Key].Driver,
+                BookingDetailsPage.CancelReasonDropdown, _c.Test.TestData.BookingDetailsPage.CancelReason);
             _browsers[_c.CurrentUser.Key].Click(BookingDetailsPage.ConfirmCancelButton);
+        }
+
+        [When(@"the user cancels the hearing with other reason and no text")]
+        public void WhenTheUserCancelsTheHearingWithOtherReason()
+        {
+            _browsers[_c.CurrentUser.Key].ScrollTo(BookingDetailsPage.CancelButton);
+            _browsers[_c.CurrentUser.Key].Click(BookingDetailsPage.CancelButton);
+
+            _commonSharedSteps.WhenTheUserSelectsTheOptionFromTheDropdown(_browsers[_c.CurrentUser.Key].Driver,
+                BookingDetailsPage.CancelReasonDropdown, _c.Test.TestData.BookingDetailsPage.CancelReason2);
+            _browsers[_c.CurrentUser.Key].Click(BookingDetailsPage.ConfirmCancelButton);
+        }
+
+        [Then(@"an error message is diplayed for the details box and hearing is not cancelled")]
+        public void ThenAnErrorMessageIsDiplayForTheDetailsBoxAndHearingIsNotCancelled()
+        {
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.CancelReasonDetailsErrorLabel).Displayed.Should().BeTrue();
+            PollForHearingStatus(BookingStatus.Cancelled).Should().BeFalse();
+            _browsers[_c.CurrentUser.Key].Click(BookingDetailsPage.KeepBookingButton);
         }
 
         [Then(@"the hearing is cancelled")]
@@ -120,6 +160,18 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             var hearing = GetHearing();
             _c.Apis.VideoApi.PollForConferenceDeleted(hearing.Id, Timeout).Should().BeTrue();
+        }
+
+        [When(@"the user cancels the hearing with other reason and detail text")]
+        public void WhenTheUserCancelsTheHearingWithOtherReasonAndDetailText()
+        {
+            _browsers[_c.CurrentUser.Key].ScrollTo(BookingDetailsPage.CancelButton);
+            _browsers[_c.CurrentUser.Key].Click(BookingDetailsPage.CancelButton);
+
+            _commonSharedSteps.WhenTheUserSelectsTheOptionFromTheDropdown(_browsers[_c.CurrentUser.Key].Driver,
+                BookingDetailsPage.CancelReasonDropdown, _c.Test.TestData.BookingDetailsPage.CancelReason2);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.CancelReasonTextfield).SendKeys(_c.Test.TestData.BookingDetailsPage.DetailReason);
+            _browsers[_c.CurrentUser.Key].Click(BookingDetailsPage.ConfirmCancelButton);
         }
 
         private HearingDetailsResponse GetHearing()

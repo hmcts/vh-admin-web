@@ -27,7 +27,8 @@ function MockBookedHearing(): BookingsDetailsModel {
     new Date(),
     'booked',
     false,
-    true
+    true,
+    'reason'
   );
 }
 

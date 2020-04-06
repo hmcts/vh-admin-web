@@ -9,6 +9,7 @@ namespace AdminWebsite.AcceptanceTests.Data.TestData
         public AddParticipant AddParticipant { get; set; }
         public OtherInformation OtherInformation { get; set; }
         public Questionnaire Questionnaire { get; set; }
+        public BookingDetailsPage BookingDetailsPage { get; set; }
     }
 
     public class HearingDetails
@@ -64,5 +65,12 @@ namespace AdminWebsite.AcceptanceTests.Data.TestData
         public string RepresentativeQuestion { get; set; }
         public string ExtendedAnswer { get; set; }
         public string UnansweredQuestion { get; set; }
+    }
+
+    public class BookingDetailsPage
+    {
+        public string CancelReason { get; set; }
+        public string CancelReason2 { get; set; }
+        public string DetailReason { get; set; }
     }
 }

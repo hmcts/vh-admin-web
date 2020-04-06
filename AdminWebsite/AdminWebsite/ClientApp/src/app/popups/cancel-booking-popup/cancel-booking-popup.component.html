@@ -1,18 +1,47 @@
-<div id="saveFailedPopup" class="vh-popup-overlay">
-  <div class="vh-popup vh-popup-xsmall">
-    <h1 class="govuk-heading-m vh-ml70 vh-mr70">Are you sure you want to cancel this booking?</h1>
+<form [formGroup]="cancelHearingForm" class="govuk-form-group">
+  <div id="saveFailedPopup" class="vh-popup-overlay">
+    <div class="vh-popup vh-popup-xsmall">
+      <div class="content">
+        <div class="govuk-grid-row">
+          <h1 class="govuk-heading-m vh-ml70 vh-mr70" id="cancel-reason-title">Cancel this booking?</h1>
+          <h2 class="govuk-heading-s" id="cancel-reason-text">Please select a reason for cancellation</h2>
 
-    <div class="content">
-      <div class="govuk-grid-row">
-        <div class="vh-top">
-          <button id="btnCancelBooking" class="govuk-button vh-mr25" data-module="govuk-button"
-                  (click)="cancelHearing()" alt="Cancel the booking">
-          Cancel booking</button>
-          <button id="btnKeepBooking" class="govuk-button hmcts-button--secondary" data-module="govuk-button"
-                  (click)="keepHearing()" alt="Keep the booking">
-          Keep booking</button>
+          <div [ngClass]="cancelReasonInvalid ? 'govuk-form-group--error' : 'govuk-form-group'">
+            <select class="govuk-select" id="cancel-reason" name="cancel-reason" formControlName="cancelReason">
+              <option *ngFor="let reason of cancelReasons" [value]="reason">
+                {{ reason }}
+              </option>
+            </select>
+            <div *ngIf="cancelReasonInvalid" class="alert alert-danger">
+              <span id="cancelReason-error" class="govuk-error-message">
+                Please select a reason
+              </span>
+            </div>
+          </div>
+
+          <div [ngClass]="cancelReasonInvalid ? 'govuk-form-group--error' : 'govuk-form-group'" *ngIf="showDetails">
+            <span id="more-detail-error" class="govuk-error-message" *ngIf="cancelReasonDetailsInvalid">
+              <span class="govuk-visually-hidden">Error:</span> Please enter a cancellation reason
+            </span>
+            <textarea [ngClass]="cancelReasonInvalid ? 'govuk-textarea--error' : 'govuk-textarea'"
+              id="cancelReason-detail" name="cancelReason-detail" rows="5"
+              aria-describedby="cancelReason-detail-hint cancelReason-detail-error"
+              formControlName="cancelReasonDetails">
+                      </textarea>
+          </div>
+
+          <div class="vh-top">
+            <button id="btnCancelBooking" class="govuk-button vh-mr25" data-module="govuk-button" (click)="cancelHearing()"
+              alt="Cancel the booking">
+              Confirm cancellation
+            </button>
+            <button id="btnKeepBooking" class="govuk-button hmcts-button--secondary" data-module="govuk-button"
+              (click)="keepHearing()" alt="Keep the booking">
+              Keep this booking
+            </button>
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div>
+</form>

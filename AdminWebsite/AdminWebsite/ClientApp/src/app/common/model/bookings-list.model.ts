@@ -17,7 +17,8 @@ export class BookingsDetailsModel {
   constructor(hearingId: string, startTime: Date, duration: number, hearingCaseNumber: string,
     hearingCaseName: string, hearingType: string, judgeName: string, courtRoom: string,
     courtAddress: string, createdBy: string, createdDate: Date, lastEditBy: string,
-    lastEditDate: Date, status: string, questionnaireNotRequired: boolean, audioRecordingRequired: boolean
+    lastEditDate: Date, status: string, questionnaireNotRequired: boolean, audioRecordingRequired: boolean,
+    cancelReason: string
   ) {
     this.HearingId = hearingId;
     this.StartTime = startTime;
@@ -37,6 +38,7 @@ export class BookingsDetailsModel {
     this.Cancelled = this.Status === 'Cancelled';
     this.QuestionnaireNotRequired = questionnaireNotRequired;
     this.AudioRecordingRequired = audioRecordingRequired;
+    this.CancelReason = cancelReason;
   }
 
   HearingId: string;
@@ -59,6 +61,7 @@ export class BookingsDetailsModel {
   QuestionnaireNotRequired: boolean;
   IsStartTimeChanged: boolean;
   AudioRecordingRequired: boolean;
+  CancelReason: string;
 
   get DurationInHoursAndMinutes(): string {
     return FormatShortDuration(this.Duration);
