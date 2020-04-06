@@ -74,7 +74,7 @@ describe('AssignJudgeComponent', () => {
         'updateHearingRequest', 'cancelRequest', 'setBookingHasChanged']);
     videoHearingsServiceSpy.getCurrentRequest.and.returnValue(newHearing);
 
-    bookingServiseSpy = jasmine.createSpyObj<BookingService>('BookingService', ['resetEditMode', 'isEditMode']);
+    bookingServiseSpy = jasmine.createSpyObj<BookingService>('BookingService', ['resetEditMode', 'isEditMode', 'removeEditMode']);
 
     judgeDataServiceSpy = jasmine.createSpyObj<JudgeDataService>(['JudgeDataService', 'getJudges']);
     judgeDataServiceSpy.getJudges.and.returnValue(of(MockValues.Judges));

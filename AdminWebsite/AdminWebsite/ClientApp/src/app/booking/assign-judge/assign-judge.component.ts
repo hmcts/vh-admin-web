@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { JudgeResponse } from '../../services/clients/api-client';
 import { HearingModel } from '../../common/model/hearing.model';
 import { ParticipantModel } from '../../common/model/participant.model';
-
+import { PageUrls } from 'src/app/shared/page-url.constants';
 import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 import { Constants } from 'src/app/common/constants';
 import { JudgeDataService } from 'src/app/booking/services/judge-data.service';
@@ -206,9 +206,9 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
       this.changeDisplayName();
       this.hearingService.updateHearingRequest(this.hearing);
       if (this.editMode) {
-        this.navigateToSummary();
+        this.router.navigate([PageUrls.Summary]);
       } else {
-        this.router.navigate(['/add-participants']);
+        this.router.navigate([PageUrls.AddParticipants]);
       }
     } else {
       this.failedSubmission = true;
@@ -220,8 +220,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
       if (this.form.dirty || this.form.touched) {
         this.attemptingDiscardChanges = true;
       } else {
-        this.navigateToSummary();
-      }
+        this.router.navigate([PageUrls.Summary]);      }
     } else {
       this.attemptingCancellation = true;
     }
@@ -236,7 +235,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     this.attemptingCancellation = false;
     this.form.reset();
     this.hearingService.cancelRequest();
-    this.router.navigate(['/dashboard']);
+    this.router.navigate([PageUrls.Dashboard]);
   }
 
   cancelChanges() {
@@ -273,6 +272,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
   }
 
   ngOnDestroy() {
+    this.bookingService.removeEditMode();
     this.$subscriptions.forEach(subcription => { if (subcription) { subcription.unsubscribe(); } });
   }
 }
