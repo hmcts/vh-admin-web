@@ -255,3 +255,10 @@ p {
 .vh-popup-message-xsmall {
   max-width: 500px !important;
 }
+
+.vh-align-text-left {
+  text-align: left;
+}
+.vh-max-width {
+  width: 100%;
+}
