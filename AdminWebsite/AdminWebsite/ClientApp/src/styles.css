@@ -102,12 +102,27 @@
   background-color: #d4351c;
   padding-top: 7px;
   padding-bottom: 7px;
-  width: 35%;
+  width: 20%;
   font-weight: 300;
   text-align: center;
   margin-top: 1px;
   font-size: 18px;
   font-family: "nta",Arial,sans-serif;
+  float: left;
+}
+
+.vh-cancelled-reason {
+  color: #626a6e;
+  background-color: white;
+  padding-top: 7px;
+  padding-left: 10px;
+  width: 75%;
+  font-weight: 300;
+  text-align: left;
+  margin-top: 1px;
+  font-size: 18px;
+  font-family: "nta",Arial,sans-serif;
+  float: left;
 }
 
 .vh-created-booking {

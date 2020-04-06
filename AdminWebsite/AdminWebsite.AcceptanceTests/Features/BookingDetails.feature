@@ -13,6 +13,21 @@ Scenario: Bookings Details
 Scenario: Cancel a booked hearing
 	Given the Video Hearings Officer user has progressed to the Booking Details page
 	When the user cancels the hearing 
+	Then the hearing is cancelled	
+	
+Scenario: Cancel a booked hearing without reason
+	Given the Video Hearings Officer user has progressed to the Booking Details page
+	When the user cancels the hearing without a cancel reason
+	Then an error message is diplay and hearing is not cancelled
+
+Scenario: Cancel a booked hearing with Cancel Reason
+	Given the Video Hearings Officer user has progressed to the Booking Details page
+	When the user cancels the hearing with other reason and no text
+	Then an error message is diplayed for the details box and hearing is not cancelled
+
+Scenario: Cancel a booked hearing with Other cancel reason
+	Given the Video Hearings Officer user has progressed to the Booking Details page
+	When the user cancels the hearing with other reason and detail text
 	Then the hearing is cancelled
 
 Scenario: Cancel a confirmed hearing
