@@ -16,6 +16,10 @@ export class BookingService {
     sessionStorage.setItem(bookingEditKey, bookingEditKey);
   }
 
+  removeEditMode() {
+    sessionStorage.removeItem(bookingEditKey);
+  }
+
   resetEditMode() {
     sessionStorage.removeItem(bookingEditKey);
     sessionStorage.removeItem(existingCaseTypeKey);
