@@ -2,12 +2,9 @@
 using AcceptanceTests.Common.Configuration.Users;
 using AcceptanceTests.Common.Driver;
 using AcceptanceTests.Common.Driver.Browser;
-using AcceptanceTests.Common.Driver.Helpers;
 using AcceptanceTests.Common.Driver.Support;
-using AcceptanceTests.Common.PageObject.Pages;
 using AdminWebsite.AcceptanceTests.Helpers;
 using BoDi;
-using FluentAssertions;
 using TechTalk.SpecFlow;
 
 namespace AdminWebsite.AcceptanceTests.Hooks
@@ -36,7 +33,12 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             context.AdminWebConfig.TestConfig.TargetBrowser = DriverManager.GetTargetBrowser(NUnit.Framework.TestContext.Parameters["TargetBrowser"]);
             context.AdminWebConfig.TestConfig.TargetDevice = DriverManager.GetTargetDevice(NUnit.Framework.TestContext.Parameters["TargetDevice"]);
             DriverManager.KillAnyLocalDriverProcesses();
-            context.Driver = new DriverSetup(context.AdminWebConfig.SauceLabsConfiguration, scenarioContext.ScenarioInfo, context.AdminWebConfig.TestConfig.TargetDevice, context.AdminWebConfig.TestConfig.TargetBrowser);
+            var driverOptions = new DriverOptions()
+            {
+                TargetBrowser = context.AdminWebConfig.TestConfig.TargetBrowser,
+                TargetDevice = context.AdminWebConfig.TestConfig.TargetDevice
+            };
+            context.Driver = new DriverSetup(context.AdminWebConfig.SauceLabsConfiguration, scenarioContext.ScenarioInfo, driverOptions);
         }
 
         [AfterScenario(Order = (int)HooksSequence.LogResultHooks)]
