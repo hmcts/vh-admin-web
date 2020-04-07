@@ -35,7 +35,7 @@
     "ngx-moment": "^3.5.0",
     "nswag": "^13.2.2",
     "rxjs": "^6.5.4",
-    "snyk": "^1.290.2",
+    "snyk": "^1.299.0",
     "zone.js": "^0.10.2"
   },
   "devDependencies": {
