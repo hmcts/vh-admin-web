@@ -7,20 +7,20 @@
           <h2 class="govuk-heading-s" id="cancel-reason-text">Please select a reason for cancellation</h2>
 
           <div [ngClass]="cancelReasonInvalid ? 'govuk-form-group--error' : 'govuk-form-group'">
-            <select class="govuk-select" id="cancel-reason" name="cancel-reason" formControlName="cancelReason">
+            <select class="govuk-select vh-max-width" id="cancel-reason" name="cancel-reason" formControlName="cancelReason">
               <option *ngFor="let reason of cancelReasons" [value]="reason">
                 {{ reason }}
               </option>
             </select>
             <div *ngIf="cancelReasonInvalid" class="alert alert-danger">
-              <span id="cancelReason-error" class="govuk-error-message">
+              <span id="cancelReason-error" class="govuk-error-message vh-align-text-left">
                 Please select a reason
               </span>
             </div>
           </div>
 
           <div [ngClass]="cancelReasonInvalid ? 'govuk-form-group--error' : 'govuk-form-group'" *ngIf="showDetails">
-            <span id="more-detail-error" class="govuk-error-message" *ngIf="cancelReasonDetailsInvalid">
+            <span id="more-detail-error" class="govuk-error-message vh-align-text-left" *ngIf="cancelReasonDetailsInvalid">
               <span class="govuk-visually-hidden">Error:</span> Please enter a cancellation reason
             </span>
             <textarea [ngClass]="cancelReasonInvalid ? 'govuk-textarea--error' : 'govuk-textarea'"
