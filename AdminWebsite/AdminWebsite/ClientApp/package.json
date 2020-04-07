@@ -44,7 +44,7 @@
     "@angular/compiler-cli": "^8.2.14",
     "@angular/language-service": "^8.2.14",
     "@types/applicationinsights-js": "^1.0.9",
-    "@types/chai": "^4.2.7",
+    "@types/chai": "^4.2.11",
     "@types/cucumber": "^4.0.7",
     "@types/jasmine": "^2.8.16",
     "@types/jasminewd2": "^2.0.8",
