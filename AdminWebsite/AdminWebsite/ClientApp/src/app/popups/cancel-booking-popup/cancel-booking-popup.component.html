@@ -7,7 +7,8 @@
           <h2 class="govuk-heading-s" id="cancel-reason-text">Please select a reason for cancellation</h2>
 
           <div [ngClass]="cancelReasonInvalid ? 'govuk-form-group--error' : 'govuk-form-group'">
-            <select class="govuk-select vh-max-width" id="cancel-reason" name="cancel-reason" formControlName="cancelReason">
+            <select class="govuk-select vh-max-width" id="cancel-reason" name="cancel-reason"
+              formControlName="cancelReason">
               <option *ngFor="let reason of cancelReasons" [value]="reason">
                 {{ reason }}
               </option>
@@ -19,20 +20,35 @@
             </div>
           </div>
 
-          <div [ngClass]="cancelReasonInvalid ? 'govuk-form-group--error' : 'govuk-form-group'" *ngIf="showDetails">
-            <span id="more-detail-error" class="govuk-error-message vh-align-text-left" *ngIf="cancelReasonDetailsInvalid">
-              <span class="govuk-visually-hidden">Error:</span> Please enter a cancellation reason
-            </span>
-            <textarea [ngClass]="cancelReasonInvalid ? 'govuk-textarea--error' : 'govuk-textarea'"
-              id="cancelReason-detail" name="cancelReason-detail" rows="5"
-              aria-describedby="cancelReason-detail-hint cancelReason-detail-error"
-              formControlName="cancelReasonDetails">
-                      </textarea>
+          <div *ngIf="showDetails">
+            <div [ngClass]="cancelReasonDetailsInvalid ? 'govuk-form-group--error' : 'govuk-form-group'">
+              <span id="more-detail-error" class="govuk-error-message vh-align-text-left"
+                *ngIf="cancelReasonDetailsInvalid && (cancelReasonDetails.pristine || !cancelReasonDetailsInvalidMaxLength)">
+                <span class="govuk-visually-hidden">Error:</span> Please enter a cancellation reason
+              </span>
+              <textarea class="govuk-textarea"
+                [ngClass]="{ 'govuk-textarea--error': cancelReasonDetailsInvalid && (cancelReasonDetails.touched || !cancelReasonDetailsInvalidMaxLength) } "
+                id="cancelReason-detail" name="cancelReason-detail" rows="5"
+                aria-describedby="cancelReason-detail-hint cancelReason-detail-error"
+                formControlName="cancelReasonDetails">
+              </textarea>
+            </div>
+
+            <div *ngIf="cancelReasonDetails.pristine || !cancelReasonDetailsInvalidMaxLength"
+              class="govuk-hint length-hint govuk-!-margin-padding-2 vh-align-text-left">
+              Character count {{currentInputLength}} (maximum allowed {{maxInputLength}}).
+            </div>
+            <div id="input-errors" *ngIf="cancelReasonDetailsInvalidMaxLength"
+              class="govuk-hint length-hint govuk-!-padding-top-2 govuk-!-margin-padding-2 alert alert-danger">
+              <span class="govuk-error-message length-hint govuk-!-margin-bottom-0 vh-align-text-left">
+                Character count {{ currentInputLength }} (maximum allowed {{ maxInputLength }}).</span>
+            </div>
           </div>
 
+
           <div class="vh-top">
-            <button id="btnCancelBooking" class="govuk-button vh-mr25" data-module="govuk-button" (click)="cancelHearing()"
-              alt="Cancel the booking">
+            <button id="btnCancelBooking" class="govuk-button vh-mr25" data-module="govuk-button"
+              (click)="cancelHearing()" alt="Cancel the booking">
               Confirm cancellation
             </button>
             <button id="btnKeepBooking" class="govuk-button hmcts-button--secondary" data-module="govuk-button"

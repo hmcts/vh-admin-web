@@ -33,7 +33,10 @@
               "src/styles.css",
               "src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [
+              "node_modules/govuk-frontend/govuk/all.js",
+              "src/scripts/init-script.js"
+            ]
           },
           "configurations": {
             "production": {
