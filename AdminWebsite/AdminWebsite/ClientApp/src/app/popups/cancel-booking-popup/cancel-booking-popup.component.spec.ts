@@ -116,4 +116,20 @@ describe('CancelBookingPopupComponent', () => {
     component.ngOnDestroy();
     expect(component.$subscriptions[0].closed).toBe(true);
   });
+  it('should return character length zero when input is blank or undefined', () => {
+    const cancelReasonDetailsValue = undefined;
+    cancelReasonDetailsControl.setValue(cancelReasonDetailsValue);
+    expect(component.currentInputLength).toBe(0);
+  });
+  it('should return character length when set', () => {
+    const cancelReasonDetailsValue = 'some other reason!';
+    cancelReasonDetailsControl.setValue(cancelReasonDetailsValue);
+    expect(component.currentInputLength).toBe(cancelReasonDetailsValue.length);
+  });
+  it('should be invalid input when form has been touched AND max length has been exceeded', () => {
+    const cancelReasonDetailsValue =
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
+    cancelReasonDetailsControl.setValue(cancelReasonDetailsValue);
+    expect(component.cancelReasonDetailsInvalidMaxLength).toBe(false);
+  });
 });

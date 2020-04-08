@@ -2,7 +2,6 @@ import { Component, OnInit, Output, EventEmitter, OnDestroy } from '@angular/cor
 import { Subscription } from 'rxjs';
 import { Constants } from 'src/app/common/constants';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
-import { ValidateForWhiteSpace } from 'src/app/shared/validators/whitespace-validator';
 
 @Component({
   selector: 'app-cancel-booking-popup',
@@ -18,6 +17,7 @@ export class CancelBookingPopupComponent implements OnInit, OnDestroy {
   selectedCancelReason: string;
   $subscriptions: Subscription[] = [];
   showDetails: boolean;
+  maxInputLength = 256;
 
   cancelReasons: string[] = [
     'Please select',
@@ -47,21 +47,31 @@ export class CancelBookingPopupComponent implements OnInit, OnDestroy {
       this.selectedCancelReason = val;
       this.showDetails = this.selectedCancelReason === 'Other (please provide details)';
       console.log(this.selectedCancelReason);
+      this.failedSubmission = false;
       if (this.showDetails) {
-        this.cancelReasonDetails.setValidators(
-          [Validators.required, ValidateForWhiteSpace, Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)]);
+        this.cancelReasonDetails.setValidators([Validators.required, Validators.pattern(Constants.TextInputPattern),
+        Validators.maxLength(this.maxInputLength)]);
       } else {
+        this.cancelReasonDetails.setValue('');
         this.cancelReasonDetails.clearValidators();
       }
       this.cancelReasonDetails.updateValueAndValidity();
     }));
   }
 
+  get currentInputLength(): number {
+    if (this.cancelReasonDetails.value) {
+      return this.cancelReasonDetails.value.length;
+    } else {
+      return 0;
+    }
+  }
+
   get cancelReason() {
     return this.cancelHearingForm.get('cancelReason');
   }
 
-  get cancelReasonInvalid() {
+  get cancelReasonInvalid(): boolean {
     return this.cancelReason.invalid && (this.cancelReason.dirty || this.cancelReason.touched || this.failedSubmission);
   }
 
@@ -69,9 +79,14 @@ export class CancelBookingPopupComponent implements OnInit, OnDestroy {
     return this.cancelHearingForm.get('cancelReasonDetails');
   }
 
-  get cancelReasonDetailsInvalid() {
-    return this.cancelReasonDetails.invalid && (this.cancelReasonDetails.dirty ||
-      this.cancelReasonDetails.touched || this.failedSubmission);
+  get cancelReasonDetailsInvalid(): boolean {
+    return this.cancelReasonDetails.invalid && (this.cancelReasonDetails.dirty || this.cancelReasonDetails.touched
+      || this.failedSubmission);
+  }
+
+  get cancelReasonDetailsInvalidMaxLength(): boolean {
+    return this.cancelReasonDetails.invalid && (this.cancelReasonDetails.dirty || this.cancelReasonDetails.touched
+      || this.failedSubmission) && this.cancelReasonDetails.hasError('maxlength');
   }
 
   cancelHearing(): void {
