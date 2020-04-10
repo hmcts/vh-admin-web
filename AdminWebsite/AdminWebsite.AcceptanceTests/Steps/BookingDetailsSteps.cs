@@ -13,6 +13,7 @@ using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.AcceptanceTests.Pages;
 using AdminWebsite.BookingsAPI.Client;
 using FluentAssertions;
+using OpenQA.Selenium;
 using TechTalk.SpecFlow;
 
 namespace AdminWebsite.AcceptanceTests.Steps
@@ -46,8 +47,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             PollForHearingStatus(BookingStatus.Booked);
             VerifyTheBookingDetails();
             VerifyJudgeInParticipantsList();
-            if (OnlyDisplayEmailAndUsernameIfCurrentUserMadeTheBooking())
-                VerifyTheParticipantDetails();
+            VerifyTheParticipantDetails();
         }
 
         private void VerifyTheBookingDetails()
@@ -68,10 +68,11 @@ namespace AdminWebsite.AcceptanceTests.Steps
         private void VerifyJudgeInParticipantsList()
         {
             var judge = UserManager.GetClerkUser(_c.Test.HearingParticipants);
+            var hearingJudge = _c.Test.HearingResponse.Participants.First(x => x.User_role_name.Equals("Judge"));
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.JudgeName).Text.Should().Contain(judge.DisplayName);
             if (!OnlyDisplayEmailAndUsernameIfCurrentUserMadeTheBooking()) return;
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.JudgeEmail).Text.Should().Be(judge.AlternativeEmail);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.JudgeUsername).Text.Should().Be(judge.Username);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.ParticipantEmail(hearingJudge.Id)).Text.Should().Be(judge.AlternativeEmail);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.ParticipantUsername(hearingJudge.Id)).Text.Should().Be(judge.Username);
         }
 
         private bool OnlyDisplayEmailAndUsernameIfCurrentUserMadeTheBooking()
@@ -81,18 +82,39 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         private void VerifyTheParticipantDetails()
         {
-            for (var i = 0; i < _c.Test.HearingParticipants.Count - 1; i++)
+            foreach (var participant in _c.Test.HearingResponse.Participants)
             {
-                var email = _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.ParticipantEmail(i)).Text;
-                var participant = _c.Test.HearingParticipants.First(x => x.AlternativeEmail.ToLower().Equals(email.ToLower()));
-                _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.ParticipantName(i)).Text.Should().Contain($"{_c.Test.TestData.AddParticipant.Participant.Title} {participant.Firstname} {participant.Lastname}");
-                
-                if (participant.HearingRoleName == PartyRole.Representative.Name)
+                if (participant.User_role_name.Equals("Judge"))
                 {
-                    _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.ParticipantRole(i)).Text.Should().Contain(RepresentingText);
+                    VerifyJudgeDetails(participant);
                 }
-                
-                _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.ParticipantUsername(i)).Text.ToLower().Should().Be(participant.Username.ToLower());
+                else
+                {
+                    VerifyParticipant(participant);
+                }
+
+                if (!OnlyDisplayEmailAndUsernameIfCurrentUserMadeTheBooking()) continue;
+                _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.ParticipantEmail(participant.Id)).Text.Trim().Should().Be(participant.Contact_email);
+                _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.ParticipantUsername(participant.Id)).Text.Trim().Should().Be(participant.Username);
+            }
+        }
+
+        private void VerifyJudgeDetails(ParticipantResponse participant)
+        {
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.JudgeName).Text.Trim().Should().Contain(participant.Display_name);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.JudgeRole).Text.Trim().Should().Be(participant.User_role_name);
+        }
+
+        private void VerifyParticipant(ParticipantResponse participant)
+        {
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.ParticipantName(participant.Id)).Text.Trim().Should().Contain($"{_c.Test.TestData.AddParticipant.Participant.Title} {participant.First_name} {participant.Last_name}");
+            if (participant.User_role_name.Equals("Representative"))
+            {
+                _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.ParticipantRepresentee(participant.Id)).Text.Trim().Should().Be(participant.Representee);
+            }
+            else
+            {
+                _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.ParticipantRole(participant.Id)).Text.Trim().Should().Be(participant.Hearing_role_name);
             }
         }
 

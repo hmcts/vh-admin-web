@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using AcceptanceTests.Common.Configuration.Users;
 using AcceptanceTests.Common.Data.TestData;
 using AdminWebsite.AcceptanceTests.Data.TestData;
+using AdminWebsite.BookingsAPI.Client;
 
 namespace AdminWebsite.AcceptanceTests.Data
 {
@@ -17,5 +19,6 @@ namespace AdminWebsite.AcceptanceTests.Data
         public bool SubmittedAndCreatedNewAadUsers { get; set; } = false;
         public CommonData CommonData { get; set; }
         public DefaultData TestData { get; set; }
+        public HearingDetailsResponse HearingResponse { get; set; }
     }
 }

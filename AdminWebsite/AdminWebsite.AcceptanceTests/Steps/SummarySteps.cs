@@ -163,8 +163,9 @@ namespace AdminWebsite.AcceptanceTests.Steps
             var bookingsApiManager = new BookingsApiManager(_c.AdminWebConfig.VhServices.BookingsApiUrl, _c.Tokens.BookingsApiBearerToken);
             var response = bookingsApiManager.PollForHearingByUsername(UserManager.GetClerkUser(_c.UserAccounts).Username, _c.Test.HearingDetails.CaseName);
             var hearings = RequestHelper.DeserialiseSnakeCaseJsonToResponse<List<HearingDetailsResponse>>(response.Content);
+            _c.Test.HearingResponse = GetHearingFromHearings(hearings);
             var assertHearing = new AssertHearing()
-                .WithHearing(GetHearingFromHearings(hearings))
+                .WithHearing(_c.Test.HearingResponse)
                 .WithTestData(_c.Test)
                 .CreatedBy(_c.CurrentUser.Username);
             assertHearing.AssertHearingDataMatches();
@@ -178,8 +179,9 @@ namespace AdminWebsite.AcceptanceTests.Steps
             var bookingsApiManager = new BookingsApiManager(_c.AdminWebConfig.VhServices.BookingsApiUrl, _c.Tokens.BookingsApiBearerToken);
             var response = bookingsApiManager.PollForHearingByUsername(UserManager.GetClerkUser(_c.UserAccounts).Username, _c.Test.HearingDetails.CaseName);
             var hearings = RequestHelper.DeserialiseSnakeCaseJsonToResponse<List<HearingDetailsResponse>>(response.Content);
+            _c.Test.HearingResponse = GetHearingFromHearings(hearings);
             var assertHearing = new AssertHearing()
-                .WithHearing(GetHearingFromHearings(hearings))
+                .WithHearing(_c.Test.HearingResponse)
                 .WithTestData(_c.Test)
                 .CreatedBy(_c.CurrentUser.Username);
             assertHearing.AssertHearingDataMatches();

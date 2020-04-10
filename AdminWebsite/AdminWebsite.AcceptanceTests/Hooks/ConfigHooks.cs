@@ -7,6 +7,7 @@ using AdminWebsite.AcceptanceTests.Configuration;
 using AdminWebsite.AcceptanceTests.Data;
 using AdminWebsite.AcceptanceTests.Data.TestData;
 using AdminWebsite.AcceptanceTests.Helpers;
+using AdminWebsite.BookingsAPI.Client;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
@@ -84,6 +85,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
                 CommonData = LoadXmlFile.SerialiseCommonData(),
                 HearingDetails = new HearingDetails(),
                 HearingParticipants = new List<UserAccount>(),
+                HearingResponse = new HearingDetailsResponse(),
                 HearingSchedule = new HearingSchedule(),
                 TestData = new DefaultDataManager().SerialiseTestData()
             };
