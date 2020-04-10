@@ -74,6 +74,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             context.Test = new Test
             {
                 AddParticipant = new AddParticipant(),
+                AssignJudge = new AssignJudge(),
                 CommonData = LoadXmlFile.SerialiseCommonData(),
                 HearingDetails = new HearingDetails(),
                 HearingParticipants = new List<UserAccount>(),

@@ -59,6 +59,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.HearingStartDate).Text.ToLower().Should().Be(_c.Test.HearingSchedule.ScheduledDate.ToLocalTime().ToString(DateFormats.HearingSummaryDate).ToLower());
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.CourtroomAddress).Text.Should().Be($"{_c.Test.HearingSchedule.HearingVenue}, {_c.Test.HearingSchedule.Room}");
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.Duration).Text.Should().Contain($"listed for {_c.Test.HearingSchedule.DurationMinutes} minutes");
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.AudioRecorded).Text.Should().Be(_c.Test.AssignJudge.AudioRecord ? "Yes" : "No");
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.OtherInformation).Text.Should().Be(_c.Test.OtherInformation);
         }
 

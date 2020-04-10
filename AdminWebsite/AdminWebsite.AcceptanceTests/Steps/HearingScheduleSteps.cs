@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using AcceptanceTests.Common.Driver.Browser;
 using AcceptanceTests.Common.Driver.Helpers;
 using AcceptanceTests.Common.Test.Steps;
@@ -68,6 +69,17 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _c.Test.HearingSchedule.DurationMinutes = _c.Test.HearingSchedule.DurationMinutes == 0 ? _c.Test.TestData.HearingSchedule.DurationMinutes : 25;
             _c.Test.HearingSchedule.HearingVenue = _c.Test.HearingSchedule.HearingVenue != null ? "Manchester Civil and Family Justice Centre" : _c.Test.TestData.HearingSchedule.HearingVenue;
             _c.Test.HearingSchedule.Room = _c.Test.HearingSchedule.Room != null ? "2" : _c.Test.TestData.HearingSchedule.Room;
+        }
+
+        public void EditHearingSchedule()
+        {
+            Thread.Sleep(TimeSpan.FromSeconds(1));
+            SetHearingScheduleDetails();
+            AddHearingDate();
+            AddHearingTime();
+            AddHearingScheduleDetails();
+            ClickNext();
+            Thread.Sleep(TimeSpan.FromSeconds(1));
         }
 
         [When(@"the user attempts to set a date in the past")]

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading;
+﻿using System.Collections.Generic;
 using AcceptanceTests.Common.Configuration.Users;
 using AcceptanceTests.Common.Driver.Browser;
 using AcceptanceTests.Common.Driver.Helpers;
@@ -30,6 +28,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             _browsers[_c.CurrentUser.Key].WaitForPageToLoad();
             SetTheJudge();
+            SetAudioRecording(_c.Test.TestData.AssignJudge.AudioRecord);
             ClickNext();
         }
 
@@ -41,6 +40,20 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _browsers[_c.CurrentUser.Key].Driver.WaitForListToBePopulated(AssignJudgePage.JudgeNameDropdown);
             _commonSharedSteps.WhenTheUserSelectsTheOptionFromTheDropdown(_browsers[_c.CurrentUser.Key].Driver, AssignJudgePage.JudgeNameDropdown, judge.Username);
             _c.Test.HearingParticipants.Add(judge);
+        }
+
+        private void SetAudioRecording(bool audioRecord)
+        {
+            _browsers[_c.CurrentUser.Key].ClickRadioButton(audioRecord
+                ? AssignJudgePage.AudioRecordYesRadioButton
+                : AssignJudgePage.AudioRecordNoRadioButton);
+            _c.Test.AssignJudge.AudioRecord = audioRecord;
+        }
+
+        public void EditAudioRecording()
+        {
+            SetAudioRecording(!_c.Test.TestData.AssignJudge.AudioRecord);
+            ClickNext();
         }
 
         public void ClickNext()

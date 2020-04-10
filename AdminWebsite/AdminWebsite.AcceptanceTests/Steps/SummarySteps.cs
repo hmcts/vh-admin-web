@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading;
 using AcceptanceTests.Common.Api.Hearings;
 using AcceptanceTests.Common.Api.Helpers;
-using AcceptanceTests.Common.Api.Requests;
 using AcceptanceTests.Common.Api.Users;
 using AcceptanceTests.Common.Configuration.Users;
 using AcceptanceTests.Common.Driver.Browser;
@@ -29,8 +28,8 @@ namespace AdminWebsite.AcceptanceTests.Steps
         private readonly BookingDetailsSteps _bookingDetailsSteps;
         private readonly HearingDetailsSteps _hearingDetailsSteps;
         private readonly HearingScheduleSteps _hearingScheduleSteps;
-        private readonly AddParticipantSteps _addParticipantSteps;
         private readonly AssignJudgeSteps _assignJudgeSteps;
+        private readonly AddParticipantSteps _addParticipantSteps;
         private readonly OtherInformationSteps _otherInformationSteps;
         private UserAccount _newUserToEdit;
 
@@ -59,6 +58,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             VerifyHearingDetails();
             VerifyHearingSchedule();
+            VerifyAudioRecording();
             VerifyOtherInformation();
             ClickBook();
             VerifyBookingCreated();
@@ -80,17 +80,14 @@ namespace AdminWebsite.AcceptanceTests.Steps
             if (screen.Equals("hearing details"))
             {
                 _hearingDetailsSteps.EditHearingDetails();
-                _hearingScheduleSteps.ClickNext();
-                _assignJudgeSteps.ClickNext();
-                _addParticipantSteps.ClickNext();
-                _otherInformationSteps.ClickNext();
             }
             else if (screen.Equals("hearing schedule"))
             {
-                _hearingScheduleSteps.ProgressToNextPage();
-                _assignJudgeSteps.ClickNext();
-                _addParticipantSteps.ClickNext();
-                _otherInformationSteps.ClickNext();
+                _hearingScheduleSteps.EditHearingSchedule();
+            }
+            else if (screen.Equals("audio recording"))
+            {
+                _assignJudgeSteps.EditAudioRecording();
             }
             else if (screen.Equals("other information"))
             {
@@ -112,6 +109,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             VerifyHearingDetails();
             VerifyHearingSchedule();
+            VerifyAudioRecording();
             VerifyOtherInformation();
             ClickBook();
             VerifyBookingUpdated();
@@ -146,6 +144,11 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(SummaryPage.CourtAddress).Text.Should().Be(courtAddress);
             var listedFor = $"listed for {_c.Test.HearingSchedule.DurationMinutes} minutes";
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(SummaryPage.HearingDuration).Text.Should().Be(listedFor);
+        }
+
+        private void VerifyAudioRecording()
+        {
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(SummaryPage.AudioRecording).Text.Should().Be(_c.Test.AssignJudge.AudioRecord ? "Yes" : "No");
         }
 
         private void VerifyOtherInformation()
