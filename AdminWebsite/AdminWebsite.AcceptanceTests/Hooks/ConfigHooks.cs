@@ -22,7 +22,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
 
         public ConfigHooks(TestContext context)
         {
-            _configRoot = ConfigurationManager.BuildConfig("f99a3fe8-cf72-486a-b90f-b65c27da84ee", GetTargetEnvironment());
+            _configRoot = ConfigurationManager.BuildConfig("f99a3fe8-cf72-486a-b90f-b65c27da84ee", GetTargetEnvironment(), RunOnSauceLabsFromLocal());
             context.AdminWebConfig = new AdminWebConfig();
             context.UserAccounts = new List<UserAccount>();
             context.Tokens = new AdminWebTokens();
@@ -31,6 +31,12 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         private static string GetTargetEnvironment()
         {
             return NUnit.Framework.TestContext.Parameters["TargetEnvironment"] ?? "";
+        }
+
+        private static bool RunOnSauceLabsFromLocal()
+        {
+            return NUnit.Framework.TestContext.Parameters["RunOnSauceLabs"] != null &&
+                   NUnit.Framework.TestContext.Parameters["RunOnSauceLabs"].Equals("true");
         }
 
         [BeforeScenario(Order = (int)HooksSequence.ConfigHooks)]

@@ -7,6 +7,7 @@ namespace AdminWebsite.AcceptanceTests.Data
 {
     public class Test
     {
+        public string CreatedBy { get; set; }
         public List<UserAccount> HearingParticipants { get; set; }
         public HearingDetails HearingDetails { get; set; }
         public HearingSchedule HearingSchedule { get; set; }

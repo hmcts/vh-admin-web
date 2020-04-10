@@ -40,18 +40,20 @@ namespace AdminWebsite.AcceptanceTests.Steps
         }
 
         [When(@"the user views the booking details")]
+        [Then(@"the user views the booking details")]
         public void WhenTheUserViewsTheBookingDetails()
         {
             PollForHearingStatus(BookingStatus.Booked);
             VerifyTheBookingDetails();
             VerifyJudgeInParticipantsList();
-            VerifyTheParticipantDetails();
+            if (OnlyDisplayEmailAndUsernameIfCurrentUserMadeTheBooking())
+                VerifyTheParticipantDetails();
         }
 
         private void VerifyTheBookingDetails()
         {
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.CaseNumberTitle).Text.Should().Be(_c.Test.HearingDetails.CaseNumber);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.CreatedBy).Text.Should().Be(_c.CurrentUser.Username);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.CreatedBy).Text.Should().Be(_c.Test.CreatedBy);
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.CreatedDate).Text.Should().NotBeNullOrWhiteSpace();
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.CaseNumber).Text.Should().Be(_c.Test.HearingDetails.CaseNumber);
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.CaseName).Text.Should().Be(_c.Test.HearingDetails.CaseName);
@@ -67,8 +69,14 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             var judge = UserManager.GetClerkUser(_c.Test.HearingParticipants);
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.JudgeName).Text.Should().Contain(judge.DisplayName);
+            if (!OnlyDisplayEmailAndUsernameIfCurrentUserMadeTheBooking()) return;
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.JudgeEmail).Text.Should().Be(judge.AlternativeEmail);
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.JudgeUsername).Text.Should().Be(judge.Username);
+        }
+
+        private bool OnlyDisplayEmailAndUsernameIfCurrentUserMadeTheBooking()
+        {
+            return _c.CurrentUser.Username.Equals(_c.Test.CreatedBy);
         }
 
         private void VerifyTheParticipantDetails()
@@ -105,15 +113,15 @@ namespace AdminWebsite.AcceptanceTests.Steps
         }
 
         [When(@"the user cancels the hearing without a cancel reason")]
-        public void WhenTheUserCancelsTheHearingWithotACancelReason()
+        public void WhenTheUserCancelsTheHearingWithoutACancelReason()
         {
             _browsers[_c.CurrentUser.Key].ScrollTo(BookingDetailsPage.CancelButton);
             _browsers[_c.CurrentUser.Key].Click(BookingDetailsPage.CancelButton);
             _browsers[_c.CurrentUser.Key].Click(BookingDetailsPage.ConfirmCancelButton);
         }
 
-        [Then(@"an error message is diplay and hearing is not cancelled")]
-        public void ThenAnErrorMessageIsDiplayAndHearingIsNotCancelled()
+        [Then(@"an error message is displayed and hearing is not cancelled")]
+        public void ThenAnErrorMessageIsDisplayedAndHearingIsNotCancelled()
         {
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.CancelReasonDropdownErrorLabel).Displayed.Should().BeTrue();
             PollForHearingStatus(BookingStatus.Cancelled).Should().BeFalse();
@@ -142,8 +150,8 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _browsers[_c.CurrentUser.Key].Click(BookingDetailsPage.ConfirmCancelButton);
         }
 
-        [Then(@"an error message is diplayed for the details box and hearing is not cancelled")]
-        public void ThenAnErrorMessageIsDiplayForTheDetailsBoxAndHearingIsNotCancelled()
+        [Then(@"an error message is displayed for the details box and hearing is not cancelled")]
+        public void ThenAnErrorMessageIsDisplayedForTheDetailsBoxAndHearingIsNotCancelled()
         {
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.CancelReasonDetailsErrorLabel).Displayed.Should().BeTrue();
             PollForHearingStatus(BookingStatus.Cancelled).Should().BeFalse();

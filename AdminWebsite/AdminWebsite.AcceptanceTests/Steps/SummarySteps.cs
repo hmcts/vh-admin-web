@@ -69,6 +69,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(SummaryPage.BookButton);
             _browsers[_c.CurrentUser.Key].Click(SummaryPage.BookButton);
+            _c.Test.CreatedBy = _c.CurrentUser.Username;
         }
 
         [When(@"the user edits the (.*)")]

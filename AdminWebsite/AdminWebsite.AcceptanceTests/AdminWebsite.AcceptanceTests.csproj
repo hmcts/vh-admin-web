@@ -80,6 +80,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <TargetPath>appsettings.preview.json</TargetPath>
     </ContentWithTargetPath>
+    <ContentWithTargetPath Include="Configuration\Environments\saucelabs.json" Condition="Exists('Configuration\Environments\saucelabs.json')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>saucelabs.json</TargetPath>
+    </ContentWithTargetPath>
   </ItemGroup>
 
   <ItemGroup>
