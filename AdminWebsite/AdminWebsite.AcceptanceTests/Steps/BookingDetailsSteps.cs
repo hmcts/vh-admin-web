@@ -6,14 +6,12 @@ using AcceptanceTests.Common.Api.Helpers;
 using AcceptanceTests.Common.Configuration.Users;
 using AcceptanceTests.Common.Driver.Browser;
 using AcceptanceTests.Common.Driver.Helpers;
-using AcceptanceTests.Common.Model.Participant;
 using AcceptanceTests.Common.Test.Steps;
 using AdminWebsite.AcceptanceTests.Data;
 using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.AcceptanceTests.Pages;
 using AdminWebsite.BookingsAPI.Client;
 using FluentAssertions;
-using OpenQA.Selenium;
 using TechTalk.SpecFlow;
 
 namespace AdminWebsite.AcceptanceTests.Steps
@@ -22,7 +20,6 @@ namespace AdminWebsite.AcceptanceTests.Steps
     public class BookingDetailsSteps : ISteps
     {
         private const int Timeout = 60;
-        private const string RepresentingText = "Representing";
         private readonly TestContext _c;
         private readonly Dictionary<string, UserBrowser> _browsers;
         private readonly CommonSharedSteps _commonSharedSteps;
