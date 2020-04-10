@@ -10,6 +10,7 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public static By HearingDate = By.Id("hearingDate");
         public static By CourtAddress = By.Id("courtAddress");
         public static By HearingDuration = By.Id("hearingDuration");
+        public static By AudioRecording = By.Id("audioRecording");
         public static By OtherInformation = By.Id("otherInformation");
         public static By Judge = By.Id("judge-name");
         public static By RemoveParticipant = By.Id("btn-remove");

@@ -1,4 +1,5 @@
 ﻿using System;
+using AdminWebsite.AcceptanceTests.Features;
 
 namespace AdminWebsite.AcceptanceTests.Data.TestData
 {
@@ -6,6 +7,7 @@ namespace AdminWebsite.AcceptanceTests.Data.TestData
     {
         public HearingDetails HearingDetails { get; set; }
         public HearingSchedule HearingSchedule { get; set; }
+        public AssignJudge AssignJudge { get; set; }
         public AddParticipant AddParticipant { get; set; }
         public OtherInformation OtherInformation { get; set; }
         public Questionnaire Questionnaire { get; set; }
@@ -26,6 +28,11 @@ namespace AdminWebsite.AcceptanceTests.Data.TestData
         public string HearingVenue { get; set; }
         public string Room { get; set; }
         public DateTime ScheduledDate { get; set; }
+    }
+
+    public class AssignJudge
+    {
+        public bool AudioRecord { get; set; }
     }
 
     public class AddParticipant

@@ -18,12 +18,12 @@ Scenario: Cancel a booked hearing
 Scenario: Cancel a booked hearing without reason
 	Given the Video Hearings Officer user has progressed to the Booking Details page
 	When the user cancels the hearing without a cancel reason
-	Then an error message is diplay and hearing is not cancelled
+	Then an error message is displayed and hearing is not cancelled
 
 Scenario: Cancel a booked hearing with Cancel Reason
 	Given the Video Hearings Officer user has progressed to the Booking Details page
 	When the user cancels the hearing with other reason and no text
-	Then an error message is diplayed for the details box and hearing is not cancelled
+	Then an error message is displayed for the details box and hearing is not cancelled
 
 Scenario: Cancel a booked hearing with Other cancel reason
 	Given the Video Hearings Officer user has progressed to the Booking Details page
@@ -37,3 +37,12 @@ Scenario: Cancel a confirmed hearing
 	When the user cancels the hearing 
 	Then the hearing is cancelled
 	And the conference is deleted
+
+@VIH-2150 @VIH-3734
+Scenario: Case admin user can view another users booking
+	Given the Video Hearings Officer user has progressed to the Booking Confirmation page
+	And the user logs out
+	And the Case Admin user has progressed to the Dashboard page
+	When the user navigates to the Bookings List page
+	And progresses from the Bookings List page to the Booking Details page
+	Then the user views the booking details

@@ -1,19 +1,24 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using AcceptanceTests.Common.Configuration.Users;
 using AcceptanceTests.Common.Data.TestData;
 using AdminWebsite.AcceptanceTests.Data.TestData;
+using AdminWebsite.BookingsAPI.Client;
 
 namespace AdminWebsite.AcceptanceTests.Data
 {
     public class Test
     {
+        public string CreatedBy { get; set; }
         public List<UserAccount> HearingParticipants { get; set; }
         public HearingDetails HearingDetails { get; set; }
         public HearingSchedule HearingSchedule { get; set; }
+        public AssignJudge AssignJudge { get; set; }
         public string OtherInformation { get; set; }
         public AddParticipant AddParticipant { get; set; }
         public bool SubmittedAndCreatedNewAadUsers { get; set; } = false;
         public CommonData CommonData { get; set; }
         public DefaultData TestData { get; set; }
+        public HearingDetailsResponse HearingResponse { get; set; }
     }
 }

@@ -7,6 +7,7 @@ using AdminWebsite.AcceptanceTests.Configuration;
 using AdminWebsite.AcceptanceTests.Data;
 using AdminWebsite.AcceptanceTests.Data.TestData;
 using AdminWebsite.AcceptanceTests.Helpers;
+using AdminWebsite.BookingsAPI.Client;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
@@ -22,7 +23,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
 
         public ConfigHooks(TestContext context)
         {
-            _configRoot = ConfigurationManager.BuildConfig("f99a3fe8-cf72-486a-b90f-b65c27da84ee", GetTargetEnvironment());
+            _configRoot = ConfigurationManager.BuildConfig("f99a3fe8-cf72-486a-b90f-b65c27da84ee", GetTargetEnvironment(), RunOnSauceLabsFromLocal());
             context.AdminWebConfig = new AdminWebConfig();
             context.UserAccounts = new List<UserAccount>();
             context.Tokens = new AdminWebTokens();
@@ -31,6 +32,12 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         private static string GetTargetEnvironment()
         {
             return NUnit.Framework.TestContext.Parameters["TargetEnvironment"] ?? "";
+        }
+
+        private static bool RunOnSauceLabsFromLocal()
+        {
+            return NUnit.Framework.TestContext.Parameters["RunOnSauceLabs"] != null &&
+                   NUnit.Framework.TestContext.Parameters["RunOnSauceLabs"].Equals("true");
         }
 
         [BeforeScenario(Order = (int)HooksSequence.ConfigHooks)]
@@ -74,9 +81,11 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             context.Test = new Test
             {
                 AddParticipant = new AddParticipant(),
+                AssignJudge = new AssignJudge(),
                 CommonData = LoadXmlFile.SerialiseCommonData(),
                 HearingDetails = new HearingDetails(),
                 HearingParticipants = new List<UserAccount>(),
+                HearingResponse = new HearingDetailsResponse(),
                 HearingSchedule = new HearingSchedule(),
                 TestData = new DefaultDataManager().SerialiseTestData()
             };

@@ -28,13 +28,13 @@
     <PackageReference Include="Selenium.Firefox.WebDriver" Version="0.26.0" />
     <PackageReference Include="Selenium.Support" Version="3.141.0" />
     <PackageReference Include="Selenium.WebDriver" Version="3.141.0" />
-    <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="80.0.3987.10600" />
+    <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="81.0.4044.6900" />
     <PackageReference Include="Selenium.WebDriver.IEDriver" Version="3.150.1" />
     <PackageReference Include="Selenium.WebDriver.MicrosoftDriver" Version="17.17134.0" />
     <PackageReference Include="SpecFlow" Version="3.1.95" />
     <PackageReference Include="SpecFlow.NUnit" Version="3.1.95" />
     <PackageReference Include="SpecFlow.Tools.MsBuild.Generation" Version="3.1.95" />
-    <PackageReference Include="VH.AcceptanceTests.Common" Version="1.0.132" />
+    <PackageReference Include="VH.AcceptanceTests.Common" Version="1.0.137" />
   </ItemGroup>
 
   <ItemGroup>
@@ -79,6 +79,10 @@
     <ContentWithTargetPath Include="Configuration\Environments\appsettings.preview.json" Condition="Exists('Configuration\Environments\appsettings.preview.json')">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <TargetPath>appsettings.preview.json</TargetPath>
+    </ContentWithTargetPath>
+    <ContentWithTargetPath Include="Configuration\Environments\saucelabs.json" Condition="Exists('Configuration\Environments\saucelabs.json')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>saucelabs.json</TargetPath>
     </ContentWithTargetPath>
   </ItemGroup>
 
