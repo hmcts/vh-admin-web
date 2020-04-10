@@ -32,7 +32,7 @@ describe('ParticipantDetailsComponent', () => {
     component.participant = pr;
 
     fixture.detectChanges();
-    const divElementRole = debugElement.queryAll(By.css('#participant_role0'));
+    const divElementRole = debugElement.queryAll(By.css(`#participant-${pr.ParticipantId}-hearing-role-name`));
     expect(divElementRole.length).toBeGreaterThan(0);
     expect(divElementRole.length).toBe(1);
     const el = divElementRole[0].nativeElement as HTMLElement;
