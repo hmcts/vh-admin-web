@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using AcceptanceTests.Common.Data.Helpers;
 using AcceptanceTests.Common.Driver.Browser;
 using AcceptanceTests.Common.Driver.Helpers;
@@ -50,9 +51,11 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         public void EditHearingDetails()
         {
+            Thread.Sleep(TimeSpan.FromSeconds(1));
             SetHearingDetails();
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(HearingDetailsPage.NextButton);
             _browsers[_c.CurrentUser.Key].Click(HearingDetailsPage.NextButton);
+            Thread.Sleep(TimeSpan.FromSeconds(1));
         }
 
         public void SetHearingDetails()
@@ -60,9 +63,11 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _c.Test.HearingDetails.CaseNumber = $"{GenerateRandom.CaseNumber(_fromRandomNumber)}";
             _browsers[_c.CurrentUser.Key].Clear(HearingDetailsPage.CaseNumberTextfield);
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(HearingDetailsPage.CaseNumberTextfield).SendKeys(_c.Test.HearingDetails.CaseNumber);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilTextPresent(HearingDetailsPage.CaseNumberTextfield, _c.Test.HearingDetails.CaseNumber);
             _c.Test.HearingDetails.CaseName = $"Admin Web Automated Test {GenerateRandom.Letters(_fromRandomNumber)}";
             _browsers[_c.CurrentUser.Key].Clear(HearingDetailsPage.CaseNameTextfield);
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(HearingDetailsPage.CaseNameTextfield).SendKeys(_c.Test.HearingDetails.CaseName);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilTextPresent(HearingDetailsPage.CaseNameTextfield, _c.Test.HearingDetails.CaseName);
         }
 
         public void SetHearingType(HearingType hearingType = null)

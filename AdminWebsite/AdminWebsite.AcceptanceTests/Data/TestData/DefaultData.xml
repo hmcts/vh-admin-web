@@ -11,6 +11,9 @@
     <HearingVenue>Birmingham Civil and Family Justice Centre</HearingVenue>
     <Room>1</Room>
   </HearingSchedule>
+  <AssignJudge>
+    <AudioRecord>false</AudioRecord>
+  </AssignJudge>
   <AddParticipant>
     <Participant>
       <NewUserPrefix>Automation_</NewUserPrefix>
