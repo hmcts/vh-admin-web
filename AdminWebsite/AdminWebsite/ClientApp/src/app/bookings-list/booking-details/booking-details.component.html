@@ -3,12 +3,12 @@
 </div>
 
 <div *ngIf="hearing != null">
-  <div style="float: left;">
-    <h1 class="govuk-heading-l" id="hearingNumber">{{ hearing.HearingCaseNumber }} </h1>
-  </div>
   <div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
+    <div class="ovuk-grid-column-full">
       <div>
+        <div class="vh-title">
+          <h1 class="govuk-heading-l" id="hearingNumber">{{ hearing.HearingCaseNumber }} </h1>
+        </div>
         <div *ngIf="hearing.isCancelled" id="lblCancelled" class="vh-cancelled-booking">{{ hearing.Status }}</div>
         <div *ngIf="hearing.isCancelled" id="lblCancelledDetails" class="vh-cancelled-reason">{{ hearing.CancelReason }}</div>
       </div>
