@@ -220,6 +220,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
     pleaseSelect.name = Constants.PleaseSelect;
     pleaseSelect.id = null;
     this.filteredHearingTypes.unshift(pleaseSelect);
+    this.hearingType.setValue(null);
   }
 
   private dynamicSort(property) {

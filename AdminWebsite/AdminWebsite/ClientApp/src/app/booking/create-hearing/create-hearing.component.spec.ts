@@ -30,6 +30,7 @@ function initExistingHearingRequest(): HearingModel {
   existingRequest.hearing_type_id = 2;
   existingRequest.hearing_venue_id = 1;
   existingRequest.questionnaire_not_required = true;
+  existingRequest.case_type = 'Civil Money Claims';
 
   return existingRequest;
 }
@@ -91,7 +92,7 @@ describe('CreateHearingComponent with multiple case types', () => {
     expect(component.caseNumber.value).toBeNull();
     expect(component.caseName.value).toBeNull();
     expect(component.caseType.value).toBe('Please select');
-    expect(component.hearingType.value).toBe(-1);
+    expect(component.hearingType.value).toBe(null);
   });
 
   it('should not set case type when multiple items returned', () => {
@@ -144,6 +145,15 @@ describe('CreateHearingComponent with multiple case types', () => {
     expect(hearingTypeControl.valid).toBeFalsy();
     hearingTypeControl.setValue(2);
     expect(hearingTypeControl.valid).toBeTruthy();
+  });
+
+  it('should set hearing type to please select when case type changes', () => {
+    const caseTypeValue = 'Generic';
+    caseTypeControl.setValue(caseTypeValue);
+    expect(component.selectedCaseType).toBe(caseTypeValue);
+    expect(caseTypeControl.valid).toBeTruthy();
+    expect(component.hearingType.value).toBe(null);
+    expect(hearingTypeControl.valid).toBeFalsy();
   });
 
   it('should update hearing request when form is valid', () => {
@@ -219,6 +229,7 @@ describe('CreateHearingComponent with existing request in session', () => {
   let component: CreateHearingComponent;
   let fixture: ComponentFixture<CreateHearingComponent>;
   const existingRequest = initExistingHearingRequest();
+  existingRequest.hearing_type_name = 'Application to Set Aside Judgement (SAJ)';
 
   beforeEach(() => {
     videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',

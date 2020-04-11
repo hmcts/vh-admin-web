@@ -6,7 +6,6 @@ using AcceptanceTests.Common.Model.Participant;
 using AcceptanceTests.Common.Test.Steps;
 using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.AcceptanceTests.Pages;
-using OpenQA.Selenium;
 using TechTalk.SpecFlow;
 
 namespace AdminWebsite.AcceptanceTests.Steps
@@ -27,7 +26,9 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [When(@"the user completes the assign judge form")]
         public void ProgressToNextPage()
         {
+            _browsers[_c.CurrentUser.Key].WaitForPageToLoad();
             SetTheJudge();
+            SetAudioRecording(_c.Test.TestData.AssignJudge.AudioRecord);
             ClickNext();
         }
 
@@ -36,8 +37,23 @@ namespace AdminWebsite.AcceptanceTests.Steps
             var judge = UserManager.GetClerkUser(_c.UserAccounts);
             judge.CaseRoleName = Party.Judge.Name;
             judge.HearingRoleName = PartyRole.Judge.Name;
+            _browsers[_c.CurrentUser.Key].Driver.WaitForListToBePopulated(AssignJudgePage.JudgeNameDropdown);
             _commonSharedSteps.WhenTheUserSelectsTheOptionFromTheDropdown(_browsers[_c.CurrentUser.Key].Driver, AssignJudgePage.JudgeNameDropdown, judge.Username);
             _c.Test.HearingParticipants.Add(judge);
+        }
+
+        private void SetAudioRecording(bool audioRecord)
+        {
+            _browsers[_c.CurrentUser.Key].ClickRadioButton(audioRecord
+                ? AssignJudgePage.AudioRecordYesRadioButton
+                : AssignJudgePage.AudioRecordNoRadioButton);
+            _c.Test.AssignJudge.AudioRecord = audioRecord;
+        }
+
+        public void EditAudioRecording()
+        {
+            SetAudioRecording(!_c.Test.TestData.AssignJudge.AudioRecord);
+            ClickNext();
         }
 
         public void ClickNext()

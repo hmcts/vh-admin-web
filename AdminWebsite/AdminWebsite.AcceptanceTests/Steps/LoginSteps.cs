@@ -29,6 +29,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _loginSharedSteps.ProgressToNextPage();
         }
 
+        [Given(@"the user logs out")]
         [When(@"the user attempts to logout")]
         public void WhenTheUserAttemptsToLogout()
         {

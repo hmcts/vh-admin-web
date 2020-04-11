@@ -88,6 +88,7 @@ namespace AdminWebsite.AcceptanceTests.Data
                 .With(x => x.Cases = cases)
                 .With(x => x.Created_by = UserManager.GetCaseAdminUser(_userAccounts).Username)
                 .With(x => x.Questionnaire_not_required = true)
+                .With(x => x.Audio_recording_required = false)
                 .Build();
 
             return _request;

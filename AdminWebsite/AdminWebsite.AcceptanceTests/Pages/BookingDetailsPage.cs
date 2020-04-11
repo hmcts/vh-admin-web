@@ -1,4 +1,5 @@
-﻿using OpenQA.Selenium;
+﻿using System;
+using OpenQA.Selenium;
 
 namespace AdminWebsite.AcceptanceTests.Pages
 {
@@ -13,6 +14,7 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public static By HearingStartDate = By.Id("hearing-start");
         public static By CourtroomAddress = By.Id("court-room-address");
         public static By Duration = By.Id("duration");
+        public static By AudioRecorded = By.Id("audioRecorded");
         public static By OtherInformation = By.Id("otherInformation");
         public static By EditButton = By.Id("edit-button");
         public static By CancelButton = By.Id("cancel-button");
@@ -20,12 +22,12 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public static By ConfirmButton = By.Id("confirm-button");
         public static By ConfirmedLabel = By.Id("lblCreated");
         public static By JudgeName = By.Id("judge-name");
-        public static By JudgeEmail = By.XPath("//div[@id='participant_emailundefined']/div[2]");
-        public static By JudgeUsername = By.XPath("//div[@id='participant_userNameundefined']/div[2]");
-        public static By ParticipantName(int index) => By.XPath($"//div[@id='participant_role{index}']/parent::div");
-        public static By ParticipantRole(int index) => By.Id($"participant_role{index}");
-        public static By ParticipantEmail(int index) => By.XPath($"//div[@id='participant_email{index}']/div[2]");
-        public static By ParticipantUsername(int index) => By.XPath($"//div[@id='participant_userName{index}']/div[2]");
+        public static By JudgeRole = By.Id("judge-hearing-role-name");
+        public static By ParticipantName(Guid participantId) => By.Id($"participant-{participantId:D}-name");
+        public static By ParticipantRole(Guid participantId) => By.Id($"participant-{participantId:D}-hearing-role-name");
+        public static By ParticipantEmail(Guid participantId) => By.Id($"participant-{participantId:D}-email");
+        public static By ParticipantUsername(Guid participantId) => By.Id($"participant-{participantId:D}-username");
+        public static By ParticipantRepresentee(Guid participantId) => By.Id($"participant-{participantId:D}-representee");
         public static By CancelReasonDropdown = By.Id("cancel-reason");
         public static By CancelReasonDropdownErrorLabel = By.Id("cancelReason-error");
         public static By CancelReasonDetailsErrorLabel = By.Id("more-detail-error");
