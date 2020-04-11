@@ -18,7 +18,7 @@ export class BookingsDetailsModel {
     hearingCaseName: string, hearingType: string, judgeName: string, courtRoom: string,
     courtAddress: string, createdBy: string, createdDate: Date, lastEditBy: string,
     lastEditDate: Date, status: string, questionnaireNotRequired: boolean, audioRecordingRequired: boolean,
-    cancelReason: string
+    cancelReason: string, caseType: string
   ) {
     this.HearingId = hearingId;
     this.StartTime = startTime;
@@ -39,6 +39,7 @@ export class BookingsDetailsModel {
     this.QuestionnaireNotRequired = questionnaireNotRequired;
     this.AudioRecordingRequired = audioRecordingRequired;
     this.CancelReason = cancelReason;
+    this.CaseType = caseType;
   }
 
   HearingId: string;
@@ -62,6 +63,7 @@ export class BookingsDetailsModel {
   IsStartTimeChanged: boolean;
   AudioRecordingRequired: boolean;
   CancelReason: string;
+  CaseType: string;
 
   get DurationInHoursAndMinutes(): string {
     return FormatShortDuration(this.Duration);

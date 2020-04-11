@@ -49,6 +49,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
   private newHearingSessionKey = 'newHearingId';
   isExistingBooking = false;
   $subscriptions: Subscription[] = [];
+  caseType: string;
 
   @ViewChild(ParticipantsListComponent, { static: true })
   participantsListComponent: ParticipantsListComponent;
@@ -135,6 +136,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
     this.courtRoomAddress = this.formatCourtRoom(this.hearing.court_name, this.hearing.court_room);
     this.otherInformation = this.hearing.other_information;
     this.audioChoice = this.hearing.audio_recording_required ? 'Yes' : 'No';
+    this.caseType = this.hearing.case_type;
   }
 
   private formatCourtRoom(courtName, courtRoom) {
