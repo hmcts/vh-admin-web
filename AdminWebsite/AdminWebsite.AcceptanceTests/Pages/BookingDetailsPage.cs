@@ -33,5 +33,6 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public static By CancelReasonDetailsErrorLabel = By.Id("more-detail-error");
         public static By CancelReasonTextfield = By.Id("cancelReason-detail");
         public static By KeepBookingButton = By.Id("btnKeepBooking");
+        public static By CaseType = By.Id("case-type");
     }
 }
