@@ -15,7 +15,7 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public static By Judge(string id, string judge) => CaseInfo(id, judge);
         public static By Venue(string id, string venue) => CaseInfo(id, venue);
         public static By CreatedBy(string id, string createdBy) => By.XPath($"//div[@id='{id}']//div[contains(text(),'{createdBy}')]");
-
+        public static By HearingType(string id, string hearingType) => CaseInfo(id, hearingType);
         private static By CaseInfo(string id, string info)
         {
             return By.XPath($"//div[@id='{id}']//div[contains(text(),'{info}')]");

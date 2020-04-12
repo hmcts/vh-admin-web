@@ -20,5 +20,6 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public static By EditScreenLink(string screen) => By.Id($"edit-link{screen.ToLower().Replace(" ", "-")}-id");
         public static By EditParticipantLink(string firstName) => By.XPath($"//div[contains(text(),'{firstName}')]/parent::div//a[text()='Edit']");
         public static By CaseType = By.Id("caseType");
+        public static By HearingType = By.Id("caseHearingType");
     }
 }
