@@ -135,6 +135,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(SummaryPage.CaseNumber).Text.Should().Be(_c.Test.HearingDetails.CaseNumber);
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(SummaryPage.CaseName).Text.Should().Be(_c.Test.HearingDetails.CaseName);
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(SummaryPage.CaseType).Text.Should().Be(_c.Test.HearingDetails.CaseType.Name);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(SummaryPage.CaseHearingType).Text.Should().Be(_c.Test.HearingDetails.HearingType.Name);
         }
 
         private void VerifyHearingSchedule()
