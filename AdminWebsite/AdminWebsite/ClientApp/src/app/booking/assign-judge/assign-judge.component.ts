@@ -38,7 +38,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
   expanded = false;
   $subscriptions: Subscription[] = [];
   audioRecording = true;
-  audioOptionsDisabled = false;
+  audioOptionsEnabled = true;
 
   constructor(
     private fb: FormBuilder,
@@ -113,7 +113,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
       this.hearing.audio_recording_required = true;
     }
 
-    this.audioOptionsDisabled = this.hearing.status === 'Created';
+    this.audioOptionsEnabled = this.hearing.status !== 'Created';
 
     this.audioRecording = this.setInitialAudio();
     this.audioChoice = new FormControl(this.audioRecording, Validators.required);

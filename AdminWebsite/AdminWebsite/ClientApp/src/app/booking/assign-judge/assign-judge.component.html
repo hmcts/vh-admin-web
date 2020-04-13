@@ -51,7 +51,7 @@
         </div>
       </details>
 
-      <div class="govuk-!-margin-bottom-9" *ngIf="!audioOptionsDisabled">
+      <div class="govuk-!-margin-bottom-9" *ngIf="audioOptionsEnabled">
         <p class="govuk-body govuk-!-margin-bottom-1">
           Audio of this hearing to be recorded?
         </p>
@@ -75,7 +75,7 @@
           </div>
         </div>
       </div>
-      <div *ngIf="audioOptionsDisabled">
+      <div *ngIf="!audioOptionsEnabled">
         <div *ngIf="audioRecording">
           <p>This hearing will be recorded (sound only)</p>
         </div>
