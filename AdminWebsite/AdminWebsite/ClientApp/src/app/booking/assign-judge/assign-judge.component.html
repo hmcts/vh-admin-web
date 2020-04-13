@@ -51,58 +51,65 @@
         </div>
       </details>
 
-        <div class="govuk-!-margin-bottom-9">
-          <p class="govuk-body govuk-!-margin-bottom-1">
-            Audio of this hearing to be recorded?
-          </p>
-          <div class="govuk-fieldset">
-            <div class="govuk-radios" data-module="radios">
-              <div class="govuk-radios__item">
-                <input formControlName="audioChoice" class="govuk-radios__input" id="audio-choice-yes" type="radio" [value]="true"
-                       data-aria-controls="conditional-how-contacted-conditional">
-                <label class="govuk-label govuk-radios__label" for="audio-choice-yes">
-                  Yes
-                </label>
-              </div>
+      <div class="govuk-!-margin-bottom-9" *ngIf="!audioOptionsDisabled">
+        <p class="govuk-body govuk-!-margin-bottom-1">
+          Audio of this hearing to be recorded?
+        </p>
+        <div class="govuk-fieldset">
+          <div class="govuk-radios" data-module="radios">
+            <div class="govuk-radios__item">
+              <input formControlName="audioChoice" class="govuk-radios__input" id="audio-choice-yes" type="radio" [value]="true"
+                     data-aria-controls="conditional-how-contacted-conditional">
+              <label class="govuk-label govuk-radios__label" for="audio-choice-yes">
+                Yes
+              </label>
+            </div>
 
-              <div class="govuk-radios__item">
-                <input formControlName="audioChoice" class="govuk-radios__input" id="audio-choice-no" type="radio" [value]="false"
-                       data-aria-controls="conditional-how-contacted">
-                <label class="govuk-label govuk-radios__label" for="audio-choice-no">
-                  No
-                </label>
-              </div>
+            <div class="govuk-radios__item">
+              <input formControlName="audioChoice" class="govuk-radios__input" id="audio-choice-no" type="radio" [value]="false"
+                     data-aria-controls="conditional-how-contacted">
+              <label class="govuk-label govuk-radios__label" for="audio-choice-no">
+                No
+              </label>
             </div>
           </div>
+        </div>
+      </div>
+      <div *ngIf="audioOptionsDisabled">
+        <div *ngIf="audioRecording">
+          <p>This hearing will be recorded (sound only)</p>
+        </div>
+        <div *ngIf="!audioRecording">
+          <p>This hearing will not be recorded</p>
+        </div>
+      </div>
+
+      <div class="govuk-!-margin-bottom-9" [ngClass]="{'govuk-form-group--error':judgeDisplayNameInvalid}">
+        <legend id="judgeDisplayName-error" *ngIf="judgeDisplayNameInvalid">
+          <span class="govuk-error-message">
+            {{constants.Error.JudgeDisplayNameErrorMsg}}
+          </span>
+        </legend>
+        <label class="govuk-label" for="judgeDisplayName">
+          Judge name
+        </label>
+        <div class="govuk-body govuk-hint">Please enter TBC if you don't know the name of the judge</div>
+        <input (focusout)="changeDisplayName()" type="text"
+               formControlName="judgeDisplayName" id="judgeDisplayName"
+               class="govuk-input govuk-input--width-20" />
 
       </div>
 
-        <div class="govuk-!-margin-bottom-9" [ngClass]="{'govuk-form-group--error':judgeDisplayNameInvalid}">
-          <legend id="judgeDisplayName-error" *ngIf="judgeDisplayNameInvalid">
-            <span class="govuk-error-message">
-              {{constants.Error.JudgeDisplayNameErrorMsg}}
-            </span>
-          </legend>
-          <label class="govuk-label" for="judgeDisplayName">
-            Judge name
-          </label>
-          <div class="govuk-body govuk-hint">Please enter TBC if you don't know the name of the judge</div>
-          <input (focusout)="changeDisplayName()" type="text"
-                 formControlName="judgeDisplayName" id="judgeDisplayName"
-                 class="govuk-input govuk-input--width-20" />
-
-        </div>
-
-        <div class="sk-top">
-          <button id="nextButton" class="govuk-button vh-mr25" data-module="govuk-button"
-                  (click)="saveJudge()" alt="Save judge details and view add participant">
-            {{buttonAction}}
-          </button>
-          <button id="cancelButton" class="govuk-button hmcts-button--secondary" data-module="govuk-button"
-                  (click)="confirmCancelBooking()" alt="Confirm cancellation of new booking and return to dashboard">
-            Cancel
-          </button>
-        </div>
+      <div class="sk-top">
+        <button id="nextButton" class="govuk-button vh-mr25" data-module="govuk-button"
+                (click)="saveJudge()" alt="Save judge details and view add participant">
+          {{buttonAction}}
+        </button>
+        <button id="cancelButton" class="govuk-button hmcts-button--secondary" data-module="govuk-button"
+                (click)="confirmCancelBooking()" alt="Confirm cancellation of new booking and return to dashboard">
+          Cancel
+        </button>
+      </div>
     </form>
   </div>
   <div class="govuk-grid-column-one-half" style="margin: 0;">

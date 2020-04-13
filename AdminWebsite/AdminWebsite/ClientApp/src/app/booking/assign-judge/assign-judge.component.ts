@@ -38,6 +38,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
   expanded = false;
   $subscriptions: Subscription[] = [];
   audioRecording = true;
+  audioOptionsDisabled = false;
 
   constructor(
     private fb: FormBuilder,
@@ -112,6 +113,8 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
       this.hearing.audio_recording_required = true;
     }
 
+    this.audioOptionsDisabled = this.hearing.status === 'Created';
+
     this.audioRecording = this.setInitialAudio();
     this.audioChoice = new FormControl(this.audioRecording, Validators.required);
 
@@ -134,7 +137,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
 
   private setInitialAudio() {
     return this.hearing && this.hearing.audio_recording_required !== null && this.hearing.audio_recording_required !== undefined
-        ? this.hearing.audio_recording_required : true;
+      ? this.hearing.audio_recording_required : true;
   }
 
   get judgeName() { return this.form.get('judgeName'); }
@@ -220,7 +223,8 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
       if (this.form.dirty || this.form.touched) {
         this.attemptingDiscardChanges = true;
       } else {
-        this.router.navigate([PageUrls.Summary]);      }
+        this.router.navigate([PageUrls.Summary]);
+      }
     } else {
       this.attemptingCancellation = true;
     }
