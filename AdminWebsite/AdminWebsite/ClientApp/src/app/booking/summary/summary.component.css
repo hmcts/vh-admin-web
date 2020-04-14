@@ -1,18 +1,19 @@
 .vhtable {
-    font-family: "nta", Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    font-weight: 400;
-    font-size: 20px;
-    line-height: 1;
-    color: #0b0c0c;
-    width: 100%;
-    margin-bottom: 20px;
-    border-spacing: 0;
-    border-collapse: collapse;
-  }
-  .vh-row{
-    margin-top: 10px;
+  font-family: "nta", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 1;
+  color: #0b0c0c;
+  width: 100%;
+  margin-bottom: 20px;
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+
+.vh-row {
+  margin-top: 10px;
 }
 
 .vh-text-break {
@@ -20,3 +21,7 @@
   word-wrap: break-word;
 }
 
+.vh-bt {
+  margin-bottom: 0;
+  padding-bottom: 0;
+}

@@ -50,6 +50,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
   isExistingBooking = false;
   $subscriptions: Subscription[] = [];
   caseType: string;
+  bookinConfirmed = false;
 
   @ViewChild(ParticipantsListComponent, { static: true })
   participantsListComponent: ParticipantsListComponent;
@@ -81,6 +82,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
   private checkForExistingRequest() {
     this.hearing = this.hearingService.getCurrentRequest();
     this.isExistingBooking = this.hearing.hearing_id && this.hearing.hearing_id.length > 0;
+    this.bookinConfirmed = this.hearing.status === 'Created';
   }
 
   private confirmRemoveParticipant() {
