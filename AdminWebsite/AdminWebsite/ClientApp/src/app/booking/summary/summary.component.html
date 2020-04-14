@@ -26,8 +26,13 @@
       <div id="hearingDuration">{{ hearingDuration }}</div>
     </div>
 
-    <app-booking-edit [title]="'Audio to be recorded'" [editLink]="'assign-judge'"
-                      [elementId]="'audio-recording-id'"></app-booking-edit>
+    <div *ngIf="!bookinConfirmed">
+      <app-booking-edit [title]="'Audio to be recorded'" [editLink]="'assign-judge'"
+                        [elementId]="'audio-recording-id'"></app-booking-edit>
+    </div>
+    <div *ngIf="bookinConfirmed">
+      <h3 class="govuk-heading-s vh-bt">Audio to be recorded</h3>
+    </div>
 
     <div class="govuk-form-group vhtable">
       <div class="vh-text-break" id="audioRecording">{{ audioChoice }}</div>
