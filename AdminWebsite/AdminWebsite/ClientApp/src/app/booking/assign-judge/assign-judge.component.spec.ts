@@ -295,5 +295,17 @@ describe('AssignJudgeComponent', () => {
     component.saveJudge();
     expect(component.hearing.audio_recording_required).toBe(false);
   });
+  it('should hide audio recording options if booking is confirmed', async() => {
+    component.hearing.status = 'Created';
+    component.ngOnInit();
+    expect(component.audioChoice.value).toBe(true);
+    expect(component.audioOptionsEnabled).toBe(false);
+  });
+  it('should show audio recording options if booking is not confirmed', async() => {
+    component.hearing.status = '';
+    component.ngOnInit();
+    expect(component.audioChoice.value).toBe(true);
+    expect(component.audioOptionsEnabled).toBe(true);
+  });
 });
 

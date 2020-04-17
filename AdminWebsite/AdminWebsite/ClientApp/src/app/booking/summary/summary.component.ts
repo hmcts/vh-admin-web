@@ -49,6 +49,8 @@ export class SummaryComponent implements OnInit, OnDestroy {
   private newHearingSessionKey = 'newHearingId';
   isExistingBooking = false;
   $subscriptions: Subscription[] = [];
+  caseType: string;
+  bookinConfirmed = false;
 
   @ViewChild(ParticipantsListComponent, { static: true })
   participantsListComponent: ParticipantsListComponent;
@@ -80,6 +82,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
   private checkForExistingRequest() {
     this.hearing = this.hearingService.getCurrentRequest();
     this.isExistingBooking = this.hearing.hearing_id && this.hearing.hearing_id.length > 0;
+    this.bookinConfirmed = this.hearing.status === 'Created';
   }
 
   private confirmRemoveParticipant() {
@@ -135,6 +138,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
     this.courtRoomAddress = this.formatCourtRoom(this.hearing.court_name, this.hearing.court_room);
     this.otherInformation = this.hearing.other_information;
     this.audioChoice = this.hearing.audio_recording_required ? 'Yes' : 'No';
+    this.caseType = this.hearing.case_type;
   }
 
   private formatCourtRoom(courtName, courtRoom) {

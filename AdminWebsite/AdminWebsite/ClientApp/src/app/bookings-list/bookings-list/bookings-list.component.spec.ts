@@ -72,15 +72,15 @@ export class BookingslistTestData {
     const b1 = new BookingsDetailsModel('1', new Date('2019-10-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JudgeGreen', '33A', 'Coronation Street',
       'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'),
-      'Booked', false, true, 'reason1');
+      'Booked', false, true, 'reason1', 'Financial Remedy');
     const b2 = new BookingsDetailsModel('2', new Date('2019-10-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JudgeGreen', '33A', 'Coronation Street',
       'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'),
-      'Booked', false, true, 'reason2');
+      'Booked', false, true, 'reason2', 'Financial Remedy');
     const b3 = new BookingsDetailsModel('3', new Date('2019-10-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JudgeGreen', '33A', 'Coronation Street',
       'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'),
-      'Booked', false, true, 'reason3');
+      'Booked', false, true, 'reason3', 'Financial Remedy');
 
     lists.push(b1);
     lists.push(b2);
@@ -97,15 +97,15 @@ export class BookingslistTestData {
     const b1 = new BookingsDetailsModel('1', new Date('2019-10-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JudgeGreen', '33A', 'Coronation Street',
       'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'),
-      'Booked', false, true, 'reason4');
+      'Booked', false, true, 'reason4', 'Financial Remedy');
     const b2 = new BookingsDetailsModel('2', new Date('2019-10-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JudgeGreen', '33A', 'Coronation Street',
       'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'),
-      'Booked', false, true, 'reason5');
+      'Booked', false, true, 'reason5', 'Financial Remedy');
     const b3 = new BookingsDetailsModel('6', new Date('2019-10-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JudgeGreen', '33A', 'Coronation Street',
       'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'),
-      'Booked', false, true, 'reason6');
+      'Booked', false, true, 'reason6', 'Financial Remedy');
 
     lists.push(b1);
     lists.push(b2);
@@ -125,15 +125,15 @@ export class ArrayBookingslistModelTestData {
     const b1 = new BookingsDetailsModel('11', new Date('2019-10-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JudgeGreen', '33A', 'Coronation Street',
       'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'),
-      'Booked', false, true, 'reason7');
+      'Booked', false, true, 'reason7', 'Financial Remedy');
     const b2 = new BookingsDetailsModel('12', new Date('2019-10-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JudgeGreen', '33A', 'Coronation Street',
       'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'),
-      'Booked', false, true, 'reason8');
+      'Booked', false, true, 'reason8', 'Financial Remedy');
     const b3 = new BookingsDetailsModel('33', new Date('2019-10-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JudgeGreen', '33A', 'Coronation Street',
       'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'),
-      'Booked', false, true, 'reason9');
+      'Booked', false, true, 'reason9', 'Financial Remedy');
 
     lists.push(b1);
     lists.push(b2);
@@ -146,15 +146,15 @@ export class ArrayBookingslistModelTestData {
     const b11 = new BookingsDetailsModel('44', new Date('2019-11-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JudgeGreen', '33A', 'Coronation Street',
       'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'),
-      'Booked', false, true, 'reason10');
+      'Booked', false, true, 'reason10', 'Financial Remedy');
     const b21 = new BookingsDetailsModel('45', new Date('2019-11-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JudgeGreen', '33A', 'Coronation Street',
       'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'),
-      'Booked', false, true, 'reason11');
+      'Booked', false, true, 'reason11', 'Financial Remedy');
     const b31 = new BookingsDetailsModel('46', new Date('2019-11-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JudgeGreen', '33A', 'Coronation Street',
       'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'),
-      'Booked', false, true, 'reason12');
+      'Booked', false, true, 'reason12', 'Financial Remedy');
 
     lists1.push(b11);
     lists1.push(b21);
@@ -206,7 +206,7 @@ export class BookingPersistServiceSpy {
     const booking = new BookingsDetailsModel('1', new Date('2019-10-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JudgeGreen', '33A', 'Coronation Street',
       'John Smith', new Date('2018-10-22 13:58:40.3730067'),
-      'Roy Ben', new Date('2018-10-22 13:58:40.3730067'), 'Booked', false, true, 'reason13');
+      'Roy Ben', new Date('2018-10-22 13:58:40.3730067'), 'Booked', false, true, 'reason13', 'Financial Remedy');
     booking.IsStartTimeChanged = true;
     return booking;
   }
@@ -310,7 +310,7 @@ describe('BookingsListComponent', () => {
     const booking = new BookingsDetailsModel('33', new Date('2019-10-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JudgeGreen', '33A', 'Coronation Street',
       'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'),
-      'Booked', false, true, 'reason14');
+      'Booked', false, true, 'reason14', 'Financial Remedy');
 
     component.resetBookingIndex(booking);
     expect(component.selectedGroupIndex).toBe(0);
@@ -321,7 +321,7 @@ describe('BookingsListComponent', () => {
     const booking = new BookingsDetailsModel('3', new Date('2019-12-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JudgeGreen', '33A', 'Coronation Street',
       'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'),
-      'Booked', false, true, 'reason15');
+      'Booked', false, true, 'reason15', 'Financial Remedy');
 
     component.resetBookingIndex(booking);
     expect(component.selectedGroupIndex).toBe(-1);

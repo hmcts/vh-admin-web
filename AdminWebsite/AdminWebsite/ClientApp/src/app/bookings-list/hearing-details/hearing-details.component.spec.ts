@@ -38,7 +38,7 @@ describe('HearingDetailsComponent', () => {
     const h1 = new BookingsDetailsModel('1', new Date('2019-10-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JadgeGreen', '33A', 'Coronation Street',
       'Jhon Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'),
-      'Booked', false, true, 'reason1');
+      'Booked', false, true, 'reason1', 'Financial Remedy');
 
     component.hearing = h1;
 
