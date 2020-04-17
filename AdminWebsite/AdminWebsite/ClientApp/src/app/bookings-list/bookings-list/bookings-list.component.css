@@ -92,3 +92,7 @@ p {
 .vh-row-created {
   padding-top: 3px;
 }
+
+.vh-font-black {
+  color: #0b0c0c;
+}
