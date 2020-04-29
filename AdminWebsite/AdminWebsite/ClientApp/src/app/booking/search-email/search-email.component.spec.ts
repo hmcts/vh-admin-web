@@ -221,4 +221,9 @@ describe('SeachEmailComponent', () => {
     expect(component.$subscriptions[0].closed).toBe(true);
     expect(component.$subscriptions[1].closed).toBe(true);
   });
+  it('should validate email for hearings.reform.hmcts.net and return false if the pattern is matched', () => {
+    component.email = 'email@hearings.reform.hmcts.net';
+    component.validateEmail();
+    expect(component.isValidEmail).toBeFalsy();
+  });
 });

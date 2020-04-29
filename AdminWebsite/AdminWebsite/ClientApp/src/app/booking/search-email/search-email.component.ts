@@ -21,6 +21,7 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
     email = '';
     isValidEmail = true;
     $subscriptions: Subscription[] = [];
+    invalidPattern = 'hearings.reform.hmcts.net';
 
     @Input()
     disabled = true;
@@ -96,7 +97,8 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
     validateEmail() {
         /* tslint:disable: max-line-length */
         const pattern = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
-        this.isValidEmail = this.email && this.email.length > 0 && this.email.length < 256 && pattern.test(this.email.toLowerCase());
+        this.isValidEmail = this.email && this.email.length > 0 && this.email.length < 256 && pattern.test(this.email.toLowerCase()) &&
+          this.email.toLowerCase().indexOf(this.invalidPattern) < 0;
         return this.isValidEmail;
     }
 
