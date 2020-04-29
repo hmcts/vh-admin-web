@@ -8,6 +8,7 @@ Scenario: Hearing Details
 	When the user completes the hearing details form
 	Then the user is on the Hearing Schedule page
 
+@Smoketest-Extended
 Scenario: Edit Hearing Details
 	Given the Video Hearings Officer user has progressed to the Booking Details page
 	When the user edits the hearing details

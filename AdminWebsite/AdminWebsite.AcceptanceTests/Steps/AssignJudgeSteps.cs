@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading;
 using AcceptanceTests.Common.Configuration.Users;
 using AcceptanceTests.Common.Driver.Browser;
 using AcceptanceTests.Common.Driver.Helpers;
@@ -52,8 +54,10 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         public void EditAudioRecording()
         {
+            Thread.Sleep(TimeSpan.FromSeconds(1));
             SetAudioRecording(!_c.Test.TestData.AssignJudge.AudioRecord);
             ClickNext();
+            Thread.Sleep(TimeSpan.FromSeconds(1));
         }
 
         public void ClickNext()

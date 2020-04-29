@@ -16,20 +16,20 @@ namespace AdminWebsite.IntegrationTests.Services
     public class ApplicationLoggerTests
     {
         [Test]
-        public void should_trace_without_failure()
+        public void Should_trace_without_failure()
         {
             ApplicationLogger.Trace("Category", "Title", "Information");
         }
         
         [Test]
-        public void should_trace_without_or_without_properties()
+        public void Should_trace_without_or_without_properties()
         {
             ApplicationLogger.TraceWithProperties("Category", "Title", "User", null);
             ApplicationLogger.TraceWithProperties("Category", "Title", "User", new Dictionary<string, string>{ {"property", "value"} });
         }
         
         [Test]
-        public void should_trace_without_or_without_object()
+        public void Should_trace_without_or_without_object()
         {
             ApplicationLogger.TraceWithObject("Category", "Title", "User", null);
             dynamic someObject = new
@@ -40,14 +40,14 @@ namespace AdminWebsite.IntegrationTests.Services
         }
 
         [Test]
-        public void should_throw_exception_if_trying_to_trace_null_exception()
+        public void Should_throw_exception_if_trying_to_trace_null_exception()
         {
             Assert.Throws<ArgumentNullException>(
                 () => ApplicationLogger.TraceException("Category", "Title", null, null));
         }
         
         [Test]
-        public void should_trace_exception()
+        public void Should_trace_exception()
         {
             var exception = new Exception("Test");
             var user = new ClaimsPrincipal();
@@ -59,7 +59,7 @@ namespace AdminWebsite.IntegrationTests.Services
         }
 
         [Test]
-        public void should_trace_event()
+        public void Should_trace_event()
         {
             var properties = new Dictionary<string, string> {{"property", "value"}};
             ApplicationLogger.TraceEvent("Title", properties);
@@ -67,7 +67,7 @@ namespace AdminWebsite.IntegrationTests.Services
         }
 
         [Test]
-        public void should_trace_result()
+        public void Should_trace_result()
         {
             ApplicationLogger.TraceRequest("Operation", DateTimeOffset.Now, TimeSpan.FromSeconds(2), "200", true);
         }

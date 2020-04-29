@@ -22,6 +22,7 @@ Scenario: Clerk login denied
 	When the user logs in with valid credentials
 	Then the user is on the Unauthorised page
 
+@Smoketest-Extended
 Scenario: Participant login denied
 	Given a new browser is open for a Participant
 	When the user logs in with valid credentials

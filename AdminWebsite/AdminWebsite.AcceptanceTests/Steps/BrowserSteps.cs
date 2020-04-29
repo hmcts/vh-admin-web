@@ -30,7 +30,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             SwitchCurrentUser(user);
 
-            var browser = new UserBrowser(_c.CurrentUser)
+            var browser = new UserBrowser()
                 .SetBaseUrl(_c.AdminWebConfig.VhServices.AdminWebUrl)
                 .SetTargetBrowser(_c.AdminWebConfig.TestConfig.TargetBrowser)
                 .SetDriver(_c.Driver);
