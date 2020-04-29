@@ -104,15 +104,10 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         [AfterScenario(Order = (int)HooksSequence.StopEdgeChromiumServer)]
         public void StopEdgeChromiumServer(TestContext context)
         {
-            var targetBrowser = GetTargetBrowser();
-            if (targetBrowser.ToLower().Equals(TargetBrowser.EdgeChromium.ToString().ToLower()) &&
+            var targetBrowser = GetBrowserAndVersion();
+            if (targetBrowser.ToLower().Contains(TargetBrowser.EdgeChromium.ToString().ToLower()) &&
                 !context.AdminWebConfig.SauceLabsConfiguration.RunningOnSauceLabs())
                 _browsers?[context.CurrentUser.Key].StopEdgeChromiumServer();
-        }
-
-        private static string GetTargetBrowser()
-        {
-            return NUnit.Framework.TestContext.Parameters["TargetBrowser"] ?? "";
         }
     }
 }
