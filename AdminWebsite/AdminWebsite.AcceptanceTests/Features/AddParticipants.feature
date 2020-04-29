@@ -8,6 +8,7 @@ Scenario: Add Participants
 	When the user completes the add participants form
 	Then the user is on the Other Information page
 
+@Smoketest-Extended
 Scenario: Edit New Participant
 	Given the Video Hearings Officer user has progressed to the Booking Details page
 	When the user edits a new participant

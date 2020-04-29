@@ -23,7 +23,7 @@ namespace AdminWebsite.IntegrationTests.Services
         }
 
         [Test]
-        public void should_return_list_of_judges()
+        public void Should_return_list_of_judges()
         {
             var judgesList = new List<UserResponse>();
             var judge = new UserResponse { Display_name = "john maclain", Email = "john.maclain@email.com", First_name = "john", Last_name = "maclain" };

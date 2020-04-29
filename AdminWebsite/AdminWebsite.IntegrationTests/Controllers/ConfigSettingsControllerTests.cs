@@ -12,7 +12,7 @@ namespace AdminWebsite.IntegrationTests.Controllers
         private readonly ConfigSettingsEndpoints _configSettingsEndpoints = new ApiUriFactory().ConfigSettingsEndpoints;
 
         [Test]
-        public async Task should_retrieve_the_client_config_settings()
+        public async Task Should_retrieve_the_client_config_settings()
         {
             var getResponse = await SendGetRequestAsync(_configSettingsEndpoints.GetConfigSettings);
             getResponse.StatusCode.Should().Be(HttpStatusCode.OK);

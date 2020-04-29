@@ -142,6 +142,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             EnterTextIfFieldIsNotPrePopulated(AddParticipantsPage.CountyTextfield, county);
             var postcode = _c.Test.TestData.AddParticipant.Address.Postcode;
             EnterTextIfFieldIsNotPrePopulated(AddParticipantsPage.PostcodeTextfield, postcode);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.AddParticipantLink);
             _browsers[_c.CurrentUser.Key].ScrollTo(AddParticipantsPage.AddParticipantLink);
             _browsers[_c.CurrentUser.Key].ClickLink(AddParticipantsPage.AddParticipantLink);
         }
@@ -167,6 +168,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             var reference = _c.Test.TestData.AddParticipant.Participant.Reference;
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.ReferenceTextfield).SendKeys(reference);
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.RepresentingTextfield).SendKeys(user.Representee);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.AddParticipantLink);
             _browsers[_c.CurrentUser.Key].ScrollTo(AddParticipantsPage.AddParticipantLink);
             _browsers[_c.CurrentUser.Key].ClickLink(AddParticipantsPage.AddParticipantLink);
         }
@@ -176,6 +178,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             ExistingUserEmailIsSelected(user.AlternativeEmail).Should().BeTrue("Existing user email appeared in the dropdown list retrieved from AAD");
             IndividualFieldsAreSet(user);
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.DisplayNameTextfield).SendKeys(user.DisplayName);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.AddParticipantLink);
             _browsers[_c.CurrentUser.Key].ScrollTo(AddParticipantsPage.AddParticipantLink);
             _browsers[_c.CurrentUser.Key].ClickLink(AddParticipantsPage.AddParticipantLink);
         }
@@ -190,6 +193,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             var reference = _c.Test.TestData.AddParticipant.Participant.Reference;
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.ReferenceTextfield).SendKeys(reference);
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.RepresentingTextfield).SendKeys(user.Representee);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.AddParticipantLink);
             _browsers[_c.CurrentUser.Key].ScrollTo(AddParticipantsPage.AddParticipantLink);
             _browsers[_c.CurrentUser.Key].ClickLink(AddParticipantsPage.AddParticipantLink);
         }
@@ -282,6 +286,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _c.Test.HearingParticipants.First(x => x.AlternativeEmail.ToLower().Equals(alternativeEmail.ToLower())).DisplayName = $"{_c.Test.AddParticipant.Participant.NewUserPrefix}Updated display name";
             _browsers[_c.CurrentUser.Key].Clear(AddParticipantsPage.DisplayNameTextfield);
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.DisplayNameTextfield).SendKeys(_c.Test.HearingParticipants.First(x => x.AlternativeEmail.ToLower().Equals(alternativeEmail.ToLower())).DisplayName);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.NextButton);
             _browsers[_c.CurrentUser.Key].ScrollTo(AddParticipantsPage.NextButton);
             _browsers[_c.CurrentUser.Key].Click(AddParticipantsPage.NextButton);
         }

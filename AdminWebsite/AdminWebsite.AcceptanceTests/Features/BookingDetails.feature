@@ -3,7 +3,7 @@
 	I need to be able to view the details of a booking
 	So that I can access the hearing information
 
-@Smoketest
+@Smoketest @Smoketest-Extended
 Scenario: Bookings Details
 	Given the Video Hearings Officer user has progressed to the Booking Details page
 	When the user views the booking details
@@ -30,6 +30,7 @@ Scenario: Cancel a booked hearing with Other cancel reason
 	When the user cancels the hearing with other reason and detail text
 	Then the hearing is cancelled
 
+@Smoketest-Extended
 Scenario: Cancel a confirmed hearing
 	Given the Video Hearings Officer user has progressed to the Booking Details page
 	When the user confirms the booking
