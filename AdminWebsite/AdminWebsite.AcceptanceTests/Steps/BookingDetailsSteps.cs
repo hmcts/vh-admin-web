@@ -119,8 +119,10 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [When(@"the user confirms the booking")]
         public void WhenTheUserConfirmsTheBooking()
         {
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.ConfirmButton);
             _browsers[_c.CurrentUser.Key].ScrollTo(BookingDetailsPage.ConfirmButton);
             _browsers[_c.CurrentUser.Key].Click(BookingDetailsPage.ConfirmButton);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.ConfirmedLabel);
             _browsers[_c.CurrentUser.Key].ScrollTo(BookingDetailsPage.ConfirmedLabel);
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.ConfirmedLabel).Displayed.Should().BeTrue();
         }
@@ -135,6 +137,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [When(@"the user cancels the hearing without a cancel reason")]
         public void WhenTheUserCancelsTheHearingWithoutACancelReason()
         {
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.CancelButton);
             _browsers[_c.CurrentUser.Key].ScrollTo(BookingDetailsPage.CancelButton);
             _browsers[_c.CurrentUser.Key].Click(BookingDetailsPage.CancelButton);
             _browsers[_c.CurrentUser.Key].Click(BookingDetailsPage.ConfirmCancelButton);
@@ -151,6 +154,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [When(@"the user cancels the hearing")]
         public void WhenTheUserAttemptsToCancelTheHearing()
         {
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.CancelButton);
             _browsers[_c.CurrentUser.Key].ScrollTo(BookingDetailsPage.CancelButton);
             _browsers[_c.CurrentUser.Key].Click(BookingDetailsPage.CancelButton);
 
@@ -162,6 +166,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [When(@"the user cancels the hearing with other reason and no text")]
         public void WhenTheUserCancelsTheHearingWithOtherReason()
         {
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.CancelButton);
             _browsers[_c.CurrentUser.Key].ScrollTo(BookingDetailsPage.CancelButton);
             _browsers[_c.CurrentUser.Key].Click(BookingDetailsPage.CancelButton);
 
@@ -194,6 +199,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [When(@"the user cancels the hearing with other reason and detail text")]
         public void WhenTheUserCancelsTheHearingWithOtherReasonAndDetailText()
         {
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.CancelButton);
             _browsers[_c.CurrentUser.Key].ScrollTo(BookingDetailsPage.CancelButton);
             _browsers[_c.CurrentUser.Key].Click(BookingDetailsPage.CancelButton);
 
@@ -228,6 +234,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         public void ClickEdit()
         {
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.EditButton);
             _browsers[_c.CurrentUser.Key].ScrollTo(BookingDetailsPage.EditButton);
             _browsers[_c.CurrentUser.Key].Click(BookingDetailsPage.EditButton);
         }
