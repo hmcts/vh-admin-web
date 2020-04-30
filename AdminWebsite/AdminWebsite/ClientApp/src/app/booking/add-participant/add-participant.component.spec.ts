@@ -19,12 +19,13 @@ import { SearchEmailComponent } from '../search-email/search-email.component';
 import { AddParticipantComponent } from './add-participant.component';
 import { HearingModel } from '../../common/model/hearing.model';
 import { ParticipantModel } from '../../common/model/participant.model';
-import { CaseAndHearingRolesResponse } from '../../services/clients/api-client';
+import { CaseAndHearingRolesResponse, ClientSettingsResponse } from '../../services/clients/api-client';
 import { PartyModel } from '../../common/model/party.model';
 import { Constants } from '../../common/constants';
 import { ParticipantsListComponent } from '../participants-list/participants-list.component';
 import { Address } from './address';
 import { Logger } from '../../services/logger';
+import { ConfigService } from '../../services/config.service';
 
 let component: AddParticipantComponent;
 let fixture: ComponentFixture<AddParticipantComponent>;
@@ -188,6 +189,8 @@ let participantServiceSpy: jasmine.SpyObj<ParticipantService>;
 let bookingServiceSpy: jasmine.SpyObj<BookingService>;
 let loggerSpy: jasmine.SpyObj<Logger>;
 
+const configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettings']);
+
 loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error']);
 participantServiceSpy = jasmine.createSpyObj<ParticipantService>('ParticipantService',
     ['checkDuplication', 'removeParticipant', 'mapParticipantsRoles']);
@@ -211,6 +214,7 @@ describe('AddParticipantComponent', () => {
             ...jasmine.createSpyObj<SearchService>(['search'])
         } as jasmine.SpyObj<SearchService>;
 
+
         component = new AddParticipantComponent(
             searchService,
             videoHearingsServiceSpy,
@@ -219,7 +223,8 @@ describe('AddParticipantComponent', () => {
             bookingServiceSpy,
             loggerSpy
         );
-        component.searchEmail = new SearchEmailComponent(searchService);
+
+        component.searchEmail = new SearchEmailComponent(searchService, configServiceSpy);
         component.participantsListComponent = new ParticipantsListComponent(
             bookingServiceSpy, routerSpy
         );
@@ -598,6 +603,7 @@ describe('AddParticipantComponent edit mode', () => {
                 { provide: ParticipantService, useValue: participantServiceSpy },
                 { provide: BookingService, useValue: bookingServiceSpy },
                 { provide: Logger, useValue: loggerSpy },
+                { provide: ConfigService, useValue: configServiceSpy }
             ]
         })
             .compileComponents();
@@ -608,7 +614,7 @@ describe('AddParticipantComponent edit mode', () => {
         participantServiceSpy.mapParticipantsRoles.and.returnValue(partyList);
         bookingServiceSpy.isEditMode.and.returnValue(true);
         bookingServiceSpy.getParticipantEmail.and.returnValue('test3@test.com');
-
+        configServiceSpy.getClientSettings.and.returnValue(of(ClientSettingsResponse));
         fixture = TestBed.createComponent(AddParticipantComponent);
         fixture.detectChanges();
         component = fixture.componentInstance;
@@ -1065,7 +1071,7 @@ describe('AddParticipantComponent set representer', () => {
     });
     it('should set email of existing participant after initialize content of the component', () => {
         component.editMode = true;
-        component.searchEmail = new SearchEmailComponent(jasmine.createSpyObj<SearchService>(['search']));
+      component.searchEmail = new SearchEmailComponent(jasmine.createSpyObj<SearchService>(['search']), configServiceSpy);
         component.participantDetails = participants[0];
         component.ngAfterContentInit();
         expect(component.searchEmail.email).toBeTruthy();

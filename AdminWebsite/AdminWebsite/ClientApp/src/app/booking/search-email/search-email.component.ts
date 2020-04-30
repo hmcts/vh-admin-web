@@ -4,6 +4,7 @@ import { PersonResponse } from '../../services/clients/api-client';
 import { Constants } from '../../common/constants';
 import { ParticipantModel } from '../../common/model/participant.model';
 import { SearchService } from '../../services/search.service';
+import { ConfigService } from 'src/app/services/config.service';
 
 @Component({
     selector: 'app-search-email',
@@ -21,7 +22,7 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
     email = '';
     isValidEmail = true;
     $subscriptions: Subscription[] = [];
-    invalidPattern = 'hearings.reform.hmcts.net';
+    invalidPattern: string;
 
     @Input()
     disabled = true;
@@ -35,7 +36,7 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
     @Output()
     emailChanged = new EventEmitter<string>();
 
-    constructor(private searchService: SearchService) { }
+    constructor(private searchService: SearchService, private configService: ConfigService) { }
 
     ngOnInit() {
         this.$subscriptions.push(this.searchService.search(this.searchTerm)
@@ -53,7 +54,13 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
                 }
             }));
 
-        this.$subscriptions.push(this.searchTerm.subscribe(s => this.email = s));
+      this.$subscriptions.push(this.searchTerm.subscribe(s => this.email = s));
+        this.getEmailPattern();
+    }
+
+    async getEmailPattern() {
+      const settings = await this.configService.getClientSettings().toPromise();
+      this.invalidPattern = settings.test_username_stem;
     }
 
     getData(data: PersonResponse[]) {
