@@ -49,5 +49,7 @@
         /// The redirect uri on successful logout
         /// </summary>
         public string PostLogoutRedirectUri { get; set; }
+
+        public string TestUsernameStem { get; set; }
     }
 }

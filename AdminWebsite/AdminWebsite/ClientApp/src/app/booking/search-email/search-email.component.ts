@@ -4,6 +4,7 @@ import { PersonResponse } from '../../services/clients/api-client';
 import { Constants } from '../../common/constants';
 import { ParticipantModel } from '../../common/model/participant.model';
 import { SearchService } from '../../services/search.service';
+import { ConfigService } from 'src/app/services/config.service';
 
 @Component({
     selector: 'app-search-email',
@@ -21,6 +22,7 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
     email = '';
     isValidEmail = true;
     $subscriptions: Subscription[] = [];
+    invalidPattern: string;
 
     @Input()
     disabled = true;
@@ -34,7 +36,7 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
     @Output()
     emailChanged = new EventEmitter<string>();
 
-    constructor(private searchService: SearchService) { }
+    constructor(private searchService: SearchService, private configService: ConfigService) { }
 
     ngOnInit() {
         this.$subscriptions.push(this.searchService.search(this.searchTerm)
@@ -52,7 +54,13 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
                 }
             }));
 
-        this.$subscriptions.push(this.searchTerm.subscribe(s => this.email = s));
+      this.$subscriptions.push(this.searchTerm.subscribe(s => this.email = s));
+        this.getEmailPattern();
+    }
+
+    async getEmailPattern() {
+      const settings = await this.configService.getClientSettings().toPromise();
+      this.invalidPattern = settings.test_username_stem;
     }
 
     getData(data: PersonResponse[]) {
@@ -96,7 +104,8 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
     validateEmail() {
         /* tslint:disable: max-line-length */
         const pattern = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
-        this.isValidEmail = this.email && this.email.length > 0 && this.email.length < 256 && pattern.test(this.email.toLowerCase());
+        this.isValidEmail = this.email && this.email.length > 0 && this.email.length < 256 && pattern.test(this.email.toLowerCase()) &&
+          this.email.toLowerCase().indexOf(this.invalidPattern) < 0;
         return this.isValidEmail;
     }
 

@@ -52,6 +52,7 @@ export class ConfigService {
     ENVIRONMENT_CONFIG.redirectUri = result.redirect_uri;
     ENVIRONMENT_CONFIG.postLogoutRedirectUri = result.post_logout_redirect_uri;
     ENVIRONMENT_CONFIG.appInsightsInstrumentationKey = result.instrumentation_key;
+    ENVIRONMENT_CONFIG.testUsernameStem = result.test_username_stem;
     return Promise.resolve(ENVIRONMENT_CONFIG);
   }
 }

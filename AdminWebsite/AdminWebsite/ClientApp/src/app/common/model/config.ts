@@ -5,6 +5,7 @@ export class Config {
   clientId: string;
   postLogoutRedirectUri: string;
   redirectUri: string;
+  testUsernameStem: string;
 
   constructor() {
 

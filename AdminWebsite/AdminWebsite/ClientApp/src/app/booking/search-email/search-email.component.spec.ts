@@ -2,11 +2,12 @@ import { async, ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core
 import { of } from 'rxjs';
 import { SharedModule } from 'src/app/shared/shared.module';
 
-import { PersonResponse } from '../../services/clients/api-client';
+import { PersonResponse, ClientSettingsResponse } from '../../services/clients/api-client';
 import { SearchService } from '../../services/search.service';
 import { SearchEmailComponent } from './search-email.component';
 import { ParticipantModel } from '../../common/model/participant.model';
 import { By } from '@angular/platform-browser';
+import { ConfigService } from '../../services/config.service';
 
 describe('SeachEmailComponent', () => {
   let component: SearchEmailComponent;
@@ -50,15 +51,24 @@ describe('SeachEmailComponent', () => {
   participantModel.phone = '12345678';
   participantModel.display_name = 'Ann';
 
+  const configSettings = new ClientSettingsResponse();
+  configSettings.test_username_stem = '@some.fortest.com';
+
   let searchServiceSpy: jasmine.SpyObj<SearchService>;
+  let configServiceSpy: jasmine.SpyObj<ConfigService>;
 
   beforeEach(() => {
     searchServiceSpy = jasmine.createSpyObj<SearchService>('SearchService', ['search']);
+    configServiceSpy = jasmine.createSpyObj<ConfigService>('CongigService', ['getClientSettings']);
+    configServiceSpy.getClientSettings.and.returnValue(of(configSettings));
 
     TestBed.configureTestingModule({
       declarations: [SearchEmailComponent],
       imports: [SharedModule],
-      providers: [{ provide: SearchService, useValue: searchServiceSpy }]
+      providers: [
+        { provide: SearchService, useValue: searchServiceSpy },
+        { provide: ConfigService, useValue: configServiceSpy }
+      ]
     })
       .compileComponents();
 
@@ -80,7 +90,6 @@ describe('SeachEmailComponent', () => {
     expect(component.results).toBeTruthy();
     expect(component.results.length).toEqual(0);
   });
-
   it('should validate email', () => {
     component.email = 'email@aa.aa';
     component.validateEmail();
@@ -221,4 +230,31 @@ describe('SeachEmailComponent', () => {
     expect(component.$subscriptions[0].closed).toBe(true);
     expect(component.$subscriptions[1].closed).toBe(true);
   });
+});
+
+describe('SearchEmailComponent email validate', () => {
+  let component: SearchEmailComponent;
+  const configSettings = new ClientSettingsResponse();
+  configSettings.test_username_stem = '@some.fortest.com';
+
+  let searchServiceSpy: jasmine.SpyObj<SearchService>;
+  let configServiceSpy: jasmine.SpyObj<ConfigService>;
+  searchServiceSpy = jasmine.createSpyObj<SearchService>('SearchService', ['search']);
+  configServiceSpy = jasmine.createSpyObj<ConfigService>('CongigService', ['getClientSettings']);
+  configServiceSpy.getClientSettings.and.returnValue(of(configSettings));
+
+  component = new SearchEmailComponent(searchServiceSpy, configServiceSpy);
+  it('should config service return email pattern for validation', fakeAsync(() => {
+    configServiceSpy.getClientSettings.and.returnValue(of(configSettings));
+    component.getEmailPattern();
+    tick();
+    expect(component.invalidPattern).toBe('@some.fortest.com');
+  }));
+  it('should validate email for valid pattern and return false if the pattern is matched', fakeAsync(() => {
+    component.getEmailPattern();
+    tick();
+    component.email = 'something.fortesting@some.fortest.com';
+    component.validateEmail();
+    expect(component.isValidEmail).toBeFalsy();
+  }));
 });

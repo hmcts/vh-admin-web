@@ -29,5 +29,7 @@
         /// The Application Insight Instrumentation Key
         /// </summary>
         public string InstrumentationKey { get; set; }
+
+        public string TestUsernameStem { get; set; }
     }
 }
