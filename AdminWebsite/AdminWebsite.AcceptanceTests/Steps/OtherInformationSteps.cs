@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading;
 using AcceptanceTests.Common.Driver.Browser;
 using AcceptanceTests.Common.Driver.Helpers;
 using AcceptanceTests.Common.Test.Steps;
@@ -22,6 +24,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [When(@"the user completes the other information form")]
         public void ProgressToNextPage()
         {
+            Thread.Sleep(TimeSpan.FromSeconds(1));
             SetOtherInformation();
             _browsers[_c.CurrentUser.Key].Clear(OtherInformationPage.OtherInformationTextfield);
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(OtherInformationPage.OtherInformationTextfield).SendKeys(_c.Test.OtherInformation);

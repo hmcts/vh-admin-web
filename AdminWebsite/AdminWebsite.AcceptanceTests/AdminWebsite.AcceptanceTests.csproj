@@ -21,10 +21,10 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.6.1" />
     <PackageReference Include="Polly" Version="7.2.0" />
     <PackageReference Include="Protractor" Version="0.13.0" />
-    <PackageReference Include="Selenium.Axe" Version="1.4.0" />
+    <PackageReference Include="Selenium.Axe" Version="1.5.0" />
     <PackageReference Include="Selenium.Firefox.WebDriver" Version="0.26.0" />
     <PackageReference Include="Selenium.Support" Version="3.141.0" />
     <PackageReference Include="Selenium.WebDriver" Version="3.141.0" />
@@ -33,8 +33,8 @@
     <PackageReference Include="Selenium.WebDriver.MicrosoftDriver" Version="17.17134.0" />
     <PackageReference Include="SpecFlow" Version="3.1.97" />
     <PackageReference Include="SpecFlow.NUnit" Version="3.1.97" />
-    <PackageReference Include="SpecFlow.Tools.MsBuild.Generation" Version="3.1.95" />
-    <PackageReference Include="VH.AcceptanceTests.Common" Version="1.0.146" />
+    <PackageReference Include="SpecFlow.Tools.MsBuild.Generation" Version="3.1.97" />
+    <PackageReference Include="VH.AcceptanceTests.Common" Version="1.0.171" />
   </ItemGroup>
 
   <ItemGroup>

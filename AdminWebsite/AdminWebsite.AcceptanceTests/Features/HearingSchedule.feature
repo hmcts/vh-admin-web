@@ -8,6 +8,7 @@ Scenario: Hearing Schedule
 	When the user completes the hearing schedule form
 	Then the user is on the Assign Judge page
 
+@Smoketest-Extended
 Scenario: Edit Hearing Schedule
 	Given the Video Hearings Officer user has progressed to the Booking Details page
 	When the user edits the hearing schedule
