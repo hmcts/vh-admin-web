@@ -9,6 +9,7 @@ import { Subscription } from 'rxjs';
   templateUrl: './change-password.component.html'
 })
 export class ChangePasswordComponent implements OnInit, OnDestroy {
+
   form: FormGroup;
   failedSubmission: boolean;
   isValidEmail: boolean;
@@ -17,8 +18,7 @@ export class ChangePasswordComponent implements OnInit, OnDestroy {
   saveSuccess: boolean;
   $subcription: Subscription;
 
-  constructor(
-    private fb: FormBuilder,
+  constructor(private fb: FormBuilder,
     private userDataService: UserDataService,
     private logger: Logger
   ) {
@@ -30,7 +30,7 @@ export class ChangePasswordComponent implements OnInit, OnDestroy {
     this.saveSuccess = false;
     this.failedSubmission = false;
     this.form = this.fb.group({
-      userName: ['']
+      userName: [''],
     });
   }
 
@@ -39,21 +39,14 @@ export class ChangePasswordComponent implements OnInit, OnDestroy {
   }
 
   get userNameInvalid() {
-    return (
-      this.userName.invalid &&
-      (this.userName.dirty || this.userName.touched || this.failedSubmission)
-    );
+    return this.userName.invalid && (this.userName.dirty || this.userName.touched || this.failedSubmission);
   }
 
   userNameOnBlur() {
     const userNameText = this.userName.value;
     /* tslint:disable: max-line-length */
     const pattern = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
-    this.isValidEmail =
-      userNameText &&
-      userNameText.length > 0 &&
-      userNameText.length < 256 &&
-      pattern.test(userNameText.toLowerCase());
+    this.isValidEmail = userNameText && userNameText.length > 0 && userNameText.length < 256 && pattern.test(userNameText.toLowerCase());
   }
 
   updateUser() {
@@ -61,22 +54,21 @@ export class ChangePasswordComponent implements OnInit, OnDestroy {
       this.failedSubmission = false;
       this.saveSuccess = false;
 
-      this.$subcription = this.userDataService
-        .updateUser(this.userName.value)
+      this.$subcription = this.userDataService.updateUser(this.userName.value)
         .subscribe(
           (data: void) => {
-            this.popupMessage = 'User password has been changed';
+            this.popupMessage = 'User\'s password has been changed';
             this.showUpdateSuccess = true;
             // this.logger.event('User\'s password has been changed.');
             this.saveSuccess = true;
           },
-          (error) => {
-            this.popupMessage =
-              'User does not exist or does not belong to any groups';
+          error => {
+            this.popupMessage = 'User does not exist - please try again';
             this.showUpdateSuccess = true;
             // this.logger.error('User does not exist.', error);
           }
         );
+
     } else {
       this.failedSubmission = true;
     }
@@ -86,7 +78,7 @@ export class ChangePasswordComponent implements OnInit, OnDestroy {
     this.showUpdateSuccess = false;
     if (this.saveSuccess) {
       this.form = this.fb.group({
-        userName: ['', Validators.required]
+        userName: ['', Validators.required],
       });
     }
   }
