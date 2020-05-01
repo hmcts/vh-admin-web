@@ -4,6 +4,7 @@
     {
         BookingConfirmation,
         BookingDetails,
+        ChangePassword,
         Questionnaire
     }
 }
