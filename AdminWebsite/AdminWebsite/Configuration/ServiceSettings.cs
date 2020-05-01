@@ -21,5 +21,10 @@
         ///     The user api resource id
         /// </summary>
         public string UserApiResourceId { get; set; }
+
+        /// <summary>
+        ///     The pattern to validate email
+        /// </summary>
+        public string ValidateEmail { get; set; }
     }
 }

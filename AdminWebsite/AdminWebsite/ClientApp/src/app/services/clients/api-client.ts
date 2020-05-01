@@ -1069,7 +1069,7 @@ export class ClientSettingsResponse implements IClientSettingsResponse {
     redirect_uri?: string | undefined;
     post_logout_redirect_uri?: string | undefined;
     instrumentation_key?: string | undefined;
-    test_username_stem?: string | undefined;
+    validate_email?: string | undefined;
 
     constructor(data?: IClientSettingsResponse) {
         if (data) {
@@ -1087,7 +1087,7 @@ export class ClientSettingsResponse implements IClientSettingsResponse {
             this.redirect_uri = _data["redirect_uri"];
             this.post_logout_redirect_uri = _data["post_logout_redirect_uri"];
             this.instrumentation_key = _data["instrumentation_key"];
-            this.test_username_stem = _data["test_username_stem"];
+            this.validate_email = _data["validate_email"];
         }
     }
 
@@ -1105,7 +1105,7 @@ export class ClientSettingsResponse implements IClientSettingsResponse {
         data["redirect_uri"] = this.redirect_uri;
         data["post_logout_redirect_uri"] = this.post_logout_redirect_uri;
         data["instrumentation_key"] = this.instrumentation_key;
-        data["test_username_stem"] = this.test_username_stem;
+        data["validate_email"] = this.validate_email;
         return data; 
     }
 }
@@ -1117,7 +1117,7 @@ export interface IClientSettingsResponse {
     redirect_uri?: string | undefined;
     post_logout_redirect_uri?: string | undefined;
     instrumentation_key?: string | undefined;
-    test_username_stem?: string | undefined;
+    validate_email?: string | undefined;
 }
 
 export class HealthCheck implements IHealthCheck {

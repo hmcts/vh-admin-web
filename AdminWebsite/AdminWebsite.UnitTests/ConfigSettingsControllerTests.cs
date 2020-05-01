@@ -24,6 +24,11 @@ namespace AdminWebsite.UnitTests
                 PostLogoutRedirectUri = "https://vh-admin-web.azurewebsites.net/"
             };
 
+            var serviceSettings = new ServiceSettings
+            {
+                ValidateEmail = "@email.com"
+            };
+
             var httpContext = new DefaultHttpContext();
             httpContext.Request.Scheme = "https";
             httpContext.Request.Host = new HostString("vh-admin-web.azurewebsites.net");
@@ -32,7 +37,7 @@ namespace AdminWebsite.UnitTests
                 HttpContext = httpContext
             };
 
-            var configSettingsController = new ConfigSettingsController(Options.Create(securitySettings)) {
+            var configSettingsController = new ConfigSettingsController(Options.Create(securitySettings), Options.Create(serviceSettings)) {
                 ControllerContext = controllerContext
             };
 
@@ -43,6 +48,7 @@ namespace AdminWebsite.UnitTests
             clientSettings.TenantId.Should().Be(securitySettings.TenantId);
             clientSettings.RedirectUri.Should().Be(securitySettings.RedirectUri);
             clientSettings.PostLogoutRedirectUri.Should().Be(securitySettings.PostLogoutRedirectUri);
+            clientSettings.ValidateEmail.Should().Be(serviceSettings.ValidateEmail);
         }
     }
 }

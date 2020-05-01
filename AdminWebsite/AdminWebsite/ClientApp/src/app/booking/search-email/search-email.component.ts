@@ -5,6 +5,7 @@ import { Constants } from '../../common/constants';
 import { ParticipantModel } from '../../common/model/participant.model';
 import { SearchService } from '../../services/search.service';
 import { ConfigService } from 'src/app/services/config.service';
+import { Logger } from '../../services/logger';
 
 @Component({
     selector: 'app-search-email',
@@ -36,7 +37,7 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
     @Output()
     emailChanged = new EventEmitter<string>();
 
-    constructor(private searchService: SearchService, private configService: ConfigService) { }
+  constructor(private searchService: SearchService, private configService: ConfigService, private logger: Logger) { }
 
     ngOnInit() {
         this.$subscriptions.push(this.searchService.search(this.searchTerm)
@@ -58,9 +59,14 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
         this.getEmailPattern();
     }
 
-    async getEmailPattern() {
+  async getEmailPattern() {
       const settings = await this.configService.getClientSettings().toPromise();
-      this.invalidPattern = settings.test_username_stem;
+      this.invalidPattern = settings.validate_email;
+      if (!this.invalidPattern || this.invalidPattern.length === 0) {
+        this.logger.error(`Pattern to validate email is not set`, new Error('Email validation error'));
+      } else {
+        this.logger.info(`Pattern to validate email is set with length ${this.invalidPattern.length}`);
+      }
     }
 
     getData(data: PersonResponse[]) {
