@@ -37,63 +37,63 @@ import { CustomAdalInterceptor } from './custom-adal-interceptor';
 import { UnsupportedBrowserComponent } from './shared/unsupported-browser/unsupported-browser.component';
 import { DeviceDetectorModule } from 'ngx-device-detector';
 import { ChangePasswordComponent } from './change-password/change-password.component';
+import { GetAudioFileComponent } from './get-audio-file/get-audio-file.component';
 
 export function getSettings(configService: ConfigService) {
-  return () => configService.loadConfig();
+    return () => configService.loadConfig();
 }
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    DashboardComponent,
-    LoginComponent,
-    LogoutComponent,
-    UnauthorisedComponent,
-    ErrorComponent,
-    UnsupportedBrowserComponent,
-    ChangePasswordComponent,
-  ],
-  imports: [
-    MomentModule,
-    BookingModule,
-    BookingsListModule,
-    BrowserModule,
-    SuitabilityModule,
-    AppRoutingModule,
-    SharedModule,
-    PopupModule,
-    DeviceDetectorModule.forRoot()
-
-  ],
-  providers: [
-    HttpClientModule,
-    ReactiveFormsModule,
-    AppRoutingModule,
-    { provide: APP_INITIALIZER, useFactory: getSettings, deps: [ConfigService], multi: true },
-    { provide: Config, useFactory: () => ENVIRONMENT_CONFIG },
-    { provide: HTTP_INTERCEPTORS, useClass: CustomAdalInterceptor, multi: true },
-    { provide: BH_API_BASE_URL, useFactory: () => '.' },
-    { provide: LOG_ADAPTER, useClass: ConsoleLogger, multi: true },
-    { provide: LOG_ADAPTER, useClass: AppInsightsLogger, multi: true },
-    { provide: Logger, useClass: LoggerService },
-    AdalService,
-    AdalGuard,
-    AdalInterceptor,
-    ConfigService,
-    AuthGuard,
-    ChangesGuard,
-    DatePipe,
-    UserIdentityService,
-    AdminGuard,
-    VhOfficerAdminGuard,
-    { provide: ErrorHandler, useClass: ErrorService },
-    LoggerService,
-    ErrorService,
-    PageTrackerService,
-    AppInsightsLogger,
-    WindowRef,
-  ],
-  bootstrap: [AppComponent]
+    declarations: [
+        AppComponent,
+        DashboardComponent,
+        LoginComponent,
+        LogoutComponent,
+        UnauthorisedComponent,
+        ErrorComponent,
+        UnsupportedBrowserComponent,
+        ChangePasswordComponent,
+        GetAudioFileComponent
+    ],
+    imports: [
+        MomentModule,
+        BookingModule,
+        BookingsListModule,
+        BrowserModule,
+        SuitabilityModule,
+        AppRoutingModule,
+        SharedModule,
+        PopupModule,
+        DeviceDetectorModule.forRoot()
+    ],
+    providers: [
+        HttpClientModule,
+        ReactiveFormsModule,
+        AppRoutingModule,
+        { provide: APP_INITIALIZER, useFactory: getSettings, deps: [ConfigService], multi: true },
+        { provide: Config, useFactory: () => ENVIRONMENT_CONFIG },
+        { provide: HTTP_INTERCEPTORS, useClass: CustomAdalInterceptor, multi: true },
+        { provide: BH_API_BASE_URL, useFactory: () => '.' },
+        { provide: LOG_ADAPTER, useClass: ConsoleLogger, multi: true },
+        { provide: LOG_ADAPTER, useClass: AppInsightsLogger, multi: true },
+        { provide: Logger, useClass: LoggerService },
+        AdalService,
+        AdalGuard,
+        AdalInterceptor,
+        ConfigService,
+        AuthGuard,
+        ChangesGuard,
+        DatePipe,
+        UserIdentityService,
+        AdminGuard,
+        VhOfficerAdminGuard,
+        { provide: ErrorHandler, useClass: ErrorService },
+        LoggerService,
+        ErrorService,
+        PageTrackerService,
+        AppInsightsLogger,
+        WindowRef
+    ],
+    bootstrap: [AppComponent]
 })
-export class AppModule { }
-
+export class AppModule {}
