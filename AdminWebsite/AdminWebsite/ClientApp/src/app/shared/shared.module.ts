@@ -13,7 +13,7 @@ import { BookingEditComponent } from './booking-edit/booking-edit.component';
 import { WindowRef } from './window-ref';
 import { LongDatetimePipe } from './directives/date-time.pipe';
 import { WindowScrolling } from './window-scrolling';
-import { CaseNumberSearchResultsComponent } from '../get-audio-file/case-number-search-results/case-number-search-results.component';
+import { HearingSearchResultsComponent } from '../get-audio-file/hearing-search-results/hearing-search-results.component';
 
 @NgModule({
     imports: [CommonModule, FormsModule, ReactiveFormsModule, HttpClientModule, SharedRoutingModule],
@@ -25,7 +25,7 @@ import { CaseNumberSearchResultsComponent } from '../get-audio-file/case-number-
         ScrollTriggerDirective,
         BookingEditComponent,
         LongDatetimePipe,
-        CaseNumberSearchResultsComponent
+        HearingSearchResultsComponent
     ],
     providers: [WindowRef, WindowScrolling],
     exports: [
@@ -40,7 +40,7 @@ import { CaseNumberSearchResultsComponent } from '../get-audio-file/case-number-
         HttpClientModule,
         ScrollTriggerDirective,
         LongDatetimePipe,
-        CaseNumberSearchResultsComponent
+        HearingSearchResultsComponent
     ]
 })
 export class SharedModule {}

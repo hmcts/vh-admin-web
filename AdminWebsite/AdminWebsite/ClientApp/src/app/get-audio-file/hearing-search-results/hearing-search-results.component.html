@@ -1,0 +1,30 @@
+<div *ngIf="!hasResults">
+    <label class="govuk-label"><b>Results</b></label>
+    <label class="govuk-label govuk-!-width-one-half">
+        There is no audio recording for this case reference number
+    </label>
+</div>
+
+<div *ngIf="hasResults">
+    <label class="govuk-label">Results</label>
+    <hr class="govuk-grid-row"/>
+    <div *ngFor="let result of results" class="govuk-grid-row">
+        <div class="govuk-grid-column-one-quarter">
+            {{result.caseNumber}}
+        </div>
+        <div class="govuk-grid-column-one-quarter">
+            {{result.caseName}}
+        </div>
+        <div class="govuk-grid-column-one-quarter">
+            {{result.scheduledDateTime}}
+            <br>
+            {{result.hearingVenueName}} - {{result.hearingRoomName}}
+        </div>
+        <div class="govuk-grid-column-one-quarter">
+            <button class="govuk-button govuk-!-margin-left-2 float-right margin-10" data-module="govuk-button" id="submit">
+                Get link
+            </button>
+        </div>
+        <hr class="margin-bottom-22"/>
+    </div>
+</div>

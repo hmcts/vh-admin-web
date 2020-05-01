@@ -16,8 +16,8 @@
 
 <form [formGroup]="form" class="govuk-form-group">
     <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':form.invalid && (form.dirty || form.touched)}">
-        <label class="govuk-label"><b>Search</b></label>
-        <label class="govuk-label govuk-!-width-one-half" for="caseNumber">
+        <label class="govuk-label">Search</label>
+        <label class="govuk-label smaller-label govuk-!-width-one-half" for="caseNumber">
             Case reference number
         </label>
         <input id="caseNumber" class="govuk-input govuk-!-width-one-quarter" type="text" formControlName="caseNumber" required>
@@ -28,5 +28,5 @@
 </form>
 
 <div>
-    <app-case-number-search-results *ngIf="hasSearched" [results]="results"></app-case-number-search-results>
+    <app-hearing-search-results *ngIf="hasSearched" [results]="results"></app-hearing-search-results>
 </div>

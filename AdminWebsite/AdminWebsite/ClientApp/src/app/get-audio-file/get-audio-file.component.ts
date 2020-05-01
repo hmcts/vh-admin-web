@@ -2,18 +2,18 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UserDataService } from '../services/user-data.service';
 import { Logger } from '../services/logger';
-import { CaseNumberSearchResultModel } from '../common/model/case-number-search-result.model';
+import { HearingAudioSearchModel } from '../common/model/hearing-audio-search-model';
 
 @Component({
     selector: 'app-get-audio-file',
-    templateUrl: './get-audio-file.component.html'
-    // styleUrls: ['./participant-status.component.scss']
+    templateUrl: './get-audio-file.component.html',
+    styleUrls: ['./get-audio-file.component.scss']
 })
 export class GetAudioFileComponent implements OnInit {
     form: FormGroup;
     hasSearched: boolean;
     loadingData: boolean;
-    results: CaseNumberSearchResultModel[] = [];
+    results: HearingAudioSearchModel[] = [];
 
     constructor(private fb: FormBuilder, private userDataService: UserDataService, private logger: Logger) {
         this.loadingData = false;
@@ -41,19 +41,15 @@ export class GetAudioFileComponent implements OnInit {
     }
 
     async getResults(caseNumber: string) {
-        // Temp
-        if (caseNumber !== 'one') {
-            this.results = [];
-            return;
-        }
-
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < 4; i++) {
             // Do map here from apiResponse
             this.results.push(
-                new CaseNumberSearchResultModel({
+                new HearingAudioSearchModel({
                     caseName: `${i}: caseName`,
                     caseNumber: `${i}: caseNumber`,
-                    scheduledDateTime: `${i}: scheduledDateTime`
+                    scheduledDateTime: `${i}: scheduledDateTime`,
+                    hearingVenueName: 'Birmingham Civil and Family Justice Centre',
+                    hearingRoomName: 'Room 6.41C'
                 })
             );
         }
