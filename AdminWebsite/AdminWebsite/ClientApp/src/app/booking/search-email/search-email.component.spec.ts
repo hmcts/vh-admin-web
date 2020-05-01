@@ -8,6 +8,7 @@ import { SearchEmailComponent } from './search-email.component';
 import { ParticipantModel } from '../../common/model/participant.model';
 import { By } from '@angular/platform-browser';
 import { ConfigService } from '../../services/config.service';
+import { Logger } from '../../services/logger';
 
 describe('SeachEmailComponent', () => {
   let component: SearchEmailComponent;
@@ -56,18 +57,22 @@ describe('SeachEmailComponent', () => {
 
   let searchServiceSpy: jasmine.SpyObj<SearchService>;
   let configServiceSpy: jasmine.SpyObj<ConfigService>;
+  let loggerSpy: jasmine.SpyObj<Logger>;
 
   beforeEach(() => {
     searchServiceSpy = jasmine.createSpyObj<SearchService>('SearchService', ['search']);
     configServiceSpy = jasmine.createSpyObj<ConfigService>('CongigService', ['getClientSettings']);
     configServiceSpy.getClientSettings.and.returnValue(of(configSettings));
+    loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['info', 'error']);
 
     TestBed.configureTestingModule({
       declarations: [SearchEmailComponent],
       imports: [SharedModule],
       providers: [
         { provide: SearchService, useValue: searchServiceSpy },
-        { provide: ConfigService, useValue: configServiceSpy }
+        { provide: ConfigService, useValue: configServiceSpy },
+        { provide: Logger, useValue: loggerSpy },
+
       ]
     })
       .compileComponents();
@@ -239,22 +244,27 @@ describe('SearchEmailComponent email validate', () => {
 
   let searchServiceSpy: jasmine.SpyObj<SearchService>;
   let configServiceSpy: jasmine.SpyObj<ConfigService>;
+  let loggerSpy: jasmine.SpyObj<Logger>;
+
   searchServiceSpy = jasmine.createSpyObj<SearchService>('SearchService', ['search']);
   configServiceSpy = jasmine.createSpyObj<ConfigService>('CongigService', ['getClientSettings']);
   configServiceSpy.getClientSettings.and.returnValue(of(configSettings));
+  loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['info', 'error']);
 
-  component = new SearchEmailComponent(searchServiceSpy, configServiceSpy);
+  component = new SearchEmailComponent(searchServiceSpy, configServiceSpy, loggerSpy);
   it('should config service return email pattern for validation', fakeAsync(() => {
     configServiceSpy.getClientSettings.and.returnValue(of(configSettings));
     component.getEmailPattern();
     tick();
     expect(component.invalidPattern).toBe('@some.fortest.com');
+    expect(loggerSpy.info).toHaveBeenCalled();
   }));
-  it('should validate email for valid pattern and return false if the pattern is matched', fakeAsync(() => {
+  it('should log error if config service return no email pattern for validation', fakeAsync(() => {
+    configSettings.test_username_stem = '';
+    configServiceSpy.getClientSettings.and.returnValue(of(configSettings));
     component.getEmailPattern();
     tick();
-    component.email = 'something.fortesting@some.fortest.com';
-    component.validateEmail();
-    expect(component.isValidEmail).toBeFalsy();
+    expect(component.invalidPattern).toBe('');
+    expect(loggerSpy.error).toHaveBeenCalled();
   }));
 });
