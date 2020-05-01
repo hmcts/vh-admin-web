@@ -76,7 +76,18 @@ namespace AdminWebsite.AcceptanceTests.Steps
             {
                 return Journey.BookingDetails;
             }
-            return page.ToLower().Equals("questionnaire") ? Journey.Questionnaire : Journey.BookingConfirmation;
+
+            if (page.ToLower().Equals("questionnaire"))
+            {
+                return Journey.Questionnaire;
+            }
+
+            if (page.ToLower().Equals("change password"))
+            {
+                return Journey.ChangePassword;
+            }
+
+            return Journey.BookingConfirmation;
         }
 
         private void Progression(Journey userJourney, string startPageAsString, string endPageAsString)
@@ -88,6 +99,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             {
                 {Journey.BookingConfirmation, new BookingsConfirmationJourney()},
                 {Journey.BookingDetails, new BookingDetailsJourney()},
+                {Journey.ChangePassword, new ChangePasswordJourney()},
                 {Journey.Questionnaire, new QuestionnaireJourney()}
             };
             journeys[userJourney].VerifyUserIsApplicableToJourney(_c.CurrentUser.Role);

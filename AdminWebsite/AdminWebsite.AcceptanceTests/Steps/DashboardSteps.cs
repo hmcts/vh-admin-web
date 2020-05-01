@@ -30,6 +30,10 @@ namespace AdminWebsite.AcceptanceTests.Steps
             {
                 _browsers[_c.CurrentUser.Key].Click(CommonAdminWebPage.BookingsListLink);
             }
+            else if (_c.RouteAfterDashboard.Equals(Page.ChangePassword))
+            {
+                _browsers[_c.CurrentUser.Key].Click(DashboardPage.ChangePasswordPanel);
+            }
             else
             {
                 _browsers[_c.CurrentUser.Key].Click(DashboardPage.QuestionnaireResultsPanel);
