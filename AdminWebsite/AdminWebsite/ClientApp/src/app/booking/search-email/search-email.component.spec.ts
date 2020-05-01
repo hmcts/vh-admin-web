@@ -53,7 +53,7 @@ describe('SeachEmailComponent', () => {
   participantModel.display_name = 'Ann';
 
   const configSettings = new ClientSettingsResponse();
-  configSettings.test_username_stem = '@some.fortest.com';
+  configSettings.validate_email = '@some.fortest.com';
 
   let searchServiceSpy: jasmine.SpyObj<SearchService>;
   let configServiceSpy: jasmine.SpyObj<ConfigService>;
@@ -240,7 +240,7 @@ describe('SeachEmailComponent', () => {
 describe('SearchEmailComponent email validate', () => {
   let component: SearchEmailComponent;
   const configSettings = new ClientSettingsResponse();
-  configSettings.test_username_stem = '@some.fortest.com';
+  configSettings.validate_email = '@some.fortest.com';
 
   let searchServiceSpy: jasmine.SpyObj<SearchService>;
   let configServiceSpy: jasmine.SpyObj<ConfigService>;
@@ -260,7 +260,7 @@ describe('SearchEmailComponent email validate', () => {
     expect(loggerSpy.info).toHaveBeenCalled();
   }));
   it('should log error if config service return no email pattern for validation', fakeAsync(() => {
-    configSettings.test_username_stem = '';
+    configSettings.validate_email = '';
     configServiceSpy.getClientSettings.and.returnValue(of(configSettings));
     component.getEmailPattern();
     tick();

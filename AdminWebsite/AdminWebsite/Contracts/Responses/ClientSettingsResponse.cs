@@ -30,6 +30,6 @@
         /// </summary>
         public string InstrumentationKey { get; set; }
 
-        public string TestUsernameStem { get; set; }
+        public string ValidateEmail { get; set; }
     }
 }

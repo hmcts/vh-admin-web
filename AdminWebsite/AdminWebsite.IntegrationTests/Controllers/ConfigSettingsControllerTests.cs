@@ -24,8 +24,8 @@ namespace AdminWebsite.IntegrationTests.Controllers
             clientSettingsResponseModel.ClientId.Should().NotBeNull();
             clientSettingsResponseModel.TenantId.Should().NotBeNull();
             clientSettingsResponseModel.RedirectUri.Should().NotBeNull();
-            clientSettingsResponseModel.TestUsernameStem.Should().NotBeNullOrEmpty();
-            clientSettingsResponseModel.TestUsernameStem.Length.Should().Be(26);
+            clientSettingsResponseModel.ValidateEmail.Should().NotBeNullOrEmpty();
+            clientSettingsResponseModel.ValidateEmail.Length.Should().Be(26);
 
         }
     }
