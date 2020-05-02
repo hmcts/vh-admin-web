@@ -224,7 +224,7 @@ describe('AddParticipantComponent', () => {
             loggerSpy
         );
 
-        component.searchEmail = new SearchEmailComponent(searchService, configServiceSpy);
+        component.searchEmail = new SearchEmailComponent(searchService, configServiceSpy, loggerSpy);
         component.participantsListComponent = new ParticipantsListComponent(
             bookingServiceSpy, routerSpy
         );
@@ -1071,7 +1071,8 @@ describe('AddParticipantComponent set representer', () => {
     });
     it('should set email of existing participant after initialize content of the component', () => {
         component.editMode = true;
-      component.searchEmail = new SearchEmailComponent(jasmine.createSpyObj<SearchService>(['search']), configServiceSpy);
+        component.searchEmail = new SearchEmailComponent(jasmine.createSpyObj<SearchService>(['search']),
+          configServiceSpy, loggerSpy);
         component.participantDetails = participants[0];
         component.ngAfterContentInit();
         expect(component.searchEmail.email).toBeTruthy();

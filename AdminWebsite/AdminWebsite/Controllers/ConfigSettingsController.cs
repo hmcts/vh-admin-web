@@ -14,10 +14,11 @@ namespace AdminWebsite.Controllers
     public class ConfigSettingsController : ControllerBase
     {
         private readonly SecuritySettings _securitySettings;
-
-        public ConfigSettingsController(IOptions<SecuritySettings> securitySettings)
+        private readonly ServiceSettings _serviceSettings;
+        public ConfigSettingsController(IOptions<SecuritySettings> securitySettings, IOptions<ServiceSettings> serviceSettings)
         {
             _securitySettings = securitySettings.Value;
+            _serviceSettings = serviceSettings.Value;
         }
 
         /// <summary>
@@ -37,7 +38,7 @@ namespace AdminWebsite.Controllers
                 RedirectUri = _securitySettings.RedirectUri,
                 PostLogoutRedirectUri = _securitySettings.PostLogoutRedirectUri,
                 InstrumentationKey = _securitySettings.InstrumentationKey,
-                TestUsernameStem = _securitySettings.TestUsernameStem
+                ValidateEmail = _serviceSettings.ValidateEmail
             };
 
             return Ok(clientSettings);
