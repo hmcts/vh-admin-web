@@ -2,6 +2,7 @@ import { HearingsByCaseNumberResponse } from '../../services/clients/api-client'
 
 export class HearingAudioSearchModel {
     constructor(apiResponse: HearingsByCaseNumberResponse) {
+        this.hearingId = apiResponse.id;
         this.caseName = apiResponse.case_name;
         this.caseNumber = apiResponse.case_number;
         this.scheduledDateTime = apiResponse.scheduled_date_time;
@@ -9,6 +10,7 @@ export class HearingAudioSearchModel {
         this.hearingRoomName = apiResponse.hearing_room_name;
     }
 
+    hearingId: string;
     caseNumber: string;
     caseName: string;
     scheduledDateTime: Date;

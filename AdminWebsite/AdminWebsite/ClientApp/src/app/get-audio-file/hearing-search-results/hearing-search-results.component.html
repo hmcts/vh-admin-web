@@ -21,7 +21,7 @@
             {{result.hearingVenueName}} - {{result.hearingRoomName}}
         </div>
         <div class="govuk-grid-column-one-quarter">
-            <app-get-audio-link-button></app-get-audio-link-button>
+            <app-get-audio-link-button [hearingId]="result.hearingId"></app-get-audio-link-button>
         </div>
         <hr class="margin-bottom-22"/>
     </div>

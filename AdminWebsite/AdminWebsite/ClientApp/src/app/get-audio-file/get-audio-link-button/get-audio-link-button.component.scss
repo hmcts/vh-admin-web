@@ -1,7 +1,27 @@
-.float-right {
-    float: right
+.standard-width-button {
+    width: 100px;
+    margin-bottom: 0px;
 }
 
-.margin-top-15 {
+.button-div {
+    float: right;
     margin-top: 15px;
+    margin-bottom: 45px;
+    height: 9px;
+}
+
+.loading-image {
+    height: 14px;
+    width: 10px;
+}
+
+.error-image {
+    height: 20px;
+    width: 20px;
+}
+
+.error-div {
+    float: left;
+    width: 102px;
+    color: #d4351c;
 }

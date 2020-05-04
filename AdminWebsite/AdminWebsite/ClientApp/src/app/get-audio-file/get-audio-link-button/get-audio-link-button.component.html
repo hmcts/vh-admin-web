@@ -1,9 +1,32 @@
-<button class="govuk-button govuk-!-margin-left-2 float-right margin-top-15" data-module="govuk-button"
-    (click)="onGetLinkClick()" *ngIf="showOnState(AudioLinkState.initial)">
-    Get link
-</button>
-<label>Please wait</label>
-<button class="govuk-button govuk-!-margin-left-2 float-right margin-top-15" data-module="govuk-button"
-        (click)="onCopyLinkClick()">
-    Copy link
-</button>
+<div class="button-div" *ngIf="showOnState(audioLinkStates.initial)">
+    <button class="govuk-button govuk-!-margin-left-2 standard-width-button" data-module="govuk-button"
+            (click)="onGetLinkClick()">
+        Get link
+    </button>
+</div>
+<div class="button-div" *ngIf="showOnState(audioLinkStates.loading)">
+    <img src="assets/images/please_wait.png" class="loading-image">
+    &nbsp;
+    <label>Please wait</label>
+</div>
+<div class="button-div" *ngIf="showOnState(audioLinkStates.finished)">
+    <button class="govuk-button govuk-!-margin-left-2 standard-width-button" data-module="govuk-button"
+            (click)="onCopyLinkClick()">
+        Copy link
+    </button>
+</div>
+<div class="button-div" *ngIf="showOnState(audioLinkStates.error)">
+    <div class="error-div">
+        <img src="assets/images/red_warning_icon.png" class="error-image">
+        &nbsp;
+        <label>Error, please try again</label>
+    </div>
+    <div style="float: right">
+        <button class="govuk-button govuk-!-margin-left-2 standard-width-button" data-module="govuk-button"
+                (click)="onGetLinkClick()">
+            Get link
+        </button>
+    </div>
+</div>
+
+

@@ -275,7 +275,7 @@ namespace AdminWebsite.Controllers
                 }
                 
                 //var hearingResponse = _bookingsApiClient.GetHearingsByCaseNumber(caseNumber);
-                Thread.Sleep(750);
+                Thread.Sleep(250);
                 return Ok(new List<HearingsByCaseNumberResponse>
                 {
                     new HearingsByCaseNumberResponse{ Id = Guid.NewGuid(), CaseNumber = "111", CaseName = "Case 1", ScheduledDateTime = DateTime.Now, HearingVenueName = "Birmingham crown court", HearingRoomName = "Room 123"},
