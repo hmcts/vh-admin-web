@@ -13,3 +13,9 @@ Scenario: Edit New Participant
 	Given the Video Hearings Officer user has progressed to the Booking Details page
 	When the user edits a new participant
 	Then the participant details are updated
+
+@VIH-4194
+Scenario: Cannot Add Participants with reform email address
+	Given the Video Hearings Officer user has progressed to the Add Participants page
+	When the user attempts to add a participant with a reform email
+	Then an error message is displayed for the invalid email
