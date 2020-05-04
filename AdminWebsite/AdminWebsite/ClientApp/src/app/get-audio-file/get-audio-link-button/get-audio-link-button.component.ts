@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { AudioLinkService } from '../../services/audio-link-service';
 import { AudioLinkState } from '../../services/audio-link-state';
 import { Logger } from '../../services/logger';
@@ -11,6 +11,7 @@ import { Logger } from '../../services/logger';
 export class GetAudioLinkButtonComponent {
     public audioLinkStates: typeof AudioLinkState = AudioLinkState;
     private _currentLinkRetrievalState: AudioLinkState = AudioLinkState.finished;
+    public showLinkCopiedMessage = false;
 
     @Input() hearingId: string;
 
@@ -30,7 +31,8 @@ export class GetAudioLinkButtonComponent {
     }
 
     async onCopyLinkClick() {
-        // do pop up
+        // copy to clipboard
+        this.showLinkCopiedMessage = true;
     }
 
     showOnState(audioLinkState: AudioLinkState) {
@@ -43,5 +45,9 @@ export class GetAudioLinkButtonComponent {
 
     setCurrentState(audioLinkState: AudioLinkState) {
         this._currentLinkRetrievalState = audioLinkState;
+    }
+
+    hideLinkCopiedMessage() {
+        this.showLinkCopiedMessage = false;
     }
 }

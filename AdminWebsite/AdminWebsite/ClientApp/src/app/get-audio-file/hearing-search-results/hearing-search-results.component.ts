@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { HearingAudioSearchModel } from '../../common/model/hearing-audio-search-model';
 
 @Component({
@@ -6,9 +6,9 @@ import { HearingAudioSearchModel } from '../../common/model/hearing-audio-search
     templateUrl: './hearing-search-results.component.html',
     styleUrls: ['./hearing-search-results.component.scss']
 })
-export class HearingSearchResultsComponent implements OnInit {
+export class HearingSearchResultsComponent {
     @Input() results: HearingAudioSearchModel[];
-    async ngOnInit(): Promise<void> {}
+
     get hasResults() {
         return this.results && this.results.length > 0;
     }

@@ -28,5 +28,16 @@
         </button>
     </div>
 </div>
+<div *ngIf="showLinkCopiedMessage" (click)="hideLinkCopiedMessage()"
+     style="float: right; clear: both; height: 40px; width: 420px; background-color: #005EA5; color: white; display: table; overflow: hidden;
+text-align: center; margin-bottom: 10px;">
+    <div style="display: table-cell; vertical-align: middle;">
+        <div>
+            <img src="assets/images/white_tick_icon.png" style="height: 20px; width: 20px; vertical-align: middle; padding-bottom: 4px;">
+            &nbsp;
+            <label style="font-size: 17px">Link to audio file copied to clipboard (valid for 7 days)</label>
+        </div>
+    </div>
+</div>
 
 
