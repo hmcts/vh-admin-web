@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text.Encodings.Web;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace AdminWebsite.Controllers
@@ -242,6 +243,47 @@ namespace AdminWebsite.Controllers
             {
                 var hearingResponse = _bookingsApiClient.GetHearingDetailsById(hearingId);
                 return Ok(hearingResponse);
+            }
+            catch (BookingsApiException e)
+            {
+                if (e.StatusCode == (int)HttpStatusCode.BadRequest)
+                {
+                    return BadRequest(e.Response);
+                }
+
+                throw;
+            }
+        }
+        
+        /// <summary>
+        /// Get hearings by case number.
+        /// </summary>
+        /// <param name="caseNumber">The case number.</param>
+        /// <returns> The hearing</returns>
+        [HttpGet("casenumber/{caseNumber}")]
+        [SwaggerOperation(OperationId = "GetHearingsByCaseNumber")]
+        [ProducesResponseType(typeof(List<HearingsByCaseNumberResponse>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public ActionResult GetHearingsByCaseNumber(string caseNumber)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(caseNumber))
+                {
+                    ModelState.AddModelError(nameof(caseNumber), $"Please provide a valid {nameof(caseNumber)}");
+                    return BadRequest(ModelState);
+                }
+                
+                //var hearingResponse = _bookingsApiClient.GetHearingsByCaseNumber(caseNumber);
+                Thread.Sleep(750);
+                return Ok(new List<HearingsByCaseNumberResponse>
+                {
+                    new HearingsByCaseNumberResponse{ Id = Guid.NewGuid(), CaseNumber = "111", CaseName = "Case 1", ScheduledDateTime = DateTime.Now, HearingVenueName = "Birmingham crown court", HearingRoomName = "Room 123"},
+                    new HearingsByCaseNumberResponse{ Id = Guid.NewGuid(), CaseNumber = "222", CaseName = "Case 2", ScheduledDateTime = DateTime.Now, HearingVenueName = "Birmingham crown court", HearingRoomName = "Room 123"},
+                    new HearingsByCaseNumberResponse{ Id = Guid.NewGuid(), CaseNumber = "333", CaseName = "Case 3", ScheduledDateTime = DateTime.Now, HearingVenueName = "Birmingham crown court", HearingRoomName = "Room 123"},
+                    new HearingsByCaseNumberResponse{ Id = Guid.NewGuid(), CaseNumber = "444", CaseName = "Case 4", ScheduledDateTime = DateTime.Now, HearingVenueName = "Birmingham crown court", HearingRoomName = "Room 123"},
+                    new HearingsByCaseNumberResponse{ Id = Guid.NewGuid(), CaseNumber = "555", CaseName = "Case 5", ScheduledDateTime = DateTime.Now, HearingVenueName = "Birmingham crown court", HearingRoomName = "Room 123"},
+                });
             }
             catch (BookingsApiException e)
             {

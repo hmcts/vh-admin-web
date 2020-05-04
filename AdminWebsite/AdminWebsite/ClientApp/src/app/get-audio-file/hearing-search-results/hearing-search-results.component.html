@@ -16,14 +16,12 @@
             {{result.caseName}}
         </div>
         <div class="govuk-grid-column-one-quarter">
-            {{result.scheduledDateTime}}
+            {{result.scheduledDateTime | appHearingSearchDateTime}}
             <br>
             {{result.hearingVenueName}} - {{result.hearingRoomName}}
         </div>
         <div class="govuk-grid-column-one-quarter">
-            <button class="govuk-button govuk-!-margin-left-2 float-right margin-10" data-module="govuk-button" id="submit">
-                Get link
-            </button>
+            <app-get-audio-link-button></app-get-audio-link-button>
         </div>
         <hr class="margin-bottom-22"/>
     </div>

@@ -527,6 +527,77 @@ export class BHClient {
     }
 
     /**
+     * Get hearings by case number.
+     * @param caseNumber The case number.
+     * @return Success
+     */
+    getHearingsByCaseNumber(caseNumber: string): Observable<HearingsByCaseNumberResponse[]> {
+        let url_ = this.baseUrl + "/api/hearings/casenumber/{caseNumber}";
+        if (caseNumber === undefined || caseNumber === null)
+            throw new Error("The parameter 'caseNumber' must be defined.");
+        url_ = url_.replace("{caseNumber}", encodeURIComponent("" + caseNumber)); 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",			
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetHearingsByCaseNumber(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetHearingsByCaseNumber(<any>response_);
+                } catch (e) {
+                    return <Observable<HearingsByCaseNumberResponse[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<HearingsByCaseNumberResponse[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetHearingsByCaseNumber(response: HttpResponseBase): Observable<HearingsByCaseNumberResponse[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(HearingsByCaseNumberResponse.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = ProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            }));
+        } else if (status === 401) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("Unauthorized", status, _responseText, _headers);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<HearingsByCaseNumberResponse[]>(<any>null);
+    }
+
+    /**
      * Find person list by email search term.
      * @param body (optional) The email address search term.
      * @return Success
@@ -2367,6 +2438,68 @@ export interface IUpdateBookingStatusRequest {
     updated_by: string | undefined;
     status?: UpdateBookingStatus;
     cancel_reason?: string | undefined;
+}
+
+export class HearingsByCaseNumberResponse implements IHearingsByCaseNumberResponse {
+    /** Hearing Id */
+    id?: string;
+    scheduled_date_time?: Date;
+    hearing_venue_name?: string | undefined;
+    case_number?: string | undefined;
+    case_name?: string | undefined;
+    courtroom_account?: string | undefined;
+    hearing_room_name?: string | undefined;
+
+    constructor(data?: IHearingsByCaseNumberResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.scheduled_date_time = _data["scheduled_date_time"] ? new Date(_data["scheduled_date_time"].toString()) : <any>undefined;
+            this.hearing_venue_name = _data["hearing_venue_name"];
+            this.case_number = _data["case_number"];
+            this.case_name = _data["case_name"];
+            this.courtroom_account = _data["courtroom_account"];
+            this.hearing_room_name = _data["hearing_room_name"];
+        }
+    }
+
+    static fromJS(data: any): HearingsByCaseNumberResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new HearingsByCaseNumberResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["scheduled_date_time"] = this.scheduled_date_time ? this.scheduled_date_time.toISOString() : <any>undefined;
+        data["hearing_venue_name"] = this.hearing_venue_name;
+        data["case_number"] = this.case_number;
+        data["case_name"] = this.case_name;
+        data["courtroom_account"] = this.courtroom_account;
+        data["hearing_room_name"] = this.hearing_room_name;
+        return data; 
+    }
+}
+
+export interface IHearingsByCaseNumberResponse {
+    /** Hearing Id */
+    id?: string;
+    scheduled_date_time?: Date;
+    hearing_venue_name?: string | undefined;
+    case_number?: string | undefined;
+    case_name?: string | undefined;
+    courtroom_account?: string | undefined;
+    hearing_room_name?: string | undefined;
 }
 
 export class PersonResponse implements IPersonResponse {

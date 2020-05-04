@@ -14,6 +14,8 @@ import { WindowRef } from './window-ref';
 import { LongDatetimePipe } from './directives/date-time.pipe';
 import { WindowScrolling } from './window-scrolling';
 import { HearingSearchResultsComponent } from '../get-audio-file/hearing-search-results/hearing-search-results.component';
+import { GetAudioLinkButtonComponent } from '../get-audio-file/get-audio-link-button/get-audio-link-button.component';
+import { HearingSearchDateTimePipe } from './directives/hearing-search-date-time.pipe';
 
 @NgModule({
     imports: [CommonModule, FormsModule, ReactiveFormsModule, HttpClientModule, SharedRoutingModule],
@@ -25,7 +27,9 @@ import { HearingSearchResultsComponent } from '../get-audio-file/hearing-search-
         ScrollTriggerDirective,
         BookingEditComponent,
         LongDatetimePipe,
-        HearingSearchResultsComponent
+        HearingSearchDateTimePipe,
+        HearingSearchResultsComponent,
+        GetAudioLinkButtonComponent
     ],
     providers: [WindowRef, WindowScrolling],
     exports: [
@@ -40,7 +44,9 @@ import { HearingSearchResultsComponent } from '../get-audio-file/hearing-search-
         HttpClientModule,
         ScrollTriggerDirective,
         LongDatetimePipe,
-        HearingSearchResultsComponent
+        HearingSearchDateTimePipe,
+        HearingSearchResultsComponent,
+        GetAudioLinkButtonComponent
     ]
 })
 export class SharedModule {}

@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { UserDataService } from '../services/user-data.service';
-import { Logger } from '../services/logger';
 import { HearingAudioSearchModel } from '../common/model/hearing-audio-search-model';
+import { AudioLinkService } from '../services/audio-link-service';
 
 @Component({
     selector: 'app-get-audio-file',
@@ -15,7 +14,7 @@ export class GetAudioFileComponent implements OnInit {
     loadingData: boolean;
     results: HearingAudioSearchModel[] = [];
 
-    constructor(private fb: FormBuilder, private userDataService: UserDataService, private logger: Logger) {
+    constructor(private fb: FormBuilder, private audioLinkService: AudioLinkService) {
         this.loadingData = false;
         this.hasSearched = false;
     }
@@ -33,26 +32,21 @@ export class GetAudioFileComponent implements OnInit {
     async search() {
         if (this.form.valid) {
             this.loadingData = true;
+            this.hasSearched = false;
+
+            this.results = await this.getResults(this.caseNumber.value);
+
             this.hasSearched = true;
-            this.results = [];
-            await this.getResults(this.caseNumber.value);
             this.loadingData = false;
         }
     }
 
-    async getResults(caseNumber: string) {
-        for (let i = 0; i < 4; i++) {
-            // Do map here from apiResponse
-            this.results.push(
-                new HearingAudioSearchModel({
-                    caseName: `${i}: caseName`,
-                    caseNumber: `${i}: caseNumber`,
-                    scheduledDateTime: `${i}: scheduledDateTime`,
-                    hearingVenueName: 'Birmingham Civil and Family Justice Centre',
-                    hearingRoomName: 'Room 6.41C'
-                })
-            );
-        }
+    async getResults(caseNumber: string): Promise<HearingAudioSearchModel[]> {
+        const response = await this.audioLinkService.getHearingByCaseNumber(caseNumber);
+
+        return response.map((x) => {
+            return new HearingAudioSearchModel(x);
+        });
     }
 
     goToDiv(fragment: string): void {
