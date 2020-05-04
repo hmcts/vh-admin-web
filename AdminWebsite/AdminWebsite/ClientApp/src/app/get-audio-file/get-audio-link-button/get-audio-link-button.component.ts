@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core';
 import { AudioLinkService } from '../../services/audio-link-service';
 import { AudioLinkState } from '../../services/audio-link-state';
 import { Logger } from '../../services/logger';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
     selector: 'app-get-audio-link-button',
@@ -13,8 +14,11 @@ export class GetAudioLinkButtonComponent {
     private _currentLinkRetrievalState: AudioLinkState = AudioLinkState.finished;
 
     @Input() hearingId: string;
+    linkCopiedToClipboard: boolean;
 
-    constructor(private audioLinkService: AudioLinkService, private logger: Logger) {}
+    constructor(private audioLinkService: AudioLinkService, private toastrService: ToastrService, private logger: Logger) {
+        this.linkCopiedToClipboard = false;
+    }
 
     async onGetLinkClick() {
         try {
@@ -30,7 +34,12 @@ export class GetAudioLinkButtonComponent {
     }
 
     async onCopyLinkClick() {
-        // do pop up
+        // this.toastrService.error('Please try again!', 'We could not get the link', { positionClass: 'toast-center-center' });
+        this.toastrService.info('', 'Link to audio file copied to clipboard', {
+            positionClass: 'toast-center-center',
+            timeOut: 999999
+        });
+        this.linkCopiedToClipboard = true;
     }
 
     showOnState(audioLinkState: AudioLinkState) {

@@ -16,9 +16,19 @@ import { WindowScrolling } from './window-scrolling';
 import { HearingSearchResultsComponent } from '../get-audio-file/hearing-search-results/hearing-search-results.component';
 import { GetAudioLinkButtonComponent } from '../get-audio-file/get-audio-link-button/get-audio-link-button.component';
 import { HearingSearchDateTimePipe } from './directives/hearing-search-date-time.pipe';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ToastrModule } from 'ngx-toastr';
 
 @NgModule({
-    imports: [CommonModule, FormsModule, ReactiveFormsModule, HttpClientModule, SharedRoutingModule],
+    imports: [
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        HttpClientModule,
+        SharedRoutingModule,
+        BrowserAnimationsModule,
+        ToastrModule.forRoot()
+    ],
     declarations: [
         HeaderComponent,
         FooterComponent,
