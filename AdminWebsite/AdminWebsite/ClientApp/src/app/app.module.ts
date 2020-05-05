@@ -7,7 +7,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { AdalGuard, AdalInterceptor, AdalService } from 'adal-angular4';
 
-import { AppRoutingModule } from './/app-routing.module';
+import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BookingModule } from './booking/booking.module';
 import { BookingsListModule } from './bookings-list/bookings-list.module';
@@ -37,7 +37,7 @@ import { CustomAdalInterceptor } from './custom-adal-interceptor';
 import { UnsupportedBrowserComponent } from './shared/unsupported-browser/unsupported-browser.component';
 import { DeviceDetectorModule } from 'ngx-device-detector';
 import { ChangePasswordComponent } from './change-password/change-password.component';
-import { GetAudioFileComponent } from './get-audio-file/get-audio-file.component';
+import { GetAudioFileModule } from './get-audio-file/get-audio-file.module';
 
 export function getSettings(configService: ConfigService) {
     return () => configService.loadConfig();
@@ -52,8 +52,7 @@ export function getSettings(configService: ConfigService) {
         UnauthorisedComponent,
         ErrorComponent,
         UnsupportedBrowserComponent,
-        ChangePasswordComponent,
-        GetAudioFileComponent
+        ChangePasswordComponent
     ],
     imports: [
         MomentModule,
@@ -64,7 +63,8 @@ export function getSettings(configService: ConfigService) {
         AppRoutingModule,
         SharedModule,
         PopupModule,
-        DeviceDetectorModule.forRoot()
+        DeviceDetectorModule.forRoot(),
+        GetAudioFileModule
     ],
     providers: [
         HttpClientModule,
