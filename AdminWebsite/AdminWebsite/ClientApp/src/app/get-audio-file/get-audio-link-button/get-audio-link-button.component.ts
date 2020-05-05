@@ -23,7 +23,7 @@ export class GetAudioLinkButtonComponent {
         try {
             this.setCurrentState(AudioLinkState.loading);
 
-            this.audioLink = await this.audioLinkService.getAudioLink('sdfs');
+            this.audioLink = await this.audioLinkService.getAudioLink(this.hearingId);
 
             this.setCurrentState(AudioLinkState.finished);
         } catch (error) {

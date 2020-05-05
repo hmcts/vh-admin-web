@@ -1,7 +1,7 @@
-import { HearingsByCaseNumberResponse } from '../../services/clients/api-client';
+import { HearingsForAudioFileSearchResponse } from '../../services/clients/api-client';
 
 export class HearingAudioSearchModel {
-    constructor(apiResponse: HearingsByCaseNumberResponse) {
+    constructor(apiResponse: HearingsForAudioFileSearchResponse) {
         this.hearingId = apiResponse.id;
         this.caseName = apiResponse.case_name;
         this.caseNumber = apiResponse.case_number;

@@ -117,10 +117,11 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 .ReturnsAsync(bookingApiResponse);
 
             var result = await _controller.GetHearingsByCaseNumberAsync("good");
-            var actionResult = (OkObjectResult)result;
+            var actionResult = result as OkObjectResult;
+            actionResult.Should().NotBeNull();
             actionResult.StatusCode.Should().Be(200);
-            var objects = actionResult.Value.As<IEnumerable<HearingsForAudioFileSearchResponse>>().ToList();
-            objects.Should().NotBeNullOrEmpty().And.HaveCount(3);
+            var items = actionResult.Value.As<IEnumerable<HearingsForAudioFileSearchResponse>>().ToList();
+            items.Should().NotBeNullOrEmpty().And.HaveCount(3);
         }
     }
 }
