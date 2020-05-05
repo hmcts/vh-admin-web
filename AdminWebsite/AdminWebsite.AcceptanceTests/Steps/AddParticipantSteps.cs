@@ -290,5 +290,24 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _browsers[_c.CurrentUser.Key].ScrollTo(AddParticipantsPage.NextButton);
             _browsers[_c.CurrentUser.Key].Click(AddParticipantsPage.NextButton);
         }
+
+        [When(@"the user attempts to add a participant with a reform email")]
+        public void WhenTheUserAttemptsToAddAParticipantWithAReformEmail()
+        {
+            var individual = UserManager.GetIndividualUsers(_c.UserAccounts)[0];
+            individual.CaseRoleName = Party.Claimant.Name;
+            individual.HearingRoleName = PartyRole.ClaimantLip.Name;
+            _c.Test.HearingParticipants.Add(individual);
+            SetParty(individual.CaseRoleName);
+            SetRole(individual.HearingRoleName);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.ParticipantEmailTextfield).SendKeys(individual.Username);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.ParticipantEmailTextfield).SendKeys(Keys.Tab);
+        }
+
+        [Then(@"an error message is displayed for the invalid email")]
+        public void ThenAnErrorMessageIsDisplayedForTheInvalidEmail()
+        {
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.InvalidEmailError).Displayed.Should().BeTrue();
+        }
     }
 }
