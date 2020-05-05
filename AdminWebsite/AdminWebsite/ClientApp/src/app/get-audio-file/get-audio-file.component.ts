@@ -42,14 +42,14 @@ export class GetAudioFileComponent implements OnInit {
     }
 
     async getResults(caseNumber: string): Promise<HearingAudioSearchModel[]> {
-        const response = await this.audioLinkService.getHearingByCaseNumber(caseNumber);
+        const response = await this.audioLinkService.getHearingsByCaseNumber(caseNumber);
+
+        if (response === null) {
+            return [];
+        }
 
         return response.map((x) => {
             return new HearingAudioSearchModel(x);
         });
-    }
-
-    goToDiv(fragment: string): void {
-        window.document.getElementById(fragment).focus();
     }
 }
