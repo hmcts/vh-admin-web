@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { AudioLinkService } from '../../services/audio-link-service';
 import { AudioLinkState } from '../../services/audio-link-state';
 import { Logger } from '../../services/logger';
@@ -39,10 +39,6 @@ export class GetAudioLinkButtonComponent {
 
     showOnState(audioLinkState: AudioLinkState) {
         return audioLinkState === this._currentLinkRetrievalState;
-    }
-
-    get currentLinkRetrievalState() {
-        return this._currentLinkRetrievalState;
     }
 
     setCurrentState(audioLinkState: AudioLinkState) {

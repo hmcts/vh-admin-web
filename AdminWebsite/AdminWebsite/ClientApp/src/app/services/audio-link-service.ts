@@ -17,6 +17,6 @@ export class AudioLinkService {
     async getAudioLink(hearingId: string): Promise<string> {
         const response = await this.bhClient.getHearingsByCaseNumber(hearingId).toPromise();
 
-        return 'http://myLink.com/sjdfusdhfishdfhs';
+        return 'http://myLink.com/testlinktofileSasToken';
     }
 }

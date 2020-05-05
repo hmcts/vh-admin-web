@@ -2,7 +2,7 @@
 
 namespace AdminWebsite.Models
 {
-    public class HearingsByCaseNumberResponse
+    public class HearingsForAudioFileSearchResponse
     {
         /// <summary>
         ///     Hearing Id
@@ -33,6 +33,11 @@ namespace AdminWebsite.Models
         ///     The courtroom account
         /// </summary>
         public string CourtroomAccount { get; set; }
+        
+        /// <summary>
+        ///     The courtroom account
+        /// </summary>
+        public string CourtroomAccountName { get; set; }
 
         /// <summary>
         ///     The hearing room name at the hearing venue
