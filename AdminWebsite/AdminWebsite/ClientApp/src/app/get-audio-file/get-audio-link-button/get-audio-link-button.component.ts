@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { AudioLinkService } from '../../services/audio-link-service';
 import { AudioLinkState } from '../../services/audio-link-state';
 import { Logger } from '../../services/logger';
+import { ClipboardService } from 'ngx-clipboard';
 
 @Component({
     selector: 'app-get-audio-link-button',
@@ -10,18 +11,19 @@ import { Logger } from '../../services/logger';
 })
 export class GetAudioLinkButtonComponent {
     public audioLinkStates: typeof AudioLinkState = AudioLinkState;
-    private _currentLinkRetrievalState: AudioLinkState = AudioLinkState.finished;
+    private _currentLinkRetrievalState: AudioLinkState = AudioLinkState.initial;
     public showLinkCopiedMessage = false;
+    private audioLink: string;
 
     @Input() hearingId: string;
 
-    constructor(private audioLinkService: AudioLinkService, private logger: Logger) {}
+    constructor(private audioLinkService: AudioLinkService, private clipboardService: ClipboardService, private logger: Logger) {}
 
     async onGetLinkClick() {
         try {
             this.setCurrentState(AudioLinkState.loading);
 
-            const audioLink = await this.audioLinkService.getAudioLink('sdfs');
+            this.audioLink = await this.audioLinkService.getAudioLink('sdfs');
 
             this.setCurrentState(AudioLinkState.finished);
         } catch (error) {
@@ -31,7 +33,7 @@ export class GetAudioLinkButtonComponent {
     }
 
     async onCopyLinkClick() {
-        // copy to clipboard
+        this.clipboardService.copyFromContent(this.audioLink);
         this.showLinkCopiedMessage = true;
     }
 
