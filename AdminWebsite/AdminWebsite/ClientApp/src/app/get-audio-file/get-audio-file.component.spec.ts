@@ -1,7 +1,6 @@
 import { AudioLinkService } from '../services/audio-link-service';
 import { GetAudioFileComponent } from './get-audio-file.component';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { of } from 'rxjs';
 import { HearingAudioSearchModel } from '../common/model/hearing-audio-search-model';
 
 describe('GetAudioFileComponent', () => {
