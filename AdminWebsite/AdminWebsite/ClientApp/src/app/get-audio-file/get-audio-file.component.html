@@ -1,6 +1,7 @@
 <h1 class="govuk-heading-l">Get an audio file link for a past hearing</h1>
 
-<div *ngIf="form.invalid && (form.dirty || form.touched)" class="govuk-error-summary govuk-!-width-one-half" aria-labelledby="error-summary-title"
+<div *ngIf="form.invalid && (form.dirty || form.touched)" class="govuk-error-summary govuk-!-width-one-half"
+     aria-labelledby="error-summary-title"
      role="alert" tabindex="-1" data-module="error-summary">
     <h2 class="govuk-error-summary__title" id="error-summary-title">
         Please complete the missing information
@@ -21,12 +22,18 @@
             Case reference number
         </label>
         <input id="caseNumber" class="govuk-input govuk-!-width-one-quarter" type="text" formControlName="caseNumber" required>
-        <button class="govuk-button govuk-!-margin-left-2" data-module="govuk-button" id="submit" (click)="search()" [disabled]="form.invalid">
+        <button (mousemove)="onMouseMove($event)" (mouseover)="onMouseOver($event)" (mouseleave)="onMouseLeave()"
+                class="govuk-button govuk-!-margin-left-2" data-module="govuk-button"
+                id="submit" (click)="search()" [disabled]="form.invalid">
             Search
         </button>
+        <a #tooltip class="tooltip" href="http://www.google.com/" style="display: none">
+            Google
+            <span id="tooltip-span"></span>
+        </a>
     </div>
 </form>
 
-<div>
+<div class="govuk-body">
     <app-hearing-search-results *ngIf="hasSearched" [results]="results"></app-hearing-search-results>
 </div>
