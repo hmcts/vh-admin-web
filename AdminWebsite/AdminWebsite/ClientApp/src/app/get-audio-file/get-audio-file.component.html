@@ -22,15 +22,10 @@
             Case reference number
         </label>
         <input id="caseNumber" class="govuk-input govuk-!-width-one-quarter" type="text" formControlName="caseNumber" required>
-        <button (mousemove)="onMouseMove($event)" (mouseover)="onMouseOver($event)" (mouseleave)="onMouseLeave()"
-                class="govuk-button govuk-!-margin-left-2" data-module="govuk-button"
+        <button class="govuk-button govuk-!-margin-left-2" data-module="govuk-button"
                 id="submit" (click)="search()" [disabled]="form.invalid">
             Search
         </button>
-        <a #tooltip class="tooltip" href="http://www.google.com/" style="display: none">
-            Google
-            <span id="tooltip-span"></span>
-        </a>
     </div>
 </form>
 

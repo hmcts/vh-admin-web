@@ -25,7 +25,7 @@ export class GetAudioLinkButtonComponent {
 
             this.audioLink = await this.audioLinkService.getAudioLink(this.hearingId);
 
-            this.setCurrentState(AudioLinkState.finished);
+            setTimeout(() => this.setCurrentState(AudioLinkState.finished), 2000);
         } catch (error) {
             this.logger.error(`Error retrieving audio link for: ${this.hearingId}`, error);
             this.setCurrentState(AudioLinkState.error);
@@ -35,6 +35,7 @@ export class GetAudioLinkButtonComponent {
     async onCopyLinkClick() {
         this.clipboardService.copyFromContent(this.audioLink);
         this.showLinkCopiedMessage = true;
+        setTimeout(() => this.hideLinkCopiedMessage(), 2000);
     }
 
     showOnState(audioLinkState: AudioLinkState) {
