@@ -9,6 +9,8 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Text.Encodings.Web;
 using AdminWebsite.UnitTests.Helper;
+using AdminWebsite.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace AdminWebsite.UnitTests.Controllers
 {
@@ -23,7 +25,11 @@ namespace AdminWebsite.UnitTests.Controllers
         public void Setup()
         {
             _bookingsApiClient = new Mock<IBookingsApiClient>();
-            _controller = new AdminWebsite.Controllers.PersonsController(_bookingsApiClient.Object, JavaScriptEncoder.Default);
+            var serviceSettings = new ServiceSettings
+            {
+                ValidateEmail = "@hearings.reform.hmcts.net"
+            };
+            _controller = new AdminWebsite.Controllers.PersonsController(_bookingsApiClient.Object, JavaScriptEncoder.Default, Options.Create(serviceSettings));
 
             _response = new List<PersonResponse>
             {
