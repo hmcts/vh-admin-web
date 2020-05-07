@@ -35,7 +35,7 @@
         <label class="govuk-label" for="role">
           Role
         </label>
-        <select id="role" formControlName="role" (change)="roleSelected()" class="govuk-select vh-input-w390">
+        <select id="role" formControlName="role" (change)="onRoleSelected($event)" class="govuk-select vh-input-w390">
           <option *ngFor="let ro of hearingRoleList" [ngValue]="ro">
             {{ro}}
           </option>
