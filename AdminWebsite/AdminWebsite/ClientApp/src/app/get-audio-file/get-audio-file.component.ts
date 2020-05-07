@@ -21,7 +21,7 @@ export class GetAudioFileComponent implements OnInit {
 
     async ngOnInit(): Promise<void> {
         this.form = this.fb.group({
-            caseNumber: ['11111', Validators.required]
+            caseNumber: ['', Validators.required]
         });
     }
 
