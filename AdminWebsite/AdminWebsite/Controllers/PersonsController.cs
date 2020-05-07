@@ -1,7 +1,10 @@
 ﻿using AdminWebsite.BookingsAPI.Client;
+using AdminWebsite.Configuration;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
@@ -18,14 +21,16 @@ namespace AdminWebsite.Controllers
     {
         private readonly IBookingsApiClient _bookingsApiClient;
         private readonly JavaScriptEncoder _encoder;
+        private readonly ServiceSettings _serviceSettings;
 
         /// <summary>
         /// Instantiates the controller
         /// </summary>
-        public PersonsController(IBookingsApiClient bookingsApiClient, JavaScriptEncoder encoder)
+        public PersonsController(IBookingsApiClient bookingsApiClient, JavaScriptEncoder encoder, IOptions<ServiceSettings> serviceSettings)
         {
             _bookingsApiClient = bookingsApiClient;
             _encoder = encoder;
+            _serviceSettings = serviceSettings.Value;
         }
 
         /// <summary>
@@ -48,6 +53,10 @@ namespace AdminWebsite.Controllers
                 };
 
                 var personsResponse = await _bookingsApiClient.PostPersonBySearchTermAsync(searchTerm);
+                if(personsResponse != null)
+                {
+                    personsResponse = personsResponse.Where(p => !p.Contact_email.Contains(_serviceSettings.ValidateEmail)).ToList();
+                }
 
                 return Ok(personsResponse);
             }

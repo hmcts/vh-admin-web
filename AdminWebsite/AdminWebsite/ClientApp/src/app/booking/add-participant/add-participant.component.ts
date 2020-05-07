@@ -450,6 +450,11 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     this.setupHearingRoles(this.party.value);
   }
 
+  onRoleSelected($event) {
+    $event.stopImmediatePropagation();
+    this.roleSelected();
+  }
+
   roleSelected() {
     this.isRoleSelected = this.role.value !== this.constants.PleaseSelect;
     if (this.role.value !== this.constants.Representative) {
