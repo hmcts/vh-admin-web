@@ -26,18 +26,18 @@ describe('GetAudioFileComponent', () => {
     });
 
     it('should keep the results as empty when form is not valid', async () => {
-        audioLinkService.getHearingsByCaseNumber.and.returnValue(Promise.resolve([]));
-
+        component.form.setValue({ caseNumber: '' });
         await component.search();
 
         expect(component.results).toEqual([]);
         expect(component.loadingData).toBeFalsy();
-        expect(component.hasSearched).toBeTruthy();
+        expect(component.hasSearched).toBeFalsy();
     });
 
     it('should keep the results as empty when service returns null', async () => {
         audioLinkService.getHearingsByCaseNumber.and.returnValue(Promise.resolve(null));
 
+        component.form.setValue({ caseNumber: '123' });
         await component.search();
 
         expect(component.results).toEqual([]);
