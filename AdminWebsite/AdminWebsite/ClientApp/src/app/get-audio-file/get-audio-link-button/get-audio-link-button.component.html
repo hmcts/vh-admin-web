@@ -5,7 +5,7 @@
     </button>
 </div>
 <div class="button-div" *ngIf="showOnState(audioLinkStates.loading)">
-    <img src="assets/images/please_wait.png" class="loading-image">
+    <img src="assets/images/please_wait.png" class="loading-image" alt="please wait">
     &nbsp;
     <label>Please wait</label>
 </div>
@@ -17,7 +17,7 @@
 </div>
 <div class="button-div" *ngIf="showOnState(audioLinkStates.error)">
     <div class="error-div">
-        <img src="assets/images/red_warning_icon.png" class="error-image">
+        <img src="assets/images/red_warning_icon.png" class="error-image" alt="waring">
         &nbsp;
         <label>Error, please try again</label>
     </div>
@@ -31,7 +31,7 @@
 <div *ngIf="showLinkCopiedMessage" (click)="hideLinkCopiedMessage()" class="linkCopiedMessage">
     <div>
         <div>
-            <img src="assets/images/white_tick_icon.png">
+            <img src="assets/images/white_tick_icon.png" alt="success">
             &nbsp;
             <label>Link to audio file copied to clipboard (valid for 7 days)</label>
         </div>
