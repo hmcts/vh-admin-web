@@ -74,6 +74,7 @@
   <ItemGroup>
     <ProjectReference Include="..\AdminWebsite.BookingsAPI.Client\AdminWebsite.BookingsAPI.Client.csproj" />
     <ProjectReference Include="..\AdminWebsite.UserAPI.Client\AdminWebsite.UserAPI.Client.csproj" />
+    <ProjectReference Include="..\AdminWebsite.VideoAPI.Client\AdminWebsite.VideoAPI.Client.csproj" />
   </ItemGroup>
 
   <ItemGroup>

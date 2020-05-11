@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Net;
 using System.Threading.Tasks;
-using AdminWebsite.Models;
+using AdminWebsite.VideoAPI.Client;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
+using HearingAudioRecordingResponse = AdminWebsite.Models.HearingAudioRecordingResponse;
 
 namespace AdminWebsite.Controllers
 {
@@ -13,10 +14,12 @@ namespace AdminWebsite.Controllers
     [ApiController]
     public class AudioPlatformController : ControllerBase
     {
+        private readonly IVideoApiClient _videoAPiClient;
         private readonly ILogger<AudioPlatformController> _logger;
 
-        public AudioPlatformController(ILogger<AudioPlatformController> logger)
+        public AudioPlatformController(IVideoApiClient videoAPiClient, ILogger<AudioPlatformController> logger)
         {
+            _videoAPiClient = videoAPiClient;
             _logger = logger;
         }
         
@@ -33,10 +36,16 @@ namespace AdminWebsite.Controllers
         {
             _logger.LogInformation($"Getting audio recording for hearing: {hearingId}");
 
-            return await Task.FromResult(Ok(new HearingAudioRecordingResponse
+            try
             {
-                AudioFileLink = "https://blobsotageFake.com/bisd76sdfhvf7ashagid6jkfdf6sfjk"
-            }));
+                var response = await _videoAPiClient.GetAudioRecordingLinkAsync(hearingId);
+                
+                return Ok(new HearingAudioRecordingResponse { AudioFileLink = response.Audio_file_link });
+            }
+            catch (VideoApiException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Response);
+            }
         }
     }
 }

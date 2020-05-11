@@ -3,8 +3,8 @@
   "defaultVariables": null,
   "documentGenerator": {
     "fromDocument": {
-      "url": "https://vh-video-api-dev.azurewebsites.net/swagger/v1/swagger.json",
-      "output": null
+        "url": "https://vh-video-api-dev.azurewebsites.net/swagger/v1/swagger.json",
+        "output": null
     }
   },
   "codeGenerators": {
@@ -17,7 +17,7 @@
       "disposeHttpClient": true,
       "protectedMethods": [],
       "generateExceptionClasses": true,
-      "exceptionClass": "VideoApiServiceException",
+      "exceptionClass": "VideoApiException",
       "wrapDtoExceptions": true,
       "useHttpClientCreationMethod": false,
       "httpClientType": "System.Net.Http.HttpClient",
