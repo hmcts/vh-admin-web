@@ -380,4 +380,9 @@ describe('HearingScheduleComponent returning to page', () => {
     expect(component.$subscriptions[0].closed).toBe(true);
     expect(component.$subscriptions[1].closed).toBe(true);
   });
+    it('should subcribe for change event the courtRoom', () => {
+        const subcriptions = component.$subscriptions.length;
+        component.ngAfterViewInit();
+        expect(component.$subscriptions.length).toBe(subcriptions + 1);
+    });
 });

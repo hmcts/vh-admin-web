@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HearingModel } from '../../common/model/hearing.model';
@@ -19,7 +19,7 @@ import { Subscription } from 'rxjs';
   templateUrl: './hearing-schedule.component.html',
   styleUrls: ['./hearing-schedule.component.css']
 })
-export class HearingScheduleComponent extends BookingBaseComponent implements OnInit, OnDestroy {
+export class HearingScheduleComponent extends BookingBaseComponent implements OnInit, AfterViewInit, OnDestroy {
 
   hearing: HearingModel;
   availableCourts: HearingVenueResponse[];
@@ -98,14 +98,18 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
       courtAddress: [this.hearing.hearing_venue_id, [Validators.required, Validators.min(1)]],
       courtRoom: [room, [Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)]],
     });
+    }
 
-    this.$subscriptions.push(this.courtAddress.valueChanges.subscribe(val => {
-      const id = val;
-      if (id !== null) {
-        this.selectedCourtName = this.availableCourts.find(c => c.id === id).name;
-      }
-    }));
-  }
+   ngAfterViewInit() {
+        if (this.courtAddress) {
+            this.$subscriptions.push(this.courtAddress.valueChanges.subscribe(val => {
+                const id = val;
+                if (id !== null) {
+                    this.selectedCourtName = this.availableCourts.find(c => c.id === id).name;
+                }
+            }));
+        }
+    }
 
   get hearingDate() {
     return this.form.get('hearingDate');
