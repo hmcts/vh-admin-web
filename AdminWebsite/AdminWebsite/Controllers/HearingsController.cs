@@ -13,6 +13,7 @@ using System.Linq;
 using System.Net;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using AdminWebsite.Mappers;
 
 namespace AdminWebsite.Controllers
 {
@@ -248,6 +249,40 @@ namespace AdminWebsite.Controllers
                 if (e.StatusCode == (int)HttpStatusCode.BadRequest)
                 {
                     return BadRequest(e.Response);
+                }
+
+                throw;
+            }
+        }
+        
+        /// <summary>
+        /// Get hearings by case number.
+        /// </summary>
+        /// <param name="caseNumber">The case number.</param>
+        /// <returns> The hearing</returns>
+        [HttpGet("casenumber/{caseNumber}")]
+        [SwaggerOperation(OperationId = "GetHearingsByCaseNumber")]
+        [ProducesResponseType(typeof(List<HearingsForAudioFileSearchResponse>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetHearingsByCaseNumberAsync(string caseNumber)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(caseNumber))
+                {
+                    ModelState.AddModelError(nameof(caseNumber), $"Please provide a valid {nameof(caseNumber)}");
+                    return BadRequest(ModelState);
+                }
+                
+                var hearingResponse = await _bookingsApiClient.GetHearingsByCaseNumberAsync(caseNumber);
+                
+                return Ok(hearingResponse.Select(HearingsForAudioFileSearchMapper.MapFrom));
+            }
+            catch (BookingsApiException ex)
+            {
+                if (ex.StatusCode == (int)HttpStatusCode.BadRequest)
+                {
+                    return BadRequest(ex.Response);
                 }
 
                 throw;

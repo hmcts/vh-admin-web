@@ -1,0 +1,54 @@
+.standard-width-button {
+    width: 100px;
+    margin-bottom: 0px;
+}
+
+.button-div {
+    float: right;
+    margin-top: 38px;
+}
+
+.loading-image {
+    height: 14px;
+    width: 10px;
+}
+
+.error-image {
+    height: 20px;
+    width: 20px;
+}
+
+.error-div {
+    float: left;
+    width: 102px;
+    color: #d4351c;
+}
+
+.linkCopiedMessage {
+    float: right;
+    clear: both;
+    height: 40px;
+    width: 420px;
+    background-color: #005EA5;
+    color: white;
+    display: table;
+    overflow: hidden;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.linkCopiedMessage div {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.linkCopiedMessage img {
+    height: 20px;
+    width: 20px;
+    vertical-align: middle;
+    padding-bottom: 4px;
+}
+
+.linkCopiedMessage label {
+    font-size: 17px;
+}

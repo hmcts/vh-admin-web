@@ -28,6 +28,73 @@ export class BHClient {
     }
 
     /**
+     * Get the audio recording for a given hearing.
+     * @param hearingId The hearing id.
+     * @return Success
+     */
+    getAudioRecordingLink(hearingId: string): Observable<HearingAudioRecordingResponse> {
+        let url_ = this.baseUrl + "/api/audio/{hearingId}";
+        if (hearingId === undefined || hearingId === null)
+            throw new Error("The parameter 'hearingId' must be defined.");
+        url_ = url_.replace("{hearingId}", encodeURIComponent("" + hearingId)); 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",			
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAudioRecordingLink(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAudioRecordingLink(<any>response_);
+                } catch (e) {
+                    return <Observable<HearingAudioRecordingResponse>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<HearingAudioRecordingResponse>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetAudioRecordingLink(response: HttpResponseBase): Observable<HearingAudioRecordingResponse> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = HearingAudioRecordingResponse.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = ProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            }));
+        } else if (status === 401) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("Unauthorized", status, _responseText, _headers);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<HearingAudioRecordingResponse>(<any>null);
+    }
+
+    /**
      * Get the configuration settings for client
      * @return Success
      */
@@ -524,6 +591,77 @@ export class BHClient {
             }));
         }
         return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * Get hearings by case number.
+     * @param caseNumber The case number.
+     * @return Success
+     */
+    getHearingsByCaseNumber(caseNumber: string): Observable<HearingsForAudioFileSearchResponse[]> {
+        let url_ = this.baseUrl + "/api/hearings/casenumber/{caseNumber}";
+        if (caseNumber === undefined || caseNumber === null)
+            throw new Error("The parameter 'caseNumber' must be defined.");
+        url_ = url_.replace("{caseNumber}", encodeURIComponent("" + caseNumber)); 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",			
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetHearingsByCaseNumber(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetHearingsByCaseNumber(<any>response_);
+                } catch (e) {
+                    return <Observable<HearingsForAudioFileSearchResponse[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<HearingsForAudioFileSearchResponse[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetHearingsByCaseNumber(response: HttpResponseBase): Observable<HearingsForAudioFileSearchResponse[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(HearingsForAudioFileSearchResponse.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = ProblemDetails.fromJS(resultData400);
+            return throwException("Bad Request", status, _responseText, _headers, result400);
+            }));
+        } else if (status === 401) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("Unauthorized", status, _responseText, _headers);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<HearingsForAudioFileSearchResponse[]>(<any>null);
     }
 
     /**
@@ -1060,6 +1198,110 @@ export class BHClient {
         }
         return _observableOf<UserProfileResponse>(<any>null);
     }
+}
+
+export class HearingAudioRecordingResponse implements IHearingAudioRecordingResponse {
+    audio_file_link?: string | undefined;
+
+    constructor(data?: IHearingAudioRecordingResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.audio_file_link = _data["audio_file_link"];
+        }
+    }
+
+    static fromJS(data: any): HearingAudioRecordingResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new HearingAudioRecordingResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["audio_file_link"] = this.audio_file_link;
+        return data; 
+    }
+}
+
+export interface IHearingAudioRecordingResponse {
+    audio_file_link?: string | undefined;
+}
+
+export class ProblemDetails implements IProblemDetails {
+    type?: string | undefined;
+    title?: string | undefined;
+    status?: number | undefined;
+    detail?: string | undefined;
+    instance?: string | undefined;
+    readonly extensions?: { [key: string]: any; } | undefined;
+
+    constructor(data?: IProblemDetails) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.type = _data["type"];
+            this.title = _data["title"];
+            this.status = _data["status"];
+            this.detail = _data["detail"];
+            this.instance = _data["instance"];
+            if (_data["extensions"]) {
+                (<any>this).extensions = {} as any;
+                for (let key in _data["extensions"]) {
+                    if (_data["extensions"].hasOwnProperty(key))
+                        (<any>this).extensions![key] = _data["extensions"][key];
+                }
+            }
+        }
+    }
+
+    static fromJS(data: any): ProblemDetails {
+        data = typeof data === 'object' ? data : {};
+        let result = new ProblemDetails();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["type"] = this.type;
+        data["title"] = this.title;
+        data["status"] = this.status;
+        data["detail"] = this.detail;
+        data["instance"] = this.instance;
+        if (this.extensions) {
+            data["extensions"] = {};
+            for (let key in this.extensions) {
+                if (this.extensions.hasOwnProperty(key))
+                    data["extensions"][key] = this.extensions[key];
+            }
+        }
+        return data; 
+    }
+}
+
+export interface IProblemDetails {
+    type?: string | undefined;
+    title?: string | undefined;
+    status?: number | undefined;
+    detail?: string | undefined;
+    instance?: string | undefined;
+    extensions?: { [key: string]: any; } | undefined;
 }
 
 /** Configuration to initialise the UI application */
@@ -1786,74 +2028,6 @@ export interface IHearingDetailsResponse {
     cancel_reason?: string | undefined;
 }
 
-export class ProblemDetails implements IProblemDetails {
-    type?: string | undefined;
-    title?: string | undefined;
-    status?: number | undefined;
-    detail?: string | undefined;
-    instance?: string | undefined;
-    readonly extensions?: { [key: string]: any; } | undefined;
-
-    constructor(data?: IProblemDetails) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.type = _data["type"];
-            this.title = _data["title"];
-            this.status = _data["status"];
-            this.detail = _data["detail"];
-            this.instance = _data["instance"];
-            if (_data["extensions"]) {
-                (<any>this).extensions = {} as any;
-                for (let key in _data["extensions"]) {
-                    if (_data["extensions"].hasOwnProperty(key))
-                        (<any>this).extensions![key] = _data["extensions"][key];
-                }
-            }
-        }
-    }
-
-    static fromJS(data: any): ProblemDetails {
-        data = typeof data === 'object' ? data : {};
-        let result = new ProblemDetails();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["type"] = this.type;
-        data["title"] = this.title;
-        data["status"] = this.status;
-        data["detail"] = this.detail;
-        data["instance"] = this.instance;
-        if (this.extensions) {
-            data["extensions"] = {};
-            for (let key in this.extensions) {
-                if (this.extensions.hasOwnProperty(key))
-                    data["extensions"][key] = this.extensions[key];
-            }
-        }
-        return data; 
-    }
-}
-
-export interface IProblemDetails {
-    type?: string | undefined;
-    title?: string | undefined;
-    status?: number | undefined;
-    detail?: string | undefined;
-    instance?: string | undefined;
-    extensions?: { [key: string]: any; } | undefined;
-}
-
 export class BookingsHearingResponse implements IBookingsHearingResponse {
     hearing_id?: string;
     hearing_number?: string | undefined;
@@ -2367,6 +2541,72 @@ export interface IUpdateBookingStatusRequest {
     updated_by: string | undefined;
     status?: UpdateBookingStatus;
     cancel_reason?: string | undefined;
+}
+
+export class HearingsForAudioFileSearchResponse implements IHearingsForAudioFileSearchResponse {
+    /** Hearing Id */
+    id?: string;
+    scheduled_date_time?: Date;
+    hearing_venue_name?: string | undefined;
+    case_number?: string | undefined;
+    case_name?: string | undefined;
+    courtroom_account?: string | undefined;
+    courtroom_account_name?: string | undefined;
+    hearing_room_name?: string | undefined;
+
+    constructor(data?: IHearingsForAudioFileSearchResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.scheduled_date_time = _data["scheduled_date_time"] ? new Date(_data["scheduled_date_time"].toString()) : <any>undefined;
+            this.hearing_venue_name = _data["hearing_venue_name"];
+            this.case_number = _data["case_number"];
+            this.case_name = _data["case_name"];
+            this.courtroom_account = _data["courtroom_account"];
+            this.courtroom_account_name = _data["courtroom_account_name"];
+            this.hearing_room_name = _data["hearing_room_name"];
+        }
+    }
+
+    static fromJS(data: any): HearingsForAudioFileSearchResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new HearingsForAudioFileSearchResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["scheduled_date_time"] = this.scheduled_date_time ? this.scheduled_date_time.toISOString() : <any>undefined;
+        data["hearing_venue_name"] = this.hearing_venue_name;
+        data["case_number"] = this.case_number;
+        data["case_name"] = this.case_name;
+        data["courtroom_account"] = this.courtroom_account;
+        data["courtroom_account_name"] = this.courtroom_account_name;
+        data["hearing_room_name"] = this.hearing_room_name;
+        return data; 
+    }
+}
+
+export interface IHearingsForAudioFileSearchResponse {
+    /** Hearing Id */
+    id?: string;
+    scheduled_date_time?: Date;
+    hearing_venue_name?: string | undefined;
+    case_number?: string | undefined;
+    case_name?: string | undefined;
+    courtroom_account?: string | undefined;
+    courtroom_account_name?: string | undefined;
+    hearing_room_name?: string | undefined;
 }
 
 export class PersonResponse implements IPersonResponse {

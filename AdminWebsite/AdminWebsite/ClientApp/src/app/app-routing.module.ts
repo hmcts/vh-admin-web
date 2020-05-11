@@ -9,25 +9,23 @@ import { ErrorComponent } from './error/error.component';
 import { AdminGuard } from './security/admin.guard';
 import { UnsupportedBrowserComponent } from './shared/unsupported-browser/unsupported-browser.component';
 import { ChangePasswordComponent } from './change-password/change-password.component';
+import { GetAudioFileComponent } from './get-audio-file/get-audio-file.component';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-  { path: 'dashboard', component: DashboardComponent, canActivate: [AdminGuard] },
-  { path: 'login', component: LoginComponent },
-  { path: 'logout', component: LogoutComponent },
-  { path: 'unauthorised', component: UnauthorisedComponent },
-  { path: 'error', component: ErrorComponent },
-  { path: 'unsupported-browser', component: UnsupportedBrowserComponent },
-  { path: 'change-password', component: ChangePasswordComponent, canActivate: [AdminGuard] },
-  { path: '**', redirectTo: 'dashboard', pathMatch: 'full', canActivate: [AdminGuard] }
+    { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+    { path: 'dashboard', component: DashboardComponent, canActivate: [AdminGuard] },
+    { path: 'login', component: LoginComponent },
+    { path: 'logout', component: LogoutComponent },
+    { path: 'unauthorised', component: UnauthorisedComponent },
+    { path: 'error', component: ErrorComponent },
+    { path: 'unsupported-browser', component: UnsupportedBrowserComponent },
+    { path: 'change-password', component: ChangePasswordComponent, canActivate: [AdminGuard] },
+    { path: 'get-audio-file', component: GetAudioFileComponent, canActivate: [AdminGuard] },
+    { path: '**', redirectTo: 'dashboard', pathMatch: 'full', canActivate: [AdminGuard] }
 ];
 
 @NgModule({
-  exports: [
-    RouterModule
-  ],
-  imports: [
-    RouterModule.forRoot(routes)],
+    exports: [RouterModule],
+    imports: [RouterModule.forRoot(routes)]
 })
-
-export class AppRoutingModule { }
+export class AppRoutingModule {}
