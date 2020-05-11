@@ -28,8 +28,7 @@ export class GetAudioLinkButtonComponent {
             setTimeout(() => this.setCurrentState(AudioLinkState.finished), 2000);
         } catch (error) {
             this.logger.error(`Error retrieving audio link for: ${this.hearingId}`, error);
-            //this.setCurrentState(AudioLinkState.error);
-            this.showLinkCopiedMessage = true;
+            this.setCurrentState(AudioLinkState.error);
         }
     }
 
