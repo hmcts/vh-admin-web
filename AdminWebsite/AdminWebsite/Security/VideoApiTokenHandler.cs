@@ -4,9 +4,9 @@ using Microsoft.Extensions.Options;
 
 namespace AdminWebsite.Security
 {
-    public class HearingApiTokenHandler : BaseServiceTokenHandler
+    public class VideoApiTokenHandler : BaseServiceTokenHandler
     {
-        public HearingApiTokenHandler(IOptions<SecuritySettings> securitySettings,
+        public VideoApiTokenHandler(IOptions<SecuritySettings> securitySettings,
             IOptions<ServiceSettings> serviceSettings,
             IMemoryCache memoryCache,
             ITokenProvider tokenProvider) : base(
@@ -14,7 +14,7 @@ namespace AdminWebsite.Security
         {
         }
 
-        protected override string TokenCacheKey => "HearingApiServiceToken";
-        protected override string ClientResource => ServiceSettings.BookingsApiResourceId;
+        protected override string TokenCacheKey => "VideoApiServiceToken";
+        protected override string ClientResource => ServiceSettings.VideoApiResourceId;
     }
 }

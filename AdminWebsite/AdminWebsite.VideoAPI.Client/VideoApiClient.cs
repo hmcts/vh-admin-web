@@ -760,7 +760,7 @@ namespace AdminWebsite.VideoAPI.Client
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "13.3.0.0 (NJsonSchema v10.1.11.0 (Newtonsoft.Json v12.0.0.0))")]
     public partial class VideoApiClient : IVideoApiClient
     {
-        private string _baseUrl = "http://localhost:5670";
+        private string _baseUrl = "https://localhost:59390";
         private System.Net.Http.HttpClient _httpClient;
         private System.Lazy<Newtonsoft.Json.JsonSerializerSettings> _settings;
     

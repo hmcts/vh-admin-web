@@ -82,7 +82,7 @@
       "typeNameGeneratorType": null,
       "propertyNameGeneratorType": null,
       "enumNameGeneratorType": null,
-      "serviceHost": "http://localhost:5670",
+      "serviceHost": "https://localhost:59390",
       "serviceSchemes": null,
       "output": "../AdminWebsite.VideoAPI.Client/VideoApiClient.cs"
     }
