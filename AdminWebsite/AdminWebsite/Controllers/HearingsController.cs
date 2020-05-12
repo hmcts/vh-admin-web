@@ -273,6 +273,8 @@ namespace AdminWebsite.Controllers
                     ModelState.AddModelError(nameof(caseNumber), $"Please provide a valid {nameof(caseNumber)}");
                     return BadRequest(ModelState);
                 }
+
+                caseNumber = WebUtility.UrlDecode(caseNumber);
                 
                 var hearingResponse = await _bookingsApiClient.GetHearingsByCaseNumberAsync(caseNumber);
                 
