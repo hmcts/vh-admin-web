@@ -260,11 +260,11 @@ namespace AdminWebsite.Controllers
         /// </summary>
         /// <param name="caseNumber">The case number.</param>
         /// <returns> The hearing</returns>
-        [HttpGet("casenumber/{caseNumber}")]
+        [HttpGet("casenumber")]
         [SwaggerOperation(OperationId = "GetHearingsByCaseNumber")]
         [ProducesResponseType(typeof(List<HearingsForAudioFileSearchResponse>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> GetHearingsByCaseNumberAsync(string caseNumber)
+        public async Task<IActionResult> GetHearingsByCaseNumberAsync([FromQuery]string caseNumber)
         {
             try
             {

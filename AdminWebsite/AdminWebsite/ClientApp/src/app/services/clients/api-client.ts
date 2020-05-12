@@ -595,14 +595,15 @@ export class BHClient {
 
     /**
      * Get hearings by case number.
-     * @param caseNumber The case number.
+     * @param caseNumber (optional) The case number.
      * @return Success
      */
-    getHearingsByCaseNumber(caseNumber: string): Observable<HearingsForAudioFileSearchResponse[]> {
-        let url_ = this.baseUrl + "/api/hearings/casenumber/{caseNumber}";
-        if (caseNumber === undefined || caseNumber === null)
-            throw new Error("The parameter 'caseNumber' must be defined.");
-        url_ = url_.replace("{caseNumber}", encodeURIComponent("" + caseNumber)); 
+    getHearingsByCaseNumber(caseNumber: string | undefined): Observable<HearingsForAudioFileSearchResponse[]> {
+        let url_ = this.baseUrl + "/api/hearings/casenumber?";
+        if (caseNumber === null)
+            throw new Error("The parameter 'caseNumber' cannot be null.");
+        else if (caseNumber !== undefined)
+            url_ += "caseNumber=" + encodeURIComponent("" + caseNumber) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
