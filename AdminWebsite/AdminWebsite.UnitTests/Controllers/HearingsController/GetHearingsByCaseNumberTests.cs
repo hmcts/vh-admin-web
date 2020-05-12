@@ -103,8 +103,12 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             Assert.ThrowsAsync<BookingsApiException>(() => _controller.GetHearingsByCaseNumberAsync("bad"));
         }
         
-        [Test]
-        public async Task Should_return_ok()
+        [TestCase("Perf692831/69", "Perf692831%2F69")]
+        [TestCase("abc/123", "abc%2F123")]
+        [TestCase("abc\\123", "abc%5C123")]
+        [TestCase("abc-123", "abc-123")]
+        [TestCase("abc-123/456\\789", "abc-123%2F456%5C789")]
+        public async Task Should_return_ok(string caseNumberDecoded, string caseNumberEncoded)
         {
             var bookingApiResponse = new List<HearingsByCaseNumberResponse>
             {
@@ -113,10 +117,10 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 new HearingsByCaseNumberResponse{Id = Guid.NewGuid()}
             };
             
-            _bookingsApiClient.Setup(x => x.GetHearingsByCaseNumberAsync(It.IsAny<string>()))
+            _bookingsApiClient.Setup(x => x.GetHearingsByCaseNumberAsync(caseNumberDecoded))
                 .ReturnsAsync(bookingApiResponse);
 
-            var result = await _controller.GetHearingsByCaseNumberAsync("good");
+            var result = await _controller.GetHearingsByCaseNumberAsync(caseNumberEncoded);
             var actionResult = result as OkObjectResult;
             actionResult.Should().NotBeNull();
             actionResult.StatusCode.Should().Be(200);
