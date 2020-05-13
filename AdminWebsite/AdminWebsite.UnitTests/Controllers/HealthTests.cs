@@ -6,11 +6,12 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
-using AdminWebsite.Models;
 using System;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using AdminWebsite.VideoAPI.Client;
+using HealthCheckResponse = AdminWebsite.Models.HealthCheckResponse;
 
 namespace AdminWebsite.UnitTests.Controllers
 {
@@ -19,18 +20,20 @@ namespace AdminWebsite.UnitTests.Controllers
         private HealthCheckController _controller;
         private Mock<IUserApiClient> _userApiClientMock;
         private Mock<IBookingsApiClient> _bookingsApiClientMock;
+        private Mock<IVideoApiClient> _videoApiClientMock;
 
         [SetUp]
         public void Setup()
         {
             _userApiClientMock = new Mock<IUserApiClient>();
             _bookingsApiClientMock = new Mock<IBookingsApiClient>();
+            _videoApiClientMock = new Mock<IVideoApiClient>();
 
-            _controller = new HealthCheckController(_userApiClientMock.Object, _bookingsApiClientMock.Object);
+            _controller = new HealthCheckController(_userApiClientMock.Object, _bookingsApiClientMock.Object, _videoApiClientMock.Object);
 
             var judges = Builder<UserResponse>.CreateListOfSize(3).Build().ToList();
-            _userApiClientMock.Setup(x => x.GetJudgesAsync())
-                .ReturnsAsync(judges);
+            
+            _userApiClientMock.Setup(x => x.GetJudgesAsync()).ReturnsAsync(judges);
         }
 
         [Test]
@@ -68,7 +71,7 @@ namespace AdminWebsite.UnitTests.Controllers
         }
         
         [Test]
-        public async Task Should_return_internal_server_error_result_when_non_video_api_exception_thrown()
+        public async Task Should_return_internal_server_error_result_when_non_booking_api_exception_thrown()
         {
             var exception = new UriFormatException("Test format is invalid");
 
@@ -83,6 +86,23 @@ namespace AdminWebsite.UnitTests.Controllers
             response.BookingsApiHealth.Successful.Should().BeFalse();
             response.BookingsApiHealth.ErrorMessage.Should().NotBeNullOrWhiteSpace();
         }
+        
+        [Test]
+        public async Task Should_return_internal_server_error_result_when_video_api_not_reachable()
+        {
+            var exception = new AggregateException("kinly api error");
+
+            _videoApiClientMock
+                .Setup(x => x.GetExpiredOpenConferencesAsync())
+                .ThrowsAsync(exception);
+
+            var result = await _controller.Health();
+            var typedResult = (ObjectResult) result;
+            typedResult.StatusCode.Should().Be((int) HttpStatusCode.InternalServerError);
+            var response = (HealthCheckResponse) typedResult.Value;
+            response.VideoApiHealth.Successful.Should().BeFalse();
+            response.VideoApiHealth.ErrorMessage.Should().NotBeNullOrWhiteSpace();
+        }
 
         [Test]
         public async Task Should_return_ok_when_all_services_are_running()
@@ -94,6 +114,7 @@ namespace AdminWebsite.UnitTests.Controllers
             var response = (HealthCheckResponse) typedResult.Value;
             response.BookingsApiHealth.Successful.Should().BeTrue();
             response.UserApiHealth.Successful.Should().BeTrue();
+            response.VideoApiHealth.Successful.Should().BeTrue();
         }
 
         [Test]
