@@ -1,11 +1,11 @@
 .standard-width-button {
     width: 100px;
-    margin-bottom: 0px;
+    vertical-align: top !important;
 }
 
 .button-div {
     float: right;
-    margin-top: 38px;
+    margin-top: 0;
 }
 
 .loading-image {
@@ -24,17 +24,30 @@
     color: #d4351c;
 }
 
+.vh-blue {
+    width: 420px;
+    background-color: #005EA5;
+    margin-left: -340px;
+}
+
+.vh-red {
+    background-color: #d4351c !important;
+    width: 460px;
+    margin-left: 0;
+    margin-right: 0;
+    margin-left: -380px;
+}
+
 .linkCopiedMessage {
     float: right;
     clear: both;
     height: 40px;
-    width: 420px;
     background-color: #005EA5;
     color: white;
     display: table;
     overflow: hidden;
     text-align: center;
-    margin-bottom: 10px;
+    position:absolute;
 }
 
 .linkCopiedMessage div {
@@ -52,3 +65,9 @@
 .linkCopiedMessage label {
     font-size: 17px;
 }
+
+.vh-m3{
+    margin-left:3px;
+}
+
+

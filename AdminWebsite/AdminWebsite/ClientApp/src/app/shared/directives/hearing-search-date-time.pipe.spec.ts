@@ -1,10 +1,10 @@
 import { HearingSearchDateTimePipe } from './hearing-search-date-time.pipe';
 
-describe('LongDatetimePipe', () => {
-    it('should return a Monday 08 April 2019, 3:45pm format', () => {
+describe('HearingSearchDateTimePipe', () => {
+    it('should return 08 April 2019 format', () => {
         const pipe = new HearingSearchDateTimePipe();
         const result = pipe.transform(new Date(2019, 3, 8, 15, 45).toUTCString());
-        expect(result).toBe('Monday, 08-Apr-2019 - 15:45');
+        expect(result).toBe('08 April 2019');
     });
 
     it('should throw an exception when an invalid input', () => {
