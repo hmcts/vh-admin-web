@@ -6,6 +6,7 @@ namespace AdminWebsite.AcceptanceTests.Pages
     {
         public static By BookVideoHearingPanel = By.Id("vhpanel-green");
         public static By QuestionnaireResultsPanel = By.Id("vhpanel-blue");
-        public static By ChangePasswordPanel = By.Id("vhpanel-purple");
+        public static By GetAudioFilePanel = By.Id("vhpanel-lightblue");
+        public static By ChangePasswordPanel = By.Id("vhpanel-darkgrey");
     }
 }

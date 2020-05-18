@@ -1,5 +1,5 @@
 <div class="button-div" *ngIf="showOnState(audioLinkStates.initial)">
-    <button class="govuk-button govuk-!-margin-left-2 standard-width-button" data-module="govuk-button"
+    <button id="getLinkButton" class="govuk-button govuk-!-margin-left-2 standard-width-button" data-module="govuk-button"
             (click)="onGetLinkClick()">
         Get link
     </button>
@@ -10,7 +10,7 @@
     <label>Please wait...</label>
 </div>
 <div class="button-div" *ngIf="showOnState(audioLinkStates.finished)">
-    <button class="govuk-button govuk-!-margin-left-2 standard-width-button" data-module="govuk-button"
+    <button id="copyLinkButton" class="govuk-button govuk-!-margin-left-2 standard-width-button" data-module="govuk-button"
             (click)="onCopyLinkClick()">
         Copy link
     </button>
@@ -24,7 +24,7 @@
         </button>
     </div>
 </div>
-<div *ngIf="showLinkCopiedMessage" (click)="hideLinkCopiedMessage()" class="linkCopiedMessage vh-blue">
+<div *ngIf="showLinkCopiedMessage" (click)="hideLinkCopiedMessage()" id="linkCopied" class="linkCopiedMessage vh-blue">
         <img src="assets/images/audio_file.png" alt="success" class="vh-m5">
         &nbsp;
         <label>Audio file link copied to clipboard (valid for 7 days)</label>

@@ -18,6 +18,7 @@ namespace AdminWebsite.AcceptanceTests.Data
         private readonly List<UserAccount> _representatives;
         private readonly List<ParticipantRequest> _participants;
         private List<UserAccount> _userAccounts;
+        private bool _withAudioRecording = false;
 
         public HearingRequestBuilder()
         {
@@ -31,6 +32,12 @@ namespace AdminWebsite.AcceptanceTests.Data
         public HearingRequestBuilder WithUserAccounts(List<UserAccount> userAccounts)
         {
             _userAccounts = userAccounts;
+            return this;
+        }
+
+        public HearingRequestBuilder WithAudioRecording()
+        {
+            _withAudioRecording = true;
             return this;
         }
 
@@ -88,7 +95,7 @@ namespace AdminWebsite.AcceptanceTests.Data
                 .With(x => x.Cases = cases)
                 .With(x => x.Created_by = UserManager.GetCaseAdminUser(_userAccounts).Username)
                 .With(x => x.Questionnaire_not_required = true)
-                .With(x => x.Audio_recording_required = false)
+                .With(x => x.Audio_recording_required = _withAudioRecording)
                 .Build();
 
             return _request;

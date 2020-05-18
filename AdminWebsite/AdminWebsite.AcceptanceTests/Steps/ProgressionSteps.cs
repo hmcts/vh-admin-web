@@ -87,6 +87,11 @@ namespace AdminWebsite.AcceptanceTests.Steps
                 return Journey.ChangePassword;
             }
 
+            if (page.ToLower().Equals("get audio file"))
+            {
+                return Journey.GetAudioFile;
+            }
+
             return Journey.BookingConfirmation;
         }
 
@@ -100,6 +105,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
                 {Journey.BookingConfirmation, new BookingsConfirmationJourney()},
                 {Journey.BookingDetails, new BookingDetailsJourney()},
                 {Journey.ChangePassword, new ChangePasswordJourney()},
+                {Journey.GetAudioFile, new GetAudioFileJourney()},
                 {Journey.Questionnaire, new QuestionnaireJourney()}
             };
             journeys[userJourney].VerifyUserIsApplicableToJourney(_c.CurrentUser.Role);
