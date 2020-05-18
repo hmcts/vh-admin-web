@@ -22,16 +22,17 @@ describe('GetAudioLinkButtonComponent', () => {
         audioLinkService.getAudioLink.and.returnValue(Promise.resolve('myLink'));
 
         await component.onGetLinkClick();
-        tick(2001);
+        tick(3001);
         expect(component.showOnState(AudioLinkState.finished)).toBeTruthy();
     }));
 
-    it('should fail in getting audio link and set state to error', async () => {
+    it('should fail in getting audio link and set state to error', fakeAsync(async () => {
         audioLinkService.getAudioLink.and.throwError('error');
 
         await component.onGetLinkClick();
+        tick(3001);
         expect(component.showOnState(AudioLinkState.error)).toBeTruthy();
-    });
+    }));
 
     it('should copy audio link and copied link message', fakeAsync(async () => {
         audioLinkService.getAudioLink.and.returnValue(Promise.resolve('myLink'));
@@ -39,7 +40,7 @@ describe('GetAudioLinkButtonComponent', () => {
         await component.onGetLinkClick();
         await component.onCopyLinkClick();
         expect(component.showLinkCopiedMessage).toBeTruthy();
-        tick(2001);
+        tick(3001);
         expect(component.showOnState(AudioLinkState.finished)).toBeTruthy();
         expect(component.showLinkCopiedMessage).toBeFalsy();
     }));

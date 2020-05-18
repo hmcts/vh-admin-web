@@ -13,6 +13,7 @@ export class GetAudioLinkButtonComponent {
     public audioLinkStates: typeof AudioLinkState = AudioLinkState;
     private _currentLinkRetrievalState: AudioLinkState = AudioLinkState.initial;
     public showLinkCopiedMessage = false;
+    showErrorMessage = false;
     private audioLink: string;
 
     @Input() hearingId: string;
@@ -25,17 +26,19 @@ export class GetAudioLinkButtonComponent {
 
             this.audioLink = await this.audioLinkService.getAudioLink(this.hearingId);
 
-            setTimeout(() => this.setCurrentState(AudioLinkState.finished), 2000);
+            setTimeout(() => this.setCurrentState(AudioLinkState.finished), 3000);
         } catch (error) {
             this.logger.error(`Error retrieving audio link for: ${this.hearingId}`, error);
             this.setCurrentState(AudioLinkState.error);
+            this.showErrorMessage = true;
+            setTimeout(() => this.hideErrorMessage(), 3000);
         }
     }
 
     async onCopyLinkClick() {
         this.clipboardService.copyFromContent(this.audioLink);
         this.showLinkCopiedMessage = true;
-        setTimeout(() => this.hideLinkCopiedMessage(), 2000);
+        setTimeout(() => this.hideLinkCopiedMessage(), 3000);
     }
 
     showOnState(audioLinkState: AudioLinkState) {
@@ -48,5 +51,9 @@ export class GetAudioLinkButtonComponent {
 
     hideLinkCopiedMessage() {
         this.showLinkCopiedMessage = false;
+    }
+
+    hideErrorMessage() {
+        this.showErrorMessage = false;
     }
 }
