@@ -26,9 +26,9 @@ variables:
       "VhServices/UserApiResourceId":"$(vh-user-api-identifieruris)",
       "VhServices/ValidateEmail":"$(reformemail)"
   - name: vhAzureKeyVault
-    value: 'https://vhwebsitesandbox.vault.azure.net/' # Used during integration tests
+    value: 'https://vhwebsitepreview.vault.azure.net/' # Used during integration tests
   - name: keyVaultName
-    value: vhcoreinfrahtsandbox # Used to get secrets for integration tests
+    value: vhcoreinfrahtpreview # Used to get secrets for integration tests
   - name: secretsFilter
     value: 'TenantId,vh-admin-web-appid,vh-admin-web-key,vh-bookings-api-identifieruris,vh-user-api-identifieruris' # filters out secrets returned from key vault
   - name: infraKeyVaultName
