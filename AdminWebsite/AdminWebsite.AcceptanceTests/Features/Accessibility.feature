@@ -63,7 +63,7 @@ Scenario: Get Audio Link File accessibility
 	Given the Video Hearings Officer user has progressed to the Get Audio File page
 	Then the page should be accessible
 
-	@Accessibility
+@Accessibility
 Scenario: Change Password page accessibility
 	Given the Video Hearings Officer user has progressed to the Change Password page
 	Then the page should be accessible
