@@ -52,6 +52,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
                 .CreateBlobClient(_c.Test.HearingResponse.Id);
 
             await _c.Wowza.UploadAudioFileToStorage(file);
+            AudioRecordingsManager.RemoveLocalAudioFile(file);
         }
 
         private bool CheckIfParticipantsAlreadyExistInTheDb()
