@@ -48,6 +48,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             RegisterTestUsers(context);
             RegisterDefaultData(context);
             RegisterHearingServices(context);
+            RegisterWowzaSettings(context);
             RegisterSauceLabsSettings(context);
             RunningAdminWebLocally(context);
             await GenerateBearerTokens(context);
@@ -96,6 +97,12 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         {
             context.AdminWebConfig.VhServices = Options.Create(_configRoot.GetSection("VhServices").Get<AdminWebVhServiceConfig>()).Value;
             ConfigurationManager.VerifyConfigValuesSet(context.AdminWebConfig.VhServices);
+        }
+
+        private void RegisterWowzaSettings(TestContext context)
+        {
+            context.AdminWebConfig.Wowza = Options.Create(_configRoot.GetSection("WowzaConfiguration").Get<WowzaConfiguration>()).Value;
+            ConfigurationManager.VerifyConfigValuesSet(context.AdminWebConfig.Wowza);
         }
 
         private void RegisterSauceLabsSettings(TestContext context)

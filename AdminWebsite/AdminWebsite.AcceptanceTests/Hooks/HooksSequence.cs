@@ -9,8 +9,11 @@
         ConfigureDriverHooks = 5,
         RemoveDataHooks = 6,
         DataHooks = 7,
-        LogResultHooks = 8,
-        TearDownBrowserHooks = 9,
-        StopEdgeChromiumServer = 10
+        AudioRecording = 8,
+        RemoveNewUsersHooks = 9,
+        RemoveAudioFiles = 10,
+        LogResultHooks = 11,
+        TearDownBrowserHooks = 12,
+        StopEdgeChromiumServer = 13
     }
 }

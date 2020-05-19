@@ -8,6 +8,8 @@ namespace AdminWebsite.AcceptanceTests.Data
         {
             return runningOnSaucelabs ? new CultureInfo("es-PR").DateTimeFormat.ShortDatePattern : CultureInfo.CurrentUICulture.DateTimeFormat.ShortDatePattern;
         }
+
         public static string HearingSummaryDate = "dddd dd MMMM yyyy, h:mmtt";
+        public static string AudioScheduledDate = "dd MMMM yyyy";
     }
 }

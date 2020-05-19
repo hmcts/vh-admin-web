@@ -34,6 +34,10 @@ namespace AdminWebsite.AcceptanceTests.Steps
             {
                 _browsers[_c.CurrentUser.Key].Click(DashboardPage.ChangePasswordPanel);
             }
+            else if (_c.RouteAfterDashboard.Equals(Page.GetAudioFile))
+            {
+                _browsers[_c.CurrentUser.Key].Click(DashboardPage.GetAudioFilePanel);
+            }
             else
             {
                 _browsers[_c.CurrentUser.Key].Click(DashboardPage.QuestionnaireResultsPanel);
@@ -52,6 +56,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(DashboardPage.BookVideoHearingPanel).Displayed.Should().BeTrue();
             OnlyVhosCanSeeTheQuestionnaireResults();
             OnlyVhosCanSeeThePasswordReset();
+            OnlyVhosCanSeeTheGetAudioFile();
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(CommonAdminWebPage.DashboardLink).Displayed.Should().BeTrue();
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(CommonAdminWebPage.BookingsListLink).Displayed.Should().BeTrue();
         }
@@ -77,6 +82,18 @@ namespace AdminWebsite.AcceptanceTests.Steps
             else
             {
                 _browsers[_c.CurrentUser.Key].Driver.WaitUntilElementNotVisible(DashboardPage.ChangePasswordPanel).Should().BeTrue();
+            }
+        }
+
+        private void OnlyVhosCanSeeTheGetAudioFile()
+        {
+            if (_c.CurrentUser.Role.ToLower().Equals("video hearings officer"))
+            {
+                _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(DashboardPage.GetAudioFilePanel).Displayed.Should().BeTrue();
+            }
+            else
+            {
+                _browsers[_c.CurrentUser.Key].Driver.WaitUntilElementNotVisible(DashboardPage.GetAudioFilePanel).Should().BeTrue();
             }
         }
     }

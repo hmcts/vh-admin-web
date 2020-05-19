@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using AcceptanceTests.Common.Api.Helpers;
 using AcceptanceTests.Common.Api.Requests;
+using AcceptanceTests.Common.AudioRecordings;
 using AcceptanceTests.Common.Configuration.Users;
 using AdminWebsite.AcceptanceTests.Data;
 using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.BookingsAPI.Client;
+using AdminWebsite.VideoAPI.Client;
 using FluentAssertions;
 using TechTalk.SpecFlow;
 
@@ -32,6 +35,26 @@ namespace AdminWebsite.AcceptanceTests.Hooks
                 CreateHearing();
         }
 
+        [BeforeScenario(Order = (int)HooksSequence.AudioRecording)]
+        public async Task AddAudioRecording(ScenarioContext scenario)
+        {
+            if (!scenario.ScenarioInfo.Tags.Contains("AudioRecording")) return;
+            _c.Test.HearingResponse = CreateHearing();
+            _c.Test.ConferenceResponse = CreateConference();
+            CloseTheConference();
+
+            var file = AudioRecordingsManager.CreateNewAudioFile("TestAudioFile.mp4", _c.Test.HearingResponse.Id);
+
+            _c.Wowza = new WowzaManager()
+                .SetStorageAccountName(_c.AdminWebConfig.Wowza.StorageAccountName)
+                .SetStorageAccountKey(_c.AdminWebConfig.Wowza.StorageAccountKey)
+                .SetStorageContainerName(_c.AdminWebConfig.Wowza.StorageContainerName)
+                .CreateBlobClient(_c.Test.HearingResponse.Id);
+
+            await _c.Wowza.UploadAudioFileToStorage(file);
+            AudioRecordingsManager.RemoveLocalAudioFile(file);
+        }
+
         private bool CheckIfParticipantsAlreadyExistInTheDb()
         {
             var exist = false;
@@ -43,10 +66,11 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             return exist;
         }
 
-        private void CreateHearing()
+        private HearingDetailsResponse CreateHearing()
         {
             var hearingRequest = new HearingRequestBuilder()
                 .WithUserAccounts(_c.UserAccounts)
+                .WithAudioRecording()
                 .Build();
 
             var hearingResponse = _c.Apis.BookingsApi.CreateHearing(hearingRequest);
@@ -56,6 +80,40 @@ namespace AdminWebsite.AcceptanceTests.Hooks
 
             ParticipantExistsInTheDb(hearing.Id).Should().BeTrue();
             _c.Apis.UserApi.ParticipantsExistInAad(_c.UserAccounts, Timeout).Should().BeTrue();
+
+            NUnit.Framework.TestContext.WriteLine($"Hearing created with Hearing Id {hearing.Id}");
+            return hearing;
+        }
+
+        private ConferenceDetailsResponse CreateConference()
+        {
+            var updateRequest = new UpdateBookingStatusRequest
+            {
+                Status = UpdateBookingStatus.Created,
+                Updated_by = UserManager.GetCaseAdminUser(_c.UserAccounts).Username
+            };
+
+            var response = _c.Apis.BookingsApi.ConfirmHearingToCreateConference(_c.Test.HearingResponse.Id, updateRequest);
+            response.StatusCode.Should().Be(HttpStatusCode.NoContent, $"Conference not created with error '{response.Content}'");
+            response = _c.Apis.VideoApi.PollForConferenceResponse(_c.Test.HearingResponse.Id);
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            var conference = RequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(response.Content);
+            NUnit.Framework.TestContext.WriteLine($"Conference created with Conference Id {conference.Id}");
+            return conference;
+        }
+
+        private void CloseTheConference()
+        {
+            var judge = _c.Test.ConferenceResponse.Participants.First(x => x.User_role == UserRole.Judge);
+            var request = new CallbackEventRequestBuilder()
+                .WithConferenceId(_c.Test.ConferenceResponse.Id)
+                .WithParticipantId(judge.Id)
+                .WithEventType(EventType.Close)
+                .FromRoomType(RoomType.HearingRoom)
+                .Build();
+
+            var response = _c.Apis.VideoApi.SendEvent(request);
+            response.StatusCode.Should().Be(HttpStatusCode.NoContent);
         }
 
         private bool ParticipantExistsInTheDb(Guid hearingId)

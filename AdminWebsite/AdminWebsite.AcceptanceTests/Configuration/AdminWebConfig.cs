@@ -8,5 +8,6 @@ namespace AdminWebsite.AcceptanceTests.Configuration
         public AdminWebTestConfig TestConfig { get; set; }
         public AdminWebVhServiceConfig VhServices { get; set; }
         public SauceLabsSettingsConfig SauceLabsConfiguration { get; set; }
+        public WowzaConfiguration Wowza { get; set; }
     }
 }

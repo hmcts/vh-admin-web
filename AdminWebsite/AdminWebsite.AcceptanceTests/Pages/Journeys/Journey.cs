@@ -5,6 +5,7 @@
         BookingConfirmation,
         BookingDetails,
         ChangePassword,
+        GetAudioFile,
         Questionnaire
     }
 }
