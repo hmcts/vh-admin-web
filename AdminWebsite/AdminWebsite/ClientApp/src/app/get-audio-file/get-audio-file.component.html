@@ -3,23 +3,8 @@
 <p class="govuk-body">Only hearings which have been confirmed will appear in the search result.</p>
 <p class="govuk-body">You will only be able to get audio file links for hearings that have finished.</p>
 
-<div *ngIf="form.invalid && (form.dirty || form.touched)" class="govuk-error-summary govuk-!-width-one-half"
-     aria-labelledby="error-summary-title"
-     role="alert" tabindex="-1" data-module="error-summary">
-    <h2 class="govuk-error-summary__title" id="error-summary-title">
-        Please complete the missing information
-    </h2>
-    <div class="govuk-error-summary__body">
-        <ul class="govuk-list govuk-error-summary__list">
-            <li *ngIf="form.invalid && (form.dirty || form.touched)">
-                <p> Enter a valid case number </p>
-            </li>
-        </ul>
-    </div>
-</div>
-
 <form [formGroup]="form" class="govuk-form-group">
-    <div class="govuk-form-group" [ngClass]="{'govuk-form-group--error':form.invalid && (form.dirty || form.touched)}">
+    <div class="govuk-form-group">
         <h2 class="govuk-heading-m">Search</h2>
         <label class="govuk-label govuk-!-width-one-half" for="caseNumber">
             Enter a case number
