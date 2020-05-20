@@ -24,8 +24,9 @@ namespace AdminWebsite.AcceptanceTests.Hooks
 
         [BeforeScenario(Order = (int)HooksSequence.RemoveDataHooks)]
         [AfterScenario]
-        public void RemovePreviousHearings(TestContext context)
+        public void RemovePreviousHearings(TestContext context, ScenarioContext scenario)
         {
+            if (scenario.ScenarioInfo.Tags.Contains("KeepDataAfterTest")) return;
             _clerkUsername = UserManager.GetClerkUser(context.UserAccounts).Username;
             ClearHearingsForClerk(context.Apis.BookingsApi);
             ClearClosedConferencesForClerk(context.Apis.BookingsApi, context.Apis.VideoApi);
