@@ -36,7 +36,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         }
 
         [Given(@"there is a hearing where an (.*) participant has completed some questionnaire answers")]
-        public void GivenThereIsAHearingWhereParticipantsHaveCompletedSomeQuestionnaireAnswers(string role)
+        public void GivenThereIsAHearingWithQuestionnaireAnswers(string role)
         {
             var hearing = CreateHearing();
             _participantResponse = hearing.Participants.First(x => x.User_role_name.ToLower().Equals(role.ToLower()));
