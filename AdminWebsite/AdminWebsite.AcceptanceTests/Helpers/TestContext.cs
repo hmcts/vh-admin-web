@@ -15,7 +15,7 @@ namespace AdminWebsite.AcceptanceTests.Helpers
         public AdminWebTokens Tokens { get; set; }
         public DriverSetup Driver { get; set; }
         public List<UserAccount> UserAccounts { get; set; }
-        public Page RouteAfterDashboard { get; set; }
+        public Page Route { get; set; }
         public Test Test { get; set; }
         public UserAccount CurrentUser { get; set; }
         public WowzaManager Wowza { get; set; }

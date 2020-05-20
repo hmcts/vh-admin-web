@@ -3,7 +3,7 @@ using FluentAssertions;
 
 namespace AdminWebsite.AcceptanceTests.Pages.Journeys
 {
-    public class BookingDetailsJourney : IJourney
+    public class BookingListJourney : IJourney
     {
         public List<Page> Journey()
         {
@@ -18,7 +18,7 @@ namespace AdminWebsite.AcceptanceTests.Pages.Journeys
                     Page.OtherInformation,
                     Page.Summary,
                     Page.BookingConfirmation,
-                    Page.BookingDetails
+                    Page.BookingsList
                 };
         }
 
