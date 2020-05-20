@@ -3,7 +3,6 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using AcceptanceTests.Common.Api.Helpers;
-using AcceptanceTests.Common.Api.Requests;
 using AcceptanceTests.Common.AudioRecordings;
 using AcceptanceTests.Common.Configuration.Users;
 using AdminWebsite.AcceptanceTests.Data;
