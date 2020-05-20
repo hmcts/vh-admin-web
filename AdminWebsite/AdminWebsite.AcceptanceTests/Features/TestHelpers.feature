@@ -1,7 +1,7 @@
 ﻿Feature: Test Helpers
 	In order to reduce time manual testing
 	As a helper
-	I want to be able to execute certain funciontality quickly
+	I want to be able to execute certain funcionality quickly
 
 @Ignore @KeepDataAfterTest
 Scenario: Add hearings with questionnaire results
