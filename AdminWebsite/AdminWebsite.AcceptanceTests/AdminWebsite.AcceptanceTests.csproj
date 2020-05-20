@@ -101,10 +101,4 @@
     <Content Include="Features\*.feature" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="TestAudioFiles\" />
-  </ItemGroup>
-
-  <ProjectExtensions><VisualStudio><UserProperties useraccounts_1json__JsonSchema="9" /></VisualStudio></ProjectExtensions>
-
 </Project>

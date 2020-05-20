@@ -1,5 +1,4 @@
 ﻿using System;
-using AcceptanceTests.Common.PageObject.Helpers;
 using OpenQA.Selenium;
 
 namespace AdminWebsite.AcceptanceTests.Pages
@@ -8,7 +7,6 @@ namespace AdminWebsite.AcceptanceTests.Pages
     {
         public static By CaseNumberTextField = By.Id("caseNumber");
         public static By SubmitButton = By.Id("submit");
-        public static By InvalidCaseNumberError = CommonLocators.ElementContainingText("Enter a valid case number");
         public static By GetLinkButton = By.Id("getLinkButton");
         public static By CopyLinkButton = By.Id("copyLinkButton");
         public static By LinkCopiedSuccessMessage = By.Id("linkCopied");

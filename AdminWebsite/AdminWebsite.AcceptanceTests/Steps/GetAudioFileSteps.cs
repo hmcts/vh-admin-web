@@ -38,18 +38,6 @@ namespace AdminWebsite.AcceptanceTests.Steps
             hearing.Closed_date_time.Should().NotBeNull();
         }
 
-        [When(@"I attempt an invalid search by case number")]
-        public void WhenIAttemptAnInvalidSearchByCaseNumber()
-        {
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(GetAudioFilePage.CaseNumberTextField).SendKeys(Keys.Tab);
-        }
-
-        [Then(@"an error message for the invalid case number appears")]
-        public void ThenAnErrorMessageAppearsStating()
-        {
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(GetAudioFilePage.InvalidCaseNumberError).Displayed.Should().BeTrue();
-        }
-
         [When(@"I search for the audio recording by case number")]
         public void WhenISearchForTheAudioRecordingByCaseNumber()
         {
