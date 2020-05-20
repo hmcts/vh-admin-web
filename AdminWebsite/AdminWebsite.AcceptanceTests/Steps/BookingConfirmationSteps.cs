@@ -24,7 +24,9 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void ProgressToNextPage()
         {
             VerifyBookingWasSuccessful();
-            _browsers[_c.CurrentUser.Key].ClickLink(CommonAdminWebPage.BookingsListLink);
+            _browsers[_c.CurrentUser.Key].ClickLink(_c.Route.Equals(Page.BookingDetails)
+                ? BookingConfirmationPage.ViewThisBookingLink
+                : CommonAdminWebPage.BookingsListLink);
         }
 
         [When(@"the user views the booking confirmation form")]

@@ -22,25 +22,25 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         public void ProgressToNextPage()
         {
-            if (_c.RouteAfterDashboard.Equals(Page.HearingDetails))
+            if (_c.Route.Equals(Page.HearingDetails))
             {
                 _browsers[_c.CurrentUser.Key].Click(DashboardPage.BookVideoHearingPanel);
             }
-            else if (_c.RouteAfterDashboard.Equals(Page.BookingsList))
+            else if (_c.Route.Equals(Page.Questionnaire))
             {
-                _browsers[_c.CurrentUser.Key].Click(CommonAdminWebPage.BookingsListLink);
+                _browsers[_c.CurrentUser.Key].Click(DashboardPage.QuestionnaireResultsPanel);
             }
-            else if (_c.RouteAfterDashboard.Equals(Page.ChangePassword))
+            else if (_c.Route.Equals(Page.ChangePassword))
             {
                 _browsers[_c.CurrentUser.Key].Click(DashboardPage.ChangePasswordPanel);
             }
-            else if (_c.RouteAfterDashboard.Equals(Page.GetAudioFile))
+            else if (_c.Route.Equals(Page.GetAudioFile))
             {
                 _browsers[_c.CurrentUser.Key].Click(DashboardPage.GetAudioFilePanel);
             }
             else
             {
-                _browsers[_c.CurrentUser.Key].Click(DashboardPage.QuestionnaireResultsPanel);
+                _browsers[_c.CurrentUser.Key].Click(DashboardPage.BookVideoHearingPanel);
             }
         }
 
