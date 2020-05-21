@@ -45,5 +45,5 @@ Scenario: Case admin user can view another users booking
 	And the user logs out
 	And the Case Admin user has progressed to the Dashboard page
 	When the user navigates to the Bookings List page
-	And progresses from the Bookings List page to the Booking Details page
+	And selects a booking
 	Then the user views the booking details
