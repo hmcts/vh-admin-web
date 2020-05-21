@@ -18,6 +18,6 @@ namespace AdminWebsite.AcceptanceTests.Helpers
         public Page Route { get; set; }
         public Test Test { get; set; }
         public UserAccount CurrentUser { get; set; }
-        public WowzaManager Wowza { get; set; }
+        public AzureStorageManager AzureStorage { get; set; }
     }
 }

@@ -46,11 +46,11 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         }
 
         [AfterScenario(Order = (int)HooksSequence.RemoveAudioFiles)]
-        public static async Task RemoveWowzaFile(TestContext context, ScenarioContext scenario)
+        public static async Task RemoveAudioFile(TestContext context, ScenarioContext scenario)
         {
             if (!scenario.ScenarioInfo.Tags.Contains("AudioRecording")) return;
-            if (context.Wowza != null)
-                await context.Wowza.RemoveAudioFileFromStorage();
+            if (context.AzureStorage != null)
+                await context.AzureStorage.RemoveAudioFileFromStorage();
         }
 
         private static bool UserHasBeenCreatedInAad(TestContext context)

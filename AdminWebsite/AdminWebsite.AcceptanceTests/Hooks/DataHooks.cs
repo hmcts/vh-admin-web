@@ -42,16 +42,16 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             _c.Test.ConferenceResponse = CreateConference();
             CloseTheConference();
 
-            var file = AudioRecordingsManager.CreateNewAudioFile("TestAudioFile.mp4", _c.Test.HearingResponse.Id);
+            var file = FileManager.CreateNewAudioFile("TestAudioFile.mp4", _c.Test.HearingResponse.Id);
 
-            _c.Wowza = new WowzaManager()
+            _c.AzureStorage = new AzureStorageManager()
                 .SetStorageAccountName(_c.AdminWebConfig.Wowza.StorageAccountName)
                 .SetStorageAccountKey(_c.AdminWebConfig.Wowza.StorageAccountKey)
                 .SetStorageContainerName(_c.AdminWebConfig.Wowza.StorageContainerName)
                 .CreateBlobClient(_c.Test.HearingResponse.Id);
 
-            await _c.Wowza.UploadAudioFileToStorage(file);
-            AudioRecordingsManager.RemoveLocalAudioFile(file);
+            await _c.AzureStorage.UploadAudioFileToStorage(file);
+            FileManager.RemoveLocalAudioFile(file);
         }
 
         private bool CheckIfParticipantsAlreadyExistInTheDb()

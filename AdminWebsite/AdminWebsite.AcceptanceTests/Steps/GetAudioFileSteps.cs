@@ -10,7 +10,6 @@ using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.AcceptanceTests.Pages;
 using AdminWebsite.VideoAPI.Client;
 using FluentAssertions;
-using OpenQA.Selenium;
 using TechTalk.SpecFlow;
 
 namespace AdminWebsite.AcceptanceTests.Steps
@@ -30,8 +29,8 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [Given(@"I have an audio recording for the closed conference")]
         public async Task GivenIHaveAnAudioRecording()
         {
-            var result = await _c.Wowza.VerifyAudioFileExistsInStorage();
-            result.Should().BeTrue("Audio file successfully uploaded to Wowza");
+            var result = await _c.AzureStorage.VerifyAudioFileExistsInStorage();
+            result.Should().BeTrue("Audio file successfully uploaded to Azure Storage");
             var response = _c.Apis.VideoApi.GetConferenceByConferenceId(_c.Test.ConferenceResponse.Id);
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             var hearing = RequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(response.Content);
