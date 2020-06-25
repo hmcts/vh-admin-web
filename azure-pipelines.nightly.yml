@@ -65,6 +65,12 @@ parameters:
       DeviceType: Desktop
       DeviceName:
       TestCaseFilter: TestCategory=UnsupportedBrowser
+    - OS: iOS
+      Browser: Safari
+      BrowserVersion:
+      DeviceType: Tablet
+      DeviceName:
+      TestCaseFilter: TestCategory=UnsupportedDevice
     - OS: Android
       Browser: Chrome
       BrowserVersion:
