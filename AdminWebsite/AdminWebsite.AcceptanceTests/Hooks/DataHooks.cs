@@ -45,9 +45,9 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             var file = FileManager.CreateNewAudioFile("TestAudioFile.mp4", _c.Test.HearingResponse.Id);
 
             _c.AzureStorage = new AzureStorageManager()
-                .SetStorageAccountName(_c.AdminWebConfig.Wowza.StorageAccountName)
-                .SetStorageAccountKey(_c.AdminWebConfig.Wowza.StorageAccountKey)
-                .SetStorageContainerName(_c.AdminWebConfig.Wowza.StorageContainerName)
+                .SetStorageAccountName(_c.WebConfig.Wowza.StorageAccountName)
+                .SetStorageAccountKey(_c.WebConfig.Wowza.StorageAccountKey)
+                .SetStorageContainerName(_c.WebConfig.Wowza.StorageContainerName)
                 .CreateBlobClient(_c.Test.HearingResponse.Id);
 
             await _c.AzureStorage.UploadAudioFileToStorage(file);

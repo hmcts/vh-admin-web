@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using AcceptanceTests.Common.Configuration.Users;
-using AcceptanceTests.Common.Driver.Browser;
+using AcceptanceTests.Common.Driver.Drivers;
 using AcceptanceTests.Common.Driver.Helpers;
 using AcceptanceTests.Common.Model.Participant;
 using AcceptanceTests.Common.Test.Steps;
@@ -116,7 +116,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             user.Lastname = $"{lastname}";
             user.DisplayName = $"{prefix}{displayName}";
             user.Role = role;
-            user.Username = $"{user.Firstname.ToLower()}.{user.Lastname.ToLower()}{_c.AdminWebConfig.TestConfig.TestUsernameStem.ToLower()}";
+            user.Username = $"{user.Firstname.ToLower()}.{user.Lastname.ToLower()}{_c.WebConfig.TestConfig.TestUsernameStem.ToLower()}";
             return user;
         }
 

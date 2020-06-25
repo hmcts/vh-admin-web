@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using AcceptanceTests.Common.Configuration.Users;
-using AcceptanceTests.Common.Driver.Browser;
+using AcceptanceTests.Common.Driver.Drivers;
 using AcceptanceTests.Common.Driver.Helpers;
 using AcceptanceTests.Common.Model.Participant;
 using AcceptanceTests.Common.Test.Steps;

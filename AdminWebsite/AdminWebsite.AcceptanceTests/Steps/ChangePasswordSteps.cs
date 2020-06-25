@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using AcceptanceTests.Common.Configuration.Users;
-using AcceptanceTests.Common.Driver.Browser;
+using AcceptanceTests.Common.Driver.Drivers;
 using AcceptanceTests.Common.Driver.Helpers;
 using AcceptanceTests.Common.PageObject.Pages;
 using AcceptanceTests.Common.Test.Steps;
@@ -42,7 +42,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void WhenTheParticipantAccessesTheApplicationUsingTheResetPassword()
         {
             _browserSteps.GivenANewBrowserIsOpenFor(_participant.DisplayName);
-            _loginSteps = new LoginSharedSteps(_browsers[_c.CurrentUser.Key], _c.CurrentUser.Username, _c.AdminWebConfig.AzureAdConfiguration.TemporaryPassword);
+            _loginSteps = new LoginSharedSteps(_browsers[_c.CurrentUser.Key], _c.CurrentUser.Username, _c.WebConfig.AzureAdConfiguration.TemporaryPassword);
             _loginSteps.ProgressToNextPage();
         }
 
@@ -55,7 +55,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [When(@"the user changes their password")]
         public void WhenTheUserChangesTheirPassword()
         {
-            _loginSteps.ChangeThePassword(_c.AdminWebConfig.AzureAdConfiguration.TemporaryPassword, GenerateRandomPassword());
+            _loginSteps.ChangeThePassword(_c.WebConfig.AzureAdConfiguration.TemporaryPassword, GenerateRandomPassword());
         }
 
         private static string GenerateRandomPassword()

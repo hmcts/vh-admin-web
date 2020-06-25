@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
-using AcceptanceTests.Common.Driver.Browser;
+using AcceptanceTests.Common.Driver.Drivers;
 using AcceptanceTests.Common.Driver.Helpers;
 using AcceptanceTests.Common.Test.Steps;
 using AdminWebsite.AcceptanceTests.Data;
@@ -38,7 +38,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         public void AddHearingDate()
         {
-            var date = _c.Test.HearingSchedule.ScheduledDate.Date.ToString(DateFormats.LocalDateFormat(_c.AdminWebConfig.SauceLabsConfiguration.RunningOnSauceLabs()));
+            var date = _c.Test.HearingSchedule.ScheduledDate.Date.ToString(DateFormats.LocalDateFormat(_c.WebConfig.SauceLabsConfiguration.RunningOnSauceLabs()));
             _browsers[_c.CurrentUser.Key].Clear(HearingSchedulePage.HearingDateTextfield);
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(HearingSchedulePage.HearingDateTextfield).SendKeys(date);
         }

@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using AcceptanceTests.Common.Configuration.Users;
-using AcceptanceTests.Common.Driver.Browser;
-using AcceptanceTests.Common.Driver.Support;
+using AcceptanceTests.Common.Driver.Drivers;
+using AcceptanceTests.Common.Driver.Enums;
 using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.AcceptanceTests.Pages;
 using TechTalk.SpecFlow;
@@ -31,8 +31,9 @@ namespace AdminWebsite.AcceptanceTests.Steps
             SwitchCurrentUser(user);
 
             var browser = new UserBrowser()
-                .SetBaseUrl(_c.AdminWebConfig.VhServices.AdminWebUrl)
-                .SetTargetBrowser(_c.AdminWebConfig.TestConfig.TargetBrowser)
+                .SetBaseUrl(_c.WebConfig.VhServices.AdminWebUrl)
+                .SetTargetBrowser(_c.WebConfig.TestConfig.TargetBrowser)
+                .SetTargetDevice(_c.WebConfig.TestConfig.TargetDevice)
                 .SetDriver(_c.Driver);
 
             _browsers.Add(_c.CurrentUser.Key, browser);
@@ -40,7 +41,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             browser.LaunchBrowser();
             browser.NavigateToPage();
 
-            if (_c.AdminWebConfig.TestConfig.TargetBrowser != TargetBrowser.Ie11)
+            if (_c.WebConfig.TestConfig.TargetBrowser != TargetBrowser.Ie11)
                 browser.PageUrl(_c.Test.CommonData.CommonUris.LoginUri);
         }
 
