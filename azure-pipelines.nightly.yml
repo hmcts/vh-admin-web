@@ -1,0 +1,278 @@
+parameters:
+- name: deploymentBranch
+  displayName: Branch to Deploy
+  type: string
+  default: refs/heads/master
+
+- name: environment
+  displayName: Environment
+  type: string
+  default: AAT
+  values:
+  - Preview
+  - Dev
+  - AAT
+  - Sandbox
+  - Test1
+  - Test2
+  - Demo
+  - Preprod
+  - Prod
+
+- name: deviceConfiguration
+  displayName: Device Configurations
+  type: object
+  default:
+    - OS: Windows
+      Browser: Chrome
+      BrowserVersion: Latest
+      DeviceType: Desktop
+      DeviceName:
+      TestCaseFilter: TestCategory!=UnsupportedBrowser
+    - OS: Windows
+      Browser: Firefox
+      BrowserVersion: Latest
+      DeviceType: Desktop
+      DeviceName:
+      TestCaseFilter: TestCategory=UnsupportedDevice
+    - OS: Windows
+      Browser: EdgeChromium
+      BrowserVersion: Latest
+      DeviceType: Desktop
+      DeviceName:
+      TestCaseFilter: TestCategory=UnsupportedDevice
+    - OS: MacOS
+      Browser: Safari
+      BrowserVersion: Latest
+      DeviceType: Desktop
+      DeviceName:
+      TestCaseFilter: TestCategory=UnsupportedDevice
+    - OS: MacOS
+      Browser: Chrome
+      BrowserVersion: Latest
+      DeviceType: Desktop
+      DeviceName:
+      TestCaseFilter: TestCategory=UnsupportedDevice
+    - OS: MacOS
+      Browser: Firefox
+      BrowserVersion: Latest
+      DeviceType: Desktop
+      DeviceName:
+      TestCaseFilter: TestCategory=UnsupportedDevice
+    - OS: Windows
+      Browser: Ie11
+      BrowserVersion: Latest
+      DeviceType: Desktop
+      DeviceName:
+      TestCaseFilter: TestCategory=UnsupportedBrowser
+    - OS: Android
+      Browser: Chrome
+      BrowserVersion:
+      DeviceType: Tablet
+      DeviceName:
+      TestCaseFilter: TestCategory=UnsupportedDevice
+    - OS: iOS
+      Browser: Safari
+      BrowserVersion:
+      DeviceType: Mobile
+      DeviceName:
+      TestCaseFilter: TestCategory=UnsupportedDevice
+    - OS: Android
+      Browser: Chrome
+      BrowserVersion:
+      DeviceType: Mobile
+      DeviceName:
+      TestCaseFilter: TestCategory=UnsupportedDevice
+
+- name: prodEnvs
+  displayName: Environments Using Prod Subscription
+  type: object
+  default:
+    - Prod
+    - Preprod
+
+# Set variables once
+variables:
+  - group: vh-domains-and-urls
+  - group: vh-apps-settings-generic
+  - group: vh-admin-web
+  - group: vh test users
+  - group: Saucelabs
+  - ${{ if containsValue(parameters.prodEnvs, parameters.environment) }}:
+    - group: vh-prod
+  - ${{ if not(containsValue(parameters.prodEnvs, parameters.environment)) }}:
+    - group: vh-preview
+
+trigger: none
+pr: none
+schedules:
+- cron: "0 22 * * *"
+  displayName: Daily midnight build
+  always: true
+  branches:
+    include:
+    - master
+
+resources:
+  repositories:
+    - repository: templates
+      type: github
+      name: hmcts/azure-devops-templates
+      ref: refs/heads/master
+      endpoint: hmcts (1)
+  pipelines:
+  - pipeline: CI
+    source: hmcts.vh-amdin-web
+
+stages:
+  - template: templates/vh-release.yml@templates
+    parameters:
+      environments:
+        - ${{ parameters.environment }}
+      deploymentBranch: ${{ parameters.deploymentBranch }}
+      releaseParameters:
+        subscription: $(env_Subscription)
+        secrets_KeyVault: $(env_Secret_KeyVault)
+        secrets_Subscription: $(env_Secret_Subscription)
+        devOpsResource: vh_admin_web
+        deploymentSlot: production
+        appName: vh-admin-web-$(environment)
+        resourceGroup: vh-admin-web-$(environment)
+        testCaseFilter: TestCategory=smoketest
+        dependentApps:
+        - vh-user-api-$(environment)
+        - vh-bookings-api-$(environment)
+        - vh-video-api-$(environment)
+        variables:
+          - group: vh-wowza-dev
+            env:
+             - Preview
+             - Dev
+             - AAT
+             - Sandbox
+             - Test1
+             - Test2
+          - group: vh-wowza-demo
+            env:
+             - Demo
+          - group: vh-wowza-preprod
+            env:
+             - Preprod
+          - group: vh-wowza-prod
+            env:
+             - Prod
+        appSettings:
+          - name: ApplicationInsights:InstrumentationKey
+            value: vh-core-infra-AppInsightsKey
+            secret: true
+          - name: IsLive
+            value: $(IsLive)
+
+          # AzureAd
+          - name: AzureAd:ClientId
+            value: vh-admin-web-appid
+            secret: true
+          - name: AzureAd:ClientSecret
+            value: vh-admin-web-key
+            secret: true
+          - name: AzureAd:PostLogoutRedirectUri
+            slot:
+              deployment:
+                value: $(admin_web_url_staging)logout
+              active:
+                value: $(admin_web_url)logout
+          - name: AzureAd:RedirectUri
+            slot:
+              deployment:
+                value: $(admin_web_url_staging)home
+              active:
+                value: $(admin_web_url)home
+          - name: AzureAd:TenantId
+            value: tenantid
+            secret: true
+          - name: AzureAd:Authority
+            value: $(Authority)
+
+          # VhServices
+          - name: VhServices:BookingsApiResourceId
+            value: vh-bookings-api-identifieruris
+            secret: true
+          - name: VhServices:BookingsApiUrl
+            value: $(bookings_api_url)
+          - name: VhServices:UserApiResourceId
+            value: vh-user-api-identifieruris
+            secret: true
+          - name: VhServices:UserApiUrl
+            value: $(user_api_url)
+          - name: VhServices:VideoApiResourceId
+            value: vh-video-api-identifieruris
+            secret: true
+          - name: VhServices:VideoApiUrl
+            value: $(video_api_url)
+          - name: VhServices:ValidateEmail
+            value: $(reformemail)
+        acceptanceTestSettings:
+          # VhServices
+          - name: VhServices:AdminWebUrl
+            value: $(admin_web_url_staging)
+          - name: VhServices:AdminWebResourceId
+            value: vh-admin-web-identifieruris
+            secret: true
+          - name: VhServices:VideoApiUrl
+            value: $(video_api_url)
+          - name: VhServices:VideoApiResourceId
+            value: vh-video-api-identifieruris
+            secret: true
+          - name: VhServices:UserApiUrl
+            value: $(user_api_url)
+          - name: VhServices:UserApiResourceId
+            value: vh-user-api-identifieruris
+            secret: true
+          - name: VhServices:BookingsApiUrl
+            value: $(bookings_api_url)
+          - name: VhServices:BookingsApiResourceId
+            value: vh-bookings-api-identifieruris
+            secret: true
+          - name: VhServices:ValidateEmail
+            value: $(reformemail)
+
+          # AzureAd
+          - name: AzureAd:Authority
+            value: $(Authority)
+          - name: AzureAd:TenantId
+            value: tenantid
+            secret: true
+          - name: AzureAd:ClientId
+            value: vh-video-web-appid
+            secret: true
+          - name: AzureAd:ClientSecret
+            value: vh-video-web-key
+            secret: true
+          - name: AzureAd:PostLogoutRedirectUri
+            value: $(admin_web_url_staging)logout
+          - name: AzureAd:TemporaryPassword
+            value: $(TemporaryPassword)
+
+          # Testing
+          - name: TestUserSecrets:TestUsernameStem
+            value: $(TestUserSecrets:TestUsernameStem)
+          - name: TestUserSecrets:TestUserPassword
+            value: $(TestUserSecrets:TestUserPassword)
+
+          # SauceLabs
+          - name: Saucelabs:Username
+            value: $(Saucelabs:Username)
+          - name: Saucelabs:AccessKey
+            value: $(Saucelabs:AccessKey)
+          - name: Saucelabs:RealDeviceApiKey
+            value: $(RealDeviceApiKey)
+
+          # WowzaConfiguration
+          - name: WowzaConfiguration:StorageAccountName
+            value: $(wowza_storageAccountName)
+          - name: WowzaConfiguration:StorageAccountKey
+            value: $(wowza_storageAccountKey)
+          - name: WowzaConfiguration:StorageContainerName
+            value: $(wowza_storageContainerName)
+        runMultiDeviceTests: true
+        deviceConfiguration: ${{ parameters.deviceConfiguration }}
