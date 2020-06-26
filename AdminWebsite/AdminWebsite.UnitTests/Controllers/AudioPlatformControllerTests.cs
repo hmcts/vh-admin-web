@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using AdminWebsite.Controllers;
+using AdminWebsite.Models;
 using AdminWebsite.VideoAPI.Client;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
@@ -8,7 +9,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
-using HearingAudioRecordingResponse = AdminWebsite.Models.HearingAudioRecordingResponse;
 
 namespace AdminWebsite.UnitTests.Controllers
 {
@@ -28,7 +28,7 @@ namespace AdminWebsite.UnitTests.Controllers
         [Test]
         public async Task Should_return_ok()
         {
-            var audioResponse = new AdminWebsite.VideoAPI.Client.AudioRecordingResponse
+            var audioResponse = new AudioRecordingResponse
             {
                 Audio_file_link = "someLinkToFile"
             };
