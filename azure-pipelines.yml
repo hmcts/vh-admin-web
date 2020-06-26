@@ -78,6 +78,8 @@ parameters:
   - name: AzureAd:ClientSecret
     value: vh-video-web-key
     secret: true
+  - name: AzureAd:RedirectUri
+    value: $(admin_web_url_staging)home
   - name: AzureAd:PostLogoutRedirectUri
     value: $(admin_web_url_staging)logout
   - name: AzureAd:TemporaryPassword
