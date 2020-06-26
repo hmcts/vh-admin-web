@@ -146,17 +146,9 @@ stages:
             value: vh-admin-web-key
             secret: true
           - name: AzureAd:PostLogoutRedirectUri
-            slot:
-              deployment:
-                value: $(admin_web_url_staging)logout
-              active:
-                value: $(admin_web_url)logout
+            value: $(admin_web_url)logout
           - name: AzureAd:RedirectUri
-            slot:
-              deployment:
-                value: $(admin_web_url_staging)home
-              active:
-                value: $(admin_web_url)home
+            value: $(admin_web_url)home
           - name: AzureAd:TenantId
             value: tenantid
             secret: true

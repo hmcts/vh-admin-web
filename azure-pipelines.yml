@@ -167,6 +167,7 @@ variables:
   - group: vh-preview
   - group: vh test users
   - group: Saucelabs
+  - group: vh-wowza-dev
 
 trigger:
   branches:
@@ -251,7 +252,6 @@ extends:
       secrets_KeyVault: $(pr_Secret_KeyVault)
       secrets_Subscription: $(pr_Secret_Subscription)
       devOpsResource: vh_admin_web
-      deploymentSlot: production
       appName: vh-admin-web-$(environment)
       resourceGroup: vh-admin-web-$(environment)
       appSettings: ${{ parameters.appSettings }}
