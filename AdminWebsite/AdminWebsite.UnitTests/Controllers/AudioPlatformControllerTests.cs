@@ -28,7 +28,7 @@ namespace AdminWebsite.UnitTests.Controllers
         [Test]
         public async Task Should_return_ok()
         {
-            var audioResponse = new AdminWebsite.VideoAPI.Client.AudioRecordingResponse
+            var audioResponse = new AdminWebsite.VideoAPI.Client.HearingAudioRecordingResponse
             {
                 Audio_file_link = "someLinkToFile"
             };
