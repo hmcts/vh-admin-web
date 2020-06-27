@@ -272,6 +272,4 @@ extends:
         - name: WebsiteUrl
           value: $(admin_web_url_staging)
         - ${{ each setting in parameters.testSettings }}:
-          - name: ${{ setting.name }}
-            value: ${{ setting.value }}
-            secret: ${{ setting.secret }}
+          - ${{ insert }}: ${{ setting }}
