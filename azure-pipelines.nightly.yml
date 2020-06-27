@@ -212,7 +212,7 @@ stages:
         acceptanceTestSettings:
           # VhServices
           - name: VhServices:AdminWebUrl
-            value: $(admin_web_url_staging)
+            value: $(admin_web_url)
           - name: VhServices:AdminWebResourceId
             value: vh-admin-web-identifieruris
             secret: true
@@ -247,9 +247,9 @@ stages:
             value: vh-video-web-key
             secret: true
           - name: AzureAd:RedirectUri
-            value: $(admin_web_url_staging)home
+            value: $(admin_web_url)home
           - name: AzureAd:PostLogoutRedirectUri
-            value: $(admin_web_url_staging)logout
+            value: $(admin_web_url)logout
           - name: AzureAd:TemporaryPassword
             value: $(TemporaryPassword)
 
