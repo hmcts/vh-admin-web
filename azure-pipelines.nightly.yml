@@ -34,31 +34,31 @@ parameters:
       BrowserVersion: Latest
       DeviceType: Desktop
       DeviceName:
-      TestCaseFilter: TestCategory=UnsupportedDevice
+      TestCaseFilter: TestCategory=UnsupportedBrowser
     - OS: Windows
       Browser: EdgeChromium
       BrowserVersion: Latest
       DeviceType: Desktop
       DeviceName:
-      TestCaseFilter: TestCategory=UnsupportedDevice
+      TestCaseFilter: TestCategory=UnsupportedBrowser
     - OS: MacOS
       Browser: Safari
       BrowserVersion: Latest
       DeviceType: Desktop
       DeviceName:
-      TestCaseFilter: TestCategory=UnsupportedDevice
+      TestCaseFilter: TestCategory=UnsupportedBrowser
     - OS: MacOS
       Browser: Chrome
       BrowserVersion: Latest
       DeviceType: Desktop
       DeviceName:
-      TestCaseFilter: TestCategory=UnsupportedDevice
+      TestCaseFilter: TestCategory=UnsupportedBrowser
     - OS: MacOS
       Browser: Firefox
       BrowserVersion: Latest
       DeviceType: Desktop
       DeviceName:
-      TestCaseFilter: TestCategory=UnsupportedDevice
+      TestCaseFilter: TestCategory=UnsupportedBrowser
     - OS: Windows
       Browser: Ie11
       BrowserVersion: Latest
@@ -168,6 +168,9 @@ stages:
              - Prod
         appSettings:
           - name: ApplicationInsights:InstrumentationKey
+            value: vh-core-infra-AppInsightsKey
+            secret: true
+          - name: AppInsightsKey
             value: vh-core-infra-AppInsightsKey
             secret: true
           - name: IsLive

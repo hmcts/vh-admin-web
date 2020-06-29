@@ -34,25 +34,25 @@ parameters:
       BrowserVersion: Beta
       DeviceType: Desktop
       DeviceName:
-      TestCaseFilter: TestCategory=Smoketest-Extended
+      TestCaseFilter: TestCategory=UnsupportedBrowser
     - OS: Windows
       Browser: EdgeChromium
       BrowserVersion: Beta
       DeviceType: Desktop
       DeviceName:
-      TestCaseFilter: TestCategory=Smoketest-Extended
+      TestCaseFilter: TestCategory=UnsupportedBrowser
     - OS: MacOS
       Browser: Chrome
       BrowserVersion: Beta
       DeviceType: Desktop
       DeviceName:
-      TestCaseFilter: TestCategory=Smoketest-Extended
+      TestCaseFilter: TestCategory=UnsupportedBrowser
     - OS: MacOS
       Browser: Firefox
       BrowserVersion: Beta
       DeviceType: Desktop
       DeviceName:
-      TestCaseFilter: TestCategory=Smoketest-Extended
+      TestCaseFilter: TestCategory=UnsupportedBrowser
 
 - name: prodEnvs
   displayName: Environments Using Prod Subscription
@@ -132,6 +132,9 @@ stages:
              - Prod
         appSettings:
           - name: ApplicationInsights:InstrumentationKey
+            value: vh-core-infra-AppInsightsKey
+            secret: true
+          - name: AppInsightsKey
             value: vh-core-infra-AppInsightsKey
             secret: true
           - name: IsLive
