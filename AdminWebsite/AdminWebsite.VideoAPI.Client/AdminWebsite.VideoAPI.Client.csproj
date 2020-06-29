@@ -2,6 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
+    <ProjectGuid>B02378AF-E361-4776-BED8-F2E8EC4B2B77</ProjectGuid>
+    <DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>
   </PropertyGroup>
 
   <ItemGroup>
