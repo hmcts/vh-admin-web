@@ -141,7 +141,6 @@ stages:
         secrets_KeyVault: $(env_Secret_KeyVault)
         secrets_Subscription: $(env_Secret_Subscription)
         devOpsResource: vh_admin_web
-        deploymentSlot: production
         appName: vh-admin-web-$(environment)
         resourceGroup: vh-admin-web-$(environment)
         testCaseFilter: TestCategory=smoketest
