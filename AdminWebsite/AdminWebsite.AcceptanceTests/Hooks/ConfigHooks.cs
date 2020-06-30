@@ -63,7 +63,11 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         private void RegisterTestUserSecrets(TestContext context)
         {
             context.WebConfig.TestConfig = Options.Create(_configRoot.GetSection("TestUserSecrets").Get<AdminWebTestConfig>()).Value;
-            ConfigurationManager.VerifyConfigValuesSet(context.WebConfig.TestConfig);
+            context.WebConfig.TestConfig.TargetBrowser.Should().NotBeNull();
+            context.WebConfig.TestConfig.TargetDevice.Should().NotBeNull();
+            context.WebConfig.TestConfig.TargetOS.Should().NotBeNull();
+            context.WebConfig.TestConfig.TestUsernameStem.Should().NotBeNull();
+            context.WebConfig.TestConfig.TestUserPassword.Should().NotBeNull();
         }
 
         private void RegisterTestUsers(TestContext context)
