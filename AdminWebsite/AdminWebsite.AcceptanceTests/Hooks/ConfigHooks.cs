@@ -24,7 +24,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         public ConfigHooks(TestContext context)
         {
             _configRoot = ConfigurationManager.BuildConfig("f99a3fe8-cf72-486a-b90f-b65c27da84ee", GetTargetEnvironment(), RunOnSauceLabsFromLocal());
-            context.AdminWebConfig = new AdminWebConfig();
+            context.WebConfig = new AdminWebConfig();
             context.UserAccounts = new List<UserAccount>();
             context.Tokens = new AdminWebTokens();
         }
@@ -56,14 +56,18 @@ namespace AdminWebsite.AcceptanceTests.Hooks
 
         private void RegisterAzureSecrets(TestContext context)
         {
-            context.AdminWebConfig.AzureAdConfiguration = Options.Create(_configRoot.GetSection("AzureAd").Get<AdminWebSecurityConfiguration>()).Value;
-            ConfigurationManager.VerifyConfigValuesSet(context.AdminWebConfig.AzureAdConfiguration);
+            context.WebConfig.AzureAdConfiguration = Options.Create(_configRoot.GetSection("AzureAd").Get<AdminWebSecurityConfiguration>()).Value;
+            ConfigurationManager.VerifyConfigValuesSet(context.WebConfig.AzureAdConfiguration);
         }
 
         private void RegisterTestUserSecrets(TestContext context)
         {
-            context.AdminWebConfig.TestConfig = Options.Create(_configRoot.GetSection("TestUserSecrets").Get<AdminWebTestConfig>()).Value;
-            ConfigurationManager.VerifyConfigValuesSet(context.AdminWebConfig.TestConfig);
+            context.WebConfig.TestConfig = Options.Create(_configRoot.GetSection("TestUserSecrets").Get<AdminWebTestConfig>()).Value;
+            context.WebConfig.TestConfig.TargetBrowser.Should().NotBeNull();
+            context.WebConfig.TestConfig.TargetDevice.Should().NotBeNull();
+            context.WebConfig.TestConfig.TargetOS.Should().NotBeNull();
+            context.WebConfig.TestConfig.TestUsernameStem.Should().NotBeNull();
+            context.WebConfig.TestConfig.TestUserPassword.Should().NotBeNull();
         }
 
         private void RegisterTestUsers(TestContext context)
@@ -73,7 +77,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             foreach (var user in context.UserAccounts)
             {
                 user.Key = user.Lastname;
-                user.Username = $"{user.DisplayName.Replace(" ", "").Replace("ClerkJudge", "Clerk")}{context.AdminWebConfig.TestConfig.TestUsernameStem}";
+                user.Username = $"{user.DisplayName.Replace(" ", "").Replace("ClerkJudge", "Clerk")}{context.WebConfig.TestConfig.TestUsernameStem}";
             }
         }
 
@@ -95,40 +99,43 @@ namespace AdminWebsite.AcceptanceTests.Hooks
 
         private void RegisterHearingServices(TestContext context)
         {
-            context.AdminWebConfig.VhServices = Options.Create(_configRoot.GetSection("VhServices").Get<AdminWebVhServiceConfig>()).Value;
-            ConfigurationManager.VerifyConfigValuesSet(context.AdminWebConfig.VhServices);
+            context.WebConfig.VhServices = Options.Create(_configRoot.GetSection("VhServices").Get<AdminWebVhServiceConfig>()).Value;
+            ConfigurationManager.VerifyConfigValuesSet(context.WebConfig.VhServices);
         }
 
         private void RegisterWowzaSettings(TestContext context)
         {
-            context.AdminWebConfig.Wowza = Options.Create(_configRoot.GetSection("WowzaConfiguration").Get<WowzaConfiguration>()).Value;
-            ConfigurationManager.VerifyConfigValuesSet(context.AdminWebConfig.Wowza);
+            context.WebConfig.Wowza = Options.Create(_configRoot.GetSection("WowzaConfiguration").Get<WowzaConfiguration>()).Value;
+            ConfigurationManager.VerifyConfigValuesSet(context.WebConfig.Wowza);
         }
 
         private void RegisterSauceLabsSettings(TestContext context)
         {
-            context.AdminWebConfig.SauceLabsConfiguration = Options.Create(_configRoot.GetSection("Saucelabs").Get<SauceLabsSettingsConfig>()).Value;
-            if (context.AdminWebConfig.SauceLabsConfiguration.RunningOnSauceLabs())
-                context.AdminWebConfig.SauceLabsConfiguration.SetRemoteServerUrlForDesktop(context.Test.CommonData.CommonConfig.SauceLabsServerUrl);
+            context.WebConfig.SauceLabsConfiguration = Options.Create(_configRoot.GetSection("Saucelabs").Get<SauceLabsSettingsConfig>()).Value;
+            if (!context.WebConfig.SauceLabsConfiguration.RunningOnSauceLabs()) return;
+            context.WebConfig.SauceLabsConfiguration.SetRemoteServerUrlForDesktop(context.Test.CommonData.CommonConfig.SauceLabsServerUrl);
+            context.WebConfig.SauceLabsConfiguration.AccessKey.Should().NotBeNullOrWhiteSpace();
+            context.WebConfig.SauceLabsConfiguration.Username.Should().NotBeNullOrWhiteSpace();
+            context.WebConfig.SauceLabsConfiguration.RealDeviceApiKey.Should().NotBeNullOrWhiteSpace();
         }
 
         private static void RunningAdminWebLocally(TestContext context)
         {
-            context.AdminWebConfig.VhServices.RunningAdminWebLocally = context.AdminWebConfig.VhServices.AdminWebUrl.Contains("localhost");
+            context.WebConfig.VhServices.RunningAdminWebLocally = context.WebConfig.VhServices.AdminWebUrl.Contains("localhost");
         }
 
         private static async Task GenerateBearerTokens(TestContext context)
         {
             context.Tokens.BookingsApiBearerToken = await ConfigurationManager.GetBearerToken(
-                context.AdminWebConfig.AzureAdConfiguration, context.AdminWebConfig.VhServices.BookingsApiResourceId);
+                context.WebConfig.AzureAdConfiguration, context.WebConfig.VhServices.BookingsApiResourceId);
             context.Tokens.BookingsApiBearerToken.Should().NotBeNullOrEmpty();
 
             context.Tokens.UserApiBearerToken = await ConfigurationManager.GetBearerToken(
-                context.AdminWebConfig.AzureAdConfiguration, context.AdminWebConfig.VhServices.UserApiResourceId);
+                context.WebConfig.AzureAdConfiguration, context.WebConfig.VhServices.UserApiResourceId);
             context.Tokens.UserApiBearerToken.Should().NotBeNullOrEmpty();
 
             context.Tokens.VideoApiBearerToken = await ConfigurationManager.GetBearerToken(
-                context.AdminWebConfig.AzureAdConfiguration, context.AdminWebConfig.VhServices.VideoApiResourceId);
+                context.WebConfig.AzureAdConfiguration, context.WebConfig.VhServices.VideoApiResourceId);
             context.Tokens.VideoApiBearerToken.Should().NotBeNullOrEmpty();
         }
     }

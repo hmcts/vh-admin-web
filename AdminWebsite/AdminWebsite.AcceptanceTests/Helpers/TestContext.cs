@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using AcceptanceTests.Common.AudioRecordings;
 using AcceptanceTests.Common.Configuration.Users;
-using AcceptanceTests.Common.Driver;
+using AcceptanceTests.Common.Driver.Drivers;
 using AdminWebsite.AcceptanceTests.Configuration;
 using AdminWebsite.AcceptanceTests.Data;
 using AdminWebsite.AcceptanceTests.Pages;
@@ -10,7 +10,7 @@ namespace AdminWebsite.AcceptanceTests.Helpers
 {
     public class TestContext
     {
-        public AdminWebConfig AdminWebConfig { get; set; }
+        public AdminWebConfig WebConfig { get; set; }
         public Apis Apis { get; set; }
         public AdminWebTokens Tokens { get; set; }
         public DriverSetup Driver { get; set; }

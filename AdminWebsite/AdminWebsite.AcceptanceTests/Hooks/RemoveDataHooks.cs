@@ -40,7 +40,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             foreach (var participant in context.Test.HearingParticipants.Where(participant => participant.DisplayName.StartsWith(context.Test.TestData.AddParticipant.Participant.NewUserPrefix)))
             {
                 if (UserHasBeenCreatedInAad(context))
-                    PollToDeleteTheNewUser(context.AdminWebConfig.VhServices.UserApiUrl, context.Tokens.UserApiBearerToken, participant.Username)
+                    PollToDeleteTheNewUser(context.WebConfig.VhServices.UserApiUrl, context.Tokens.UserApiBearerToken, participant.Username)
                         .Should().BeTrue("New user was deleted from AAD");
             }
         }

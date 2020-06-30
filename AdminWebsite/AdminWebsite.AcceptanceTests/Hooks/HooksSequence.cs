@@ -13,7 +13,6 @@
         RemoveNewUsersHooks = 9,
         RemoveAudioFiles = 10,
         LogResultHooks = 11,
-        TearDownBrowserHooks = 12,
-        StopEdgeChromiumServer = 13
+        TearDownBrowserHooks = 12
     }
 }

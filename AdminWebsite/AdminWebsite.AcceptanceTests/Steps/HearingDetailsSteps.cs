@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using AcceptanceTests.Common.Data.Helpers;
-using AcceptanceTests.Common.Driver.Browser;
+using AcceptanceTests.Common.Driver.Drivers;
 using AcceptanceTests.Common.Driver.Helpers;
 using AcceptanceTests.Common.Model.Case;
 using AcceptanceTests.Common.Model.Hearing;

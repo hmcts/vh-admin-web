@@ -7,7 +7,7 @@ using AcceptanceTests.Common.Api.Hearings;
 using AcceptanceTests.Common.Api.Helpers;
 using AcceptanceTests.Common.Api.Users;
 using AcceptanceTests.Common.Configuration.Users;
-using AcceptanceTests.Common.Driver.Browser;
+using AcceptanceTests.Common.Driver.Drivers;
 using AcceptanceTests.Common.Driver.Helpers;
 using AcceptanceTests.Common.Test.Steps;
 using AdminWebsite.AcceptanceTests.Data;
@@ -120,7 +120,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void ThenTheParticipantDetailsAreUpdated()
         {
             ClickBook();
-            var bookingsApiManager = new BookingsApiManager(_c.AdminWebConfig.VhServices.BookingsApiUrl, _c.Tokens.BookingsApiBearerToken);
+            var bookingsApiManager = new BookingsApiManager(_c.WebConfig.VhServices.BookingsApiUrl, _c.Tokens.BookingsApiBearerToken);
             bookingsApiManager.PollForParticipantNameUpdated(UserManager.GetClerkUser(_c.UserAccounts).Username, _c.Test.AddParticipant.Participant.NewUserPrefix).Should().BeTrue();
         }
 
@@ -161,7 +161,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         private void VerifyBookingCreated()
         {
-            var bookingsApiManager = new BookingsApiManager(_c.AdminWebConfig.VhServices.BookingsApiUrl, _c.Tokens.BookingsApiBearerToken);
+            var bookingsApiManager = new BookingsApiManager(_c.WebConfig.VhServices.BookingsApiUrl, _c.Tokens.BookingsApiBearerToken);
             var response = bookingsApiManager.PollForHearingByUsername(UserManager.GetClerkUser(_c.UserAccounts).Username, _c.Test.HearingDetails.CaseName);
             var hearings = RequestHelper.DeserialiseSnakeCaseJsonToResponse<List<HearingDetailsResponse>>(response.Content);
             _c.Test.HearingResponse = GetHearingFromHearings(hearings);
@@ -177,7 +177,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         private void VerifyBookingUpdated()
         {
             Thread.Sleep(TimeSpan.FromSeconds(0.5));
-            var bookingsApiManager = new BookingsApiManager(_c.AdminWebConfig.VhServices.BookingsApiUrl, _c.Tokens.BookingsApiBearerToken);
+            var bookingsApiManager = new BookingsApiManager(_c.WebConfig.VhServices.BookingsApiUrl, _c.Tokens.BookingsApiBearerToken);
             var response = bookingsApiManager.PollForHearingByUsername(UserManager.GetClerkUser(_c.UserAccounts).Username, _c.Test.HearingDetails.CaseName);
             var hearings = RequestHelper.DeserialiseSnakeCaseJsonToResponse<List<HearingDetailsResponse>>(response.Content);
             _c.Test.HearingResponse = GetHearingFromHearings(hearings);
@@ -201,7 +201,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         private void VerifyNewUsersCreatedInAad()
         {
-            var userApiManager = new UserApiManager(_c.AdminWebConfig.VhServices.UserApiUrl, _c.Tokens.UserApiBearerToken);
+            var userApiManager = new UserApiManager(_c.WebConfig.VhServices.UserApiUrl, _c.Tokens.UserApiBearerToken);
             foreach (var participant in _c.Test.HearingParticipants.Where(participant => participant.DisplayName.Contains(_c.Test.TestData.AddParticipant.Participant.NewUserPrefix)))
             {
                 userApiManager.CheckIfParticipantExistsInAad(participant.AlternativeEmail, Timeout);
