@@ -63,8 +63,6 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<ActionResult<IList<CaseAndHearingRolesResponse>>> GetParticipantRoles(string caseTypeName)
         {
-            caseTypeName = _encoder.Encode(caseTypeName);
-
             var response = new List<CaseAndHearingRolesResponse>();
 
             var caseRoles = await _bookingsApiClient.GetCaseRolesForCaseTypeAsync(caseTypeName);
