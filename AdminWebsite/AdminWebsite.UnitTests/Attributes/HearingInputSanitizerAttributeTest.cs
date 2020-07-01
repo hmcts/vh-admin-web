@@ -98,7 +98,7 @@ namespace AdminWebsite.UnitTests.Attributes
         }
 
         [TestCase("<script>innerText</script>", "innerText")]
-        public void OnActionExecuting_invalid_request_will_not_sanitizer(string inputText, string expectedText)
+        public void OnActionExecuting_invalid_request_will_not_sanitizer(string inputText)
         {
             var context = CreateBookNewHearingRequestContext(inputText, "nothing");
             _hearingInputSanitizerAttribute.OnActionExecuting(context);

@@ -18,7 +18,7 @@ namespace AdminWebsite.UnitTests.Controllers
     {
         private UserDataController _controller;
         private Mock<IUserApiClient> _apiClient;
-        protected Mock<IUserAccountService> _userAccountService { get; private set; }
+        protected Mock<IUserAccountService> _userAccountService;
 
         private readonly List<JudgeResponse> judgeResponse = new List<JudgeResponse>();
 
