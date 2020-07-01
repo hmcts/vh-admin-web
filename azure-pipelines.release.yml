@@ -155,6 +155,10 @@ stages:
             secret: true
           - name: AzureAd:Authority
             value: $(Authority)
+              
+          # Testing
+          - name: TestUserSecrets:TestUsernameStem
+            value: $(TestUserSecrets:TestUsernameStem)
 
           # VhServices
           - name: VhServices:BookingsApiResourceId
