@@ -25,11 +25,13 @@ namespace AdminWebsite.UnitTests.Controllers
         public void Setup()
         {
             _bookingsApiClient = new Mock<IBookingsApiClient>();
-            var serviceSettings = new ServiceSettings
+
+            var testSettings = new TestUserSecrets()
             {
-                ValidateEmail = "@hearings.reform.hmcts.net"
+                TestUsernameStem = "@madeUpEmail.com"
             };
-            _controller = new AdminWebsite.Controllers.PersonsController(_bookingsApiClient.Object, JavaScriptEncoder.Default, Options.Create(serviceSettings));
+
+            _controller = new AdminWebsite.Controllers.PersonsController(_bookingsApiClient.Object, JavaScriptEncoder.Default, Options.Create(testSettings));
 
             _response = new List<PersonResponse>
             {
@@ -48,7 +50,7 @@ namespace AdminWebsite.UnitTests.Controllers
         }
 
         [Test]
-        public async Task PersonsController_should_return_request_if_match_to_search_term()
+        public async Task PersonsController_Should_return_request_if_match_to_search_term()
         {
             _bookingsApiClient.Setup(x => x.PostPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
                               .ReturnsAsync(_response);
@@ -61,7 +63,7 @@ namespace AdminWebsite.UnitTests.Controllers
         }
 
         [Test]
-        public async Task PersonController_should_pass_on_bad_request_from_bookings_api()
+        public async Task PersonController_Should_pass_on_bad_request_from_bookings_api()
         {
             _bookingsApiClient.Setup(x => x.PostPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
                   .ThrowsAsync(ClientException.ForBookingsAPI(HttpStatusCode.BadRequest));
@@ -71,7 +73,7 @@ namespace AdminWebsite.UnitTests.Controllers
         }
 
         [Test]
-        public void PersonController_should_pass_on_exception_request_from_bookings_api()
+        public void PersonController_Should_pass_on_exception_request_from_bookings_api()
         {
             _bookingsApiClient.Setup(x => x.PostPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
                   .ThrowsAsync(ClientException.ForBookingsAPI(HttpStatusCode.InternalServerError));

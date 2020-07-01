@@ -54,7 +54,7 @@ namespace AdminWebsite.UnitTests.Controllers
         }
 
         [Test]
-        public void should_return_a_list_of_judges()
+        public void Should_return_a_list_of_judges()
         {
             _userAccountService.Setup(x => x.GetJudgeUsers()).Returns(judgeResponse);
 
@@ -73,7 +73,7 @@ namespace AdminWebsite.UnitTests.Controllers
         }
 
         [Test]
-        public void user_controller_should_return_a_bad_request_when_no_username_is_passed()
+        public void user_controller_Should_return_a_bad_request_when_no_username_is_passed()
         {
             _userAccountService.Setup(x => x.UpdateParticipantPassword(It.IsAny<string>())).ThrowsAsync(ClientException.ForUserService(HttpStatusCode.BadRequest));
             var response = _controller.UpdateUser("");
@@ -81,7 +81,7 @@ namespace AdminWebsite.UnitTests.Controllers
         }
 
         [Test]
-        public void user_controller_should_return_a_not_found_when_invalid_username_is_passed()
+        public void user_controller_Should_return_a_not_found_when_invalid_username_is_passed()
         {
             _userAccountService.Setup(x => x.UpdateParticipantPassword(It.IsAny<string>())).ThrowsAsync(ClientException.ForUserService(HttpStatusCode.NotFound));
             var response = _controller.UpdateUser("unknown.user@domain.com");
@@ -89,7 +89,7 @@ namespace AdminWebsite.UnitTests.Controllers
         }
 
         [Test]
-        public void user_controller_should_return_no_content_when_valid_username_is_passed()
+        public void user_controller_Should_return_no_content_when_valid_username_is_passed()
         {
             _controller = new UserDataController(_userAccountService.Object);
             ActionResult result = _controller.UpdateUser("test").Result;

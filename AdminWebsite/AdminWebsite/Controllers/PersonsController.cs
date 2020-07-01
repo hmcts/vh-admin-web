@@ -21,16 +21,16 @@ namespace AdminWebsite.Controllers
     {
         private readonly IBookingsApiClient _bookingsApiClient;
         private readonly JavaScriptEncoder _encoder;
-        private readonly ServiceSettings _serviceSettings;
+        private readonly TestUserSecrets _testSettings;
 
         /// <summary>
         /// Instantiates the controller
         /// </summary>
-        public PersonsController(IBookingsApiClient bookingsApiClient, JavaScriptEncoder encoder, IOptions<ServiceSettings> serviceSettings)
+        public PersonsController(IBookingsApiClient bookingsApiClient, JavaScriptEncoder encoder, IOptions<TestUserSecrets> testSettings)
         {
             _bookingsApiClient = bookingsApiClient;
             _encoder = encoder;
-            _serviceSettings = serviceSettings.Value;
+            _testSettings = testSettings.Value;
         }
 
         /// <summary>
@@ -53,10 +53,7 @@ namespace AdminWebsite.Controllers
                 };
 
                 var personsResponse = await _bookingsApiClient.PostPersonBySearchTermAsync(searchTerm);
-                if(personsResponse != null)
-                {
-                    personsResponse = personsResponse.Where(p => !p.Contact_email.Contains(_serviceSettings.ValidateEmail)).ToList();
-                }
+                personsResponse = personsResponse?.Where(p => !p.Contact_email.Contains(_testSettings.TestUsernameStem)).ToList();
 
                 return Ok(personsResponse);
             }
