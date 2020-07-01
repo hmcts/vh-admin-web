@@ -50,7 +50,7 @@ namespace AdminWebsite.UnitTests.Controllers
         }
 
         [Test]
-        public async Task PersonsController_Should_return_request_if_match_to_search_term()
+        public async Task Should_return_request_if_match_to_search_term()
         {
             _bookingsApiClient.Setup(x => x.PostPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
                               .ReturnsAsync(_response);
@@ -63,7 +63,7 @@ namespace AdminWebsite.UnitTests.Controllers
         }
 
         [Test]
-        public async Task PersonController_Should_pass_on_bad_request_from_bookings_api()
+        public async Task Should_pass_on_bad_request_from_bookings_api()
         {
             _bookingsApiClient.Setup(x => x.PostPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
                   .ThrowsAsync(ClientException.ForBookingsAPI(HttpStatusCode.BadRequest));
@@ -73,7 +73,7 @@ namespace AdminWebsite.UnitTests.Controllers
         }
 
         [Test]
-        public void PersonController_Should_pass_on_exception_request_from_bookings_api()
+        public void Should_pass_on_exception_request_from_bookings_api()
         {
             _bookingsApiClient.Setup(x => x.PostPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
                   .ThrowsAsync(ClientException.ForBookingsAPI(HttpStatusCode.InternalServerError));
