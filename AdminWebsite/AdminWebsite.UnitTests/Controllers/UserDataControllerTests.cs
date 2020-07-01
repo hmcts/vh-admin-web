@@ -29,11 +29,11 @@ namespace AdminWebsite.UnitTests.Controllers
             _controller = new UserDataController(_userAccountService.Object);
 
             _apiClient = new Mock<IUserApiClient>();
-            var groupResponse = new GroupsResponse() { Display_name = "VirtualRoomJudge", Group_id = "431f50b2-fb30-4937-9e91-9b9eeb54097f" };
-            _apiClient.Setup(x => x.GetGroupByName("VirtualRoomJudge")).Returns(groupResponse);
+            var groupResponse = new GroupsResponse() { Display_name = "MadeUpGroup1", Group_id = Guid.NewGuid().ToString() };
+            _apiClient.Setup(x => x.GetGroupByName("MadeUpGroup1")).Returns(groupResponse);
 
-            var groupResponseTest = new GroupsResponse() { Display_name = "TestAccount", Group_id = "63b60a06-874f-490d-8acb-56a88a125078" };
-            _apiClient.Setup(x => x.GetGroupByName("TestAccount")).Returns(groupResponseTest);
+            var groupResponseTest = new GroupsResponse() { Display_name = "MadeUpGroup2", Group_id = Guid.NewGuid().ToString() };
+            _apiClient.Setup(x => x.GetGroupByName("MadeUpGroup2")).Returns(groupResponseTest);
 
             var judgeData = new JudgeResponse()
             {
