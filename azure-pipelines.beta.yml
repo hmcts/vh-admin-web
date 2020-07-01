@@ -124,9 +124,17 @@ stages:
             value: vh-admin-web-key
             secret: true
           - name: AzureAd:PostLogoutRedirectUri
-            value: $(admin_web_url)logout
+            slot:
+              deployment:
+                value: $(admin_web_url_staging)logout
+              active:
+                value: $(admin_web_url)logout
           - name: AzureAd:RedirectUri
-            value: $(admin_web_url)home
+            slot:
+              deployment:
+                value: $(admin_web_url_staging)home
+              active:
+                value: $(admin_web_url)home
           - name: AzureAd:TenantId
             value: tenantid
             secret: true
@@ -154,7 +162,7 @@ stages:
         acceptanceTestSettings:
           # VhServices
           - name: VhServices:AdminWebUrl
-            value: $(admin_web_url)
+            slot: true
           - name: VhServices:AdminWebResourceId
             value: vh-admin-web-identifieruris
             secret: true
@@ -173,8 +181,6 @@ stages:
           - name: VhServices:BookingsApiResourceId
             value: vh-bookings-api-identifieruris
             secret: true
-          - name: VhServices:ValidateEmail
-            value: $(reformemail)
 
           # AzureAd
           - name: AzureAd:Authority
@@ -188,10 +194,10 @@ stages:
           - name: AzureAd:ClientSecret
             value: vh-video-web-key
             secret: true
-          - name: AzureAd:RedirectUri
-            value: $(admin_web_url)home
           - name: AzureAd:PostLogoutRedirectUri
-            value: $(admin_web_url)logout
+            slot: true
+          - name: AzureAd:RedirectUri
+            slot: true
           - name: AzureAd:TemporaryPassword
             value: $(TemporaryPassword)
 
