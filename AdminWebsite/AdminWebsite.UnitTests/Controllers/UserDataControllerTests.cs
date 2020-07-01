@@ -29,15 +29,15 @@ namespace AdminWebsite.UnitTests.Controllers
             _controller = new UserDataController(_userAccountService.Object);
 
             _apiClient = new Mock<IUserApiClient>();
-            GroupsResponse groupResponse = new GroupsResponse() { Display_name = "VirtualRoomJudge", Group_id = "431f50b2-fb30-4937-9e91-9b9eeb54097f" };
+            var groupResponse = new GroupsResponse() { Display_name = "VirtualRoomJudge", Group_id = "431f50b2-fb30-4937-9e91-9b9eeb54097f" };
             _apiClient.Setup(x => x.GetGroupByName("VirtualRoomJudge")).Returns(groupResponse);
 
-            GroupsResponse groupResponseTest = new GroupsResponse() { Display_name = "TestAccount", Group_id = "63b60a06-874f-490d-8acb-56a88a125078" };
+            var groupResponseTest = new GroupsResponse() { Display_name = "TestAccount", Group_id = "63b60a06-874f-490d-8acb-56a88a125078" };
             _apiClient.Setup(x => x.GetGroupByName("TestAccount")).Returns(groupResponseTest);
 
-            JudgeResponse judgeData = new JudgeResponse()
+            var judgeData = new JudgeResponse()
             {
-                Email = "Test.Judge01@hearings.reform.hmcts.net",
+                Email = "Test.Judge01@madeupemail.com",
                 DisplayName = "Test Judge01",
                 FirstName = "Test",
                 LastName = "Judge01"
@@ -45,7 +45,7 @@ namespace AdminWebsite.UnitTests.Controllers
             judgeResponse.Add(judgeData);
             judgeData = new JudgeResponse()
             {
-                Email = "Test.Judge02@hearings.reform.hmcts.net",
+                Email = "Test.Judge02@madeupemail.com",
                 DisplayName = "Test Judge02",
                 FirstName = "Test",
                 LastName = "Judge021"
@@ -59,13 +59,14 @@ namespace AdminWebsite.UnitTests.Controllers
             _userAccountService.Setup(x => x.GetJudgeUsers()).Returns(judgeResponse);
 
             _controller = new UserDataController(_userAccountService.Object);
-            ActionResult result = _controller.GetJudges().Result;
-            OkObjectResult okObjectResult = (OkObjectResult)result;
+            var result = _controller.GetJudges().Result;
+            var okObjectResult = (OkObjectResult)result;
             okObjectResult.StatusCode.Should().Be(200);
 
-            List<JudgeResponse> judges = (List<JudgeResponse>)okObjectResult.Value;
-            JudgeResponse testJudge = judges.Single(j =>
-                j.Email.Equals("Test.Judge01@hearings.reform.hmcts.net", StringComparison.CurrentCultureIgnoreCase));
+            var judges = (List<JudgeResponse>)okObjectResult.Value;
+
+            var testJudge = judges.First(j =>
+                j.Email.Equals("Test.Judge01@madeupemail.com", StringComparison.CurrentCultureIgnoreCase));
 
             testJudge.LastName.Should().Be("Judge01");
             testJudge.FirstName.Should().Be("Test");
@@ -73,7 +74,7 @@ namespace AdminWebsite.UnitTests.Controllers
         }
 
         [Test]
-        public void user_controller_Should_return_a_bad_request_when_no_username_is_passed()
+        public void Should_return_a_bad_request_when_no_username_is_passed()
         {
             _userAccountService.Setup(x => x.UpdateParticipantPassword(It.IsAny<string>())).ThrowsAsync(ClientException.ForUserService(HttpStatusCode.BadRequest));
             var response = _controller.UpdateUser("");
@@ -81,7 +82,7 @@ namespace AdminWebsite.UnitTests.Controllers
         }
 
         [Test]
-        public void user_controller_Should_return_a_not_found_when_invalid_username_is_passed()
+        public void Should_return_a_not_found_when_invalid_username_is_passed()
         {
             _userAccountService.Setup(x => x.UpdateParticipantPassword(It.IsAny<string>())).ThrowsAsync(ClientException.ForUserService(HttpStatusCode.NotFound));
             var response = _controller.UpdateUser("unknown.user@domain.com");
@@ -89,11 +90,11 @@ namespace AdminWebsite.UnitTests.Controllers
         }
 
         [Test]
-        public void user_controller_Should_return_no_content_when_valid_username_is_passed()
+        public void Should_return_no_content_when_valid_username_is_passed()
         {
             _controller = new UserDataController(_userAccountService.Object);
-            ActionResult result = _controller.UpdateUser("test").Result;
-            NoContentResult noContentResult = (NoContentResult)result;
+            var result = _controller.UpdateUser("test").Result;
+            var noContentResult = (NoContentResult)result;
             noContentResult.StatusCode.Should().Be(204);
         }
     }
