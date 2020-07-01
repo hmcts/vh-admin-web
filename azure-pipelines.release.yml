@@ -132,51 +132,29 @@ stages:
             value: $(IsLive)
 
           # AzureAd
-          - name: AzureAd:Authority
-            value: $(Authority)
-          - name: AzureAd:BaseVideoUrl
-            value: $(video_blob_url)
           - name: AzureAd:ClientId
-            value: vh-service-web-appid
+            value: vh-admin-web-appid
             secret: true
           - name: AzureAd:ClientSecret
-            value: vh-service-web-key
+            value: vh-admin-web-key
             secret: true
           - name: AzureAd:PostLogoutRedirectUri
             slot:
               deployment:
-                value: $(service_web_url_staging)logout
+                value: $(admin_web_url_staging)logout
               active:
-                value: $(service_web_url)logout
+                value: $(admin_web_url)logout
           - name: AzureAd:RedirectUri
             slot:
               deployment:
-                value: $(service_web_url_staging)
+                value: $(admin_web_url_staging)home
               active:
-                value: $(service_web_url)
+                value: $(admin_web_url)home
           - name: AzureAd:TenantId
             value: tenantid
             secret: true
-          - name: AzureAd:UserApiClientId
-            value: vh-user-api-appid
-            secret: true
-          - name: AzureAd:UserApiClientSecret
-            value: vh-user-api-key
-            secret: true
-
-          # Kinly
-          - name: KinlyConfiguration:CallbackSecret
-            value: $(CallbackKey)
-          - name: KinlyConfiguration:ApiSecret
-            value: $(KinlyApiKey)
-          - name: KinlyConfiguration:SelfTestApiSecret
-            value: $(SelfTestApiKey)
-
-          # Testing
-          - name: TestUserSecrets:TestUsernameStem
-            value: $(TestUserSecrets:TestUsernameStem)
-          - name: TestUserSecrets:TestUserPassword
-            value: $(TestUserSecrets:TestUserPassword)
+          - name: AzureAd:Authority
+            value: $(Authority)
 
           # VhServices
           - name: VhServices:BookingsApiResourceId
@@ -194,85 +172,57 @@ stages:
             secret: true
           - name: VhServices:VideoApiUrl
             value: $(video_api_url)
-          - name: VhServices:VideoWebUrl
-            value: $(video_web_url)
-          - name: VhServices:KinlySelfTestScoreEndpointUrl
-            value: $(KinlySelfTestApiUrl)/testcall
-          - name: VhServices:PexipSelfTestNodeUri
-            value: $(PexipSelfTestNode)
-          - name: VhServices:ServiceWebUrl
-            slot:
-              deployment:
-                value: $(service_web_url_staging)
-              active:
-                value: $(service_web_url)
+          - name: VhServices:ValidateEmail
+            value: $(reformemail)
         acceptanceTestSettings:
-          # AzureAd
-          - name: AzureAd:AppInsightsKey
-            value: vh-core-infra-AppInsightsKey
+          # VhServices
+          - name: VhServices:AdminWebUrl
+            value: $(admin_web_url_staging)
+          - name: VhServices:AdminWebResourceId
+            value: vh-admin-web-identifieruris
             secret: true
+          - name: VhServices:VideoApiUrl
+            value: $(video_api_url)
+          - name: VhServices:VideoApiResourceId
+            value: vh-video-api-identifieruris
+            secret: true
+          - name: VhServices:UserApiUrl
+            value: $(user_api_url)
+          - name: VhServices:UserApiResourceId
+            value: vh-user-api-identifieruris
+            secret: true
+          - name: VhServices:BookingsApiUrl
+            value: $(bookings_api_url)
+          - name: VhServices:BookingsApiResourceId
+            value: vh-bookings-api-identifieruris
+            secret: true
+          - name: VhServices:ValidateEmail
+            value: $(reformemail)
+
+          # AzureAd
           - name: AzureAd:Authority
             value: $(Authority)
-          - name: AzureAd:BaseVideoUrl
-            value: $(video_blob_url)
+          - name: AzureAd:TenantId
+            value: tenantid
+            secret: true
           - name: AzureAd:ClientId
-            value: vh-service-web-appid
+            value: vh-video-web-appid
             secret: true
           - name: AzureAd:ClientSecret
-            value: vh-service-web-key
+            value: vh-video-web-key
             secret: true
           - name: AzureAd:PostLogoutRedirectUri
             slot: true
           - name: AzureAd:RedirectUri
             slot: true
-          - name: AzureAd:TenantId
-            value: tenantid
-            secret: true
-          - name: AzureAd:UserApiClientId
-            value: vh-user-api-appid
-            secret: true
-          - name: AzureAd:UserApiClientSecret
-            value: vh-user-api-key
-            secret: true
-
-          # Kinly
-          - name: KinlyConfiguration:CallbackSecret
-            value: $(CallbackKey)
-          - name: KinlyConfiguration:ApiSecret
-            value: $(KinlyApiKey)
-          - name: KinlyConfiguration:SelfTestApiSecret
-            value: $(SelfTestApiKey)
+          - name: AzureAd:TemporaryPassword
+            value: $(TemporaryPassword)
 
           # Testing
           - name: TestUserSecrets:TestUsernameStem
             value: $(TestUserSecrets:TestUsernameStem)
           - name: TestUserSecrets:TestUserPassword
             value: $(TestUserSecrets:TestUserPassword)
-
-          # VhServices
-          - name: VhServices:BookingsApiResourceId
-            value: vh-bookings-api-identifieruris
-            secret: true
-          - name: VhServices:BookingsApiUrl
-            value: $(bookings_api_url)
-          - name: VhServices:UserApiResourceId
-            value: vh-user-api-identifieruris
-            secret: true
-          - name: VhServices:UserApiUrl
-            value: $(user_api_url)
-          - name: VhServices:VideoApiResourceId
-            value: vh-video-api-identifieruris
-            secret: true
-          - name: VhServices:VideoApiUrl
-            value: $(video_api_url)
-          - name: VhServices:VideoWebUrl
-            value: $(video_web_url)
-          - name: VhServices:KinlySelfTestScoreEndpointUrl
-            value: $(KinlySelfTestApiUrl)/testcall
-          - name: VhServices:PexipSelfTestNodeUri
-            value: $(PexipSelfTestNode)
-          - name: VhServices:ServiceWebUrl
-            slot: true
 
           # SauceLabs
           - name: Saucelabs:Username
@@ -281,3 +231,11 @@ stages:
             value: $(Saucelabs:AccessKey)
           - name: Saucelabs:RealDeviceApiKey
             value: $(RealDeviceApiKey)
+
+          # WowzaConfiguration
+          - name: WowzaConfiguration:StorageAccountName
+            value: $(wowza_storageAccountName)
+          - name: WowzaConfiguration:StorageAccountKey
+            value: $(wowza_storageAccountKey)
+          - name: WowzaConfiguration:StorageContainerName
+            value: $(wowza_storageContainerName)
