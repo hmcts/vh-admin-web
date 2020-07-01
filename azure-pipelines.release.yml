@@ -56,11 +56,12 @@ resources:
   pipelines:
   - pipeline: CI
     source: hmcts.vh-admin-web
-    trigger: 
+    trigger:
+      enabled: true
       branches:
-      - master
-      - hotfix/*
-      - release/*
+        - master
+        - hotfix/*
+        - release/*
 
 stages:
   - template: templates/vh-release.yml@templates

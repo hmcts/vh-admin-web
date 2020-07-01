@@ -128,7 +128,7 @@ resources:
       endpoint: hmcts (1)
   pipelines:
   - pipeline: CI
-    source: hmcts.vh-amdin-web
+    source: hmcts.vh-admin-web
 
 stages:
   - template: templates/vh-release.yml@templates
