@@ -63,8 +63,6 @@ parameters:
   - name: VhServices:BookingsApiResourceId
     value: vh-bookings-api-identifieruris
     secret: true
-  - name: VhServices:ValidateEmail
-    value: $(reformemail)
 
   # AzureAd
   - name: AzureAd:Authority
@@ -143,6 +141,10 @@ parameters:
     secret: true
   - name: AzureAd:Authority
     value: $(Authority)
+    
+  # Testing
+  - name: TestUserSecrets:TestUsernameStem
+    value: $(TestUserSecrets:TestUsernameStem)
 
   # VhServices
   - name: VhServices:BookingsApiResourceId
@@ -160,8 +162,6 @@ parameters:
     secret: true
   - name: VhServices:VideoApiUrl
     value: $(video_api_url)
-  - name: VhServices:ValidateEmail
-    value: $(reformemail)
 
 variables:
   - group: vh-domains-and-urls

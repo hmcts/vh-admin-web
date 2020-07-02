@@ -12,7 +12,7 @@ namespace AdminWebsite.UnitTests.Security
     public class UserIdentityTests
     {
         [Test]
-        public void should_return_the_display_names_of_assigned_case_types()
+        public void Should_return_the_display_names_of_assigned_case_types()
         {
             var administratorRoleClaims = new AdministratorRoleClaims(new UserRole
             {
@@ -29,7 +29,7 @@ namespace AdminWebsite.UnitTests.Security
         }
 
         [Test]
-        public void should_return_group_display_names()
+        public void Should_return_group_display_names()
         {
             var administratorRoleClaims = new AdministratorRoleClaims(new UserRole
             {
@@ -51,7 +51,7 @@ namespace AdminWebsite.UnitTests.Security
         [TestCase(UserRoleType.Individual, false)]
         [TestCase(UserRoleType.Judge, false)]
         [TestCase(UserRoleType.Representative, false)]
-        public void should_set_the_isvhofficeradministratorrole_property(UserRoleType userRoleType, bool expectedValue)
+        public void Should_set_the_isvhofficeradministratorrole_property(UserRoleType userRoleType, bool expectedValue)
         {
             var administratorRoleClaims = new AdministratorRoleClaims(new UserRole
             {
@@ -71,7 +71,7 @@ namespace AdminWebsite.UnitTests.Security
         [TestCase(UserRoleType.Individual, false)]
         [TestCase(UserRoleType.Judge, false)]
         [TestCase(UserRoleType.Representative, false)]
-        public void should_set_the_iscaseadministratorrole_property(UserRoleType userRoleType, bool expectedValue)
+        public void Should_set_the_iscaseadministratorrole_property(UserRoleType userRoleType, bool expectedValue)
         {
             var administratorRoleClaims = new AdministratorRoleClaims(new UserRole
             {
@@ -91,7 +91,7 @@ namespace AdminWebsite.UnitTests.Security
         [TestCase(UserRoleType.Individual, false)]
         [TestCase(UserRoleType.Judge, false)]
         [TestCase(UserRoleType.Representative, false)]
-        public void should_set_the_isadministratorrole_property(UserRoleType userRoleType, bool expectedValue)
+        public void Should_set_the_isadministratorrole_property(UserRoleType userRoleType, bool expectedValue)
         {
             var administratorRoleClaims = new AdministratorRoleClaims(new UserRole
             {
@@ -106,7 +106,7 @@ namespace AdminWebsite.UnitTests.Security
         }
 
         [Test]
-        public void should_return_the_username()
+        public void Should_return_the_username()
         {
             const string name = "Someone@somewhere.com";
             var administratorRoleClaims = new AdministratorRoleClaims(new UserRole

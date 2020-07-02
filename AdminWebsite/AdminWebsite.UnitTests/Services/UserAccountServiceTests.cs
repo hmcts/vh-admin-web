@@ -123,7 +123,7 @@ namespace AdminWebsite.UnitTests.Services
         }
 
         [Test]
-        public async Task should_update_password_if_a_user_was_found_in_aad()
+        public async Task Should_update_password_if_a_user_was_found_in_aad()
         {
             _userApiClient.Setup(x => x.GetUserByAdUserNameAsync(It.IsAny<string>())).ReturnsAsync(new UserProfile { User_name = "existingUser@email.com" });
             await _service.UpdateParticipantPassword("exisitngUser");

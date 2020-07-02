@@ -30,6 +30,9 @@
         /// </summary>
         public string InstrumentationKey { get; set; }
 
-        public string ValidateEmail { get; set; }
+        /// <summary>
+        /// The reform email
+        /// </summary>
+        public string TestUserStem { get; set; }
     }
 }
