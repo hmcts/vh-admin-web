@@ -55,7 +55,7 @@ resources:
       endpoint: hmcts (1)
   pipelines:
   - pipeline: CI
-    source: hmcts.vh-admin-web
+    source: Apps-CI\hmcts.vh-admin-web
     trigger:
       enabled: true
       branches:
