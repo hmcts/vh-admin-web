@@ -8,6 +8,5 @@
         public string UserApiResourceId { get; set; }
         public string VideoApiUrl { get; set; }
         public string VideoApiResourceId { get; set; }
-        public string ValidateEmail { get; set; }
     }
 }
