@@ -224,7 +224,11 @@ stages:
         acceptanceTestSettings:
           # VhServices
           - name: VhServices:AdminWebUrl
-            slot: true
+            slot:
+              deployment:
+                value: $(admin_web_url_staging)
+              active:
+                value: $(admin_web_url)
           - name: VhServices:AdminWebResourceId
             value: vh-admin-web-identifieruris
             secret: true
