@@ -26,7 +26,7 @@ namespace AdminWebsite.UnitTests.Controllers
         {
             _bookingsApiClient = new Mock<IBookingsApiClient>();
 
-            var testSettings = new TestUserSecrets()
+            var testSettings = new TestUserSecrets
             {
                 TestUsernameStem = "@madeUpEmail.com"
             };
