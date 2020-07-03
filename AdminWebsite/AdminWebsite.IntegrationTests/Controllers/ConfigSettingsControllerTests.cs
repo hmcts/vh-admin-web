@@ -26,7 +26,6 @@ namespace AdminWebsite.IntegrationTests.Controllers
             clientSettingsResponseModel.RedirectUri.Should().NotBeNull();
             clientSettingsResponseModel.TestUserStem.Should().NotBeNullOrEmpty();
             clientSettingsResponseModel.TestUserStem.Length.Should().Be(26);
-
         }
     }
 }
