@@ -49,7 +49,7 @@ namespace AdminWebsite.UnitTests
             clientSettings.TenantId.Should().Be(securitySettings.TenantId);
             clientSettings.RedirectUri.Should().Be(securitySettings.RedirectUri);
             clientSettings.PostLogoutRedirectUri.Should().Be(securitySettings.PostLogoutRedirectUri);
-            clientSettings.TestUserStem.Should().Be(testSettings.TestUsernameStem);
+            clientSettings.TestUsernameStem.Should().Be(testSettings.TestUsernameStem);
         }
     }
 }

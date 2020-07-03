@@ -33,6 +33,6 @@
         /// <summary>
         /// The reform email
         /// </summary>
-        public string TestUserStem { get; set; }
+        public string TestUsernameStem { get; set; }
     }
 }

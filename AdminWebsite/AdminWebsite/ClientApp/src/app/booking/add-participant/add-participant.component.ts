@@ -6,7 +6,6 @@ import { Constants } from '../../common/constants';
 import { IDropDownModel } from '../../common/model/drop-down.model';
 import { HearingModel } from '../../common/model/hearing.model';
 import { ParticipantModel } from '../../common/model/participant.model';
-
 import { SearchService } from '../../services/search.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { SearchEmailComponent } from '../search-email/search-email.component';
