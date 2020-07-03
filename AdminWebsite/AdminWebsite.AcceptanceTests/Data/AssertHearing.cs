@@ -78,7 +78,7 @@ namespace AdminWebsite.AcceptanceTests.Data
         public void AssertUpdatedStatus(string updatedBy, DateTime updatedDate)
         {
             _hearing.Updated_by.Should().Be(updatedBy);
-            _hearing.Updated_date.ToLocalTime().ToShortTimeString().Should().BeOneOf(updatedDate.ToLocalTime().ToShortTimeString(), updatedDate.ToLocalTime().AddMinutes(1).ToShortTimeString());
+            _hearing.Updated_date.ToLocalTime().ToShortTimeString().Should().BeOneOf(updatedDate.ToLocalTime().AddMinutes(-1).ToShortTimeString(), updatedDate.ToLocalTime().ToShortTimeString(), updatedDate.ToLocalTime().AddMinutes(1).ToShortTimeString());
         }
 
         public static void VerifyTimeSpansMatch(int? actual, int hours, int minutes)
