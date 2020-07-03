@@ -52,7 +52,7 @@ parameters:
       BrowserVersion: Latest
       DeviceType: Desktop
       DeviceName:
-      TestCaseFilter: TestCategory=UnsupportedBrowser
+      TestCaseFilter: TestCategory=Smoketest-Extended
     - OS: MacOS
       Browser: Firefox
       BrowserVersion: Latest
