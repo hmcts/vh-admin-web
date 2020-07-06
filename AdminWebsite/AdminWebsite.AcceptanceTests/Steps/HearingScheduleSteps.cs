@@ -64,7 +64,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         public void SetHearingScheduleDetails()
         {
-            _c.Test.HearingSchedule.ScheduledDate = _c.Test.HearingSchedule.ScheduledDate == default ? DateTime.Today.AddDays(1).AddMinutes(-1) : DateTime.Today.AddDays(1).AddMinutes(-10);
+            _c.Test.HearingSchedule.ScheduledDate = _c.Test.HearingSchedule.ScheduledDate == default ? _c.TimeZone.Adjust(DateTime.Today.AddDays(1).AddMinutes(-1)) : _c.TimeZone.Adjust(DateTime.Today.AddDays(1).AddMinutes(-10));
             _c.Test.HearingSchedule.DurationHours = _c.Test.HearingSchedule.DurationHours == 0 ? _c.Test.TestData.HearingSchedule.DurationHours : 0;
             _c.Test.HearingSchedule.DurationMinutes = _c.Test.HearingSchedule.DurationMinutes == 0 ? _c.Test.TestData.HearingSchedule.DurationMinutes : 25;
             _c.Test.HearingSchedule.HearingVenue = _c.Test.HearingSchedule.HearingVenue != null ? "Manchester Civil and Family Justice Centre" : _c.Test.TestData.HearingSchedule.HearingVenue;
