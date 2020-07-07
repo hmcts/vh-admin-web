@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using AcceptanceTests.Common.Configuration.Users;
+using AcceptanceTests.Common.Data.Time;
 using AcceptanceTests.Common.Driver.Drivers;
 using AcceptanceTests.Common.Driver.Settings;
 using AdminWebsite.AcceptanceTests.Helpers;
@@ -52,6 +53,12 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             };
 
             context.Driver = new DriverSetup(context.WebConfig.SauceLabsConfiguration, driverOptions, sauceLabsOptions);
+        }
+
+        [BeforeScenario(Order = (int)HooksSequence.SetTimeZone)]
+        public void SetTimeZone(TestContext context)
+        {
+            context.TimeZone = new TimeZone(context.WebConfig.SauceLabsConfiguration.RunningOnSauceLabs(), context.WebConfig.TestConfig.TargetOS);
         }
 
         private static bool EnableLogging(ScenarioInfo scenario)

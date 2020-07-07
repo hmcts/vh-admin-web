@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using AcceptanceTests.Common.Configuration.Users;
 using AcceptanceTests.Common.Model.Participant;
@@ -81,32 +80,17 @@ namespace AdminWebsite.AcceptanceTests.Data
             _hearing.Updated_date.ToLocalTime().ToShortTimeString().Should().BeOneOf(updatedDate.ToLocalTime().AddMinutes(-1).ToShortTimeString(), updatedDate.ToLocalTime().ToShortTimeString(), updatedDate.ToLocalTime().AddMinutes(1).ToShortTimeString());
         }
 
-        public static void VerifyTimeSpansMatch(int? actual, int hours, int minutes)
+        public static void VerifyTimeSpansMatch(int actual, int hours, int minutes)
         {
-            if (actual != null)
-            {
-                var actualDuration = TimeSpan.FromMinutes(actual.Value);
-                var expectedDuration = TimeSpan.FromHours(hours).Add(TimeSpan.FromMinutes(minutes));
-                actualDuration.Should().Be(expectedDuration);
-            }
-            else
-            {
-                throw new DataException("Scheduled duration cannot be null");
-            }
-
+            var actualDuration = TimeSpan.FromMinutes(actual);
+            var expectedDuration = TimeSpan.FromHours(hours).Add(TimeSpan.FromMinutes(minutes));
+            actualDuration.Should().Be(expectedDuration);
         }
 
-        private static void VerifyDatesMatch(DateTime? expected, DateTime actual)
+        private static void VerifyDatesMatch(DateTime actual, DateTime expected)
         {
-            if (expected != null)
-            {
-                expected.Value.ToShortDateString().Should().Be(actual.ToUniversalTime().ToShortDateString());
-                expected.Value.ToShortTimeString().Should().BeOneOf(actual.ToUniversalTime().ToShortTimeString(), actual.ToUniversalTime().AddMinutes(-1).ToShortTimeString());
-            }
-            else
-            {
-                throw new DataException("Scheduled time cannot be null");
-            }
+            actual.ToShortDateString().Should().Be(expected.ToUniversalTime().ToShortDateString());
+            actual.ToShortTimeString().Should().BeOneOf(expected.ToUniversalTime().AddMinutes(-1).ToShortTimeString(), expected.ToUniversalTime().ToShortTimeString());
         }
     }
 }
