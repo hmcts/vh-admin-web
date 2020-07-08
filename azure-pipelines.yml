@@ -178,18 +178,10 @@ trigger:
     - master
     - release/*
     - hotfix/*
-  paths:
-    include:
-    - AdminWebsite/*
-    - azure-pipelines.yml
 pr:
   branches:
     include:
     - master
-  paths:
-    include:
-    - AdminWebsite/*
-    - azure-pipelines.yml
 
 resources:
   repositories:
