@@ -64,11 +64,21 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         public void SetHearingScheduleDetails()
         {
-            _c.Test.HearingSchedule.ScheduledDate = _c.Test.HearingSchedule.ScheduledDate == default ? _c.TimeZone.Adjust(DateTime.Today.AddDays(1).AddMinutes(-1)) : _c.TimeZone.Adjust(DateTime.Today.AddDays(1).AddMinutes(-10));
+            _c.Test.HearingSchedule.ScheduledDate = _c.Test.HearingSchedule.ScheduledDate == default ? SetDateAsOneMinuteToMidnight() : UpdateDateAsTenMinutesToMidnight();
             _c.Test.HearingSchedule.DurationHours = _c.Test.HearingSchedule.DurationHours == 0 ? _c.Test.TestData.HearingSchedule.DurationHours : 0;
             _c.Test.HearingSchedule.DurationMinutes = _c.Test.HearingSchedule.DurationMinutes == 0 ? _c.Test.TestData.HearingSchedule.DurationMinutes : 25;
             _c.Test.HearingSchedule.HearingVenue = _c.Test.HearingSchedule.HearingVenue != null ? "Manchester Civil and Family Justice Centre" : _c.Test.TestData.HearingSchedule.HearingVenue;
             _c.Test.HearingSchedule.Room = _c.Test.HearingSchedule.Room != null ? "2" : _c.Test.TestData.HearingSchedule.Room;
+        }
+
+        private static DateTime SetDateAsOneMinuteToMidnight()
+        {
+            return DateTime.Today.AddDays(1).AddMinutes(-1);
+        }
+
+        private static DateTime UpdateDateAsTenMinutesToMidnight()
+        {
+            return DateTime.Today.AddDays(1).AddMinutes(-10);
         }
 
         public void EditHearingSchedule()

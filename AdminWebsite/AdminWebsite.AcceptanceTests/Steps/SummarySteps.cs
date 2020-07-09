@@ -168,6 +168,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             var assertHearing = new AssertHearing()
                 .WithHearing(_c.Test.HearingResponse)
                 .WithTestData(_c.Test)
+                .WithTimeZone(_c.TimeZone)
                 .CreatedBy(_c.CurrentUser.Username);
             assertHearing.AssertHearingDataMatches();
             assertHearing.AssertParticipantDataMatches(_c.Test.HearingParticipants);
@@ -184,6 +185,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             var assertHearing = new AssertHearing()
                 .WithHearing(_c.Test.HearingResponse)
                 .WithTestData(_c.Test)
+                .WithTimeZone(_c.TimeZone)
                 .CreatedBy(_c.CurrentUser.Username);
             assertHearing.AssertHearingDataMatches();
             assertHearing.AssertParticipantDataMatches(_c.Test.HearingParticipants);
