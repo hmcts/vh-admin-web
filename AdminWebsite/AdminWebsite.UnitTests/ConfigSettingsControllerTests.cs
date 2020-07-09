@@ -12,7 +12,7 @@ namespace AdminWebsite.UnitTests
     public class ConfigSettingsControllerTests
     {
         [Test]
-        public void should_return_response_with_settings()
+        public void Should_return_response_with_settings()
         {
             var securitySettings = new SecuritySettings
             {
@@ -20,19 +20,25 @@ namespace AdminWebsite.UnitTests
                 TenantId = "TenantId",
                 ClientSecret = "ClientSecret",
                 Authority = "Authority",
-                RedirectUri = "https://vh-admin-web.azurewebsites.net/login",
-                PostLogoutRedirectUri = "https://vh-admin-web.azurewebsites.net/"
+                RedirectUri = "https://vh-admin-web.com",
+                PostLogoutRedirectUri = "https://vh-admin-web.com/"
+            };
+
+            var testSettings = new TestUserSecrets
+            {
+                TestUsernameStem = "@email.com"
             };
 
             var httpContext = new DefaultHttpContext();
             httpContext.Request.Scheme = "https";
-            httpContext.Request.Host = new HostString("vh-admin-web.azurewebsites.net");
+            httpContext.Request.Host = new HostString("vh-admin-web.com");
             httpContext.Request.PathBase = "";
+
             var controllerContext = new ControllerContext {
                 HttpContext = httpContext
             };
 
-            var configSettingsController = new ConfigSettingsController(Options.Create(securitySettings)) {
+            var configSettingsController = new ConfigSettingsController(Options.Create(securitySettings), Options.Create(testSettings)) {
                 ControllerContext = controllerContext
             };
 
@@ -43,6 +49,7 @@ namespace AdminWebsite.UnitTests
             clientSettings.TenantId.Should().Be(securitySettings.TenantId);
             clientSettings.RedirectUri.Should().Be(securitySettings.RedirectUri);
             clientSettings.PostLogoutRedirectUri.Should().Be(securitySettings.PostLogoutRedirectUri);
+            clientSettings.TestUsernameStem.Should().Be(testSettings.TestUsernameStem);
         }
     }
 }

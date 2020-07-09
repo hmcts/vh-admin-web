@@ -18,7 +18,6 @@ namespace AdminWebsite.AcceptanceTests.Pages.Journeys
                     Page.OtherInformation,
                     Page.Summary,
                     Page.BookingConfirmation,
-                    Page.BookingsList,
                     Page.BookingDetails
                 };
         }

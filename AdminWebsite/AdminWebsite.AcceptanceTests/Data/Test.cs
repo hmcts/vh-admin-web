@@ -4,6 +4,7 @@ using AcceptanceTests.Common.Configuration.Users;
 using AcceptanceTests.Common.Data.TestData;
 using AdminWebsite.AcceptanceTests.Data.TestData;
 using AdminWebsite.BookingsAPI.Client;
+using AdminWebsite.VideoAPI.Client;
 
 namespace AdminWebsite.AcceptanceTests.Data
 {
@@ -19,6 +20,7 @@ namespace AdminWebsite.AcceptanceTests.Data
         public bool SubmittedAndCreatedNewAadUsers { get; set; } = false;
         public CommonData CommonData { get; set; }
         public DefaultData TestData { get; set; }
+        public ConferenceDetailsResponse ConferenceResponse { get; set; }
         public HearingDetailsResponse HearingResponse { get; set; }
     }
 }

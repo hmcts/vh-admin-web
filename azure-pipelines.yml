@@ -1,37 +1,176 @@
-# Set variables once
+parameters:
+- name: PackageApp
+  displayName: Package App
+  type: boolean
+  default: true
+
+- name: PackageACTests
+  displayName: Package Acceptance Tests
+  type: boolean
+  default: true
+
+- name: RunUnitTests
+  displayName: Run Unit Tests
+  type: boolean
+  default: true
+
+- name: RunIntegTests
+  displayName: Run Integration Tests
+  type: boolean
+  default: true
+
+- name: RunSonarCloudTests
+  displayName: Run Sonar Cloud Analysis
+  type: boolean
+  default: true
+
+- name: RunMutationTests
+  displayName: Run Mutation Tests
+  type: boolean
+  default: true
+
+- name: RunACTests
+  displayName: Run Acceptance Tests
+  type: boolean
+  default: true
+
+- name: RunNodeTests
+  displayName: Run Node Tests
+  type: boolean
+  default: true
+
+- name: testSettings
+  type: object
+  default:
+  # VhServices
+  - name: VhServices:AdminWebUrl
+    value: $(admin_web_url_staging)
+  - name: VhServices:AdminWebResourceId
+    value: vh-admin-web-identifieruris
+    secret: true
+  - name: VhServices:VideoApiUrl
+    value: $(video_api_url)
+  - name: VhServices:VideoApiResourceId
+    value: vh-video-api-identifieruris
+    secret: true
+  - name: VhServices:UserApiUrl
+    value: $(user_api_url)
+  - name: VhServices:UserApiResourceId
+    value: vh-user-api-identifieruris
+    secret: true
+  - name: VhServices:BookingsApiUrl
+    value: $(bookings_api_url)
+  - name: VhServices:BookingsApiResourceId
+    value: vh-bookings-api-identifieruris
+    secret: true
+
+  # AzureAd
+  - name: AzureAd:Authority
+    value: $(Authority)
+  - name: AzureAd:TenantId
+    value: tenantid
+    secret: true
+  - name: AzureAd:ClientId
+    value: vh-video-web-appid
+    secret: true
+  - name: AzureAd:ClientSecret
+    value: vh-video-web-key
+    secret: true
+  - name: AzureAd:PostLogoutRedirectUri
+    slot: true
+  - name: AzureAd:RedirectUri
+    slot: true
+  - name: AzureAd:TemporaryPassword
+    value: $(TemporaryPassword)
+
+  # Testing
+  - name: TestUserSecrets:TestUsernameStem
+    value: $(TestUserSecrets:TestUsernameStem)
+  - name: TestUserSecrets:TestUserPassword
+    value: $(TestUserSecrets:TestUserPassword)
+
+  # SauceLabs
+  - name: Saucelabs:Username
+    value: $(Saucelabs:Username)
+  - name: Saucelabs:AccessKey
+    value: $(Saucelabs:AccessKey)
+  - name: Saucelabs:RealDeviceApiKey
+    value: $(RealDeviceApiKey)
+
+  # WowzaConfiguration
+  - name: WowzaConfiguration:StorageAccountName
+    value: $(wowza_storageAccountName)
+  - name: WowzaConfiguration:StorageAccountKey
+    value: $(wowza_storageAccountKey)
+  - name: WowzaConfiguration:StorageContainerName
+    value: $(wowza_storageContainerName)
+
+- name: appSettings
+  type: object
+  default:
+  - name: ApplicationInsights:InstrumentationKey
+    value: vh-core-infra-AppInsightsKey
+    secret: true
+  - name: AppInsightsKey
+    value: vh-core-infra-AppInsightsKey
+    secret: true
+  - name: IsLive
+    value: $(IsLive)
+
+  # AzureAd
+  - name: AzureAd:ClientId
+    value: vh-admin-web-appid
+    secret: true
+  - name: AzureAd:ClientSecret
+    value: vh-admin-web-key
+    secret: true
+  - name: AzureAd:PostLogoutRedirectUri
+    slot:
+      deployment:
+        value: $(admin_web_url_staging)logout
+      active:
+        value: $(admin_web_url)logout
+  - name: AzureAd:RedirectUri
+    slot:
+      deployment:
+        value: $(admin_web_url_staging)home
+      active:
+        value: $(admin_web_url)home
+  - name: AzureAd:TenantId
+    value: tenantid
+    secret: true
+  - name: AzureAd:Authority
+    value: $(Authority)
+    
+  # Testing
+  - name: TestUserSecrets:TestUsernameStem
+    value: $(TestUserSecrets:TestUsernameStem)
+
+  # VhServices
+  - name: VhServices:BookingsApiResourceId
+    value: vh-bookings-api-identifieruris
+    secret: true
+  - name: VhServices:BookingsApiUrl
+    value: $(bookings_api_url)
+  - name: VhServices:UserApiResourceId
+    value: vh-user-api-identifieruris
+    secret: true
+  - name: VhServices:UserApiUrl
+    value: $(user_api_url)
+  - name: VhServices:VideoApiResourceId
+    value: vh-video-api-identifieruris
+    secret: true
+  - name: VhServices:VideoApiUrl
+    value: $(video_api_url)
+
 variables:
-  cleanChekout: 'false'
-  solutionType: angularDotNetCore # angularDotNetCore, dotNetCore
-  apiDirectory: 'AdminWebsite/AdminWebsite'
-  sonarCloudPrepareExtraProperties: |
-    sonar.exclusions=**/node_modules/**, **/*.spec.ts, *.spec.ts, **/ClientApp/src/*, **/ClientApp/coverage/**/*, **/Startup.cs, **/Program.cs, **/ConfigureServicesExtensions.cs, **/Swagger/*.cs
-    sonar.typescript.lcov.reportPaths=$(System.DefaultWorkingDirectory)/AdminWebsite/AdminWebsite/ClientApp/coverage/lcov.info
-    sonar.typescript.exclusions=**/node_modules/**, **/typings.d.ts, **/main.ts, **/environments/environment*.ts, **/*routing.module.ts, **/api-client.ts
-    sonar.cs.opencover.reportsPaths=$(Common.TestResultsDirectory)\Coverage\coverage.opencover.xml
-    sonar.coverage.exclusions= **/Testing.Common/**, AdminWebsite/Views/*, AdminWebsite/Pages/*, AdminWebsite.UserAPI.Client/*, AdminWebsite.AcceptanceTests/*
-  nodeVersion: 10.16.0
-  integrationTestsAppSettingsTransform: '
-  "AzureAd/Authority":"https://login.microsoftonline.com/$(TenantId)",
-  "AzureAd/ClientId":"$(vh-admin-web-appid)",
-  "AzureAd/ClientSecret":"$(vh-admin-web-key)",
-  "AzureAd/TenantId":"$(TenantId)",
-  "VhServices/BookingsApiResourceId":"$(vh-bookings-api-identifieruris)",
-  "VhServices/UserApiResourceId":"$(vh-user-api-identifieruris)"'
-
-  vhAzureKeyVault: 'https://vhwebsitepreview.vault.azure.net/' # Used during integration tests
-  keyVaultName: vhcoreinfrahtpreview # Used to get secrets for integration tests
-  secretsFilter: 'TenantId,vh-admin-web-appid,vh-admin-web-key,vh-bookings-api-identifieruris,vh-user-api-identifieruris' # filters out secrets returned from key vault
-  infraKeyVaultName: 'vhcoreinfradev'
-  infraSecretsFilter: 'vh-core-infra-AppInsightsKey'
-  dotnetVersion: 2.2.207
-
-# GitHub Repo that conatins build templates. Reference https://docs.microsoft.com/en-us/azure/devops/pipelines/process/templates?view=vsts#using-other-repositories
-resources:
-  repositories:
-  - repository: azureDevOpsTemplates
-    type: github
-    name: hmcts/azure-devops-templates
-    endpoint: hmcts
+  - group: vh-domains-and-urls
+  - group: vh-apps-settings-generic
+  - group: vh-admin-web
+  - group: vh-preview
+  - group: vh test users
+  - group: Saucelabs
+  - group: vh-wowza-dev
 
 trigger:
   branches:
@@ -40,19 +179,84 @@ trigger:
     - release/*
     - hotfix/*
 pr:
-  - master
+  branches:
+    include:
+    - master
 
-jobs:
-- template: jobs/angularDotNetCore.yml@azureDevOpsTemplates # Template reference
+resources:
+  repositories:
+    - repository: templates
+      type: github
+      name: hmcts/azure-devops-templates
+      ref: refs/heads/master
+      endpoint: hmcts (1)
+  containers:
+  - container: dotnetsdk
+    image: sspublicsbox.azurecr.io/vh/dotnet-angular:3.1.102
+    endpoint: sspublicsbox
+  - container: dotnetsdk-cipipeline
+    image: sspublicsbox.azurecr.io/vh/dotnet-angular-cipipeline:3.1.102
+    endpoint: sspublicsbox
+  - container: node
+    image: node:lts-alpine
+
+extends:
+  template: stages\dotnet-package.yml@templates
   parameters:
-    cleanCheckout: $(cleanCheckout)
-    sonarCloudExtraProperties: $(sonarCloudPrepareExtraProperties)
-    KeyVaultName: $(KeyVaultName)
-    apiDirectory: $(apiDirectory)
-    SecretsFilter: $(SecretsFilter)
-    solutionType: $(solutionType)
-    integrationTestsAppSettingsTransform: $(integrationTestsAppSettingsTransform)
-    infraKeyVaultName: $(infraKeyVaultName)
-    infraSecretsFilter: $(infraSecretsFilter)
-    nodeVersion: $(nodeVersion)
-    dotNetCoreVersion: $(dotnetVersion)
+    coreProjectPath: AdminWebsite/AdminWebsite
+    nodeProjectPath: AdminWebsite/AdminWebsite/ClientApp
+    PackageApp: ${{ parameters.PackageApp }}
+    PackageAcceptanceTests: ${{ parameters.PackageACTests }}
+    packageManagers:
+      - nuget
+      - npm
+    Test: ${{ or(parameters.RunUnitTests, parameters.RunIntegTests, parameters.RunMutationTests) }}
+    testParameters:
+      coreProjectPath: AdminWebsite/AdminWebsite
+      nodeProjectPath: AdminWebsite/AdminWebsite/ClientApp
+      RunNode: true
+      unitTestProjectPath: AdminWebsite/AdminWebsite.UnitTests
+      integTestProjectPath: AdminWebsite/AdminWebsite.IntegrationTests
+      secrets_KeyVault: $(pr_Secret_KeyVault)
+      secrets_Subscription: $(pr_Secret_Subscription)
+      RunUnitTests: ${{ parameters.RunUnitTests }}
+      RunIntegrationTests: ${{ parameters.RunIntegTests }}
+      RunSonarCloud: ${{ parameters.RunSonarCloudTests }}
+      RunStryker: ${{ parameters.RunMutationTests }}
+      IntegrationTestSettings:
+        - ${{ each setting in parameters.testSettings }}:
+          - name: ${{ setting.name }}
+            value: ${{ setting.value }}
+            secret: ${{ setting.secret }}
+      coverletCoverageExclusions:
+        - "**/Testing.Common/**"
+        - "AdminWebsite/Views/*"
+        - "AdminWebsite/Pages/*"
+        - "AdminWebsite.UserAPI.Client/*"
+        - "AdminWebsite.AcceptanceTests/*"
+      sonarCloud_ExtraProperties: |
+        sonar.exclusions=**/node_modules/**, **/*.spec.ts, *.spec.ts, **/ClientApp/src/*, **/ClientApp/coverage/**/*, **/Startup.cs, **/Program.cs, **/ConfigureServicesExtensions.cs, **/Swagger/*.cs
+        sonar.typescript.lcov.reportPaths=$(System.DefaultWorkingDirectory)/AdminWebsite/AdminWebsite/ClientApp/coverage/lcov.info
+        sonar.typescript.exclusions=**/node_modules/**, **/typings.d.ts, **/main.ts, **/environments/environment*.ts, **/*routing.module.ts, **/api-client.ts
+        sonar.cs.opencover.reportsPaths=$(Common.TestResultsDirectory)\Coverage\coverage.opencover.xml
+        sonar.coverage.exclusions= **/Testing.Common/**, AdminWebsite/Views/*, AdminWebsite/Pages/*, AdminWebsite.UserAPI.Client/*, AdminWebsite.AcceptanceTests/*
+    ACTest: ${{ parameters.RunACTests }}
+    releaseParameters:
+      environment: Preview
+      subscription: $(pr_Subscription)
+      secrets_KeyVault: $(pr_Secret_KeyVault)
+      secrets_Subscription: $(pr_Secret_Subscription)
+      devOpsResource: vh_admin_web
+      appName: vh-admin-web-$(environment)
+      resourceGroup: vh-admin-web-$(environment)
+      appSettings: ${{ parameters.appSettings }}
+      testCaseFilter: TestCategory=smoketest
+      dependentApps:
+        - vh-user-api-$(environment)
+        - vh-bookings-api-$(environment)
+        - vh-video-api-$(environment)
+      acceptanceTestSettings:
+        - name: WebsiteUrl
+          value: $(admin_web_url_staging)
+        - ${{ each setting in parameters.testSettings }}:
+          - ${{ insert }}: ${{ setting }}

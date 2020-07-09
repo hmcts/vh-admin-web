@@ -1,0 +1,22 @@
+<h1 class="govuk-heading-l">Get an audio file link for a past hearing</h1>
+
+<p class="govuk-body">Only hearings which have been confirmed will appear in the search result.</p>
+<p class="govuk-body">You will only be able to get audio file links for hearings that have finished.</p>
+
+<form [formGroup]="form" class="govuk-form-group">
+    <div class="govuk-form-group">
+        <h2 class="govuk-heading-m">Search</h2>
+        <label class="govuk-label govuk-!-width-one-half" for="caseNumber">
+            Enter a case number
+        </label>
+        <input id="caseNumber" class="govuk-input govuk-!-width-one-quarter" type="text" formControlName="caseNumber" required>
+        <button class="govuk-button govuk-!-margin-left-2" data-module="govuk-button"
+                id="submit" (click)="search()" [disabled]="form.invalid">
+            Search
+        </button>
+    </div>
+</form>
+
+<div class="govuk-body">
+    <app-hearing-search-results *ngIf="hasSearched" [results]="results"></app-hearing-search-results>
+</div>

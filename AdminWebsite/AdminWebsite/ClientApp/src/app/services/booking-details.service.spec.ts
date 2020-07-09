@@ -20,8 +20,8 @@ export class ResponseTestData {
     response.other_information = 'some note';
     response.hearing_room_name = '777';
     response.created_date = new Date('2019-10-22 13:58:40.3730067');
-    response.created_by = 'stub.response@hearings.reform.hmcts.net';
-    response.updated_by = 'stub.response@hearings.reform.hmcts.net';
+    response.created_by = 'stub.response@madeupemail.com';
+    response.updated_by = 'stub.response@madeupemail.com';
     response.updated_date = new Date('2019-10-22 13:58:40.3730067');
     response.audio_recording_required = true;
 
@@ -79,8 +79,8 @@ describe('booking details service', () => {
     expect(model.HearingCaseNumber).toBe('XX3456234565');
     expect(model.HearingType).toBe('Application to Set Judgment Aside');
     expect(model.StartTime).toEqual(new Date('2019-10-22 13:58:40.3730067'));
-    expect(model.CreatedBy).toBe('stub.response@hearings.reform.hmcts.net');
-    expect(model.LastEditBy).toBe('stub.response@hearings.reform.hmcts.net');
+    expect(model.CreatedBy).toBe('stub.response@madeupemail.com');
+    expect(model.LastEditBy).toBe('stub.response@madeupemail.com');
     expect(model.AudioRecordingRequired).toBe(true);
   });
 

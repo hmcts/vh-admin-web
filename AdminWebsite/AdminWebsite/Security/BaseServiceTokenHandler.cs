@@ -21,7 +21,9 @@ namespace AdminWebsite.Security
         protected abstract string ClientResource { get; }
 
         protected BaseServiceTokenHandler(IOptions<SecuritySettings> securitySettings,
-            IOptions<ServiceSettings> serviceSettings, IMemoryCache memoryCache, ITokenProvider tokenProvider)
+            IOptions<ServiceSettings> serviceSettings,
+            IMemoryCache memoryCache,
+            ITokenProvider tokenProvider)
         {
             _securitySettings = securitySettings.Value;
             ServiceSettings = serviceSettings.Value;
@@ -29,12 +31,11 @@ namespace AdminWebsite.Security
             _tokenProvider = tokenProvider;
         }
 
-        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request,
-            CancellationToken cancellationToken)
+        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             const string AUTHORIZATION = "Authorization";
             const string BEARER = "Bearer";
-            const string ERR_MSG ="BookHearing Client Exception";
+            const string ERR_MSG = "Client Exception";
             const int MINUTES = -1;
 
             var properties = new Dictionary<string, string>();
@@ -42,8 +43,7 @@ namespace AdminWebsite.Security
             var token = _memoryCache.Get<string>(TokenCacheKey);
             if (string.IsNullOrEmpty(token))
             {
-                var authenticationResult = _tokenProvider.GetAuthorisationResult(_securitySettings.ClientId,
-                    _securitySettings.ClientSecret, ClientResource);
+                var authenticationResult = _tokenProvider.GetAuthorisationResult(_securitySettings.ClientId, _securitySettings.ClientSecret, ClientResource);
                 token = authenticationResult.AccessToken;
                 var tokenExpireDateTime = authenticationResult.ExpiresOn.DateTime.AddMinutes(MINUTES);
                 _memoryCache.Set(TokenCacheKey, token, tokenExpireDateTime);
@@ -56,8 +56,8 @@ namespace AdminWebsite.Security
             }
             catch (Exception e)
             {
-                ApplicationLogger.TraceException(TraceCategory.ServiceAuthentication.ToString(), ERR_MSG, e, null,
-                    properties);
+                ApplicationLogger.TraceException(TraceCategory.ServiceAuthentication.ToString(), ERR_MSG, e, null, properties);
+                
                 throw;
             }
         }

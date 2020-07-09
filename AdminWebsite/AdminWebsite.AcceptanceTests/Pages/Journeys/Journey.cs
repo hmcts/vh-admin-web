@@ -4,6 +4,9 @@
     {
         BookingConfirmation,
         BookingDetails,
+        BookingsList,
+        ChangePassword,
+        GetAudioFile,
         Questionnaire
     }
 }

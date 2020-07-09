@@ -54,9 +54,9 @@ namespace AdminWebsite
         {
             services.Configure<SecuritySettings>(options => Configuration.Bind("AzureAd", options));
             services.Configure<ServiceSettings>(options => Configuration.Bind("VhServices", options));
+            services.Configure<TestUserSecrets>(options => Configuration.Bind("TestUserSecrets", options));
             services.Configure<AppConfigSettings>(options => Configuration.Bind(options));
             services.Configure<SecuritySettings>(options => Configuration.Bind("ApplicationInsights", options));
-            services.Configure<SecuritySettings>(options => Configuration.Bind("TestUserSecrets", options));
         }
 
         private void RegisterAuth(IServiceCollection serviceCollection)

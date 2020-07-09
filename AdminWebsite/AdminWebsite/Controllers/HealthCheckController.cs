@@ -1,5 +1,4 @@
 ﻿using AdminWebsite.BookingsAPI.Client;
-using AdminWebsite.Models;
 using AdminWebsite.UserAPI.Client;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +7,8 @@ using System;
 using System.Net;
 using System.Reflection;
 using System.Threading.Tasks;
+using AdminWebsite.VideoAPI.Client;
+using HealthCheckResponse = AdminWebsite.Models.HealthCheckResponse;
 
 namespace AdminWebsite.Controllers
 {
@@ -19,11 +20,13 @@ namespace AdminWebsite.Controllers
     {
         private readonly IUserApiClient _userApiClient;
         private readonly IBookingsApiClient _bookingsApiClient;
+        private readonly IVideoApiClient _videoApiClient;
 
-        public HealthCheckController(IUserApiClient userApiClient, IBookingsApiClient bookingsApiClient)
+        public HealthCheckController(IUserApiClient userApiClient, IBookingsApiClient bookingsApiClient, IVideoApiClient videoApiClient)
         {
             _userApiClient = userApiClient;
             _bookingsApiClient = bookingsApiClient;
+            _videoApiClient = videoApiClient;
         }
 
         /// <summary>
@@ -40,6 +43,7 @@ namespace AdminWebsite.Controllers
             {
                 BookingsApiHealth = { Successful = true },
                 UserApiHealth = { Successful = true },
+                VideoApiHealth = { Successful = true },
                 AppVersion = GetApplicationVersion()
             };
             try
@@ -69,8 +73,22 @@ namespace AdminWebsite.Controllers
                     response.BookingsApiHealth.Data = ex.Data;
                 }
             }
+            
+            try
+            {
+                await _videoApiClient.GetExpiredOpenConferencesAsync();
+            }
+            catch (Exception ex)
+            {
+                if (!(ex is VideoApiException))
+                {
+                    response.VideoApiHealth.Successful = false;
+                    response.VideoApiHealth.ErrorMessage = ex.Message;
+                    response.VideoApiHealth.Data = ex.Data;
+                }
+            }
 
-            if (!response.UserApiHealth.Successful || !response.BookingsApiHealth.Successful)
+            if (!response.UserApiHealth.Successful || !response.BookingsApiHealth.Successful || !response.VideoApiHealth.Successful)
             {
                 return StatusCode((int)HttpStatusCode.InternalServerError, response);
             }
@@ -85,12 +103,14 @@ namespace AdminWebsite.Controllers
                 FileVersion = GetExecutingAssemblyAttribute<AssemblyFileVersionAttribute>(a => a.Version),
                 InformationVersion = GetExecutingAssemblyAttribute<AssemblyInformationalVersionAttribute>(a => a.InformationalVersion)
             };
+            
             return applicationVersion;
         }
 
-        private string GetExecutingAssemblyAttribute<T>(Func<T, string> value) where T : Attribute
+        private static string GetExecutingAssemblyAttribute<T>(Func<T, string> value) where T : Attribute
         {
-            T attribute = (T)Attribute.GetCustomAttribute(Assembly.GetExecutingAssembly(), typeof(T));
+            var attribute = (T)Attribute.GetCustomAttribute(Assembly.GetExecutingAssembly(), typeof(T));
+            
             return value.Invoke(attribute);
         }
     }

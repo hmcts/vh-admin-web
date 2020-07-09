@@ -33,59 +33,69 @@ import { UnsupportedBrowserComponent } from './shared/unsupported-browser/unsupp
 import { Logger } from './services/logger';
 import { ChangePasswordComponent } from './change-password/change-password.component';
 import { UpdateUserPopupComponent } from './popups/update-user-popup/update-user-popup.component';
+import { GetAudioFileComponent } from './get-audio-file/get-audio-file.component';
+import { GetAudioLinkButtonComponent } from './get-audio-file/get-audio-link-button/get-audio-link-button.component';
+import { HearingSearchDateTimePipe } from './shared/directives/hearing-search-date-time.pipe';
+import { HearingSearchResultsComponent } from './get-audio-file/hearing-search-results/hearing-search-results.component';
 
 describe('app routing', () => {
-  let location: Location;
-  let router: Router;
-  let fixture: ComponentFixture<DashboardComponent>;
-  let adalSvc;
-  let loggerSpy: jasmine.SpyObj<Logger>;
-  loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error']);
+    let location: Location;
+    let router: Router;
+    let fixture: ComponentFixture<DashboardComponent>;
+    let adalSvc;
+    let loggerSpy: jasmine.SpyObj<Logger>;
+    loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error']);
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      imports: [ReactiveFormsModule, RouterTestingModule.withRoutes(routes), FormsModule],
-      declarations: [
-        DashboardComponent,
-        AppComponent,
-        LoginComponent,
-        LogoutComponent,
-        HeaderStubComponent,
-        FooterStubComponent,
-        ContactUsStubComponent,
-        PaginationStubComponent,
-        UnauthorisedComponent,
-        ErrorComponent,
-        SignOutPopupComponent,
-        WaitPopupComponent,
-        SaveFailedPopupComponent,
-        CancelPopupStubComponent,
-        CancelBookingPopupComponent,
-        UnsupportedBrowserComponent,
-        ChangePasswordComponent,
-        UpdateUserPopupComponent
-      ],
-      providers: [
-        AuthGuard,
-        AdminGuard,
-        { provide: AdalService, useClass: MockAdalService },
-        { provide: ChangesGuard, useClass: MockChangesGuard }, HttpClient, HttpHandler,
-        ErrorService,
-        { provide: Logger, useValue: loggerSpy }
-      ],
-    }).compileComponents();
+    beforeEach(() => {
+        TestBed.configureTestingModule({
+            imports: [ReactiveFormsModule, RouterTestingModule.withRoutes(routes), FormsModule],
+            declarations: [
+                DashboardComponent,
+                AppComponent,
+                LoginComponent,
+                LogoutComponent,
+                HeaderStubComponent,
+                FooterStubComponent,
+                ContactUsStubComponent,
+                PaginationStubComponent,
+                UnauthorisedComponent,
+                ErrorComponent,
+                SignOutPopupComponent,
+                WaitPopupComponent,
+                SaveFailedPopupComponent,
+                CancelPopupStubComponent,
+                CancelBookingPopupComponent,
+                UnsupportedBrowserComponent,
+                ChangePasswordComponent,
+                UpdateUserPopupComponent,
+                GetAudioFileComponent,
+                GetAudioLinkButtonComponent,
+                HearingSearchDateTimePipe,
+                HearingSearchResultsComponent
+            ],
+            providers: [
+                AuthGuard,
+                AdminGuard,
+                { provide: AdalService, useClass: MockAdalService },
+                { provide: ChangesGuard, useClass: MockChangesGuard },
+                HttpClient,
+                HttpHandler,
+                ErrorService,
+                { provide: Logger, useValue: loggerSpy }
+            ]
+        }).compileComponents();
 
-    fixture = TestBed.createComponent(DashboardComponent);
+        fixture = TestBed.createComponent(DashboardComponent);
 
-    router = TestBed.get(Router);
-    location = TestBed.get(Location);
-    adalSvc = TestBed.get(AdalService);
-  });
+        router = TestBed.get(Router);
+        location = TestBed.get(Location);
+        adalSvc = TestBed.get(AdalService);
+    });
 
-  it('it should navigate to login', fakeAsync(() => {
-    adalSvc.setAuthenticated(false);
-    router.navigate(['/dashboard']);
-    tick();
-    expect(location.path()).toBe('/unauthorised');
-  }));
+    it('it should navigate to login', fakeAsync(() => {
+        adalSvc.setAuthenticated(false);
+        router.navigate(['/dashboard']);
+        tick();
+        expect(location.path()).toBe('/unauthorised');
+    }));
 });

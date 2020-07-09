@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading;
+using System.Threading.Tasks;
 using AcceptanceTests.Common.Api.Hearings;
 using AcceptanceTests.Common.Api.Helpers;
-using AcceptanceTests.Common.Api.Requests;
 using AcceptanceTests.Common.Api.Users;
 using AcceptanceTests.Common.Configuration.Users;
 using AdminWebsite.AcceptanceTests.Helpers;
@@ -24,14 +24,15 @@ namespace AdminWebsite.AcceptanceTests.Hooks
 
         [BeforeScenario(Order = (int)HooksSequence.RemoveDataHooks)]
         [AfterScenario]
-        public void RemovePreviousHearings(TestContext context)
+        public void RemovePreviousHearings(TestContext context, ScenarioContext scenario)
         {
+            if (scenario.ScenarioInfo.Tags.Contains("KeepDataAfterTest")) return;
             _clerkUsername = UserManager.GetClerkUser(context.UserAccounts).Username;
             ClearHearingsForClerk(context.Apis.BookingsApi);
             ClearClosedConferencesForClerk(context.Apis.BookingsApi, context.Apis.VideoApi);
         }
 
-        [AfterScenario]
+        [AfterScenario(Order = (int)HooksSequence.RemoveNewUsersHooks)]
         public static void RemoveNewUsersFromAad(TestContext context)
         {
             if (context.Test?.HearingParticipants == null) return;
@@ -39,9 +40,17 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             foreach (var participant in context.Test.HearingParticipants.Where(participant => participant.DisplayName.StartsWith(context.Test.TestData.AddParticipant.Participant.NewUserPrefix)))
             {
                 if (UserHasBeenCreatedInAad(context))
-                    PollToDeleteTheNewUser(context.AdminWebConfig.VhServices.UserApiUrl, context.Tokens.UserApiBearerToken, participant.Username)
+                    PollToDeleteTheNewUser(context.WebConfig.VhServices.UserApiUrl, context.Tokens.UserApiBearerToken, participant.Username)
                         .Should().BeTrue("New user was deleted from AAD");
             }
+        }
+
+        [AfterScenario(Order = (int)HooksSequence.RemoveAudioFiles)]
+        public static async Task RemoveAudioFile(TestContext context, ScenarioContext scenario)
+        {
+            if (!scenario.ScenarioInfo.Tags.Contains("AudioRecording")) return;
+            if (context.AzureStorage != null)
+                await context.AzureStorage.RemoveAudioFileFromStorage();
         }
 
         private static bool UserHasBeenCreatedInAad(TestContext context)

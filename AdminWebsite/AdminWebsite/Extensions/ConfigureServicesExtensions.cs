@@ -20,6 +20,7 @@ using System.IO;
 using System.Net.Http;
 using System.Reflection;
 using AdminWebsite.Contracts.Responses;
+using AdminWebsite.VideoAPI.Client;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 
@@ -75,6 +76,7 @@ namespace AdminWebsite.Extensions
             serviceCollection.AddMemoryCache();
             serviceCollection.AddTransient<HearingApiTokenHandler>();
             serviceCollection.AddTransient<UserApiTokenHandler>();
+            serviceCollection.AddTransient<VideoApiTokenHandler>();
             serviceCollection.AddScoped<ITokenProvider, TokenProvider>();
             serviceCollection.AddScoped<IUserAccountService, UserAccountService>();
             serviceCollection.AddScoped<SecuritySettings>();
@@ -88,11 +90,15 @@ namespace AdminWebsite.Extensions
 
             serviceCollection.AddHttpClient<IBookingsApiClient, BookingsApiClient>()
                 .AddHttpMessageHandler(() => container.GetService<HearingApiTokenHandler>())
-                .AddTypedClient(httpClient => BuildHearingApiClient(httpClient, settings));
+                .AddTypedClient(httpClient => (IBookingsApiClient) new BookingsApiClient(httpClient) { BaseUrl = settings.BookingsApiUrl });
 
             serviceCollection.AddHttpClient<IUserApiClient, UserApiClient>()
                .AddHttpMessageHandler(() => container.GetService<UserApiTokenHandler>())
-               .AddTypedClient(httpClient => BuildUserApiClient(httpClient, settings));
+               .AddTypedClient(httpClient => (IUserApiClient) new UserApiClient(httpClient) { BaseUrl = settings.UserApiUrl });
+            
+            serviceCollection.AddHttpClient<IVideoApiClient, VideoApiClient>()
+                .AddHttpMessageHandler(() => container.GetService<VideoApiTokenHandler>())
+                .AddTypedClient(httpClient => (IVideoApiClient) new VideoApiClient(httpClient) { BaseUrl = settings.VideoApiUrl });
 
             serviceCollection.AddTransient<IUserIdentity, UserIdentity>((ctx) =>
             {
@@ -105,16 +111,6 @@ namespace AdminWebsite.Extensions
             serviceCollection.AddSingleton<IValidator<EditHearingRequest>, EditHearingRequestValidator>();
 
             return serviceCollection;
-        }
-
-        private static IBookingsApiClient BuildHearingApiClient(HttpClient httpClient, ServiceSettings serviceSettings)
-        {
-            return new BookingsApiClient(httpClient) { BaseUrl = serviceSettings.BookingsApiUrl };
-        }
-
-        private static IUserApiClient BuildUserApiClient(HttpClient httpClient, ServiceSettings serviceSettings)
-        {
-            return new UserApiClient(httpClient) { BaseUrl = serviceSettings.UserApiUrl };
         }
 
         public static IServiceCollection AddJsonOptions(this IServiceCollection serviceCollection)

@@ -16,12 +16,12 @@ export class QuestionnaireResponses {
 
 @Injectable()
 export class QuestionnaireService {
-
+  LIMIT_RECORDS = 200;
   constructor(private service: ScrollableSuitabilityAnswersService) { }
 
   async loadNext(nextCursor: string): Promise<QuestionnaireResponses> {
 
-    const page = await this.service.getSuitabilityAnswers(nextCursor, 100);
+    const page = await this.service.getSuitabilityAnswers(nextCursor, this.LIMIT_RECORDS);
 
     // we need to figure out if next cursor is returned as null or not
     return new QuestionnaireResponses(

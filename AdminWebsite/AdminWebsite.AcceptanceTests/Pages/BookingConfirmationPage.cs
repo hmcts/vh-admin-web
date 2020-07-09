@@ -11,5 +11,6 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public static By HearingDate = By.Id("hearingDate");
         public static By BookAnotherHearingButton = By.Id("btnBookAnotherHearing");
         public static By ReturnToDashboardLink = By.PartialLinkText("Return to dashboard");
+        public static By ViewThisBookingLink = By.LinkText("View this booking");
     }
 }

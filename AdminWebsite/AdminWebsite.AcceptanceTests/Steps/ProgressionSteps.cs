@@ -72,11 +72,32 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         private static Journey FromString(string page)
         {
-            if (page.ToLower().Equals(Page.BookingsList.Name.ToLower()) || page.ToLower().Equals(Page.BookingDetails.Name.ToLower()))
+            if (page.ToLower().Equals(Page.BookingsList.Name.ToLower()))
+            {
+                return Journey.BookingsList;
+            }
+
+            if (page.ToLower().Equals(Page.BookingDetails.Name.ToLower()))
             {
                 return Journey.BookingDetails;
             }
-            return page.ToLower().Equals("questionnaire") ? Journey.Questionnaire : Journey.BookingConfirmation;
+
+            if (page.ToLower().Equals(Page.Questionnaire.Name.ToLower()))
+            {
+                return Journey.Questionnaire;
+            }
+
+            if (page.ToLower().Equals(Page.ChangePassword.Name.ToLower()))
+            {
+                return Journey.ChangePassword;
+            }
+
+            if (page.ToLower().Equals(Page.GetAudioFile.Name.ToLower()))
+            {
+                return Journey.GetAudioFile;
+            }
+
+            return Journey.BookingConfirmation;
         }
 
         private void Progression(Journey userJourney, string startPageAsString, string endPageAsString)
@@ -88,11 +109,14 @@ namespace AdminWebsite.AcceptanceTests.Steps
             {
                 {Journey.BookingConfirmation, new BookingsConfirmationJourney()},
                 {Journey.BookingDetails, new BookingDetailsJourney()},
+                {Journey.BookingsList, new BookingListJourney()},
+                {Journey.ChangePassword, new ChangePasswordJourney()},
+                {Journey.GetAudioFile, new GetAudioFileJourney()},
                 {Journey.Questionnaire, new QuestionnaireJourney()}
             };
             journeys[userJourney].VerifyUserIsApplicableToJourney(_c.CurrentUser.Role);
             journeys[userJourney].VerifyDestinationIsInThatJourney(endPage);
-            _c.RouteAfterDashboard = journeys[userJourney].GetNextPage(Page.Dashboard);
+            _c.Route = journeys[userJourney].GetNextPage(GetRouteBasedOn(userJourney));
             var journey = journeys[userJourney].Journey();
             var steps = Steps();
             foreach (var page in journey)
@@ -112,6 +136,15 @@ namespace AdminWebsite.AcceptanceTests.Steps
                 if (page.Equals(endPage)) break;
                 steps[page].ProgressToNextPage();
             }
+        }
+
+        private static Page GetRouteBasedOn(Journey userJourney)
+        {
+            if (userJourney == Journey.BookingDetails || userJourney == Journey.BookingsList)
+            {
+                return Page.BookingConfirmation;
+            }
+            return Page.Dashboard;
         }
 
         private Dictionary<Page, ISteps> Steps()

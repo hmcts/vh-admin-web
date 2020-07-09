@@ -1,3 +1,4 @@
+@import "~govuk-frontend/govuk/all";
 // global styles for <a> and <p> tags
 $govuk-global-styles: true;
 
@@ -63,17 +64,22 @@ $govuk-global-styles: true;
 
 #vhpanel-green {
     color: #ffffff;
-    background: #00823B;
+    background-color: govuk-colour("green");
 }
 
 #vhpanel-blue {
     color: #ffffff;
-    background: #005ea5;
+    background-color: govuk-colour("blue");
 }
 
-#vhpanel-purple {
-  color: #ffffff;
-  background: #912b88;
+#vhpanel-lightblue {
+    color: #ffffff;
+    background-color: govuk-colour("purple");
+}
+
+#vhpanel-darkgrey {
+    color: #ffffff;
+    background-color: govuk-colour("dark-grey");
 }
 
 #vhpanel-red {

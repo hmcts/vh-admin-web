@@ -57,25 +57,25 @@ export class MockValues {
           "first_name": "John",
           "last_name": "Doe",
           "display_name": "John Doe",
-          "email": "John.Doe@hearings.reform.hmcts.net"
+          "email": "John.Doe@madeupemail.com"
         },
         {
            "first_name": "John2",
            "last_name": "Doe",
            "display_name": "John2 Doe",
-           "email": "John2.Doe@hearings.reform.hmcts.net"
+           "email": "John2.Doe@madeupemail.com"
         },
         {
            "first_name": "John3",
            "last_name": "Doe",
            "display_name": "John3 Doe",
-           "email": "John3.Doe@hearings.reform.hmcts.net"
+           "email": "John3.Doe@madeupemail.com"
         },
         {
            "first_name": "John4",
            "last_name": "Doe",
            "display_name": "John4 Doe",
-           "email": "John4.Doe@hearings.reform.hmcts.net"
+           "email": "John4.Doe@madeupemail.com"
         }
      ]`);
 }

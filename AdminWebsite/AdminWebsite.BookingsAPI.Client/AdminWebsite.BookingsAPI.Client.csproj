@@ -3,6 +3,8 @@
     <PropertyGroup>
         <TargetFramework>netstandard2.1</TargetFramework>
         <RootNamespace>AdminWebsite.BookHearingClient</RootNamespace>
+        <ProjectGuid>CC1994C6-5EFB-46D2-B024-16ACF8B20AF5</ProjectGuid>
+        <DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>
     </PropertyGroup>
 
     <ItemGroup>

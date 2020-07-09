@@ -13,40 +13,32 @@ import { BookingEditComponent } from './booking-edit/booking-edit.component';
 import { WindowRef } from './window-ref';
 import { LongDatetimePipe } from './directives/date-time.pipe';
 import { WindowScrolling } from './window-scrolling';
+import { ClipboardModule } from 'ngx-clipboard';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    HttpClientModule,
-    SharedRoutingModule
-  ],
-  declarations: [
-    HeaderComponent,
-    FooterComponent,
-    ContactUsComponent,
-    PaginationComponent,
-    ScrollTriggerDirective,
-    BookingEditComponent,
-    LongDatetimePipe
-  ],
-  providers: [
-    WindowRef,
-    WindowScrolling
-  ],
-  exports: [
-    HeaderComponent,
-    FooterComponent,
-    ContactUsComponent,
-    PaginationComponent,
-    BookingEditComponent,
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    HttpClientModule,
-    ScrollTriggerDirective,
-    LongDatetimePipe
-  ]
+    imports: [CommonModule, FormsModule, ReactiveFormsModule, HttpClientModule, SharedRoutingModule, ClipboardModule],
+    declarations: [
+        HeaderComponent,
+        FooterComponent,
+        ContactUsComponent,
+        PaginationComponent,
+        ScrollTriggerDirective,
+        BookingEditComponent,
+        LongDatetimePipe
+    ],
+    providers: [WindowRef, WindowScrolling],
+    exports: [
+        HeaderComponent,
+        FooterComponent,
+        ContactUsComponent,
+        PaginationComponent,
+        BookingEditComponent,
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        HttpClientModule,
+        ScrollTriggerDirective,
+        LongDatetimePipe
+    ]
 })
-export class SharedModule { }
+export class SharedModule {}

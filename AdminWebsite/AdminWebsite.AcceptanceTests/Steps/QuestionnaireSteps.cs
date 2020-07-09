@@ -4,7 +4,7 @@ using System.Linq;
 using System.Net;
 using AcceptanceTests.Common.Api.Hearings;
 using AcceptanceTests.Common.Api.Helpers;
-using AcceptanceTests.Common.Driver.Browser;
+using AcceptanceTests.Common.Driver.Drivers;
 using AcceptanceTests.Common.Driver.Helpers;
 using AcceptanceTests.Common.Test.Steps;
 using AdminWebsite.AcceptanceTests.Data;
@@ -36,7 +36,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         }
 
         [Given(@"there is a hearing where an (.*) participant has completed some questionnaire answers")]
-        public void GivenThereIsAHearingWhereParticipantsHaveCompletedSomeQuestionnaireAnswers(string role)
+        public void GivenThereIsAHearingWithQuestionnaireAnswers(string role)
         {
             var hearing = CreateHearing();
             _participantResponse = hearing.Participants.First(x => x.User_role_name.ToLower().Equals(role.ToLower()));
@@ -69,7 +69,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
                 .WithUserAccounts(_c.UserAccounts)
                 .Build();
 
-            _bookingsApiManager = new BookingsApiManager(_c.AdminWebConfig.VhServices.BookingsApiUrl, _c.Tokens.BookingsApiBearerToken);
+            _bookingsApiManager = new BookingsApiManager(_c.WebConfig.VhServices.BookingsApiUrl, _c.Tokens.BookingsApiBearerToken);
             var hearingResponse = _bookingsApiManager.CreateHearing(hearingRequest);
             hearingResponse.StatusCode.Should().Be(HttpStatusCode.Created);
             var hearing = RequestHelper.DeserialiseSnakeCaseJsonToResponse<HearingDetailsResponse>(hearingResponse.Content);
