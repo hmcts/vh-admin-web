@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using AcceptanceTests.Common.Configuration.Users;
 using AcceptanceTests.Common.Model.Participant;
 using AdminWebsite.BookingsAPI.Client;
 using FluentAssertions;
+using TimeZone = AcceptanceTests.Common.Data.Time.TimeZone;
 
 namespace AdminWebsite.AcceptanceTests.Data
 {
@@ -13,6 +15,7 @@ namespace AdminWebsite.AcceptanceTests.Data
         private static HearingDetailsResponse _hearing;
         private static string _createdBy;
         private static Test _test;
+        private TimeZone _timeZone;
 
         public AssertHearing WithHearing(HearingDetailsResponse hearing)
         {
@@ -32,13 +35,19 @@ namespace AdminWebsite.AcceptanceTests.Data
             return this;
         }
 
+        public AssertHearing WithTimeZone(TimeZone timeZone)
+        {
+            _timeZone = timeZone;
+            return this;
+        }
+
         public void AssertHearingDataMatches()
         {
             _hearing.Cases.First().Name.Should().Be(_test.HearingDetails.CaseName);
             _hearing.Cases.First().Number.Should().Be(_test.HearingDetails.CaseNumber);
             _hearing.Case_type_name.Should().Be(_test.HearingDetails.CaseType.Name);
             _hearing.Created_by.Should().Be(_createdBy);
-            VerifyDatesMatch(_hearing.Created_date, DateTime.Now);
+            VerifyCreatedDate(_hearing.Created_date, DateTime.UtcNow);
             _hearing.Hearing_room_name.Should().Be(_test.HearingSchedule.Room);
             _hearing.Hearing_type_name.Should().Be(_test.HearingDetails.HearingType.Name);
             _hearing.Hearing_venue_name.Should().Be(_test.HearingSchedule.HearingVenue);
@@ -87,10 +96,25 @@ namespace AdminWebsite.AcceptanceTests.Data
             actualDuration.Should().Be(expectedDuration);
         }
 
-        private static void VerifyDatesMatch(DateTime actual, DateTime expected)
+        private static void VerifyCreatedDate(DateTime actual, DateTime expected)
         {
-            actual.ToShortDateString().Should().Be(expected.ToUniversalTime().ToShortDateString());
-            actual.ToShortTimeString().Should().BeOneOf(expected.ToUniversalTime().AddMinutes(-1).ToShortTimeString(), expected.ToUniversalTime().ToShortTimeString());
+            actual.ToShortDateString().Should().Be(expected.ToShortDateString());
+            actual.ToShortTimeString().Should().BeOneOf(
+                expected.AddMinutes(-3).ToShortTimeString(),
+                expected.AddMinutes(-2).ToShortTimeString(),
+                expected.AddMinutes(-1).ToShortTimeString(),
+                expected.ToShortTimeString());
+        }
+
+        private void VerifyDatesMatch(DateTime actual, DateTime expected)
+        {
+            expected = _timeZone.AdjustAdminWeb(expected);
+            actual.ToShortDateString().Should().Be(expected.ToShortDateString());
+            actual.ToShortTimeString().Should().BeOneOf(
+                expected.AddMinutes(-3).ToShortTimeString(),
+                                 expected.AddMinutes(-2).ToShortTimeString(), 
+                                 expected.AddMinutes(-1).ToShortTimeString(), 
+                                 expected.ToShortTimeString());
         }
     }
 }
