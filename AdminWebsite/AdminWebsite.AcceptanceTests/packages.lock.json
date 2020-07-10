@@ -231,9 +231,9 @@
       },
       "VH.AcceptanceTests.Common": {
         "type": "Direct",
-        "requested": "[1.0.238, )",
-        "resolved": "1.0.238",
-        "contentHash": "yXVAdUPJIEBZdxZyb+jIOq/KZ6DkFCz3gl2AS8sgjT0bOoh2TmennIoOLVp4XbkCgPLYTOdXyazhIUJcaI4TVQ==",
+        "requested": "[1.0.239, )",
+        "resolved": "1.0.239",
+        "contentHash": "zTmAY8uWZs/ZknEK98iK/8DXSBZ9JCEBFu5SJmX1vpMtixdHPlwGbv/PCISfr4bgAWovqAD/ZkhBRbZao4qtzw==",
         "dependencies": {
           "Appium.WebDriver": "4.1.1",
           "Azure.Storage.Blobs": "12.4.4",
@@ -259,7 +259,8 @@
           "Selenium.WebDriver.ChromeDriver": "83.0.4103.3900",
           "SpecFlow": "3.1.97",
           "System.Collections": "4.3.0",
-          "System.Configuration.ConfigurationManager": "4.7.0"
+          "System.Configuration.ConfigurationManager": "4.7.0",
+          "TimeZoneConverter": "3.2.0"
         }
       },
       "Appium.WebDriver": {
@@ -1716,6 +1717,11 @@
           "System.Xml.XPath": "4.3.0",
           "System.Xml.XmlDocument": "4.3.0"
         }
+      },
+      "TimeZoneConverter": {
+        "type": "Transitive",
+        "resolved": "3.2.0",
+        "contentHash": "f0UpF9H+ylj3qjO/l2+Yt0R77FFR327efJwsoXAys6J1fSYFcQPrPVhaGVVWoN79+PVutj0qzj79kuhSPN70gA=="
       },
       "Utf8Json": {
         "type": "Transitive",
