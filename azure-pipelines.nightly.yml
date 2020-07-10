@@ -112,7 +112,7 @@ variables:
 trigger: none
 pr: none
 schedules:
-- cron: "0 22 * * *"
+- cron: "0 19 * * *"
   displayName: Daily midnight build
   always: true
   branches:
