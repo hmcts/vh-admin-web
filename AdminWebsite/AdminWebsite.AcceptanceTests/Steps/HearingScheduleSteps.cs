@@ -62,7 +62,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(HearingSchedulePage.CourtRoomTextfield).SendKeys(_c.Test.HearingSchedule.Room);
         }
 
-        public void SetHearingScheduleDetails()
+        private void SetHearingScheduleDetails()
         {
             _c.Test.HearingSchedule.ScheduledDate = _c.Test.HearingSchedule.ScheduledDate == default ? SetDateAsOneMinuteToMidnight() : UpdateDateAsTenMinutesToMidnight();
             _c.Test.HearingSchedule.DurationHours = _c.Test.HearingSchedule.DurationHours == 0 ? _c.Test.TestData.HearingSchedule.DurationHours : 0;
@@ -73,12 +73,23 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         private static DateTime SetDateAsOneMinuteToMidnight()
         {
-            return DateTime.Today.AddDays(1).AddMinutes(-1);
+            return DateTime.Today.AddDays(AddDayIfCloseToMidnight()).AddMinutes(-1);
         }
 
         private static DateTime UpdateDateAsTenMinutesToMidnight()
         {
-            return DateTime.Today.AddDays(1).AddMinutes(-10);
+            return DateTime.Today.AddDays(AddDayIfCloseToMidnight()).AddMinutes(-10);
+        }
+
+        private static int AddDayIfCloseToMidnight()
+        {
+            var utcNow = DateTime.UtcNow.ToShortTimeString();
+            if (utcNow.Equals("11:58 PM") ||
+                utcNow.Equals("11:59 PM"))
+            {
+                return 2;
+            }
+            return 1;
         }
 
         public void EditHearingSchedule()
@@ -131,7 +142,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _browsers[_c.CurrentUser.Key].PageUrl(Page.AssignJudge.Url, true);
         }
 
-        public void ClickNext()
+        private void ClickNext()
         {
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(HearingSchedulePage.NextButton);
             _browsers[_c.CurrentUser.Key].Click(HearingSchedulePage.NextButton);
