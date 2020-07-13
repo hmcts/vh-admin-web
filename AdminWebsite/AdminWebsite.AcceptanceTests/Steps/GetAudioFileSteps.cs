@@ -50,8 +50,9 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             var hearing = _c.Test.HearingResponse;
             var caseDetails = hearing.Cases.First();
+            var date = _c.TimeZone.Adjust(hearing.Scheduled_date_time).Date.ToString(DateFormats.AudioScheduledDate);
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(GetAudioFilePage.ResultsCaseNumber(hearing.Id)).Text.Trim().Should().Be(caseDetails.Number);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(GetAudioFilePage.ResultsScheduledTime(hearing.Id)).Text.Trim().Should().Be(hearing.Scheduled_date_time.Date.ToString(DateFormats.AudioScheduledDate));
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(GetAudioFilePage.ResultsScheduledTime(hearing.Id)).Text.Trim().Should().Be(date);
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(GetAudioFilePage.ResultsCaseName(hearing.Id)).Text.Trim().Should().Be(caseDetails.Name);
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(GetAudioFilePage.ResultsVenue(hearing.Id)).Text.Trim().Should().Be($"{hearing.Hearing_venue_name} {hearing.Hearing_room_name}");
         }
