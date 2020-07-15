@@ -26,7 +26,7 @@
     "@hmcts/frontend": "0.0.39-alpha",
     "@rxjs/rx": "^4.1.0",
     "adal-angular4": "^3.0.16",
-    "applicationinsights-js": "^1.0.20",
+    "applicationinsights-js": "^1.0.21",
     "classlist.js": "^1.1.20150312",
     "core-js": "^3.6.5",
     "govuk-frontend": "^3.7.0",
