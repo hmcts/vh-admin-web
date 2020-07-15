@@ -35,12 +35,12 @@
     "ngx-device-detector": "^1.4.5",
     "ngx-moment": "^3.5.0",
     "rxjs": "^6.5.5",
-    "snyk": "^1.347.1",
+    "snyk": "^1.348.1",
     "zone.js": "^0.10.2"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^0.803.27",
-    "@angular/cli": "^8.3.27",
+    "@angular/cli": "^8.3.28",
     "@angular/compiler-cli": "^8.2.14",
     "@angular/language-service": "^8.2.14",
     "@types/applicationinsights-js": "^1.0.9",
