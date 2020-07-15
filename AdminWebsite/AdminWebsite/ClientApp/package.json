@@ -26,7 +26,7 @@
     "@hmcts/frontend": "0.0.39-alpha",
     "@rxjs/rx": "^4.1.0",
     "adal-angular4": "^3.0.16",
-    "applicationinsights-js": "^1.0.20",
+    "applicationinsights-js": "^1.0.21",
     "classlist.js": "^1.1.20150312",
     "core-js": "^3.6.5",
     "govuk-frontend": "^3.7.0",
@@ -35,12 +35,12 @@
     "ngx-device-detector": "^1.4.5",
     "ngx-moment": "^3.5.0",
     "rxjs": "^6.5.5",
-    "snyk": "^1.347.1",
+    "snyk": "^1.348.1",
     "zone.js": "^0.10.3"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^0.803.27",
-    "@angular/cli": "^8.3.27",
+    "@angular/cli": "^8.3.28",
     "@angular/compiler-cli": "^8.2.14",
     "@angular/language-service": "^8.2.14",
     "@types/applicationinsights-js": "^1.0.9",
