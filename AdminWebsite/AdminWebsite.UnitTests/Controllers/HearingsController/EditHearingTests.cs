@@ -9,12 +9,15 @@ using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
 using AdminWebsite.UnitTests.Helper;
+using AdminWebsite.VideoAPI.Client;
 using FluentAssertions;
 using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
+using UpdateParticipantRequest = AdminWebsite.BookingsAPI.Client.UpdateParticipantRequest;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {
@@ -25,6 +28,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private Mock<IUserAccountService> _userAccountService;
         private Mock<IValidator<BookNewHearingRequest>> _bookNewHearingRequestValidator;
         private Mock<IValidator<EditHearingRequest>> _editHearingRequestValidator;
+        private Mock<IVideoApiClient> _videoApiMock;
+        private Mock<IPollyRetryService> _pollyRetryServiceMock;
 
         private Guid _validId;
         private EditHearingRequest _request;
@@ -40,13 +45,18 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _userAccountService = new Mock<IUserAccountService>();
             _bookNewHearingRequestValidator = new Mock<IValidator<BookNewHearingRequest>>();
             _editHearingRequestValidator = new Mock<IValidator<EditHearingRequest>>();
+            _videoApiMock = new Mock<IVideoApiClient>();
+            _pollyRetryServiceMock = new Mock<IPollyRetryService>();
 
             _controller = new AdminWebsite.Controllers.HearingsController(_bookingsApiClient.Object,
                 _userIdentity.Object,
                 _userAccountService.Object,
                 _bookNewHearingRequestValidator.Object,
                 _editHearingRequestValidator.Object,
-                JavaScriptEncoder.Default);
+                JavaScriptEncoder.Default,
+                _videoApiMock.Object,
+                _pollyRetryServiceMock.Object,
+                new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>().Object);
 
             _validId = Guid.NewGuid();
             _request = new EditHearingRequest

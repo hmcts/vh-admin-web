@@ -14,6 +14,10 @@ using System.Net;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using AdminWebsite.Mappers;
+using AdminWebsite.VideoAPI.Client;
+using Microsoft.Extensions.Logging;
+using ParticipantRequest = AdminWebsite.BookingsAPI.Client.ParticipantRequest;
+using UpdateParticipantRequest = AdminWebsite.BookingsAPI.Client.UpdateParticipantRequest;
 
 namespace AdminWebsite.Controllers
 {
@@ -31,13 +35,16 @@ namespace AdminWebsite.Controllers
         private readonly IValidator<BookNewHearingRequest> _bookNewHearingRequestValidator;
         private readonly IValidator<EditHearingRequest> _editHearingRequestValidator;
         private readonly JavaScriptEncoder _encoder;
+        private readonly IVideoApiClient _videoApiClient;
+        private readonly IPollyRetryService _pollyRetryService;
+        private readonly ILogger<HearingsController> _logger;
 
         /// <summary>
         /// Instantiates the controller
         /// </summary>
         public HearingsController(IBookingsApiClient bookingsApiClient, IUserIdentity userIdentity, IUserAccountService userAccountService,
             IValidator<BookNewHearingRequest> bookNewHearingRequestValidator, IValidator<EditHearingRequest> editHearingRequestValidator,
-            JavaScriptEncoder encoder)
+            JavaScriptEncoder encoder, IVideoApiClient videoApiClient, IPollyRetryService pollyRetryService, ILogger<HearingsController> logger)
         {
             _bookingsApiClient = bookingsApiClient;
             _userIdentity = userIdentity;
@@ -45,6 +52,9 @@ namespace AdminWebsite.Controllers
             _bookNewHearingRequestValidator = bookNewHearingRequestValidator;
             _editHearingRequestValidator = editHearingRequestValidator;
             _encoder = encoder;
+            _videoApiClient = videoApiClient;
+            _pollyRetryService = pollyRetryService;
+            _logger = logger;
         }
 
         /// <summary>
@@ -434,29 +444,77 @@ namespace AdminWebsite.Controllers
         /// <returns>Success status</returns>
         [HttpPatch("{hearingId}")]
         [SwaggerOperation(OperationId = "UpdateBookingStatus")]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(UpdateBookingStatusResponse), (int) HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult> UpdateBookingStatus(Guid hearingId, UpdateBookingStatusRequest updateBookingStatusRequest)
+        public async Task<IActionResult> UpdateBookingStatus(Guid hearingId, UpdateBookingStatusRequest updateBookingStatusRequest)
         {
+            var errorMessage = $"Failed to get the conference from video api, possibly the conference was not created or the kinly meeting room is null - hearingId: {hearingId}";
+
             try
             {
                 updateBookingStatusRequest.Updated_by = _userIdentity.GetUserIdentityName();
                 await _bookingsApiClient.UpdateBookingStatusAsync(hearingId, updateBookingStatusRequest);
-                return NoContent();
+
+                if (updateBookingStatusRequest.Status != BookingsAPI.Client.UpdateBookingStatus.Created)
+                {
+                    return Ok(new UpdateBookingStatusResponse {Success = true});
+                }
+
+                try
+                {
+                    var conferenceDetailsResponse = await _pollyRetryService.WaitAndRetryAsync<VideoApiException, ConferenceDetailsResponse>
+                    (
+                        1, _ => TimeSpan.FromSeconds(5),
+                        retryAttempt => _logger.LogWarning($"Failed to retrieve conference details from the VideoAPi for hearingId {hearingId}. Retrying attempt {retryAttempt}"),
+                        videoApiResponseObject => !ConferenceExistsWithMeetingRoom(videoApiResponseObject),
+                        () => _videoApiClient.GetConferenceByHearingRefIdAsync(hearingId)
+                    );
+
+                    if (ConferenceExistsWithMeetingRoom(conferenceDetailsResponse))
+                    {
+                        return Ok(new UpdateBookingStatusResponse {Success = true});
+                    }
+                }
+                catch (VideoApiException ex)
+                {
+                    _logger.LogError(ex, $"{errorMessage}: {ex.Message}");
+                }
+
+                // Set the booking status to failed as the video api failed
+                await _bookingsApiClient.UpdateBookingStatusAsync(hearingId, new UpdateBookingStatusRequest
+                {
+                    Status = BookingsAPI.Client.UpdateBookingStatus.Failed,
+                    Updated_by = "System",
+                    Cancel_reason = string.Empty
+                });
+
+                return Ok(new UpdateBookingStatusResponse {Success = false, Message = errorMessage});
             }
             catch (BookingsApiException e)
             {
-                if (e.StatusCode == (int)HttpStatusCode.BadRequest)
+                if (e.StatusCode == (int) HttpStatusCode.BadRequest)
                 {
                     return BadRequest(e.Response);
                 }
-                if (e.StatusCode == (int)HttpStatusCode.NotFound)
+
+                if (e.StatusCode == (int) HttpStatusCode.NotFound)
                 {
                     return NotFound(e.Response);
                 }
+
                 throw;
             }
+        }
+
+        private static bool ConferenceExistsWithMeetingRoom(ConferenceDetailsResponse conference)
+        {
+            var success = !(conference?.Meeting_room == null
+                            || string.IsNullOrWhiteSpace(conference.Meeting_room.Admin_uri)
+                            || string.IsNullOrWhiteSpace(conference.Meeting_room.Participant_uri)
+                            || string.IsNullOrWhiteSpace(conference.Meeting_room.Judge_uri)
+                            || string.IsNullOrWhiteSpace(conference.Meeting_room.Pexip_node));
+            return success;
         }
     }
 }

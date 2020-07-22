@@ -9,7 +9,9 @@ using System;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using AdminWebsite.Models;
+using AdminWebsite.VideoAPI.Client;
 using FluentValidation;
+using Microsoft.Extensions.Logging;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {
@@ -23,6 +25,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private AdminWebsite.Controllers.HearingsController _controller;
         private Guid _guid;
         private UpdateBookingStatusRequest _updateBookingStatusRequest;
+        private Mock<IVideoApiClient> _videoApiMock;
+        private Mock<IPollyRetryService> _pollyRetryServiceMock;
 
         [SetUp]
         public void Setup()
@@ -32,13 +36,18 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _userAccountService = new Mock<IUserAccountService>();
             _bookNewHearingRequestValidator = new Mock<IValidator<BookNewHearingRequest>>();
             _editHearingRequestValidator = new Mock<IValidator<EditHearingRequest>>();
+            _videoApiMock = new Mock<IVideoApiClient>();
+            _pollyRetryServiceMock = new Mock<IPollyRetryService>();
 
             _controller = new AdminWebsite.Controllers.HearingsController(_bookingsApiClient.Object,
                 _userIdentity.Object,
                 _userAccountService.Object,
                 _bookNewHearingRequestValidator.Object,
                 _editHearingRequestValidator.Object,
-                JavaScriptEncoder.Default);
+                JavaScriptEncoder.Default,
+                _videoApiMock.Object,
+                _pollyRetryServiceMock.Object,
+                new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>().Object);
                 
             _guid = Guid.NewGuid();
 
