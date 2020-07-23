@@ -157,6 +157,7 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
                         this.updateStatusHandler(status);
                     } else {
                         this.showConfirmingFailed = true;
+                        this.updateStatusHandler(UpdateBookingStatus.Failed);
                     }
 
                     this.showConfirming = false;
@@ -166,6 +167,7 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
                     this.errorHandler(error, status);
                     this.showConfirming = false;
                     this.showConfirmingFailed = true;
+                    this.updateStatusHandler(UpdateBookingStatus.Failed);
                 }
             )
         );
