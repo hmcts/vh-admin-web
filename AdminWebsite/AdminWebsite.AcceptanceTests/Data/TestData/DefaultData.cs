@@ -38,7 +38,6 @@ namespace AdminWebsite.AcceptanceTests.Data.TestData
     public class AddParticipant
     {
         public Participant Participant { get; set; }
-        public Address Address { get; set; }
     }
 
     public class Participant
@@ -48,15 +47,6 @@ namespace AdminWebsite.AcceptanceTests.Data.TestData
         public string Phone { get; set; }
         public string Organisation { get; set; }
         public string Reference { get; set; }
-    }
-
-    public class Address
-    {
-        public string HouseNumber { get; set; }
-        public string Street { get; set; }
-        public string City { get; set; }
-        public string County { get; set; }
-        public string Postcode { get; set; }
     }
 
     public class OtherInformation

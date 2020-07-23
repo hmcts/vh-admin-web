@@ -22,13 +22,6 @@
       <Organisation>MoJ</Organisation>
       <Reference>1</Reference>
     </Participant>
-    <Address>
-      <HouseNumber>123</HouseNumber>
-      <Street>London Road</Street>
-      <City>London</City>
-      <County>London</County>
-      <Postcode>SW1 1WS</Postcode>
-    </Address>
   </AddParticipant>
   <OtherInformation>
     <Other>Other Info</Other>

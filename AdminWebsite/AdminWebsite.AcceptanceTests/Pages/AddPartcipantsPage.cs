@@ -15,11 +15,6 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public static By RepOrganisationTextfield = By.Id("companyName");
         public static By PhoneTextfield = By.Id("phone");
         public static By DisplayNameTextfield = By.Id("displayName");
-        public static By HouseNumberTextfield = By.Id("houseNumber");
-        public static By StreetTextfield = By.Id("street");
-        public static By CityTextfield = By.Id("city");
-        public static By CountyTextfield = By.Id("county");
-        public static By PostcodeTextfield = By.Id("postcode");
         public static By ReferenceTextfield = By.Id("reference");
         public static By RepresentingTextfield = By.Id("representing");
         public static By AddParticipantLink = By.Id("addParticipantBtn");

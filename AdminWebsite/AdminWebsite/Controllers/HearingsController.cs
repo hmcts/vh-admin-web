@@ -388,12 +388,7 @@ namespace AdminWebsite.Controllers
             {
                 Title = participant.Title,
                 Display_name = participant.DisplayName,
-                City = participant.City,
-                County = participant.County,
-                House_number = participant.HouseNumber,
                 Organisation_name = participant.OrganisationName,
-                Postcode = participant.Postcode,
-                Street = participant.Street,
                 Telephone_number = participant.TelephoneNumber,
                 Representee = participant.Representee,
                 Reference = participant.Reference
@@ -417,11 +412,6 @@ namespace AdminWebsite.Controllers
                 Telephone_number = participant.TelephoneNumber,
                 Title = participant.Title,
                 Organisation_name = participant.OrganisationName,
-                House_number = participant.HouseNumber,
-                Street = participant.Street,
-                City = participant.City,
-                County = participant.County,
-                Postcode = participant.Postcode
             };
             return newParticipant;
         }
