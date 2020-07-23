@@ -196,11 +196,6 @@ describe('Video hearing service', () => {
       participant.telephone_number = '123123123';
       participant.case_role_name = 'Defendant';
       participant.hearing_role_name = 'Defendant LIP';
-      participant.house_number = '123';
-      participant.street = 'Test Street';
-      participant.city = 'Test City';
-      participant.county = 'Test County';
-      participant.postcode = 'TE1 TNR';
       participants.push(participant);
 
       const model = service.mapParticipantResponseToParticipantModel(participants);
@@ -215,11 +210,6 @@ describe('Video hearing service', () => {
       expect(model[0].phone).toEqual(participant.telephone_number);
       expect(model[0].case_role_name).toEqual(participant.case_role_name);
       expect(model[0].hearing_role_name).toEqual(participant.hearing_role_name);
-      expect(model[0].housenumber).toEqual(participant.house_number);
-      expect(model[0].street).toEqual(participant.street);
-      expect(model[0].city).toEqual(participant.city);
-      expect(model[0].county).toEqual(participant.county);
-      expect(model[0].postcode).toEqual(participant.postcode);
   });
 
   it('should map ParticipantModel toParticipantResponse', () => {
@@ -235,11 +225,6 @@ describe('Video hearing service', () => {
       participant.phone = '123123123';
       participant.case_role_name = 'Defendant';
       participant.hearing_role_name = 'Defendant LIP';
-      participant.housenumber = '123';
-      participant.street = 'Test Street';
-      participant.city = 'Test City';
-      participant.county = 'Test County';
-      participant.postcode = 'TE1 TNR';
       participants.push(participant);
 
       const model = service.mapParticipants(participants);
@@ -254,11 +239,6 @@ describe('Video hearing service', () => {
       expect(model[0].telephone_number).toEqual(participant.phone);
       expect(model[0].case_role_name).toEqual(participant.case_role_name);
       expect(model[0].hearing_role_name).toEqual(participant.hearing_role_name);
-      expect(model[0].house_number).toEqual(participant.housenumber);
-      expect(model[0].street).toEqual(participant.street);
-      expect(model[0].city).toEqual(participant.city);
-      expect(model[0].county).toEqual(participant.county);
-      expect(model[0].postcode).toEqual(participant.postcode);
   });
 
   it('should map Existing hearing', () => {
@@ -274,11 +254,6 @@ describe('Video hearing service', () => {
       participant.phone = '123123123';
       participant.case_role_name = 'Defendant';
       participant.hearing_role_name = 'Defendant LIP';
-      participant.housenumber = '123';
-      participant.street = 'Test Street';
-      participant.city = 'Test City';
-      participant.county = 'Test County';
-      participant.postcode = 'TE1 TNR';
       participants.push(participant);
       const caseModel = new CaseModel();
       caseModel.name = 'case1';
@@ -314,11 +289,6 @@ describe('Video hearing service', () => {
       expect(actualParticipant.middle_names).toEqual(expectedParticipant.middle_names);
       expect(actualParticipant.hearing_role_name).toEqual(expectedParticipant.hearing_role_name);
       expect(actualParticipant.case_role_name).toEqual(expectedParticipant.case_role_name);
-      expect(actualParticipant.house_number).toEqual(expectedParticipant.housenumber);
-      expect(actualParticipant.street).toEqual(expectedParticipant.street);
-      expect(actualParticipant.city).toEqual(expectedParticipant.city);
-      expect(actualParticipant.county).toEqual(expectedParticipant.county);
-      expect(actualParticipant.postcode).toEqual(expectedParticipant.postcode);
       expect(actualCase.name).toEqual(expectedCase.name);
       expect(actualCase.number).toEqual(expectedCase.number);
   });

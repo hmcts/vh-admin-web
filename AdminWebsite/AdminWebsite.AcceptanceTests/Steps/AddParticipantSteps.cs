@@ -132,16 +132,6 @@ namespace AdminWebsite.AcceptanceTests.Steps
             var telephone = _c.Test.TestData.AddParticipant.Participant.Phone;
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.PhoneTextfield).SendKeys(telephone);
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.DisplayNameTextfield).SendKeys(user.DisplayName);
-            var houseNumber = _c.Test.TestData.AddParticipant.Address.HouseNumber;
-            EnterTextIfFieldIsNotPrePopulated(AddParticipantsPage.HouseNumberTextfield, houseNumber);
-            var street = _c.Test.TestData.AddParticipant.Address.Street;
-            EnterTextIfFieldIsNotPrePopulated(AddParticipantsPage.StreetTextfield, street);
-            var city = _c.Test.TestData.AddParticipant.Address.Street;
-            EnterTextIfFieldIsNotPrePopulated(AddParticipantsPage.CityTextfield, city);
-            var county = _c.Test.TestData.AddParticipant.Address.County;
-            EnterTextIfFieldIsNotPrePopulated(AddParticipantsPage.CountyTextfield, county);
-            var postcode = _c.Test.TestData.AddParticipant.Address.Postcode;
-            EnterTextIfFieldIsNotPrePopulated(AddParticipantsPage.PostcodeTextfield, postcode);
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.AddParticipantLink);
             _browsers[_c.CurrentUser.Key].ScrollTo(AddParticipantsPage.AddParticipantLink);
             _browsers[_c.CurrentUser.Key].ClickLink(AddParticipantsPage.AddParticipantLink);
@@ -224,16 +214,6 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AddParticipantsPage.PhoneTextfield).GetAttribute("value").Should().NotBeNullOrWhiteSpace();
             var organisation = _c.Test.TestData.AddParticipant.Participant.Organisation;
             EnterTextIfFieldIsNotPrePopulated(AddParticipantsPage.IndividualOrganisationTextfield, organisation);
-            var houseNumber = _c.Test.TestData.AddParticipant.Address.HouseNumber;
-            EnterTextIfFieldIsNotPrePopulated(AddParticipantsPage.HouseNumberTextfield, houseNumber);
-            var street = _c.Test.TestData.AddParticipant.Address.Street;
-            EnterTextIfFieldIsNotPrePopulated(AddParticipantsPage.StreetTextfield, street);
-            var city = _c.Test.TestData.AddParticipant.Address.Street;
-            EnterTextIfFieldIsNotPrePopulated(AddParticipantsPage.CityTextfield, city);
-            var county = _c.Test.TestData.AddParticipant.Address.County;
-            EnterTextIfFieldIsNotPrePopulated(AddParticipantsPage.CountyTextfield, county);
-            var postcode = _c.Test.TestData.AddParticipant.Address.Postcode;
-            EnterTextIfFieldIsNotPrePopulated(AddParticipantsPage.PostcodeTextfield, postcode);
         }
 
         private void RepFieldsAreSet(UserAccount user)

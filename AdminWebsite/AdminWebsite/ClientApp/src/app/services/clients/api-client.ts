@@ -1565,11 +1565,6 @@ export class ParticipantRequest implements IParticipantRequest {
     reference?: string | undefined;
     representee?: string | undefined;
     organisation_name?: string | undefined;
-    house_number?: string | undefined;
-    street?: string | undefined;
-    postcode?: string | undefined;
-    city?: string | undefined;
-    county?: string | undefined;
 
     constructor(data?: IParticipantRequest) {
         if (data) {
@@ -1595,11 +1590,6 @@ export class ParticipantRequest implements IParticipantRequest {
             this.reference = _data["reference"];
             this.representee = _data["representee"];
             this.organisation_name = _data["organisation_name"];
-            this.house_number = _data["house_number"];
-            this.street = _data["street"];
-            this.postcode = _data["postcode"];
-            this.city = _data["city"];
-            this.county = _data["county"];
         }
     }
 
@@ -1625,11 +1615,6 @@ export class ParticipantRequest implements IParticipantRequest {
         data["reference"] = this.reference;
         data["representee"] = this.representee;
         data["organisation_name"] = this.organisation_name;
-        data["house_number"] = this.house_number;
-        data["street"] = this.street;
-        data["postcode"] = this.postcode;
-        data["city"] = this.city;
-        data["county"] = this.county;
         return data; 
     }
 }
@@ -1648,11 +1633,6 @@ export interface IParticipantRequest {
     reference?: string | undefined;
     representee?: string | undefined;
     organisation_name?: string | undefined;
-    house_number?: string | undefined;
-    street?: string | undefined;
-    postcode?: string | undefined;
-    city?: string | undefined;
-    county?: string | undefined;
 }
 
 export class BookNewHearingRequest implements IBookNewHearingRequest {
@@ -1811,11 +1791,6 @@ export class ParticipantResponse implements IParticipantResponse {
     reference?: string | undefined;
     organisation?: string | undefined;
     representee?: string | undefined;
-    house_number?: string | undefined;
-    street?: string | undefined;
-    postcode?: string | undefined;
-    city?: string | undefined;
-    county?: string | undefined;
 
     constructor(data?: IParticipantResponse) {
         if (data) {
@@ -1843,11 +1818,6 @@ export class ParticipantResponse implements IParticipantResponse {
             this.reference = _data["reference"];
             this.organisation = _data["organisation"];
             this.representee = _data["representee"];
-            this.house_number = _data["house_number"];
-            this.street = _data["street"];
-            this.postcode = _data["postcode"];
-            this.city = _data["city"];
-            this.county = _data["county"];
         }
     }
 
@@ -1875,11 +1845,6 @@ export class ParticipantResponse implements IParticipantResponse {
         data["reference"] = this.reference;
         data["organisation"] = this.organisation;
         data["representee"] = this.representee;
-        data["house_number"] = this.house_number;
-        data["street"] = this.street;
-        data["postcode"] = this.postcode;
-        data["city"] = this.city;
-        data["county"] = this.county;
         return data; 
     }
 }
@@ -1900,11 +1865,6 @@ export interface IParticipantResponse {
     reference?: string | undefined;
     organisation?: string | undefined;
     representee?: string | undefined;
-    house_number?: string | undefined;
-    street?: string | undefined;
-    postcode?: string | undefined;
-    city?: string | undefined;
-    county?: string | undefined;
 }
 
 export enum BookingStatus {
@@ -2313,15 +2273,6 @@ export class EditParticipantRequest implements IEditParticipantRequest {
     reference?: string | undefined;
     /** The representee of a representative */
     representee?: string | undefined;
-    house_number?: string | undefined;
-    /** Stree number of an Individual */
-    street?: string | undefined;
-    /** Postcode of an Individual */
-    postcode?: string | undefined;
-    /** City/Town of an Individual */
-    city?: string | undefined;
-    /** County of an Individual */
-    county?: string | undefined;
     organisation_name?: string | undefined;
 
     constructor(data?: IEditParticipantRequest) {
@@ -2347,11 +2298,6 @@ export class EditParticipantRequest implements IEditParticipantRequest {
             this.hearing_role_name = _data["hearing_role_name"];
             this.reference = _data["reference"];
             this.representee = _data["representee"];
-            this.house_number = _data["house_number"];
-            this.street = _data["street"];
-            this.postcode = _data["postcode"];
-            this.city = _data["city"];
-            this.county = _data["county"];
             this.organisation_name = _data["organisation_name"];
         }
     }
@@ -2377,11 +2323,6 @@ export class EditParticipantRequest implements IEditParticipantRequest {
         data["hearing_role_name"] = this.hearing_role_name;
         data["reference"] = this.reference;
         data["representee"] = this.representee;
-        data["house_number"] = this.house_number;
-        data["street"] = this.street;
-        data["postcode"] = this.postcode;
-        data["city"] = this.city;
-        data["county"] = this.county;
         data["organisation_name"] = this.organisation_name;
         return data; 
     }
@@ -2405,15 +2346,6 @@ export interface IEditParticipantRequest {
     reference?: string | undefined;
     /** The representee of a representative */
     representee?: string | undefined;
-    house_number?: string | undefined;
-    /** Stree number of an Individual */
-    street?: string | undefined;
-    /** Postcode of an Individual */
-    postcode?: string | undefined;
-    /** City/Town of an Individual */
-    city?: string | undefined;
-    /** County of an Individual */
-    county?: string | undefined;
     organisation_name?: string | undefined;
 }
 

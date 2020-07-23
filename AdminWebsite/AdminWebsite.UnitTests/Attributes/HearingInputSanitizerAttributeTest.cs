@@ -48,11 +48,6 @@ namespace AdminWebsite.UnitTests.Attributes
                 x.Last_name == expectedText &&
                 x.Display_name == expectedText &&
                 x.Telephone_number == expectedText &&
-                x.House_number == expectedText &&
-                x.Street == expectedText &&
-                x.City == expectedText &&
-                x.Postcode == expectedText &&
-                x.County == expectedText &&
                 x.Reference == expectedText &&
                 x.Representee == expectedText &&
                 x.Organisation_name == expectedText
@@ -86,11 +81,6 @@ namespace AdminWebsite.UnitTests.Attributes
                 x.LastName == expectedText &&
                 x.DisplayName == expectedText &&
                 x.TelephoneNumber == expectedText &&
-                x.HouseNumber == expectedText &&
-                x.Street == expectedText &&
-                x.City == expectedText &&
-                x.Postcode == expectedText &&
-                x.County == expectedText &&
                 x.Reference == expectedText &&
                 x.Representee == expectedText &&
                 x.OrganisationName == expectedText
@@ -136,11 +126,6 @@ namespace AdminWebsite.UnitTests.Attributes
                                 Last_name = text,
                                 Display_name = text,
                                 Telephone_number = text,
-                                House_number = text,
-                                Street = text,
-                                City = text,
-                                Postcode = text,
-                                County = text,
                                 Reference = text,
                                 Representee = text,
                                 Organisation_name = text
@@ -180,11 +165,6 @@ namespace AdminWebsite.UnitTests.Attributes
                                 LastName = text,
                                 DisplayName = text,
                                 TelephoneNumber = text,
-                                HouseNumber = text,
-                                Street = text,
-                                City = text,
-                                Postcode = text,
-                                County = text,
                                 Reference = text,
                                 Representee = text,
                                 OrganisationName = text

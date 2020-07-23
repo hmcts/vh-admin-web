@@ -152,12 +152,6 @@ export class VideoHearingsService {
     editParticipant.telephone_number = participant.phone;
     editParticipant.title = participant.title;
     editParticipant.organisation_name = participant.company;
-    editParticipant.house_number = participant.housenumber;
-    editParticipant.street = participant.street;
-    editParticipant.city = participant.city;
-    editParticipant.county = participant.county;
-    editParticipant.postcode = participant.postcode;
-
     return editParticipant;
   }
 
@@ -246,11 +240,6 @@ export class VideoHearingsService {
         participant.representee = p.representee;
         participant.reference = p.reference;
         participant.organisation_name = p.company;
-        participant.house_number = p.housenumber;
-        participant.street = p.street;
-        participant.city = p.city;
-        participant.county = p.county;
-        participant.postcode = p.postcode;
         participants.push(participant);
       });
     }
@@ -278,11 +267,6 @@ export class VideoHearingsService {
         participant.reference = p.reference;
         participant.company = p.organisation;
         participant.is_judge = p.case_role_name === 'Judge';
-        participant.housenumber = p.house_number;
-        participant.street = p.street;
-        participant.city = p.city;
-        participant.county = p.county;
-        participant.postcode = p.postcode;
         participants.push(participant);
       });
     }

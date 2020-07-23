@@ -15,7 +15,6 @@ import { BookingService } from '../../services/booking.service';
 import { ParticipantService } from '../services/participant.service';
 import { CaseAndHearingRolesResponse } from '../../services/clients/api-client';
 import { PartyModel } from '../../common/model/party.model';
-import { Address } from './address';
 import { Logger } from '../../services/logger';
 import { SanitizeInputText } from '../../common/formatters/sanitize-input-text';
 
@@ -49,11 +48,6 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   private companyNameIndividual: FormControl;
   private reference: FormControl;
   private representing: FormControl;
-  private houseNumber: FormControl;
-  private street: FormControl;
-  private city: FormControl;
-  private county: FormControl;
-  private postcode: FormControl;
   isRoleSelected = true;
   isPartySelected = true;
   isTitleSelected = true;
@@ -77,9 +71,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   existingParticipant: boolean;
   isRepresentative = false;
   bookingHasParticipants: boolean;
-  showAddress = false;
   existingPersonEmails: string[] = [];
-  dummyAddress: Address = new Address();
   $subscriptions: Subscription[] = [];
 
   @ViewChild(SearchEmailComponent, { static: false })
@@ -101,7 +93,6 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   }
 
   ngOnInit() {
-    this.dummyAddress.setDummyAddress();
     this.checkForExistingRequest();
     this.initializeForm();
     super.ngOnInit();
@@ -194,14 +185,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     this.companyNameIndividual = new FormControl('', [Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)]);
     this.reference = new FormControl('', [Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)]);
     this.representing = new FormControl('', [Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)]);
-    this.houseNumber = new FormControl(this.dummyAddress.houseNumber);
-    this.street = new FormControl(this.dummyAddress.street);
-    this.city = new FormControl(this.dummyAddress.city);
-    this.county = new FormControl(this.dummyAddress.county);
-    this.postcode = new FormControl(this.dummyAddress.postcode, {
-      validators: [Validators.required,
-      Validators.pattern(Constants.PostCodePattern), Validators.maxLength(10)], updateOn: 'blur'
-    });
+
     this.form = new FormGroup({
       role: this.role,
       party: this.party,
@@ -214,11 +198,6 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
       companyNameIndividual: this.companyNameIndividual,
       reference: this.reference,
       representing: this.representing,
-      houseNumber: this.houseNumber,
-      street: this.street,
-      city: this.city,
-      county: this.county,
-      postcode: this.postcode,
     });
     const self = this;
     this.$subscriptions.push(this.form.valueChanges.subscribe(
@@ -301,9 +280,6 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     // if it's added in the existing hearing participant, then allowed all fields to edit.
     this.resetPartyAndRole();
 
-    if (this.constants.IndividualRoles.indexOf(this.participantDetails.hearing_role_name) > -1) {
-      this.showAddress = true;
-    }
     this.isRepresentative = this.participantDetails.hearing_role_name === Constants.Representative;
 
     this.form.setValue({
@@ -318,11 +294,6 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
       companyNameIndividual: this.participantDetails.company ? this.participantDetails.company : '',
       reference: this.participantDetails.reference ? this.participantDetails.reference : '',
       representing: this.participantDetails.representee ? this.participantDetails.representee : '',
-      houseNumber: this.participantDetails.housenumber ? this.participantDetails.housenumber : this.dummyAddress.houseNumber,
-      street: this.participantDetails.street ? this.participantDetails.street : this.dummyAddress.street,
-      city: this.participantDetails.city ? this.participantDetails.city : this.dummyAddress.city,
-      county: this.participantDetails.county ? this.participantDetails.county : this.dummyAddress.county,
-      postcode: this.participantDetails.postcode ? this.participantDetails.postcode : this.dummyAddress.postcode
     });
 
     setTimeout(() => {
@@ -413,23 +384,6 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
       || (this.displayName.touched && this.displayName.value === '');
   }
 
-  get houseNumberInvalid() {
-    return this.houseNumber.invalid && (this.houseNumber.dirty || this.houseNumber.touched || this.isShowErrorSummary);
-  }
-
-  get streetInvalid() {
-    return this.street.invalid && (this.street.dirty || this.street.touched || this.isShowErrorSummary);
-  }
-  get cityInvalid() {
-    return this.city.invalid && (this.city.dirty || this.city.touched || this.isShowErrorSummary);
-  }
-  get countyInvalid() {
-    return this.county.invalid && (this.county.dirty || this.county.touched || this.isShowErrorSummary);
-  }
-
-  get postcodeInvalid() {
-    return this.postcode.invalid && (this.postcode.dirty || this.postcode.touched || this.isShowErrorSummary);
-  }
   get referenceInvalid() {
     return this.reference.invalid &&
       (this.reference.dirty || this.reference.touched || this.isShowErrorSummary);
@@ -457,18 +411,6 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   roleSelected() {
     this.isRoleSelected = this.role.value !== this.constants.PleaseSelect;
     if (this.role.value !== this.constants.Representative) {
-      this.showAddress = true;
-
-      this.houseNumber.setValidators([Validators.required, Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)]);
-      this.street.setValidators([Validators.required, Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)]);
-      this.city.setValidators([Validators.required, Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)]);
-      this.county.setValidators([Validators.required, Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)]);
-
-      this.houseNumber.updateValueAndValidity();
-      this.street.updateValueAndValidity();
-      this.city.updateValueAndValidity();
-      this.county.updateValueAndValidity();
-
       this.companyName.clearValidators();
       this.reference.clearValidators();
       this.representing.clearValidators();
@@ -481,8 +423,6 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
       this.reference.setValue('');
       this.representing.setValue('');
     } else {
-      this.showAddress = false;
-
       this.companyName.setValidators([Validators.required, Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)]);
       this.reference.setValidators([
         Validators.required,
@@ -494,21 +434,6 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
       this.reference.updateValueAndValidity();
       this.representing.updateValueAndValidity();
 
-      this.houseNumber.clearValidators();
-      this.street.clearValidators();
-      this.city.clearValidators();
-      this.county.clearValidators();
-
-      this.houseNumber.updateValueAndValidity();
-      this.street.updateValueAndValidity();
-      this.city.updateValueAndValidity();
-      this.county.updateValueAndValidity();
-
-      this.houseNumber.setValue(this.dummyAddress.houseNumber);
-      this.street.setValue(this.dummyAddress.street);
-      this.city.setValue(this.dummyAddress.city);
-      this.county.setValue(this.dummyAddress.county);
-      this.postcode.setValue(this.dummyAddress.postcode);
       this.companyNameIndividual.setValue('');
     }
     this.showDetails = true;
@@ -623,11 +548,6 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     newParticipant.username = this.searchEmail ? this.searchEmail.email : '';
     newParticipant.reference = this.reference.value;
     newParticipant.representee = this.representing.value;
-    newParticipant.housenumber = this.houseNumber.value;
-    newParticipant.street = this.street.value;
-    newParticipant.city = this.city.value;
-    newParticipant.county = this.county.value;
-    newParticipant.postcode = this.postcode.value;
     newParticipant.is_exist_person = this.existingPersonEmails.findIndex(x => x === newParticipant.email) > -1;
   }
 
@@ -693,11 +613,6 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         companyNameIndividual: '',
         reference: '',
         representing: '',
-        houseNumber: this.dummyAddress.houseNumber,
-        street: this.dummyAddress.street,
-        city: this.dummyAddress.city,
-        county: this.dummyAddress.county,
-        postcode: this.dummyAddress.postcode,
       });
     this.form.markAsUntouched();
     this.form.markAsPristine();
@@ -794,24 +709,6 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   displayNameOnBlur() {
     const text = SanitizeInputText(this.displayName.value);
     this.displayName.setValue(text);
-  }
-
-  houseNumberOnBlur() {
-    const text = SanitizeInputText(this.houseNumber.value);
-    this.houseNumber.setValue(text);
-  }
-
-  streetOnBlur() {
-    const text = SanitizeInputText(this.street.value);
-    this.street.setValue(text);
-  }
-  cityOnBlur() {
-    const text = SanitizeInputText(this.city.value);
-    this.city.setValue(text);
-  }
-  countyOnBlur() {
-    const text = SanitizeInputText(this.county.value);
-    this.county.setValue(text);
   }
 
   companyNameOnBlur() {
