@@ -30,6 +30,8 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
     judges: Array<ParticipantDetailsModel> = [];
     isVhOfficerAdmin = false;
     showCancelBooking: boolean;
+    showConfirming: boolean;
+    showConfirmingFailed: boolean;
     isConfirmationTimeValid = true;
     hearingId: string;
     updateBookingStatusRequest: UpdateBookingStatusRequest;
@@ -49,6 +51,8 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
         private logger: Logger
     ) {
         this.showCancelBooking = false;
+        this.showConfirming = false;
+        this.showConfirmingFailed = false;
     }
 
     ngOnInit() {
@@ -144,6 +148,7 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
         updateBookingStatus.status = status;
         updateBookingStatus.updated_by = '';
         updateBookingStatus.cancel_reason = reason;
+        this.showConfirming = true;
 
         this.$subscriptions.push(
             this.videoHearingService.updateBookingStatus(this.hearingId, updateBookingStatus).subscribe(
@@ -151,13 +156,16 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
                     if (data.success) {
                         this.updateStatusHandler(status);
                     } else {
-                        alert('error: ' + data.message);
+                        this.showConfirmingFailed = true;
                     }
 
+                    this.showConfirming = false;
                     this.logger.event('Hearing status changed', { hearingId: this.hearingId, status: status });
                 },
                 (error) => {
                     this.errorHandler(error, status);
+                    this.showConfirming = false;
+                    this.showConfirmingFailed = true;
                 }
             )
         );
@@ -193,6 +201,10 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
         }
         this.booking.status = status;
         this.setBookingInStorage();
+    }
+
+    closeConfirmFailed(): void {
+        this.showConfirmingFailed = false;
     }
 
     ngOnDestroy() {

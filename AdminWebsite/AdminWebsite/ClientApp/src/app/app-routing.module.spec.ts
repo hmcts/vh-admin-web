@@ -37,6 +37,7 @@ import { GetAudioFileComponent } from './get-audio-file/get-audio-file.component
 import { GetAudioLinkButtonComponent } from './get-audio-file/get-audio-link-button/get-audio-link-button.component';
 import { HearingSearchDateTimePipe } from './shared/directives/hearing-search-date-time.pipe';
 import { HearingSearchResultsComponent } from './get-audio-file/hearing-search-results/hearing-search-results.component';
+import { ConfirmBookingFailedPopupComponent } from './popups/confirm-booking-failed-popup/confirm-booking-failed-popup.component';
 
 describe('app routing', () => {
     let location: Location;
@@ -63,6 +64,7 @@ describe('app routing', () => {
                 SignOutPopupComponent,
                 WaitPopupComponent,
                 SaveFailedPopupComponent,
+                ConfirmBookingFailedPopupComponent,
                 CancelPopupStubComponent,
                 CancelBookingPopupComponent,
                 UnsupportedBrowserComponent,

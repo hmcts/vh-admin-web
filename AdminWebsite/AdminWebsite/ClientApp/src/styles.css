@@ -139,6 +139,20 @@
   float: left;
 }
 
+.vh-created-confirmation-failed {
+    color: #ffffff;
+    background-color: #d4351c;
+    padding-top: 7px;
+    padding-bottom: 7px;
+    width: 10%;
+    font-weight: 300;
+    text-align: center;
+    margin-top: 1px;
+    font-size: 18px;
+    font-family: "nta",Arial,sans-serif;
+    float: left;
+}
+
 .vh-btncancel {
   background-color: #dee0e2 !important;
   color: #0b0b0b !important;
