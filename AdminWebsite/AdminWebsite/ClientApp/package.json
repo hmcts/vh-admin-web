@@ -35,7 +35,7 @@
     "ngx-device-detector": "^1.4.5",
     "ngx-moment": "^3.5.0",
     "rxjs": "^6.5.5",
-    "snyk": "^1.355.0",
+    "snyk": "^1.359.0",
     "zone.js": "^0.10.3"
   },
   "devDependencies": {
