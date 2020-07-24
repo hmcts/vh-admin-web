@@ -24,7 +24,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private readonly AdminWebsite.Controllers.HearingsController _controller;
         private readonly Mock<IPollyRetryService> _pollyRetryServiceMock;
 
-        public UpdateBookingStatusTests(UpdateBookingStatusRequest updateBookingStatusRequest)
+        public UpdateBookingStatusTests()
         {
             _bookingsApiClient = new Mock<IBookingsApiClient>();
             _userIdentity = new Mock<IUserIdentity>();
@@ -400,6 +400,22 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             _bookingsApiClient.Verify(x => x.UpdateBookingStatusAsync(hearingId, updateCreatedStatus), Times.Once);
             _bookingsApiClient.Verify(x => x.UpdateBookingStatusAsync(hearingId, It.Is<UpdateBookingStatusRequest>(pred => pred.Status == UpdateBookingStatus.Failed)), Times.Once);
+        }
+
+        [Test]
+        public void UpdateBookingStatus_throws_when_bookings_api_exception()
+        {
+            _userIdentity.Setup(x => x.GetUserIdentityName()).Returns("test");
+            var request = new UpdateBookingStatusRequest
+            {
+                Updated_by = "test", Cancel_reason = "", Status = UpdateBookingStatus.Cancelled
+            };
+            var hearingId = Guid.NewGuid();
+
+            _bookingsApiClient.Setup(x => x.UpdateBookingStatusAsync(hearingId, request))
+                .ThrowsAsync(new BookingsApiException("", StatusCodes.Status500InternalServerError, "", null, null));
+
+            Assert.ThrowsAsync<BookingsApiException>(() => _controller.UpdateBookingStatus(hearingId, request));
         }
     }
 }
