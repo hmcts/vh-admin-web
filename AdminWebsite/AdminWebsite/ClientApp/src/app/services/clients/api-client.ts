@@ -1888,6 +1888,8 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
     created_by?: string | undefined;
     updated_by?: string | undefined;
     updated_date?: Date;
+    confirmed_by?: string | undefined;
+    confirmed_date?: Date | undefined;
     status?: BookingStatus;
     questionnaire_not_required?: boolean;
     audio_recording_required?: boolean;
@@ -1926,6 +1928,8 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
             this.created_by = _data["created_by"];
             this.updated_by = _data["updated_by"];
             this.updated_date = _data["updated_date"] ? new Date(_data["updated_date"].toString()) : <any>undefined;
+            this.confirmed_by = _data["confirmed_by"];
+            this.confirmed_date = _data["confirmed_date"] ? new Date(_data["confirmed_date"].toString()) : <any>undefined;
             this.status = _data["status"];
             this.questionnaire_not_required = _data["questionnaire_not_required"];
             this.audio_recording_required = _data["audio_recording_required"];
@@ -1964,6 +1968,8 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
         data["created_by"] = this.created_by;
         data["updated_by"] = this.updated_by;
         data["updated_date"] = this.updated_date ? this.updated_date.toISOString() : <any>undefined;
+        data["confirmed_by"] = this.confirmed_by;
+        data["confirmed_date"] = this.confirmed_date ? this.confirmed_date.toISOString() : <any>undefined;
         data["status"] = this.status;
         data["questionnaire_not_required"] = this.questionnaire_not_required;
         data["audio_recording_required"] = this.audio_recording_required;
@@ -1987,6 +1993,8 @@ export interface IHearingDetailsResponse {
     created_by?: string | undefined;
     updated_by?: string | undefined;
     updated_date?: Date;
+    confirmed_by?: string | undefined;
+    confirmed_date?: Date | undefined;
     status?: BookingStatus;
     questionnaire_not_required?: boolean;
     audio_recording_required?: boolean;
@@ -2008,6 +2016,8 @@ export class BookingsHearingResponse implements IBookingsHearingResponse {
     created_date?: Date;
     last_edit_by?: string | undefined;
     last_edit_date?: Date | undefined;
+    confirmed_by?: string | undefined;
+    confirmed_date?: Date | undefined;
     hearing_date?: Date;
     status?: BookingStatus;
     questionnaire_not_required?: boolean;
@@ -2039,6 +2049,8 @@ export class BookingsHearingResponse implements IBookingsHearingResponse {
             this.created_date = _data["created_date"] ? new Date(_data["created_date"].toString()) : <any>undefined;
             this.last_edit_by = _data["last_edit_by"];
             this.last_edit_date = _data["last_edit_date"] ? new Date(_data["last_edit_date"].toString()) : <any>undefined;
+            this.confirmed_by = _data["confirmed_by"];
+            this.confirmed_date = _data["confirmed_date"] ? new Date(_data["confirmed_date"].toString()) : <any>undefined;
             this.hearing_date = _data["hearing_date"] ? new Date(_data["hearing_date"].toString()) : <any>undefined;
             this.status = _data["status"];
             this.questionnaire_not_required = _data["questionnaire_not_required"];
@@ -2070,6 +2082,8 @@ export class BookingsHearingResponse implements IBookingsHearingResponse {
         data["created_date"] = this.created_date ? this.created_date.toISOString() : <any>undefined;
         data["last_edit_by"] = this.last_edit_by;
         data["last_edit_date"] = this.last_edit_date ? this.last_edit_date.toISOString() : <any>undefined;
+        data["confirmed_by"] = this.confirmed_by;
+        data["confirmed_date"] = this.confirmed_date ? this.confirmed_date.toISOString() : <any>undefined;
         data["hearing_date"] = this.hearing_date ? this.hearing_date.toISOString() : <any>undefined;
         data["status"] = this.status;
         data["questionnaire_not_required"] = this.questionnaire_not_required;
@@ -2094,6 +2108,8 @@ export interface IBookingsHearingResponse {
     created_date?: Date;
     last_edit_by?: string | undefined;
     last_edit_date?: Date | undefined;
+    confirmed_by?: string | undefined;
+    confirmed_date?: Date | undefined;
     hearing_date?: Date;
     status?: BookingStatus;
     questionnaire_not_required?: boolean;

@@ -25,6 +25,8 @@ export class BookingDetailsService {
       hearingResponse.created_date,
       hearingResponse.updated_by,
       hearingResponse.updated_date,
+      hearingResponse.confirmed_by,
+      hearingResponse.confirmed_date,
       hearingResponse.status,
       hearingResponse.questionnaire_not_required,
       hearingResponse.audio_recording_required,

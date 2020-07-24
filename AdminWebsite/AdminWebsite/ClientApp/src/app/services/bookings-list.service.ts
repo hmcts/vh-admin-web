@@ -122,6 +122,8 @@ export class BookingsListService {
       hearing.created_date,
       hearing.last_edit_by,
       hearing.last_edit_date,
+      hearing.confirmed_by,
+      hearing.confirmed_date,
       hearing.status,
       hearing.questionnaire_not_required,
       hearing.audio_recording_required,
