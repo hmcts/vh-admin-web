@@ -11,7 +11,8 @@ import {
     HearingDetailsResponse,
     UpdateBookingStatusRequest,
     UpdateBookingStatus,
-    UserProfileResponse
+    UserProfileResponse,
+    UpdateBookingStatusResponse
 } from '../../services/clients/api-client';
 import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
 import { ParticipantDetailsModel } from '../../common/model/participant-details.model';
@@ -359,6 +360,28 @@ describe('BookingDetailsComponent', () => {
     it('should navigate back', () => {
         component.navigateBack();
         expect(routerSpy.navigate).toHaveBeenCalled();
+    });
+    it('should not show pop up if the confirm failed', () => {
+        videoHearingServiceSpy.updateBookingStatus.and.returnValue(of(new UpdateBookingStatusResponse({ success: true })));
+        component.isVhOfficerAdmin = true;
+        component.confirmHearing();
+        expect(component.showConfirmingFailed).toBeFalsy();
+    });
+    it('should show pop up if the confirm failed', () => {
+        videoHearingServiceSpy.updateBookingStatus.and.returnValue(of(new UpdateBookingStatusResponse({ success: false })));
+        component.isVhOfficerAdmin = true;
+        component.confirmHearing();
+        expect(component.showConfirmingFailed).toBeTruthy();
+    });
+    it('should hide pop up if the close confirm failed ok button was clicked', () => {
+        component.showConfirmingFailed = true;
+        component.closeConfirmFailed();
+        expect(component.showConfirmingFailed).toBeFalsy();
+    });
+    it('should hide show confirming pop up on error', () => {
+        component.showConfirming = true;
+        component.errorHandler('error', UpdateBookingStatus.Created);
+        expect(component.showConfirming).toBeFalsy();
     });
     it('should set subscription to check hearing start time', fakeAsync(() => {
         component.isConfirmationTimeValid = true;

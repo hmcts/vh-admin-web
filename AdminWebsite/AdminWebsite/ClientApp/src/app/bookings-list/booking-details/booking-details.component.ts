@@ -165,8 +165,6 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
                 },
                 (error) => {
                     this.errorHandler(error, status);
-                    this.showConfirming = false;
-                    this.showConfirmingFailed = true;
                     this.updateStatusHandler(UpdateBookingStatus.Failed);
                 }
             )
@@ -194,6 +192,10 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
         if (status === UpdateBookingStatus.Cancelled) {
             this.showCancelBooking = false;
         }
+
+        this.showConfirming = false;
+        this.showConfirmingFailed = true;
+
         this.logger.error('Error update hearing status', error);
     }
 
