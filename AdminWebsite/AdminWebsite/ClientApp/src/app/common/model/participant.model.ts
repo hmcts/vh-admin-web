@@ -15,9 +15,4 @@ export class ParticipantModel {
   company?: string | undefined;
   is_judge: boolean;
   is_exist_person: boolean;
-  housenumber?: string | undefined;
-  street?: string | undefined;
-  city?: string | undefined;
-  county?: string | undefined;
-  postcode?: string | undefined;
 }
