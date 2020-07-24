@@ -156,9 +156,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             var response = await _controller.UpdateBookingStatus(Guid.NewGuid(), new UpdateBookingStatusRequest());
 
-            response.Should().BeOfType<NoContentResult>();
+            response.Should().BeOfType<OkObjectResult>();
 
-            _bookingsApiClient.Verify(x => x.UpdateBookingStatusAsync(It.IsAny<Guid>(), It.IsAny<UpdateBookingStatusRequest>()), Times.Once);
+            _bookingsApiClient.Verify(x => x.UpdateBookingStatusAsync(It.IsAny<Guid>(), It.IsAny<UpdateBookingStatusRequest>()), Times.Exactly(2));
         }
 
         [Test]

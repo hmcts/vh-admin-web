@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using AdminWebsite.Models;
 using AdminWebsite.VideoAPI.Client;
 using FluentValidation;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
@@ -57,9 +58,10 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task Should_update_status_of_hearing_to_cancelled_given_status_and_updatedby()
         {
-            var result = await _controller.UpdateBookingStatus(_guid, _updateBookingStatusRequest);
-            var noContentResult = (NoContentResult)result;
-            noContentResult.StatusCode.Should().Be(204);
+            var response = await _controller.UpdateBookingStatus(_guid, _updateBookingStatusRequest);
+            var result = (OkObjectResult) response;
+            result.StatusCode.Should().Be(StatusCodes.Status200OK);
+            result.Value.Should().NotBeNull().And.BeAssignableTo<UpdateBookingStatusResponse>().Subject.Success.Should().BeTrue();
         }
     }
 }
