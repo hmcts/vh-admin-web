@@ -7,7 +7,7 @@ using NUnit.Framework;
 
 namespace AdminWebsite.UnitTests.Services
 {
-public class PollyRetryServiceTests
+    public class PollyRetryServiceTests
     {
         private readonly IPollyRetryService _pollyRetryService;
 
@@ -93,6 +93,7 @@ public class PollyRetryServiceTests
             );
 
             Assert.False(retryInvoked);
+            
             result.Success.Should().BeTrue();
         }
     }

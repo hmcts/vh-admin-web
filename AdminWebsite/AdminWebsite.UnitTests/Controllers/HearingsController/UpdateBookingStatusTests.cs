@@ -16,7 +16,6 @@ using NUnit.Framework;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {
-    [TestFixture]
     public class UpdateBookingStatusTests
     {
         private readonly Mock<IBookingsApiClient> _bookingsApiClient;
@@ -410,6 +409,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             {
                 Updated_by = "test", Cancel_reason = "", Status = UpdateBookingStatus.Cancelled
             };
+            
             var hearingId = Guid.NewGuid();
 
             _bookingsApiClient.Setup(x => x.UpdateBookingStatusAsync(hearingId, request))
