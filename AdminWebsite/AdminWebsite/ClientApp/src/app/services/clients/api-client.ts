@@ -2602,11 +2602,6 @@ export class PersonResponse implements IPersonResponse {
     telephone_number?: string | undefined;
     username?: string | undefined;
     organisation?: string | undefined;
-    house_number?: string | undefined;
-    street?: string | undefined;
-    postcode?: string | undefined;
-    city?: string | undefined;
-    county?: string | undefined;
 
     constructor(data?: IPersonResponse) {
         if (data) {
@@ -2628,11 +2623,6 @@ export class PersonResponse implements IPersonResponse {
             this.telephone_number = _data["telephone_number"];
             this.username = _data["username"];
             this.organisation = _data["organisation"];
-            this.house_number = _data["house_number"];
-            this.street = _data["street"];
-            this.postcode = _data["postcode"];
-            this.city = _data["city"];
-            this.county = _data["county"];
         }
     }
 
@@ -2654,11 +2644,6 @@ export class PersonResponse implements IPersonResponse {
         data["telephone_number"] = this.telephone_number;
         data["username"] = this.username;
         data["organisation"] = this.organisation;
-        data["house_number"] = this.house_number;
-        data["street"] = this.street;
-        data["postcode"] = this.postcode;
-        data["city"] = this.city;
-        data["county"] = this.county;
         return data; 
     }
 }
@@ -2673,11 +2658,6 @@ export interface IPersonResponse {
     telephone_number?: string | undefined;
     username?: string | undefined;
     organisation?: string | undefined;
-    house_number?: string | undefined;
-    street?: string | undefined;
-    postcode?: string | undefined;
-    city?: string | undefined;
-    county?: string | undefined;
 }
 
 /** Defines a type of hearing based on case */
