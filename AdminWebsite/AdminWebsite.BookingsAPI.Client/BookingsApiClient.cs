@@ -3618,6 +3618,9 @@ namespace AdminWebsite.BookingsAPI.Client
         [System.Runtime.Serialization.EnumMember(Value = @"Cancelled")]
         Cancelled = 2,
     
+        [System.Runtime.Serialization.EnumMember(Value = @"Failed")]
+        Failed = 3,
+    
     }
     
     /// <summary>Detailed information of a hearing</summary>
@@ -3794,6 +3797,9 @@ namespace AdminWebsite.BookingsAPI.Client
     
         [System.Runtime.Serialization.EnumMember(Value = @"Cancelled")]
         Cancelled = 1,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Failed")]
+        Failed = 2,
     
     }
     
