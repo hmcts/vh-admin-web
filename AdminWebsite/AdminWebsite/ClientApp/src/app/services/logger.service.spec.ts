@@ -18,7 +18,7 @@ describe('LoggerService', () => {
       ]
     });
 
-    logger = TestBed.get(Logger);
+    logger = TestBed.inject(Logger);
   });
 
   it('logs debug to all adapters', () => {

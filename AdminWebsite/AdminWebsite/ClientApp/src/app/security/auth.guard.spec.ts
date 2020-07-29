@@ -19,8 +19,8 @@ describe('authguard', () => {
               { provide: Router, useValue: router },
             ],
           }).compileComponents();
-          adalSvc = TestBed.get(AdalService);
-          authGuard = TestBed.get(AuthGuard);
+          adalSvc = TestBed.inject(AdalService);
+          authGuard = TestBed.inject(AuthGuard);
     });
 
     describe('when logged in with successful authentication', () => {
