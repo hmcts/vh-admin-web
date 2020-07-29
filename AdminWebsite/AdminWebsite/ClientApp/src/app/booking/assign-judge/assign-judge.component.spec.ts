@@ -107,7 +107,11 @@ describe('AssignJudgeComponent', () => {
         }).compileComponents();
 
         fixture = TestBed.createComponent(AssignJudgeComponent);
+
+        /* tslint:disable */
         routerSpy = TestBed.get(Router);
+        /* tslint:enable */
+
         component = fixture.componentInstance;
         fixture.detectChanges();
         component.ngOnInit();
