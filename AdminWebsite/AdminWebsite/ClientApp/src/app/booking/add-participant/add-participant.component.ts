@@ -74,7 +74,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   existingPersonEmails: string[] = [];
   $subscriptions: Subscription[] = [];
 
-  @ViewChild(SearchEmailComponent, { static: false })
+  @ViewChild(SearchEmailComponent)
   searchEmail: SearchEmailComponent;
 
   @ViewChild(ParticipantsListComponent, { static: true })

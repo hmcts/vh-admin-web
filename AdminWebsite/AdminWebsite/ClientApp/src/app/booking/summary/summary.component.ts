@@ -55,7 +55,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
   @ViewChild(ParticipantsListComponent, { static: true })
   participantsListComponent: ParticipantsListComponent;
 
-  @ViewChild(RemovePopupComponent, { static: false })
+  @ViewChild(RemovePopupComponent)
   removePopupComponent: RemovePopupComponent;
 
   constructor(private hearingService: VideoHearingsService,
