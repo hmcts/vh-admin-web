@@ -40,8 +40,8 @@ describe('PageTrackerService', () => {
       ]
     });
 
-    router = TestBed.get(Router);
-    pageTrackerService = TestBed.get(PageTrackerService);
+    router = TestBed.inject(Router);
+    pageTrackerService = TestBed.inject(PageTrackerService);
     pageTrackerService.trackNavigation(router);
   });
 

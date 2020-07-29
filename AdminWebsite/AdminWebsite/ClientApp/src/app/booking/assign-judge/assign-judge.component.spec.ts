@@ -106,7 +106,7 @@ describe('AssignJudgeComponent', () => {
         }).compileComponents();
 
         fixture = TestBed.createComponent(AssignJudgeComponent);
-        routerSpy = TestBed.get(Router);
+        routerSpy = TestBed.inject(Router);
         component = fixture.componentInstance;
         fixture.detectChanges();
         component.ngOnInit();

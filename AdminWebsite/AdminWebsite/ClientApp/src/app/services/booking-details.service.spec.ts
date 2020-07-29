@@ -55,7 +55,7 @@ describe('booking details service', () => {
       providers: [BookingDetailsService]
     });
 
-    service = TestBed.get(BookingDetailsService);
+    service = TestBed.inject(BookingDetailsService);
   });
 
   afterEach(() => {

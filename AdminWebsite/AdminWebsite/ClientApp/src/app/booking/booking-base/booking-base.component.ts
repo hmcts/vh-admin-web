@@ -6,7 +6,7 @@ import { FormGroup } from '@angular/forms';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 
 @Directive()
-export abstract class BookingBaseComponent implements OnInit {
+export abstract class BookingBaseComponentDirective implements OnInit {
 
   buttonAction: string;
   editMode = false;

@@ -10,7 +10,7 @@ import { SearchService } from '../../services/search.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { SearchEmailComponent } from '../search-email/search-email.component';
 import { ParticipantsListComponent } from '../participants-list/participants-list.component';
-import { BookingBaseComponent } from '../booking-base/booking-base.component';
+import { BookingBaseComponentDirective as BookingBaseComponent } from '../booking-base/booking-base.component';
 import { BookingService } from '../../services/booking.service';
 import { ParticipantService } from '../services/participant.service';
 import { CaseAndHearingRolesResponse } from '../../services/clients/api-client';

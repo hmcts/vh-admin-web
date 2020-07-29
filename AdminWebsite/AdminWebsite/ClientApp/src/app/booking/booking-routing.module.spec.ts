@@ -58,13 +58,13 @@ describe('BookingModuleRouting', () => {
             ]
         }).compileComponents();
 
-        router = TestBed.get(Router);
-        location = TestBed.get(Location);
+        router = TestBed.inject(Router);
+        location = TestBed.inject(Location);
         fixture = TestBed.createComponent(CreateHearingComponent);
         createHearing = fixture.componentInstance;
-        changesGuard = TestBed.get(ChangesGuard);
-        adalSvc = TestBed.get(AdalService);
-        bookingGuard = TestBed.get(AdminGuard);
+        changesGuard = TestBed.inject(ChangesGuard);
+        adalSvc = TestBed.inject(AdalService);
+        bookingGuard = TestBed.inject(AdminGuard);
     });
 
     describe('when create hearing', () => {

@@ -89,9 +89,9 @@ describe('app routing', () => {
 
         fixture = TestBed.createComponent(DashboardComponent);
 
-        router = TestBed.get(Router);
-        location = TestBed.get(Location);
-        adalSvc = TestBed.get(AdalService);
+        router = TestBed.inject(Router);
+        location = TestBed.inject(Location);
+        adalSvc = TestBed.inject(AdalService);
     });
 
     it('it should navigate to login', fakeAsync(() => {
