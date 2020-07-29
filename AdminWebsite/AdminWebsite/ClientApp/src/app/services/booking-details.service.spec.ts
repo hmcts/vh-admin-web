@@ -23,6 +23,8 @@ export class ResponseTestData {
     response.created_by = 'stub.response@madeupemail.com';
     response.updated_by = 'stub.response@madeupemail.com';
     response.updated_date = new Date('2019-10-22 13:58:40.3730067');
+    response.confirmed_by = 'stub.response@madeupemail.com';
+    response.confirmed_date = new Date('2019-10-22 13:58:40.3730067');
     response.audio_recording_required = true;
 
     const par1 = new ParticipantResponse();
@@ -81,6 +83,7 @@ describe('booking details service', () => {
     expect(model.StartTime).toEqual(new Date('2019-10-22 13:58:40.3730067'));
     expect(model.CreatedBy).toBe('stub.response@madeupemail.com');
     expect(model.LastEditBy).toBe('stub.response@madeupemail.com');
+    expect(model.ConfirmedBy).toBe('stub.response@madeupemail.com');
     expect(model.AudioRecordingRequired).toBe(true);
   });
 

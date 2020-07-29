@@ -38,7 +38,7 @@ export class BookingDetailsTestData {
   getBookingsDetailsModel() {
     return new BookingsDetailsModel('44', new Date('2019-11-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', '', '33A', 'Coronation Street',
-      'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'),
+      'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'), null, null,
       'Booked', true, true, 'reason', 'Financial Remedy');
   }
 
