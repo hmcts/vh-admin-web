@@ -9,7 +9,10 @@ using System;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using AdminWebsite.Models;
+using AdminWebsite.VideoAPI.Client;
 using FluentValidation;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {
@@ -23,6 +26,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private AdminWebsite.Controllers.HearingsController _controller;
         private Guid _guid;
         private UpdateBookingStatusRequest _updateBookingStatusRequest;
+        private Mock<IVideoApiClient> _videoApiMock;
+        private Mock<IPollyRetryService> _pollyRetryServiceMock;
 
         [SetUp]
         public void Setup()
@@ -32,13 +37,18 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _userAccountService = new Mock<IUserAccountService>();
             _bookNewHearingRequestValidator = new Mock<IValidator<BookNewHearingRequest>>();
             _editHearingRequestValidator = new Mock<IValidator<EditHearingRequest>>();
+            _videoApiMock = new Mock<IVideoApiClient>();
+            _pollyRetryServiceMock = new Mock<IPollyRetryService>();
 
             _controller = new AdminWebsite.Controllers.HearingsController(_bookingsApiClient.Object,
                 _userIdentity.Object,
                 _userAccountService.Object,
                 _bookNewHearingRequestValidator.Object,
                 _editHearingRequestValidator.Object,
-                JavaScriptEncoder.Default);
+                JavaScriptEncoder.Default,
+                _videoApiMock.Object,
+                _pollyRetryServiceMock.Object,
+                new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>().Object);
                 
             _guid = Guid.NewGuid();
 
@@ -48,9 +58,10 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task Should_update_status_of_hearing_to_cancelled_given_status_and_updatedby()
         {
-            var result = await _controller.UpdateBookingStatus(_guid, _updateBookingStatusRequest);
-            var noContentResult = (NoContentResult)result;
-            noContentResult.StatusCode.Should().Be(204);
+            var response = await _controller.UpdateBookingStatus(_guid, _updateBookingStatusRequest);
+            var result = (OkObjectResult) response;
+            result.StatusCode.Should().Be(StatusCodes.Status200OK);
+            result.Value.Should().NotBeNull().And.BeAssignableTo<UpdateBookingStatusResponse>().Subject.Success.Should().BeTrue();
         }
     }
 }

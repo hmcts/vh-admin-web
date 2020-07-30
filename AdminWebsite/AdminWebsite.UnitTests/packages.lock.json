@@ -975,6 +975,11 @@
           "NWebsec.AspNetCore.Core": "3.0.0"
         }
       },
+      "Polly": {
+        "type": "Transitive",
+        "resolved": "7.2.1",
+        "contentHash": "Od8SnPlpQr+PuAS0YzY3jgtzaDNknlIuAaldN2VEIyTvm/wCg22C5nUkUV1BEG8rIsub5RFMoV/NEQ0tM/+7Uw=="
+      },
       "runtime.debian.8-x64.runtime.native.System.Security.Cryptography.OpenSsl": {
         "type": "Transitive",
         "resolved": "4.3.2",
@@ -2565,6 +2570,7 @@
           "Microsoft.OpenApi": "1.1.4",
           "Microsoft.VisualStudio.Web.CodeGeneration.Design": "3.1.0",
           "NWebsec.AspNetCore.Middleware": "3.0.0",
+          "Polly": "7.2.1",
           "SonarAnalyzer.CSharp": "8.2.0.14119",
           "Swashbuckle.AspNetCore": "5.0.0",
           "Swashbuckle.AspNetCore.Annotations": "5.0.0",

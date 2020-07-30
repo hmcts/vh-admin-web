@@ -1,15 +1,13 @@
 import { FormatShortDuration } from '../formatters/format-short-duration';
 
 export class BookingsListModel {
+    constructor(bookingsDate: Date) {
+        this.BookingsDate = bookingsDate;
+        this.BookingsDetails = [];
+    }
 
-  constructor(bookingsDate: Date) {
-    this.BookingsDate = bookingsDate;
-    this.BookingsDetails = [];
-  }
-
-  BookingsDate: Date;
-  BookingsDetails: Array<BookingsDetailsModel>;
-
+    BookingsDate: Date;
+    BookingsDetails: Array<BookingsDetailsModel>;
 }
 
 export class BookingsDetailsModel {
@@ -70,15 +68,19 @@ export class BookingsDetailsModel {
   CancelReason: string;
   CaseType: string;
 
-  get DurationInHoursAndMinutes(): string {
-    return FormatShortDuration(this.Duration);
-  }
+    get DurationInHoursAndMinutes(): string {
+        return FormatShortDuration(this.Duration);
+    }
 
-  public get isCancelled(): boolean {
-    return this.Status === 'Cancelled';
-  }
+    public get isCancelled(): boolean {
+        return this.Status === 'Cancelled';
+    }
 
-  public get isCreated(): boolean {
-    return this.Status === 'Created';
-  }
+    public get isCreated(): boolean {
+        return this.Status === 'Created';
+    }
+
+    public get hasBookingConfirmationFailed(): boolean {
+        return this.Status === 'Failed';
+    }
 }

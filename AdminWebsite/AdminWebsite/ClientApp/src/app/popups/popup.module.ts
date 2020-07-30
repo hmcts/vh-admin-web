@@ -9,30 +9,31 @@ import { CancelBookingPopupComponent } from './cancel-booking-popup/cancel-booki
 import { WaitPopupComponent } from './wait-popup/wait-popup.component';
 import { DiscardConfirmPopupComponent } from './discard-confirm-popup/discard-confirm-popup.component';
 import { UpdateUserPopupComponent } from './update-user-popup/update-user-popup.component';
+import { ConfirmBookingFailedPopupComponent } from './confirm-booking-failed-popup/confirm-booking-failed-popup.component';
 
 @NgModule({
-  imports: [
-    SharedModule
-  ],
-  declarations: [
-    CancelPopupComponent,
-    ConfirmationPopupComponent,
-    SignOutPopupComponent,
-    SaveFailedPopupComponent,
-    CancelBookingPopupComponent,
-    WaitPopupComponent,
-    DiscardConfirmPopupComponent,
-    UpdateUserPopupComponent,
-  ],
-  exports: [
-    CancelPopupComponent,
-    ConfirmationPopupComponent,
-    SignOutPopupComponent,
-    WaitPopupComponent,
-    SaveFailedPopupComponent,
-    DiscardConfirmPopupComponent,
-    CancelBookingPopupComponent,
-    UpdateUserPopupComponent
-  ]
+    imports: [SharedModule],
+    declarations: [
+        CancelPopupComponent,
+        ConfirmationPopupComponent,
+        SignOutPopupComponent,
+        SaveFailedPopupComponent,
+        ConfirmBookingFailedPopupComponent,
+        CancelBookingPopupComponent,
+        WaitPopupComponent,
+        DiscardConfirmPopupComponent,
+        UpdateUserPopupComponent
+    ],
+    exports: [
+        CancelPopupComponent,
+        ConfirmationPopupComponent,
+        SignOutPopupComponent,
+        WaitPopupComponent,
+        SaveFailedPopupComponent,
+        ConfirmBookingFailedPopupComponent,
+        DiscardConfirmPopupComponent,
+        CancelBookingPopupComponent,
+        UpdateUserPopupComponent
+    ]
 })
-export class PopupModule { }
+export class PopupModule {}

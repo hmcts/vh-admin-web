@@ -64,6 +64,7 @@ let loggerSpy: jasmine.SpyObj<Logger>;
 
 describe('AssignJudgeComponent', () => {
     beforeEach(async(() => {
+
         const newHearing = initHearingRequest();
         loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error']);
 
@@ -106,7 +107,11 @@ describe('AssignJudgeComponent', () => {
         }).compileComponents();
 
         fixture = TestBed.createComponent(AssignJudgeComponent);
+
+        /* tslint:disable */
         routerSpy = TestBed.get(Router);
+        /* tslint:enable */
+
         component = fixture.componentInstance;
         fixture.detectChanges();
         component.ngOnInit();

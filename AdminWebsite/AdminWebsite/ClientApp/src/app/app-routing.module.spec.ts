@@ -37,6 +37,7 @@ import { GetAudioFileComponent } from './get-audio-file/get-audio-file.component
 import { GetAudioLinkButtonComponent } from './get-audio-file/get-audio-link-button/get-audio-link-button.component';
 import { HearingSearchDateTimePipe } from './shared/directives/hearing-search-date-time.pipe';
 import { HearingSearchResultsComponent } from './get-audio-file/hearing-search-results/hearing-search-results.component';
+import { ConfirmBookingFailedPopupComponent } from './popups/confirm-booking-failed-popup/confirm-booking-failed-popup.component';
 
 describe('app routing', () => {
     let location: Location;
@@ -63,6 +64,7 @@ describe('app routing', () => {
                 SignOutPopupComponent,
                 WaitPopupComponent,
                 SaveFailedPopupComponent,
+                ConfirmBookingFailedPopupComponent,
                 CancelPopupStubComponent,
                 CancelBookingPopupComponent,
                 UnsupportedBrowserComponent,
@@ -87,9 +89,9 @@ describe('app routing', () => {
 
         fixture = TestBed.createComponent(DashboardComponent);
 
-        router = TestBed.get(Router);
-        location = TestBed.get(Location);
-        adalSvc = TestBed.get(AdalService);
+        router = TestBed.inject(Router);
+        location = TestBed.inject(Location);
+        adalSvc = TestBed.inject(AdalService);
     });
 
     it('it should navigate to login', fakeAsync(() => {

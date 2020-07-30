@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms'
 import { Router } from '@angular/router';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { HearingModel } from '../../common/model/hearing.model';
-import { BookingBaseComponent } from '../booking-base/booking-base.component';
+import { BookingBaseComponentDirective as BookingBaseComponent } from '../booking-base/booking-base.component';
 import { BookingService } from '../../services/booking.service';
 import { PageUrls } from 'src/app/shared/page-url.constants';
 import { Constants } from '../../common/constants';

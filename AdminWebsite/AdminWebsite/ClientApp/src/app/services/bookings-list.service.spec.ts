@@ -152,7 +152,7 @@ describe('bookings list service', () => {
     bookingsResponse = new ResponseTestData().getTestData();
 
     bhClientSpy.getBookingsList.and.returnValue(of(bookingsResponse));
-    service = TestBed.get(BookingsListService);
+    service = TestBed.inject(BookingsListService);
   });
 
   afterEach(() => {

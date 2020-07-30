@@ -32,7 +32,7 @@ describe('admin-guard', () => {
         { provide: Logger, useValue: loggerSpy }
       ],
     }).compileComponents();
-    adminGuard = TestBed.get(AdminGuard);
+    adminGuard = TestBed.inject(AdminGuard);
   });
 
   describe('when logged in with vh office admin role', () => {

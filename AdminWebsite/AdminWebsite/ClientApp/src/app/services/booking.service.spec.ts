@@ -9,7 +9,7 @@ describe('booking service', () => {
       providers: [BookingService]
     });
 
-    service = TestBed.get(BookingService);
+    service = TestBed.inject(BookingService);
     const mockSessionStorage = {
       getItem: (key: string): string => {
         return 'true';

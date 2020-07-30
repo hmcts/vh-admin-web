@@ -83,6 +83,7 @@ namespace AdminWebsite.Extensions
             serviceCollection.AddScoped<AppConfigSettings>();
             serviceCollection.AddSingleton<IClaimsCacheProvider, MemoryClaimsCacheProvider>();
             serviceCollection.AddScoped<ICachedUserClaimBuilder, CachedUserClaimBuilder>();
+            serviceCollection.AddSingleton<IPollyRetryService, PollyRetryService>();
 
             // Build the hearings api client using a reusable HttpClient factory and predefined base url
             var container = serviceCollection.BuildServiceProvider();

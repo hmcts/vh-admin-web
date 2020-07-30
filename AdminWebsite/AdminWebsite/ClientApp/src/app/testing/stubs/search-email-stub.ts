@@ -13,7 +13,7 @@ export class SearchEmailStubComponent {
   @Output()
   emailChanged = new EventEmitter<string>();
 
-  @ViewChild('emailInput', { static: false })
+  @ViewChild('emailInput')
   emailInput: ElementRef;
 
   validateEmail() {

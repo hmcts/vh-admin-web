@@ -23,63 +23,62 @@ import { SaveFailedPopupComponent } from '../popups/save-failed-popup/save-faile
 import { DiscardConfirmPopupComponent } from '../popups/discard-confirm-popup/discard-confirm-popup.component';
 import { Components } from './booking.module';
 import { SharedModule } from '../shared/shared.module';
+import { ConfirmBookingFailedPopupComponent } from '../popups/confirm-booking-failed-popup/confirm-booking-failed-popup.component';
 
 describe('BookingModuleRouting', () => {
-  let location: Location;
-  let router: Router;
-  let fixture: ComponentFixture<CreateHearingComponent>;
-  let createHearing: CreateHearingComponent;
-  let changesGuard;
-  let adalSvc;
-  let bookingGuard;
-  const errorService: jasmine.SpyObj<ErrorService> = jasmine.createSpyObj('ErrorService', ['handleError']);
+    let location: Location;
+    let router: Router;
+    let fixture: ComponentFixture<CreateHearingComponent>;
+    let createHearing: CreateHearingComponent;
+    let changesGuard;
+    let adalSvc;
+    let bookingGuard;
+    const errorService: jasmine.SpyObj<ErrorService> = jasmine.createSpyObj('ErrorService', ['handleError']);
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      imports: [
-        ReactiveFormsModule,
-        RouterTestingModule.withRoutes(routes),
-        FormsModule,
-        SharedModule
-      ],
-      declarations: [
-        CancelPopupComponent,
-        DiscardConfirmPopupComponent,
-        ConfirmationPopupComponent,
-        WaitPopupComponent,
-        SaveFailedPopupComponent,
-        ...Components
-      ],
-      providers: [
-        AuthGuard,
-        { provide: AdminGuard, useClass: MockAdminGuard },
-        { provide: AdalService, useClass: MockAdalService },
-        { provide: ChangesGuard, useClass: MockChangesGuard }, HttpClient, HttpHandler,
-        { provide: ErrorService, useValue: errorService },
-      ],
-    }).compileComponents();
+    beforeEach(() => {
+        TestBed.configureTestingModule({
+            imports: [ReactiveFormsModule, RouterTestingModule.withRoutes(routes), FormsModule, SharedModule],
+            declarations: [
+                CancelPopupComponent,
+                DiscardConfirmPopupComponent,
+                ConfirmationPopupComponent,
+                WaitPopupComponent,
+                SaveFailedPopupComponent,
+                ConfirmBookingFailedPopupComponent,
+                ...Components
+            ],
+            providers: [
+                AuthGuard,
+                { provide: AdminGuard, useClass: MockAdminGuard },
+                { provide: AdalService, useClass: MockAdalService },
+                { provide: ChangesGuard, useClass: MockChangesGuard },
+                HttpClient,
+                HttpHandler,
+                { provide: ErrorService, useValue: errorService }
+            ]
+        }).compileComponents();
 
-    router = TestBed.get(Router);
-    location = TestBed.get(Location);
-    fixture = TestBed.createComponent(CreateHearingComponent);
-    createHearing = fixture.componentInstance;
-    changesGuard = TestBed.get(ChangesGuard);
-    adalSvc = TestBed.get(AdalService);
-    bookingGuard = TestBed.get(AdminGuard);
-  });
+        router = TestBed.inject(Router);
+        location = TestBed.inject(Location);
+        fixture = TestBed.createComponent(CreateHearingComponent);
+        createHearing = fixture.componentInstance;
+        changesGuard = TestBed.inject(ChangesGuard);
+        adalSvc = TestBed.inject(AdalService);
+        bookingGuard = TestBed.inject(AdminGuard);
+    });
 
-  describe('when create hearing', () => {
-    it('it should be able to navigate away from current route', fakeAsync(() => {
-      adalSvc.setAuthenticated(true);
-      changesGuard.setflag(true);
-      bookingGuard.setflag(true);
-      createHearing.ngOnInit();
-      router.navigate(['/book-hearing']);
-      tick();
-      createHearing.form.markAsPristine();
-      router.navigate(['/hearing-schedule']);
-      tick();
-      expect(location.path()).toBe('/hearing-schedule');
-    }));
-  });
+    describe('when create hearing', () => {
+        it('it should be able to navigate away from current route', fakeAsync(() => {
+            adalSvc.setAuthenticated(true);
+            changesGuard.setflag(true);
+            bookingGuard.setflag(true);
+            createHearing.ngOnInit();
+            router.navigate(['/book-hearing']);
+            tick();
+            createHearing.form.markAsPristine();
+            router.navigate(['/hearing-schedule']);
+            tick();
+            expect(location.path()).toBe('/hearing-schedule');
+        }));
+    });
 });
