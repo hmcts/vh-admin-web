@@ -3877,6 +3877,14 @@ namespace AdminWebsite.BookingsAPI.Client
         [Newtonsoft.Json.JsonProperty("updated_date", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.DateTime Updated_date { get; set; }
     
+        /// <summary>The VH admin username that confirmed the hearing</summary>
+        [Newtonsoft.Json.JsonProperty("confirmed_by", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Confirmed_by { get; set; }
+    
+        /// <summary>The date and time when the hearing was confirmed</summary>
+        [Newtonsoft.Json.JsonProperty("confirmed_date", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTime? Confirmed_date { get; set; }
+    
         [Newtonsoft.Json.JsonProperty("status", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
         public BookingStatus Status { get; set; }
@@ -4146,6 +4154,14 @@ namespace AdminWebsite.BookingsAPI.Client
         /// <summary>Gets or sets the last edited date of hearing.</summary>
         [Newtonsoft.Json.JsonProperty("last_edit_date", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.DateTime? Last_edit_date { get; set; }
+    
+        /// <summary>The VH admin username that confirmed the hearing</summary>
+        [Newtonsoft.Json.JsonProperty("confirmed_by", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Confirmed_by { get; set; }
+    
+        /// <summary>The date and time when the hearing was confirmed</summary>
+        [Newtonsoft.Json.JsonProperty("confirmed_date", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTime? Confirmed_date { get; set; }
     
         /// <summary>Gets the scheduled date without time.</summary>
         [Newtonsoft.Json.JsonProperty("hearing_date", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]

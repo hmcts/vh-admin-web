@@ -38,28 +38,12 @@ let bookingPersistServiceSpy: jasmine.SpyObj<BookingPersistService>;
 let userIdentityServiceSpy: jasmine.SpyObj<UserIdentityService>;
 
 export class BookingDetailsTestData {
-    getBookingsDetailsModel() {
-        return new BookingsDetailsModel(
-            '44',
-            new Date('2019-11-22 13:58:40.3730067'),
-            120,
-            'XX3456234565',
-            'Smith vs Donner',
-            'Tax',
-            '',
-            '33A',
-            'Coronation Street',
-            'John Smith',
-            new Date('2018-10-22 13:58:40.3730067'),
-            'Roy Ben',
-            new Date('2018-10-22 13:58:40.3730067'),
-            'Booked',
-            true,
-            true,
-            'reason',
-            'Financial Remedy'
-        );
-    }
+  getBookingsDetailsModel() {
+    return new BookingsDetailsModel('44', new Date('2019-11-22 13:58:40.3730067'),
+      120, 'XX3456234565', 'Smith vs Donner', 'Tax', '', '33A', 'Coronation Street',
+      'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'), null, null,
+      'Booked', true, true, 'reason', 'Financial Remedy');
+  }
 
     getParticipants() {
         const participants: Array<ParticipantDetailsModel> = [];
