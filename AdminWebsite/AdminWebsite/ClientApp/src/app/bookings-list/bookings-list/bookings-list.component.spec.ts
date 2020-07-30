@@ -206,7 +206,7 @@ export class BookingPersistServiceSpy {
     const booking = new BookingsDetailsModel('1', new Date('2019-10-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JudgeGreen', '33A', 'Coronation Street',
       'John Smith', new Date('2018-10-22 13:58:40.3730067'),
-      'Roy Ben', new Date('2018-10-22 13:58:40.3730067'), null, null, 
+      'Roy Ben', new Date('2018-10-22 13:58:40.3730067'), null, null,
       'Booked', false, true, 'reason13', 'Financial Remedy');
     booking.IsStartTimeChanged = true;
     return booking;
