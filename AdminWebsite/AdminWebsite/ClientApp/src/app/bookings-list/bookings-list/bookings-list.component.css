@@ -62,7 +62,7 @@ p {
     text-decoration: none;
 }
 
-.vh-cancelled-booking {
+.vh-cancelled-booking, .vh-confirmation-failed {
     color: #ffffff;
     background-color: #d4351c;
     margin-left: 9px;
