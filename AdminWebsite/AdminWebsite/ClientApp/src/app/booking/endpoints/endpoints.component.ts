@@ -23,6 +23,7 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
   attemptingCancellation = false;
   attemptingDiscardChanges = false;
   failedValidation: boolean;
+  newEndpoints: EndpointModel[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -41,6 +42,11 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
 
   ngOnDestroy(): void {
     this.bookingService.removeEditMode();
+    this.$subscriptions.forEach((subcription) => {
+      if (subcription) {
+        subcription.unsubscribe();
+      }
+    });
   }
 
   get endpoints(): FormArray {
@@ -48,18 +54,7 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
   }
 
   addEndpoint(): void {
-    const newEndpointsArray: EndpointModel[] = [];
-    for (const control of this.endpoints.controls) {
-      const endpointModel = new EndpointModel();
-      if (control.value.displayName !== '') {
-        const displayNameText = SanitizeInputText(control.value.displayName);
-        endpointModel.displayName = displayNameText;
-        endpointModel.Id = control.value.id;
-        newEndpointsArray.push(endpointModel);
-      }
-    }
-    if (!this.hasDuplicateDisplayName(newEndpointsArray)) {
-      console.log('no duplicate endpoints found!');
+    if (!this.hasDuplicateDisplayName(this.newEndpoints)) {
       this.failedValidation = false;
       this.endpoints.push(this.addEndpointsFormGroup());
     } else {
@@ -69,21 +64,11 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
   }
 
   saveEndpoints(): void {
-    const newEndpoints: EndpointModel[] = [];
-    for (const control of this.endpoints.controls) {
-      const endpointModel = new EndpointModel();
-      if (control.value.displayName !== '') {
-        const displayNameText = SanitizeInputText(control.value.displayName);
-        endpointModel.displayName = displayNameText;
-        endpointModel.Id = control.value.id;
-        newEndpoints.push(endpointModel);
-      }
-    }
-    if (!this.hasDuplicateDisplayName(newEndpoints)) {
-      console.log('no duplicate endpoints found!');
+    if (!this.hasDuplicateDisplayName(this.newEndpoints)) {
       this.failedValidation = false;
-      this.hearing.endpoints = newEndpoints;
+      this.hearing.endpoints = this.newEndpoints;
       this.videoHearingService.updateHearingRequest(this.hearing);
+
       if (this.editMode) {
         this.router.navigate([PageUrls.Summary]);
       } else {
@@ -135,6 +120,13 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
     if (this.hearing.endpoints.length > 0) {
       this.form.setControl('endpoints', this.setExistingEndpoints(this.hearing.endpoints));
     }
+
+    this.$subscriptions.push(
+      this.form.get('endpoints').valueChanges.subscribe(ep => {
+        this.newEndpoints = ep;
+      })
+    );
+
   }
 
   private setExistingEndpoints(endpoints: EndpointModel[]): FormArray {

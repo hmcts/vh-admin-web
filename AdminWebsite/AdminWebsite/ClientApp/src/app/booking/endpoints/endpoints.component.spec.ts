@@ -99,39 +99,32 @@ describe('EndpointsComponent', () => {
     component.cancelBooking();
     expect(component.attemptingCancellation).toBeTruthy();
   });
-  it('should check for duplicate display names', () => {
+  it('it should validate form array and display error message is duplicates exist', () => {
     component.ngOnInit();
-    fixture.detectChanges();
-    component.hearing.endpoints = [];
-    const ep1 = new EndpointModel();
-    ep1.displayName = 'test endpoint 001';
-    const ep2 = new EndpointModel();
-    ep2.displayName = 'test endpoint 002';
-    const ep3 = new EndpointModel();
-    ep3.displayName = 'test endpoint 001';
-    component.hearing.endpoints.push(ep1);
-    component.hearing.endpoints.push(ep2);
-    component.hearing.endpoints.push(ep3);
-    console.log(component.hearing.endpoints);
-
-    const result = component.hasDuplicateDisplayName(component.hearing.endpoints);
-    expect(result).toBe(true);
-  });
-  it('it should validate form array on clicking add another', () => {
-    component.ngOnInit();
-    fixture.detectChanges();
-    component.hearing.endpoints = [];
-    const ep1 = new EndpointModel();
-    ep1.displayName = 'test endpoint 001';
-    const ep2 = new EndpointModel();
-    ep2.displayName = 'test endpoint 002';
-    const ep3 = new EndpointModel();
-    ep3.displayName = 'test endpoint 001';
-    component.hearing.endpoints.push(ep1);
-    component.hearing.endpoints.push(ep2);
-    component.hearing.endpoints.push(ep3);
-    console.log(component.hearing.endpoints);
+    component.endpoints.controls[0].get('displayName').setValue('200');
+    component.addEndpoint();
+    component.endpoints.controls[1].get('displayName').setValue('200');
     component.addEndpoint();
     expect(component.failedValidation).toBe(true);
+  });
+  it('it should validate form array and add form array', () => {
+    component.ngOnInit();
+    component.endpoints.controls[0].get('displayName').setValue('200');
+    component.addEndpoint();
+    component.endpoints.controls[1].get('displayName').setValue('300');
+    component.addEndpoint();
+    expect(component.failedValidation).toBe(false);
+  });
+  it('it should validate form array on next click', () => {
+    component.ngOnInit();
+    component.endpoints.controls[0].get('displayName').setValue('200');
+    component.addEndpoint();
+    component.endpoints.controls[1].get('displayName').setValue('200');
+    component.addEndpoint();
+    expect(component.failedValidation).toBe(true);
+  });
+  it('should unsubscribe all subcription on destroy', () => {
+    component.ngOnDestroy();
+    expect(component.$subscriptions[0].closed).toBe(true);
   });
 });
