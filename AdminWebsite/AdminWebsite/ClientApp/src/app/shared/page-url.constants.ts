@@ -7,7 +7,7 @@ export let PageUrls = {
   HearingSchedule: '/hearing-schedule',
   AssignJudge: '/assign-judge',
   AddParticipants: '/add-participants',
-  Endpoints: '/endpoints',
+  Endpoints: '/video-access-points',
   OtherInformation: '/other-information',
   Summary: '/summary',
   BookingConfirmation: '/booking-confirmation',

@@ -37,7 +37,8 @@
 
         <div *ngIf="hasEndpoints">
 
-            <h3 class="govuk-heading-s remove-header-padding" id="endpoint-is">Endpoints</h3>
+            <app-booking-edit [title]="'Video access points'" [editLink]="'video-access-points'"
+                [elementId]="'video-access-points-id'"></app-booking-edit>
 
             <div class="govuk-form-group vhtable">
                 <div *ngFor="let endpoint of endpoints; let i = index" id="{{endpoint}}+i" class="vh-text-break">
@@ -46,9 +47,6 @@
                             {{ endpoint.displayName }}
                         </div>
                         <div class="govuk-grid-column-one-half">
-                            <a [routerLink]="['/endpoints']" class="vhlink remove-header-padding"
-                                href="javascript:void(0)" (click)="editEndpoint()" [attr.id]="'edit-link' + i">Edit
-                            </a>
                             <a class="vhlink" href="javascript:void(0)" [attr.id]="'remove-link' + i"
                                 (click)="removeEndpoint(i)">Remove</a>
                         </div>

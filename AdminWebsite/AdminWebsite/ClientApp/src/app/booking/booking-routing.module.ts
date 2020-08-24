@@ -17,7 +17,7 @@ export const routes: Routes = [
   { path: 'hearing-schedule', component: HearingScheduleComponent, canActivate: [AuthGuard, AdminGuard] },
   { path: 'assign-judge', component: AssignJudgeComponent, canActivate: [AuthGuard, AdminGuard] },
   { path: 'add-participants', component: AddParticipantComponent, canActivate: [AuthGuard, AdminGuard] },
-  { path: 'endpoints', component: EndpointsComponent, canActivate: [AuthGuard, AdminGuard] },
+  { path: 'video-access-points', component: EndpointsComponent, canActivate: [AuthGuard, AdminGuard] },
   { path: 'other-information', component: OtherInformationComponent, canActivate: [AuthGuard, AdminGuard] },
   { path: 'summary', component: SummaryComponent, canActivate: [AuthGuard, AdminGuard] },
   { path: 'booking-confirmation', component: BookingConfirmationComponent, canActivate: [AuthGuard, AdminGuard] },

@@ -149,10 +149,6 @@ export class SummaryComponent implements OnInit, OnDestroy {
     return this.endpoints.length > 0;
   }
 
-  editEndpoint() {
-    this.bookingService.setEditMode();
-  }
-
   removeEndpoint(rowIndex: number): void {
     this.hearing.endpoints.splice(rowIndex, 1);
     this.hearingService.updateHearingRequest(this.hearing);

@@ -1,22 +1,19 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { AbstractControl, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Constants } from 'src/app/common/constants';
 import { SanitizeInputText } from 'src/app/common/formatters/sanitize-input-text';
 import { EndpointModel } from 'src/app/common/model/endpoint.model';
 import { HearingModel } from 'src/app/common/model/hearing.model';
-import { RemovePopupComponent } from 'src/app/popups/remove-popup/remove-popup.component';
 import { BookingService } from 'src/app/services/booking.service';
-import { EndpointRequest } from 'src/app/services/clients/api-client';
 import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 import { PageUrls } from 'src/app/shared/page-url.constants';
 import { BookingBaseComponentDirective as BookingBaseComponent } from '../booking-base/booking-base.component';
 
 @Component({
   selector: 'app-endpoints',
-  templateUrl: './endpoints.component.html',
-  styleUrls: ['./endpoints.component.css']
+  templateUrl: './endpoints.component.html'
 })
 export class EndpointsComponent extends BookingBaseComponent implements OnInit, OnDestroy {
   canNavigate = true;
@@ -44,11 +41,6 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
 
   ngOnDestroy(): void {
     this.bookingService.removeEditMode();
-    this.$subscriptions.forEach((subcription) => {
-      if (subcription) {
-        subcription.unsubscribe();
-      }
-    });
   }
 
   get endpoints(): FormArray {

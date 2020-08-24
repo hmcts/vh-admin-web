@@ -441,7 +441,7 @@ describe('AddParticipantComponent', () => {
     it('should navigate to endpoints page', () => {
         component.hearing.participants = participants;
         component.next();
-        expect(routerSpy.navigate).toHaveBeenCalledWith(['/endpoints']);
+        expect(routerSpy.navigate).toHaveBeenCalledWith(['/video-access-points']);
     });
     it('the case roles and hearing roles were populated', () => {
         component.setupRoles(roleList);

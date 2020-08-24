@@ -16,22 +16,22 @@ export const BreadcrumbItems = [
     {
         id: 3,
         value: false,
-        name: 'Assign judge',
+        name: 'Judge',
         url: '/assign-judge',
         active: false
     },
     {
         id: 4,
         value: false,
-        name: 'Add participants',
+        name: 'Participants',
         url: '/add-participants',
         active: false
     },
     {
         id: 5,
         value: false,
-        name: 'Endpoints',
-        url: '/endpoints',
+        name: 'Video access points',
+        url: '/video-access-points',
         active: false
     },
     {
