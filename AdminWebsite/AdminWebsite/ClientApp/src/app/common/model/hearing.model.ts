@@ -1,5 +1,7 @@
 import { CaseModel } from './case.model';
 import { ParticipantModel } from './participant.model';
+import { EndpointModel } from './endpoint.model';
+import { EndpointRequest } from 'src/app/services/clients/api-client';
 
 export class HearingModel {
 
@@ -7,6 +9,7 @@ export class HearingModel {
     this.cases = [];
     this.participants = [];
     this.scheduled_duration = 0;
+    this.endpoints = [];
   }
   hearing_id?: string | undefined;
   scheduled_date_time?: Date | undefined;
@@ -29,4 +32,5 @@ export class HearingModel {
   status?: string | undefined;
   questionnaire_not_required: boolean;
   audio_recording_required?: boolean;
+  endpoints?: EndpointModel[] | undefined;
 }

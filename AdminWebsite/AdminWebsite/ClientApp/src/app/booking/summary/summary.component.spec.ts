@@ -19,6 +19,7 @@ import { SaveFailedPopupComponent } from 'src/app/popups/save-failed-popup/save-
 import { HearingDetailsResponse } from '../../services/clients/api-client';
 import { LongDatetimePipe } from '../../../app/shared/directives/date-time.pipe';
 import { Logger } from '../../services/logger';
+import { EndpointModel } from 'src/app/common/model/endpoint.model';
 
 function initExistingHearingRequest(): HearingModel {
 
@@ -192,6 +193,10 @@ describe('SummaryComponent with valid request', () => {
     component.ngOnInit();
     fixture.detectChanges();
     expect(component.audioChoice).toBe('No');
+  });
+  it('should display endpoints if the hearing has endpoints', () => {
+    component.ngOnInit();
+    fixture.detectChanges();
   });
 });
 

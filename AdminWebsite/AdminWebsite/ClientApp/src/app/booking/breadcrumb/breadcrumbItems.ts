@@ -5,13 +5,13 @@ export const BreadcrumbItems = [
         name: 'Hearing details',
         url: '/book-hearing',
         active: true
-      },
+    },
     {
         id: 2,
-       value: false,
-       name: 'Hearing schedule',
-       url: '/hearing-schedule',
-       active: false
+        value: false,
+        name: 'Hearing schedule',
+        url: '/hearing-schedule',
+        active: false
     },
     {
         id: 3,
@@ -30,12 +30,19 @@ export const BreadcrumbItems = [
     {
         id: 5,
         value: false,
+        name: 'Endpoints',
+        url: '/endpoints',
+        active: false
+    },
+    {
+        id: 6,
+        value: false,
         name: 'Other information',
         url: '/other-information',
         active: false
     },
     {
-        id: 6,
+        id: 7,
         value: false,
         name: 'Summary',
         url: '/summary',

@@ -1,33 +1,27 @@
-import { ComponentFixture, TestBed, async, fakeAsync, tick } from '@angular/core/testing';
 import { HttpClientModule } from '@angular/common/http';
-import { Router } from '@angular/router';
-
 import { Component, Input } from '@angular/core';
-import { BookingDetailsComponent } from './booking-details.component';
-import { VideoHearingsService } from '../../services/video-hearings.service';
+import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { ReactiveFormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { RouterTestingModule } from '@angular/router/testing';
+import { Observable, of } from 'rxjs';
+import { EndpointModel } from 'src/app/common/model/endpoint.model';
+import { CancelBookingPopupComponent } from 'src/app/popups/cancel-booking-popup/cancel-booking-popup.component';
+import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
+import { CaseModel } from '../../common/model/case.model';
+import { HearingModel } from '../../common/model/hearing.model';
+import { ParticipantDetailsModel } from '../../common/model/participant-details.model';
+import { ConfirmBookingFailedPopupComponent } from '../../popups/confirm-booking-failed-popup/confirm-booking-failed-popup.component';
+import { WaitPopupComponent } from '../../popups/wait-popup/wait-popup.component';
 import { BookingDetailsService } from '../../services/booking-details.service';
 import { BookingService } from '../../services/booking.service';
-import {
-    HearingDetailsResponse,
-    UpdateBookingStatusRequest,
-    UpdateBookingStatus,
-    UserProfileResponse,
-    UpdateBookingStatusResponse
-} from '../../services/clients/api-client';
-import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
-import { ParticipantDetailsModel } from '../../common/model/participant-details.model';
-import { of, Observable } from 'rxjs';
-import { HearingModel } from '../../common/model/hearing.model';
-import { CaseModel } from '../../common/model/case.model';
-import { PageUrls } from '../../shared/page-url.constants';
-import { CancelBookingPopupComponent } from 'src/app/popups/cancel-booking-popup/cancel-booking-popup.component';
 import { BookingPersistService } from '../../services/bookings-persist.service';
-import { UserIdentityService } from '../../services/user-identity.service';
+import { HearingDetailsResponse, UpdateBookingStatus, UpdateBookingStatusRequest, UpdateBookingStatusResponse, UserProfileResponse } from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
-import { ReactiveFormsModule } from '@angular/forms';
-import { RouterTestingModule } from '@angular/router/testing';
-import { WaitPopupComponent } from '../../popups/wait-popup/wait-popup.component';
-import { ConfirmBookingFailedPopupComponent } from '../../popups/confirm-booking-failed-popup/confirm-booking-failed-popup.component';
+import { UserIdentityService } from '../../services/user-identity.service';
+import { VideoHearingsService } from '../../services/video-hearings.service';
+import { PageUrls } from '../../shared/page-url.constants';
+import { BookingDetailsComponent } from './booking-details.component';
 
 let component: BookingDetailsComponent;
 let fixture: ComponentFixture<BookingDetailsComponent>;
@@ -38,12 +32,12 @@ let bookingPersistServiceSpy: jasmine.SpyObj<BookingPersistService>;
 let userIdentityServiceSpy: jasmine.SpyObj<UserIdentityService>;
 
 export class BookingDetailsTestData {
-  getBookingsDetailsModel() {
-    return new BookingsDetailsModel('44', new Date('2019-11-22 13:58:40.3730067'),
-      120, 'XX3456234565', 'Smith vs Donner', 'Tax', '', '33A', 'Coronation Street',
-      'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'), null, null,
-      'Booked', true, true, 'reason', 'Financial Remedy');
-  }
+    getBookingsDetailsModel() {
+        return new BookingsDetailsModel('44', new Date('2019-11-22 13:58:40.3730067'),
+            120, 'XX3456234565', 'Smith vs Donner', 'Tax', '', '33A', 'Coronation Street',
+            'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'), null, null,
+            'Booked', true, true, 'reason', 'Financial Remedy');
+    }
 
     getParticipants() {
         const participants: Array<ParticipantDetailsModel> = [];
@@ -101,6 +95,17 @@ export class BookingDetailsTestData {
         judges.push(p1);
         return { judges: judges, participants: participants };
     }
+
+    getEndpoints() {
+        const endpoints: EndpointModel[] = [];
+        let endpoint = new EndpointModel();
+        endpoint.displayName = 'Courtroom 001';
+        endpoints.push(endpoint);
+        endpoint = new EndpointModel();
+        endpoint.displayName = 'Courtroom 002';
+        endpoints.push(endpoint);
+        return endpoints;
+    }
 }
 
 @Component({
@@ -155,6 +160,10 @@ class BookingDetailsServiceMock {
 
     mapBookingParticipants(response) {
         return new BookingDetailsTestData().getParticipants();
+    }
+
+    mapBookingEndpoints(response) {
+        return new BookingDetailsTestData().getEndpoints();
     }
 }
 

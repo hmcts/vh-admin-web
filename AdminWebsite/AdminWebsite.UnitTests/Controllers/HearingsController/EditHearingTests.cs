@@ -17,6 +17,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
+using AddEndpointRequest = AdminWebsite.BookingsAPI.Client.AddEndpointRequest;
+using UpdateEndpointRequest = AdminWebsite.BookingsAPI.Client.UpdateEndpointRequest;
 using UpdateParticipantRequest = AdminWebsite.BookingsAPI.Client.UpdateParticipantRequest;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
@@ -33,8 +35,10 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
         private Guid _validId;
         private EditHearingRequest _request;
+        private EditHearingRequest _requestWithEndpoints;
         private HearingDetailsResponse _existingHearing;
-        
+        private HearingDetailsResponse _existingHearingWithEndpoints;
+
         private AdminWebsite.Controllers.HearingsController _controller;
 
         [SetUp]
@@ -87,6 +91,33 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                         Username = "old@user.com"
                     }
                 }
+            };
+
+            _requestWithEndpoints = new EditHearingRequest
+            {
+                Case = new EditCaseRequest { Name = "Case", Number = "123" },
+                Participants = new List<EditParticipantRequest> { new EditParticipantRequest { ContactEmail = "new@user.com" } },
+                Endpoints = new List<EditEndpointRequest> { 
+                    new EditEndpointRequest {  Id = null, DisplayName = "New Endpoint"  },
+                    new EditEndpointRequest {  Id = Guid.Parse("61dd9b6b-bcb3-4c93-4499-08d845ef44f0"), DisplayName = "Test endpoint 002 - Court Room 1000"  },
+                    new EditEndpointRequest {  Id = Guid.Parse("031cc91a-eb3d-43b1-449a-08d845ef44f0"), DisplayName = "Test endpoint 002 - Court Room 1001 - EDIT"  },
+                }
+            };
+
+            _existingHearingWithEndpoints = new HearingDetailsResponse 
+            { 
+                Endpoints = new List<BookingsAPI.Client.EndpointResponse> 
+                { 
+                    new BookingsAPI.Client.EndpointResponse {
+                        Display_name = "Test endpoint 002 - Court Room 1000", Id = Guid.Parse("61dd9b6b-bcb3-4c93-4499-08d845ef44f0"),  Pin= "5098", Sip = "2105152214"
+                    },
+                    new BookingsAPI.Client.EndpointResponse {
+                        Display_name = "Test endpoint 002 - Court Room 1001", Id = Guid.Parse("031cc91a-eb3d-43b1-449a-08d845ef44f0"),  Pin= "3350", Sip = "0250352214"
+                    },
+                    new BookingsAPI.Client.EndpointResponse {
+                        Display_name = "Test endpoint 002 - Court Room 1003", Id = Guid.Parse("59641348-6d76-4ff3-449b-08d845ef44f0"),  Pin= "0450", Sip = "7350352214"
+                    },
+                } 
             };
             
             _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
@@ -421,6 +452,18 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 participants => participants.Participants.Any(p => p.Username == newJudgeEmail))), Times.Once);
         }
 
+        [Test]
+        public async Task Should_remove_endpoint_if_endpoint_is_removed_from_the_endpoint_list()
+        {
+            _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>())).ReturnsAsync(_existingHearingWithEndpoints);
+
+            var result = await _controller.EditHearing(_validId, _requestWithEndpoints);
+            ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
+
+            _bookingsApiClient.Verify(x => x.RemoveEndPointFromHearingAsync(It.IsAny<Guid>(), It.IsAny<Guid>()), Times.Once);
+            _bookingsApiClient.Verify(x => x.UpdateDisplayNameForEndpointAsync(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<UpdateEndpointRequest>()), Times.Once);
+            _bookingsApiClient.Verify(x => x.AddEndPointToHearingAsync(It.IsAny<Guid>(), It.IsAny<AddEndpointRequest>()), Times.Once);
+        }
         private void GivenApiThrowsExceptionOnUpdate(HttpStatusCode code)
         {
             _bookingsApiClient.Setup(x =>

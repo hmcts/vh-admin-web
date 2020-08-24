@@ -15,6 +15,7 @@ import { RemovePopupComponent } from '../../popups/remove-popup/remove-popup.com
 import { FormatShortDuration } from '../../common/formatters/format-short-duration';
 import { Logger } from '../../services/logger';
 import { Subscription } from 'rxjs';
+import { EndpointModel } from 'src/app/common/model/endpoint.model';
 
 @Component({
   selector: 'app-summary',
@@ -51,6 +52,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
   $subscriptions: Subscription[] = [];
   caseType: string;
   bookinConfirmed = false;
+  endpoints: EndpointModel[] = [];
 
   @ViewChild(ParticipantsListComponent, { static: true })
   participantsListComponent: ParticipantsListComponent;
@@ -89,7 +91,8 @@ export class SummaryComponent implements OnInit, OnDestroy {
     const participant = this.hearing.participants.find(x => x.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase());
     const filteredParticipants = this.hearing.participants.filter(x => !x.is_judge);
     const isNotLast = filteredParticipants && filteredParticipants.length > 1;
-    this.removerFullName = participant ? `${participant.title} ${participant.first_name} ${participant.last_name}` : '';
+    const title = participant && participant.title !== null ? `${participant.title}` : '';
+    this.removerFullName = participant ? `${title} ${participant.first_name} ${participant.last_name}` : '';
     this.showConfirmationRemoveParticipant = true;
     setTimeout(() => {
       this.removePopupComponent.isLastParticipant = !isNotLast;
@@ -139,6 +142,20 @@ export class SummaryComponent implements OnInit, OnDestroy {
     this.otherInformation = this.hearing.other_information;
     this.audioChoice = this.hearing.audio_recording_required ? 'Yes' : 'No';
     this.caseType = this.hearing.case_type;
+    this.endpoints = this.hearing.endpoints;
+  }
+
+  get hasEndpoints(): boolean {
+    return this.endpoints.length > 0;
+  }
+
+  editEndpoint() {
+    this.bookingService.setEditMode();
+  }
+
+  removeEndpoint(rowIndex: number): void {
+    this.hearing.endpoints.splice(rowIndex, 1);
+    this.hearingService.updateHearingRequest(this.hearing);
   }
 
   private formatCourtRoom(courtName, courtRoom) {

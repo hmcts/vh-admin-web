@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { BookingDetailsService } from './booking-details.service';
-import { HearingDetailsResponse, CaseResponse, ParticipantResponse } from './clients/api-client';
+import { HearingDetailsResponse, CaseResponse, ParticipantResponse, EndpointResponse } from './clients/api-client';
 
 export class ResponseTestData {
   static getHearingResponseTestData(): HearingDetailsResponse {
@@ -45,6 +45,14 @@ export class ResponseTestData {
     response.participants = [];
     response.participants.push(par1);
     response.participants.push(par2);
+
+    const endpoint1 = new EndpointResponse();
+    endpoint1.display_name = 'test endpoint 1';
+    endpoint1.sip = '2213';
+    endpoint1.pin = '2323';
+    endpoint1.id = '022f5e0c-696d-43cf-6fe0-08d846dbdb21';
+    response.endpoints = [];
+    response.endpoints.push(endpoint1);
     return response;
   }
 }
@@ -111,5 +119,11 @@ describe('booking details service', () => {
     expect(model.judges[0].UserRoleName).toBe('Judge');
   });
 
+  it('it should map the endpoints', () => {
+    const hearingResponse = ResponseTestData.getHearingResponseTestData();
+    const model = service.mapBookingEndpoints(hearingResponse);
+    expect(model).toBeTruthy();
+    expect(model[0].displayName).toBe('test endpoint 1');
+  });
 });
 
