@@ -68,10 +68,6 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
     }
   }
 
-  removeEndpoint(rowIndex: number): void {
-    this.endpoints.removeAt(rowIndex);
-  }
-
   saveEndpoints(): void {
     const newEndpoints: EndpointModel[] = [];
     for (const control of this.endpoints.controls) {
@@ -99,6 +95,10 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
     }
   }
 
+  removeEndpoint(rowIndex: number): void {
+    this.endpoints.removeAt(rowIndex);
+  }
+
   cancelBooking(): void {
     if (this.editMode) {
       if (this.form.dirty || this.form.touched) {
@@ -113,7 +113,6 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
 
   continueBooking() {
     this.attemptingCancellation = false;
-    this.attemptingDiscardChanges = false;
   }
 
   cancelEndpoints() {
@@ -138,14 +137,7 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
     }
   }
 
-  addEndpointsFormGroup(): FormGroup {
-    return this.fb.group({
-      displayName: ['', [blankSpaceValidator]],
-      id: ['']
-    });
-  }
-
-  setExistingEndpoints(endpoints: EndpointModel[]): FormArray {
+  private setExistingEndpoints(endpoints: EndpointModel[]): FormArray {
     const formArray = new FormArray([]);
     endpoints.forEach(e => {
       formArray.push(this.fb.group({
@@ -156,7 +148,14 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
     return formArray;
   }
 
-  private hasDuplicateDisplayName(endpoints: EndpointModel[]): boolean {
+  private addEndpointsFormGroup(): FormGroup {
+    return this.fb.group({
+      displayName: ['', [blankSpaceValidator]],
+      id: ['']
+    });
+  }
+
+  hasDuplicateDisplayName(endpoints: EndpointModel[]): boolean {
     const listOfDisplayNames = endpoints.map(function (item) { return item.displayName; });
     const duplicateDisplayName = listOfDisplayNames.some(function (item, position) {
       return listOfDisplayNames.indexOf(item) !== position;
@@ -167,7 +166,7 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
 
 function blankSpaceValidator(control: AbstractControl): { [key: string]: any } | null {
   const displayNameText: string = control.value;
-  if (displayNameText.replace(/\s/g, '').length) {
+  if (displayNameText !== null && displayNameText.replace(/\s/g, '').length) {
     return null;
   } else {
     return { 'blankSpaceValidator': true };
