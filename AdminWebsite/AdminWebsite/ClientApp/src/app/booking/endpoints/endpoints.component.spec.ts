@@ -65,9 +65,14 @@ describe('EndpointsComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
-/*   it('should navigate to other information page', () => {
-    component.hearing.participants = participants;
-    component.next();
-    expect(routerSpy.navigate).toHaveBeenCalledWith(['/endpoints']);
-  }); */
+  it('should get booking data from storage', () => {
+    component.ngOnInit();
+    fixture.detectChanges();
+    expect(component.hearing).toBeTruthy();
+  });
+  it('should navigate to other information page', () => {
+    component.hearing.endpoints = [];
+    component.saveEndpoints();
+    expect(routerSpy.navigate).toHaveBeenCalledWith(['/other-information']);
+  });
 });

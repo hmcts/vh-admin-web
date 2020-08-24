@@ -91,15 +91,26 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
         newEndpoints.push(endpointModel);
       }
     }
-    this.hearing.endpoints = newEndpoints;
-    this.videoHearingService.updateHearingRequest(this.hearing);
-    this.router.navigate([PageUrls.OtherInformation]);
+    if (!this.hasDuplicateDisplayName(newEndpoints)) {
+      console.log('no duplicate endpoints found!');
+      this.failedValidation = false;
+      this.hearing.endpoints = newEndpoints;
+      this.videoHearingService.updateHearingRequest(this.hearing);
+      if (this.editMode) {
+        this.router.navigate([PageUrls.Summary]);
+      } else {
+        this.router.navigate([PageUrls.OtherInformation]);
+      }
+    } else {
+      this.failedValidation = true;
+      console.log('an endpoint with the display name exists!');
+    }
   }
 
   cancelBooking(): void {
     if (this.editMode) {
       if (this.form.dirty || this.form.touched) {
-        this.attemptingDiscardChanges = true;
+        this.attemptingCancellation = true;
       } else {
         this.router.navigate([PageUrls.Summary]);
       }
