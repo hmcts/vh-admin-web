@@ -21,7 +21,6 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
   hearing: HearingModel;
   $subscriptions: Subscription[] = [];
   attemptingCancellation = false;
-  attemptingDiscardChanges = false;
   failedValidation: boolean;
   newEndpoints: EndpointModel[] = [];
 

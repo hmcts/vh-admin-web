@@ -1,5 +1,4 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { of } from 'rxjs';
@@ -36,7 +35,7 @@ describe('EndpointsComponent', () => {
 
   beforeEach(async(() => {
     videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService',
-      ['getHearingTypes', 'getCurrentRequest', 'updateHearingRequest', 'setBookingHasChanged']);
+      ['getHearingTypes', 'getCurrentRequest', 'updateHearingRequest', 'setBookingHasChanged', 'cancelRequest']);
     routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
     videoHearingsServiceSpy.getCurrentRequest.and.returnValue(newHearing);
@@ -99,6 +98,21 @@ describe('EndpointsComponent', () => {
     component.cancelBooking();
     expect(component.attemptingCancellation).toBeTruthy();
   });
+  it('should close confirmation popup and navigate to dashboard page if continue booking clicked', () => {
+    component.attemptingCancellation = true;
+    component.ngOnInit();
+    component.cancelEndpoints();
+    expect(component.attemptingCancellation).toBeFalsy();
+    expect(videoHearingsServiceSpy.cancelRequest).toHaveBeenCalled();
+    expect(routerSpy.navigate).toHaveBeenCalledWith(['/dashboard']);
+  });
+  it('should close confirmation popup and remain on endpoint page when continue booking is clicked', () => {
+    component.attemptingCancellation = true;
+    component.ngOnInit();
+    component.form.markAsTouched();
+    component.cancelEndpoints();
+    expect(component.attemptingCancellation).toBeFalsy();
+  });
   it('it should validate form array and display error message is duplicates exist', () => {
     component.ngOnInit();
     component.endpoints.controls[0].get('displayName').setValue('200');
@@ -115,13 +129,25 @@ describe('EndpointsComponent', () => {
     component.addEndpoint();
     expect(component.failedValidation).toBe(false);
   });
-  it('it should validate form array on next click', () => {
+  it('it should validate form array on next click and show error message on validation failure', () => {
     component.ngOnInit();
     component.endpoints.controls[0].get('displayName').setValue('200');
     component.addEndpoint();
     component.endpoints.controls[1].get('displayName').setValue('200');
-    component.addEndpoint();
+    component.saveEndpoints();
     expect(component.failedValidation).toBe(true);
+  });
+  it('it should validate form array on next click and navigate to summary page in edit mode', () => {
+    bookingServiceSpy.isEditMode.and.returnValue(true);
+    component.ngOnInit();
+    component.endpoints.controls[0].get('displayName').setValue('200');
+    component.addEndpoint();
+    component.endpoints.controls[1].get('displayName').setValue('300');
+    component.saveEndpoints();
+    expect(videoHearingsServiceSpy.updateHearingRequest).toHaveBeenCalled();
+    expect(component.hearing.endpoints).not.toBeNull();
+    expect(component.failedValidation).toBe(false);
+    expect(routerSpy.navigate).toHaveBeenCalledWith(['/summary']);
   });
   it('should unsubscribe all subcription on destroy', () => {
     component.ngOnDestroy();

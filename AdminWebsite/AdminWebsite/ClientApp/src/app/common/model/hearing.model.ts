@@ -1,7 +1,6 @@
 import { CaseModel } from './case.model';
 import { ParticipantModel } from './participant.model';
 import { EndpointModel } from './endpoint.model';
-import { EndpointRequest } from 'src/app/services/clients/api-client';
 
 export class HearingModel {
 
