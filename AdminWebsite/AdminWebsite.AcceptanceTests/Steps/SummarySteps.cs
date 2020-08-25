@@ -175,7 +175,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         private void VerifyVideoAccessPoints()
         {
             var videoAccessPoints = _c.Test.VideoAccessPoints.DisplayName;
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(SummaryPage.VideoAccessPoints).Text.Should().Be(videoAccessPoints);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(SummaryPage.VideoAccessPoints(0)).Text.Should().Be(videoAccessPoints);
         }
 
         private void VerifyBookingCreated()

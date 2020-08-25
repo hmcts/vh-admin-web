@@ -93,14 +93,17 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 }
             };
 
+            var guid1 = Guid.NewGuid();
+            var guid2 = Guid.NewGuid();
+            var guid3 = Guid.NewGuid();
             _requestWithEndpoints = new EditHearingRequest
             {
                 Case = new EditCaseRequest { Name = "Case", Number = "123" },
                 Participants = new List<EditParticipantRequest> { new EditParticipantRequest { ContactEmail = "new@user.com" } },
                 Endpoints = new List<EditEndpointRequest> { 
-                    new EditEndpointRequest {  Id = null, DisplayName = "New Endpoint"  },
-                    new EditEndpointRequest {  Id = Guid.Parse("61dd9b6b-bcb3-4c93-4499-08d845ef44f0"), DisplayName = "Test endpoint 002 - Court Room 1000"  },
-                    new EditEndpointRequest {  Id = Guid.Parse("031cc91a-eb3d-43b1-449a-08d845ef44f0"), DisplayName = "Test endpoint 002 - Court Room 1001 - EDIT"  },
+                    new EditEndpointRequest {  Id = null, DisplayName = "New Endpoint" },
+                    new EditEndpointRequest {  Id = guid1, DisplayName = "data1" },
+                    new EditEndpointRequest {  Id = guid2, DisplayName = "data2-edit" },
                 }
             };
 
@@ -108,15 +111,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             { 
                 Endpoints = new List<BookingsAPI.Client.EndpointResponse> 
                 { 
-                    new BookingsAPI.Client.EndpointResponse {
-                        Display_name = "Test endpoint 002 - Court Room 1000", Id = Guid.Parse("61dd9b6b-bcb3-4c93-4499-08d845ef44f0"),  Pin= "5098", Sip = "2105152214"
-                    },
-                    new BookingsAPI.Client.EndpointResponse {
-                        Display_name = "Test endpoint 002 - Court Room 1001", Id = Guid.Parse("031cc91a-eb3d-43b1-449a-08d845ef44f0"),  Pin= "3350", Sip = "0250352214"
-                    },
-                    new BookingsAPI.Client.EndpointResponse {
-                        Display_name = "Test endpoint 002 - Court Room 1003", Id = Guid.Parse("59641348-6d76-4ff3-449b-08d845ef44f0"),  Pin= "0450", Sip = "7350352214"
-                    },
+                    new BookingsAPI.Client.EndpointResponse { Display_name = "data1", Id = guid1,  Pin= "0000", Sip = "1111111111" },
+                    new BookingsAPI.Client.EndpointResponse { Display_name = "data2", Id = guid2,  Pin= "1111", Sip = "2222222222" },
+                    new BookingsAPI.Client.EndpointResponse { Display_name = "data3", Id = guid3,  Pin= "2222", Sip = "5544332234" },
                 } 
             };
             

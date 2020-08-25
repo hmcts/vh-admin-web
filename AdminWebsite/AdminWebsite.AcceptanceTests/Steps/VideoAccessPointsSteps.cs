@@ -26,8 +26,8 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             _browsers[_c.CurrentUser.Key].WaitForPageToLoad();
             SetVideoAccessPoint();
-            _browsers[_c.CurrentUser.Key].Clear(VideoAccessPointsPage.DisplayNameField);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(VideoAccessPointsPage.DisplayNameField).SendKeys(_c.Test.VideoAccessPoints.DisplayName);
+            _browsers[_c.CurrentUser.Key].Clear(VideoAccessPointsPage.DisplayNameField(0));
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(VideoAccessPointsPage.DisplayNameField(0)).SendKeys(_c.Test.VideoAccessPoints.DisplayName);
             ClickNext();
         }
 

@@ -21,6 +21,6 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public static By EditParticipantLink(string firstName) => By.XPath($"//div[contains(text(),'{firstName}')]/parent::div//a[text()='Edit']");
         public static By CaseType = By.Id("caseType");
         public static By HearingType = By.Id("caseHearingType");
-        public static By VideoAccessPoints = By.Id("displayName0");
+        public static By VideoAccessPoints(int i) => By.Id($"displayName{i.ToString()}");
     }
 }
