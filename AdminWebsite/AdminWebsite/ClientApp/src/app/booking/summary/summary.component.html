@@ -43,7 +43,7 @@
             <div class="govuk-form-group vhtable">
                 <div *ngFor="let endpoint of endpoints; let i = index" id="{{endpoint}}+i" class="vh-text-break">
                     <div class="govuk-grid-row">
-                        <div class="govuk-grid-column-one-half">
+                        <div class="govuk-grid-column-one-half" id="displayName{{+i}}">
                             {{ endpoint.displayName }}
                         </div>
                         <div class="govuk-grid-column-one-half">

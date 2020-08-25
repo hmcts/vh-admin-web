@@ -23,6 +23,9 @@
       <Reference>1</Reference>
     </Participant>
   </AddParticipant>
+  <VideoAccessPoints>
+    <DisplayName>Endpoint 001 - CourtRoom1</DisplayName>
+  </VideoAccessPoints>
   <OtherInformation>
     <Other>Other Info</Other>
   </OtherInformation>

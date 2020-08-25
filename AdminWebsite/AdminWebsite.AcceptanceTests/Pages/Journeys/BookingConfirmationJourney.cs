@@ -15,6 +15,7 @@ namespace AdminWebsite.AcceptanceTests.Pages.Journeys
                 Page.HearingSchedule,
                 Page.AssignJudge,
                 Page.AddParticipants,
+                Page.VideoAccessPoints,
                 Page.OtherInformation,
                 Page.Summary,
                 Page.BookingConfirmation
