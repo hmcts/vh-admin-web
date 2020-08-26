@@ -34,5 +34,6 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public static By CancelReasonTextfield = By.Id("cancelReason-detail");
         public static By KeepBookingButton = By.Id("btnKeepBooking");
         public static By CaseType = By.Id("case-type");
+        public static By VideoAccessPoints(int i) => By.Id($"displayName{i.ToString()}");
     }
 }

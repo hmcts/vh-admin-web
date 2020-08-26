@@ -24,6 +24,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         private readonly OtherInformationSteps _otherInformationSteps;
         private readonly QuestionnaireSteps _questionnaireSteps;
         private readonly SummarySteps _summarySteps;
+        private readonly VideoAccessPointsSteps _videoAccessPointsSteps;
 
         public ProgressionSteps(
             TestContext testContext,
@@ -39,7 +40,8 @@ namespace AdminWebsite.AcceptanceTests.Steps
             LoginSteps loginSteps,
             OtherInformationSteps otherInformationSteps,
             QuestionnaireSteps questionnaireSteps,
-            SummarySteps summarySteps)
+            SummarySteps summarySteps,
+            VideoAccessPointsSteps videoAccessPointsSteps)
         {
             _c = testContext;
             _addParticipantSteps = addParticipantSteps;
@@ -55,6 +57,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _otherInformationSteps = otherInformationSteps;
             _questionnaireSteps = questionnaireSteps;
             _summarySteps = summarySteps;
+            _videoAccessPointsSteps = videoAccessPointsSteps;
         }
 
         [Given(@"the (.*) user has progressed to the (.*) page")]
@@ -162,7 +165,8 @@ namespace AdminWebsite.AcceptanceTests.Steps
                 {Page.Login, _loginSteps},
                 {Page.OtherInformation, _otherInformationSteps},
                 {Page.Questionnaire, _questionnaireSteps},
-                {Page.Summary, _summarySteps}
+                {Page.Summary, _summarySteps},
+                {Page.VideoAccessPoints, _videoAccessPointsSteps}
             };
         }
     }

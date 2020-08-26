@@ -19,6 +19,7 @@ import { SaveFailedPopupComponent } from 'src/app/popups/save-failed-popup/save-
 import { HearingDetailsResponse } from '../../services/clients/api-client';
 import { LongDatetimePipe } from '../../../app/shared/directives/date-time.pipe';
 import { Logger } from '../../services/logger';
+import { EndpointModel } from 'src/app/common/model/endpoint.model';
 
 function initExistingHearingRequest(): HearingModel {
 
@@ -338,6 +339,24 @@ describe('SummaryComponent  with existing request', () => {
   it('should unsibscribe subcription on destroy', () => {
     component.ngOnDestroy();
     component.$subscriptions.forEach(s => expect(s.closed).toBe(true));
+  });
+  it('should remove existing endpoint', () => {
+    component.hearing = initExistingHearingRequest();
+    component.hearing.hearing_id = '12345';
+    component.hearing.endpoints = [];
+    const ep1 = new EndpointModel();
+    ep1.displayName = 'test endpoint 001';
+    const ep2 = new EndpointModel();
+    ep2.displayName = 'test endpoint 002';
+    const ep3 = new EndpointModel();
+    ep3.displayName = 'test endpoint 003';
+    component.hearing.endpoints.push(ep1);
+    component.hearing.endpoints.push(ep2);
+    component.hearing.endpoints.push(ep3);
+
+    component.removeEndpoint(1);
+    expect(component.hearing.endpoints.length).toBe(2);
+    expect(videoHearingsServiceSpy.updateHearingRequest).toHaveBeenCalled();
   });
 });
 

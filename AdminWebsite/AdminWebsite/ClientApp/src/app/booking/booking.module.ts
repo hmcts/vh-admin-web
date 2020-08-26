@@ -13,6 +13,7 @@ import { ParticipantsListComponent } from './participants-list/participants-list
 import { SearchEmailComponent } from './search-email/search-email.component';
 import { SummaryComponent } from './summary/summary.component';
 import { RemovePopupComponent } from '../popups/remove-popup/remove-popup.component';
+import { EndpointsComponent } from './endpoints/endpoints.component';
 
 export const Components: Type<any>[] = [
   CreateHearingComponent,
@@ -25,7 +26,8 @@ export const Components: Type<any>[] = [
   BookingConfirmationComponent,
   BreadcrumbComponent,
   SearchEmailComponent,
-  ParticipantsListComponent
+  ParticipantsListComponent,
+  EndpointsComponent
 ];
 
 @NgModule({

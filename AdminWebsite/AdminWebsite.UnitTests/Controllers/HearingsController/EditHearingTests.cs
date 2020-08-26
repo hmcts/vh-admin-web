@@ -17,6 +17,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
+using AddEndpointRequest = AdminWebsite.BookingsAPI.Client.AddEndpointRequest;
+using UpdateEndpointRequest = AdminWebsite.BookingsAPI.Client.UpdateEndpointRequest;
 using UpdateParticipantRequest = AdminWebsite.BookingsAPI.Client.UpdateParticipantRequest;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
@@ -33,8 +35,10 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
         private Guid _validId;
         private EditHearingRequest _request;
+        private EditHearingRequest _requestWithEndpoints;
         private HearingDetailsResponse _existingHearing;
-        
+        private HearingDetailsResponse _existingHearingWithEndpoints;
+
         private AdminWebsite.Controllers.HearingsController _controller;
 
         [SetUp]
@@ -87,6 +91,30 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                         Username = "old@user.com"
                     }
                 }
+            };
+
+            var guid1 = Guid.NewGuid();
+            var guid2 = Guid.NewGuid();
+            var guid3 = Guid.NewGuid();
+            _requestWithEndpoints = new EditHearingRequest
+            {
+                Case = new EditCaseRequest { Name = "Case", Number = "123" },
+                Participants = new List<EditParticipantRequest> { new EditParticipantRequest { ContactEmail = "new@user.com" } },
+                Endpoints = new List<EditEndpointRequest> { 
+                    new EditEndpointRequest {  Id = null, DisplayName = "New Endpoint" },
+                    new EditEndpointRequest {  Id = guid1, DisplayName = "data1" },
+                    new EditEndpointRequest {  Id = guid2, DisplayName = "data2-edit" },
+                }
+            };
+
+            _existingHearingWithEndpoints = new HearingDetailsResponse 
+            { 
+                Endpoints = new List<BookingsAPI.Client.EndpointResponse> 
+                { 
+                    new BookingsAPI.Client.EndpointResponse { Display_name = "data1", Id = guid1,  Pin= "0000", Sip = "1111111111" },
+                    new BookingsAPI.Client.EndpointResponse { Display_name = "data2", Id = guid2,  Pin= "1111", Sip = "2222222222" },
+                    new BookingsAPI.Client.EndpointResponse { Display_name = "data3", Id = guid3,  Pin= "2222", Sip = "5544332234" },
+                } 
             };
             
             _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
@@ -421,6 +449,18 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 participants => participants.Participants.Any(p => p.Username == newJudgeEmail))), Times.Once);
         }
 
+        [Test]
+        public async Task Should_remove_endpoint_if_endpoint_is_removed_from_the_endpoint_list()
+        {
+            _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>())).ReturnsAsync(_existingHearingWithEndpoints);
+
+            var result = await _controller.EditHearing(_validId, _requestWithEndpoints);
+            ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
+
+            _bookingsApiClient.Verify(x => x.RemoveEndPointFromHearingAsync(It.IsAny<Guid>(), It.IsAny<Guid>()), Times.Once);
+            _bookingsApiClient.Verify(x => x.UpdateDisplayNameForEndpointAsync(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<UpdateEndpointRequest>()), Times.Once);
+            _bookingsApiClient.Verify(x => x.AddEndPointToHearingAsync(It.IsAny<Guid>(), It.IsAny<AddEndpointRequest>()), Times.Once);
+        }
         private void GivenApiThrowsExceptionOnUpdate(HttpStatusCode code)
         {
             _bookingsApiClient.Setup(x =>

@@ -12,6 +12,7 @@ namespace AdminWebsite.AcceptanceTests.Data.TestData
         public OtherInformation OtherInformation { get; set; }
         public Questionnaire Questionnaire { get; set; }
         public BookingDetailsPage BookingDetailsPage { get; set; }
+        public VideoAccessPoints VideoAccessPoints { get; set; }
     }
 
     public class HearingDetails
@@ -69,5 +70,10 @@ namespace AdminWebsite.AcceptanceTests.Data.TestData
         public string CancelReason { get; set; }
         public string CancelReason2 { get; set; }
         public string DetailReason { get; set; }
+    }
+
+    public class VideoAccessPoints
+    {
+        public string DisplayName { get; set; }
     }
 }

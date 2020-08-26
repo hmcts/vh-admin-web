@@ -25,6 +25,7 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public static readonly Page HearingSchedule = new Page("Hearing Schedule", "hearing-schedule");
         public static readonly Page AssignJudge = new Page("Assign Judge", "assign-judge");
         public static readonly Page AddParticipants = new Page("Add Participants", "add-participants");
+        public static readonly Page VideoAccessPoints = new Page("Video Access Points", "video-access-points");
         public static readonly Page OtherInformation = new Page("Other Information", "other-information");
         public static readonly Page Summary = new Page("Summary", "summary");
         public static readonly Page BookingConfirmation = new Page("Booking Confirmation", "booking-confirmation");
@@ -66,6 +67,7 @@ namespace AdminWebsite.AcceptanceTests.Pages
                 yield return HearingSchedule;
                 yield return AssignJudge;
                 yield return AddParticipants;
+                yield return VideoAccessPoints;
                 yield return OtherInformation;
                 yield return Summary;
                 yield return BookingConfirmation;

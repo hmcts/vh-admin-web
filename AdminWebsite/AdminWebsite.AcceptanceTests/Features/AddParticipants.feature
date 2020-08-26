@@ -6,7 +6,7 @@
 Scenario: Add Participants
 	Given the Video Hearings Officer user has progressed to the Add Participants page
 	When the user completes the add participants form
-	Then the user is on the Other Information page
+	Then the user is on the Video Access Points page
 
 @Smoketest-Extended
 Scenario: Edit New Participant

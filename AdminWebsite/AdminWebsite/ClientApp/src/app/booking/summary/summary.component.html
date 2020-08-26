@@ -8,8 +8,8 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-one-half">
 
-        <h2 class="govuk-heading-m"
-            id="hearingSummary">{{ isExistingBooking ? 'Booking details' : 'Hearing summary'}}</h2>
+        <h2 class="govuk-heading-m" id="hearingSummary">{{ isExistingBooking ? 'Booking details' : 'Hearing summary'}}
+        </h2>
         <app-booking-edit [title]="'Hearing details'" [editLink]="'book-hearing'" [elementId]="'hearing-details-id'">
         </app-booking-edit>
         <div class="govuk-form-group vhtable">
@@ -20,7 +20,7 @@
         </div>
 
         <app-booking-edit [title]="'Hearing schedule'" [editLink]="'hearing-schedule'"
-                          [elementId]="'hearing-schedule-id'">
+            [elementId]="'hearing-schedule-id'">
         </app-booking-edit>
         <div class="govuk-form-group vhtable">
             <div id="hearingDate">{{ hearingDate | appLongDatetime }}</div>
@@ -28,16 +28,35 @@
             <div id="hearingDuration">{{ hearingDuration }}</div>
         </div>
 
-
         <app-booking-edit [title]="'Audio to be recorded'" [editLink]="'assign-judge'"
-                          [elementId]="'audio-recording-id'"></app-booking-edit>
+            [elementId]="'audio-recording-id'"></app-booking-edit>
 
         <div class="govuk-form-group vhtable">
             <div class="vh-text-break" id="audioRecording">{{ audioChoice }}</div>
         </div>
 
+        <div *ngIf="hasEndpoints">
+
+            <app-booking-edit [title]="'Video access points'" [editLink]="'video-access-points'"
+                [elementId]="'video-access-points-id'"></app-booking-edit>
+
+            <div class="govuk-form-group vhtable">
+                <div *ngFor="let endpoint of endpoints; let i = index" id="{{endpoint}}+i" class="vh-text-break">
+                    <div class="govuk-grid-row">
+                        <div class="govuk-grid-column-one-half" id="displayName{{+i}}">
+                            {{ endpoint.displayName }}
+                        </div>
+                        <div class="govuk-grid-column-one-half">
+                            <a class="vhlink" href="javascript:void(0)" [attr.id]="'remove-link' + i"
+                                (click)="removeEndpoint(i)">Remove</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <app-booking-edit [title]="'Other information'" [editLink]="'other-information'"
-                          [elementId]="'other-information-id'"></app-booking-edit>
+            [elementId]="'other-information-id'"></app-booking-edit>
 
         <div class="govuk-form-group vhtable">
             <div class="vh-text-break" id="otherInformation">{{ otherInformation }}</div>
@@ -45,12 +64,11 @@
 
         <div class="sk-top">
             <button id="bookButton" class="govuk-button vh-mr25" data-module="govuk-button" (click)="bookHearing()"
-                    alt="Book a Hearing"
-                    [disabled]="bookingsSaving">
+                alt="Book a Hearing" [disabled]="bookingsSaving">
                 {{isExistingBooking ? 'Save' : 'Book'}}
             </button>
             <button id="cancelButton" class="govuk-button hmcts-button--secondary" data-module="govuk-button"
-                    (click)="confirmCancelBooking()" alt="Confirm cancellation of new booking and return to dashboard">
+                (click)="confirmCancelBooking()" alt="Confirm cancellation of new booking and return to dashboard">
                 Cancel
             </button>
         </div>
@@ -68,7 +86,7 @@
 
 <div *ngIf="showConfirmationRemoveParticipant">
     <app-remove-popup (continueRemove)="handleContinueRemove()" (cancelRemove)="handleCancelRemove()"
-                      [fullName]="removerFullName"></app-remove-popup>
+        [fullName]="removerFullName"></app-remove-popup>
 </div>
 
 <div *ngIf="showWaitSaving">

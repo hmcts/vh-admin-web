@@ -18,6 +18,8 @@ using AdminWebsite.VideoAPI.Client;
 using Microsoft.Extensions.Logging;
 using ParticipantRequest = AdminWebsite.BookingsAPI.Client.ParticipantRequest;
 using UpdateParticipantRequest = AdminWebsite.BookingsAPI.Client.UpdateParticipantRequest;
+using AddEndpointRequest = AdminWebsite.BookingsAPI.Client.AddEndpointRequest;
+using UpdateEndpointRequest = AdminWebsite.BookingsAPI.Client.UpdateEndpointRequest;
 
 namespace AdminWebsite.Controllers
 {
@@ -219,6 +221,33 @@ namespace AdminWebsite.Controllers
                 foreach (var participantToDelete in deleteParticipantList)
                 {
                     await _bookingsApiClient.RemoveParticipantFromHearingAsync(hearingId, participantToDelete.Id);
+                }
+
+                // endpoints.
+                if (hearing.Endpoints != null)
+                {
+                    var listOfEndpointsToDelete = hearing.Endpoints.Where(e => request.Endpoints.All(re => re.Id != e.Id));
+                    foreach (var endpointToDelete in listOfEndpointsToDelete)
+                    {
+                        await _bookingsApiClient.RemoveEndPointFromHearingAsync(hearing.Id, endpointToDelete.Id);
+                    }
+                    foreach (var endpoint in request.Endpoints)
+                    {
+                        if (!endpoint.Id.HasValue)
+                        {
+                            var addEndpointRequest = new AddEndpointRequest { Display_name = endpoint.DisplayName };
+                            await _bookingsApiClient.AddEndPointToHearingAsync(hearing.Id, addEndpointRequest);
+                        }
+                        else
+                        {
+                            var existingEndpointToEdit = hearing.Endpoints.FirstOrDefault(e => e.Id.Equals(endpoint.Id));
+                            if (existingEndpointToEdit != null && existingEndpointToEdit.Display_name != endpoint.DisplayName)
+                            {
+                                var updateEndpointRequest = new UpdateEndpointRequest { Display_name = endpoint.DisplayName };
+                                await _bookingsApiClient.UpdateDisplayNameForEndpointAsync(hearing.Id, endpoint.Id.Value, updateEndpointRequest);
+                            }
+                        }
+                    }
                 }
 
                 return Ok(await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId));

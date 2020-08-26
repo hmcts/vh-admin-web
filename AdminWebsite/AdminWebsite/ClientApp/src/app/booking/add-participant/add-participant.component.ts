@@ -17,6 +17,7 @@ import { CaseAndHearingRolesResponse } from '../../services/clients/api-client';
 import { PartyModel } from '../../common/model/party.model';
 import { Logger } from '../../services/logger';
 import { SanitizeInputText } from '../../common/formatters/sanitize-input-text';
+import { PageUrls } from 'src/app/shared/page-url.constants';
 
 @Component({
   selector: 'app-add-participant',
@@ -514,7 +515,8 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   confirmRemoveParticipant() {
     if (this.selectedParticipantEmail) {
       const participant = this.hearing.participants.find(x => x.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase());
-      this.removerFullName = participant ? `${participant.title} ${participant.first_name} ${participant.last_name}` : '';
+      const title = participant && participant.title !== null ? `${participant.title}` : '';
+      this.removerFullName = participant ? `${title} ${participant.first_name} ${participant.last_name}` : '';
       const anyParticipants = this.hearing.participants.filter(x => !x.is_judge);
       this.bookingHasParticipants = anyParticipants && anyParticipants.length > 1;
       this.showConfirmationRemoveParticipant = true;
@@ -575,7 +577,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
       this.navigateToSummary();
     } else {
       this.videoHearingService.cancelRequest();
-      this.router.navigate(['/dashboard']);
+      this.router.navigate([PageUrls.Dashboard]);
     }
   }
 
@@ -647,7 +649,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         }
         this.navigateToSummary();
       } else {
-        this.router.navigate(['/other-information']);
+        this.router.navigate([PageUrls.Endpoints]);
       }
     } else {
       this.displayErrorNoParticipants = true;

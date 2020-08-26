@@ -92,7 +92,8 @@ namespace AdminWebsite.AcceptanceTests.Hooks
                 HearingParticipants = new List<UserAccount>(),
                 HearingResponse = new HearingDetailsResponse(),
                 HearingSchedule = new HearingSchedule(),
-                TestData = new DefaultDataManager().SerialiseTestData()
+                TestData = new DefaultDataManager().SerialiseTestData(),
+                VideoAccessPoints = new VideoAccessPoints()
             };
             context.Test.AddParticipant = context.Test.TestData.AddParticipant;
         }

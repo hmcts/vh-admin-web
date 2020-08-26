@@ -50,3 +50,7 @@ div {
   overflow-wrap: break-word;
   word-wrap: break-word;
 }
+
+.vh-remove-padding {
+    margin-bottom: 1px;
+}
