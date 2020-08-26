@@ -72,7 +72,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _bookingsApiManager = new BookingsApiManager(_c.WebConfig.VhServices.BookingsApiUrl, _c.Tokens.BookingsApiBearerToken);
             var hearingResponse = _bookingsApiManager.CreateHearing(hearingRequest);
             hearingResponse.StatusCode.Should().Be(HttpStatusCode.Created);
-            var hearing = RequestHelper.DeserialiseSnakeCaseJsonToResponse<HearingDetailsResponse>(hearingResponse.Content);
+            var hearing = RequestHelper.Deserialise<HearingDetailsResponse>(hearingResponse.Content);
             hearing.Should().NotBeNull();
             return hearing;
         }

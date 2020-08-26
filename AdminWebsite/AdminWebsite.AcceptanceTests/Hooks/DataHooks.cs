@@ -74,7 +74,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
 
             var hearingResponse = _c.Apis.BookingsApi.CreateHearing(hearingRequest);
             hearingResponse.StatusCode.Should().Be(HttpStatusCode.Created);
-            var hearing = RequestHelper.DeserialiseSnakeCaseJsonToResponse<HearingDetailsResponse>(hearingResponse.Content);
+            var hearing = RequestHelper.Deserialise<HearingDetailsResponse>(hearingResponse.Content);
             hearing.Should().NotBeNull();
 
             ParticipantExistsInTheDb(hearing.Id).Should().BeTrue();
@@ -96,7 +96,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             response.StatusCode.Should().Be(HttpStatusCode.NoContent, $"Conference not created with error '{response.Content}'");
             response = _c.Apis.VideoApi.PollForConferenceResponse(_c.Test.HearingResponse.Id);
             response.StatusCode.Should().Be(HttpStatusCode.OK);
-            var conference = RequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(response.Content);
+            var conference = RequestHelper.Deserialise<ConferenceDetailsResponse>(response.Content);
             NUnit.Framework.TestContext.WriteLine($"Conference created with Conference Id {conference.Id}");
             return conference;
         }
@@ -118,7 +118,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         private bool ParticipantExistsInTheDb(Guid hearingId)
         {
             var hearingResponse = _c.Apis.BookingsApi.GetHearing(hearingId);
-            var hearing = RequestHelper.DeserialiseSnakeCaseJsonToResponse<HearingDetailsResponse>(hearingResponse.Content);
+            var hearing = RequestHelper.Deserialise<HearingDetailsResponse>(hearingResponse.Content);
             hearing.Should().NotBeNull();
             return hearing.Participants.Any(x =>
                 x.Username.ToLower().Equals(UserManager.GetDefaultParticipantUser(_c.UserAccounts).Username.ToLower()));

@@ -214,7 +214,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             var clerkUsername = UserManager.GetClerkUser(_c.UserAccounts).Username;
             var hearingResponse = _c.Apis.BookingsApi.GetHearingsForUsername(clerkUsername);
-            var hearings = RequestHelper.DeserialiseSnakeCaseJsonToResponse<List<HearingDetailsResponse>>(hearingResponse.Content);
+            var hearings = RequestHelper.Deserialise<List<HearingDetailsResponse>>(hearingResponse.Content);
             return hearings.First(x => x.Cases.First().Name.Equals(_c.Test.HearingDetails.CaseName));
         }
 
