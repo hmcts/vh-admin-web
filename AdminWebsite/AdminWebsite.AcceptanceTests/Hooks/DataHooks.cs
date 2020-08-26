@@ -40,6 +40,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             if (!scenario.ScenarioInfo.Tags.Contains("AudioRecording")) return;
             _c.Test.HearingResponse = CreateHearing();
             _c.Test.ConferenceResponse = CreateConference();
+            StartTheHearing(); 
             CloseTheConference();
 
             var file = FileManager.CreateNewAudioFile("TestAudioFile.mp4", _c.Test.HearingResponse.Id);
@@ -101,9 +102,25 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             return conference;
         }
 
+        private void StartTheHearing()
+        {
+            var judge = _c.Test.ConferenceResponse.Participants.First(x => x.User_role == UserRole.Judge);
+            
+            var request = new CallbackEventRequestBuilder()
+                .WithConferenceId(_c.Test.ConferenceResponse.Id)
+                .WithParticipantId(judge.Id)
+                .WithEventType(EventType.Start)
+                .FromRoomType(null)
+                .Build();
+
+            var response = _c.Apis.VideoApi.SendEvent(request);
+            response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        }
+
         private void CloseTheConference()
         {
             var judge = _c.Test.ConferenceResponse.Participants.First(x => x.User_role == UserRole.Judge);
+            
             var request = new CallbackEventRequestBuilder()
                 .WithConferenceId(_c.Test.ConferenceResponse.Id)
                 .WithParticipantId(judge.Id)
