@@ -12,6 +12,7 @@ using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.VideoAPI.Client;
 using FluentAssertions;
+using Newtonsoft.Json;
 using TechTalk.SpecFlow;
 
 namespace AdminWebsite.AcceptanceTests.Hooks
@@ -91,18 +92,25 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         private void ClearClosedConferencesForClerk(BookingsApiManager bookingsApi, VideoApiManager videoApi)
         {
             var response = videoApi.GetConferencesForTodayJudge(_clerkUsername);
-            var todaysConferences = RequestHelper.Deserialise<List<ConferenceForJudgeResponse>>(response.Content);
-            if (todaysConferences == null) return;
-
-            foreach (var conference in todaysConferences)
+            try
             {
-                var hearingId = GetTheHearingIdFromTheConference(videoApi, conference.Id);
+                var todaysConferences = RequestHelper.Deserialise<List<ConferenceForJudgeResponse>>(response.Content);
+                if (todaysConferences == null) return;
 
-                if (HearingHasNotBeenDeletedAlready(bookingsApi, hearingId) && !hearingId.Equals(Guid.Empty))
-                    DeleteTheHearing(bookingsApi, hearingId);
+                foreach (var conference in todaysConferences)
+                {
+                    var hearingId = GetTheHearingIdFromTheConference(videoApi, conference.Id);
 
-                if (ConferenceHasNotBeenDeletedAlready(videoApi, conference.Id))
-                    DeleteTheConference(videoApi, conference.Id);
+                    if (HearingHasNotBeenDeletedAlready(bookingsApi, hearingId) && !hearingId.Equals(Guid.Empty))
+                        DeleteTheHearing(bookingsApi, hearingId);
+
+                    if (ConferenceHasNotBeenDeletedAlready(videoApi, conference.Id))
+                        DeleteTheConference(videoApi, conference.Id);
+                }
+            }
+            catch (JsonReaderException e)
+            {
+                NUnit.Framework.TestContext.WriteLine($"Failed to parse list of conferences with error '{e}'");
             }
         }
 
