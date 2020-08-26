@@ -102,7 +102,8 @@ namespace AdminWebsite.Services
             {
                 First_name = participant.First_name?.Replace(BLANK, string.Empty),
                 Last_name = participant.Last_name?.Replace(BLANK, string.Empty),
-                Recovery_email = participant.Contact_email
+                Recovery_email = participant.Contact_email,
+                Is_test_user = false
             };
 
             var newUserResponse = await _userApiClient.CreateUserAsync(createUserRequest);
