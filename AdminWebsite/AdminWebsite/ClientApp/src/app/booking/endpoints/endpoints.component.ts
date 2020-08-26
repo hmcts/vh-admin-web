@@ -63,9 +63,21 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
   }
 
   saveEndpoints(): void {
-    if (!this.hasDuplicateDisplayName(this.newEndpoints)) {
+
+    const newEndpointsArray: EndpointModel[] = [];
+    for (const control of this.endpoints.controls) {
+      const endpointModel = new EndpointModel();
+      if (control.value.displayName.trim() !== '') {
+        const displayNameText = SanitizeInputText(control.value.displayName);
+        endpointModel.displayName = displayNameText;
+        endpointModel.Id = control.value.id;
+        newEndpointsArray.push(endpointModel);
+      }
+    }
+
+    if (!this.hasDuplicateDisplayName(newEndpointsArray)) {
       this.failedValidation = false;
-      this.hearing.endpoints = this.newEndpoints;
+      this.hearing.endpoints = newEndpointsArray;
       this.videoHearingService.updateHearingRequest(this.hearing);
 
       if (this.editMode) {
@@ -117,7 +129,8 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
       ])
     });
     if (this.hearing.endpoints.length > 0) {
-      this.form.setControl('endpoints', this.setExistingEndpoints(this.hearing.endpoints));
+      this.newEndpoints = this.hearing.endpoints;
+      this.form.setControl('endpoints', this.setExistingEndpoints(this.newEndpoints));
     }
 
     this.$subscriptions.push(
@@ -125,7 +138,6 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
         this.newEndpoints = ep;
       })
     );
-
   }
 
   private setExistingEndpoints(endpoints: EndpointModel[]): FormArray {
