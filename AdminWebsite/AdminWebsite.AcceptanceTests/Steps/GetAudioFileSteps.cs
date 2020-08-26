@@ -33,7 +33,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             result.Should().BeTrue("Audio file successfully uploaded to Azure Storage");
             var response = _c.Apis.VideoApi.GetConferenceByConferenceId(_c.Test.ConferenceResponse.Id);
             response.StatusCode.Should().Be(HttpStatusCode.OK);
-            var hearing = RequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(response.Content);
+            var hearing = RequestHelper.Deserialise<ConferenceDetailsResponse>(response.Content);
             hearing.Closed_date_time.Should().NotBeNull();
         }
 
