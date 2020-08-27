@@ -281,7 +281,6 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     // if it's added in the existing hearing participant, then allowed all fields to edit.
     this.resetPartyAndRole();
 
-    // this.isRepresentative = this.participantDetails.hearing_role_name === Constants.Representative;
     this.isRepresentative = this.isRoleRepresentative(this.participantDetails.hearing_role_name);
 
     this.form.setValue({
@@ -412,7 +411,6 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
   roleSelected() {
     this.isRoleSelected = this.role.value !== this.constants.PleaseSelect;
-    // if (this.role.value !== this.constants.Representative) {
     if (!this.isRoleRepresentative(this.role.value)) {
       this.companyName.clearValidators();
       this.reference.clearValidators();
@@ -440,7 +438,6 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
       this.companyNameIndividual.setValue('');
     }
     this.showDetails = true;
-    // this.isRepresentative = this.role.value === this.constants.Representative;
     this.isRepresentative = this.isRoleRepresentative(this.role.value);
   }
 
@@ -545,7 +542,6 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     newParticipant.hearing_role_name = this.role.value;
     newParticipant.email = this.searchEmail ? this.searchEmail.email : '';
     newParticipant.display_name = this.displayName.value;
-    // if (this.role.value === Constants.Representative) {
     if (this.isRoleRepresentative(this.role.value)) {
       newParticipant.company = this.companyName.value;
     } else {
