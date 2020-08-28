@@ -85,10 +85,11 @@ describe('EndpointsComponent', () => {
     component.cancelBooking();
     expect(component.attemptingCancellation).toBeTruthy();
   });
-  it('should return to summary screen if cancel clicked in edit mode with no updates', () => {
+  it('should show a confirmation popup if cancel clicked in edit mode', () => {
     bookingServiceSpy.isEditMode.and.returnValue(true);
     component.ngOnInit();
     component.cancelBooking();
+    expect(component.attemptingCancellation).toBeFalsy();
     expect(routerSpy.navigate).toHaveBeenCalledWith(['/summary']);
   });
   it('should show a confirmation popup if cancel clicked in edit mode with updates', () => {
@@ -96,22 +97,34 @@ describe('EndpointsComponent', () => {
     component.ngOnInit();
     component.form.markAsTouched();
     component.cancelBooking();
-    expect(component.attemptingCancellation).toBeTruthy();
+    expect(component.attemptingDiscardChanges).toBeTruthy();
   });
-  it('should close confirmation popup and navigate to dashboard page if continue booking clicked', () => {
+  it('should close the confirmation popup and stay on page in new mode and continue booking clicked', () => {
+    bookingServiceSpy.isEditMode.and.returnValue(false);
     component.attemptingCancellation = true;
-    component.ngOnInit();
+    component.continueBooking();
+    expect(component.attemptingCancellation).toBeFalsy();
+  });
+  it('should close the confirmation popup and navigate to dashboard in new mode and discard changes clicked', () => {
+    bookingServiceSpy.isEditMode.and.returnValue(false);
+    component.attemptingCancellation = true;
     component.cancelEndpoints();
     expect(component.attemptingCancellation).toBeFalsy();
     expect(videoHearingsServiceSpy.cancelRequest).toHaveBeenCalled();
     expect(routerSpy.navigate).toHaveBeenCalledWith(['/dashboard']);
   });
-  it('should close confirmation popup and remain on endpoint page when continue booking is clicked', () => {
-    component.attemptingCancellation = true;
-    component.ngOnInit();
-    component.form.markAsTouched();
-    component.cancelEndpoints();
-    expect(component.attemptingCancellation).toBeFalsy();
+  it('should close the confirmation popup and stay on page in edit mode and continue booking clicked', () => {
+    bookingServiceSpy.isEditMode.and.returnValue(true);
+    component.attemptingDiscardChanges = true;
+    component.continueBooking();
+    expect(component.attemptingDiscardChanges).toBeFalsy();
+  });
+  it('should close the confirmation popup and navigate to summary in edit mode and discard changes clicked', () => {
+    bookingServiceSpy.isEditMode.and.returnValue(false);
+    component.attemptingDiscardChanges = true;
+    component.cancelChanges();
+    expect(component.attemptingDiscardChanges).toBeFalsy();
+    expect(routerSpy.navigate).toHaveBeenCalledWith(['/summary']);
   });
   it('it should validate form array and display error message is duplicates exist', () => {
     component.ngOnInit();
