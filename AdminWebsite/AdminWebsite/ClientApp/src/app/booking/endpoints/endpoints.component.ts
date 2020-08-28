@@ -21,6 +21,7 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
   hearing: HearingModel;
   $subscriptions: Subscription[] = [];
   attemptingCancellation = false;
+  attemptingDiscardChanges = false;
   failedValidation: boolean;
   newEndpoints: EndpointModel[] = [];
 
@@ -98,7 +99,7 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
   cancelBooking(): void {
     if (this.editMode) {
       if (this.form.dirty || this.form.touched) {
-        this.attemptingCancellation = true;
+        this.attemptingDiscardChanges = true;
       } else {
         this.router.navigate([PageUrls.Summary]);
       }
@@ -109,6 +110,7 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
 
   continueBooking() {
     this.attemptingCancellation = false;
+    this.attemptingDiscardChanges = false;
   }
 
   cancelEndpoints() {
@@ -116,6 +118,12 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
     this.form.reset();
     this.videoHearingService.cancelRequest();
     this.router.navigate([PageUrls.Dashboard]);
+  }
+
+  cancelChanges() {
+    this.attemptingDiscardChanges = false;
+    this.form.reset();
+    this.navigateToSummary();
   }
 
   private checkForExistingRequest(): void {
