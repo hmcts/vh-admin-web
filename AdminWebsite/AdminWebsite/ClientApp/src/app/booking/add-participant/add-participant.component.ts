@@ -281,7 +281,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     // if it's added in the existing hearing participant, then allowed all fields to edit.
     this.resetPartyAndRole();
 
-    this.isRepresentative = this.participantDetails.hearing_role_name === Constants.Representative;
+    this.isRepresentative = this.isRoleRepresentative(this.participantDetails.hearing_role_name);
 
     this.form.setValue({
       party: this.participantDetails.case_role_name,
@@ -411,7 +411,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
   roleSelected() {
     this.isRoleSelected = this.role.value !== this.constants.PleaseSelect;
-    if (this.role.value !== this.constants.Representative) {
+    if (!this.isRoleRepresentative(this.role.value)) {
       this.companyName.clearValidators();
       this.reference.clearValidators();
       this.representing.clearValidators();
@@ -438,7 +438,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
       this.companyNameIndividual.setValue('');
     }
     this.showDetails = true;
-    this.isRepresentative = this.role.value === this.constants.Representative;
+    this.isRepresentative = this.isRoleRepresentative(this.role.value);
   }
 
   titleSelected() {
@@ -515,7 +515,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   confirmRemoveParticipant() {
     if (this.selectedParticipantEmail) {
       const participant = this.hearing.participants.find(x => x.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase());
-      const title = participant && participant.title !== null ? `${participant.title}` : '';
+      const title = participant && participant.title ? `${participant.title}` : '';
       this.removerFullName = participant ? `${title} ${participant.first_name} ${participant.last_name}` : '';
       const anyParticipants = this.hearing.participants.filter(x => !x.is_judge);
       this.bookingHasParticipants = anyParticipants && anyParticipants.length > 1;
@@ -542,7 +542,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     newParticipant.hearing_role_name = this.role.value;
     newParticipant.email = this.searchEmail ? this.searchEmail.email : '';
     newParticipant.display_name = this.displayName.value;
-    if (this.role.value === Constants.Representative) {
+    if (this.isRoleRepresentative(this.role.value)) {
       newParticipant.company = this.companyName.value;
     } else {
       newParticipant.company = this.companyNameIndividual.value;
@@ -731,5 +731,9 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   ngOnDestroy() {
     this.clearForm();
     this.$subscriptions.forEach(subscription => { if (subscription) { subscription.unsubscribe(); } });
+  }
+  isRoleRepresentative(hearingRole: string): boolean {
+    const representativeRoles = ['representative', 'prosecution', 'defence advocate', 'prosecution advocate'];
+    return representativeRoles.includes(hearingRole.toLowerCase());
   }
 }
