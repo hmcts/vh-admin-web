@@ -10,13 +10,14 @@ import { SearchService } from '../../services/search.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { SearchEmailComponent } from '../search-email/search-email.component';
 import { ParticipantsListComponent } from '../participants-list/participants-list.component';
-import { BookingBaseComponent } from '../booking-base/booking-base.component';
+import { BookingBaseComponentDirective as BookingBaseComponent } from '../booking-base/booking-base.component';
 import { BookingService } from '../../services/booking.service';
 import { ParticipantService } from '../services/participant.service';
 import { CaseAndHearingRolesResponse } from '../../services/clients/api-client';
 import { PartyModel } from '../../common/model/party.model';
 import { Logger } from '../../services/logger';
 import { SanitizeInputText } from '../../common/formatters/sanitize-input-text';
+import { PageUrls } from 'src/app/shared/page-url.constants';
 
 @Component({
   selector: 'app-add-participant',
@@ -74,7 +75,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   existingPersonEmails: string[] = [];
   $subscriptions: Subscription[] = [];
 
-  @ViewChild(SearchEmailComponent, { static: false })
+  @ViewChild(SearchEmailComponent)
   searchEmail: SearchEmailComponent;
 
   @ViewChild(ParticipantsListComponent, { static: true })
@@ -280,7 +281,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     // if it's added in the existing hearing participant, then allowed all fields to edit.
     this.resetPartyAndRole();
 
-    this.isRepresentative = this.participantDetails.hearing_role_name === Constants.Representative;
+    this.isRepresentative = this.isRoleRepresentative(this.participantDetails.hearing_role_name);
 
     this.form.setValue({
       party: this.participantDetails.case_role_name,
@@ -410,7 +411,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
   roleSelected() {
     this.isRoleSelected = this.role.value !== this.constants.PleaseSelect;
-    if (this.role.value !== this.constants.Representative) {
+    if (!this.isRoleRepresentative(this.role.value)) {
       this.companyName.clearValidators();
       this.reference.clearValidators();
       this.representing.clearValidators();
@@ -437,7 +438,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
       this.companyNameIndividual.setValue('');
     }
     this.showDetails = true;
-    this.isRepresentative = this.role.value === this.constants.Representative;
+    this.isRepresentative = this.isRoleRepresentative(this.role.value);
   }
 
   titleSelected() {
@@ -514,7 +515,8 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   confirmRemoveParticipant() {
     if (this.selectedParticipantEmail) {
       const participant = this.hearing.participants.find(x => x.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase());
-      this.removerFullName = participant ? `${participant.title} ${participant.first_name} ${participant.last_name}` : '';
+      const title = participant && participant.title ? `${participant.title}` : '';
+      this.removerFullName = participant ? `${title} ${participant.first_name} ${participant.last_name}` : '';
       const anyParticipants = this.hearing.participants.filter(x => !x.is_judge);
       this.bookingHasParticipants = anyParticipants && anyParticipants.length > 1;
       this.showConfirmationRemoveParticipant = true;
@@ -540,7 +542,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     newParticipant.hearing_role_name = this.role.value;
     newParticipant.email = this.searchEmail ? this.searchEmail.email : '';
     newParticipant.display_name = this.displayName.value;
-    if (this.role.value === Constants.Representative) {
+    if (this.isRoleRepresentative(this.role.value)) {
       newParticipant.company = this.companyName.value;
     } else {
       newParticipant.company = this.companyNameIndividual.value;
@@ -575,7 +577,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
       this.navigateToSummary();
     } else {
       this.videoHearingService.cancelRequest();
-      this.router.navigate(['/dashboard']);
+      this.router.navigate([PageUrls.Dashboard]);
     }
   }
 
@@ -647,7 +649,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         }
         this.navigateToSummary();
       } else {
-        this.router.navigate(['/other-information']);
+        this.router.navigate([PageUrls.Endpoints]);
       }
     } else {
       this.displayErrorNoParticipants = true;
@@ -729,5 +731,9 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
   ngOnDestroy() {
     this.clearForm();
     this.$subscriptions.forEach(subscription => { if (subscription) { subscription.unsubscribe(); } });
+  }
+  isRoleRepresentative(hearingRole: string): boolean {
+    const representativeRoles = ['representative', 'prosecution', 'defence advocate', 'prosecution advocate'];
+    return representativeRoles.includes(hearingRole.toLowerCase());
   }
 }

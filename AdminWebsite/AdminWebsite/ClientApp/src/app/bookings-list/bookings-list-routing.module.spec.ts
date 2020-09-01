@@ -54,12 +54,12 @@ describe('BookingsListRouting', () => {
             ]
         }).compileComponents();
 
-        router = TestBed.get(Router);
-        location = TestBed.get(Location);
+        router = TestBed.inject(Router);
+        location = TestBed.inject(Location);
         fixture = TestBed.createComponent(BookingsListComponent);
         bookingsList = fixture.componentInstance;
-        adalSvc = TestBed.get(AdalService);
-        bookingGuard = TestBed.get(AdminGuard);
+        adalSvc = TestBed.inject(AdalService);
+        bookingGuard = TestBed.inject(AdminGuard);
     });
 
     describe('admin can navigate to booking list', () => {

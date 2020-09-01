@@ -10,13 +10,15 @@ import { CreateHearingComponent } from './create-hearing/create-hearing.componen
 import { HearingScheduleComponent } from './hearing-schedule/hearing-schedule.component';
 import { OtherInformationComponent } from './other-information/other-information.component';
 import { SummaryComponent } from './summary/summary.component';
+import { EndpointsComponent } from './endpoints/endpoints.component';
 
 export const routes: Routes = [
   { path: 'book-hearing', component: CreateHearingComponent, canActivate: [AuthGuard, AdminGuard] },
   { path: 'hearing-schedule', component: HearingScheduleComponent, canActivate: [AuthGuard, AdminGuard] },
   { path: 'assign-judge', component: AssignJudgeComponent, canActivate: [AuthGuard, AdminGuard] },
   { path: 'add-participants', component: AddParticipantComponent, canActivate: [AuthGuard, AdminGuard] },
-  { path: 'other-information', component: OtherInformationComponent, canActivate: [AuthGuard, AdminGuard]},
+  { path: 'video-access-points', component: EndpointsComponent, canActivate: [AuthGuard, AdminGuard] },
+  { path: 'other-information', component: OtherInformationComponent, canActivate: [AuthGuard, AdminGuard] },
   { path: 'summary', component: SummaryComponent, canActivate: [AuthGuard, AdminGuard] },
   { path: 'booking-confirmation', component: BookingConfirmationComponent, canActivate: [AuthGuard, AdminGuard] },
 ];

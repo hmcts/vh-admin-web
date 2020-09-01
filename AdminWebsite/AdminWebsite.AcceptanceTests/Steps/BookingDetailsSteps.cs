@@ -61,6 +61,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.Duration).Text.Should().Contain($"listed for {_c.Test.HearingSchedule.DurationMinutes} minutes");
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.AudioRecorded).Text.Should().Be(_c.Test.AssignJudge.AudioRecord ? "Yes" : "No");
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.OtherInformation).Text.Should().Be(_c.Test.OtherInformation);
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(BookingDetailsPage.VideoAccessPoints(0)).Text.Should().Be(_c.Test.VideoAccessPoints.DisplayName);
         }
 
         private void VerifyJudgeInParticipantsList()
@@ -213,7 +214,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             var clerkUsername = UserManager.GetClerkUser(_c.UserAccounts).Username;
             var hearingResponse = _c.Apis.BookingsApi.GetHearingsForUsername(clerkUsername);
-            var hearings = RequestHelper.DeserialiseSnakeCaseJsonToResponse<List<HearingDetailsResponse>>(hearingResponse.Content);
+            var hearings = RequestHelper.Deserialise<List<HearingDetailsResponse>>(hearingResponse.Content);
             return hearings.First(x => x.Cases.First().Name.Equals(_c.Test.HearingDetails.CaseName));
         }
 

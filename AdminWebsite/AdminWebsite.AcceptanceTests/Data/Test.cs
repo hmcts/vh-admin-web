@@ -22,5 +22,6 @@ namespace AdminWebsite.AcceptanceTests.Data
         public DefaultData TestData { get; set; }
         public ConferenceDetailsResponse ConferenceResponse { get; set; }
         public HearingDetailsResponse HearingResponse { get; set; }
+        public VideoAccessPoints VideoAccessPoints { get; set; }
     }
 }

@@ -9,7 +9,7 @@ import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 import { Constants } from 'src/app/common/constants';
 import { JudgeDataService } from 'src/app/booking/services/judge-data.service';
 import { BookingService } from '../../services/booking.service';
-import { BookingBaseComponent } from '../booking-base/booking-base.component';
+import { BookingBaseComponentDirective as BookingBaseComponent } from '../booking-base/booking-base.component';
 import { Logger } from '../../services/logger';
 import { SanitizeInputText } from '../../common/formatters/sanitize-input-text';
 import { Subscription } from 'rxjs';

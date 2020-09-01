@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BookingsDetailsModel } from '../common/model/bookings-list.model';
+import { EndpointModel } from '../common/model/endpoint.model';
 import { ParticipantDetailsModel } from '../common/model/participant-details.model';
 import { HearingDetailsResponse } from './clients/api-client';
 
@@ -25,6 +26,8 @@ export class BookingDetailsService {
       hearingResponse.created_date,
       hearingResponse.updated_by,
       hearingResponse.updated_date,
+      hearingResponse.confirmed_by,
+      hearingResponse.confirmed_date,
       hearingResponse.status,
       hearingResponse.questionnaire_not_required,
       hearingResponse.audio_recording_required,
@@ -53,5 +56,18 @@ export class BookingDetailsService {
     }
 
     return { judges: judges, participants: participants };
+  }
+
+  mapBookingEndpoints(hearingResponse: HearingDetailsResponse): EndpointModel[] {
+    const endpoints: EndpointModel[] = [];
+    if (hearingResponse.endpoints && hearingResponse.endpoints.length > 0) {
+      hearingResponse.endpoints.forEach(e => {
+        const epModel = new EndpointModel();
+        epModel.Id = e.id;
+        epModel.displayName = e.display_name;
+        endpoints.push(epModel);
+      });
+    }
+    return endpoints;
   }
 }

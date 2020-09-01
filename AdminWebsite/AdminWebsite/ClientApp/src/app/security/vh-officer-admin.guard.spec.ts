@@ -35,7 +35,7 @@ describe('vh-officer-admin-guard', () => {
         { provide: Logger, useValue: loggerSpy }
       ],
     }).compileComponents();
-    vhOfficerGuard = TestBed.get(VhOfficerAdminGuard);
+    vhOfficerGuard = TestBed.inject(VhOfficerAdminGuard);
   });
 
   describe('when logged in with vh office admin role', () => {

@@ -1,5 +1,5 @@
-import {Injectable} from '@angular/core';
-import {Observable} from 'rxjs';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import {
     BHClient,
     BookNewHearingRequest,
@@ -7,8 +7,11 @@ import {
     CaseRequest,
     CaseResponse,
     EditCaseRequest,
+    EditEndpointRequest,
     EditHearingRequest,
     EditParticipantRequest,
+    EndpointRequest,
+    EndpointResponse,
     HearingDetailsResponse,
     HearingTypeResponse,
     ParticipantRequest,
@@ -16,9 +19,10 @@ import {
     UpdateBookingStatusRequest,
     UpdateBookingStatusResponse
 } from './clients/api-client';
-import {HearingModel} from '../common/model/hearing.model';
-import {CaseModel} from '../common/model/case.model';
-import {ParticipantModel} from '../common/model/participant.model';
+import { HearingModel } from '../common/model/hearing.model';
+import { CaseModel } from '../common/model/case.model';
+import { ParticipantModel } from '../common/model/participant.model';
+import { EndpointModel } from '../common/model/endpoint.model';
 
 @Injectable({
     providedIn: 'root'
@@ -116,7 +120,7 @@ export class VideoHearingsService {
         const hearing = new EditHearingRequest();
 
         if (booking.cases && booking.cases.length > 0) {
-            hearing.case = new EditCaseRequest({name: booking.cases[0].name, number: booking.cases[0].number});
+            hearing.case = new EditCaseRequest({ name: booking.cases[0].name, number: booking.cases[0].number });
         }
 
         hearing.hearing_room_name = booking.court_room;
@@ -127,6 +131,7 @@ export class VideoHearingsService {
         hearing.participants = this.mapParticipantModelToEditParticipantRequest(booking.participants);
         hearing.questionnaire_not_required = booking.questionnaire_not_required;
         hearing.audio_recording_required = booking.audio_recording_required;
+        hearing.endpoints = this.mapEndpointModelToEditEndpointRequest(booking.endpoints);
         return hearing;
     }
 
@@ -134,6 +139,14 @@ export class VideoHearingsService {
         let list: Array<EditParticipantRequest> = [];
         if (participants && participants.length > 0) {
             list = participants.map(x => this.mappingToEditParticipantRequest(x));
+        }
+        return list;
+    }
+
+    mapEndpointModelToEditEndpointRequest(endpoints: EndpointModel[]): EditEndpointRequest[] {
+        let list: EditEndpointRequest[] = [];
+        if (endpoints && endpoints.length > 0) {
+            list = endpoints.map(x => this.mappingToEditEndpointRequest(x));
         }
         return list;
     }
@@ -156,6 +169,13 @@ export class VideoHearingsService {
         return editParticipant;
     }
 
+    mappingToEditEndpointRequest(endpoint: EndpointModel): EditEndpointRequest {
+        const editEndpoint = new EditEndpointRequest();
+        editEndpoint.id = endpoint.Id;
+        editEndpoint.display_name = endpoint.displayName;
+        return editEndpoint;
+    }
+
     mapHearing(newRequest: HearingModel): BookNewHearingRequest {
         const newHearingRequest = new BookNewHearingRequest();
         newHearingRequest.cases = this.mapCases(newRequest);
@@ -169,6 +189,7 @@ export class VideoHearingsService {
         newHearingRequest.other_information = newRequest.other_information;
         newHearingRequest.questionnaire_not_required = newRequest.questionnaire_not_required;
         newHearingRequest.audio_recording_required = newRequest.audio_recording_required;
+        newHearingRequest.endpoints = this.mapEndpoints(newRequest.endpoints);
         return newHearingRequest;
     }
 
@@ -191,6 +212,7 @@ export class VideoHearingsService {
         hearing.questionnaire_not_required = response.questionnaire_not_required;
         hearing.status = response.status;
         hearing.audio_recording_required = response.audio_recording_required;
+        hearing.endpoints = this.mapEndpointResponseToEndpointModel(response.endpoints);
         return hearing;
     }
 
@@ -247,6 +269,19 @@ export class VideoHearingsService {
         return participants;
     }
 
+    mapEndpoints(endpointModel: EndpointModel[]): EndpointRequest[] {
+        const eps: EndpointRequest[] = [];
+        let endpoint: EndpointRequest;
+        if (endpointModel && endpointModel.length > 0) {
+            endpointModel.forEach(e => {
+                endpoint = new EndpointRequest();
+                endpoint.display_name = e.displayName;
+                eps.push(endpoint);
+            });
+        }
+        return eps;
+    }
+
     mapParticipantResponseToParticipantModel(response: ParticipantResponse[]): ParticipantModel[] {
         const participants: ParticipantModel[] = [];
         let participant: ParticipantModel;
@@ -272,6 +307,20 @@ export class VideoHearingsService {
             });
         }
         return participants;
+    }
+
+    mapEndpointResponseToEndpointModel(response: EndpointResponse[]): EndpointModel[] {
+        const endpoints: EndpointModel[] = [];
+        let endpoint: EndpointModel;
+        if (response && response.length > 0) {
+            response.forEach(e => {
+                endpoint = new EndpointModel();
+                endpoint.Id = e.id;
+                endpoint.displayName = e.display_name;
+                endpoints.push(endpoint);
+            });
+        }
+        return endpoints;
     }
 
     getHearingById(hearingId: string): Observable<HearingDetailsResponse> {

@@ -21,6 +21,7 @@
             <div class="govuk-hint vh-sml vh-col vh-font-black">listed for {{detail.DurationInHoursAndMinutes}} </div>
             <div *ngIf="detail.isCancelled" class="vh-cancelled-booking">{{detail.Status}}</div>
             <div *ngIf="detail.isCreated" class="vh-created-booking">Confirmed</div>
+            <div *ngIf="detail.hasBookingConfirmationFailed" class="vh-confirmation-failed">Failed</div>
           </div>
           <div class="govuk-grid-column-one-quarter">
 

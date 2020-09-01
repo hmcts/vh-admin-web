@@ -105,6 +105,7 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
         const participants_and_judges = this.bookingDetailsService.mapBookingParticipants(hearingResponse);
         this.participants = participants_and_judges.participants;
         this.judges = participants_and_judges.judges;
+        this.hearing.Endpoints = this.bookingDetailsService.mapBookingEndpoints(hearingResponse);
     }
 
     mapResponseToModel(hearingResponse: HearingDetailsResponse): HearingModel {

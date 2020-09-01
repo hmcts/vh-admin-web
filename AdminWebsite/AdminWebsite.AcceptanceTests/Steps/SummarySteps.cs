@@ -31,6 +31,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         private readonly AssignJudgeSteps _assignJudgeSteps;
         private readonly AddParticipantSteps _addParticipantSteps;
         private readonly OtherInformationSteps _otherInformationSteps;
+        private readonly VideoAccessPointsSteps _videoAccessPointsSteps;
         private UserAccount _newUserToEdit;
 
         public SummarySteps(
@@ -41,7 +42,8 @@ namespace AdminWebsite.AcceptanceTests.Steps
             HearingScheduleSteps hearingScheduleSteps,
             AssignJudgeSteps assignJudgeSteps,
             AddParticipantSteps addParticipantSteps,
-            OtherInformationSteps otherInformationSteps)
+            OtherInformationSteps otherInformationSteps,
+            VideoAccessPointsSteps videoAccessPointsSteps)
         {
             _c = testContext;
             _browsers = browsers;
@@ -51,6 +53,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _assignJudgeSteps = assignJudgeSteps;
             _addParticipantSteps = addParticipantSteps;
             _otherInformationSteps = otherInformationSteps;
+            _videoAccessPointsSteps = videoAccessPointsSteps;
         }
 
         [When(@"the user views the information on the summary form")]
@@ -59,6 +62,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             VerifyHearingDetails();
             VerifyHearingSchedule();
             VerifyAudioRecording();
+            VerifyVideoAccessPoints();
             VerifyOtherInformation();
             ClickBook();
             VerifyBookingCreated();
@@ -105,12 +109,21 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _addParticipantSteps.EditANewParticipant(_newUserToEdit.AlternativeEmail);
         }
 
+        [When(@"the user edits an endpoint display name")]
+        public void WhenTheUserEditsAnEndpointDisplayName()
+        {
+            _bookingDetailsSteps.ClickEdit();
+            _browsers[_c.CurrentUser.Key].Click(SummaryPage.EditScreenLink("video access points"));
+            _videoAccessPointsSteps.ProgressToNextPage();
+        }
+
         [Then(@"the details are updated")]
         public void ThenTheHearingIsUpdated()
         {
             VerifyHearingDetails();
             VerifyHearingSchedule();
             VerifyAudioRecording();
+            VerifyVideoAccessPoints();
             VerifyOtherInformation();
             ClickBook();
             VerifyBookingUpdated();
@@ -159,11 +172,17 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(SummaryPage.OtherInformation).Text.Should().Be(otherInformation);
         }
 
+        private void VerifyVideoAccessPoints()
+        {
+            var videoAccessPoints = _c.Test.VideoAccessPoints.DisplayName;
+            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(SummaryPage.VideoAccessPoints(0)).Text.Should().Be(videoAccessPoints);
+        }
+
         private void VerifyBookingCreated()
         {
             var bookingsApiManager = new BookingsApiManager(_c.WebConfig.VhServices.BookingsApiUrl, _c.Tokens.BookingsApiBearerToken);
             var response = bookingsApiManager.PollForHearingByUsername(UserManager.GetClerkUser(_c.UserAccounts).Username, _c.Test.HearingDetails.CaseName);
-            var hearings = RequestHelper.DeserialiseSnakeCaseJsonToResponse<List<HearingDetailsResponse>>(response.Content);
+            var hearings = RequestHelper.Deserialise<List<HearingDetailsResponse>>(response.Content);
             _c.Test.HearingResponse = GetHearingFromHearings(hearings);
             var assertHearing = new AssertHearing()
                 .WithHearing(_c.Test.HearingResponse)
@@ -180,7 +199,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             Thread.Sleep(TimeSpan.FromSeconds(0.5));
             var bookingsApiManager = new BookingsApiManager(_c.WebConfig.VhServices.BookingsApiUrl, _c.Tokens.BookingsApiBearerToken);
             var response = bookingsApiManager.PollForHearingByUsername(UserManager.GetClerkUser(_c.UserAccounts).Username, _c.Test.HearingDetails.CaseName);
-            var hearings = RequestHelper.DeserialiseSnakeCaseJsonToResponse<List<HearingDetailsResponse>>(response.Content);
+            var hearings = RequestHelper.Deserialise<List<HearingDetailsResponse>>(response.Content);
             _c.Test.HearingResponse = GetHearingFromHearings(hearings);
             var assertHearing = new AssertHearing()
                 .WithHearing(_c.Test.HearingResponse)

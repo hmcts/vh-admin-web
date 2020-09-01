@@ -1,11 +1,12 @@
 import { BookingService } from '../../services/booking.service';
 import { Router } from '@angular/router';
-import { OnInit } from '@angular/core';
+import { OnInit, Directive } from '@angular/core';
 import { PageUrls } from 'src/app/shared/page-url.constants';
 import { FormGroup } from '@angular/forms';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 
-export abstract class BookingBaseComponent implements OnInit {
+@Directive()
+export abstract class BookingBaseComponentDirective implements OnInit {
 
   buttonAction: string;
   editMode = false;

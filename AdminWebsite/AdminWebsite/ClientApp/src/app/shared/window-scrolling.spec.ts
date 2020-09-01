@@ -11,7 +11,7 @@ describe('WindowScroll', () => {
             ]
         }).compileComponents();
 
-        scroll = TestBed.get(WindowScrolling);
+        scroll = TestBed.inject(WindowScrolling);
     });
 
     it('can return scroll position', () => {

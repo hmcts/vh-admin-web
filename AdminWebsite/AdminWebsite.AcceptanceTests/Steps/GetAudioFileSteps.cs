@@ -33,8 +33,9 @@ namespace AdminWebsite.AcceptanceTests.Steps
             result.Should().BeTrue("Audio file successfully uploaded to Azure Storage");
             var response = _c.Apis.VideoApi.GetConferenceByConferenceId(_c.Test.ConferenceResponse.Id);
             response.StatusCode.Should().Be(HttpStatusCode.OK);
-            var hearing = RequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(response.Content);
-            hearing.Closed_date_time.Should().NotBeNull();
+            var conference = RequestHelper.Deserialise<ConferenceDetailsResponse>(response.Content);
+            conference.Started_date_time.Should().NotBeNull();
+            conference.Closed_date_time.Should().NotBeNull();
         }
 
         [When(@"I search for the audio recording by case number")]

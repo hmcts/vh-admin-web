@@ -15,15 +15,15 @@ export class ResponseTestData {
     const b1 = new BookingsDetailsModel('1', new Date('2019-12-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JadgeGreen', '33A', 'Coronation Street',
       'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'),
-      'Booked', false, true, 'reason1', 'Financial Remedy');
+      null, null, 'Booked', false, true, 'reason1', 'Financial Remedy');
     const b2 = new BookingsDetailsModel('12', new Date('2019-12-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JadgeGreen', '33A', 'Coronation Street',
       'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'),
-      'Booked', false, true, 'reason2', 'Financial Remedy');
+      null, null, 'Booked', false, true, 'reason2', 'Financial Remedy');
     const b3 = new BookingsDetailsModel('33', new Date('2019-12-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JadgeGreen', '33A', 'Coronation Street',
       'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'),
-      'Booked', false, true, 'reason3', 'Financial Remedy');
+      null, null, 'Booked', false, true, 'reason3', 'Financial Remedy');
 
     lists.push(b1);
     lists.push(b2);
@@ -41,15 +41,15 @@ export class ResponseTestData {
     const b1 = new BookingsDetailsModel('1', new Date('2019-10-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JadgeGreen', '33A', 'Coronation Street',
       'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'),
-      'Booked', false, true, 'reason11', 'Financial Remedy');
+      null, null, 'Booked', false, true, 'reason11', 'Financial Remedy');
     const b2 = new BookingsDetailsModel('12', new Date('2019-10-22 14:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JadgeGreen', '33A', 'Coronation Street',
       'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'),
-      'Booked', false, true, 'reason12', 'Financial Remedy');
+      null, null, 'Booked', false, true, 'reason12', 'Financial Remedy');
     const b3 = new BookingsDetailsModel('33', new Date('2019-10-22 14:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JadgeGreen', '33A', 'Coronation Street',
       'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'),
-      'Booked', false, true, 'reason13', 'Financial Remedy');
+      null, null, 'Booked', false, true, 'reason13', 'Financial Remedy');
 
     lists.push(b1);
     lists.push(b2);
@@ -61,15 +61,15 @@ export class ResponseTestData {
     const b11 = new BookingsDetailsModel('44', new Date('2019-11-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JadgeGreen', '33A', 'Coronation Street',
       'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'),
-      'Booked', false, true, 'reason21', 'Financial Remedy');
+      null, null, 'Booked', false, true, 'reason21', 'Financial Remedy');
     const b21 = new BookingsDetailsModel('45', new Date('2019-11-22 14:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JadgeGreen', '33A', 'Coronation Street',
       'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'),
-      'Booked', false, true, 'reason32', 'Financial Remedy');
+      null, null, 'Booked', false, true, 'reason32', 'Financial Remedy');
     const b31 = new BookingsDetailsModel('46', new Date('2019-11-22 15:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JadgeGreen', '33A', 'Coronation Street',
       'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'),
-      'Booked', false, true, 'reason33', 'Financial Remedy');
+      null, null, 'Booked', false, true, 'reason33', 'Financial Remedy');
 
     lists1.push(b11);
     lists1.push(b21);
@@ -152,7 +152,7 @@ describe('bookings list service', () => {
     bookingsResponse = new ResponseTestData().getTestData();
 
     bhClientSpy.getBookingsList.and.returnValue(of(bookingsResponse));
-    service = TestBed.get(BookingsListService);
+    service = TestBed.inject(BookingsListService);
   });
 
   afterEach(() => {
@@ -232,7 +232,7 @@ describe('Booking list service functionality', () => {
     const bookingEdited = new BookingsDetailsModel('1', new Date('2019-11-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JadgeGreen', '33A', 'Coronation Street',
       'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'),
-      'Booked', false, true, 'reason', 'Financial Remedy');
+      null, null, 'Booked', false, true, 'reason', 'Financial Remedy');
     bookingEdited.IsStartTimeChanged = true;
 
     expect(bookingsList.length).toBe(2);
@@ -251,7 +251,7 @@ describe('Booking list service functionality', () => {
     const bookingEdited = new BookingsDetailsModel('1', new Date('2019-12-22 13:58:40.3730067'),
       120, 'XX3456234565', 'Smith vs Donner', 'Tax', 'JadgeGreen', '33A', 'Coronation Street',
       'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'),
-      'Booked', false, true, 'reason1', 'Financial Remedy');
+      null, null, 'Booked', false, true, 'reason1', 'Financial Remedy');
 
     bookingEdited.IsStartTimeChanged = true;
 

@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { HearingModel } from '../../common/model/hearing.model';
 import { ReferenceDataService } from '../../services/reference-data.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
-import { BookingBaseComponent } from '../booking-base/booking-base.component';
+import { BookingBaseComponentDirective as BookingBaseComponent } from '../booking-base/booking-base.component';
 import { BookingService } from '../../services/booking.service';
 import { ErrorService } from 'src/app/services/error.service';
 import { HearingVenueResponse } from '../../services/clients/api-client';

@@ -40,6 +40,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             if (!scenario.ScenarioInfo.Tags.Contains("AudioRecording")) return;
             _c.Test.HearingResponse = CreateHearing();
             _c.Test.ConferenceResponse = CreateConference();
+            StartTheHearing(); 
             CloseTheConference();
 
             var file = FileManager.CreateNewAudioFile("TestAudioFile.mp4", _c.Test.HearingResponse.Id);
@@ -74,7 +75,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
 
             var hearingResponse = _c.Apis.BookingsApi.CreateHearing(hearingRequest);
             hearingResponse.StatusCode.Should().Be(HttpStatusCode.Created);
-            var hearing = RequestHelper.DeserialiseSnakeCaseJsonToResponse<HearingDetailsResponse>(hearingResponse.Content);
+            var hearing = RequestHelper.Deserialise<HearingDetailsResponse>(hearingResponse.Content);
             hearing.Should().NotBeNull();
 
             ParticipantExistsInTheDb(hearing.Id).Should().BeTrue();
@@ -96,14 +97,30 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             response.StatusCode.Should().Be(HttpStatusCode.NoContent, $"Conference not created with error '{response.Content}'");
             response = _c.Apis.VideoApi.PollForConferenceResponse(_c.Test.HearingResponse.Id);
             response.StatusCode.Should().Be(HttpStatusCode.OK);
-            var conference = RequestHelper.DeserialiseSnakeCaseJsonToResponse<ConferenceDetailsResponse>(response.Content);
+            var conference = RequestHelper.Deserialise<ConferenceDetailsResponse>(response.Content);
             NUnit.Framework.TestContext.WriteLine($"Conference created with Conference Id {conference.Id}");
             return conference;
+        }
+
+        private void StartTheHearing()
+        {
+            var judge = _c.Test.ConferenceResponse.Participants.First(x => x.User_role == UserRole.Judge);
+            
+            var request = new CallbackEventRequestBuilder()
+                .WithConferenceId(_c.Test.ConferenceResponse.Id)
+                .WithParticipantId(judge.Id)
+                .WithEventType(EventType.Start)
+                .FromRoomType(null)
+                .Build();
+
+            var response = _c.Apis.VideoApi.SendEvent(request);
+            response.StatusCode.Should().Be(HttpStatusCode.NoContent);
         }
 
         private void CloseTheConference()
         {
             var judge = _c.Test.ConferenceResponse.Participants.First(x => x.User_role == UserRole.Judge);
+            
             var request = new CallbackEventRequestBuilder()
                 .WithConferenceId(_c.Test.ConferenceResponse.Id)
                 .WithParticipantId(judge.Id)
@@ -118,7 +135,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         private bool ParticipantExistsInTheDb(Guid hearingId)
         {
             var hearingResponse = _c.Apis.BookingsApi.GetHearing(hearingId);
-            var hearing = RequestHelper.DeserialiseSnakeCaseJsonToResponse<HearingDetailsResponse>(hearingResponse.Content);
+            var hearing = RequestHelper.Deserialise<HearingDetailsResponse>(hearingResponse.Content);
             hearing.Should().NotBeNull();
             return hearing.Participants.Any(x =>
                 x.Username.ToLower().Equals(UserManager.GetDefaultParticipantUser(_c.UserAccounts).Username.ToLower()));

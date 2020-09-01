@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, HostListener, ElementRef, Renderer} from '@angular/core';
+import { Component, OnInit, ViewChild, HostListener, ElementRef, Renderer2 } from '@angular/core';
 import { Router } from '@angular/router';
 import { AdalService } from 'adal-angular4';
 import { ConfigService } from './services/config.service';
@@ -41,7 +41,7 @@ export class AppComponent implements OnInit {
     pageTracker: PageTrackerService,
     private videoHearingsService: VideoHearingsService,
    private bookingService: BookingService, private deviceTypeService: DeviceType,
-   private renderer: Renderer) {
+   private renderer: Renderer2) {
 
     this.config.tenant = this.configService.clientSettings.tenant_id;
     this.config.clientId = this.configService.clientSettings.client_id;
@@ -123,6 +123,6 @@ export class AppComponent implements OnInit {
   }
 
   skipToContent() {
-    this.renderer.invokeElementMethod(this.main.nativeElement, 'focus');
+    this.main.nativeElement.focus();
   }
 }
