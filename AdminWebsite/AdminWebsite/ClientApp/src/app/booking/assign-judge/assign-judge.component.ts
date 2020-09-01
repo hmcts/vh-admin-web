@@ -13,6 +13,7 @@ import { BookingBaseComponent } from '../booking-base/booking-base.component';
 import { Logger } from '../../services/logger';
 import { SanitizeInputText } from '../../common/formatters/sanitize-input-text';
 import { Subscription } from 'rxjs';
+import { RecordingGuardService } from '../../services/recording-guard.service';
 
 @Component({
     selector: 'app-assign-judge',
@@ -36,6 +37,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     expanded = false;
     $subscriptions: Subscription[] = [];
     audioRecording = true;
+    switchOffRecording = false;
 
     constructor(
         private fb: FormBuilder,
@@ -43,7 +45,8 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         protected hearingService: VideoHearingsService,
         private judgeService: JudgeDataService,
         protected bookingService: BookingService,
-        private logger: Logger
+        private logger: Logger,
+        private recordingGuard: RecordingGuardService
     ) {
         super(bookingService, router, hearingService);
     }
@@ -78,6 +81,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         this.failedSubmission = false;
         this.checkForExistingRequest();
         this.loadJudges();
+        this.switchOffRecording = this.recordingGuard.switchOffRecording(this.hearing.case_type);
         this.initForm();
         super.ngOnInit();
     }
@@ -99,11 +103,16 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
             updateOn: 'blur'
         });
 
-        if (this.hearing.audio_recording_required === null || this.hearing.audio_recording_required === undefined) {
-            this.hearing.audio_recording_required = true;
+        if (!this.switchOffRecording) {
+            if (this.hearing.audio_recording_required === null || this.hearing.audio_recording_required === undefined) {
+                this.hearing.audio_recording_required = true;
+            }
+        } else {
+            this.hearing.audio_recording_required = false;
         }
 
         this.audioRecording = this.setInitialAudio();
+
         this.audioChoice = new FormControl(this.audioRecording, Validators.required);
 
         this.form = this.fb.group({
