@@ -91,7 +91,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
     const participant = this.hearing.participants.find(x => x.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase());
     const filteredParticipants = this.hearing.participants.filter(x => !x.is_judge);
     const isNotLast = filteredParticipants && filteredParticipants.length > 1;
-    const title = participant && participant.title !== null ? `${participant.title}` : '';
+    const title = participant && participant.title ? `${participant.title}` : '';
     this.removerFullName = participant ? `${title} ${participant.first_name} ${participant.last_name}` : '';
     this.showConfirmationRemoveParticipant = true;
     setTimeout(() => {
