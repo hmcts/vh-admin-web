@@ -19,6 +19,7 @@ import { By } from '@angular/platform-browser';
 import { Constants } from 'src/app/common/constants';
 import { Logger } from '../../services/logger';
 import { JudgeResponse } from '../../services/clients/api-client';
+import { RecordingGuardService } from '../../services/recording-guard.service';
 
 function initHearingRequest(): HearingModel {
     const participants: ParticipantModel[] = [];
@@ -95,7 +96,8 @@ describe('AssignJudgeComponent', () => {
                     }
                 },
                 { provide: BookingService, useValue: bookingServiseSpy },
-                { provide: Logger, useValue: loggerSpy }
+                { provide: Logger, useValue: loggerSpy },
+                RecordingGuardService
             ],
             declarations: [
                 AssignJudgeComponent,
@@ -303,5 +305,17 @@ describe('AssignJudgeComponent', () => {
         fixture.detectChanges();
         component.saveJudge();
         expect(component.hearing.audio_recording_required).toBe(false);
+    });
+    it('should not allowed to set audio recording options for case type to recording', () => {
+        component.hearing.case_type = 'Court of Appeal Criminal Division';
+        component.ngOnInit();
+        fixture.autoDetectChanges();
+        expect(component.switchOffRecording).toBe(true);
+    });
+    it('should allowed to set audio recording options for case type', () => {
+        component.hearing.case_type = 'Rents';
+        component.ngOnInit();
+        fixture.autoDetectChanges();
+        expect(component.switchOffRecording).toBe(false);
     });
 });

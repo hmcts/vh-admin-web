@@ -7578,6 +7578,12 @@ namespace AdminWebsite.VideoAPI.Client
         [System.Runtime.Serialization.EnumMember(Value = @"EndpointDisconnected")]
         EndpointDisconnected = 18,
     
+        [System.Runtime.Serialization.EnumMember(Value = @"EndpointJoined")]
+        EndpointJoined = 17,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"EndpointDisconnected")]
+        EndpointDisconnected = 18,
+    
     }
     
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
