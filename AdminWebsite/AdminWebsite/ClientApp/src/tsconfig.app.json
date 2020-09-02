@@ -6,7 +6,8 @@
   },
   "files": [
     "main.ts",
-    "polyfills.ts"
+    "polyfills.ts",
+    "./app/common/model/ParticipantHearingDeleteResultModel.ts"
   ],
   "include": [
     "src/**/*.d.ts"

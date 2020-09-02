@@ -42,4 +42,15 @@
             </div>
         </a>
     </div>
+    <div class="govuk-grid-column-one-third" *ngIf="showCheckList">
+        <a class="vhpanel-link" [routerLink]="['/delete-participant']">
+            <div class="vhpanel" id="vhpanel-blue">
+                <h1 class="vhpanel-title">Delete participant</h1>
+                <div>
+                    <img alt="Delete participant" src="assets/images/delete-participant.png"
+                         width="64" />
+                </div>
+            </div>
+        </a>
+    </div>
 </div>

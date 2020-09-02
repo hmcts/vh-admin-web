@@ -1,0 +1,41 @@
+<h2 class="govuk-heading-m">Results</h2>
+
+<div *ngIf="!hasResults && !userNotFound">
+    <p class="govuk-body govuk-!-width-one-half">This user account has no hearings.</p>
+</div>
+
+<div *ngIf="!hasResults && userNotFound">
+    <div class="govuk-warning-text">
+        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+        <strong class="govuk-warning-text__text">
+            <span class="govuk-warning-text__assistive">Warning</span>
+            Sorry, we can't find a user with that name.
+        </strong>
+    </div>
+</div>
+
+<div *ngIf="hasResults && !userNotFound">
+    <div class="govuk-warning-text">
+        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+        <strong class="govuk-warning-text__text">
+            <span class="govuk-warning-text__assistive">Warning</span>
+            You'll need to manually remove this participant from each hearing listed below. Any new or replacement participants must also be
+            added to these hearings manually.
+        </strong>
+    </div>
+    <div *ngFor="let result of results" class="govuk-grid-row">
+        <div id="{{ result.hearingId }}-case-number" class="govuk-grid-column-one-quarter">
+            {{ result.caseNumber }}
+        </div>
+        <div id="{{ result.hearingId }}-scheduled-time" class="govuk-grid-column-one-quarter">
+            {{ result.scheduledDateTime | date: 'dd MMMM yyyy, hh:mm' }}
+        </div>
+        <div id="{{ result.hearingId }}-case-name" class="govuk-grid-column-one-quarter">
+            {{ result.caseName }}
+        </div>
+        <div id="{{ result.hearingId }}-venue" class="govuk-grid-column-one-quarter">
+            {{ result.hearingVenueName }} {{ result.hearingRoomName }}
+        </div>
+        <hr class="margin-bottom-22 clear-both" />
+    </div>
+</div>
