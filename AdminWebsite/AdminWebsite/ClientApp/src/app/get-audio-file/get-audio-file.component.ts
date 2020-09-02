@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { HearingAudioSearchModel } from '../common/model/hearing-audio-search-model';
 import { AudioLinkService } from '../services/audio-link-service';
 
@@ -20,13 +20,44 @@ export class GetAudioFileComponent implements OnInit {
     }
 
     async ngOnInit(): Promise<void> {
+        let hearingDateParsed = null;
+
         this.form = this.fb.group({
-            caseNumber: ['', Validators.required]
+            caseNumber: ['', Validators.required],
+            searchChoice: ['vhFile'],
+            hearingDate: [hearingDateParsed, Validators.required],
+            cloudroomName: ['', Validators.required],
+            caseReference: ['']
+
         });
     }
 
     get caseNumber() {
         return this.form.get('caseNumber');
+    }
+
+    get cloudroomName() {
+        return this.form.get('cloudroomName');
+    }
+
+    get caseReference() {
+        return this.form.get('caseReference');
+    }
+
+    get searchChoice() {
+        return this.form.controls['searchChoice'].value;
+    }
+
+    get hearingDate() {
+        return this.form.get('hearingDate');
+    }
+
+    get hearingDateInvalid() {
+        const todayDate = new Date(new Date());
+        return (
+            (this.hearingDate.invalid || new Date(this.hearingDate.value) > todayDate) &&
+            (this.hearingDate.dirty || this.hearingDate.touched )
+        );
     }
 
     async search() {

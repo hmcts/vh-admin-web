@@ -6,14 +6,70 @@
 <form [formGroup]="form" class="govuk-form-group">
     <div class="govuk-form-group">
         <h2 class="govuk-heading-m">Search</h2>
-        <label class="govuk-label govuk-!-width-one-half" for="caseNumber">
-            Enter a case number
-        </label>
-        <input id="caseNumber" class="govuk-input govuk-!-width-one-quarter" type="text" formControlName="caseNumber" required>
-        <button class="govuk-button govuk-!-margin-left-2" data-module="govuk-button"
-                id="submit" (click)="search()" [disabled]="form.invalid">
-            Search
-        </button>
+        <div>
+            <div class="govuk-radios" data-module="radios">
+                <div class="govuk-radios__item">
+                    <input formControlName="searchChoice" class="govuk-radios__input" id="search-choice-vhfile"
+                           type="radio" [value]="'vhFile'"
+                           data-aria-controls="conditional-how-contacted-conditional">
+                    <label class="govuk-label govuk-radios__label" for="search-choice-vhfile">
+                        Search for a video hearing audio file
+                    </label>
+                </div>
+
+                <div class="govuk-radios__item">
+                    <input formControlName="searchChoice" class="govuk-radios__input" id="search-choice-cvpfile"
+                           type="radio" [value]="'cvpFile'"
+                           data-aria-controls="conditional-how-contacted">
+                    <label class="govuk-label govuk-radios__label" for="search-choice-cvpfile">
+                        Search for a CVP audio file
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="govuk-!-margin-top-9" *ngIf="searchChoice === 'vhFile'">
+            <label class="govuk-label govuk-!-width-one-half" for="caseNumber">
+                Enter a case number
+            </label>
+            <input id="caseNumber" class="govuk-input govuk-!-width-one-quarter" type="text" formControlName="caseNumber" required>
+            <button class="govuk-button govuk-!-margin-left-2" data-module="govuk-button"
+                    id="submit" (click)="search()" [disabled]="form.invalid">
+                Search
+            </button>
+        </div>
+
+        <div class="govuk-!-margin-top-9" *ngIf="searchChoice === 'cvpFile'">
+            <label class="govuk-label govuk-!-width-one-quarter" for="cloudroomName">
+                Cloudroom name
+            </label>
+            <input id="cloudroomName" class="govuk-input govuk-!-width-one-half" type="text" formControlName="cloudroomName" required>
+
+            <div class="govuk-!-margin-top-3">
+                <div [ngClass]="hearingDateInvalid ? 'govuk-form-group--error' : 'govuk-form-group'">
+                    <label class="govuk-label govuk-!-width-one-quarter" for="hearingDate">
+                        Date
+                    </label>
+                    <input id="hearingDate"
+                           class="govuk-input govuk-!-width-one-quarter"
+                           type="date"
+                           formControlName="hearingDate"
+                           required
+                           placeholder="e.g. 30/08/2020"
+                           min="{{ today | date: 'yyyy-MM-dd' }}" />
+                    <div *ngIf="hearingDateInvalid" class="alert alert-danger">
+                        <span id="hearingDate-error" class="govuk-error-message">
+                            Please enter a date in the past
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <label class="govuk-label govuk-!-width-two-thirds govuk-!-margin-top-3" for="caseReference">
+                Case reference <span class="govuk-hint">(optional)</span>
+            </label>
+            <input id="caseReference" class="govuk-input govuk-!-width-one-half" type="text" formControlName="caseReference" required>
+
+        </div>
     </div>
 </form>
 
