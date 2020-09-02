@@ -72,6 +72,18 @@ export class GetAudioFileComponent implements OnInit {
         }
     }
 
+    async searchCVP() {
+        if (this.form.valid) {
+            this.loadingData = true;
+            this.hasSearched = false;
+
+            this.results = await this.getResults(this.caseNumber.value);
+
+            this.hasSearched = true;
+            this.loadingData = false;
+        }
+    }
+
     async getResults(caseNumber: string): Promise<HearingAudioSearchModel[]> {
         const response = await this.audioLinkService.getHearingsByCaseNumber(caseNumber);
 

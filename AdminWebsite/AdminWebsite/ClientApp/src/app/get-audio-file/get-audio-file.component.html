@@ -64,11 +64,16 @@
                 </div>
             </div>
 
-            <label class="govuk-label govuk-!-width-two-thirds govuk-!-margin-top-3" for="caseReference">
-                Case reference <span class="govuk-hint">(optional)</span>
-            </label>
-            <input id="caseReference" class="govuk-input govuk-!-width-one-half" type="text" formControlName="caseReference" required>
-
+            <div class="govuk-!-margin-top-3">
+                <label class="govuk-label govuk-!-width-two-thirds " for="caseReference">
+                    Case reference <span class="govuk-hint" style="display:inline-block; margin-bottom:0 !important;">(optional)</span>
+                </label>
+                <input id="caseReference" class="govuk-input govuk-!-width-one-half" type="text" formControlName="caseReference" required>
+            </div>
+            <button class="govuk-button govuk-!-margin-top-3" data-module="govuk-button"
+                    id="submitCvp" (click)="searchCVP()" [disabled]="form.invalid">
+                Search
+            </button>
         </div>
     </div>
 </form>
