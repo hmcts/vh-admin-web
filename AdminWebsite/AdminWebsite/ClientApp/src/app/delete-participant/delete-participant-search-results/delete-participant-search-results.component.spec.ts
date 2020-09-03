@@ -34,21 +34,22 @@ describe('DeleteParticipantSearchResultsComponent', () => {
         const searchResults = [new ParticipantHearingDeleteResultModel(hearings[0])];
 
         component.results = searchResults;
-        expect(component.hasResults).toBeTruthy();
+        expect(component.existsWithHearings).toBeTruthy();
+        expect(component.existsWithoutHearings).toBeFalsy();
+        expect(component.userNotFound).toBeFalsy();
     });
 
     it('should return false when results list is empty', () => {
         component.results = [];
-        expect(component.hasResults).toBeFalsy();
+        expect(component.existsWithoutHearings).toBeTruthy();
+        expect(component.existsWithHearings).toBeFalsy();
+        expect(component.userNotFound).toBeFalsy();
     });
 
     it('should return userNotFound true when results is null ', () => {
         component.results = null;
-        expect(component.userNotFound).toBeTruthy();
-    });
-
-    it('should return userNotFound false when results is set ', () => {
-        component.results = [];
+        expect(component.existsWithoutHearings).toBeFalsy();
+        expect(component.existsWithHearings).toBeFalsy();
         expect(component.userNotFound).toBeTruthy();
     });
 

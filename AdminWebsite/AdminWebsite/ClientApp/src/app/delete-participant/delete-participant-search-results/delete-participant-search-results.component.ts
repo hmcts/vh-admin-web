@@ -19,12 +19,16 @@ export class DeleteParticipantSearchResultsComponent {
         private router: Router
     ) {}
 
-    get hasResults() {
+    get existsWithoutHearings(): boolean {
+        return this.results && this.results.length === 0;
+    }
+
+    get existsWithHearings() {
         return this.results && this.results.length > 0;
     }
 
     get userNotFound() {
-        return !this.results || this.results.length === 0;
+        return this.results === null;
     }
 
     editHearing(hearingId: string) {
