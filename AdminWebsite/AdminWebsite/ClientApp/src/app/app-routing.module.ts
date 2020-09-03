@@ -10,9 +10,10 @@ import { AdminGuard } from './security/admin.guard';
 import { UnsupportedBrowserComponent } from './shared/unsupported-browser/unsupported-browser.component';
 import { ChangePasswordComponent } from './change-password/change-password.component';
 import { GetAudioFileComponent } from './get-audio-file/get-audio-file.component';
+import { DeleteParticipantSearchComponent } from './delete-participant/delete-participant-search/delete-participant-search.component';
 
 export const routes: Routes = [
-    { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+{ path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     { path: 'dashboard', component: DashboardComponent, canActivate: [AdminGuard] },
     { path: 'login', component: LoginComponent },
     { path: 'logout', component: LogoutComponent },
@@ -21,6 +22,7 @@ export const routes: Routes = [
     { path: 'unsupported-browser', component: UnsupportedBrowserComponent },
     { path: 'change-password', component: ChangePasswordComponent, canActivate: [AdminGuard] },
     { path: 'get-audio-file', component: GetAudioFileComponent, canActivate: [AdminGuard] },
+    { path: 'delete-participant', component: DeleteParticipantSearchComponent, canActivate: [AdminGuard] },
     { path: '**', redirectTo: 'dashboard', pathMatch: 'full', canActivate: [AdminGuard] }
 ];
 

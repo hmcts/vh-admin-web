@@ -67,5 +67,32 @@ namespace AdminWebsite.Controllers
                 throw;
             }
         }
+
+        /// <summary>
+        /// Get all hearings for a person by username
+        /// </summary>
+        /// <param name="username"></param>
+        /// <returns></returns>
+        [HttpGet("username/hearings", Name = "GetHearingsByUsernameForDeletion")]
+        [SwaggerOperation(OperationId = "GetHearingsByUsernameForDeletion")]
+        [ProducesResponseType(typeof(List<HearingsByUsernameForDeletionResponse>), (int) HttpStatusCode.OK)]
+        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        public async Task<ActionResult<List<HearingsByUsernameForDeletionResponse>>> GetHearingsByUsernameForDeletion([FromQuery] string username)
+        {
+            try
+            {
+                var response = await _bookingsApiClient.GetHearingsByUsernameForDeletionAsync(username);
+                return Ok(response);
+            }
+            catch (BookingsApiException e)
+            {
+                if (e.StatusCode == (int) HttpStatusCode.NotFound)
+                {
+                    return NotFound();
+                }
+
+                throw;
+            }
+        }
     }
 }
