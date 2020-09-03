@@ -38,6 +38,7 @@ import { UnsupportedBrowserComponent } from './shared/unsupported-browser/unsupp
 import { DeviceDetectorModule } from 'ngx-device-detector';
 import { ChangePasswordComponent } from './change-password/change-password.component';
 import { GetAudioFileModule } from './get-audio-file/get-audio-file.module';
+import { DeleteParticipantModule } from './delete-participant/delete-participant.module';
 
 export function getSettings(configService: ConfigService) {
     return () => configService.loadConfig();
@@ -52,7 +53,7 @@ export function getSettings(configService: ConfigService) {
         UnauthorisedComponent,
         ErrorComponent,
         UnsupportedBrowserComponent,
-        ChangePasswordComponent
+        ChangePasswordComponent,
     ],
     imports: [
         MomentModule,
@@ -64,7 +65,8 @@ export function getSettings(configService: ConfigService) {
         SharedModule,
         PopupModule,
         DeviceDetectorModule.forRoot(),
-        GetAudioFileModule
+        GetAudioFileModule,
+        DeleteParticipantModule,
     ],
     providers: [
         HttpClientModule,
