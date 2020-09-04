@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { BHClient, HearingsByUsernameForDeletionResponse } from './clients/api-client';
-import { Logger } from './logger';
 
 @Injectable({ providedIn: 'root' })
 export class ParticipantDeleteServiceService {

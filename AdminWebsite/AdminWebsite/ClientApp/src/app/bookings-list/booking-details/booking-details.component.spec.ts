@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { Component, Input } from '@angular/core';
 import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
@@ -16,7 +17,13 @@ import { WaitPopupComponent } from '../../popups/wait-popup/wait-popup.component
 import { BookingDetailsService } from '../../services/booking-details.service';
 import { BookingService } from '../../services/booking.service';
 import { BookingPersistService } from '../../services/bookings-persist.service';
-import { HearingDetailsResponse, UpdateBookingStatus, UpdateBookingStatusRequest, UpdateBookingStatusResponse, UserProfileResponse } from '../../services/clients/api-client';
+import {
+    HearingDetailsResponse,
+    UpdateBookingStatus,
+    UpdateBookingStatusRequest,
+    UpdateBookingStatusResponse,
+    UserProfileResponse
+} from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
 import { UserIdentityService } from '../../services/user-identity.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
@@ -27,16 +34,35 @@ let component: BookingDetailsComponent;
 let fixture: ComponentFixture<BookingDetailsComponent>;
 let videoHearingServiceSpy: jasmine.SpyObj<VideoHearingsService>;
 let routerSpy: jasmine.SpyObj<Router>;
+let locationSpy: jasmine.SpyObj<Location>;
 let bookingServiceSpy: jasmine.SpyObj<BookingService>;
 let bookingPersistServiceSpy: jasmine.SpyObj<BookingPersistService>;
 let userIdentityServiceSpy: jasmine.SpyObj<UserIdentityService>;
 
 export class BookingDetailsTestData {
     getBookingsDetailsModel() {
-        return new BookingsDetailsModel('44', new Date('2019-11-22 13:58:40.3730067'),
-            120, 'XX3456234565', 'Smith vs Donner', 'Tax', '', '33A', 'Coronation Street',
-            'John Smith', new Date('2018-10-22 13:58:40.3730067'), 'Roy Ben', new Date('2018-10-22 13:58:40.3730067'), null, null,
-            'Booked', true, true, 'reason', 'Financial Remedy');
+        return new BookingsDetailsModel(
+            '44',
+            new Date('2019-11-22 13:58:40.3730067'),
+            120,
+            'XX3456234565',
+            'Smith vs Donner',
+            'Tax',
+            '',
+            '33A',
+            'Coronation Street',
+            'John Smith',
+            new Date('2018-10-22 13:58:40.3730067'),
+            'Roy Ben',
+            new Date('2018-10-22 13:58:40.3730067'),
+            null,
+            null,
+            'Booked',
+            true,
+            true,
+            'reason',
+            'Financial Remedy'
+        );
     }
 
     getParticipants() {
@@ -186,6 +212,7 @@ describe('BookingDetailsComponent', () => {
     bookingPersistServiceSpy = jasmine.createSpyObj('BookingPersistService', ['selectedHearingId']);
     userIdentityServiceSpy = jasmine.createSpyObj('UserIdentityService', ['getUserInformation']);
     const loggerSpy: jasmine.SpyObj<Logger> = jasmine.createSpyObj('Logger', ['error', 'event']);
+    locationSpy = jasmine.createSpyObj('Location', ['back']);
 
     beforeEach(async(() => {
         videoHearingServiceSpy.getHearingById.and.returnValue(of(hearingResponse));
@@ -213,7 +240,8 @@ describe('BookingDetailsComponent', () => {
                 { provide: BookingService, useValue: bookingServiceSpy },
                 { provide: BookingPersistService, useValue: bookingPersistServiceSpy },
                 { provide: UserIdentityService, useValue: userIdentityServiceSpy },
-                { provide: Logger, useValue: loggerSpy }
+                { provide: Logger, useValue: loggerSpy },
+                { provide: Location, useValue: locationSpy }
             ]
         }).compileComponents();
         fixture = TestBed.createComponent(BookingDetailsComponent);
@@ -352,7 +380,7 @@ describe('BookingDetailsComponent', () => {
     });
     it('should navigate back', () => {
         component.navigateBack();
-        expect(routerSpy.navigate).toHaveBeenCalled();
+        expect(locationSpy.back).toHaveBeenCalled();
     });
     it('should not show pop up if the confirm failed', () => {
         videoHearingServiceSpy.updateBookingStatus.and.returnValue(of(new UpdateBookingStatusResponse({ success: true })));
