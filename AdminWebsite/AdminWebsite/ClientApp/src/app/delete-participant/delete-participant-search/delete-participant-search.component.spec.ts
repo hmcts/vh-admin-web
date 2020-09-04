@@ -53,6 +53,15 @@ describe('DeleteParticipantComponent', () => {
         expect(component.results).toEqual([]);
     });
 
+    it('should not search when input is empty', async () => {
+        const username = '';
+        component.form.setValue({ username: username });
+
+        await component.search();
+
+        expect(service.getHearingsForUsername).toHaveBeenCalledTimes(0);
+    });
+
     it('should map hearings', async () => {
         const username = 'unit@test.com';
         component.form.setValue({ username: username });
