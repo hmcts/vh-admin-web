@@ -4,6 +4,6 @@
     </div>
     <div class="link" (mouseover)="onMouseOver($event)" (mousemove)="onMouseOver($event)" (mouseout)="onMouseOut()"
         (click)="copyToClipboard(endpoint); $event.stopPropagation()">
-        {{ endpoint.sip }}
+        {{endpoint.sip}}:{{endpoint.pin}}
     </div>
 </div>

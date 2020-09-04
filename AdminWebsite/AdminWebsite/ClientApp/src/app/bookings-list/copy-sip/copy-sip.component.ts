@@ -34,7 +34,8 @@ export class CopySipComponent implements OnInit {
   }
 
   copyToClipboard(endpoint: EndpointModel) {
-    this.clipboardService.copyFromContent(endpoint.sip);
+    const address = endpoint.sip + ':' + endpoint.pin;
+    this.clipboardService.copyFromContent(address);
     this.tooltip = 'SIP address copied to clipboard';
     this.setTooltipVisibility(false);
   }
