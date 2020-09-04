@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using AdminWebsite.TestAPI.Client;
 using FluentAssertions;
 
 namespace AdminWebsite.AcceptanceTests.Pages.Journeys
@@ -15,9 +16,9 @@ namespace AdminWebsite.AcceptanceTests.Pages.Journeys
             };
         }
 
-        public void VerifyUserIsApplicableToJourney(string currentUserRole)
+        public void VerifyUserIsApplicableToJourney(UserType userType)
         {
-            currentUserRole.ToLower().Should().BeOneOf("video hearings officer");
+            userType.Should().Be(UserType.VideoHearingsOfficer);
         }
 
         public void VerifyDestinationIsInThatJourney(Page destinationPage)

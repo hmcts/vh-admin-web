@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using AdminWebsite.VideoAPI.Client;
+using AdminWebsite.TestAPI.Client;
+
 
 namespace AdminWebsite.AcceptanceTests.Data
 {

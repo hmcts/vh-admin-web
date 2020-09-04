@@ -9,6 +9,7 @@ using AcceptanceTests.Common.Model.Hearing;
 using AcceptanceTests.Common.Test.Steps;
 using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.AcceptanceTests.Pages;
+using AdminWebsite.TestAPI.Client;
 using TechTalk.SpecFlow;
 
 namespace AdminWebsite.AcceptanceTests.Steps
@@ -17,11 +18,11 @@ namespace AdminWebsite.AcceptanceTests.Steps
     public class HearingDetailsSteps : ISteps
     {
         private readonly TestContext _c;
-        private readonly Dictionary<string, UserBrowser> _browsers;
+        private readonly Dictionary<User, UserBrowser> _browsers;
         private readonly CommonSharedSteps _commonSharedSteps;
         private readonly Random _fromRandomNumber;
 
-        public HearingDetailsSteps(TestContext testContext, Dictionary<string, UserBrowser> browsers, CommonSharedSteps commonSharedSteps)
+        public HearingDetailsSteps(TestContext testContext, Dictionary<User, UserBrowser> browsers, CommonSharedSteps commonSharedSteps)
         {
             _fromRandomNumber = new Random();
             _c = testContext;
@@ -36,7 +37,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             SetHearingType();
             _c.Test.HearingDetails.DoNotSendQuestionnaires = _c.Test.TestData.HearingDetails.DoNotSendQuestionnaires;
             SendQuestionnaires();
-            _browsers[_c.CurrentUser.Key].Click(HearingDetailsPage.NextButton);
+            _browsers[_c.CurrentUser].Click(HearingDetailsPage.NextButton);
         }
 
         [When(@"the user elects to send the questionnaires")]
@@ -46,28 +47,28 @@ namespace AdminWebsite.AcceptanceTests.Steps
             SetHearingType();
             _c.Test.HearingDetails.DoNotSendQuestionnaires = false;
             SendQuestionnaires();
-            _browsers[_c.CurrentUser.Key].Click(HearingDetailsPage.NextButton);
+            _browsers[_c.CurrentUser].Click(HearingDetailsPage.NextButton);
         }
 
         public void EditHearingDetails()
         {
             Thread.Sleep(TimeSpan.FromSeconds(1));
             SetHearingDetails();
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(HearingDetailsPage.NextButton);
-            _browsers[_c.CurrentUser.Key].Click(HearingDetailsPage.NextButton);
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(HearingDetailsPage.NextButton);
+            _browsers[_c.CurrentUser].Click(HearingDetailsPage.NextButton);
             Thread.Sleep(TimeSpan.FromSeconds(1));
         }
 
         public void SetHearingDetails()
         {
             _c.Test.HearingDetails.CaseNumber = $"{GenerateRandom.CaseNumber(_fromRandomNumber)}";
-            _browsers[_c.CurrentUser.Key].Clear(HearingDetailsPage.CaseNumberTextfield);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(HearingDetailsPage.CaseNumberTextfield).SendKeys(_c.Test.HearingDetails.CaseNumber);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilTextPresent(HearingDetailsPage.CaseNumberTextfield, _c.Test.HearingDetails.CaseNumber);
+            _browsers[_c.CurrentUser].Clear(HearingDetailsPage.CaseNumberTextfield);
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(HearingDetailsPage.CaseNumberTextfield).SendKeys(_c.Test.HearingDetails.CaseNumber);
+            _browsers[_c.CurrentUser].Driver.WaitUntilTextPresent(HearingDetailsPage.CaseNumberTextfield, _c.Test.HearingDetails.CaseNumber);
             _c.Test.HearingDetails.CaseName = $"Admin Web Automated Test {GenerateRandom.Letters(_fromRandomNumber)}";
-            _browsers[_c.CurrentUser.Key].Clear(HearingDetailsPage.CaseNameTextfield);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(HearingDetailsPage.CaseNameTextfield).SendKeys(_c.Test.HearingDetails.CaseName);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilTextPresent(HearingDetailsPage.CaseNameTextfield, _c.Test.HearingDetails.CaseName);
+            _browsers[_c.CurrentUser].Clear(HearingDetailsPage.CaseNameTextfield);
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(HearingDetailsPage.CaseNameTextfield).SendKeys(_c.Test.HearingDetails.CaseName);
+            _browsers[_c.CurrentUser].Driver.WaitUntilTextPresent(HearingDetailsPage.CaseNameTextfield, _c.Test.HearingDetails.CaseName);
         }
 
         public void SetHearingType(HearingType hearingType = null)
@@ -77,21 +78,21 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
             _c.Test.HearingDetails.HearingType = hearingType;
             _c.Test.HearingDetails.CaseType = CaseType.FromString(_c.Test.TestData.HearingDetails.CaseType);
-            _commonSharedSteps.WhenTheUserSelectsTheOptionFromTheDropdown(_browsers[_c.CurrentUser.Key].Driver, HearingDetailsPage.HearingTypeDropdown, HearingType.ToString(hearingType));
+            _commonSharedSteps.WhenTheUserSelectsTheOptionFromTheDropdown(_browsers[_c.CurrentUser].Driver, HearingDetailsPage.HearingTypeDropdown, HearingType.ToString(hearingType));
         }
 
         public void SendQuestionnaires()
         {
-            var isCheckboxSelected = _browsers[_c.CurrentUser.Key].Driver.WaitUntilElementExists(HearingDetailsPage.SendQuestionnairesCheckbox).Selected;
+            var isCheckboxSelected = _browsers[_c.CurrentUser].Driver.WaitUntilElementExists(HearingDetailsPage.SendQuestionnairesCheckbox).Selected;
             if (_c.Test.HearingDetails.DoNotSendQuestionnaires)
             {
                 if (!isCheckboxSelected)
-                    _browsers[_c.CurrentUser.Key].ClickCheckbox(HearingDetailsPage.SendQuestionnairesCheckbox);
+                    _browsers[_c.CurrentUser].ClickCheckbox(HearingDetailsPage.SendQuestionnairesCheckbox);
             }
             else
             {
                 if (isCheckboxSelected)
-                    _browsers[_c.CurrentUser.Key].ClickCheckbox(HearingDetailsPage.SendQuestionnairesCheckbox);
+                    _browsers[_c.CurrentUser].ClickCheckbox(HearingDetailsPage.SendQuestionnairesCheckbox);
             }
         }
     }

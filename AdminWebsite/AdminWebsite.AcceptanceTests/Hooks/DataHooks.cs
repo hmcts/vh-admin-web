@@ -1,14 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using AcceptanceTests.Common.Api.Helpers;
 using AcceptanceTests.Common.AudioRecordings;
-using AcceptanceTests.Common.Configuration.Users;
 using AdminWebsite.AcceptanceTests.Data;
 using AdminWebsite.AcceptanceTests.Helpers;
-using AdminWebsite.BookingsAPI.Client;
-using AdminWebsite.VideoAPI.Client;
+using AdminWebsite.TestAPI.Client;
 using FluentAssertions;
 using TechTalk.SpecFlow;
 
@@ -17,7 +16,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
     [Binding]
     public sealed class DataHooks
     {
-        private const int Timeout = 60;
+        private const int ALLOCATE_USERS_FOR_MINUTES = 3;
         private readonly TestContext _c;
 
         public DataHooks(TestContext context)
@@ -26,12 +25,43 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         }
 
         [BeforeScenario(Order = (int)HooksSequence.DataHooks)]
-        public void AddExistingUsers()
+        public void AddExistingUsers(ScenarioContext scenario)
         {
+            AllocateUsers();
+
             var exist = CheckIfParticipantsAlreadyExistInTheDb();
 
-            if (!exist)
+            if (!exist || scenario.ScenarioInfo.Tags.Contains("QuestionnairesAlreadyPartiallyCompleted"))
                 CreateHearing();
+        }
+
+        private void AllocateUsers()
+        {
+            var userTypes = new List<UserType>
+            {
+                UserType.Judge,
+                UserType.VideoHearingsOfficer,
+                UserType.CaseAdmin,
+                UserType.Individual,
+                UserType.Representative
+            };
+
+            var request = new AllocateUsersRequest()
+            {
+                Application = Application.AdminWeb,
+                Expiry_in_minutes = ALLOCATE_USERS_FOR_MINUTES,
+                Is_prod_user = _c.WebConfig.IsLive,
+                Test_type = TestType.Automated,
+                User_types = userTypes
+            };
+
+            var response = _c.Api.AllocateUsers(request);
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            response.Should().NotBeNull();
+            var users = RequestHelper.Deserialise<List<UserDetailsResponse>>(response.Content);
+            users.Should().NotBeNullOrEmpty();
+            _c.Users = UserDetailsResponseToUsersMapper.Map(users);
+            _c.Users.Should().NotBeNullOrEmpty();
         }
 
         [BeforeScenario(Order = (int)HooksSequence.AudioRecording)]
@@ -59,47 +89,58 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         {
             var exist = false;
 
-            foreach (var response in UserManager.GetNonClerkParticipantUsers(_c.UserAccounts).Select(participant => _c.Apis.UserApi.GetUser(participant.Username)))
+            foreach (var response in from user in _c.Users where user.User_type != UserType.CaseAdmin && user.User_type != UserType.VideoHearingsOfficer 
+                select _c.Api.GetUserByUserPrincipalName(user.Username))
             {
                 exist = response.StatusCode == HttpStatusCode.OK;
             }
+
             return exist;
         }
 
-        private HearingDetailsResponse CreateHearing()
+        public HearingDetailsResponse CreateHearing()
         {
             var hearingRequest = new HearingRequestBuilder()
-                .WithUserAccounts(_c.UserAccounts)
-                .WithAudioRecording()
+                .WithUsers(_c.Users)
                 .Build();
 
-            var hearingResponse = _c.Apis.BookingsApi.CreateHearing(hearingRequest);
+            var hearingResponse = _c.Api.CreateHearing(hearingRequest);
             hearingResponse.StatusCode.Should().Be(HttpStatusCode.Created);
             var hearing = RequestHelper.Deserialise<HearingDetailsResponse>(hearingResponse.Content);
             hearing.Should().NotBeNull();
-
-            ParticipantExistsInTheDb(hearing.Id).Should().BeTrue();
-            _c.Apis.UserApi.ParticipantsExistInAad(_c.UserAccounts, Timeout).Should().BeTrue();
-
+            ParticipantsShouldExistInTheDb(hearing.Id);
             NUnit.Framework.TestContext.WriteLine($"Hearing created with Hearing Id {hearing.Id}");
             return hearing;
         }
 
-        private ConferenceDetailsResponse CreateConference()
+        public ConferenceDetailsResponse CreateConference()
         {
-            var updateRequest = new UpdateBookingStatusRequest
+            var vho = _c.Users.First(x => x.User_type == UserType.VideoHearingsOfficer);
+
+            var request = new UpdateBookingStatusRequest()
             {
-                Status = UpdateBookingStatus.Created,
-                Updated_by = UserManager.GetCaseAdminUser(_c.UserAccounts).Username
+                Updated_by = vho.Username,
+                AdditionalProperties = null,
+                Cancel_reason = null,
+                Status = UpdateBookingStatus.Created
             };
 
-            var response = _c.Apis.BookingsApi.ConfirmHearingToCreateConference(_c.Test.HearingResponse.Id, updateRequest);
-            response.StatusCode.Should().Be(HttpStatusCode.NoContent, $"Conference not created with error '{response.Content}'");
-            response = _c.Apis.VideoApi.PollForConferenceResponse(_c.Test.HearingResponse.Id);
-            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            var response = _c.Api.ConfirmHearingToCreateConference(_c.Test.HearingResponse.Id, request);
+            response.StatusCode.Should().Be(HttpStatusCode.Created);
             var conference = RequestHelper.Deserialise<ConferenceDetailsResponse>(response.Content);
             NUnit.Framework.TestContext.WriteLine($"Conference created with Conference Id {conference.Id}");
             return conference;
+        }
+
+        private void ParticipantsShouldExistInTheDb(Guid hearingId)
+        {
+            var hearingResponse = _c.Api.GetHearing(hearingId);
+            var hearing = RequestHelper.Deserialise<HearingDetailsResponse>(hearingResponse.Content);
+            hearing.Should().NotBeNull();
+            foreach (var user in _c.Users.Where(user => user.User_type != UserType.CaseAdmin && user.User_type != UserType.VideoHearingsOfficer))
+            {
+                hearing.Participants.Any(x => x.Last_name.Equals(user.Last_name)).Should().BeTrue();
+            }
         }
 
         private void StartTheHearing()
@@ -113,7 +154,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
                 .FromRoomType(null)
                 .Build();
 
-            var response = _c.Apis.VideoApi.SendEvent(request);
+            var response = _c.Api.SendEvent(request);
             response.StatusCode.Should().Be(HttpStatusCode.NoContent);
         }
 
@@ -128,17 +169,8 @@ namespace AdminWebsite.AcceptanceTests.Hooks
                 .FromRoomType(RoomType.HearingRoom)
                 .Build();
 
-            var response = _c.Apis.VideoApi.SendEvent(request);
+            var response = _c.Api.SendEvent(request);
             response.StatusCode.Should().Be(HttpStatusCode.NoContent);
-        }
-
-        private bool ParticipantExistsInTheDb(Guid hearingId)
-        {
-            var hearingResponse = _c.Apis.BookingsApi.GetHearing(hearingId);
-            var hearing = RequestHelper.Deserialise<HearingDetailsResponse>(hearingResponse.Content);
-            hearing.Should().NotBeNull();
-            return hearing.Participants.Any(x =>
-                x.Username.ToLower().Equals(UserManager.GetDefaultParticipantUser(_c.UserAccounts).Username.ToLower()));
         }
     }
 }

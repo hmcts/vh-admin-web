@@ -2,15 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using AcceptanceTests.Common.Api.Hearings;
-using AcceptanceTests.Common.Api.Helpers;
 using AcceptanceTests.Common.Driver.Drivers;
 using AcceptanceTests.Common.Driver.Helpers;
 using AcceptanceTests.Common.Test.Steps;
-using AdminWebsite.AcceptanceTests.Data;
 using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.AcceptanceTests.Pages;
-using AdminWebsite.BookingsAPI.Client;
+using AdminWebsite.TestAPI.Client;
 using FluentAssertions;
 using TechTalk.SpecFlow;
 
@@ -21,10 +18,9 @@ namespace AdminWebsite.AcceptanceTests.Steps
     {
         private const string UnansweredAnswer = "Not answered";
         private readonly TestContext _c;
-        private readonly Dictionary<string, UserBrowser> _browsers;
-        private BookingsApiManager _bookingsApiManager;
+        private readonly Dictionary<User, UserBrowser> _browsers;
         private ParticipantResponse _participantResponse;
-        public QuestionnaireSteps(TestContext testContext, Dictionary<string, UserBrowser> browsers)
+        public QuestionnaireSteps(TestContext testContext, Dictionary<User, UserBrowser> browsers)
         {
             _c = testContext;
             _browsers = browsers;
@@ -32,21 +28,20 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         public void ProgressToNextPage()
         {
-            _browsers[_c.CurrentUser.Key].Click(CommonAdminWebPage.DashboardLink);
+            _browsers[_c.CurrentUser].Click(CommonAdminWebPage.DashboardLink);
         }
 
         [Given(@"there is a hearing where an (.*) participant has completed some questionnaire answers")]
         public void GivenThereIsAHearingWithQuestionnaireAnswers(string role)
         {
-            var hearing = CreateHearing();
-            _participantResponse = hearing.Participants.First(x => x.User_role_name.ToLower().Equals(role.ToLower()));
-            AddSuitabilityAnswers(hearing.Id, _participantResponse.Id, role.ToLower());
+            _participantResponse = _c.Test.HearingResponse.Participants.First(x => x.User_role_name.ToLower().Equals(role.ToLower()));
+            AddSuitabilityAnswers(_c.Test.HearingResponse.Id, _participantResponse.Id, role.ToLower());
         }
 
         [Then(@"the user can see a list of answers including the (.*) specific answer")]
         public void ThenTheUserCanSeeAListOfAnswers(string role)
         {
-            _browsers[_c.CurrentUser.Key].Click(QuestionnairePage.QuestionnaireLink(_participantResponse.Last_name));
+            _browsers[_c.CurrentUser].Click(QuestionnairePage.QuestionnaireLink(_participantResponse.Last_name));
             var allQuestionsAndAnswers = GetQuestionsAndAnswers();
             CheckQuestionHasBeenAnswered(_c.Test.TestData.Questionnaire.SelfTestQuestion1, "Yes", allQuestionsAndAnswers);
             CheckQuestionHasBeenAnswered(_c.Test.TestData.Questionnaire.SelfTestQuestion2, "Yes", allQuestionsAndAnswers);
@@ -54,7 +49,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
                 role.ToLower().Equals("individual")
                     ? _c.Test.TestData.Questionnaire.IndividualQuestion
                     : _c.Test.TestData.Questionnaire.RepresentativeQuestion, "Yes", allQuestionsAndAnswers);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(QuestionnairePage.ExtendedAnswer(_c.Test.TestData.Questionnaire.ExtendedAnswer)).Displayed.Should().BeTrue();
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(QuestionnairePage.ExtendedAnswer(_c.Test.TestData.Questionnaire.ExtendedAnswer)).Displayed.Should().BeTrue();
             CheckQuestionHasBeenAnswered(_c.Test.TestData.Questionnaire.UnansweredQuestion, UnansweredAnswer, allQuestionsAndAnswers);
         }
 
@@ -63,31 +58,17 @@ namespace AdminWebsite.AcceptanceTests.Steps
             allQuestionsAndAnswers[question].Should().Be(answer);
         }
 
-        private HearingDetailsResponse CreateHearing()
-        {
-            var hearingRequest = new HearingRequestBuilder()
-                .WithUserAccounts(_c.UserAccounts)
-                .Build();
-
-            _bookingsApiManager = new BookingsApiManager(_c.WebConfig.VhServices.BookingsApiUrl, _c.Tokens.BookingsApiBearerToken);
-            var hearingResponse = _bookingsApiManager.CreateHearing(hearingRequest);
-            hearingResponse.StatusCode.Should().Be(HttpStatusCode.Created);
-            var hearing = RequestHelper.Deserialise<HearingDetailsResponse>(hearingResponse.Content);
-            hearing.Should().NotBeNull();
-            return hearing;
-        }
-
         private void AddSuitabilityAnswers(Guid hearingId, Guid participantId, string role)
         {
             var answers = SuitabilityAnswers.Build(role, _c.Test.TestData.Questionnaire.ExtendedAnswer);
-            var response = _bookingsApiManager.SetSuitabilityAnswers(hearingId, participantId, answers);
+            var response = _c.Api.SetSuitabilityAnswers(hearingId, participantId, answers);
             response.StatusCode.Should().Be(HttpStatusCode.NoContent);
         }
 
         private Dictionary<string, string> GetQuestionsAndAnswers()
         {
-            var questions = _browsers[_c.CurrentUser.Key].Driver.WaitUntilElementsVisible(QuestionnairePage.AllQuestions);
-            var answers = _browsers[_c.CurrentUser.Key].Driver.WaitUntilElementsVisible(QuestionnairePage.AllAnswers);
+            var questions = _browsers[_c.CurrentUser].Driver.WaitUntilElementsVisible(QuestionnairePage.AllQuestions);
+            var answers = _browsers[_c.CurrentUser].Driver.WaitUntilElementsVisible(QuestionnairePage.AllAnswers);
             var questionsAndAnswers = new Dictionary<string, string>();
 
             for (var i = 0; i < questions.Count; i++)

@@ -7,7 +7,7 @@ using AdminWebsite.AcceptanceTests.Configuration;
 using AdminWebsite.AcceptanceTests.Data;
 using AdminWebsite.AcceptanceTests.Data.TestData;
 using AdminWebsite.AcceptanceTests.Helpers;
-using AdminWebsite.BookingsAPI.Client;
+using AdminWebsite.TestAPI.Client;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
@@ -25,8 +25,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         {
             _configRoot = ConfigurationManager.BuildConfig("f99a3fe8-cf72-486a-b90f-b65c27da84ee", GetTargetEnvironment(), RunOnSauceLabsFromLocal());
             context.WebConfig = new AdminWebConfig();
-            context.UserAccounts = new List<UserAccount>();
-            context.Tokens = new AdminWebTokens();
+            context.Users = new List<User>();
         }
 
         private static string GetTargetEnvironment()
@@ -45,9 +44,9 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         {
             RegisterAzureSecrets(context);
             RegisterTestUserSecrets(context);
-            RegisterTestUsers(context);
             RegisterDefaultData(context);
             RegisterHearingServices(context);
+            RegisterIsLive(context);
             RegisterWowzaSettings(context);
             RegisterSauceLabsSettings(context);
             RunningAdminWebLocally(context);
@@ -68,17 +67,6 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             context.WebConfig.TestConfig.TargetOS.Should().NotBeNull();
             context.WebConfig.TestConfig.TestUsernameStem.Should().NotBeNull();
             context.WebConfig.TestConfig.TestUserPassword.Should().NotBeNull();
-        }
-
-        private void RegisterTestUsers(TestContext context)
-        {
-            context.UserAccounts = Options.Create(_configRoot.GetSection("UserAccounts").Get<List<UserAccount>>()).Value;
-            context.UserAccounts.Should().NotBeNullOrEmpty();
-            foreach (var user in context.UserAccounts)
-            {
-                user.Key = user.Lastname;
-                user.Username = $"{user.DisplayName.Replace(" ", "").Replace("ClerkJudge", "Clerk")}{context.WebConfig.TestConfig.TestUsernameStem}";
-            }
         }
 
         private static void RegisterDefaultData(TestContext context)
@@ -104,6 +92,12 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             ConfigurationManager.VerifyConfigValuesSet(context.WebConfig.VhServices);
         }
 
+        private void RegisterIsLive(TestContext context)
+        {
+            context.WebConfig.IsLive = _configRoot.GetValue<bool>("IsLive");
+            context.WebConfig.Should().NotBeNull();
+        }
+
         private void RegisterWowzaSettings(TestContext context)
         {
             context.WebConfig.Wowza = Options.Create(_configRoot.GetSection("WowzaConfiguration").Get<WowzaConfiguration>()).Value;
@@ -127,17 +121,9 @@ namespace AdminWebsite.AcceptanceTests.Hooks
 
         private static async Task GenerateBearerTokens(TestContext context)
         {
-            context.Tokens.BookingsApiBearerToken = await ConfigurationManager.GetBearerToken(
-                context.WebConfig.AzureAdConfiguration, context.WebConfig.VhServices.BookingsApiResourceId);
-            context.Tokens.BookingsApiBearerToken.Should().NotBeNullOrEmpty();
-
-            context.Tokens.UserApiBearerToken = await ConfigurationManager.GetBearerToken(
-                context.WebConfig.AzureAdConfiguration, context.WebConfig.VhServices.UserApiResourceId);
-            context.Tokens.UserApiBearerToken.Should().NotBeNullOrEmpty();
-
-            context.Tokens.VideoApiBearerToken = await ConfigurationManager.GetBearerToken(
-                context.WebConfig.AzureAdConfiguration, context.WebConfig.VhServices.VideoApiResourceId);
-            context.Tokens.VideoApiBearerToken.Should().NotBeNullOrEmpty();
+            context.Token = await ConfigurationManager.GetBearerToken(
+                context.WebConfig.AzureAdConfiguration, context.WebConfig.VhServices.TestApiResourceId);
+            context.Token.Should().NotBeNullOrEmpty();
         }
     }
 }
