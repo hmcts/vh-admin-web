@@ -8,6 +8,8 @@ using System.Linq;
 using System.Net;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using AdminWebsite.Services;
+using AdminWebsite.UserAPI.Client;
 
 namespace AdminWebsite.Controllers
 {
@@ -20,16 +22,19 @@ namespace AdminWebsite.Controllers
     public class PersonsController : ControllerBase
     {
         private readonly IBookingsApiClient _bookingsApiClient;
+        private readonly IUserAccountService _userAccountService;
         private readonly JavaScriptEncoder _encoder;
         private readonly TestUserSecrets _testSettings;
 
         /// <summary>
         /// Instantiates the controller
         /// </summary>
-        public PersonsController(IBookingsApiClient bookingsApiClient, JavaScriptEncoder encoder, IOptions<TestUserSecrets> testSettings)
+        public PersonsController(IBookingsApiClient bookingsApiClient, JavaScriptEncoder encoder,
+            IOptions<TestUserSecrets> testSettings, IUserAccountService userAccountService)
         {
             _bookingsApiClient = bookingsApiClient;
             _encoder = encoder;
+            _userAccountService = userAccountService;
             _testSettings = testSettings.Value;
         }
 
@@ -93,6 +98,22 @@ namespace AdminWebsite.Controllers
 
                 throw;
             }
+        }
+
+        /// <summary>
+        /// Delete a user account and anonymise a person in bookings
+        /// </summary>
+        /// <param name="username">username of person</param>
+        /// <returns></returns>
+        [HttpDelete("username/{username}", Name = "DeletePersonWithUsername")]
+        [SwaggerOperation(OperationId = "DeletePersonWithUsername")]
+        [ProducesResponseType((int) HttpStatusCode.NoContent)]
+        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        public async Task<IActionResult> DeletePersonWithUsernameAsync(string username)
+        {
+            var usernameCleaned = username.ToLower().Trim();
+            await _userAccountService.DeleteParticipantAccountAsync(usernameCleaned);
+            return NoContent();
         }
     }
 }
