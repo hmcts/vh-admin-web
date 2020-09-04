@@ -17,6 +17,7 @@ import { PageUrls } from '../../shared/page-url.constants';
 import { BookingPersistService } from '../../services/bookings-persist.service';
 import { interval, Subscription } from 'rxjs';
 import { Logger } from '../../services/logger';
+import { Location } from '@angular/common';
 
 @Component({
     selector: 'app-booking-details',
@@ -48,7 +49,8 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
         private router: Router,
         private bookingService: BookingService,
         private bookingPersistService: BookingPersistService,
-        private logger: Logger
+        private logger: Logger,
+        private location: Location
     ) {
         this.showCancelBooking = false;
         this.showConfirming = false;
@@ -113,7 +115,8 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
     }
 
     navigateBack() {
-        this.router.navigate([PageUrls.BookingsList]);
+        this.location.back();
+        // this.router.navigate([PageUrls.BookingsList]);
     }
 
     setBookingInStorage() {

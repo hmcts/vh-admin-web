@@ -36,4 +36,10 @@ describe('ParticipantDeleteServiceService', () => {
         const result = await service.getHearingsForUsername('user@test.com');
         expect(result).toEqual(hearings);
     });
+
+    it('should return null if api returns an error', async () => {
+        apiClient.getHearingsByUsernameForDeletion.and.throwError('unit test error');
+        const result = await service.getHearingsForUsername('user@test.com');
+        expect(result).toBeNull();
+    });
 });
