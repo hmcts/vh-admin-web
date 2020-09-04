@@ -317,6 +317,8 @@ export class VideoHearingsService {
                 endpoint = new EndpointModel();
                 endpoint.Id = e.id;
                 endpoint.displayName = e.display_name;
+                endpoint.pin = e.pin;
+                endpoint.sip = e.sip;
                 endpoints.push(endpoint);
             });
         }
