@@ -1,0 +1,22 @@
+<h2 class="govuk-heading-m">Results</h2>
+<div *ngIf="!hasResults">
+    <p class="govuk-body govuk-!-width-one-half">
+        There is no CVP audio files for this cloudroom name and date.
+    </p>
+</div>
+
+<div *ngIf="hasResults">
+    <div class="govuk-grid-column-three-quarters vh-pl0">
+        <span class="govuk-heading-s">File</span>
+    </div>
+    <hr class="margin-bottom-22 clear-both" />
+    <div *ngFor="let result of results; i as index" class="govuk-grid-row">
+        <div id="cvp-audio-file-{{ i }}" class="govuk-grid-column-three-quarters">
+            {{ result }}
+        </div>
+        <div class="govuk-grid-column-one-quarter vh-pl0 vh-btn">
+            <app-get-audio-link-button [hearingId]="result"></app-get-audio-link-button>
+        </div>
+        <hr class="margin-bottom-22 clear-both" />
+    </div>
+</div>

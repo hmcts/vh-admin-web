@@ -11,12 +11,13 @@ import { AudioLinkService } from '../services/audio-link-service';
 export class GetAudioFileComponent implements OnInit {
     form: FormGroup;
     hasSearched: boolean;
-    loadingData: boolean;
+    hasCvpSearched: boolean;
     results: HearingAudioSearchModel[] = [];
+    cvpResults: string[] = [];
 
     constructor(private fb: FormBuilder, private audioLinkService: AudioLinkService) {
-        this.loadingData = false;
         this.hasSearched = false;
+        this.hasCvpSearched = false;
     }
 
     async ngOnInit(): Promise<void> {
@@ -28,7 +29,6 @@ export class GetAudioFileComponent implements OnInit {
             hearingDate: [hearingDateParsed, Validators.required],
             cloudroomName: ['', Validators.required],
             caseReference: ['']
-
         });
     }
 
@@ -56,31 +56,52 @@ export class GetAudioFileComponent implements OnInit {
         const todayDate = new Date(new Date());
         return (
             (this.hearingDate.invalid || new Date(this.hearingDate.value) > todayDate) &&
-            (this.hearingDate.dirty || this.hearingDate.touched )
+            (this.hearingDate.dirty || this.hearingDate.touched)
         );
     }
 
+    get cvpRequestInvalid() {
+        return this.cloudroomName.invalid || this.hearingDate.invalid || this.hearingDateInvalid;
+    }
+
+    get cloudroomNameInvalid() {
+        return this.cloudroomName.invalid && (this.cloudroomName.dirty || this.cloudroomName.touched);
+    }
+
+    searchChoiceClick() {
+        this.hasCvpSearched = false;
+        this.hasSearched = false;
+        this.caseReference.setValue('');
+        this.cloudroomName.setValue('');
+        this.cloudroomName.markAsPristine();
+        this.cloudroomName.markAsUntouched();
+        this.hearingDate.setValue('');
+        this.hearingDate.markAsUntouched();
+        this.hearingDate.markAsPristine();
+        this.caseReference.markAsPristine();
+        this.cvpResults.length = 0;
+        this.caseNumber.setValue('');
+        this.caseNumber.markAsUntouched();
+        this.results.length = 0;
+    }
+
     async search() {
-        if (this.form.valid) {
-            this.loadingData = true;
+        if (!this.caseNumber.invalid) {
             this.hasSearched = false;
 
             this.results = await this.getResults(this.caseNumber.value);
 
             this.hasSearched = true;
-            this.loadingData = false;
         }
     }
 
-    async searchCVP() {
-        if (this.form.valid) {
-            this.loadingData = true;
-            this.hasSearched = false;
+    searchCVP() {
+        if (!this.cvpRequestInvalid) {
+            this.hasCvpSearched = false;
 
-            this.results = await this.getResults(this.caseNumber.value);
+            this.cvpResults = this.getCvpResults();
 
-            this.hasSearched = true;
-            this.loadingData = false;
+            this.hasCvpSearched = true;
         }
     }
 
@@ -91,8 +112,16 @@ export class GetAudioFileComponent implements OnInit {
             return [];
         }
 
-        return response.map((x) => {
+        return response.map(x => {
             return new HearingAudioSearchModel(x);
         });
+    }
+
+    getCvpResults() {
+        return [
+            'FM-0152-ZE186004C1_2020-08-04-09.30.12.316-UTC_0.mp4',
+            'FM-0152-ZE186004C1_2020-08-04-09.30.12.316-UTC_0.mp4',
+            'FM-0152-ZE186004C1_2020-08-04-09.30.12.316-UTC_0.mp4'
+        ];
     }
 }

@@ -20,4 +20,10 @@ export class AudioLinkService {
 
         return response.audio_file_link;
     }
+
+    async getCvpAudioLink(cloudroomName: string, hearingDate: Date, caseReference: string = null): Promise<string> {
+        const response = await this.bhClient.getCvpAudioRecordingLink(cloudroomName, hearingDate, caseReference).toPromise();
+
+        return response.audio_file_link;
+    }
 }

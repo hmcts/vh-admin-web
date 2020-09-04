@@ -47,5 +47,27 @@ namespace AdminWebsite.Controllers
                 return StatusCode(ex.StatusCode, ex.Response);
             }
         }
+
+
+        
+        [HttpGet]
+        [SwaggerOperation(OperationId = "GetCvpAudioRecordingLink")]
+        [ProducesResponseType(typeof(HearingAudioRecordingResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public IActionResult GetCvpAudioRecordingLinkAsync(string cloudroomName, DateTime hearingDate, string caseReference)
+        {
+            _logger.LogInformation($"Getting CVP audio recording for cloudroom: {cloudroomName}");
+
+            try
+            {
+               // var response = await _videoAPiClient.GetCvpAudioRecordingLinkAsync(cloudroomName, hearingDate, caseReference);
+
+                return Ok(new HearingAudioRecordingResponse { AudioFileLink = "response.Audio_file_link" });
+            }
+            catch (VideoApiException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Response);
+            }
+        }
     }
 }
