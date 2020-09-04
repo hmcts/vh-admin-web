@@ -33,7 +33,9 @@ describe('CopySipComponent', () => {
     component.sipAddress = new ElementRef(sipAddress);
     component.onMouseOver(mouseEvent);
 
+    const expectedTop = mouseEvent.clientY + 15 + 'px';
     const expectedLeft = mouseEvent.clientX + 20 + 'px';
+    expect(sipAddress.style.top).toBe(expectedTop);
     expect(sipAddress.style.left).toBe(expectedLeft);
 
     expect(component.displayTooltip).toBe(false);

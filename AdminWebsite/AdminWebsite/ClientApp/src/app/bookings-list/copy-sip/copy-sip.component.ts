@@ -28,6 +28,7 @@ export class CopySipComponent implements OnInit {
     const y = $event.clientY;
     const elem = this.sipAddress.nativeElement as HTMLDivElement;
 
+    elem.style.top = y + 15 + 'px';
     elem.style.left = x + 20 + 'px';
     this.setTooltipVisibility(false);
   }

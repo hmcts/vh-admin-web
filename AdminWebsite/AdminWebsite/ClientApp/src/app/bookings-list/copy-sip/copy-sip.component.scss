@@ -10,7 +10,7 @@
   background: govuk-colour('blue');
   border: 1px solidgovuk-colour('blue');
   border-radius: 2px;
-  position: absolute;
+  position: fixed;
   padding: 8px;
 }
 
@@ -18,4 +18,5 @@
   color: govuk-colour('blue');
   text-decoration-line: underline;
   text-decoration-style: solid;
+  cursor: pointer;
 }
