@@ -17,7 +17,7 @@ export class CopySipComponent implements OnInit {
 
   ngOnInit(): void {
     this.displayTooltip = true;
-    this.tooltip = 'Copy SIP address';
+    this.tooltip = 'Copy address';
   }
 
   onMouseOver($event: MouseEvent): void {
@@ -34,8 +34,9 @@ export class CopySipComponent implements OnInit {
   }
 
   copyToClipboard(endpoint: EndpointModel) {
-    this.clipboardService.copyFromContent(endpoint.sip);
-    this.tooltip = 'SIP address copied to clipboard';
+    const address = endpoint.sip + ':' + endpoint.pin;
+    this.clipboardService.copyFromContent(address);
+    this.tooltip = 'Address copied to clipboard';
     this.setTooltipVisibility(false);
   }
 

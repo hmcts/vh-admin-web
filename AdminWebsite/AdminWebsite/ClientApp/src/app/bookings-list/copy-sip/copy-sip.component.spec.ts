@@ -39,7 +39,7 @@ describe('CopySipComponent', () => {
     expect(sipAddress.style.left).toBe(expectedLeft);
 
     expect(component.displayTooltip).toBe(false);
-    expect(component.tooltip).toBe('Copy SIP address');
+    expect(component.tooltip).toBe('Copy address');
   });
   it('should not show tooltip if element if not ready', () => {
     component.sipAddress = null;
@@ -48,12 +48,14 @@ describe('CopySipComponent', () => {
 
     expect(component.displayTooltip).toBeTruthy();
   });
-  it('should copy the conference id to the clipboard', () => {
+  it('should copy the endpoint sip address and pin to the clipboard', () => {
     const endpoint = new EndpointModel();
     endpoint.sip = '12345@12345';
+    endpoint.pin = '3000';
     component.copyToClipboard(endpoint);
-    expect(clipboardServiceSpy.copyFromContent).toHaveBeenCalledWith(endpoint.sip);
+    const address = endpoint.sip + ':' + endpoint.pin;
+    expect(clipboardServiceSpy.copyFromContent).toHaveBeenCalledWith(address);
     expect(component.displayTooltip).toBe(false);
-    expect(component.tooltip).toBe('SIP address copied to clipboard');
+    expect(component.tooltip).toBe('Address copied to clipboard');
   });
 });
