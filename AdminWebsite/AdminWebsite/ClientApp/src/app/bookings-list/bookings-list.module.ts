@@ -8,7 +8,7 @@ import { ParticipantDetailsComponent } from './participant-details/participant-d
 import { BookingParticipantListComponent } from './booking-participant-list/booking-participant-list.component';
 import { HearingDetailsComponent } from './hearing-details/hearing-details.component';
 import { PopupModule } from '../popups/popup.module';
-
+import { CopySipComponent } from './copy-sip/copy-sip.component';
 
 @NgModule({
   imports: [
@@ -23,6 +23,7 @@ import { PopupModule } from '../popups/popup.module';
     ParticipantDetailsComponent,
     BookingParticipantListComponent,
     HearingDetailsComponent,
+    CopySipComponent,
   ],
   exports: [
     BookingsListComponent,

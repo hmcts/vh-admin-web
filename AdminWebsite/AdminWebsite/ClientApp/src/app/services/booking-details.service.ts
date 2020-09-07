@@ -65,6 +65,8 @@ export class BookingDetailsService {
         const epModel = new EndpointModel();
         epModel.Id = e.id;
         epModel.displayName = e.display_name;
+        epModel.pin = e.pin;
+        epModel.sip = e.sip;
         endpoints.push(epModel);
       });
     }
