@@ -9,7 +9,6 @@ using System.Net;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using AdminWebsite.Services;
-using AdminWebsite.UserAPI.Client;
 
 namespace AdminWebsite.Controllers
 {
