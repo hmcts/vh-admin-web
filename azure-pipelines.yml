@@ -1,167 +1,167 @@
 parameters:
-- name: PackageApp
-  displayName: Package App
-  type: boolean
-  default: true
+  - name: PackageApp
+    displayName: Package App
+    type: boolean
+    default: true
 
-- name: PackageACTests
-  displayName: Package Acceptance Tests
-  type: boolean
-  default: true
+  - name: PackageACTests
+    displayName: Package Acceptance Tests
+    type: boolean
+    default: true
 
-- name: RunUnitTests
-  displayName: Run Unit Tests
-  type: boolean
-  default: true
+  - name: RunUnitTests
+    displayName: Run Unit Tests
+    type: boolean
+    default: true
 
-- name: RunIntegTests
-  displayName: Run Integration Tests
-  type: boolean
-  default: true
+  - name: RunIntegTests
+    displayName: Run Integration Tests
+    type: boolean
+    default: true
 
-- name: RunSonarCloudTests
-  displayName: Run Sonar Cloud Analysis
-  type: boolean
-  default: true
+  - name: RunSonarCloudTests
+    displayName: Run Sonar Cloud Analysis
+    type: boolean
+    default: true
 
-- name: RunMutationTests
-  displayName: Run Mutation Tests
-  type: boolean
-  default: true
+  - name: RunMutationTests
+    displayName: Run Mutation Tests
+    type: boolean
+    default: true
 
-- name: RunACTests
-  displayName: Run Acceptance Tests
-  type: boolean
-  default: true
+  - name: RunACTests
+    displayName: Run Acceptance Tests
+    type: boolean
+    default: true
 
-- name: RunNodeTests
-  displayName: Run Node Tests
-  type: boolean
-  default: true
+  - name: RunNodeTests
+    displayName: Run Node Tests
+    type: boolean
+    default: true
 
-- name: testSettings
-  type: object
-  default:
-  # VhServices
-  - name: VhServices:AdminWebUrl
-    value: $(admin_web_url_staging)
-  - name: VhServices:AdminWebResourceId
-    value: vh-admin-web-identifieruris
-    secret: true
-  - name: VhServices:VideoApiUrl
-    value: $(video_api_url)
-  - name: VhServices:VideoApiResourceId
-    value: vh-video-api-identifieruris
-    secret: true
-  - name: VhServices:UserApiUrl
-    value: $(user_api_url)
-  - name: VhServices:UserApiResourceId
-    value: vh-user-api-identifieruris
-    secret: true
-  - name: VhServices:BookingsApiUrl
-    value: $(bookings_api_url)
-  - name: VhServices:BookingsApiResourceId
-    value: vh-bookings-api-identifieruris
-    secret: true
+  - name: testSettings
+    type: object
+    default:
+      # VhServices
+      - name: VhServices:AdminWebUrl
+        value: $(admin_web_url_staging)
+      - name: VhServices:AdminWebResourceId
+        value: vh-admin-web-identifieruris
+        secret: true
+      - name: VhServices:VideoApiUrl
+        value: $(video_api_url)
+      - name: VhServices:VideoApiResourceId
+        value: vh-video-api-identifieruris
+        secret: true
+      - name: VhServices:UserApiUrl
+        value: $(user_api_url)
+      - name: VhServices:UserApiResourceId
+        value: vh-user-api-identifieruris
+        secret: true
+      - name: VhServices:BookingsApiUrl
+        value: $(bookings_api_url)
+      - name: VhServices:BookingsApiResourceId
+        value: vh-bookings-api-identifieruris
+        secret: true
 
-  # AzureAd
-  - name: AzureAd:Authority
-    value: $(Authority)
-  - name: AzureAd:TenantId
-    value: tenantid
-    secret: true
-  - name: AzureAd:ClientId
-    value: vh-video-web-appid
-    secret: true
-  - name: AzureAd:ClientSecret
-    value: vh-video-web-key
-    secret: true
-  - name: AzureAd:PostLogoutRedirectUri
-    slot: true
-  - name: AzureAd:RedirectUri
-    slot: true
-  - name: AzureAd:TemporaryPassword
-    value: $(TemporaryPassword)
+      # AzureAd
+      - name: AzureAd:Authority
+        value: $(Authority)
+      - name: AzureAd:TenantId
+        value: tenantid
+        secret: true
+      - name: AzureAd:ClientId
+        value: vh-video-web-appid
+        secret: true
+      - name: AzureAd:ClientSecret
+        value: vh-video-web-key
+        secret: true
+      - name: AzureAd:PostLogoutRedirectUri
+        slot: true
+      - name: AzureAd:RedirectUri
+        slot: true
+      - name: AzureAd:TemporaryPassword
+        value: $(TemporaryPassword)
 
-  # Testing
-  - name: TestUserSecrets:TestUsernameStem
-    value: $(TestUserSecrets:TestUsernameStem)
-  - name: TestUserSecrets:TestUserPassword
-    value: $(TestUserSecrets:TestUserPassword)
+      # Testing
+      - name: TestUserSecrets:TestUsernameStem
+        value: $(TestUserSecrets:TestUsernameStem)
+      - name: TestUserSecrets:TestUserPassword
+        value: $(TestUserSecrets:TestUserPassword)
 
-  # SauceLabs
-  - name: Saucelabs:Username
-    value: $(Saucelabs:Username)
-  - name: Saucelabs:AccessKey
-    value: $(Saucelabs:AccessKey)
-  - name: Saucelabs:RealDeviceApiKey
-    value: $(RealDeviceApiKey)
+      # SauceLabs
+      - name: Saucelabs:Username
+        value: $(Saucelabs:Username)
+      - name: Saucelabs:AccessKey
+        value: $(Saucelabs:AccessKey)
+      - name: Saucelabs:RealDeviceApiKey
+        value: $(RealDeviceApiKey)
 
-  # WowzaConfiguration
-  - name: WowzaConfiguration:StorageAccountName
-    value: $(wowza_storageAccountName)
-  - name: WowzaConfiguration:StorageAccountKey
-    value: $(wowza_storageAccountKey)
-  - name: WowzaConfiguration:StorageContainerName
-    value: $(wowza_storageContainerName)
+      # WowzaConfiguration
+      - name: WowzaConfiguration:StorageAccountName
+        value: $(wowza_storageAccountName)
+      - name: WowzaConfiguration:StorageAccountKey
+        value: $(wowza_storageAccountKey)
+      - name: WowzaConfiguration:StorageContainerName
+        value: $(wowza_storageContainerName)
 
-- name: appSettings
-  type: object
-  default:
-  - name: ApplicationInsights:InstrumentationKey
-    value: vh-core-infra-AppInsightsKey
-    secret: true
-  - name: AppInsightsKey
-    value: vh-core-infra-AppInsightsKey
-    secret: true
-  - name: IsLive
-    value: $(IsLive)
+  - name: appSettings
+    type: object
+    default:
+      - name: ApplicationInsights:InstrumentationKey
+        value: vh-core-infra-AppInsightsKey
+        secret: true
+      - name: AppInsightsKey
+        value: vh-core-infra-AppInsightsKey
+        secret: true
+      - name: IsLive
+        value: $(IsLive)
 
-  # AzureAd
-  - name: AzureAd:ClientId
-    value: vh-admin-web-appid
-    secret: true
-  - name: AzureAd:ClientSecret
-    value: vh-admin-web-key
-    secret: true
-  - name: AzureAd:PostLogoutRedirectUri
-    slot:
-      deployment:
-        value: $(admin_web_url_staging)logout
-      active:
-        value: $(admin_web_url)logout
-  - name: AzureAd:RedirectUri
-    slot:
-      deployment:
-        value: $(admin_web_url_staging)home
-      active:
-        value: $(admin_web_url)home
-  - name: AzureAd:TenantId
-    value: tenantid
-    secret: true
-  - name: AzureAd:Authority
-    value: $(Authority)
-    
-  # Testing
-  - name: TestUserSecrets:TestUsernameStem
-    value: $(TestUserSecrets:TestUsernameStem)
+      # AzureAd
+      - name: AzureAd:ClientId
+        value: vh-admin-web-appid
+        secret: true
+      - name: AzureAd:ClientSecret
+        value: vh-admin-web-key
+        secret: true
+      - name: AzureAd:PostLogoutRedirectUri
+        slot:
+          deployment:
+            value: $(admin_web_url_staging)logout
+          active:
+            value: $(admin_web_url)logout
+      - name: AzureAd:RedirectUri
+        slot:
+          deployment:
+            value: $(admin_web_url_staging)home
+          active:
+            value: $(admin_web_url)home
+      - name: AzureAd:TenantId
+        value: tenantid
+        secret: true
+      - name: AzureAd:Authority
+        value: $(Authority)
 
-  # VhServices
-  - name: VhServices:BookingsApiResourceId
-    value: vh-bookings-api-identifieruris
-    secret: true
-  - name: VhServices:BookingsApiUrl
-    value: $(bookings_api_url)
-  - name: VhServices:UserApiResourceId
-    value: vh-user-api-identifieruris
-    secret: true
-  - name: VhServices:UserApiUrl
-    value: $(user_api_url)
-  - name: VhServices:VideoApiResourceId
-    value: vh-video-api-identifieruris
-    secret: true
-  - name: VhServices:VideoApiUrl
-    value: $(video_api_url)
+      # Testing
+      - name: TestUserSecrets:TestUsernameStem
+        value: $(TestUserSecrets:TestUsernameStem)
+
+      # VhServices
+      - name: VhServices:BookingsApiResourceId
+        value: vh-bookings-api-identifieruris
+        secret: true
+      - name: VhServices:BookingsApiUrl
+        value: $(bookings_api_url)
+      - name: VhServices:UserApiResourceId
+        value: vh-user-api-identifieruris
+        secret: true
+      - name: VhServices:UserApiUrl
+        value: $(user_api_url)
+      - name: VhServices:VideoApiResourceId
+        value: vh-video-api-identifieruris
+        secret: true
+      - name: VhServices:VideoApiUrl
+        value: $(video_api_url)
 
 variables:
   - group: vh-domains-and-urls
@@ -175,13 +175,13 @@ variables:
 trigger:
   branches:
     include:
-    - master
-    - release/*
-    - hotfix/*
+      - master
+      - release/*
+      - hotfix/*
 pr:
   branches:
     include:
-    - master
+      - master
 
 resources:
   repositories:
@@ -191,14 +191,14 @@ resources:
       ref: refs/heads/master
       endpoint: hmcts (1)
   containers:
-  - container: dotnetsdk
-    image: sspublicsbox.azurecr.io/vh/dotnet-angular:3.1.102
-    endpoint: sspublicsbox
-  - container: dotnetsdk-cipipeline
-    image: sspublicsbox.azurecr.io/vh/dotnet-angular-cipipeline:3.1.102
-    endpoint: sspublicsbox
-  - container: node
-    image: node:lts-alpine
+    - container: dotnetsdk
+      image: sspublicsbox.azurecr.io/vh/dotnet-angular:3.1.102
+      endpoint: sspublicsbox
+    - container: dotnetsdk-cipipeline
+      image: sspublicsbox.azurecr.io/vh/dotnet-angular-cipipeline:3.1.102
+      endpoint: sspublicsbox
+    - container: node
+      image: node:lts-alpine
 
 extends:
   template: stages\dotnet-package.yml@templates
@@ -225,9 +225,9 @@ extends:
       RunStryker: ${{ parameters.RunMutationTests }}
       IntegrationTestSettings:
         - ${{ each setting in parameters.testSettings }}:
-          - name: ${{ setting.name }}
-            value: ${{ setting.value }}
-            secret: ${{ setting.secret }}
+            - name: ${{ setting.name }}
+              value: ${{ setting.value }}
+              secret: ${{ setting.secret }}
       coverletCoverageExclusions:
         - "**/Testing.Common/**"
         - "AdminWebsite/Views/*"
@@ -238,7 +238,7 @@ extends:
         sonar.exclusions=**/node_modules/**, **/*.spec.ts, *.spec.ts, **/ClientApp/src/*, **/ClientApp/coverage/**/*, **/Startup.cs, **/Program.cs, **/ConfigureServicesExtensions.cs, **/Swagger/*.cs
         sonar.typescript.lcov.reportPaths=$(System.DefaultWorkingDirectory)/AdminWebsite/AdminWebsite/ClientApp/coverage/lcov.info
         sonar.typescript.exclusions=**/node_modules/**, **/typings.d.ts, **/main.ts, **/environments/environment*.ts, **/*routing.module.ts, **/api-client.ts
-        sonar.cs.opencover.reportsPaths=$(Common.TestResultsDirectory)\Coverage\coverage.opencover.xml
+        sonar.cs.opencover.reportsPaths=$(Common.TestResultsDirectory)/Coverage/coverage.opencover.xml
         sonar.coverage.exclusions= **/Testing.Common/**, AdminWebsite/Views/*, AdminWebsite/Pages/*, AdminWebsite.UserAPI.Client/*, AdminWebsite.AcceptanceTests/*
     ACTest: ${{ parameters.RunACTests }}
     releaseParameters:
@@ -265,4 +265,4 @@ extends:
         - name: WebsiteUrl
           value: $(admin_web_url_staging)
         - ${{ each setting in parameters.testSettings }}:
-          - ${{ insert }}: ${{ setting }}
+            - ${{ insert }}: ${{ setting }}

@@ -92,7 +92,8 @@ describe('DeleteParticipantSearchResultsComponent', () => {
     });
 
     it('should not display account delete on error', async () => {
-        participantDeleteService.deleteUserAccount.and.returnValue(Promise.reject('error'));
+        const error = { status: 401, isApiException: true };
+        participantDeleteService.deleteUserAccount.and.returnValue(Promise.reject(error));
         component.displayConfirmPopup = true;
         await component.onDeletionAnswer(false);
         expect(component.displayConfirmPopup).toBeFalsy();

@@ -7,7 +7,7 @@ describe('ParticipantDeleteServiceService', () => {
     let service: ParticipantDeleteService;
 
     beforeEach(() => {
-        apiClient = jasmine.createSpyObj<BHClient>('BHClient', ['getHearingsByUsernameForDeletion']);
+        apiClient = jasmine.createSpyObj<BHClient>('BHClient', ['getHearingsByUsernameForDeletion', 'deletePersonWithUsername']);
         service = new ParticipantDeleteService(apiClient);
     });
 
@@ -41,5 +41,11 @@ describe('ParticipantDeleteServiceService', () => {
         apiClient.getHearingsByUsernameForDeletion.and.throwError('unit test error');
         const result = await service.getHearingsForUsername('user@test.com');
         expect(result).toBeNull();
+    });
+
+    it('should call api when deleting person with username ', async () => {
+        const username = 'test.unit@here.com';
+        await service.deleteUserAccount(username);
+        expect(apiClient.deletePersonWithUsername).toHaveBeenCalledWith(username);
     });
 });
