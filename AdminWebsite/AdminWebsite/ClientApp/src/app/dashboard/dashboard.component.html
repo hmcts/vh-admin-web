@@ -1,7 +1,7 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-one-third" *ngIf="showBooking">
         <a class="vhpanel-link" [routerLink]="['/book-hearing']">
-            <div class="vhpanel" id="vhpanel-green">
+            <div class="vhpanel vhpanel-green" id="bookHearingBtn">
                 <h1 class="vhpanel-title">Book a video hearing</h1>
                 <div>
                     <img alt="Begin booking a new hearing" src="assets/images/bookicon.png" style="width: 64px" />
@@ -11,7 +11,7 @@
     </div>
     <div class="govuk-grid-column-one-third" *ngIf="showCheckList">
         <a class="vhpanel-link" [routerLink]="['/questionnaire']">
-            <div class="vhpanel" id="vhpanel-blue">
+            <div class="vhpanel vhpanel-blue" id="questionnaireResultsBtn">
                 <h1 class="vhpanel-title">Questionnaire results</h1>
                 <div>
                     <img alt="Begin booking a new hearing" src="assets/images/VHO_questionnaire_icon.png" style="width: 64px" />
@@ -21,7 +21,7 @@
     </div>
     <div class="govuk-grid-column-one-third" *ngIf="showCheckList">
         <a class="vhpanel-link" [routerLink]="['/get-audio-file']">
-            <div class="vhpanel" id="vhpanel-lightblue">
+            <div class="vhpanel vhpanel-lightblue" id="getAudioLinkBtn">
                 <h1 class="vhpanel-title">Get audio file link</h1>
                 <div>
                     <img alt="Get the audio file link" src="assets/images/audio_file.png" style="width: 64px" />
@@ -31,7 +31,7 @@
     </div>
     <div class="govuk-grid-column-one-third" *ngIf="showCheckList">
         <a class="vhpanel-link" [routerLink]="['/change-password']">
-            <div class="vhpanel" id="vhpanel-darkgrey">
+            <div class="vhpanel vhpanel-darkgrey" id="changePasswordBtn">
                 <h1 class="vhpanel-title">Change user password</h1>
                 <div>
                     <img alt="Change the user password" src="assets/images/change-password.png" width="64" />
@@ -41,7 +41,7 @@
     </div>
     <div class="govuk-grid-column-one-third" *ngIf="showCheckList">
         <a class="vhpanel-link" [routerLink]="['/delete-participant']">
-            <div class="vhpanel" id="vhpanel-pink">
+            <div class="vhpanel vhpanel-pink" id="deleteUserBtn">
                 <h1 class="vhpanel-title">Delete user account</h1>
                 <div>
                     <img alt="Delete participant" src="assets/images/delete-participant.png" width="64" />

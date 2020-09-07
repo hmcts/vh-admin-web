@@ -21,6 +21,7 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public static readonly Page Questionnaire = new Page("Questionnaire", "questionnaire");
         public static readonly Page ChangePassword = new Page("Change Password", "change-password");
         public static readonly Page GetAudioFile = new Page("Get Audio File", "get-audio-file");
+        public static readonly Page DeleteUser = new Page("Delete User", "delete-user");
         public static readonly Page HearingDetails = new Page("Hearing Details", "book-hearing");
         public static readonly Page HearingSchedule = new Page("Hearing Schedule", "hearing-schedule");
         public static readonly Page AssignJudge = new Page("Assign Judge", "assign-judge");
@@ -63,6 +64,7 @@ namespace AdminWebsite.AcceptanceTests.Pages
                 yield return Questionnaire;
                 yield return ChangePassword;
                 yield return GetAudioFile;
+                yield return DeleteUser;
                 yield return HearingDetails;
                 yield return HearingSchedule;
                 yield return AssignJudge;
