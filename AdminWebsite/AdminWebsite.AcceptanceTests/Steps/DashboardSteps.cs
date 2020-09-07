@@ -38,6 +38,10 @@ namespace AdminWebsite.AcceptanceTests.Steps
             {
                 _browsers[_c.CurrentUser.Key].Click(DashboardPage.GetAudioFilePanel);
             }
+            else if (_c.Route.Equals(Page.DeleteUser))
+            {
+                _browsers[_c.CurrentUser.Key].Click(DashboardPage.DeleteUserPanel);
+            }
             else
             {
                 _browsers[_c.CurrentUser.Key].Click(DashboardPage.BookVideoHearingPanel);
