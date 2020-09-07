@@ -4,22 +4,25 @@ using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using System.Collections.Generic;
+using AdminWebsite.BookingsAPI.Client;
 
 namespace AdminWebsite.IntegrationTests.Services
 {
     public class UserAccountServiceTests
     {
-        private Mock<IUserApiClient> _apiClient;
+        private Mock<IUserApiClient> _userApiClient;
+        private Mock<IBookingsApiClient> _bookingsApiClient;
 
         [SetUp]
         public void Setup()
         {
-            _apiClient = new Mock<IUserApiClient>();
+            _userApiClient = new Mock<IUserApiClient>();
+            _bookingsApiClient = new Mock<IBookingsApiClient>();
         }
 
         private UserAccountService GetService()
         {
-            return new UserAccountService(_apiClient.Object);
+            return new UserAccountService(_userApiClient.Object, _bookingsApiClient.Object);
         }
 
         [Test]
@@ -31,7 +34,7 @@ namespace AdminWebsite.IntegrationTests.Services
             judge = new UserResponse { Display_name = "john wayne", Email = "john.wayne@email.com", First_name = "john", Last_name = "wayne" };
             judgesList.Add(judge);
 
-            _apiClient.Setup(x => x.GetJudges()).Returns(judgesList);
+            _userApiClient.Setup(x => x.GetJudges()).Returns(judgesList);
             var group = GetService().GetJudgeUsers();
             group.Should().NotBeNullOrEmpty();
         }

@@ -4,18 +4,24 @@
 
 <form [formGroup]="form" class="govuk-form-group">
     <div class="govuk-form-group">
-        <label class="govuk-label govuk-!-one-half" for="username">
-            Enter participant username
-        </label>
-        <input id="username" class="govuk-input govuk-!-width-one-half" type="text" formControlName="username" required>
-        <button class="govuk-button govuk-!-margin-left-2" data-module="govuk-button"
-                id="submit" (click)="search()" [disabled]="form.invalid">
+        <label class="govuk-label govuk-!-one-half" for="username"> Enter participant username </label>
+        <input id="username" class="govuk-input govuk-!-width-one-half" type="text" formControlName="username" required />
+        <button
+            class="govuk-button govuk-!-margin-left-2"
+            data-module="govuk-button"
+            id="submit"
+            (click)="search()"
+            [disabled]="form.invalid"
+        >
             Search
         </button>
     </div>
 </form>
 
 <div class="govuk-body">
-    <app-delete-participant-search-results *ngIf="hasSearched" [results]="results"></app-delete-participant-search-results>
+    <app-delete-participant-search-results
+        *ngIf="hasSearched"
+        [username]="username.value"
+        [results]="results"
+    ></app-delete-participant-search-results>
 </div>
-

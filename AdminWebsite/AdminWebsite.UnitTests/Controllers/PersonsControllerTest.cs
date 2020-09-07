@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Text.Encodings.Web;
 using AdminWebsite.UnitTests.Helper;
 using AdminWebsite.Configuration;
+using AdminWebsite.Services;
 using FizzWare.NBuilder;
 using Microsoft.Extensions.Options;
 
@@ -21,19 +22,21 @@ namespace AdminWebsite.UnitTests.Controllers
     {
         private AdminWebsite.Controllers.PersonsController _controller;
         private Mock<IBookingsApiClient> _bookingsApiClient;
+        private Mock<IUserAccountService> _userAccountService;
         private List<PersonResponse> _response;
 
         [SetUp]
         public void Setup()
         {
             _bookingsApiClient = new Mock<IBookingsApiClient>();
-
+            _userAccountService = new Mock<IUserAccountService>();
             var testSettings = new TestUserSecrets
             {
                 TestUsernameStem = "@madeUpEmail.com"
             };
 
-            _controller = new AdminWebsite.Controllers.PersonsController(_bookingsApiClient.Object, JavaScriptEncoder.Default, Options.Create(testSettings));
+            _controller = new AdminWebsite.Controllers.PersonsController(_bookingsApiClient.Object,
+                JavaScriptEncoder.Default, Options.Create(testSettings), _userAccountService.Object);
 
             _response = new List<PersonResponse>
             {
@@ -114,6 +117,16 @@ namespace AdminWebsite.UnitTests.Controllers
                 .ThrowsAsync(ClientException.ForBookingsAPI(HttpStatusCode.InternalServerError));
             Assert.ThrowsAsync<BookingsApiException>(() =>
                 _controller.GetHearingsByUsernameForDeletion("usernamefailed@test.com"));
+        }
+
+        [Test]
+        public async Task should_clean_username_before_removing_account()
+        {
+            var username = " Test.Hello@WORLD.COM  ";
+            var usernameCleaned = username.Trim().ToLower();
+
+            await _controller.DeletePersonWithUsernameAsync(username);
+            _userAccountService.Verify(x => x.DeleteParticipantAccountAsync(usernameCleaned), Times.Once);
         }
     }
 }

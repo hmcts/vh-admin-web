@@ -1,11 +1,11 @@
 import { FormBuilder } from '@angular/forms';
 import { HearingsByUsernameForDeletionResponse } from 'src/app/services/clients/api-client';
-import { ParticipantDeleteServiceService } from 'src/app/services/participant-delete-service.service';
+import { ParticipantDeleteService } from 'src/app/services/participant-delete-service.service';
 import { DeleteParticipantSearchComponent } from './delete-participant-search.component';
 
 describe('DeleteParticipantComponent', () => {
     let component: DeleteParticipantSearchComponent;
-    let service: jasmine.SpyObj<ParticipantDeleteServiceService>;
+    let service: jasmine.SpyObj<ParticipantDeleteService>;
     let formBuilder: FormBuilder;
 
     const hearings = [
@@ -33,7 +33,7 @@ describe('DeleteParticipantComponent', () => {
     ];
 
     beforeAll(async () => {
-        service = jasmine.createSpyObj<ParticipantDeleteServiceService>('ParticipantDeleteServiceService', ['getHearingsForUsername']);
+        service = jasmine.createSpyObj<ParticipantDeleteService>('ParticipantDeleteServiceService', ['getHearingsForUsername']);
         formBuilder = new FormBuilder();
     });
 

@@ -1,7 +1,16 @@
+@import '~govuk-frontend/govuk/all';
+
 .clear-both {
     clear: both;
 }
 
 .margin-bottom-22 {
     margin-bottom: 22px;
+}
+
+.govuk-tag--red {
+    color: govuk-colour('white');
+    background-color: govuk-colour('red');
+    padding: 7px;
+    border-radius: 3px;
 }
