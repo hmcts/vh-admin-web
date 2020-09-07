@@ -53,11 +53,10 @@ export class DeleteParticipantSearchResultsComponent {
         this.displayConfirmPopup = false;
         try {
             if (answer) {
-                console.log('user deleted');
                 await this.participantDeleteService.deleteUserAccount(this.username);
                 this.accountDeleted = true;
             }
-        } catch {
+        } catch (err) {
             this.accountDeleted = false;
         }
     }
