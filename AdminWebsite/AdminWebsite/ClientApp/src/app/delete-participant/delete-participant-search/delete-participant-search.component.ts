@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ParticipantHearingDeleteResultModel } from '../../common/model/participant-hearing-delete-result-model';
-import { ParticipantDeleteServiceService } from '../../services/participant-delete-service.service';
+import { ParticipantDeleteService } from '../../services/participant-delete-service.service';
 
 @Component({
     selector: 'app-delete-participant',
@@ -12,7 +12,7 @@ export class DeleteParticipantSearchComponent implements OnInit {
     hasSearched: boolean;
     loadingData: boolean;
     results: ParticipantHearingDeleteResultModel[] = [];
-    constructor(private fb: FormBuilder, private service: ParticipantDeleteServiceService) {}
+    constructor(private fb: FormBuilder, private service: ParticipantDeleteService) {}
 
     ngOnInit(): void {
         this.form = this.fb.group({

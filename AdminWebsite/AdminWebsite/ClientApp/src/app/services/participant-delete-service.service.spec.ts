@@ -1,14 +1,14 @@
 import { of } from 'rxjs';
 import { BHClient, HearingsByUsernameForDeletionResponse } from './clients/api-client';
-import { ParticipantDeleteServiceService } from './participant-delete-service.service';
+import { ParticipantDeleteService } from './participant-delete-service.service';
 
 describe('ParticipantDeleteServiceService', () => {
     let apiClient: jasmine.SpyObj<BHClient>;
-    let service: ParticipantDeleteServiceService;
+    let service: ParticipantDeleteService;
 
     beforeEach(() => {
-        apiClient = jasmine.createSpyObj<BHClient>('BHClient', ['getHearingsByUsernameForDeletion']);
-        service = new ParticipantDeleteServiceService(apiClient);
+        apiClient = jasmine.createSpyObj<BHClient>('BHClient', ['getHearingsByUsernameForDeletion', 'deletePersonWithUsername']);
+        service = new ParticipantDeleteService(apiClient);
     });
 
     it('should get list of hearings for username', async () => {
@@ -41,5 +41,12 @@ describe('ParticipantDeleteServiceService', () => {
         apiClient.getHearingsByUsernameForDeletion.and.throwError('unit test error');
         const result = await service.getHearingsForUsername('user@test.com');
         expect(result).toBeNull();
+    });
+
+    it('should call api when deleting person with username ', async () => {
+        apiClient.deletePersonWithUsername.and.returnValue(of());
+        const username = 'test.unit@here.com';
+        await service.deleteUserAccount(username);
+        expect(apiClient.deletePersonWithUsername).toHaveBeenCalledWith(username);
     });
 });
