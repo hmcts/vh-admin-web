@@ -1,14 +1,14 @@
 import { of } from 'rxjs';
 import { BHClient, HearingsByUsernameForDeletionResponse } from './clients/api-client';
-import { ParticipantDeleteServiceService } from './participant-delete-service.service';
+import { ParticipantDeleteService } from './participant-delete-service.service';
 
 describe('ParticipantDeleteServiceService', () => {
     let apiClient: jasmine.SpyObj<BHClient>;
-    let service: ParticipantDeleteServiceService;
+    let service: ParticipantDeleteService;
 
     beforeEach(() => {
         apiClient = jasmine.createSpyObj<BHClient>('BHClient', ['getHearingsByUsernameForDeletion']);
-        service = new ParticipantDeleteServiceService(apiClient);
+        service = new ParticipantDeleteService(apiClient);
     });
 
     it('should get list of hearings for username', async () => {
