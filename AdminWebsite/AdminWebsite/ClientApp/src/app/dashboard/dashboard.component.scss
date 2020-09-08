@@ -2,19 +2,6 @@
 // global styles for <a> and <p> tags
 $govuk-global-styles: true;
 
-// // Import GOV.UK Frontend
-// @import "../../../node_modules/govuk-frontend/all";
-
-// // Patterns that aren't in Frontend
-// @import "patterns/check-your-answers";
-// @import "patterns/task-list";
-// @import "patterns/related-items";
-
-// // Components that aren't in Frontend
-// @import "components/cookie-banner";
-
-// Add extra styles here, or re-organise the Sass files in whichever way makes most sense to you
-
 .vhpanel {
     font-family: 'nta', Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
@@ -30,6 +17,7 @@ $govuk-global-styles: true;
     padding: 25px 10px;
     border: 5px solid transparent;
     text-align: center;
+    color: govuk-colour('white');
 }
 
 .vhpanel-title {
@@ -62,33 +50,27 @@ $govuk-global-styles: true;
     box-shadow: 0 7px 17px 0 rgba(0, 0, 0, 0.4);
 }
 
-#vhpanel-green {
-    color: #ffffff;
+.vhpanel-green {
     background-color: govuk-colour('green');
 }
 
-#vhpanel-blue {
-    color: #ffffff;
+.vhpanel-blue {
     background-color: govuk-colour('blue');
 }
 
-#vhpanel-lightblue {
-    color: #ffffff;
+.vhpanel-lightblue {
     background-color: govuk-colour('purple');
 }
 
-#vhpanel-darkgrey {
-    color: #ffffff;
+.vhpanel-darkgrey {
     background-color: govuk-colour('dark-grey');
 }
 
-#vhpanel-red {
-    color: #ffffff;
-    background: #d4351c;
+.vhpanel-red {
+    background: govuk-colour('red');
 }
 
-#vhpanel-pink {
-    color: #ffffff;
+.vhpanel-pink {
     background-color: govuk-colour('pink');
 }
 
