@@ -6,7 +6,6 @@ export class ParticipantHearingDeleteResultModel {
     caseName: string;
     scheduledDateTime: Date;
     hearingVenueName: string;
-    hearingRoomName: string;
 
     constructor(apiResponse: HearingsByUsernameForDeletionResponse) {
         this.hearingId = apiResponse.hearing_id;

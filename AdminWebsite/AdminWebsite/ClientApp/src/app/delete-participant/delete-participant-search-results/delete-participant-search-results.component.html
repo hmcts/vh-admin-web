@@ -42,16 +42,19 @@
         </strong>
     </div>
     <div *ngFor="let result of results" class="govuk-grid-row">
-        <div id="{{ result.hearingId }}-case-number" class="govuk-grid-column-one-third">
+        <div id="{{ result.hearingId }}-case-number" class="govuk-grid-column-one-quarter">
             <a href="javascript:void(0)" (click)="editHearing(result.hearingId)" class="govuk-link govuk-link--no-visited-state">{{
                 result.caseNumber
             }}</a>
         </div>
-        <div id="{{ result.hearingId }}-scheduled-time" class="govuk-grid-column-one-third">
+        <div id="{{ result.hearingId }}-scheduled-time" class="govuk-grid-column-one-quarter">
             {{ result.scheduledDateTime | date: 'dd MMMM yyyy, hh:mm' }}
         </div>
-        <div id="{{ result.hearingId }}-case-name" class="govuk-grid-column-one-third">
+        <div id="{{ result.hearingId }}-case-name" class="govuk-grid-column-one-quarter">
             {{ result.caseName }}
+        </div>
+        <div id="{{ result.hearingId }}-venue" class="govuk-grid-column-one-quarter">
+            {{ result.hearingVenueName }}
         </div>
         <hr class="margin-bottom-22 clear-both" />
     </div>
