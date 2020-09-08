@@ -93,7 +93,7 @@ namespace AdminWebsite.UnitTests.Controllers
             _bookingsApiClient.Setup(x => x.GetHearingsByUsernameForDeletionAsync(It.IsAny<string>()))
                 .ReturnsAsync(responseMock);
             
-            var result = await _controller.GetHearingsByUsernameForDeletion("realusername@test.com");
+            var result = await _controller.GetHearingsByUsernameForDeletionAsync("realusername@test.com");
 
             var okResult = (OkObjectResult) result.Result;
             okResult.Should().NotBeNull();
@@ -105,8 +105,18 @@ namespace AdminWebsite.UnitTests.Controllers
         {
             _bookingsApiClient.Setup(x => x.GetHearingsByUsernameForDeletionAsync(It.IsAny<string>()))
                 .ThrowsAsync(ClientException.ForBookingsAPI(HttpStatusCode.NotFound));
-            var result = await _controller.GetHearingsByUsernameForDeletion("does_not_exist@test.com");
+            var result = await _controller.GetHearingsByUsernameForDeletionAsync("does_not_exist@test.com");
             var notFoundResult = (NotFoundResult) result.Result;
+            notFoundResult.Should().NotBeNull();
+        }
+        
+        [Test]
+        public async Task Should_return_unauthorised_when_bookings_api_returns_unauthorised()
+        {
+            _bookingsApiClient.Setup(x => x.GetHearingsByUsernameForDeletionAsync(It.IsAny<string>()))
+                .ThrowsAsync(ClientException.ForBookingsAPI(HttpStatusCode.Unauthorized));
+            var result = await _controller.GetHearingsByUsernameForDeletionAsync("invalid_user@test.com");
+            var notFoundResult = (UnauthorizedResult) result.Result;
             notFoundResult.Should().NotBeNull();
         }
         
@@ -116,7 +126,7 @@ namespace AdminWebsite.UnitTests.Controllers
             _bookingsApiClient.Setup(x => x.GetHearingsByUsernameForDeletionAsync(It.IsAny<string>()))
                 .ThrowsAsync(ClientException.ForBookingsAPI(HttpStatusCode.InternalServerError));
             Assert.ThrowsAsync<BookingsApiException>(() =>
-                _controller.GetHearingsByUsernameForDeletion("usernamefailed@test.com"));
+                _controller.GetHearingsByUsernameForDeletionAsync("usernamefailed@test.com"));
         }
 
         [Test]
