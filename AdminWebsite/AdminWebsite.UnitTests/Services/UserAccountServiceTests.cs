@@ -1,3 +1,4 @@
+using System;
 using AdminWebsite.Configuration;
 using AdminWebsite.Helper;
 using AdminWebsite.Security;
@@ -221,7 +222,7 @@ namespace AdminWebsite.UnitTests.Services
         }
         
         [Test]
-        public async Task should_fail_to_delete_account_when_user_api_throws()
+        public void should_fail_to_delete_account_when_user_api_throws()
         {
             var username = "valid.user@test.com";
             _bookingsApiClient.Setup(x => x.GetHearingsByUsernameForDeletionAsync(username))
@@ -231,14 +232,14 @@ namespace AdminWebsite.UnitTests.Services
                 .Setup(x => x.GetUserByAdUserNameAsync(username))
                 .ThrowsAsync(ClientException.ForUserService(HttpStatusCode.InternalServerError));
             
-            await _service.DeleteParticipantAccountAsync(username);
+            Assert.ThrowsAsync<UserAPI.Client.UserServiceException>(() => _service.DeleteParticipantAccountAsync(username));
             
             _userApiClient.Verify(x => x.DeleteUserAsync(username), Times.Never);
             _bookingsApiClient.Verify(x => x.AnonymisePersonWithUsernameAsync(username), Times.Never);
         }
         
         [Test]
-        public async Task should_fail_to_delete_account_when_bookings_api_throws()
+        public void should_fail_to_delete_account_when_bookings_api_throws()
         {
             var username = "valid.user@test.com";
             _bookingsApiClient.Setup(x => x.GetHearingsByUsernameForDeletionAsync(username))
@@ -248,7 +249,7 @@ namespace AdminWebsite.UnitTests.Services
                 .Setup(x => x.GetUserByAdUserNameAsync(username))
                 .ReturnsAsync(new UserProfile { User_role = UserRoleType.Individual.ToString() });
             
-            await _service.DeleteParticipantAccountAsync(username);
+            Assert.ThrowsAsync<BookingsApiException>(() => _service.DeleteParticipantAccountAsync(username));
             
             _userApiClient.Verify(x => x.DeleteUserAsync(username), Times.Once);
             _bookingsApiClient.Verify(x => x.AnonymisePersonWithUsernameAsync(username), Times.Never);
