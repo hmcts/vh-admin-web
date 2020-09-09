@@ -183,7 +183,15 @@ namespace AdminWebsite.Services
         {
             try
             {
-                await _userApiClient.GetUserByAdUserNameAsync(username);
+                var person = await _userApiClient.GetUserByAdUserNameAsync(username);
+                Enum.TryParse<UserRoleType>(person.User_role, out var userRoleResult);
+                if (userRoleResult == UserRoleType.Judge || userRoleResult == UserRoleType.VhOfficer)
+                {
+                    throw new Security.UserServiceException()
+                    {
+                        Reason = $"Unable to delete account with role {userRoleResult}"
+                    };
+                }
                 return true;
             }
             catch (UserAPI.Client.UserServiceException e)
