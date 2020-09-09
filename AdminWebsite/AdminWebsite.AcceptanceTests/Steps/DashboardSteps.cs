@@ -41,7 +41,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             }
             else if (_c.Route.Equals(Page.DeleteUser))
             {
-                _browsers[_c.CurrentUser.Key].Click(DashboardPage.DeleteUserPanel);
+                _browsers[_c.CurrentUser].Click(DashboardPage.DeleteUserPanel);
             }
             else
             {
