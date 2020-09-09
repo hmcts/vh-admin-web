@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using HearingAudioRecordingResponse = AdminWebsite.Models.HearingAudioRecordingResponse;
+using CvpAudioFileResponse = AdminWebsite.Models.CvpAudioFileResponse;
+using System.Collections.Generic;
 
 namespace AdminWebsite.Controllers
 {
@@ -22,7 +24,7 @@ namespace AdminWebsite.Controllers
             _videoAPiClient = videoAPiClient;
             _logger = logger;
         }
-        
+
         /// <summary>
         /// Get the audio recording for a given hearing.
         /// </summary>
@@ -30,8 +32,8 @@ namespace AdminWebsite.Controllers
         /// <returns> The hearing</returns>
         [HttpGet("{hearingId}")]
         [SwaggerOperation(OperationId = "GetAudioRecordingLink")]
-        [ProducesResponseType(typeof(HearingAudioRecordingResponse), (int) HttpStatusCode.OK)]
-        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(HearingAudioRecordingResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetAudioRecordingLinkAsync(Guid hearingId)
         {
             _logger.LogInformation($"Getting audio recording for hearing: {hearingId}");
@@ -39,7 +41,7 @@ namespace AdminWebsite.Controllers
             try
             {
                 var response = await _videoAPiClient.GetAudioRecordingLinkAsync(hearingId);
-                
+
                 return Ok(new HearingAudioRecordingResponse { AudioFileLink = response.Audio_file_link });
             }
             catch (VideoApiException ex)
@@ -48,11 +50,9 @@ namespace AdminWebsite.Controllers
             }
         }
 
-
-        
         [HttpGet]
         [SwaggerOperation(OperationId = "GetCvpAudioRecordingLink")]
-        [ProducesResponseType(typeof(HearingAudioRecordingResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(List<CvpAudioFileResponse>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public IActionResult GetCvpAudioRecordingLinkAsync(string cloudroomName, DateTime hearingDate, string caseReference)
         {
@@ -60,14 +60,24 @@ namespace AdminWebsite.Controllers
 
             try
             {
-               // var response = await _videoAPiClient.GetCvpAudioRecordingLinkAsync(cloudroomName, hearingDate, caseReference);
+                var formatDate = $"{hearingDate.Year}-{AppendToDate(hearingDate.Month)}-{AppendToDate(hearingDate.Day)}";
+                // var response = await _videoAPiClient.GetCvpAudioRecordingLinkAsync(cloudroomName, formatDate, caseReference);
 
-                return Ok(new HearingAudioRecordingResponse { AudioFileLink = "response.Audio_file_link" });
+                return Ok(new List<CvpAudioFileResponse> { new CvpAudioFileResponse
+                { FileName = "FM-12345_08-09-2020_0.mp4", SasTokenUri = "www.zara.com"  },
+                new CvpAudioFileResponse{ FileName = "FM-12345_08-09-2020_0.mp4", SasTokenUri = "www.zara.com"  },
+                new CvpAudioFileResponse{ FileName = "FM-12345_08-09-2020_0.mp4", SasTokenUri = "www.zara.com"  }
+                });
             }
             catch (VideoApiException ex)
             {
                 return StatusCode(ex.StatusCode, ex.Response);
             }
+        }
+
+        private string AppendToDate(int dateValue)
+        {
+            return dateValue > 9 ? dateValue.ToString() : $"0{dateValue}";
         }
     }
 }

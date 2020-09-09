@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BHClient, HearingsForAudioFileSearchResponse } from './clients/api-client';
+import { BHClient, HearingsForAudioFileSearchResponse, CvpAudioFileResponse } from './clients/api-client';
 import { Logger } from './logger';
 
 @Injectable({ providedIn: 'root' })
@@ -21,9 +21,9 @@ export class AudioLinkService {
         return response.audio_file_link;
     }
 
-    async getCvpAudioLink(cloudroomName: string, hearingDate: Date, caseReference: string = null): Promise<string> {
+    async getCvpAudioLink(cloudroomName: string, hearingDate: Date, caseReference: string = null): Promise<CvpAudioFileResponse[]> {
         const response = await this.bhClient.getCvpAudioRecordingLink(cloudroomName, hearingDate, caseReference).toPromise();
 
-        return response.audio_file_link;
+        return response;
     }
 }

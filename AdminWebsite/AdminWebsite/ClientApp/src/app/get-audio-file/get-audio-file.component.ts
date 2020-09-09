@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { HearingAudioSearchModel } from '../common/model/hearing-audio-search-model';
+import { CvpAudioSearchModel } from '../common/model/cvp-audio-search-model';
 import { AudioLinkService } from '../services/audio-link-service';
 
 @Component({
@@ -13,7 +14,7 @@ export class GetAudioFileComponent implements OnInit {
     hasSearched: boolean;
     hasCvpSearched: boolean;
     results: HearingAudioSearchModel[] = [];
-    cvpResults: string[] = [];
+    cvpResults: CvpAudioSearchModel[] = [];
 
     constructor(private fb: FormBuilder, private audioLinkService: AudioLinkService) {
         this.hasSearched = false;
@@ -95,11 +96,11 @@ export class GetAudioFileComponent implements OnInit {
         }
     }
 
-    searchCVP() {
+    async searchCVP() {
         if (!this.cvpRequestInvalid) {
             this.hasCvpSearched = false;
 
-            this.cvpResults = this.getCvpResults();
+            this.cvpResults = await this.getCvpResults();
 
             this.hasCvpSearched = true;
         }
@@ -117,11 +118,8 @@ export class GetAudioFileComponent implements OnInit {
         });
     }
 
-    getCvpResults() {
-        return [
-            'FM-0152-ZE186004C1_2020-08-04-09.30.12.316-UTC_0.mp4',
-            'FM-0152-ZE186004C1_2020-08-04-09.30.12.316-UTC_0.mp4',
-            'FM-0152-ZE186004C1_2020-08-04-09.30.12.316-UTC_0.mp4'
-        ];
+    async getCvpResults(): Promise<CvpAudioSearchModel[]> {
+        const response = await this.audioLinkService.getCvpAudioLink(this.cloudroomName.value, new Date(this.hearingDate.value), this.caseReference.value);
+        return response === null ? [] : response.map(x => new CvpAudioSearchModel(x));
     }
 }
