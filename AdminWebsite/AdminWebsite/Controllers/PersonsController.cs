@@ -81,7 +81,7 @@ namespace AdminWebsite.Controllers
         [SwaggerOperation(OperationId = "GetHearingsByUsernameForDeletion")]
         [ProducesResponseType(typeof(List<HearingsByUsernameForDeletionResponse>), (int) HttpStatusCode.OK)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
-        public async Task<ActionResult<List<HearingsByUsernameForDeletionResponse>>> GetHearingsByUsernameForDeletion([FromQuery] string username)
+        public async Task<ActionResult<List<HearingsByUsernameForDeletionResponse>>> GetHearingsByUsernameForDeletionAsync([FromQuery] string username)
         {
             try
             {
@@ -90,12 +90,15 @@ namespace AdminWebsite.Controllers
             }
             catch (BookingsApiException e)
             {
-                if (e.StatusCode == (int) HttpStatusCode.NotFound)
+                switch (e.StatusCode)
                 {
-                    return NotFound();
+                    case (int) HttpStatusCode.NotFound:
+                        return NotFound();
+                    case (int) HttpStatusCode.Unauthorized:
+                        return Unauthorized();
+                    default:
+                        throw;
                 }
-
-                throw;
             }
         }
 

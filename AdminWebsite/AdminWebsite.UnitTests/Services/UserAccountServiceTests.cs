@@ -1,3 +1,4 @@
+using System;
 using AdminWebsite.Configuration;
 using AdminWebsite.Helper;
 using AdminWebsite.Security;
@@ -12,6 +13,7 @@ using System.Net;
 using System.Threading.Tasks;
 using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.UnitTests.Helper;
+using UserServiceException = AdminWebsite.Security.UserServiceException;
 
 namespace AdminWebsite.UnitTests.Services
 {
@@ -133,7 +135,7 @@ namespace AdminWebsite.UnitTests.Services
         }
 
         [Test]
-        public void should_remove_user_in_ad_and_bookings_api()
+        public async Task should_remove_user_in_ad_and_bookings_api()
         {
             var username = "valid.user@test.com";
             _bookingsApiClient.Setup(x => x.GetHearingsByUsernameForDeletionAsync(username))
@@ -143,14 +145,14 @@ namespace AdminWebsite.UnitTests.Services
                 .Setup(x => x.GetUserByAdUserNameAsync(username))
                 .ReturnsAsync(new UserProfile { User_role = UserRoleType.Individual.ToString() });
 
-            _service.DeleteParticipantAccountAsync(username);
+            await _service.DeleteParticipantAccountAsync(username);
             
             _userApiClient.Verify(x => x.DeleteUserAsync(username), Times.Once);
             _bookingsApiClient.Verify(x => x.AnonymisePersonWithUsernameAsync(username), Times.Once);
         }
         
         [Test]
-        public void should_remove_user_in_ad_but_not_bookings_api()
+        public async Task should_remove_user_in_ad_but_not_bookings_api()
         {
             var username = "valid.user@test.com";
             _bookingsApiClient.Setup(x => x.GetHearingsByUsernameForDeletionAsync(It.IsAny<string>()))
@@ -160,14 +162,14 @@ namespace AdminWebsite.UnitTests.Services
                 .Setup(x => x.GetUserByAdUserNameAsync(username))
                 .ReturnsAsync(new UserProfile { User_role = UserRoleType.Individual.ToString() });
 
-            _service.DeleteParticipantAccountAsync(username);
+            await _service.DeleteParticipantAccountAsync(username);
             
             _userApiClient.Verify(x => x.DeleteUserAsync(username), Times.Once);
             _bookingsApiClient.Verify(x => x.AnonymisePersonWithUsernameAsync(username), Times.Never);
         }
         
         [Test]
-        public void should_remove_user_in_bookings_api_but_not_ad()
+        public async Task should_remove_user_in_bookings_api_but_not_ad()
         {
             var username = "valid.user@test.com";
             _bookingsApiClient.Setup(x => x.GetHearingsByUsernameForDeletionAsync(username))
@@ -177,10 +179,46 @@ namespace AdminWebsite.UnitTests.Services
                 .Setup(x => x.GetUserByAdUserNameAsync(username))
                 .ThrowsAsync(ClientException.ForUserService(HttpStatusCode.NotFound));
             
-            _service.DeleteParticipantAccountAsync(username);
+            await _service.DeleteParticipantAccountAsync(username);
             
             _userApiClient.Verify(x => x.DeleteUserAsync(username), Times.Never);
             _bookingsApiClient.Verify(x => x.AnonymisePersonWithUsernameAsync(username), Times.Once);
+        }
+
+        [Test]
+        public void should_fail_to_delete_judge_account()
+        {
+            var username = "valid.user@test.com";
+            _bookingsApiClient.Setup(x => x.GetHearingsByUsernameForDeletionAsync(username))
+                .ReturnsAsync(new List<HearingsByUsernameForDeletionResponse>());
+            
+            _userApiClient
+                .Setup(x => x.GetUserByAdUserNameAsync(username))
+                .ReturnsAsync(new UserProfile { User_role = UserRoleType.Judge.ToString() });
+
+            var exception = Assert.ThrowsAsync<UserServiceException>(() => _service.DeleteParticipantAccountAsync(username));
+            exception.Reason.Should().Be("Unable to delete account with role Judge");
+            
+            _userApiClient.Verify(x => x.DeleteUserAsync(username), Times.Never);
+            _bookingsApiClient.Verify(x => x.AnonymisePersonWithUsernameAsync(username), Times.Never);
+        }
+        
+        [Test]
+        public void should_fail_to_delete_admin()
+        {
+            var username = "valid.user@test.com";
+            _bookingsApiClient.Setup(x => x.GetHearingsByUsernameForDeletionAsync(username))
+                .ReturnsAsync(new List<HearingsByUsernameForDeletionResponse>());
+            
+            _userApiClient
+                .Setup(x => x.GetUserByAdUserNameAsync(username))
+                .ReturnsAsync(new UserProfile { User_role = UserRoleType.VhOfficer.ToString() });
+
+            var exception = Assert.ThrowsAsync<UserServiceException>(() => _service.DeleteParticipantAccountAsync(username));
+            exception.Reason.Should().Be("Unable to delete account with role VhOfficer");
+            
+            _userApiClient.Verify(x => x.DeleteUserAsync(username), Times.Never);
+            _bookingsApiClient.Verify(x => x.AnonymisePersonWithUsernameAsync(username), Times.Never);
         }
         
         [Test]
@@ -194,7 +232,7 @@ namespace AdminWebsite.UnitTests.Services
                 .Setup(x => x.GetUserByAdUserNameAsync(username))
                 .ThrowsAsync(ClientException.ForUserService(HttpStatusCode.InternalServerError));
             
-            _service.DeleteParticipantAccountAsync(username);
+            Assert.ThrowsAsync<UserAPI.Client.UserServiceException>(() => _service.DeleteParticipantAccountAsync(username));
             
             _userApiClient.Verify(x => x.DeleteUserAsync(username), Times.Never);
             _bookingsApiClient.Verify(x => x.AnonymisePersonWithUsernameAsync(username), Times.Never);
@@ -211,7 +249,7 @@ namespace AdminWebsite.UnitTests.Services
                 .Setup(x => x.GetUserByAdUserNameAsync(username))
                 .ReturnsAsync(new UserProfile { User_role = UserRoleType.Individual.ToString() });
             
-            _service.DeleteParticipantAccountAsync(username);
+            Assert.ThrowsAsync<BookingsApiException>(() => _service.DeleteParticipantAccountAsync(username));
             
             _userApiClient.Verify(x => x.DeleteUserAsync(username), Times.Once);
             _bookingsApiClient.Verify(x => x.AnonymisePersonWithUsernameAsync(username), Times.Never);

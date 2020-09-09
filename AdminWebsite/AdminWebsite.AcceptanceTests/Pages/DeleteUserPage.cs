@@ -10,5 +10,6 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public static By ResultsCaseNumber(Guid hearingId) => By.Id($"{hearingId}-case-number");
         public static By ResultsScheduledTime(Guid hearingId) => By.Id($"{hearingId}-scheduled-time");
         public static By ResultsCaseName(Guid hearingId) => By.Id($"{hearingId}-case-name");
+        public static By ResultsVenueName(Guid hearingId) => By.Id($"{hearingId}-venue");
     }
 }
