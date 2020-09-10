@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BHClient, HearingsForAudioFileSearchResponse, CvpAudioFileResponse } from './clients/api-client';
+import { BHClient, HearingsForAudioFileSearchResponse, CvpForAudioFileResponse } from './clients/api-client';
 import { Logger } from './logger';
 
 @Injectable({ providedIn: 'root' })
@@ -21,9 +21,21 @@ export class AudioLinkService {
         return response.audio_file_link;
     }
 
-    async getCvpAudioLink(cloudroomName: string, hearingDate: Date, caseReference: string = null): Promise<CvpAudioFileResponse[]> {
-        const response = await this.bhClient.getCvpAudioRecordingLink(cloudroomName, hearingDate, caseReference).toPromise();
+    async getCvpAudioLinkWithCaseReference(cloudroomName: string, date: string, caseReference: string): Promise<CvpForAudioFileResponse[]> {
+        try {
+            return await this.bhClient.getCvpAudioRecordingLinkWithCaseReference(cloudroomName, date, caseReference).toPromise();
+        } catch (error) {
+            this.logger.error(`Error retrieving cvp audio file link for: ${cloudroomName}, ${date}, ${caseReference}`, error);
+            return null;
+        }
+    }
 
-        return response;
+    async getCvpAudioLink(cloudroomName: string, date: string): Promise<CvpForAudioFileResponse[]> {
+        try {
+            return await this.bhClient.getCvpAudioRecordingLink(cloudroomName, date).toPromise();
+        } catch (error) {
+            this.logger.error(`Error retrieving cvp audio file link for: ${cloudroomName}, ${date}`, error);
+            return null;
+        }
     }
 }

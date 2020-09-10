@@ -22,7 +22,7 @@ export class GetAudioFileComponent implements OnInit {
     }
 
     async ngOnInit(): Promise<void> {
-        let hearingDateParsed = null;
+        const hearingDateParsed = null;
 
         this.form = this.fb.group({
             caseNumber: ['', Validators.required],
@@ -119,7 +119,13 @@ export class GetAudioFileComponent implements OnInit {
     }
 
     async getCvpResults(): Promise<CvpAudioSearchModel[]> {
-        const response = await this.audioLinkService.getCvpAudioLink(this.cloudroomName.value, new Date(this.hearingDate.value), this.caseReference.value);
+        const response = this.caseReference.value
+            ? await this.audioLinkService.getCvpAudioLinkWithCaseReference(
+                  this.cloudroomName.value,
+                  this.hearingDate.value,
+                  this.caseReference.value
+              )
+            : await this.audioLinkService.getCvpAudioLink(this.cloudroomName.value, this.hearingDate.value);
         return response === null ? [] : response.map(x => new CvpAudioSearchModel(x));
     }
 }

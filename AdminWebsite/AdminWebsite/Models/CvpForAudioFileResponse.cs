@@ -1,6 +1,6 @@
 ﻿namespace AdminWebsite.Models
 {
-    public class CvpAudioFileResponse
+    public class CvpForAudioFileResponse
     {
         public string FileName { get; set; }
 

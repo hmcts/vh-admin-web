@@ -10,8 +10,7 @@ import { ClipboardService } from 'ngx-clipboard';
 export class CvpAudioFileSearchResultComponent {
     @Input() results: CvpAudioSearchModel[];
 
-
-    constructor(private clipboardService: ClipboardService) { }
+    constructor(private clipboardService: ClipboardService) {}
 
     get hasResults() {
         return this.results && this.results.length > 0;
@@ -25,6 +24,8 @@ export class CvpAudioFileSearchResultComponent {
     }
 
     hideLinkCopiedMessage() {
-        this.results.forEach(x => { x.selected = false; })
+        this.results.forEach(x => {
+            x.selected = false;
+        });
     }
 }

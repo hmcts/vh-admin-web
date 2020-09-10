@@ -2,15 +2,21 @@ import { AudioLinkService } from '../services/audio-link-service';
 import { GetAudioFileComponent } from './get-audio-file.component';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HearingAudioSearchModel } from '../common/model/hearing-audio-search-model';
+import { CvpAudioSearchModel } from '../common/model/cvp-audio-search-model';
+import { CvpForAudioFileResponse } from '../services/clients/api-client';
 
 describe('GetAudioFileComponent', () => {
     let audioLinkService: jasmine.SpyObj<AudioLinkService>;
     let formBuilder: FormBuilder;
-    let form: FormGroup;
+    const form: FormGroup;
     let component: GetAudioFileComponent;
 
     beforeAll(async () => {
-        audioLinkService = jasmine.createSpyObj<AudioLinkService>('AudioLinkService', ['getHearingsByCaseNumber']);
+        audioLinkService = jasmine.createSpyObj<AudioLinkService>('AudioLinkService', [
+            'getHearingsByCaseNumber',
+            'getCvpAudioLinkWithCaseReference',
+            'getCvpAudioLink'
+        ]);
         formBuilder = new FormBuilder();
         component = new GetAudioFileComponent(formBuilder, audioLinkService);
         await component.ngOnInit();
@@ -74,13 +80,13 @@ describe('GetAudioFileComponent', () => {
         expect(component.searchChoice).toBe('vhFile');
     });
     it('should get the hearing date from the form', async () => {
-        let date = Date.now;
+        const date = Date.now;
         component.hearingDate.setValue(date);
         expect(component.hearingDate.value).toBe(date);
     });
     it('should validate hearing date as invalid', () => {
         const todayDate = new Date(new Date().setHours(0, 0, 0, 0));
-        let todayHours = new Date().getHours() + 1;
+        const todayHours = new Date().getHours() + 1;
         const date = todayDate.setHours(todayHours, 0, 0, 0);
 
         component.hearingDate.setValue(date);
@@ -90,14 +96,14 @@ describe('GetAudioFileComponent', () => {
     });
     it('should get valid hearing date', () => {
         const todayDate = new Date(new Date().setHours(0, 0, 0, 0));
-        let todayHours = new Date().getHours() - 1;
+        const todayHours = new Date().getHours() - 1;
         const date = todayDate.setHours(todayHours, 0, 0, 0);
         component.hearingDate.setValue(date);
         expect(component.hearingDateInvalid).toBeFalsy();
     });
     it('should validate cvp search parameters as valid', () => {
         const todayDate = new Date(new Date().setHours(0, 0, 0, 0));
-        let todayHours = new Date().getHours() - 1;
+        const todayHours = new Date().getHours() - 1;
         const date = todayDate.setHours(todayHours, 0, 0, 0);
 
         component.hearingDate.setValue(date);
@@ -108,7 +114,7 @@ describe('GetAudioFileComponent', () => {
     });
     it('should validate cvp search parameters as invalid', () => {
         const todayDate = new Date(new Date().setHours(0, 0, 0, 0));
-        let todayHours = new Date().getHours() + 1;
+        const todayHours = new Date().getHours() + 1;
         const date = todayDate.setHours(todayHours, 0, 0, 0);
 
         component.hearingDate.setValue(date);
@@ -137,5 +143,61 @@ describe('GetAudioFileComponent', () => {
         expect(component.hasCvpSearched).toBe(false);
         expect(component.cvpResults.length).toBe(0);
         expect(component.results.length).toBe(0);
+    });
+    it('should keep the results as empty when cvp audio files not found and service returns null', async () => {
+        audioLinkService.getCvpAudioLink.and.returnValue(Promise.resolve(null));
+
+        component.caseReference.setValue('');
+        component.cloudroomName.setValue('cloudroom1');
+        component.hearingDate.setValue('2020-08-04');
+        await component.searchCVP();
+
+        expect(component.cvpResults).toEqual([]);
+        expect(component.hasCvpSearched).toBeTruthy();
+        expect(audioLinkService.getCvpAudioLink).toHaveBeenCalled();
+    });
+    it('should keep the results as empty when cvp audio files with case reference not found and service returns null', async () => {
+        audioLinkService.getCvpAudioLinkWithCaseReference.and.returnValue(Promise.resolve(null));
+
+        component.caseReference.setValue('123');
+        component.cloudroomName.setValue('cloudroom1');
+        component.hearingDate.setValue('2020-08-04');
+        await component.searchCVP();
+
+        expect(component.cvpResults).toEqual([]);
+        expect(component.hasCvpSearched).toBeTruthy();
+        expect(audioLinkService.getCvpAudioLinkWithCaseReference).toHaveBeenCalled();
+    });
+    it('should get the results when cvp audio files are found and service returns result', async () => {
+        const result = [
+            new CvpAudioSearchModel(new CvpForAudioFileResponse({ file_name: 'FM-12345-2020-08-09_0.mp4', sas_token_uri: 'goto.audio' })),
+            new CvpAudioSearchModel(new CvpForAudioFileResponse({ file_name: 'FM-12345-2020-08-09_0.mp4', sas_token_uri: 'goto.audio' }))
+        ];
+        audioLinkService.getCvpAudioLink.and.returnValue(Promise.resolve(result));
+
+        component.caseReference.setValue('');
+        component.cloudroomName.setValue('cloudroom1');
+        component.hearingDate.setValue('2020-08-04');
+        await component.searchCVP();
+
+        expect(component.cvpResults.length).toBe(2);
+        expect(component.hasCvpSearched).toBeTruthy();
+        expect(audioLinkService.getCvpAudioLink).toHaveBeenCalled();
+    });
+    it('should get the results when cvp audio files with case reference are found and service returns result', async () => {
+        const result = [
+            new CvpAudioSearchModel(new CvpForAudioFileResponse({ file_name: 'FM-12345-2020-08-09_0.mp4', sas_token_uri: 'goto.audio' })),
+            new CvpAudioSearchModel(new CvpForAudioFileResponse({ file_name: 'FM-12345-2020-08-09_0.mp4', sas_token_uri: 'goto.audio' }))
+        ];
+        audioLinkService.getCvpAudioLinkWithCaseReference.and.returnValue(Promise.resolve(result));
+
+        component.caseReference.setValue('123');
+        component.cloudroomName.setValue('cloudroom1');
+        component.hearingDate.setValue('2020-08-04');
+        await component.searchCVP();
+
+        expect(component.cvpResults.length).toBe(2);
+        expect(component.hasCvpSearched).toBeTruthy();
+        expect(audioLinkService.getCvpAudioLinkWithCaseReference).toHaveBeenCalled();
     });
 });

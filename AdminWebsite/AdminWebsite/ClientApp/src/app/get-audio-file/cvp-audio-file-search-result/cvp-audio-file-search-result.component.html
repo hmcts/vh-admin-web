@@ -16,13 +16,17 @@
         </div>
         <div class="govuk-grid-column-one-quarter vh-pl0 vh-btn">
             <div class="button-div">
-                <button id="copyLinkButton" class="govuk-button govuk-!-margin-left-2 standard-width-button" data-module="govuk-button"
-                        (click)="onCopyLinkClick(i)">
+                <button
+                    id="copyLinkButton"
+                    class="govuk-button govuk-!-margin-left-2 standard-width-button"
+                    data-module="govuk-button"
+                    (click)="onCopyLinkClick(i)"
+                >
                     Copy link
                 </button>
             </div>
             <div *ngIf="result.selected" (click)="hideLinkCopiedMessage()" id="linkCopied" class="linkCopiedMessage vh-blue">
-                <img src="assets/images/audio_file.png" alt="success" class="vh-m5">
+                <img src="assets/images/audio_file.png" alt="success" class="vh-m5" />
                 &nbsp;
                 <label>Audio file link copied to clipboard (valid for 3 days)</label>
             </div>
