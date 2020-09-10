@@ -81,11 +81,16 @@
 <div *ngIf="hearing?.Endpoints && hearing?.Endpoints.length > 0">
   <h2 class="govuk-heading-s remove-header-padding">Video access points</h2>
   <div class="govuk-form-group vhtable">
-    <div *ngFor="let endpoint of hearing?.Endpoints; let i = index" id="{{endpoint}}+i"
-      class="govuk-body vh-text-break vh-remove-padding">
+    <div *ngFor="let endpoint of hearing?.Endpoints; let i = index" id="displayNameRow{{+i}}"
+      class="govuk-body vh-text-break">
       <div class="govuk-grid-row">
-        <div class="govuk-grid-column-one-half" id="displayName{{+i}}">
+        <div class="govuk-grid-column-full" id="displayName{{+i}}">
           {{ endpoint.displayName }}
+        </div>
+      </div>
+      <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full" id="sip{{+i}}">
+          <app-copy-sip [endpoint]="endpoint"></app-copy-sip>
         </div>
       </div>
     </div>

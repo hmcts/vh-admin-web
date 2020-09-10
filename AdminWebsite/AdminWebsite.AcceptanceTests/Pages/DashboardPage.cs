@@ -4,9 +4,10 @@ namespace AdminWebsite.AcceptanceTests.Pages
 {
     public static class DashboardPage
     {
-        public static By BookVideoHearingPanel = By.Id("vhpanel-green");
-        public static By QuestionnaireResultsPanel = By.Id("vhpanel-blue");
-        public static By GetAudioFilePanel = By.Id("vhpanel-lightblue");
-        public static By ChangePasswordPanel = By.Id("vhpanel-darkgrey");
+        public static By BookVideoHearingPanel = By.Id("bookHearingBtn");
+        public static By QuestionnaireResultsPanel = By.Id("questionnaireResultsBtn");
+        public static By GetAudioFilePanel = By.Id("getAudioLinkBtn");
+        public static By ChangePasswordPanel = By.Id("changePasswordBtn");
+        public static By DeleteUserPanel = By.Id("deleteUserBtn");
     }
 }

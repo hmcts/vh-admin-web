@@ -1,0 +1,61 @@
+<h2 class="govuk-heading-m">Results</h2>
+
+<div *ngIf="existsWithoutHearings">
+    <ng-container *ngIf="accountDeleted">
+        <div class="govuk-!-margin-bottom-3">
+            <p class="govuk-phase-banner__content">
+                <strong class="govuk-tag govuk-tag--red govuk-phase-banner__content__tag"> USER ACCOUNT DELETED </strong>
+            </p>
+        </div>
+    </ng-container>
+    <h3 class="govuk-heading-s govuk-!-width-one-half">This user account has no hearings.</h3>
+    <ng-container *ngIf="!accountDeleted">
+        <button class="govuk-button govuk-button--warning" (click)="displayConfirmDeleteDialog()" data-module="govuk-button">
+            Delete this user account
+        </button>
+        <span class="govuk-caption-m"
+            >This will remove the user account from the database and can no longer be used to sign in to the video web hearings
+            service.</span
+        >
+    </ng-container>
+</div>
+
+<app-confirm-delete-popup *ngIf="displayConfirmPopup" (deletionAnswer)="onDeletionAnswer($event)"></app-confirm-delete-popup>
+
+<div *ngIf="userNotFound">
+    <div class="govuk-warning-text">
+        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+        <strong class="govuk-warning-text__text">
+            <span class="govuk-warning-text__assistive">Warning</span>
+            Sorry, we can't find a user with that name.
+        </strong>
+    </div>
+</div>
+
+<div *ngIf="existsWithHearings">
+    <div class="govuk-warning-text">
+        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+        <strong class="govuk-warning-text__text">
+            <span class="govuk-warning-text__assistive">Warning</span>
+            You'll need to manually remove this participant from each hearing listed below. Any new or replacement participants must also be
+            added to these hearings manually.
+        </strong>
+    </div>
+    <div *ngFor="let result of results" class="govuk-grid-row">
+        <div id="{{ result.hearingId }}-case-number" class="govuk-grid-column-one-quarter">
+            <a href="javascript:void(0)" (click)="editHearing(result.hearingId)" class="govuk-link govuk-link--no-visited-state">{{
+                result.caseNumber
+            }}</a>
+        </div>
+        <div id="{{ result.hearingId }}-scheduled-time" class="govuk-grid-column-one-quarter">
+            {{ result.scheduledDateTime | date: 'dd MMMM yyyy, hh:mm' }}
+        </div>
+        <div id="{{ result.hearingId }}-case-name" class="govuk-grid-column-one-quarter">
+            {{ result.caseName }}
+        </div>
+        <div id="{{ result.hearingId }}-venue" class="govuk-grid-column-one-quarter">
+            {{ result.hearingVenueName }}
+        </div>
+        <hr class="margin-bottom-22 clear-both" />
+    </div>
+</div>

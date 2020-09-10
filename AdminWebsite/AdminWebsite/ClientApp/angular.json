@@ -125,5 +125,8 @@
       }
     }
   },
-  "defaultProject": "AdminWebsite"
+  "defaultProject": "AdminWebsite",
+  "cli": {
+    "analytics": "a4fce46a-39b8-4b94-a0be-6e6dd4751653"
+  }
 }

@@ -35,19 +35,29 @@ namespace AdminWebsite.Services
         /// <param name="userName"></param>
         /// <returns></returns>
         Task UpdateParticipantPassword(string userName);
+
+        /// <summary>
+        /// Delete a user account in AD, then anonymise the person in Bookings API
+        /// </summary>
+        /// <param name="username"></param>
+        /// <returns></returns>
+        Task DeleteParticipantAccountAsync(string username);
     }
 
     public class UserAccountService : IUserAccountService
     {
         private readonly IUserApiClient _userApiClient;
+        private readonly IBookingsApiClient _bookingsApiClient;
 
         /// <summary>
         /// Create the service
         /// </summary>
         /// <param name="userApiClient"></param>
-        public UserAccountService(IUserApiClient userApiClient)
+        /// <param name="bookingsApiClient"></param>
+        public UserAccountService(IUserApiClient userApiClient, IBookingsApiClient bookingsApiClient)
         {
             _userApiClient = userApiClient;
+            _bookingsApiClient = bookingsApiClient;
         }
 
         /// <inheritdoc />
@@ -153,6 +163,63 @@ namespace AdminWebsite.Services
             if (userProfile != null)
             {
                 await _userApiClient.UpdateUserAsync(userName);
+            }
+        }
+
+        public async Task DeleteParticipantAccountAsync(string username)
+        {
+            if (await CheckUsernameExistsInAdAsync(username))
+            {
+               await _userApiClient.DeleteUserAsync(username);
+            }
+            
+            if (await CheckPersonExistsInBookingsAsync(username))
+            {
+                await _bookingsApiClient.AnonymisePersonWithUsernameAsync(username);
+            }
+        }
+        
+        private async Task<bool> CheckUsernameExistsInAdAsync(string username)
+        {
+            try
+            {
+                var person = await _userApiClient.GetUserByAdUserNameAsync(username);
+                Enum.TryParse<UserRoleType>(person.User_role, out var userRoleResult);
+                if (userRoleResult == UserRoleType.Judge || userRoleResult == UserRoleType.VhOfficer)
+                {
+                    throw new Security.UserServiceException()
+                    {
+                        Reason = $"Unable to delete account with role {userRoleResult}"
+                    };
+                }
+                return true;
+            }
+            catch (UserAPI.Client.UserServiceException e)
+            {
+                if (e.StatusCode == (int)HttpStatusCode.NotFound)
+                {
+                    return false;
+                }
+
+                throw;
+            }
+        }
+        
+        private async Task<bool> CheckPersonExistsInBookingsAsync(string username)
+        {
+            try
+            {
+                await _bookingsApiClient.GetHearingsByUsernameForDeletionAsync(username);
+                return true;
+            }
+            catch (BookingsApiException e)
+            {
+                if (e.StatusCode == (int)HttpStatusCode.NotFound)
+                {
+                    return false;
+                }
+
+                throw;
             }
         }
     }

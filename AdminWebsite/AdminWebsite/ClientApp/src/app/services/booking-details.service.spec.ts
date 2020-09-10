@@ -124,6 +124,8 @@ describe('booking details service', () => {
     const model = service.mapBookingEndpoints(hearingResponse);
     expect(model).toBeTruthy();
     expect(model[0].displayName).toBe('test endpoint 1');
+    expect(model[0].pin).toBe('2323');
+    expect(model[0].sip).toBe('2213');
   });
 });
 
