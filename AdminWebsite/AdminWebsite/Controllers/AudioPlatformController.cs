@@ -1,14 +1,14 @@
-﻿using System;
-using System.Net;
-using System.Threading.Tasks;
-using AdminWebsite.VideoAPI.Client;
+﻿using AdminWebsite.VideoAPI.Client;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
-using HearingAudioRecordingResponse = AdminWebsite.Models.HearingAudioRecordingResponse;
-using CvpForAudioFileResponse = AdminWebsite.Models.CvpForAudioFileResponse;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
+using CvpForAudioFileResponse = AdminWebsite.Models.CvpForAudioFileResponse;
+using HearingAudioRecordingResponse = AdminWebsite.Models.HearingAudioRecordingResponse;
 
 namespace AdminWebsite.Controllers
 {
