@@ -1,0 +1,36 @@
+<h2 class="govuk-heading-m">Results</h2>
+<div *ngIf="!hasResults">
+    <p class="govuk-body govuk-!-width-one-half">
+        There is no CVP audio files for this cloudroom name and date.
+    </p>
+</div>
+
+<div *ngIf="hasResults">
+    <div class="govuk-grid-column-three-quarters vh-pl0">
+        <span class="govuk-heading-s">File</span>
+    </div>
+    <hr class="margin-bottom-22 clear-both" />
+    <div *ngFor="let result of results; let i = index" class="govuk-grid-row">
+        <div id="cvp-audio-file-{{ i }}" class="govuk-grid-column-three-quarters">
+            {{ result.fileName }}
+        </div>
+        <div class="govuk-grid-column-one-quarter vh-pl0 vh-btn">
+            <div class="button-div">
+                <button
+                    id="copyLinkButton"
+                    class="govuk-button govuk-!-margin-left-2 standard-width-button"
+                    data-module="govuk-button"
+                    (click)="onCopyLinkClick(i)"
+                >
+                    Copy link
+                </button>
+            </div>
+            <div *ngIf="result.selected" (click)="hideLinkCopiedMessage()" id="linkCopied" class="linkCopiedMessage vh-blue">
+                <img src="assets/images/audio_file.png" alt="success" class="vh-m5" />
+                &nbsp;
+                <label>Audio file link copied to clipboard (valid for 3 days)</label>
+            </div>
+        </div>
+        <hr class="margin-bottom-22 clear-both" />
+    </div>
+</div>
