@@ -8,7 +8,6 @@ import { CvpForAudioFileResponse } from '../services/clients/api-client';
 describe('GetAudioFileComponent', () => {
     let audioLinkService: jasmine.SpyObj<AudioLinkService>;
     let formBuilder: FormBuilder;
-    const form: FormGroup;
     let component: GetAudioFileComponent;
 
     beforeAll(async () => {
