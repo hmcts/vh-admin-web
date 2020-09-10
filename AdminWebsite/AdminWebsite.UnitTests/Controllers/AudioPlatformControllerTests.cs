@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using AdminWebsite.Controllers;
 using AdminWebsite.Models;
@@ -17,14 +18,14 @@ namespace AdminWebsite.UnitTests.Controllers
         private readonly Mock<IVideoApiClient> _videoApiClientMock;
 
         private readonly AudioPlatformController _controller;
-        
+
         public AudioPlatformControllerTests()
         {
             _videoApiClientMock = new Mock<IVideoApiClient>();
 
-            _controller = new AudioPlatformController(_videoApiClientMock.Object, new Mock<ILogger<AudioPlatformController>>().Object);    
+            _controller = new AudioPlatformController(_videoApiClientMock.Object, new Mock<ILogger<AudioPlatformController>>().Object);
         }
-        
+
         [Test]
         public async Task Should_return_ok()
         {
@@ -34,7 +35,7 @@ namespace AdminWebsite.UnitTests.Controllers
             };
 
             _videoApiClientMock.Setup(x => x.GetAudioRecordingLinkAsync(It.IsAny<Guid>())).ReturnsAsync(audioResponse);
-            
+
             var result = await _controller.GetAudioRecordingLinkAsync(It.IsAny<Guid>());
 
             var actionResult = result as OkObjectResult;
@@ -45,15 +46,88 @@ namespace AdminWebsite.UnitTests.Controllers
                 .And.Subject.As<HearingAudioRecordingResponse>().AudioFileLink.Should().NotBeNullOrEmpty()
                 .And.Subject.Should().Be(audioResponse.Audio_file_link);
         }
-        
+
         [Test]
         public async Task Should_return_not_found()
         {
             _videoApiClientMock
                 .Setup(x => x.GetAudioRecordingLinkAsync(It.IsAny<Guid>()))
                 .ThrowsAsync(new VideoApiException("not found", StatusCodes.Status404NotFound, "", null, null));
-            
+
             var result = await _controller.GetAudioRecordingLinkAsync(It.IsAny<Guid>());
+
+            var actionResult = result as ObjectResult;
+            actionResult.Should().NotBeNull();
+            actionResult.StatusCode.Should().Be(404);
+        }
+
+        [Test]
+        public async Task Should_get_cvp_audio_file_for_cloudroom_and_date_return_ok()
+        {
+            var audioResponse = new List<CvpAudioFileResponse>{ new CvpAudioFileResponse
+            {
+                File_name = "someFile",
+                Sas_token_url = "someLink"
+            } };
+
+            _videoApiClientMock.Setup(x => x.GetAudioRecordingLinkCvpAsync(It.IsAny<string>(), It.IsAny<string>()))
+            .ReturnsAsync(audioResponse);
+
+            var result = await _controller.GetCvpAudioRecordingLinkAsync(It.IsAny<string>(), It.IsAny<string>());
+
+            var actionResult = result as OkObjectResult;
+            actionResult.Should().NotBeNull();
+            actionResult.StatusCode.Should().Be(200);
+            var item = actionResult.Value.As<List<CvpForAudioFileResponse>>();
+            item.Should().NotBeNull()
+                .And.Subject.As<List<CvpForAudioFileResponse>>().Count.Should().Be(1);
+            item[0].FileName.Should().Be("someFile");
+            item[0].SasTokenUri.Should().Be("someLink");
+        }
+
+        [Test]
+        public async Task Should_get_cvp_audio_file_for_cloudroom_and_date_and_caseReference_return_ok()
+        {
+            var audioResponse = new List<CvpAudioFileResponse>{ new CvpAudioFileResponse
+            {
+                File_name = "someFile",
+                Sas_token_url = "someLink"
+            } };
+
+            _videoApiClientMock.Setup(x => x.GetAudioRecordingLinkCvpWithCaseReferenceAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+            .ReturnsAsync(audioResponse);
+
+            var result = await _controller.GetCvpAudioRecordingLinkWithCaseReferenceAsync(It.IsAny<string>(), It.IsAny<string>(), "case ref");
+
+            var actionResult = result as OkObjectResult;
+            actionResult.Should().NotBeNull();
+            actionResult.StatusCode.Should().Be(200);
+            var item = actionResult.Value.As<List<CvpForAudioFileResponse>>();
+            item.Should().NotBeNull()
+                .And.Subject.As<List<CvpForAudioFileResponse>>().Count.Should().Be(1);
+            item[0].FileName.Should().Be("someFile");
+            item[0].SasTokenUri.Should().Be("someLink");
+        }
+
+        [Test]
+        public async Task Should_return_bad_request_for_cvp_audio_file()
+        {
+            _videoApiClientMock.Setup(x => x.GetAudioRecordingLinkCvpAsync(It.IsAny<string>(), It.IsAny<string>()))
+                .ThrowsAsync(new VideoApiException("not found request", StatusCodes.Status404NotFound, "", null, null));
+
+            var result = await _controller.GetCvpAudioRecordingLinkAsync(It.IsAny<string>(), It.IsAny<string>());
+
+            var actionResult = result as ObjectResult;
+            actionResult.Should().NotBeNull();
+            actionResult.StatusCode.Should().Be(404);
+        }
+        [Test]
+        public async Task Should_return_bad_request_for_cvp_audio_file_with_case_reference()
+        {
+            _videoApiClientMock.Setup(x => x.GetAudioRecordingLinkCvpWithCaseReferenceAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+                .ThrowsAsync(new VideoApiException("not found request", StatusCodes.Status404NotFound, "", null, null));
+
+            var result = await _controller.GetCvpAudioRecordingLinkWithCaseReferenceAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>());
 
             var actionResult = result as ObjectResult;
             actionResult.Should().NotBeNull();
