@@ -67,8 +67,8 @@ describe('GetAudioFileComponent', () => {
         expect(component.hasSearched).toBeTruthy();
     });
     it('should get the cloudroom name from the form', async () => {
-        component.cloudroomName.setValue('cloudroom1');
-        expect(component.cloudroomName.value).toBe('cloudroom1');
+        component.cloudroomName.setValue('000101');
+        expect(component.cloudroomName.value).toBe('000101');
     });
     it('should get the case reference from the form', async () => {
         component.caseReference.setValue('reference1');
@@ -106,7 +106,7 @@ describe('GetAudioFileComponent', () => {
         const date = todayDate.setHours(todayHours, 0, 0, 0);
 
         component.hearingDate.setValue(date);
-        component.cloudroomName.setValue('cloudroom1');
+        component.cloudroomName.setValue('000101');
         component.hearingDate.markAsTouched();
 
         expect(component.cvpRequestInvalid).toBeFalsy();
@@ -127,8 +127,14 @@ describe('GetAudioFileComponent', () => {
 
         expect(component.cloudroomNameInvalid).toBeTruthy();
     });
+    it('should validate cloudroom name as invalid if not numeric', () => {
+        component.cloudroomName.setValue('cloudroom1111');
+        component.cloudroomName.markAsTouched();
+
+        expect(component.cloudroomNameInvalid).toBeTruthy();
+    });
     it('should validate cloudroom name as valid', () => {
-        component.cloudroomName.setValue('cloud1');
+        component.cloudroomName.setValue('1231');
         component.cloudroomName.markAsTouched();
 
         expect(component.cloudroomNameInvalid).toBeFalsy();
@@ -147,7 +153,7 @@ describe('GetAudioFileComponent', () => {
         audioLinkService.getCvpAudioLink.and.returnValue(Promise.resolve(null));
 
         component.caseReference.setValue('');
-        component.cloudroomName.setValue('cloudroom1');
+        component.cloudroomName.setValue('000101');
         component.hearingDate.setValue('2020-08-04');
         await component.searchCVP();
 
@@ -159,7 +165,7 @@ describe('GetAudioFileComponent', () => {
         audioLinkService.getCvpAudioLinkWithCaseReference.and.returnValue(Promise.resolve(null));
 
         component.caseReference.setValue('123');
-        component.cloudroomName.setValue('cloudroom1');
+        component.cloudroomName.setValue('000101');
         component.hearingDate.setValue('2020-08-04');
         await component.searchCVP();
 
@@ -175,7 +181,7 @@ describe('GetAudioFileComponent', () => {
         audioLinkService.getCvpAudioLink.and.returnValue(Promise.resolve(result));
 
         component.caseReference.setValue('');
-        component.cloudroomName.setValue('cloudroom1');
+        component.cloudroomName.setValue('000101');
         component.hearingDate.setValue('2020-08-04');
         await component.searchCVP();
 
@@ -191,7 +197,7 @@ describe('GetAudioFileComponent', () => {
         audioLinkService.getCvpAudioLinkWithCaseReference.and.returnValue(Promise.resolve(result));
 
         component.caseReference.setValue('123');
-        component.cloudroomName.setValue('cloudroom1');
+        component.cloudroomName.setValue('000101');
         component.hearingDate.setValue('2020-08-04');
         await component.searchCVP();
 
