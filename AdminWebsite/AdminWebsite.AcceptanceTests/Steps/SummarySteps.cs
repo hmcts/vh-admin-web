@@ -219,7 +219,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             foreach (var participant in _c.Test.HearingParticipants.Where(participant => participant.DisplayName.Contains(_c.Test.TestData.AddParticipant.Participant.NewUserPrefix)))
             {
-                _c.Api.PollForParticipantExistsInAD(participant.AlternativeEmail, TIMEOUT);
+                _c.Api.PollForParticipantExistsInAD(participant.Username, TIMEOUT);
             }
             _c.Test.SubmittedAndCreatedNewAadUsers = true;
         }

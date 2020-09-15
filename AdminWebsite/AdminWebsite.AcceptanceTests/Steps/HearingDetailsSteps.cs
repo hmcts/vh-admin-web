@@ -34,6 +34,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void ProgressToNextPage()
         {
             SetHearingDetails();
+            SetCaseType();
             SetHearingType();
             _c.Test.HearingDetails.DoNotSendQuestionnaires = _c.Test.TestData.HearingDetails.DoNotSendQuestionnaires;
             SendQuestionnaires();
@@ -44,6 +45,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void WhenTheUserSelectsToSendTheQuestionnaires()
         {
             SetHearingDetails();
+            SetCaseType();
             SetHearingType();
             _c.Test.HearingDetails.DoNotSendQuestionnaires = false;
             SendQuestionnaires();
@@ -71,13 +73,19 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _browsers[_c.CurrentUser].Driver.WaitUntilTextPresent(HearingDetailsPage.CaseNameTextfield, _c.Test.HearingDetails.CaseName);
         }
 
+        public void SetCaseType(CaseType caseType = null)
+        {
+            caseType ??= CaseType.FromString(_c.Test.TestData.HearingDetails.CaseType);
+
+            _c.Test.HearingDetails.CaseType = CaseType.FromString(_c.Test.TestData.HearingDetails.CaseType);
+            _commonSharedSteps.WhenTheUserSelectsTheOptionFromTheDropdown(_browsers[_c.CurrentUser].Driver, HearingDetailsPage.CaseTypeDropdown, CaseType.ToString(caseType));
+        }
+
         public void SetHearingType(HearingType hearingType = null)
         {
-            if (hearingType == null)
-                hearingType = HearingType.FromString(_c.Test.TestData.HearingDetails.HearingType);
+            hearingType ??= HearingType.FromString(_c.Test.TestData.HearingDetails.HearingType);
 
             _c.Test.HearingDetails.HearingType = hearingType;
-            _c.Test.HearingDetails.CaseType = CaseType.FromString(_c.Test.TestData.HearingDetails.CaseType);
             _commonSharedSteps.WhenTheUserSelectsTheOptionFromTheDropdown(_browsers[_c.CurrentUser].Driver, HearingDetailsPage.HearingTypeDropdown, HearingType.ToString(hearingType));
         }
 

@@ -111,8 +111,8 @@ namespace AdminWebsite.AcceptanceTests.Data
             actual.ToShortDateString().Should().Be(expected.ToShortDateString());
             actual.ToShortTimeString().Should().BeOneOf(
                 expected.AddMinutes(-3).ToShortTimeString(),
-                                 expected.AddMinutes(-2).ToShortTimeString(), 
-                                 expected.AddMinutes(-1).ToShortTimeString(), 
+                                 expected.AddMinutes(-2).ToShortTimeString(),
+                                 expected.AddMinutes(-1).ToShortTimeString(),
                                  expected.ToShortTimeString());
         }
     }

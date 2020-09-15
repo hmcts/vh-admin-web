@@ -67,6 +67,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             var rep = UserToUserAccountMapper.Map(repUser);
             rep.CaseRoleName = Party.Claimant.Name;
             rep.HearingRoleName = PartyRole.Representative.Name;
+            rep.Representee = _c.Users.First(x => x.User_type == UserType.Individual).Display_name;
             _c.Test.HearingParticipants.Add(rep);
             SetParty(rep.CaseRoleName);
             SetRole(rep.HearingRoleName);

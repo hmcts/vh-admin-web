@@ -73,13 +73,13 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             StartTheHearing(); 
             CloseTheConference();
 
-            var file = FileManager.CreateNewAudioFile("TestAudioFile.mp4", _c.Test.HearingResponse.Id);
+            var file = FileManager.CreateNewAudioFile("TestAudioFile.mp4", _c.Test.HearingResponse.Id.ToString());
 
             _c.AzureStorage = new AzureStorageManager()
                 .SetStorageAccountName(_c.WebConfig.Wowza.StorageAccountName)
                 .SetStorageAccountKey(_c.WebConfig.Wowza.StorageAccountKey)
                 .SetStorageContainerName(_c.WebConfig.Wowza.StorageContainerName)
-                .CreateBlobClient(_c.Test.HearingResponse.Id);
+                .CreateBlobClient(_c.Test.HearingResponse.Id.ToString());
 
             await _c.AzureStorage.UploadAudioFileToStorage(file);
             FileManager.RemoveLocalAudioFile(file);
@@ -90,7 +90,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             var exist = false;
 
             foreach (var response in from user in _c.Users where user.User_type != UserType.CaseAdmin && user.User_type != UserType.VideoHearingsOfficer 
-                select _c.Api.GetUserByUserPrincipalName(user.Username))
+                select _c.Api.GetPersonByUsername(user.Username))
             {
                 exist = response.StatusCode == HttpStatusCode.OK;
             }
