@@ -115,7 +115,7 @@ namespace AdminWebsite.BookingsAPI.Client
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task RemoveEndPointFromHearingAsync(System.Guid hearingId, System.Guid endpointId, System.Threading.CancellationToken cancellationToken);
     
-        /// <summary>Update display name of an endpoint of a given hearing</summary>
+        /// <summary>Update an endpoint of a given hearing</summary>
         /// <param name="hearingId">The hearing id</param>
         /// <param name="endpointId">The endpoint id</param>
         /// <param name="body">Details of the endpoint to be updated</param>
@@ -123,7 +123,7 @@ namespace AdminWebsite.BookingsAPI.Client
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task UpdateDisplayNameForEndpointAsync(System.Guid hearingId, System.Guid endpointId, UpdateEndpointRequest body);
     
-        /// <summary>Update display name of an endpoint of a given hearing</summary>
+        /// <summary>Update an endpoint of a given hearing</summary>
         /// <param name="hearingId">The hearing id</param>
         /// <param name="endpointId">The endpoint id</param>
         /// <param name="body">Details of the endpoint to be updated</param>
@@ -132,7 +132,7 @@ namespace AdminWebsite.BookingsAPI.Client
         void UpdateDisplayNameForEndpoint(System.Guid hearingId, System.Guid endpointId, UpdateEndpointRequest body);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Update display name of an endpoint of a given hearing</summary>
+        /// <summary>Update an endpoint of a given hearing</summary>
         /// <param name="hearingId">The hearing id</param>
         /// <param name="endpointId">The endpoint id</param>
         /// <param name="body">Details of the endpoint to be updated</param>
@@ -1229,7 +1229,7 @@ namespace AdminWebsite.BookingsAPI.Client
             }
         }
     
-        /// <summary>Update display name of an endpoint of a given hearing</summary>
+        /// <summary>Update an endpoint of a given hearing</summary>
         /// <param name="hearingId">The hearing id</param>
         /// <param name="endpointId">The endpoint id</param>
         /// <param name="body">Details of the endpoint to be updated</param>
@@ -1240,7 +1240,7 @@ namespace AdminWebsite.BookingsAPI.Client
             return UpdateDisplayNameForEndpointAsync(hearingId, endpointId, body, System.Threading.CancellationToken.None);
         }
     
-        /// <summary>Update display name of an endpoint of a given hearing</summary>
+        /// <summary>Update an endpoint of a given hearing</summary>
         /// <param name="hearingId">The hearing id</param>
         /// <param name="endpointId">The endpoint id</param>
         /// <param name="body">Details of the endpoint to be updated</param>
@@ -1252,7 +1252,7 @@ namespace AdminWebsite.BookingsAPI.Client
         }
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Update display name of an endpoint of a given hearing</summary>
+        /// <summary>Update an endpoint of a given hearing</summary>
         /// <param name="hearingId">The hearing id</param>
         /// <param name="endpointId">The endpoint id</param>
         /// <param name="body">Details of the endpoint to be updated</param>
@@ -1267,7 +1267,7 @@ namespace AdminWebsite.BookingsAPI.Client
                 throw new System.ArgumentNullException("endpointId");
     
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/hearings/{hearingId}/endpoints/{endpointId}/displayName");
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/hearings/{hearingId}/endpoints/{endpointId}");
             urlBuilder_.Replace("{hearingId}", System.Uri.EscapeDataString(ConvertToString(hearingId, System.Globalization.CultureInfo.InvariantCulture)));
             urlBuilder_.Replace("{endpointId}", System.Uri.EscapeDataString(ConvertToString(endpointId, System.Globalization.CultureInfo.InvariantCulture)));
     
@@ -4460,6 +4460,9 @@ namespace AdminWebsite.BookingsAPI.Client
         [Newtonsoft.Json.JsonProperty("display_name", Required = Newtonsoft.Json.Required.AllowNull)]
         public string Display_name { get; set; }
     
+        [Newtonsoft.Json.JsonProperty("defence_advocate_username", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Defence_advocate_username { get; set; }
+    
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
     
         [Newtonsoft.Json.JsonExtensionData]
@@ -4477,6 +4480,9 @@ namespace AdminWebsite.BookingsAPI.Client
     {
         [Newtonsoft.Json.JsonProperty("display_name", Required = Newtonsoft.Json.Required.AllowNull)]
         public string Display_name { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("defence_advocate_username", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Defence_advocate_username { get; set; }
     
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
     
@@ -4843,6 +4849,9 @@ namespace AdminWebsite.BookingsAPI.Client
         [Newtonsoft.Json.JsonProperty("pin", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Pin { get; set; }
     
+        [Newtonsoft.Json.JsonProperty("defence_advocate_id", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid? Defence_advocate_id { get; set; }
+    
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
     
         [Newtonsoft.Json.JsonExtensionData]
@@ -5079,6 +5088,9 @@ namespace AdminWebsite.BookingsAPI.Client
     {
         [Newtonsoft.Json.JsonProperty("display_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Display_name { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("defence_advocate_username", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Defence_advocate_username { get; set; }
     
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
     

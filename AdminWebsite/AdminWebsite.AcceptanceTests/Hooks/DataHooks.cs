@@ -33,6 +33,8 @@ namespace AdminWebsite.AcceptanceTests.Hooks
 
             if (!exist || scenario.ScenarioInfo.Tags.Contains("QuestionnairesAlreadyPartiallyCompleted"))
                 CreateHearing();
+
+            RefreshJudgeDropdownList();
         }
 
         private void AllocateUsers()
@@ -171,6 +173,12 @@ namespace AdminWebsite.AcceptanceTests.Hooks
 
             var response = _c.Api.SendEvent(request);
             response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        }
+
+        private void RefreshJudgeDropdownList()
+        {
+            var response = _c.Api.RefreshJudgesCache();
+            response.IsSuccessful.Should().BeTrue();
         }
     }
 }

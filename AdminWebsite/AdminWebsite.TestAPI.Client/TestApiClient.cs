@@ -504,24 +504,24 @@ namespace AdminWebsite.TestAPI.Client
         /// <exception cref="TestApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<UserProfile> UserPrincipalNameAsync(string username, System.Threading.CancellationToken cancellationToken);
     
-        /// <summary>Check if user exists in AAD by contact email</summary>
-        /// <param name="contactEmail">Contact email of the user (case insensitive)</param>
+        /// <summary>Check if user exists in AAD by username</summary>
+        /// <param name="username">Username of the user (case insensitive)</param>
         /// <returns>Success</returns>
         /// <exception cref="TestApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<bool> AadAsync(string contactEmail);
+        System.Threading.Tasks.Task<bool> AadAsync(string username);
     
-        /// <summary>Check if user exists in AAD by contact email</summary>
-        /// <param name="contactEmail">Contact email of the user (case insensitive)</param>
+        /// <summary>Check if user exists in AAD by username</summary>
+        /// <param name="username">Username of the user (case insensitive)</param>
         /// <returns>Success</returns>
         /// <exception cref="TestApiException">A server side error occurred.</exception>
-        bool Aad(string contactEmail);
+        bool Aad(string username);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Check if user exists in AAD by contact email</summary>
-        /// <param name="contactEmail">Contact email of the user (case insensitive)</param>
+        /// <summary>Check if user exists in AAD by username</summary>
+        /// <param name="username">Username of the user (case insensitive)</param>
         /// <returns>Success</returns>
         /// <exception cref="TestApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<bool> AadAsync(string contactEmail, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<bool> AadAsync(string username, System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Delete AAD user</summary>
         /// <param name="contactEmail">Email of the user to delete</param>
@@ -541,6 +541,22 @@ namespace AdminWebsite.TestAPI.Client
         /// <returns>Success</returns>
         /// <exception cref="TestApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task Aad2Async(string contactEmail, System.Threading.CancellationToken cancellationToken);
+    
+        /// <summary>Refresh Judges Cache</summary>
+        /// <returns>Success</returns>
+        /// <exception cref="TestApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task CacheAsync();
+    
+        /// <summary>Refresh Judges Cache</summary>
+        /// <returns>Success</returns>
+        /// <exception cref="TestApiException">A server side error occurred.</exception>
+        void Cache();
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Refresh Judges Cache</summary>
+        /// <returns>Success</returns>
+        /// <exception cref="TestApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task CacheAsync(System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Delete hearings by partial case name or number</summary>
         /// <param name="body">Partial case name or number text for the hearing</param>
@@ -3298,34 +3314,34 @@ namespace AdminWebsite.TestAPI.Client
             }
         }
     
-        /// <summary>Check if user exists in AAD by contact email</summary>
-        /// <param name="contactEmail">Contact email of the user (case insensitive)</param>
+        /// <summary>Check if user exists in AAD by username</summary>
+        /// <param name="username">Username of the user (case insensitive)</param>
         /// <returns>Success</returns>
         /// <exception cref="TestApiException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<bool> AadAsync(string contactEmail)
+        public System.Threading.Tasks.Task<bool> AadAsync(string username)
         {
-            return AadAsync(contactEmail, System.Threading.CancellationToken.None);
+            return AadAsync(username, System.Threading.CancellationToken.None);
         }
     
-        /// <summary>Check if user exists in AAD by contact email</summary>
-        /// <param name="contactEmail">Contact email of the user (case insensitive)</param>
+        /// <summary>Check if user exists in AAD by username</summary>
+        /// <param name="username">Username of the user (case insensitive)</param>
         /// <returns>Success</returns>
         /// <exception cref="TestApiException">A server side error occurred.</exception>
-        public bool Aad(string contactEmail)
+        public bool Aad(string username)
         {
-            return System.Threading.Tasks.Task.Run(async () => await AadAsync(contactEmail, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
+            return System.Threading.Tasks.Task.Run(async () => await AadAsync(username, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
         }
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Check if user exists in AAD by contact email</summary>
-        /// <param name="contactEmail">Contact email of the user (case insensitive)</param>
+        /// <summary>Check if user exists in AAD by username</summary>
+        /// <param name="username">Username of the user (case insensitive)</param>
         /// <returns>Success</returns>
         /// <exception cref="TestApiException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task<bool> AadAsync(string contactEmail, System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task<bool> AadAsync(string username, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/users/aad/{contactEmail}");
-            urlBuilder_.Replace("{contactEmail}", System.Uri.EscapeDataString(ConvertToString(contactEmail, System.Globalization.CultureInfo.InvariantCulture)));
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/users/aad/{username}");
+            urlBuilder_.Replace("{username}", System.Uri.EscapeDataString(ConvertToString(username, System.Globalization.CultureInfo.InvariantCulture)));
     
             var client_ = _httpClient;
             try
@@ -3461,6 +3477,94 @@ namespace AdminWebsite.TestAPI.Client
     
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 204)
+                        {
+                            return;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new TestApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new TestApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new TestApiException("Unauthorized", status_, responseText_, headers_, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new TestApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (response_ != null)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+            }
+        }
+    
+        /// <summary>Refresh Judges Cache</summary>
+        /// <returns>Success</returns>
+        /// <exception cref="TestApiException">A server side error occurred.</exception>
+        public System.Threading.Tasks.Task CacheAsync()
+        {
+            return CacheAsync(System.Threading.CancellationToken.None);
+        }
+    
+        /// <summary>Refresh Judges Cache</summary>
+        /// <returns>Success</returns>
+        /// <exception cref="TestApiException">A server side error occurred.</exception>
+        public void Cache()
+        {
+            System.Threading.Tasks.Task.Run(async () => await CacheAsync(System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
+        }
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Refresh Judges Cache</summary>
+        /// <returns>Success</returns>
+        /// <exception cref="TestApiException">A server side error occurred.</exception>
+        public async System.Threading.Tasks.Task CacheAsync(System.Threading.CancellationToken cancellationToken)
+        {
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/users/judges/cache");
+    
+            var client_ = _httpClient;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+    
+                    PrepareRequest(client_, request_, urlBuilder_);
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+                    PrepareRequest(client_, request_, url_);
+    
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+    
+                        ProcessResponse(client_, response_);
+    
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
                         {
                             return;
                         }
@@ -3743,6 +3847,9 @@ namespace AdminWebsite.TestAPI.Client
     
         [System.Runtime.Serialization.EnumMember(Value = @"Performance")]
         Performance = 2,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"ITHC")]
+        ITHC = 3,
     
     }
     
@@ -4799,6 +4906,9 @@ namespace AdminWebsite.TestAPI.Client
     
         [Newtonsoft.Json.JsonProperty("pin", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Pin { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("defence_advocate_id", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid? Defence_advocate_id { get; set; }
     
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
     
