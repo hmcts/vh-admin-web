@@ -276,6 +276,7 @@ export class VideoHearingsService {
             endpointModel.forEach(e => {
                 endpoint = new EndpointRequest();
                 endpoint.display_name = e.displayName;
+                endpoint.defence_advocate_username = e.defenceAdvocate;
                 eps.push(endpoint);
             });
         }
@@ -319,6 +320,7 @@ export class VideoHearingsService {
                 endpoint.displayName = e.display_name;
                 endpoint.pin = e.pin;
                 endpoint.sip = e.sip;
+                endpoint.defenceAdvocate = e.defence_advocate_id;
                 endpoints.push(endpoint);
             });
         }

@@ -1776,6 +1776,7 @@ export interface IParticipantRequest {
 
 export class EndpointRequest implements IEndpointRequest {
     display_name?: string | undefined;
+    defence_advocate_username?: string | undefined;
 
     constructor(data?: IEndpointRequest) {
         if (data) {
@@ -1789,6 +1790,7 @@ export class EndpointRequest implements IEndpointRequest {
     init(_data?: any) {
         if (_data) {
             this.display_name = _data["display_name"];
+            this.defence_advocate_username = _data["defence_advocate_username"];
         }
     }
 
@@ -1802,12 +1804,14 @@ export class EndpointRequest implements IEndpointRequest {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["display_name"] = this.display_name;
+        data["defence_advocate_username"] = this.defence_advocate_username;
         return data; 
     }
 }
 
 export interface IEndpointRequest {
     display_name?: string | undefined;
+    defence_advocate_username?: string | undefined;
 }
 
 export class BookNewHearingRequest implements IBookNewHearingRequest {
@@ -2066,6 +2070,7 @@ export class EndpointResponse implements IEndpointResponse {
     display_name?: string | undefined;
     sip?: string | undefined;
     pin?: string | undefined;
+    defence_advocate_id?: string | undefined;
 
     constructor(data?: IEndpointResponse) {
         if (data) {
@@ -2082,6 +2087,7 @@ export class EndpointResponse implements IEndpointResponse {
             this.display_name = _data["display_name"];
             this.sip = _data["sip"];
             this.pin = _data["pin"];
+            this.defence_advocate_id = _data["defence_advocate_id"];
         }
     }
 
@@ -2098,6 +2104,7 @@ export class EndpointResponse implements IEndpointResponse {
         data["display_name"] = this.display_name;
         data["sip"] = this.sip;
         data["pin"] = this.pin;
+        data["defence_advocate_id"] = this.defence_advocate_id;
         return data; 
     }
 }
@@ -2107,6 +2114,7 @@ export interface IEndpointResponse {
     display_name?: string | undefined;
     sip?: string | undefined;
     pin?: string | undefined;
+    defence_advocate_id?: string | undefined;
 }
 
 export class HearingDetailsResponse implements IHearingDetailsResponse {

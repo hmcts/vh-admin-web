@@ -16,12 +16,12 @@
             </h2>
         </div>
 
-        <form [formGroup]="form" class="govuk-form-group" (ngSubmit)="saveEndpoints()">
+        <form [formGroup]="form" (ngSubmit)="saveEndpoints()">
             <div formArrayName="endpoints" *ngFor="let endpoint of endpoints.controls; let i = index">
                 <div [formGroupName]="i">
-                    <div class="govuk-form-group govuk-!-padding-bottom-2"
+                    <div class="govuk-form-group"
                         [ngClass]="{'has-error': endpoints.controls[i].invalid && endpoints.controls[i].touched }">
-                        <label class="govuk-label govuk-!-width-one-half" [attr.for]="'displayName'+i">
+                        <label class="govuk-label govuk-!-width-one-half" [attr.for]="'displayNameLabel'+i">
                             Display name
                         </label>
                         <input [id]="'displayName'+i" class="govuk-input govuk-!-width-three-quarters" type="text"
@@ -29,6 +29,17 @@
                         <a *ngIf="endpoints.length>1" [id]="'removeDisplayName'+i"
                             class="govuk-link govuk-!-margin-left-2" href="javascript:void(0)"
                             (click)="removeEndpoint(i)">Remove</a>
+                    </div>
+                    <div class="govuk-form-group">
+                        <label class="govuk-label govuk-!-width-full" [attr.for]="'defenceAdvocateLabel'+i">
+                            Link a defence advocate to this video access point?
+                        </label>
+                        <select class="govuk-select ddl-width" [id]="'defenceAdvocate'+i"
+                            formControlName="defenceAdvocate">
+                            <option *ngFor="let da of availableDefenceAdvocates" [ngValue]="da">
+                                {{ da.displayName }}
+                            </option>
+                        </select>
                     </div>
                 </div>
             </div>
@@ -50,6 +61,9 @@
                 Cancel
             </button>
         </div>
+    </div>
+    <div class="govuk-grid-column-one-third">
+        {{ form.value | json }}
     </div>
 </div>
 <div *ngIf="attemptingCancellation">

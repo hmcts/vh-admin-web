@@ -6,10 +6,12 @@ import { Constants } from 'src/app/common/constants';
 import { SanitizeInputText } from 'src/app/common/formatters/sanitize-input-text';
 import { EndpointModel } from 'src/app/common/model/endpoint.model';
 import { HearingModel } from 'src/app/common/model/hearing.model';
+import { ParticipantModel } from 'src/app/common/model/participant.model';
 import { BookingService } from 'src/app/services/booking.service';
 import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 import { PageUrls } from 'src/app/shared/page-url.constants';
 import { BookingBaseComponentDirective as BookingBaseComponent } from '../booking-base/booking-base.component';
+import { DefenceAdvocateModel } from 'src/app/common/model/defence-advocate.model';
 
 @Component({
   selector: 'app-endpoints',
@@ -24,6 +26,7 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
   attemptingDiscardChanges = false;
   failedValidation: boolean;
   newEndpoints: EndpointModel[] = [];
+  availableDefenceAdvocates: DefenceAdvocateModel[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -64,7 +67,6 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
   }
 
   saveEndpoints(): void {
-
     const newEndpointsArray: EndpointModel[] = [];
     for (const control of this.endpoints.controls) {
       const endpointModel = new EndpointModel();
@@ -72,6 +74,7 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
         const displayNameText = SanitizeInputText(control.value.displayName);
         endpointModel.displayName = displayNameText;
         endpointModel.Id = control.value.id;
+        endpointModel.defenceAdvocate = control.value.defenceAdvocate.username;
         newEndpointsArray.push(endpointModel);
       }
     }
@@ -131,6 +134,7 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
   }
 
   private initialiseForm(): void {
+    this.availableDefenceAdvocates = this.populateDefenceAdvocates();
     this.form = this.fb.group({
       endpoints: this.fb.array([
         this.addEndpointsFormGroup()
@@ -138,14 +142,38 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
     });
     if (this.hearing.endpoints.length > 0) {
       this.newEndpoints = this.hearing.endpoints;
+      console.log(this.hearing.endpoints);
       this.form.setControl('endpoints', this.setExistingEndpoints(this.newEndpoints));
     }
 
     this.$subscriptions.push(
       this.form.get('endpoints').valueChanges.subscribe(ep => {
         this.newEndpoints = ep;
+        console.log(ep);
       })
     );
+  }
+  populateDefenceAdvocates(): DefenceAdvocateModel[] {
+    const participants = this.hearing.participants.filter(
+      p => p.hearing_role_name.toLowerCase() === this.constants.DefenceAdvocate.toLowerCase()
+    );
+    let defenceAdvocates: Array<DefenceAdvocateModel> = [];
+    if (this.hearing.participants && this.hearing.participants.length > 0) {
+      defenceAdvocates = participants.map(x => this.mapParticipantsToDefenceAdvocateModel(x));
+    }
+    const defenceAdvocateModel = new DefenceAdvocateModel();
+    defenceAdvocateModel.id = null;
+    defenceAdvocateModel.username = this.constants.None;
+    defenceAdvocateModel.displayName = this.constants.None;
+    defenceAdvocates.unshift(defenceAdvocateModel);
+    return defenceAdvocates;
+  }
+  private mapParticipantsToDefenceAdvocateModel(participant: ParticipantModel): DefenceAdvocateModel {
+    const defenceAdvocateModel = new DefenceAdvocateModel();
+    defenceAdvocateModel.id = participant.id;
+    defenceAdvocateModel.username = participant.username;
+    defenceAdvocateModel.displayName = participant.display_name;
+    return defenceAdvocateModel;
   }
 
   private setExistingEndpoints(endpoints: EndpointModel[]): FormArray {
@@ -153,7 +181,7 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
     endpoints.forEach(e => {
       formArray.push(this.fb.group({
         displayName: e.displayName,
-        id: e.Id
+        defenceAdvocate: e.defenceAdvocate
       }));
     });
     return formArray;
@@ -162,7 +190,7 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
   private addEndpointsFormGroup(): FormGroup {
     return this.fb.group({
       displayName: ['', [blankSpaceValidator]],
-      id: ['']
+      defenceAdvocate: ['']
     });
   }
 
@@ -172,6 +200,14 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
       return listOfDisplayNames.indexOf(item) !== position;
     });
     return duplicateDisplayName;
+  }
+  hasDuplicateDefenceAdvocate(endpoints: EndpointModel[]): boolean {
+    const listOfDefenceAdvocates = endpoints.map(function (item) { return item.defenceAdvocate; });
+    const duplicateDefenceAdvocate = listOfDefenceAdvocates.some(function (item, position) {
+      return listOfDefenceAdvocates.indexOf(item) !== position;
+    });
+    console.log('Duplicate advocate name: ->' + duplicateDefenceAdvocate);
+    return duplicateDefenceAdvocate;
   }
 }
 

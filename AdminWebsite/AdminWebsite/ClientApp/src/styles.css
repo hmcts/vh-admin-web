@@ -284,3 +284,7 @@ p {
   float: left;
   padding-right: 10px;
 }
+
+.ddl-width {
+  width: 75%;
+}
