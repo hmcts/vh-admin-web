@@ -117,7 +117,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
                 {Journey.GetAudioFile, new GetAudioFileJourney()},
                 {Journey.Questionnaire, new QuestionnaireJourney()}
             };
-            journeys[userJourney].VerifyUserIsApplicableToJourney(_c.CurrentUser.Role);
+            journeys[userJourney].VerifyUserIsApplicableToJourney(_c.CurrentUser.User_type);
             journeys[userJourney].VerifyDestinationIsInThatJourney(endPage);
             _c.Route = journeys[userJourney].GetNextPage(GetRouteBasedOn(userJourney));
             var journey = journeys[userJourney].Journey();

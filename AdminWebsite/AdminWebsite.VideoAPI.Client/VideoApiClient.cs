@@ -191,34 +191,34 @@ namespace AdminWebsite.VideoAPI.Client
         /// <summary>Get the audio recording links for a given CVP recording.</summary>
         /// <returns>Success</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.List<CvpAudioFileResponse>> GetAudioRecordingLinkCvpWithCaseReferenceAsync(string cloudRoomName, string date, string caseReference);
+        System.Threading.Tasks.Task<System.Collections.Generic.List<CvpAudioFileResponse>> GetAudioRecordingLinkCvpWithCaseReferenceAsync(string cloudRoom, string date, string caseReference);
     
         /// <summary>Get the audio recording links for a given CVP recording.</summary>
         /// <returns>Success</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        System.Collections.Generic.List<CvpAudioFileResponse> GetAudioRecordingLinkCvpWithCaseReference(string cloudRoomName, string date, string caseReference);
-    
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Get the audio recording links for a given CVP recording.</summary>
-        /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.List<CvpAudioFileResponse>> GetAudioRecordingLinkCvpWithCaseReferenceAsync(string cloudRoomName, string date, string caseReference, System.Threading.CancellationToken cancellationToken);
-    
-        /// <summary>Get the audio recording links for a given CVP recording.</summary>
-        /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.List<CvpAudioFileResponse>> GetAudioRecordingLinkCvpAsync(string cloudRoomName, string date);
-    
-        /// <summary>Get the audio recording links for a given CVP recording.</summary>
-        /// <returns>Success</returns>
-        /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        System.Collections.Generic.List<CvpAudioFileResponse> GetAudioRecordingLinkCvp(string cloudRoomName, string date);
+        System.Collections.Generic.List<CvpAudioFileResponse> GetAudioRecordingLinkCvpWithCaseReference(string cloudRoom, string date, string caseReference);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Get the audio recording links for a given CVP recording.</summary>
         /// <returns>Success</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.List<CvpAudioFileResponse>> GetAudioRecordingLinkCvpAsync(string cloudRoomName, string date, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<System.Collections.Generic.List<CvpAudioFileResponse>> GetAudioRecordingLinkCvpWithCaseReferenceAsync(string cloudRoom, string date, string caseReference, System.Threading.CancellationToken cancellationToken);
+    
+        /// <summary>Get the audio recording links for a given CVP recording.</summary>
+        /// <returns>Success</returns>
+        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<System.Collections.Generic.List<CvpAudioFileResponse>> GetAudioRecordingLinkCvpAsync(string cloudRoom, string date);
+    
+        /// <summary>Get the audio recording links for a given CVP recording.</summary>
+        /// <returns>Success</returns>
+        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        System.Collections.Generic.List<CvpAudioFileResponse> GetAudioRecordingLinkCvp(string cloudRoom, string date);
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Get the audio recording links for a given CVP recording.</summary>
+        /// <returns>Success</returns>
+        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<System.Collections.Generic.List<CvpAudioFileResponse>> GetAudioRecordingLinkCvpAsync(string cloudRoom, string date, System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Request to book a conference</summary>
         /// <param name="body">Details of a conference</param>
@@ -643,30 +643,30 @@ namespace AdminWebsite.VideoAPI.Client
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<System.Collections.Generic.List<EndpointResponse>> RemoveEndpointFromConferenceAsync(System.Guid conferenceId, string sipAddress, System.Threading.CancellationToken cancellationToken);
     
-        /// <summary>Update the display name of an endpoint</summary>
+        /// <summary>Update an endpoint's display name or assign the defence advocate</summary>
         /// <param name="conferenceId">the conference id</param>
         /// <param name="sipAddress">the endpoint sip address to be updated</param>
-        /// <param name="body">the display name to be updated</param>
+        /// <param name="body">the updated values of an endpoint</param>
         /// <returns>Success</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task UpdateDisplayNameForEndpoint_Async(System.Guid conferenceId, string sipAddress, UpdateEndpointRequest body);
+        System.Threading.Tasks.Task UpdateDisplayNameForEndpointAsync(System.Guid conferenceId, string sipAddress, UpdateEndpointRequest body);
     
-        /// <summary>Update the display name of an endpoint</summary>
+        /// <summary>Update an endpoint's display name or assign the defence advocate</summary>
         /// <param name="conferenceId">the conference id</param>
         /// <param name="sipAddress">the endpoint sip address to be updated</param>
-        /// <param name="body">the display name to be updated</param>
+        /// <param name="body">the updated values of an endpoint</param>
         /// <returns>Success</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        void UpdateDisplayNameForEndpoint_(System.Guid conferenceId, string sipAddress, UpdateEndpointRequest body);
+        void UpdateDisplayNameForEndpoint(System.Guid conferenceId, string sipAddress, UpdateEndpointRequest body);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Update the display name of an endpoint</summary>
+        /// <summary>Update an endpoint's display name or assign the defence advocate</summary>
         /// <param name="conferenceId">the conference id</param>
         /// <param name="sipAddress">the endpoint sip address to be updated</param>
-        /// <param name="body">the display name to be updated</param>
+        /// <param name="body">the updated values of an endpoint</param>
         /// <returns>Success</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task UpdateDisplayNameForEndpoint_Async(System.Guid conferenceId, string sipAddress, UpdateEndpointRequest body, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task UpdateDisplayNameForEndpointAsync(System.Guid conferenceId, string sipAddress, UpdateEndpointRequest body, System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Check Service Health</summary>
         /// <returns>Success</returns>
@@ -2058,27 +2058,27 @@ namespace AdminWebsite.VideoAPI.Client
         /// <summary>Get the audio recording links for a given CVP recording.</summary>
         /// <returns>Success</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<System.Collections.Generic.List<CvpAudioFileResponse>> GetAudioRecordingLinkCvpWithCaseReferenceAsync(string cloudRoomName, string date, string caseReference)
+        public System.Threading.Tasks.Task<System.Collections.Generic.List<CvpAudioFileResponse>> GetAudioRecordingLinkCvpWithCaseReferenceAsync(string cloudRoom, string date, string caseReference)
         {
-            return GetAudioRecordingLinkCvpWithCaseReferenceAsync(cloudRoomName, date, caseReference, System.Threading.CancellationToken.None);
+            return GetAudioRecordingLinkCvpWithCaseReferenceAsync(cloudRoom, date, caseReference, System.Threading.CancellationToken.None);
         }
     
         /// <summary>Get the audio recording links for a given CVP recording.</summary>
         /// <returns>Success</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public System.Collections.Generic.List<CvpAudioFileResponse> GetAudioRecordingLinkCvpWithCaseReference(string cloudRoomName, string date, string caseReference)
+        public System.Collections.Generic.List<CvpAudioFileResponse> GetAudioRecordingLinkCvpWithCaseReference(string cloudRoom, string date, string caseReference)
         {
-            return System.Threading.Tasks.Task.Run(async () => await GetAudioRecordingLinkCvpWithCaseReferenceAsync(cloudRoomName, date, caseReference, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
+            return System.Threading.Tasks.Task.Run(async () => await GetAudioRecordingLinkCvpWithCaseReferenceAsync(cloudRoom, date, caseReference, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
         }
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Get the audio recording links for a given CVP recording.</summary>
         /// <returns>Success</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task<System.Collections.Generic.List<CvpAudioFileResponse>> GetAudioRecordingLinkCvpWithCaseReferenceAsync(string cloudRoomName, string date, string caseReference, System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task<System.Collections.Generic.List<CvpAudioFileResponse>> GetAudioRecordingLinkCvpWithCaseReferenceAsync(string cloudRoom, string date, string caseReference, System.Threading.CancellationToken cancellationToken)
         {
-            if (cloudRoomName == null)
-                throw new System.ArgumentNullException("cloudRoomName");
+            if (cloudRoom == null)
+                throw new System.ArgumentNullException("cloudRoom");
     
             if (date == null)
                 throw new System.ArgumentNullException("date");
@@ -2087,8 +2087,8 @@ namespace AdminWebsite.VideoAPI.Client
                 throw new System.ArgumentNullException("caseReference");
     
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/conferences/audio/{cloudRoomName}/{date}/{caseReference}");
-            urlBuilder_.Replace("{cloudRoomName}", System.Uri.EscapeDataString(ConvertToString(cloudRoomName, System.Globalization.CultureInfo.InvariantCulture)));
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/conferences/audio/{cloudRoom}/{date}/{caseReference}");
+            urlBuilder_.Replace("{cloudRoom}", System.Uri.EscapeDataString(ConvertToString(cloudRoom, System.Globalization.CultureInfo.InvariantCulture)));
             urlBuilder_.Replace("{date}", System.Uri.EscapeDataString(ConvertToString(date, System.Globalization.CultureInfo.InvariantCulture)));
             urlBuilder_.Replace("{caseReference}", System.Uri.EscapeDataString(ConvertToString(caseReference, System.Globalization.CultureInfo.InvariantCulture)));
     
@@ -2164,34 +2164,34 @@ namespace AdminWebsite.VideoAPI.Client
         /// <summary>Get the audio recording links for a given CVP recording.</summary>
         /// <returns>Success</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<System.Collections.Generic.List<CvpAudioFileResponse>> GetAudioRecordingLinkCvpAsync(string cloudRoomName, string date)
+        public System.Threading.Tasks.Task<System.Collections.Generic.List<CvpAudioFileResponse>> GetAudioRecordingLinkCvpAsync(string cloudRoom, string date)
         {
-            return GetAudioRecordingLinkCvpAsync(cloudRoomName, date, System.Threading.CancellationToken.None);
+            return GetAudioRecordingLinkCvpAsync(cloudRoom, date, System.Threading.CancellationToken.None);
         }
     
         /// <summary>Get the audio recording links for a given CVP recording.</summary>
         /// <returns>Success</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public System.Collections.Generic.List<CvpAudioFileResponse> GetAudioRecordingLinkCvp(string cloudRoomName, string date)
+        public System.Collections.Generic.List<CvpAudioFileResponse> GetAudioRecordingLinkCvp(string cloudRoom, string date)
         {
-            return System.Threading.Tasks.Task.Run(async () => await GetAudioRecordingLinkCvpAsync(cloudRoomName, date, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
+            return System.Threading.Tasks.Task.Run(async () => await GetAudioRecordingLinkCvpAsync(cloudRoom, date, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
         }
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Get the audio recording links for a given CVP recording.</summary>
         /// <returns>Success</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task<System.Collections.Generic.List<CvpAudioFileResponse>> GetAudioRecordingLinkCvpAsync(string cloudRoomName, string date, System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task<System.Collections.Generic.List<CvpAudioFileResponse>> GetAudioRecordingLinkCvpAsync(string cloudRoom, string date, System.Threading.CancellationToken cancellationToken)
         {
-            if (cloudRoomName == null)
-                throw new System.ArgumentNullException("cloudRoomName");
+            if (cloudRoom == null)
+                throw new System.ArgumentNullException("cloudRoom");
     
             if (date == null)
                 throw new System.ArgumentNullException("date");
     
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/conferences/audio/{cloudRoomName}/{date}");
-            urlBuilder_.Replace("{cloudRoomName}", System.Uri.EscapeDataString(ConvertToString(cloudRoomName, System.Globalization.CultureInfo.InvariantCulture)));
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/conferences/audio/{cloudRoom}/{date}");
+            urlBuilder_.Replace("{cloudRoom}", System.Uri.EscapeDataString(ConvertToString(cloudRoom, System.Globalization.CultureInfo.InvariantCulture)));
             urlBuilder_.Replace("{date}", System.Uri.EscapeDataString(ConvertToString(date, System.Globalization.CultureInfo.InvariantCulture)));
     
             var client_ = _httpClient;
@@ -4483,36 +4483,36 @@ namespace AdminWebsite.VideoAPI.Client
             }
         }
     
-        /// <summary>Update the display name of an endpoint</summary>
+        /// <summary>Update an endpoint's display name or assign the defence advocate</summary>
         /// <param name="conferenceId">the conference id</param>
         /// <param name="sipAddress">the endpoint sip address to be updated</param>
-        /// <param name="body">the display name to be updated</param>
+        /// <param name="body">the updated values of an endpoint</param>
         /// <returns>Success</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task UpdateDisplayNameForEndpoint_Async(System.Guid conferenceId, string sipAddress, UpdateEndpointRequest body)
+        public System.Threading.Tasks.Task UpdateDisplayNameForEndpointAsync(System.Guid conferenceId, string sipAddress, UpdateEndpointRequest body)
         {
-            return UpdateDisplayNameForEndpoint_Async(conferenceId, sipAddress, body, System.Threading.CancellationToken.None);
+            return UpdateDisplayNameForEndpointAsync(conferenceId, sipAddress, body, System.Threading.CancellationToken.None);
         }
     
-        /// <summary>Update the display name of an endpoint</summary>
+        /// <summary>Update an endpoint's display name or assign the defence advocate</summary>
         /// <param name="conferenceId">the conference id</param>
         /// <param name="sipAddress">the endpoint sip address to be updated</param>
-        /// <param name="body">the display name to be updated</param>
+        /// <param name="body">the updated values of an endpoint</param>
         /// <returns>Success</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public void UpdateDisplayNameForEndpoint_(System.Guid conferenceId, string sipAddress, UpdateEndpointRequest body)
+        public void UpdateDisplayNameForEndpoint(System.Guid conferenceId, string sipAddress, UpdateEndpointRequest body)
         {
-            System.Threading.Tasks.Task.Run(async () => await UpdateDisplayNameForEndpoint_Async(conferenceId, sipAddress, body, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
+            System.Threading.Tasks.Task.Run(async () => await UpdateDisplayNameForEndpointAsync(conferenceId, sipAddress, body, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
         }
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Update the display name of an endpoint</summary>
+        /// <summary>Update an endpoint's display name or assign the defence advocate</summary>
         /// <param name="conferenceId">the conference id</param>
         /// <param name="sipAddress">the endpoint sip address to be updated</param>
-        /// <param name="body">the display name to be updated</param>
+        /// <param name="body">the updated values of an endpoint</param>
         /// <returns>Success</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task UpdateDisplayNameForEndpoint_Async(System.Guid conferenceId, string sipAddress, UpdateEndpointRequest body, System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task UpdateDisplayNameForEndpointAsync(System.Guid conferenceId, string sipAddress, UpdateEndpointRequest body, System.Threading.CancellationToken cancellationToken)
         {
             if (conferenceId == null)
                 throw new System.ArgumentNullException("conferenceId");
@@ -4521,7 +4521,7 @@ namespace AdminWebsite.VideoAPI.Client
                 throw new System.ArgumentNullException("sipAddress");
     
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/conferences/{conferenceId}/endpoints/{sipAddress}/displayname");
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/conferences/{conferenceId}/endpoints/{sipAddress}");
             urlBuilder_.Replace("{conferenceId}", System.Uri.EscapeDataString(ConvertToString(conferenceId, System.Globalization.CultureInfo.InvariantCulture)));
             urlBuilder_.Replace("{sipAddress}", System.Uri.EscapeDataString(ConvertToString(sipAddress, System.Globalization.CultureInfo.InvariantCulture)));
     
@@ -6870,6 +6870,9 @@ namespace AdminWebsite.VideoAPI.Client
         [Newtonsoft.Json.JsonProperty("pin", Required = Newtonsoft.Json.Required.AllowNull)]
         public string Pin { get; set; }
     
+        [Newtonsoft.Json.JsonProperty("defence_advocate", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Defence_advocate { get; set; }
+    
     
     }
     
@@ -7044,6 +7047,9 @@ namespace AdminWebsite.VideoAPI.Client
         [Newtonsoft.Json.JsonProperty("status", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
         public EndpointState Status { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("defence_advocate", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Defence_advocate { get; set; }
     
     
     }
@@ -7475,6 +7481,9 @@ namespace AdminWebsite.VideoAPI.Client
     {
         [Newtonsoft.Json.JsonProperty("display_name", Required = Newtonsoft.Json.Required.AllowNull)]
         public string Display_name { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("defence_advocate", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Defence_advocate { get; set; }
     
     
     }

@@ -1,5 +1,4 @@
 ﻿using System;
-using AdminWebsite.AcceptanceTests.Features;
 
 namespace AdminWebsite.AcceptanceTests.Data.TestData
 {

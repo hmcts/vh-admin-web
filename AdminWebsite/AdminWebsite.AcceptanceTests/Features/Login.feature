@@ -17,7 +17,7 @@ Scenario: Video Hearings Officer login
 	When the user attempts to logout
 	Then the user should be navigated to sign in screen
 
-Scenario: Clerk login denied
-	Given a new browser is open for a Clerk
+Scenario: Judge login denied
+	Given a new browser is open for a Judge
 	When the user logs in with valid credentials
 	Then the user is on the Unauthorised page
