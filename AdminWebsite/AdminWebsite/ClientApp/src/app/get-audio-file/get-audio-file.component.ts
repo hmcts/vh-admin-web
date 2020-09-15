@@ -28,7 +28,7 @@ export class GetAudioFileComponent implements OnInit {
             caseNumber: ['', Validators.required],
             searchChoice: ['vhFile'],
             hearingDate: [hearingDateParsed, Validators.required],
-            cloudroomName: ['', Validators.required],
+            cloudroomName: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
             caseReference: ['']
         });
     }
