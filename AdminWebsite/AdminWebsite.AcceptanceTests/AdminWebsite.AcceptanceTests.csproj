@@ -14,13 +14,13 @@
 
   <ItemGroup>
     <PackageReference Include="Faker.NETCore" Version="1.0.2" />
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.1.7" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="3.1.7" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="3.1.7" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="3.1.7" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.7" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="3.1.7" />
-    <PackageReference Include="Microsoft.Extensions.Options" Version="3.1.7" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.1.8" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="3.1.8" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="3.1.8" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="3.1.8" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.8" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="3.1.8" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="3.1.8" />
     <PackageReference Include="NBuilder" Version="6.1.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="nunit" Version="3.12.0" />
@@ -32,22 +32,20 @@
     <PackageReference Include="Polly" Version="7.2.1" />
     <PackageReference Include="Protractor" Version="0.13.0" />
     <PackageReference Include="Selenium.Axe" Version="1.5.2" />
-    <PackageReference Include="Selenium.Firefox.WebDriver" Version="0.26.0" />
+    <PackageReference Include="Selenium.Firefox.WebDriver" Version="0.27.0" />
     <PackageReference Include="Selenium.Support" Version="3.141.0" />
     <PackageReference Include="Selenium.WebDriver" Version="3.141.0" />
-    <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="84.0.4147.3001" />
+    <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="85.0.4183.8700" />
     <PackageReference Include="Selenium.WebDriver.IEDriver" Version="3.150.1.2" />
     <PackageReference Include="Selenium.WebDriver.MicrosoftDriver" Version="17.17134.0" />
-    <PackageReference Include="SpecFlow" Version="3.4.3" />
-    <PackageReference Include="SpecFlow.NUnit" Version="3.4.3" />
-    <PackageReference Include="SpecFlow.Tools.MsBuild.Generation" Version="3.4.3" />
-    <PackageReference Include="VH.AcceptanceTests.Common" Version="1.0.257" />
+    <PackageReference Include="SpecFlow" Version="3.4.8" />
+    <PackageReference Include="SpecFlow.NUnit" Version="3.4.8" />
+    <PackageReference Include="SpecFlow.Tools.MsBuild.Generation" Version="3.4.8" />
+    <PackageReference Include="VH.AcceptanceTests.Common" Version="1.0.278" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AdminWebsite.BookingsAPI.Client\AdminWebsite.BookingsAPI.Client.csproj" />
-    <ProjectReference Include="..\AdminWebsite.UserAPI.Client\AdminWebsite.UserAPI.Client.csproj" />
-    <ProjectReference Include="..\AdminWebsite.VideoAPI.Client\AdminWebsite.VideoAPI.Client.csproj" />
+    <ProjectReference Include="..\AdminWebsite.TestAPI.Client\AdminWebsite.TestAPI.Client.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -61,9 +59,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="TestAudioFiles\TestAudioFile.mp4">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="useraccounts.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <ContentWithTargetPath Include="Configuration\Environments\appsettings.aat.json" Condition="Exists('Configuration\Environments\appsettings.aat.json')">

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using AcceptanceTests.Common.Configuration.Users;
 using AcceptanceTests.Common.Model.Participant;
-using AdminWebsite.BookingsAPI.Client;
+using AdminWebsite.TestAPI.Client;
 using FluentAssertions;
 using TimeZone = AcceptanceTests.Common.Data.Time.TimeZone;
 
@@ -68,7 +68,7 @@ namespace AdminWebsite.AcceptanceTests.Data
                 actualParticipant.First_name.Should().Be(expectedParticipant.Firstname);
                 actualParticipant.Hearing_role_name.Should().Be(expectedParticipant.HearingRoleName);
                 actualParticipant.Last_name.Should().Be(expectedParticipant.Lastname);
-                var role = expectedParticipant.Role.ToLower().Equals("clerk") ? "Judge" : expectedParticipant.Role;
+                var role = expectedParticipant.Role.ToLower().Equals("judge") ? "Judge" : expectedParticipant.Role;
                 actualParticipant.User_role_name.Should().Be(role);
                 if (!expectedParticipant.HearingRoleName.Equals(PartyRole.Representative.Name)) continue;
                 actualParticipant.Organisation.Should().Be(_test.AddParticipant.Participant.Organisation);
@@ -111,8 +111,8 @@ namespace AdminWebsite.AcceptanceTests.Data
             actual.ToShortDateString().Should().Be(expected.ToShortDateString());
             actual.ToShortTimeString().Should().BeOneOf(
                 expected.AddMinutes(-3).ToShortTimeString(),
-                                 expected.AddMinutes(-2).ToShortTimeString(), 
-                                 expected.AddMinutes(-1).ToShortTimeString(), 
+                                 expected.AddMinutes(-2).ToShortTimeString(),
+                                 expected.AddMinutes(-1).ToShortTimeString(),
                                  expected.ToShortTimeString());
         }
     }

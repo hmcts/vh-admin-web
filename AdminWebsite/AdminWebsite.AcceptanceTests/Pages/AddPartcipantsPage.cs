@@ -24,6 +24,6 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public static By ExistingEmailLinks = By.XPath("//li[@class='vk-showlist-m30']/a");
         public static By ParticipantsList = By.XPath("//*[contains(@class, 'vhtable-header')]");
         public static By InvalidEmailError = CommonLocators.ElementContainingText("Please enter a valid email address");
-        public static By ClerkUserParticipantsList(string username) => CommonLocators.ElementContainingText(username);
+        public static By JudgeUserParticipantsList(string username) => CommonLocators.ElementContainingText(username);
     }
 }

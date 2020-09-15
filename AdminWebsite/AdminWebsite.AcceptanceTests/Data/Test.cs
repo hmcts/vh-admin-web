@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using AcceptanceTests.Common.Configuration.Users;
 using AcceptanceTests.Common.Data.TestData;
 using AdminWebsite.AcceptanceTests.Data.TestData;
-using AdminWebsite.BookingsAPI.Client;
-using AdminWebsite.VideoAPI.Client;
+using AdminWebsite.TestAPI.Client;
 
 namespace AdminWebsite.AcceptanceTests.Data
 {

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using AcceptanceTests.Common.Data.Questions;
-using AdminWebsite.BookingsAPI.Client;
+using AdminWebsite.TestAPI.Client;
 
 namespace AdminWebsite.AcceptanceTests.Helpers
 {
