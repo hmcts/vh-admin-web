@@ -41,7 +41,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [When(@"the participant accesses the application using the reset password")]
         public void WhenTheParticipantAccessesTheApplicationUsingTheResetPassword()
         {
-            _browserSteps.GivenANewBrowserIsOpenFor(_participant.Display_name);
+            _browserSteps.GivenANewBrowserIsOpenFor(_participant.Last_name);
             _loginSteps = new LoginSharedSteps(_browsers[_c.CurrentUser], _c.CurrentUser.Username, _c.WebConfig.AzureAdConfiguration.TemporaryPassword);
             _loginSteps.ProgressToNextPage();
         }

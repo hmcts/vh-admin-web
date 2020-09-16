@@ -32,9 +32,10 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             var exist = CheckIfParticipantsAlreadyExistInTheDb();
 
             if (!exist || scenario.ScenarioInfo.Tags.Contains("QuestionnairesAlreadyPartiallyCompleted"))
-                CreateHearing();
-
-            RefreshJudgeDropdownList();
+            {
+                _c.Test.HearingResponse = CreateHearing();
+                RefreshJudgeDropdownList();
+            }
         }
 
         private void AllocateUsers()
@@ -70,7 +71,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         public async Task AddAudioRecording(ScenarioContext scenario)
         {
             if (!scenario.ScenarioInfo.Tags.Contains("AudioRecording")) return;
-            _c.Test.HearingResponse = CreateHearing();
+            _c.Test.HearingResponse = CreateHearing(true);
             _c.Test.ConferenceResponse = CreateConference();
             StartTheHearing(); 
             CloseTheConference();
@@ -100,10 +101,11 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             return exist;
         }
 
-        public HearingDetailsResponse CreateHearing()
+        public HearingDetailsResponse CreateHearing(bool withAudioRecording = false)
         {
             var hearingRequest = new HearingRequestBuilder()
                 .WithUsers(_c.Users)
+                .WithAudioRecordingRequired(withAudioRecording)
                 .Build();
 
             var hearingResponse = _c.Api.CreateHearing(hearingRequest);
