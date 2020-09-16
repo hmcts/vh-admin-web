@@ -24,7 +24,9 @@ namespace AdminWebsite.UnitTests.Services
             _pollyRetryService.WaitAndRetryAsync<Exception, object>
             (
                 3, i => TimeSpan.FromMilliseconds(1), retryAttempt => retryInvoked = true,
+#pragma warning disable S3626 // Jump statements should not be redundant
                 () => throw new Exception("What")
+#pragma warning restore S3626 // Jump statements should not be redundant
             );
 
             Assert.True(retryInvoked);
@@ -56,7 +58,9 @@ namespace AdminWebsite.UnitTests.Services
                 (
                     3, i => TimeSpan.FromMilliseconds(1), retryAttempt => retryInvoked = true,
                     x => !x.Success,
+#pragma warning disable S3626 // Jump statements should not be redundant
                     () => throw new Exception("What")
+#pragma warning restore S3626 // Jump statements should not be redundant
                 );
             }
             catch

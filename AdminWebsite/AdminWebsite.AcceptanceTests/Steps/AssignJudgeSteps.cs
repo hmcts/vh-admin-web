@@ -6,8 +6,10 @@ using AcceptanceTests.Common.Driver.Drivers;
 using AcceptanceTests.Common.Driver.Helpers;
 using AcceptanceTests.Common.Model.Participant;
 using AcceptanceTests.Common.Test.Steps;
+using AdminWebsite.AcceptanceTests.Data;
 using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.AcceptanceTests.Pages;
+using AdminWebsite.TestAPI.Client;
 using TechTalk.SpecFlow;
 
 namespace AdminWebsite.AcceptanceTests.Steps
@@ -16,9 +18,9 @@ namespace AdminWebsite.AcceptanceTests.Steps
     public class AssignJudgeSteps : ISteps
     {
         private readonly TestContext _c;
-        private readonly Dictionary<string, UserBrowser> _browsers;
+        private readonly Dictionary<User, UserBrowser> _browsers;
         private readonly CommonSharedSteps _commonSharedSteps;
-        public AssignJudgeSteps(TestContext testContext, Dictionary<string, UserBrowser> browsers, CommonSharedSteps commonSharedSteps)
+        public AssignJudgeSteps(TestContext testContext, Dictionary<User, UserBrowser> browsers, CommonSharedSteps commonSharedSteps)
         {
             _c = testContext;
             _browsers = browsers;
@@ -28,7 +30,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [When(@"the user completes the assign judge form")]
         public void ProgressToNextPage()
         {
-            _browsers[_c.CurrentUser.Key].WaitForPageToLoad();
+            _browsers[_c.CurrentUser].WaitForPageToLoad();
             SetTheJudge();
             SetAudioRecording(_c.Test.TestData.AssignJudge.AudioRecord);
             ClickNext();
@@ -36,17 +38,18 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         private void SetTheJudge()
         {
-            var judge = UserManager.GetClerkUser(_c.UserAccounts);
+            var judgeUser = Users.GetJudgeUser(_c.Users);
+            var judge = UserToUserAccountMapper.Map(judgeUser);
             judge.CaseRoleName = Party.Judge.Name;
             judge.HearingRoleName = PartyRole.Judge.Name;
-            _browsers[_c.CurrentUser.Key].Driver.WaitForListToBePopulated(AssignJudgePage.JudgeNameDropdown);
-            _commonSharedSteps.WhenTheUserSelectsTheOptionFromTheDropdown(_browsers[_c.CurrentUser.Key].Driver, AssignJudgePage.JudgeNameDropdown, judge.Username);
+            _browsers[_c.CurrentUser].Driver.WaitForListToBePopulated(AssignJudgePage.JudgeNameDropdown);
+            _commonSharedSteps.WhenTheUserSelectsTheOptionFromTheDropdown(_browsers[_c.CurrentUser].Driver, AssignJudgePage.JudgeNameDropdown, judge.Username);
             _c.Test.HearingParticipants.Add(judge);
         }
 
         private void SetAudioRecording(bool audioRecord)
         {
-            _browsers[_c.CurrentUser.Key].ClickRadioButton(audioRecord
+            _browsers[_c.CurrentUser].ClickRadioButton(audioRecord
                 ? AssignJudgePage.AudioRecordYesRadioButton
                 : AssignJudgePage.AudioRecordNoRadioButton);
             _c.Test.AssignJudge.AudioRecord = audioRecord;
@@ -62,8 +65,8 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         public void ClickNext()
         {
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(AssignJudgePage.NextButton);
-            _browsers[_c.CurrentUser.Key].Click(AssignJudgePage.NextButton);
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AssignJudgePage.NextButton);
+            _browsers[_c.CurrentUser].Click(AssignJudgePage.NextButton);
         }
     }
 }

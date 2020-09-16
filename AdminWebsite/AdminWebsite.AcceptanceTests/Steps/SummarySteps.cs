@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading;
-using AcceptanceTests.Common.Api.Hearings;
 using AcceptanceTests.Common.Api.Helpers;
-using AcceptanceTests.Common.Api.Users;
 using AcceptanceTests.Common.Configuration.Users;
 using AcceptanceTests.Common.Driver.Drivers;
 using AcceptanceTests.Common.Driver.Helpers;
@@ -13,7 +11,7 @@ using AcceptanceTests.Common.Test.Steps;
 using AdminWebsite.AcceptanceTests.Data;
 using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.AcceptanceTests.Pages;
-using AdminWebsite.BookingsAPI.Client;
+using AdminWebsite.TestAPI.Client;
 using FluentAssertions;
 using TechTalk.SpecFlow;
 
@@ -22,9 +20,9 @@ namespace AdminWebsite.AcceptanceTests.Steps
     [Binding]
     public class SummarySteps : ISteps
     {
-        private const int Timeout = 60;
+        private const int TIMEOUT = 60;
         private readonly TestContext _c;
-        private readonly Dictionary<string, UserBrowser> _browsers;
+        private readonly Dictionary<User, UserBrowser> _browsers;
         private readonly BookingDetailsSteps _bookingDetailsSteps;
         private readonly HearingDetailsSteps _hearingDetailsSteps;
         private readonly HearingScheduleSteps _hearingScheduleSteps;
@@ -36,7 +34,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         public SummarySteps(
             TestContext testContext, 
-            Dictionary<string, UserBrowser> browsers,
+            Dictionary<User, UserBrowser> browsers,
             BookingDetailsSteps bookingDetailsSteps, 
             HearingDetailsSteps hearingDetailsSteps,
             HearingScheduleSteps hearingScheduleSteps,
@@ -71,8 +69,8 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         public void ClickBook()
         {
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(SummaryPage.BookButton);
-            _browsers[_c.CurrentUser.Key].Click(SummaryPage.BookButton);
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(SummaryPage.BookButton);
+            _browsers[_c.CurrentUser].Click(SummaryPage.BookButton);
             _c.Test.CreatedBy = _c.CurrentUser.Username;
         }
 
@@ -80,7 +78,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void WhenTheUserEditsTheHearing(string screen)
         {
             _bookingDetailsSteps.ClickEdit();
-            _browsers[_c.CurrentUser.Key].Click(SummaryPage.EditScreenLink(screen));
+            _browsers[_c.CurrentUser].Click(SummaryPage.EditScreenLink(screen));
 
             if (screen.Equals("hearing details"))
             {
@@ -105,7 +103,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             _bookingDetailsSteps.ClickEdit();
             _newUserToEdit = UserManager.GetUserFromDisplayName(_c.Test.HearingParticipants, _c.Test.AddParticipant.Participant.NewUserPrefix);
-            _browsers[_c.CurrentUser.Key].Click(SummaryPage.EditParticipantLink(_newUserToEdit.Firstname));
+            _browsers[_c.CurrentUser].Click(SummaryPage.EditParticipantLink(_newUserToEdit.Firstname));
             _addParticipantSteps.EditANewParticipant(_newUserToEdit.AlternativeEmail);
         }
 
@@ -113,7 +111,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void WhenTheUserEditsAnEndpointDisplayName()
         {
             _bookingDetailsSteps.ClickEdit();
-            _browsers[_c.CurrentUser.Key].Click(SummaryPage.EditScreenLink("video access points"));
+            _browsers[_c.CurrentUser].Click(SummaryPage.EditScreenLink("video access points"));
             _videoAccessPointsSteps.ProgressToNextPage();
         }
 
@@ -133,8 +131,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void ThenTheParticipantDetailsAreUpdated()
         {
             ClickBook();
-            var bookingsApiManager = new BookingsApiManager(_c.WebConfig.VhServices.BookingsApiUrl, _c.Tokens.BookingsApiBearerToken);
-            bookingsApiManager.PollForParticipantNameUpdated(UserManager.GetClerkUser(_c.UserAccounts).Username, _c.Test.AddParticipant.Participant.NewUserPrefix).Should().BeTrue();
+            _c.Api.PollForParticipantNameUpdated(Users.GetJudgeUser(_c.Users).Username, _c.Test.AddParticipant.Participant.NewUserPrefix).Should().BeTrue();
         }
 
         [Then(@"the questionnaires have been sent")]
@@ -145,43 +142,42 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         private void VerifyHearingDetails()
         {
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(SummaryPage.CaseNumber).Text.Should().Be(_c.Test.HearingDetails.CaseNumber);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(SummaryPage.CaseName).Text.Should().Be(_c.Test.HearingDetails.CaseName);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(SummaryPage.CaseType).Text.Should().Be(_c.Test.HearingDetails.CaseType.Name);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(SummaryPage.HearingType).Text.Should().Be(_c.Test.HearingDetails.HearingType.Name);
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(SummaryPage.CaseNumber).Text.Should().Be(_c.Test.HearingDetails.CaseNumber);
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(SummaryPage.CaseName).Text.Should().Be(_c.Test.HearingDetails.CaseName);
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(SummaryPage.CaseType).Text.Should().Be(_c.Test.HearingDetails.CaseType.Name);
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(SummaryPage.HearingType).Text.Should().Be(_c.Test.HearingDetails.HearingType.Name);
         }
 
         private void VerifyHearingSchedule()
         {
             var scheduleDate = _c.Test.HearingSchedule.ScheduledDate.ToString(DateFormats.HearingSummaryDate);
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(SummaryPage.HearingDate).Text.ToLower().Should().Be(scheduleDate.ToLower());
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(SummaryPage.HearingDate).Text.ToLower().Should().Be(scheduleDate.ToLower());
             var courtAddress = $"{_c.Test.HearingSchedule.HearingVenue}, {_c.Test.HearingSchedule.Room}";
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(SummaryPage.CourtAddress).Text.Should().Be(courtAddress);
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(SummaryPage.CourtAddress).Text.Should().Be(courtAddress);
             var listedFor = $"listed for {_c.Test.HearingSchedule.DurationMinutes} minutes";
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(SummaryPage.HearingDuration).Text.Should().Be(listedFor);
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(SummaryPage.HearingDuration).Text.Should().Be(listedFor);
         }
 
         private void VerifyAudioRecording()
         {
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(SummaryPage.AudioRecording).Text.Should().Be(_c.Test.AssignJudge.AudioRecord ? "Yes" : "No");
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(SummaryPage.AudioRecording).Text.Should().Be(_c.Test.AssignJudge.AudioRecord ? "Yes" : "No");
         }
 
         private void VerifyOtherInformation()
         {
             var otherInformation = _c.Test.OtherInformation;
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(SummaryPage.OtherInformation).Text.Should().Be(otherInformation);
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(SummaryPage.OtherInformation).Text.Should().Be(otherInformation);
         }
 
         private void VerifyVideoAccessPoints()
         {
             var videoAccessPoints = _c.Test.VideoAccessPoints.DisplayName;
-            _browsers[_c.CurrentUser.Key].Driver.WaitUntilVisible(SummaryPage.VideoAccessPoints(0)).Text.Should().Be(videoAccessPoints);
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(SummaryPage.VideoAccessPoints(0)).Text.Should().Be(videoAccessPoints);
         }
 
         private void VerifyBookingCreated()
         {
-            var bookingsApiManager = new BookingsApiManager(_c.WebConfig.VhServices.BookingsApiUrl, _c.Tokens.BookingsApiBearerToken);
-            var response = bookingsApiManager.PollForHearingByUsername(UserManager.GetClerkUser(_c.UserAccounts).Username, _c.Test.HearingDetails.CaseName);
+            var response = _c.Api.PollForHearingByUsername(Users.GetJudgeUser(_c.Users).Username, _c.Test.HearingDetails.CaseName);
             var hearings = RequestHelper.Deserialise<List<HearingDetailsResponse>>(response.Content);
             _c.Test.HearingResponse = GetHearingFromHearings(hearings);
             var assertHearing = new AssertHearing()
@@ -197,8 +193,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         private void VerifyBookingUpdated()
         {
             Thread.Sleep(TimeSpan.FromSeconds(0.5));
-            var bookingsApiManager = new BookingsApiManager(_c.WebConfig.VhServices.BookingsApiUrl, _c.Tokens.BookingsApiBearerToken);
-            var response = bookingsApiManager.PollForHearingByUsername(UserManager.GetClerkUser(_c.UserAccounts).Username, _c.Test.HearingDetails.CaseName);
+            var response = _c.Api.PollForHearingByUsername(Users.GetJudgeUser(_c.Users).Username, _c.Test.HearingDetails.CaseName);
             var hearings = RequestHelper.Deserialise<List<HearingDetailsResponse>>(response.Content);
             _c.Test.HearingResponse = GetHearingFromHearings(hearings);
             var assertHearing = new AssertHearing()
@@ -222,10 +217,9 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         private void VerifyNewUsersCreatedInAad()
         {
-            var userApiManager = new UserApiManager(_c.WebConfig.VhServices.UserApiUrl, _c.Tokens.UserApiBearerToken);
             foreach (var participant in _c.Test.HearingParticipants.Where(participant => participant.DisplayName.Contains(_c.Test.TestData.AddParticipant.Participant.NewUserPrefix)))
             {
-                userApiManager.CheckIfParticipantExistsInAad(participant.AlternativeEmail, Timeout);
+                _c.Api.PollForParticipantExistsInAD(participant.Username, TIMEOUT);
             }
             _c.Test.SubmittedAndCreatedNewAadUsers = true;
         }

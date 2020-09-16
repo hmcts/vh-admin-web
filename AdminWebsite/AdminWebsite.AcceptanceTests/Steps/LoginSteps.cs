@@ -3,6 +3,7 @@ using AcceptanceTests.Common.Driver.Drivers;
 using AcceptanceTests.Common.PageObject.Pages;
 using AcceptanceTests.Common.Test.Steps;
 using AdminWebsite.AcceptanceTests.Helpers;
+using AdminWebsite.TestAPI.Client;
 using FluentAssertions;
 using TechTalk.SpecFlow;
 
@@ -12,11 +13,11 @@ namespace AdminWebsite.AcceptanceTests.Steps
     public sealed class LoginSteps : ISteps
     {
         private LoginSharedSteps _loginSharedSteps;
-        private readonly Dictionary<string, UserBrowser> _browsers;
+        private readonly Dictionary<User, UserBrowser> _browsers;
         private readonly TestContext _c;
         private const int ReachedThePageRetries = 2;
 
-        public LoginSteps(Dictionary<string, UserBrowser> browsers, TestContext testContext)
+        public LoginSteps(Dictionary<User, UserBrowser> browsers, TestContext testContext)
         {
             _browsers = browsers;
             _c = testContext;
@@ -25,7 +26,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [When(@"the user logs in with valid credentials")]
         public void ProgressToNextPage()
         {
-            _loginSharedSteps = new LoginSharedSteps(_browsers[_c.CurrentUser.Key], _c.CurrentUser.Username, _c.WebConfig.TestConfig.TestUserPassword);
+            _loginSharedSteps = new LoginSharedSteps(_browsers[_c.CurrentUser], _c.CurrentUser.Username, _c.WebConfig.TestConfig.TestUserPassword);
             _loginSharedSteps.ProgressToNextPage();
         }
 
@@ -33,7 +34,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [When(@"the user attempts to logout")]
         public void WhenTheUserAttemptsToLogout()
         {
-            _browsers[_c.CurrentUser.Key].ClickLink(CommonPages.SignOutLink);
+            _browsers[_c.CurrentUser].ClickLink(CommonPages.SignOutLink);
         }
 
         [Then(@"the sign out link is displayed")]
@@ -45,7 +46,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [Then(@"the user should be navigated to sign in screen")]
         public void ThenTheUserShouldBeNavigatedToSignInScreen()
         {
-            _browsers[_c.CurrentUser.Key].Retry(() => _browsers[_c.CurrentUser.Key].Driver.Title.Trim().Should().Be(LoginPage.SignInTitle), ReachedThePageRetries);
+            _browsers[_c.CurrentUser].Retry(() => _browsers[_c.CurrentUser].Driver.Title.Trim().Should().Be(LoginPage.SignInTitle), ReachedThePageRetries);
         }
     }
 }

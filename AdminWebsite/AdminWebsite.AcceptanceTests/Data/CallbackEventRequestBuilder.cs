@@ -1,5 +1,5 @@
 ﻿using System;
-using AdminWebsite.VideoAPI.Client;
+using AdminWebsite.TestAPI.Client;
 using FizzWare.NBuilder;
 
 namespace AdminWebsite.AcceptanceTests.Data
