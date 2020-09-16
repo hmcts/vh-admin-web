@@ -36,7 +36,7 @@
                         </label>
                         <select class="govuk-select ddl-width" [id]="'defenceAdvocate'+i"
                             formControlName="defenceAdvocate">
-                            <option *ngFor="let da of availableDefenceAdvocates" [ngValue]="da">
+                            <option *ngFor="let da of availableDefenceAdvocates" [ngValue]="da.username">
                                 {{ da.displayName }}
                             </option>
                         </select>

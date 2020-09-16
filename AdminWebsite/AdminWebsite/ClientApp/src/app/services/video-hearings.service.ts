@@ -173,6 +173,7 @@ export class VideoHearingsService {
         const editEndpoint = new EditEndpointRequest();
         editEndpoint.id = endpoint.Id;
         editEndpoint.display_name = endpoint.displayName;
+        editEndpoint.defence_advocate_username = endpoint.defenceAdvocate;
         return editEndpoint;
     }
 

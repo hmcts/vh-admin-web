@@ -12,5 +12,13 @@ namespace AdminWebsite.Models
         ///     The display name for the endpoint
         /// </summary>
         public string DisplayName { get; set; }
+        /// <summary>
+        ///     The username of the participant
+        /// </summary>
+        public string DefenceAdvocateUsername { get; set; }
+        /// <summary>
+        ///     The defence advocate Id
+        /// </summary>
+        public Guid? DefenceAdvocateId { get; set; }
     }
 }
