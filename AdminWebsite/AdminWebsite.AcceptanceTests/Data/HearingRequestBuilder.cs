@@ -29,6 +29,12 @@ namespace AdminWebsite.AcceptanceTests.Data
             return this;
         }
 
+        public HearingRequestBuilder WithAudioRecordingRequired(bool audioRecording)
+        {
+            _request.Audio_recording_required = audioRecording;
+            return this;
+        }
+
         public CreateHearingRequest Build()
         {
             return _request;
