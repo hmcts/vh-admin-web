@@ -560,31 +560,53 @@ namespace AdminWebsite.VideoAPI.Client
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task HandleConsultationRequestAsync(ConsultationRequest body, System.Threading.CancellationToken cancellationToken);
     
+        /// <summary>Leave a private consultation</summary>
         /// <returns>Success</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task LeavePrivateConsultationAsync(LeaveConsultationRequest body);
     
+        /// <summary>Leave a private consultation</summary>
         /// <returns>Success</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         void LeavePrivateConsultation(LeaveConsultationRequest body);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Leave a private consultation</summary>
         /// <returns>Success</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task LeavePrivateConsultationAsync(LeaveConsultationRequest body, System.Threading.CancellationToken cancellationToken);
     
+        /// <summary>Respond to a private consultation with a video hearings officer</summary>
         /// <returns>Success</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task RespondToAdminConsultationRequestAsync(AdminConsultationRequest body);
     
+        /// <summary>Respond to a private consultation with a video hearings officer</summary>
         /// <returns>Success</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         void RespondToAdminConsultationRequest(AdminConsultationRequest body);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Respond to a private consultation with a video hearings officer</summary>
         /// <returns>Success</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task RespondToAdminConsultationRequestAsync(AdminConsultationRequest body, System.Threading.CancellationToken cancellationToken);
+    
+        /// <summary>Start a private consultation with a video endpoint</summary>
+        /// <returns>Success</returns>
+        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task StartPrivateConsultationWithEndpointAsync(EndpointConsultationRequest body);
+    
+        /// <summary>Start a private consultation with a video endpoint</summary>
+        /// <returns>Success</returns>
+        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        void StartPrivateConsultationWithEndpoint(EndpointConsultationRequest body);
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Start a private consultation with a video endpoint</summary>
+        /// <returns>Success</returns>
+        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task StartPrivateConsultationWithEndpointAsync(EndpointConsultationRequest body, System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Get all endpoints for a conference</summary>
         /// <param name="conferenceId">Id of the conference</param>
@@ -4007,6 +4029,7 @@ namespace AdminWebsite.VideoAPI.Client
             }
         }
     
+        /// <summary>Leave a private consultation</summary>
         /// <returns>Success</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         public System.Threading.Tasks.Task LeavePrivateConsultationAsync(LeaveConsultationRequest body)
@@ -4014,6 +4037,7 @@ namespace AdminWebsite.VideoAPI.Client
             return LeavePrivateConsultationAsync(body, System.Threading.CancellationToken.None);
         }
     
+        /// <summary>Leave a private consultation</summary>
         /// <returns>Success</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         public void LeavePrivateConsultation(LeaveConsultationRequest body)
@@ -4022,6 +4046,7 @@ namespace AdminWebsite.VideoAPI.Client
         }
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Leave a private consultation</summary>
         /// <returns>Success</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         public async System.Threading.Tasks.Task LeavePrivateConsultationAsync(LeaveConsultationRequest body, System.Threading.CancellationToken cancellationToken)
@@ -4105,6 +4130,7 @@ namespace AdminWebsite.VideoAPI.Client
             }
         }
     
+        /// <summary>Respond to a private consultation with a video hearings officer</summary>
         /// <returns>Success</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         public System.Threading.Tasks.Task RespondToAdminConsultationRequestAsync(AdminConsultationRequest body)
@@ -4112,6 +4138,7 @@ namespace AdminWebsite.VideoAPI.Client
             return RespondToAdminConsultationRequestAsync(body, System.Threading.CancellationToken.None);
         }
     
+        /// <summary>Respond to a private consultation with a video hearings officer</summary>
         /// <returns>Success</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         public void RespondToAdminConsultationRequest(AdminConsultationRequest body)
@@ -4120,6 +4147,7 @@ namespace AdminWebsite.VideoAPI.Client
         }
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Respond to a private consultation with a video hearings officer</summary>
         /// <returns>Success</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         public async System.Threading.Tasks.Task RespondToAdminConsultationRequestAsync(AdminConsultationRequest body, System.Threading.CancellationToken cancellationToken)
@@ -4156,6 +4184,107 @@ namespace AdminWebsite.VideoAPI.Client
     
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 204)
+                        {
+                            return;
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new VideoApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new VideoApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new VideoApiException("Unauthorized", status_, responseText_, headers_, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new VideoApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (response_ != null)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+            }
+        }
+    
+        /// <summary>Start a private consultation with a video endpoint</summary>
+        /// <returns>Success</returns>
+        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        public System.Threading.Tasks.Task StartPrivateConsultationWithEndpointAsync(EndpointConsultationRequest body)
+        {
+            return StartPrivateConsultationWithEndpointAsync(body, System.Threading.CancellationToken.None);
+        }
+    
+        /// <summary>Start a private consultation with a video endpoint</summary>
+        /// <returns>Success</returns>
+        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        public void StartPrivateConsultationWithEndpoint(EndpointConsultationRequest body)
+        {
+            System.Threading.Tasks.Task.Run(async () => await StartPrivateConsultationWithEndpointAsync(body, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
+        }
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Start a private consultation with a video endpoint</summary>
+        /// <returns>Success</returns>
+        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        public async System.Threading.Tasks.Task StartPrivateConsultationWithEndpointAsync(EndpointConsultationRequest body, System.Threading.CancellationToken cancellationToken)
+        {
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/consultations/endpoint");
+    
+            var client_ = _httpClient;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var content_ = new System.Net.Http.StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(body, _settings.Value));
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
+    
+                    PrepareRequest(client_, request_, urlBuilder_);
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+                    PrepareRequest(client_, request_, url_);
+    
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+    
+                        ProcessResponse(client_, response_);
+    
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 202)
                         {
                             return;
                         }
@@ -6867,6 +6996,7 @@ namespace AdminWebsite.VideoAPI.Client
         [Newtonsoft.Json.JsonProperty("sip_address", Required = Newtonsoft.Json.Required.AllowNull)]
         public string Sip_address { get; set; }
     
+        /// <summary>The pin</summary>
         [Newtonsoft.Json.JsonProperty("pin", Required = Newtonsoft.Json.Required.AllowNull)]
         public string Pin { get; set; }
     
@@ -7023,6 +7153,9 @@ namespace AdminWebsite.VideoAPI.Client
     
         [System.Runtime.Serialization.EnumMember(Value = @"Disconnected")]
         Disconnected = 2,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"InConsultation")]
+        InConsultation = 3,
     
     }
     
@@ -7476,6 +7609,22 @@ namespace AdminWebsite.VideoAPI.Client
     
     }
     
+    /// <summary>Request a private consultation with a video endpoint</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class EndpointConsultationRequest 
+    {
+        [Newtonsoft.Json.JsonProperty("conference_id", Required = Newtonsoft.Json.Required.Always)]
+        public System.Guid Conference_id { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("defence_advocate_id", Required = Newtonsoft.Json.Required.Always)]
+        public System.Guid Defence_advocate_id { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("endpoint_id", Required = Newtonsoft.Json.Required.Always)]
+        public System.Guid Endpoint_id { get; set; }
+    
+    
+    }
+    
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
     public partial class UpdateEndpointRequest 
     {
@@ -7805,47 +7954,50 @@ namespace AdminWebsite.VideoAPI.Client
         [System.Runtime.Serialization.EnumMember(Value = @"Help")]
         Help = 4,
     
-        [System.Runtime.Serialization.EnumMember(Value = @"Start")]
-        Start = 5,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"CountdownFinished")]
-        CountdownFinished = 6,
-    
         [System.Runtime.Serialization.EnumMember(Value = @"Pause")]
-        Pause = 7,
+        Pause = 5,
     
         [System.Runtime.Serialization.EnumMember(Value = @"Close")]
-        Close = 8,
+        Close = 6,
     
         [System.Runtime.Serialization.EnumMember(Value = @"Leave")]
-        Leave = 9,
+        Leave = 7,
     
         [System.Runtime.Serialization.EnumMember(Value = @"Consultation")]
-        Consultation = 10,
+        Consultation = 8,
     
         [System.Runtime.Serialization.EnumMember(Value = @"MediaPermissionDenied")]
-        MediaPermissionDenied = 11,
+        MediaPermissionDenied = 9,
     
         [System.Runtime.Serialization.EnumMember(Value = @"ParticipantJoining")]
-        ParticipantJoining = 12,
+        ParticipantJoining = 10,
     
         [System.Runtime.Serialization.EnumMember(Value = @"SelfTestFailed")]
-        SelfTestFailed = 13,
+        SelfTestFailed = 11,
     
         [System.Runtime.Serialization.EnumMember(Value = @"Suspend")]
-        Suspend = 14,
+        Suspend = 12,
     
         [System.Runtime.Serialization.EnumMember(Value = @"VhoCall")]
-        VhoCall = 15,
+        VhoCall = 13,
     
         [System.Runtime.Serialization.EnumMember(Value = @"ParticipantNotSignedIn")]
-        ParticipantNotSignedIn = 16,
+        ParticipantNotSignedIn = 14,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Start")]
+        Start = 15,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"CountdownFinished")]
+        CountdownFinished = 16,
     
         [System.Runtime.Serialization.EnumMember(Value = @"EndpointJoined")]
         EndpointJoined = 17,
     
         [System.Runtime.Serialization.EnumMember(Value = @"EndpointDisconnected")]
         EndpointDisconnected = 18,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"EndpointTransfer")]
+        EndpointTransfer = 19,
     
     }
     
