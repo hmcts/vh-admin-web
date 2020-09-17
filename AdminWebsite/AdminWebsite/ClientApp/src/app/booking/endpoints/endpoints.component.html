@@ -62,9 +62,7 @@
             </button>
         </div>
     </div>
-    <div class="govuk-grid-column-one-third">
-        {{ form.value | json }}
-    </div>
+
 </div>
 <div *ngIf="attemptingCancellation">
     <app-cancel-popup (continueBooking)="continueBooking($event)" (cancelBooking)="cancelEndpoints($event)">

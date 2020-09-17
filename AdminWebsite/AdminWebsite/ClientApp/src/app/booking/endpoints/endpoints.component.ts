@@ -200,7 +200,7 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
     return this.fb.group({
       displayName: ['', [blankSpaceValidator]],
       id: [''],
-      defenceAdvocate: ['']
+      defenceAdvocate: ['None']
     });
   }
 
@@ -214,7 +214,7 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
   hasDuplicateDefenceAdvocate(endpoints: EndpointModel[]): boolean {
     const listOfDefenceAdvocates = endpoints
       .filter(function (item) {
-        if (item.defenceAdvocate === '') {
+        if (item.defenceAdvocate === 'None') {
           return false;
         }
         return true;

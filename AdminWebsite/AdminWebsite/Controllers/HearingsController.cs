@@ -260,7 +260,9 @@ namespace AdminWebsite.Controllers
                         {
                             var existingEndpointToEdit = hearing.Endpoints.FirstOrDefault(e => e.Id.Equals(endpoint.Id));
                             if (existingEndpointToEdit != null && 
-                                (existingEndpointToEdit.Display_name != endpoint.DisplayName || existingEndpointToEdit.Defence_advocate_id != endpoint.DefenceAdvocateId))
+                                (existingEndpointToEdit.Display_name != endpoint.DisplayName || 
+                                existingEndpointToEdit.Defence_advocate_id  == null || 
+                                existingEndpointToEdit.Defence_advocate_id != endpoint.DefenceAdvocateId))
                             {
                                 var updateEndpointRequest = new UpdateEndpointRequest { Display_name = endpoint.DisplayName, Defence_advocate_username = endpoint.DefenceAdvocateUsername };
                                 await _bookingsApiClient.UpdateDisplayNameForEndpointAsync(hearing.Id, endpoint.Id.Value, updateEndpointRequest);
