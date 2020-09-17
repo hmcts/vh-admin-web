@@ -67,9 +67,21 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
   }
 
   saveEndpoints(): void {
+    const newEndpointsArray: EndpointModel[] = [];
+    for (const control of this.endpoints.controls) {
+      const endpointModel = new EndpointModel();
+      if (control.value.displayName.trim() !== '') {
+        const displayNameText = SanitizeInputText(control.value.displayName);
+        endpointModel.displayName = displayNameText;
+        endpointModel.Id = control.value.id;
+        endpointModel.defenceAdvocate = control.value.defenceAdvocate !== this.constants.None ? control.value.defenceAdvocate : '';
+        newEndpointsArray.push(endpointModel);
+      }
+    }
+
     if (!this.hasDuplicateDisplayName(this.newEndpoints) && !this.hasDuplicateDefenceAdvocate(this.newEndpoints)) {
       this.failedValidation = false;
-      this.hearing.endpoints = this.newEndpoints; 
+      this.hearing.endpoints = newEndpointsArray;
       this.videoHearingService.updateHearingRequest(this.hearing);
 
       if (this.editMode) {
@@ -167,11 +179,12 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
   private setExistingEndpoints(endpoints: EndpointModel[]): FormArray {
     const formArray = new FormArray([]);
     endpoints.forEach(e => {
-      formArray.push(this.fb.group({
-        displayName: e.displayName,
-        id: e.Id,
-        defenceAdvocate: e.defenceAdvocate === '' ? 'None' : this.getUsernameFromId(e.defenceAdvocate)
-      }));
+      formArray.push(
+        this.fb.group({
+          displayName: e.displayName,
+          id: e.Id,
+          defenceAdvocate: e.defenceAdvocate === undefined ? 'None' : this.getUsernameFromId(e.defenceAdvocate)
+        }));
     });
     return formArray;
   }
@@ -199,9 +212,16 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
     return duplicateDisplayName;
   }
   hasDuplicateDefenceAdvocate(endpoints: EndpointModel[]): boolean {
-    const listOfDefenceAdvocates = endpoints.filter(function (item) {
-      if (item.defenceAdvocate === '') { return false; } return true;
-    }).map(function (item) { return item.defenceAdvocate; });
+    const listOfDefenceAdvocates = endpoints
+      .filter(function (item) {
+        if (item.defenceAdvocate === '') {
+          return false;
+        }
+        return true;
+      })
+      .map(function (item) {
+        return item.defenceAdvocate;
+      });
     console.log(listOfDefenceAdvocates);
     const duplicateDefenceAdvocate = listOfDefenceAdvocates.some(function (item, position) {
       return listOfDefenceAdvocates.indexOf(item) !== position;
