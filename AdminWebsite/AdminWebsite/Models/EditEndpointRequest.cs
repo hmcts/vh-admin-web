@@ -16,9 +16,5 @@ namespace AdminWebsite.Models
         ///     The username of the participant
         /// </summary>
         public string DefenceAdvocateUsername { get; set; }
-        /// <summary>
-        ///     The defence advocate Id
-        /// </summary>
-        public Guid? DefenceAdvocateId { get; set; }
     }
 }

@@ -73,13 +73,13 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
       if (control.value.displayName.trim() !== '') {
         const displayNameText = SanitizeInputText(control.value.displayName);
         endpointModel.displayName = displayNameText;
-        endpointModel.Id = control.value.id;
+        endpointModel.id = control.value.id;
         endpointModel.defenceAdvocate = control.value.defenceAdvocate !== this.constants.None ? control.value.defenceAdvocate : '';
         newEndpointsArray.push(endpointModel);
       }
     }
 
-    if (!this.hasDuplicateDisplayName(this.newEndpoints) && !this.hasDuplicateDefenceAdvocate(this.newEndpoints)) {
+    if (!this.hasDuplicateDisplayName(newEndpointsArray) && !this.hasDuplicateDefenceAdvocate(newEndpointsArray)) {
       this.failedValidation = false;
       this.hearing.endpoints = newEndpointsArray;
       this.videoHearingService.updateHearingRequest(this.hearing);
@@ -132,7 +132,6 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
   private checkForExistingRequest(): void {
     this.hearing = this.videoHearingService.getCurrentRequest();
   }
-
   private initialiseForm(): void {
     this.availableDefenceAdvocates = this.populateDefenceAdvocates();
     this.form = this.fb.group({
@@ -144,14 +143,13 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
       this.newEndpoints = this.hearing.endpoints;
       this.form.setControl('endpoints', this.setExistingEndpoints(this.newEndpoints));
     }
-
     this.$subscriptions.push(
       this.form.get('endpoints').valueChanges.subscribe(ep => {
         this.newEndpoints = ep;
       })
     );
   }
-  populateDefenceAdvocates(): DefenceAdvocateModel[] {
+  private populateDefenceAdvocates(): DefenceAdvocateModel[] {
     const participants = this.hearing.participants.filter(
       p => p.hearing_role_name.toLowerCase() === this.constants.DefenceAdvocate.toLowerCase()
     );
@@ -181,8 +179,9 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
     endpoints.forEach(e => {
       formArray.push(
         this.fb.group({
+          id: e.id,
           displayName: e.displayName,
-          id: e.Id,
+          defenceAdvocateId: e.defenceAdvocate,
           defenceAdvocate: e.defenceAdvocate === undefined ? 'None' : this.getUsernameFromId(e.defenceAdvocate)
         }));
     });
@@ -199,30 +198,24 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
   private addEndpointsFormGroup(): FormGroup {
     return this.fb.group({
       displayName: ['', [blankSpaceValidator]],
-      id: [''],
-      defenceAdvocate: ['None']
+      defenceAdvocate: ['None'],
+      id: [],
+      defenceAdvocateId: []
     });
   }
 
-  hasDuplicateDisplayName(endpoints: EndpointModel[]): boolean {
+  private hasDuplicateDisplayName(endpoints: EndpointModel[]): boolean {
     const listOfDisplayNames = endpoints.map(function (item) { return item.displayName; });
     const duplicateDisplayName = listOfDisplayNames.some(function (item, position) {
       return listOfDisplayNames.indexOf(item) !== position;
     });
     return duplicateDisplayName;
   }
-  hasDuplicateDefenceAdvocate(endpoints: EndpointModel[]): boolean {
-    const listOfDefenceAdvocates = endpoints
-      .filter(function (item) {
-        if (item.defenceAdvocate === 'None') {
-          return false;
-        }
-        return true;
-      })
-      .map(function (item) {
-        return item.defenceAdvocate;
-      });
-    console.log(listOfDefenceAdvocates);
+  private hasDuplicateDefenceAdvocate(endpoints: EndpointModel[]): boolean {
+    const listOfDefenceAdvocates = endpoints.filter(function (item) {
+      if (item.defenceAdvocate === '') { return false; }
+      return true;
+    }).map(function (item) { return item.defenceAdvocate; });
     const duplicateDefenceAdvocate = listOfDefenceAdvocates.some(function (item, position) {
       return listOfDefenceAdvocates.indexOf(item) !== position;
     });

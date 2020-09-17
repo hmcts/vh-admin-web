@@ -245,24 +245,23 @@ namespace AdminWebsite.Controllers
                     }
                     foreach (var endpoint in request.Endpoints)
                     {
+                        var epToUpdate = newParticipantList
+                            .Find(p => p.Contact_email.Equals(endpoint.DefenceAdvocateUsername, StringComparison.CurrentCultureIgnoreCase));
+                        if (epToUpdate != null)
+                        {
+                            endpoint.DefenceAdvocateUsername = epToUpdate.Username;
+                        }
+
                         if (!endpoint.Id.HasValue)
                         {
-                            var epToUpdate = newParticipantList
-                                .Find(p => p.Contact_email.Equals(endpoint.DefenceAdvocateUsername, StringComparison.CurrentCultureIgnoreCase));
-                            if (epToUpdate != null)
-                            {
-                                endpoint.DefenceAdvocateUsername = epToUpdate.Username;
-                            }
                             var addEndpointRequest = new AddEndpointRequest { Display_name = endpoint.DisplayName, Defence_advocate_username = endpoint.DefenceAdvocateUsername };
                             await _bookingsApiClient.AddEndPointToHearingAsync(hearing.Id, addEndpointRequest);
                         }
                         else
                         {
                             var existingEndpointToEdit = hearing.Endpoints.FirstOrDefault(e => e.Id.Equals(endpoint.Id));
-                            if (existingEndpointToEdit != null && 
-                                (existingEndpointToEdit.Display_name != endpoint.DisplayName || 
-                                existingEndpointToEdit.Defence_advocate_id  == null || 
-                                existingEndpointToEdit.Defence_advocate_id != endpoint.DefenceAdvocateId))
+                            if (existingEndpointToEdit != null && (existingEndpointToEdit.Display_name != endpoint.DisplayName || 
+                                existingEndpointToEdit.Defence_advocate_id.ToString() != endpoint.DefenceAdvocateUsername))
                             {
                                 var updateEndpointRequest = new UpdateEndpointRequest { Display_name = endpoint.DisplayName, Defence_advocate_username = endpoint.DefenceAdvocateUsername };
                                 await _bookingsApiClient.UpdateDisplayNameForEndpointAsync(hearing.Id, endpoint.Id.Value, updateEndpointRequest);

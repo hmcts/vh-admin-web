@@ -171,7 +171,7 @@ export class VideoHearingsService {
 
     mappingToEditEndpointRequest(endpoint: EndpointModel): EditEndpointRequest {
         const editEndpoint = new EditEndpointRequest();
-        editEndpoint.id = endpoint.Id;
+        editEndpoint.id = endpoint.id;
         editEndpoint.display_name = endpoint.displayName;
         editEndpoint.defence_advocate_username = endpoint.defenceAdvocate;
         return editEndpoint;
@@ -317,7 +317,7 @@ export class VideoHearingsService {
         if (response && response.length > 0) {
             response.forEach(e => {
                 endpoint = new EndpointModel();
-                endpoint.Id = e.id;
+                endpoint.id = e.id;
                 endpoint.displayName = e.display_name;
                 endpoint.pin = e.pin;
                 endpoint.sip = e.sip;

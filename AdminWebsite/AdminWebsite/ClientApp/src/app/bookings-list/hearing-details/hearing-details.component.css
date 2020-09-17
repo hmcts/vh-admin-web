@@ -54,3 +54,8 @@ div {
 .vh-remove-padding {
     margin-bottom: 1px;
 }
+
+.icon {
+    width: 16px;
+    height: 16px;;
+}

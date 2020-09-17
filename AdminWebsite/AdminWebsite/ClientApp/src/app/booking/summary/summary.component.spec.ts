@@ -25,6 +25,9 @@ function initExistingHearingRequest(): HearingModel {
 
   const pat1 = new ParticipantModel();
   pat1.email = 'aa@aa.aa';
+  pat1.representee = 'citizen 01';
+  pat1.display_name = 'solicitor 01';
+  pat1.id = '123123-123';
 
   const today = new Date();
   today.setHours(14, 30);
@@ -357,6 +360,11 @@ describe('SummaryComponent  with existing request', () => {
     component.removeEndpoint(1);
     expect(component.hearing.endpoints.length).toBe(2);
     expect(videoHearingsServiceSpy.updateHearingRequest).toHaveBeenCalled();
+  });
+  it('it should display the participant and representee', () => {
+    component.hearing = initExistingHearingRequest();
+    const result = component.getParticipantInfo('123123-123');
+    expect(result).toBe('solicitor 01, representing citizen 01');
   });
 });
 
