@@ -1,14 +1,10 @@
-﻿using AdminWebsite.Helper;
-using AdminWebsite.IntegrationTests.Helper;
-using AdminWebsite.Security;
-using AdminWebsite.Services.Models;
+﻿using AdminWebsite.IntegrationTests.Helper;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using Moq;
 using NUnit.Framework;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http;
@@ -72,20 +68,20 @@ namespace AdminWebsite.IntegrationTests.Controllers
 
         private static void OverrideDependenciesInServiceCollection(IServiceCollection services)
         {
-            var cachedUserClaimBuilder = new Mock<ICachedUserClaimBuilder>();
+            // var cachedUserClaimBuilder = new Mock<ICachedUserClaimBuilder>();
 
-            var claims = new AdministratorRoleClaims(new UserRole
-            {
-                UserRoleType = UserRoleType.None
-            }).Claims;
+            // var claims = new AdministratorRoleClaims(new UserRole
+            // {
+            //     UserRoleType = UserRoleType.None
+            // }).Claims;
 
-            cachedUserClaimBuilder.Setup
-            (
-                x => x.BuildAsync(It.IsAny<string>(), It.IsAny<string>())
-            )
-            .ReturnsAsync(claims);
-
-            services.AddTransient(x => cachedUserClaimBuilder.Object);
+            // cachedUserClaimBuilder.Setup
+            // (
+            //     x => x.BuildAsync(It.IsAny<string>(), It.IsAny<string>())
+            // )
+            // .ReturnsAsync(claims);
+            //
+            // services.AddTransient(x => cachedUserClaimBuilder.Object);
         }
 
         private void CreateAccessToken()

@@ -1,8 +1,8 @@
 ﻿using AdminWebsite.Contracts.Responses;
-using AdminWebsite.Security;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Net;
+using AdminWebsite.Models;
 
 namespace AdminWebsite.Controllers
 {
@@ -10,13 +10,6 @@ namespace AdminWebsite.Controllers
     [Route("api/user")]
     public class UserIdentityController : ControllerBase
     {
-        private readonly IUserIdentity _userIdentity;
-
-        public UserIdentityController(IUserIdentity userIdentity)
-        {
-            _userIdentity = userIdentity;
-        }
-
         [HttpGet]
         [SwaggerOperation(OperationId = "GetUserProfile")]
         [ProducesResponseType(typeof(UserProfileResponse), (int)HttpStatusCode.OK)]
@@ -24,8 +17,8 @@ namespace AdminWebsite.Controllers
         {
             var profile = new UserProfileResponse
             {
-                IsVhOfficerAdministratorRole = _userIdentity.IsVhOfficerAdministratorRole(),
-                IsCaseAdministrator = _userIdentity.IsCaseAdministratorRole()
+                IsVhOfficerAdministratorRole = User.IsInRole(AppRoles.VhOfficerRole),
+                IsCaseAdministrator = User.IsInRole(AppRoles.CaseAdminRole)
             };
 
             return Ok(profile);
