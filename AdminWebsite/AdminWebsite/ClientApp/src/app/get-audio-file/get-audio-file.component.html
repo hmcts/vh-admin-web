@@ -58,12 +58,12 @@
         <div class="govuk-!-margin-top-9" *ngIf="searchChoice === 'cvpFile'">
             <div [ngClass]="cloudroomNameInvalid ? 'govuk-form-group--error' : 'govuk-form-group'">
                 <label class="govuk-label govuk-!-width-one-quarter" for="cloudroomName">
-                    Cloudroom 
+                    Cloudroom number
                 </label>
                 <input id="cloudroomName" class="govuk-input govuk-!-width-one-half" type="text" formControlName="cloudroomName" required />
                 <div *ngIf="cloudroomNameInvalid" class="alert alert-danger">
                     <span id="hearingDate-error" class="govuk-error-message">
-                        Please enter a valid cloudroom
+                        Enter the number of the cloudroom
                     </span>
                 </div>
             </div>
