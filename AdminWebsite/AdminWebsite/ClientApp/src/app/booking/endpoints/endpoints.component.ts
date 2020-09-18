@@ -165,7 +165,7 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
     defenceAdvocates.unshift(defenceAdvocateModel);
     return defenceAdvocates;
   }
-  private mapParticipantsToDefenceAdvocateModel(participant: ParticipantModel): DefenceAdvocateModel {
+  mapParticipantsToDefenceAdvocateModel(participant: ParticipantModel): DefenceAdvocateModel {
     const defenceAdvocateModel = new DefenceAdvocateModel();
     defenceAdvocateModel.id = participant.id;
     defenceAdvocateModel.username = participant.username;
@@ -188,7 +188,7 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
     return formArray;
   }
 
-  private getUsernameFromId(participantId: string): string {
+  getUsernameFromId(participantId: string): string {
     const defAdv = this.hearing.participants.find(p => p.id === participantId);
     if (defAdv) {
       return defAdv.username;

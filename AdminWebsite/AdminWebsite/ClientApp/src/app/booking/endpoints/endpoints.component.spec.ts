@@ -4,6 +4,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { of } from 'rxjs';
 import { EndpointModel } from 'src/app/common/model/endpoint.model';
 import { HearingModel } from 'src/app/common/model/hearing.model';
+import { ParticipantModel } from 'src/app/common/model/participant.model';
 import { CancelPopupComponent } from 'src/app/popups/cancel-popup/cancel-popup.component';
 import { DiscardConfirmPopupComponent } from 'src/app/popups/discard-confirm-popup/discard-confirm-popup.component';
 import { BookingService } from 'src/app/services/booking.service';
@@ -142,6 +143,26 @@ describe('EndpointsComponent', () => {
     component.addEndpoint();
     expect(component.failedValidation).toBe(false);
   });
+  it('it should validate form array and add form array with defence advocate', () => {
+    component.ngOnInit();
+    component.endpoints.controls[0].get('displayName').setValue('200');
+    component.endpoints.controls[0].get('defenceAdvocate').setValue('username@email.com');
+    component.addEndpoint();
+    component.endpoints.controls[1].get('displayName').setValue('300');
+    component.endpoints.controls[1].get('defenceAdvocate').setValue('username1@email.com');
+    component.addEndpoint();
+    expect(component.failedValidation).toBe(false);
+  });
+  it('it should validate form array and add form array with defence advocate as none', () => {
+    component.ngOnInit();
+    component.endpoints.controls[0].get('displayName').setValue('200');
+    component.endpoints.controls[0].get('defenceAdvocate').setValue('None');
+    component.addEndpoint();
+    component.endpoints.controls[1].get('displayName').setValue('300');
+    component.endpoints.controls[1].get('defenceAdvocate').setValue('None');
+    component.addEndpoint();
+    expect(component.failedValidation).toBe(false);
+  });
   it('it should validate form array on next click and show error message on validation failure', () => {
     component.ngOnInit();
     component.endpoints.controls[0].get('displayName').setValue('200');
@@ -165,5 +186,29 @@ describe('EndpointsComponent', () => {
   it('should unsubscribe all subcription on destroy', () => {
     component.ngOnDestroy();
     expect(component.$subscriptions[0].closed).toBe(true);
+  });
+  it('should map participant list to defence advocate model', () => {
+    component.ngOnInit();
+    const participantModel = new ParticipantModel();
+    participantModel.id = '1000';
+    participantModel.username = 'username@email.com';
+    participantModel.display_name = 'display name';
+    const dA = component.mapParticipantsToDefenceAdvocateModel(participantModel);
+    expect(dA).toBeTruthy();
+    expect(dA.id).toBe('1000');
+    expect(dA.username).toBe('username@email.com');
+    expect(dA.displayName).toBe('display name');
+  });
+  it('should return the username from id', () => {
+    component.ngOnInit();
+    const participantModel = new ParticipantModel();
+    participantModel.id = '1000';
+    participantModel.username = 'username@email.com';
+    participantModel.display_name = 'display name';
+    component.hearing.participants.push(participantModel);
+    let result = component.getUsernameFromId('1000');
+    expect(result).toBe('username@email.com');
+    result = component.getUsernameFromId('1001');
+    expect(result).toBe('1001');
   });
 });

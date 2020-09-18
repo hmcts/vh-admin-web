@@ -366,5 +366,10 @@ describe('SummaryComponent  with existing request', () => {
     const result = component.getParticipantInfo('123123-123');
     expect(result).toBe('solicitor 01, representing citizen 01');
   });
+  it('it should display the participant and representee', () => {
+    component.hearing = initExistingHearingRequest();
+    const result = component.getParticipantInfo('123123-1231');
+    expect(result).toBe('');
+  });
 });
 
