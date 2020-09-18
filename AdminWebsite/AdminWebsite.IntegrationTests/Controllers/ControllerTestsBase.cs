@@ -10,6 +10,10 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using AdminWebsite.Models;
+using AdminWebsite.Security;
+using AdminWebsite.Testing.Common.Builders;
+using Moq;
 
 namespace AdminWebsite.IntegrationTests.Controllers
 {
@@ -68,20 +72,17 @@ namespace AdminWebsite.IntegrationTests.Controllers
 
         private static void OverrideDependenciesInServiceCollection(IServiceCollection services)
         {
-            // var cachedUserClaimBuilder = new Mock<ICachedUserClaimBuilder>();
+            var cachedUserClaimBuilder = new Mock<ICachedUserClaimBuilder>();
 
-            // var claims = new AdministratorRoleClaims(new UserRole
-            // {
-            //     UserRoleType = UserRoleType.None
-            // }).Claims;
+            var user = new ClaimsPrincipalBuilder().WithRole(AppRoles.VhOfficerRole).Build();
 
-            // cachedUserClaimBuilder.Setup
-            // (
-            //     x => x.BuildAsync(It.IsAny<string>(), It.IsAny<string>())
-            // )
-            // .ReturnsAsync(claims);
-            //
-            // services.AddTransient(x => cachedUserClaimBuilder.Object);
+            cachedUserClaimBuilder.Setup
+            (
+                x => x.BuildAsync(It.IsAny<string>(), It.IsAny<string>())
+            )
+            .ReturnsAsync(user.Claims);
+            
+            services.AddTransient(x => cachedUserClaimBuilder.Object);
         }
 
         private void CreateAccessToken()

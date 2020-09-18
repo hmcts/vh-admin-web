@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Security.Claims;
 
-namespace AdminWebsite.UnitTests.Builders
+namespace AdminWebsite.Testing.Common.Builders
 {
     public class ClaimsPrincipalBuilder
     {

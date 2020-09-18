@@ -2700,6 +2700,9 @@
           "Newtonsoft.Json": "12.0.3"
         }
       },
+      "adminwebsite.testing.common": {
+        "type": "Project"
+      },
       "adminwebsite.userapi.client": {
         "type": "Project",
         "dependencies": {

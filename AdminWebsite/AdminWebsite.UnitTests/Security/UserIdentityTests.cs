@@ -6,7 +6,7 @@ using NUnit.Framework;
 using System.Collections.Generic;
 using System.Linq;
 using AdminWebsite.Models;
-using AdminWebsite.UnitTests.Builders;
+using AdminWebsite.Testing.Common.Builders;
 
 namespace AdminWebsite.UnitTests.Security
 {
