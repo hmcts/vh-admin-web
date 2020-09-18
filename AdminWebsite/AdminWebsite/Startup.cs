@@ -2,22 +2,14 @@ using AdminWebsite.Configuration;
 using AdminWebsite.Extensions;
 using AdminWebsite.Helper;
 using AdminWebsite.Middleware;
-using AdminWebsite.Security;
 using AdminWebsite.Services;
 using Microsoft.ApplicationInsights.Extensibility;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace AdminWebsite
 {
@@ -41,7 +33,7 @@ namespace AdminWebsite
 
             services.AddCustomTypes();
 
-            RegisterAuth(services);
+            services.RegisterAuthSchemes(Configuration);
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
@@ -57,33 +49,7 @@ namespace AdminWebsite
             services.Configure<AppConfigSettings>(options => Configuration.Bind(options));
             services.Configure<SecuritySettings>(options => Configuration.Bind("ApplicationInsights", options));
         }
-
-        private void RegisterAuth(IServiceCollection serviceCollection)
-        {
-            var policy = new AuthorizationPolicyBuilder()
-                .RequireAuthenticatedUser()
-                .Build();
-
-            serviceCollection.AddMvc(options => { options.Filters.Add(new AuthorizeFilter(policy)); });
-
-            var securitySettings = Configuration.GetSection("AzureAd").Get<SecuritySettings>();
-
-            serviceCollection.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(options =>
-            {
-                options.Authority = securitySettings.Authority;
-                options.TokenValidationParameters.ValidateLifetime = true;
-                options.Audience = securitySettings.ClientId;
-                options.TokenValidationParameters.ClockSkew = TimeSpan.Zero;
-                options.Events = new JwtBearerEvents { OnTokenValidated = OnTokenValidated };
-            });
-
-            serviceCollection.AddAuthorization();
-        }
-
+        
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
@@ -137,18 +103,6 @@ namespace AdminWebsite
             });
 
             app.UseMiddleware<ExceptionMiddleware>();
-        }
-
-        private static async Task OnTokenValidated(TokenValidatedContext ctx)
-        {
-            if (ctx.SecurityToken is JwtSecurityToken jwtToken)
-            {
-                var cachedUserClaimBuilder = ctx.HttpContext.RequestServices.GetService<ICachedUserClaimBuilder>();
-                var userProfileClaims = await cachedUserClaimBuilder.BuildAsync(ctx.Principal.Identity.Name, jwtToken.RawData);
-                var claimsIdentity = ctx.Principal.Identity as ClaimsIdentity;
-
-                claimsIdentity?.AddClaims(userProfileClaims);
-            }
         }
     }
 }

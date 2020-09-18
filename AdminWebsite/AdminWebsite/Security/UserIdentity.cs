@@ -1,6 +1,7 @@
 ﻿using AdminWebsite.Helper;
 using System.Collections.Generic;
 using System.Security.Claims;
+using AdminWebsite.Models;
 
 namespace AdminWebsite.Security
 {
@@ -38,17 +39,17 @@ namespace AdminWebsite.Security
 
         public bool IsAdministratorRole()
         {
-            return _administratorRoleClaims.IsAdministratorRole;
+            return IsVhOfficerAdministratorRole() || IsCaseAdministratorRole();
         }
 
         public bool IsVhOfficerAdministratorRole()
         {
-            return _administratorRoleClaims.IsVhOfficerAdministratorRole;
+            return _currentUser.IsInRole(AppRoles.VhOfficerRole);
         }
 
         public bool IsCaseAdministratorRole()
         {
-            return _administratorRoleClaims.IsCaseAdministratorRole;
+            return _currentUser.IsInRole(AppRoles.CaseAdminRole);
         }
 
         public string GetUserIdentityName()
