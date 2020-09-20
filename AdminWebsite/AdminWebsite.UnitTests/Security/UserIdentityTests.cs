@@ -5,7 +5,8 @@ using FluentAssertions;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
+using AdminWebsite.Models;
+using AdminWebsite.Testing.Common.Builders;
 
 namespace AdminWebsite.UnitTests.Security
 {
@@ -45,81 +46,51 @@ namespace AdminWebsite.UnitTests.Security
             caseTypes.Should().Contain("Financial Remedy");
         }
 
-        [TestCase(UserRoleType.None, false)]
-        [TestCase(UserRoleType.VhOfficer, true)]
-        [TestCase(UserRoleType.CaseAdmin, false)]
-        [TestCase(UserRoleType.Individual, false)]
-        [TestCase(UserRoleType.Judge, false)]
-        [TestCase(UserRoleType.Representative, false)]
-        public void Should_set_the_isvhofficeradministratorrole_property(UserRoleType userRoleType, bool expectedValue)
+        [TestCase(AppRoles.CitizenRole, false)]
+        [TestCase(AppRoles.JudgeRole, false)]
+        [TestCase(AppRoles.RepresentativeRole, false)]
+        [TestCase(AppRoles.CaseAdminRole, false)]
+        [TestCase(AppRoles.VhOfficerRole, true)]
+        public void Should_set_the_isvhofficeradministratorrole_property(string appRole, bool expectedValue)
         {
-            var administratorRoleClaims = new AdministratorRoleClaims(new UserRole
-            {
-                UserRoleType = userRoleType
-            });
-
-            var user = new TestPrincipal(administratorRoleClaims.Claims);
+            var user = new ClaimsPrincipalBuilder().WithRole(appRole).Build();
             var userIdentity = new UserIdentity(user);
-
-            userIdentity.Should().NotBeNull();
             userIdentity.IsVhOfficerAdministratorRole().Should().Be(expectedValue);
         }
 
-        [TestCase(UserRoleType.None, false)]
-        [TestCase(UserRoleType.VhOfficer, false)]
-        [TestCase(UserRoleType.CaseAdmin, true)]
-        [TestCase(UserRoleType.Individual, false)]
-        [TestCase(UserRoleType.Judge, false)]
-        [TestCase(UserRoleType.Representative, false)]
-        public void Should_set_the_iscaseadministratorrole_property(UserRoleType userRoleType, bool expectedValue)
+        [TestCase(AppRoles.CitizenRole, false)]
+        [TestCase(AppRoles.JudgeRole, false)]
+        [TestCase(AppRoles.RepresentativeRole, false)]
+        [TestCase(AppRoles.CaseAdminRole, true)]
+        [TestCase(AppRoles.VhOfficerRole, false)]
+        public void Should_set_the_iscaseadministratorrole_property(string appRole, bool expectedValue)
         {
-            var administratorRoleClaims = new AdministratorRoleClaims(new UserRole
-            {
-                UserRoleType = userRoleType
-            });
-
-            var user = new TestPrincipal(administratorRoleClaims.Claims);
+            var user = new ClaimsPrincipalBuilder().WithRole(appRole).Build();
             var userIdentity = new UserIdentity(user);
-
-            userIdentity.Should().NotBeNull();
             userIdentity.IsCaseAdministratorRole().Should().Be(expectedValue);
         }
 
-        [TestCase(UserRoleType.None, false)]
-        [TestCase(UserRoleType.VhOfficer, true)]
-        [TestCase(UserRoleType.CaseAdmin, true)]
-        [TestCase(UserRoleType.Individual, false)]
-        [TestCase(UserRoleType.Judge, false)]
-        [TestCase(UserRoleType.Representative, false)]
-        public void Should_set_the_isadministratorrole_property(UserRoleType userRoleType, bool expectedValue)
+        [TestCase(AppRoles.CitizenRole, false)]
+        [TestCase(AppRoles.JudgeRole, false)]
+        [TestCase(AppRoles.RepresentativeRole, false)]
+        [TestCase(AppRoles.CaseAdminRole, true)]
+        [TestCase(AppRoles.VhOfficerRole, true)]
+        public void Should_set_the_isadministratorrole_property(string appRole, bool expectedValue)
         {
-            var administratorRoleClaims = new AdministratorRoleClaims(new UserRole
-            {
-                UserRoleType = userRoleType
-            });
-
-            var user = new TestPrincipal(administratorRoleClaims.Claims);
+            var user = new ClaimsPrincipalBuilder().WithRole(appRole).Build();
             var userIdentity = new UserIdentity(user);
-
-            userIdentity.Should().NotBeNull();
             userIdentity.IsAdministratorRole().Should().Be(expectedValue);
         }
 
         [Test]
         public void Should_return_the_username()
         {
-            const string name = "Someone@somewhere.com";
-            var administratorRoleClaims = new AdministratorRoleClaims(new UserRole
-            {
-                UserRoleType = UserRoleType.None
-            });
-            var usernameClaim = new Claim(ClaimTypes.Name, name);
-            var user = new TestPrincipal(administratorRoleClaims.Claims.Union(new List<Claim>{ usernameClaim }));
-
+            const string username = "Someone@somewhere.com";
+            var user = new ClaimsPrincipalBuilder().WithUsername(username).Build();
             var userIdentity = new UserIdentity(user);
 
             userIdentity.Should().NotBeNull();
-            userIdentity.GetUserIdentityName().Should().Be(name);
+            userIdentity.GetUserIdentityName().Should().Be(username);
         }
     }
 }

@@ -1,19 +1,19 @@
-﻿using AdminWebsite.Helper;
-using AdminWebsite.IntegrationTests.Helper;
-using AdminWebsite.Security;
-using AdminWebsite.Services.Models;
+﻿using AdminWebsite.IntegrationTests.Helper;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using Moq;
 using NUnit.Framework;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using AdminWebsite.Models;
+using AdminWebsite.Security;
+using AdminWebsite.Testing.Common.Builders;
+using Moq;
 
 namespace AdminWebsite.IntegrationTests.Controllers
 {
@@ -74,17 +74,14 @@ namespace AdminWebsite.IntegrationTests.Controllers
         {
             var cachedUserClaimBuilder = new Mock<ICachedUserClaimBuilder>();
 
-            var claims = new AdministratorRoleClaims(new UserRole
-            {
-                UserRoleType = UserRoleType.None
-            }).Claims;
+            var user = new ClaimsPrincipalBuilder().WithRole(AppRoles.VhOfficerRole).Build();
 
             cachedUserClaimBuilder.Setup
             (
                 x => x.BuildAsync(It.IsAny<string>(), It.IsAny<string>())
             )
-            .ReturnsAsync(claims);
-
+            .ReturnsAsync(user.Claims);
+            
             services.AddTransient(x => cachedUserClaimBuilder.Object);
         }
 
