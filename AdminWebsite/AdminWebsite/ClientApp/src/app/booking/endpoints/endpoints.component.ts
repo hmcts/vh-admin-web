@@ -139,7 +139,6 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
   }
   private initialiseForm(): void {
     this.availableDefenceAdvocates = this.populateDefenceAdvocates();
-    this.select.push(this.availableDefenceAdvocates);
     this.form = this.fb.group({
       endpoints: this.fb.array([
         this.addEndpointsFormGroup()
@@ -165,17 +164,6 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
           defenceAdvocateId: e.defenceAdvocate,
           defenceAdvocate: e.defenceAdvocate === undefined ? 'None' : this.getUsernameFromId(e.defenceAdvocate)
         }));
-      const dA = e.defenceAdvocate === undefined ? 'None' : this.getUsernameFromId(e.defenceAdvocate);
-      console.log(dA);
-      if (dA !== this.constants.None) {
-        const dARow = this.availableDefenceAdvocates.find(da => da.username === dA);
-        if (dARow) {
-          this.availableDefenceAdvocates.find(da => da.username === dA).isSelected = true;
-        }
-      }
-      this.availableDefenceAdvocates = this.availableDefenceAdvocates.filter(p => p.isSelected !== true);
-      this.select.push(this.availableDefenceAdvocates);
-      console.log(this.select);
     });
     return formArray;
   }
@@ -201,16 +189,6 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
       isSelected: null
     });
     return defenceAdvocateModel;
-  }
-  updateSelection(event: any) {
-    const userName = event.target.value;
-    console.log(userName);
-    if (userName !== this.constants.None) {
-      this.availableDefenceAdvocates.find(da => da.username === event.target.value).isSelected = true;
-    }
-    this.availableDefenceAdvocates = this.availableDefenceAdvocates.filter(x => x.isSelected !== true);
-    this.select.push(this.availableDefenceAdvocates);
-    console.log(this.select);
   }
   getUsernameFromId(participantId: string): string {
     const defAdv = this.hearing.participants.find(p => p.id === participantId);

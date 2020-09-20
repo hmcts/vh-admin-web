@@ -12,7 +12,7 @@
         <div *ngIf="failedValidation" class="govuk-error-summary govuk-!-width-full"
             aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
             <h2 class="govuk-error-summary__title" id="error-summary-title">
-                Please enter a unique display name
+                Please enter a unique display name / defence advocate
             </h2>
         </div>
 
@@ -35,8 +35,8 @@
                             Link a defence advocate to this video access point?
                         </label>
                         <select class="govuk-select ddl-width" [id]="'defenceAdvocate'+i"
-                            (change)="updateSelection($event)" formControlName="defenceAdvocate">
-                            <option *ngFor="let da of select[i]" [value]="da.username">
+                            formControlName="defenceAdvocate">
+                            <option *ngFor="let da of availableDefenceAdvocates" [value]="da.username">
                                 {{ da.displayName }}
                             </option>
                         </select>
