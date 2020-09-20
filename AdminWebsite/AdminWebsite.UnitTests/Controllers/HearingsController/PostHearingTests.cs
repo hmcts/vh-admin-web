@@ -72,6 +72,34 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
 
         [Test]
+        public async Task Should_update_participant_username_to_aad_email_id()
+        {
+            _bookNewHearingRequestValidator.Setup(x => x.Validate(It.IsAny<BookNewHearingRequest>()))
+                .Returns(new ValidationResult());
+
+            var participant = new BookingsAPI.Client.ParticipantRequest
+            {
+                Username = "username@newemail.com", Case_role_name = "Claimant",
+                Hearing_role_name = "Representative", Contact_email = "username@email.com"
+            };
+            var participantList = new List<BookingsAPI.Client.ParticipantRequest>();
+            participantList.Add(participant);
+
+            var da = "username@email.com";
+            var endpoints = new EndpointRequest { Display_name = "displayname", Defence_advocate_username = da };
+            var endpointList = new List<EndpointRequest>();
+            endpointList.Add(endpoints);
+
+            var hearing = new BookNewHearingRequest
+            {
+                Participants = participantList,
+                Endpoints = endpointList
+            };
+
+            var result = await _controller.Post(hearing);
+            _userAccountService.Verify(x => x.UpdateParticipantUsername(participant), Times.Once);
+        }
+        [Test]
         public async Task Should_not_update_user_details_for_judge()
         {
             _bookNewHearingRequestValidator.Setup(x => x.Validate(It.IsAny<BookNewHearingRequest>()))

@@ -35,8 +35,8 @@
                             Link a defence advocate to this video access point?
                         </label>
                         <select class="govuk-select ddl-width" [id]="'defenceAdvocate'+i"
-                            formControlName="defenceAdvocate">
-                            <option *ngFor="let da of availableDefenceAdvocates" [ngValue]="da.username">
+                            (change)="updateSelection($event)" formControlName="defenceAdvocate">
+                            <option *ngFor="let da of select[i]" [value]="da.username">
                                 {{ da.displayName }}
                             </option>
                         </select>

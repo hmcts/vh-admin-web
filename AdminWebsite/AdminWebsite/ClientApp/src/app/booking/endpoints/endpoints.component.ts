@@ -27,6 +27,8 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
   failedValidation: boolean;
   newEndpoints: EndpointModel[] = [];
   availableDefenceAdvocates: DefenceAdvocateModel[] = [];
+  participants: ParticipantModel[] = [];
+  select: any[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -57,7 +59,7 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
   }
 
   addEndpoint(): void {
-    if (!this.hasDuplicateDisplayName(this.newEndpoints)) {
+    if (!this.hasDuplicateDisplayName(this.newEndpoints) && !this.hasDuplicateDefenceAdvocate(this.newEndpoints)) {
       this.failedValidation = false;
       this.endpoints.push(this.addEndpointsFormGroup());
     } else {
@@ -131,9 +133,13 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
 
   private checkForExistingRequest(): void {
     this.hearing = this.videoHearingService.getCurrentRequest();
+    this.participants = this.hearing.participants.filter(
+      p => p.hearing_role_name === this.constants.DefenceAdvocate
+    );
   }
   private initialiseForm(): void {
     this.availableDefenceAdvocates = this.populateDefenceAdvocates();
+    this.select.push(this.availableDefenceAdvocates);
     this.form = this.fb.group({
       endpoints: this.fb.array([
         this.addEndpointsFormGroup()
@@ -149,31 +155,6 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
       })
     );
   }
-  private populateDefenceAdvocates(): DefenceAdvocateModel[] {
-    const participants = this.hearing.participants.filter(
-      p => p.hearing_role_name.toLowerCase() === this.constants.DefenceAdvocate.toLowerCase()
-    );
-    let defenceAdvocates: Array<DefenceAdvocateModel> = [];
-    if (this.hearing.participants && this.hearing.participants.length > 0) {
-      defenceAdvocates = participants.map(x => this.mapParticipantsToDefenceAdvocateModel(x));
-    }
-    const defenceAdvocateModel = new DefenceAdvocateModel();
-    defenceAdvocateModel.id = null;
-    defenceAdvocateModel.username = this.constants.None;
-    defenceAdvocateModel.displayName = this.constants.None;
-    defenceAdvocateModel.isSelected = true;
-    defenceAdvocates.unshift(defenceAdvocateModel);
-    return defenceAdvocates;
-  }
-  mapParticipantsToDefenceAdvocateModel(participant: ParticipantModel): DefenceAdvocateModel {
-    const defenceAdvocateModel = new DefenceAdvocateModel();
-    defenceAdvocateModel.id = participant.id;
-    defenceAdvocateModel.username = participant.username;
-    defenceAdvocateModel.displayName = participant.display_name;
-    defenceAdvocateModel.isSelected = true;
-    return defenceAdvocateModel;
-  }
-
   private setExistingEndpoints(endpoints: EndpointModel[]): FormArray {
     const formArray = new FormArray([]);
     endpoints.forEach(e => {
@@ -184,10 +165,53 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
           defenceAdvocateId: e.defenceAdvocate,
           defenceAdvocate: e.defenceAdvocate === undefined ? 'None' : this.getUsernameFromId(e.defenceAdvocate)
         }));
+      const dA = e.defenceAdvocate === undefined ? 'None' : this.getUsernameFromId(e.defenceAdvocate);
+      console.log(dA);
+      if (dA !== this.constants.None) {
+        const dARow = this.availableDefenceAdvocates.find(da => da.username === dA);
+        if (dARow) {
+          this.availableDefenceAdvocates.find(da => da.username === dA).isSelected = true;
+        }
+      }
+      this.availableDefenceAdvocates = this.availableDefenceAdvocates.filter(p => p.isSelected !== true);
+      this.select.push(this.availableDefenceAdvocates);
+      console.log(this.select);
     });
     return formArray;
   }
-
+  private populateDefenceAdvocates(): DefenceAdvocateModel[] {
+    let defenceAdvocates: Array<DefenceAdvocateModel> = [];
+    if (this.hearing.participants && this.hearing.participants.length > 0) {
+      defenceAdvocates = this.participants.map(x => this.mapParticipantsToDefenceAdvocateModel(x));
+    }
+    const defenceAdvocateModel = Object.assign(new DefenceAdvocateModel(), {
+      id: null,
+      username: this.constants.None,
+      displayName: this.constants.None,
+      isSelected: null
+    });
+    defenceAdvocates.unshift(defenceAdvocateModel);
+    return defenceAdvocates;
+  }
+  mapParticipantsToDefenceAdvocateModel(participant: ParticipantModel): DefenceAdvocateModel {
+    const defenceAdvocateModel = Object.assign(new DefenceAdvocateModel(), {
+      id: participant.id,
+      username: participant.username,
+      displayName: participant.display_name,
+      isSelected: null
+    });
+    return defenceAdvocateModel;
+  }
+  updateSelection(event: any) {
+    const userName = event.target.value;
+    console.log(userName);
+    if (userName !== this.constants.None) {
+      this.availableDefenceAdvocates.find(da => da.username === event.target.value).isSelected = true;
+    }
+    this.availableDefenceAdvocates = this.availableDefenceAdvocates.filter(x => x.isSelected !== true);
+    this.select.push(this.availableDefenceAdvocates);
+    console.log(this.select);
+  }
   getUsernameFromId(participantId: string): string {
     const defAdv = this.hearing.participants.find(p => p.id === participantId);
     if (defAdv) {
@@ -200,7 +224,7 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
       displayName: ['', [blankSpaceValidator]],
       defenceAdvocate: ['None'],
       id: [],
-      defenceAdvocateId: []
+      defenceAdvocateId: [],
     });
   }
 
@@ -213,7 +237,7 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
   }
   private hasDuplicateDefenceAdvocate(endpoints: EndpointModel[]): boolean {
     const listOfDefenceAdvocates = endpoints.filter(function (item) {
-      if (item.defenceAdvocate === '') { return false; }
+      if (item.defenceAdvocate === '' || item.defenceAdvocate === 'None' || item.defenceAdvocate === undefined) { return false; }
       return true;
     }).map(function (item) { return item.defenceAdvocate; });
     const duplicateDefenceAdvocate = listOfDefenceAdvocates.some(function (item, position) {

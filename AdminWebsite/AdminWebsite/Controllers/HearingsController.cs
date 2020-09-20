@@ -83,23 +83,20 @@ namespace AdminWebsite.Controllers
             {
                 if (request.Participants != null)
                 {
-                    foreach (var participant in request.Participants)
+                    var participantsList = request.Participants.Where(p => p.Case_role_name != "Judge");
+                    foreach (var participant in participantsList)
                     {
-                        if (participant.Case_role_name == "Judge") continue;
-
                         await _userAccountService.UpdateParticipantUsername(participant);
-                    }
-                }
-                if (request.Endpoints != null)
-                {
-                    foreach (var endpoint in request.Endpoints)
-                    {
-                        var epToUpdate = request.Participants
-                            .Find(p => p.Contact_email.Equals(endpoint.Defence_advocate_username, StringComparison.CurrentCultureIgnoreCase));
-                        if (epToUpdate != null)
+
+                        if (request.Endpoints != null)
                         {
-                            endpoint.Defence_advocate_username = epToUpdate.Username;
-                        }                        
+                            var epToUpdate = request.Endpoints.FirstOrDefault(ep => ep.Defence_advocate_username.Equals(participant.Contact_email, 
+                                StringComparison.CurrentCultureIgnoreCase));
+                            if (epToUpdate != null)
+                            {
+                                epToUpdate.Defence_advocate_username = participant.Username;
+                            }
+                        }
                     }
                 }
 

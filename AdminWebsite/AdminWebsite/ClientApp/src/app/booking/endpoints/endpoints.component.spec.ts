@@ -156,10 +156,10 @@ describe('EndpointsComponent', () => {
   it('it should validate form array and add form array with defence advocate as none', () => {
     component.ngOnInit();
     component.endpoints.controls[0].get('displayName').setValue('200');
-    component.endpoints.controls[0].get('defenceAdvocate').setValue('None');
+    component.endpoints.controls[0].get('defenceAdvocate').setValue('');
     component.addEndpoint();
     component.endpoints.controls[1].get('displayName').setValue('300');
-    component.endpoints.controls[1].get('defenceAdvocate').setValue('None');
+    component.endpoints.controls[1].get('defenceAdvocate').setValue('');
     component.addEndpoint();
     expect(component.failedValidation).toBe(false);
   });
@@ -183,32 +183,33 @@ describe('EndpointsComponent', () => {
     expect(component.failedValidation).toBe(false);
     expect(routerSpy.navigate).toHaveBeenCalledWith(['/summary']);
   });
-  it('should unsubscribe all subcription on destroy', () => {
-    component.ngOnDestroy();
-    expect(component.$subscriptions[0].closed).toBe(true);
-  });
   it('should map participant list to defence advocate model', () => {
-    component.ngOnInit();
     const participantModel = new ParticipantModel();
     participantModel.id = '1000';
     participantModel.username = 'username@email.com';
     participantModel.display_name = 'display name';
+    component.ngOnInit();
     const dA = component.mapParticipantsToDefenceAdvocateModel(participantModel);
     expect(dA).toBeTruthy();
     expect(dA.id).toBe('1000');
     expect(dA.username).toBe('username@email.com');
     expect(dA.displayName).toBe('display name');
+    expect(dA.isSelected).toBe(null);
   });
   it('should return the username from id', () => {
-    component.ngOnInit();
     const participantModel = new ParticipantModel();
     participantModel.id = '1000';
     participantModel.username = 'username@email.com';
     participantModel.display_name = 'display name';
     component.hearing.participants.push(participantModel);
+    component.ngOnInit();
     let result = component.getUsernameFromId('1000');
     expect(result).toBe('username@email.com');
     result = component.getUsernameFromId('1001');
     expect(result).toBe('1001');
+  });
+  it('should unsubscribe all subcription on destroy', () => {
+    component.ngOnDestroy();
+    expect(component.$subscriptions[0].closed).toBe(true);
   });
 });
