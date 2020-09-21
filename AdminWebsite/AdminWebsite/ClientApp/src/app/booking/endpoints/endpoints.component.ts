@@ -29,6 +29,8 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
   availableDefenceAdvocates: DefenceAdvocateModel[] = [];
   participants: ParticipantModel[] = [];
   select: any[] = [];
+  duplicateDefAdv = false;
+  duplicateDa = false;
 
   constructor(
     private fb: FormBuilder,
@@ -59,6 +61,8 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
   }
 
   addEndpoint(): void {
+    this.duplicateDefAdv = false;
+    this.duplicateDa = false;
     if (!this.hasDuplicateDisplayName(this.newEndpoints) && !this.hasDuplicateDefenceAdvocate(this.newEndpoints)) {
       this.failedValidation = false;
       this.endpoints.push(this.addEndpointsFormGroup());
@@ -69,6 +73,8 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
   }
 
   saveEndpoints(): void {
+    this.duplicateDefAdv = false;
+    this.duplicateDa = false;
     const newEndpointsArray: EndpointModel[] = [];
     for (const control of this.endpoints.controls) {
       const endpointModel = new EndpointModel();
@@ -211,6 +217,7 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
     const duplicateDisplayName = listOfDisplayNames.some(function (item, position) {
       return listOfDisplayNames.indexOf(item) !== position;
     });
+    if (duplicateDisplayName) { this.duplicateDa = true; }
     return duplicateDisplayName;
   }
   private hasDuplicateDefenceAdvocate(endpoints: EndpointModel[]): boolean {
@@ -221,6 +228,7 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
     const duplicateDefenceAdvocate = listOfDefenceAdvocates.some(function (item, position) {
       return listOfDefenceAdvocates.indexOf(item) !== position;
     });
+    if (duplicateDefenceAdvocate) { this.duplicateDefAdv = true; }
     return duplicateDefenceAdvocate;
   }
 }

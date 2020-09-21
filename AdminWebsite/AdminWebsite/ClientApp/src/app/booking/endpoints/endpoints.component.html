@@ -12,12 +12,22 @@
         <div *ngIf="failedValidation" class="govuk-error-summary govuk-!-width-full"
             aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
             <h2 class="govuk-error-summary__title" id="error-summary-title">
-                Please enter a unique display name / defence advocate
+                Please complete the missing information
             </h2>
+            <div class="govuk-error-summary__body">
+                <ul class="govuk-list govuk-error-summary__list">
+                    <li *ngIf="duplicateDa">
+                        Please enter a unique display name
+                    </li>
+                    <li *ngIf="duplicateDefAdv">
+                        Please link a unique defence advocate to an endpoint
+                    </li>
+                </ul>
+            </div>
         </div>
 
         <form [formGroup]="form" (ngSubmit)="saveEndpoints()">
-            <div formArrayName="endpoints" *ngFor="let endpoint of endpoints.controls; let i = index">
+            <div formArrayName="endpoints" *ngFor="let endpoint of endpoints.controls; let i = index; let lst = last;">
                 <div [formGroupName]="i">
                     <div class="govuk-form-group"
                         [ngClass]="{'has-error': endpoints.controls[i].invalid && endpoints.controls[i].touched }">
@@ -42,6 +52,7 @@
                         </select>
                     </div>
                 </div>
+                <div *ngIf="!lst" class="vh-line" style="margin-bottom: 10px;"></div>
             </div>
         </form>
 

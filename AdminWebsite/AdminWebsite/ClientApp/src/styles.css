@@ -288,3 +288,7 @@ p {
 .ddl-width {
   width: 75%;
 }
+
+.vh-line {
+  border-bottom: 1px solid #bfc0c0;
+}
