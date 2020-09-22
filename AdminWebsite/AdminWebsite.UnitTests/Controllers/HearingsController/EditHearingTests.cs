@@ -96,14 +96,16 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var guid1 = Guid.NewGuid();
             var guid2 = Guid.NewGuid();
             var guid3 = Guid.NewGuid();
+            var guid4 = Guid.NewGuid();
             _requestWithEndpoints = new EditHearingRequest
             {
                 Case = new EditCaseRequest { Name = "Case", Number = "123" },
                 Participants = new List<EditParticipantRequest> { new EditParticipantRequest { ContactEmail = "new@user.com" } },
                 Endpoints = new List<EditEndpointRequest> { 
-                    new EditEndpointRequest {  Id = null, DisplayName = "New Endpoint" },
-                    new EditEndpointRequest {  Id = guid1, DisplayName = "data1" },
+                    new EditEndpointRequest {  Id = null, DisplayName = "New Endpoint" , DefenceAdvocateUsername = "username@email.com" },
+                    new EditEndpointRequest {  Id = guid1, DisplayName = "data1", DefenceAdvocateUsername = "edit-user@email.com" },
                     new EditEndpointRequest {  Id = guid2, DisplayName = "data2-edit" },
+                    new EditEndpointRequest {  Id = guid4, DisplayName = "data4-edit", DefenceAdvocateUsername = "" },
                 }
             };
 
@@ -112,8 +114,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 Endpoints = new List<BookingsAPI.Client.EndpointResponse> 
                 { 
                     new BookingsAPI.Client.EndpointResponse { Display_name = "data1", Id = guid1,  Pin= "0000", Sip = "1111111111" },
-                    new BookingsAPI.Client.EndpointResponse { Display_name = "data2", Id = guid2,  Pin= "1111", Sip = "2222222222" },
+                    new BookingsAPI.Client.EndpointResponse { Display_name = "data2", Id = guid2,  Pin= "1111", Sip = "2222222222", Defence_advocate_id = Guid.NewGuid() },
                     new BookingsAPI.Client.EndpointResponse { Display_name = "data3", Id = guid3,  Pin= "2222", Sip = "5544332234" },
+                    new BookingsAPI.Client.EndpointResponse { Display_name = "data4", Id = guid4,  Pin= "2222", Sip = "5544332234", Defence_advocate_id = Guid.NewGuid() },
                 } 
             };
             
@@ -463,7 +466,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>())).ReturnsAsync(_existingHearingWithEndpoints);
             var result = await _controller.EditHearing(_validId, _requestWithEndpoints);
             ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
-            _bookingsApiClient.Verify(x => x.UpdateDisplayNameForEndpointAsync(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<UpdateEndpointRequest>()), Times.Exactly(2));
+            _bookingsApiClient.Verify(x => x.UpdateDisplayNameForEndpointAsync(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<UpdateEndpointRequest>()), Times.Exactly(3));
         }
         [Test]
         public async Task Should_remove_endpoint_if_endpoint_is_removed_from_the_endpoint_list()

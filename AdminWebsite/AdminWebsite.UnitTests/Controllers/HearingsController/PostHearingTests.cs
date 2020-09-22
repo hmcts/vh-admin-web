@@ -99,6 +99,30 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var result = await _controller.Post(hearing);
             _userAccountService.Verify(x => x.UpdateParticipantUsername(participant), Times.Once);
         }
+
+        [Test]
+        public async Task Should_create_a_hearing_with_endpoints()
+        {
+            _bookNewHearingRequestValidator.Setup(x => x.Validate(It.IsAny<BookNewHearingRequest>()))
+                .Returns(new ValidationResult());
+            var newHearingRequest = new BookNewHearingRequest() {
+                Participants = new List<BookingsAPI.Client.ParticipantRequest> { 
+                   new BookingsAPI.Client.ParticipantRequest {  Case_role_name = "CaseRole", Contact_email = "contact1@email.com", Hearing_role_name = "HearingRole", Display_name="display name1",
+                   First_name = "fname",  Middle_names = "", Last_name = "lname1", Username = "username1@email.com",  Organisation_name = "", Reference = "", Representee = "", Telephone_number = "" },
+                   new BookingsAPI.Client.ParticipantRequest {  Case_role_name = "CaseRole", Contact_email = "contact2@email.com", Hearing_role_name = "HearingRole", Display_name="display name2",
+                   First_name = "fname2",  Middle_names = "", Last_name = "lname2", Username = "username2@email.com",  Organisation_name = "", Reference = "", Representee = "", Telephone_number = "" },
+                },
+                Endpoints = new List<EndpointRequest> { 
+                    new EndpointRequest { Display_name = "displayname1", Defence_advocate_username = "contact1@email.com" },
+                    new EndpointRequest { Display_name = "displayname2", Defence_advocate_username = "contact2@email.com" },
+                }
+            };
+            var result = await _controller.Post(newHearingRequest);
+            result.Result.Should().BeOfType<CreatedResult>();
+            var createdObjectResult = (CreatedResult)result.Result;
+            createdObjectResult.StatusCode.Should().Be(201);
+        }
+
         [Test]
         public async Task Should_not_update_user_details_for_judge()
         {
