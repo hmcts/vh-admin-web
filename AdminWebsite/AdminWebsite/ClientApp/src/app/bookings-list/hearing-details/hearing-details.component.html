@@ -88,6 +88,12 @@
           {{ endpoint.displayName }}
         </div>
       </div>
+      <div *ngIf="getParticipantInfo(endpoint.defenceAdvocate)" class="govuk-grid-row">
+        <div class="govuk-grid-column-full" id="defenceAdvocateRep{{+i}}">
+          <img src="/assets/images/link.png" class="icon" alt="link to endpoint" />
+          {{ getParticipantInfo(endpoint.defenceAdvocate) }}
+        </div>
+      </div>
       <div class="govuk-grid-row">
         <div class="govuk-grid-column-full" id="sip{{+i}}">
           <app-copy-sip [endpoint]="endpoint"></app-copy-sip>

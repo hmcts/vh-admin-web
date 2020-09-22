@@ -63,10 +63,11 @@ export class BookingDetailsService {
     if (hearingResponse.endpoints && hearingResponse.endpoints.length > 0) {
       hearingResponse.endpoints.forEach(e => {
         const epModel = new EndpointModel();
-        epModel.Id = e.id;
+        epModel.id = e.id;
         epModel.displayName = e.display_name;
         epModel.pin = e.pin;
         epModel.sip = e.sip;
+        epModel.defenceAdvocate = e.defence_advocate_id;
         endpoints.push(epModel);
       });
     }

@@ -6,6 +6,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { HearingDetailsComponent } from './hearing-details.component';
 import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
 import { LongDatetimePipe } from '../../../app/shared/directives/date-time.pipe';
+import { ParticipantDetailsModel } from 'src/app/common/model/participant-details.model';
 
 
 describe('HearingDetailsComponent', () => {
@@ -54,4 +55,25 @@ describe('HearingDetailsComponent', () => {
       }
     );
   }));
+
+  it('it should display the participant and representee', () => {
+    const participants: Array<ParticipantDetailsModel> = [];
+    const participant = new ParticipantDetailsModel('123-123', 'Judge', 'Judge', 'last_name',
+      'user_role_name', 'username', 'contact_email', 'case_role_name', 'hearing_role_name',
+      'display_name', 'middle_names', 'organisation', 'reference', 'representee');
+    participants.push(participant);
+    component.participants = participants;
+    const result = component.getParticipantInfo('123-123');
+    expect(result).toBe('display_name, representing representee');
+  });
+  it('it should display the participant and representee', () => {
+    const participants: Array<ParticipantDetailsModel> = [];
+    const participant = new ParticipantDetailsModel('123-123', 'Judge', 'Judge', 'last_name',
+      'user_role_name', 'username', 'contact_email', 'case_role_name', 'hearing_role_name',
+      'display_name', 'middle_names', 'organisation', 'reference', 'representee');
+    participants.push(participant);
+    component.participants = participants;
+    const result = component.getParticipantInfo('123-1234');
+    expect(result).toBe('');
+  });
 });

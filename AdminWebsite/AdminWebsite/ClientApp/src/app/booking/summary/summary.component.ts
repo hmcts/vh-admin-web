@@ -248,4 +248,13 @@ export class SummaryComponent implements OnInit, OnDestroy {
             }
         });
     }
+
+    getParticipantInfo(defenceAdvocate: string): string {
+        let represents = '';
+        const participant = this.hearing.participants.find(p => p.id === defenceAdvocate);
+        if (participant) {
+            represents = participant.display_name + ', representing ' + participant.representee;
+        }
+        return represents;
+    }
 }

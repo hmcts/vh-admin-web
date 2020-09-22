@@ -6,10 +6,12 @@ import { Constants } from 'src/app/common/constants';
 import { SanitizeInputText } from 'src/app/common/formatters/sanitize-input-text';
 import { EndpointModel } from 'src/app/common/model/endpoint.model';
 import { HearingModel } from 'src/app/common/model/hearing.model';
+import { ParticipantModel } from 'src/app/common/model/participant.model';
 import { BookingService } from 'src/app/services/booking.service';
 import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 import { PageUrls } from 'src/app/shared/page-url.constants';
 import { BookingBaseComponentDirective as BookingBaseComponent } from '../booking-base/booking-base.component';
+import { DefenceAdvocateModel } from 'src/app/common/model/defence-advocate.model';
 
 @Component({
   selector: 'app-endpoints',
@@ -24,6 +26,11 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
   attemptingDiscardChanges = false;
   failedValidation: boolean;
   newEndpoints: EndpointModel[] = [];
+  availableDefenceAdvocates: DefenceAdvocateModel[] = [];
+  participants: ParticipantModel[] = [];
+  select: any[] = [];
+  duplicateDefAdv = false;
+  duplicateDa = false;
 
   constructor(
     private fb: FormBuilder,
@@ -54,7 +61,9 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
   }
 
   addEndpoint(): void {
-    if (!this.hasDuplicateDisplayName(this.newEndpoints)) {
+    this.duplicateDefAdv = false;
+    this.duplicateDa = false;
+    if (!this.hasDuplicateDisplayName(this.newEndpoints) && !this.hasDuplicateDefenceAdvocate(this.newEndpoints)) {
       this.failedValidation = false;
       this.endpoints.push(this.addEndpointsFormGroup());
     } else {
@@ -64,19 +73,21 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
   }
 
   saveEndpoints(): void {
-
+    this.duplicateDefAdv = false;
+    this.duplicateDa = false;
     const newEndpointsArray: EndpointModel[] = [];
     for (const control of this.endpoints.controls) {
       const endpointModel = new EndpointModel();
       if (control.value.displayName.trim() !== '') {
         const displayNameText = SanitizeInputText(control.value.displayName);
         endpointModel.displayName = displayNameText;
-        endpointModel.Id = control.value.id;
+        endpointModel.id = control.value.id;
+        endpointModel.defenceAdvocate = control.value.defenceAdvocate !== this.constants.None ? control.value.defenceAdvocate : '';
         newEndpointsArray.push(endpointModel);
       }
     }
 
-    if (!this.hasDuplicateDisplayName(newEndpointsArray)) {
+    if (!this.hasDuplicateDisplayName(newEndpointsArray) && !this.hasDuplicateDefenceAdvocate(newEndpointsArray)) {
       this.failedValidation = false;
       this.hearing.endpoints = newEndpointsArray;
       this.videoHearingService.updateHearingRequest(this.hearing);
@@ -128,9 +139,12 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
 
   private checkForExistingRequest(): void {
     this.hearing = this.videoHearingService.getCurrentRequest();
+    this.participants = this.hearing.participants.filter(
+      p => p.hearing_role_name === this.constants.DefenceAdvocate
+    );
   }
-
   private initialiseForm(): void {
+    this.availableDefenceAdvocates = this.populateDefenceAdvocates();
     this.form = this.fb.group({
       endpoints: this.fb.array([
         this.addEndpointsFormGroup()
@@ -140,38 +154,82 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
       this.newEndpoints = this.hearing.endpoints;
       this.form.setControl('endpoints', this.setExistingEndpoints(this.newEndpoints));
     }
-
     this.$subscriptions.push(
       this.form.get('endpoints').valueChanges.subscribe(ep => {
         this.newEndpoints = ep;
       })
     );
   }
-
   private setExistingEndpoints(endpoints: EndpointModel[]): FormArray {
     const formArray = new FormArray([]);
     endpoints.forEach(e => {
-      formArray.push(this.fb.group({
-        displayName: e.displayName,
-        id: e.Id
-      }));
+      formArray.push(
+        this.fb.group({
+          id: e.id,
+          displayName: e.displayName,
+          defenceAdvocateId: e.defenceAdvocate,
+          defenceAdvocate: e.defenceAdvocate === undefined ? 'None' : this.getUsernameFromId(e.defenceAdvocate)
+        }));
     });
     return formArray;
   }
-
+  private populateDefenceAdvocates(): DefenceAdvocateModel[] {
+    let defenceAdvocates: Array<DefenceAdvocateModel> = [];
+    if (this.hearing.participants && this.hearing.participants.length > 0) {
+      defenceAdvocates = this.participants.map(x => this.mapParticipantsToDefenceAdvocateModel(x));
+    }
+    const defenceAdvocateModel = Object.assign(new DefenceAdvocateModel(), {
+      id: null,
+      username: this.constants.None,
+      displayName: this.constants.None,
+      isSelected: null
+    });
+    defenceAdvocates.unshift(defenceAdvocateModel);
+    return defenceAdvocates;
+  }
+  mapParticipantsToDefenceAdvocateModel(participant: ParticipantModel): DefenceAdvocateModel {
+    const defenceAdvocateModel = Object.assign(new DefenceAdvocateModel(), {
+      id: participant.id,
+      username: participant.username,
+      displayName: participant.display_name,
+      isSelected: null
+    });
+    return defenceAdvocateModel;
+  }
+  getUsernameFromId(participantId: string): string {
+    const defAdv = this.hearing.participants.find(p => p.id === participantId);
+    if (defAdv) {
+      return defAdv.username;
+    }
+    return participantId;
+  }
   private addEndpointsFormGroup(): FormGroup {
     return this.fb.group({
       displayName: ['', [blankSpaceValidator]],
-      id: ['']
+      defenceAdvocate: ['None'],
+      id: [],
+      defenceAdvocateId: [],
     });
   }
 
-  hasDuplicateDisplayName(endpoints: EndpointModel[]): boolean {
+  private hasDuplicateDisplayName(endpoints: EndpointModel[]): boolean {
     const listOfDisplayNames = endpoints.map(function (item) { return item.displayName; });
     const duplicateDisplayName = listOfDisplayNames.some(function (item, position) {
       return listOfDisplayNames.indexOf(item) !== position;
     });
+    if (duplicateDisplayName) { this.duplicateDa = true; }
     return duplicateDisplayName;
+  }
+  private hasDuplicateDefenceAdvocate(endpoints: EndpointModel[]): boolean {
+    const listOfDefenceAdvocates = endpoints.filter(function (item) {
+      if (item.defenceAdvocate === '' || item.defenceAdvocate === 'None' || item.defenceAdvocate === undefined) { return false; }
+      return true;
+    }).map(function (item) { return item.defenceAdvocate; });
+    const duplicateDefenceAdvocate = listOfDefenceAdvocates.some(function (item, position) {
+      return listOfDefenceAdvocates.indexOf(item) !== position;
+    });
+    if (duplicateDefenceAdvocate) { this.duplicateDefAdv = true; }
+    return duplicateDefenceAdvocate;
   }
 }
 

@@ -4,6 +4,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { of } from 'rxjs';
 import { EndpointModel } from 'src/app/common/model/endpoint.model';
 import { HearingModel } from 'src/app/common/model/hearing.model';
+import { ParticipantModel } from 'src/app/common/model/participant.model';
 import { CancelPopupComponent } from 'src/app/popups/cancel-popup/cancel-popup.component';
 import { DiscardConfirmPopupComponent } from 'src/app/popups/discard-confirm-popup/discard-confirm-popup.component';
 import { BookingService } from 'src/app/services/booking.service';
@@ -40,7 +41,7 @@ describe('EndpointsComponent', () => {
 
     videoHearingsServiceSpy.getCurrentRequest.and.returnValue(newHearing);
     videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
-    bookingServiceSpy = jasmine.createSpyObj('BookingSErvice', ['isEditMode', 'resetEditMode', 'removeEditMode']);
+    bookingServiceSpy = jasmine.createSpyObj('BookingService', ['isEditMode', 'resetEditMode', 'removeEditMode']);
 
     TestBed.configureTestingModule({
       imports: [SharedModule, RouterTestingModule],
@@ -126,41 +127,158 @@ describe('EndpointsComponent', () => {
     expect(component.attemptingDiscardChanges).toBeFalsy();
     expect(routerSpy.navigate).toHaveBeenCalledWith(['/summary']);
   });
-  it('it should validate form array and display error message is duplicates exist', () => {
+  it('it should validate display names on add another click and show error for duplicates', () => {
     component.ngOnInit();
     component.endpoints.controls[0].get('displayName').setValue('200');
     component.addEndpoint();
     component.endpoints.controls[1].get('displayName').setValue('200');
     component.addEndpoint();
+    expect(component.duplicateDa).toBe(true);
     expect(component.failedValidation).toBe(true);
   });
-  it('it should validate form array and add form array', () => {
-    component.ngOnInit();
-    component.endpoints.controls[0].get('displayName').setValue('200');
-    component.addEndpoint();
-    component.endpoints.controls[1].get('displayName').setValue('300');
-    component.addEndpoint();
-    expect(component.failedValidation).toBe(false);
-  });
-  it('it should validate form array on next click and show error message on validation failure', () => {
+  it('it should validate display names on next click and show error for duplicates', () => {
     component.ngOnInit();
     component.endpoints.controls[0].get('displayName').setValue('200');
     component.addEndpoint();
     component.endpoints.controls[1].get('displayName').setValue('200');
     component.saveEndpoints();
+    expect(component.duplicateDa).toBe(true);
     expect(component.failedValidation).toBe(true);
   });
+  it('it should validate display names on next click and navigate to other information page if validations pass', () => {
+    component.ngOnInit();
+    component.endpoints.controls[0].get('displayName').setValue('200');
+    component.addEndpoint();
+    component.endpoints.controls[1].get('displayName').setValue('201');
+    component.saveEndpoints();
+    expect(component.duplicateDa).toBe(false);
+    expect(component.failedValidation).toBe(false);
+    expect(component.hearing.endpoints[0].displayName).toBe('200');
+    expect(component.hearing.endpoints[1].displayName).toBe('201');
+    expect(videoHearingsServiceSpy.updateHearingRequest).toHaveBeenCalled();
+    expect(routerSpy.navigate).toHaveBeenCalledWith(['/other-information']);
+  });
+  it('it should validate display names, defence advocate on next click and navigate to other information page for defence adv none', () => {
+    component.ngOnInit();
+    component.endpoints.controls[0].get('displayName').setValue('200');
+    component.saveEndpoints();
+    expect(component.duplicateDa).toBe(false);
+    expect(component.duplicateDefAdv).toBe(false);
+    expect(component.failedValidation).toBe(false);
+    expect(component.hearing.endpoints[0].displayName).toBe('200');
+    expect(component.hearing.endpoints[0].defenceAdvocate).toBe('');
+    expect(videoHearingsServiceSpy.updateHearingRequest).toHaveBeenCalled();
+    expect(routerSpy.navigate).toHaveBeenCalledWith(['/other-information']);
+  });
+
+  it('it should validate defence advocate on add another click and show error for duplicates', () => {
+    component.ngOnInit();
+    component.endpoints.controls[0].get('displayName').setValue('200');
+    component.endpoints.controls[0].get('defenceAdvocate').setValue('username@email.com');
+    component.addEndpoint();
+    component.endpoints.controls[1].get('displayName').setValue('201');
+    component.endpoints.controls[1].get('defenceAdvocate').setValue('username@email.com');
+    component.addEndpoint();
+    expect(component.duplicateDefAdv).toBe(true);
+    expect(component.failedValidation).toBe(true);
+  });
+  it('it should validate display names on next click and show error for duplicates', () => {
+    component.ngOnInit();
+    component.endpoints.controls[0].get('displayName').setValue('200');
+    component.endpoints.controls[0].get('defenceAdvocate').setValue('username@email.com');
+    component.addEndpoint();
+    component.endpoints.controls[1].get('displayName').setValue('201');
+    component.endpoints.controls[1].get('defenceAdvocate').setValue('username@email.com');
+    component.saveEndpoints();
+    expect(component.duplicateDefAdv).toBe(true);
+    expect(component.failedValidation).toBe(true);
+  });
+  it('it should validate fields on next click and navigate to other information page if validations pass', () => {
+    component.ngOnInit();
+    component.endpoints.controls[0].get('displayName').setValue('200');
+    component.endpoints.controls[0].get('defenceAdvocate').setValue('username@email.com');
+    component.addEndpoint();
+    component.endpoints.controls[1].get('displayName').setValue('201');
+    component.endpoints.controls[1].get('defenceAdvocate').setValue('username1@email.com');
+    component.saveEndpoints();
+    expect(component.duplicateDa).toBe(false);
+    expect(component.duplicateDefAdv).toBe(false);
+    expect(component.failedValidation).toBe(false);
+    expect(component.hearing.endpoints[0].displayName).toBe('200');
+    expect(component.hearing.endpoints[0].defenceAdvocate).toBe('username@email.com');
+    expect(component.hearing.endpoints[1].displayName).toBe('201');
+    expect(component.hearing.endpoints[1].defenceAdvocate).toBe('username1@email.com');
+    expect(videoHearingsServiceSpy.updateHearingRequest).toHaveBeenCalled();
+    expect(routerSpy.navigate).toHaveBeenCalledWith(['/other-information']);
+  });
+
   it('it should validate form array on next click and navigate to summary page in edit mode', () => {
     bookingServiceSpy.isEditMode.and.returnValue(true);
     component.ngOnInit();
-    component.endpoints.controls[0].get('displayName').setValue('200');
-    component.addEndpoint();
-    component.endpoints.controls[1].get('displayName').setValue('300');
+    const existinghearing = new HearingModel();
+    existinghearing.case_type = 'Case type';
+    const eps: EndpointModel[] = [];
+    let ep = new EndpointModel();
+    ep.displayName = 'displayname1';
+    ep.defenceAdvocate = '12345';
+    eps.push(ep);
+    ep = new EndpointModel();
+    ep.displayName = 'displayname1';
+    ep.defenceAdvocate = '11223';
+    existinghearing.endpoints = eps;
+
+    component.hearing = existinghearing;
+
+    component.endpoints.controls[0].get('displayName').setValue('new display name');
+    component.endpoints.controls[0].get('defenceAdvocate').setValue('user@email.com');
     component.saveEndpoints();
-    expect(videoHearingsServiceSpy.updateHearingRequest).toHaveBeenCalled();
-    expect(component.hearing.endpoints).not.toBeNull();
     expect(component.failedValidation).toBe(false);
+    expect(component.hearing.endpoints[0].displayName).toBe('new display name');
+    expect(component.hearing.endpoints[0].defenceAdvocate).toBe('user@email.com');
+    expect(videoHearingsServiceSpy.updateHearingRequest).toHaveBeenCalled();
+
     expect(routerSpy.navigate).toHaveBeenCalledWith(['/summary']);
+  });
+
+  it('it should remove an endpoint from the endpoint array on remove click', () => {
+    component.ngOnInit();
+    component.endpoints.controls[0].get('displayName').setValue('200');
+    component.endpoints.controls[0].get('defenceAdvocate').setValue('username@email.com');
+    component.addEndpoint();
+    component.endpoints.controls[1].get('displayName').setValue('201');
+    component.endpoints.controls[1].get('defenceAdvocate').setValue('username1@email.com');
+    component.addEndpoint();
+    component.endpoints.controls[2].get('displayName').setValue('202');
+    component.endpoints.controls[2].get('defenceAdvocate').setValue('username2@email.com');
+
+    component.removeEndpoint(1);
+    component.saveEndpoints();
+    expect(component.hearing.endpoints.length).toBe(2);
+  });
+  it('should map participant list to defence advocate model', () => {
+    const participantModel = new ParticipantModel();
+    participantModel.id = '1000';
+    participantModel.username = 'username@email.com';
+    participantModel.display_name = 'display name';
+    component.ngOnInit();
+    const dA = component.mapParticipantsToDefenceAdvocateModel(participantModel);
+    expect(dA).toBeTruthy();
+    expect(dA.id).toBe('1000');
+    expect(dA.username).toBe('username@email.com');
+    expect(dA.displayName).toBe('display name');
+    expect(dA.isSelected).toBe(null);
+  });
+  it('should return the username from id', () => {
+    const participantModel = new ParticipantModel();
+    participantModel.id = '1000';
+    participantModel.username = 'username@email.com';
+    participantModel.display_name = 'display name';
+    component.hearing.participants.push(participantModel);
+    component.ngOnInit();
+    let result = component.getUsernameFromId('1000');
+    expect(result).toBe('username@email.com');
+    result = component.getUsernameFromId('1001');
+    expect(result).toBe('1001');
   });
   it('should unsubscribe all subcription on destroy', () => {
     component.ngOnDestroy();
