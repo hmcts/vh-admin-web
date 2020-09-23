@@ -298,7 +298,7 @@ namespace AdminWebsite.Controllers
 
             var tasks = (from pair in newUsernameAdIdDict
                 let participant = hearing.Participants.FirstOrDefault(x => x.Username == pair.Key)
-                select _userAccountService.AssignParticipantToGroup(pair.Key, participant.User_role_name)).ToList();
+                select _userAccountService.AssignParticipantToGroup(pair.Value, participant.User_role_name)).ToList();
             await Task.WhenAll(tasks);
         }
 
