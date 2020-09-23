@@ -102,6 +102,7 @@ namespace AdminWebsite.Controllers
 
                 request.Created_by = _userIdentity.GetUserIdentityName();
                 var hearingDetailsResponse = await _bookingsApiClient.BookNewHearingAsync(request);
+                await AssignParticipantToCorrectGroups(hearingDetailsResponse);
                 return Created("", hearingDetailsResponse);
             }
             catch (BookingsApiException e)
@@ -266,8 +267,9 @@ namespace AdminWebsite.Controllers
                         }
                     }
                 }
-
-                return Ok(await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId));
+                var updatedHearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
+                await AssignParticipantToCorrectGroups(updatedHearing);
+                return Ok(updatedHearing);
             }
             catch (BookingsApiException e)
             {
@@ -281,6 +283,13 @@ namespace AdminWebsite.Controllers
                 }
                 throw;
             }
+        }
+
+        private async Task AssignParticipantToCorrectGroups(HearingDetailsResponse hearing)
+        {
+            var groupTasks = hearing.Participants.Select(participant =>
+                _userAccountService.AssignParticipantToGroup(participant.Username, participant.User_role_name)).ToArray();
+            await Task.WhenAll(groupTasks);
         }
 
         /// <summary>

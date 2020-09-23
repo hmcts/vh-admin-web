@@ -10,6 +10,7 @@ using AdminWebsite.Security;
 using AdminWebsite.Services;
 using AdminWebsite.UnitTests.Helper;
 using AdminWebsite.VideoAPI.Client;
+using FizzWare.NBuilder;
 using FluentAssertions;
 using FluentValidation;
 using FluentValidation.Results;
@@ -481,6 +482,21 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _bookingsApiClient.Setup(x =>
                     x.UpdateHearingDetailsAsync(It.IsAny<Guid>(), It.IsAny<UpdateHearingRequest>()))
                 .ThrowsAsync(ClientException.ForBookingsAPI(code));
+        }
+
+        private void SetupUpdatedHearingResponse()
+        {
+            // setup response
+            var pat1 = Builder<ParticipantResponse>.CreateNew()
+                .With(x => x.Id = Guid.NewGuid())
+                .With(x => x.User_role_name = "Representative").Build();
+            var pat2 = Builder<ParticipantResponse>.CreateNew()
+                .With(x => x.Id = Guid.NewGuid())
+                .With(x => x.User_role_name = "Individual").Build();
+            var hearingDetailsResponse = Builder<HearingDetailsResponse>.CreateNew()
+                .With(x=> x.Participants = new List<ParticipantResponse> {pat1, pat2}).Build();
+            _bookingsApiClient.Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
+                .ReturnsAsync(hearingDetailsResponse);
         }
     }
 }

@@ -42,10 +42,15 @@ namespace AdminWebsite.Services
         /// <param name="username"></param>
         /// <returns></returns>
         Task DeleteParticipantAccountAsync(string username);
+
+        Task AssignParticipantToGroup(string username, string userRole);
     }
 
     public class UserAccountService : IUserAccountService
     {
+        public static readonly string External = "External";
+        public static readonly string VirtualRoomProfessionalUser = "VirtualRoomProfessionalUser";
+        
         private readonly IUserApiClient _userApiClient;
         private readonly IBookingsApiClient _bookingsApiClient;
 
@@ -103,10 +108,6 @@ namespace AdminWebsite.Services
 
         private async Task<NewUserResponse> CreateNewUserInAD(ParticipantRequest participant)
         {
-            const string REPRESENTATIVE = "Representative";
-            const string DEFENCE_ADVOCATE = "Defence Advocate";
-            const string EXTERNAL = "External";
-            const string VIRTUAL_ROOM_PROFESSIONAL_USER = "VirtualRoomProfessionalUser";
             const string BLANK = " ";
 
             var createUserRequest = new CreateUserRequest
@@ -121,25 +122,7 @@ namespace AdminWebsite.Services
 
             participant.Username = newUserResponse.Username;
 
-            // Add user to user group.
-            var addUserToGroupRequest = new AddUserToGroupRequest
-            {
-                User_id = newUserResponse.User_id,
-                Group_name = EXTERNAL
-            };
-
-            await _userApiClient.AddUserToGroupAsync(addUserToGroupRequest);
-
-            if (participant.Hearing_role_name == REPRESENTATIVE || participant.Hearing_role_name == DEFENCE_ADVOCATE)
-            {
-                addUserToGroupRequest = new AddUserToGroupRequest
-                {
-                    User_id = newUserResponse.User_id,
-                    Group_name = VIRTUAL_ROOM_PROFESSIONAL_USER
-                };
-                
-                await _userApiClient.AddUserToGroupAsync(addUserToGroupRequest);
-            }
+           
             
             return newUserResponse;
         }
@@ -179,7 +162,31 @@ namespace AdminWebsite.Services
                 await _bookingsApiClient.AnonymisePersonWithUsernameAsync(username);
             }
         }
-        
+
+        public async Task AssignParticipantToGroup(string username, string userRole)
+        {
+            const string REPRESENTATIVE_ROLE = "Representative";
+            
+            // Add user to user group.
+            var addUserToGroupRequest = new AddUserToGroupRequest
+            {
+                User_id = username,
+                Group_name = External
+            };
+
+            await _userApiClient.AddUserToGroupAsync(addUserToGroupRequest);
+            if (userRole == REPRESENTATIVE_ROLE )
+            {
+                addUserToGroupRequest = new AddUserToGroupRequest
+                {
+                    User_id = username,
+                    Group_name = VirtualRoomProfessionalUser
+                };
+                
+                await _userApiClient.AddUserToGroupAsync(addUserToGroupRequest);
+            }
+        }
+
         private async Task<bool> CheckUsernameExistsInAdAsync(string username)
         {
             try
