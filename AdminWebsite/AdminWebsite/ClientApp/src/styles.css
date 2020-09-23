@@ -36,7 +36,7 @@
   color: #005ea5;
   font-weight: 500;
   margin-left: 10px;
-  font-family: "nta", Arial, sans-serif;
+  font-family: 'nta', Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-size: 18px;
@@ -107,7 +107,7 @@
   text-align: center;
   margin-top: 1px;
   font-size: 18px;
-  font-family: "nta",Arial,sans-serif;
+  font-family: 'nta', Arial, sans-serif;
   float: left;
 }
 
@@ -121,13 +121,13 @@
   text-align: left;
   margin-top: 1px;
   font-size: 18px;
-  font-family: "nta",Arial,sans-serif;
+  font-family: 'nta', Arial, sans-serif;
   float: left;
 }
 
 .vh-created-booking {
   color: #ffffff;
-  background-color: #3868C2;
+  background-color: #3868c2;
   padding-top: 7px;
   padding-bottom: 7px;
   width: 10%;
@@ -135,22 +135,22 @@
   text-align: center;
   margin-top: 1px;
   font-size: 18px;
-  font-family: "nta",Arial,sans-serif;
+  font-family: 'nta', Arial, sans-serif;
   float: left;
 }
 
 .vh-created-confirmation-failed {
-    color: #ffffff;
-    background-color: #d4351c;
-    padding-top: 7px;
-    padding-bottom: 7px;
-    width: 10%;
-    font-weight: 300;
-    text-align: center;
-    margin-top: 1px;
-    font-size: 18px;
-    font-family: "nta",Arial,sans-serif;
-    float: left;
+  color: #ffffff;
+  background-color: #d4351c;
+  padding-top: 7px;
+  padding-bottom: 7px;
+  width: 10%;
+  font-weight: 300;
+  text-align: center;
+  margin-top: 1px;
+  font-size: 18px;
+  font-family: 'nta', Arial, sans-serif;
+  float: left;
 }
 
 .vh-btncancel {
@@ -158,9 +158,9 @@
   color: #0b0b0b !important;
 }
 
-  .vh-btncancel:hover, .vh-btncancel:focus {
-    background-color: #bfc1c3 !important;
-  }
+.vh-btncancel:hover, .vh-btncancel:focus {
+  background-color: #bfc1c3 !important;
+}
 
 .popup {
   margin: 70px auto;
@@ -175,7 +175,7 @@
 p {
   max-height: 30%;
   overflow: auto;
-  color: #0B0B0B;
+  color: #0b0b0b;
   font-family: Helvetica, Arial, Verdana, Tahoma, sans-serif;
   font-size: 18px;
   line-height: 1.3157;
@@ -227,14 +227,13 @@ p {
   height: 30px;
   animation: spin 2s linear infinite;
   z-index: 1001;
-  box-shadow: 0px 0px 10px #FFF;
+  box-shadow: 0px 0px 10px #fff;
 }
 
 @keyframes spin {
   0% {
     transform: rotate(0deg);
   }
-
   100% {
     transform: rotate(360deg);
   }
@@ -274,21 +273,20 @@ p {
 .vh-align-text-left {
   text-align: left;
 }
+
 .vh-max-width {
   width: 100%;
 }
+
 .vh-margin-bottom-10 {
   margin: auto;
 }
+
 .vh-title {
   float: left;
   padding-right: 10px;
 }
 
-.ddl-width {
-  width: 75%;
-}
-
-.vh-line {
-  border-bottom: 1px solid #bfc0c0;
+.vh-top-pop {
+  margin: 70px auto !important;
 }
