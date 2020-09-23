@@ -1,5 +1,5 @@
 ﻿Feature: Bookings List
-	As a Case Admin or VH-Officer
+	As a VH-Officer
 	I need to be able to check all the future bookings
 	So that I can drill down for hearing information
 

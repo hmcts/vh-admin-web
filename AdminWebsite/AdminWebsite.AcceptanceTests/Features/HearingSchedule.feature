@@ -1,5 +1,5 @@
 ﻿Feature: Hearing Schedule
-	As a Case Admin or VH-Officer
+	As a VH-Officer
 	I need to be able to add hearing schedule details
 	So that the correct information is available to all participants who are joining the hearing
 

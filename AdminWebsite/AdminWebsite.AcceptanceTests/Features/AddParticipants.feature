@@ -1,5 +1,5 @@
 ﻿Feature: Add Participants
-	As a Case Admin or VH-Officer
+	As a VH-Officer
 	I need to be able to assign a courtroom account to a hearing
 	So that a judge is assigned the hearing
 

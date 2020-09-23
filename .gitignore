@@ -349,5 +349,4 @@ jasmine-tests
 # local env settings files
 /AdminWebsite/AdminWebsite.AcceptanceTests/Configuration/Environments/
 
-AssemblyInfo.cs
 .DS_Store

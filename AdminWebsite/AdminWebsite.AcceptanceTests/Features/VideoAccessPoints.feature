@@ -1,5 +1,5 @@
 ﻿Feature: Video Access Points
-	As a Case Admin or VH-Officer
+	As a VH-Officer
 	I need to be able to add video access points to a hearing
 	So that 0 or more video access points are assigned to the hearing
 
