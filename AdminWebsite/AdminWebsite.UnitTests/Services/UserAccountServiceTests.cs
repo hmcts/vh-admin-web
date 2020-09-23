@@ -54,42 +54,26 @@ namespace AdminWebsite.UnitTests.Services
             Assert.ThrowsAsync<UserAPI.Client.UserServiceException>(() =>
                 _service.UpdateParticipantUsername(new BookingsAPI.Client.ParticipantRequest()));
         }
-
+        
         [Test]
-        public async Task Should_add_new_individuals_to_external_group()
+        public async Task Should_add_individual_to_external_user_group_only()
         {
-            _userApiClient.Setup(x => x.CreateUserAsync(It.IsAny<CreateUserRequest>()))
-                .ReturnsAsync(new NewUserResponse());
+            await _service.AssignParticipantToGroup("rep@test.com","Individual");
 
-            var participant = new BookingsAPI.Client.ParticipantRequest
-            {
-                Username = "existin@user.com",
-                First_name ="Steve David",
-                Last_name ="Some Name",
-            };
-
-            await _service.UpdateParticipantUsername(participant);
-
-            _userApiClient.Verify(x => x.CreateUserAsync(It.Is<CreateUserRequest>(x => x.First_name == "SteveDavid" && x.Last_name == "SomeName")), Times.Once);
-            _userApiClient.Verify(x => x.AddUserToGroupAsync(It.Is<AddUserToGroupRequest>(y => y.Group_name == "External")),
+            _userApiClient.Verify(x => x.AddUserToGroupAsync(It.Is<AddUserToGroupRequest>(y => y.Group_name == UserAccountService.External)),
                 Times.Once);
+            _userApiClient.Verify(x => x.AddUserToGroupAsync(It.Is<AddUserToGroupRequest>(y => y.Group_name == UserAccountService.VirtualRoomProfessionalUser)),
+                Times.Never);
         }
 
         [Test]
         public async Task Should_add_representative_to_professional_user_group()
         {
-            _userApiClient.Setup(x => x.CreateUserAsync(It.IsAny<CreateUserRequest>()))
-                .ReturnsAsync(new NewUserResponse());
+            await _service.AssignParticipantToGroup("rep@test.com","Representative");
 
-            var participant = new BookingsAPI.Client.ParticipantRequest
-            {
-                Username = "existin@user.com",
-                Hearing_role_name = "Representative"
-            };
-
-            await _service.UpdateParticipantUsername(participant);
-
-            _userApiClient.Verify(x => x.AddUserToGroupAsync(It.Is<AddUserToGroupRequest>(y => y.Group_name == "VirtualRoomProfessionalUser")),
+            _userApiClient.Verify(x => x.AddUserToGroupAsync(It.Is<AddUserToGroupRequest>(y => y.Group_name == UserAccountService.External)),
+                Times.Once);
+            _userApiClient.Verify(x => x.AddUserToGroupAsync(It.Is<AddUserToGroupRequest>(y => y.Group_name == UserAccountService.VirtualRoomProfessionalUser)),
                 Times.Once);
         }
 
