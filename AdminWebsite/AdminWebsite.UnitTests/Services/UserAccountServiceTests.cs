@@ -75,8 +75,9 @@ namespace AdminWebsite.UnitTests.Services
                 Times.Once);
         }
 
-        [Test]
-        public async Task Should_add_representative_to_professional_user_group()
+        [TestCase("Representative")]
+        [TestCase("Defence Advocate")]
+        public async Task Should_add_representative_to_professional_user_group(string hearingRole)
         {
             _userApiClient.Setup(x => x.CreateUserAsync(It.IsAny<CreateUserRequest>()))
                 .ReturnsAsync(new NewUserResponse());
@@ -84,7 +85,7 @@ namespace AdminWebsite.UnitTests.Services
             var participant = new BookingsAPI.Client.ParticipantRequest
             {
                 Username = "existin@user.com",
-                Hearing_role_name = "Representative"
+                Hearing_role_name = hearingRole
             };
 
             await _service.UpdateParticipantUsername(participant);
