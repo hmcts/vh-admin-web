@@ -1,5 +1,5 @@
 ﻿Feature: Other Information
-	As a Case Admin or VH-Officer
+	As a VH-Officer
 	I need to be able to add other information to a hearing
 	So that I can keep a note of any extra hearing information
 
