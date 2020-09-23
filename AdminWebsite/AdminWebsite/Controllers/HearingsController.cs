@@ -289,11 +289,17 @@ namespace AdminWebsite.Controllers
         }
 
         private async Task AssignParticipantToCorrectGroups(HearingDetailsResponse hearing,
-            Dictionary<string, string> usernameAdIdDict)
+            Dictionary<string, string> newUsernameAdIdDict)
         {
-            var groupTasks = hearing.Participants.Where(x=> x.User_role_name != "Judge").Select(participant =>
-                _userAccountService.AssignParticipantToGroup(usernameAdIdDict[participant.Username], participant.User_role_name)).ToArray();
-            await Task.WhenAll(groupTasks);
+            if (!newUsernameAdIdDict.Any())
+            {
+                return;
+            }
+
+            var tasks = (from pair in newUsernameAdIdDict
+                let participant = hearing.Participants.FirstOrDefault(x => x.Username == pair.Key)
+                select _userAccountService.AssignParticipantToGroup(pair.Key, participant.User_role_name)).ToList();
+            await Task.WhenAll(tasks);
         }
 
         /// <summary>
