@@ -25,7 +25,7 @@ namespace AdminWebsite.Services
         /// </summary>
         /// <param name="participant"></param>
         /// <returns></returns>
-        Task UpdateParticipantUsername(ParticipantRequest participant);
+        Task<string> UpdateParticipantUsername(ParticipantRequest participant);
 
         Task<UserRole> GetUserRoleAsync(string userName);
 
@@ -66,19 +66,19 @@ namespace AdminWebsite.Services
         }
 
         /// <inheritdoc />
-        public async Task UpdateParticipantUsername(ParticipantRequest participant)
+        public async Task<string> UpdateParticipantUsername(ParticipantRequest participant)
         {
             // create user in AD if users email does not exist in AD.
             var userProfile = await CheckUserExistsInAD(participant.Contact_email);
             if (userProfile == null)
             {
                 // create the user in AD.
-                await CreateNewUserInAD(participant);
+                var newUser = await CreateNewUserInAD(participant);
+                return newUser.User_id;
             }
-            else
-            {
-                participant.Username = userProfile.User_name;
-            }
+
+            participant.Username = userProfile.User_name;
+            return userProfile.User_id;
         }
 
         public async Task<UserRole> GetUserRoleAsync(string userName)
