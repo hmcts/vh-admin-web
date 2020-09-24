@@ -36,7 +36,7 @@
     "ngx-device-detector": "^1.5.2",
     "ngx-moment": "^3.5.0",
     "rxjs": "^6.6.3",
-    "snyk": "^1.387.1",
+    "snyk": "^1.388.0",
     "tslib": "^2.0.1",
     "zone.js": "~0.11.0"
   },
@@ -50,7 +50,7 @@
     "@types/cucumber": "^4.0.7",
     "@types/jasmine": "^2.8.17",
     "@types/jasminewd2": "^2.0.8",
-    "@types/node": "^12.12.54",
+    "@types/node": "^12.12.55",
     "@types/uuid": "^3.4.9",
     "chai": "^4.2.0",
     "codelyzer": "^6.0.0",
