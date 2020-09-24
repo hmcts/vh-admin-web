@@ -12,21 +12,27 @@ import { ClipboardService } from 'ngx-clipboard';
 export class GetAudioLinkButtonComponent {
     public audioLinkStates: typeof AudioLinkState = AudioLinkState;
     private _currentLinkRetrievalState: AudioLinkState = AudioLinkState.initial;
-    public showLinkCopiedMessage = false;
+    public showLinkCopiedMessage: boolean[] = [];
+
     showErrorMessage = false;
-    private audioLink: string;
+
+    audioLinks: string[] = [];
 
     @Input() hearingId: string;
 
-    constructor(private audioLinkService: AudioLinkService, private clipboardService: ClipboardService, private logger: Logger) {}
+    constructor(private audioLinkService: AudioLinkService, private clipboardService: ClipboardService, private logger: Logger) { }
 
     async onGetLinkClick() {
         try {
             this.setCurrentState(AudioLinkState.loading);
 
-            this.audioLink = await this.audioLinkService.getAudioLink(this.hearingId);
-
+            this.audioLinks = await this.audioLinkService.getAudioLink(this.hearingId);
+            this.showLinkCopiedMessage = [];
+            this.audioLinks.forEach(x => {
+                this.showLinkCopiedMessage.push(false);
+            })
             setTimeout(() => this.setCurrentState(AudioLinkState.finished), 3000);
+
         } catch (error) {
             this.logger.error(`Error retrieving audio link for: ${this.hearingId}`, error);
             this.setCurrentState(AudioLinkState.error);
@@ -35,10 +41,10 @@ export class GetAudioLinkButtonComponent {
         }
     }
 
-    async onCopyLinkClick() {
-        this.clipboardService.copyFromContent(this.audioLink);
-        this.showLinkCopiedMessage = true;
-        setTimeout(() => this.hideLinkCopiedMessage(), 3000);
+    async onCopyLinkClick(fileIndex: number) {
+        this.clipboardService.copyFromContent(this.audioLinks[fileIndex]);
+        this.showLinkCopiedMessage[fileIndex] = true;
+        setTimeout(() => this.hideLinkCopiedMessage(fileIndex), 3000);
     }
 
     showOnState(audioLinkState: AudioLinkState) {
@@ -49,8 +55,8 @@ export class GetAudioLinkButtonComponent {
         this._currentLinkRetrievalState = audioLinkState;
     }
 
-    hideLinkCopiedMessage() {
-        this.showLinkCopiedMessage = false;
+    hideLinkCopiedMessage(fileIndex: number) {
+        this.showLinkCopiedMessage[fileIndex] = false;
     }
 
     hideErrorMessage() {

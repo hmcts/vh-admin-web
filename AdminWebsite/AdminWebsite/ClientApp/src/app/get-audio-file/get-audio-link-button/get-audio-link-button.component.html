@@ -9,12 +9,27 @@
     &nbsp;
     <label>Please wait...</label>
 </div>
+
 <div class="button-div" *ngIf="showOnState(audioLinkStates.finished)">
+    <div *ngFor="let audioLink of audioLinks; let fileIndex=index">
+        <button id="{{fileIndex}}-copyLinkButton" class="govuk-button govuk-!-margin-left-2 standard-width-button" data-module="govuk-button"
+                (click)="onCopyLinkClick(fileIndex)">
+            Copy link {{audioLinks.length > 1 ? fileIndex + 1 : ''}}
+        </button>
+        <div *ngIf="showLinkCopiedMessage[fileIndex]" (click)="hideLinkCopiedMessage(fileIndex)" id="{{fileIndex}}-linkCopied" class="linkCopiedMessage vh-blue-multi">
+            <img src="assets/images/audio_file.png" alt="success" class="vh-m5">
+            &nbsp;
+            <label>Audio file link copied to clipboard (valid for 3 days)</label>
+        </div>
+    </div>
+</div>
+
+<!--<div class="button-div" *ngIf="showOnState(audioLinkStates.finished)">
     <button id="copyLinkButton" class="govuk-button govuk-!-margin-left-2 standard-width-button" data-module="govuk-button"
             (click)="onCopyLinkClick()">
         Copy link
     </button>
-</div>
+</div>-->
 
 <div class="button-div" *ngIf="showOnState(audioLinkStates.error)">
     <div style="float: right">
@@ -24,11 +39,11 @@
         </button>
     </div>
 </div>
-<div *ngIf="showLinkCopiedMessage" (click)="hideLinkCopiedMessage()" id="linkCopied" class="linkCopiedMessage vh-blue">
+<!--<div *ngIf="showLinkCopiedMessage" (click)="hideLinkCopiedMessage()" id="linkCopied" class="linkCopiedMessage vh-blue">
         <img src="assets/images/audio_file.png" alt="success" class="vh-m5">
         &nbsp;
         <label>Audio file link copied to clipboard (valid for 3 days)</label>
-</div>
+</div>-->
 
 <div class="linkCopiedMessage vh-red" *ngIf="showErrorMessage" (click)="hideErrorMessage()">
 

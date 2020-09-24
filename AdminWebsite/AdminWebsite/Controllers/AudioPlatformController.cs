@@ -33,7 +33,7 @@ namespace AdminWebsite.Controllers
         /// <returns> The hearing</returns>
         [HttpGet("{hearingId}")]
         [SwaggerOperation(OperationId = "GetAudioRecordingLink")]
-        [ProducesResponseType(typeof(HearingAudioRecordingResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(List<HearingAudioRecordingResponse>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetAudioRecordingLinkAsync(Guid hearingId)
         {
@@ -41,9 +41,15 @@ namespace AdminWebsite.Controllers
 
             try
             {
+                // TO DO
                 var response = await _videoAPiClient.GetAudioRecordingLinkAsync(hearingId);
+                var result = new List<HearingAudioRecordingResponse>
+                { 
+                    new HearingAudioRecordingResponse { AudioFileLink = response.Audio_file_link },
+                    new HearingAudioRecordingResponse { AudioFileLink = "response.Audio_file_link1" },
 
-                return Ok(new HearingAudioRecordingResponse { AudioFileLink = response.Audio_file_link });
+                };
+                return Ok(result);
             }
             catch (VideoApiException ex)
             {
