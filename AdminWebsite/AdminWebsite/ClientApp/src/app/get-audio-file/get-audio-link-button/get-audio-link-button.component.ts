@@ -20,25 +20,32 @@ export class GetAudioLinkButtonComponent {
 
     @Input() hearingId: string;
 
-    constructor(private audioLinkService: AudioLinkService, private clipboardService: ClipboardService, private logger: Logger) { }
+    constructor(private audioLinkService: AudioLinkService, private clipboardService: ClipboardService, private logger: Logger) {}
 
     async onGetLinkClick() {
         try {
             this.setCurrentState(AudioLinkState.loading);
 
             this.audioLinks = await this.audioLinkService.getAudioLink(this.hearingId);
-            this.showLinkCopiedMessage = [];
-            this.audioLinks.forEach(x => {
-                this.showLinkCopiedMessage.push(false);
-            })
-            setTimeout(() => this.setCurrentState(AudioLinkState.finished), 3000);
-
+            if (this.audioLinks.length === 0) {
+                this.errorToGetLink();
+            } else {
+                this.showLinkCopiedMessage = [];
+                this.audioLinks.forEach(x => {
+                    this.showLinkCopiedMessage.push(false);
+                });
+                setTimeout(() => this.setCurrentState(AudioLinkState.finished), 3000);
+            }
         } catch (error) {
-            this.logger.error(`Error retrieving audio link for: ${this.hearingId}`, error);
-            this.setCurrentState(AudioLinkState.error);
-            this.showErrorMessage = true;
-            setTimeout(() => this.hideErrorMessage(), 3000);
+            this.errorToGetLink();
         }
+    }
+
+    private errorToGetLink() {
+        this.logger.warn(`Error retrieving audio link for: ${this.hearingId}`);
+        this.setCurrentState(AudioLinkState.error);
+        this.showErrorMessage = true;
+        setTimeout(() => this.hideErrorMessage(), 3000);
     }
 
     async onCopyLinkClick(fileIndex: number) {

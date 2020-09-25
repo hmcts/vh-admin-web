@@ -1,7 +1,9 @@
-﻿namespace AdminWebsite.Models
+﻿using System.Collections.Generic;
+
+namespace AdminWebsite.Models
 {
     public class HearingAudioRecordingResponse
     {
-        public string AudioFileLink { get; set; }
+        public List<string> AudioFileLinks { get; set; }
     }
 }

@@ -31,7 +31,7 @@ namespace AdminWebsite.UnitTests.Controllers
         {
             var audioResponse = new AudioRecordingResponse
             {
-                Audio_file_link = "someLinkToFile"
+                Audio_file_links = new List<string> { "someLinkToFile" }
             };
 
             _videoApiClientMock.Setup(x => x.GetAudioRecordingLinkAsync(It.IsAny<Guid>())).ReturnsAsync(audioResponse);
@@ -43,8 +43,8 @@ namespace AdminWebsite.UnitTests.Controllers
             actionResult.StatusCode.Should().Be(200);
             var item = actionResult.Value.As<HearingAudioRecordingResponse>();
             item.Should().NotBeNull()
-                .And.Subject.As<HearingAudioRecordingResponse>().AudioFileLink.Should().NotBeNullOrEmpty()
-                .And.Subject.Should().Be(audioResponse.Audio_file_link);
+                .And.Subject.As<HearingAudioRecordingResponse>().AudioFileLinks.Count.Should().Be(1);
+            item.AudioFileLinks[0].Should().Be(audioResponse.Audio_file_links[0]);
         }
 
         [Test]

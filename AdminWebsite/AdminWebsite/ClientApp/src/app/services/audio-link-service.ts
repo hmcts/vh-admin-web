@@ -17,9 +17,7 @@ export class AudioLinkService {
 
     async getAudioLink(hearingId: string): Promise<string[]> {
         const response = await this.bhClient.getAudioRecordingLink(hearingId).toPromise();
-        const result: string[] = []; // TO DO
-        response.forEach(x => { result.push(x.audio_file_link) });
-        return result;
+        return response.audio_file_links;
     }
 
     async getCvpAudioLinkWithCaseReference(cloudroomName: string, date: string, caseReference: string): Promise<CvpForAudioFileResponse[]> {

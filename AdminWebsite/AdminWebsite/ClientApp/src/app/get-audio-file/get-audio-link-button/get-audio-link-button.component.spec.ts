@@ -46,7 +46,7 @@ describe('GetAudioLinkButtonComponent', () => {
     }));
 
     it('should get audio multi links and set state to finised for selected link', fakeAsync(async () => {
-        audioLinkService.getAudioLink.and.returnValue(Promise.resolve(['myLink1','myLink2']));
+        audioLinkService.getAudioLink.and.returnValue(Promise.resolve(['myLink1', 'myLink2']));
 
         await component.onGetLinkClick();
         await component.onCopyLinkClick(0);
@@ -55,8 +55,15 @@ describe('GetAudioLinkButtonComponent', () => {
         expect(component.showOnState(AudioLinkState.finished)).toBeTruthy();
         expect(component.showLinkCopiedMessage.length).toBe(2);
         expect(component.showLinkCopiedMessage[0]).toBe(false);
-        expect(component.showLinkCopiedMessage[1]).toBe(false)
-
+        expect(component.showLinkCopiedMessage[1]).toBe(false);
     }));
+    it('should not get audio files link and set state to initial', fakeAsync(async () => {
+        audioLinkService.getAudioLink.and.returnValue(Promise.resolve([]));
 
+        await component.onGetLinkClick();
+
+        tick(3001);
+        expect(component.showOnState(AudioLinkState.error)).toBeTruthy();
+        expect(component.showLinkCopiedMessage.length).toBe(0);
+    }));
 });
