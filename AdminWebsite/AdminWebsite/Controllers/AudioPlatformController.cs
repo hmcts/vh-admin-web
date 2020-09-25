@@ -42,8 +42,8 @@ namespace AdminWebsite.Controllers
             try
             {
                 var response = await _videoAPiClient.GetAudioRecordingLinkAsync(hearingId);
+                return Ok(new HearingAudioRecordingResponse { AudioFileLinks = response.Audio_file_links });
 
-                return Ok(new HearingAudioRecordingResponse { AudioFileLink = response.Audio_file_link });
             }
             catch (VideoApiException ex)
             {

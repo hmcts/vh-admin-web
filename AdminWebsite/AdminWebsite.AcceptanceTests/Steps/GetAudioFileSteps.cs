@@ -63,13 +63,13 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void WhenIAttemptToGetTheLink()
         {
             _browsers[_c.CurrentUser].Click(GetAudioFilePage.GetLinkButton);
-            _browsers[_c.CurrentUser].Click(GetAudioFilePage.CopyLinkButton);
+            _browsers[_c.CurrentUser].Click(GetAudioFilePage.CopyLinkButton(0));
         }
 
         [Then(@"the link is retrieved")]
         public void ThenTheLinkIsRetrieved()
         {
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(GetAudioFilePage.LinkCopiedSuccessMessage).Displayed.Should().BeTrue();
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(GetAudioFilePage.LinkCopiedSuccessMessage(0)).Displayed.Should().BeTrue();
         }
     }
 }

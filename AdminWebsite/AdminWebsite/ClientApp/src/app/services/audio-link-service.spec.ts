@@ -34,11 +34,11 @@ describe('AudioLinkService', () => {
     });
 
     it('should get the audio link', async () => {
-        const hearingAudioRecordingResponse = new HearingAudioRecordingResponse({ audio_file_link: 'someUrl' });
+        const hearingAudioRecordingResponse = new HearingAudioRecordingResponse({ audio_file_links: ['someUrl'] });
         apiClient.getAudioRecordingLink.and.returnValue(of(hearingAudioRecordingResponse));
         const result = await service.getAudioLink('hearingId');
         expect(result).not.toBeNull();
         expect(result).not.toBeUndefined();
-        expect(result).toBe(hearingAudioRecordingResponse.audio_file_link);
+        expect(result[0]).toBe(hearingAudioRecordingResponse.audio_file_links[0]);
     });
 });
