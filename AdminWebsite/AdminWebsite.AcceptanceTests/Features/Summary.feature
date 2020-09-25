@@ -1,5 +1,5 @@
 ﻿Feature: Summary
-	As a Case Admin or VH-Officer
+	As a VH-Officer
 	I need to be able to check that the information is correct before I submit the form
 	So that I can reduce the chances of mistakes on the booking
 

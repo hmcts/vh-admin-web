@@ -3,6 +3,7 @@
 	I would like to login and Logout
 	So that I can access and sign out of the application
 
+@Ignore
 Scenario: Case Admin login
 	Given a new browser is open for a Case Admin
 	When the user logs in with valid credentials

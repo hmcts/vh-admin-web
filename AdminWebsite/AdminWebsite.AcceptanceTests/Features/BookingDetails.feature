@@ -1,5 +1,5 @@
 ﻿Feature: Booking Details
-	As a Case Admin or VH-Officer
+	As a VH-Officer
 	I need to be able to view the details of a booking
 	So that I can access the hearing information
 
@@ -39,7 +39,7 @@ Scenario: Cancel a confirmed hearing
 	Then the hearing is cancelled
 	And the conference is deleted
 
-@VIH-2150 @VIH-3734
+@VIH-2150 @VIH-3734 @Ignore
 Scenario: Case admin user can view another users booking
 	Given the Video Hearings Officer user has progressed to the Booking Confirmation page
 	And the user logs out

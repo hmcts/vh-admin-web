@@ -71,6 +71,7 @@ namespace AdminWebsite.Controllers
         [HearingInputSanitizer]
         public async Task<ActionResult<HearingDetailsResponse>> Post([FromBody] BookNewHearingRequest request)
         {
+            var usernameAdIdDict = new Dictionary<string, string>();
             var result = _bookNewHearingRequestValidator.Validate(request);
 
             if (!result.IsValid)
@@ -86,8 +87,8 @@ namespace AdminWebsite.Controllers
                     var participantsList = request.Participants.Where(p => p.Case_role_name != "Judge");
                     foreach (var participant in participantsList)
                     {
-                        await _userAccountService.UpdateParticipantUsername(participant);
-
+                        var userId =  await _userAccountService.UpdateParticipantUsername(participant);
+                        usernameAdIdDict[participant.Username] = userId;
                         if (request.Endpoints != null)
                         {
                             var epToUpdate = request.Endpoints.FirstOrDefault(ep => ep.Defence_advocate_username.Equals(participant.Contact_email, 
@@ -102,6 +103,7 @@ namespace AdminWebsite.Controllers
 
                 request.Created_by = _userIdentity.GetUserIdentityName();
                 var hearingDetailsResponse = await _bookingsApiClient.BookNewHearingAsync(request);
+                await AssignParticipantToCorrectGroups(hearingDetailsResponse, usernameAdIdDict);
                 return Created("", hearingDetailsResponse);
             }
             catch (BookingsApiException e)
@@ -129,6 +131,7 @@ namespace AdminWebsite.Controllers
         [HearingInputSanitizer]
         public async Task<ActionResult<HearingDetailsResponse>> EditHearing(Guid hearingId, [FromBody] EditHearingRequest request)
         {
+            var usernameAdIdDict = new Dictionary<string, string>();
             if (hearingId == Guid.Empty)
             {
                 ModelState.AddModelError(nameof(hearingId), $"Please provide a valid {nameof(hearingId)}");
@@ -184,7 +187,8 @@ namespace AdminWebsite.Controllers
                         else
                         {
                             // Update the request with newly created user details in AD
-                            await _userAccountService.UpdateParticipantUsername(newParticipant);
+                            var userId =  await _userAccountService.UpdateParticipantUsername(newParticipant);
+                            usernameAdIdDict.Add(newParticipant.Username, userId);
                         }
                         newParticipantList.Add(newParticipant);
                     }
@@ -266,8 +270,9 @@ namespace AdminWebsite.Controllers
                         }
                     }
                 }
-
-                return Ok(await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId));
+                var updatedHearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
+                await AssignParticipantToCorrectGroups(updatedHearing, usernameAdIdDict);
+                return Ok(updatedHearing);
             }
             catch (BookingsApiException e)
             {
@@ -281,6 +286,20 @@ namespace AdminWebsite.Controllers
                 }
                 throw;
             }
+        }
+
+        private async Task AssignParticipantToCorrectGroups(HearingDetailsResponse hearing,
+            Dictionary<string, string> newUsernameAdIdDict)
+        {
+            if (!newUsernameAdIdDict.Any())
+            {
+                return;
+            }
+
+            var tasks = (from pair in newUsernameAdIdDict
+                let participant = hearing.Participants.FirstOrDefault(x => x.Username == pair.Key)
+                select _userAccountService.AssignParticipantToGroup(pair.Value, participant.User_role_name)).ToList();
+            await Task.WhenAll(tasks);
         }
 
         /// <summary>
