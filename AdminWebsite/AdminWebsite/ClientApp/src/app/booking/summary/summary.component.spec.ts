@@ -20,6 +20,8 @@ import { HearingDetailsResponse } from '../../services/clients/api-client';
 import { LongDatetimePipe } from '../../../app/shared/directives/date-time.pipe';
 import { Logger } from '../../services/logger';
 import { EndpointModel } from 'src/app/common/model/endpoint.model';
+import { BookingService } from '../../services/booking.service';
+import { RecordingGuardService } from '../../services/recording-guard.service';
 
 function initExistingHearingRequest(): HearingModel {
     const pat1 = new ParticipantModel();
@@ -383,9 +385,13 @@ describe('SummaryComponent  with existing request', () => {
 
 describe('SummaryComponent  with multi days request', () => {
     let component: SummaryComponent;
-    let fixture: ComponentFixture<SummaryComponent>;
     let existingRequest: HearingModel;
+    let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
+    let bookingServiceSpy: jasmine.SpyObj<BookingService>;
+    let recordingGuardServiceSpy: jasmine.SpyObj<RecordingGuardService>;
 
+    bookingServiceSpy = jasmine.CreateSpyObj<BookingService>('BookingService', ['removeParticipantEmail']);
+    recordingGuardServiceSpy = jasmine.createSpyObj<RecordingGuardService>('RecordingGuardService', ['switchOffRecording']);
     beforeEach(async(() => {
         existingRequest = initExistingHearingRequest();
         existingRequest.multiDays = true;
@@ -393,35 +399,15 @@ describe('SummaryComponent  with multi days request', () => {
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
         videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
         videoHearingsServiceSpy.updateHearing.and.returnValue(of(new HearingDetailsResponse()));
-
-        TestBed.configureTestingModule({
-            providers: [
-                { provide: ReferenceDataService, useValue: referenceDataServiceServiceSpy },
-                { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
-                { provide: Router, useValue: routerSpy },
-                { provide: Logger, useValue: loggerSpy }
-            ],
-            imports: [RouterTestingModule],
-            declarations: [
-                SummaryComponent,
-                BreadcrumbStubComponent,
-                CancelPopupComponent,
-                ParticipantsListStubComponent,
-                BookingEditStubComponent,
-                RemovePopupComponent,
-                WaitPopupComponent,
-                SaveFailedPopupComponent,
-                LongDatetimePipe
-            ]
-        }).compileComponents();
-    }));
-
-    beforeEach(() => {
-        fixture = TestBed.createComponent(SummaryComponent);
-        component = fixture.componentInstance;
-        fixture.detectChanges();
-    });
-
+        componet = new SummaryComponent(
+            videoHearingsServiceSpy,
+            routerSpy,
+            referenceDataServiceServiceSpy,
+            bookingServiceSpy,
+            loggerSpy,
+            referenceDataServiceServiceSpy
+        );
+       
     it('should display summary data from existing hearing with multi days', () => {
         expect(component.hearingDate).toEqual(existingRequest.scheduled_date_time);
         expect(component.endHearingDate).toEqual(existingRequest.end_hearing_date_time);
