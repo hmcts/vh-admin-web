@@ -33,7 +33,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     isStartHoursInPast = false;
     isStartMinutesInPast = false;
     $subscriptions: Subscription[] = [];
-    multiDaysHearing: boolean;
+    multiDaysHearing = false;
 
     constructor(
         private refDataService: ReferenceDataService,
@@ -115,7 +115,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
             courtAddress: [this.hearing.hearing_venue_id, [Validators.required, Validators.min(1)]],
             courtRoom: [room, [Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)]],
             multiDays: [this.multiDaysHearing],
-            endHearingDate: [endHearingDateParsed, Validators.required]
+            endHearingDate: [endHearingDateParsed]
         });
     }
 
@@ -164,10 +164,6 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
         return this.form.get('courtRoom');
     }
 
-    get multiDaysValue() {
-        return this.form.get('multiDays').value;
-    }
-
     get hearingDateInvalid() {
         const todayDate = new Date(new Date().setHours(0, 0, 0, 0));
         return (
@@ -177,7 +173,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     }
 
     get endHearingDateInvalid() {
-        if (this.multiDaysValue) {
+        if (this.multiDaysHearing) {
             const endDateNoTime = new Date(new Date(this.endHearingDate.value).setHours(0, 0, 0));
             const startDateNoTime = new Date(new Date(this.hearingDate.value).setHours(0, 0, 0));
 
@@ -192,7 +188,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     }
 
     get durationInvalid() {
-        if (!this.multiDaysValue) {
+        if (!this.multiDaysHearing) {
             let hearingDuration = parseInt(this.form.value.hearingDurationHour, 10) * 60;
             hearingDuration += parseInt(this.form.value.hearingDurationMinute, 10);
             return hearingDuration <= 0;
@@ -337,7 +333,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
 
         this.hearing.scheduled_date_time = hearingDate;
         this.hearing.scheduled_duration = this.setHearingDuration();
-        this.hearing.multiDays = this.multiDaysValue;
+        this.hearing.multiDays = this.multiDaysHearing;
         const endDate = new Date(this.form.value.endHearingDate);
         this.hearing.end_hearing_date_time = endDate;
         this.hearingService.updateHearingRequest(this.hearing);
@@ -345,7 +341,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
 
     private setHearingDuration() {
         let hearingDuration = 0;
-        if (!this.multiDaysValue) {
+        if (!this.multiDaysHearing) {
             hearingDuration = parseInt(this.form.value.hearingDurationHour, 10) * 60;
             hearingDuration += parseInt(this.form.value.hearingDurationMinute, 10);
         }
@@ -393,6 +389,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
 
     multiDaysChanged(value) {
         if (value) {
+            this.multiDaysHearing = true;
             this.hearingDurationHour.clearValidators();
             this.hearingDurationMinute.clearValidators();
             this.hearingDurationHour.updateValueAndValidity();
@@ -407,8 +404,11 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
 
             this.endHearingDate.setValidators([Validators.required]);
             this.endHearingDate.updateValueAndValidity();
+            this.endHearingDate.setValue(null);
         } else {
+            this.multiDaysHearing = false;
             this.endHearingDate.clearValidators();
+            this.endHearingDate.updateValueAndValidity();
             this.endHearingDate.setValue(null);
 
             this.hearingDurationHour.setValidators([Validators.required, Validators.min(0), Validators.max(23)]);

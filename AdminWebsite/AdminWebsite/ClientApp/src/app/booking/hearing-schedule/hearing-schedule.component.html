@@ -13,7 +13,6 @@
                 id="miltiDaysHearing"
                 name="miltiDaysHearing"
                 type="checkbox"
-                [checked]="multiDaysHearing"
                 formControlName="multiDays"
                 (change)="multiDaysChanged(checkBoxMulti.checked)"
             />
@@ -23,7 +22,7 @@
 
     <div [ngClass]="hearingDateInvalid ? 'govuk-form-group--error' : 'govuk-form-group'">
         <label class="govuk-label govuk-!-width-one-quarter" for="hearingDate">
-            {{ multiDaysValue ? 'Start date of hearing' : 'Date of hearing' }}
+            {{ multiDaysHearing ? 'Start date of hearing' : 'Date of hearing' }}
         </label>
         <input
             id="hearingDate"
@@ -40,7 +39,7 @@
         </div>
     </div>
 
-    <div *ngIf="multiDaysValue" class="vh-bottom-m">
+    <div *ngIf="multiDaysHearing" class="vh-bottom-m">
         <div [ngClass]="endHearingDateInvalid ? 'govuk-form-group--error' : 'govuk-form-group'">
             <label class="govuk-label govuk-!-width-one-quarter" for="endHearingDate"> End date of hearing </label>
             <input
@@ -120,7 +119,7 @@
         </div>
     </div>
 
-    <div *ngIf="!multiDaysValue">
+    <div *ngIf="!multiDaysHearing">
         <div
             [ngClass]="
                 hearingDurationHourInvalid || hearingDurationMinuteInvalid || durationInvalid

@@ -111,7 +111,7 @@ describe('HearingScheduleComponent first visit', () => {
         expect(component.hearingDurationHour.value).toBeNull();
         expect(component.hearingDurationMinute.value).toBeNull();
         expect(component.courtAddress.value).toBe(-1);
-        expect(component.multiDaysValue).toBeNull();
+        expect(component.multiDaysHearing).toBeFalsy();
     });
 
     it('should fail validation when form empty', () => {
@@ -364,7 +364,7 @@ describe('HearingScheduleComponent returning to page', () => {
         expect(component.hearingDurationHour.value).toBe(expectedDurationHour);
         expect(component.hearingDurationMinute.value).toBe(expectedDurationMinute);
         expect(component.courtAddress.value).toBe(existingRequest.hearing_venue_id);
-        expect(component.multiDaysValue).toBe(existingRequest.multiDays);
+        expect(component.multiDaysHearing).toBe(existingRequest.multiDays);
     });
     it('should hide cancel and discard pop up confirmation', () => {
         component.attemptingCancellation = true;
@@ -447,7 +447,6 @@ describe('HearingScheduleComponent multi days hearing', () => {
     let fixture: ComponentFixture<HearingScheduleComponent>;
 
     const existingRequest: HearingModel = initExistingHearingRequest();
-    existingRequest.multiDays = true;
 
     let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
     let referenceDataServiceServiceSpy: jasmine.SpyObj<ReferenceDataService>;
@@ -492,16 +491,14 @@ describe('HearingScheduleComponent multi days hearing', () => {
 
     it('should set multi days flag to true', () => {
         component.hearing = existingRequest;
-        component.hearing.multiDays = true;
-        component.ngOnInit();
-        fixture.detectChanges();
-        expect(component.form.controls['multiDays'].value).toBe(true);
+        component.multiDaysChanged(true);
+        expect(component.multiDaysHearing).toBe(true);
     });
     it('should validate end date to true', () => {
         const startDateValue = new Date(addDays(Date.now(), 1));
         const endDateValue = new Date(addDays(Date.now(), 3));
 
-        multiDaysControl.setValue(true);
+        component.multiDaysChanged(true);
         dateControl.setValue(startDateValue);
         component.endHearingDate.markAsTouched();
         endDateControl.setValue(endDateValue);
@@ -510,7 +507,7 @@ describe('HearingScheduleComponent multi days hearing', () => {
     it('should validate end date to fase if it is matched the start day', () => {
         const startDateValue = new Date(addDays(Date.now(), 1));
         const endDateValue = new Date(addDays(Date.now(), 1));
-        multiDaysControl.setValue(true);
+        component.multiDaysChanged(true);
         dateControl.setValue(startDateValue);
         component.endHearingDate.markAsTouched();
 
@@ -521,7 +518,7 @@ describe('HearingScheduleComponent multi days hearing', () => {
         const startDateValue = new Date(addDays(Date.now(), 1));
         const endDateValue = new Date(Date.now());
 
-        multiDaysControl.setValue(true);
+        component.multiDaysChanged(true);
         dateControl.setValue(startDateValue);
         component.endHearingDate.markAsTouched();
 
@@ -535,23 +532,17 @@ describe('HearingScheduleComponent multi days hearing', () => {
         const dateString = dateTransfomer.transform(existingRequest.scheduled_date_time, 'yyyy-MM-dd');
         const endDateString = dateTransfomer.transform(existingRequest.end_hearing_date_time, 'yyyy-MM-dd');
 
-        const durationDate = new Date(0, 0, 0, 0, 0, 0, 0);
-        durationDate.setMinutes(existingRequest.scheduled_duration);
-        existingRequest.multiDays = true;
         existingRequest.end_hearing_date_time = endDateValue;
 
         const expectedStartHour = dateTransfomer.transform(existingRequest.scheduled_date_time, 'HH');
         const expectedStartMinute = dateTransfomer.transform(existingRequest.scheduled_date_time, 'mm');
-        const expectedDurationHour = dateTransfomer.transform(durationDate, 'HH');
-        const expectedDurationMinute = dateTransfomer.transform(durationDate, 'mm');
+        component.multiDaysChanged(true);
 
         expect(component.hearingDate.value).toBe(dateString);
         expect(component.hearingStartTimeHour.value).toBe(expectedStartHour);
         expect(component.hearingStartTimeMinute.value).toBe(expectedStartMinute);
-        expect(component.hearingDurationHour.value).toBe(expectedDurationHour);
-        expect(component.hearingDurationMinute.value).toBe(expectedDurationMinute);
         expect(component.courtAddress.value).toBe(existingRequest.hearing_venue_id);
-        expect(component.multiDaysValue).toBe(existingRequest.multiDays);
+        expect(component.multiDaysHearing).toBe(true);
         expect(component.endHearingDate.value).toBe(endDateString);
     });
     it('should duration set to untoched if multi days hearing', () => {
