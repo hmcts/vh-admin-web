@@ -21,8 +21,13 @@
         <app-booking-edit [title]="'Hearing schedule'" [editLink]="'hearing-schedule'" [elementId]="'hearing-schedule-id'">
         </app-booking-edit>
         <div class="govuk-form-group vhtable">
-            <div id="hearingDate">{{ hearingDate | date: 'EEEE dd MMMM yyyy' }}<span *ngIf="multiDays"> -</span></div>
-            <div *ngIf="multiDays">{{ endHearingDate | appLongDatetime }}</div>
+            <div id="hearingDate" *ngIf="!multiDays; else multiDaysHearing">
+                {{ hearingDate | appLongDatetime }}
+            </div>
+            <ng-template #multiDaysHearing>
+                <div id="hearingStartDate">{{ hearingDate | date: 'EEEE dd MMMM yyyy' }}<span *ngIf="multiDays"> -</span></div>
+                <div>{{ endHearingDate | appLongDatetime }}</div>
+            </ng-template>
             <div id="courtAddress" class="vh-text-break">{{ courtRoomAddress }}</div>
             <div *ngIf="!multiDays" id="hearingDuration">{{ hearingDuration }}</div>
         </div>

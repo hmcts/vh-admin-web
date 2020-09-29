@@ -111,7 +111,7 @@ describe('HearingScheduleComponent first visit', () => {
         expect(component.hearingDurationHour.value).toBeNull();
         expect(component.hearingDurationMinute.value).toBeNull();
         expect(component.courtAddress.value).toBe(-1);
-        expect(component.multiDays).toBeNull();
+        expect(component.multiDaysValue).toBeNull();
     });
 
     it('should fail validation when form empty', () => {
@@ -364,7 +364,7 @@ describe('HearingScheduleComponent returning to page', () => {
         expect(component.hearingDurationHour.value).toBe(expectedDurationHour);
         expect(component.hearingDurationMinute.value).toBe(expectedDurationMinute);
         expect(component.courtAddress.value).toBe(existingRequest.hearing_venue_id);
-        expect(component.multiDays).toBe(existingRequest.multiDays);
+        expect(component.multiDaysValue).toBe(existingRequest.multiDays);
     });
     it('should hide cancel and discard pop up confirmation', () => {
         component.attemptingCancellation = true;
@@ -551,7 +551,16 @@ describe('HearingScheduleComponent multi days hearing', () => {
         expect(component.hearingDurationHour.value).toBe(expectedDurationHour);
         expect(component.hearingDurationMinute.value).toBe(expectedDurationMinute);
         expect(component.courtAddress.value).toBe(existingRequest.hearing_venue_id);
-        expect(component.multiDays).toBe(existingRequest.multiDays);
+        expect(component.multiDaysValue).toBe(existingRequest.multiDays);
         expect(component.endHearingDate.value).toBe(endDateString);
+    });
+    it('should duration set to untoched if multi days hearing', () => {
+        component.multiDaysChanged(true);
+        expect(component.hearingDurationHour.touched).toBe(false);
+        expect(component.hearingDurationMinute.touched).toBe(false);
+    });
+    it('should end date set to null if multi days hearing is off', () => {
+        component.multiDaysChanged(false);
+        expect(component.endHearingDate.value).toBe(null);
     });
 });

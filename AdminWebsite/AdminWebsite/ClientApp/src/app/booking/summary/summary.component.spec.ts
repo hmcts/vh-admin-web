@@ -386,30 +386,37 @@ describe('SummaryComponent  with existing request', () => {
 describe('SummaryComponent  with multi days request', () => {
     let component: SummaryComponent;
     let existingRequest: HearingModel;
-    let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
+    // let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
     let bookingServiceSpy: jasmine.SpyObj<BookingService>;
     let recordingGuardServiceSpy: jasmine.SpyObj<RecordingGuardService>;
 
-    bookingServiceSpy = jasmine.CreateSpyObj<BookingService>('BookingService', ['removeParticipantEmail']);
+    bookingServiceSpy = jasmine.createSpyObj<BookingService>('BookingService', ['removeParticipantEmail']);
     recordingGuardServiceSpy = jasmine.createSpyObj<RecordingGuardService>('RecordingGuardService', ['switchOffRecording']);
-    beforeEach(async(() => {
-        existingRequest = initExistingHearingRequest();
-        existingRequest.multiDays = true;
-        existingRequest.hearing_id = '12345ty';
-        videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
-        videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
-        videoHearingsServiceSpy.updateHearing.and.returnValue(of(new HearingDetailsResponse()));
-        componet = new SummaryComponent(
-            videoHearingsServiceSpy,
-            routerSpy,
-            referenceDataServiceServiceSpy,
-            bookingServiceSpy,
-            loggerSpy,
-            referenceDataServiceServiceSpy
-        );
-       
+    existingRequest = initExistingHearingRequest();
+    existingRequest.multiDays = true;
+    existingRequest.hearing_id = '12345ty';
+    videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
+    videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
+    videoHearingsServiceSpy.updateHearing.and.returnValue(of(new HearingDetailsResponse()));
+
+    component = new SummaryComponent(
+        videoHearingsServiceSpy,
+        routerSpy,
+        referenceDataServiceServiceSpy,
+        bookingServiceSpy,
+        loggerSpy,
+        recordingGuardServiceSpy
+    );
+
     it('should display summary data from existing hearing with multi days', () => {
-        expect(component.hearingDate).toEqual(existingRequest.scheduled_date_time);
-        expect(component.endHearingDate).toEqual(existingRequest.end_hearing_date_time);
+        component.ngOnInit();
+        expect(component.hearingDate.getDay()).toEqual(existingRequest.scheduled_date_time.getDay());
+        expect(component.endHearingDate.getDay()).toEqual(existingRequest.end_hearing_date_time.getDay());
+
+        expect(component.hearingDate.getMonth()).toEqual(existingRequest.scheduled_date_time.getMonth());
+        expect(component.endHearingDate.getMonth()).toEqual(existingRequest.end_hearing_date_time.getMonth());
+
+        expect(component.hearingDate.getFullYear()).toEqual(existingRequest.scheduled_date_time.getFullYear());
+        expect(component.endHearingDate.getFullYear()).toEqual(existingRequest.end_hearing_date_time.getFullYear());
     });
 });
