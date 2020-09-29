@@ -5,9 +5,24 @@
 <h2 class="govuk-heading-m">Time and location</h2>
 
 <form [formGroup]="form" class="govuk-form-group" (ngSubmit)="saveScheduleAndLocation()">
+    <div class="govuk-form-group govuk-!-width-one-quarter">
+        <div class="govuk-checkboxes__item">
+            <input
+                #checkBoxMulti
+                class="govuk-checkboxes__input"
+                id="miltiDaysHearing"
+                name="miltiDaysHearing"
+                type="checkbox"
+                formControlName="multiDays"
+                (change)="multiDaysChanged(checkBoxMulti.checked)"
+            />
+            <label class="govuk-label govuk-checkboxes__label" for="miltiDaysHearing"> Multi-day hearing </label>
+        </div>
+    </div>
+
     <div [ngClass]="hearingDateInvalid ? 'govuk-form-group--error' : 'govuk-form-group'">
         <label class="govuk-label govuk-!-width-one-quarter" for="hearingDate">
-            Date of hearing
+            {{ multiDaysHearing ? 'Start date of hearing' : 'Date of hearing' }}
         </label>
         <input
             id="hearingDate"
@@ -20,9 +35,27 @@
             (blur)="resetPastTimeOnBlur()"
         />
         <div *ngIf="hearingDateInvalid" class="alert alert-danger">
-            <span id="hearingDate-error" class="govuk-error-message">
-                Please enter a date in the future
-            </span>
+            <span id="hearingDate-error" class="govuk-error-message"> Please enter a date in the future </span>
+        </div>
+    </div>
+
+    <div *ngIf="multiDaysHearing" class="vh-bottom-m">
+        <div [ngClass]="endHearingDateInvalid ? 'govuk-form-group--error' : 'govuk-form-group'">
+            <label class="govuk-label govuk-!-width-one-quarter" for="endHearingDate"> End date of hearing </label>
+            <input
+                id="endHearingDate"
+                class="govuk-input govuk-!-width-one-quarter"
+                type="date"
+                formControlName="endHearingDate"
+                required
+                placeholder="e.g. 30/02/2018"
+                min="{{ today | date: 'yyyy-MM-dd' }}"
+            />
+            <div *ngIf="endHearingDateInvalid" class="alert alert-danger">
+                <span id="endHearingDate-error" class="govuk-error-message">
+                    Please enter a date at least 1 day later than the start date
+                </span>
+            </div>
         </div>
     </div>
 
@@ -33,9 +66,7 @@
                 : 'govuk-form-group'
         "
     >
-        <label class="govuk-label govuk-!-width-one-half" for="hearingStartTime">
-            Hearing start time (use the 24 hour clock)
-        </label>
+        <label class="govuk-label govuk-!-width-one-half" for="hearingStartTime"> Hearing start time (use the 24 hour clock) </label>
         <fieldset class="govuk-fieldset" aria-describedby="hearingStartTimeHour" role="group">
             <legend></legend>
             <div class="govuk-date-input">
@@ -78,104 +109,92 @@
             </div>
         </fieldset>
         <div *ngIf="hearingStartTimeHourInvalid" class="alert alert-danger">
-            <span id="hearingStartTimeHour-error" class="govuk-error-message">
-                Provide a value for start hour between 0 and 23
-            </span>
+            <span id="hearingStartTimeHour-error" class="govuk-error-message"> Provide a value for start hour between 0 and 23 </span>
         </div>
         <div *ngIf="hearingStartTimeMinuteInvalid" class="alert alert-danger">
-            <span id="hearingStartTimeMinute-error" class="govuk-error-message">
-                Provide a value for start minutes between 0 and 59
-            </span>
+            <span id="hearingStartTimeMinute-error" class="govuk-error-message"> Provide a value for start minutes between 0 and 59 </span>
         </div>
         <div *ngIf="isStartMinutesInPast || isStartHoursInPast" class="alert alert-danger">
-            <span id="hearingTime-error" class="govuk-error-message">
-                Please enter a time in the future
-            </span>
+            <span id="hearingTime-error" class="govuk-error-message"> Please enter a time in the future </span>
         </div>
     </div>
 
-    <div
-        [ngClass]="
-            hearingDurationHourInvalid || hearingDurationMinuteInvalid || durationInvalid ? 'govuk-form-group--error' : 'govuk-form-group'
-        "
-    >
-        <label class="govuk-label govuk-!-width-one-half" for="hearingDuration">
-            Duration
-        </label>
-        <fieldset class="govuk-fieldset" aria-describedby="hearingDurationHour" role="group">
-            <legend></legend>
-            <div class="govuk-date-input">
-                <div class="govuk-date-input__item">
-                    <div class="govuk-form-group">
-                        <input
-                            class="govuk-input govuk-date-input__input govuk-input--width-2"
-                            id="hearingDurationHour"
-                            name="hearingDurationHour"
-                            type="number"
-                            placeholder="00"
-                            min="0"
-                            max="23"
-                            title="hearingDurationHour"
-                            formControlName="hearingDurationHour"
-                            aria-label="hearingDurationHour"
-                            aria-labelledby="hearingDurationHour"
-                        />
+    <div *ngIf="!multiDaysHearing">
+        <div
+            [ngClass]="
+                hearingDurationHourInvalid || hearingDurationMinuteInvalid || durationInvalid
+                    ? 'govuk-form-group--error'
+                    : 'govuk-form-group'
+            "
+        >
+            <label class="govuk-label govuk-!-width-one-half" for="hearingDuration"> Duration </label>
+            <fieldset class="govuk-fieldset" aria-describedby="hearingDurationHour" role="group">
+                <legend></legend>
+                <div class="govuk-date-input">
+                    <div class="govuk-date-input__item">
+                        <div class="govuk-form-group">
+                            <input
+                                class="govuk-input govuk-date-input__input govuk-input--width-2"
+                                id="hearingDurationHour"
+                                name="hearingDurationHour"
+                                type="number"
+                                placeholder="00"
+                                min="0"
+                                max="23"
+                                title="hearingDurationHour"
+                                formControlName="hearingDurationHour"
+                                aria-label="hearingDurationHour"
+                                aria-labelledby="hearingDurationHour"
+                                [required]="'{multiDays}'"
+                            />
+                        </div>
+                    </div>
+                    <div class="govuk-date-input__item">
+                        <div class="govuk-form-group">
+                            <input
+                                class="govuk-input govuk-date-input__input govuk-input--width-2"
+                                id="hearingDurationMinute"
+                                name="hearingDurationMinute"
+                                type="number"
+                                placeholder="45"
+                                min="0"
+                                max="59"
+                                title="hearingDurationMinute"
+                                formControlName="hearingDurationMinute"
+                                aria-label="hearingDurationMinute"
+                                aria-labelledby="hearingDurationMinute"
+                                [required]="'{multiDays}'"
+                            />
+                        </div>
                     </div>
                 </div>
-                <div class="govuk-date-input__item">
-                    <div class="govuk-form-group">
-                        <input
-                            class="govuk-input govuk-date-input__input govuk-input--width-2"
-                            id="hearingDurationMinute"
-                            name="hearingDurationMinute"
-                            type="number"
-                            placeholder="45"
-                            min="0"
-                            max="59"
-                            title="hearingDurationMinute"
-                            formControlName="hearingDurationMinute"
-                            aria-label="hearingDurationMinute"
-                            aria-labelledby="hearingDurationMinute"
-                        />
-                    </div>
-                </div>
+            </fieldset>
+            <div *ngIf="hearingDurationHourInvalid" class="alert alert-danger">
+                <span id="hearingDurationHour-error" class="govuk-error-message"> Provide a value for duration hour between 0 and 23 </span>
             </div>
-        </fieldset>
-        <div *ngIf="hearingDurationHourInvalid" class="alert alert-danger">
-            <span id="hearingDurationHour-error" class="govuk-error-message">
-                Provide a value for duration hour between 0 and 23
-            </span>
-        </div>
-        <div *ngIf="hearingDurationMinuteInvalid" class="alert alert-danger">
-            <span id="hearingDurationMinute-error" class="govuk-error-message">
-                Provide a value for duration minutes between 0 and 59
-            </span>
-        </div>
-        <div *ngIf="durationInvalid" class="alert alert-danger">
-            <span id="duration-error" class="govuk-error-message">
-                Duration cannot be zero
-            </span>
+            <div *ngIf="hearingDurationMinuteInvalid" class="alert alert-danger">
+                <span id="hearingDurationMinute-error" class="govuk-error-message">
+                    Provide a value for duration minutes between 0 and 59
+                </span>
+            </div>
+            <div *ngIf="durationInvalid" class="alert alert-danger">
+                <span id="duration-error" class="govuk-error-message"> Duration cannot be zero </span>
+            </div>
         </div>
     </div>
 
     <div [ngClass]="courtAddressInvalid ? 'govuk-form-group--error' : 'govuk-form-group'">
-        <label class="govuk-label govuk-!-width-one-half" for="courtAddress">
-            Hearing venue
-        </label>
+        <label class="govuk-label govuk-!-width-one-half" for="courtAddress"> Hearing venue </label>
         <select class="govuk-select govuk-!-width-one-half" id="courtAddress" formControlName="courtAddress">
-            <option *ngFor="let venue of availableCourts" [ngValue]="venue.id">{{ venue.name }} </option>
+            <option *ngFor="let venue of availableCourts" [ngValue]="venue.id">{{ venue.name }}</option>
         </select>
         <div *ngIf="courtAddressInvalid" class="alert alert-danger">
-            <span id="courtAddress-error" class="govuk-error-message">
-                Please select a hearing venue
-            </span>
+            <span id="courtAddress-error" class="govuk-error-message"> Please select a hearing venue </span>
         </div>
     </div>
 
     <div [ngClass]="courtRoomInvalid ? 'govuk-form-group--error' : 'govuk-form-group'">
-        <label class="govuk-label" for="court-room">
-            Room
-        </label>
+        <label class="govuk-label" for="court-room"> Room </label>
         <input
             class="govuk-input govuk-!-width-one-half"
             id="court-room"
@@ -185,9 +204,7 @@
             (blur)="courtRoomOnBlur()"
         />
         <div *ngIf="courtRoomInvalid" class="alert alert-danger">
-            <span id="courtRoom-error" class="govuk-error-message">
-                Please enter a valid court room
-            </span>
+            <span id="courtRoom-error" class="govuk-error-message"> Please enter a valid court room </span>
         </div>
     </div>
 
@@ -205,7 +222,8 @@
             id="cancelButton"
             class="govuk-button hmcts-button--secondary"
             data-module="govuk-button"
-            (click)="confirmCancelBooking()" type="button"
+            (click)="confirmCancelBooking()"
+            type="button"
             alt="Confirm cancellation of new booking and return to dashboard"
         >
             Cancel

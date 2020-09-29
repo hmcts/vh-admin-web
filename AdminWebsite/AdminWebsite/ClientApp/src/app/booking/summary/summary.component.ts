@@ -54,11 +54,13 @@ export class SummaryComponent implements OnInit, OnDestroy {
     endpoints: EndpointModel[] = [];
     switchOffRecording = false;
 
+    multiDays: boolean;
+    endHearingDate: Date;
+
     @ViewChild(ParticipantsListComponent, { static: true })
     participantsListComponent: ParticipantsListComponent;
 
-    @ViewChild(RemovePopupComponent)
-    removePopupComponent: RemovePopupComponent;
+    @ViewChild(RemovePopupComponent) removePopupComponent: RemovePopupComponent;
 
     constructor(
         private hearingService: VideoHearingsService,
@@ -79,7 +81,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
         if (this.participantsListComponent) {
             this.participantsListComponent.isEditMode = this.isExistingBooking;
             this.$subscriptions.push(
-                this.participantsListComponent.selectedParticipantToRemove.subscribe((participantEmail) => {
+                this.participantsListComponent.selectedParticipantToRemove.subscribe(participantEmail => {
                     this.selectedParticipantEmail = participantEmail;
                     this.confirmRemoveParticipant();
                 })
@@ -94,8 +96,8 @@ export class SummaryComponent implements OnInit, OnDestroy {
     }
 
     private confirmRemoveParticipant() {
-        const participant = this.hearing.participants.find((x) => x.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase());
-        const filteredParticipants = this.hearing.participants.filter((x) => !x.is_judge);
+        const participant = this.hearing.participants.find(x => x.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase());
+        const filteredParticipants = this.hearing.participants.filter(x => !x.is_judge);
         const isNotLast = filteredParticipants && filteredParticipants.length > 1;
         const title = participant && participant.title ? `${participant.title}` : '';
         this.removerFullName = participant ? `${title} ${participant.first_name} ${participant.last_name}` : '';
@@ -116,7 +118,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
 
     removeParticipant() {
         const indexOfParticipant = this.hearing.participants.findIndex(
-            (x) => x.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase()
+            x => x.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase()
         );
         if (indexOfParticipant > -1) {
             if (this.hearing.hearing_id && this.hearing.participants[indexOfParticipant].id) {
@@ -131,7 +133,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
         }
     }
     isLastParticipanRemoved() {
-        const filteredParticipants = this.hearing.participants.filter((x) => !x.is_judge);
+        const filteredParticipants = this.hearing.participants.filter(x => !x.is_judge);
         if (!filteredParticipants || filteredParticipants.length === 0) {
             // the last participant was removed, go to 'add participant' screen
             this.router.navigate([PageUrls.AddParticipants]);
@@ -149,6 +151,8 @@ export class SummaryComponent implements OnInit, OnDestroy {
         this.audioChoice = this.hearing.audio_recording_required ? 'Yes' : 'No';
         this.caseType = this.hearing.case_type;
         this.endpoints = this.hearing.endpoints;
+        this.multiDays = this.hearing.multiDays;
+        this.endHearingDate = this.hearing.end_hearing_date_time;
     }
 
     get hasEndpoints(): boolean {
@@ -199,7 +203,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
                         this.logger.event('Hearing booking saved', { hearingId: hearingDetailsResponse.id });
                         this.router.navigate([PageUrls.BookingConfirmation]);
                     },
-                    (error) => {
+                    error => {
                         this.logger.error('Error saving new hearing.', error);
                         this.setError(error);
                     }
@@ -218,7 +222,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
 
                     this.router.navigate([PageUrls.BookingDetails]);
                 },
-                (error) => {
+                error => {
                     this.logger.error(`Error updating hearing with ID: ${this.hearing.hearing_id}`, error);
                     this.setError(error);
                 }
@@ -242,7 +246,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        this.$subscriptions.forEach((subscription) => {
+        this.$subscriptions.forEach(subscription => {
             if (subscription) {
                 subscription.unsubscribe();
             }

@@ -33,6 +33,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     isStartHoursInPast = false;
     isStartMinutesInPast = false;
     $subscriptions: Subscription[] = [];
+    multiDaysHearing = false;
 
     constructor(
         private refDataService: ReferenceDataService,
@@ -66,33 +67,45 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
         let durationHour = null;
         let durationMinute = null;
         let room = '';
+        this.multiDaysHearing = null;
+        let endHearingDateParsed = null;
 
-        if (this.hearing && this.hearing.hearing_venue_id === undefined) {
-            this.hearing.hearing_venue_id = -1;
+        if (this.hearing) {
+            if (this.hearing.hearing_venue_id === undefined) {
+                this.hearing.hearing_venue_id = -1;
+            }
+
+            if (this.hearing.scheduled_date_time) {
+                const date = new Date(this.hearing.scheduled_date_time);
+                hearingDateParsed = this.datePipe.transform(date, 'yyyy-MM-dd');
+                startTimeHour = (date.getHours() < 10 ? '0' : '') + date.getHours();
+                startTimeMinute = (date.getMinutes() < 10 ? '0' : '') + date.getMinutes();
+            }
+
+            if (this.hearing.end_hearing_date_time) {
+                const date = new Date(this.hearing.end_hearing_date_time);
+                endHearingDateParsed = this.datePipe.transform(date, 'yyyy-MM-dd');
+            }
+
+            if (this.hearing.scheduled_duration) {
+                const duration = new Date();
+                duration.setHours(0, 0, 0, 0);
+                duration.setMinutes(this.hearing.scheduled_duration);
+                durationHour = (duration.getHours() < 10 ? '0' : '') + duration.getHours();
+                durationMinute = (duration.getMinutes() < 10 ? '0' : '') + duration.getMinutes();
+            }
+
+            if (this.hearing.scheduled_date_time && this.hearing.scheduled_duration && this.hearing.hearing_venue_id) {
+                this.hasSaved = true;
+            }
+
+            if (this.hearing.court_room) {
+                room = this.hearing.court_room;
+            }
+
+            this.multiDaysHearing = this.hearing.multiDays;
         }
 
-        if (this.hearing && this.hearing.scheduled_date_time) {
-            const date = new Date(this.hearing.scheduled_date_time);
-            hearingDateParsed = this.datePipe.transform(date, 'yyyy-MM-dd');
-            startTimeHour = (date.getHours() < 10 ? '0' : '') + date.getHours();
-            startTimeMinute = (date.getMinutes() < 10 ? '0' : '') + date.getMinutes();
-        }
-
-        if (this.hearing && this.hearing.scheduled_duration) {
-            const duration = new Date();
-            duration.setHours(0, 0, 0, 0);
-            duration.setMinutes(this.hearing.scheduled_duration);
-            durationHour = (duration.getHours() < 10 ? '0' : '') + duration.getHours();
-            durationMinute = (duration.getMinutes() < 10 ? '0' : '') + duration.getMinutes();
-        }
-
-        if (this.hearing && this.hearing.scheduled_date_time && this.hearing.scheduled_duration && this.hearing.hearing_venue_id) {
-            this.hasSaved = true;
-        }
-
-        if (this.hearing && this.hearing.court_room) {
-            room = this.hearing.court_room;
-        }
         this.form = this.fb.group({
             hearingDate: [hearingDateParsed, Validators.required],
             hearingStartTimeHour: [startTimeHour, [Validators.required, Validators.min(0), Validators.max(23)]],
@@ -100,17 +113,19 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
             hearingDurationHour: [durationHour, [Validators.required, Validators.min(0), Validators.max(23)]],
             hearingDurationMinute: [durationMinute, [Validators.required, Validators.min(0), Validators.max(59)]],
             courtAddress: [this.hearing.hearing_venue_id, [Validators.required, Validators.min(1)]],
-            courtRoom: [room, [Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)]]
+            courtRoom: [room, [Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)]],
+            multiDays: [this.multiDaysHearing],
+            endHearingDate: [endHearingDateParsed]
         });
     }
 
     ngAfterViewInit() {
         if (this.courtAddress) {
             this.$subscriptions.push(
-                this.courtAddress.valueChanges.subscribe((val) => {
+                this.courtAddress.valueChanges.subscribe(val => {
                     const id = val;
                     if (id !== null) {
-                        this.selectedCourtName = this.availableCourts.find((c) => c.id === id).name;
+                        this.selectedCourtName = this.availableCourts.find(c => c.id === id).name;
                     }
                 })
             );
@@ -119,6 +134,10 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
 
     get hearingDate() {
         return this.form.get('hearingDate');
+    }
+
+    get endHearingDate() {
+        return this.form.get('endHearingDate');
     }
 
     get hearingStartTimeHour() {
@@ -153,10 +172,28 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
         );
     }
 
+    get endHearingDateInvalid() {
+        if (this.multiDaysHearing) {
+            const endDateNoTime = new Date(new Date(this.endHearingDate.value).setHours(0, 0, 0));
+            const startDateNoTime = new Date(new Date(this.hearingDate.value).setHours(0, 0, 0));
+
+            const compareStartInvalid = endDateNoTime <= startDateNoTime;
+
+            return (
+                (this.endHearingDate.invalid || compareStartInvalid) &&
+                (this.endHearingDate.dirty || this.endHearingDate.touched || this.failedSubmission)
+            );
+        }
+        return false;
+    }
+
     get durationInvalid() {
-        let hearingDuration = parseInt(this.form.value.hearingDurationHour, 10) * 60;
-        hearingDuration += parseInt(this.form.value.hearingDurationMinute, 10);
-        return hearingDuration <= 0;
+        if (!this.multiDaysHearing) {
+            let hearingDuration = parseInt(this.form.value.hearingDurationHour, 10) * 60;
+            hearingDuration += parseInt(this.form.value.hearingDurationMinute, 10);
+            return hearingDuration <= 0;
+        }
+        return false;
     }
 
     get hearingStartTimeHourInvalid() {
@@ -229,14 +266,14 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
                     this.availableCourts.unshift(pleaseSelect);
                     this.setVenueForExistingHearing();
                 },
-                (error) => this.errorService.handleError(error)
+                error => this.errorService.handleError(error)
             )
         );
     }
 
     setVenueForExistingHearing() {
         if (this.isExistinHearing && this.availableCourts && this.availableCourts.length > 0) {
-            const selectedCourts = this.availableCourts.filter((x) => x.name === this.hearing.court_name);
+            const selectedCourts = this.availableCourts.filter(x => x.name === this.hearing.court_name);
             if (selectedCourts && selectedCourts.length > 0) {
                 this.selectedCourtName = selectedCourts[0].name;
                 this.form.get('courtAddress').setValue(selectedCourts[0].id);
@@ -269,6 +306,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
             !this.isStartHoursInPast &&
             !this.isStartMinutesInPast &&
             !this.durationInvalid &&
+            !this.endHearingDateInvalid &&
             this.finalCheckStartDateTimeInPast()
         ) {
             this.failedSubmission = false;
@@ -294,10 +332,20 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
         hearingDate.setHours(this.form.value.hearingStartTimeHour, this.form.value.hearingStartTimeMinute);
 
         this.hearing.scheduled_date_time = hearingDate;
-        let hearingDuration = parseInt(this.form.value.hearingDurationHour, 10) * 60;
-        hearingDuration += parseInt(this.form.value.hearingDurationMinute, 10);
-        this.hearing.scheduled_duration = hearingDuration;
+        this.hearing.scheduled_duration = this.setHearingDuration();
+        this.hearing.multiDays = this.multiDaysHearing;
+        const endDate = new Date(this.form.value.endHearingDate);
+        this.hearing.end_hearing_date_time = endDate;
         this.hearingService.updateHearingRequest(this.hearing);
+    }
+
+    private setHearingDuration() {
+        let hearingDuration = 0;
+        if (!this.multiDaysHearing) {
+            hearingDuration = parseInt(this.form.value.hearingDurationHour, 10) * 60;
+            hearingDuration += parseInt(this.form.value.hearingDurationMinute, 10);
+        }
+        return hearingDuration;
     }
 
     continueBooking() {
@@ -339,9 +387,40 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
         this.courtRoom.setValue(text);
     }
 
+    multiDaysChanged(value) {
+        if (value) {
+            this.multiDaysHearing = true;
+            this.hearingDurationHour.clearValidators();
+            this.hearingDurationMinute.clearValidators();
+            this.hearingDurationHour.updateValueAndValidity();
+            this.hearingDurationMinute.updateValueAndValidity();
+
+            this.hearingDurationHour.setValue('');
+            this.hearingDurationMinute.setValue('');
+            this.hearingDurationHour.markAsUntouched();
+            this.hearingDurationHour.markAsPristine();
+            this.hearingDurationMinute.markAsUntouched();
+            this.hearingDurationMinute.markAsPristine();
+
+            this.endHearingDate.setValidators([Validators.required]);
+            this.endHearingDate.updateValueAndValidity();
+            this.endHearingDate.setValue(null);
+        } else {
+            this.multiDaysHearing = false;
+            this.endHearingDate.clearValidators();
+            this.endHearingDate.updateValueAndValidity();
+            this.endHearingDate.setValue(null);
+
+            this.hearingDurationHour.setValidators([Validators.required, Validators.min(0), Validators.max(23)]);
+            this.hearingDurationHour.updateValueAndValidity();
+            this.hearingDurationMinute.setValidators([Validators.required, Validators.min(0), Validators.max(59)]);
+            this.hearingDurationMinute.updateValueAndValidity();
+        }
+    }
+
     ngOnDestroy() {
         this.bookingService.removeEditMode();
-        this.$subscriptions.forEach((subscription) => {
+        this.$subscriptions.forEach(subscription => {
             if (subscription) {
                 subscription.unsubscribe();
             }
