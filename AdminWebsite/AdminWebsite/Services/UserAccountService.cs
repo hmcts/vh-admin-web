@@ -34,7 +34,7 @@ namespace AdminWebsite.Services
         /// </summary>
         /// <param name="userName"></param>
         /// <returns></returns>
-        Task UpdateParticipantPassword(string userName);
+        Task<UpdateUserPasswordResponse> UpdateParticipantPassword(string userName);
 
         /// <summary>
         /// Delete a user account in AD, then anonymise the person in Bookings API
@@ -140,14 +140,24 @@ namespace AdminWebsite.Services
             }).ToList();
         }
 
-        /// <inheritdoc />
-        public async Task UpdateParticipantPassword(string userName)
+        public async Task<UpdateUserPasswordResponse> UpdateParticipantPassword(string userName)
         {
             var userProfile = await _userApiClient.GetUserByAdUserNameAsync(userName);
+            
             if (userProfile != null)
             {
-                await _userApiClient.UpdateUserAsync(userName);
+                var response = await _userApiClient.UpdateUserAsync(userName);
+                
+                return new UpdateUserPasswordResponse
+                {
+                    Password = response.New_password
+                };
             }
+
+            throw new Security.UserServiceException
+            {
+                Reason = "Unable to generate new password"
+            };
         }
 
         public async Task DeleteParticipantAccountAsync(string username)

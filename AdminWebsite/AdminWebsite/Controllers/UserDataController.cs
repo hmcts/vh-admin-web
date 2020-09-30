@@ -38,15 +38,14 @@ namespace AdminWebsite.Controllers
         /// <returns></returns>
         [HttpPatch("updateUser")]
         [SwaggerOperation(OperationId = "UpdateUser")]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(UpdateUserPasswordResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult> UpdateUser([FromBody]string userName)
         {
             try
             {
-                await _userAccountService.UpdateParticipantPassword(userName);
-                return NoContent();
+                return Ok(await _userAccountService.UpdateParticipantPassword(userName));
             }
             catch (UserAPI.Client.UserServiceException e)
             {
