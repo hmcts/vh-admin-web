@@ -3,6 +3,8 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { UserDataService } from '../services/user-data.service';
 import { Logger } from '../services/logger';
 import { Subscription } from 'rxjs';
+import { UpdateUserPasswordResponse } from '../services/clients/api-client';
+import { ClipboardService } from 'ngx-clipboard';
 
 @Component({
   selector: 'app-change-password',
@@ -14,16 +16,20 @@ export class ChangePasswordComponent implements OnInit, OnDestroy {
   failedSubmission: boolean;
   isValidEmail: boolean;
   showUpdateSuccess: boolean;
+  showCopyPasswordButton: boolean;
+  password: string;
   popupMessage: string;
   saveSuccess: boolean;
   $subcription: Subscription;
 
   constructor(private fb: FormBuilder,
     private userDataService: UserDataService,
+    private clipboardService: ClipboardService,
     private logger: Logger
   ) {
     this.showUpdateSuccess = false;
     this.isValidEmail = true;
+    this.showCopyPasswordButton = false;
   }
 
   ngOnInit() {
@@ -43,6 +49,7 @@ export class ChangePasswordComponent implements OnInit, OnDestroy {
   }
 
   userNameOnBlur() {
+    this.showCopyPasswordButton = false;
     const userNameText = this.userName.value;
     /* tslint:disable: max-line-length */
     const pattern = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
@@ -56,15 +63,18 @@ export class ChangePasswordComponent implements OnInit, OnDestroy {
 
       this.$subcription = this.userDataService.updateUser(this.userName.value)
         .subscribe(
-          (data: void) => {
+          (data: UpdateUserPasswordResponse) => {
             this.popupMessage = 'User\'s password has been changed';
             this.showUpdateSuccess = true;
+            this.password = data.password;
+            this.showCopyPasswordButton = true;
             // this.logger.event('User\'s password has been changed.');
             this.saveSuccess = true;
           },
           error => {
             this.popupMessage = 'User does not exist - please try again';
             this.showUpdateSuccess = true;
+            this.showCopyPasswordButton = false;
             // this.logger.error('User does not exist.', error);
           }
         );
@@ -72,6 +82,10 @@ export class ChangePasswordComponent implements OnInit, OnDestroy {
     } else {
       this.failedSubmission = true;
     }
+  }
+
+  copyPassword() {
+      this.clipboardService.copyFromContent(this.password);
   }
 
   okay(): void {
