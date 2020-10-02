@@ -51,7 +51,7 @@ function initExistingHearingRequest(): HearingModel {
     const courtString = MockValues.Courts.find(c => c.id === existingRequest.hearing_venue_id).name;
     existingRequest.court_name = courtString;
     existingRequest.multiDays = false;
-    existingRequest.end_hearing_date_time = new Date(addDays(Date.now(), 3));
+    existingRequest.end_hearing_date_time = new Date(addDays(Date.now(), 7));
 
     existingRequest.participants = [];
     existingRequest.participants.push(pat1);
@@ -98,7 +98,8 @@ videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHeari
     'saveHearing',
     'cancelRequest',
     'updateHearing',
-    'setBookingHasChanged'
+    'setBookingHasChanged',
+    'cloneMultiHearings'
 ]);
 
 describe('SummaryComponent with valid request', () => {
@@ -113,6 +114,7 @@ describe('SummaryComponent with valid request', () => {
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
         videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
         videoHearingsServiceSpy.saveHearing.and.returnValue(of(new HearingDetailsResponse()));
+        videoHearingsServiceSpy.cloneMultiHearings.and.callThrough();
 
         TestBed.configureTestingModule({
             providers: [
@@ -186,11 +188,10 @@ describe('SummaryComponent with valid request', () => {
     it('should hide pop up that indicated process saving a booking', () => {
         expect(component.showWaitSaving).toBeFalsy();
     });
-    it('should save new booking', () => {
+    it('should save new booking', async () => {
         component.ngOnInit();
         fixture.detectChanges();
-
-        component.bookHearing();
+        await component.bookHearing();
         expect(component.bookingsSaving).toBeTruthy();
         expect(component.showWaitSaving).toBeFalsy();
         expect(routerSpy.navigate).toHaveBeenCalled();
@@ -209,6 +210,20 @@ describe('SummaryComponent with valid request', () => {
         fixture.detectChanges();
         expect(component.audioChoice).toBe('No');
     });
+    it('should save new booking with multi hearings', async () => {
+        component.ngOnInit();
+        component.hearing.multiDays = true;
+        component.hearing.end_hearing_date_time = new Date(component.hearing.scheduled_date_time);
+        component.hearing.end_hearing_date_time.setDate(component.hearing.end_hearing_date_time.getDate() + 5);
+        fixture.detectChanges();
+
+        await component.bookHearing();
+        expect(component.bookingsSaving).toBeTruthy();
+        expect(component.showWaitSaving).toBeFalsy();
+        expect(routerSpy.navigate).toHaveBeenCalled();
+        expect(videoHearingsServiceSpy.saveHearing).toHaveBeenCalled();
+        expect(videoHearingsServiceSpy.cloneMultiHearings).toHaveBeenCalled();
+    });
 });
 
 describe('SummaryComponent  with invalid request', () => {
@@ -216,13 +231,21 @@ describe('SummaryComponent  with invalid request', () => {
     let fixture: ComponentFixture<SummaryComponent>;
 
     beforeEach(async(() => {
+        videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
+            'getHearingTypes',
+            'getCurrentRequest',
+            'updateHearingRequest',
+            'saveHearing',
+            'cancelRequest',
+            'updateHearing',
+            'setBookingHasChanged',
+            'cloneMultiHearings'
+        ]);
         initExistingHearingRequest();
         const existingRequest = initBadHearingRequest();
         videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
         videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
-        videoHearingsServiceSpy.saveHearing.and.callFake(() => {
-            return throwError(new Error('Fake error'));
-        });
+        videoHearingsServiceSpy.saveHearing.and.throwError('Fake error');
 
         TestBed.configureTestingModule({
             providers: [
@@ -252,8 +275,8 @@ describe('SummaryComponent  with invalid request', () => {
         fixture.detectChanges();
     });
 
-    it('should display save failed message', () => {
-        component.bookHearing();
+    it('should display save failed message', async () => {
+        await component.bookHearing();
         expect(component.showErrorSaving).toBeTruthy();
         expect(component.showWaitSaving).toBeFalsy();
     });
@@ -386,7 +409,6 @@ describe('SummaryComponent  with existing request', () => {
 describe('SummaryComponent  with multi days request', () => {
     let component: SummaryComponent;
     let existingRequest: HearingModel;
-    // let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
     let bookingServiceSpy: jasmine.SpyObj<BookingService>;
     let recordingGuardServiceSpy: jasmine.SpyObj<RecordingGuardService>;
 
@@ -409,14 +431,19 @@ describe('SummaryComponent  with multi days request', () => {
     );
 
     it('should display summary data from existing hearing with multi days', () => {
+        component.hearing = existingRequest;
+        component.hearing.end_hearing_date_time = new Date(component.hearing.scheduled_date_time);
+        component.hearing.end_hearing_date_time.setDate(component.hearing.end_hearing_date_time.getDate() + 5);
+
         component.ngOnInit();
-        expect(component.hearingDate.getDay()).toEqual(existingRequest.scheduled_date_time.getDay());
-        expect(component.endHearingDate.getDay()).toEqual(existingRequest.end_hearing_date_time.getDay());
 
-        expect(component.hearingDate.getMonth()).toEqual(existingRequest.scheduled_date_time.getMonth());
-        expect(component.endHearingDate.getMonth()).toEqual(existingRequest.end_hearing_date_time.getMonth());
+        expect(new Date(component.hearingDate).getDay()).toEqual(new Date(existingRequest.scheduled_date_time).getDay());
+        expect(new Date(component.endHearingDate).getDay()).toEqual(new Date(existingRequest.end_hearing_date_time).getDay());
 
-        expect(component.hearingDate.getFullYear()).toEqual(existingRequest.scheduled_date_time.getFullYear());
-        expect(component.endHearingDate.getFullYear()).toEqual(existingRequest.end_hearing_date_time.getFullYear());
+        expect(new Date(component.hearingDate).getMonth()).toEqual(new Date(existingRequest.scheduled_date_time).getMonth());
+        expect(new Date(component.endHearingDate).getMonth()).toEqual(new Date(existingRequest.end_hearing_date_time).getMonth());
+
+        expect(new Date(component.hearingDate).getFullYear()).toEqual(new Date(existingRequest.scheduled_date_time).getFullYear());
+        expect(new Date(component.endHearingDate).getFullYear()).toEqual(new Date(existingRequest.end_hearing_date_time).getFullYear());
     });
 });

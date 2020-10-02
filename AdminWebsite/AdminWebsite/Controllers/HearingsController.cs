@@ -20,6 +20,7 @@ using ParticipantRequest = AdminWebsite.BookingsAPI.Client.ParticipantRequest;
 using UpdateParticipantRequest = AdminWebsite.BookingsAPI.Client.UpdateParticipantRequest;
 using AddEndpointRequest = AdminWebsite.BookingsAPI.Client.AddEndpointRequest;
 using UpdateEndpointRequest = AdminWebsite.BookingsAPI.Client.UpdateEndpointRequest;
+using AdminWebsite.Helper;
 
 namespace AdminWebsite.Controllers
 {
@@ -115,6 +116,42 @@ namespace AdminWebsite.Controllers
                 throw;
             }
         }
+
+        /// <summary>
+        /// Clone hearings with the details of a given hearing on given dates
+        /// </summary>
+        /// <param name="hearingId">Original hearing to clone</param>
+        /// <param name="hearingRequest">The dates range to create the new hearings on</param>
+        /// <returns></returns>
+        [HttpPost("{hearingId}/clone")]
+        [SwaggerOperation(OperationId = "CloneHearing")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> CloneHearing(Guid hearingId, [FromBody]MultiHearingRequest hearingRequest)
+        {
+
+            var listOfDates = DateListMapper.GetListOfWorkingDates(hearingRequest.StartDate, hearingRequest.EndDate);
+            if(listOfDates.Count == 0)
+            {
+                return BadRequest();
+            }
+            var cloneHearingRequest = new CloneHearingRequest { Dates = listOfDates };
+            try
+            {
+                await _bookingsApiClient.CloneHearingAsync(hearingId, cloneHearingRequest);
+
+                return NoContent();
+            }
+            catch (BookingsApiException e)
+            {
+                if (e.StatusCode == (int)HttpStatusCode.BadRequest)
+                {
+                    return BadRequest(e.Response);
+                }
+                throw;
+            }
+        }
+
 
         /// <summary>
         /// Edit a hearing

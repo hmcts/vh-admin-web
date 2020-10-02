@@ -81,7 +81,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 .With(x => x.Username = "username")
                 .Build();
             var hearingDetailsResponse = Builder<HearingDetailsResponse>.CreateNew()
-                .With(x => x.Participants = new List<ParticipantResponse> {pat1}).Build();
+                .With(x => x.Participants = new List<ParticipantResponse> { pat1 }).Build();
             _bookingsApiClient.Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
                 .ReturnsAsync(hearingDetailsResponse);
 
@@ -98,13 +98,15 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             var participant = new BookingsAPI.Client.ParticipantRequest
             {
-                Username = "username@newemail.com", Case_role_name = "Claimant",
-                Hearing_role_name = "Representative", Contact_email = "username@email.com"
+                Username = "username@newemail.com",
+                Case_role_name = "Claimant",
+                Hearing_role_name = "Representative",
+                Contact_email = "username@email.com"
             };
-            var participantList = new List<BookingsAPI.Client.ParticipantRequest> {participant};
+            var participantList = new List<BookingsAPI.Client.ParticipantRequest> { participant };
 
             var da = "username@email.com";
-            var endpoints = new EndpointRequest {Display_name = "displayname", Defence_advocate_username = da};
+            var endpoints = new EndpointRequest { Display_name = "displayname", Defence_advocate_username = da };
             var endpointList = new List<EndpointRequest>();
             endpointList.Add(endpoints);
 
@@ -120,7 +122,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 .With(x => x.User_role_name = "Representative")
                 .With(x => x.Username = participant.Username).Build();
             var hearingDetailsResponse = Builder<HearingDetailsResponse>.CreateNew()
-                .With(x => x.Participants = new List<ParticipantResponse> {pat1}).Build();
+                .With(x => x.Participants = new List<ParticipantResponse> { pat1 }).Build();
             _bookingsApiClient.Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
                 .ReturnsAsync(hearingDetailsResponse);
 
@@ -174,14 +176,14 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 .Build();
             var hearingDetailsResponse = Builder<HearingDetailsResponse>.CreateNew()
                 .With(x => x.Endpoints = Builder<EndpointResponse>.CreateListOfSize(2).Build().ToList())
-                .With(x => x.Participants = new List<ParticipantResponse> {pat1, pat2}).Build();
+                .With(x => x.Participants = new List<ParticipantResponse> { pat1, pat2 }).Build();
             _bookingsApiClient.Setup(x => x.BookNewHearingAsync(newHearingRequest))
                 .ReturnsAsync(hearingDetailsResponse);
 
             var result = await _controller.Post(newHearingRequest);
 
             result.Result.Should().BeOfType<CreatedResult>();
-            var createdObjectResult = (CreatedResult) result.Result;
+            var createdObjectResult = (CreatedResult)result.Result;
             createdObjectResult.StatusCode.Should().Be(201);
         }
 
@@ -203,7 +205,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 .With(x => x.Id = Guid.NewGuid())
                 .With(x => x.User_role_name = "Judge").Build();
             var hearingDetailsResponse = Builder<HearingDetailsResponse>.CreateNew()
-                .With(x => x.Participants = new List<ParticipantResponse> {judge}).Build();
+                .With(x => x.Participants = new List<ParticipantResponse> { judge }).Build();
             _bookingsApiClient.Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
                 .ReturnsAsync(hearingDetailsResponse);
 
@@ -247,14 +249,14 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 .With(x => x.Id = Guid.NewGuid())
                 .With(x => x.User_role_name = "Individual").Build();
             var hearingDetailsResponse = Builder<HearingDetailsResponse>.CreateNew()
-                .With(x => x.Participants = new List<ParticipantResponse> {pat1, pat2}).Build();
+                .With(x => x.Participants = new List<ParticipantResponse> { pat1, pat2 }).Build();
             _bookingsApiClient.Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
                 .ReturnsAsync(hearingDetailsResponse);
 
             var result = await PostNewHearing();
 
             result.Result.Should().BeOfType<CreatedResult>();
-            var createdResult = (CreatedResult) result.Result;
+            var createdResult = (CreatedResult)result.Result;
             createdResult.Location.Should().Be("");
 
             _bookingsApiClient.Verify(x => x.BookNewHearingAsync(It.Is<BookNewHearingRequest>(
@@ -324,6 +326,43 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var response = await _controller.UpdateBookingStatus(Guid.NewGuid(), new UpdateBookingStatusRequest());
 
             response.Should().BeOfType<NotFoundObjectResult>();
+        }
+
+        [Test]
+        public async Task Should_clone_hearing()
+        {
+            var request = GetMultiHearingRequest();
+            _bookingsApiClient
+                .Setup(x => x.CloneHearingAsync(It.IsAny<Guid>(), It.IsAny<CloneHearingRequest>()))
+                .Verifiable();
+
+            var response = await _controller.CloneHearing(Guid.NewGuid(), request);
+
+            response.Should().BeOfType<NoContentResult>();
+
+            _bookingsApiClient.Verify(
+                x => x.CloneHearingAsync(It.IsAny<Guid>(), It.IsAny<CloneHearingRequest>()),
+                Times.Exactly(1));
+        }
+
+        [Test]
+        public async Task Should_catch_BookingsApiException_by_clone_hearing()
+        {
+            var request = GetMultiHearingRequest();
+            _bookingsApiClient
+                .Setup(x => x.CloneHearingAsync(It.IsAny<Guid>(), It.IsAny<CloneHearingRequest>()))
+                .Throws(new BookingsApiException("Error", (int)HttpStatusCode.BadRequest, "response", null, null));
+
+            var response = await _controller.CloneHearing(Guid.NewGuid(), request);
+
+            response.Should().BeOfType<BadRequestObjectResult>();
+        }
+
+        private MultiHearingRequest GetMultiHearingRequest()
+        {
+            var startDate = new DateTime(2020, 10, 1);
+            var endDate = new DateTime(2020, 10, 6);
+            return new MultiHearingRequest { StartDate = startDate.ToString(), EndDate = endDate.ToString() };
         }
 
         private Task<ActionResult<HearingDetailsResponse>> PostNewHearing()

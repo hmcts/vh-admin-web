@@ -22,7 +22,12 @@ export class BHClient {
     private baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
 
-    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(BH_API_BASE_URL) baseUrl?: string) {
+    constructor(
+        @Inject(HttpClient) http: HttpClient,
+        @Optional()
+        @Inject(BH_API_BASE_URL)
+        baseUrl?: string
+    ) {
         this.http = http;
         this.baseUrl = baseUrl ? baseUrl : 'https://localhost:5400';
     }
@@ -79,7 +84,7 @@ export class BHClient {
         }
         if (status === 200) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     let result200: any = null;
                     let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result200 = HearingAudioRecordingResponse.fromJS(resultData200);
@@ -88,7 +93,7 @@ export class BHClient {
             );
         } else if (status === 400) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     let result400: any = null;
                     let resultData400 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result400 = ProblemDetails.fromJS(resultData400);
@@ -97,13 +102,13 @@ export class BHClient {
             );
         } else if (status === 401) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     return throwException('Unauthorized', status, _responseText, _headers);
                 })
             );
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     return throwException('An unexpected server error occurred.', status, _responseText, _headers);
                 })
             );
@@ -169,7 +174,7 @@ export class BHClient {
         }
         if (status === 200) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     let result200: any = null;
                     let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     if (Array.isArray(resultData200)) {
@@ -181,7 +186,7 @@ export class BHClient {
             );
         } else if (status === 400) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     let result400: any = null;
                     let resultData400 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result400 = ProblemDetails.fromJS(resultData400);
@@ -190,13 +195,13 @@ export class BHClient {
             );
         } else if (status === 401) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     return throwException('Unauthorized', status, _responseText, _headers);
                 })
             );
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     return throwException('An unexpected server error occurred.', status, _responseText, _headers);
                 })
             );
@@ -256,7 +261,7 @@ export class BHClient {
         }
         if (status === 200) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     let result200: any = null;
                     let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     if (Array.isArray(resultData200)) {
@@ -268,7 +273,7 @@ export class BHClient {
             );
         } else if (status === 400) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     let result400: any = null;
                     let resultData400 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result400 = ProblemDetails.fromJS(resultData400);
@@ -277,13 +282,13 @@ export class BHClient {
             );
         } else if (status === 401) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     return throwException('Unauthorized', status, _responseText, _headers);
                 })
             );
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     return throwException('An unexpected server error occurred.', status, _responseText, _headers);
                 })
             );
@@ -340,7 +345,7 @@ export class BHClient {
         }
         if (status === 200) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     let result200: any = null;
                     let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result200 = ClientSettingsResponse.fromJS(resultData200);
@@ -349,13 +354,13 @@ export class BHClient {
             );
         } else if (status === 401) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     return throwException('Unauthorized', status, _responseText, _headers);
                 })
             );
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     return throwException('An unexpected server error occurred.', status, _responseText, _headers);
                 })
             );
@@ -412,7 +417,7 @@ export class BHClient {
         }
         if (status === 200) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     let result200: any = null;
                     let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result200 = HealthCheckResponse.fromJS(resultData200);
@@ -421,7 +426,7 @@ export class BHClient {
             );
         } else if (status === 500) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     let result500: any = null;
                     let resultData500 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result500 = HealthCheckResponse.fromJS(resultData500);
@@ -430,13 +435,13 @@ export class BHClient {
             );
         } else if (status === 401) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     return throwException('Unauthorized', status, _responseText, _headers);
                 })
             );
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     return throwException('An unexpected server error occurred.', status, _responseText, _headers);
                 })
             );
@@ -498,7 +503,7 @@ export class BHClient {
         }
         if (status === 201) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     let result201: any = null;
                     let resultData201 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result201 = HearingDetailsResponse.fromJS(resultData201);
@@ -507,7 +512,7 @@ export class BHClient {
             );
         } else if (status === 400) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     let result400: any = null;
                     let resultData400 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result400 = ProblemDetails.fromJS(resultData400);
@@ -516,13 +521,13 @@ export class BHClient {
             );
         } else if (status === 401) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     return throwException('Unauthorized', status, _responseText, _headers);
                 })
             );
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     return throwException('An unexpected server error occurred.', status, _responseText, _headers);
                 })
             );
@@ -585,7 +590,7 @@ export class BHClient {
         }
         if (status === 200) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     let result200: any = null;
                     let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result200 = BookingsResponse.fromJS(resultData200);
@@ -594,7 +599,7 @@ export class BHClient {
             );
         } else if (status === 404) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     let result404: any = null;
                     let resultData404 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result404 = ProblemDetails.fromJS(resultData404);
@@ -603,7 +608,7 @@ export class BHClient {
             );
         } else if (status === 400) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     let result400: any = null;
                     let resultData400 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result400 = ProblemDetails.fromJS(resultData400);
@@ -612,18 +617,103 @@ export class BHClient {
             );
         } else if (status === 401) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     return throwException('Unauthorized', status, _responseText, _headers);
                 })
             );
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     return throwException('An unexpected server error occurred.', status, _responseText, _headers);
                 })
             );
         }
         return _observableOf<BookingsResponse>(<any>null);
+    }
+
+    /**
+     * Clone hearings with the details of a given hearing on given dates
+     * @param hearingId Original hearing to clone
+     * @param body (optional) The dates to create a new hearing on
+     * @return Success
+     */
+    cloneHearing(hearingId: string, body: MultiHearingRequest | undefined): Observable<void> {
+        let url_ = this.baseUrl + '/api/hearings/{hearingId}/clone';
+        if (hearingId === undefined || hearingId === null) throw new Error("The parameter 'hearingId' must be defined.");
+        url_ = url_.replace('{hearingId}', encodeURIComponent('' + hearingId));
+        url_ = url_.replace(/[?&]$/, '');
+
+        const content_ = JSON.stringify(body);
+
+        let options_: any = {
+            body: content_,
+            observe: 'response',
+            responseType: 'blob',
+            headers: new HttpHeaders({
+                'Content-Type': 'application/json-patch+json'
+            })
+        };
+
+        return this.http
+            .request('post', url_, options_)
+            .pipe(
+                _observableMergeMap((response_: any) => {
+                    return this.processCloneHearing(response_);
+                })
+            )
+            .pipe(
+                _observableCatch((response_: any) => {
+                    if (response_ instanceof HttpResponseBase) {
+                        try {
+                            return this.processCloneHearing(<any>response_);
+                        } catch (e) {
+                            return <Observable<void>>(<any>_observableThrow(e));
+                        }
+                    } else return <Observable<void>>(<any>_observableThrow(response_));
+                })
+            );
+    }
+
+    protected processCloneHearing(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body : (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {};
+        if (response.headers) {
+            for (let key of response.headers.keys()) {
+                _headers[key] = response.headers.get(key);
+            }
+        }
+        if (status === 204) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return _observableOf<void>(<any>null);
+                })
+            );
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    let result400: any = null;
+                    let resultData400 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                    result400 = ProblemDetails.fromJS(resultData400);
+                    return throwException('Bad Request', status, _responseText, _headers, result400);
+                })
+            );
+        } else if (status === 401) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('Unauthorized', status, _responseText, _headers);
+                })
+            );
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(
+                _observableMergeMap(_responseText => {
+                    return throwException('An unexpected server error occurred.', status, _responseText, _headers);
+                })
+            );
+        }
+        return _observableOf<void>(<any>null);
     }
 
     /**
@@ -683,7 +773,7 @@ export class BHClient {
         }
         if (status === 200) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     let result200: any = null;
                     let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result200 = HearingDetailsResponse.fromJS(resultData200);
@@ -692,7 +782,7 @@ export class BHClient {
             );
         } else if (status === 404) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     let result404: any = null;
                     let resultData404 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result404 = ProblemDetails.fromJS(resultData404);
@@ -701,7 +791,7 @@ export class BHClient {
             );
         } else if (status === 400) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     let result400: any = null;
                     let resultData400 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result400 = ProblemDetails.fromJS(resultData400);
@@ -710,19 +800,19 @@ export class BHClient {
             );
         } else if (status === 204) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     return throwException('Success', status, _responseText, _headers);
                 })
             );
         } else if (status === 401) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     return throwException('Unauthorized', status, _responseText, _headers);
                 })
             );
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     return throwException('An unexpected server error occurred.', status, _responseText, _headers);
                 })
             );
@@ -782,7 +872,7 @@ export class BHClient {
         }
         if (status === 200) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     let result200: any = null;
                     let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result200 = HearingDetailsResponse.fromJS(resultData200);
@@ -791,7 +881,7 @@ export class BHClient {
             );
         } else if (status === 404) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     let result404: any = null;
                     let resultData404 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result404 = ProblemDetails.fromJS(resultData404);
@@ -800,7 +890,7 @@ export class BHClient {
             );
         } else if (status === 400) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     let result400: any = null;
                     let resultData400 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result400 = ProblemDetails.fromJS(resultData400);
@@ -809,13 +899,13 @@ export class BHClient {
             );
         } else if (status === 401) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     return throwException('Unauthorized', status, _responseText, _headers);
                 })
             );
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     return throwException('An unexpected server error occurred.', status, _responseText, _headers);
                 })
             );
@@ -880,7 +970,7 @@ export class BHClient {
         }
         if (status === 200) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     let result200: any = null;
                     let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result200 = UpdateBookingStatusResponse.fromJS(resultData200);
@@ -889,7 +979,7 @@ export class BHClient {
             );
         } else if (status === 404) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     let result404: any = null;
                     let resultData404 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result404 = ProblemDetails.fromJS(resultData404);
@@ -898,7 +988,7 @@ export class BHClient {
             );
         } else if (status === 400) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     let result400: any = null;
                     let resultData400 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result400 = ProblemDetails.fromJS(resultData400);
@@ -907,13 +997,13 @@ export class BHClient {
             );
         } else if (status === 401) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     return throwException('Unauthorized', status, _responseText, _headers);
                 })
             );
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     return throwException('An unexpected server error occurred.', status, _responseText, _headers);
                 })
             );
@@ -973,7 +1063,7 @@ export class BHClient {
         }
         if (status === 200) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     let result200: any = null;
                     let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     if (Array.isArray(resultData200)) {
@@ -985,7 +1075,7 @@ export class BHClient {
             );
         } else if (status === 400) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     let result400: any = null;
                     let resultData400 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result400 = ProblemDetails.fromJS(resultData400);
@@ -994,13 +1084,13 @@ export class BHClient {
             );
         } else if (status === 401) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     return throwException('Unauthorized', status, _responseText, _headers);
                 })
             );
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     return throwException('An unexpected server error occurred.', status, _responseText, _headers);
                 })
             );
@@ -1062,7 +1152,7 @@ export class BHClient {
         }
         if (status === 200) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     let result200: any = null;
                     let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     if (Array.isArray(resultData200)) {
@@ -1074,7 +1164,7 @@ export class BHClient {
             );
         } else if (status === 400) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     let result400: any = null;
                     let resultData400 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result400 = ProblemDetails.fromJS(resultData400);
@@ -1083,13 +1173,13 @@ export class BHClient {
             );
         } else if (status === 401) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     return throwException('Unauthorized', status, _responseText, _headers);
                 })
             );
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     return throwException('An unexpected server error occurred.', status, _responseText, _headers);
                 })
             );
@@ -1149,7 +1239,7 @@ export class BHClient {
         }
         if (status === 200) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     let result200: any = null;
                     let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     if (Array.isArray(resultData200)) {
@@ -1161,7 +1251,7 @@ export class BHClient {
             );
         } else if (status === 404) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     let result404: any = null;
                     let resultData404 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result404 = ProblemDetails.fromJS(resultData404);
@@ -1170,13 +1260,13 @@ export class BHClient {
             );
         } else if (status === 401) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     return throwException('Unauthorized', status, _responseText, _headers);
                 })
             );
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     return throwException('An unexpected server error occurred.', status, _responseText, _headers);
                 })
             );
@@ -1234,13 +1324,13 @@ export class BHClient {
         }
         if (status === 204) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     return _observableOf<void>(<any>null);
                 })
             );
         } else if (status === 404) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     let result404: any = null;
                     let resultData404 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result404 = ProblemDetails.fromJS(resultData404);
@@ -1249,13 +1339,13 @@ export class BHClient {
             );
         } else if (status === 401) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     return throwException('Unauthorized', status, _responseText, _headers);
                 })
             );
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     return throwException('An unexpected server error occurred.', status, _responseText, _headers);
                 })
             );
@@ -1312,7 +1402,7 @@ export class BHClient {
         }
         if (status === 200) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     let result200: any = null;
                     let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     if (Array.isArray(resultData200)) {
@@ -1324,7 +1414,7 @@ export class BHClient {
             );
         } else if (status === 404) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     let result404: any = null;
                     let resultData404 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result404 = ProblemDetails.fromJS(resultData404);
@@ -1333,13 +1423,13 @@ export class BHClient {
             );
         } else if (status === 401) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     return throwException('Unauthorized', status, _responseText, _headers);
                 })
             );
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     return throwException('An unexpected server error occurred.', status, _responseText, _headers);
                 })
             );
@@ -1399,7 +1489,7 @@ export class BHClient {
         }
         if (status === 200) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     let result200: any = null;
                     let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     if (Array.isArray(resultData200)) {
@@ -1411,7 +1501,7 @@ export class BHClient {
             );
         } else if (status === 404) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     let result404: any = null;
                     let resultData404 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result404 = ProblemDetails.fromJS(resultData404);
@@ -1420,13 +1510,13 @@ export class BHClient {
             );
         } else if (status === 401) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     return throwException('Unauthorized', status, _responseText, _headers);
                 })
             );
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     return throwException('An unexpected server error occurred.', status, _responseText, _headers);
                 })
             );
@@ -1483,7 +1573,7 @@ export class BHClient {
         }
         if (status === 200) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     let result200: any = null;
                     let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     if (Array.isArray(resultData200)) {
@@ -1495,7 +1585,7 @@ export class BHClient {
             );
         } else if (status === 404) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     let result404: any = null;
                     let resultData404 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result404 = ProblemDetails.fromJS(resultData404);
@@ -1504,13 +1594,13 @@ export class BHClient {
             );
         } else if (status === 401) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     return throwException('Unauthorized', status, _responseText, _headers);
                 })
             );
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     return throwException('An unexpected server error occurred.', status, _responseText, _headers);
                 })
             );
@@ -1573,7 +1663,7 @@ export class BHClient {
         }
         if (status === 200) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     let result200: any = null;
                     let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result200 = SuitabilityAnswersResponse.fromJS(resultData200);
@@ -1582,7 +1672,7 @@ export class BHClient {
             );
         } else if (status === 400) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     let result400: any = null;
                     let resultData400 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result400 = ProblemDetails.fromJS(resultData400);
@@ -1591,13 +1681,13 @@ export class BHClient {
             );
         } else if (status === 401) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     return throwException('Unauthorized', status, _responseText, _headers);
                 })
             );
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     return throwException('An unexpected server error occurred.', status, _responseText, _headers);
                 })
             );
@@ -1654,7 +1744,7 @@ export class BHClient {
         }
         if (status === 200) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     let result200: any = null;
                     let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     if (Array.isArray(resultData200)) {
@@ -1666,19 +1756,19 @@ export class BHClient {
             );
         } else if (status === 404) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     return throwException('Not Found', status, _responseText, _headers);
                 })
             );
         } else if (status === 401) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     return throwException('Unauthorized', status, _responseText, _headers);
                 })
             );
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     return throwException('An unexpected server error occurred.', status, _responseText, _headers);
                 })
             );
@@ -1739,31 +1829,31 @@ export class BHClient {
         }
         if (status === 200) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     return _observableOf<void>(<any>null);
                 })
             );
         } else if (status === 404) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     return throwException('Not Found', status, _responseText, _headers);
                 })
             );
         } else if (status === 400) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     return throwException('Bad Request', status, _responseText, _headers);
                 })
             );
         } else if (status === 401) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     return throwException('Unauthorized', status, _responseText, _headers);
                 })
             );
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     return throwException('An unexpected server error occurred.', status, _responseText, _headers);
                 })
             );
@@ -1819,7 +1909,7 @@ export class BHClient {
         }
         if (status === 200) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     let result200: any = null;
                     let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
                     result200 = UserProfileResponse.fromJS(resultData200);
@@ -1828,13 +1918,13 @@ export class BHClient {
             );
         } else if (status === 401) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     return throwException('Unauthorized', status, _responseText, _headers);
                 })
             );
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(
-                _observableMergeMap((_responseText) => {
+                _observableMergeMap(_responseText => {
                     return throwException('An unexpected server error occurred.', status, _responseText, _headers);
                 })
             );
@@ -2664,6 +2754,7 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
     audio_recording_required?: boolean;
     cancel_reason?: string | undefined;
     endpoints?: EndpointResponse[] | undefined;
+    group_id?: string | undefined;
 
     constructor(data?: IHearingDetailsResponse) {
         if (data) {
@@ -2705,6 +2796,7 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
                 this.endpoints = [] as any;
                 for (let item of _data['endpoints']) this.endpoints!.push(EndpointResponse.fromJS(item));
             }
+            this.group_id = _data['group_id'];
         }
     }
 
@@ -2747,6 +2839,7 @@ export class HearingDetailsResponse implements IHearingDetailsResponse {
             data['endpoints'] = [];
             for (let item of this.endpoints) data['endpoints'].push(item.toJSON());
         }
+        data['group_id'] = this.group_id;
         return data;
     }
 }
@@ -2773,6 +2866,7 @@ export interface IHearingDetailsResponse {
     audio_recording_required?: boolean;
     cancel_reason?: string | undefined;
     endpoints?: EndpointResponse[] | undefined;
+    group_id?: string | undefined;
 }
 
 export class BookingsHearingResponse implements IBookingsHearingResponse {
@@ -2797,6 +2891,7 @@ export class BookingsHearingResponse implements IBookingsHearingResponse {
     questionnaire_not_required?: boolean;
     audio_recording_required?: boolean;
     cancel_reason?: string | undefined;
+    group_id?: string | undefined;
 
     constructor(data?: IBookingsHearingResponse) {
         if (data) {
@@ -2829,6 +2924,7 @@ export class BookingsHearingResponse implements IBookingsHearingResponse {
             this.questionnaire_not_required = _data['questionnaire_not_required'];
             this.audio_recording_required = _data['audio_recording_required'];
             this.cancel_reason = _data['cancel_reason'];
+            this.group_id = _data['group_id'];
         }
     }
 
@@ -2862,6 +2958,7 @@ export class BookingsHearingResponse implements IBookingsHearingResponse {
         data['questionnaire_not_required'] = this.questionnaire_not_required;
         data['audio_recording_required'] = this.audio_recording_required;
         data['cancel_reason'] = this.cancel_reason;
+        data['group_id'] = this.group_id;
         return data;
     }
 }
@@ -2888,6 +2985,7 @@ export interface IBookingsHearingResponse {
     questionnaire_not_required?: boolean;
     audio_recording_required?: boolean;
     cancel_reason?: string | undefined;
+    group_id?: string | undefined;
 }
 
 export class BookingsByDateResponse implements IBookingsByDateResponse {
@@ -2990,6 +3088,45 @@ export interface IBookingsResponse {
     limit?: number;
     prev_page_url?: string | undefined;
     next_page_url?: string | undefined;
+}
+
+export class MultiHearingRequest implements IMultiHearingRequest {
+    start_date?: string | undefined;
+    end_date?: string | undefined;
+
+    constructor(data?: IMultiHearingRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.start_date = _data['start_date'];
+            this.end_date = _data['end_date'];
+        }
+    }
+
+    static fromJS(data: any): MultiHearingRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new MultiHearingRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['start_date'] = this.start_date;
+        data['end_date'] = this.end_date;
+        return data;
+    }
+}
+
+export interface IMultiHearingRequest {
+    start_date?: string | undefined;
+    end_date?: string | undefined;
 }
 
 /** Case request */
@@ -3983,7 +4120,7 @@ function blobToText(blob: any): Observable<string> {
             observer.complete();
         } else {
             let reader = new FileReader();
-            reader.onload = (event) => {
+            reader.onload = event => {
                 observer.next((<any>event.target).result);
                 observer.complete();
             };
