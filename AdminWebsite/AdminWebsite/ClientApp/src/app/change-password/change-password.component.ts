@@ -49,7 +49,6 @@ export class ChangePasswordComponent implements OnInit, OnDestroy {
   }
 
   userNameOnBlur() {
-    this.showCopyPasswordButton = false;
     const userNameText = this.userName.value;
     /* tslint:disable: max-line-length */
     const pattern = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
@@ -90,11 +89,6 @@ export class ChangePasswordComponent implements OnInit, OnDestroy {
 
   okay(): void {
     this.showUpdateSuccess = false;
-    if (this.saveSuccess) {
-      this.form = this.fb.group({
-        userName: ['', Validators.required],
-      });
-    }
   }
 
   goToDiv(fragment: string): void {
