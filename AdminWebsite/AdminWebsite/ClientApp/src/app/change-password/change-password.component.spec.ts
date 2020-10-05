@@ -5,8 +5,8 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { UpdateUserPopupComponent } from '../popups/update-user-popup/update-user-popup.component';
 import { Logger } from '../services/logger';
 import { UserDataService } from '../services/user-data.service';
-import { Observable } from 'rxjs';
-import { By } from '@angular/platform-browser';
+import { of, throwError } from 'rxjs';
+import { UpdateUserPasswordResponse } from '../services/clients/api-client';
 
 describe('ChangePasswordComponent', () => {
   let component: ChangePasswordComponent;
@@ -18,9 +18,9 @@ describe('ChangePasswordComponent', () => {
     loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error']);
     userDataServiceSpy = jasmine.createSpyObj<UserDataService>('UserDataService', ['updateUser']);
 
-    userDataServiceSpy.updateUser.and.callFake(() => {
-      return new Observable<void>();
-    });
+    const updateUserPasswordResponse = new UpdateUserPasswordResponse();
+    updateUserPasswordResponse.password = 'MyNewPassword';
+    userDataServiceSpy.updateUser.and.returnValue(of(updateUserPasswordResponse));
 
     TestBed.configureTestingModule({
       imports: [
@@ -66,6 +66,14 @@ describe('ChangePasswordComponent', () => {
     fixture.detectChanges();
     expect(userDataServiceSpy.updateUser).toHaveBeenCalled();
   });
+    it('should show copy password button when updated.', () => {
+        component.userName.setValue('user.name@domain.com');
+        component.updateUser();
+        fixture.detectChanges();
+        expect(userDataServiceSpy.updateUser).toHaveBeenCalled();
+        expect(component.showCopyPasswordButton).toBeTruthy();
+        expect(component.password).not.toBeNull();
+    });
   it('should hide pop up if okay pressed', () => {
     component.okay();
     fixture.detectChanges();

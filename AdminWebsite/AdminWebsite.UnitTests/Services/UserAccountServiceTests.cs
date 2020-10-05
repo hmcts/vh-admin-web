@@ -1,4 +1,3 @@
-using System;
 using AdminWebsite.Configuration;
 using AdminWebsite.Helper;
 using AdminWebsite.Security;
@@ -113,9 +112,35 @@ namespace AdminWebsite.UnitTests.Services
         [Test]
         public async Task Should_update_password_if_a_user_was_found_in_aad()
         {
-            _userApiClient.Setup(x => x.GetUserByAdUserNameAsync(It.IsAny<string>())).ReturnsAsync(new UserProfile { User_name = "existingUser@email.com" });
-            await _service.UpdateParticipantPassword("exisitngUser");
-            _userApiClient.Verify(x => x.UpdateUserAsync(It.IsAny<string>()), Times.Once);
+            const string UserName = "existingUser";
+            var userProfile = new UserProfile { User_name = "existingUser@email.com" };
+            var updatedUserResponse = new UpdateUserResponse {New_password = "SomePassword"};
+            
+            _userApiClient
+                .Setup(x => x.GetUserByAdUserNameAsync(UserName))
+                .ReturnsAsync(userProfile);
+
+            _userApiClient.Setup(x => x.UpdateUserAsync(UserName)).ReturnsAsync(updatedUserResponse);
+            
+            var response = await _service.UpdateParticipantPassword(UserName);
+            
+            response.Should().NotBeNull();
+            response.Password.Should().Be(updatedUserResponse.New_password);
+            
+            _userApiClient.Verify(x => x.UpdateUserAsync(UserName), Times.Once);
+        }
+
+        [Test]
+        public async Task Should_throw_exception_on_update_password()
+        {
+            const string UserName = "existingUser";
+
+            _userApiClient
+                .Setup(x => x.GetUserByAdUserNameAsync(UserName))
+                .ReturnsAsync((UserProfile) null);
+
+
+            Assert.ThrowsAsync<UserServiceException>(() => _service.UpdateParticipantPassword(UserName));
         }
 
         [Test]
