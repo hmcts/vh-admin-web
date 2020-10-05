@@ -8,6 +8,11 @@ Scenario: Hearing Schedule
 	When the user completes the hearing schedule form
 	Then the user is on the Assign Judge page
 
+Scenario: Hearing Schedule with multi days hearing
+	Given the Video Hearings Officer user has progressed to the Hearing Schedule page
+	When the user completes the hearing schedule form with multi days
+	Then the user is on the Assign Judge page
+
 @Smoketest-Extended
 Scenario: Edit Hearing Schedule
 	Given the Video Hearings Officer user has progressed to the Booking Details page

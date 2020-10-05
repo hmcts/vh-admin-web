@@ -33,9 +33,9 @@ namespace AdminWebsite.AcceptanceTests.Steps
         private UserAccount _newUserToEdit;
 
         public SummarySteps(
-            TestContext testContext, 
+            TestContext testContext,
             Dictionary<User, UserBrowser> browsers,
-            BookingDetailsSteps bookingDetailsSteps, 
+            BookingDetailsSteps bookingDetailsSteps,
             HearingDetailsSteps hearingDetailsSteps,
             HearingScheduleSteps hearingScheduleSteps,
             AssignJudgeSteps assignJudgeSteps,
@@ -150,12 +150,27 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         private void VerifyHearingSchedule()
         {
-            var scheduleDate = _c.Test.HearingSchedule.ScheduledDate.ToString(DateFormats.HearingSummaryDate);
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(SummaryPage.HearingDate).Text.ToLower().Should().Be(scheduleDate.ToLower());
+            if (!_c.Test.HearingSchedule.MultiDays)
+            {
+                var scheduleDate = _c.Test.HearingSchedule.ScheduledDate.ToString(DateFormats.HearingSummaryDate);
+                _browsers[_c.CurrentUser].Driver.WaitUntilVisible(SummaryPage.HearingDate).Text.ToLower().Should().Be(scheduleDate.ToLower());
+                var listedFor = $"listed for {_c.Test.HearingSchedule.DurationMinutes} minutes";
+                _browsers[_c.CurrentUser].Driver.WaitUntilVisible(SummaryPage.HearingDuration).Text.Should().Be(listedFor);
+            }
+            else
+            {
+                var startDate = _c.Test.HearingSchedule.ScheduledDate.ToString(DateFormats.HearingSummaryDateMultiDays);
+                var endDate = _c.Test.HearingSchedule.EndHearingDate.ToString(DateFormats.HearingSummaryDateMultiDays);
+                var startTime = _c.Test.HearingSchedule.ScheduledDate.ToString(DateFormats.HearingSummaryTimeMultiDays);
+                var textDateStart = $"{startDate.ToLower()} -";
+                var textDateEnd = $"{endDate.ToLower()}, {startTime.ToLower()}";
+
+                _browsers[_c.CurrentUser].Driver.WaitUntilVisible(SummaryPage.HearingStartDateMultiDays).Text.ToLower().Should().Be(textDateStart);
+                _browsers[_c.CurrentUser].Driver.WaitUntilVisible(SummaryPage.HearingEndDateMultiDays).Text.ToLower().Should().Be(textDateEnd);
+            }
+
             var courtAddress = $"{_c.Test.HearingSchedule.HearingVenue}, {_c.Test.HearingSchedule.Room}";
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(SummaryPage.CourtAddress).Text.Should().Be(courtAddress);
-            var listedFor = $"listed for {_c.Test.HearingSchedule.DurationMinutes} minutes";
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(SummaryPage.HearingDuration).Text.Should().Be(listedFor);
         }
 
         private void VerifyAudioRecording()

@@ -37,11 +37,27 @@ namespace AdminWebsite.AcceptanceTests.Steps
             ClickNext();
         }
 
+
+        [When(@"the user completes the hearing schedule form with multi days")]
+        public void ProgressToNextPageWithMultiDays()
+        {
+            _c.Test.HearingSchedule.MultiDays = true;
+            ProgressToNextPage();
+        }
+
         public void AddHearingDate()
         {
             var date = _c.Test.HearingSchedule.ScheduledDate.Date.ToString(DateFormats.LocalDateFormat(_c.WebConfig.SauceLabsConfiguration.RunningOnSauceLabs()));
             _browsers[_c.CurrentUser].Clear(HearingSchedulePage.HearingDateTextfield);
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(HearingSchedulePage.HearingDateTextfield).SendKeys(date);
+            if (_c.Test.HearingSchedule.MultiDays)
+            {
+                var endDate = _c.Test.HearingSchedule.EndHearingDate.Date.ToString(DateFormats.LocalDateFormat(_c.WebConfig.SauceLabsConfiguration.RunningOnSauceLabs()));
+                _browsers[_c.CurrentUser].Clear(HearingSchedulePage.HearingEndDateTextField);
+                _browsers[_c.CurrentUser].Driver.WaitUntilVisible(HearingSchedulePage.HearingEndDateTextField).SendKeys(endDate);
+
+            }
+
         }
 
         private void AddHearingTime()
@@ -54,10 +70,13 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         private void AddHearingScheduleDetails()
         {
-            _browsers[_c.CurrentUser].Clear(HearingSchedulePage.HearingDurationHourTextfield);
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(HearingSchedulePage.HearingDurationHourTextfield).SendKeys(_c.Test.HearingSchedule.DurationHours.ToString());
-            _browsers[_c.CurrentUser].Clear(HearingSchedulePage.HearingDurationMinuteTextfield);
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(HearingSchedulePage.HearingDurationMinuteTextfield).SendKeys(_c.Test.HearingSchedule.DurationMinutes.ToString());
+            if (!_c.Test.HearingSchedule.MultiDays)
+            {
+                _browsers[_c.CurrentUser].Clear(HearingSchedulePage.HearingDurationHourTextfield);
+                _browsers[_c.CurrentUser].Driver.WaitUntilVisible(HearingSchedulePage.HearingDurationHourTextfield).SendKeys(_c.Test.HearingSchedule.DurationHours.ToString());
+                _browsers[_c.CurrentUser].Clear(HearingSchedulePage.HearingDurationMinuteTextfield);
+                _browsers[_c.CurrentUser].Driver.WaitUntilVisible(HearingSchedulePage.HearingDurationMinuteTextfield).SendKeys(_c.Test.HearingSchedule.DurationMinutes.ToString());
+            }
             _commonSharedSteps.WhenTheUserSelectsTheOptionFromTheDropdown(_browsers[_c.CurrentUser].Driver, HearingSchedulePage.CourtAddressDropdown, _c.Test.HearingSchedule.HearingVenue);
             _browsers[_c.CurrentUser].Clear(HearingSchedulePage.CourtRoomTextfield);
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(HearingSchedulePage.CourtRoomTextfield).SendKeys(_c.Test.HearingSchedule.Room);
@@ -70,6 +89,20 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _c.Test.HearingSchedule.DurationMinutes = _c.Test.HearingSchedule.DurationMinutes == 0 ? _c.Test.TestData.HearingSchedule.DurationMinutes : 25;
             _c.Test.HearingSchedule.HearingVenue = _c.Test.HearingSchedule.HearingVenue != null ? "Manchester Civil and Family Justice Centre" : _c.Test.TestData.HearingSchedule.HearingVenue;
             _c.Test.HearingSchedule.Room = _c.Test.HearingSchedule.Room != null ? "2" : _c.Test.TestData.HearingSchedule.Room;
+            if (_c.Test.HearingSchedule.MultiDays)
+            {
+                SelectMultiDaysHearing();
+                _c.Test.HearingSchedule.EndHearingDate = _c.Test.HearingSchedule.ScheduledDate.AddDays(4);
+            }
+        }
+
+       private void SelectMultiDaysHearing()
+        {
+            var isCheckboxSelected = _browsers[_c.CurrentUser].Driver.WaitUntilElementExists(HearingSchedulePage.MultiDaysCheckBox).Selected;
+                if (!isCheckboxSelected) { 
+                    _browsers[_c.CurrentUser].ClickCheckbox(HearingSchedulePage.MultiDaysCheckBox);
+            }
+           
         }
 
         private static DateTime SetDateAsOneMinuteToMidnight()
