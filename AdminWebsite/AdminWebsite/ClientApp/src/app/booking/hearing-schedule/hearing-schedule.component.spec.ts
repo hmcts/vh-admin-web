@@ -113,6 +113,11 @@ describe('HearingScheduleComponent first visit', () => {
         expect(component.courtAddress.value).toBe(-1);
         expect(component.multiDaysHearing).toBeFalsy();
     });
+    it('should set controls for duration', () => {
+        component.ngOnInit();
+        expect(component.durationHourControl).toBeTruthy();
+        expect(component.durationMinuteControl).toBeTruthy();
+    });
 
     it('should fail validation when form empty', () => {
         expect(component.form.invalid).toBeTruthy();
@@ -487,6 +492,12 @@ describe('HearingScheduleComponent multi days hearing', () => {
         fixture.detectChanges();
 
         initFormControls(component);
+    });
+    it('should set controls for duration', () => {
+        component.hearing = existingRequest;
+        component.ngOnInit();
+        expect(component.durationHourControl).toBeTruthy();
+        expect(component.durationMinuteControl).toBeTruthy();
     });
 
     it('should set multi days flag to true', () => {

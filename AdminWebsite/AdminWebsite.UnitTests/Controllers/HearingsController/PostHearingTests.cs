@@ -346,6 +346,19 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
 
         [Test]
+        public async Task Should_return_bad_request_status_if_no_items_in_the_date_list()
+        {
+            var startDate = new DateTime(2020, 10, 1);
+            var endDate = new DateTime(2020, 10, 1);
+            var request = new MultiHearingRequest { StartDate = startDate.ToString(), EndDate = endDate.ToString() };
+
+
+            var response = await _controller.CloneHearing(Guid.NewGuid(), request);
+
+            response.Should().BeOfType<BadRequestResult>();
+        }
+
+        [Test]
         public async Task Should_catch_BookingsApiException_by_clone_hearing()
         {
             var request = GetMultiHearingRequest();
