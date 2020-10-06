@@ -16,6 +16,6 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public static By HearingDateError = By.Id("hearingDate-error");
         public static By HearingTimeError = By.Id("hearingTime-error");
         public static By HearingEndDateTextField = By.Id("endHearingDate");
-        public static By MultiDaysCheckBox = By.Id("miltiDaysHearing");
+        public static By MultiDaysCheckBox = By.Id("multiDaysHearing");
     }
 }
