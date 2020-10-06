@@ -36,7 +36,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     multiDaysHearing = false;
     durationHourControl: FormControl;
     durationMinuteControl: FormControl;
-
+    isBookedHearing = false;
     constructor(
         private refDataService: ReferenceDataService,
         protected hearingService: VideoHearingsService,
@@ -60,6 +60,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     private checkForExistingRequest() {
         this.hearing = this.hearingService.getCurrentRequest();
         this.isExistinHearing = this.hearing && this.hearing.hearing_type_name && this.hearing.hearing_type_name.length > 0;
+        this.isBookedHearing = this.hearing && this.hearing.hearing_id !== undefined && this.hearing.hearing_id.length > 0;
     }
 
     private initForm() {
