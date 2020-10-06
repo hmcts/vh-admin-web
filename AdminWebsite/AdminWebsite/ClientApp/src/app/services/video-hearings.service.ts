@@ -17,7 +17,8 @@ import {
     ParticipantRequest,
     ParticipantResponse,
     UpdateBookingStatusRequest,
-    UpdateBookingStatusResponse
+    UpdateBookingStatusResponse,
+    MultiHearingRequest
 } from './clients/api-client';
 import { HearingModel } from '../common/model/hearing.model';
 import { CaseModel } from '../common/model/case.model';
@@ -81,9 +82,13 @@ export class VideoHearingsService {
     validCurrentRequest() {
         const localRequest = this.getCurrentRequest();
 
-        return localRequest.scheduled_date_time && localRequest.scheduled_duration > 0 &&
-            localRequest.participants.length > 1 && localRequest.hearing_venue_id > 0 &&
-            localRequest.hearing_type_id > 0;
+        return (
+            localRequest.scheduled_date_time &&
+            localRequest.scheduled_duration > 0 &&
+            localRequest.participants.length > 1 &&
+            localRequest.hearing_venue_id > 0 &&
+            localRequest.hearing_type_id > 0
+        );
     }
 
     updateHearingRequest(updatedRequest: HearingModel) {
@@ -106,9 +111,13 @@ export class VideoHearingsService {
         sessionStorage.removeItem(this.bookingHasChangesKey);
     }
 
-    saveHearing(newRequest: HearingModel): Observable<HearingDetailsResponse> {
+    saveHearing(newRequest: HearingModel): Promise<HearingDetailsResponse> {
         const hearingRequest = this.mapHearing(newRequest);
-        return this.bhClient.bookNewHearing(hearingRequest);
+        return this.bhClient.bookNewHearing(hearingRequest).toPromise();
+    }
+
+    cloneMultiHearings(hearingId: string, request: MultiHearingRequest): Promise<void> {
+        return this.bhClient.cloneHearing(hearingId, request).toPromise();
     }
 
     updateHearing(booking: HearingModel): Observable<HearingDetailsResponse> {
