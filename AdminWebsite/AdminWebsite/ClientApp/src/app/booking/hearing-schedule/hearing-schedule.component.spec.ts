@@ -566,7 +566,7 @@ describe('HearingScheduleComponent multi days hearing', () => {
         expect(component.endHearingDate.value).toBe(null);
     });
     it('should hide multi days checkbox if the hearing is booked', () => {
-        component.hearing.hearing_id = '1234555559';
+        component.hearing.hearing_id = '12345555590'
         component.ngOnInit();
         expect(component.isBookedHearing).toBe(true);
     });
