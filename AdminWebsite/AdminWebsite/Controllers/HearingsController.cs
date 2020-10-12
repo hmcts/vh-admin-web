@@ -366,29 +366,23 @@ namespace AdminWebsite.Controllers
                 throw;
             }
         }
-        
+
         /// <summary>
         /// Get hearings by case number.
         /// </summary>
         /// <param name="caseNumber">The case number.</param>
+        /// <param name="date">The date to filter by</param>
         /// <returns> The hearing</returns>
-        [HttpGet("casenumber")]
-        [SwaggerOperation(OperationId = "GetHearingsByCaseNumber")]
+        [HttpGet("audiorecording/search")]
+        [SwaggerOperation(OperationId = "SearchForAudioRecordedHearings")]
         [ProducesResponseType(typeof(List<HearingsForAudioFileSearchResponse>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> GetHearingsByCaseNumberAsync([FromQuery]string caseNumber)
+        public async Task<IActionResult> SearchForAudioRecordedHearingsAsync([FromQuery]string caseNumber, [FromQuery] DateTime? date = null)
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(caseNumber))
-                {
-                    ModelState.AddModelError(nameof(caseNumber), $"Please provide a valid {nameof(caseNumber)}");
-                    return BadRequest(ModelState);
-                }
-
-                caseNumber = WebUtility.UrlDecode(caseNumber);
-                
-                var hearingResponse = await _bookingsApiClient.GetHearingsByCaseNumberAsync(caseNumber);
+                var decodedCaseNumber = string.IsNullOrWhiteSpace(caseNumber) ? null :  WebUtility.UrlDecode(caseNumber);
+                var hearingResponse = await _bookingsApiClient.SearchForHearingsAsync(decodedCaseNumber, date);
                 
                 return Ok(hearingResponse.Select(HearingsForAudioFileSearchMapper.MapFrom));
             }
