@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using AcceptanceTests.Common.Api.Hearings;
 using AcceptanceTests.Common.Api.Helpers;
@@ -30,9 +31,11 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             var response = api.GetHearingsByUsername(_username);
             var hearings = RequestHelper.Deserialise<List<HearingDetailsResponse>>(response.Content);
             if (hearings == null) return;
-            foreach (var hearing in hearings)
+
+            var ids =  hearings.Select(x => x.Group_id).Distinct().ToList();
+            foreach (var id in ids.Where(x=> x.HasValue))
             {
-                DeleteTheHearing(api, hearing.Id);
+                DeleteTheHearing(api, id.Value);
             }
         }
 
