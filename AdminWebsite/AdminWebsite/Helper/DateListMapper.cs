@@ -21,10 +21,11 @@ namespace AdminWebsite.Helper
 
         public static List<DateTime> GetListOfWorkingDates(DateTime startDate, DateTime endDate)
         {
+
             var dates = new List<DateTime>();
             var nextDate = startDate.AddDays(1);
 
-            for (var dt = nextDate; dt <= endDate; dt = dt.AddDays(1))
+            for (var dt = nextDate; dt.Date <= endDate.Date; dt = dt.AddDays(1))
             {
                 if (!IsWeekend(dt))
                 {
