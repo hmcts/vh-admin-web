@@ -57,17 +57,13 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetCvpAudioRecordingsALlLinkAsync(string cloudroom, string date, string caseReference)
         {
-            _logger.LogInformation($"Getting CVP audio recording for cloudroom: {cloudroom}, date: {date}, case reference: {caseReference}");
+            _logger.LogInformation($"GetCvpAudioRecordingsALlLinkAsync cloudroom: {cloudroom}, date: {date}, case reference: {caseReference}");
 
             try
             {
                 var cvpFilesResponse = await _videoAPiClient.GetAudioRecordingLinkAllCvpAsync(cloudroom, date, caseReference);
 
-                var response = cvpFilesResponse
-                    .Select(x => new CvpForAudioFileResponse { FileName = x.File_name, SasTokenUri = x.Sas_token_url })
-                    .ToList();
-
-                return Ok(response);
+                return Ok(GetCvpForAudioFileResponses(cvpFilesResponse));
             }
             catch (VideoApiException ex)
             {
@@ -81,17 +77,13 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetCvpAudioRecordingsByCloudRoomAsync(string cloudroom, string date)
         {
-            _logger.LogInformation($"Getting CVP audio recording for cloudroom: {cloudroom}, date: {date}");
+            _logger.LogInformation($"GetCvpAudioRecordingsByCloudRoomAsync cloudroom: {cloudroom}, date: {date}");
 
             try
             {
                 var cvpFilesResponse = await _videoAPiClient.GetAudioRecordingLinkCvpByCloudRoomAsync(cloudroom, date);
 
-                var response = cvpFilesResponse
-                    .Select(x => new CvpForAudioFileResponse { FileName = x.File_name, SasTokenUri = x.Sas_token_url })
-                    .ToList();
-
-                return Ok(response);
+                return Ok(GetCvpForAudioFileResponses(cvpFilesResponse));
             }
             catch (VideoApiException ex)
             {
@@ -105,22 +97,27 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetCvpAudioRecordingsByDateAsync(string date, string caseReference)
         {
-            _logger.LogInformation($"Getting CVP audio recording for Date: {date}, case reference: {caseReference}");
+            _logger.LogInformation($"GetCvpAudioRecordingsByDateAsync Date: {date}, case reference: {caseReference}");
 
             try
             {
                 var cvpFilesResponse = await _videoAPiClient.GetAudioRecordingLinkCvpByDateAsync(date, caseReference);
 
-                var response = cvpFilesResponse
-                    .Select(x => new CvpForAudioFileResponse {FileName = x.File_name, SasTokenUri = x.Sas_token_url})
-                    .ToList();
-
-                return Ok(response);
+                return Ok(GetCvpForAudioFileResponses(cvpFilesResponse));
             }
             catch (VideoApiException ex)
             {
                 return StatusCode(ex.StatusCode, ex.Response);
             }
+        }
+
+        private static List<CvpForAudioFileResponse> GetCvpForAudioFileResponses(List<CvpAudioFileResponse> cvpFilesResponse)
+        {
+            var response = cvpFilesResponse
+                .Select(x => new CvpForAudioFileResponse {FileName = x.File_name, SasTokenUri = x.Sas_token_url})
+                .ToList();
+            
+            return response;
         }
     }
 }
