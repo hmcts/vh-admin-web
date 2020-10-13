@@ -68,7 +68,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         }
 
 
-        [Given(@"the (.*) user has progressed to the (.*) page of multi days hearing")]
+        [Given(@"the (.*) user has progressed to the (.*) page of a multi days hearing")]
         public void GivenIAmOnThePageOfMultiDaysHearing(string user, string page)
         {
             _c.Test.HearingSchedule.MultiDays = true;
