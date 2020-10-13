@@ -25,7 +25,8 @@ export class GetAudioFileComponent implements OnInit {
         const hearingDateParsed = null;
 
         this.form = this.fb.group({
-            caseNumber: ['', Validators.required],
+            caseNumber: [null],
+            vhDate: [null],
             searchChoice: ['vhFile'],
             hearingDate: [hearingDateParsed, Validators.required],
             cloudroomName: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
@@ -35,6 +36,10 @@ export class GetAudioFileComponent implements OnInit {
 
     get caseNumber() {
         return this.form.get('caseNumber');
+    }
+
+    get vhDate() {
+        return this.form.get('vhDate');
     }
 
     get cloudroomName() {
@@ -59,6 +64,11 @@ export class GetAudioFileComponent implements OnInit {
             (this.hearingDate.invalid || new Date(this.hearingDate.value) > todayDate) &&
             (this.hearingDate.dirty || this.hearingDate.touched)
         );
+    }
+
+    get vhDateInvalid() {
+        const todayDate = new Date(new Date());
+        return new Date(this.vhDate.value) > todayDate && (this.vhDate.dirty || this.vhDate.touched);
     }
 
     get cvpRequestInvalid() {
@@ -86,11 +96,17 @@ export class GetAudioFileComponent implements OnInit {
         this.results.length = 0;
     }
 
+    get vhSearchCriteriaSet(): boolean {
+        return this.caseNumber.value || this.vhDate.value;
+    }
+
     async search() {
-        if (!this.caseNumber.invalid) {
+        if (this.vhSearchCriteriaSet) {
             this.hasSearched = false;
 
-            this.results = await this.getResults(this.caseNumber.value);
+            const date: Date = this.vhDate.value ? new Date(this.vhDate.value) : undefined;
+            const caseNumber: string = this.caseNumber.value ? this.caseNumber.value : undefined;
+            this.results = await this.getResults(caseNumber, date);
 
             this.hasSearched = true;
         }
@@ -106,14 +122,14 @@ export class GetAudioFileComponent implements OnInit {
         }
     }
 
-    async getResults(caseNumber: string): Promise<HearingAudioSearchModel[]> {
-        const response = await this.audioLinkService.searchForHearingsByCaseNumberOrDate(caseNumber, undefined);
+    async getResults(caseNumber: string, date?: Date): Promise<HearingAudioSearchModel[]> {
+        const response = await this.audioLinkService.searchForHearingsByCaseNumberOrDate(caseNumber, date);
 
         if (response === null) {
             return [];
         }
 
-        return response.map((x) => {
+        return response.map(x => {
             return new HearingAudioSearchModel(x);
         });
     }
@@ -126,6 +142,6 @@ export class GetAudioFileComponent implements OnInit {
                   this.caseReference.value
               )
             : await this.audioLinkService.getCvpAudioLink(this.cloudroomName.value, this.hearingDate.value);
-        return response === null ? [] : response.map((x) => new CvpAudioSearchModel(x));
+        return response === null ? [] : response.map(x => new CvpAudioSearchModel(x));
     }
 }
