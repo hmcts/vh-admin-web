@@ -107,13 +107,13 @@ export class GetAudioFileComponent implements OnInit {
     }
 
     async getResults(caseNumber: string): Promise<HearingAudioSearchModel[]> {
-        const response = await this.audioLinkService.getHearingsByCaseNumber(caseNumber);
+        const response = await this.audioLinkService.searchForHearingsByCaseNumberOrDate(caseNumber, undefined);
 
         if (response === null) {
             return [];
         }
 
-        return response.map(x => {
+        return response.map((x) => {
             return new HearingAudioSearchModel(x);
         });
     }
@@ -126,6 +126,6 @@ export class GetAudioFileComponent implements OnInit {
                   this.caseReference.value
               )
             : await this.audioLinkService.getCvpAudioLink(this.cloudroomName.value, this.hearingDate.value);
-        return response === null ? [] : response.map(x => new CvpAudioSearchModel(x));
+        return response === null ? [] : response.map((x) => new CvpAudioSearchModel(x));
     }
 }

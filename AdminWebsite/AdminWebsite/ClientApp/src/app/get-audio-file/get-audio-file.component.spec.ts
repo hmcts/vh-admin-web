@@ -12,7 +12,7 @@ describe('GetAudioFileComponent', () => {
 
     beforeAll(async () => {
         audioLinkService = jasmine.createSpyObj<AudioLinkService>('AudioLinkService', [
-            'getHearingsByCaseNumber',
+            'searchForHearingsByCaseNumberOrDate',
             'getCvpAudioLinkWithCaseReference',
             'getCvpAudioLink'
         ]);
@@ -35,7 +35,7 @@ describe('GetAudioFileComponent', () => {
     });
 
     it('should keep the results as empty when service returns null', async () => {
-        audioLinkService.getHearingsByCaseNumber.and.returnValue(Promise.resolve(null));
+        audioLinkService.searchForHearingsByCaseNumberOrDate.and.returnValue(Promise.resolve(null));
 
         component.caseNumber.setValue('123');
         await component.search();
@@ -57,7 +57,7 @@ describe('GetAudioFileComponent', () => {
                 id: '363725D0-E3D6-4D4A-8D0A-E8E57575FBC2'
             })
         ];
-        audioLinkService.getHearingsByCaseNumber.and.returnValue(Promise.resolve(models));
+        audioLinkService.searchForHearingsByCaseNumberOrDate.and.returnValue(Promise.resolve(models));
 
         await component.search();
 

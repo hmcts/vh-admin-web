@@ -61,7 +61,7 @@ namespace AdminWebsite.Controllers
 
             try
             {
-                var cvpFilesResponse = await _videoAPiClient.GetAudioRecordingLinkCvpWithCaseReferenceAsync(cloudroom, date, caseReference);
+                var cvpFilesResponse = await _videoAPiClient. GetAudioRecordingLinkAllCvpAsync(cloudroom, date, caseReference);
 
                 var response = cvpFilesResponse.Select(x => new CvpForAudioFileResponse { FileName = x.File_name, SasTokenUri = x.Sas_token_url })
                     .ToList();
@@ -84,7 +84,7 @@ namespace AdminWebsite.Controllers
 
             try
             {
-                var cvpFilesResponse = await _videoAPiClient.GetAudioRecordingLinkCvpAsync(cloudroom, date);
+                var cvpFilesResponse = await _videoAPiClient.GetAudioRecordingLinkCvpByCloudRoomAsync(cloudroom, date);
 
                 var response = cvpFilesResponse.Select(x => new CvpForAudioFileResponse { FileName = x.File_name, SasTokenUri = x.Sas_token_url })
                     .ToList();

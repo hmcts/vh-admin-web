@@ -19,7 +19,7 @@ using NUnit.Framework;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {
-    public class GetHearingsByCaseNumberTests
+    public class SearchForAudioRecordedHearingsTests
     {
         private Mock<IBookingsApiClient> _bookingsApiClient;
         private Mock<IUserIdentity> _userIdentity;
@@ -56,7 +56,11 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             _vhExistingHearing = new HearingDetailsResponse
             {
-                Cases = new List<BookingsAPI.Client.CaseResponse>() {new BookingsAPI.Client.CaseResponse() {Name = "BBC vs ITV", Number = "TX/12345/2019", Is_lead_case = false}},
+                Cases = new List<BookingsAPI.Client.CaseResponse>()
+                {
+                    new BookingsAPI.Client.CaseResponse()
+                        {Name = "BBC vs ITV", Number = "TX/12345/2019", Is_lead_case = false}
+                },
                 Case_type_name = "Civil Money Claims",
                 Created_by = "CaseAdministrator",
                 Created_date = DateTime.UtcNow,
@@ -67,9 +71,27 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 Other_information = "Any other information about the hearing",
                 Participants = new List<ParticipantResponse>()
                 {
-                    new ParticipantResponse() {Case_role_name = "Judge", Contact_email = "Judge.Lumb@madeupemail.com", Display_name = "Judge Lumb", First_name = "Judge", Hearing_role_name = "Judge", Last_name = "Lumb", Middle_names = string.Empty, Telephone_number = string.Empty, Title = "Judge", Username = "Judge.Lumb@madeupemail.com"},
-                    new ParticipantResponse() {Case_role_name = "Claimant", Contact_email = "test.claimaint@emailaddress.net", Display_name = "Test Claimaint", First_name = "Test", Hearing_role_name = "Claimant LIP", Last_name = "Claimaint", Middle_names = string.Empty, Telephone_number = string.Empty, Title = "Mr", Username = "Test.Claimaint@madeupemail.com"},
-                    new ParticipantResponse() {Case_role_name = "Defendant", Contact_email = "test.defendant@emailaddress.net", Display_name = "Test Defendant", First_name = "Test", Hearing_role_name = "Representative", Last_name = "Defendant", Middle_names = string.Empty, Telephone_number = string.Empty, Title = "Mr", Username = "Test.Defendant@madeupemail.com"},
+                    new ParticipantResponse()
+                    {
+                        Case_role_name = "Judge", Contact_email = "Judge.Lumb@madeupemail.com",
+                        Display_name = "Judge Lumb", First_name = "Judge", Hearing_role_name = "Judge",
+                        Last_name = "Lumb", Middle_names = string.Empty, Telephone_number = string.Empty,
+                        Title = "Judge", Username = "Judge.Lumb@madeupemail.com"
+                    },
+                    new ParticipantResponse()
+                    {
+                        Case_role_name = "Claimant", Contact_email = "test.claimaint@emailaddress.net",
+                        Display_name = "Test Claimaint", First_name = "Test", Hearing_role_name = "Claimant LIP",
+                        Last_name = "Claimaint", Middle_names = string.Empty, Telephone_number = string.Empty,
+                        Title = "Mr", Username = "Test.Claimaint@madeupemail.com"
+                    },
+                    new ParticipantResponse()
+                    {
+                        Case_role_name = "Defendant", Contact_email = "test.defendant@emailaddress.net",
+                        Display_name = "Test Defendant", First_name = "Test", Hearing_role_name = "Representative",
+                        Last_name = "Defendant", Middle_names = string.Empty, Telephone_number = string.Empty,
+                        Title = "Mr", Username = "Test.Defendant@madeupemail.com"
+                    },
                 },
                 Scheduled_date_time = DateTime.UtcNow.AddDays(10),
                 Scheduled_duration = 60,
@@ -81,37 +103,28 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(_vhExistingHearing);
         }
-        
-        [TestCase(null)]
-        [TestCase("")]
-        [TestCase(" ")]
-        public async Task Should_return_bad_request_when_case_number_is_null_empty_whitespace(string caseNumber)
-        {
-            var result = await _controller.GetHearingsByCaseNumberAsync(caseNumber);
-            var badRequestResult = (BadRequestObjectResult)result;
-            badRequestResult.StatusCode.Should().Be(400);
-        }
-        
+
         [Test]
         public async Task Should_return_bad_request_when_booking_api_throws()
         {
-            _bookingsApiClient.Setup(x => x.GetHearingsByCaseNumberAsync(It.IsAny<string>()))
+            _bookingsApiClient.Setup(x => x.SearchForHearingsAsync(It.IsAny<string>(), It.IsAny<DateTime?>()))
                 .Throws(ClientException.ForBookingsAPI(HttpStatusCode.BadRequest));
 
-            var result = await _controller.GetHearingsByCaseNumberAsync("bad");
-            var badRequestResult = (BadRequestObjectResult)result;
+            var result = await _controller.SearchForAudioRecordedHearingsAsync("bad", DateTime.Today);
+            var badRequestResult = (BadRequestObjectResult) result;
             badRequestResult.StatusCode.Should().Be(400);
         }
-        
+
         [Test]
         public void Should_return_throw_when_booking_api_throws()
         {
-            _bookingsApiClient.Setup(x => x.GetHearingsByCaseNumberAsync(It.IsAny<string>()))
+            _bookingsApiClient.Setup(x => x.SearchForHearingsAsync(It.IsAny<string>(), It.IsAny<DateTime?>()))
                 .Throws(ClientException.ForBookingsAPI(HttpStatusCode.InternalServerError));
 
-            Assert.ThrowsAsync<BookingsApiException>(() => _controller.GetHearingsByCaseNumberAsync("bad"));
+            Assert.ThrowsAsync<BookingsApiException>(() =>
+                _controller.SearchForAudioRecordedHearingsAsync("bad", DateTime.Today));
         }
-        
+
         [TestCase("Perf692831/69", "Perf692831%2F69")]
         [TestCase("abc/123", "abc%2F123")]
         [TestCase("abc\\123", "abc%5C123")]
@@ -119,18 +132,18 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [TestCase("abc-123/456\\789", "abc-123%2F456%5C789")]
         public async Task Should_return_ok(string caseNumberDecoded, string caseNumberEncoded)
         {
-            var bookingApiResponse = new List<HearingsByCaseNumberResponse>
+            var bookingApiResponse = new List<AudioRecordedHearingsBySearchResponse>
             {
-                new HearingsByCaseNumberResponse{Id = Guid.NewGuid()},
-                new HearingsByCaseNumberResponse{Id = Guid.NewGuid()},
-                new HearingsByCaseNumberResponse{Id = Guid.NewGuid()}
+                new AudioRecordedHearingsBySearchResponse {Id = Guid.NewGuid()},
+                new AudioRecordedHearingsBySearchResponse {Id = Guid.NewGuid()},
+                new AudioRecordedHearingsBySearchResponse {Id = Guid.NewGuid()}
             };
-            
-            _bookingsApiClient.Setup(x => x.GetHearingsByCaseNumberAsync(caseNumberDecoded))
+
+            _bookingsApiClient.Setup(x => x.SearchForHearingsAsync(caseNumberDecoded, It.IsAny<DateTime?>()))
                 .ReturnsAsync(bookingApiResponse);
 
-            var result = await _controller.GetHearingsByCaseNumberAsync(caseNumberEncoded);
-            var actionResult = result as OkObjectResult;
+            var result = await _controller.SearchForAudioRecordedHearingsAsync(caseNumberEncoded, DateTime.Today);
+            var actionResult = (OkObjectResult)result;
             actionResult.Should().NotBeNull();
             actionResult.StatusCode.Should().Be(200);
             var items = actionResult.Value.As<IEnumerable<HearingsForAudioFileSearchResponse>>().ToList();

@@ -11,7 +11,7 @@ namespace AdminWebsite.UnitTests.Mappers
         [Test]
         public void Should_map_all_properties()
         {
-            var source = new HearingsByCaseNumberResponse
+            var source = new AudioRecordedHearingsBySearchResponse
             {
                 Case_name = "Case_name",
                 Case_number = "Case_number",
