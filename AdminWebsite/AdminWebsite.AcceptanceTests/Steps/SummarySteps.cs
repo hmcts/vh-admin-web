@@ -63,7 +63,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             VerifyVideoAccessPoints();
             VerifyOtherInformation();
             ClickBook();
-            VerifyBookingCreated();
+            VerifyBookingsCreated();
             VerifyNewUsersCreatedInAad();
         }
 
@@ -190,44 +190,56 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(SummaryPage.VideoAccessPoints(0)).Text.Should().Be(videoAccessPoints);
         }
 
-        private void VerifyBookingCreated()
+        private void VerifyBookingsCreated()
         {
             var response = _c.Api.PollForHearingByUsername(Users.GetJudgeUser(_c.Users).Username, _c.Test.HearingDetails.CaseName);
-            var hearings = RequestHelper.Deserialise<List<HearingDetailsResponse>>(response.Content);
-            _c.Test.HearingResponse = GetHearingFromHearings(hearings);
-            var assertHearing = new AssertHearing()
-                .WithHearing(_c.Test.HearingResponse)
+            var allHearings = RequestHelper.Deserialise<List<HearingDetailsResponse>>(response.Content);
+            var hearings = GetHearingFromHearings(allHearings);
+
+            foreach (var assertHearing in hearings.Select(hearing => new AssertHearing()
+                .WithHearing(hearing)
                 .WithTestData(_c.Test)
                 .WithTimeZone(_c.TimeZone)
-                .CreatedBy(_c.CurrentUser.Username);
-            assertHearing.AssertHearingDataMatches();
-            assertHearing.AssertParticipantDataMatches(_c.Test.HearingParticipants);
-            assertHearing.AssertHearingStatus(BookingStatus.Booked);
+                .IsMultiDayHearing(_c.Test.HearingSchedule.MultiDays)
+                .CreatedBy(_c.CurrentUser.Username)))
+            {
+                assertHearing.AssertHearingDataMatches();
+                assertHearing.AssertParticipantDataMatches(_c.Test.HearingParticipants);
+                assertHearing.AssertHearingStatus(BookingStatus.Booked);
+            }
         }
 
         private void VerifyBookingUpdated()
         {
             Thread.Sleep(TimeSpan.FromSeconds(0.5));
             var response = _c.Api.PollForHearingByUsername(Users.GetJudgeUser(_c.Users).Username, _c.Test.HearingDetails.CaseName);
-            var hearings = RequestHelper.Deserialise<List<HearingDetailsResponse>>(response.Content);
-            _c.Test.HearingResponse = GetHearingFromHearings(hearings);
-            var assertHearing = new AssertHearing()
-                .WithHearing(_c.Test.HearingResponse)
+            var allHearings = RequestHelper.Deserialise<List<HearingDetailsResponse>>(response.Content);
+            var hearings = GetHearingFromHearings(allHearings);
+
+            foreach (var assertHearing in hearings.Select(hearing => new AssertHearing()
+                .WithHearing(hearing)
                 .WithTestData(_c.Test)
                 .WithTimeZone(_c.TimeZone)
-                .CreatedBy(_c.CurrentUser.Username);
-            assertHearing.AssertHearingDataMatches();
-            assertHearing.AssertParticipantDataMatches(_c.Test.HearingParticipants);
-            assertHearing.AssertUpdatedStatus(_c.CurrentUser.Username, DateTime.Now);
+                .IsMultiDayHearing(_c.Test.HearingSchedule.MultiDays)
+                .IsRunningOnSauceLabs(_c.WebConfig.SauceLabsConfiguration.RunningOnSauceLabs())
+                .CreatedBy(_c.CurrentUser.Username)))
+            {
+                assertHearing.AssertHearingDataMatches();
+                assertHearing.AssertParticipantDataMatches(_c.Test.HearingParticipants);
+                assertHearing.AssertUpdatedStatus(_c.CurrentUser.Username, DateTime.Now);
+            }
         }
 
-        private HearingDetailsResponse GetHearingFromHearings(IEnumerable<HearingDetailsResponse> hearings)
+        private List<HearingDetailsResponse> GetHearingFromHearings(IEnumerable<HearingDetailsResponse> allHearings)
         {
-            foreach (var hearing in hearings.Where(hearing => hearing.Cases.First().Name.Equals(_c.Test.HearingDetails.CaseName)))
+            var hearings = allHearings.Where(hearing => hearing.Cases.First().Name.Contains(_c.Test.HearingDetails.CaseName)).ToList();
+
+            if (hearings.Count == 0)
             {
-                return hearing;
+                throw new DataException("Created hearing could not be found in the bookings api");
             }
-            throw new DataException("Created hearing could not be found in the bookings api");
+
+            return hearings;
         }
 
         private void VerifyNewUsersCreatedInAad()
