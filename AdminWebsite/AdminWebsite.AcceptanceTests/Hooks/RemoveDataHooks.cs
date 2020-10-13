@@ -32,13 +32,14 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             var hearings = RequestHelper.Deserialise<List<HearingDetailsResponse>>(response.Content);
             if (hearings == null) return;
 
-            var alreadyDeletedHearings = new List<Guid>();
-            foreach (var hearing in hearings.Where(hearing => !alreadyDeletedHearings.Contains(hearing.Id)))
+            hearings = hearings.GroupBy(x => x.Id)
+                .Select(group => group.First())
+                .ToList();
+
+            foreach (var hearing in hearings)
             {
                 DeleteTheHearing(api, hearing.Id);
-                alreadyDeletedHearings.Add(hearing.Id);
             }
-            alreadyDeletedHearings.Clear();
         }
 
         private static void DeleteTheHearing(TestApiManager api, Guid hearingId)
