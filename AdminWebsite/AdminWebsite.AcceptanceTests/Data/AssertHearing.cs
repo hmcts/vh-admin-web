@@ -15,6 +15,8 @@ namespace AdminWebsite.AcceptanceTests.Data
         private static string _createdBy;
         private static Test _test;
         private TimeZone _timeZone;
+        private bool _isMultiDayHearing;
+        private bool _isRunningOnSauceLabs;
 
         public AssertHearing WithHearing(HearingDetailsResponse hearing)
         {
@@ -37,6 +39,18 @@ namespace AdminWebsite.AcceptanceTests.Data
         public AssertHearing WithTimeZone(TimeZone timeZone)
         {
             _timeZone = timeZone;
+            return this;
+        }
+
+        public AssertHearing IsMultiDayHearing(bool isMultiDayHearing)
+        {
+            _isMultiDayHearing = isMultiDayHearing;
+            return this;
+        }
+
+        public AssertHearing IsRunningOnSauceLabs(bool isRunningOnSauceLabs)
+        {
+            _isRunningOnSauceLabs = isRunningOnSauceLabs;
             return this;
         }
 
@@ -88,10 +102,11 @@ namespace AdminWebsite.AcceptanceTests.Data
             _hearing.Updated_date.ToLocalTime().ToShortTimeString().Should().BeOneOf(updatedDate.ToLocalTime().AddMinutes(-1).ToShortTimeString(), updatedDate.ToLocalTime().ToShortTimeString(), updatedDate.ToLocalTime().AddMinutes(1).ToShortTimeString());
         }
 
-        public static void VerifyTimeSpansMatch(int actual, int hours, int minutes)
+        public void VerifyTimeSpansMatch(int actual, int hours, int minutes)
         {
             var actualDuration = TimeSpan.FromMinutes(actual);
-            var expectedDuration = TimeSpan.FromHours(hours).Add(TimeSpan.FromMinutes(minutes));
+            var expectedDuration = _isMultiDayHearing ? TimeSpan.FromHours(8) : TimeSpan.FromHours(hours).Add(TimeSpan.FromMinutes(minutes));
+
             actualDuration.Should().Be(expectedDuration);
         }
 
@@ -109,11 +124,15 @@ namespace AdminWebsite.AcceptanceTests.Data
         {
             expected = _timeZone.AdjustAdminWeb(expected);
             actual.ToShortDateString().Should().Be(expected.ToShortDateString());
-            actual.ToShortTimeString().Should().BeOneOf(
+
+            if (_isRunningOnSauceLabs)
+            {
+                actual.ToShortTimeString().Should().BeOneOf(
                 expected.AddMinutes(-3).ToShortTimeString(),
                                  expected.AddMinutes(-2).ToShortTimeString(),
                                  expected.AddMinutes(-1).ToShortTimeString(),
                                  expected.ToShortTimeString());
+            }
         }
     }
 }
