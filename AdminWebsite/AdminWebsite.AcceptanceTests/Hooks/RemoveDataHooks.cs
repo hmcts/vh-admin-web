@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using AcceptanceTests.Common.Api.Hearings;
 using AcceptanceTests.Common.Api.Helpers;
@@ -30,16 +31,20 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             var response = api.GetHearingsByUsername(_username);
             var hearings = RequestHelper.Deserialise<List<HearingDetailsResponse>>(response.Content);
             if (hearings == null) return;
-            foreach (var hearing in hearings)
+
+            var alreadyDeletedHearings = new List<Guid>();
+            foreach (var hearing in hearings.Where(hearing => !alreadyDeletedHearings.Contains(hearing.Id)))
             {
                 DeleteTheHearing(api, hearing.Id);
+                alreadyDeletedHearings.Add(hearing.Id);
             }
+            alreadyDeletedHearings.Clear();
         }
 
         private static void DeleteTheHearing(TestApiManager api, Guid hearingId)
         {
             var response = api.DeleteHearing(hearingId);
-            response.IsSuccessful.Should().BeTrue($"HearingDetails {hearingId} has been deleted. Status {response.StatusCode}. {response.Content}");
+            response.IsSuccessful.Should().BeTrue($"Hearing {hearingId} has been deleted. Status {response.StatusCode}. {response.Content}");
         }
 
         private void ClearClosedConferencesForUser(TestApiManager api)
