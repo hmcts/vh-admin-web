@@ -5,7 +5,6 @@ using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.AcceptanceTests.Pages;
 using AdminWebsite.TestAPI.Client;
 using FluentAssertions;
-using Selenium.Axe;
 using TechTalk.SpecFlow;
 
 namespace AdminWebsite.AcceptanceTests.Steps
@@ -40,13 +39,6 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(CommonAdminWebPage
                 .ContactUsEmail(_c.Test.CommonData.CommonOnScreenData.VhoEmail)).Displayed.Should().BeTrue();
             _browsers[_c.CurrentUser].CloseTab();
-        }
-
-        [Then(@"the page should be accessible")]
-        public void ThenThePageShouldBeAccessible()
-        {
-            var axeResult = new AxeBuilder(_browsers[_c.CurrentUser].Driver).Analyze();
-            axeResult.Violations.Should().BeEmpty();
         }
     }
 }

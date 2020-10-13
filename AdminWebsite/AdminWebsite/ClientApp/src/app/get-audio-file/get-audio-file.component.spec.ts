@@ -1,9 +1,9 @@
-import { AudioLinkService } from '../services/audio-link-service';
-import { GetAudioFileComponent } from './get-audio-file.component';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { HearingAudioSearchModel } from '../common/model/hearing-audio-search-model';
+import { FormBuilder } from '@angular/forms';
 import { CvpAudioSearchModel } from '../common/model/cvp-audio-search-model';
+import { HearingAudioSearchModel } from '../common/model/hearing-audio-search-model';
+import { AudioLinkService } from '../services/audio-link-service';
 import { CvpForAudioFileResponse } from '../services/clients/api-client';
+import { GetAudioFileComponent } from './get-audio-file.component';
 
 describe('GetAudioFileComponent', () => {
     let audioLinkService: jasmine.SpyObj<AudioLinkService>;
@@ -67,6 +67,22 @@ describe('GetAudioFileComponent', () => {
         expect(component.results).not.toEqual([]);
         expect(component.hasSearched).toBeTruthy();
     });
+
+    it('should set date to undefined when not set on search', async () => {
+        component.vhDate.setValue(null);
+        component.caseNumber.setValue('123');
+        await component.search();
+        expect(audioLinkService.searchForHearingsByCaseNumberOrDate).toHaveBeenCalledWith('123', undefined);
+    });
+
+    it('should set case number to undefined when not set on search', async () => {
+        const date = new Date();
+        component.vhDate.setValue(date);
+        component.caseNumber.setValue(null);
+        await component.search();
+        expect(audioLinkService.searchForHearingsByCaseNumberOrDate).toHaveBeenCalledWith(undefined, date);
+    });
+
     it('should get the cloudroom name from the form', async () => {
         component.cloudroomName.setValue('000101');
         expect(component.cloudroomName.value).toBe('000101');

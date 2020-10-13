@@ -33,35 +33,53 @@
                         data-aria-controls="conditional-how-contacted"
                         (click)="searchChoiceClick()"
                     />
-                    <label class="govuk-label govuk-radios__label" for="search-choice-cvpfile">
-                        Search for a CVP audio file
-                    </label>
+                    <label class="govuk-label govuk-radios__label" for="search-choice-cvpfile"> Search for a CVP audio file </label>
                 </div>
             </div>
         </div>
         <div class="govuk-!-margin-top-9" *ngIf="searchChoice === 'vhFile'">
-            <label class="govuk-label govuk-!-width-one-half" for="caseNumber">
-                Enter a case number
-            </label>
-            <input id="caseNumber" class="govuk-input govuk-!-width-one-quarter" type="text"
-                   formControlName="caseNumber" required/>
+            <label class="govuk-label govuk-!-width-one-half" for="caseNumber"> Enter a case number </label>
+            <input id="caseNumber" class="govuk-input govuk-!-width-one-quarter" type="text" formControlName="caseNumber" required />
+            <div class="govuk-!-margin-top-3">
+                <div [ngClass]="vhDateInvalid ? 'govuk-form-group--error' : 'govuk-form-group'">
+                    <label class="govuk-label govuk-!-width-one-quarter" for="vhDate"> Date </label>
+                    <input
+                        id="vhDate"
+                        class="govuk-input govuk-!-width-one-quarter"
+                        type="date"
+                        formControlName="vhDate"
+                        required
+                        placeholder="e.g. 30/08/2020"
+                        min="{{ today | date: 'yyyy-MM-dd' }}"
+                    />
+                    <div *ngIf="vhDateInvalid" class="alert alert-danger">
+                        <span id="vhDate-error" class="govuk-error-message"> Please enter a date in the past </span>
+                    </div>
+                </div>
+            </div>
             <button
-                class="govuk-button govuk-!-margin-left-2"
+                class="govuk-button govuk-!-margin-top-3"
                 data-module="govuk-button"
                 id="submit"
                 (click)="search()"
-                [disabled]="caseNumber.invalid"
+                [disabled]="!vhSearchCriteriaSet"
             >
                 Search
             </button>
         </div>
 
         <div class="govuk-!-margin-top-9" *ngIf="searchChoice === 'cvpFile'">
-            <div class="govuk-!-margin-bottom-6">
+            <div [ngClass]="cloudroomNameInvalid ? 'govuk-form-group--error' : 'govuk-form-group'">
+                <label class="govuk-label govuk-!-width-one-quarter" for="cloudroomName"> Cloudroom number </label>
+                <input id="cloudroomName" class="govuk-input govuk-!-width-one-half" type="text" formControlName="cloudroomName" required />
+                <div *ngIf="cloudroomNameInvalid" class="alert alert-danger">
+                    <span id="hearingDate-error" class="govuk-error-message"> Enter the number of the cloudroom </span>
+                </div>
+            </div>
+
+            <div class="govuk-!-margin-top-3">
                 <div [ngClass]="hearingDateInvalid ? 'govuk-form-group--error' : 'govuk-form-group'">
-                    <label class="govuk-label govuk-!-width-one-quarter" for="hearingDate">
-                        Date
-                    </label>
+                    <label class="govuk-label govuk-!-width-one-quarter" for="hearingDate"> Date </label>
                     <input
                         id="hearingDate"
                         class="govuk-input govuk-!-width-one-quarter"
@@ -72,32 +90,16 @@
                         min="{{ today | date: 'yyyy-MM-dd' }}"
                     />
                     <div *ngIf="hearingDateInvalid" class="alert alert-danger">
-                        <span id="hearingDate-error" class="govuk-error-message">
-                            Please enter a date in the past
-                        </span>
+                        <span id="hearingDate-error" class="govuk-error-message"> Please enter a date in the past </span>
                     </div>
-                </div>
-            </div>
-
-            <div [ngClass]="cloudroomNameInvalid ? 'govuk-form-group--error' : 'govuk-form-group'">
-                <label class="govuk-label govuk-!-width-two-thirds" for="cloudroomName">
-                    Cloudroom number
-                </label>
-                <input id="cloudroomName" class="govuk-input govuk-!-width-one-half" type="text"
-                       formControlName="cloudroomName"/>
-                <div *ngIf="cloudroomNameInvalid" class="alert alert-danger">
-                    <span id="hearingDate-error" class="govuk-error-message">
-                        Enter the number of the cloudroom
-                    </span>
                 </div>
             </div>
 
             <div class="govuk-!-margin-top-3">
                 <label class="govuk-label govuk-!-width-two-thirds" for="caseReference">
-                    Case reference
+                    Case reference <span class="govuk-hint" style="display: inline-block; margin-bottom: 0 !important">(optional)</span>
                 </label>
-                <input id="caseReference" class="govuk-input govuk-!-width-one-half" type="text"
-                       formControlName="caseReference"/>
+                <input id="caseReference" class="govuk-input govuk-!-width-one-half" type="text" formControlName="caseReference" />
             </div>
             <button
                 class="govuk-button govuk-!-margin-top-3"

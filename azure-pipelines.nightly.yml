@@ -59,6 +59,12 @@ parameters:
       DeviceType: Desktop
       DeviceName:
       TestCaseFilter: TestCategory=UnsupportedBrowser
+    - OS: MacOS
+      Browser: EdgeChromium
+      BrowserVersion: Latest
+      DeviceType: Desktop
+      DeviceName:
+      TestCaseFilter: TestCategory=UnsupportedBrowser  
     - OS: Windows
       Browser: Ie11
       BrowserVersion: Latest
