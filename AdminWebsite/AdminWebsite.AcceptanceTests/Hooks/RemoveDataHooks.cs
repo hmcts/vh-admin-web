@@ -32,13 +32,11 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             var hearings = RequestHelper.Deserialise<List<HearingDetailsResponse>>(response.Content);
             if (hearings == null) return;
 
-            hearings = hearings.GroupBy(x => x.Id)
-                .Select(group => group.First())
-                .ToList();
+            var hearingIds = hearings.Select(x => x.Id).Distinct().ToList();
 
-            foreach (var hearing in hearings)
+            foreach (var hearingId in hearingIds)
             {
-                DeleteTheHearing(api, hearing.Id);
+                DeleteTheHearing(api, hearingId);
             }
         }
 
