@@ -16,6 +16,7 @@ export class GetAudioFileComponent implements OnInit {
     hasCvpSearched: boolean;
     results: HearingAudioSearchModel[] = [];
     cvpResults: CvpAudioSearchModel[] = [];
+    today = new Date();
 
     constructor(private fb: FormBuilder, private audioLinkService: AudioLinkService) {
         this.hasSearched = false;
