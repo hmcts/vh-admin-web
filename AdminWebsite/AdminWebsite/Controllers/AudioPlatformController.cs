@@ -51,19 +51,20 @@ namespace AdminWebsite.Controllers
             }
         }
 
-        [HttpGet("{cloudroom}/{date}/{caseReference}")]
-        [SwaggerOperation(OperationId = "GetCvpAudioRecordingLinkWithCaseReference")]
+        [HttpGet("cvp/all/{cloudroom}/{date}/{caseReference}")]
+        [SwaggerOperation(OperationId = "GetCvpAudioRecordingsAll")]
         [ProducesResponseType(typeof(List<CvpForAudioFileResponse>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> GetCvpAudioRecordingLinkWithCaseReferenceAsync(string cloudroom, string date, string caseReference)
+        public async Task<IActionResult> GetCvpAudioRecordingsALlLinkAsync(string cloudroom, string date, string caseReference)
         {
             _logger.LogInformation($"Getting CVP audio recording for cloudroom: {cloudroom}, date: {date}, case reference: {caseReference}");
 
             try
             {
-                var cvpFilesResponse = await _videoAPiClient. GetAudioRecordingLinkAllCvpAsync(cloudroom, date, caseReference);
+                var cvpFilesResponse = await _videoAPiClient.GetAudioRecordingLinkAllCvpAsync(cloudroom, date, caseReference);
 
-                var response = cvpFilesResponse.Select(x => new CvpForAudioFileResponse { FileName = x.File_name, SasTokenUri = x.Sas_token_url })
+                var response = cvpFilesResponse
+                    .Select(x => new CvpForAudioFileResponse { FileName = x.File_name, SasTokenUri = x.Sas_token_url })
                     .ToList();
 
                 return Ok(response);
@@ -74,11 +75,11 @@ namespace AdminWebsite.Controllers
             }
         }
 
-        [HttpGet("{cloudroom}/{date}")]
-        [SwaggerOperation(OperationId = "GetCvpAudioRecordingLink")]
+        [HttpGet("cvp/cloudroom/{cloudroom}/{date}")]
+        [SwaggerOperation(OperationId = "GetCvpAudioRecordingsByCloudRoom")]
         [ProducesResponseType(typeof(List<CvpForAudioFileResponse>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> GetCvpAudioRecordingLinkAsync(string cloudroom, string date)
+        public async Task<IActionResult> GetCvpAudioRecordingsByCloudRoomAsync(string cloudroom, string date)
         {
             _logger.LogInformation($"Getting CVP audio recording for cloudroom: {cloudroom}, date: {date}");
 
@@ -86,7 +87,32 @@ namespace AdminWebsite.Controllers
             {
                 var cvpFilesResponse = await _videoAPiClient.GetAudioRecordingLinkCvpByCloudRoomAsync(cloudroom, date);
 
-                var response = cvpFilesResponse.Select(x => new CvpForAudioFileResponse { FileName = x.File_name, SasTokenUri = x.Sas_token_url })
+                var response = cvpFilesResponse
+                    .Select(x => new CvpForAudioFileResponse { FileName = x.File_name, SasTokenUri = x.Sas_token_url })
+                    .ToList();
+
+                return Ok(response);
+            }
+            catch (VideoApiException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Response);
+            }
+        }
+
+        [HttpGet("cvp/date/{date}/{caseReference}")]
+        [SwaggerOperation(OperationId = "GetCvpAudioRecordingsByDate")]
+        [ProducesResponseType(typeof(List<CvpForAudioFileResponse>), (int) HttpStatusCode.OK)]
+        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetCvpAudioRecordingsByDateAsync(string date, string caseReference)
+        {
+            _logger.LogInformation($"Getting CVP audio recording for Date: {date}, case reference: {caseReference}");
+
+            try
+            {
+                var cvpFilesResponse = await _videoAPiClient.GetAudioRecordingLinkCvpByDateAsync(date, caseReference);
+
+                var response = cvpFilesResponse
+                    .Select(x => new CvpForAudioFileResponse {FileName = x.File_name, SasTokenUri = x.Sas_token_url})
                     .ToList();
 
                 return Ok(response);

@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms'
 import { HearingAudioSearchModel } from '../common/model/hearing-audio-search-model';
 import { CvpAudioSearchModel } from '../common/model/cvp-audio-search-model';
 import { AudioLinkService } from '../services/audio-link-service';
+import { CvpForAudioFileResponse } from '../services/clients/api-client';
 
 @Component({
     selector: 'app-get-audio-file',
@@ -28,7 +29,7 @@ export class GetAudioFileComponent implements OnInit {
             caseNumber: ['', Validators.required],
             searchChoice: ['vhFile'],
             hearingDate: [hearingDateParsed, Validators.required],
-            cloudroomName: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
+            cloudroomName: ['', [Validators.pattern('^[0-9]*$')]],
             caseReference: ['']
         });
     }
@@ -62,11 +63,12 @@ export class GetAudioFileComponent implements OnInit {
     }
 
     get cvpRequestInvalid() {
-        return this.cloudroomName.invalid || this.hearingDate.invalid || this.hearingDateInvalid;
+        return this.cloudroomName.invalid || this.hearingDate.invalid || this.hearingDateInvalid ||
+            (this.cloudroomName.value.length === 0 && this.caseReference.value.length === 0);
     }
 
     get cloudroomNameInvalid() {
-        return this.cloudroomName.invalid && (this.cloudroomName.dirty || this.cloudroomName.touched);
+        return this.cloudroomName.invalid && this.cloudroomName.value.length > 0;
     }
 
     searchChoiceClick() {
@@ -119,13 +121,18 @@ export class GetAudioFileComponent implements OnInit {
     }
 
     async getCvpResults(): Promise<CvpAudioSearchModel[]> {
-        const response = this.caseReference.value
-            ? await this.audioLinkService.getCvpAudioLinkWithCaseReference(
-                  this.cloudroomName.value,
-                  this.hearingDate.value,
-                  this.caseReference.value
-              )
-            : await this.audioLinkService.getCvpAudioLink(this.cloudroomName.value, this.hearingDate.value);
+        let response: CvpForAudioFileResponse[];
+
+        if (this.cloudroomName.value && this.hearingDate.value && this.caseReference.value) {
+            response = await this.audioLinkService.getCvpAudioRecordingsAll(this.cloudroomName.value,
+                this.hearingDate.value,
+                this.caseReference.value);
+        } else if (this.cloudroomName.value && this.hearingDate.value) {
+            response = await this.audioLinkService.getCvpAudioRecordingsByCloudRoom(this.cloudroomName.value, this.hearingDate.value);
+        } else {
+            response = await this.audioLinkService.getCvpAudioRecordingsByDate(this.hearingDate.value, this.caseReference.value);
+        }
+
         return response === null ? [] : response.map((x) => new CvpAudioSearchModel(x));
     }
 }
