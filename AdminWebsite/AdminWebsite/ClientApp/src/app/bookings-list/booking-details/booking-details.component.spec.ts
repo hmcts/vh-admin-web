@@ -1,7 +1,7 @@
 import { Location } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { Component, Input } from '@angular/core';
-import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -214,41 +214,43 @@ describe('BookingDetailsComponent', () => {
     const loggerSpy: jasmine.SpyObj<Logger> = jasmine.createSpyObj('Logger', ['error', 'event']);
     locationSpy = jasmine.createSpyObj('Location', ['back']);
 
-    beforeEach(async(() => {
-        videoHearingServiceSpy.getHearingById.and.returnValue(of(hearingResponse));
-        videoHearingServiceSpy.updateBookingStatus.and.returnValue(of());
-        videoHearingServiceSpy.mapHearingDetailsResponseToHearingModel.and.returnValue(hearingModel);
-        videoHearingServiceSpy.getCurrentRequest.and.returnValue(hearingModel);
+    beforeEach(
+        waitForAsync(() => {
+            videoHearingServiceSpy.getHearingById.and.returnValue(of(hearingResponse));
+            videoHearingServiceSpy.updateBookingStatus.and.returnValue(of());
+            videoHearingServiceSpy.mapHearingDetailsResponseToHearingModel.and.returnValue(hearingModel);
+            videoHearingServiceSpy.getCurrentRequest.and.returnValue(hearingModel);
 
-        bookingPersistServiceSpy.selectedHearingId = '44';
-        userIdentityServiceSpy.getUserInformation.and.returnValue(of(true));
+            bookingPersistServiceSpy.selectedHearingId = '44';
+            userIdentityServiceSpy.getUserInformation.and.returnValue(of(true));
 
-        TestBed.configureTestingModule({
-            declarations: [
-                BookingDetailsComponent,
-                BookingParticipantListMockComponent,
-                HearingDetailsMockComponent,
-                CancelBookingPopupComponent,
-                WaitPopupComponent,
-                ConfirmBookingFailedPopupComponent
-            ],
-            imports: [HttpClientModule, ReactiveFormsModule, RouterTestingModule],
-            providers: [
-                { provide: VideoHearingsService, useValue: videoHearingServiceSpy },
-                { provide: BookingDetailsService, useClass: BookingDetailsServiceMock },
-                { provide: Router, useValue: routerSpy },
-                { provide: BookingService, useValue: bookingServiceSpy },
-                { provide: BookingPersistService, useValue: bookingPersistServiceSpy },
-                { provide: UserIdentityService, useValue: userIdentityServiceSpy },
-                { provide: Logger, useValue: loggerSpy },
-                { provide: Location, useValue: locationSpy }
-            ]
-        }).compileComponents();
-        fixture = TestBed.createComponent(BookingDetailsComponent);
-        component = fixture.componentInstance;
-        component.hearingId = '1';
-        fixture.detectChanges();
-    }));
+            TestBed.configureTestingModule({
+                declarations: [
+                    BookingDetailsComponent,
+                    BookingParticipantListMockComponent,
+                    HearingDetailsMockComponent,
+                    CancelBookingPopupComponent,
+                    WaitPopupComponent,
+                    ConfirmBookingFailedPopupComponent
+                ],
+                imports: [HttpClientModule, ReactiveFormsModule, RouterTestingModule],
+                providers: [
+                    { provide: VideoHearingsService, useValue: videoHearingServiceSpy },
+                    { provide: BookingDetailsService, useClass: BookingDetailsServiceMock },
+                    { provide: Router, useValue: routerSpy },
+                    { provide: BookingService, useValue: bookingServiceSpy },
+                    { provide: BookingPersistService, useValue: bookingPersistServiceSpy },
+                    { provide: UserIdentityService, useValue: userIdentityServiceSpy },
+                    { provide: Logger, useValue: loggerSpy },
+                    { provide: Location, useValue: locationSpy }
+                ]
+            }).compileComponents();
+            fixture = TestBed.createComponent(BookingDetailsComponent);
+            component = fixture.componentInstance;
+            component.hearingId = '1';
+            fixture.detectChanges();
+        })
+    );
 
     it('should create component', fakeAsync(() => {
         expect(component).toBeTruthy();
@@ -413,7 +415,7 @@ describe('BookingDetailsComponent', () => {
     it('should on destroy unsubscribe the subscriptions', fakeAsync(() => {
         component.ngOnDestroy();
         expect(component.timeSubscription).toBeFalsy();
-        component.$subscriptions.forEach((s) => expect(s.closed).toBeTruthy());
+        component.$subscriptions.forEach(s => expect(s.closed).toBeTruthy());
     }));
     it('should set confirmation button visible if hearing start time more than 30 min', fakeAsync(() => {
         let current = new Date();

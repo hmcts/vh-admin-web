@@ -44,6 +44,15 @@ namespace AdminWebsite.Services
         Task DeleteParticipantAccountAsync(string username);
 
         Task AssignParticipantToGroup(string username, string userRole);
+
+        Task<string> GetAdUserIdForUsername(string username);
+
+        /// <summary>
+        /// Create a new user in AD
+        /// </summary>
+        /// <param name="participant"></param>
+        /// <returns>New User response</returns>
+        Task<NewUserResponse> CreateNewUserInAD(ParticipantRequest participant);
     }
 
     public class UserAccountService : IUserAccountService
@@ -106,7 +115,25 @@ namespace AdminWebsite.Services
             }
         }
 
-        private async Task<NewUserResponse> CreateNewUserInAD(ParticipantRequest participant)
+        public async Task<string> GetAdUserIdForUsername(string username)
+        {
+            try
+            {
+                var user = await _userApiClient.GetUserByAdUserIdAsync(username);
+                return user.User_id;
+            }
+            catch (UserAPI.Client.UserServiceException e)
+            {
+                if (e.StatusCode == (int) HttpStatusCode.NotFound)
+                {
+                    return null;
+                }
+
+                throw;
+            }
+        }
+
+        public async Task<NewUserResponse> CreateNewUserInAD(ParticipantRequest participant)
         {
             const string BLANK = " ";
 

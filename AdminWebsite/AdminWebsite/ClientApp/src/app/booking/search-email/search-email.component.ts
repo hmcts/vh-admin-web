@@ -37,11 +37,11 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
     @Output()
     emailChanged = new EventEmitter<string>();
 
-  constructor(private searchService: SearchService, private configService: ConfigService, private logger: Logger) { }
+    constructor(private searchService: SearchService, private configService: ConfigService, private logger: Logger) {}
 
     ngOnInit() {
-        this.$subscriptions.push(this.searchService.search(this.searchTerm)
-            .subscribe(data => {
+        this.$subscriptions.push(
+            this.searchService.search(this.searchTerm).subscribe(data => {
                 if (data && data.length > 0) {
                     this.getData(data);
                 } else {
@@ -53,20 +53,21 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
                     this.isShowResult = false;
                     this.results = undefined;
                 }
-            }));
+            })
+        );
 
-      this.$subscriptions.push(this.searchTerm.subscribe(s => this.email = s));
+        this.$subscriptions.push(this.searchTerm.subscribe(s => (this.email = s)));
         this.getEmailPattern();
     }
 
-  async getEmailPattern() {
-      const settings = await this.configService.getClientSettings().toPromise();
-      this.invalidPattern = settings.test_username_stem;
-      if (!this.invalidPattern || this.invalidPattern.length === 0) {
-        this.logger.error(`Pattern to validate email is not set`, new Error('Email validation error'));
-      } else {
-        this.logger.info(`Pattern to validate email is set with length ${this.invalidPattern.length}`);
-      }
+    async getEmailPattern() {
+        const settings = await this.configService.getClientSettings().toPromise();
+        this.invalidPattern = settings.test_username_stem;
+        if (!this.invalidPattern || this.invalidPattern.length === 0) {
+            this.logger.error(`Pattern to validate email is not set`, new Error('Email validation error'));
+        } else {
+            this.logger.info(`Pattern to validate email is set with length ${this.invalidPattern.length}`);
+        }
     }
 
     getData(data: PersonResponse[]) {
@@ -98,6 +99,7 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
         selectedResult.phone = result.phone;
         selectedResult.company = result.company;
         selectedResult.is_exist_person = true;
+        selectedResult.username = result.username;
         this.isShowResult = false;
         this.findParticipant.emit(selectedResult);
     }
@@ -105,7 +107,11 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
     validateEmail() {
         /* tslint:disable: max-line-length */
         const pattern = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
-        this.isValidEmail = this.email && this.email.length > 0 && this.email.length < 256 && pattern.test(this.email.toLowerCase()) &&
+        this.isValidEmail =
+            this.email &&
+            this.email.length > 0 &&
+            this.email.length < 256 &&
+            pattern.test(this.email.toLowerCase()) &&
             this.email.toLowerCase().indexOf(this.invalidPattern) < 0;
         return this.isValidEmail;
     }
@@ -149,6 +155,10 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-      this.$subscriptions.forEach(subscription => { if (subscription) { subscription.unsubscribe(); } });
+        this.$subscriptions.forEach(subscription => {
+            if (subscription) {
+                subscription.unsubscribe();
+            }
+        });
     }
 }

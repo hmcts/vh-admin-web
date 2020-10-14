@@ -35,7 +35,6 @@ namespace AdminWebsite.Controllers
         private readonly IBookingsApiClient _bookingsApiClient;
         private readonly IUserIdentity _userIdentity;
         private readonly IUserAccountService _userAccountService;
-        private readonly IValidator<BookNewHearingRequest> _bookNewHearingRequestValidator;
         private readonly IValidator<EditHearingRequest> _editHearingRequestValidator;
         private readonly JavaScriptEncoder _encoder;
         private readonly IVideoApiClient _videoApiClient;
@@ -45,14 +44,14 @@ namespace AdminWebsite.Controllers
         /// <summary>
         /// Instantiates the controller
         /// </summary>
-        public HearingsController(IBookingsApiClient bookingsApiClient, IUserIdentity userIdentity, IUserAccountService userAccountService,
-            IValidator<BookNewHearingRequest> bookNewHearingRequestValidator, IValidator<EditHearingRequest> editHearingRequestValidator,
-            JavaScriptEncoder encoder, IVideoApiClient videoApiClient, IPollyRetryService pollyRetryService, ILogger<HearingsController> logger)
+        public HearingsController(IBookingsApiClient bookingsApiClient, IUserIdentity userIdentity,
+            IUserAccountService userAccountService, IValidator<EditHearingRequest> editHearingRequestValidator,
+            JavaScriptEncoder encoder, IVideoApiClient videoApiClient, IPollyRetryService pollyRetryService,
+            ILogger<HearingsController> logger)
         {
             _bookingsApiClient = bookingsApiClient;
             _userIdentity = userIdentity;
             _userAccountService = userAccountService;
-            _bookNewHearingRequestValidator = bookNewHearingRequestValidator;
             _editHearingRequestValidator = editHearingRequestValidator;
             _encoder = encoder;
             _videoApiClient = videoApiClient;
@@ -73,33 +72,17 @@ namespace AdminWebsite.Controllers
         public async Task<ActionResult<HearingDetailsResponse>> Post([FromBody] BookNewHearingRequest request)
         {
             var usernameAdIdDict = new Dictionary<string, string>();
-            var result = _bookNewHearingRequestValidator.Validate(request);
-
-            if (!result.IsValid)
-            {
-                ModelState.AddFluentValidationErrors(result.Errors);
-                return BadRequest(ModelState);
-            }
-
             try
             {
-                if (request.Participants != null)
+                var nonJudgeParticipants = request.Participants.Where(p => p.Case_role_name != "Judge").ToList();
+                await PopulateUserIdsAndUsernames(nonJudgeParticipants, usernameAdIdDict);
+
+                if (request.Endpoints != null && request.Endpoints.Any())
                 {
-                    var participantsList = request.Participants.Where(p => p.Case_role_name != "Judge");
-                    foreach (var participant in participantsList)
-                    {
-                        var userId =  await _userAccountService.UpdateParticipantUsername(participant);
-                        usernameAdIdDict[participant.Username] = userId;
-                        if (request.Endpoints != null)
-                        {
-                            var epToUpdate = request.Endpoints.FirstOrDefault(ep => ep.Defence_advocate_username.Equals(participant.Contact_email, 
-                                StringComparison.CurrentCultureIgnoreCase));
-                            if (epToUpdate != null)
-                            {
-                                epToUpdate.Defence_advocate_username = participant.Username;
-                            }
-                        }
-                    }
+                    var endpointsWithDa = request.Endpoints
+                        .Where(x => !string.IsNullOrWhiteSpace(x.Defence_advocate_username)).ToList();
+                    AssignEndpointDefenceAdvocates(endpointsWithDa, request.Participants.AsReadOnly());
+                    
                 }
 
                 request.Created_by = _userIdentity.GetUserIdentityName();
@@ -109,11 +92,48 @@ namespace AdminWebsite.Controllers
             }
             catch (BookingsApiException e)
             {
-                if (e.StatusCode == (int)HttpStatusCode.BadRequest)
+                if (e.StatusCode == (int) HttpStatusCode.BadRequest)
                 {
                     return BadRequest(e.Response);
                 }
+
                 throw;
+            }
+        }
+
+        private async Task PopulateUserIdsAndUsernames(IList<ParticipantRequest> participants,
+            Dictionary<string, string> usernameAdIdDict)
+        {
+            foreach (var participant in participants)
+            {
+                // set the participant username according to AD
+                string adUserId;
+                if(string.IsNullOrWhiteSpace(participant.Username))
+                {
+                    // create user
+                    var newUser = await _userAccountService.CreateNewUserInAD(participant);
+                    participant.Username = newUser.Username;
+                    adUserId = newUser.User_id;
+                }
+                else
+                {
+                    // get user
+                    adUserId = await _userAccountService.GetAdUserIdForUsername(participant.Username);
+                }
+                    
+                usernameAdIdDict[participant.Username] = adUserId;
+            }
+        }
+
+        private void AssignEndpointDefenceAdvocates(List<EndpointRequest> endpointsWithDa, IReadOnlyCollection<ParticipantRequest> participants)
+        {
+            // update the username of defence advocate 
+            foreach (var endpoint in endpointsWithDa)
+            {
+                var defenceAdvocate = participants.Single(x =>
+                    x.Contact_email.Equals(endpoint.Defence_advocate_username,
+                        StringComparison.CurrentCultureIgnoreCase));
+                endpoint.Defence_advocate_username = defenceAdvocate.Username;
             }
         }
 

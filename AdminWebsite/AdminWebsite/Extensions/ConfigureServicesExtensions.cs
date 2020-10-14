@@ -108,7 +108,6 @@ namespace AdminWebsite.Extensions
                 return new UserIdentity(userPrincipal);
             });
 
-            serviceCollection.AddSingleton<IValidator<BookNewHearingRequest>, BookNewHearingRequestValidator>();
             serviceCollection.AddSingleton<IValidator<EditHearingRequest>, EditHearingRequestValidator>();
 
             return serviceCollection;

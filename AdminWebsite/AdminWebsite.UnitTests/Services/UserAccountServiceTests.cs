@@ -1,3 +1,4 @@
+using System;
 using AdminWebsite.Configuration;
 using AdminWebsite.Helper;
 using AdminWebsite.Security;
@@ -262,6 +263,42 @@ namespace AdminWebsite.UnitTests.Services
             
             _userApiClient.Verify(x => x.DeleteUserAsync(username), Times.Once);
             _bookingsApiClient.Verify(x => x.AnonymisePersonWithUsernameAsync(username), Times.Never);
+        }
+
+        [Test]
+        public async Task should_return_user_ad_id_for_username()
+        {
+            var profile = new UserProfile
+            {
+                User_id = Guid.NewGuid().ToString()
+            };
+            _userApiClient.Setup(x => x.GetUserByAdUserIdAsync(It.IsAny<string>()))
+                .ReturnsAsync(profile);
+
+            
+            var id = await  _service.GetAdUserIdForUsername("do_not_exist@test.com");
+            id.Should().Be(profile.User_id);
+        }
+        
+        [Test]
+        public async Task should_return_null_when_username_not_found()
+        {
+            _userApiClient.Setup(x => x.GetUserByAdUserIdAsync(It.IsAny<string>()))
+                .Throws(ClientException.ForUserService(HttpStatusCode.NotFound));
+
+            
+              var id = await  _service.GetAdUserIdForUsername("do_not_exist@test.com");
+              id.Should().BeNull();
+        }
+        
+        [Test]
+        public void should_throw_exception_when_username_not_found_throws()
+        {
+            _userApiClient.Setup(x => x.GetUserByAdUserIdAsync(It.IsAny<string>()))
+                .Throws(ClientException.ForUserService(HttpStatusCode.InternalServerError));
+
+            Assert.ThrowsAsync<UserAPI.Client.UserServiceException>(() =>
+                _service.GetAdUserIdForUsername("123"));
         }
     }
 }

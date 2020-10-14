@@ -13,7 +13,6 @@ using AdminWebsite.VideoAPI.Client;
 using FizzWare.NBuilder;
 using FluentAssertions;
 using FluentValidation;
-using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -27,7 +26,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private Mock<IBookingsApiClient> _bookingsApiClient;
         private Mock<IUserIdentity> _userIdentity;
         private Mock<IUserAccountService> _userAccountService;
-        private Mock<IValidator<BookNewHearingRequest>> _bookNewHearingRequestValidator;
         private Mock<IValidator<EditHearingRequest>> _editHearingRequestValidator;
         private Mock<IVideoApiClient> _videoApiMock;
         private Mock<IPollyRetryService> _pollyRetryServiceMock;
@@ -40,7 +38,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _bookingsApiClient = new Mock<IBookingsApiClient>();
             _userIdentity = new Mock<IUserIdentity>();
             _userAccountService = new Mock<IUserAccountService>();
-            _bookNewHearingRequestValidator = new Mock<IValidator<BookNewHearingRequest>>();
             _editHearingRequestValidator = new Mock<IValidator<EditHearingRequest>>();
             _videoApiMock = new Mock<IVideoApiClient>();
             _pollyRetryServiceMock = new Mock<IPollyRetryService>();
@@ -48,7 +45,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _controller = new AdminWebsite.Controllers.HearingsController(_bookingsApiClient.Object,
                 _userIdentity.Object,
                 _userAccountService.Object,
-                _bookNewHearingRequestValidator.Object,
                 _editHearingRequestValidator.Object,
                 JavaScriptEncoder.Default,
                 _videoApiMock.Object,
@@ -64,9 +60,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task Should_update_participant_user_details()
         {
-            _bookNewHearingRequestValidator.Setup(x => x.Validate(It.IsAny<BookNewHearingRequest>()))
-                .Returns(new ValidationResult());
-
             var participant = new BookingsAPI.Client.ParticipantRequest
             {
                 Username = "username",
@@ -87,15 +80,12 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             await PostWithParticipants(participant);
 
-            _userAccountService.Verify(x => x.UpdateParticipantUsername(participant), Times.Once);
+            _userAccountService.Verify(x => x.GetAdUserIdForUsername(participant.Username), Times.Once);
         }
 
         [Test]
         public async Task Should_update_participant_username_to_aad_email_id()
         {
-            _bookNewHearingRequestValidator.Setup(x => x.Validate(It.IsAny<BookNewHearingRequest>()))
-                .Returns(new ValidationResult());
-
             var participant = new BookingsAPI.Client.ParticipantRequest
             {
                 Username = "username@newemail.com",
@@ -127,14 +117,12 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 .ReturnsAsync(hearingDetailsResponse);
 
             await _controller.Post(hearing);
-            _userAccountService.Verify(x => x.UpdateParticipantUsername(participant), Times.Once);
+            _userAccountService.Verify(x => x.GetAdUserIdForUsername(participant.Username), Times.Once);
         }
 
         [Test]
         public async Task Should_create_a_hearing_with_endpoints()
         {
-            _bookNewHearingRequestValidator.Setup(x => x.Validate(It.IsAny<BookNewHearingRequest>()))
-                .Returns(new ValidationResult());
             var newHearingRequest = new BookNewHearingRequest
             {
                 Participants = new List<BookingsAPI.Client.ParticipantRequest>
@@ -190,9 +178,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task Should_not_update_user_details_for_judge()
         {
-            _bookNewHearingRequestValidator.Setup(x => x.Validate(It.IsAny<BookNewHearingRequest>()))
-                .Returns(new ValidationResult());
-
             var participant = new BookingsAPI.Client.ParticipantRequest
             {
                 Username = "username",
@@ -217,9 +202,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task Should_pass_bad_request_from_bookings_api()
         {
-            _bookNewHearingRequestValidator.Setup(x => x.Validate(It.IsAny<BookNewHearingRequest>()))
-                .Returns(new ValidationResult());
-
             var hearing = new BookNewHearingRequest
             {
                 Participants = new List<BookingsAPI.Client.ParticipantRequest>()
@@ -235,9 +217,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task Should_pass_current_user_as_created_by_to_service()
         {
-            _bookNewHearingRequestValidator.Setup(x => x.Validate(It.IsAny<BookNewHearingRequest>()))
-                .Returns(new ValidationResult());
-
             const string CURRENT_USERNAME = "test@user.com";
             _userIdentity.Setup(x => x.GetUserIdentityName()).Returns(CURRENT_USERNAME);
 
@@ -261,28 +240,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             _bookingsApiClient.Verify(x => x.BookNewHearingAsync(It.Is<BookNewHearingRequest>(
                 request => request.Created_by == CURRENT_USERNAME)), Times.Once);
-        }
-
-        [Test]
-        public async Task Should_return_bad_request_on_validation_failure()
-        {
-            _bookNewHearingRequestValidator.Setup(x => x.Validate(It.IsAny<BookNewHearingRequest>()))
-                .Returns(new ValidationResult(new[]
-                {
-                    new ValidationFailure("dsfs", "asda", new object())
-                }));
-
-            var participant = new BookingsAPI.Client.ParticipantRequest
-            {
-                Username = "username",
-                Case_role_name = "Claimant",
-                Hearing_role_name = "Representative"
-            };
-
-            var response = await PostWithParticipants(participant);
-            response.Result.Should().BeOfType<BadRequestObjectResult>();
-
-            _userAccountService.Verify(x => x.UpdateParticipantUsername(participant), Times.Never);
         }
 
         [Test]
