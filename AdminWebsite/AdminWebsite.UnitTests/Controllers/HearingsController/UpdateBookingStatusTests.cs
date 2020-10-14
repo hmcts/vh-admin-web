@@ -28,7 +28,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _bookingsApiClient = new Mock<IBookingsApiClient>();
             _userIdentity = new Mock<IUserIdentity>();
             var userAccountService = new Mock<IUserAccountService>();
-            var bookNewHearingRequestValidator = new Mock<IValidator<BookNewHearingRequest>>();
             var editHearingRequestValidator = new Mock<IValidator<EditHearingRequest>>();
             var videoApiMock = new Mock<IVideoApiClient>();
             _pollyRetryServiceMock = new Mock<IPollyRetryService>();
@@ -36,7 +35,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _controller = new AdminWebsite.Controllers.HearingsController(_bookingsApiClient.Object,
                 _userIdentity.Object,
                 userAccountService.Object,
-                bookNewHearingRequestValidator.Object,
                 editHearingRequestValidator.Object,
                 JavaScriptEncoder.Default,
                 videoApiMock.Object,
