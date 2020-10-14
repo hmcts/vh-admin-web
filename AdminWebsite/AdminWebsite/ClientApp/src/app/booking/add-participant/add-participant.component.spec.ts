@@ -1,36 +1,35 @@
-import { async, ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import { AbstractControl, Validators } from '@angular/forms';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
-
 import { of, Subscription } from 'rxjs';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { BreadcrumbStubComponent } from 'src/app/testing/stubs/breadcrumb-stub';
 import { CancelPopupStubComponent } from 'src/app/testing/stubs/cancel-popup-stub';
 import { ConfirmationPopupStubComponent } from 'src/app/testing/stubs/confirmation-popup-stub';
-import { RemovePopupStubComponent } from '../../testing/stubs/remove-popup-stub';
-import { DiscardConfirmPopupComponent } from '../../popups/discard-confirm-popup/discard-confirm-popup.component';
-
 import { SearchServiceStub } from 'src/app/testing/stubs/service-service-stub';
-import { SearchService } from '../../services/search.service';
-import { VideoHearingsService } from '../../services/video-hearings.service';
-import { ParticipantService } from '../services/participant.service';
-import { BookingService } from '../../services/booking.service';
-import { SearchEmailComponent } from '../search-email/search-email.component';
-import { AddParticipantComponent } from './add-participant.component';
+import { Constants } from '../../common/constants';
 import { HearingModel } from '../../common/model/hearing.model';
 import { ParticipantModel } from '../../common/model/participant.model';
-import { CaseAndHearingRolesResponse, ClientSettingsResponse } from '../../services/clients/api-client';
 import { PartyModel } from '../../common/model/party.model';
-import { Constants } from '../../common/constants';
-import { ParticipantsListComponent } from '../participants-list/participants-list.component';
-import { Logger } from '../../services/logger';
+import { DiscardConfirmPopupComponent } from '../../popups/discard-confirm-popup/discard-confirm-popup.component';
+import { BookingService } from '../../services/booking.service';
+import { CaseAndHearingRolesResponse, ClientSettingsResponse } from '../../services/clients/api-client';
 import { ConfigService } from '../../services/config.service';
+import { Logger } from '../../services/logger';
+import { SearchService } from '../../services/search.service';
+import { VideoHearingsService } from '../../services/video-hearings.service';
+import { RemovePopupStubComponent } from '../../testing/stubs/remove-popup-stub';
+import { ParticipantsListComponent } from '../participants-list/participants-list.component';
+import { SearchEmailComponent } from '../search-email/search-email.component';
+import { ParticipantService } from '../services/participant.service';
+import { AddParticipantComponent } from './add-participant.component';
 
 let component: AddParticipantComponent;
 let fixture: ComponentFixture<AddParticipantComponent>;
 
-const roleList: CaseAndHearingRolesResponse[] =
-    [new CaseAndHearingRolesResponse({ name: 'Claimant', hearing_roles: ['Representative', 'Claimant LIP'] })];
+const roleList: CaseAndHearingRolesResponse[] = [
+    new CaseAndHearingRolesResponse({ name: 'Claimant', hearing_roles: ['Representative', 'Claimant LIP'] })
+];
 
 const partyR = new PartyModel('Claimant');
 partyR.hearingRoles = ['Representative', 'Claimant LIP'];
@@ -162,56 +161,61 @@ let loggerSpy: jasmine.SpyObj<Logger>;
 const configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettings']);
 
 loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error']);
-participantServiceSpy = jasmine.createSpyObj<ParticipantService>('ParticipantService',
-    ['checkDuplication', 'removeParticipant', 'mapParticipantsRoles']);
+participantServiceSpy = jasmine.createSpyObj<ParticipantService>('ParticipantService', [
+    'checkDuplication',
+    'removeParticipant',
+    'mapParticipantsRoles'
+]);
 
 describe('AddParticipantComponent', () => {
+    beforeEach(
+        waitForAsync(() => {
+            const hearing = initHearingRequest();
+            videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>([
+                'getParticipantRoles',
+                'getCurrentRequest',
+                'setBookingHasChanged',
+                'updateHearingRequest',
+                'cancelRequest'
+            ]);
+            videoHearingsServiceSpy.getParticipantRoles.and.returnValue(Promise.resolve(roleList));
+            videoHearingsServiceSpy.getCurrentRequest.and.returnValue(hearing);
+            participantServiceSpy = jasmine.createSpyObj<ParticipantService>(['mapParticipantsRoles', 'checkDuplication']);
+            participantServiceSpy.mapParticipantsRoles.and.returnValue(partyList);
+            bookingServiceSpy = jasmine.createSpyObj<BookingService>(['isEditMode', 'resetEditMode']);
+            bookingServiceSpy.isEditMode.and.returnValue(false);
 
-    beforeEach(async(() => {
-        const hearing = initHearingRequest();
-        videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>([
-            'getParticipantRoles', 'getCurrentRequest', 'setBookingHasChanged', 'updateHearingRequest', 'cancelRequest'
-        ]);
-        videoHearingsServiceSpy.getParticipantRoles.and.returnValue(Promise.resolve(roleList));
-        videoHearingsServiceSpy.getCurrentRequest.and.returnValue(hearing);
-        participantServiceSpy = jasmine.createSpyObj<ParticipantService>(['mapParticipantsRoles', 'checkDuplication']);
-        participantServiceSpy.mapParticipantsRoles.and.returnValue(partyList);
-        bookingServiceSpy = jasmine.createSpyObj<BookingService>(['isEditMode', 'resetEditMode']);
-        bookingServiceSpy.isEditMode.and.returnValue(false);
+            const searchService = {
+                ...new SearchServiceStub(),
+                ...jasmine.createSpyObj<SearchService>(['search'])
+            } as jasmine.SpyObj<SearchService>;
 
-        const searchService = {
-            ...new SearchServiceStub(),
-            ...jasmine.createSpyObj<SearchService>(['search'])
-        } as jasmine.SpyObj<SearchService>;
+            component = new AddParticipantComponent(
+                searchService,
+                videoHearingsServiceSpy,
+                participantServiceSpy,
+                routerSpy,
+                bookingServiceSpy,
+                loggerSpy
+            );
 
+            component.searchEmail = new SearchEmailComponent(searchService, configServiceSpy, loggerSpy);
+            component.participantsListComponent = new ParticipantsListComponent(bookingServiceSpy, routerSpy);
 
-        component = new AddParticipantComponent(
-            searchService,
-            videoHearingsServiceSpy,
-            participantServiceSpy,
-            routerSpy,
-            bookingServiceSpy,
-            loggerSpy
-        );
+            component.ngOnInit();
 
-        component.searchEmail = new SearchEmailComponent(searchService, configServiceSpy, loggerSpy);
-        component.participantsListComponent = new ParticipantsListComponent(
-            bookingServiceSpy, routerSpy
-        );
-
-        component.ngOnInit();
-
-        role = component.form.controls['role'];
-        party = component.form.controls['party'];
-        title = component.form.controls['title'];
-        firstName = component.form.controls['firstName'];
-        lastName = component.form.controls['lastName'];
-        phone = component.form.controls['phone'];
-        displayName = component.form.controls['displayName'];
-        companyName = component.form.controls['companyName'];
-        reference = component.form.controls['reference'];
-        representing = component.form.controls['representing'];
-    }));
+            role = component.form.controls['role'];
+            party = component.form.controls['party'];
+            title = component.form.controls['title'];
+            firstName = component.form.controls['firstName'];
+            lastName = component.form.controls['lastName'];
+            phone = component.form.controls['phone'];
+            displayName = component.form.controls['displayName'];
+            companyName = component.form.controls['companyName'];
+            reference = component.form.controls['reference'];
+            representing = component.form.controls['representing'];
+        })
+    );
 
     it('should initialize edit mode as false and value of button set to next', () => {
         component.ngOnInit();
@@ -500,64 +504,65 @@ describe('AddParticipantComponent', () => {
 });
 
 describe('AddParticipantComponent edit mode', () => {
+    beforeEach(
+        waitForAsync(() => {
+            videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>([
+                'getCurrentRequest',
+                'getParticipantRoles',
+                'setBookingHasChanged',
+                'updateHearingRequest',
+                'cancelRequest'
+            ]);
+            bookingServiceSpy = jasmine.createSpyObj<BookingService>(['isEditMode', 'getParticipantEmail', 'resetEditMode']);
 
-    beforeEach(async(() => {
-        videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>([
-            'getCurrentRequest', 'getParticipantRoles', 'setBookingHasChanged', 'updateHearingRequest', 'cancelRequest'
-        ]);
-        bookingServiceSpy = jasmine.createSpyObj<BookingService>(['isEditMode', 'getParticipantEmail', 'resetEditMode']);
+            TestBed.configureTestingModule({
+                declarations: [
+                    AddParticipantComponent,
+                    BreadcrumbStubComponent,
+                    SearchEmailComponent,
+                    ParticipantsListComponent,
+                    CancelPopupStubComponent,
+                    ConfirmationPopupStubComponent,
+                    RemovePopupStubComponent,
+                    DiscardConfirmPopupComponent
+                ],
+                imports: [SharedModule, RouterModule.forChild([])],
+                providers: [
+                    { provide: SearchService, useClass: SearchServiceStub },
+                    { provide: Router, useValue: routerSpy },
+                    { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
+                    { provide: ParticipantService, useValue: participantServiceSpy },
+                    { provide: BookingService, useValue: bookingServiceSpy },
+                    { provide: Logger, useValue: loggerSpy },
+                    { provide: ConfigService, useValue: configServiceSpy }
+                ]
+            }).compileComponents();
 
-        TestBed.configureTestingModule({
-            declarations: [
-                AddParticipantComponent,
-                BreadcrumbStubComponent,
-                SearchEmailComponent,
-                ParticipantsListComponent,
-                CancelPopupStubComponent,
-                ConfirmationPopupStubComponent,
-                RemovePopupStubComponent,
-                DiscardConfirmPopupComponent,
-            ],
-            imports: [
-                SharedModule,
-                RouterModule.forChild([])
-            ],
-            providers: [
-                { provide: SearchService, useClass: SearchServiceStub },
-                { provide: Router, useValue: routerSpy },
-                { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
-                { provide: ParticipantService, useValue: participantServiceSpy },
-                { provide: BookingService, useValue: bookingServiceSpy },
-                { provide: Logger, useValue: loggerSpy },
-                { provide: ConfigService, useValue: configServiceSpy }
-            ]
+            const hearing = initExistHearingRequest();
+            videoHearingsServiceSpy.getParticipantRoles.and.returnValue(Promise.resolve(roleList));
+            videoHearingsServiceSpy.getCurrentRequest.and.returnValue(hearing);
+            participantServiceSpy.mapParticipantsRoles.and.returnValue(partyList);
+            bookingServiceSpy.isEditMode.and.returnValue(true);
+            bookingServiceSpy.getParticipantEmail.and.returnValue('test3@test.com');
+            configServiceSpy.getClientSettings.and.returnValue(of(ClientSettingsResponse));
+            fixture = TestBed.createComponent(AddParticipantComponent);
+            fixture.detectChanges();
+            component = fixture.componentInstance;
+            component.editMode = true;
+            component.ngOnInit();
+            fixture.detectChanges();
+
+            role = component.form.controls['role'];
+            party = component.form.controls['party'];
+            title = component.form.controls['title'];
+            firstName = component.form.controls['firstName'];
+            lastName = component.form.controls['lastName'];
+            phone = component.form.controls['phone'];
+            displayName = component.form.controls['displayName'];
+            companyName = component.form.controls['companyName'];
+            companyNameIndividual = component.form.controls['companyNameIndividual'];
         })
-            .compileComponents();
-
-        const hearing = initExistHearingRequest();
-        videoHearingsServiceSpy.getParticipantRoles.and.returnValue(Promise.resolve(roleList));
-        videoHearingsServiceSpy.getCurrentRequest.and.returnValue(hearing);
-        participantServiceSpy.mapParticipantsRoles.and.returnValue(partyList);
-        bookingServiceSpy.isEditMode.and.returnValue(true);
-        bookingServiceSpy.getParticipantEmail.and.returnValue('test3@test.com');
-        configServiceSpy.getClientSettings.and.returnValue(of(ClientSettingsResponse));
-        fixture = TestBed.createComponent(AddParticipantComponent);
-        fixture.detectChanges();
-        component = fixture.componentInstance;
-        component.editMode = true;
-        component.ngOnInit();
-        fixture.detectChanges();
-
-        role = component.form.controls['role'];
-        party = component.form.controls['party'];
-        title = component.form.controls['title'];
-        firstName = component.form.controls['firstName'];
-        lastName = component.form.controls['lastName'];
-        phone = component.form.controls['phone'];
-        displayName = component.form.controls['displayName'];
-        companyName = component.form.controls['companyName'];
-        companyNameIndividual = component.form.controls['companyNameIndividual'];
-    }));
+    );
     it('should initialize form controls', () => {
         component.initializeForm();
         expect(component.form.controls['firstName']).toBeTruthy();
@@ -750,43 +755,46 @@ describe('AddParticipantComponent edit mode', () => {
 });
 
 describe('AddParticipantComponent edit mode no participants added', () => {
+    beforeEach(
+        waitForAsync(() => {
+            const hearing = initExistHearingRequest();
+            videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>([
+                'getParticipantRoles',
+                'getCurrentRequest',
+                'setBookingHasChanged'
+            ]);
+            videoHearingsServiceSpy.getParticipantRoles.and.returnValue(Promise.resolve(roleList));
+            videoHearingsServiceSpy.getCurrentRequest.and.returnValue(hearing);
+            participantServiceSpy.mapParticipantsRoles.and.returnValue(partyList);
+            bookingServiceSpy = jasmine.createSpyObj<BookingService>(['getParticipantEmail', 'isEditMode', 'setEditMode', 'resetEditMode']);
+            bookingServiceSpy.isEditMode.and.returnValue(true);
+            bookingServiceSpy.getParticipantEmail.and.returnValue('');
 
-    beforeEach(async(() => {
-        const hearing = initExistHearingRequest();
-        videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>([
-            'getParticipantRoles', 'getCurrentRequest', 'setBookingHasChanged'
-        ]);
-        videoHearingsServiceSpy.getParticipantRoles.and.returnValue(Promise.resolve(roleList));
-        videoHearingsServiceSpy.getCurrentRequest.and.returnValue(hearing);
-        participantServiceSpy.mapParticipantsRoles.and.returnValue(partyList);
-        bookingServiceSpy = jasmine.createSpyObj<BookingService>(['getParticipantEmail', 'isEditMode', 'setEditMode', 'resetEditMode']);
-        bookingServiceSpy.isEditMode.and.returnValue(true);
-        bookingServiceSpy.getParticipantEmail.and.returnValue('');
+            component = new AddParticipantComponent(
+                jasmine.createSpyObj<SearchService>(['search']),
+                videoHearingsServiceSpy,
+                participantServiceSpy,
+                jasmine.createSpyObj<Router>(['navigate']),
+                bookingServiceSpy,
+                loggerSpy
+            );
+            component.participantsListComponent = new ParticipantsListComponent(
+                bookingServiceSpy,
+                jasmine.createSpyObj<Router>(['navigate'])
+            );
+            component.editMode = true;
+            component.ngOnInit();
 
-        component = new AddParticipantComponent(
-            jasmine.createSpyObj<SearchService>(['search']),
-            videoHearingsServiceSpy,
-            participantServiceSpy,
-            jasmine.createSpyObj<Router>(['navigate']),
-            bookingServiceSpy,
-            loggerSpy
-        );
-        component.participantsListComponent = new ParticipantsListComponent(
-            bookingServiceSpy,
-            jasmine.createSpyObj<Router>(['navigate'])
-        );
-        component.editMode = true;
-        component.ngOnInit();
-
-        role = component.form.controls['role'];
-        party = component.form.controls['party'];
-        title = component.form.controls['title'];
-        firstName = component.form.controls['firstName'];
-        lastName = component.form.controls['lastName'];
-        phone = component.form.controls['phone'];
-        displayName = component.form.controls['displayName'];
-        companyName = component.form.controls['companyName'];
-    }));
+            role = component.form.controls['role'];
+            party = component.form.controls['party'];
+            title = component.form.controls['title'];
+            firstName = component.form.controls['firstName'];
+            lastName = component.form.controls['lastName'];
+            phone = component.form.controls['phone'];
+            displayName = component.form.controls['displayName'];
+            companyName = component.form.controls['companyName'];
+        })
+    );
     it('should show button add participant', fakeAsync(() => {
         component.ngAfterContentInit();
         component.ngAfterViewInit();
@@ -801,12 +809,15 @@ describe('AddParticipantComponent edit mode no participants added', () => {
         expect(component.displayUpdateButton).toBeFalsy();
     }));
 
-    it('should recognize a participantList', async(() => {
-        component.ngAfterContentInit();
-        component.ngAfterViewInit();
-        const partList = component.participantsListComponent;
-        expect(partList).toBeDefined();
-    }));
+    it(
+        'should recognize a participantList',
+        waitForAsync(() => {
+            component.ngAfterContentInit();
+            component.ngAfterViewInit();
+            const partList = component.participantsListComponent;
+            expect(partList).toBeDefined();
+        })
+    );
     it('should show all fields if the participant selected for edit', fakeAsync(() => {
         component.ngAfterContentInit();
         component.ngAfterViewInit();
@@ -892,38 +903,39 @@ describe('AddParticipantComponent edit mode no participants added', () => {
     });
 });
 describe('AddParticipantComponent set representer', () => {
+    beforeEach(
+        waitForAsync(() => {
+            const hearing = initExistHearingRequest();
+            videoHearingsServiceSpy.getParticipantRoles.and.returnValue(Promise.resolve(roleList));
+            videoHearingsServiceSpy.getCurrentRequest.and.returnValue(hearing);
+            participantServiceSpy.mapParticipantsRoles.and.returnValue(partyList);
+            bookingServiceSpy.isEditMode.and.returnValue(true);
+            bookingServiceSpy.getParticipantEmail.and.returnValue('');
 
-    beforeEach(async(() => {
-        const hearing = initExistHearingRequest();
-        videoHearingsServiceSpy.getParticipantRoles.and.returnValue(Promise.resolve(roleList));
-        videoHearingsServiceSpy.getCurrentRequest.and.returnValue(hearing);
-        participantServiceSpy.mapParticipantsRoles.and.returnValue(partyList);
-        bookingServiceSpy.isEditMode.and.returnValue(true);
-        bookingServiceSpy.getParticipantEmail.and.returnValue('');
+            const searchServiceStab = jasmine.createSpyObj<SearchService>(['search']);
 
-        const searchServiceStab = jasmine.createSpyObj<SearchService>(['search']);
+            component = new AddParticipantComponent(
+                searchServiceStab,
+                videoHearingsServiceSpy,
+                participantServiceSpy,
+                { ...routerSpy, ...jasmine.createSpyObj<Router>(['navigate']) } as jasmine.SpyObj<Router>,
+                bookingServiceSpy,
+                loggerSpy
+            );
+            component.ngOnInit();
 
-        component = new AddParticipantComponent(
-            searchServiceStab,
-            videoHearingsServiceSpy,
-            participantServiceSpy,
-            { ...routerSpy, ...jasmine.createSpyObj<Router>(['navigate']) } as jasmine.SpyObj<Router>,
-            bookingServiceSpy,
-            loggerSpy
-        );
-        component.ngOnInit();
-
-        role = component.form.controls['role'];
-        party = component.form.controls['party'];
-        title = component.form.controls['title'];
-        firstName = component.form.controls['firstName'];
-        lastName = component.form.controls['lastName'];
-        phone = component.form.controls['phone'];
-        displayName = component.form.controls['displayName'];
-        companyName = component.form.controls['companyName'];
-        reference = component.form.controls['reference'];
-        representing = component.form.controls['representing'];
-    }));
+            role = component.form.controls['role'];
+            party = component.form.controls['party'];
+            title = component.form.controls['title'];
+            firstName = component.form.controls['firstName'];
+            lastName = component.form.controls['lastName'];
+            phone = component.form.controls['phone'];
+            displayName = component.form.controls['displayName'];
+            companyName = component.form.controls['companyName'];
+            reference = component.form.controls['reference'];
+            representing = component.form.controls['representing'];
+        })
+    );
 
     it('should show reference, company and name of representing person', () => {
         component.form.get('role').setValue('Representative');
@@ -950,8 +962,11 @@ describe('AddParticipantComponent set representer', () => {
     });
     it('should set email of existing participant after initialize content of the component', () => {
         component.editMode = true;
-        component.searchEmail = new SearchEmailComponent(jasmine.createSpyObj<SearchService>(['search']),
-          configServiceSpy, loggerSpy);
+        component.searchEmail = new SearchEmailComponent(
+            jasmine.createSpyObj<SearchService>(['search']),
+            configServiceSpy,
+            loggerSpy
+        );
         component.participantDetails = participants[0];
         component.ngAfterContentInit();
         expect(component.searchEmail.email).toBeTruthy();
@@ -1012,14 +1027,14 @@ describe('AddParticipantComponent set representer', () => {
         expect(component.form.controls['representing'].value).toBe('text');
     });
     it('should unsubscribe all subcriptions on destroy component', () => {
-      component.$subscriptions.push(new Subscription(), new Subscription());
-      expect(component.$subscriptions[0].closed).toBeFalsy();
-      expect(component.$subscriptions[1].closed).toBeFalsy();
+        component.$subscriptions.push(new Subscription(), new Subscription());
+        expect(component.$subscriptions[0].closed).toBeFalsy();
+        expect(component.$subscriptions[1].closed).toBeFalsy();
 
-      component.ngOnDestroy();
+        component.ngOnDestroy();
 
-      expect(component.$subscriptions[0].closed).toBeTruthy();
-      expect(component.$subscriptions[1].closed).toBeTruthy();
+        expect(component.$subscriptions[0].closed).toBeTruthy();
+        expect(component.$subscriptions[1].closed).toBeTruthy();
     });
 });
 

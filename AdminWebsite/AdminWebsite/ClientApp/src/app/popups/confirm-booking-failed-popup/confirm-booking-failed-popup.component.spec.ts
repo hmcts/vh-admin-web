@@ -1,6 +1,6 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
 import { DebugElement, ElementRef } from '@angular/core';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { ConfirmBookingFailedPopupComponent } from './confirm-booking-failed-popup.component';
 
 describe('SaveFailedPopupComponent', () => {
@@ -10,11 +10,13 @@ describe('SaveFailedPopupComponent', () => {
     let buttonTryAgain: ElementRef;
     let buttonCancel: ElementRef;
 
-    beforeEach(async(() => {
-        TestBed.configureTestingModule({
-            declarations: [ConfirmBookingFailedPopupComponent]
-        }).compileComponents();
-    }));
+    beforeEach(
+        waitForAsync(() => {
+            TestBed.configureTestingModule({
+                declarations: [ConfirmBookingFailedPopupComponent]
+            }).compileComponents();
+        })
+    );
 
     beforeEach(() => {
         fixture = TestBed.createComponent(ConfirmBookingFailedPopupComponent);

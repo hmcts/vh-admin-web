@@ -1,27 +1,27 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { Router } from '@angular/router';
-import { of, throwError } from 'rxjs';
+import { RouterTestingModule } from '@angular/router/testing';
+import { of } from 'rxjs';
+import { EndpointModel } from 'src/app/common/model/endpoint.model';
 import { CancelPopupComponent } from 'src/app/popups/cancel-popup/cancel-popup.component';
-import { RemovePopupComponent } from '../../popups/remove-popup/remove-popup.component';
+import { SaveFailedPopupComponent } from 'src/app/popups/save-failed-popup/save-failed-popup.component';
 import { BreadcrumbStubComponent } from 'src/app/testing/stubs/breadcrumb-stub';
-import { BookingEditStubComponent } from '../../testing/stubs/booking-edit-stub';
+import { LongDatetimePipe } from '../../../app/shared/directives/date-time.pipe';
+import { CaseModel } from '../../common/model/case.model';
+import { HearingModel } from '../../common/model/hearing.model';
+import { ParticipantModel } from '../../common/model/participant.model';
+import { RemovePopupComponent } from '../../popups/remove-popup/remove-popup.component';
+import { WaitPopupComponent } from '../../popups/wait-popup/wait-popup.component';
+import { BookingService } from '../../services/booking.service';
+import { HearingDetailsResponse } from '../../services/clients/api-client';
+import { Logger } from '../../services/logger';
+import { RecordingGuardService } from '../../services/recording-guard.service';
 import { ReferenceDataService } from '../../services/reference-data.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { MockValues } from '../../testing/data/test-objects';
-import { SummaryComponent } from './summary.component';
-import { RouterTestingModule } from '@angular/router/testing';
-import { HearingModel } from '../../common/model/hearing.model';
-import { CaseModel } from '../../common/model/case.model';
-import { ParticipantModel } from '../../common/model/participant.model';
+import { BookingEditStubComponent } from '../../testing/stubs/booking-edit-stub';
 import { ParticipantsListStubComponent } from '../../testing/stubs/participant-list-stub';
-import { WaitPopupComponent } from '../../popups/wait-popup/wait-popup.component';
-import { SaveFailedPopupComponent } from 'src/app/popups/save-failed-popup/save-failed-popup.component';
-import { HearingDetailsResponse } from '../../services/clients/api-client';
-import { LongDatetimePipe } from '../../../app/shared/directives/date-time.pipe';
-import { Logger } from '../../services/logger';
-import { EndpointModel } from 'src/app/common/model/endpoint.model';
-import { BookingService } from '../../services/booking.service';
-import { RecordingGuardService } from '../../services/recording-guard.service';
+import { SummaryComponent } from './summary.component';
 
 function initExistingHearingRequest(): HearingModel {
     const pat1 = new ParticipantModel();
@@ -108,35 +108,37 @@ describe('SummaryComponent with valid request', () => {
 
     let existingRequest: any;
 
-    beforeEach(async(() => {
-        existingRequest = initExistingHearingRequest();
+    beforeEach(
+        waitForAsync(() => {
+            existingRequest = initExistingHearingRequest();
 
-        videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
-        videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
-        videoHearingsServiceSpy.saveHearing.and.returnValue(of(new HearingDetailsResponse()));
-        videoHearingsServiceSpy.cloneMultiHearings.and.callThrough();
+            videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
+            videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
+            videoHearingsServiceSpy.saveHearing.and.returnValue(of(new HearingDetailsResponse()));
+            videoHearingsServiceSpy.cloneMultiHearings.and.callThrough();
 
-        TestBed.configureTestingModule({
-            providers: [
-                { provide: ReferenceDataService, useValue: referenceDataServiceServiceSpy },
-                { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
-                { provide: Router, useValue: routerSpy },
-                { provide: Logger, useValue: loggerSpy }
-            ],
-            declarations: [
-                SummaryComponent,
-                BreadcrumbStubComponent,
-                CancelPopupComponent,
-                ParticipantsListStubComponent,
-                BookingEditStubComponent,
-                RemovePopupComponent,
-                WaitPopupComponent,
-                SaveFailedPopupComponent,
-                LongDatetimePipe
-            ],
-            imports: [RouterTestingModule]
-        }).compileComponents();
-    }));
+            TestBed.configureTestingModule({
+                providers: [
+                    { provide: ReferenceDataService, useValue: referenceDataServiceServiceSpy },
+                    { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
+                    { provide: Router, useValue: routerSpy },
+                    { provide: Logger, useValue: loggerSpy }
+                ],
+                declarations: [
+                    SummaryComponent,
+                    BreadcrumbStubComponent,
+                    CancelPopupComponent,
+                    ParticipantsListStubComponent,
+                    BookingEditStubComponent,
+                    RemovePopupComponent,
+                    WaitPopupComponent,
+                    SaveFailedPopupComponent,
+                    LongDatetimePipe
+                ],
+                imports: [RouterTestingModule]
+            }).compileComponents();
+        })
+    );
 
     beforeEach(() => {
         fixture = TestBed.createComponent(SummaryComponent);
@@ -230,44 +232,46 @@ describe('SummaryComponent  with invalid request', () => {
     let component: SummaryComponent;
     let fixture: ComponentFixture<SummaryComponent>;
 
-    beforeEach(async(() => {
-        videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
-            'getHearingTypes',
-            'getCurrentRequest',
-            'updateHearingRequest',
-            'saveHearing',
-            'cancelRequest',
-            'updateHearing',
-            'setBookingHasChanged',
-            'cloneMultiHearings'
-        ]);
-        initExistingHearingRequest();
-        const existingRequest = initBadHearingRequest();
-        videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
-        videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
-        videoHearingsServiceSpy.saveHearing.and.throwError('Fake error');
+    beforeEach(
+        waitForAsync(() => {
+            videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
+                'getHearingTypes',
+                'getCurrentRequest',
+                'updateHearingRequest',
+                'saveHearing',
+                'cancelRequest',
+                'updateHearing',
+                'setBookingHasChanged',
+                'cloneMultiHearings'
+            ]);
+            initExistingHearingRequest();
+            const existingRequest = initBadHearingRequest();
+            videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
+            videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
+            videoHearingsServiceSpy.saveHearing.and.throwError('Fake error');
 
-        TestBed.configureTestingModule({
-            providers: [
-                { provide: ReferenceDataService, useValue: referenceDataServiceServiceSpy },
-                { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
-                { provide: Router, useValue: routerSpy },
-                { provide: Logger, useValue: loggerSpy }
-            ],
-            imports: [RouterTestingModule],
-            declarations: [
-                SummaryComponent,
-                BreadcrumbStubComponent,
-                CancelPopupComponent,
-                ParticipantsListStubComponent,
-                BookingEditStubComponent,
-                RemovePopupComponent,
-                WaitPopupComponent,
-                SaveFailedPopupComponent,
-                LongDatetimePipe
-            ]
-        }).compileComponents();
-    }));
+            TestBed.configureTestingModule({
+                providers: [
+                    { provide: ReferenceDataService, useValue: referenceDataServiceServiceSpy },
+                    { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
+                    { provide: Router, useValue: routerSpy },
+                    { provide: Logger, useValue: loggerSpy }
+                ],
+                imports: [RouterTestingModule],
+                declarations: [
+                    SummaryComponent,
+                    BreadcrumbStubComponent,
+                    CancelPopupComponent,
+                    ParticipantsListStubComponent,
+                    BookingEditStubComponent,
+                    RemovePopupComponent,
+                    WaitPopupComponent,
+                    SaveFailedPopupComponent,
+                    LongDatetimePipe
+                ]
+            }).compileComponents();
+        })
+    );
 
     beforeEach(() => {
         fixture = TestBed.createComponent(SummaryComponent);
@@ -286,34 +290,36 @@ describe('SummaryComponent  with existing request', () => {
     let component: SummaryComponent;
     let fixture: ComponentFixture<SummaryComponent>;
 
-    beforeEach(async(() => {
-        const existingRequest = initExistingHearingRequest();
-        existingRequest.hearing_id = '12345ty';
-        videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
-        videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
-        videoHearingsServiceSpy.updateHearing.and.returnValue(of(new HearingDetailsResponse()));
+    beforeEach(
+        waitForAsync(() => {
+            const existingRequest = initExistingHearingRequest();
+            existingRequest.hearing_id = '12345ty';
+            videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
+            videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
+            videoHearingsServiceSpy.updateHearing.and.returnValue(of(new HearingDetailsResponse()));
 
-        TestBed.configureTestingModule({
-            providers: [
-                { provide: ReferenceDataService, useValue: referenceDataServiceServiceSpy },
-                { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
-                { provide: Router, useValue: routerSpy },
-                { provide: Logger, useValue: loggerSpy }
-            ],
-            imports: [RouterTestingModule],
-            declarations: [
-                SummaryComponent,
-                BreadcrumbStubComponent,
-                CancelPopupComponent,
-                ParticipantsListStubComponent,
-                BookingEditStubComponent,
-                RemovePopupComponent,
-                WaitPopupComponent,
-                SaveFailedPopupComponent,
-                LongDatetimePipe
-            ]
-        }).compileComponents();
-    }));
+            TestBed.configureTestingModule({
+                providers: [
+                    { provide: ReferenceDataService, useValue: referenceDataServiceServiceSpy },
+                    { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
+                    { provide: Router, useValue: routerSpy },
+                    { provide: Logger, useValue: loggerSpy }
+                ],
+                imports: [RouterTestingModule],
+                declarations: [
+                    SummaryComponent,
+                    BreadcrumbStubComponent,
+                    CancelPopupComponent,
+                    ParticipantsListStubComponent,
+                    BookingEditStubComponent,
+                    RemovePopupComponent,
+                    WaitPopupComponent,
+                    SaveFailedPopupComponent,
+                    LongDatetimePipe
+                ]
+            }).compileComponents();
+        })
+    );
 
     beforeEach(() => {
         fixture = TestBed.createComponent(SummaryComponent);

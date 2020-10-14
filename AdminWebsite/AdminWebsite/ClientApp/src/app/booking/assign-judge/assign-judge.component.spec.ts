@@ -1,25 +1,24 @@
-import { async, ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
-import { CancelPopupComponent } from '../../popups/cancel-popup/cancel-popup.component';
-import { DiscardConfirmPopupComponent } from '../../popups/discard-confirm-popup/discard-confirm-popup.component';
-import { SharedModule } from '../../shared/shared.module';
-import { BreadcrumbStubComponent } from '../../testing/stubs/breadcrumb-stub';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { Router } from '@angular/router';
-
-import { VideoHearingsService } from '../../services/video-hearings.service';
-import { BookingService } from '../../services/booking.service';
-import { AssignJudgeComponent } from './assign-judge.component';
-import { of, Subscription } from 'rxjs';
-import { MockValues } from '../../testing/data/test-objects';
-import { JudgeDataService } from '../services/judge-data.service';
-import { ParticipantsListStubComponent } from '../../testing/stubs/participant-list-stub';
+import { RouterTestingModule } from '@angular/router/testing';
+import { of } from 'rxjs';
+import { Constants } from 'src/app/common/constants';
 import { HearingModel } from '../../common/model/hearing.model';
 import { ParticipantModel } from '../../common/model/participant.model';
-import { By } from '@angular/platform-browser';
-import { Constants } from 'src/app/common/constants';
-import { Logger } from '../../services/logger';
+import { CancelPopupComponent } from '../../popups/cancel-popup/cancel-popup.component';
+import { DiscardConfirmPopupComponent } from '../../popups/discard-confirm-popup/discard-confirm-popup.component';
+import { BookingService } from '../../services/booking.service';
 import { JudgeResponse } from '../../services/clients/api-client';
+import { Logger } from '../../services/logger';
 import { RecordingGuardService } from '../../services/recording-guard.service';
+import { VideoHearingsService } from '../../services/video-hearings.service';
+import { SharedModule } from '../../shared/shared.module';
+import { MockValues } from '../../testing/data/test-objects';
+import { BreadcrumbStubComponent } from '../../testing/stubs/breadcrumb-stub';
+import { ParticipantsListStubComponent } from '../../testing/stubs/participant-list-stub';
+import { JudgeDataService } from '../services/judge-data.service';
+import { AssignJudgeComponent } from './assign-judge.component';
 
 function initHearingRequest(): HearingModel {
     const participants: ParticipantModel[] = [];
@@ -64,60 +63,61 @@ let bookingServiseSpy: jasmine.SpyObj<BookingService>;
 let loggerSpy: jasmine.SpyObj<Logger>;
 
 describe('AssignJudgeComponent', () => {
-    beforeEach(async(() => {
+    beforeEach(
+        waitForAsync(() => {
+            const newHearing = initHearingRequest();
+            loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error']);
 
-        const newHearing = initHearingRequest();
-        loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error']);
+            videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
+                'getHearingTypes',
+                'getCurrentRequest',
+                'updateHearingRequest',
+                'cancelRequest',
+                'setBookingHasChanged'
+            ]);
+            videoHearingsServiceSpy.getCurrentRequest.and.returnValue(newHearing);
 
-        videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
-            'getHearingTypes',
-            'getCurrentRequest',
-            'updateHearingRequest',
-            'cancelRequest',
-            'setBookingHasChanged'
-        ]);
-        videoHearingsServiceSpy.getCurrentRequest.and.returnValue(newHearing);
+            bookingServiseSpy = jasmine.createSpyObj<BookingService>('BookingService', ['resetEditMode', 'isEditMode', 'removeEditMode']);
 
-        bookingServiseSpy = jasmine.createSpyObj<BookingService>('BookingService', ['resetEditMode', 'isEditMode', 'removeEditMode']);
+            judgeDataServiceSpy = jasmine.createSpyObj<JudgeDataService>(['JudgeDataService', 'getJudges']);
+            judgeDataServiceSpy.getJudges.and.returnValue(of(MockValues.Judges));
 
-        judgeDataServiceSpy = jasmine.createSpyObj<JudgeDataService>(['JudgeDataService', 'getJudges']);
-        judgeDataServiceSpy.getJudges.and.returnValue(of(MockValues.Judges));
+            TestBed.configureTestingModule({
+                imports: [SharedModule, RouterTestingModule],
+                providers: [
+                    { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
+                    { provide: JudgeDataService, useValue: judgeDataServiceSpy },
+                    {
+                        provide: Router,
+                        useValue: {
+                            url: '/summary',
+                            navigate: jasmine.createSpy('navigate')
+                        }
+                    },
+                    { provide: BookingService, useValue: bookingServiseSpy },
+                    { provide: Logger, useValue: loggerSpy },
+                    RecordingGuardService
+                ],
+                declarations: [
+                    AssignJudgeComponent,
+                    BreadcrumbStubComponent,
+                    CancelPopupComponent,
+                    ParticipantsListStubComponent,
+                    DiscardConfirmPopupComponent
+                ]
+            }).compileComponents();
 
-        TestBed.configureTestingModule({
-            imports: [SharedModule, RouterTestingModule],
-            providers: [
-                { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
-                { provide: JudgeDataService, useValue: judgeDataServiceSpy },
-                {
-                    provide: Router,
-                    useValue: {
-                        url: '/summary',
-                        navigate: jasmine.createSpy('navigate')
-                    }
-                },
-                { provide: BookingService, useValue: bookingServiseSpy },
-                { provide: Logger, useValue: loggerSpy },
-                RecordingGuardService
-            ],
-            declarations: [
-                AssignJudgeComponent,
-                BreadcrumbStubComponent,
-                CancelPopupComponent,
-                ParticipantsListStubComponent,
-                DiscardConfirmPopupComponent
-            ]
-        }).compileComponents();
+            fixture = TestBed.createComponent(AssignJudgeComponent);
 
-        fixture = TestBed.createComponent(AssignJudgeComponent);
+            /* tslint:disable */
+            routerSpy = TestBed.get(Router);
+            /* tslint:enable */
 
-        /* tslint:disable */
-        routerSpy = TestBed.get(Router);
-        /* tslint:enable */
-
-        component = fixture.componentInstance;
-        fixture.detectChanges();
-        component.ngOnInit();
-    }));
+            component = fixture.componentInstance;
+            fixture.detectChanges();
+            component.ngOnInit();
+        })
+    );
 
     it('should fail validation if a judge is not selected', () => {
         component.cancelAssignJudge();

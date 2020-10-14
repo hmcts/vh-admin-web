@@ -499,7 +499,8 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
                 this.showDetails = false;
             } else {
                 this.showConfirmationPopup = true;
-                this.confirmationMessage = `You have already added ${newParticipant.first_name} ${newParticipant.last_name} to this hearing`;
+                const message = `You have already added ${newParticipant.first_name} ${newParticipant.last_name} to this hearing`;
+                this.confirmationMessage = message;
             }
         } else {
             this.isShowErrorSummary = true;
