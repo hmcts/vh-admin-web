@@ -20,20 +20,29 @@ export class AudioLinkService {
         return response.audio_file_links;
     }
 
-    async getCvpAudioLinkWithCaseReference(cloudroomName: string, date: string, caseReference: string): Promise<CvpForAudioFileResponse[]> {
+    async getCvpAudioRecordingsAll(cloudRoomName: string, date: string, caseReference: string): Promise<CvpForAudioFileResponse[]> {
         try {
-            return await this.bhClient.getCvpAudioRecordingLinkWithCaseReference(cloudroomName, date, caseReference).toPromise();
+            return await this.bhClient.getCvpAudioRecordingsAll(cloudRoomName, date, caseReference).toPromise();
         } catch (error) {
-            this.logger.error(`Error retrieving cvp audio file link for: ${cloudroomName}, ${date}, ${caseReference}`, error);
+            this.logger.error(`Error retrieving cvp audio file link for: ${cloudRoomName}, ${date}, ${caseReference}`, error);
             return null;
         }
     }
 
-    async getCvpAudioLink(cloudroomName: string, date: string): Promise<CvpForAudioFileResponse[]> {
+    async getCvpAudioRecordingsByCloudRoom(cloudRoomName: string, date: string): Promise<CvpForAudioFileResponse[]> {
         try {
-            return await this.bhClient.getCvpAudioRecordingLink(cloudroomName, date).toPromise();
+            return await this.bhClient.getCvpAudioRecordingsByCloudRoom(cloudRoomName, date).toPromise();
         } catch (error) {
-            this.logger.error(`Error retrieving cvp audio file link for: ${cloudroomName}, ${date}`, error);
+            this.logger.error(`Error retrieving cvp audio file link for: ${cloudRoomName}, ${date}`, error);
+            return null;
+        }
+    }
+
+    async getCvpAudioRecordingsByDate(date: string, caseReference: string): Promise<CvpForAudioFileResponse[]> {
+        try {
+            return await this.bhClient.getCvpAudioRecordingsByDate(date, caseReference).toPromise();
+        } catch (error) {
+            this.logger.error(`Error retrieving cvp audio file link for Date: ${date}, ${caseReference}`, error);
             return null;
         }
     }
