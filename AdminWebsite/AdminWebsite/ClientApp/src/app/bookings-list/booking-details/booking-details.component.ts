@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
 import { ParticipantDetailsModel } from '../../common/model/participant-details.model';
@@ -18,6 +18,8 @@ import { BookingPersistService } from '../../services/bookings-persist.service';
 import { interval, Subscription } from 'rxjs';
 import { Logger } from '../../services/logger';
 import { Location } from '@angular/common';
+import { filter } from 'rxjs/operators';
+import { ReturnUrlService } from 'src/app/services/return-url.service';
 
 @Component({
     selector: 'app-booking-details',
@@ -42,6 +44,8 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
     $subscriptions: Subscription[] = [];
     cancelReason: string;
 
+    previousUrl: string = null;
+
     constructor(
         private videoHearingService: VideoHearingsService,
         private bookingDetailsService: BookingDetailsService,
@@ -50,7 +54,7 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
         private bookingService: BookingService,
         private bookingPersistService: BookingPersistService,
         private logger: Logger,
-        private location: Location
+        private returnUrlService: ReturnUrlService
     ) {
         this.showCancelBooking = false;
         this.showConfirming = false;
@@ -61,7 +65,7 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
         this.hearingId = this.bookingPersistService.selectedHearingId;
         if (this.hearingId) {
             this.$subscriptions.push(
-                this.videoHearingService.getHearingById(this.hearingId).subscribe((data) => {
+                this.videoHearingService.getHearingById(this.hearingId).subscribe(data => {
                     this.mapHearing(data);
                     // mapping to Hearing model for edit on summary page
                     this.booking = this.videoHearingService.mapHearingDetailsResponseToHearingModel(data);
@@ -72,7 +76,7 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
             );
         }
         this.$subscriptions.push(
-            this.userIdentityService.getUserInformation().subscribe((userProfile) => {
+            this.userIdentityService.getUserInformation().subscribe(userProfile => {
                 this.getUserRole(userProfile);
             })
         );
@@ -84,7 +88,7 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
 
     setSubscribers() {
         if (this.isConfirmationTimeValid) {
-            this.timeSubscription = this.$timeObserver.subscribe((x) => {
+            this.timeSubscription = this.$timeObserver.subscribe(x => {
                 this.setTimeObserver();
             });
         }
@@ -114,9 +118,14 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
         return this.videoHearingService.mapHearingDetailsResponseToHearingModel(hearingResponse);
     }
 
-    navigateBack() {
-        this.location.back();
-        // this.router.navigate([PageUrls.BookingsList]);
+    async navigateBack() {
+        const returnUrl = this.returnUrlService.popUrl();
+        if (returnUrl) {
+            console.log(`navigating to ${returnUrl}`);
+            await this.router.navigateByUrl(returnUrl);
+        } else {
+            await this.router.navigateByUrl(PageUrls.BookingsList);
+        }
     }
 
     setBookingInStorage() {
@@ -156,7 +165,7 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
 
         this.$subscriptions.push(
             this.videoHearingService.updateBookingStatus(this.hearingId, updateBookingStatus).subscribe(
-                (data) => {
+                data => {
                     if (data.success) {
                         this.updateStatusHandler(status);
                     } else {
@@ -167,7 +176,7 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
                     this.showConfirming = false;
                     this.logger.event('Hearing status changed', { hearingId: this.hearingId, status: status });
                 },
-                (error) => {
+                error => {
                     this.errorHandler(error, status);
                     this.updateStatusHandler(UpdateBookingStatus.Failed);
                 }
@@ -182,10 +191,10 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
         this.persistStatus(status);
         this.$subscriptions.push(
             this.videoHearingService.getHearingById(this.hearingId).subscribe(
-                (newData) => {
+                newData => {
                     this.mapHearing(newData);
                 },
-                (error) => {
+                error => {
                     this.logger.error(`Error to get hearing Id: ${this.hearingId}`, error);
                 }
             )
@@ -220,7 +229,7 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
             this.timeSubscription.unsubscribe();
         }
 
-        this.$subscriptions.forEach((subscription) => {
+        this.$subscriptions.forEach(subscription => {
             if (subscription) {
                 subscription.unsubscribe();
             }

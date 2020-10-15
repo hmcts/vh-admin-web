@@ -284,7 +284,6 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         this.displayAdd();
         this.enableFields();
         this.participantDetails = Object.assign({}, participantDetails);
-        console.warn(this.participantDetails);
 
         if (participantDetails.is_exist_person) {
             this.disableLastFirstNames();
