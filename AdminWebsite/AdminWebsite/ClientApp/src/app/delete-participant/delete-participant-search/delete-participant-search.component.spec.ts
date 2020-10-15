@@ -1,36 +1,68 @@
+import { fakeAsync, flushMicrotasks, tick, waitForAsync } from '@angular/core/testing';
 import { FormBuilder } from '@angular/forms';
+import { of } from 'rxjs';
 import { HearingsByUsernameForDeletionResponse } from 'src/app/services/clients/api-client';
 import { ParticipantDeleteService } from 'src/app/services/participant-delete-service.service';
 import { DeleteParticipantSearchComponent } from './delete-participant-search.component';
 
-describe('DeleteParticipantComponent', () => {
-    let component: DeleteParticipantSearchComponent;
-    let service: jasmine.SpyObj<ParticipantDeleteService>;
-    let formBuilder: FormBuilder;
+const hearings = [
+    new HearingsByUsernameForDeletionResponse({
+        hearing_id: '11111',
+        case_name: 'case1',
+        case_number: '123',
+        scheduled_date_time: new Date(),
+        venue: 'venue1'
+    }),
+    new HearingsByUsernameForDeletionResponse({
+        hearing_id: '22222',
+        case_name: 'case2',
+        case_number: '234',
+        scheduled_date_time: new Date(),
+        venue: 'venue2'
+    }),
+    new HearingsByUsernameForDeletionResponse({
+        hearing_id: '33333',
+        case_name: 'case3',
+        case_number: '345',
+        scheduled_date_time: new Date(),
+        venue: 'venue1'
+    })
+];
 
-    const hearings = [
-        new HearingsByUsernameForDeletionResponse({
-            hearing_id: '11111',
-            case_name: 'case1',
-            case_number: '123',
-            scheduled_date_time: new Date(),
-            venue: 'venue1'
-        }),
-        new HearingsByUsernameForDeletionResponse({
-            hearing_id: '22222',
-            case_name: 'case2',
-            case_number: '234',
-            scheduled_date_time: new Date(),
-            venue: 'venue2'
-        }),
-        new HearingsByUsernameForDeletionResponse({
-            hearing_id: '33333',
-            case_name: 'case3',
-            case_number: '345',
-            scheduled_date_time: new Date(),
-            venue: 'venue1'
-        })
-    ];
+let component: DeleteParticipantSearchComponent;
+let service: jasmine.SpyObj<ParticipantDeleteService>;
+let formBuilder: FormBuilder;
+
+describe('DeleteParticipantComponent user exists in query params', () => {
+    const username = 'test@exists.com';
+    const activatedRoute: any = { queryParams: of({ username }) };
+
+    beforeAll(async () => {
+        service = jasmine.createSpyObj<ParticipantDeleteService>('ParticipantDeleteServiceService', ['getHearingsForUsername']);
+        formBuilder = new FormBuilder();
+    });
+
+    beforeEach(fakeAsync(() => {
+        component = new DeleteParticipantSearchComponent(formBuilder, service, activatedRoute);
+        service.getHearingsForUsername.and.returnValue(Promise.resolve(hearings));
+        component.ngOnInit();
+        flushMicrotasks();
+    }));
+
+    afterEach(() => {
+        component.ngOnDestroy();
+    });
+
+    it('should init form with username in query params and search', fakeAsync(() => {
+        expect(component.username.value).toBe(username);
+        expect(component.form.valid).toBeTruthy();
+        expect(component.hasSearched).toBeTruthy();
+        expect(component.results.length).toBe(hearings.length);
+    }));
+});
+
+describe('DeleteParticipantComponent no user in query params', () => {
+    const activatedRoute: any = { queryParams: of() };
 
     beforeAll(async () => {
         service = jasmine.createSpyObj<ParticipantDeleteService>('ParticipantDeleteServiceService', ['getHearingsForUsername']);
@@ -38,9 +70,13 @@ describe('DeleteParticipantComponent', () => {
     });
 
     beforeEach(() => {
-        component = new DeleteParticipantSearchComponent(formBuilder, service);
+        component = new DeleteParticipantSearchComponent(formBuilder, service, activatedRoute);
         service.getHearingsForUsername.and.returnValue(Promise.resolve(hearings));
         component.ngOnInit();
+    });
+
+    afterEach(() => {
+        component.ngOnDestroy();
     });
 
     it('should init form', () => {

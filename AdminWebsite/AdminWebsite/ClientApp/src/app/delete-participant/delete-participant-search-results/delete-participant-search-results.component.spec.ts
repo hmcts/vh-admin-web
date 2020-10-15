@@ -6,6 +6,7 @@ import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 import { PageUrls } from 'src/app/shared/page-url.constants';
 import { DeleteParticipantSearchResultsComponent } from './delete-participant-search-results.component';
 import { ParticipantDeleteService } from 'src/app/services/participant-delete-service.service';
+import { ReturnUrlService } from 'src/app/services/return-url.service';
 
 describe('DeleteParticipantSearchResultsComponent', () => {
     let component: DeleteParticipantSearchResultsComponent;
@@ -13,12 +14,14 @@ describe('DeleteParticipantSearchResultsComponent', () => {
     let videoHearingService: jasmine.SpyObj<VideoHearingsService>;
     let participantDeleteService: jasmine.SpyObj<ParticipantDeleteService>;
     let router: jasmine.SpyObj<Router>;
+    let returnUrlService: jasmine.SpyObj<ReturnUrlService>;
 
     beforeAll(() => {
         bookingPersistService = jasmine.createSpyObj<BookingPersistService>('BookingPersistService', ['selectedHearingId']);
         videoHearingService = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', ['cancelRequest']);
         participantDeleteService = jasmine.createSpyObj<ParticipantDeleteService>('ParticipantDeleteService', ['deleteUserAccount']);
         router = jasmine.createSpyObj<Router>(['navigate']);
+        returnUrlService = jasmine.createSpyObj<ReturnUrlService>('ReturnUrlService', ['popUrl', 'setUrl']);
     });
 
     beforeEach(() => {
@@ -26,7 +29,8 @@ describe('DeleteParticipantSearchResultsComponent', () => {
             bookingPersistService,
             videoHearingService,
             participantDeleteService,
-            router
+            router,
+            returnUrlService
         );
     });
 
@@ -62,9 +66,11 @@ describe('DeleteParticipantSearchResultsComponent', () => {
     });
 
     it('should navigate to booking details for edit', () => {
+        component.username = 'test@test.com';
         component.editHearing('1234');
         expect(videoHearingService.cancelRequest).toHaveBeenCalled();
         expect(router.navigate).toHaveBeenCalledWith([PageUrls.BookingDetails]);
+        expect(returnUrlService.setUrl).toHaveBeenCalledWith(`${PageUrls.DeleteParticipant}?username=${component.username}`);
     });
 
     it('should display confirm delete popup', () => {
