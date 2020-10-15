@@ -5,6 +5,7 @@ import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 import { Router } from '@angular/router';
 import { PageUrls } from 'src/app/shared/page-url.constants';
 import { ParticipantDeleteService } from 'src/app/services/participant-delete-service.service';
+import { ReturnUrlService } from 'src/app/services/return-url.service';
 
 @Component({
     selector: 'app-delete-participant-search-results',
@@ -21,7 +22,8 @@ export class DeleteParticipantSearchResultsComponent {
         private bookingPersistService: BookingPersistService,
         private videoHearingService: VideoHearingsService,
         private participantDeleteService: ParticipantDeleteService,
-        private router: Router
+        private router: Router,
+        private returnUrlService: ReturnUrlService
     ) {
         this.displayConfirmPopup = false;
         this.accountDeleted = false;
@@ -42,6 +44,7 @@ export class DeleteParticipantSearchResultsComponent {
     editHearing(hearingId: string) {
         this.videoHearingService.cancelRequest();
         this.bookingPersistService.selectedHearingId = hearingId;
+        this.returnUrlService.setUrl(`${PageUrls.DeleteParticipant}?username=${this.username}`);
         this.router.navigate([PageUrls.BookingDetails]);
     }
 

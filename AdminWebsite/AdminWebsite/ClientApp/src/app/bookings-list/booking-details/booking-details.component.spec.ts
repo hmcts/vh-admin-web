@@ -8,6 +8,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { Observable, of } from 'rxjs';
 import { EndpointModel } from 'src/app/common/model/endpoint.model';
 import { CancelBookingPopupComponent } from 'src/app/popups/cancel-booking-popup/cancel-booking-popup.component';
+import { ReturnUrlService } from 'src/app/services/return-url.service';
 import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
 import { CaseModel } from '../../common/model/case.model';
 import { HearingModel } from '../../common/model/hearing.model';
@@ -34,7 +35,7 @@ let component: BookingDetailsComponent;
 let fixture: ComponentFixture<BookingDetailsComponent>;
 let videoHearingServiceSpy: jasmine.SpyObj<VideoHearingsService>;
 let routerSpy: jasmine.SpyObj<Router>;
-let locationSpy: jasmine.SpyObj<Location>;
+let returnUrlServiceSpy: jasmine.SpyObj<ReturnUrlService>;
 let bookingServiceSpy: jasmine.SpyObj<BookingService>;
 let bookingPersistServiceSpy: jasmine.SpyObj<BookingPersistService>;
 let userIdentityServiceSpy: jasmine.SpyObj<UserIdentityService>;
@@ -202,7 +203,7 @@ describe('BookingDetailsComponent', () => {
         'updateBookingStatus',
         'getCurrentRequest'
     ]);
-    routerSpy = jasmine.createSpyObj('Router', ['navigate']);
+    routerSpy = jasmine.createSpyObj('Router', ['navigate', 'navigateByUrl']);
     bookingServiceSpy = jasmine.createSpyObj('BookingService', [
         'setEditMode',
         'resetEditMode',
@@ -212,7 +213,7 @@ describe('BookingDetailsComponent', () => {
     bookingPersistServiceSpy = jasmine.createSpyObj('BookingPersistService', ['selectedHearingId']);
     userIdentityServiceSpy = jasmine.createSpyObj('UserIdentityService', ['getUserInformation']);
     const loggerSpy: jasmine.SpyObj<Logger> = jasmine.createSpyObj('Logger', ['error', 'event']);
-    locationSpy = jasmine.createSpyObj('Location', ['back']);
+    returnUrlServiceSpy = jasmine.createSpyObj<ReturnUrlService>('ReturnUrlService', ['popUrl', 'setUrl']);
 
     beforeEach(
         waitForAsync(() => {
@@ -242,7 +243,7 @@ describe('BookingDetailsComponent', () => {
                     { provide: BookingPersistService, useValue: bookingPersistServiceSpy },
                     { provide: UserIdentityService, useValue: userIdentityServiceSpy },
                     { provide: Logger, useValue: loggerSpy },
-                    { provide: Location, useValue: locationSpy }
+                    { provide: ReturnUrlService, useValue: returnUrlServiceSpy }
                 ]
             }).compileComponents();
             fixture = TestBed.createComponent(BookingDetailsComponent);
@@ -380,9 +381,15 @@ describe('BookingDetailsComponent', () => {
         component.errorHandler('error', UpdateBookingStatus.Created);
         expect(component.showCancelBooking).toBeTruthy();
     });
-    it('should navigate back', () => {
+    it('should navigate back to return url if exists', () => {
+        returnUrlServiceSpy.popUrl.and.returnValue(PageUrls.DeleteParticipant);
         component.navigateBack();
-        expect(locationSpy.back).toHaveBeenCalled();
+        expect(routerSpy.navigateByUrl).toHaveBeenCalledWith(PageUrls.DeleteParticipant);
+    });
+    it('should navigate back to hearing list if not return url set', () => {
+        returnUrlServiceSpy.popUrl.and.returnValue(null);
+        component.navigateBack();
+        expect(routerSpy.navigateByUrl).toHaveBeenCalledWith(PageUrls.BookingsList);
     });
     it('should not show pop up if the confirm failed', () => {
         videoHearingServiceSpy.updateBookingStatus.and.returnValue(of(new UpdateBookingStatusResponse({ success: true })));

@@ -13,7 +13,7 @@ import { GetAudioFileComponent } from './get-audio-file/get-audio-file.component
 import { DeleteParticipantSearchComponent } from './delete-participant/delete-participant-search/delete-participant-search.component';
 
 export const routes: Routes = [
-{ path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+    { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     { path: 'dashboard', component: DashboardComponent, canActivate: [AdminGuard] },
     { path: 'login', component: LoginComponent },
     { path: 'logout', component: LogoutComponent },
