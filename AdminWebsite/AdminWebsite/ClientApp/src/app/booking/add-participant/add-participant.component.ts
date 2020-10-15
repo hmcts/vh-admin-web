@@ -160,6 +160,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
     private setParticipantEmail() {
         this.searchEmail.email = this.participantDetails.email;
+        this.searchEmail.searchTerm.next(this.searchEmail.email);
         this.searchEmail.isValidEmail = true;
         const participantHasId = this.participantDetails.id && this.participantDetails.id.length > 0;
         this.emailDisabled = participantHasId || this.participantDetails.is_exist_person;
