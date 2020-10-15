@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 using AcceptanceTests.Common.Api.Helpers;
 using AcceptanceTests.Common.AudioRecordings;
@@ -18,10 +19,12 @@ namespace AdminWebsite.AcceptanceTests.Hooks
     {
         private const int ALLOCATE_USERS_FOR_MINUTES = 3;
         private readonly TestContext _c;
+        private readonly Random _random;
 
         public DataHooks(TestContext context)
         {
             _c = context;
+            _random = new Random();
         }
 
         [BeforeScenario(Order = (int)HooksSequence.DataHooks)]
@@ -58,6 +61,8 @@ namespace AdminWebsite.AcceptanceTests.Hooks
                 User_types = userTypes
             };
 
+            Thread.Sleep(TimeSpan.FromSeconds(GetRandomNumberForParallelExecution(8)));
+
             var response = _c.Api.AllocateUsers(request);
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             response.Should().NotBeNull();
@@ -65,6 +70,11 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             users.Should().NotBeNullOrEmpty();
             _c.Users = UserDetailsResponseToUsersMapper.Map(users);
             _c.Users.Should().NotBeNullOrEmpty();
+        }
+
+        public double GetRandomNumberForParallelExecution(int maximum)
+        {
+            return _random.NextDouble() * maximum;
         }
 
         [BeforeScenario(Order = (int)HooksSequence.AudioRecording)]
