@@ -110,10 +110,20 @@ namespace AdminWebsite.Controllers
                 string adUserId;
                 if(string.IsNullOrWhiteSpace(participant.Username))
                 {
-                    // create user
-                    var newUser = await _userAccountService.CreateNewUserInAD(participant);
-                    participant.Username = newUser.Username;
-                    adUserId = newUser.User_id;
+                    // check user contact email already exist
+                    var user = await _userAccountService.GetUserByContactEmail(participant.Contact_email);
+                    if (user != null)
+                    {
+                        participant.Username = user.User_name;
+                        adUserId = user.User_id;
+                    }
+                    else
+                    {
+                        // create user
+                        var newUser = await _userAccountService.CreateNewUserInAD(participant);
+                        participant.Username = newUser.Username;
+                        adUserId = newUser.User_id;
+                    }
                 }
                 else
                 {

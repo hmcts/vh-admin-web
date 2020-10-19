@@ -47,6 +47,8 @@ namespace AdminWebsite.Services
 
         Task<string> GetAdUserIdForUsername(string username);
 
+        Task<UserProfile> GetUserByContactEmail(string emailAddress);
+
         /// <summary>
         /// Create a new user in AD
         /// </summary>
@@ -78,7 +80,7 @@ namespace AdminWebsite.Services
         public async Task<string> UpdateParticipantUsername(ParticipantRequest participant)
         {
             // create user in AD if users email does not exist in AD.
-            var userProfile = await CheckUserExistsInAD(participant.Contact_email);
+            var userProfile = await GetUserByContactEmail(participant.Contact_email);
             if (userProfile == null)
             {
                 // create the user in AD.
@@ -98,7 +100,7 @@ namespace AdminWebsite.Services
             return new UserRole { UserRoleType = userRoleResult, CaseTypes = user.Case_type };
         }
 
-        private async Task<UserProfile> CheckUserExistsInAD(string emailAddress)
+        public async Task<UserProfile> GetUserByContactEmail(string emailAddress)
         {
             try
             {
