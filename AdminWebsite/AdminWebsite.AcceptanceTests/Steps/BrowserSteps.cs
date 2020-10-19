@@ -30,19 +30,17 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             SwitchCurrentUser(user);
 
-            var browser = new UserBrowser()
+            _browsers.Add(_c.CurrentUser, new UserBrowser()
                 .SetBaseUrl(_c.WebConfig.VhServices.AdminWebUrl)
                 .SetTargetBrowser(_c.WebConfig.TestConfig.TargetBrowser)
                 .SetTargetDevice(_c.WebConfig.TestConfig.TargetDevice)
-                .SetDriver(_c.Driver);
+                .SetDriver(_c.Driver));
 
-            _browsers.Add(_c.CurrentUser, browser);
-
-            browser.LaunchBrowser();
-            browser.NavigateToPage();
+            _browsers[_c.CurrentUser].LaunchBrowser();
+            _browsers[_c.CurrentUser].NavigateToPage();
 
             if (_c.WebConfig.TestConfig.TargetBrowser != TargetBrowser.Ie11)
-                browser.PageUrl(_c.Test.CommonData.CommonUris.LoginUri);
+                _browsers[_c.CurrentUser].PageUrl(_c.Test.CommonData.CommonUris.LoginUri);
         }
 
         [Given(@"in (.*)'s browser")]
