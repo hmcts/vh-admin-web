@@ -1,19 +1,32 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using AdminWebsite.AcceptanceTests.Helpers;
 using FluentAssertions;
+using Polly;
+using RestSharp;
 using TechTalk.SpecFlow;
 
 namespace AdminWebsite.AcceptanceTests.Hooks
 {
     [Binding]
-    public sealed class HealthcheckHooks
+    public class HealthcheckHooks
     {
+        private const int RETRIES = 4;
+
         [BeforeScenario(Order = (int)HooksSequence.HealthcheckHooks)]
         public void CheckApiHealth(TestContext context)
         {
-            var response = context.Api.HealthCheck();
-            response.StatusCode.Should().Be(HttpStatusCode.OK,
-                $"Healthcheck failed with '{response.StatusCode}' and error message '{response.ErrorMessage}'");
+            var retryOnForbiddenFirewallExceptions = Policy
+                .HandleResult<IRestResponse>(r => r.StatusCode == HttpStatusCode.Forbidden)
+                .WaitAndRetry(RETRIES, retryAttempt =>
+                        TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)),
+                    (exception, timeSpan) =>
+                    {
+                        NUnit.Framework.TestContext.WriteLine($"Encountered error '{exception.Result.StatusCode}' after {timeSpan.Seconds} seconds. Retrying...");
+                    });
+
+            var response = retryOnForbiddenFirewallExceptions.Execute(() => context.Api.HealthCheck());
+            response.StatusCode.Should().Be(HttpStatusCode.OK, $"Healthcheck failed with '{response.StatusCode}' and error message '{response.ErrorMessage}'");
         }
     }
 }
