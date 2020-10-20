@@ -34,8 +34,9 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void VerifyBookingWasSuccessful()
         {
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingConfirmationPage.SuccessMessage).Displayed.Should().BeTrue();
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingConfirmationPage.CaseNumber).Text.Should().Be(_c.Test.HearingDetails.CaseNumber);
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingConfirmationPage.CaseName).Text.Should().Contain(_c.Test.HearingDetails.CaseName);
+            _browsers[_c.CurrentUser].Driver.WaitForPageToLoad();
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingConfirmationPage.CaseNumber).Text.Trim().Should().Contain(_c.Test.HearingDetails.CaseNumber);
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingConfirmationPage.CaseName).Text.Trim().Should().Contain(_c.Test.HearingDetails.CaseName);
             var scheduleDate = _c.Test.HearingSchedule.ScheduledDate.ToString(DateFormats.HearingSummaryDate);
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingConfirmationPage.HearingDate).Text.ToLower().Should().Be(scheduleDate.ToLower());
         }
