@@ -83,22 +83,33 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
         public async Task<ActionResult<List<HearingsByUsernameForDeletionResponse>>> GetHearingsByUsernameForDeletionAsync([FromQuery] string username)
         {
+            var userId = await _userAccountService.GetAdUserIdForUsername(username);
+            var userExists = !string.IsNullOrWhiteSpace(userId);
+            
             try
             {
+                
                 var response = await _bookingsApiClient.GetHearingsByUsernameForDeletionAsync(username);
                 return Ok(response);
             }
             catch (BookingsApiException e)
             {
-                switch (e.StatusCode)
+                if (userExists && e.StatusCode == (int) HttpStatusCode.NotFound)
                 {
-                    case (int) HttpStatusCode.NotFound:
-                        return NotFound();
-                    case (int) HttpStatusCode.Unauthorized:
-                        return Unauthorized();
-                    default:
-                        throw;
+                    return Ok(new List<HearingsByUsernameForDeletionResponse>());
+                } 
+                
+                if (!userExists && e.StatusCode == (int) HttpStatusCode.NotFound)
+                {
+                    return NotFound();
                 }
+                
+                if (e.StatusCode == (int) HttpStatusCode.Unauthorized)
+                {
+                    return Unauthorized();
+                }
+
+                throw;
             }
         }
 

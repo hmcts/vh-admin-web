@@ -46,13 +46,6 @@ namespace AdminWebsite.Services
         Task AssignParticipantToGroup(string username, string userRole);
 
         Task<string> GetAdUserIdForUsername(string username);
-
-        /// <summary>
-        /// Create a new user in AD
-        /// </summary>
-        /// <param name="participant"></param>
-        /// <returns>New User response</returns>
-        Task<NewUserResponse> CreateNewUserInAD(ParticipantRequest participant);
     }
 
     public class UserAccountService : IUserAccountService
@@ -78,7 +71,7 @@ namespace AdminWebsite.Services
         public async Task<string> UpdateParticipantUsername(ParticipantRequest participant)
         {
             // create user in AD if users email does not exist in AD.
-            var userProfile = await CheckUserExistsInAD(participant.Contact_email);
+            var userProfile = await GetUserByContactEmail(participant.Contact_email);
             if (userProfile == null)
             {
                 // create the user in AD.
@@ -98,7 +91,7 @@ namespace AdminWebsite.Services
             return new UserRole { UserRoleType = userRoleResult, CaseTypes = user.Case_type };
         }
 
-        private async Task<UserProfile> CheckUserExistsInAD(string emailAddress)
+        private async Task<UserProfile> GetUserByContactEmail(string emailAddress)
         {
             try
             {
@@ -133,7 +126,7 @@ namespace AdminWebsite.Services
             }
         }
 
-        public async Task<NewUserResponse> CreateNewUserInAD(ParticipantRequest participant)
+        private async Task<NewUserResponse> CreateNewUserInAD(ParticipantRequest participant)
         {
             const string BLANK = " ";
 

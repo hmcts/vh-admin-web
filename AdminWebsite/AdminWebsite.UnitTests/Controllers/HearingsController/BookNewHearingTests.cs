@@ -1,14 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
-using AdminWebsite.UnitTests.Helper;
 using AdminWebsite.UserAPI.Client;
 using AdminWebsite.VideoAPI.Client;
 using FizzWare.NBuilder;
@@ -31,9 +29,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private Mock<IValidator<EditHearingRequest>> _editHearingRequestValidator;
         private Mock<IVideoApiClient> _videoApiMock;
         private Mock<IPollyRetryService> _pollyRetryServiceMock;
-        
+
         private AdminWebsite.Controllers.HearingsController _controller;
-        
+
         [SetUp]
         public void Setup()
         {
@@ -42,7 +40,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _userIdentity = new Mock<IUserIdentity>();
 
             _userAccountService = new UserAccountService(_userApiClient.Object, _bookingsApiClient.Object);
-            
+
             _editHearingRequestValidator = new Mock<IValidator<EditHearingRequest>>();
             _videoApiMock = new Mock<IVideoApiClient>();
             _pollyRetryServiceMock = new Mock<IPollyRetryService>();
@@ -60,6 +58,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task should_book_hearing()
         {
+            // request with existing person, new user, existing user in AD but not in persons table 
             var request = new BookNewHearingRequest
             {
                 Participants = new List<BookingsAPI.Client.ParticipantRequest>
@@ -76,6 +75,13 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                         Case_role_name = "CaseRole", Contact_email = "contact2@email.com",
                         Hearing_role_name = "HearingRole", Display_name = "display name2",
                         First_name = "fname2", Middle_names = "", Last_name = "lname2", Organisation_name = "",
+                        Reference = "", Representee = "", Telephone_number = ""
+                    },
+                    new BookingsAPI.Client.ParticipantRequest
+                    {
+                        Case_role_name = "CaseRole", Contact_email = "contact3@email.com",
+                        Hearing_role_name = "HearingRole", Display_name = "display name3",
+                        First_name = "fname3", Middle_names = "", Last_name = "lname3", Organisation_name = "",
                         Reference = "", Representee = "", Telephone_number = ""
                     },
                     new BookingsAPI.Client.ParticipantRequest
@@ -108,7 +114,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 _userApiClient.Setup(x => x.GetUserByAdUserIdAsync(It.Is<string>(e => e == participant.Username)))
                     .ReturnsAsync(profile);
             }
-            
+
             foreach (var participant in request.Participants.Where(x => string.IsNullOrWhiteSpace(x.Username)))
             {
                 var newUser = new NewUserResponse()
@@ -122,6 +128,20 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                         userRequest.Recovery_email == participant.Contact_email))).ReturnsAsync(newUser);
             }
 
+            var existingPat3 = request.Participants.Single(x => x.Contact_email == "contact3@email.com");
+
+            var existingUser3 = new UserProfile()
+            {
+                User_id = Guid.NewGuid().ToString(),
+                User_name = $"{existingPat3.First_name}.{existingPat3.Last_name}@hmcts.net",
+                Email = existingPat3.Contact_email,
+                First_name = existingPat3.First_name,
+                Last_name = existingPat3.Last_name,
+                Display_name = existingPat3.Display_name,
+            };
+            _userApiClient
+                .Setup(x => x.GetUserByEmailAsync(existingPat3.Contact_email)).ReturnsAsync(existingUser3);
+
             // setup response
             var pat1 = Builder<ParticipantResponse>.CreateNew()
                 .With(x => x.Id = Guid.NewGuid())
@@ -133,6 +153,11 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 .With(x => x.User_role_name = "Individual")
                 .With(x => x.Username = "fname2.lname2@hmcts.net")
                 .Build();
+            var pat3 = Builder<ParticipantResponse>.CreateNew()
+                .With(x => x.Id = Guid.NewGuid())
+                .With(x => x.User_role_name = "Individual")
+                .With(x => x.Username = "fname3.lname3@hmcts.net")
+                .Build();
             var judge = Builder<ParticipantResponse>.CreateNew()
                 .With(x => x.Id = Guid.NewGuid())
                 .With(x => x.User_role_name = "Judge")
@@ -140,7 +165,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 .Build();
             var hearingDetailsResponse = Builder<HearingDetailsResponse>.CreateNew()
                 .With(x => x.Endpoints = Builder<EndpointResponse>.CreateListOfSize(2).Build().ToList())
-                .With(x => x.Participants = new List<ParticipantResponse> {pat1, pat2, judge}).Build();
+                .With(x => x.Participants = new List<ParticipantResponse> {pat1, pat2, pat3, judge}).Build();
             _bookingsApiClient.Setup(x => x.BookNewHearingAsync(request))
                 .ReturnsAsync(hearingDetailsResponse);
 
