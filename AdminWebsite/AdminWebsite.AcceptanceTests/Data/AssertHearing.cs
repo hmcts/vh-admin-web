@@ -56,7 +56,7 @@ namespace AdminWebsite.AcceptanceTests.Data
 
         public void AssertHearingDataMatches()
         {
-            _hearing.Cases.First().Name.Should().Be(_test.HearingDetails.CaseName);
+            _hearing.Cases.First().Name.Should().Contain(_test.HearingDetails.CaseName);
             _hearing.Cases.First().Number.Should().Contain(_test.HearingDetails.CaseNumber);
             _hearing.Case_type_name.Should().Be(_test.HearingDetails.CaseType.Name);
             _hearing.Created_by.Should().Be(_createdBy);
