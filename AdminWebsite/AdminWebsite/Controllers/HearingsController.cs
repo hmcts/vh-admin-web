@@ -514,7 +514,6 @@ namespace AdminWebsite.Controllers
                 Organisation_name = participant.OrganisationName,
                 Telephone_number = participant.TelephoneNumber,
                 Representee = participant.Representee,
-                Reference = participant.Reference
             };
             return updateParticipantRequest;
         }
@@ -531,7 +530,6 @@ namespace AdminWebsite.Controllers
                 Hearing_role_name = participant.HearingRoleName,
                 Middle_names = participant.MiddleNames,
                 Representee = participant.Representee,
-                Reference = participant.Reference,
                 Telephone_number = participant.TelephoneNumber,
                 Title = participant.Title,
                 Organisation_name = participant.OrganisationName,

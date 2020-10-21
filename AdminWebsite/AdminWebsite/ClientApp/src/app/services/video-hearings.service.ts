@@ -171,7 +171,6 @@ export class VideoHearingsService {
         editParticipant.hearing_role_name = participant.hearing_role_name;
         editParticipant.middle_names = participant.middle_names;
         editParticipant.representee = participant.representee;
-        editParticipant.reference = participant.reference;
         editParticipant.telephone_number = participant.phone;
         editParticipant.title = participant.title;
         editParticipant.organisation_name = participant.company;
@@ -271,7 +270,6 @@ export class VideoHearingsService {
                 participant.case_role_name = p.case_role_name;
                 participant.hearing_role_name = p.hearing_role_name;
                 participant.representee = p.representee;
-                participant.reference = p.reference;
                 participant.organisation_name = p.company;
                 participants.push(participant);
             });
@@ -311,7 +309,6 @@ export class VideoHearingsService {
                 participant.case_role_name = p.case_role_name;
                 participant.hearing_role_name = p.hearing_role_name;
                 participant.representee = p.representee;
-                participant.reference = p.reference;
                 participant.company = p.organisation;
                 participant.is_judge = p.case_role_name === 'Judge';
                 participants.push(participant);

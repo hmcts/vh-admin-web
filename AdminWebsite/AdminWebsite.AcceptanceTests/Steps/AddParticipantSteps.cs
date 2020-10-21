@@ -161,8 +161,6 @@ namespace AdminWebsite.AcceptanceTests.Steps
             var organisation = _c.Test.TestData.AddParticipant.Participant.Organisation;
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AddParticipantsPage.RepOrganisationTextfield).SendKeys(organisation);
             var reference = _c.Test.TestData.AddParticipant.Participant.Reference;
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AddParticipantsPage.ReferenceTextfield).SendKeys(reference);
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AddParticipantsPage.RepresentingTextfield).SendKeys(user.Representee);
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AddParticipantsPage.AddParticipantLink);
             _browsers[_c.CurrentUser].ScrollTo(AddParticipantsPage.AddParticipantLink);
             _browsers[_c.CurrentUser].ClickLink(AddParticipantsPage.AddParticipantLink);
@@ -186,8 +184,6 @@ namespace AdminWebsite.AcceptanceTests.Steps
             var organisation = _c.Test.TestData.AddParticipant.Participant.Organisation;
             EnterTextIfFieldIsNotPrePopulated(AddParticipantsPage.RepOrganisationTextfield, organisation);
             var reference = _c.Test.TestData.AddParticipant.Participant.Reference;
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AddParticipantsPage.ReferenceTextfield).SendKeys(reference);
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AddParticipantsPage.RepresentingTextfield).SendKeys(user.Representee);
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AddParticipantsPage.AddParticipantLink);
             _browsers[_c.CurrentUser].ScrollTo(AddParticipantsPage.AddParticipantLink);
             _browsers[_c.CurrentUser].ClickLink(AddParticipantsPage.AddParticipantLink);
