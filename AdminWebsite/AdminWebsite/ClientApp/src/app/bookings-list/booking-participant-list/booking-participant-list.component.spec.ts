@@ -10,11 +10,9 @@ import { BookingParticipantListComponent } from './booking-participant-list.comp
     template: ''
 })
 class ParticipantDetailsMockComponent {
-    @Input()
-    participant: ParticipantDetailsModel = null;
+    @Input() participant: ParticipantDetailsModel = null;
 
-    @Input()
-    vh_officer_admin: boolean;
+    @Input() vh_officer_admin: boolean;
 }
 
 describe('BookingParticipantListComponent', () => {
@@ -57,7 +55,6 @@ describe('BookingParticipantListComponent', () => {
             'Alan Brake',
             '',
             'ABC Solicitors',
-            'new Solicitor',
             'defendant'
         );
         const participantsList: Array<ParticipantDetailsModel> = [];
@@ -89,7 +86,6 @@ describe('BookingParticipantListComponent', () => {
             'Alan Brake',
             '',
             'ABC Solicitors',
-            'new Solicitor',
             'defendant'
         );
         const participantsList: Array<ParticipantDetailsModel> = [];
@@ -120,7 +116,6 @@ describe('BookingParticipantListComponent', () => {
             'Alan Brake',
             '',
             'ABC Solicitors',
-            'new Solicitor',
             'defendant'
         );
         const participantsList: Array<ParticipantDetailsModel> = [];
