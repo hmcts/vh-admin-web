@@ -206,6 +206,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
             companyNameIndividual: this.companyNameIndividual,
             representing: this.representing
         });
+
         const self = this;
         this.$subscriptions.push(
             this.form.valueChanges.subscribe(result => {
