@@ -1028,6 +1028,16 @@ describe('AddParticipantComponent set representer', () => {
         expect(component.$subscriptions[0].closed).toBeTruthy();
         expect(component.$subscriptions[1].closed).toBeTruthy();
     });
+    it('should indicate that role is representative', () => {
+        const roleToFind = 'representative';
+        const result = component.isRoleRepresentative(roleToFind);
+        expect(result).toBe(true);
+    });
+    it('should indicate that role is not representative', () => {
+        const roleToFind = 'somerole';
+        const result = component.isRoleRepresentative(roleToFind);
+        expect(result).toBe(false);
+    });
 });
 
 function isAddressControlValid(control: AbstractControl, controlValue: string) {

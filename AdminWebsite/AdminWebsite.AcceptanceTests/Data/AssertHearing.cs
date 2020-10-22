@@ -87,7 +87,6 @@ namespace AdminWebsite.AcceptanceTests.Data
                 if (!expectedParticipant.HearingRoleName.Equals(PartyRole.Representative.Name)) continue;
                 actualParticipant.Organisation.Should().Be(_test.AddParticipant.Participant.Organisation);
                 actualParticipant.Representee.Should().Be(expectedParticipant.Representee);
-                actualParticipant.Reference.Should().Be(_test.AddParticipant.Participant.Reference);
             }
         }
 
