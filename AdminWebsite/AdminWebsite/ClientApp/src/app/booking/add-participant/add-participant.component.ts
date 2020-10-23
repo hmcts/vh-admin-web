@@ -46,7 +46,6 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     private displayName: FormControl;
     private companyName: FormControl;
     private companyNameIndividual: FormControl;
-    private reference: FormControl;
     private representing: FormControl;
     isRoleSelected = true;
     isPartySelected = true;
@@ -74,8 +73,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     existingPersonEmails: string[] = [];
     $subscriptions: Subscription[] = [];
 
-    @ViewChild(SearchEmailComponent)
-    searchEmail: SearchEmailComponent;
+    @ViewChild(SearchEmailComponent) searchEmail: SearchEmailComponent;
 
     @ViewChild(ParticipantsListComponent, { static: true })
     participantsListComponent: ParticipantsListComponent;
@@ -194,7 +192,6 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         ]);
         this.companyName = new FormControl('');
         this.companyNameIndividual = new FormControl('', [Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)]);
-        this.reference = new FormControl('', [Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)]);
         this.representing = new FormControl('', [Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)]);
 
         this.form = new FormGroup({
@@ -207,9 +204,9 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
             displayName: this.displayName,
             companyName: this.companyName,
             companyNameIndividual: this.companyNameIndividual,
-            reference: this.reference,
             representing: this.representing
         });
+
         const self = this;
         this.$subscriptions.push(
             this.form.valueChanges.subscribe(result => {
@@ -311,7 +308,6 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
             displayName: this.participantDetails.display_name || '',
             companyName: this.participantDetails.company ? this.participantDetails.company : '',
             companyNameIndividual: this.participantDetails.company ? this.participantDetails.company : '',
-            reference: this.participantDetails.reference ? this.participantDetails.reference : '',
             representing: this.participantDetails.representee ? this.participantDetails.representee : ''
         });
 
@@ -410,9 +406,6 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         );
     }
 
-    get referenceInvalid() {
-        return this.reference.invalid && (this.reference.dirty || this.reference.touched || this.isShowErrorSummary);
-    }
     get representeeInvalid() {
         return this.representing.invalid && (this.representing.dirty || this.representing.touched || this.isShowErrorSummary);
     }
@@ -439,15 +432,12 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         this.isRoleSelected = this.role.value !== this.constants.PleaseSelect;
         if (!this.isRoleRepresentative(this.role.value)) {
             this.companyName.clearValidators();
-            this.reference.clearValidators();
             this.representing.clearValidators();
 
             this.companyName.updateValueAndValidity();
-            this.reference.updateValueAndValidity();
             this.representing.updateValueAndValidity();
 
             this.companyName.setValue('');
-            this.reference.setValue('');
             this.representing.setValue('');
         } else {
             this.companyName.setValidators([
@@ -455,7 +445,6 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
                 Validators.pattern(Constants.TextInputPattern),
                 Validators.maxLength(255)
             ]);
-            this.reference.setValidators([Validators.required, Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)]);
             this.representing.setValidators([
                 Validators.required,
                 Validators.pattern(Constants.TextInputPattern),
@@ -463,7 +452,6 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
             ]);
 
             this.companyName.updateValueAndValidity();
-            this.reference.updateValueAndValidity();
             this.representing.updateValueAndValidity();
 
             this.companyNameIndividual.setValue('');
@@ -581,7 +569,6 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
             newParticipant.company = this.companyNameIndividual.value;
         }
         newParticipant.username = this.participantDetails ? this.participantDetails.username : '';
-        newParticipant.reference = this.reference.value;
         newParticipant.representee = this.representing.value;
         newParticipant.is_exist_person = this.existingPersonEmails.findIndex(x => x === newParticipant.email) > -1;
     }
@@ -645,7 +632,6 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
             displayName: '',
             companyName: '',
             companyNameIndividual: '',
-            reference: '',
             representing: ''
         });
         this.form.markAsUntouched();
@@ -747,11 +733,6 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     companyNameOnBlur() {
         const text = SanitizeInputText(this.companyName.value);
         this.companyName.setValue(text);
-    }
-
-    referenceOnBlur() {
-        const text = SanitizeInputText(this.reference.value);
-        this.reference.setValue(text);
     }
 
     representingOnBlur() {

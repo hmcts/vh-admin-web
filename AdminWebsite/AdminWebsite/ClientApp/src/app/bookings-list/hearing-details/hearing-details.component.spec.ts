@@ -85,7 +85,6 @@ describe('HearingDetailsComponent', () => {
             'display_name',
             'middle_names',
             'organisation',
-            'reference',
             'representee'
         );
         participants.push(participant);
@@ -108,7 +107,6 @@ describe('HearingDetailsComponent', () => {
             'display_name',
             'middle_names',
             'organisation',
-            'reference',
             'representee'
         );
         participants.push(participant);
