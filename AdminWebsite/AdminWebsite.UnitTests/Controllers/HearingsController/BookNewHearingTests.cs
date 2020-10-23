@@ -68,28 +68,28 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                         Case_role_name = "CaseRole", Contact_email = "contact1@email.com",
                         Hearing_role_name = "HearingRole", Display_name = "display name1",
                         First_name = "fname", Middle_names = "", Last_name = "lname1", Username = "username1@hmcts.net",
-                        Organisation_name = "", Reference = "", Representee = "", Telephone_number = ""
+                        Organisation_name = "", Representee = "", Telephone_number = ""
                     },
                     new BookingsAPI.Client.ParticipantRequest
                     {
                         Case_role_name = "CaseRole", Contact_email = "contact2@email.com",
                         Hearing_role_name = "HearingRole", Display_name = "display name2",
                         First_name = "fname2", Middle_names = "", Last_name = "lname2", Organisation_name = "",
-                        Reference = "", Representee = "", Telephone_number = ""
+                        Representee = "", Telephone_number = ""
                     },
                     new BookingsAPI.Client.ParticipantRequest
                     {
                         Case_role_name = "CaseRole", Contact_email = "contact3@email.com",
                         Hearing_role_name = "HearingRole", Display_name = "display name3",
                         First_name = "fname3", Middle_names = "", Last_name = "lname3", Organisation_name = "",
-                        Reference = "", Representee = "", Telephone_number = ""
+                        Representee = "", Telephone_number = ""
                     },
                     new BookingsAPI.Client.ParticipantRequest
                     {
                         Case_role_name = "Judge", Contact_email = "judge@email.com",
                         Hearing_role_name = "Judge", Display_name = "Judge Fudge",
                         First_name = "Jack", Middle_names = "", Last_name = "Fudge",
-                        Username = "judge.fudge@hmcts.net", Organisation_name = "", Reference = "", Representee = "",
+                        Username = "judge.fudge@hmcts.net", Organisation_name = "", Representee = "",
                         Telephone_number = ""
                     }
                 },

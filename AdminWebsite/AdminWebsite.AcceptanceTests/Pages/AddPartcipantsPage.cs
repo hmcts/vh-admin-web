@@ -15,7 +15,6 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public static By RepOrganisationTextfield = By.Id("companyName");
         public static By PhoneTextfield = By.Id("phone");
         public static By DisplayNameTextfield = By.Id("displayName");
-        public static By ReferenceTextfield = By.Id("reference");
         public static By RepresentingTextfield = By.Id("representing");
         public static By AddParticipantLink = By.Id("addParticipantBtn");
         public static By ClearDetailsLink = By.PartialLinkText("Clear details");

@@ -39,7 +39,6 @@ describe('ParticipantDetailsComponent', () => {
             'Alan Brake',
             '',
             'ABC Solicitors',
-            'new Solicitor',
             'defendant'
         );
         pr.IndexInList = 0;
