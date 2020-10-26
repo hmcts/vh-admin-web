@@ -27,22 +27,31 @@
 
     <div *ngIf="vh_officer_admin">
 
-      <div class="govuk-grid-row">
-        <div class="govuk-grid-column-one-third">
-          Email:
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-one-third">
+                Email:
+            </div>
+            <div id="participant-{{participant?.ParticipantId}}-email" class="govuk-grid-column-two-thirds">
+                {{participant?.Email}}
+            </div>
         </div>
-        <div id="participant-{{participant?.ParticipantId}}-email" class="govuk-grid-column-two-thirds">
-          {{participant?.Email}}
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-one-third">
+                Username:
+            </div>
+            <div id="participant-{{participant?.ParticipantId}}-username" class="govuk-grid-column-two-thirds">
+                {{participant?.UserName}}
+            </div>
         </div>
-      </div>
-      <div class="govuk-grid-row">
-        <div class="govuk-grid-column-one-third">
-          Username:
+
+        <div class="govuk-grid-row" *ngIf="participant?.HearingRoleName !== 'Judge'">
+            <div class="govuk-grid-column-one-third">
+                Telephone:
+            </div>
+            <div id="participant-{{participant?.ParticipantId}}-phone" class="govuk-grid-column-two-thirds">
+                {{participant?.Phone}}
+            </div>
         </div>
-        <div id="participant-{{participant?.ParticipantId}}-username" class="govuk-grid-column-two-thirds">
-          {{participant?.UserName}}
-        </div>
-      </div>
 
     </div>
   </div>

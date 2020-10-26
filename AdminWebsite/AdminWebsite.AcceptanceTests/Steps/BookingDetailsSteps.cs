@@ -135,6 +135,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             {
                 _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingDetailsPage.ParticipantRole(participant.Id)).Text.Trim().Should().Be(participant.Hearing_role_name);
             }
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingDetailsPage.ParticipantPhone(participant.Id)).Text.Trim().Should().Be(participant.Telephone_number);
         }
 
         [When(@"the user confirms the booking")]
