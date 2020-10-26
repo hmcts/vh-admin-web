@@ -28,6 +28,8 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public static By ParticipantEmail(Guid participantId) => By.Id($"participant-{participantId:D}-email");
         public static By ParticipantUsername(Guid participantId) => By.Id($"participant-{participantId:D}-username");
         public static By ParticipantRepresentee(Guid participantId) => By.Id($"participant-{participantId:D}-representee");
+        public static By ParticipantPhone(Guid participantId) => By.Id($"participant-{participantId:D}-phone");
+
         public static By CancelReasonDropdown = By.Id("cancel-reason");
         public static By CancelReasonDropdownErrorLabel = By.Id("cancelReason-error");
         public static By CancelReasonDetailsErrorLabel = By.Id("more-detail-error");

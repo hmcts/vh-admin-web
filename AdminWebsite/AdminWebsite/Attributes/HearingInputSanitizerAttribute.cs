@@ -32,7 +32,6 @@ namespace AdminWebsite.Attributes
                             x.Last_name = Sanitize(x.Last_name);
                             x.Display_name = Sanitize(x.Display_name);
                             x.Telephone_number = Sanitize(x.Telephone_number);
-                            x.Reference = Sanitize(x.Reference);
                             x.Representee = Sanitize(x.Representee);
                             x.Organisation_name = Sanitize(x.Organisation_name);
                         });
@@ -56,7 +55,6 @@ namespace AdminWebsite.Attributes
                             x.LastName = Sanitize(x.LastName);
                             x.DisplayName = Sanitize(x.DisplayName);
                             x.TelephoneNumber = Sanitize(x.TelephoneNumber);
-                            x.Reference = Sanitize(x.Reference);
                             x.Representee = Sanitize(x.Representee);
                             x.OrganisationName = Sanitize(x.OrganisationName);
                         });

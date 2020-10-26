@@ -46,7 +46,7 @@ export class BookingDetailsService {
       hearingResponse.participants.forEach(p => {
         const model = new ParticipantDetailsModel(p.id, p.title, p.first_name, p.last_name,
           p.user_role_name, p.username, p.contact_email, p.case_role_name, p.hearing_role_name,
-          p.display_name, p.middle_names, p.organisation, p.reference, p.representee);
+          p.display_name, p.middle_names, p.organisation, p.representee, p.telephone_number);
         if (p.user_role_name === this.JUDGE) {
           judges.push(model);
         } else {

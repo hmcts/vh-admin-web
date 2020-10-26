@@ -25,17 +25,13 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
     $subscriptions: Subscription[] = [];
     invalidPattern: string;
 
-    @Input()
-    disabled = true;
+    @Input() disabled = true;
 
-    @Output()
-    findParticipant = new EventEmitter<ParticipantModel>();
+    @Output() findParticipant = new EventEmitter<ParticipantModel>();
 
-    @Output()
-    participantsNotFound = new EventEmitter();
+    @Output() participantsNotFound = new EventEmitter();
 
-    @Output()
-    emailChanged = new EventEmitter<string>();
+    @Output() emailChanged = new EventEmitter<string>();
 
     constructor(private searchService: SearchService, private configService: ConfigService, private logger: Logger) {}
 
@@ -146,7 +142,6 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
             participant.email = p.contact_email;
             participant.phone = p.telephone_number;
             participant.representee = '';
-            participant.reference = '';
             participant.company = p.organisation;
         }
 

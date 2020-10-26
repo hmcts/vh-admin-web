@@ -132,14 +132,14 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                         Case_role_name = "CaseRole", Contact_email = "contact1@email.com",
                         Hearing_role_name = "HearingRole", Display_name = "display name1",
                         First_name = "fname", Middle_names = "", Last_name = "lname1", Username = "username1@email.com",
-                        Organisation_name = "", Reference = "", Representee = "", Telephone_number = ""
+                        Organisation_name = "", Representee = "", Telephone_number = ""
                     },
                     new BookingsAPI.Client.ParticipantRequest
                     {
                         Case_role_name = "CaseRole", Contact_email = "contact2@email.com",
                         Hearing_role_name = "HearingRole", Display_name = "display name2",
                         First_name = "fname2", Middle_names = "", Last_name = "lname2",
-                        Username = "username2@email.com", Organisation_name = "", Reference = "", Representee = "",
+                        Username = "username2@email.com", Organisation_name = "", Representee = "",
                         Telephone_number = ""
                     },
                 },
