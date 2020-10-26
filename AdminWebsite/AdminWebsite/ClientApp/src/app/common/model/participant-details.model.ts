@@ -12,7 +12,8 @@ export class ParticipantDetailsModel {
         displayName: string,
         middleNames: string,
         organisation: string,
-        representee: string
+        representee: string,
+        phone: string
     ) {
         this.ParticipantId = participantId;
         this.FirstName = firstName;
@@ -28,6 +29,7 @@ export class ParticipantDetailsModel {
         this.MiddleNames = middleNames;
         this.Representee = representee;
         this.Company = organisation;
+        this.Phone = phone;
     }
 
     ParticipantId: string;
@@ -43,6 +45,7 @@ export class ParticipantDetailsModel {
     MiddleNames: string;
     Representee: string;
     Company: string;
+    Phone: string;
 
     // flag to indicate if participant is the last in the list and don't need decoration bottom line
     Flag: boolean;
