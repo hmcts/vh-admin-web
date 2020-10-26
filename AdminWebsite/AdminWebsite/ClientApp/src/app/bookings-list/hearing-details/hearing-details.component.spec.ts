@@ -85,7 +85,8 @@ describe('HearingDetailsComponent', () => {
             'display_name',
             'middle_names',
             'organisation',
-            'representee'
+            'representee',
+            '12345678'
         );
         participants.push(participant);
         component.participants = participants;
@@ -107,7 +108,8 @@ describe('HearingDetailsComponent', () => {
             'display_name',
             'middle_names',
             'organisation',
-            'representee'
+            'representee',
+            ''
         );
         participants.push(participant);
         component.participants = participants;

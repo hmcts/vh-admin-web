@@ -82,7 +82,8 @@ export class BookingDetailsTestData {
             'Alan Brake',
             '',
             'ABC Solicitors',
-            'defendant'
+            'defendant',
+            '12345678'
         );
         const p2 = new ParticipantDetailsModel(
             '2',
@@ -97,7 +98,8 @@ export class BookingDetailsTestData {
             'Roy Bark',
             '',
             'ABC Solicitors',
-            'defendant'
+            'defendant',
+            '12345678'
         );
         const p3 = new ParticipantDetailsModel(
             '2',
@@ -112,7 +114,8 @@ export class BookingDetailsTestData {
             'Fill',
             '',
             'ABC Solicitors',
-            'defendant'
+            'defendant',
+            '12345678'
         );
         participants.push(p2);
         participants.push(p3);
