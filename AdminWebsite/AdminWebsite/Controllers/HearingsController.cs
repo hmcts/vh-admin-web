@@ -128,7 +128,7 @@ namespace AdminWebsite.Controllers
             foreach (var endpoint in endpointsWithDa)
             {
                 var defenceAdvocate = participants.Single(x =>
-                    x.Contact_email.Equals(endpoint.Defence_advocate_username,
+                    x.Username.Equals(endpoint.Defence_advocate_username,
                         StringComparison.CurrentCultureIgnoreCase));
                 endpoint.Defence_advocate_username = defenceAdvocate.Username;
             }

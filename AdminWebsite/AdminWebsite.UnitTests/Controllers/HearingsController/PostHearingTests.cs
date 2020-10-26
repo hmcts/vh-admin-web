@@ -95,7 +95,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             };
             var participantList = new List<BookingsAPI.Client.ParticipantRequest> { participant };
 
-            var da = "username@email.com";
+            var da = "username@newemail.com";
             var endpoints = new EndpointRequest { Display_name = "displayname", Defence_advocate_username = da };
             var endpointList = new List<EndpointRequest>();
             endpointList.Add(endpoints);
@@ -146,9 +146,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 Endpoints = new List<EndpointRequest>
                 {
                     new EndpointRequest
-                        {Display_name = "displayname1", Defence_advocate_username = "contact1@email.com"},
+                        {Display_name = "displayname1", Defence_advocate_username = "username1@email.com"},
                     new EndpointRequest
-                        {Display_name = "displayname2", Defence_advocate_username = "contact2@email.com"},
+                        {Display_name = "displayname2", Defence_advocate_username = "username2@email.com"},
                 }
             };
             // setup response
