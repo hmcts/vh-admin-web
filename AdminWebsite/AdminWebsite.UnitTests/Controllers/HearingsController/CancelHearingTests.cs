@@ -1,18 +1,17 @@
 ﻿using AdminWebsite.BookingsAPI.Client;
+using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
+using AdminWebsite.VideoAPI.Client;
 using FluentAssertions;
+using FluentValidation;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using System;
-using System.Text.Encodings.Web;
 using System.Threading.Tasks;
-using AdminWebsite.Models;
-using AdminWebsite.VideoAPI.Client;
-using FluentValidation;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {
@@ -42,7 +41,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 _userIdentity.Object,
                 _userAccountService.Object,
                 _editHearingRequestValidator.Object,
-                JavaScriptEncoder.Default,
                 _videoApiMock.Object,
                 _pollyRetryServiceMock.Object,
                 new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>().Object);

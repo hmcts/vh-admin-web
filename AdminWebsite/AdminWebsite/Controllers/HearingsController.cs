@@ -1,26 +1,25 @@
 using AdminWebsite.Attributes;
 using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Extensions;
+using AdminWebsite.Helper;
+using AdminWebsite.Mappers;
 using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
+using AdminWebsite.VideoAPI.Client;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Text.Encodings.Web;
 using System.Threading.Tasks;
-using AdminWebsite.Mappers;
-using AdminWebsite.VideoAPI.Client;
-using Microsoft.Extensions.Logging;
-using ParticipantRequest = AdminWebsite.BookingsAPI.Client.ParticipantRequest;
-using UpdateParticipantRequest = AdminWebsite.BookingsAPI.Client.UpdateParticipantRequest;
 using AddEndpointRequest = AdminWebsite.BookingsAPI.Client.AddEndpointRequest;
+using ParticipantRequest = AdminWebsite.BookingsAPI.Client.ParticipantRequest;
 using UpdateEndpointRequest = AdminWebsite.BookingsAPI.Client.UpdateEndpointRequest;
-using AdminWebsite.Helper;
+using UpdateParticipantRequest = AdminWebsite.BookingsAPI.Client.UpdateParticipantRequest;
 
 namespace AdminWebsite.Controllers
 {
@@ -36,7 +35,6 @@ namespace AdminWebsite.Controllers
         private readonly IUserIdentity _userIdentity;
         private readonly IUserAccountService _userAccountService;
         private readonly IValidator<EditHearingRequest> _editHearingRequestValidator;
-        private readonly JavaScriptEncoder _encoder;
         private readonly IVideoApiClient _videoApiClient;
         private readonly IPollyRetryService _pollyRetryService;
         private readonly ILogger<HearingsController> _logger;
@@ -46,14 +44,13 @@ namespace AdminWebsite.Controllers
         /// </summary>
         public HearingsController(IBookingsApiClient bookingsApiClient, IUserIdentity userIdentity,
             IUserAccountService userAccountService, IValidator<EditHearingRequest> editHearingRequestValidator,
-            JavaScriptEncoder encoder, IVideoApiClient videoApiClient, IPollyRetryService pollyRetryService,
+            IVideoApiClient videoApiClient, IPollyRetryService pollyRetryService,
             ILogger<HearingsController> logger)
         {
             _bookingsApiClient = bookingsApiClient;
             _userIdentity = userIdentity;
             _userAccountService = userAccountService;
             _editHearingRequestValidator = editHearingRequestValidator;
-            _encoder = encoder;
             _videoApiClient = videoApiClient;
             _pollyRetryService = pollyRetryService;
             _logger = logger;
@@ -82,7 +79,7 @@ namespace AdminWebsite.Controllers
                     var endpointsWithDa = request.Endpoints
                         .Where(x => !string.IsNullOrWhiteSpace(x.Defence_advocate_username)).ToList();
                     AssignEndpointDefenceAdvocates(endpointsWithDa, request.Participants.AsReadOnly());
-                    
+
                 }
 
                 request.Created_by = _userIdentity.GetUserIdentityName();
@@ -92,7 +89,7 @@ namespace AdminWebsite.Controllers
             }
             catch (BookingsApiException e)
             {
-                if (e.StatusCode == (int) HttpStatusCode.BadRequest)
+                if (e.StatusCode == (int)HttpStatusCode.BadRequest)
                 {
                     return BadRequest(e.Response);
                 }
@@ -108,7 +105,7 @@ namespace AdminWebsite.Controllers
             {
                 // set the participant username according to AD
                 string adUserId;
-                if(string.IsNullOrWhiteSpace(participant.Username))
+                if (string.IsNullOrWhiteSpace(participant.Username))
                 {
                     adUserId = await _userAccountService.UpdateParticipantUsername(participant);
                 }
@@ -148,7 +145,7 @@ namespace AdminWebsite.Controllers
         {
 
             var listOfDates = DateListMapper.GetListOfWorkingDates(hearingRequest.StartDate, hearingRequest.EndDate);
-            if(listOfDates.Count == 0)
+            if (listOfDates.Count == 0)
             {
                 return BadRequest();
             }
@@ -241,7 +238,7 @@ namespace AdminWebsite.Controllers
                         else
                         {
                             // Update the request with newly created user details in AD
-                            var userId =  await _userAccountService.UpdateParticipantUsername(newParticipant);
+                            var userId = await _userAccountService.UpdateParticipantUsername(newParticipant);
                             usernameAdIdDict.Add(newParticipant.Username, userId);
                         }
                         newParticipantList.Add(newParticipant);
@@ -270,6 +267,17 @@ namespace AdminWebsite.Controllers
                     }
                 }
 
+                // Delete existing participants if the request doesn't contain any update information
+                if (hearing.Participants == null)
+                {
+                    hearing.Participants = new List<ParticipantResponse>();
+                }
+                var deleteParticipantList = hearing.Participants.Where(p => request.Participants.All(rp => rp.Id != p.Id));
+                foreach (var participantToDelete in deleteParticipantList)
+                {
+                    await _bookingsApiClient.RemoveParticipantFromHearingAsync(hearingId, participantToDelete.Id);
+                }
+
                 // Add new participants
                 if (newParticipantList.Any())
                 {
@@ -277,17 +285,6 @@ namespace AdminWebsite.Controllers
                     {
                         Participants = newParticipantList
                     });
-                }
-
-                // Delete existing participants if the request doesn't contain any update information
-                if (hearing.Participants == null)
-                { 
-                    hearing.Participants = new List<ParticipantResponse>();
-                }
-                var deleteParticipantList = hearing.Participants.Where(p => request.Participants.All(rp => rp.ContactEmail != p.Contact_email));
-                foreach (var participantToDelete in deleteParticipantList)
-                {
-                    await _bookingsApiClient.RemoveParticipantFromHearingAsync(hearingId, participantToDelete.Id);
                 }
 
                 // endpoints.
@@ -315,7 +312,7 @@ namespace AdminWebsite.Controllers
                         else
                         {
                             var existingEndpointToEdit = hearing.Endpoints.FirstOrDefault(e => e.Id.Equals(endpoint.Id));
-                            if (existingEndpointToEdit != null && (existingEndpointToEdit.Display_name != endpoint.DisplayName || 
+                            if (existingEndpointToEdit != null && (existingEndpointToEdit.Display_name != endpoint.DisplayName ||
                                 existingEndpointToEdit.Defence_advocate_id.ToString() != endpoint.DefenceAdvocateUsername))
                             {
                                 var updateEndpointRequest = new UpdateEndpointRequest { Display_name = endpoint.DisplayName, Defence_advocate_username = endpoint.DefenceAdvocateUsername };
@@ -351,8 +348,8 @@ namespace AdminWebsite.Controllers
             }
 
             var tasks = (from pair in newUsernameAdIdDict
-                let participant = hearing.Participants.FirstOrDefault(x => x.Username == pair.Key)
-                select _userAccountService.AssignParticipantToGroup(pair.Value, participant.User_role_name)).ToList();
+                         let participant = hearing.Participants.FirstOrDefault(x => x.Username == pair.Key)
+                         select _userAccountService.AssignParticipantToGroup(pair.Value, participant.User_role_name)).ToList();
             await Task.WhenAll(tasks);
         }
 
@@ -398,9 +395,9 @@ namespace AdminWebsite.Controllers
         {
             try
             {
-                var decodedCaseNumber = string.IsNullOrWhiteSpace(caseNumber) ? null :  WebUtility.UrlDecode(caseNumber);
+                var decodedCaseNumber = string.IsNullOrWhiteSpace(caseNumber) ? null : WebUtility.UrlDecode(caseNumber);
                 var hearingResponse = await _bookingsApiClient.SearchForHearingsAsync(decodedCaseNumber, date);
-                
+
                 return Ok(hearingResponse.Select(HearingsForAudioFileSearchMapper.MapFrom));
             }
             catch (BookingsApiException ex)
@@ -412,73 +409,6 @@ namespace AdminWebsite.Controllers
 
                 throw;
             }
-        }
-
-        /// <summary>
-        /// Gets the all upcoming bookings hearing by the given case types for a hearing administrator.
-        /// </summary>
-        /// <param name="cursor">The unique sequential value of hearing ID.</param>
-        /// <param name="limit">The max number of hearings to be returned.</param>
-        /// <returns> The hearings list</returns>
-        [HttpGet]
-        [SwaggerOperation(OperationId = "GetBookingsList")]
-        [ProducesResponseType(typeof(BookingsResponse), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public ActionResult GetBookingsList(string cursor, int limit = 100)
-        {
-            if (cursor != null)
-            {
-                cursor = _encoder.Encode(cursor);
-            }
-
-            IEnumerable<string> caseTypes = null;
-
-            if (_userIdentity.IsAdministratorRole())
-            {
-                caseTypes = _userIdentity.GetGroupDisplayNames();
-            }
-            else
-            {
-                return Unauthorized();
-            }
-
-            try
-            {
-                var types = caseTypes ?? Enumerable.Empty<string>();
-                var hearingTypesIds = GetHearingTypesId(types);
-                var bookingsResponse = _bookingsApiClient.GetHearingsByTypes(hearingTypesIds, cursor, limit);
-                return Ok(bookingsResponse);
-            }
-            catch (BookingsApiException e)
-            {
-                if (e.StatusCode == (int)HttpStatusCode.BadRequest)
-                {
-                    return BadRequest(e.Response);
-                }
-
-                throw;
-            }
-        }
-
-
-        private List<int> GetHearingTypesId(IEnumerable<string> caseTypes)
-        {
-            var typeIds = new List<int>();
-            var types = _bookingsApiClient.GetCaseTypes();
-            if (types != null && types.Any())
-            {
-                foreach (var item in caseTypes)
-                {
-                    var case_type = types.FirstOrDefault(s => s.Name == item);
-                    if (case_type != null && !typeIds.Any(s => s == case_type.Id))
-                    {
-                        typeIds.Add(case_type.Id);
-                    }
-                }
-            }
-
-            return typeIds;
         }
 
         private UpdateHearingRequest MapHearingUpdateRequest(EditHearingRequest editHearingRequest)
@@ -545,7 +475,7 @@ namespace AdminWebsite.Controllers
         /// <returns>Success status</returns>
         [HttpPatch("{hearingId}")]
         [SwaggerOperation(OperationId = "UpdateBookingStatus")]
-        [ProducesResponseType(typeof(UpdateBookingStatusResponse), (int) HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(UpdateBookingStatusResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> UpdateBookingStatus(Guid hearingId, UpdateBookingStatusRequest updateBookingStatusRequest)
@@ -559,7 +489,7 @@ namespace AdminWebsite.Controllers
 
                 if (updateBookingStatusRequest.Status != BookingsAPI.Client.UpdateBookingStatus.Created)
                 {
-                    return Ok(new UpdateBookingStatusResponse {Success = true});
+                    return Ok(new UpdateBookingStatusResponse { Success = true });
                 }
 
                 try
@@ -574,7 +504,7 @@ namespace AdminWebsite.Controllers
 
                     if (ConferenceExistsWithMeetingRoom(conferenceDetailsResponse))
                     {
-                        return Ok(new UpdateBookingStatusResponse {Success = true});
+                        return Ok(new UpdateBookingStatusResponse { Success = true });
                     }
                 }
                 catch (VideoApiException ex)
@@ -590,16 +520,16 @@ namespace AdminWebsite.Controllers
                     Cancel_reason = string.Empty
                 });
 
-                return Ok(new UpdateBookingStatusResponse {Success = false, Message = errorMessage});
+                return Ok(new UpdateBookingStatusResponse { Success = false, Message = errorMessage });
             }
             catch (BookingsApiException e)
             {
-                if (e.StatusCode == (int) HttpStatusCode.BadRequest)
+                if (e.StatusCode == (int)HttpStatusCode.BadRequest)
                 {
                     return BadRequest(e.Response);
                 }
 
-                if (e.StatusCode == (int) HttpStatusCode.NotFound)
+                if (e.StatusCode == (int)HttpStatusCode.NotFound)
                 {
                     return NotFound(e.Response);
                 }
