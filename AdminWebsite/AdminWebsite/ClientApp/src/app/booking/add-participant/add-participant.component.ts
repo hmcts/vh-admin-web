@@ -749,7 +749,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         });
     }
     isRoleRepresentative(hearingRole: string): boolean {
-        const representativeRoles = ['representative', 'prosecution', 'defence advocate', 'prosecution advocate'];
+        const representativeRoles = ['representative', 'app advocate', 'prosecution advocate', 'respondent advocate'];
         return representativeRoles.includes(hearingRole.toLowerCase());
     }
 }
