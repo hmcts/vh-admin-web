@@ -1,21 +1,25 @@
 .rowbottom {
-  border-bottom: 1px solid #bfc1c3;
-  text-align: left;
-  margin-left: 15px;
-  margin-right: 15px;
+    border-bottom: 1px solid #bfc1c3;
+    text-align: left;
+    margin-left: 15px;
+    margin-right: 15px;
 }
 
 .vh-row {
-  margin-top: 15px;
-  padding-left: 15px;
-  overflow-wrap: break-word;
-  word-wrap: break-word;
+    margin-top: 15px;
+    padding-left: 15px;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
 }
 
 .vh-image-15 {
-  width: 15%;
+    width: 15%;
 }
 
 .vh-image-50 {
-  width: 50%;
+    width: 50%;
+}
+
+.vh-mtop {
+    margin-top: 10px;
 }
