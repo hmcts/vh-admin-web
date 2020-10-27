@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.Encodings.Web;
-using System.Threading.Tasks;
 using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Models;
 using AdminWebsite.Security;
@@ -16,6 +11,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using EndpointResponse = AdminWebsite.BookingsAPI.Client.EndpointResponse;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
@@ -49,7 +48,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 _userIdentity.Object,
                 _userAccountService,
                 _editHearingRequestValidator.Object,
-                JavaScriptEncoder.Default,
                 _videoApiMock.Object,
                 _pollyRetryServiceMock.Object,
                 new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>().Object);

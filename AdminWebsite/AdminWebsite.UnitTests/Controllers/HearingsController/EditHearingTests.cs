@@ -1,16 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text.Encodings.Web;
-using System.Threading.Tasks;
 using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
 using AdminWebsite.UnitTests.Helper;
 using AdminWebsite.VideoAPI.Client;
-using FizzWare.NBuilder;
 using FluentAssertions;
 using FluentValidation;
 using FluentValidation.Results;
@@ -18,6 +11,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
 using AddEndpointRequest = AdminWebsite.BookingsAPI.Client.AddEndpointRequest;
 using UpdateEndpointRequest = AdminWebsite.BookingsAPI.Client.UpdateEndpointRequest;
 using UpdateParticipantRequest = AdminWebsite.BookingsAPI.Client.UpdateParticipantRequest;
@@ -55,7 +53,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 _userIdentity.Object,
                 _userAccountService.Object,
                 _editHearingRequestValidator.Object,
-                JavaScriptEncoder.Default,
                 _videoApiMock.Object,
                 _pollyRetryServiceMock.Object,
                 new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>().Object);
@@ -613,21 +610,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _bookingsApiClient.Setup(x =>
                     x.UpdateHearingDetailsAsync(It.IsAny<Guid>(), It.IsAny<UpdateHearingRequest>()))
                 .ThrowsAsync(ClientException.ForBookingsAPI(code));
-        }
-
-        private void SetupUpdatedHearingResponse()
-        {
-            // setup response
-            var pat1 = Builder<ParticipantResponse>.CreateNew()
-                .With(x => x.Id = Guid.NewGuid())
-                .With(x => x.User_role_name = "Representative").Build();
-            var pat2 = Builder<ParticipantResponse>.CreateNew()
-                .With(x => x.Id = Guid.NewGuid())
-                .With(x => x.User_role_name = "Individual").Build();
-            var hearingDetailsResponse = Builder<HearingDetailsResponse>.CreateNew()
-                .With(x=> x.Participants = new List<ParticipantResponse> {pat1, pat2}).Build();
-            _bookingsApiClient.Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
-                .ReturnsAsync(hearingDetailsResponse);
         }
     }
 }

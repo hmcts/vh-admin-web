@@ -1,26 +1,25 @@
 using AdminWebsite.Attributes;
 using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Extensions;
+using AdminWebsite.Helper;
+using AdminWebsite.Mappers;
 using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
+using AdminWebsite.VideoAPI.Client;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Text.Encodings.Web;
 using System.Threading.Tasks;
-using AdminWebsite.Mappers;
-using AdminWebsite.VideoAPI.Client;
-using Microsoft.Extensions.Logging;
-using ParticipantRequest = AdminWebsite.BookingsAPI.Client.ParticipantRequest;
-using UpdateParticipantRequest = AdminWebsite.BookingsAPI.Client.UpdateParticipantRequest;
 using AddEndpointRequest = AdminWebsite.BookingsAPI.Client.AddEndpointRequest;
+using ParticipantRequest = AdminWebsite.BookingsAPI.Client.ParticipantRequest;
 using UpdateEndpointRequest = AdminWebsite.BookingsAPI.Client.UpdateEndpointRequest;
-using AdminWebsite.Helper;
+using UpdateParticipantRequest = AdminWebsite.BookingsAPI.Client.UpdateParticipantRequest;
 
 namespace AdminWebsite.Controllers
 {
@@ -36,7 +35,6 @@ namespace AdminWebsite.Controllers
         private readonly IUserIdentity _userIdentity;
         private readonly IUserAccountService _userAccountService;
         private readonly IValidator<EditHearingRequest> _editHearingRequestValidator;
-        private readonly JavaScriptEncoder _encoder;
         private readonly IVideoApiClient _videoApiClient;
         private readonly IPollyRetryService _pollyRetryService;
         private readonly ILogger<HearingsController> _logger;
@@ -46,14 +44,13 @@ namespace AdminWebsite.Controllers
         /// </summary>
         public HearingsController(IBookingsApiClient bookingsApiClient, IUserIdentity userIdentity,
             IUserAccountService userAccountService, IValidator<EditHearingRequest> editHearingRequestValidator,
-            JavaScriptEncoder encoder, IVideoApiClient videoApiClient, IPollyRetryService pollyRetryService,
+            IVideoApiClient videoApiClient, IPollyRetryService pollyRetryService,
             ILogger<HearingsController> logger)
         {
             _bookingsApiClient = bookingsApiClient;
             _userIdentity = userIdentity;
             _userAccountService = userAccountService;
             _editHearingRequestValidator = editHearingRequestValidator;
-            _encoder = encoder;
             _videoApiClient = videoApiClient;
             _pollyRetryService = pollyRetryService;
             _logger = logger;
@@ -412,73 +409,6 @@ namespace AdminWebsite.Controllers
 
                 throw;
             }
-        }
-
-        /// <summary>
-        /// Gets the all upcoming bookings hearing by the given case types for a hearing administrator.
-        /// </summary>
-        /// <param name="cursor">The unique sequential value of hearing ID.</param>
-        /// <param name="limit">The max number of hearings to be returned.</param>
-        /// <returns> The hearings list</returns>
-        [HttpGet]
-        [SwaggerOperation(OperationId = "GetBookingsList")]
-        [ProducesResponseType(typeof(BookingsResponse), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public ActionResult GetBookingsList(string cursor, int limit = 100)
-        {
-            if (cursor != null)
-            {
-                cursor = _encoder.Encode(cursor);
-            }
-
-            IEnumerable<string> caseTypes = null;
-
-            if (_userIdentity.IsAdministratorRole())
-            {
-                caseTypes = _userIdentity.GetGroupDisplayNames();
-            }
-            else
-            {
-                return Unauthorized();
-            }
-
-            try
-            {
-                var types = caseTypes ?? Enumerable.Empty<string>();
-                var hearingTypesIds = GetHearingTypesId(types);
-                var bookingsResponse = _bookingsApiClient.GetHearingsByTypes(hearingTypesIds, cursor, limit);
-                return Ok(bookingsResponse);
-            }
-            catch (BookingsApiException e)
-            {
-                if (e.StatusCode == (int)HttpStatusCode.BadRequest)
-                {
-                    return BadRequest(e.Response);
-                }
-
-                throw;
-            }
-        }
-
-
-        private List<int> GetHearingTypesId(IEnumerable<string> caseTypes)
-        {
-            var typeIds = new List<int>();
-            var types = _bookingsApiClient.GetCaseTypes();
-            if (types != null && types.Any())
-            {
-                foreach (var item in caseTypes)
-                {
-                    var case_type = types.FirstOrDefault(s => s.Name == item);
-                    if (case_type != null && !typeIds.Any(s => s == case_type.Id))
-                    {
-                        typeIds.Add(case_type.Id);
-                    }
-                }
-            }
-
-            return typeIds;
         }
 
         private UpdateHearingRequest MapHearingUpdateRequest(EditHearingRequest editHearingRequest)
