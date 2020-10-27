@@ -404,7 +404,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
 
         [Test]
-        public async Task Should_not_delete_missing_participant_if_no_any_participants_in_the_list_for_the_hearing()
+        public async Task Should_not_delete_existing_participant_if_participant_with_the_same_id_in_the_list_of_updated_hearing()
         {
             _updatedExistingParticipantHearingOriginal.Participants = new List<ParticipantResponse>();
             var updatedHearing = new HearingDetailsResponse
@@ -415,13 +415,19 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 Contact_email = "new@user.com",
                 Username = "new@user.com"
             });
+            _addNewParticipantRequest.Participants[0].Id = updatedHearing.Participants[0].Id;
+
             _bookingsApiClient.SetupSequence(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(_updatedExistingParticipantHearingOriginal)
                 .ReturnsAsync(updatedHearing);
+
+
             var result = await _controller.EditHearing(_validId, _addNewParticipantRequest);
             ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
             _bookingsApiClient.Verify(x => x.RemoveParticipantFromHearingAsync(It.IsAny<Guid>(), It.IsAny<Guid>()), Times.Never);
         }
+
+
         [Test]
         public async Task Should_delete_missing_participant_from_hearing_if_no_any_participants_in_the_request()
         {
@@ -442,7 +448,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
 
         [Test]
-        public async Task Should_delete_two_missing_participant_if_two_with_no_matching_contact_email_exist_for_the_hearing()
+        public async Task Should_delete_two_missing_participant_if_two_with_no_matching_id_exist_for_the_hearing()
         {
             _addNewParticipantRequest.Participants.ForEach(x => { x.ContactEmail = "existing@judge.com"; x.CaseRoleName = "Judge"; });
             _updatedExistingParticipantHearingOriginal.Participants.ForEach(x => x.Contact_email= "old@judge.com");
@@ -460,7 +466,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
 
         [Test]
-        public async Task Should_not_delete_missing_participant_if_all_match_contact_email_for_updated_hearing()
+        public async Task Should_not_delete_missing_participant_if_all_match_id_for_updated_hearing()
         {
             _addNewParticipantRequest.Participants.ForEach(x => { x.ContactEmail = "old@judge.com"; x.CaseRoleName = "Judge"; });
             _addNewParticipantRequest.Participants.Add(new EditParticipantRequest { ContactEmail = "old@judge.com" });
@@ -472,6 +478,12 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 Contact_email = "old@judge.com",
                 Username = "old@judge.com"
             });
+
+            var id_firstPart = _updatedExistingParticipantHearingOriginal.Participants[0].Id;
+            var id_secndPart = _updatedExistingParticipantHearingOriginal.Participants[1].Id;
+
+            _addNewParticipantRequest.Participants[0].Id = id_firstPart;
+            _addNewParticipantRequest.Participants[1].Id = id_secndPart;
 
             var result = await _controller.EditHearing(_validId, _addNewParticipantRequest);
             ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
