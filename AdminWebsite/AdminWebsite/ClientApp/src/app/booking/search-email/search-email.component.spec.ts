@@ -134,10 +134,33 @@ describe('SeachEmailComponent', () => {
     });
     it('select item should emit event participant found on navigating away from email field', () => {
         spyOn(component.findParticipant, 'emit');
-        component.populateParticipantInfo('aa@aa.aa');
+        const participantsList: ParticipantModel[] = [];
+        const participant = new ParticipantModel();
+        participant.email = 'citizen.one@email.com';
+        participant.first_name = 'citizen';
+        participant.last_name = 'one';
+        participantModel.title = 'Mr.';
+        participantModel.case_role_name = 'Defendant';
+        participantModel.hearing_role_name = 'Defendant LIP';
+        participantModel.phone = '12345678';
+        participantModel.display_name = 'Citizen One';
+        participantsList.push(participant);
+        component.results = participantsList;
+
+        component.populateParticipantInfo('citizen.one@email.com');
         fixture.detectChanges();
         expect(component.isShowResult).toBeFalsy();
         expect(component.findParticipant.emit).toHaveBeenCalled();
+    });
+    it('select item should emit event participant found on navigating away from email field', () => {
+        spyOn(component.findParticipant, 'emit');
+        const participantsList: ParticipantModel[] = [];
+        component.results = participantsList;
+
+        component.populateParticipantInfo('citizen.one@email.com');
+        fixture.detectChanges();
+        expect(component.isShowResult).toBeFalsy();
+        expect(component.findParticipant.emit).not.toHaveBeenCalled();
     });
     it('should disable email address', fakeAsync(() => {
         fixture.detectChanges();

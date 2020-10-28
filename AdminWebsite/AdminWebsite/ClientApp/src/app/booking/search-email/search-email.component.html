@@ -9,9 +9,8 @@
       Email
     </label>
     <input #emailInput [attr.disabled]="disabled ? true : null" id="participantEmail" name="participantEmail"
-      [(ngModel)]="email" (blur)="blurEmail()" class="govuk-input govuk-input--width-20"
-      (keyup)="searchTerm.next($event.target.value)" type="email"
-      (blur)="populateParticipantInfo($event.target.value)" />
+      [(ngModel)]="email" (blur)="blurEmail();populateParticipantInfo($event.target.value);"
+      class="govuk-input govuk-input--width-20" (keyup)="searchTerm.next($event.target.value)" type="email" />
 
     <ul *ngIf="isShowResult" class="vh-li-email">
       <li *ngFor="let result of results | slice:0:9" class="vk-showlist-m30">
