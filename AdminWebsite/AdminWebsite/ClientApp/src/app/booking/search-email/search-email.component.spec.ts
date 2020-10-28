@@ -132,6 +132,13 @@ describe('SeachEmailComponent', () => {
         expect(component.isShowResult).toBeFalsy();
         expect(component.findParticipant.emit).toHaveBeenCalled();
     });
+    it('select item should emit event participant found on navigating away from email field', () => {
+        spyOn(component.findParticipant, 'emit');
+        component.populateParticipantInfo('aa@aa.aa');
+        fixture.detectChanges();
+        expect(component.isShowResult).toBeFalsy();
+        expect(component.findParticipant.emit).toHaveBeenCalled();
+    });
     it('should disable email address', fakeAsync(() => {
         fixture.detectChanges();
 

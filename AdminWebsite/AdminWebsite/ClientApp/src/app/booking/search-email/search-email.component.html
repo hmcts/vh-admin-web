@@ -8,12 +8,15 @@
     <label class="govuk-label" for="participantEmail">
       Email
     </label>
-    <input #emailInput [attr.disabled]="disabled ? true : null" id="participantEmail" name="participantEmail" [(ngModel)]="email" (blur)="blurEmail()" class="govuk-input govuk-input--width-20"
-           (keyup)="searchTerm.next($event.target.value)" type="email" />
+    <input #emailInput [attr.disabled]="disabled ? true : null" id="participantEmail" name="participantEmail"
+      [(ngModel)]="email" (blur)="blurEmail()" class="govuk-input govuk-input--width-20"
+      (keyup)="searchTerm.next($event.target.value)" type="email"
+      (blur)="populateParticipantInfo($event.target.value)" />
 
     <ul *ngIf="isShowResult" class="vh-li-email">
       <li *ngFor="let result of results | slice:0:9" class="vk-showlist-m30">
-        <a class="govuk-body vh-a-email" href="javascript: void(0)" (click)="selectItemClick(result)">{{result.email}}</a>
+        <a class="govuk-body vh-a-email" href="javascript: void(0)"
+          (click)="selectItemClick(result)">{{result.email}}</a>
       </li>
     </ul>
   </div>

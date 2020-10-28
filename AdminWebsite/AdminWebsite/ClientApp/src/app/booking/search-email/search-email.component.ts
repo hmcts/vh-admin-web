@@ -33,7 +33,7 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
 
     @Output() emailChanged = new EventEmitter<string>();
 
-    constructor(private searchService: SearchService, private configService: ConfigService, private logger: Logger) {}
+    constructor(private searchService: SearchService, private configService: ConfigService, private logger: Logger) { }
 
     ngOnInit() {
         this.$subscriptions.push(
@@ -154,5 +154,12 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
                 subscription.unsubscribe();
             }
         });
+    }
+
+    populateParticipantInfo(email: string) {
+        if (this.results && this.results.length > 0) {
+            const participant = this.results.find(p => p.email === email);
+            this.selectItemClick(participant);
+        }
     }
 }
