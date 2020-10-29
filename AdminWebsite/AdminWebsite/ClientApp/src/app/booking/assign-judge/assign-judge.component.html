@@ -1,4 +1,4 @@
-<app-breadcrumb [canNavigate]="canNavigate"></app-breadcrumb>
+<app-breadcrumb [canNavigate]="canNavigateNext"></app-breadcrumb>
 <h1 class="govuk-heading-l">Book a video hearing</h1>
 
 <h2 class="govuk-heading-m">Assign a courtroom account</h2>
@@ -11,9 +11,7 @@
     tabindex="-1"
     data-module="error-summary"
 >
-    <h2 class="govuk-error-summary__title" id="error-summary-title">
-        Please complete the missing information
-    </h2>
+    <h2 class="govuk-error-summary__title" id="error-summary-title">Please complete the missing information</h2>
     <div class="govuk-error-summary__body">
         <ul class="govuk-list govuk-error-summary__list">
             <li *ngIf="judgeName.invalid">
@@ -30,25 +28,19 @@
     <div class="govuk-grid-column-one-half">
         <form [formGroup]="form" class="govuk-form-group" (ngSubmit)="saveJudge()">
             <div [ngClass]="judgeNameInvalid || !isJudgeSelected ? 'govuk-form-group--error' : 'govuk-form-group'">
-                <label class="govuk-label govuk-!-width-one-half" for="judgeName">
-                    Courtroom account
-                </label>
+                <label class="govuk-label govuk-!-width-one-half" for="judgeName"> Courtroom account </label>
                 <select class="govuk-select" id="judgeName" formControlName="judgeName">
                     <option *ngFor="let judge of availableJudges" [ngValue]="judge.email">{{ judge.email }}</option>
                 </select>
                 <div *ngIf="judgeNameInvalid || !isJudgeSelected" class="alert alert-danger">
-                    <span id="judgeName-error" class="govuk-error-message">
-                        Please assign a courtroom account to this hearing
-                    </span>
+                    <span id="judgeName-error" class="govuk-error-message"> Please assign a courtroom account to this hearing </span>
                 </div>
             </div>
 
             <p class="govuk-body govuk-!-margin-bottom-5"></p>
 
             <div class="govuk-!-margin-bottom-9" *ngIf="!switchOffRecording">
-                <p class="govuk-body govuk-!-margin-bottom-1">
-                    Audio of this hearing to be recorded?
-                </p>
+                <p class="govuk-body govuk-!-margin-bottom-1">Audio of this hearing to be recorded?</p>
                 <div class="govuk-fieldset">
                     <div class="govuk-radios" data-module="radios">
                         <div class="govuk-radios__item">
@@ -60,9 +52,7 @@
                                 [value]="true"
                                 data-aria-controls="conditional-how-contacted-conditional"
                             />
-                            <label class="govuk-label govuk-radios__label" for="audio-choice-yes">
-                                Yes
-                            </label>
+                            <label class="govuk-label govuk-radios__label" for="audio-choice-yes"> Yes </label>
                         </div>
 
                         <div class="govuk-radios__item">
@@ -74,9 +64,7 @@
                                 [value]="false"
                                 data-aria-controls="conditional-how-contacted"
                             />
-                            <label class="govuk-label govuk-radios__label" for="audio-choice-no">
-                                No
-                            </label>
+                            <label class="govuk-label govuk-radios__label" for="audio-choice-no"> No </label>
                         </div>
                     </div>
                 </div>
@@ -88,9 +76,7 @@
                         {{ constants.Error.JudgeDisplayNameErrorMsg }}
                     </span>
                 </legend>
-                <label class="govuk-label" for="judgeDisplayName">
-                    Judge name
-                </label>
+                <label class="govuk-label" for="judgeDisplayName"> Judge name </label>
                 <div class="govuk-body govuk-hint">Please enter TBC if you don't know the name of the judge</div>
                 <input
                     (focusout)="changeDisplayName()"
@@ -124,7 +110,7 @@
             </div>
         </form>
     </div>
-    <div class="govuk-grid-column-one-half" style="margin: 0;">
+    <div class="govuk-grid-column-one-half" style="margin: 0">
         <app-participants-list [participants]="hearing.participants"></app-participants-list>
     </div>
 </div>
