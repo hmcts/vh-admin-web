@@ -318,4 +318,20 @@ describe('AssignJudgeComponent', () => {
         fixture.autoDetectChanges();
         expect(component.switchOffRecording).toBe(false);
     });
+    it('should navigate if judge is saved', () => {
+        const savedHearing = initHearingRequest();
+        expect(savedHearing.participants.length > 0).toBe(true);
+        videoHearingsServiceSpy.getCurrentRequest.calls.reset();
+        component.canNavigate = true;
+        videoHearingsServiceSpy.getCurrentRequest.and.returnValue(savedHearing);
+        expect(component.canNavigateNext).toBe(true);
+    });
+    it('should not navigate if judge is not saved', () => {
+        const savedHearing = initHearingRequest();
+        savedHearing.participants = [];
+        videoHearingsServiceSpy.getCurrentRequest.calls.reset();
+        component.canNavigate = true;
+        videoHearingsServiceSpy.getCurrentRequest.and.returnValue(savedHearing);
+        expect(component.canNavigateNext).toBe(false);
+    });
 });
