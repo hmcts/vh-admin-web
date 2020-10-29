@@ -159,7 +159,9 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
     populateParticipantInfo(email: string) {
         if (this.results && this.results.length > 0) {
             const participant = this.results.find(p => p.email === email);
-            this.selectItemClick(participant);
+            if (participant) {
+                this.selectItemClick(participant);
+            }
         }
     }
 }
