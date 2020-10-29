@@ -1,3 +1,5 @@
+import { CaseRoles } from '../model/case-roles';
+
 export class ParticipantDetailsModel {
     constructor(
         participantId: string,
@@ -65,5 +67,13 @@ export class ParticipantDetailsModel {
         return (
             this.HearingRoleName && this.HearingRoleName.indexOf('Representative') > -1 && this.Representee && this.Representee.length > 0
         );
+    }
+
+    showCaseRole(): boolean { console.log(this.CaseRoleName);
+        return this.CaseRoleName.toLowerCase() === CaseRoles.NONE.toLowerCase() ||
+            this.CaseRoleName.toLowerCase() === CaseRoles.OBSERVER.toLowerCase() ||
+            this.CaseRoleName.toLowerCase() === CaseRoles.PANEL_MEMBER.toLowerCase()
+            ? false
+            : true;
     }
 }
