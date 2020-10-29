@@ -25,7 +25,6 @@ import { PageUrls } from 'src/app/shared/page-url.constants';
     styleUrls: ['./add-participant.component.css']
 })
 export class AddParticipantComponent extends BookingBaseComponent implements OnInit, AfterViewInit, AfterContentInit, OnDestroy {
-    canNavigate = true;
     constants = Constants;
 
     emailDisabled = false;
@@ -681,6 +680,10 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
             participantsValid = anyParticipants && anyParticipants.length > 0;
         }
         return participantsValid;
+    }
+
+    get canNavigate() {
+        return this.checkParticipants();
     }
 
     hasChanges(): Observable<boolean> | boolean {

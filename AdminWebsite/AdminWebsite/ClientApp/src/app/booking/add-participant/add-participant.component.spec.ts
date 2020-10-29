@@ -1038,6 +1038,14 @@ describe('AddParticipantComponent set representer', () => {
         const result = component.isRoleRepresentative(roleToFind);
         expect(result).toBe(false);
     });
+    it('should not navigate to next page if no participants in the hearing', () => {
+        component.hearing.participants = [];
+        expect(component.canNavigate).toBe(false);
+    });
+    it('should navigate to next page if at least one participant in the hearing', () => {
+        component.hearing = initHearingRequest();
+        expect(component.canNavigate).toBe(true);
+    });
 });
 
 function isAddressControlValid(control: AbstractControl, controlValue: string) {
