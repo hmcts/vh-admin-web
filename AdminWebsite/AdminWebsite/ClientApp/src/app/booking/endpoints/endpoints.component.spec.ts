@@ -168,7 +168,6 @@ describe('EndpointsComponent', () => {
         component.endpoints.controls[0].get('displayName').setValue('200');
         component.saveEndpoints();
         expect(component.duplicateDa).toBe(false);
-        expect(component.duplicateDefAdv).toBe(false);
         expect(component.failedValidation).toBe(false);
         expect(component.hearing.endpoints[0].displayName).toBe('200');
         expect(component.hearing.endpoints[0].defenceAdvocate).toBe('');
@@ -176,28 +175,6 @@ describe('EndpointsComponent', () => {
         expect(routerSpy.navigate).toHaveBeenCalledWith(['/other-information']);
     });
 
-    it('it should validate defence advocate on add another click and show error for duplicates', () => {
-        component.ngOnInit();
-        component.endpoints.controls[0].get('displayName').setValue('200');
-        component.endpoints.controls[0].get('defenceAdvocate').setValue('username@email.com');
-        component.addEndpoint();
-        component.endpoints.controls[1].get('displayName').setValue('201');
-        component.endpoints.controls[1].get('defenceAdvocate').setValue('username@email.com');
-        component.addEndpoint();
-        expect(component.duplicateDefAdv).toBe(true);
-        expect(component.failedValidation).toBe(true);
-    });
-    it('it should validate display names on next click and show error for duplicates', () => {
-        component.ngOnInit();
-        component.endpoints.controls[0].get('displayName').setValue('200');
-        component.endpoints.controls[0].get('defenceAdvocate').setValue('username@email.com');
-        component.addEndpoint();
-        component.endpoints.controls[1].get('displayName').setValue('201');
-        component.endpoints.controls[1].get('defenceAdvocate').setValue('username@email.com');
-        component.saveEndpoints();
-        expect(component.duplicateDefAdv).toBe(true);
-        expect(component.failedValidation).toBe(true);
-    });
     it('it should validate fields on next click and navigate to other information page if validations pass', () => {
         component.ngOnInit();
         component.endpoints.controls[0].get('displayName').setValue('200');
@@ -207,7 +184,6 @@ describe('EndpointsComponent', () => {
         component.endpoints.controls[1].get('defenceAdvocate').setValue('username1@email.com');
         component.saveEndpoints();
         expect(component.duplicateDa).toBe(false);
-        expect(component.duplicateDefAdv).toBe(false);
         expect(component.failedValidation).toBe(false);
         expect(component.hearing.endpoints[0].displayName).toBe('200');
         expect(component.hearing.endpoints[0].defenceAdvocate).toBe('username@email.com');
