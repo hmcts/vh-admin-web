@@ -105,4 +105,61 @@ describe('participant details model', () => {
 
         expect(model.isRepresenting).toBeFalsy();
     });
+    it('should return false when case role is none', () => {
+        const model = new ParticipantDetailsModel(
+            'id',
+            'title',
+            'first_name',
+            'last_name',
+            'user_role_name',
+            'username',
+            'contact_email',
+            'none',
+            'Individual',
+            'display_name',
+            'middle_names',
+            'organisation',
+            'representee',
+            '007867678678'
+        );
+        expect(model.showCaseRole()).toBeFalsy();
+    });
+    it('should return false when case role is observer', () => {
+        const model = new ParticipantDetailsModel(
+            'id',
+            'title',
+            'first_name',
+            'last_name',
+            'user_role_name',
+            'username',
+            'contact_email',
+            'observer',
+            'Individual',
+            'display_name',
+            'middle_names',
+            'organisation',
+            'representee',
+            '007867678678'
+        );
+        expect(model.showCaseRole()).toBeFalsy();
+    });
+    it('should return true when case role is representative', () => {
+        const model = new ParticipantDetailsModel(
+            'id',
+            'title',
+            'first_name',
+            'last_name',
+            'user_role_name',
+            'username',
+            'contact_email',
+            'Representative',
+            'Individual',
+            'display_name',
+            'middle_names',
+            'organisation',
+            'representee',
+            '007867678678'
+        );
+        expect(model.showCaseRole()).toBeTruthy();
+    });
 });

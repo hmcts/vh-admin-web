@@ -1,13 +1,8 @@
 <div class="govuk-grid-row vh-row">
     <div *ngIf="participant?.HearingRoleName === 'Judge'">
         <div class="govuk-grid-column-one-third vh-image-15">
-            <img
-                src="/assets/images/govuk-crest.png"
-                height="40"
-                width="40"
-                class="govuk-header__logotype-crest"
-                alt="HM Courts &amp; Tribunals Service crest"
-            />
+            <img src="/assets/images/govuk-crest.png" height="40" width="40" class="govuk-header__logotype-crest"
+                alt="HM Courts &amp; Tribunals Service crest" />
         </div>
         <div id="judge-name" class="govuk-grid-column-one-half vh-image-50">
             {{ participant?.DisplayName }}
@@ -20,14 +15,19 @@
     <div class="govuk-grid-column-full">
         <div id="participant-{{ participant?.ParticipantId }}-name" *ngIf="participant?.HearingRoleName !== 'Judge'">
             {{ participant?.fullName }}
-            <div id="participant-{{ participant?.ParticipantId }}-hearing-role-name" class="govuk-hint" *ngIf="!participant.isRepresenting">
+            <div id="participant-{{ participant?.ParticipantId }}-hearing-role-name" class="govuk-hint"
+                *ngIf="!participant.isRepresenting">
                 {{ participant?.HearingRoleName }}
             </div>
-            <div class="govuk-hint" *ngIf="participant.isRepresenting">
+            <div class="govuk-hint vh-margin-bottom" *ngIf="participant.isRepresenting">
                 <span>Representing</span>
                 <div id="participant-{{ participant?.ParticipantId }}-representee" class="vh-text-color-black">
                     {{ participant.Representee }}
                 </div>
+            </div>
+            <div id="participant-{{ participant?.ParticipantId }}-case-role-name" class="govuk-hint"
+                *ngIf="participant.showCaseRole()">
+                {{ participant?.CaseRoleName }}
             </div>
         </div>
 
