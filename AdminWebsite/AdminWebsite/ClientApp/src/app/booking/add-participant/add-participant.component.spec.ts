@@ -28,11 +28,11 @@ let component: AddParticipantComponent;
 let fixture: ComponentFixture<AddParticipantComponent>;
 
 const roleList: CaseAndHearingRolesResponse[] = [
-    new CaseAndHearingRolesResponse({ name: 'Claimant', hearing_roles: ['Representative', 'Claimant LIP'] })
+    new CaseAndHearingRolesResponse({ name: 'Claimant', hearing_roles: ['Representative', 'Litigant in person'] })
 ];
 
 const partyR = new PartyModel('Claimant');
-partyR.hearingRoles = ['Representative', 'Claimant LIP'];
+partyR.hearingRoles = ['Representative', 'Litigant in person'];
 const partyList: PartyModel[] = [partyR];
 
 let role: AbstractControl;
@@ -97,7 +97,7 @@ p4.is_judge = false;
 p4.title = 'Mr.';
 p4.email = 'test4@test.com';
 p4.phone = '32332';
-p4.hearing_role_name = 'Claimant LIP';
+p4.hearing_role_name = 'Litigant in person';
 p4.case_role_name = 'Claimant';
 p4.company = 'CN';
 p3.id = '1234';
@@ -366,7 +366,7 @@ describe('AddParticipantComponent', () => {
         component.showDetails = true;
         spyOn(component.searchEmail, 'validateEmail').and.returnValue(true);
         component.searchEmail.email = 'mock@email.com';
-        role.setValue('Claimant LIP');
+        role.setValue('Litigant in person');
         party.setValue('Claimant');
         firstName.setValue('Sam');
         lastName.setValue('Green');
@@ -1050,7 +1050,7 @@ describe('AddParticipantComponent set representer', () => {
 
 function isAddressControlValid(control: AbstractControl, controlValue: string) {
     party.setValue('Claimant');
-    role.setValue('Claimant LIP');
+    role.setValue('Litigant in person');
     control.setValidators([Validators.required]);
     control.updateValueAndValidity();
     control.setValue(controlValue);
