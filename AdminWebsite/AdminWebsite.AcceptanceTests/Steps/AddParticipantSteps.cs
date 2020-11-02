@@ -54,7 +54,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             var individualUser = Users.GetIndividualUser(_c.Users);
             var individual = UserToUserAccountMapper.Map(individualUser);
             individual.CaseRoleName = Party.Claimant.Name;
-            individual.HearingRoleName = PartyRole.ClaimantLip.Name;
+            individual.HearingRoleName = PartyRole.LitigantInPerson.Name;
             _c.Test.HearingParticipants.Add(individual);
             SetParty(individual.CaseRoleName);
             SetRole(individual.HearingRoleName);
@@ -79,7 +79,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
             var individual = CreateNewUser("Individual");
             individual.CaseRoleName = Party.Defendant.Name;
-            individual.HearingRoleName = PartyRole.DefendantLip.Name;
+            individual.HearingRoleName = PartyRole.LitigantInPerson.Name;
             _individualDisplayName = individual.DisplayName;
             _c.Test.HearingParticipants.Add(individual);
             SetParty(individual.CaseRoleName);
@@ -279,7 +279,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             var individualUser = Users.GetIndividualUser(_c.Users);
             var individual = UserToUserAccountMapper.Map(individualUser);
             individual.CaseRoleName = Party.Claimant.Name;
-            individual.HearingRoleName = PartyRole.ClaimantLip.Name;
+            individual.HearingRoleName = PartyRole.LitigantInPerson.Name;
             _c.Test.HearingParticipants.Add(individual);
             SetParty(individual.CaseRoleName);
             SetRole(individual.HearingRoleName);
