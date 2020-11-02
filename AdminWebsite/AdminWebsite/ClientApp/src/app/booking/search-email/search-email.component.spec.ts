@@ -47,7 +47,7 @@ describe('SeachEmailComponent', () => {
     participantModel.last_name = 'Smith';
     participantModel.title = 'Mrs';
     participantModel.case_role_name = 'Defendant';
-    participantModel.hearing_role_name = 'Defendant LIP';
+    participantModel.hearing_role_name = 'Litigant in person';
     participantModel.phone = '12345678';
     participantModel.display_name = 'Ann';
 
@@ -141,7 +141,7 @@ describe('SeachEmailComponent', () => {
         participant.last_name = 'one';
         participantModel.title = 'Mr.';
         participantModel.case_role_name = 'Defendant';
-        participantModel.hearing_role_name = 'Defendant LIP';
+        participantModel.hearing_role_name = 'Litigant in person';
         participantModel.phone = '12345678';
         participantModel.display_name = 'Citizen One';
         participantsList.push(participant);

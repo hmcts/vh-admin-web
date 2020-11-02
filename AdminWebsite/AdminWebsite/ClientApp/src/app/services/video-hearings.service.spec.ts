@@ -89,7 +89,7 @@ describe('Video hearing service', () => {
         // given the api responds with
         const serverResponse = new CaseAndHearingRolesResponse({
             name: 'Defendant',
-            hearing_roles: ['Representative', 'LIP']
+            hearing_roles: ['Representative', 'Litigant in person']
         });
         clientApiSpy.getParticipantRoles.and.returnValue(of([serverResponse]));
 
@@ -212,7 +212,7 @@ describe('Video hearing service', () => {
         participant.contact_email = 'dan@email.aa';
         participant.telephone_number = '123123123';
         participant.case_role_name = 'Defendant';
-        participant.hearing_role_name = 'Defendant LIP';
+        participant.hearing_role_name = 'Litigant in person';
         participants.push(participant);
 
         const model = service.mapParticipantResponseToParticipantModel(participants);
@@ -241,7 +241,7 @@ describe('Video hearing service', () => {
         participant.email = 'dan@email.aa';
         participant.phone = '123123123';
         participant.case_role_name = 'Defendant';
-        participant.hearing_role_name = 'Defendant LIP';
+        participant.hearing_role_name = 'Litigant in person';
         participants.push(participant);
 
         const model = service.mapParticipants(participants);
@@ -270,7 +270,7 @@ describe('Video hearing service', () => {
         participant.email = 'dan@email.aa';
         participant.phone = '123123123';
         participant.case_role_name = 'Defendant';
-        participant.hearing_role_name = 'Defendant LIP';
+        participant.hearing_role_name = 'Litigant in person';
         participants.push(participant);
         const caseModel = new CaseModel();
         caseModel.name = 'case1';
@@ -331,7 +331,7 @@ describe('Video hearing service', () => {
         participant.email = 'dan@email.aa';
         participant.phone = '123123123';
         participant.case_role_name = 'Defendant';
-        participant.hearing_role_name = 'Defendant LIP';
+        participant.hearing_role_name = 'Litigant in person';
         participants.push(participant);
         const caseModel = new CaseModel();
         caseModel.name = 'case1';

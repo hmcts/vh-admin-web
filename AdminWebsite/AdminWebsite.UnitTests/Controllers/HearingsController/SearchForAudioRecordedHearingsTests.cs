@@ -76,7 +76,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                     new ParticipantResponse()
                     {
                         Case_role_name = "Claimant", Contact_email = "test.claimaint@emailaddress.net",
-                        Display_name = "Test Claimaint", First_name = "Test", Hearing_role_name = "Claimant LIP",
+                        Display_name = "Test Claimaint", First_name = "Test", Hearing_role_name = "Litigant in person",
                         Last_name = "Claimaint", Middle_names = string.Empty, Telephone_number = string.Empty,
                         Title = "Mr", Username = "Test.Claimaint@madeupemail.com"
                     },
