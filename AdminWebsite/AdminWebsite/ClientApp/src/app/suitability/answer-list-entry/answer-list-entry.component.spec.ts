@@ -51,4 +51,46 @@ describe('AnswerListEntryComponent', () => {
     it('should identify that a participant is representative', () => {
         expect(component.isRepresentative).toBeTruthy();
     });
+    it('should filter answers for individual to suppress questions without answers', () => {
+        component.questionnaire = new ParticipantQuestionnaire({
+            answers: [
+                new SuitabilityAnswerGroup({
+                    title: 'Equipment',
+                    answers: [
+                        {
+                            answer: 'true',
+                            notes: 'I have an eyesight problem',
+                            question: 'ABOUT_YOU',
+                            embeddedQuestionAnswers: new Array<EmbeddedSuitabilityQuestionAnswer>()
+                        },
+                        {
+                            answer: 'Not answered',
+                            notes: '',
+                            question: 'ROOM',
+                            embeddedQuestionAnswers: new Array<EmbeddedSuitabilityQuestionAnswer>()
+                        },
+                        {
+                            answer: 'N/A',
+                            notes: '',
+                            question: 'KIT_SELFTEST_SCORE',
+                            embeddedQuestionAnswers: new Array<EmbeddedSuitabilityQuestionAnswer>()
+                        }
+                    ]
+                })
+            ],
+            representee: '',
+            hearingRole: 'Applicant LIP',
+            caseNumber: '',
+            displayName: '',
+            participantId: '',
+            updatedAt: new Date()
+        });
+
+        expect(component.isRepresentative).toBeFalsy();
+
+        const answers = component.answers;
+        expect(answers.length).toBe(1);
+        expect(answers[0].answers.length).toBe(1);
+        expect(answers[0].answers[0].answer).toBe('true');
+    });
 });
