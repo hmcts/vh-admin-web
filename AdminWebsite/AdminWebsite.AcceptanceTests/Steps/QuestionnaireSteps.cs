@@ -50,7 +50,6 @@ namespace AdminWebsite.AcceptanceTests.Steps
                     ? _c.Test.TestData.Questionnaire.IndividualQuestion
                     : _c.Test.TestData.Questionnaire.RepresentativeQuestion, "Yes", allQuestionsAndAnswers);
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(QuestionnairePage.ExtendedAnswer(_c.Test.TestData.Questionnaire.ExtendedAnswer)).Displayed.Should().BeTrue();
-            CheckQuestionHasBeenAnswered(_c.Test.TestData.Questionnaire.UnansweredQuestion, UnansweredAnswer, allQuestionsAndAnswers);
         }
 
         private static void CheckQuestionHasBeenAnswered(string question, string answer, IReadOnlyDictionary<string, string> allQuestionsAndAnswers)
