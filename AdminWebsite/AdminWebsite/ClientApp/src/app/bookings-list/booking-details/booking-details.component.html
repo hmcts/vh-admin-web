@@ -56,7 +56,7 @@
 </div>
 
 <div *ngIf="showConfirmingFailed">
-    <app-confirm-booking-failed-popup (close)="closeConfirmFailed($event)">
+    <app-confirm-booking-failed-popup (close)="closeConfirmFailed($event)" [hearingId]="hearingId">
     </app-confirm-booking-failed-popup>
 </div>
 

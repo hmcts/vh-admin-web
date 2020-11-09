@@ -29,7 +29,6 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
   availableDefenceAdvocates: DefenceAdvocateModel[] = [];
   participants: ParticipantModel[] = [];
   select: any[] = [];
-  duplicateDefAdv = false;
   duplicateDa = false;
 
   constructor(
@@ -61,9 +60,8 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
   }
 
   addEndpoint(): void {
-    this.duplicateDefAdv = false;
     this.duplicateDa = false;
-    if (!this.hasDuplicateDisplayName(this.newEndpoints) && !this.hasDuplicateDefenceAdvocate(this.newEndpoints)) {
+    if (!this.hasDuplicateDisplayName(this.newEndpoints)) {
       this.failedValidation = false;
       this.endpoints.push(this.addEndpointsFormGroup());
     } else {
@@ -73,7 +71,6 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
   }
 
   saveEndpoints(): void {
-    this.duplicateDefAdv = false;
     this.duplicateDa = false;
     const newEndpointsArray: EndpointModel[] = [];
     for (const control of this.endpoints.controls) {
@@ -87,7 +84,7 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
       }
     }
 
-    if (!this.hasDuplicateDisplayName(newEndpointsArray) && !this.hasDuplicateDefenceAdvocate(newEndpointsArray)) {
+    if (!this.hasDuplicateDisplayName(newEndpointsArray)) {
       this.failedValidation = false;
       this.hearing.endpoints = newEndpointsArray;
       this.videoHearingService.updateHearingRequest(this.hearing);
@@ -140,7 +137,7 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
   private checkForExistingRequest(): void {
     this.hearing = this.videoHearingService.getCurrentRequest();
     this.participants = this.hearing.participants.filter(
-      p => p.hearing_role_name === this.constants.DefenceAdvocate
+      p => p.hearing_role_name === this.constants.DefenceAdvocate || p.hearing_role_name === this.constants.RespondentAdvocate
     );
   }
   private initialiseForm(): void {
@@ -219,17 +216,6 @@ export class EndpointsComponent extends BookingBaseComponent implements OnInit, 
     });
     if (duplicateDisplayName) { this.duplicateDa = true; }
     return duplicateDisplayName;
-  }
-  private hasDuplicateDefenceAdvocate(endpoints: EndpointModel[]): boolean {
-    const listOfDefenceAdvocates = endpoints.filter(function (item) {
-      if (item.defenceAdvocate === '' || item.defenceAdvocate === 'None' || item.defenceAdvocate === undefined) { return false; }
-      return true;
-    }).map(function (item) { return item.defenceAdvocate; });
-    const duplicateDefenceAdvocate = listOfDefenceAdvocates.some(function (item, position) {
-      return listOfDefenceAdvocates.indexOf(item) !== position;
-    });
-    if (duplicateDefenceAdvocate) { this.duplicateDefAdv = true; }
-    return duplicateDefenceAdvocate;
   }
 }
 

@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace AdminWebsite.UnitTests.Controllers
 {
@@ -90,12 +91,21 @@ namespace AdminWebsite.UnitTests.Controllers
         }
 
         [Test]
-        public void Should_return_no_content_when_valid_username_is_passed()
+        public async Task Should_return_no_content_when_valid_username_is_passed()
         {
+            var expectedResponse = new UpdateUserPasswordResponse
+            {
+                Password = "NewPassword"
+            };
+            
+            _userAccountService.Setup(x => x.UpdateParticipantPassword(It.IsAny<string>())).ReturnsAsync(expectedResponse);
             _controller = new UserDataController(_userAccountService.Object);
-            var result = _controller.UpdateUser("test").Result;
-            var noContentResult = (NoContentResult)result;
-            noContentResult.StatusCode.Should().Be(204);
+            var response = await _controller.UpdateUser("test");
+            var result = response as OkObjectResult;
+            result.Should().NotBeNull();
+            result.StatusCode.Should().Be(200);
+            result.Value.Should().NotBeNull().And.BeAssignableTo<UpdateUserPasswordResponse>();
+            result.Value.As<UpdateUserPasswordResponse>().Password.Should().NotBeNull().And.Be(expectedResponse.Password);
         }
     }
 }

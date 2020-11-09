@@ -91,7 +91,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     }
 
     private initForm() {
-        const find_judge = this.hearing.participants.find((x) => x.is_judge === true);
+        const find_judge = this.hearing.participants.find(x => x.is_judge === true);
         if (!find_judge) {
             this.judge = new JudgeResponse({ email: this.constants.PleaseSelect, display_name: '' });
         } else {
@@ -122,7 +122,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         });
 
         this.$subscriptions.push(
-            this.judgeName.valueChanges.subscribe((judgeUserId) => {
+            this.judgeName.valueChanges.subscribe(judgeUserId => {
                 this.addJudge(judgeUserId);
                 this.isJudgeSelected = judgeUserId !== null;
                 this.canNavigate = this.isJudgeSelected;
@@ -130,7 +130,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         );
 
         this.$subscriptions.push(
-            this.judgeDisplayName.valueChanges.subscribe((name) => {
+            this.judgeDisplayName.valueChanges.subscribe(name => {
                 this.judge.display_name = name;
             })
         );
@@ -140,6 +140,12 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         return this.hearing && this.hearing.audio_recording_required !== null && this.hearing.audio_recording_required !== undefined
             ? this.hearing.audio_recording_required
             : true;
+    }
+
+    get canNavigateNext() {
+        // should not navigate to next page if judge data is not saved in cache.
+        const savedInCacheHearing = this.hearingService.getCurrentRequest();
+        return this.canNavigate && savedInCacheHearing.participants.length > 0;
     }
 
     get judgeName() {
@@ -156,7 +162,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
 
     public addJudge(judgeId: string) {
         if (judgeId) {
-            const selectedJudge = this.availableJudges.find((j) => j.email === judgeId);
+            const selectedJudge = this.availableJudges.find(j => j.email === judgeId);
             this.judge.first_name = selectedJudge.first_name;
             this.judge.last_name = selectedJudge.last_name;
             this.judge.email = selectedJudge.email;
@@ -166,7 +172,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
             this.judgeDisplayName.patchValue(this.judge.display_name);
             const newJudge = AssignJudgeComponent.mapJudgeToModel(this.judge);
 
-            const indexOfJudge = this.hearing.participants.findIndex((x) => x.is_judge === true);
+            const indexOfJudge = this.hearing.participants.findIndex(x => x.is_judge === true);
             if (indexOfJudge > -1) {
                 this.hearing.participants.splice(indexOfJudge, 1);
             }
@@ -177,7 +183,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     isJudgeDisplayNameSet(): boolean {
         let result = false;
         if (this.judge && this.judge.display_name) {
-            const enteredJudge = this.availableJudges.find((j) => j.display_name === this.judge.display_name);
+            const enteredJudge = this.availableJudges.find(j => j.display_name === this.judge.display_name);
             result = !enteredJudge;
         }
         return result;
@@ -185,7 +191,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
 
     changeDisplayName() {
         if (this.judge && this.judge.display_name) {
-            const indexOfJudge = this.hearing.participants.findIndex((x) => x.is_judge === true);
+            const indexOfJudge = this.hearing.participants.findIndex(x => x.is_judge === true);
             if (indexOfJudge !== -1) {
                 this.hearing.participants[indexOfJudge].display_name = this.judge.display_name;
             }
@@ -262,13 +268,13 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         this.$subscriptions.push(
             this.judgeService.getJudges().subscribe(
                 (data: JudgeResponse[]) => {
-                    this.availableJudges = data.filter((x) => x.first_name && x.last_name);
+                    this.availableJudges = data.filter(x => x.first_name && x.last_name);
                     const userResponse = new JudgeResponse();
                     userResponse.email = this.constants.PleaseSelect;
                     userResponse.display_name = '';
                     this.availableJudges.unshift(userResponse);
                 },
-                (error) => this.onErrorLoadJudges(error)
+                error => this.onErrorLoadJudges(error)
             )
         );
     }
@@ -283,7 +289,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
 
     ngOnDestroy() {
         this.bookingService.removeEditMode();
-        this.$subscriptions.forEach((subcription) => {
+        this.$subscriptions.forEach(subcription => {
             if (subcription) {
                 subcription.unsubscribe();
             }

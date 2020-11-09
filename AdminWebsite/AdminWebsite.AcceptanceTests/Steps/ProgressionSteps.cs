@@ -67,6 +67,14 @@ namespace AdminWebsite.AcceptanceTests.Steps
             Progression(FromString(page), "Login", page);
         }
 
+
+        [Given(@"the (.*) user has progressed to the (.*) page of a multi days hearing")]
+        public void GivenIAmOnThePageOfMultiDaysHearing(string user, string page)
+        {
+            _c.Test.HearingSchedule.MultiDays = true;
+            GivenIAmOnThePage(user, page);
+        }
+
         [When(@"progresses from the (.*) page to the (.*) page")]
         public void WhenProgressesFromPageToAnotherPage(string from, string to)
         {

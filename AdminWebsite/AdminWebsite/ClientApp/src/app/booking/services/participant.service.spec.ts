@@ -23,7 +23,7 @@ describe('ParticipantService', () => {
   it('should map roles to party model array', inject([ParticipantService], (service: ParticipantService) => {
     const response = new CaseAndHearingRolesResponse();
     response.name = 'Defendant';
-    response.hearing_roles = ['Defendant LIP'];
+      response.hearing_roles = ['Litigant in person'];
     const responses: CaseAndHearingRolesResponse[] = [];
     responses.push(response);
 
@@ -32,7 +32,7 @@ describe('ParticipantService', () => {
     expect(models.length).toBe(1);
     expect(models[0].name).toBe('Defendant');
     expect(models[0].hearingRoles.length).toBe(1);
-    expect(models[0].hearingRoles[0]).toBe('Defendant LIP');
+      expect(models[0].hearingRoles[0]).toBe('Litigant in person');
   }));
   it('should return empty party model array', inject([ParticipantService], (service: ParticipantService) => {
     const responses: CaseAndHearingRolesResponse[] = [];

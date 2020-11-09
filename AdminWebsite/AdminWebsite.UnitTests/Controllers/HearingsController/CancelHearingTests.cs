@@ -1,18 +1,17 @@
 ﻿using AdminWebsite.BookingsAPI.Client;
+using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
+using AdminWebsite.VideoAPI.Client;
 using FluentAssertions;
+using FluentValidation;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using System;
-using System.Text.Encodings.Web;
 using System.Threading.Tasks;
-using AdminWebsite.Models;
-using AdminWebsite.VideoAPI.Client;
-using FluentValidation;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {
@@ -21,7 +20,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private Mock<IBookingsApiClient> _bookingsApiClient;
         private Mock<IUserIdentity> _userIdentity;
         private Mock<IUserAccountService> _userAccountService;
-        private Mock<IValidator<BookNewHearingRequest>> _bookNewHearingRequestValidator;
         private Mock<IValidator<EditHearingRequest>> _editHearingRequestValidator;
         private AdminWebsite.Controllers.HearingsController _controller;
         private Guid _guid;
@@ -35,7 +33,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _bookingsApiClient = new Mock<IBookingsApiClient>();
             _userIdentity = new Mock<IUserIdentity>();
             _userAccountService = new Mock<IUserAccountService>();
-            _bookNewHearingRequestValidator = new Mock<IValidator<BookNewHearingRequest>>();
             _editHearingRequestValidator = new Mock<IValidator<EditHearingRequest>>();
             _videoApiMock = new Mock<IVideoApiClient>();
             _pollyRetryServiceMock = new Mock<IPollyRetryService>();
@@ -43,9 +40,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _controller = new AdminWebsite.Controllers.HearingsController(_bookingsApiClient.Object,
                 _userIdentity.Object,
                 _userAccountService.Object,
-                _bookNewHearingRequestValidator.Object,
                 _editHearingRequestValidator.Object,
-                JavaScriptEncoder.Default,
                 _videoApiMock.Object,
                 _pollyRetryServiceMock.Object,
                 new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>().Object);

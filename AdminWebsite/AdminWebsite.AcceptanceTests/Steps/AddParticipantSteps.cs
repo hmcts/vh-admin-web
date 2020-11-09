@@ -54,7 +54,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             var individualUser = Users.GetIndividualUser(_c.Users);
             var individual = UserToUserAccountMapper.Map(individualUser);
             individual.CaseRoleName = Party.Claimant.Name;
-            individual.HearingRoleName = PartyRole.ClaimantLip.Name;
+            individual.HearingRoleName = PartyRole.LitigantInPerson.Name;
             _c.Test.HearingParticipants.Add(individual);
             SetParty(individual.CaseRoleName);
             SetRole(individual.HearingRoleName);
@@ -79,7 +79,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
             var individual = CreateNewUser("Individual");
             individual.CaseRoleName = Party.Defendant.Name;
-            individual.HearingRoleName = PartyRole.DefendantLip.Name;
+            individual.HearingRoleName = PartyRole.LitigantInPerson.Name;
             _individualDisplayName = individual.DisplayName;
             _c.Test.HearingParticipants.Add(individual);
             SetParty(individual.CaseRoleName);
@@ -160,9 +160,8 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AddParticipantsPage.DisplayNameTextfield).SendKeys(user.DisplayName);
             var organisation = _c.Test.TestData.AddParticipant.Participant.Organisation;
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AddParticipantsPage.RepOrganisationTextfield).SendKeys(organisation);
-            var reference = _c.Test.TestData.AddParticipant.Participant.Reference;
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AddParticipantsPage.ReferenceTextfield).SendKeys(reference);
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AddParticipantsPage.RepresentingTextfield).SendKeys(user.Representee);
+
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AddParticipantsPage.AddParticipantLink);
             _browsers[_c.CurrentUser].ScrollTo(AddParticipantsPage.AddParticipantLink);
             _browsers[_c.CurrentUser].ClickLink(AddParticipantsPage.AddParticipantLink);
@@ -185,8 +184,6 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AddParticipantsPage.DisplayNameTextfield).SendKeys(user.DisplayName);
             var organisation = _c.Test.TestData.AddParticipant.Participant.Organisation;
             EnterTextIfFieldIsNotPrePopulated(AddParticipantsPage.RepOrganisationTextfield, organisation);
-            var reference = _c.Test.TestData.AddParticipant.Participant.Reference;
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AddParticipantsPage.ReferenceTextfield).SendKeys(reference);
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AddParticipantsPage.RepresentingTextfield).SendKeys(user.Representee);
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AddParticipantsPage.AddParticipantLink);
             _browsers[_c.CurrentUser].ScrollTo(AddParticipantsPage.AddParticipantLink);
@@ -282,7 +279,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             var individualUser = Users.GetIndividualUser(_c.Users);
             var individual = UserToUserAccountMapper.Map(individualUser);
             individual.CaseRoleName = Party.Claimant.Name;
-            individual.HearingRoleName = PartyRole.ClaimantLip.Name;
+            individual.HearingRoleName = PartyRole.LitigantInPerson.Name;
             _c.Test.HearingParticipants.Add(individual);
             SetParty(individual.CaseRoleName);
             SetRole(individual.HearingRoleName);

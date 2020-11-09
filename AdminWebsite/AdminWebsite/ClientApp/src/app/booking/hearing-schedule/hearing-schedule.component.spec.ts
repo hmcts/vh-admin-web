@@ -1,22 +1,21 @@
 import { DatePipe } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { AbstractControl, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { of } from 'rxjs';
+import { HearingVenueResponse } from 'src/app/services/clients/api-client';
+import { HearingModel } from '../../common/model/hearing.model';
 import { CancelPopupComponent } from '../../popups/cancel-popup/cancel-popup.component';
-import { SharedModule } from '../../shared/shared.module';
-import { BreadcrumbStubComponent } from '../../testing/stubs/breadcrumb-stub';
 import { DiscardConfirmPopupComponent } from '../../popups/discard-confirm-popup/discard-confirm-popup.component';
-
+import { ErrorService } from '../../services/error.service';
 import { ReferenceDataService } from '../../services/reference-data.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
+import { SharedModule } from '../../shared/shared.module';
 import { MockValues } from '../../testing/data/test-objects';
+import { BreadcrumbStubComponent } from '../../testing/stubs/breadcrumb-stub';
 import { HearingScheduleComponent } from './hearing-schedule.component';
-import { HearingModel } from '../../common/model/hearing.model';
-import { ErrorService } from '../../services/error.service';
-import { HearingVenueResponse } from 'src/app/services/clients/api-client';
 
 const newHearing = new HearingModel();
 
@@ -67,33 +66,35 @@ describe('HearingScheduleComponent first visit', () => {
     let routerSpy: jasmine.SpyObj<Router>;
     const errorService: jasmine.SpyObj<ErrorService> = jasmine.createSpyObj('ErrorService', ['handleError']);
 
-    beforeEach(async(() => {
-        routerSpy = jasmine.createSpyObj('Router', ['navigate']);
+    beforeEach(
+        waitForAsync(() => {
+            routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
-        referenceDataServiceServiceSpy = jasmine.createSpyObj<ReferenceDataService>('ReferenceDataService', ['getCourts']);
-        referenceDataServiceServiceSpy.getCourts.and.returnValue(of(MockValues.Courts));
-        videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
-            'getHearingTypes',
-            'getCurrentRequest',
-            'updateHearingRequest',
-            'cancelRequest',
-            'setBookingHasChanged'
-        ]);
+            referenceDataServiceServiceSpy = jasmine.createSpyObj<ReferenceDataService>('ReferenceDataService', ['getCourts']);
+            referenceDataServiceServiceSpy.getCourts.and.returnValue(of(MockValues.Courts));
+            videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
+                'getHearingTypes',
+                'getCurrentRequest',
+                'updateHearingRequest',
+                'cancelRequest',
+                'setBookingHasChanged'
+            ]);
 
-        videoHearingsServiceSpy.getCurrentRequest.and.returnValue(newHearing);
+            videoHearingsServiceSpy.getCurrentRequest.and.returnValue(newHearing);
 
-        TestBed.configureTestingModule({
-            imports: [SharedModule, RouterTestingModule],
-            providers: [
-                { provide: ReferenceDataService, useValue: referenceDataServiceServiceSpy },
-                { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
-                { provide: Router, useValue: routerSpy },
-                { provide: ErrorService, useValue: errorService },
-                DatePipe
-            ],
-            declarations: [HearingScheduleComponent, BreadcrumbStubComponent, CancelPopupComponent, DiscardConfirmPopupComponent]
-        }).compileComponents();
-    }));
+            TestBed.configureTestingModule({
+                imports: [SharedModule, RouterTestingModule],
+                providers: [
+                    { provide: ReferenceDataService, useValue: referenceDataServiceServiceSpy },
+                    { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
+                    { provide: Router, useValue: routerSpy },
+                    { provide: ErrorService, useValue: errorService },
+                    DatePipe
+                ],
+                declarations: [HearingScheduleComponent, BreadcrumbStubComponent, CancelPopupComponent, DiscardConfirmPopupComponent]
+            }).compileComponents();
+        })
+    );
 
     beforeEach(() => {
         fixture = TestBed.createComponent(HearingScheduleComponent);
@@ -112,6 +113,11 @@ describe('HearingScheduleComponent first visit', () => {
         expect(component.hearingDurationMinute.value).toBeNull();
         expect(component.courtAddress.value).toBe(-1);
         expect(component.multiDaysHearing).toBeFalsy();
+    });
+    it('should set controls for duration', () => {
+        component.ngOnInit();
+        expect(component.durationHourControl).toBeTruthy();
+        expect(component.durationMinuteControl).toBeTruthy();
     });
 
     it('should fail validation when form empty', () => {
@@ -311,33 +317,35 @@ describe('HearingScheduleComponent returning to page', () => {
     let routerSpy: jasmine.SpyObj<Router>;
     const errorService: jasmine.SpyObj<ErrorService> = jasmine.createSpyObj('ErrorService', ['handleError']);
 
-    beforeEach(async(() => {
-        routerSpy = jasmine.createSpyObj('Router', ['navigate']);
+    beforeEach(
+        waitForAsync(() => {
+            routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
-        referenceDataServiceServiceSpy = jasmine.createSpyObj<ReferenceDataService>('ReferenceDataService', ['getCourts']);
-        referenceDataServiceServiceSpy.getCourts.and.returnValue(of(MockValues.Courts));
-        videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
-            'getHearingTypes',
-            'getCurrentRequest',
-            'updateHearingRequest',
-            'cancelRequest',
-            'setBookingHasChanged'
-        ]);
+            referenceDataServiceServiceSpy = jasmine.createSpyObj<ReferenceDataService>('ReferenceDataService', ['getCourts']);
+            referenceDataServiceServiceSpy.getCourts.and.returnValue(of(MockValues.Courts));
+            videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
+                'getHearingTypes',
+                'getCurrentRequest',
+                'updateHearingRequest',
+                'cancelRequest',
+                'setBookingHasChanged'
+            ]);
 
-        videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
+            videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
 
-        TestBed.configureTestingModule({
-            imports: [HttpClientModule, ReactiveFormsModule, RouterTestingModule],
-            providers: [
-                { provide: ReferenceDataService, useValue: referenceDataServiceServiceSpy },
-                { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
-                { provide: Router, useValue: routerSpy },
-                { provide: ErrorService, useValue: errorService },
-                DatePipe
-            ],
-            declarations: [HearingScheduleComponent, BreadcrumbStubComponent, CancelPopupComponent, DiscardConfirmPopupComponent]
-        }).compileComponents();
-    }));
+            TestBed.configureTestingModule({
+                imports: [HttpClientModule, ReactiveFormsModule, RouterTestingModule],
+                providers: [
+                    { provide: ReferenceDataService, useValue: referenceDataServiceServiceSpy },
+                    { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
+                    { provide: Router, useValue: routerSpy },
+                    { provide: ErrorService, useValue: errorService },
+                    DatePipe
+                ],
+                declarations: [HearingScheduleComponent, BreadcrumbStubComponent, CancelPopupComponent, DiscardConfirmPopupComponent]
+            }).compileComponents();
+        })
+    );
 
     beforeEach(() => {
         fixture = TestBed.createComponent(HearingScheduleComponent);
@@ -453,33 +461,35 @@ describe('HearingScheduleComponent multi days hearing', () => {
     let routerSpy: jasmine.SpyObj<Router>;
     const errorService: jasmine.SpyObj<ErrorService> = jasmine.createSpyObj('ErrorService', ['handleError']);
 
-    beforeEach(async(() => {
-        routerSpy = jasmine.createSpyObj('Router', ['navigate']);
+    beforeEach(
+        waitForAsync(() => {
+            routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
-        referenceDataServiceServiceSpy = jasmine.createSpyObj<ReferenceDataService>('ReferenceDataService', ['getCourts']);
-        referenceDataServiceServiceSpy.getCourts.and.returnValue(of(MockValues.Courts));
-        videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
-            'getHearingTypes',
-            'getCurrentRequest',
-            'updateHearingRequest',
-            'cancelRequest',
-            'setBookingHasChanged'
-        ]);
+            referenceDataServiceServiceSpy = jasmine.createSpyObj<ReferenceDataService>('ReferenceDataService', ['getCourts']);
+            referenceDataServiceServiceSpy.getCourts.and.returnValue(of(MockValues.Courts));
+            videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
+                'getHearingTypes',
+                'getCurrentRequest',
+                'updateHearingRequest',
+                'cancelRequest',
+                'setBookingHasChanged'
+            ]);
 
-        videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
+            videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
 
-        TestBed.configureTestingModule({
-            imports: [HttpClientModule, ReactiveFormsModule, RouterTestingModule],
-            providers: [
-                { provide: ReferenceDataService, useValue: referenceDataServiceServiceSpy },
-                { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
-                { provide: Router, useValue: routerSpy },
-                { provide: ErrorService, useValue: errorService },
-                DatePipe
-            ],
-            declarations: [HearingScheduleComponent, BreadcrumbStubComponent, CancelPopupComponent, DiscardConfirmPopupComponent]
-        }).compileComponents();
-    }));
+            TestBed.configureTestingModule({
+                imports: [HttpClientModule, ReactiveFormsModule, RouterTestingModule],
+                providers: [
+                    { provide: ReferenceDataService, useValue: referenceDataServiceServiceSpy },
+                    { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
+                    { provide: Router, useValue: routerSpy },
+                    { provide: ErrorService, useValue: errorService },
+                    DatePipe
+                ],
+                declarations: [HearingScheduleComponent, BreadcrumbStubComponent, CancelPopupComponent, DiscardConfirmPopupComponent]
+            }).compileComponents();
+        })
+    );
 
     beforeEach(() => {
         fixture = TestBed.createComponent(HearingScheduleComponent);
@@ -487,6 +497,12 @@ describe('HearingScheduleComponent multi days hearing', () => {
         fixture.detectChanges();
 
         initFormControls(component);
+    });
+    it('should set controls for duration', () => {
+        component.hearing = existingRequest;
+        component.ngOnInit();
+        expect(component.durationHourControl).toBeTruthy();
+        expect(component.durationMinuteControl).toBeTruthy();
     });
 
     it('should set multi days flag to true', () => {
@@ -553,5 +569,15 @@ describe('HearingScheduleComponent multi days hearing', () => {
     it('should end date set to null if multi days hearing is off', () => {
         component.multiDaysChanged(false);
         expect(component.endHearingDate.value).toBe(null);
+    });
+    it('should hide multi days checkbox if the hearing is booked', () => {
+        component.hearing.hearing_id = '123455555900';
+        component.ngOnInit();
+        expect(component.isBookedHearing).toBe(true);
+    });
+    it('should display multi days checkbox if the hearing is not booked', () => {
+        component.hearing.hearing_id = null;
+        component.ngOnInit();
+        expect(component.isBookedHearing).toBe(false);
     });
 });

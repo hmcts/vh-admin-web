@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HearingModel } from '../../common/model/hearing.model';
 import { ReferenceDataService } from '../../services/reference-data.service';
@@ -34,7 +34,9 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     isStartMinutesInPast = false;
     $subscriptions: Subscription[] = [];
     multiDaysHearing = false;
-
+    durationHourControl: FormControl;
+    durationMinuteControl: FormControl;
+    isBookedHearing = false;
     constructor(
         private refDataService: ReferenceDataService,
         protected hearingService: VideoHearingsService,
@@ -58,6 +60,8 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     private checkForExistingRequest() {
         this.hearing = this.hearingService.getCurrentRequest();
         this.isExistinHearing = this.hearing && this.hearing.hearing_type_name && this.hearing.hearing_type_name.length > 0;
+        this.isBookedHearing =
+            this.hearing && this.hearing.hearing_id !== undefined && this.hearing.hearing_id !== null && this.hearing.hearing_id.length > 0;
     }
 
     private initForm() {
@@ -106,12 +110,20 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
             this.multiDaysHearing = this.hearing.multiDays;
         }
 
+        if (this.multiDaysHearing) {
+            this.durationHourControl = new FormControl(durationHour);
+            this.durationMinuteControl = new FormControl(durationMinute);
+        } else {
+            this.durationHourControl = new FormControl(durationHour, [Validators.required, Validators.min(0), Validators.max(23)]);
+            this.durationMinuteControl = new FormControl(durationMinute, [Validators.required, Validators.min(0), Validators.max(59)]);
+        }
+
         this.form = this.fb.group({
             hearingDate: [hearingDateParsed, Validators.required],
             hearingStartTimeHour: [startTimeHour, [Validators.required, Validators.min(0), Validators.max(23)]],
             hearingStartTimeMinute: [startTimeMinute, [Validators.required, Validators.min(0), Validators.max(59)]],
-            hearingDurationHour: [durationHour, [Validators.required, Validators.min(0), Validators.max(23)]],
-            hearingDurationMinute: [durationMinute, [Validators.required, Validators.min(0), Validators.max(59)]],
+            hearingDurationHour: this.durationHourControl,
+            hearingDurationMinute: this.durationMinuteControl,
             courtAddress: [this.hearing.hearing_venue_id, [Validators.required, Validators.min(1)]],
             courtRoom: [room, [Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)]],
             multiDays: [this.multiDaysHearing],

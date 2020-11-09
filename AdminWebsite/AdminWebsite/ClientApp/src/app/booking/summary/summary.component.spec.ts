@@ -1,27 +1,27 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { Router } from '@angular/router';
-import { of, throwError } from 'rxjs';
+import { RouterTestingModule } from '@angular/router/testing';
+import { of } from 'rxjs';
+import { EndpointModel } from 'src/app/common/model/endpoint.model';
 import { CancelPopupComponent } from 'src/app/popups/cancel-popup/cancel-popup.component';
-import { RemovePopupComponent } from '../../popups/remove-popup/remove-popup.component';
+import { SaveFailedPopupComponent } from 'src/app/popups/save-failed-popup/save-failed-popup.component';
 import { BreadcrumbStubComponent } from 'src/app/testing/stubs/breadcrumb-stub';
-import { BookingEditStubComponent } from '../../testing/stubs/booking-edit-stub';
+import { LongDatetimePipe } from '../../../app/shared/directives/date-time.pipe';
+import { CaseModel } from '../../common/model/case.model';
+import { HearingModel } from '../../common/model/hearing.model';
+import { ParticipantModel } from '../../common/model/participant.model';
+import { RemovePopupComponent } from '../../popups/remove-popup/remove-popup.component';
+import { WaitPopupComponent } from '../../popups/wait-popup/wait-popup.component';
+import { BookingService } from '../../services/booking.service';
+import { HearingDetailsResponse } from '../../services/clients/api-client';
+import { Logger } from '../../services/logger';
+import { RecordingGuardService } from '../../services/recording-guard.service';
 import { ReferenceDataService } from '../../services/reference-data.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { MockValues } from '../../testing/data/test-objects';
-import { SummaryComponent } from './summary.component';
-import { RouterTestingModule } from '@angular/router/testing';
-import { HearingModel } from '../../common/model/hearing.model';
-import { CaseModel } from '../../common/model/case.model';
-import { ParticipantModel } from '../../common/model/participant.model';
+import { BookingEditStubComponent } from '../../testing/stubs/booking-edit-stub';
 import { ParticipantsListStubComponent } from '../../testing/stubs/participant-list-stub';
-import { WaitPopupComponent } from '../../popups/wait-popup/wait-popup.component';
-import { SaveFailedPopupComponent } from 'src/app/popups/save-failed-popup/save-failed-popup.component';
-import { HearingDetailsResponse } from '../../services/clients/api-client';
-import { LongDatetimePipe } from '../../../app/shared/directives/date-time.pipe';
-import { Logger } from '../../services/logger';
-import { EndpointModel } from 'src/app/common/model/endpoint.model';
-import { BookingService } from '../../services/booking.service';
-import { RecordingGuardService } from '../../services/recording-guard.service';
+import { SummaryComponent } from './summary.component';
 
 function initExistingHearingRequest(): HearingModel {
     const pat1 = new ParticipantModel();
@@ -51,7 +51,7 @@ function initExistingHearingRequest(): HearingModel {
     const courtString = MockValues.Courts.find(c => c.id === existingRequest.hearing_venue_id).name;
     existingRequest.court_name = courtString;
     existingRequest.multiDays = false;
-    existingRequest.end_hearing_date_time = new Date(addDays(Date.now(), 3));
+    existingRequest.end_hearing_date_time = new Date(addDays(Date.now(), 7));
 
     existingRequest.participants = [];
     existingRequest.participants.push(pat1);
@@ -98,7 +98,8 @@ videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHeari
     'saveHearing',
     'cancelRequest',
     'updateHearing',
-    'setBookingHasChanged'
+    'setBookingHasChanged',
+    'cloneMultiHearings'
 ]);
 
 describe('SummaryComponent with valid request', () => {
@@ -107,34 +108,37 @@ describe('SummaryComponent with valid request', () => {
 
     let existingRequest: any;
 
-    beforeEach(async(() => {
-        existingRequest = initExistingHearingRequest();
+    beforeEach(
+        waitForAsync(() => {
+            existingRequest = initExistingHearingRequest();
 
-        videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
-        videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
-        videoHearingsServiceSpy.saveHearing.and.returnValue(of(new HearingDetailsResponse()));
+            videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
+            videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
+            videoHearingsServiceSpy.saveHearing.and.returnValue(of(new HearingDetailsResponse()));
+            videoHearingsServiceSpy.cloneMultiHearings.and.callThrough();
 
-        TestBed.configureTestingModule({
-            providers: [
-                { provide: ReferenceDataService, useValue: referenceDataServiceServiceSpy },
-                { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
-                { provide: Router, useValue: routerSpy },
-                { provide: Logger, useValue: loggerSpy }
-            ],
-            declarations: [
-                SummaryComponent,
-                BreadcrumbStubComponent,
-                CancelPopupComponent,
-                ParticipantsListStubComponent,
-                BookingEditStubComponent,
-                RemovePopupComponent,
-                WaitPopupComponent,
-                SaveFailedPopupComponent,
-                LongDatetimePipe
-            ],
-            imports: [RouterTestingModule]
-        }).compileComponents();
-    }));
+            TestBed.configureTestingModule({
+                providers: [
+                    { provide: ReferenceDataService, useValue: referenceDataServiceServiceSpy },
+                    { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
+                    { provide: Router, useValue: routerSpy },
+                    { provide: Logger, useValue: loggerSpy }
+                ],
+                declarations: [
+                    SummaryComponent,
+                    BreadcrumbStubComponent,
+                    CancelPopupComponent,
+                    ParticipantsListStubComponent,
+                    BookingEditStubComponent,
+                    RemovePopupComponent,
+                    WaitPopupComponent,
+                    SaveFailedPopupComponent,
+                    LongDatetimePipe
+                ],
+                imports: [RouterTestingModule]
+            }).compileComponents();
+        })
+    );
 
     beforeEach(() => {
         fixture = TestBed.createComponent(SummaryComponent);
@@ -186,11 +190,10 @@ describe('SummaryComponent with valid request', () => {
     it('should hide pop up that indicated process saving a booking', () => {
         expect(component.showWaitSaving).toBeFalsy();
     });
-    it('should save new booking', () => {
+    it('should save new booking', async () => {
         component.ngOnInit();
         fixture.detectChanges();
-
-        component.bookHearing();
+        await component.bookHearing();
         expect(component.bookingsSaving).toBeTruthy();
         expect(component.showWaitSaving).toBeFalsy();
         expect(routerSpy.navigate).toHaveBeenCalled();
@@ -209,42 +212,66 @@ describe('SummaryComponent with valid request', () => {
         fixture.detectChanges();
         expect(component.audioChoice).toBe('No');
     });
+    it('should save new booking with multi hearings', async () => {
+        component.ngOnInit();
+        component.hearing.multiDays = true;
+        component.hearing.end_hearing_date_time = new Date(component.hearing.scheduled_date_time);
+        component.hearing.end_hearing_date_time.setDate(component.hearing.end_hearing_date_time.getDate() + 5);
+        fixture.detectChanges();
+
+        await component.bookHearing();
+        expect(component.bookingsSaving).toBeTruthy();
+        expect(component.showWaitSaving).toBeFalsy();
+        expect(routerSpy.navigate).toHaveBeenCalled();
+        expect(videoHearingsServiceSpy.saveHearing).toHaveBeenCalled();
+        expect(videoHearingsServiceSpy.cloneMultiHearings).toHaveBeenCalled();
+    });
 });
 
 describe('SummaryComponent  with invalid request', () => {
     let component: SummaryComponent;
     let fixture: ComponentFixture<SummaryComponent>;
 
-    beforeEach(async(() => {
-        initExistingHearingRequest();
-        const existingRequest = initBadHearingRequest();
-        videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
-        videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
-        videoHearingsServiceSpy.saveHearing.and.callFake(() => {
-            return throwError(new Error('Fake error'));
-        });
+    beforeEach(
+        waitForAsync(() => {
+            videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
+                'getHearingTypes',
+                'getCurrentRequest',
+                'updateHearingRequest',
+                'saveHearing',
+                'cancelRequest',
+                'updateHearing',
+                'setBookingHasChanged',
+                'cloneMultiHearings'
+            ]);
+            initExistingHearingRequest();
+            const existingRequest = initBadHearingRequest();
+            videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
+            videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
+            videoHearingsServiceSpy.saveHearing.and.throwError('Fake error');
 
-        TestBed.configureTestingModule({
-            providers: [
-                { provide: ReferenceDataService, useValue: referenceDataServiceServiceSpy },
-                { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
-                { provide: Router, useValue: routerSpy },
-                { provide: Logger, useValue: loggerSpy }
-            ],
-            imports: [RouterTestingModule],
-            declarations: [
-                SummaryComponent,
-                BreadcrumbStubComponent,
-                CancelPopupComponent,
-                ParticipantsListStubComponent,
-                BookingEditStubComponent,
-                RemovePopupComponent,
-                WaitPopupComponent,
-                SaveFailedPopupComponent,
-                LongDatetimePipe
-            ]
-        }).compileComponents();
-    }));
+            TestBed.configureTestingModule({
+                providers: [
+                    { provide: ReferenceDataService, useValue: referenceDataServiceServiceSpy },
+                    { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
+                    { provide: Router, useValue: routerSpy },
+                    { provide: Logger, useValue: loggerSpy }
+                ],
+                imports: [RouterTestingModule],
+                declarations: [
+                    SummaryComponent,
+                    BreadcrumbStubComponent,
+                    CancelPopupComponent,
+                    ParticipantsListStubComponent,
+                    BookingEditStubComponent,
+                    RemovePopupComponent,
+                    WaitPopupComponent,
+                    SaveFailedPopupComponent,
+                    LongDatetimePipe
+                ]
+            }).compileComponents();
+        })
+    );
 
     beforeEach(() => {
         fixture = TestBed.createComponent(SummaryComponent);
@@ -252,8 +279,8 @@ describe('SummaryComponent  with invalid request', () => {
         fixture.detectChanges();
     });
 
-    it('should display save failed message', () => {
-        component.bookHearing();
+    it('should display save failed message', async () => {
+        await component.bookHearing();
         expect(component.showErrorSaving).toBeTruthy();
         expect(component.showWaitSaving).toBeFalsy();
     });
@@ -263,34 +290,36 @@ describe('SummaryComponent  with existing request', () => {
     let component: SummaryComponent;
     let fixture: ComponentFixture<SummaryComponent>;
 
-    beforeEach(async(() => {
-        const existingRequest = initExistingHearingRequest();
-        existingRequest.hearing_id = '12345ty';
-        videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
-        videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
-        videoHearingsServiceSpy.updateHearing.and.returnValue(of(new HearingDetailsResponse()));
+    beforeEach(
+        waitForAsync(() => {
+            const existingRequest = initExistingHearingRequest();
+            existingRequest.hearing_id = '12345ty';
+            videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
+            videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
+            videoHearingsServiceSpy.updateHearing.and.returnValue(of(new HearingDetailsResponse()));
 
-        TestBed.configureTestingModule({
-            providers: [
-                { provide: ReferenceDataService, useValue: referenceDataServiceServiceSpy },
-                { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
-                { provide: Router, useValue: routerSpy },
-                { provide: Logger, useValue: loggerSpy }
-            ],
-            imports: [RouterTestingModule],
-            declarations: [
-                SummaryComponent,
-                BreadcrumbStubComponent,
-                CancelPopupComponent,
-                ParticipantsListStubComponent,
-                BookingEditStubComponent,
-                RemovePopupComponent,
-                WaitPopupComponent,
-                SaveFailedPopupComponent,
-                LongDatetimePipe
-            ]
-        }).compileComponents();
-    }));
+            TestBed.configureTestingModule({
+                providers: [
+                    { provide: ReferenceDataService, useValue: referenceDataServiceServiceSpy },
+                    { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
+                    { provide: Router, useValue: routerSpy },
+                    { provide: Logger, useValue: loggerSpy }
+                ],
+                imports: [RouterTestingModule],
+                declarations: [
+                    SummaryComponent,
+                    BreadcrumbStubComponent,
+                    CancelPopupComponent,
+                    ParticipantsListStubComponent,
+                    BookingEditStubComponent,
+                    RemovePopupComponent,
+                    WaitPopupComponent,
+                    SaveFailedPopupComponent,
+                    LongDatetimePipe
+                ]
+            }).compileComponents();
+        })
+    );
 
     beforeEach(() => {
         fixture = TestBed.createComponent(SummaryComponent);
@@ -386,7 +415,6 @@ describe('SummaryComponent  with existing request', () => {
 describe('SummaryComponent  with multi days request', () => {
     let component: SummaryComponent;
     let existingRequest: HearingModel;
-    // let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
     let bookingServiceSpy: jasmine.SpyObj<BookingService>;
     let recordingGuardServiceSpy: jasmine.SpyObj<RecordingGuardService>;
 
@@ -409,14 +437,19 @@ describe('SummaryComponent  with multi days request', () => {
     );
 
     it('should display summary data from existing hearing with multi days', () => {
+        component.hearing = existingRequest;
+        component.hearing.end_hearing_date_time = new Date(component.hearing.scheduled_date_time);
+        component.hearing.end_hearing_date_time.setDate(component.hearing.end_hearing_date_time.getDate() + 5);
+
         component.ngOnInit();
-        expect(component.hearingDate.getDay()).toEqual(existingRequest.scheduled_date_time.getDay());
-        expect(component.endHearingDate.getDay()).toEqual(existingRequest.end_hearing_date_time.getDay());
 
-        expect(component.hearingDate.getMonth()).toEqual(existingRequest.scheduled_date_time.getMonth());
-        expect(component.endHearingDate.getMonth()).toEqual(existingRequest.end_hearing_date_time.getMonth());
+        expect(new Date(component.hearingDate).getDay()).toEqual(new Date(existingRequest.scheduled_date_time).getDay());
+        expect(new Date(component.endHearingDate).getDay()).toEqual(new Date(existingRequest.end_hearing_date_time).getDay());
 
-        expect(component.hearingDate.getFullYear()).toEqual(existingRequest.scheduled_date_time.getFullYear());
-        expect(component.endHearingDate.getFullYear()).toEqual(existingRequest.end_hearing_date_time.getFullYear());
+        expect(new Date(component.hearingDate).getMonth()).toEqual(new Date(existingRequest.scheduled_date_time).getMonth());
+        expect(new Date(component.endHearingDate).getMonth()).toEqual(new Date(existingRequest.end_hearing_date_time).getMonth());
+
+        expect(new Date(component.hearingDate).getFullYear()).toEqual(new Date(existingRequest.scheduled_date_time).getFullYear());
+        expect(new Date(component.endHearingDate).getFullYear()).toEqual(new Date(existingRequest.end_hearing_date_time).getFullYear());
     });
 });

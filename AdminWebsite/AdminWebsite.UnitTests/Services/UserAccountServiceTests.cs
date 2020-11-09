@@ -113,9 +113,35 @@ namespace AdminWebsite.UnitTests.Services
         [Test]
         public async Task Should_update_password_if_a_user_was_found_in_aad()
         {
-            _userApiClient.Setup(x => x.GetUserByAdUserNameAsync(It.IsAny<string>())).ReturnsAsync(new UserProfile { User_name = "existingUser@email.com" });
-            await _service.UpdateParticipantPassword("exisitngUser");
-            _userApiClient.Verify(x => x.UpdateUserAsync(It.IsAny<string>()), Times.Once);
+            const string UserName = "existingUser";
+            var userProfile = new UserProfile { User_name = "existingUser@email.com" };
+            var updatedUserResponse = new UpdateUserResponse {New_password = "SomePassword"};
+            
+            _userApiClient
+                .Setup(x => x.GetUserByAdUserNameAsync(UserName))
+                .ReturnsAsync(userProfile);
+
+            _userApiClient.Setup(x => x.UpdateUserAsync(UserName)).ReturnsAsync(updatedUserResponse);
+            
+            var response = await _service.UpdateParticipantPassword(UserName);
+            
+            response.Should().NotBeNull();
+            response.Password.Should().Be(updatedUserResponse.New_password);
+            
+            _userApiClient.Verify(x => x.UpdateUserAsync(UserName), Times.Once);
+        }
+
+        [Test]
+        public async Task Should_throw_exception_on_update_password()
+        {
+            const string UserName = "existingUser";
+
+            _userApiClient
+                .Setup(x => x.GetUserByAdUserNameAsync(UserName))
+                .ReturnsAsync((UserProfile) null);
+
+
+            Assert.ThrowsAsync<UserServiceException>(() => _service.UpdateParticipantPassword(UserName));
         }
 
         [Test]
@@ -237,6 +263,42 @@ namespace AdminWebsite.UnitTests.Services
             
             _userApiClient.Verify(x => x.DeleteUserAsync(username), Times.Once);
             _bookingsApiClient.Verify(x => x.AnonymisePersonWithUsernameAsync(username), Times.Never);
+        }
+
+        [Test]
+        public async Task should_return_user_ad_id_for_username()
+        {
+            var profile = new UserProfile
+            {
+                User_id = Guid.NewGuid().ToString()
+            };
+            _userApiClient.Setup(x => x.GetUserByAdUserIdAsync(It.IsAny<string>()))
+                .ReturnsAsync(profile);
+
+            
+            var id = await  _service.GetAdUserIdForUsername("do_not_exist@test.com");
+            id.Should().Be(profile.User_id);
+        }
+        
+        [Test]
+        public async Task should_return_null_when_username_not_found()
+        {
+            _userApiClient.Setup(x => x.GetUserByAdUserIdAsync(It.IsAny<string>()))
+                .Throws(ClientException.ForUserService(HttpStatusCode.NotFound));
+
+            
+              var id = await  _service.GetAdUserIdForUsername("do_not_exist@test.com");
+              id.Should().BeNull();
+        }
+        
+        [Test]
+        public void should_throw_exception_when_username_not_found_throws()
+        {
+            _userApiClient.Setup(x => x.GetUserByAdUserIdAsync(It.IsAny<string>()))
+                .Throws(ClientException.ForUserService(HttpStatusCode.InternalServerError));
+
+            Assert.ThrowsAsync<UserAPI.Client.UserServiceException>(() =>
+                _service.GetAdUserIdForUsername("123"));
         }
     }
 }

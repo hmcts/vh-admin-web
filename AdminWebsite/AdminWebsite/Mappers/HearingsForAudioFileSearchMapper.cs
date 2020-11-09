@@ -5,7 +5,7 @@ namespace AdminWebsite.Mappers
 {
     public static class HearingsForAudioFileSearchMapper
     {
-        public static HearingsForAudioFileSearchResponse MapFrom(HearingsByCaseNumberResponse source)
+        public static HearingsForAudioFileSearchResponse MapFrom(AudioRecordedHearingsBySearchResponse source)
         {
             return new HearingsForAudioFileSearchResponse
             {

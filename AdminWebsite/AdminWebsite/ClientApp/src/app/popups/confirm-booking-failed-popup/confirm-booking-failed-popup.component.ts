@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 @Component({
     selector: 'app-confirm-booking-failed-popup',
@@ -6,9 +6,13 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 })
 export class ConfirmBookingFailedPopupComponent implements OnInit {
     @Output() close: EventEmitter<any> = new EventEmitter<any>();
+    @Input() hearingId: string;
 
+    errorDateTime: string;
     constructor() {}
-    ngOnInit() {}
+    ngOnInit() {
+        this.errorDateTime = new Date().toUTCString();
+    }
 
     ok(): void {
         this.close.emit();

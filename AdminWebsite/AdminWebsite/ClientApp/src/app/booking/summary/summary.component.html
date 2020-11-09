@@ -26,7 +26,9 @@
             </div>
             <ng-template #multiDaysHearing>
                 <div id="hearingStartDate">{{ hearingDate | date: 'EEEE dd MMMM yyyy' }}<span *ngIf="multiDays"> -</span></div>
-                <div>{{ endHearingDate | appLongDatetime }}</div>
+                <div id="hearingEndDateTime">
+                    {{ endHearingDate | date: 'EEEE dd MMMM yyyy' }}, {{ hearingDate | date: 'h:mma' | lowercase }}
+                </div>
             </ng-template>
             <div id="courtAddress" class="vh-text-break">{{ courtRoomAddress }}</div>
             <div *ngIf="!multiDays" id="hearingDuration">{{ hearingDuration }}</div>

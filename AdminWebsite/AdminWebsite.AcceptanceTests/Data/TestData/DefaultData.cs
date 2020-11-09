@@ -28,6 +28,8 @@ namespace AdminWebsite.AcceptanceTests.Data.TestData
         public string HearingVenue { get; set; }
         public string Room { get; set; }
         public DateTime ScheduledDate { get; set; }
+        public bool MultiDays { get; set; }
+        public DateTime EndHearingDate { get; set; }
     }
 
     public class AssignJudge
@@ -46,7 +48,6 @@ namespace AdminWebsite.AcceptanceTests.Data.TestData
         public string Title { get; set; }
         public string Phone { get; set; }
         public string Organisation { get; set; }
-        public string Reference { get; set; }
     }
 
     public class OtherInformation

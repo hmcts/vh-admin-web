@@ -1,6 +1,3 @@
-using System;
-using System.Text.Encodings.Web;
-using System.Threading.Tasks;
 using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Models;
 using AdminWebsite.Security;
@@ -13,6 +10,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
+using System;
+using System.Threading.Tasks;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {
@@ -28,7 +27,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _bookingsApiClient = new Mock<IBookingsApiClient>();
             _userIdentity = new Mock<IUserIdentity>();
             var userAccountService = new Mock<IUserAccountService>();
-            var bookNewHearingRequestValidator = new Mock<IValidator<BookNewHearingRequest>>();
             var editHearingRequestValidator = new Mock<IValidator<EditHearingRequest>>();
             var videoApiMock = new Mock<IVideoApiClient>();
             _pollyRetryServiceMock = new Mock<IPollyRetryService>();
@@ -36,9 +34,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _controller = new AdminWebsite.Controllers.HearingsController(_bookingsApiClient.Object,
                 _userIdentity.Object,
                 userAccountService.Object,
-                bookNewHearingRequestValidator.Object,
                 editHearingRequestValidator.Object,
-                JavaScriptEncoder.Default,
                 videoApiMock.Object,
                 _pollyRetryServiceMock.Object,
                 new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>().Object);

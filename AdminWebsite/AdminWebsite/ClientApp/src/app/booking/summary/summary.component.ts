@@ -3,7 +3,7 @@ import { FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { Constants } from '../../common/constants';
-import { HearingTypeResponse } from '../../services/clients/api-client';
+import { HearingTypeResponse, MultiHearingRequest } from '../../services/clients/api-client';
 import { HearingModel } from '../../common/model/hearing.model';
 import { ParticipantsListComponent } from '../participants-list/participants-list.component';
 import { ReferenceDataService } from '../../services/reference-data.service';
@@ -15,6 +15,7 @@ import { RemovePopupComponent } from '../../popups/remove-popup/remove-popup.com
 import { FormatShortDuration } from '../../common/formatters/format-short-duration';
 import { Logger } from '../../services/logger';
 import { Subscription } from 'rxjs';
+
 import { EndpointModel } from 'src/app/common/model/endpoint.model';
 import { RecordingGuardService } from '../../services/recording-guard.service';
 
@@ -53,7 +54,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
     bookinConfirmed = false;
     endpoints: EndpointModel[] = [];
     switchOffRecording = false;
-
+    hearingDetailsResponseMulti: HearingDetailsResponse;
     multiDays: boolean;
     endHearingDate: Date;
 
@@ -187,28 +188,41 @@ export class SummaryComponent implements OnInit, OnDestroy {
         }
     }
 
-    bookHearing(): void {
+    async bookHearing() {
         this.bookingsSaving = true;
         this.showWaitSaving = true;
         this.showErrorSaving = false;
         if (this.hearing.hearing_id && this.hearing.hearing_id.length > 0) {
             this.updateHearing();
         } else {
-            this.$subscriptions.push(
-                this.hearingService.saveHearing(this.hearing).subscribe(
-                    (hearingDetailsResponse: HearingDetailsResponse) => {
-                        sessionStorage.setItem(this.newHearingSessionKey, hearingDetailsResponse.id);
-                        this.hearingService.cancelRequest();
-                        this.showWaitSaving = false;
-                        this.logger.event('Hearing booking saved', { hearingId: hearingDetailsResponse.id });
-                        this.router.navigate([PageUrls.BookingConfirmation]);
-                    },
-                    error => {
-                        this.logger.error('Error saving new hearing.', error);
-                        this.setError(error);
-                    }
-                )
-            );
+            this.setDurationOfMultiHearing();
+            try {
+                const hearingDetailsResponse = await this.hearingService.saveHearing(this.hearing);
+                if (this.hearing.multiDays) {
+                    await this.hearingService.cloneMultiHearings(
+                        hearingDetailsResponse.id,
+                        new MultiHearingRequest({
+                            start_date: this.hearing.scheduled_date_time.toString(),
+                            end_date: this.hearing.end_hearing_date_time.toString()
+                        })
+                    );
+                }
+
+                sessionStorage.setItem(this.newHearingSessionKey, hearingDetailsResponse.id);
+                this.hearingService.cancelRequest();
+                this.showWaitSaving = false;
+                this.logger.event('Hearing booking saved', { hearingId: hearingDetailsResponse.id });
+                this.router.navigate([PageUrls.BookingConfirmation]);
+            } catch (error) {
+                this.logger.error('Error saving new hearing.', error);
+                this.setError(error);
+            }
+        }
+    }
+
+    private setDurationOfMultiHearing() {
+        if (this.hearing.multiDays) {
+            this.hearing.scheduled_duration = 480;
         }
     }
 

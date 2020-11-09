@@ -1,13 +1,14 @@
 import { Location } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { Component, Input } from '@angular/core';
-import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Observable, of } from 'rxjs';
 import { EndpointModel } from 'src/app/common/model/endpoint.model';
 import { CancelBookingPopupComponent } from 'src/app/popups/cancel-booking-popup/cancel-booking-popup.component';
+import { ReturnUrlService } from 'src/app/services/return-url.service';
 import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
 import { CaseModel } from '../../common/model/case.model';
 import { HearingModel } from '../../common/model/hearing.model';
@@ -34,7 +35,7 @@ let component: BookingDetailsComponent;
 let fixture: ComponentFixture<BookingDetailsComponent>;
 let videoHearingServiceSpy: jasmine.SpyObj<VideoHearingsService>;
 let routerSpy: jasmine.SpyObj<Router>;
-let locationSpy: jasmine.SpyObj<Location>;
+let returnUrlServiceSpy: jasmine.SpyObj<ReturnUrlService>;
 let bookingServiceSpy: jasmine.SpyObj<BookingService>;
 let bookingPersistServiceSpy: jasmine.SpyObj<BookingPersistService>;
 let userIdentityServiceSpy: jasmine.SpyObj<UserIdentityService>;
@@ -81,8 +82,8 @@ export class BookingDetailsTestData {
             'Alan Brake',
             '',
             'ABC Solicitors',
-            'new Solicitor',
-            'defendant'
+            'defendant',
+            '12345678'
         );
         const p2 = new ParticipantDetailsModel(
             '2',
@@ -93,12 +94,12 @@ export class BookingDetailsTestData {
             'email.p2@email.com',
             'email2@co.uk',
             'Claimant',
-            'Claimant LIP',
+            'Litigant in person',
             'Roy Bark',
             '',
             'ABC Solicitors',
-            'new Solicitor',
-            'defendant'
+            'defendant',
+            '12345678'
         );
         const p3 = new ParticipantDetailsModel(
             '2',
@@ -109,12 +110,12 @@ export class BookingDetailsTestData {
             'email.p3@email.com',
             'email3@co.uk',
             'Defendant',
-            'Defendant LIP',
+            'Litigant in person',
             'Fill',
             '',
             'ABC Solicitors',
-            'new Solicitor',
-            'defendant'
+            'defendant',
+            '12345678'
         );
         participants.push(p2);
         participants.push(p3);
@@ -139,14 +140,11 @@ export class BookingDetailsTestData {
     template: ''
 })
 class BookingParticipantListMockComponent {
-    @Input()
-    participants: Array<ParticipantDetailsModel> = [];
+    @Input() participants: Array<ParticipantDetailsModel> = [];
 
-    @Input()
-    judges: Array<ParticipantDetailsModel> = [];
+    @Input() judges: Array<ParticipantDetailsModel> = [];
 
-    @Input()
-    vh_officer_admin: boolean;
+    @Input() vh_officer_admin: boolean;
 }
 
 @Component({
@@ -154,8 +152,7 @@ class BookingParticipantListMockComponent {
     template: ''
 })
 class HearingDetailsMockComponent {
-    @Input()
-    hearing: BookingsDetailsModel;
+    @Input() hearing: BookingsDetailsModel;
 }
 
 const hearingResponse = new HearingDetailsResponse();
@@ -202,7 +199,7 @@ describe('BookingDetailsComponent', () => {
         'updateBookingStatus',
         'getCurrentRequest'
     ]);
-    routerSpy = jasmine.createSpyObj('Router', ['navigate']);
+    routerSpy = jasmine.createSpyObj('Router', ['navigate', 'navigateByUrl']);
     bookingServiceSpy = jasmine.createSpyObj('BookingService', [
         'setEditMode',
         'resetEditMode',
@@ -212,58 +209,66 @@ describe('BookingDetailsComponent', () => {
     bookingPersistServiceSpy = jasmine.createSpyObj('BookingPersistService', ['selectedHearingId']);
     userIdentityServiceSpy = jasmine.createSpyObj('UserIdentityService', ['getUserInformation']);
     const loggerSpy: jasmine.SpyObj<Logger> = jasmine.createSpyObj('Logger', ['error', 'event']);
-    locationSpy = jasmine.createSpyObj('Location', ['back']);
+    returnUrlServiceSpy = jasmine.createSpyObj<ReturnUrlService>('ReturnUrlService', ['popUrl', 'setUrl']);
 
-    beforeEach(async(() => {
-        videoHearingServiceSpy.getHearingById.and.returnValue(of(hearingResponse));
-        videoHearingServiceSpy.updateBookingStatus.and.returnValue(of());
-        videoHearingServiceSpy.mapHearingDetailsResponseToHearingModel.and.returnValue(hearingModel);
-        videoHearingServiceSpy.getCurrentRequest.and.returnValue(hearingModel);
+    beforeEach(
+        waitForAsync(() => {
+            videoHearingServiceSpy.getHearingById.and.returnValue(of(hearingResponse));
+            videoHearingServiceSpy.updateBookingStatus.and.returnValue(of());
+            videoHearingServiceSpy.mapHearingDetailsResponseToHearingModel.and.returnValue(hearingModel);
+            videoHearingServiceSpy.getCurrentRequest.and.returnValue(hearingModel);
 
-        bookingPersistServiceSpy.selectedHearingId = '44';
-        userIdentityServiceSpy.getUserInformation.and.returnValue(of(true));
+            bookingPersistServiceSpy.selectedHearingId = '44';
+            userIdentityServiceSpy.getUserInformation.and.returnValue(of(true));
 
-        TestBed.configureTestingModule({
-            declarations: [
-                BookingDetailsComponent,
-                BookingParticipantListMockComponent,
-                HearingDetailsMockComponent,
-                CancelBookingPopupComponent,
-                WaitPopupComponent,
-                ConfirmBookingFailedPopupComponent
-            ],
-            imports: [HttpClientModule, ReactiveFormsModule, RouterTestingModule],
-            providers: [
-                { provide: VideoHearingsService, useValue: videoHearingServiceSpy },
-                { provide: BookingDetailsService, useClass: BookingDetailsServiceMock },
-                { provide: Router, useValue: routerSpy },
-                { provide: BookingService, useValue: bookingServiceSpy },
-                { provide: BookingPersistService, useValue: bookingPersistServiceSpy },
-                { provide: UserIdentityService, useValue: userIdentityServiceSpy },
-                { provide: Logger, useValue: loggerSpy },
-                { provide: Location, useValue: locationSpy }
-            ]
-        }).compileComponents();
-        fixture = TestBed.createComponent(BookingDetailsComponent);
-        component = fixture.componentInstance;
-        component.hearingId = '1';
-        fixture.detectChanges();
-    }));
+            TestBed.configureTestingModule({
+                declarations: [
+                    BookingDetailsComponent,
+                    BookingParticipantListMockComponent,
+                    HearingDetailsMockComponent,
+                    CancelBookingPopupComponent,
+                    WaitPopupComponent,
+                    ConfirmBookingFailedPopupComponent
+                ],
+                imports: [HttpClientModule, ReactiveFormsModule, RouterTestingModule],
+                providers: [
+                    { provide: VideoHearingsService, useValue: videoHearingServiceSpy },
+                    { provide: BookingDetailsService, useClass: BookingDetailsServiceMock },
+                    { provide: Router, useValue: routerSpy },
+                    { provide: BookingService, useValue: bookingServiceSpy },
+                    { provide: BookingPersistService, useValue: bookingPersistServiceSpy },
+                    { provide: UserIdentityService, useValue: userIdentityServiceSpy },
+                    { provide: Logger, useValue: loggerSpy },
+                    { provide: ReturnUrlService, useValue: returnUrlServiceSpy }
+                ]
+            }).compileComponents();
+            fixture = TestBed.createComponent(BookingDetailsComponent);
+            component = fixture.componentInstance;
+            component.hearingId = '1';
+            fixture.detectChanges();
+        })
+    );
 
-    it('should create component', fakeAsync(() => {
-        expect(component).toBeTruthy();
-    }));
+    it(
+        'should create component',
+        fakeAsync(() => {
+            expect(component).toBeTruthy();
+        })
+    );
 
-    it('should get hearings details', fakeAsync(() => {
-        component.ngOnInit();
-        expect(videoHearingServiceSpy.getHearingById).toHaveBeenCalled();
-        expect(component.hearing).toBeTruthy();
-        expect(component.hearing.HearingId).toBe('44');
-        expect(component.hearing.Duration).toBe(120);
-        expect(component.hearing.HearingCaseNumber).toBe('XX3456234565');
-        expect(component.hearing.QuestionnaireNotRequired).toBeTruthy();
-        expect(component.hearing.AudioRecordingRequired).toBeTruthy();
-    }));
+    it(
+        'should get hearings details',
+        fakeAsync(() => {
+            component.ngOnInit();
+            expect(videoHearingServiceSpy.getHearingById).toHaveBeenCalled();
+            expect(component.hearing).toBeTruthy();
+            expect(component.hearing.HearingId).toBe('44');
+            expect(component.hearing.Duration).toBe(120);
+            expect(component.hearing.HearingCaseNumber).toBe('XX3456234565');
+            expect(component.hearing.QuestionnaireNotRequired).toBeTruthy();
+            expect(component.hearing.AudioRecordingRequired).toBeTruthy();
+        })
+    );
 
     it('should get hearings details and map to HearingModel', () => {
         component.ngOnInit();
@@ -322,18 +327,24 @@ describe('BookingDetailsComponent', () => {
         component.keepBooking();
         expect(component.showCancelBooking).toBeFalsy();
     });
-    it('should set confirmation button not visible if hearing start time less than 30 min', fakeAsync(() => {
-        component.booking.scheduled_date_time = new Date(Date.now());
-        component.timeSubscription = new Observable<any>().subscribe();
-        component.setTimeObserver();
-        expect(component.isConfirmationTimeValid).toBeFalsy();
-    }));
-    it('should not reset confirmation button if current booking is not set', fakeAsync(() => {
-        component.booking = undefined;
-        component.isConfirmationTimeValid = true;
-        component.setTimeObserver();
-        expect(component.isConfirmationTimeValid).toBeTruthy();
-    }));
+    it(
+        'should set confirmation button not visible if hearing start time less than 30 min',
+        fakeAsync(() => {
+            component.booking.scheduled_date_time = new Date(Date.now());
+            component.timeSubscription = new Observable<any>().subscribe();
+            component.setTimeObserver();
+            expect(component.isConfirmationTimeValid).toBeFalsy();
+        })
+    );
+    it(
+        'should not reset confirmation button if current booking is not set',
+        fakeAsync(() => {
+            component.booking = undefined;
+            component.isConfirmationTimeValid = true;
+            component.setTimeObserver();
+            expect(component.isConfirmationTimeValid).toBeTruthy();
+        })
+    );
     it('should confirm booking', () => {
         component.isVhOfficerAdmin = true;
         component.confirmHearing();
@@ -378,9 +389,15 @@ describe('BookingDetailsComponent', () => {
         component.errorHandler('error', UpdateBookingStatus.Created);
         expect(component.showCancelBooking).toBeTruthy();
     });
-    it('should navigate back', () => {
+    it('should navigate back to return url if exists', () => {
+        returnUrlServiceSpy.popUrl.and.returnValue(PageUrls.DeleteParticipant);
         component.navigateBack();
-        expect(locationSpy.back).toHaveBeenCalled();
+        expect(routerSpy.navigateByUrl).toHaveBeenCalledWith(PageUrls.DeleteParticipant);
+    });
+    it('should navigate back to hearing list if not return url set', () => {
+        returnUrlServiceSpy.popUrl.and.returnValue(null);
+        component.navigateBack();
+        expect(routerSpy.navigateByUrl).toHaveBeenCalledWith(PageUrls.BookingsList);
     });
     it('should not show pop up if the confirm failed', () => {
         videoHearingServiceSpy.updateBookingStatus.and.returnValue(of(new UpdateBookingStatusResponse({ success: true })));
@@ -404,24 +421,33 @@ describe('BookingDetailsComponent', () => {
         component.errorHandler('error', UpdateBookingStatus.Created);
         expect(component.showConfirming).toBeFalsy();
     });
-    it('should set subscription to check hearing start time', fakeAsync(() => {
-        component.isConfirmationTimeValid = true;
-        component.$timeObserver = new Observable<any>();
-        component.setSubscribers();
-        expect(component.$timeObserver).toBeTruthy();
-    }));
-    it('should on destroy unsubscribe the subscriptions', fakeAsync(() => {
-        component.ngOnDestroy();
-        expect(component.timeSubscription).toBeFalsy();
-        component.$subscriptions.forEach((s) => expect(s.closed).toBeTruthy());
-    }));
-    it('should set confirmation button visible if hearing start time more than 30 min', fakeAsync(() => {
-        let current = new Date();
-        current.setMinutes(current.getMinutes() + 31);
-        current = new Date(current);
-        component.booking.scheduled_date_time = current;
-        component.setTimeObserver();
-        tick();
-        expect(component.isConfirmationTimeValid).toBeTruthy();
-    }));
+    it(
+        'should set subscription to check hearing start time',
+        fakeAsync(() => {
+            component.isConfirmationTimeValid = true;
+            component.$timeObserver = new Observable<any>();
+            component.setSubscribers();
+            expect(component.$timeObserver).toBeTruthy();
+        })
+    );
+    it(
+        'should on destroy unsubscribe the subscriptions',
+        fakeAsync(() => {
+            component.ngOnDestroy();
+            expect(component.timeSubscription).toBeFalsy();
+            component.$subscriptions.forEach(s => expect(s.closed).toBeTruthy());
+        })
+    );
+    it(
+        'should set confirmation button visible if hearing start time more than 30 min',
+        fakeAsync(() => {
+            let current = new Date();
+            current.setMinutes(current.getMinutes() + 31);
+            current = new Date(current);
+            component.booking.scheduled_date_time = current;
+            component.setTimeObserver();
+            tick();
+            expect(component.isConfirmationTimeValid).toBeTruthy();
+        })
+    );
 });

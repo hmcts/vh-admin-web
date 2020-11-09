@@ -31,7 +31,8 @@ export const Constants = {
         phone: '0300 303 0655',
         email: 'video-hearings@justice.gov.uk'
     },
-    IndividualRoles: ['Claimant LIP', 'Defendant LIP', 'Applicant LIP', 'Respondent LIP'],
-    DefenceAdvocate: 'Defence Advocate',
-    None: 'None'
+    IndividualRoles: ['Claimant LIP', 'Defendant LIP', 'Applicant LIP', 'Respondent LIP', 'Litigant in person'],
+    DefenceAdvocate: 'App Advocate',
+    None: 'None',
+    RespondentAdvocate: 'Respondent Advocate'
 };

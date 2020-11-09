@@ -8,3 +8,9 @@ Scenario: Summary
 	Given the Video Hearings Officer user has progressed to the Summary page
 	When the user views the information on the summary form
 	Then the user is on the Booking Confirmation page
+
+@Smoketest-Extended
+Scenario: Summary for multi days hearing
+	Given the Video Hearings Officer user has progressed to the Summary page of a multi days hearing
+	When the user views the information on the summary form
+	Then the user is on the Booking Confirmation page

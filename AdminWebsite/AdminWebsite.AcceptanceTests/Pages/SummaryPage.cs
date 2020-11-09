@@ -22,5 +22,7 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public static By CaseType = By.Id("caseType");
         public static By HearingType = By.Id("caseHearingType");
         public static By VideoAccessPoints(int i) => By.Id($"displayName{i.ToString()}");
+        public static By HearingStartDateMultiDays = By.Id("hearingStartDate");
+        public static By HearingEndDateMultiDays = By.Id("hearingEndDateTime");
     }
 }

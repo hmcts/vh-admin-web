@@ -1,16 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text.Encodings.Web;
-using System.Threading.Tasks;
 using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
 using AdminWebsite.UnitTests.Helper;
 using AdminWebsite.VideoAPI.Client;
-using FizzWare.NBuilder;
 using FluentAssertions;
 using FluentValidation;
 using FluentValidation.Results;
@@ -18,6 +11,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
 using AddEndpointRequest = AdminWebsite.BookingsAPI.Client.AddEndpointRequest;
 using UpdateEndpointRequest = AdminWebsite.BookingsAPI.Client.UpdateEndpointRequest;
 using UpdateParticipantRequest = AdminWebsite.BookingsAPI.Client.UpdateParticipantRequest;
@@ -29,7 +27,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private Mock<IBookingsApiClient> _bookingsApiClient;
         private Mock<IUserIdentity> _userIdentity;
         private Mock<IUserAccountService> _userAccountService;
-        private Mock<IValidator<BookNewHearingRequest>> _bookNewHearingRequestValidator;
         private Mock<IValidator<EditHearingRequest>> _editHearingRequestValidator;
         private Mock<IVideoApiClient> _videoApiMock;
         private Mock<IPollyRetryService> _pollyRetryServiceMock;
@@ -48,7 +45,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _bookingsApiClient = new Mock<IBookingsApiClient>();
             _userIdentity = new Mock<IUserIdentity>();
             _userAccountService = new Mock<IUserAccountService>();
-            _bookNewHearingRequestValidator = new Mock<IValidator<BookNewHearingRequest>>();
             _editHearingRequestValidator = new Mock<IValidator<EditHearingRequest>>();
             _videoApiMock = new Mock<IVideoApiClient>();
             _pollyRetryServiceMock = new Mock<IPollyRetryService>();
@@ -56,9 +52,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _controller = new AdminWebsite.Controllers.HearingsController(_bookingsApiClient.Object,
                 _userIdentity.Object,
                 _userAccountService.Object,
-                _bookNewHearingRequestValidator.Object,
                 _editHearingRequestValidator.Object,
-                JavaScriptEncoder.Default,
                 _videoApiMock.Object,
                 _pollyRetryServiceMock.Object,
                 new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>().Object);
@@ -138,7 +132,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(_updatedExistingParticipantHearingOriginal);
             
-            _bookNewHearingRequestValidator.Setup(x => x.Validate(It.IsAny<BookNewHearingRequest>())).Returns(new ValidationResult());
             _editHearingRequestValidator.Setup(x => x.Validate(It.IsAny<EditHearingRequest>())).Returns(new ValidationResult());
             _userAccountService
                 .Setup(x => x.UpdateParticipantUsername(It.IsAny<AdminWebsite.BookingsAPI.Client.ParticipantRequest>()))
@@ -408,7 +401,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
 
         [Test]
-        public async Task Should_not_delete_missing_participant_if_no_any_participants_in_the_list_for_the_hearing()
+        public async Task Should_not_delete_existing_participant_if_participant_with_the_same_id_in_the_list_of_updated_hearing()
         {
             _updatedExistingParticipantHearingOriginal.Participants = new List<ParticipantResponse>();
             var updatedHearing = new HearingDetailsResponse
@@ -419,13 +412,19 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 Contact_email = "new@user.com",
                 Username = "new@user.com"
             });
+            _addNewParticipantRequest.Participants[0].Id = updatedHearing.Participants[0].Id;
+
             _bookingsApiClient.SetupSequence(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(_updatedExistingParticipantHearingOriginal)
                 .ReturnsAsync(updatedHearing);
+
+
             var result = await _controller.EditHearing(_validId, _addNewParticipantRequest);
             ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
             _bookingsApiClient.Verify(x => x.RemoveParticipantFromHearingAsync(It.IsAny<Guid>(), It.IsAny<Guid>()), Times.Never);
         }
+
+
         [Test]
         public async Task Should_delete_missing_participant_from_hearing_if_no_any_participants_in_the_request()
         {
@@ -446,7 +445,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
 
         [Test]
-        public async Task Should_delete_two_missing_participant_if_two_with_no_matching_contact_email_exist_for_the_hearing()
+        public async Task Should_delete_two_missing_participant_if_two_with_no_matching_id_exist_for_the_hearing()
         {
             _addNewParticipantRequest.Participants.ForEach(x => { x.ContactEmail = "existing@judge.com"; x.CaseRoleName = "Judge"; });
             _updatedExistingParticipantHearingOriginal.Participants.ForEach(x => x.Contact_email= "old@judge.com");
@@ -464,7 +463,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
 
         [Test]
-        public async Task Should_not_delete_missing_participant_if_all_match_contact_email_for_updated_hearing()
+        public async Task Should_not_delete_missing_participant_if_all_match_id_for_updated_hearing()
         {
             _addNewParticipantRequest.Participants.ForEach(x => { x.ContactEmail = "old@judge.com"; x.CaseRoleName = "Judge"; });
             _addNewParticipantRequest.Participants.Add(new EditParticipantRequest { ContactEmail = "old@judge.com" });
@@ -476,6 +475,12 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 Contact_email = "old@judge.com",
                 Username = "old@judge.com"
             });
+
+            var id_firstPart = _updatedExistingParticipantHearingOriginal.Participants[0].Id;
+            var id_secndPart = _updatedExistingParticipantHearingOriginal.Participants[1].Id;
+
+            _addNewParticipantRequest.Participants[0].Id = id_firstPart;
+            _addNewParticipantRequest.Participants[1].Id = id_secndPart;
 
             var result = await _controller.EditHearing(_validId, _addNewParticipantRequest);
             ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
@@ -605,21 +610,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _bookingsApiClient.Setup(x =>
                     x.UpdateHearingDetailsAsync(It.IsAny<Guid>(), It.IsAny<UpdateHearingRequest>()))
                 .ThrowsAsync(ClientException.ForBookingsAPI(code));
-        }
-
-        private void SetupUpdatedHearingResponse()
-        {
-            // setup response
-            var pat1 = Builder<ParticipantResponse>.CreateNew()
-                .With(x => x.Id = Guid.NewGuid())
-                .With(x => x.User_role_name = "Representative").Build();
-            var pat2 = Builder<ParticipantResponse>.CreateNew()
-                .With(x => x.Id = Guid.NewGuid())
-                .With(x => x.User_role_name = "Individual").Build();
-            var hearingDetailsResponse = Builder<HearingDetailsResponse>.CreateNew()
-                .With(x=> x.Participants = new List<ParticipantResponse> {pat1, pat2}).Build();
-            _bookingsApiClient.Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
-                .ReturnsAsync(hearingDetailsResponse);
         }
     }
 }

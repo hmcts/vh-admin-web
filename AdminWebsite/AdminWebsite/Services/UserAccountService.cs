@@ -34,7 +34,7 @@ namespace AdminWebsite.Services
         /// </summary>
         /// <param name="userName"></param>
         /// <returns></returns>
-        Task UpdateParticipantPassword(string userName);
+        Task<UpdateUserPasswordResponse> UpdateParticipantPassword(string userName);
 
         /// <summary>
         /// Delete a user account in AD, then anonymise the person in Bookings API
@@ -44,6 +44,8 @@ namespace AdminWebsite.Services
         Task DeleteParticipantAccountAsync(string username);
 
         Task AssignParticipantToGroup(string username, string userRole);
+
+        Task<string> GetAdUserIdForUsername(string username);
     }
 
     public class UserAccountService : IUserAccountService
@@ -69,7 +71,7 @@ namespace AdminWebsite.Services
         public async Task<string> UpdateParticipantUsername(ParticipantRequest participant)
         {
             // create user in AD if users email does not exist in AD.
-            var userProfile = await CheckUserExistsInAD(participant.Contact_email);
+            var userProfile = await GetUserByContactEmail(participant.Contact_email);
             if (userProfile == null)
             {
                 // create the user in AD.
@@ -89,7 +91,7 @@ namespace AdminWebsite.Services
             return new UserRole { UserRoleType = userRoleResult, CaseTypes = user.Case_type };
         }
 
-        private async Task<UserProfile> CheckUserExistsInAD(string emailAddress)
+        private async Task<UserProfile> GetUserByContactEmail(string emailAddress)
         {
             try
             {
@@ -98,6 +100,24 @@ namespace AdminWebsite.Services
             catch (UserAPI.Client.UserServiceException e)
             {
                 if (e.StatusCode == (int)HttpStatusCode.NotFound)
+                {
+                    return null;
+                }
+
+                throw;
+            }
+        }
+
+        public async Task<string> GetAdUserIdForUsername(string username)
+        {
+            try
+            {
+                var user = await _userApiClient.GetUserByAdUserIdAsync(username);
+                return user.User_id;
+            }
+            catch (UserAPI.Client.UserServiceException e)
+            {
+                if (e.StatusCode == (int) HttpStatusCode.NotFound)
                 {
                     return null;
                 }
@@ -140,14 +160,24 @@ namespace AdminWebsite.Services
             }).ToList();
         }
 
-        /// <inheritdoc />
-        public async Task UpdateParticipantPassword(string userName)
+        public async Task<UpdateUserPasswordResponse> UpdateParticipantPassword(string userName)
         {
             var userProfile = await _userApiClient.GetUserByAdUserNameAsync(userName);
+            
             if (userProfile != null)
             {
-                await _userApiClient.UpdateUserAsync(userName);
+                var response = await _userApiClient.UpdateUserAsync(userName);
+                
+                return new UpdateUserPasswordResponse
+                {
+                    Password = response.New_password
+                };
             }
+
+            throw new Security.UserServiceException
+            {
+                Reason = "Unable to generate new password"
+            };
         }
 
         public async Task DeleteParticipantAccountAsync(string username)

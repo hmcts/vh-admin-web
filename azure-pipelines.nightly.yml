@@ -59,6 +59,12 @@ parameters:
       DeviceType: Desktop
       DeviceName:
       TestCaseFilter: TestCategory=UnsupportedBrowser
+    - OS: MacOS
+      Browser: EdgeChromium
+      BrowserVersion: Latest
+      DeviceType: Desktop
+      DeviceName:
+      TestCaseFilter: TestCategory=UnsupportedBrowser  
     - OS: Windows
       Browser: Ie11
       BrowserVersion: Latest
@@ -125,7 +131,7 @@ resources:
       type: github
       name: hmcts/azure-devops-templates
       ref: refs/heads/master
-      endpoint: hmcts (1)
+      endpoint: hmcts_shaed
   pipelines:
   - pipeline: CI
     source: hmcts.vh-admin-web
