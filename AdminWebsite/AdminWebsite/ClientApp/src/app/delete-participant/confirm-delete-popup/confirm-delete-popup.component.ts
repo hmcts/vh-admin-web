@@ -12,12 +12,12 @@ export class ConfirmDeletePopupComponent {
     constructor(private logger: Logger) {}
 
     confirmDelete() {
-        this.logger.info(`${this.loggerPrefix} Confirmed to delete participant`);
+        this.logger.debug(`${this.loggerPrefix} Confirmed to delete participant`);
         this.deletionAnswer.emit(true);
     }
 
     cancelDelete() {
-        this.logger.info(`${this.loggerPrefix} Chose to not delete participant`);
+        this.logger.debug(`${this.loggerPrefix} Chose to not delete participant`);
         this.deletionAnswer.emit(false);
     }
 }

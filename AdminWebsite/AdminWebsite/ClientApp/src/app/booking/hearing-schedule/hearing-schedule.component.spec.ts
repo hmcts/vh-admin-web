@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { of } from 'rxjs';
 import { HearingVenueResponse } from 'src/app/services/clients/api-client';
+import { Logger } from 'src/app/services/logger';
 import { HearingModel } from '../../common/model/hearing.model';
 import { CancelPopupComponent } from '../../popups/cancel-popup/cancel-popup.component';
 import { DiscardConfirmPopupComponent } from '../../popups/discard-confirm-popup/discard-confirm-popup.component';
@@ -56,6 +57,7 @@ function addDays(date, days) {
     result.setDate(result.getDate() + days);
     return result;
 }
+const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn', 'info']);
 
 describe('HearingScheduleComponent first visit', () => {
     let component: HearingScheduleComponent;
@@ -89,7 +91,8 @@ describe('HearingScheduleComponent first visit', () => {
                     { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
                     { provide: Router, useValue: routerSpy },
                     { provide: ErrorService, useValue: errorService },
-                    DatePipe
+                    DatePipe,
+                    { provide: Logger, useValue: loggerSpy }
                 ],
                 declarations: [HearingScheduleComponent, BreadcrumbStubComponent, CancelPopupComponent, DiscardConfirmPopupComponent]
             }).compileComponents();
@@ -340,7 +343,8 @@ describe('HearingScheduleComponent returning to page', () => {
                     { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
                     { provide: Router, useValue: routerSpy },
                     { provide: ErrorService, useValue: errorService },
-                    DatePipe
+                    DatePipe,
+                    { provide: Logger, useValue: loggerSpy }
                 ],
                 declarations: [HearingScheduleComponent, BreadcrumbStubComponent, CancelPopupComponent, DiscardConfirmPopupComponent]
             }).compileComponents();
@@ -484,7 +488,8 @@ describe('HearingScheduleComponent multi days hearing', () => {
                     { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
                     { provide: Router, useValue: routerSpy },
                     { provide: ErrorService, useValue: errorService },
-                    DatePipe
+                    DatePipe,
+                    { provide: Logger, useValue: loggerSpy }
                 ],
                 declarations: [HearingScheduleComponent, BreadcrumbStubComponent, CancelPopupComponent, DiscardConfirmPopupComponent]
             }).compileComponents();

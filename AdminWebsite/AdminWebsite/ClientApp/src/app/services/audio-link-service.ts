@@ -4,13 +4,14 @@ import { Logger } from './logger';
 
 @Injectable({ providedIn: 'root' })
 export class AudioLinkService {
+    private readonly loggerPrefix = '[AudioLinkService] -';
     constructor(private bhClient: BHClient, private logger: Logger) {}
 
     async searchForHearingsByCaseNumberOrDate(caseNumber: string, date?: Date): Promise<HearingsForAudioFileSearchResponse[]> {
         try {
             return await this.bhClient.searchForAudioRecordedHearings(caseNumber, date).toPromise();
         } catch (error) {
-            this.logger.error(`Error retrieving hearing for: ${caseNumber}`, error);
+            this.logger.error(`${this.loggerPrefix} Error retrieving hearing for: ${caseNumber}`, error);
             return null;
         }
     }
@@ -24,7 +25,10 @@ export class AudioLinkService {
         try {
             return await this.bhClient.getCvpAudioRecordingsAll(cloudRoomName, date, caseReference).toPromise();
         } catch (error) {
-            this.logger.error(`Error retrieving cvp audio file link for: ${cloudRoomName}, ${date}, ${caseReference}`, error);
+            this.logger.error(
+                `${this.loggerPrefix} Error retrieving cvp audio file link for: ${cloudRoomName}, ${date}, ${caseReference}`,
+                error
+            );
             return null;
         }
     }
@@ -33,7 +37,7 @@ export class AudioLinkService {
         try {
             return await this.bhClient.getCvpAudioRecordingsByCloudRoom(cloudRoomName, date).toPromise();
         } catch (error) {
-            this.logger.error(`Error retrieving cvp audio file link for: ${cloudRoomName}, ${date}`, error);
+            this.logger.error(`${this.loggerPrefix} Error retrieving cvp audio file link for: ${cloudRoomName}, ${date}`, error);
             return null;
         }
     }
@@ -42,7 +46,7 @@ export class AudioLinkService {
         try {
             return await this.bhClient.getCvpAudioRecordingsByDate(date, caseReference).toPromise();
         } catch (error) {
-            this.logger.error(`Error retrieving cvp audio file link for Date: ${date}, ${caseReference}`, error);
+            this.logger.error(`${this.loggerPrefix} Error retrieving cvp audio file link for Date: ${date}, ${caseReference}`, error);
             return null;
         }
     }

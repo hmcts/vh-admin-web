@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
+import { Logger } from 'src/app/services/logger';
 import { ParticipantModel } from '../../common/model/participant.model';
 import { BookingService } from '../../services/booking.service';
 import { ParticipantsListComponent } from './participants-list.component';
@@ -13,6 +14,7 @@ const router = {
 };
 
 let bookingServiceSpy: jasmine.SpyObj<BookingService>;
+const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
 
 describe('ParticipantsListComponent', () => {
     let component: ParticipantsListComponent;
@@ -30,7 +32,8 @@ describe('ParticipantsListComponent', () => {
                 declarations: [ParticipantsListComponent],
                 providers: [
                     { provide: Router, useValue: router },
-                    { provide: BookingService, useValue: bookingServiceSpy }
+                    { provide: BookingService, useValue: bookingServiceSpy },
+                    { provide: Logger, useValue: loggerSpy }
                 ],
                 imports: [RouterTestingModule]
             }).compileComponents();

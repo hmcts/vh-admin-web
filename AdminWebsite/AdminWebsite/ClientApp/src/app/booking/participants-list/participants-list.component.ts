@@ -1,64 +1,67 @@
-import { Component, Input, OnInit, EventEmitter } from '@angular/core';
-import { BookingService } from '../../services/booking.service';
-import { ParticipantModel } from '../../common/model/participant.model';
+import { Component, EventEmitter, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { Logger } from 'src/app/services/logger';
 import { PageUrls } from 'src/app/shared/page-url.constants';
+import { ParticipantModel } from '../../common/model/participant.model';
+import { BookingService } from '../../services/booking.service';
 
 @Component({
-  selector: 'app-participants-list',
-  templateUrl: './participants-list.component.html',
-  styleUrls: ['./participants-list.component.css']
+    selector: 'app-participants-list',
+    templateUrl: './participants-list.component.html',
+    styleUrls: ['./participants-list.component.css']
 })
 export class ParticipantsListComponent implements OnInit {
+    private readonly loggerPrefix = '[ParticipantsList] -';
+    @Input()
+    participants: ParticipantModel[];
 
-  @Input()
-  participants: ParticipantModel[];
+    $selectedForEdit: EventEmitter<string>;
+    $selectedForRemove: EventEmitter<string>;
 
-  $selectedForEdit: EventEmitter<string>;
-  $selectedForRemove: EventEmitter<string>;
+    isSummaryPage = false;
+    isEditRemoveVisible = true;
 
-  isSummaryPage = false;
-  isEditRemoveVisible = true;
+    isEditMode = false;
 
-  isEditMode = false;
-
-  constructor(private bookingService: BookingService, private router: Router) {
-    this.$selectedForEdit = new EventEmitter<string>();
-    this.$selectedForRemove = new EventEmitter<string>();
-  }
-
-  ngOnInit() {
-    const currentUrl = this.router.url;
-    if (currentUrl) {
-      this.isSummaryPage = currentUrl.includes('summary');
-      this.isEditRemoveVisible = !currentUrl.includes('assign-judge');
+    constructor(private bookingService: BookingService, private router: Router, private logger: Logger) {
+        this.$selectedForEdit = new EventEmitter<string>();
+        this.$selectedForRemove = new EventEmitter<string>();
     }
-  }
 
-  editJudge() {
-    this.bookingService.setEditMode();
-  }
-
-  editParticipant(participantEmail: string) {
-    this.bookingService.setEditMode();
-    if (this.isSummaryPage) {
-      this.bookingService.setParticipantEmail(participantEmail);
-      this.router.navigate([PageUrls.AddParticipants]);
-    } else {
-      // we are on the add participant page
-      this.$selectedForEdit.emit(participantEmail);
+    ngOnInit() {
+        const currentUrl = this.router.url;
+        if (currentUrl) {
+            this.isSummaryPage = currentUrl.includes('summary');
+            this.isEditRemoveVisible = !currentUrl.includes('assign-judge');
+        }
     }
-  }
 
-  removeParticipant(participantEmail: string) {
-    this.$selectedForRemove.emit(participantEmail);
-  }
+    editJudge() {
+        this.bookingService.setEditMode();
+    }
 
-  get selectedParticipant() {
-    return this.$selectedForEdit;
-  }
+    editParticipant(participantEmail: string) {
+        this.bookingService.setEditMode();
+        if (this.isSummaryPage) {
+            this.bookingService.setParticipantEmail(participantEmail);
+            this.logger.debug(`${this.loggerPrefix} Navigating back to participants to edit`, { participant: participantEmail });
+            this.router.navigate([PageUrls.AddParticipants]);
+        } else {
+            // we are on the add participant page
+            this.$selectedForEdit.emit(participantEmail);
+        }
+    }
 
-  get selectedParticipantToRemove() {
-    return this.$selectedForRemove;
-  }
+    removeParticipant(participantEmail: string) {
+        this.logger.debug(`${this.loggerPrefix} Removing participant`, { participant: participantEmail });
+        this.$selectedForRemove.emit(participantEmail);
+    }
+
+    get selectedParticipant() {
+        return this.$selectedForEdit;
+    }
+
+    get selectedParticipantToRemove() {
+        return this.$selectedForRemove;
+    }
 }

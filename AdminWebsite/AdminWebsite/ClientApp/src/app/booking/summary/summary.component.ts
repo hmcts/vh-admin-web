@@ -1,23 +1,20 @@
-import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
-
+import { Subscription } from 'rxjs';
+import { EndpointModel } from 'src/app/common/model/endpoint.model';
 import { Constants } from '../../common/constants';
-import { HearingTypeResponse, MultiHearingRequest } from '../../services/clients/api-client';
+import { FormatShortDuration } from '../../common/formatters/format-short-duration';
 import { HearingModel } from '../../common/model/hearing.model';
-import { ParticipantsListComponent } from '../participants-list/participants-list.component';
+import { RemovePopupComponent } from '../../popups/remove-popup/remove-popup.component';
+import { BookingService } from '../../services/booking.service';
+import { HearingDetailsResponse, HearingTypeResponse, MultiHearingRequest } from '../../services/clients/api-client';
+import { Logger } from '../../services/logger';
+import { RecordingGuardService } from '../../services/recording-guard.service';
 import { ReferenceDataService } from '../../services/reference-data.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { PageUrls } from '../../shared/page-url.constants';
-import { HearingDetailsResponse } from '../../services/clients/api-client';
-import { BookingService } from '../../services/booking.service';
-import { RemovePopupComponent } from '../../popups/remove-popup/remove-popup.component';
-import { FormatShortDuration } from '../../common/formatters/format-short-duration';
-import { Logger } from '../../services/logger';
-import { Subscription } from 'rxjs';
-
-import { EndpointModel } from 'src/app/common/model/endpoint.model';
-import { RecordingGuardService } from '../../services/recording-guard.service';
+import { ParticipantsListComponent } from '../participants-list/participants-list.component';
 
 @Component({
     selector: 'app-summary',
@@ -25,6 +22,7 @@ import { RecordingGuardService } from '../../services/recording-guard.service';
     styleUrls: ['./summary.component.css']
 })
 export class SummaryComponent implements OnInit, OnDestroy {
+    protected readonly loggerPrefix: string = '[Booking] - [Summary] -';
     constants = Constants;
     hearing: HearingModel;
     attemptingCancellation: boolean;
@@ -76,6 +74,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
+        this.logger.debug(`${this.loggerPrefix} On step Summary`, { step: 'Summary' });
         this.checkForExistingRequest();
         this.retrieveHearingSummary();
         this.switchOffRecording = this.recordingGuardService.switchOffRecording(this.hearing.case_type);
@@ -114,17 +113,22 @@ export class SummaryComponent implements OnInit, OnDestroy {
     }
 
     handleCancelRemove() {
+        this.logger.debug(`${this.loggerPrefix} Cancelling participant removal`);
         this.showConfirmationRemoveParticipant = false;
     }
 
     removeParticipant() {
+        this.logger.debug(`${this.loggerPrefix} Removing participant`, { participant: this.selectedParticipantEmail });
         const indexOfParticipant = this.hearing.participants.findIndex(
             x => x.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase()
         );
         if (indexOfParticipant > -1) {
             if (this.hearing.hearing_id && this.hearing.participants[indexOfParticipant].id) {
                 const id = this.hearing.participants[indexOfParticipant].id;
-                this.logger.event('Participant removed from hearing.', { hearingId: this.hearing.hearing_id, participantId: id });
+                this.logger.info(`${this.loggerPrefix} Participant removed from hearing.`, {
+                    hearingId: this.hearing.hearing_id,
+                    participantId: id
+                });
             }
             this.hearing.participants.splice(indexOfParticipant, 1);
             this.hearingService.updateHearingRequest(this.hearing);
@@ -171,19 +175,24 @@ export class SummaryComponent implements OnInit, OnDestroy {
     }
 
     continueBooking() {
+        this.logger.debug(`${this.loggerPrefix} Rejected cancellation. Continuing with booking.`);
         this.attemptingCancellation = false;
     }
 
     confirmCancelBooking() {
+        this.logger.debug(`${this.loggerPrefix} Attempting to cancel booking.`);
         this.attemptingCancellation = true;
     }
 
     cancelBooking() {
+        this.logger.debug(`${this.loggerPrefix} Confirmed to cancel booking.`);
         this.attemptingCancellation = false;
         this.hearingService.cancelRequest();
         if (this.isExistingBooking) {
+            this.logger.debug(`${this.loggerPrefix} Returning to booking details.`);
             this.router.navigate([PageUrls.BookingDetails]);
         } else {
+            this.logger.debug(`${this.loggerPrefix} Returning to dashboard.`);
             this.router.navigate([PageUrls.Dashboard]);
         }
     }
@@ -211,10 +220,12 @@ export class SummaryComponent implements OnInit, OnDestroy {
                 sessionStorage.setItem(this.newHearingSessionKey, hearingDetailsResponse.id);
                 this.hearingService.cancelRequest();
                 this.showWaitSaving = false;
-                this.logger.event('Hearing booking saved', { hearingId: hearingDetailsResponse.id });
+                this.logger.info(`${this.loggerPrefix} Saved booking. Navigating to confirmation page.`, {
+                    hearingId: hearingDetailsResponse.id
+                });
                 this.router.navigate([PageUrls.BookingConfirmation]);
             } catch (error) {
-                this.logger.error('Error saving new hearing.', error);
+                this.logger.error(`${this.loggerPrefix} Failed to save booking.`, error, { payload: this.hearing });
                 this.setError(error);
             }
         }
@@ -232,12 +243,16 @@ export class SummaryComponent implements OnInit, OnDestroy {
                 (hearingDetailsResponse: HearingDetailsResponse) => {
                     this.showWaitSaving = false;
                     this.hearingService.setBookingHasChanged(false);
-                    this.logger.event('Hearing booking updated', { hearingId: hearingDetailsResponse.id });
-
+                    this.logger.info(`${this.loggerPrefix} Updated booking. Navigating to booking details.`, {
+                        hearingId: hearingDetailsResponse.id
+                    });
                     this.router.navigate([PageUrls.BookingDetails]);
                 },
                 error => {
-                    this.logger.error(`Error updating hearing with ID: ${this.hearing.hearing_id}`, error);
+                    this.logger.error(`${this.loggerPrefix} Failed to update hearing with ID: ${this.hearing.hearing_id}.`, error, {
+                        hearing: this.hearing.hearing_id,
+                        payload: this.hearing
+                    });
                     this.setError(error);
                 }
             )

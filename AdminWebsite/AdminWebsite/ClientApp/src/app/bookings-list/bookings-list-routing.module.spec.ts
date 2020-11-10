@@ -1,27 +1,26 @@
-import { routes } from './bookings-list-routing.module';
 import { Location } from '@angular/common';
-import { TestBed, fakeAsync, tick, ComponentFixture } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
-import { Router } from '@angular/router';
-import { AuthGuard } from '../security/auth.gaurd';
-import { AdminGuard } from '../security/admin.guard';
-
 import { HttpClient, HttpHandler } from '@angular/common/http';
+import { ComponentFixture, fakeAsync, TestBed } from '@angular/core/testing';
+import { ReactiveFormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { RouterTestingModule } from '@angular/router/testing';
 import { AdalService } from 'adal-angular4';
+import { MomentModule } from 'ngx-moment';
+import { LongDatetimePipe } from '../../app/shared/directives/date-time.pipe';
+import { CancelBookingPopupComponent } from '../popups/cancel-booking-popup/cancel-booking-popup.component';
+import { ConfirmBookingFailedPopupComponent } from '../popups/confirm-booking-failed-popup/confirm-booking-failed-popup.component';
+import { WaitPopupComponent } from '../popups/wait-popup/wait-popup.component';
+import { AdminGuard } from '../security/admin.guard';
+import { AuthGuard } from '../security/auth.gaurd';
+import { Logger } from '../services/logger';
 import { MockAdalService } from '../testing/mocks/MockAdalService';
 import { MockAdminGuard } from '../testing/mocks/MockAdminGuard';
-
-import { BookingsListComponent } from './bookings-list/bookings-list.component';
 import { BookingDetailsComponent } from './booking-details/booking-details.component';
 import { BookingParticipantListComponent } from './booking-participant-list/booking-participant-list.component';
-import { ParticipantDetailsComponent } from './participant-details/participant-details.component';
+import { routes } from './bookings-list-routing.module';
+import { BookingsListComponent } from './bookings-list/bookings-list.component';
 import { HearingDetailsComponent } from './hearing-details/hearing-details.component';
-import { CancelBookingPopupComponent } from '../popups/cancel-booking-popup/cancel-booking-popup.component';
-import { LongDatetimePipe } from '../../app/shared/directives/date-time.pipe';
-import { MomentModule } from 'ngx-moment';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { WaitPopupComponent } from '../popups/wait-popup/wait-popup.component';
-import { ConfirmBookingFailedPopupComponent } from '../popups/confirm-booking-failed-popup/confirm-booking-failed-popup.component';
+import { ParticipantDetailsComponent } from './participant-details/participant-details.component';
 
 describe('BookingsListRouting', () => {
     let location: Location;
@@ -30,6 +29,7 @@ describe('BookingsListRouting', () => {
     let bookingsList: BookingsListComponent;
     let adalSvc;
     let bookingGuard;
+    const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn', 'info']);
 
     beforeEach(() => {
         TestBed.configureTestingModule({
@@ -50,7 +50,8 @@ describe('BookingsListRouting', () => {
                 { provide: AdminGuard, useClass: MockAdminGuard },
                 { provide: AdalService, useClass: MockAdalService },
                 HttpClient,
-                HttpHandler
+                HttpHandler,
+                { provide: Logger, useValue: loggerSpy }
             ]
         }).compileComponents();
 

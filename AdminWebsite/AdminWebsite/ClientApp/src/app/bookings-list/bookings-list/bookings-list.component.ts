@@ -199,7 +199,7 @@ export class BookingsListComponent implements OnInit, OnDestroy {
     }
 
     closeHearingDetails() {
-        this.logger.info(`${this.loggerPrefix} Closing hearing details`);
+        this.logger.debug(`${this.loggerPrefix} Closing hearing details`);
         setTimeout(() => {
             this.selectedElement = document.getElementById(this.selectedGroupIndex + '_' + this.selectedItemIndex);
             if (this.selectedElement) {

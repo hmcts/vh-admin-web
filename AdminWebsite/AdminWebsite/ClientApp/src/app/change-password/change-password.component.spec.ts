@@ -16,7 +16,7 @@ describe('ChangePasswordComponent', () => {
 
     beforeEach(
         waitForAsync(() => {
-            loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error']);
+            loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'warn', 'debug', 'info']);
             userDataServiceSpy = jasmine.createSpyObj<UserDataService>('UserDataService', ['updateUser']);
 
             const updateUserPasswordResponse = new UpdateUserPasswordResponse();

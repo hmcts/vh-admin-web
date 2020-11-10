@@ -1,6 +1,7 @@
 import { DebugElement, ElementRef } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
+import { Logger } from 'src/app/services/logger';
 import { UpdateUserPopupComponent } from './update-user-popup.component';
 
 describe('UpdateUserSuccessPopupComponent', () => {
@@ -8,11 +9,13 @@ describe('UpdateUserSuccessPopupComponent', () => {
     let fixture: ComponentFixture<UpdateUserPopupComponent>;
     let de: DebugElement;
     let buttonOkay: ElementRef;
+    const logger = jasmine.createSpyObj<Logger>('Logger', ['debug', 'info', 'error', 'warn']);
 
     beforeEach(
         waitForAsync(() => {
             TestBed.configureTestingModule({
-                declarations: [UpdateUserPopupComponent]
+                declarations: [UpdateUserPopupComponent],
+                providers: [{ provide: Logger, useValue: logger }]
             }).compileComponents();
         })
     );

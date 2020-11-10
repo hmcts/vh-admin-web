@@ -1,18 +1,19 @@
 import { DatePipe } from '@angular/common';
-import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
+import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { Constants } from 'src/app/common/constants';
+import { ErrorService } from 'src/app/services/error.service';
+import { Logger } from 'src/app/services/logger';
+import { PageUrls } from 'src/app/shared/page-url.constants';
+import { SanitizeInputText } from '../../common/formatters/sanitize-input-text';
 import { HearingModel } from '../../common/model/hearing.model';
+import { BookingService } from '../../services/booking.service';
+import { HearingVenueResponse } from '../../services/clients/api-client';
 import { ReferenceDataService } from '../../services/reference-data.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { BookingBaseComponentDirective as BookingBaseComponent } from '../booking-base/booking-base.component';
-import { BookingService } from '../../services/booking.service';
-import { ErrorService } from 'src/app/services/error.service';
-import { HearingVenueResponse } from '../../services/clients/api-client';
-import { PageUrls } from 'src/app/shared/page-url.constants';
-import { Constants } from 'src/app/common/constants';
-import { SanitizeInputText } from '../../common/formatters/sanitize-input-text';
-import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-hearing-schedule',
@@ -44,9 +45,10 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
         protected router: Router,
         private datePipe: DatePipe,
         protected bookingService: BookingService,
-        private errorService: ErrorService
+        private errorService: ErrorService,
+        protected logger: Logger
     ) {
-        super(bookingService, router, hearingService);
+        super(bookingService, router, hearingService, logger);
     }
 
     ngOnInit() {
@@ -62,6 +64,11 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
         this.isExistinHearing = this.hearing && this.hearing.hearing_type_name && this.hearing.hearing_type_name.length > 0;
         this.isBookedHearing =
             this.hearing && this.hearing.hearing_id !== undefined && this.hearing.hearing_id !== null && this.hearing.hearing_id.length > 0;
+        this.logger.debug(`${this.loggerPrefix} Checking for existing hearing`, {
+            hearingExists: this.isExistinHearing,
+            isBookedHearing: this.isBookedHearing,
+            hearing: this.hearing?.hearing_id
+        });
     }
 
     private initForm() {
@@ -75,6 +82,9 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
         let endHearingDateParsed = null;
 
         if (this.hearing) {
+            this.logger.debug(`${this.loggerPrefix} Populating form with existing hearing details`, {
+                hearing: this.hearing?.hearing_id
+            });
             if (this.hearing.hearing_venue_id === undefined) {
                 this.hearing.hearing_venue_id = -1;
             }
@@ -268,17 +278,22 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     }
 
     private retrieveCourts() {
+        this.logger.debug(`${this.loggerPrefix} Retrieving courts.`);
         this.$subscriptions.push(
             this.refDataService.getCourts().subscribe(
                 (data: HearingVenueResponse[]) => {
                     this.availableCourts = data;
+                    this.logger.debug(`${this.loggerPrefix} Updating list of available courts.`, { courts: data.length });
                     const pleaseSelect = new HearingVenueResponse();
                     pleaseSelect.name = Constants.PleaseSelect;
                     pleaseSelect.id = -1;
                     this.availableCourts.unshift(pleaseSelect);
                     this.setVenueForExistingHearing();
                 },
-                error => this.errorService.handleError(error)
+                error => {
+                    this.logger.error(`${this.loggerPrefix} Failed to get courts available.`, error);
+                    this.errorService.handleError(error);
+                }
             )
         );
     }
@@ -321,16 +336,20 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
             !this.endHearingDateInvalid &&
             this.finalCheckStartDateTimeInPast()
         ) {
+            this.logger.debug(`${this.loggerPrefix} Updating booking schedule and location.`);
             this.failedSubmission = false;
             this.updateHearingRequest();
             this.form.markAsPristine();
             this.hasSaved = true;
             if (this.editMode) {
+                this.logger.debug(`${this.loggerPrefix} In edit mode. Returning to summary page.`);
                 this.router.navigate([PageUrls.Summary]);
             } else {
+                this.logger.debug(`${this.loggerPrefix} Navigating to judge assignment.`);
                 this.router.navigate([PageUrls.AssignJudge]);
             }
         } else {
+            this.logger.debug(`${this.loggerPrefix} Failed to update booking schedule and location. Form is not valid.`);
             this.failedSubmission = true;
         }
     }
@@ -349,6 +368,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
         const endDate = new Date(this.form.value.endHearingDate);
         this.hearing.end_hearing_date_time = endDate;
         this.hearingService.updateHearingRequest(this.hearing);
+        this.logger.info(`${this.loggerPrefix} Updated hearing request schedule and location`, { hearing: this.hearing });
     }
 
     private setHearingDuration() {
@@ -361,23 +381,29 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     }
 
     continueBooking() {
+        this.logger.debug(`${this.loggerPrefix} Rejected cancellation. Continuing with booking.`);
         this.attemptingCancellation = false;
         this.attemptingDiscardChanges = false;
     }
 
     confirmCancelBooking() {
+        this.logger.debug(`${this.loggerPrefix} Attempting to cancel booking.`);
         if (this.editMode) {
             if (this.form.dirty || this.form.touched) {
+                this.logger.debug(`${this.loggerPrefix} In edit mode. Changes found. Confirm if changes should be discarded.`);
                 this.attemptingDiscardChanges = true;
             } else {
+                this.logger.debug(`${this.loggerPrefix} In edit mode. No changes. Returning to summary.`);
                 this.navigateToSummary();
             }
         } else {
+            this.logger.debug(`${this.loggerPrefix} New booking. Confirm if changes should be cancelled.`);
             this.attemptingCancellation = true;
         }
     }
 
     cancelBooking() {
+        this.logger.debug(`${this.loggerPrefix} Cancelling booking and returning to dashboard.`);
         this.attemptingCancellation = false;
         this.hearingService.cancelRequest();
         this.form.reset();
@@ -385,6 +411,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     }
 
     cancelChanges() {
+        this.logger.debug(`${this.loggerPrefix} Resetting changes. Returning to summary.`);
         this.attemptingDiscardChanges = false;
         this.form.reset();
         this.navigateToSummary();

@@ -13,7 +13,7 @@ export class UpdateUserPopupComponent {
     constructor(private logger: Logger) {}
 
     okayClose(): void {
-        this.logger.debug('Clicked okay');
+        this.logger.debug(`${this.loggerPrefix} Clicked okay`);
         this.okay.emit();
     }
 }
