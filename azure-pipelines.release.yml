@@ -1,35 +1,35 @@
 parameters:
-- name: deploymentBranch
-  displayName: Branch to Deploy
-  type: string
-  default: refs/heads/master
+  - name: deploymentBranch
+    displayName: Branch to Deploy
+    type: string
+    default: refs/heads/master
 
-- name: environment
-  displayName: Environment
-  type: string
-  default: Sandbox
-  values:
-  - Preview
-  - Dev
-  - AAT
-  - Sandbox
-  - Test1
-  - Test2
-  - Demo
-  - Preprod
-  - Prod
+  - name: environment
+    displayName: Environment
+    type: string
+    default: Sandbox
+    values:
+      - Preview
+      - Dev
+      - AAT
+      - Sandbox
+      - Test1
+      - Test2
+      - Demo
+      - Preprod
+      - Prod
 
-- name: RunZap
-  displayName: Execute ZAP Tests
-  type: boolean
-  default: false
+  - name: RunZap
+    displayName: Execute ZAP Tests
+    type: boolean
+    default: false
 
-- name: prodEnvs
-  displayName: Environments Using Prod Subscription
-  type: object
-  default:
-    - Prod
-    - Preprod
+  - name: prodEnvs
+    displayName: Environments Using Prod Subscription
+    type: object
+    default:
+      - Prod
+      - Preprod
 
 # Set variables once
 variables:
@@ -39,15 +39,15 @@ variables:
   - group: vh test users
   - group: Saucelabs
   - ${{ if ne(variables['Build.Reason'], 'ResourceTrigger') }}:
-    - ${{ if containsValue(parameters.prodEnvs, parameters.environment) }}:
-      - group: vh-prod
-    - ${{ if not(containsValue(parameters.prodEnvs, parameters.environment)) }}:
-      - group: vh-preview
+      - ${{ if containsValue(parameters.prodEnvs, parameters.environment) }}:
+          - group: vh-prod
+      - ? ${{ if not(containsValue(parameters.prodEnvs, parameters.environment)) }}
+        : - group: vh-preview
   - ${{ if eq(variables['Build.Reason'], 'ResourceTrigger') }}:
-    - ${{ if or(startswith(variables['Build.SourceBranch'], 'refs/heads/release/'), startswith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')) }}:
-      - group: vh-prod
-    - ${{ if not(or(startswith(variables['Build.SourceBranch'], 'refs/heads/release/'), startswith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'))) }}:
-      - group: vh-preview
+      - ? ${{ if or(startswith(variables['Build.SourceBranch'], 'refs/heads/release/'), startswith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')) }}
+        : - group: vh-prod
+      - ? ${{ if not(or(startswith(variables['Build.SourceBranch'], 'refs/heads/release/'), startswith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'))) }}
+        : - group: vh-preview
 
 trigger: none
 pr: none
@@ -60,14 +60,14 @@ resources:
       ref: refs/heads/master
       endpoint: hmcts_shaed
   pipelines:
-  - pipeline: CI
-    source: hmcts.vh-admin-web
-    trigger:
-      enabled: true
-      branches:
-        - master
-        - hotfix/*
-        - release/*
+    - pipeline: CI
+      source: hmcts.vh-admin-web
+      trigger:
+        enabled: true
+        branches:
+          - master
+          - hotfix/*
+          - release/*
 
 stages:
   - template: templates/vh-release.yml@templates
@@ -88,57 +88,59 @@ stages:
         resourceGroup: vh-admin-web-$(environment)
         testCaseFilter: TestCategory=smoketest
         dependentApps:
-        - name: vh-user-api-$(environment)
-          resourceGroup: vh-user-api-$(environment)
-          healthEndpoint: $(user_api_url)healthcheck/health
-        - name: vh-bookings-api-$(environment)
-          resourceGroup: vh-bookings-api-$(environment)
-          healthEndpoint: $(bookings_api_url)healthcheck/health
-        - name: vh-video-api-$(environment)
-          resourceGroup: vh-video-api-$(environment)
-          healthEndpoint: $(video_api_url)healthcheck/health
-        - name: vh-test-api-$(environment)
-          resourceGroup: vh-test-api-$(environment)
-          healthEndpoint: $(test_api_url)health/health       
+          - name: vh-user-api-$(environment)
+            resourceGroup: vh-user-api-$(environment)
+            healthEndpoint: $(user_api_url)healthcheck/health
+          - name: vh-bookings-api-$(environment)
+            resourceGroup: vh-bookings-api-$(environment)
+            healthEndpoint: $(bookings_api_url)healthcheck/health
+          - name: vh-video-api-$(environment)
+            resourceGroup: vh-video-api-$(environment)
+            healthEndpoint: $(video_api_url)healthcheck/health
+          - name: vh-test-api-$(environment)
+            resourceGroup: vh-test-api-$(environment)
+            healthEndpoint: $(test_api_url)health/health
         variables:
           - group: vh-wowza-dev
             env:
-             - Preview
-             - Dev
-             - AAT
-             - Sandbox
-             - Test1
-             - Test2
+              - Preview
+              - Dev
+              - AAT
+              - Sandbox
+              - Test1
+              - Test2
           - group: vh-wowza-demo
             env:
-             - Demo
+              - Demo
           - group: vh-wowza-preprod
             env:
-             - Preprod
+              - Preprod
           - group: vh-wowza-prod
             env:
-             - Prod
+              - Prod
+          - group: KinlyConfiguration_Dev
+            env:
+              - Sandbox
           - group: KinlyConfiguration_Test
             env:
-             - Preview
-             - Dev
-             - AAT
-             - Sandbox
-             - Test1
-             - Test2
+              - Preview
+              - Dev
+              - AAT
+              - Test1
+              - Test2
           - group: KinlyConfiguration_Test2
             env:
-             - Demo
+              - Demo
           - group: KinlyConfiguration_Preprod
             env:
-             - Preprod
+              - Preprod
           - group: KinlyConfiguration_Prod
             env:
-             - Prod
+              - Prod
           - name: AppUri
             value: $(AppUri_Prod)
             env:
-             - Prod
+              - Prod
         appSettings:
           - name: ApplicationInsights:InstrumentationKey
             value: vh-core-infra-AppInsightsKey
@@ -173,7 +175,7 @@ stages:
             secret: true
           - name: AzureAd:Authority
             value: $(Authority)
-              
+
           # Testing
           - name: TestUserSecrets:TestUsernameStem
             value: $(TestUserSecrets:TestUsernameStem)
@@ -217,7 +219,7 @@ stages:
             value: $(test_api_url)
           - name: VhServices:TestApiResourceId
             value: vh-test-api-identifieruris
-            secret: true  
+            secret: true
           - name: VhServices:BookingsApiUrl
             value: $(bookings_api_url)
           - name: VhServices:BookingsApiResourceId
