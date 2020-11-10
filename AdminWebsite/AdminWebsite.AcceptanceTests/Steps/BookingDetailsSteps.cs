@@ -20,22 +20,24 @@ namespace AdminWebsite.AcceptanceTests.Steps
     [Binding]
     public class BookingDetailsSteps : ISteps
     {
-        private const int Timeout = 60;
         private readonly TestContext _c;
         private readonly Dictionary<User, UserBrowser> _browsers;
         private readonly CommonSharedSteps _commonSharedSteps;
+        private readonly BookingsListSteps _bookingsListSteps;
 
-        public BookingDetailsSteps(TestContext testContext, Dictionary<User, UserBrowser> browsers, CommonSharedSteps commonSharedSteps)
+        public BookingDetailsSteps(TestContext testContext, Dictionary<User, UserBrowser> browsers, CommonSharedSteps commonSharedSteps, BookingsListSteps bookingsListSteps)
         {
             _c = testContext;
             _browsers = browsers;
             _commonSharedSteps = commonSharedSteps;
+            _bookingsListSteps = bookingsListSteps;
         }
 
         public void ProgressToNextPage()
         {
             WhenTheUserConfirmsTheBooking();
             ThenTheHearingIsAvailableInTheVideoWeb();
+            ThenTheConferenceMatchesTheHearing();
         }
 
         [When(@"the user views the booking details")]
@@ -85,6 +87,11 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingDetailsPage.ParticipantUsername(hearingJudge.Id)).Text.Should().Be(judge.Username);
         }
 
+        private static HearingDetailsResponse GetTheFirstHearing(IReadOnlyCollection<HearingDetailsResponse> hearings)
+        {
+            return hearings.Count == 1 ? hearings.First() : hearings.First(x => x.Cases.First().Name.Contains("1 of"));
+        }
+
         private bool OnlyDisplayEmailAndUsernameIfCurrentUserMadeTheBooking()
         {
             return _c.CurrentUser.Username.Equals(_c.Test.CreatedBy);
@@ -112,12 +119,6 @@ namespace AdminWebsite.AcceptanceTests.Steps
             }
         }
 
-
-        private static HearingDetailsResponse GetTheFirstHearing(List<HearingDetailsResponse> hearings)
-        {
-            return hearings.Count == 1 ? hearings.First() : hearings.First(x => x.Cases.First().Name.Contains("1 of"));
-        }
-
         private void VerifyJudgeDetails(ParticipantResponse participant)
         {
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingDetailsPage.JudgeName).Text.Trim().Should().Contain(participant.Display_name);
@@ -138,7 +139,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingDetailsPage.ParticipantPhone(participant.Id)).Text.Trim().Should().Be(participant.Telephone_number);
         }
 
-        [When(@"the user confirms the booking")]
+        [When(@"the user confirms the hearing")]
         public void WhenTheUserConfirmsTheBooking()
         {
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingDetailsPage.ConfirmButton);
@@ -149,14 +150,63 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingDetailsPage.ConfirmedLabel).Displayed.Should().BeTrue();
         }
 
+        [When(@"the user confirms all the hearings")]
+        public void WhenTheUserConfirmsAllTheBookings()
+        {
+            foreach (var hearing in GetHearings())
+            {
+                _browsers[_c.CurrentUser].Click(CommonAdminWebPage.BookingsListLink);
+                _bookingsListSteps.SelectsBookingByCaseName(hearing.Cases.First().Name);
+                WhenTheUserConfirmsTheBooking();
+            }
+        }
+        
         [Then(@"the hearing is available in video web")]
-        [Then(@"the first hearing is available in video web")]
         public void ThenTheHearingIsAvailableInTheVideoWeb()
         {
             var hearings = GetHearings();
-            var hearing = GetTheFirstHearing(hearings);
+            var hearing = hearings.First();
+
             PollForHearingStatus(BookingStatus.Created, hearing.Id).Should().BeTrue();
-            _c.Api.PollForConferenceExists(hearing.Id).Should().BeTrue();
+            PollForConferenceInVideoApi(hearing.Id);
+        }
+
+        [Then(@"the hearings are available in video web")]
+        public void ThenTheHearingsAreAvailableInTheVideoWeb()
+        {
+            foreach (var hearing in GetHearings())
+            {
+                PollForHearingStatus(BookingStatus.Created, hearing.Id).Should().BeTrue();
+                PollForConferenceInVideoApi(hearing.Id);
+            }
+        }
+
+        private ConferenceDetailsResponse PollForConferenceInVideoApi(Guid hearingId)
+        {
+            const int DELAY = 2;
+            const int FIND_CONFERENCE_TIMEOUT = 30;
+
+            for (var i = 0; i < FIND_CONFERENCE_TIMEOUT; i++)
+            {
+                var response = _c.Api.GetConferenceByHearingId(hearingId);
+                if (response.IsSuccessful)
+                {
+                    return RequestHelper.Deserialise<ConferenceDetailsResponse>(response.Content);
+                }
+                Thread.Sleep(TimeSpan.FromSeconds(DELAY));
+            }
+
+            throw new DataException($"Conference could not be found in Video Api after {FIND_CONFERENCE_TIMEOUT * DELAY} seconds");
+        }
+
+        [Then(@"the conference details match the hearing")]
+        public void ThenTheConferenceMatchesTheHearing()
+        {
+            foreach (var hearing in GetHearings())
+            {
+                var conference = PollForConferenceInVideoApi(hearing.Id);
+                AssertConference.Assert(hearing, conference);
+            }
         }
 
         [When(@"the user cancels the hearing without a cancel reason")]
@@ -232,7 +282,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             foreach (var hearing in GetHearings())
             {
-                _c.Api.PollForConferenceDeleted(hearing.Id, Timeout).Should().BeTrue();
+                _c.Api.PollForConferenceDeleted(hearing.Id).Should().BeTrue();
             }
         }
 
@@ -272,7 +322,9 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         private bool PollForHearingStatus(BookingStatus expectedStatus, Guid hearingId)
         {
-            for (var i = 0; i < Timeout; i++)
+            const int POLL_FOR_HEARING_STATUS_TIMEOUT = 60;
+
+            for (var i = 0; i < POLL_FOR_HEARING_STATUS_TIMEOUT; i++)
             {
                 var hearing = GetHearing(hearingId);
                 if (hearing.Status.Equals(expectedStatus))

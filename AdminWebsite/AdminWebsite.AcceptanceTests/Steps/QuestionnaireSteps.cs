@@ -16,7 +16,6 @@ namespace AdminWebsite.AcceptanceTests.Steps
     [Binding]
     public class QuestionnaireSteps : ISteps
     {
-        private const string UnansweredAnswer = "Not answered";
         private readonly TestContext _c;
         private readonly Dictionary<User, UserBrowser> _browsers;
         private ParticipantResponse _participantResponse;
