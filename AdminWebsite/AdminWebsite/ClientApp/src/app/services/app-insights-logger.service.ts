@@ -1,66 +1,71 @@
-import { AppInsights } from 'applicationinsights-js';
-import { LogAdapter } from './log-adapter';
-import { Config } from '../common/model/config';
 import { Injectable } from '@angular/core';
-
-enum SeverityLevel {
-  Verbose = 0,
-  Information = 1,
-  Warning = 2,
-  Error = 3,
-  Critical = 4
-}
+import { ApplicationInsights, ITelemetryItem, SeverityLevel } from '@microsoft/applicationinsights-web';
+import { AdalService } from 'adal-angular4';
+import { Config } from '../common/model/config';
+import { LogAdapter } from './log-adapter';
 
 @Injectable()
 export class AppInsightsLogger implements LogAdapter {
-  errorInfo: any;
+    errorInfo: any;
+    appInsights: ApplicationInsights;
 
-  constructor(config: Config) {
-    const appInsightsConfig: Microsoft.ApplicationInsights.IConfig = {
-      instrumentationKey: config.appInsightsInstrumentationKey,
-    };
+    constructor(config: Config, adalService: AdalService) {
+        this.appInsights = new ApplicationInsights({
+            config: {
+                instrumentationKey: config.appInsightsInstrumentationKey
+            }
+        });
 
-    // Unfortunately, there is no way to know if the setup is successful or not
-    AppInsights.downloadAndSetup(appInsightsConfig);
+        this.appInsights.loadAppInsights();
+        this.appInsights.addTelemetryInitializer((envelope: ITelemetryItem) => {
+            envelope.tags['ai.cloud.role'] = 'vh-admin-web';
+            envelope.tags['ai.user.id'] = adalService.userInfo.userName.toLowerCase();
+        });
+    }
 
-    // When it's been initialised, set the role so we know which application is logging
-    AppInsights.queue.push(() => {
-      AppInsights.context.addTelemetryInitializer((envelope) => {
-        envelope.tags['ai.cloud.role'] = 'vh-admin-web';
-      });
-    });
-  }
+    debug(message: string, properties: any = null): void {
+        if (!this.appInsights) {
+            return;
+        }
+        this.appInsights.trackTrace({ message, severityLevel: SeverityLevel.Verbose }, properties);
+    }
 
-  debug(message: string): void {
-    AppInsights.trackTrace(message, null, SeverityLevel.Verbose);
-  }
+    info(message: string, properties: any = null): void {
+        if (!this.appInsights) {
+            return;
+        }
+        this.appInsights.trackTrace({ message, severityLevel: SeverityLevel.Information }, properties);
+    }
 
-  info(message: string): void {
-    AppInsights.trackTrace(message, null, SeverityLevel.Information);
-  }
+    warn(message: string, properties: any = null): void {
+        if (!this.appInsights) {
+            return;
+        }
+        this.appInsights.trackTrace({ message, severityLevel: SeverityLevel.Warning }, properties);
+    }
 
-  warn(message: string): void {
-    AppInsights.trackTrace(message, null, SeverityLevel.Warning);
-  }
+    trackPage(pageName: string, url: string) {
+        this.appInsights.trackPageView({ name: pageName, uri: url });
+    }
 
-  trackPage(pageName: string, url: string) {
-    AppInsights.trackPageView(pageName, url);
-  }
+    trackEvent(eventName: string, properties: any) {
+        this.appInsights.trackEvent({ name: eventName }, properties);
+    }
 
-  trackEvent(eventName: string, properties: any) {
-    AppInsights.trackEvent(eventName, properties);
-  }
+    trackException(message: string, err: Error, properties: any) {
+        properties = properties || {};
+        properties.message = message;
 
-  trackException(message: string, err: Error, properties: any) {
-    properties = properties || {};
-    properties.message = message;
+        this.errorInfo = err;
+        properties.errorInformation = this.errorInfo
+            ? `${this.errorInfo.error} : ${this.errorInfo.status}
+       : ${this.errorInfo.statusText} : ${this.errorInfo.url} : ${this.errorInfo.message}`
+            : ``;
 
-    this.errorInfo = err;
-    properties.errorInformation =
-      this.errorInfo ? `${this.errorInfo.error} : ${this.errorInfo.status}
-       : ${this.errorInfo.statusText} : ${this.errorInfo.url} : ${this.errorInfo.message}` : ``;
-
-    AppInsights.trackException(err, null, properties);
-  }
+        this.appInsights.trackTrace({ message, severityLevel: SeverityLevel.Error }, properties);
+        this.appInsights.trackException({
+            error: err,
+            properties: properties
+        });
+    }
 }
-
