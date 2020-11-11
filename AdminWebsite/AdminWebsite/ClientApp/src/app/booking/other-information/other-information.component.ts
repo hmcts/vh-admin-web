@@ -1,99 +1,116 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { VideoHearingsService } from '../../services/video-hearings.service';
-import { HearingModel } from '../../common/model/hearing.model';
-import { BookingBaseComponentDirective as BookingBaseComponent } from '../booking-base/booking-base.component';
-import { BookingService } from '../../services/booking.service';
+import { Logger } from 'src/app/services/logger';
 import { PageUrls } from 'src/app/shared/page-url.constants';
 import { Constants } from '../../common/constants';
 import { SanitizeInputText } from '../../common/formatters/sanitize-input-text';
+import { HearingModel } from '../../common/model/hearing.model';
+import { BookingService } from '../../services/booking.service';
+import { VideoHearingsService } from '../../services/video-hearings.service';
+import { BookingBaseComponentDirective as BookingBaseComponent } from '../booking-base/booking-base.component';
 
 @Component({
-  selector: 'app-other-information',
-  templateUrl: './other-information.component.html',
-  styleUrls: ['./other-information.component.css']
+    selector: 'app-other-information',
+    templateUrl: './other-information.component.html',
+    styleUrls: ['./other-information.component.css']
 })
 export class OtherInformationComponent extends BookingBaseComponent implements OnInit {
-  constants = Constants;
-  hearing: HearingModel;
-  attemptingCancellation = false;
-  attemptingDiscardChanges = false;
-  canNavigate = true;
+    constants = Constants;
+    hearing: HearingModel;
+    attemptingCancellation = false;
+    attemptingDiscardChanges = false;
+    canNavigate = true;
 
-  otherInformationText: string;
-  otherInformation: FormControl;
+    otherInformationText: string;
+    otherInformation: FormControl;
 
-  constructor(private fb: FormBuilder, protected videoHearingService: VideoHearingsService,
-    protected router: Router, protected bookingService: BookingService) {
-    super(bookingService, router, videoHearingService);
-  }
-
-  ngOnInit() {
-    this.checkForExistingRequest();
-    this.initForm();
-    super.ngOnInit();
-  }
-
-  private initForm() {
-    this.otherInformation = new FormControl(this.otherInformationText ? this.otherInformationText : '',
-      Validators.pattern(Constants.TextInputPattern));
-
-    this.form = this.fb.group({
-      otherInformation: this.otherInformation,
-    });
-  }
-
-  get otherInformationInvalid() {
-    return this.otherInformation.invalid && (this.otherInformation.dirty || this.otherInformation.touched);
-  }
-
-  private checkForExistingRequest() {
-    this.hearing = this.videoHearingService.getCurrentRequest();
-    this.otherInformationText = this.hearing.other_information;
-  }
-
-  next() {
-    this.hearing.other_information = this.otherInformation.value;
-    this.videoHearingService.updateHearingRequest(this.hearing);
-    this.form.markAsPristine();
-    if (this.editMode) {
-      this.resetEditMode();
+    constructor(
+        private fb: FormBuilder,
+        protected videoHearingService: VideoHearingsService,
+        protected router: Router,
+        protected bookingService: BookingService,
+        protected logger: Logger
+    ) {
+        super(bookingService, router, videoHearingService, logger);
     }
-    this.router.navigate([PageUrls.Summary]);
-  }
 
-  cancelBooking() {
-    this.attemptingCancellation = false;
-    this.videoHearingService.cancelRequest();
-    this.form.reset();
-    this.router.navigate([PageUrls.Dashboard]);
-  }
+    ngOnInit() {
+        this.checkForExistingRequest();
+        this.initForm();
+        super.ngOnInit();
+    }
 
-  cancelChanges() {
-    this.attemptingDiscardChanges = false;
-    this.form.reset();
-    this.navigateToSummary();
-  }
-  continueBooking() {
-    this.attemptingCancellation = false;
-    this.attemptingDiscardChanges = false;
-  }
+    private initForm() {
+        this.otherInformation = new FormControl(
+            this.otherInformationText ? this.otherInformationText : '',
+            Validators.pattern(Constants.TextInputPattern)
+        );
 
-  confirmCancelBooking() {
-    if (this.editMode) {
-      if (this.form.dirty || this.form.touched) {
-        this.attemptingDiscardChanges = true;
-      } else {
+        this.form = this.fb.group({
+            otherInformation: this.otherInformation
+        });
+    }
+
+    get otherInformationInvalid() {
+        return this.otherInformation.invalid && (this.otherInformation.dirty || this.otherInformation.touched);
+    }
+
+    private checkForExistingRequest() {
+        this.hearing = this.videoHearingService.getCurrentRequest();
+        this.otherInformationText = this.hearing.other_information;
+    }
+
+    next() {
+        this.hearing.other_information = this.otherInformation.value;
+        this.videoHearingService.updateHearingRequest(this.hearing);
+        this.logger.debug(`${this.loggerPrefix} Updated hearing other information.`, { hearing: this.hearing });
+        this.form.markAsPristine();
+        if (this.editMode) {
+            this.resetEditMode();
+        }
+        this.logger.debug(`${this.loggerPrefix} Proceeding to summary screen.`);
+        this.router.navigate([PageUrls.Summary]);
+    }
+
+    cancelBooking() {
+        this.logger.debug(`${this.loggerPrefix} Cancelling booking and returning to dashboard.`);
+        this.attemptingCancellation = false;
+        this.videoHearingService.cancelRequest();
+        this.form.reset();
+        this.router.navigate([PageUrls.Dashboard]);
+    }
+
+    cancelChanges() {
+        this.logger.debug(`${this.loggerPrefix} Resetting changes. Returning to summary.`);
+        this.attemptingDiscardChanges = false;
+        this.form.reset();
         this.navigateToSummary();
-      }
-    } else {
-      this.attemptingCancellation = true;
     }
-  }
+    continueBooking() {
+        this.logger.debug(`${this.loggerPrefix} Rejected cancellation. Continuing with booking.`);
+        this.attemptingCancellation = false;
+        this.attemptingDiscardChanges = false;
+    }
 
-  otherInformationOnBlur() {
-    const text = SanitizeInputText(this.otherInformation.value);
-    this.otherInformation.setValue(text);
-  }
+    confirmCancelBooking() {
+        this.logger.debug(`${this.loggerPrefix} Attempting to cancel booking.`);
+        if (this.editMode) {
+            if (this.form.dirty || this.form.touched) {
+                this.logger.debug(`${this.loggerPrefix} In edit mode. Changes found. Confirm if changes should be discarded.`);
+                this.attemptingDiscardChanges = true;
+            } else {
+                this.logger.debug(`${this.loggerPrefix} In edit mode. No changes. Returning to summary.`);
+                this.navigateToSummary();
+            }
+        } else {
+            this.logger.debug(`${this.loggerPrefix} New booking. Changes found. Confirm if changes should be discarded.`);
+            this.attemptingCancellation = true;
+        }
+    }
+
+    otherInformationOnBlur() {
+        const text = SanitizeInputText(this.otherInformation.value);
+        this.otherInformation.setValue(text);
+    }
 }

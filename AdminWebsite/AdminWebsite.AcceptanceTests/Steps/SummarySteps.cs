@@ -196,16 +196,14 @@ namespace AdminWebsite.AcceptanceTests.Steps
             var allHearings = RequestHelper.Deserialise<List<HearingDetailsResponse>>(response.Content);
             var hearings = GetHearingFromHearings(allHearings);
 
-            foreach (var assertHearing in hearings.Select(hearing => new AssertHearing()
-                .WithHearing(hearing)
-                .WithTestData(_c.Test)
-                .WithTimeZone(_c.TimeZone)
-                .IsMultiDayHearing(_c.Test.HearingSchedule.MultiDays)
-                .CreatedBy(_c.CurrentUser.Username)))
+            foreach (var hearing in hearings)
             {
-                assertHearing.AssertHearingDataMatches();
-                assertHearing.AssertParticipantDataMatches(_c.Test.HearingParticipants);
-                assertHearing.AssertHearingStatus(BookingStatus.Booked);
+                var expectedScheduledDate = _c.TimeZone.AdjustAdminWeb(_c.Test.HearingSchedule.ScheduledDate);
+                AssertHearing.AssertHearingDetails(hearing, _c.Test);
+                AssertHearing.AssertHearingParticipants(hearing.Participants, _c.Test.HearingParticipants, _c.Test.AddParticipant.Participant.Organisation);
+                AssertHearing.AssertCreatedBy(hearing.Created_by, _c.CurrentUser.Username);
+                AssertHearing.AssertScheduledDate(hearing.Scheduled_date_time, expectedScheduledDate, _c.WebConfig.SauceLabsConfiguration.RunningOnSauceLabs());
+                AssertHearing.AssertTimeSpansMatch(hearing.Scheduled_duration, _c.Test.HearingSchedule.DurationHours, _c.Test.HearingSchedule.DurationMinutes, _c.Test.HearingSchedule.MultiDays);
             }
         }
 
@@ -216,17 +214,15 @@ namespace AdminWebsite.AcceptanceTests.Steps
             var allHearings = RequestHelper.Deserialise<List<HearingDetailsResponse>>(response.Content);
             var hearings = GetHearingFromHearings(allHearings);
 
-            foreach (var assertHearing in hearings.Select(hearing => new AssertHearing()
-                .WithHearing(hearing)
-                .WithTestData(_c.Test)
-                .WithTimeZone(_c.TimeZone)
-                .IsMultiDayHearing(_c.Test.HearingSchedule.MultiDays)
-                .IsRunningOnSauceLabs(_c.WebConfig.SauceLabsConfiguration.RunningOnSauceLabs())
-                .CreatedBy(_c.CurrentUser.Username)))
+            foreach (var hearing in hearings)
             {
-                assertHearing.AssertHearingDataMatches();
-                assertHearing.AssertParticipantDataMatches(_c.Test.HearingParticipants);
-                assertHearing.AssertUpdatedStatus(_c.CurrentUser.Username, DateTime.Now);
+                var expectedScheduledDate = _c.TimeZone.AdjustAdminWeb(_c.Test.HearingSchedule.ScheduledDate);
+                AssertHearing.AssertHearingDetails(hearing, _c.Test);
+                AssertHearing.AssertHearingParticipants(hearing.Participants, _c.Test.HearingParticipants, _c.Test.AddParticipant.Participant.Organisation);
+                AssertHearing.AssertCreatedBy(hearing.Created_by, _c.CurrentUser.Username);
+                AssertHearing.AssertScheduledDate(hearing.Scheduled_date_time, expectedScheduledDate, _c.WebConfig.SauceLabsConfiguration.RunningOnSauceLabs());
+                AssertHearing.AssertTimeSpansMatch(hearing.Scheduled_duration, _c.Test.HearingSchedule.DurationHours, _c.Test.HearingSchedule.DurationMinutes, _c.Test.HearingSchedule.MultiDays);
+                AssertHearing.AssertUpdatedStatus(hearing, _c.CurrentUser.Username, DateTime.Now);
             }
         }
 

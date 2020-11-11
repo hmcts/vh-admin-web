@@ -7,6 +7,7 @@ import { PageUrls } from 'src/app/shared/page-url.constants';
 import { DeleteParticipantSearchResultsComponent } from './delete-participant-search-results.component';
 import { ParticipantDeleteService } from 'src/app/services/participant-delete-service.service';
 import { ReturnUrlService } from 'src/app/services/return-url.service';
+import { Logger } from 'src/app/services/logger';
 
 describe('DeleteParticipantSearchResultsComponent', () => {
     let component: DeleteParticipantSearchResultsComponent;
@@ -15,6 +16,7 @@ describe('DeleteParticipantSearchResultsComponent', () => {
     let participantDeleteService: jasmine.SpyObj<ParticipantDeleteService>;
     let router: jasmine.SpyObj<Router>;
     let returnUrlService: jasmine.SpyObj<ReturnUrlService>;
+    const logger = jasmine.createSpyObj<Logger>('Logger', ['debug', 'info', 'error']);
 
     beforeAll(() => {
         bookingPersistService = jasmine.createSpyObj<BookingPersistService>('BookingPersistService', ['selectedHearingId']);
@@ -30,7 +32,8 @@ describe('DeleteParticipantSearchResultsComponent', () => {
             videoHearingService,
             participantDeleteService,
             router,
-            returnUrlService
+            returnUrlService,
+            logger
         );
     });
 

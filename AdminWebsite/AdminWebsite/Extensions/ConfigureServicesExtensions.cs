@@ -91,15 +91,15 @@ namespace AdminWebsite.Extensions
 
             serviceCollection.AddHttpClient<IBookingsApiClient, BookingsApiClient>()
                 .AddHttpMessageHandler(() => container.GetService<HearingApiTokenHandler>())
-                .AddTypedClient(httpClient => (IBookingsApiClient) new BookingsApiClient(httpClient) { BaseUrl = settings.BookingsApiUrl });
+                .AddTypedClient(httpClient => (IBookingsApiClient) new BookingsApiClient(httpClient) { BaseUrl = settings.BookingsApiUrl, ReadResponseAsString = true });
 
             serviceCollection.AddHttpClient<IUserApiClient, UserApiClient>()
                .AddHttpMessageHandler(() => container.GetService<UserApiTokenHandler>())
-               .AddTypedClient(httpClient => (IUserApiClient) new UserApiClient(httpClient) { BaseUrl = settings.UserApiUrl });
+               .AddTypedClient(httpClient => (IUserApiClient) new UserApiClient(httpClient) { BaseUrl = settings.UserApiUrl, ReadResponseAsString = true });
             
             serviceCollection.AddHttpClient<IVideoApiClient, VideoApiClient>()
                 .AddHttpMessageHandler(() => container.GetService<VideoApiTokenHandler>())
-                .AddTypedClient(httpClient => (IVideoApiClient) new VideoApiClient(httpClient) { BaseUrl = settings.VideoApiUrl });
+                .AddTypedClient(httpClient => (IVideoApiClient) new VideoApiClient(httpClient) { BaseUrl = settings.VideoApiUrl, ReadResponseAsString = true });
 
             serviceCollection.AddTransient<IUserIdentity, UserIdentity>((ctx) =>
             {

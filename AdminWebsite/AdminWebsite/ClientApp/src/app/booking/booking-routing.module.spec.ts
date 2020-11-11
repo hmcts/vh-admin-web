@@ -24,6 +24,7 @@ import { DiscardConfirmPopupComponent } from '../popups/discard-confirm-popup/di
 import { Components } from './booking.module';
 import { SharedModule } from '../shared/shared.module';
 import { ConfirmBookingFailedPopupComponent } from '../popups/confirm-booking-failed-popup/confirm-booking-failed-popup.component';
+import { Logger } from '../services/logger';
 
 describe('BookingModuleRouting', () => {
     let location: Location;
@@ -33,6 +34,7 @@ describe('BookingModuleRouting', () => {
     let changesGuard;
     let adalSvc;
     let bookingGuard;
+    const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
     const errorService: jasmine.SpyObj<ErrorService> = jasmine.createSpyObj('ErrorService', ['handleError']);
 
     beforeEach(() => {
@@ -52,6 +54,7 @@ describe('BookingModuleRouting', () => {
                 { provide: AdminGuard, useClass: MockAdminGuard },
                 { provide: AdalService, useClass: MockAdalService },
                 { provide: ChangesGuard, useClass: MockChangesGuard },
+                { provide: Logger, useValue: loggerSpy },
                 HttpClient,
                 HttpHandler,
                 { provide: ErrorService, useValue: errorService }

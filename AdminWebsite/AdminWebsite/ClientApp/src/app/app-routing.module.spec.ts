@@ -44,8 +44,7 @@ describe('app routing', () => {
     let router: Router;
     let fixture: ComponentFixture<DashboardComponent>;
     let adalSvc;
-    let loggerSpy: jasmine.SpyObj<Logger>;
-    loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error']);
+    const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
 
     beforeEach(() => {
         TestBed.configureTestingModule({

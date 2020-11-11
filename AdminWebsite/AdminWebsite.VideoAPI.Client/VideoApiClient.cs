@@ -481,6 +481,25 @@ namespace AdminWebsite.VideoAPI.Client
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task EndVideoHearingAsync(System.Guid conferenceId, System.Threading.CancellationToken cancellationToken);
     
+        /// <summary>Request technical assistance. This will suspend a hearing.</summary>
+        /// <param name="conferenceId">conference id</param>
+        /// <returns>Success</returns>
+        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task SuspendHearingAsync(System.Guid conferenceId);
+    
+        /// <summary>Request technical assistance. This will suspend a hearing.</summary>
+        /// <param name="conferenceId">conference id</param>
+        /// <returns>Success</returns>
+        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        void SuspendHearing(System.Guid conferenceId);
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Request technical assistance. This will suspend a hearing.</summary>
+        /// <param name="conferenceId">conference id</param>
+        /// <returns>Success</returns>
+        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task SuspendHearingAsync(System.Guid conferenceId, System.Threading.CancellationToken cancellationToken);
+    
         /// <summary>Transfer a participant in or out of a hearing</summary>
         /// <param name="conferenceId">Id for conference</param>
         /// <param name="body">Participant and direction of transfer</param>
@@ -3512,6 +3531,92 @@ namespace AdminWebsite.VideoAPI.Client
     
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/conferences/{conferenceId}/end");
+            urlBuilder_.Replace("{conferenceId}", System.Uri.EscapeDataString(ConvertToString(conferenceId, System.Globalization.CultureInfo.InvariantCulture)));
+    
+            var client_ = _httpClient;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Content = new System.Net.Http.StringContent(string.Empty, System.Text.Encoding.UTF8, "application/json");
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
+    
+                    PrepareRequest(client_, request_, urlBuilder_);
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+                    PrepareRequest(client_, request_, url_);
+    
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+    
+                        ProcessResponse(client_, response_);
+    
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 202)
+                        {
+                            return;
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new VideoApiException("Unauthorized", status_, responseText_, headers_, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new VideoApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (response_ != null)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+            }
+        }
+    
+        /// <summary>Request technical assistance. This will suspend a hearing.</summary>
+        /// <param name="conferenceId">conference id</param>
+        /// <returns>Success</returns>
+        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        public System.Threading.Tasks.Task SuspendHearingAsync(System.Guid conferenceId)
+        {
+            return SuspendHearingAsync(conferenceId, System.Threading.CancellationToken.None);
+        }
+    
+        /// <summary>Request technical assistance. This will suspend a hearing.</summary>
+        /// <param name="conferenceId">conference id</param>
+        /// <returns>Success</returns>
+        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        public void SuspendHearing(System.Guid conferenceId)
+        {
+            System.Threading.Tasks.Task.Run(async () => await SuspendHearingAsync(conferenceId, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
+        }
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Request technical assistance. This will suspend a hearing.</summary>
+        /// <param name="conferenceId">conference id</param>
+        /// <returns>Success</returns>
+        /// <exception cref="VideoApiException">A server side error occurred.</exception>
+        public async System.Threading.Tasks.Task SuspendHearingAsync(System.Guid conferenceId, System.Threading.CancellationToken cancellationToken)
+        {
+            if (conferenceId == null)
+                throw new System.ArgumentNullException("conferenceId");
+    
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/conferences/{conferenceId}/suspend");
             urlBuilder_.Replace("{conferenceId}", System.Uri.EscapeDataString(ConvertToString(conferenceId, System.Globalization.CultureInfo.InvariantCulture)));
     
             var client_ = _httpClient;

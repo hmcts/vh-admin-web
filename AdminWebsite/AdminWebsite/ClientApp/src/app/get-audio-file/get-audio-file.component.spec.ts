@@ -3,12 +3,14 @@ import { CvpAudioSearchModel } from '../common/model/cvp-audio-search-model';
 import { HearingAudioSearchModel } from '../common/model/hearing-audio-search-model';
 import { AudioLinkService } from '../services/audio-link-service';
 import { CvpForAudioFileResponse } from '../services/clients/api-client';
+import { Logger } from '../services/logger';
 import { GetAudioFileComponent } from './get-audio-file.component';
 
 describe('GetAudioFileComponent', () => {
     let audioLinkService: jasmine.SpyObj<AudioLinkService>;
     let formBuilder: FormBuilder;
     let component: GetAudioFileComponent;
+    const logger = jasmine.createSpyObj<Logger>('Logger', ['debug', 'info', 'error', 'warn']);
 
     beforeAll(async () => {
         audioLinkService = jasmine.createSpyObj<AudioLinkService>('AudioLinkService', [
@@ -18,7 +20,7 @@ describe('GetAudioFileComponent', () => {
             'getCvpAudioRecordingsByDate'
         ]);
         formBuilder = new FormBuilder();
-        component = new GetAudioFileComponent(formBuilder, audioLinkService);
+        component = new GetAudioFileComponent(formBuilder, audioLinkService, logger);
         await component.ngOnInit();
     });
 

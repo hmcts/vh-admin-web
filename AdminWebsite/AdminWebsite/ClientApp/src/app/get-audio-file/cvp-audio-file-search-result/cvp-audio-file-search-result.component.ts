@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { CvpAudioSearchModel } from '../../common/model/cvp-audio-search-model';
 import { ClipboardService } from 'ngx-clipboard';
+import { Logger } from 'src/app/services/logger';
 
 @Component({
     selector: 'app-cvp-audio-file-search-result',
@@ -8,9 +9,10 @@ import { ClipboardService } from 'ngx-clipboard';
     styleUrls: ['./cvp-audio-file-search-result.component.scss']
 })
 export class CvpAudioFileSearchResultComponent {
+    private readonly loggerPrefix = '[CvpAudioFileSearchResult] -';
     @Input() results: CvpAudioSearchModel[];
 
-    constructor(private clipboardService: ClipboardService) {}
+    constructor(private clipboardService: ClipboardService, private logger: Logger) {}
 
     get hasResults() {
         return this.results && this.results.length > 0;
@@ -18,6 +20,7 @@ export class CvpAudioFileSearchResultComponent {
 
     async onCopyLinkClick(i: number) {
         const result = this.results[i];
+        this.logger.debug(`${this.loggerPrefix} Copying audio link`, { filename: result.fileName });
         this.clipboardService.copyFromContent(result.sasTokenUri);
         result.selected = true;
         setTimeout(() => this.hideLinkCopiedMessage(), 3000);

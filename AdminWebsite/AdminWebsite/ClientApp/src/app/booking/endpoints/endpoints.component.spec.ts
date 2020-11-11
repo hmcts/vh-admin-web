@@ -9,6 +9,7 @@ import { CancelPopupComponent } from 'src/app/popups/cancel-popup/cancel-popup.c
 import { DiscardConfirmPopupComponent } from 'src/app/popups/discard-confirm-popup/discard-confirm-popup.component';
 import { BookingService } from 'src/app/services/booking.service';
 import { ErrorService } from 'src/app/services/error.service';
+import { Logger } from 'src/app/services/logger';
 import { VideoHearingsService } from 'src/app/services/video-hearings.service';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { MockValues } from 'src/app/testing/data/test-objects';
@@ -31,7 +32,7 @@ let bookingServiceSpy: jasmine.SpyObj<BookingService>;
 describe('EndpointsComponent', () => {
     let component: EndpointsComponent;
     let fixture: ComponentFixture<EndpointsComponent>;
-
+    const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
     const newHearing = initHearingRequest();
 
     beforeEach(
@@ -55,7 +56,8 @@ describe('EndpointsComponent', () => {
                     { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
                     { provide: Router, useValue: routerSpy },
                     { provide: ErrorService, useValue: errorService },
-                    { provide: BookingService, useValue: bookingServiceSpy }
+                    { provide: BookingService, useValue: bookingServiceSpy },
+                    { provide: Logger, useValue: loggerSpy }
                 ],
                 declarations: [EndpointsComponent, BreadcrumbComponent, CancelPopupComponent, DiscardConfirmPopupComponent]
             }).compileComponents();

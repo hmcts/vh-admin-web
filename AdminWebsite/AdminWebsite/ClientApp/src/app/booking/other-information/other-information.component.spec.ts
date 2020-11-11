@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { AbstractControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
+import { Logger } from 'src/app/services/logger';
 import { HearingModel } from '../../common/model/hearing.model';
 import { DiscardConfirmPopupComponent } from '../../popups/discard-confirm-popup/discard-confirm-popup.component';
 import { VideoHearingsService } from '../../services/video-hearings.service';
@@ -14,6 +15,7 @@ import { OtherInformationComponent } from './other-information.component';
 let routerSpy: jasmine.SpyObj<Router>;
 let otherInformation: AbstractControl;
 let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
+const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
 
 const hearing = new HearingModel();
 hearing.other_information = 'some text';
@@ -36,7 +38,8 @@ describe('OtherInformationComponent', () => {
                 imports: [RouterTestingModule, SharedModule],
                 providers: [
                     { provide: Router, useValue: routerSpy },
-                    { provide: VideoHearingsService, useValue: videoHearingsServiceSpy }
+                    { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
+                    { provide: Logger, useValue: loggerSpy }
                 ],
                 declarations: [
                     OtherInformationComponent,

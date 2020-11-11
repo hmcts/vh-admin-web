@@ -87,7 +87,7 @@ let routerSpy: jasmine.SpyObj<Router>;
 let loggerSpy: jasmine.SpyObj<Logger>;
 
 routerSpy = jasmine.createSpyObj('Router', ['navigate', 'url']);
-loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'info', 'event']);
+loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'info', 'warn', 'debug']);
 
 referenceDataServiceServiceSpy = jasmine.createSpyObj<ReferenceDataService>('ReferenceDataService', ['getCourts']);
 referenceDataServiceServiceSpy.getCourts.and.returnValue(of(MockValues.Courts));
@@ -376,7 +376,7 @@ describe('SummaryComponent  with existing request', () => {
         component.selectedParticipantEmail = 'aa@aa.aa';
         component.removeParticipant();
         fixture.detectChanges();
-        expect(loggerSpy.event).toHaveBeenCalled();
+        expect(loggerSpy.info).toHaveBeenCalled();
     });
     it('should unsibscribe subcription on destroy', () => {
         component.ngOnDestroy();

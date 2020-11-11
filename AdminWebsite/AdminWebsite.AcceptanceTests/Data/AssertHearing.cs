@@ -5,75 +5,69 @@ using AcceptanceTests.Common.Configuration.Users;
 using AcceptanceTests.Common.Model.Participant;
 using AdminWebsite.TestAPI.Client;
 using FluentAssertions;
-using TimeZone = AcceptanceTests.Common.Data.Time.TimeZone;
 
 namespace AdminWebsite.AcceptanceTests.Data
 {
-    public class AssertHearing
+    public static class AssertHearing
     {
-        private static HearingDetailsResponse _hearing;
-        private static string _createdBy;
-        private static Test _test;
-        private TimeZone _timeZone;
-        private bool _isMultiDayHearing;
-        private bool _isRunningOnSauceLabs;
-
-        public AssertHearing WithHearing(HearingDetailsResponse hearing)
+        public static void AssertHearingDetails(HearingDetailsResponse hearing, Test testData)
         {
-            _hearing = hearing;
-            return this;
+            AssertDetails(hearing, testData);
+            AssertCreatedDate(hearing.Created_date, DateTime.UtcNow);
         }
 
-        public AssertHearing CreatedBy(string createdBy)
+        private static void AssertDetails(HearingDetailsResponse hearing, Test testData)
         {
-            _createdBy = createdBy;
-            return this;
+            hearing.Cases.First().Name.Should().Contain(testData.HearingDetails.CaseName);
+            hearing.Cases.First().Number.Should().Contain(testData.HearingDetails.CaseNumber);
+            hearing.Case_type_name.Should().Be(testData.HearingDetails.CaseType.Name);
+            hearing.Hearing_room_name.Should().Be(testData.HearingSchedule.Room);
+            hearing.Hearing_type_name.Should().Be(testData.HearingDetails.HearingType.Name);
+            hearing.Hearing_venue_name.Should().Be(testData.HearingSchedule.HearingVenue);
+            hearing.Other_information.Should().Be(testData.OtherInformation);
+            hearing.Questionnaire_not_required.Should().Be(testData.HearingDetails.DoNotSendQuestionnaires);
         }
 
-        public AssertHearing WithTestData(Test test)
+        private static void AssertCreatedDate(DateTime actual, DateTime expected)
         {
-            _test = test;
-            return this;
+            actual.ToShortDateString().Should().Be(expected.ToShortDateString());
+            actual.ToShortTimeString().Should().BeOneOf(
+                expected.AddMinutes(-3).ToShortTimeString(),
+                expected.AddMinutes(-2).ToShortTimeString(),
+                expected.AddMinutes(-1).ToShortTimeString(),
+                expected.ToShortTimeString());
         }
 
-        public AssertHearing WithTimeZone(TimeZone timeZone)
+        public static void AssertScheduledDate(DateTime actual, DateTime expected, bool isRunningOnSauceLabs)
         {
-            _timeZone = timeZone;
-            return this;
+            actual.ToShortDateString().Should().Be(expected.ToShortDateString());
+
+            if (isRunningOnSauceLabs)
+            {
+                actual.ToShortTimeString().Should().BeOneOf(
+                    expected.AddMinutes(-3).ToShortTimeString(),
+                    expected.AddMinutes(-2).ToShortTimeString(),
+                    expected.AddMinutes(-1).ToShortTimeString(),
+                    expected.ToShortTimeString());
+            }
         }
 
-        public AssertHearing IsMultiDayHearing(bool isMultiDayHearing)
+        public static void AssertTimeSpansMatch(int actual, int hours, int minutes, bool isMultiDayHearing)
         {
-            _isMultiDayHearing = isMultiDayHearing;
-            return this;
+            var actualDuration = TimeSpan.FromMinutes(actual);
+            var expectedDuration = isMultiDayHearing ? TimeSpan.FromHours(8) : TimeSpan.FromHours(hours).Add(TimeSpan.FromMinutes(minutes));
+            actualDuration.Should().Be(expectedDuration);
         }
 
-        public AssertHearing IsRunningOnSauceLabs(bool isRunningOnSauceLabs)
+        public static void AssertCreatedBy(string actual, string expected)
         {
-            _isRunningOnSauceLabs = isRunningOnSauceLabs;
-            return this;
+            actual.Should().Be(expected);
         }
 
-        public void AssertHearingDataMatches()
+        public static void AssertHearingParticipants(List<ParticipantResponse> participants, List<UserAccount> testHearingParticipants, string organisation)
         {
-            _hearing.Cases.First().Name.Should().Contain(_test.HearingDetails.CaseName);
-            _hearing.Cases.First().Number.Should().Contain(_test.HearingDetails.CaseNumber);
-            _hearing.Case_type_name.Should().Be(_test.HearingDetails.CaseType.Name);
-            _hearing.Created_by.Should().Be(_createdBy);
-            VerifyCreatedDate(_hearing.Created_date, DateTime.UtcNow);
-            _hearing.Hearing_room_name.Should().Be(_test.HearingSchedule.Room);
-            _hearing.Hearing_type_name.Should().Be(_test.HearingDetails.HearingType.Name);
-            _hearing.Hearing_venue_name.Should().Be(_test.HearingSchedule.HearingVenue);
-            _hearing.Other_information.Should().Be(_test.OtherInformation);
-            _hearing.Questionnaire_not_required.Should().Be(_test.HearingDetails.DoNotSendQuestionnaires);
-            VerifyDatesMatch(_hearing.Scheduled_date_time, _test.HearingSchedule.ScheduledDate);
-            VerifyTimeSpansMatch(_hearing.Scheduled_duration, _test.HearingSchedule.DurationHours, _test.HearingSchedule.DurationMinutes);
-        }
-
-        public void AssertParticipantDataMatches(List<UserAccount> testHearingParticipants)
-        {
-            _hearing.Participants.Count.Should().Be(testHearingParticipants.Count);
-            foreach (var actualParticipant in _hearing.Participants)
+            participants.Count.Should().Be(testHearingParticipants.Count);
+            foreach (var actualParticipant in participants)
             {
                 var expectedParticipant = testHearingParticipants.First(x => x.Lastname.ToLower().Equals(actualParticipant.Last_name.ToLower()));
                 actualParticipant.Contact_email.Should().Be(expectedParticipant.AlternativeEmail);
@@ -85,53 +79,15 @@ namespace AdminWebsite.AcceptanceTests.Data
                 var role = expectedParticipant.Role.ToLower().Equals("judge") ? "Judge" : expectedParticipant.Role;
                 actualParticipant.User_role_name.Should().Be(role);
                 if (!expectedParticipant.HearingRoleName.Equals(PartyRole.Representative.Name)) continue;
-                actualParticipant.Organisation.Should().Be(_test.AddParticipant.Participant.Organisation);
+                actualParticipant.Organisation.Should().Be(organisation);
                 actualParticipant.Representee.Should().Be(expectedParticipant.Representee);
             }
         }
 
-        public void AssertHearingStatus(BookingStatus expectedStatus)
+        public static void AssertUpdatedStatus(HearingDetailsResponse hearing, string updatedBy, DateTime updatedDate)
         {
-            _hearing.Status.Should().Be(expectedStatus);
-        }
-
-        public void AssertUpdatedStatus(string updatedBy, DateTime updatedDate)
-        {
-            _hearing.Updated_by.Should().Be(updatedBy);
-            _hearing.Updated_date.ToLocalTime().ToShortTimeString().Should().BeOneOf(updatedDate.ToLocalTime().AddMinutes(-1).ToShortTimeString(), updatedDate.ToLocalTime().ToShortTimeString(), updatedDate.ToLocalTime().AddMinutes(1).ToShortTimeString());
-        }
-
-        public void VerifyTimeSpansMatch(int actual, int hours, int minutes)
-        {
-            var actualDuration = TimeSpan.FromMinutes(actual);
-            var expectedDuration = _isMultiDayHearing ? TimeSpan.FromHours(8) : TimeSpan.FromHours(hours).Add(TimeSpan.FromMinutes(minutes));
-
-            actualDuration.Should().Be(expectedDuration);
-        }
-
-        private static void VerifyCreatedDate(DateTime actual, DateTime expected)
-        {
-            actual.ToShortDateString().Should().Be(expected.ToShortDateString());
-            actual.ToShortTimeString().Should().BeOneOf(
-                expected.AddMinutes(-3).ToShortTimeString(),
-                expected.AddMinutes(-2).ToShortTimeString(),
-                expected.AddMinutes(-1).ToShortTimeString(),
-                expected.ToShortTimeString());
-        }
-
-        private void VerifyDatesMatch(DateTime actual, DateTime expected)
-        {
-            expected = _timeZone.AdjustAdminWeb(expected);
-            actual.ToShortDateString().Should().Be(expected.ToShortDateString());
-
-            if (_isRunningOnSauceLabs)
-            {
-                actual.ToShortTimeString().Should().BeOneOf(
-                expected.AddMinutes(-3).ToShortTimeString(),
-                                 expected.AddMinutes(-2).ToShortTimeString(),
-                                 expected.AddMinutes(-1).ToShortTimeString(),
-                                 expected.ToShortTimeString());
-            }
+            hearing.Updated_by.Should().Be(updatedBy);
+            hearing.Updated_date.ToLocalTime().ToShortTimeString().Should().BeOneOf(updatedDate.ToLocalTime().AddMinutes(-1).ToShortTimeString(), updatedDate.ToLocalTime().ToShortTimeString(), updatedDate.ToLocalTime().AddMinutes(1).ToShortTimeString());
         }
     }
 }
