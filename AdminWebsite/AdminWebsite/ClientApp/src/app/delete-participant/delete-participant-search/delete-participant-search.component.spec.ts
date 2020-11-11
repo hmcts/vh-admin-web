@@ -2,6 +2,7 @@ import { fakeAsync, flushMicrotasks, tick, waitForAsync } from '@angular/core/te
 import { FormBuilder } from '@angular/forms';
 import { of } from 'rxjs';
 import { HearingsByUsernameForDeletionResponse } from 'src/app/services/clients/api-client';
+import { Logger } from 'src/app/services/logger';
 import { ParticipantDeleteService } from 'src/app/services/participant-delete-service.service';
 import { DeleteParticipantSearchComponent } from './delete-participant-search.component';
 
@@ -32,6 +33,7 @@ const hearings = [
 let component: DeleteParticipantSearchComponent;
 let service: jasmine.SpyObj<ParticipantDeleteService>;
 let formBuilder: FormBuilder;
+const logger = jasmine.createSpyObj<Logger>('Logger', ['debug', 'info', 'error', 'warn']);
 
 describe('DeleteParticipantComponent user exists in query params', () => {
     const username = 'test@exists.com';
@@ -43,7 +45,7 @@ describe('DeleteParticipantComponent user exists in query params', () => {
     });
 
     beforeEach(fakeAsync(() => {
-        component = new DeleteParticipantSearchComponent(formBuilder, service, activatedRoute);
+        component = new DeleteParticipantSearchComponent(formBuilder, service, activatedRoute, logger);
         service.getHearingsForUsername.and.returnValue(Promise.resolve(hearings));
         component.ngOnInit();
         flushMicrotasks();
@@ -70,7 +72,7 @@ describe('DeleteParticipantComponent no user in query params', () => {
     });
 
     beforeEach(() => {
-        component = new DeleteParticipantSearchComponent(formBuilder, service, activatedRoute);
+        component = new DeleteParticipantSearchComponent(formBuilder, service, activatedRoute, logger);
         service.getHearingsForUsername.and.returnValue(Promise.resolve(hearings));
         component.ngOnInit();
     });

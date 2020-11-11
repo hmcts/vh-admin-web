@@ -155,7 +155,7 @@ let loggerSpy: jasmine.SpyObj<Logger>;
 
 const configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettings']);
 
-loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error']);
+loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
 participantServiceSpy = jasmine.createSpyObj<ParticipantService>('ParticipantService', [
     'checkDuplication',
     'removeParticipant',
@@ -195,7 +195,7 @@ describe('AddParticipantComponent', () => {
             );
 
             component.searchEmail = new SearchEmailComponent(searchService, configServiceSpy, loggerSpy);
-            component.participantsListComponent = new ParticipantsListComponent(bookingServiceSpy, routerSpy);
+            component.participantsListComponent = new ParticipantsListComponent(bookingServiceSpy, routerSpy, loggerSpy);
 
             component.ngOnInit();
 
@@ -217,18 +217,15 @@ describe('AddParticipantComponent', () => {
         expect(component.buttonAction).toBe('Next');
         expect(videoHearingsServiceSpy.getCurrentRequest).toHaveBeenCalled();
     });
-    it(
-        'should set case role list, hearing role list and title list',
-        fakeAsync(() => {
-            component.ngOnInit();
-            component.ngAfterViewInit();
-            tick(600);
-            expect(component.roleList).toBeTruthy();
-            expect(component.roleList.length).toBe(2);
-            expect(component.titleList).toBeTruthy();
-            expect(component.titleList.length).toBe(2);
-        })
-    );
+    it('should set case role list, hearing role list and title list', fakeAsync(() => {
+        component.ngOnInit();
+        component.ngAfterViewInit();
+        tick(600);
+        expect(component.roleList).toBeTruthy();
+        expect(component.roleList.length).toBe(2);
+        expect(component.titleList).toBeTruthy();
+        expect(component.titleList.length).toBe(2);
+    }));
 
     it('considers the email valid if the field is not displayed', () => {
         component.searchEmail = null;
@@ -247,20 +244,17 @@ describe('AddParticipantComponent', () => {
         expect(component.validEmail()).toBe(false);
     });
 
-    it(
-        'should set initial values for fields',
-        fakeAsync(() => {
-            component.ngOnInit();
-            tick(500);
-            expect(role.value).toBe(Constants.PleaseSelect);
-            expect(party.value).toBe(Constants.PleaseSelect);
-            expect(firstName.value).toBe('');
-            expect(lastName.value).toBe('');
-            expect(phone.value).toBe('');
-            expect(title.value).toBe(Constants.PleaseSelect);
-            expect(companyName.value).toBe('');
-        })
-    );
+    it('should set initial values for fields', fakeAsync(() => {
+        component.ngOnInit();
+        tick(500);
+        expect(role.value).toBe(Constants.PleaseSelect);
+        expect(party.value).toBe(Constants.PleaseSelect);
+        expect(firstName.value).toBe('');
+        expect(lastName.value).toBe('');
+        expect(phone.value).toBe('');
+        expect(title.value).toBe(Constants.PleaseSelect);
+        expect(companyName.value).toBe('');
+    }));
     it('should set validation to false when form is empty', () => {
         expect(component.form.valid).toBeFalsy();
     });
@@ -591,27 +585,24 @@ describe('AddParticipantComponent edit mode', () => {
         expect(bookingServiceSpy.resetEditMode).toHaveBeenCalled();
     });
 
-    it(
-        'should set edit mode and populate participant data',
-        fakeAsync(() => {
-            fixture.detectChanges();
-            tick(1000);
-            fixture.detectChanges();
-            fixture.whenStable().then(() => {
-                expect(videoHearingsServiceSpy.getCurrentRequest).toHaveBeenCalled();
-                expect(component.hearing).toBeTruthy();
-                expect(component.existingParticipant).toBeTruthy();
-                expect(videoHearingsServiceSpy.getParticipantRoles).toHaveBeenCalled();
-                expect(component.showDetails).toBeTruthy();
-                expect(component.selectedParticipantEmail).toBe('test3@test.com');
-                expect(component.displayNextButton).toBeTruthy();
-                expect(component.displayClearButton).toBeFalsy();
-                expect(component.displayAddButton).toBeFalsy();
-                expect(component.displayUpdateButton).toBeFalsy();
-            });
-            fixture.detectChanges();
-        })
-    );
+    it('should set edit mode and populate participant data', fakeAsync(() => {
+        fixture.detectChanges();
+        tick(1000);
+        fixture.detectChanges();
+        fixture.whenStable().then(() => {
+            expect(videoHearingsServiceSpy.getCurrentRequest).toHaveBeenCalled();
+            expect(component.hearing).toBeTruthy();
+            expect(component.existingParticipant).toBeTruthy();
+            expect(videoHearingsServiceSpy.getParticipantRoles).toHaveBeenCalled();
+            expect(component.showDetails).toBeTruthy();
+            expect(component.selectedParticipantEmail).toBe('test3@test.com');
+            expect(component.displayNextButton).toBeTruthy();
+            expect(component.displayClearButton).toBeFalsy();
+            expect(component.displayAddButton).toBeFalsy();
+            expect(component.displayUpdateButton).toBeFalsy();
+        });
+        fixture.detectChanges();
+    }));
 
     it('should update participant and clear form', () => {
         component.showDetails = true;
@@ -781,7 +772,8 @@ describe('AddParticipantComponent edit mode no participants added', () => {
             );
             component.participantsListComponent = new ParticipantsListComponent(
                 bookingServiceSpy,
-                jasmine.createSpyObj<Router>(['navigate'])
+                jasmine.createSpyObj<Router>(['navigate']),
+                loggerSpy
             );
             component.editMode = true;
             component.ngOnInit();
@@ -796,22 +788,19 @@ describe('AddParticipantComponent edit mode no participants added', () => {
             companyName = component.form.controls['companyName'];
         })
     );
-    it(
-        'should show button add participant',
-        fakeAsync(() => {
-            component.ngAfterContentInit();
-            component.ngAfterViewInit();
-            tick(600);
-            expect(component.editMode).toBeTruthy();
-            expect(bookingServiceSpy.getParticipantEmail).toHaveBeenCalled();
-            expect(component.selectedParticipantEmail).toBe('');
-            expect(component.showDetails).toBeFalsy();
-            expect(component.displayNextButton).toBeFalsy();
-            expect(component.displayClearButton).toBeTruthy();
-            expect(component.displayAddButton).toBeTruthy();
-            expect(component.displayUpdateButton).toBeFalsy();
-        })
-    );
+    it('should show button add participant', fakeAsync(() => {
+        component.ngAfterContentInit();
+        component.ngAfterViewInit();
+        tick(600);
+        expect(component.editMode).toBeTruthy();
+        expect(bookingServiceSpy.getParticipantEmail).toHaveBeenCalled();
+        expect(component.selectedParticipantEmail).toBe('');
+        expect(component.showDetails).toBeFalsy();
+        expect(component.displayNextButton).toBeFalsy();
+        expect(component.displayClearButton).toBeTruthy();
+        expect(component.displayAddButton).toBeTruthy();
+        expect(component.displayUpdateButton).toBeFalsy();
+    }));
 
     it(
         'should recognize a participantList',
@@ -822,48 +811,39 @@ describe('AddParticipantComponent edit mode no participants added', () => {
             expect(partList).toBeDefined();
         })
     );
-    it(
-        'should show all fields if the participant selected for edit',
-        fakeAsync(() => {
-            component.ngAfterContentInit();
-            component.ngAfterViewInit();
-            tick(600);
-            const partList = component.participantsListComponent;
-            partList.editParticipant('test2@test.com');
-            partList.selectedParticipant.emit();
-            tick(600);
+    it('should show all fields if the participant selected for edit', fakeAsync(() => {
+        component.ngAfterContentInit();
+        component.ngAfterViewInit();
+        tick(600);
+        const partList = component.participantsListComponent;
+        partList.editParticipant('test2@test.com');
+        partList.selectedParticipant.emit();
+        tick(600);
 
-            expect(component.showDetails).toBeTruthy();
-        })
-    );
-    it(
-        'should show confirmation to remove participant',
-        fakeAsync(() => {
-            component.ngAfterContentInit();
-            component.ngAfterViewInit();
-            tick(600);
-            const partList = component.participantsListComponent;
-            partList.removeParticipant('test2@test.com');
-            component.selectedParticipantEmail = 'test2@test.com';
-            partList.selectedParticipantToRemove.emit();
-            tick(600);
+        expect(component.showDetails).toBeTruthy();
+    }));
+    it('should show confirmation to remove participant', fakeAsync(() => {
+        component.ngAfterContentInit();
+        component.ngAfterViewInit();
+        tick(600);
+        const partList = component.participantsListComponent;
+        partList.removeParticipant('test2@test.com');
+        component.selectedParticipantEmail = 'test2@test.com';
+        partList.selectedParticipantToRemove.emit();
+        tick(600);
 
-            expect(component.showConfirmationRemoveParticipant).toBeTruthy();
-        })
-    );
-    it(
-        'should display add button if participant has no email set',
-        fakeAsync(() => {
-            component.ngAfterContentInit();
-            component.ngAfterViewInit();
-            component.selectedParticipantEmail = '';
-            component.ngOnInit();
-            tick(600);
+        expect(component.showConfirmationRemoveParticipant).toBeTruthy();
+    }));
+    it('should display add button if participant has no email set', fakeAsync(() => {
+        component.ngAfterContentInit();
+        component.ngAfterViewInit();
+        component.selectedParticipantEmail = '';
+        component.ngOnInit();
+        tick(600);
 
-            expect(component.showDetails).toBeFalsy();
-            expect(component.displayAddButton).toBeTruthy();
-        })
-    );
+        expect(component.showDetails).toBeFalsy();
+        expect(component.displayAddButton).toBeTruthy();
+    }));
     it('should set existingParticipant to false', () => {
         participant.id = '';
         component.participantDetails = participant;
@@ -972,7 +952,11 @@ describe('AddParticipantComponent set representer', () => {
     });
     it('should set email of existing participant after initialize content of the component', () => {
         component.editMode = true;
-        component.searchEmail = new SearchEmailComponent(jasmine.createSpyObj<SearchService>(['search']), configServiceSpy, loggerSpy);
+        component.searchEmail = new SearchEmailComponent(
+            jasmine.createSpyObj<SearchService>(['search']),
+            configServiceSpy,
+            loggerSpy
+        );
         component.participantDetails = participants[0];
         component.ngAfterContentInit();
         expect(component.searchEmail.email).toBeTruthy();

@@ -4,6 +4,7 @@ import { HearingAudioSearchModel } from '../common/model/hearing-audio-search-mo
 import { CvpAudioSearchModel } from '../common/model/cvp-audio-search-model';
 import { AudioLinkService } from '../services/audio-link-service';
 import { CvpForAudioFileResponse } from '../services/clients/api-client';
+import { Logger } from '../services/logger';
 
 @Component({
     selector: 'app-get-audio-file',
@@ -11,6 +12,7 @@ import { CvpForAudioFileResponse } from '../services/clients/api-client';
     styleUrls: ['./get-audio-file.component.scss']
 })
 export class GetAudioFileComponent implements OnInit {
+    private readonly loggerPrefix = '[GetAudioFile] -';
     form: FormGroup;
     hasSearched: boolean;
     hasCvpSearched: boolean;
@@ -18,12 +20,13 @@ export class GetAudioFileComponent implements OnInit {
     cvpResults: CvpAudioSearchModel[] = [];
     today = new Date();
 
-    constructor(private fb: FormBuilder, private audioLinkService: AudioLinkService) {
+    constructor(private fb: FormBuilder, private audioLinkService: AudioLinkService, private logger: Logger) {
         this.hasSearched = false;
         this.hasCvpSearched = false;
     }
 
     async ngOnInit(): Promise<void> {
+        this.logger.debug(`${this.loggerPrefix} Landed on get audio file`);
         const hearingDateParsed = null;
 
         this.form = this.fb.group({
@@ -74,8 +77,12 @@ export class GetAudioFileComponent implements OnInit {
     }
 
     get cvpRequestInvalid() {
-        return this.cloudroomName.invalid || this.hearingDate.invalid || this.hearingDateInvalid ||
-            (this.cloudroomName.value.length === 0 && this.caseReference.value.length === 0);
+        return (
+            this.cloudroomName.invalid ||
+            this.hearingDate.invalid ||
+            this.hearingDateInvalid ||
+            (this.cloudroomName.value.length === 0 && this.caseReference.value.length === 0)
+        );
     }
 
     get cloudroomNameInvalid() {
@@ -83,6 +90,7 @@ export class GetAudioFileComponent implements OnInit {
     }
 
     searchChoiceClick() {
+        this.logger.debug(`${this.loggerPrefix} Resetting form`);
         this.hasCvpSearched = false;
         this.hasSearched = false;
         this.caseReference.setValue('');
@@ -104,6 +112,7 @@ export class GetAudioFileComponent implements OnInit {
     }
 
     async search() {
+        this.logger.debug(`${this.loggerPrefix} Attempting to search for audio recording`);
         if (this.vhSearchCriteriaSet) {
             this.hasSearched = false;
 
@@ -126,12 +135,14 @@ export class GetAudioFileComponent implements OnInit {
     }
 
     async getResults(caseNumber: string, date?: Date): Promise<HearingAudioSearchModel[]> {
+        this.logger.debug(`${this.loggerPrefix} Getting results by case number/date`, { caseNumber, date });
         const response = await this.audioLinkService.searchForHearingsByCaseNumberOrDate(caseNumber, date);
 
         if (response === null) {
+            this.logger.warn(`${this.loggerPrefix} No results`, { caseNumber, date });
             return [];
         }
-
+        this.logger.debug(`${this.loggerPrefix} Mapping results`, { caseNumber, date });
         return response.map(x => {
             return new HearingAudioSearchModel(x);
         });
@@ -141,15 +152,30 @@ export class GetAudioFileComponent implements OnInit {
         let response: CvpForAudioFileResponse[];
 
         if (this.cloudroomName.value && this.hearingDate.value && this.caseReference.value) {
-            response = await this.audioLinkService.getCvpAudioRecordingsAll(this.cloudroomName.value,
+            this.logger.debug(`${this.loggerPrefix} Getting all CVP audio recordings`, {
+                cloudRoom: this.cloudroomName.value,
+                date: this.hearingDate.value,
+                caseReference: this.caseReference.value
+            });
+            response = await this.audioLinkService.getCvpAudioRecordingsAll(
+                this.cloudroomName.value,
                 this.hearingDate.value,
-                this.caseReference.value);
+                this.caseReference.value
+            );
         } else if (this.cloudroomName.value && this.hearingDate.value) {
+            this.logger.debug(`${this.loggerPrefix} Getting CVP audio recordings by cloud room`, {
+                cloudRoom: this.cloudroomName.value,
+                date: this.hearingDate.value
+            });
             response = await this.audioLinkService.getCvpAudioRecordingsByCloudRoom(this.cloudroomName.value, this.hearingDate.value);
         } else {
+            this.logger.debug(`${this.loggerPrefix} Getting CVP audio recordings by date and case number`, {
+                date: this.hearingDate.value,
+                caseReference: this.caseReference.value
+            });
             response = await this.audioLinkService.getCvpAudioRecordingsByDate(this.hearingDate.value, this.caseReference.value);
         }
 
-        return response === null ? [] : response.map((x) => new CvpAudioSearchModel(x));
+        return response === null ? [] : response.map(x => new CvpAudioSearchModel(x));
     }
 }

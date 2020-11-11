@@ -23,7 +23,7 @@ describe('LoginComponent', () => {
                 }
             };
 
-            logger = jasmine.createSpyObj<LoggerService>(['error']);
+            logger = jasmine.createSpyObj<LoggerService>(['error', 'debug']);
             adalService = jasmine.createSpyObj<AdalService>(['setAuthenticated', 'login', 'userInfo']);
             router = jasmine.createSpyObj<Router>(['navigate', 'navigateByUrl']);
             returnUrl = jasmine.createSpyObj<ReturnUrlService>(['popUrl', 'setUrl']);
