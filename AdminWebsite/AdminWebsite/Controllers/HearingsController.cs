@@ -69,6 +69,7 @@ namespace AdminWebsite.Controllers
         public async Task<ActionResult<HearingDetailsResponse>> Post([FromBody] BookNewHearingRequest request)
         {
             var usernameAdIdDict = new Dictionary<string, string>();
+            HearingDetailsResponse hearingDetailsResponse = null;
             try
             {
                 var nonJudgeParticipants = request.Participants.Where(p => p.Case_role_name != "Judge").ToList();
@@ -83,7 +84,7 @@ namespace AdminWebsite.Controllers
                 }
 
                 request.Created_by = _userIdentity.GetUserIdentityName();
-                var hearingDetailsResponse = await _bookingsApiClient.BookNewHearingAsync(request);
+                hearingDetailsResponse = await _bookingsApiClient.BookNewHearingAsync(request);
                 await AssignParticipantToCorrectGroups(hearingDetailsResponse, usernameAdIdDict);
                 return Created("", hearingDetailsResponse);
             }
@@ -95,6 +96,15 @@ namespace AdminWebsite.Controllers
                 }
 
                 throw;
+            }
+            catch(Exception uex)
+            {
+                if(hearingDetailsResponse != null && hearingDetailsResponse.Id != null && hearingDetailsResponse.Id != Guid.Empty)
+                {
+                    return Created("", hearingDetailsResponse);
+                }
+
+                return BadRequest(uex.Message);
             }
         }
 

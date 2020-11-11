@@ -212,6 +212,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             result.Result.Should().BeOfType<BadRequestObjectResult>();
         }
 
+
+
         [Test]
         public async Task Should_pass_current_user_as_created_by_to_service()
         {
@@ -324,6 +326,75 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var response = await _controller.CloneHearing(Guid.NewGuid(), request);
 
             response.Should().BeOfType<BadRequestObjectResult>();
+        }
+
+        [Test]
+        public async Task Should_catch_exception_and_check_if_hearing_is_created_returns_created_result()
+        {
+            var hearing = new BookNewHearingRequest
+            {
+                Participants = new List<BookingsAPI.Client.ParticipantRequest>
+                {
+                     new BookingsAPI.Client.ParticipantRequest
+                    {
+                        Case_role_name = "CaseRole", Contact_email = "contact1@email.com",
+                        Hearing_role_name = "HearingRole", Display_name = "display name1",
+                        First_name = "fname", Middle_names = "", Last_name = "lname1", Username = "username1@hmcts.net",
+                        Organisation_name = "", Representee = "", Telephone_number = ""
+                    }
+                }
+            };
+
+            var pat1 = Builder<ParticipantResponse>.CreateNew()
+              .With(x => x.Id = Guid.NewGuid())
+              .With(x => x.User_role_name = "Representative")
+              .With(x => x.Username = "username1@hmcts.net")
+              .Build();
+
+            var judge = Builder<ParticipantResponse>.CreateNew()
+            .With(x => x.Id = Guid.NewGuid())
+            .With(x => x.User_role_name = "Judge").Build();
+
+            var hearingDetailsResponse = Builder<HearingDetailsResponse>.CreateNew()
+                .With(x => x.Participants = new List<ParticipantResponse> { pat1, judge }).Build();
+
+            _bookingsApiClient.Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
+                .ReturnsAsync(hearingDetailsResponse);
+
+            _userAccountService.Setup(x => x.AssignParticipantToGroup(It.IsAny<string>(), It.IsAny<string>()))
+                .Throws(new Exception());
+
+            var result = await _controller.Post(hearing);
+            result.Result.Should().BeOfType<CreatedResult>();
+        }
+
+        [Test]
+        public async Task Should_catch_exception_and_check_if_hearing_is_not_created_returns_bad_result()
+        {
+            var hearing = new BookNewHearingRequest
+            {
+                Participants = new List<BookingsAPI.Client.ParticipantRequest>
+                {
+                     new BookingsAPI.Client.ParticipantRequest
+                    {
+                        Case_role_name = "CaseRole", Contact_email = "contact1@email.com",
+                        Hearing_role_name = "HearingRole", Display_name = "display name1",
+                        First_name = "fname", Middle_names = "", Last_name = "lname1", Username = "username1@hmcts.net",
+                        Organisation_name = "", Representee = "", Telephone_number = ""
+                    }
+                }
+            };
+
+            var hearingDetailsResponse = new HearingDetailsResponse();
+
+            _bookingsApiClient.Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
+                .ReturnsAsync(hearingDetailsResponse);
+
+            _userAccountService.Setup(x => x.AssignParticipantToGroup(It.IsAny<string>(), It.IsAny<string>()))
+                .Throws(new Exception());
+
+            var result = await _controller.Post(hearing);
+            result.Result.Should().BeOfType<BadRequestObjectResult>();
         }
 
         private MultiHearingRequest GetMultiHearingRequest()
