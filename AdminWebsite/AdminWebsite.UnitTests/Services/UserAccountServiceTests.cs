@@ -135,7 +135,7 @@ namespace AdminWebsite.UnitTests.Services
         }
 
         [Test]
-        public async Task Should_throw_exception_on_update_password()
+        public void Should_throw_exception_on_update_password()
         {
             const string UserName = "existingUser";
 

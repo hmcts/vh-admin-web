@@ -59,10 +59,11 @@ namespace AdminWebsite.Services
         private readonly ILogger<UserAccountService> _logger;
 
         /// <summary>
-        /// Create the service
+        /// User account management service
         /// </summary>
         /// <param name="userApiClient"></param>
         /// <param name="bookingsApiClient"></param>
+        /// <param name="logger"></param>
         public UserAccountService(IUserApiClient userApiClient, IBookingsApiClient bookingsApiClient, ILogger<UserAccountService> logger)
         {
             _userApiClient = userApiClient;
