@@ -5,7 +5,7 @@ namespace AdminWebsite.AcceptanceTests.Pages
     public static class BookingsListPage
     {
         public static By Rows = By.XPath("//div[contains(@class,'vh-a')]");
-        public static By Row(string caseNumber) => By.XPath($"//div[contains(text(),'{caseNumber}')]/parent::div/parent::div");
+        public static By Row(string text) => By.XPath($"//div[contains(text(),'{text}')]/parent::div/parent::div");
         public static By RowWithId(string id) => By.Id(id);
         public static By ScheduledTime(string id) => By.XPath($"//div[@id='{id}']//div[contains(text(),':')]");
         public static By ScheduledDuration(string id) => By.XPath($"//div[@id='{id}']//div[contains(text(),'listed for')]");

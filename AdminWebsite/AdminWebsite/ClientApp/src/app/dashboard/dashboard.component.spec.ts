@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { of } from 'rxjs';
 import { UserProfileResponse } from '../services/clients/api-client';
+import { Logger } from '../services/logger';
 import { UserIdentityService } from '../services/user-identity.service';
 import { DashboardComponent } from './dashboard.component';
 
@@ -9,13 +10,16 @@ describe('DashboardComponent', () => {
     let component: DashboardComponent;
     let fixture: ComponentFixture<DashboardComponent>;
     const userIdentitySpy = jasmine.createSpyObj<UserIdentityService>('UserIdentityService', ['getUserInformation']);
-
+    const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
     beforeEach(
         waitForAsync(() => {
             TestBed.configureTestingModule({
                 imports: [RouterTestingModule],
                 declarations: [DashboardComponent],
-                providers: [{ provide: UserIdentityService, useValue: userIdentitySpy }]
+                providers: [
+                    { provide: UserIdentityService, useValue: userIdentitySpy },
+                    { provide: Logger, useValue: loggerSpy }
+                ]
             }).compileComponents();
         })
     );

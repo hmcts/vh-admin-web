@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { AbstractControl } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 import { RouterTestingModule } from '@angular/router/testing';
+import { Logger } from 'src/app/services/logger';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { CancelBookingPopupComponent } from './cancel-booking-popup.component';
 
@@ -14,12 +15,14 @@ describe('CancelBookingPopupComponent', () => {
     let buttonKeep: ElementRef;
     let cancelReasonControl: AbstractControl;
     let cancelReasonDetailsControl: AbstractControl;
+    const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
 
     beforeEach(
         waitForAsync(() => {
             TestBed.configureTestingModule({
                 imports: [SharedModule, RouterTestingModule],
-                declarations: [CancelBookingPopupComponent]
+                declarations: [CancelBookingPopupComponent],
+                providers: [{ provide: Logger, useValue: loggerSpy }]
             }).compileComponents();
         })
     );
@@ -92,7 +95,6 @@ describe('CancelBookingPopupComponent', () => {
         expect(component.cancelBooking.emit).toHaveBeenCalledWith(select.value);
     });
     it('should emit event with selected reason from detail when "Other" is selected as cancel reason the cancel button is clicked', () => {
-        console.log(component);
         spyOn(component.cancelBooking, 'emit');
         const select: HTMLSelectElement = fixture.debugElement.query(By.css('#cancel-reason')).nativeElement;
         select.value = select.options[9].value;

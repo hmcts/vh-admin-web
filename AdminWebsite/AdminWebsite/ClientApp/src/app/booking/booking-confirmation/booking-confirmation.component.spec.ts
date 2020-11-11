@@ -80,7 +80,7 @@ describe('BookingConfirmationComponent', () => {
 
     beforeEach(
         waitForAsync(() => {
-            loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error']);
+            loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
             routerSpy = jasmine.createSpyObj<Router>('Router', ['navigate']);
             videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
                 'getHearingTypes',

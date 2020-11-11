@@ -208,7 +208,7 @@ describe('BookingDetailsComponent', () => {
     ]);
     bookingPersistServiceSpy = jasmine.createSpyObj('BookingPersistService', ['selectedHearingId']);
     userIdentityServiceSpy = jasmine.createSpyObj('UserIdentityService', ['getUserInformation']);
-    const loggerSpy: jasmine.SpyObj<Logger> = jasmine.createSpyObj('Logger', ['error', 'event']);
+    const loggerSpy: jasmine.SpyObj<Logger> = jasmine.createSpyObj('Logger', ['error', 'event', 'debug', 'info']);
     returnUrlServiceSpy = jasmine.createSpyObj<ReturnUrlService>('ReturnUrlService', ['popUrl', 'setUrl']);
 
     beforeEach(
@@ -249,26 +249,20 @@ describe('BookingDetailsComponent', () => {
         })
     );
 
-    it(
-        'should create component',
-        fakeAsync(() => {
-            expect(component).toBeTruthy();
-        })
-    );
+    it('should create component', fakeAsync(() => {
+        expect(component).toBeTruthy();
+    }));
 
-    it(
-        'should get hearings details',
-        fakeAsync(() => {
-            component.ngOnInit();
-            expect(videoHearingServiceSpy.getHearingById).toHaveBeenCalled();
-            expect(component.hearing).toBeTruthy();
-            expect(component.hearing.HearingId).toBe('44');
-            expect(component.hearing.Duration).toBe(120);
-            expect(component.hearing.HearingCaseNumber).toBe('XX3456234565');
-            expect(component.hearing.QuestionnaireNotRequired).toBeTruthy();
-            expect(component.hearing.AudioRecordingRequired).toBeTruthy();
-        })
-    );
+    it('should get hearings details', fakeAsync(() => {
+        component.ngOnInit();
+        expect(videoHearingServiceSpy.getHearingById).toHaveBeenCalled();
+        expect(component.hearing).toBeTruthy();
+        expect(component.hearing.HearingId).toBe('44');
+        expect(component.hearing.Duration).toBe(120);
+        expect(component.hearing.HearingCaseNumber).toBe('XX3456234565');
+        expect(component.hearing.QuestionnaireNotRequired).toBeTruthy();
+        expect(component.hearing.AudioRecordingRequired).toBeTruthy();
+    }));
 
     it('should get hearings details and map to HearingModel', () => {
         component.ngOnInit();
@@ -327,24 +321,18 @@ describe('BookingDetailsComponent', () => {
         component.keepBooking();
         expect(component.showCancelBooking).toBeFalsy();
     });
-    it(
-        'should set confirmation button not visible if hearing start time less than 30 min',
-        fakeAsync(() => {
-            component.booking.scheduled_date_time = new Date(Date.now());
-            component.timeSubscription = new Observable<any>().subscribe();
-            component.setTimeObserver();
-            expect(component.isConfirmationTimeValid).toBeFalsy();
-        })
-    );
-    it(
-        'should not reset confirmation button if current booking is not set',
-        fakeAsync(() => {
-            component.booking = undefined;
-            component.isConfirmationTimeValid = true;
-            component.setTimeObserver();
-            expect(component.isConfirmationTimeValid).toBeTruthy();
-        })
-    );
+    it('should set confirmation button not visible if hearing start time less than 30 min', fakeAsync(() => {
+        component.booking.scheduled_date_time = new Date(Date.now());
+        component.timeSubscription = new Observable<any>().subscribe();
+        component.setTimeObserver();
+        expect(component.isConfirmationTimeValid).toBeFalsy();
+    }));
+    it('should not reset confirmation button if current booking is not set', fakeAsync(() => {
+        component.booking = undefined;
+        component.isConfirmationTimeValid = true;
+        component.setTimeObserver();
+        expect(component.isConfirmationTimeValid).toBeTruthy();
+    }));
     it('should confirm booking', () => {
         component.isVhOfficerAdmin = true;
         component.confirmHearing();
@@ -421,33 +409,24 @@ describe('BookingDetailsComponent', () => {
         component.errorHandler('error', UpdateBookingStatus.Created);
         expect(component.showConfirming).toBeFalsy();
     });
-    it(
-        'should set subscription to check hearing start time',
-        fakeAsync(() => {
-            component.isConfirmationTimeValid = true;
-            component.$timeObserver = new Observable<any>();
-            component.setSubscribers();
-            expect(component.$timeObserver).toBeTruthy();
-        })
-    );
-    it(
-        'should on destroy unsubscribe the subscriptions',
-        fakeAsync(() => {
-            component.ngOnDestroy();
-            expect(component.timeSubscription).toBeFalsy();
-            component.$subscriptions.forEach(s => expect(s.closed).toBeTruthy());
-        })
-    );
-    it(
-        'should set confirmation button visible if hearing start time more than 30 min',
-        fakeAsync(() => {
-            let current = new Date();
-            current.setMinutes(current.getMinutes() + 31);
-            current = new Date(current);
-            component.booking.scheduled_date_time = current;
-            component.setTimeObserver();
-            tick();
-            expect(component.isConfirmationTimeValid).toBeTruthy();
-        })
-    );
+    it('should set subscription to check hearing start time', fakeAsync(() => {
+        component.isConfirmationTimeValid = true;
+        component.$timeObserver = new Observable<any>();
+        component.setSubscribers();
+        expect(component.$timeObserver).toBeTruthy();
+    }));
+    it('should on destroy unsubscribe the subscriptions', fakeAsync(() => {
+        component.ngOnDestroy();
+        expect(component.timeSubscription).toBeFalsy();
+        component.$subscriptions.forEach(s => expect(s.closed).toBeTruthy());
+    }));
+    it('should set confirmation button visible if hearing start time more than 30 min', fakeAsync(() => {
+        let current = new Date();
+        current.setMinutes(current.getMinutes() + 31);
+        current = new Date(current);
+        component.booking.scheduled_date_time = current;
+        component.setTimeObserver();
+        tick();
+        expect(component.isConfirmationTimeValid).toBeTruthy();
+    }));
 });

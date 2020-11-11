@@ -1,25 +1,23 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
-import { VideoHearingsService } from '../../services/video-hearings.service';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { interval, Subscription } from 'rxjs';
+import { ReturnUrlService } from 'src/app/services/return-url.service';
 import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
+import { HearingModel } from '../../common/model/hearing.model';
 import { ParticipantDetailsModel } from '../../common/model/participant-details.model';
 import { BookingDetailsService } from '../../services/booking-details.service';
 import { BookingService } from '../../services/booking.service';
+import { BookingPersistService } from '../../services/bookings-persist.service';
 import {
     HearingDetailsResponse,
-    UpdateBookingStatusRequest,
     UpdateBookingStatus,
+    UpdateBookingStatusRequest,
     UserProfileResponse
 } from '../../services/clients/api-client';
-import { UserIdentityService } from '../../services/user-identity.service';
-import { HearingModel } from '../../common/model/hearing.model';
-import { PageUrls } from '../../shared/page-url.constants';
-import { BookingPersistService } from '../../services/bookings-persist.service';
-import { interval, Subscription } from 'rxjs';
 import { Logger } from '../../services/logger';
-import { Location } from '@angular/common';
-import { filter } from 'rxjs/operators';
-import { ReturnUrlService } from 'src/app/services/return-url.service';
+import { UserIdentityService } from '../../services/user-identity.service';
+import { VideoHearingsService } from '../../services/video-hearings.service';
+import { PageUrls } from '../../shared/page-url.constants';
 
 @Component({
     selector: 'app-booking-details',
@@ -27,6 +25,7 @@ import { ReturnUrlService } from 'src/app/services/return-url.service';
     styleUrls: ['booking-details.component.css']
 })
 export class BookingDetailsComponent implements OnInit, OnDestroy {
+    private readonly loggerPrefix = '[BookingDetails] -';
     hearing: BookingsDetailsModel;
     booking: HearingModel;
     participants: Array<ParticipantDetailsModel> = [];
@@ -121,9 +120,10 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
     async navigateBack() {
         const returnUrl = this.returnUrlService.popUrl();
         if (returnUrl) {
-            console.log(`navigating to ${returnUrl}`);
+            this.logger.debug(`${this.loggerPrefix} navigating back to ${returnUrl}`);
             await this.router.navigateByUrl(returnUrl);
         } else {
+            this.logger.debug(`${this.loggerPrefix} navigating back to booking list`);
             await this.router.navigateByUrl(PageUrls.BookingsList);
         }
     }
@@ -174,7 +174,8 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
                     }
 
                     this.showConfirming = false;
-                    this.logger.event('Hearing status changed', { hearingId: this.hearingId, status: status });
+                    this.logger.info(`${this.loggerPrefix} Hearing status changed`, { hearingId: this.hearingId, status: status });
+                    this.logger.event(`${this.loggerPrefix} Hearing status changed`, { hearingId: this.hearingId, status: status });
                 },
                 error => {
                     this.errorHandler(error, status);
@@ -195,7 +196,7 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
                     this.mapHearing(newData);
                 },
                 error => {
-                    this.logger.error(`Error to get hearing Id: ${this.hearingId}`, error);
+                    this.logger.error(`${this.loggerPrefix} Error to get hearing Id: ${this.hearingId}`, error);
                 }
             )
         );
@@ -209,7 +210,7 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
         this.showConfirming = false;
         this.showConfirmingFailed = true;
 
-        this.logger.error('Error update hearing status', error);
+        this.logger.error(`${this.loggerPrefix} Error update hearing status`, error);
     }
 
     persistStatus(status: UpdateBookingStatus) {

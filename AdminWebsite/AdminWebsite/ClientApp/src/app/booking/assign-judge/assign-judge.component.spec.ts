@@ -66,7 +66,7 @@ describe('AssignJudgeComponent', () => {
     beforeEach(
         waitForAsync(() => {
             const newHearing = initHearingRequest();
-            loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error']);
+            loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
 
             videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
                 'getHearingTypes',

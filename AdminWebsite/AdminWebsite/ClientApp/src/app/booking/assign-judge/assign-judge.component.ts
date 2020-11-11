@@ -1,19 +1,19 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { FormBuilder, Validators, FormControl } from '@angular/forms';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { JudgeResponse } from '../../services/clients/api-client';
+import { Subscription } from 'rxjs';
+import { JudgeDataService } from 'src/app/booking/services/judge-data.service';
+import { Constants } from 'src/app/common/constants';
+import { VideoHearingsService } from 'src/app/services/video-hearings.service';
+import { PageUrls } from 'src/app/shared/page-url.constants';
+import { SanitizeInputText } from '../../common/formatters/sanitize-input-text';
 import { HearingModel } from '../../common/model/hearing.model';
 import { ParticipantModel } from '../../common/model/participant.model';
-import { PageUrls } from 'src/app/shared/page-url.constants';
-import { VideoHearingsService } from 'src/app/services/video-hearings.service';
-import { Constants } from 'src/app/common/constants';
-import { JudgeDataService } from 'src/app/booking/services/judge-data.service';
 import { BookingService } from '../../services/booking.service';
-import { BookingBaseComponentDirective as BookingBaseComponent } from '../booking-base/booking-base.component';
+import { JudgeResponse } from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
-import { SanitizeInputText } from '../../common/formatters/sanitize-input-text';
-import { Subscription } from 'rxjs';
 import { RecordingGuardService } from '../../services/recording-guard.service';
+import { BookingBaseComponentDirective as BookingBaseComponent } from '../booking-base/booking-base.component';
 
 @Component({
     selector: 'app-assign-judge',
@@ -45,10 +45,10 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         protected hearingService: VideoHearingsService,
         private judgeService: JudgeDataService,
         protected bookingService: BookingService,
-        private logger: Logger,
+        protected logger: Logger,
         private recordingGuard: RecordingGuardService
     ) {
-        super(bookingService, router, hearingService);
+        super(bookingService, router, hearingService, logger);
     }
 
     static mapJudge(judge: ParticipantModel): JudgeResponse {
@@ -87,6 +87,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     }
 
     private checkForExistingRequest() {
+        this.logger.debug(`${this.loggerPrefix} Checking for existing hearing`);
         this.hearing = this.hearingService.getCurrentRequest();
     }
 
@@ -95,6 +96,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         if (!find_judge) {
             this.judge = new JudgeResponse({ email: this.constants.PleaseSelect, display_name: '' });
         } else {
+            this.logger.debug(`${this.loggerPrefix} Found judge in hearing. Populating existing selection.`);
             this.judge = AssignJudgeComponent.mapJudge(find_judge);
             this.canNavigate = true;
         }
@@ -201,25 +203,32 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     }
 
     saveJudge() {
+        this.logger.debug(`${this.loggerPrefix} Attempting to save judge.`);
         if (!this.judge.email || this.judge.email === this.constants.PleaseSelect) {
+            this.logger.warn(`${this.loggerPrefix} No judge selected. Email not found`);
             this.isJudgeSelected = false;
             return;
         }
         if (!this.judge.display_name) {
+            this.logger.warn(`${this.loggerPrefix} No judge selected. Display name not set.`);
             this.failedSubmission = true;
             return;
         }
 
         if (this.form.valid) {
+            this.logger.debug(`${this.loggerPrefix} Judge selection valid.`);
             this.failedSubmission = false;
             this.form.markAsPristine();
             this.hasSaved = true;
             this.hearing.audio_recording_required = this.audioChoice.value;
             this.changeDisplayName();
             this.hearingService.updateHearingRequest(this.hearing);
+            this.logger.debug(`${this.loggerPrefix} Updated hearing judge and recording selection`, { hearing: this.hearing });
             if (this.editMode) {
+                this.logger.debug(`${this.loggerPrefix} In edit mode. Returning to summary page.`);
                 this.router.navigate([PageUrls.Summary]);
             } else {
+                this.logger.debug(`${this.loggerPrefix} Navigating to add participants.`);
                 this.router.navigate([PageUrls.AddParticipants]);
             }
         } else {
@@ -228,23 +237,29 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     }
 
     confirmCancelBooking() {
+        this.logger.debug(`${this.loggerPrefix} Attempting to cancel booking.`);
         if (this.editMode) {
             if (this.form.dirty || this.form.touched) {
+                this.logger.debug(`${this.loggerPrefix} In edit mode. Changes found. Confirm if changes should be discarded.`);
                 this.attemptingDiscardChanges = true;
             } else {
+                this.logger.debug(`${this.loggerPrefix} In edit mode. No changes. Returning to summary.`);
                 this.router.navigate([PageUrls.Summary]);
             }
         } else {
+            this.logger.debug(`${this.loggerPrefix} New booking. Changes found. Confirm if changes should be discarded.`);
             this.attemptingCancellation = true;
         }
     }
 
     continueBooking() {
+        this.logger.debug(`${this.loggerPrefix} Rejected cancellation. Continuing with booking.`);
         this.attemptingCancellation = false;
         this.attemptingDiscardChanges = false;
     }
 
     cancelAssignJudge() {
+        this.logger.debug(`${this.loggerPrefix} Cancelling booking and returning to dashboard.`);
         this.attemptingCancellation = false;
         this.form.reset();
         this.hearingService.cancelRequest();
@@ -252,6 +267,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     }
 
     cancelChanges() {
+        this.logger.debug(`${this.loggerPrefix} Resetting changes. Returning to summary.`);
         this.attemptingDiscardChanges = false;
         this.form.reset();
         this.navigateToSummary();
@@ -265,10 +281,12 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         if (this.availableJudges) {
             return;
         }
+        this.logger.debug(`${this.loggerPrefix} Attempting to get list of judges`);
         this.$subscriptions.push(
             this.judgeService.getJudges().subscribe(
                 (data: JudgeResponse[]) => {
                     this.availableJudges = data.filter(x => x.first_name && x.last_name);
+                    this.logger.debug(`${this.loggerPrefix} Got list of judges`, { availableJudges: this.availableJudges.length });
                     const userResponse = new JudgeResponse();
                     userResponse.email = this.constants.PleaseSelect;
                     userResponse.display_name = '';
@@ -280,7 +298,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     }
 
     onErrorLoadJudges(error) {
-        this.logger.error('Error to get list of judges.', error);
+        this.logger.error(`${this.loggerPrefix} Error to get list of judges.`, error);
     }
 
     toggle() {

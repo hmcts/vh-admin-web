@@ -1,16 +1,18 @@
-import { CvpAudioFileSearchResultComponent } from './cvp-audio-file-search-result.component';
+import { fakeAsync, tick } from '@angular/core/testing';
+import { ClipboardService } from 'ngx-clipboard';
+import { Logger } from 'src/app/services/logger';
 import { CvpAudioSearchModel } from '../../common/model/cvp-audio-search-model';
 import { CvpForAudioFileResponse } from '../../services/clients/api-client';
-import { ClipboardService } from 'ngx-clipboard';
-import { fakeAsync, tick } from '@angular/core/testing';
+import { CvpAudioFileSearchResultComponent } from './cvp-audio-file-search-result.component';
 
 describe('CvpAudioFileSearchResultComponent', () => {
     let component: CvpAudioFileSearchResultComponent;
     let clipboardService: jasmine.SpyObj<ClipboardService>;
+    const logger = jasmine.createSpyObj<Logger>('Logger', ['debug']);
 
     beforeEach(() => {
         clipboardService = jasmine.createSpyObj<ClipboardService>('ClipboardService', ['copyFromContent']);
-        component = new CvpAudioFileSearchResultComponent(clipboardService);
+        component = new CvpAudioFileSearchResultComponent(clipboardService, logger);
     });
 
     it('should return has results as false', function () {

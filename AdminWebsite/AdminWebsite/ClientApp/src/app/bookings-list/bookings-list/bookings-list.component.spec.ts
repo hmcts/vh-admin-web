@@ -1,9 +1,10 @@
 import { HttpClientModule } from '@angular/common/http';
 import { Component, Directive, EventEmitter, Output } from '@angular/core';
-import { async, ComponentFixture, fakeAsync, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, waitForAsync } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { MomentModule } from 'ngx-moment';
 import { of } from 'rxjs';
+import { Logger } from 'src/app/services/logger';
 import { LongDatetimePipe } from '../../../app/shared/directives/date-time.pipe';
 import { BookingsDetailsModel, BookingsListModel } from '../../common/model/bookings-list.model';
 import { BookingsModel } from '../../common/model/bookings.model';
@@ -471,6 +472,7 @@ export class BookingPersistServiceSpy {
 }
 
 let routerSpy: jasmine.SpyObj<Router>;
+const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn', 'info']);
 
 describe('BookingsListComponent', () => {
     beforeEach(
@@ -493,7 +495,8 @@ describe('BookingsListComponent', () => {
                     { provide: BookingsListService, useValue: bookingsListServiceSpy },
                     { provide: Router, useValue: routerSpy },
                     { provide: VideoHearingsService, useValue: videoHearingServiceSpy },
-                    { provide: BookingPersistService, useClass: BookingPersistServiceSpy }
+                    { provide: BookingPersistService, useClass: BookingPersistServiceSpy },
+                    { provide: Logger, useValue: loggerSpy }
                 ]
             }).compileComponents();
 

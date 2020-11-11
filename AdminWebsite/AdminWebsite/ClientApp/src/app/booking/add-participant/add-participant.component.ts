@@ -1,23 +1,23 @@
-import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, AfterContentInit } from '@angular/core';
+import { AfterContentInit, AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
+import { PageUrls } from 'src/app/shared/page-url.constants';
 import { Constants } from '../../common/constants';
+import { SanitizeInputText } from '../../common/formatters/sanitize-input-text';
 import { IDropDownModel } from '../../common/model/drop-down.model';
 import { HearingModel } from '../../common/model/hearing.model';
 import { ParticipantModel } from '../../common/model/participant.model';
+import { PartyModel } from '../../common/model/party.model';
+import { BookingService } from '../../services/booking.service';
+import { CaseAndHearingRolesResponse } from '../../services/clients/api-client';
+import { Logger } from '../../services/logger';
 import { SearchService } from '../../services/search.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
-import { SearchEmailComponent } from '../search-email/search-email.component';
-import { ParticipantsListComponent } from '../participants-list/participants-list.component';
 import { BookingBaseComponentDirective as BookingBaseComponent } from '../booking-base/booking-base.component';
-import { BookingService } from '../../services/booking.service';
+import { ParticipantsListComponent } from '../participants-list/participants-list.component';
+import { SearchEmailComponent } from '../search-email/search-email.component';
 import { ParticipantService } from '../services/participant.service';
-import { CaseAndHearingRolesResponse } from '../../services/clients/api-client';
-import { PartyModel } from '../../common/model/party.model';
-import { Logger } from '../../services/logger';
-import { SanitizeInputText } from '../../common/formatters/sanitize-input-text';
-import { PageUrls } from 'src/app/shared/page-url.constants';
 
 @Component({
     selector: 'app-add-participant',
@@ -83,9 +83,9 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         private participantService: ParticipantService,
         protected router: Router,
         protected bookingService: BookingService,
-        private logger: Logger
+        protected logger: Logger
     ) {
-        super(bookingService, router, videoHearingService);
+        super(bookingService, router, videoHearingService, logger);
         this.titleList = searchService.TitleList;
     }
 
@@ -120,6 +120,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
         setTimeout(() => {
             const self = this;
+            this.logger.debug(`${this.loggerPrefix} Getting participant roles.`);
             this.videoHearingService
                 .getParticipantRoles(this.hearing.case_type)
                 .then((data: CaseAndHearingRolesResponse[]) => {
@@ -143,7 +144,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
                         self.repopulateParticipantToEdit();
                     }
                 })
-                .catch(error => this.logger.error('Error to get participant case and hearing roles.', error));
+                .catch(error => this.logger.error(`${this.loggerPrefix} Error to get participant case and hearing roles.`, error));
         }, 500);
     }
 
@@ -245,6 +246,10 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     private repopulateParticipantToEdit() {
         const selectedParticipant = this.hearing.participants.find(s => s.email === this.selectedParticipantEmail);
         if (selectedParticipant) {
+            this.logger.debug(`${this.loggerPrefix} Repopulating participant to edit.`, {
+                hearing: this.hearing.hearing_id,
+                participant: selectedParticipant.id
+            });
             this.getParticipant(selectedParticipant);
         }
     }
@@ -252,8 +257,10 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     private checkForExistingRequest() {
         this.hearing = this.videoHearingService.getCurrentRequest();
         if (this.hearing) {
+            this.logger.debug(`${this.loggerPrefix} Found existing hearing.`, { hearing: this.hearing.hearing_id });
             const anyParticipants = this.hearing.participants.find(x => !x.is_judge);
             if (this.editMode) {
+                this.logger.debug(`${this.loggerPrefix} Mapping existing participants.`, { hearing: this.hearing.hearing_id });
                 this.bookingHasParticipants = anyParticipants && !anyParticipants.is_judge;
             }
         }
@@ -337,6 +344,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     }
 
     notFoundParticipant() {
+        this.logger.warn(`${this.loggerPrefix} Participant not found.`);
         this.displayErrorNoParticipants = false;
         this.displayClear();
     }
@@ -479,12 +487,26 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
             if (!this.participantService.checkDuplication(newParticipant.email, this.hearing.participants)) {
                 this.hearing.participants.push(newParticipant);
                 this.videoHearingService.updateHearingRequest(this.hearing);
+                this.logger.debug(`${this.loggerPrefix} Saved participant to booking. Clearing form.`, {
+                    hearing: this.hearing?.hearing_id,
+                    participant: newParticipant.id,
+                    existingPerson: newParticipant.is_exist_person,
+                    email: newParticipant.email,
+                    username: newParticipant.username
+                });
                 this.participantDetails = null;
                 this.clearForm();
                 this.displayNext();
                 this.form.markAsPristine();
                 this.showDetails = false;
             } else {
+                this.logger.warn(`${this.loggerPrefix} Cannot save existing participant to booking`, {
+                    hearing: this.hearing?.hearing_id,
+                    participant: newParticipant.id,
+                    existingPerson: newParticipant.is_exist_person,
+                    email: newParticipant.email,
+                    username: newParticipant.username
+                });
                 this.showConfirmationPopup = true;
                 const message = `You have already added ${newParticipant.first_name} ${newParticipant.last_name} to this hearing`;
                 this.confirmationMessage = message;
@@ -503,6 +525,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
     updateParticipant() {
         if (!this.existingParticipant && !this.participantDetails) {
+            this.logger.debug(`${this.loggerPrefix} Attempting to add participant to booking.`);
             this.saveParticipant();
             this.bookingHasParticipants = true;
         } else {
@@ -518,12 +541,14 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
                 this.participantDetails = null;
                 this.form.markAsPristine();
             } else {
+                this.logger.warn(`${this.loggerPrefix} Form is not valid. Unable to add participant to booking.`);
                 this.isShowErrorSummary = true;
             }
         }
     }
 
     actionsBeforeSave() {
+        this.logger.debug(`${this.loggerPrefix} Marking all pre-populated fields as touched.`);
         this.roleSelected();
         this.role.markAsTouched();
         this.firstName.markAsTouched();
@@ -585,6 +610,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     }
 
     handleContinueBooking() {
+        this.logger.debug(`${this.loggerPrefix} Rejected cancellation. Continuing with booking.`);
         this.showCancelPopup = false;
         this.attemptingDiscardChanges = false;
     }
@@ -593,14 +619,17 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         this.showCancelPopup = false;
         this.form.reset();
         if (this.editMode) {
+            this.logger.debug(`${this.loggerPrefix} In edit mode. Returning to summary.`);
             this.navigateToSummary();
         } else {
+            this.logger.debug(`${this.loggerPrefix} Cancelling booking and returning to dashboard.`);
             this.videoHearingService.cancelRequest();
             this.router.navigate([PageUrls.Dashboard]);
         }
     }
 
     cancelChanges() {
+        this.logger.debug(`${this.loggerPrefix} Resetting changes. Returning to summary.`);
         this.attemptingDiscardChanges = false;
         this.form.reset();
         this.navigateToSummary();
@@ -664,11 +693,14 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
                 if (this.isShowErrorSummary) {
                     return;
                 }
+                this.logger.debug(`${this.loggerPrefix} In edit mode. Returning to summary.`);
                 this.navigateToSummary();
             } else {
+                this.logger.debug(`${this.loggerPrefix} Proceeding to endpoints`);
                 this.router.navigate([PageUrls.Endpoints]);
             }
         } else {
+            this.logger.warn(`${this.loggerPrefix} Unable to proceed. No participants added to booking`);
             this.displayErrorNoParticipants = true;
         }
     }

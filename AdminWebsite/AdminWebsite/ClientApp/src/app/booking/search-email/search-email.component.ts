@@ -14,6 +14,7 @@ import { Logger } from '../../services/logger';
     providers: [SearchService]
 })
 export class SearchEmailComponent implements OnInit, OnDestroy {
+    private readonly loggerPrefix = '[SearchEmail] -';
     constants = Constants;
     participantDetails: ParticipantModel;
     searchTerm = new Subject<string>();
@@ -33,7 +34,7 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
 
     @Output() emailChanged = new EventEmitter<string>();
 
-    constructor(private searchService: SearchService, private configService: ConfigService, private logger: Logger) { }
+    constructor(private searchService: SearchService, private configService: ConfigService, private logger: Logger) {}
 
     ngOnInit() {
         this.$subscriptions.push(
@@ -60,9 +61,9 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
         const settings = await this.configService.getClientSettings().toPromise();
         this.invalidPattern = settings.test_username_stem;
         if (!this.invalidPattern || this.invalidPattern.length === 0) {
-            this.logger.error(`Pattern to validate email is not set`, new Error('Email validation error'));
+            this.logger.error(`${this.loggerPrefix} Pattern to validate email is not set`, new Error('Email validation error'));
         } else {
-            this.logger.info(`Pattern to validate email is set with length ${this.invalidPattern.length}`);
+            this.logger.info(`${this.loggerPrefix} Pattern to validate email is set with length ${this.invalidPattern.length}`);
         }
     }
 

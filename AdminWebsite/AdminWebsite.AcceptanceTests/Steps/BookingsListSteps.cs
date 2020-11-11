@@ -14,6 +14,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
     [Binding]
     public class BookingsListSteps : ISteps
     {
+        private const int RETRIES = 10;
         private readonly TestContext _c;
         private readonly Dictionary<User, UserBrowser> _browsers;
         private string _rowId;
@@ -27,6 +28,21 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void ProgressToNextPage()
         {
             _rowId = GetRowId(_c.Test.HearingDetails.CaseNumber);
+            _browsers[_c.CurrentUser].Click(BookingsListPage.RowWithId(_rowId));
+        }
+
+        [When(@"selects a booking by case name (.*)")]
+        public void SelectsBookingByCaseName(string caseName)
+        {
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingsListPage.Row(caseName));
+
+            for (var i = 0; i < RETRIES; i++)
+            {
+                _rowId = GetRowId(caseName);
+                if (_rowId == null || _rowId.Equals(string.Empty)) continue;
+                break;
+            }
+            
             _browsers[_c.CurrentUser].Click(BookingsListPage.RowWithId(_rowId));
         }
 
@@ -45,9 +61,9 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingsListPage.Venue(_rowId, _c.Test.TestData.HearingSchedule.HearingVenue)).Displayed.Should().BeTrue();
         }
 
-        private string GetRowId(string caseNumber)
+        private string GetRowId(string text)
         {
-            return _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingsListPage.Row(caseNumber)).GetAttribute("id");
+            return _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingsListPage.Row(text)).GetAttribute("id");
         }
     }
 }
