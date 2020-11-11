@@ -77,6 +77,28 @@ namespace AdminWebsite.UnitTests
         }
 
         [Test]
+        public async Task Should_return_participants_roles_in_asc_order()
+        {
+            var listTypes = new List<CaseRoleResponse> { new CaseRoleResponse { Name = "type1" } };
+            var listHearingRoles = new List<HearingRoleResponse> {
+                new HearingRoleResponse { Name = "b type" },
+                new HearingRoleResponse { Name = "z type" },
+                new HearingRoleResponse { Name = "d type" },
+                new HearingRoleResponse { Name = "a type" },
+            };
+            _bookingsApiClientMock.Setup(x => x.GetCaseRolesForCaseTypeAsync(It.IsAny<string>())).ReturnsAsync(listTypes);
+            _bookingsApiClientMock.Setup(x => x.GetHearingRolesForCaseRoleAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(listHearingRoles);
+
+            var response = await _controller.GetParticipantRoles("type1");
+            response.Should().NotBeNull();
+            var result = (OkObjectResult)response.Result;
+            List<CaseAndHearingRolesResponse> caseRoles = (List<CaseAndHearingRolesResponse>)result.Value;
+            caseRoles[0].Name.Should().Be("type1");
+            caseRoles[0].HearingRoles.Count.Should().Be(4);
+            caseRoles[0].HearingRoles.Should().BeInAscendingOrder();
+        }
+
+        [Test]
         public async Task Should_return_empty_list_of_participants_roles()
         {
             var listTypes = new List<CaseRoleResponse>();
