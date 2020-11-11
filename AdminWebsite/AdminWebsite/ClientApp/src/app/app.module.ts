@@ -53,7 +53,7 @@ export function getSettings(configService: ConfigService) {
         UnauthorisedComponent,
         ErrorComponent,
         UnsupportedBrowserComponent,
-        ChangePasswordComponent,
+        ChangePasswordComponent
     ],
     imports: [
         MomentModule,
@@ -66,7 +66,7 @@ export function getSettings(configService: ConfigService) {
         PopupModule,
         DeviceDetectorModule.forRoot(),
         GetAudioFileModule,
-        DeleteParticipantModule,
+        DeleteParticipantModule
     ],
     providers: [
         HttpClientModule,

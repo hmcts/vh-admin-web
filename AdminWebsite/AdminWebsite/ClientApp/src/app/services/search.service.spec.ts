@@ -5,7 +5,7 @@ import { of } from 'rxjs';
 import { BHClient, PersonResponse } from './clients/api-client';
 
 const participantList: PersonResponse[] = JSON.parse(
-  `
+    `
     [
       {
         "id": 1,
@@ -35,31 +35,31 @@ const participantList: PersonResponse[] = JSON.parse(
 let clientApiSpy: jasmine.SpyObj<BHClient>;
 
 describe('SearchService', () => {
-  clientApiSpy = jasmine.createSpyObj('BHClient', ['postPersonBySearchTerm']);
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      imports: [HttpClientModule],
-      providers: [{ provide: BHClient, useValue: clientApiSpy }]
+    clientApiSpy = jasmine.createSpyObj('BHClient', ['postPersonBySearchTerm']);
+    beforeEach(() => {
+        TestBed.configureTestingModule({
+            imports: [HttpClientModule],
+            providers: [{ provide: BHClient, useValue: clientApiSpy }]
+        });
     });
-  });
 
-  it('should return result', inject([SearchService], (service: SearchService) => {
-    const terms = 'abc';
-    clientApiSpy.postPersonBySearchTerm.and.returnValue(of(participantList));
-    service.search(of(terms)).subscribe(x => expect(x).toBeTruthy());
-  }));
-  it('should method searchEntries not call api and return empty array', inject([SearchService], (service: SearchService) => {
-    const terms = 'ab';
-    service.searchEntries(terms).subscribe(x => expect(x.length).toBe(0));
-  }));
-  it('should method searchEntries call api and return persons response array', inject([SearchService], (service: SearchService) => {
-    const terms = 'abc';
-    clientApiSpy.postPersonBySearchTerm.and.returnValue(of(participantList));
-    service.searchEntries(terms).subscribe(x => expect(x.length).toBe(2));
-  }));
-  it('should return title list', inject([SearchService], (service: SearchService) => {
-    const list = service.TitleList;
-    expect(list).toBeTruthy();
-    expect(list.length).toBeGreaterThan(0);
-  }));
+    it('should return result', inject([SearchService], (service: SearchService) => {
+        const terms = 'abc';
+        clientApiSpy.postPersonBySearchTerm.and.returnValue(of(participantList));
+        service.search(of(terms)).subscribe(x => expect(x).toBeTruthy());
+    }));
+    it('should method searchEntries not call api and return empty array', inject([SearchService], (service: SearchService) => {
+        const terms = 'ab';
+        service.searchEntries(terms).subscribe(x => expect(x.length).toBe(0));
+    }));
+    it('should method searchEntries call api and return persons response array', inject([SearchService], (service: SearchService) => {
+        const terms = 'abc';
+        clientApiSpy.postPersonBySearchTerm.and.returnValue(of(participantList));
+        service.searchEntries(terms).subscribe(x => expect(x.length).toBe(2));
+    }));
+    it('should return title list', inject([SearchService], (service: SearchService) => {
+        const list = service.TitleList;
+        expect(list).toBeTruthy();
+        expect(list.length).toBeGreaterThan(0);
+    }));
 });

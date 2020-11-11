@@ -2,32 +2,30 @@ import { Injectable } from '@angular/core';
 import { DeviceDetectorService } from 'ngx-device-detector';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
 export class DeviceType {
+    constructor(private deviceDetectorService: DeviceDetectorService) {}
 
-  constructor(private deviceDetectorService: DeviceDetectorService) {
-  }
+    isMobile() {
+        return this.deviceDetectorService.isMobile();
+    }
 
-  isMobile() {
-    return this.deviceDetectorService.isMobile();
-  }
+    isTablet() {
+        return this.deviceDetectorService.isTablet();
+    }
 
-  isTablet() {
-    return this.deviceDetectorService.isTablet();
-  }
+    isDesktop() {
+        return this.deviceDetectorService.isDesktop();
+    }
 
-  isDesktop() {
-    return this.deviceDetectorService.isDesktop();
-  }
+    isSupportedBrowser(): boolean {
+        const supportedBrowsers = ['Chrome'];
+        const browser = this.deviceDetectorService.browser;
+        return supportedBrowsers.findIndex(x => x.toUpperCase() === browser.toUpperCase()) > -1;
+    }
 
-  isSupportedBrowser(): boolean {
-    const supportedBrowsers = ['Chrome'];
-    const browser = this.deviceDetectorService.browser;
-    return supportedBrowsers.findIndex(x => x.toUpperCase() === browser.toUpperCase()) > -1;
-  }
-
-  getBrowserName(): string {
-    return this.deviceDetectorService.browser;
-  }
+    getBrowserName(): string {
+        return this.deviceDetectorService.browser;
+    }
 }

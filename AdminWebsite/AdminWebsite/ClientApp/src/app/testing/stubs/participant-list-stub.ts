@@ -5,14 +5,14 @@ import { ParticipantRequest } from 'src/app/services/clients/api-client';
 export class ParticipantsListStubComponent {
     @Input()
     participants: ParticipantRequest[];
-  $selectedForEdit: EventEmitter<string> = new EventEmitter<string>();
-  $selectedForRemove: EventEmitter<string> = new EventEmitter<string>();
+    $selectedForEdit: EventEmitter<string> = new EventEmitter<string>();
+    $selectedForRemove: EventEmitter<string> = new EventEmitter<string>();
 
-  get selectedParticipant() {
-    return this.$selectedForEdit;
-  }
+    get selectedParticipant() {
+        return this.$selectedForEdit;
+    }
 
-  get selectedParticipantToRemove() {
-    return this.$selectedForRemove;
-  }
+    get selectedParticipantToRemove() {
+        return this.$selectedForRemove;
+    }
 }

@@ -1,11 +1,11 @@
 import { WindowRef, WindowLocation } from './window-ref';
 
 describe('WindowRef', () => {
-  it('should get url from browser', () => {
-    const window = new WindowRef();
-    // the jasmine test url
-    expect(window.getLocation().href).toBe('/context.html');
-  });
+    it('should get url from browser', () => {
+        const window = new WindowRef();
+        // the jasmine test url
+        expect(window.getLocation().href).toBe('/context.html');
+    });
 });
 
 describe('WindowLocation', () => {

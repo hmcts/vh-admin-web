@@ -42,13 +42,13 @@ div {
 }
 
 .vh_panel-r {
-   margin-right:10px !important;
-   text-align:left !important;
+    margin-right: 10px !important;
+    text-align: left !important;
 }
 
 .vh-text-break {
-  overflow-wrap: break-word;
-  word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
 }
 
 .vh-remove-padding {

@@ -15,7 +15,7 @@ export class ApiStub implements ScrollableSuitabilityAnswersService {
     }
 
     forFirstCall(): PageResponseBuilder {
-        return new PageResponseBuilder(results => this.firstCall = results);
+        return new PageResponseBuilder(results => (this.firstCall = results));
     }
 
     forCursor(cursor: string): PageResponseBuilder {

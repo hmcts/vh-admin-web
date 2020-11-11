@@ -1,7 +1,6 @@
 import { ChecklistModel, AnswerQuestion } from 'src/app/common/model/checklist.model';
 
 export class ChecklistTestData {
-
     getTestData(): Array<ChecklistModel> {
         const checklistsTest: Array<ChecklistModel> = [];
         const chm1 = new ChecklistModel(1, 'Mrs', 'Stive', 'Smith', 'Hr1', 'Mr Smith vs Mr Roy', new Date('2018-10-22 13:58:40.3730067'));

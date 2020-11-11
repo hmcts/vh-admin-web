@@ -2,7 +2,6 @@ import { SuitabilityAnswerResponse } from '../../services/clients/api-client';
 import { ParticipantSuitabilityAnswerResponse } from '../../services/clients/api-client';
 
 export class SuitabilityAnswerTestData {
-
     plainResponse = new ParticipantSuitabilityAnswerResponse({
         case_number: '',
         first_name: '',

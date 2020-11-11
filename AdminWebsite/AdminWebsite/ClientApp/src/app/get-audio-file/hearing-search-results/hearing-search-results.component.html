@@ -1,44 +1,39 @@
-
 <h2 class="govuk-heading-m">Results</h2>
 <div *ngIf="!hasResults">
-    <p class="govuk-body govuk-!-width-one-half">
-        There is no audio recording for this case reference number.
-    </p>
+  <p class="govuk-body govuk-!-width-one-half">There is no audio recording for this case reference number.</p>
 </div>
 
 <div *ngIf="hasResults">
-    <div class="govuk-grid-column-one-quarter vh-pl0">
-        <span class="govuk-heading-s">Case number</span>
+  <div class="govuk-grid-column-one-quarter vh-pl0">
+    <span class="govuk-heading-s">Case number</span>
+  </div>
+  <div class="govuk-grid-column-one-quarter vh-pl0">
+    <span class="govuk-heading-s">Date</span>
+  </div>
+  <div class="govuk-grid-column-one-quarter vh-pl0">
+    <span class="govuk-heading-s">Hearing title</span>
+  </div>
+  <div class="govuk-grid-column-one-quarter vh-pl0">
+    <span class="govuk-heading-s">Hearing venue</span>
+  </div>
+  <div class="govuk-grid-column-one-quarter vh-pl0"></div>
+  <hr class="margin-bottom-22 clear-both" />
+  <div *ngFor="let result of results" class="govuk-grid-row">
+    <div id="{{ result.hearingId }}-case-number" class="govuk-grid-column-one-quarter vh-20">
+      {{ result.caseNumber }}
     </div>
-    <div class="govuk-grid-column-one-quarter vh-pl0">
-        <span class="govuk-heading-s">Date</span>
+    <div id="{{ result.hearingId }}-scheduled-time" class="govuk-grid-column-one-quarter vh-pl0">
+      {{ result.scheduledDateTime | appHearingSearchDateTime }}
     </div>
-    <div class="govuk-grid-column-one-quarter vh-pl0">
-        <span class="govuk-heading-s">Hearing title</span>
+    <div id="{{ result.hearingId }}-case-name" class="govuk-grid-column-one-quarter vh-pl0">
+      {{ result.caseName }}
     </div>
-    <div class="govuk-grid-column-one-quarter vh-pl0">
-        <span class="govuk-heading-s">Hearing venue</span>
+    <div id="{{ result.hearingId }}-venue" class="govuk-grid-column-one-quarter vh-pl0">
+      {{ result.hearingVenueName }} {{ result.hearingRoomName }}
     </div>
-    <div class="govuk-grid-column-one-quarter vh-pl0">
+    <div class="govuk-grid-column-one-quarter vh-pl0 vh-btn">
+      <app-get-audio-link-button [hearingId]="result.hearingId"></app-get-audio-link-button>
     </div>
     <hr class="margin-bottom-22 clear-both" />
-    <div *ngFor="let result of results" class="govuk-grid-row">
-        <div id="{{result.hearingId}}-case-number" class="govuk-grid-column-one-quarter vh-20">
-            {{result.caseNumber}}
-        </div>
-        <div id="{{result.hearingId}}-scheduled-time" class="govuk-grid-column-one-quarter vh-pl0">
-            {{result.scheduledDateTime | appHearingSearchDateTime}}
-        </div>
-        <div id="{{result.hearingId}}-case-name" class="govuk-grid-column-one-quarter vh-pl0">
-            {{result.caseName}}
-        </div>
-        <div id="{{result.hearingId}}-venue" class="govuk-grid-column-one-quarter vh-pl0">
-            {{result.hearingVenueName}} {{result.hearingRoomName}}
-        </div>
-        <div class="govuk-grid-column-one-quarter vh-pl0 vh-btn">
-           
-            <app-get-audio-link-button [hearingId]="result.hearingId"></app-get-audio-link-button>
-        </div>
-        <hr class="margin-bottom-22 clear-both" />
-    </div>
+  </div>
 </div>

@@ -6,8 +6,7 @@ import { Observable } from 'rxjs';
     providedIn: 'root'
 })
 export class UserDataService {
-
-    constructor(private bhClient: BHClient) { }
+    constructor(private bhClient: BHClient) {}
 
     updateUser(userName: string): Observable<UpdateUserPasswordResponse> {
         return this.bhClient.updateUser(userName);

@@ -8,13 +8,12 @@ import { BookingsListComponent } from './bookings-list/bookings-list.component';
 import { BookingDetailsComponent } from './booking-details/booking-details.component';
 
 export const routes: Routes = [
-  { path: 'bookings-list', component: BookingsListComponent, canActivate: [AuthGuard, AdminGuard] },
-  { path: 'booking-details', component: BookingDetailsComponent, canActivate: [AuthGuard, AdminGuard] },
-
+    { path: 'bookings-list', component: BookingsListComponent, canActivate: [AuthGuard, AdminGuard] },
+    { path: 'booking-details', component: BookingDetailsComponent, canActivate: [AuthGuard, AdminGuard] }
 ];
 
 @NgModule({
-  imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+    imports: [RouterModule.forChild(routes)],
+    exports: [RouterModule]
 })
-export class BookingsListRoutingModule { }
+export class BookingsListRoutingModule {}

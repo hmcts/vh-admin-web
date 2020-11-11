@@ -6,8 +6,7 @@ import { Observable } from 'rxjs';
     providedIn: 'root'
 })
 export class JudgeDataService {
-
-    constructor(private bhClient: BHClient) { }
+    constructor(private bhClient: BHClient) {}
 
     getJudges(): Observable<JudgeResponse[]> {
         return this.bhClient.getJudges();

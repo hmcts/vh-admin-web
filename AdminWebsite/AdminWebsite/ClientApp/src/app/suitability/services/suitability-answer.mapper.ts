@@ -44,45 +44,26 @@ export class IndividualQuestionsMapAttributes implements QuestionsMapAttributes 
             IndividualQuestionKeys.AboutYou,
             {
                 Question:
-                'Is there anything you\'d like the court to take into account when it decides which type of hearing will be suitable?'
+                    // tslint:disable-next-line: quotemark
+                    "Is there anything you'd like the court to take into account when it decides which type of hearing will be suitable?"
             }
         ],
-        [
-            IndividualQuestionKeys.Interpreter,
-            { Question: 'Will you need an interpreter for your hearing?' }
-        ],
+        [IndividualQuestionKeys.Interpreter, { Question: 'Will you need an interpreter for your hearing?' }],
         [
             IndividualQuestionKeys.Computer,
             { Question: 'Will you have access to a laptop or desktop computer (not a mobile, not a tablet)?' }
         ],
-        [
-            IndividualQuestionKeys.Camera,
-            { Question: 'Does your computer have a camera and microphone?' }
-        ],
-        [
-            IndividualQuestionKeys.Internet,
-            { Question: 'At the time of your hearing, will the computer be able to access the internet?' }
-        ],
-        [
-            IndividualQuestionKeys.Room,
-            { Question: 'At the time of your hearing, will you have access to a quiet, private room?' }
-        ],
-        [
-            IndividualQuestionKeys.Consent,
-            { Question: 'Would you be content to take part in your hearing by video?' }
-        ]
+        [IndividualQuestionKeys.Camera, { Question: 'Does your computer have a camera and microphone?' }],
+        [IndividualQuestionKeys.Internet, { Question: 'At the time of your hearing, will the computer be able to access the internet?' }],
+        [IndividualQuestionKeys.Room, { Question: 'At the time of your hearing, will you have access to a quiet, private room?' }],
+        [IndividualQuestionKeys.Consent, { Question: 'Would you be content to take part in your hearing by video?' }]
     ]);
 
-    public readonly AnswerOverrides = new Map<string, string>([
-        ['ind', 'individual']
-    ]);
+    public readonly AnswerOverrides = new Map<string, string>([['ind', 'individual']]);
 }
 
 export class RepresentativeQuestionsMapAttributes implements QuestionsMapAttributes {
-    public readonly QuestionsOrder = [
-        RepresentativeQuestionKeys.PresentingTheCase,
-        RepresentativeQuestionKeys.OtherInformation
-    ];
+    public readonly QuestionsOrder = [RepresentativeQuestionKeys.PresentingTheCase, RepresentativeQuestionKeys.OtherInformation];
 
     public readonly Questions = new Map<string, QuestionAnswer>([
         [
@@ -90,11 +71,10 @@ export class RepresentativeQuestionsMapAttributes implements QuestionsMapAttribu
             {
                 Question: 'Will someone be presenting the case?',
                 DefaultAnswer: 'I will be presenting the case',
-                EmbeddedAnswersInNotes:
-                    [
-                        RepresentativeQuestionKeys.PresentingTheCaseName,
-                        RepresentativeQuestionKeys.PresentingTheCaseEmail
-                    ]
+                EmbeddedAnswersInNotes: [
+                    RepresentativeQuestionKeys.PresentingTheCaseName,
+                    RepresentativeQuestionKeys.PresentingTheCaseEmail
+                ]
             }
         ],
         [RepresentativeQuestionKeys.PresentingTheCaseName, { Question: 'Name:' }],
@@ -102,24 +82,22 @@ export class RepresentativeQuestionsMapAttributes implements QuestionsMapAttribu
         [
             RepresentativeQuestionKeys.OtherInformation,
             {
-                Question: 'Is there anything you\'d like the court to know that could affect this hearing taking place by video?',
+                // tslint:disable-next-line: quotemark
+                Question: "Is there anything you'd like the court to know that could affect this hearing taking place by video?",
                 DefaultAnswer: ''
             }
         ]
     ]);
 
-    public readonly AnswerOverrides = new Map<string, string>([
-        ['Will someone be presenting the case', 'Yes']
-    ]);
+    public readonly AnswerOverrides = new Map<string, string>([['Will someone be presenting the case', 'Yes']]);
 }
 
 export class SelfTestQuestionsMapAttributes implements QuestionsMapAttributes {
-
     public readonly QuestionsOrder = [
         SelfTestQuestionKeys.SelfTestScore,
         SelfTestQuestionKeys.SeeYourself,
         SelfTestQuestionKeys.Microphone,
-        SelfTestQuestionKeys.SeeHearClearly,
+        SelfTestQuestionKeys.SeeHearClearly
     ];
 
     public readonly Questions = new Map<string, QuestionAnswer>([
@@ -129,9 +107,7 @@ export class SelfTestQuestionsMapAttributes implements QuestionsMapAttributes {
         [SelfTestQuestionKeys.SeeHearClearly, { Question: 'Could you see and hear the video clearly?' }]
     ]);
 
-    public readonly AnswerOverrides = new Map<string, string>([
-        ['self', 'selftest']
-    ]);
+    public readonly AnswerOverrides = new Map<string, string>([['self', 'selftest']]);
 }
 
 export class QuestionAnswer {

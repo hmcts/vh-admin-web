@@ -7,5 +7,4 @@ export class BookingsModel {
     }
     Hearings: Array<BookingsListModel>;
     NextCursor: string;
-
 }

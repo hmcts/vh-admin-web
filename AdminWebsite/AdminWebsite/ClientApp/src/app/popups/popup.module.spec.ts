@@ -1,13 +1,13 @@
 import { PopupModule } from './popup.module';
 
 describe('SharedModule', () => {
-  let popupModule: PopupModule;
+    let popupModule: PopupModule;
 
-  beforeEach(() => {
-    popupModule = new PopupModule();
-  });
+    beforeEach(() => {
+        popupModule = new PopupModule();
+    });
 
-  it('should create an instance', () => {
-    expect(popupModule).toBeTruthy();
-  });
+    it('should create an instance', () => {
+        expect(popupModule).toBeTruthy();
+    });
 });

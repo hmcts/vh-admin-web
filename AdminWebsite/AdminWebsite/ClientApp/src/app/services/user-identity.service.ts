@@ -3,13 +3,12 @@ import { BHClient, UserProfileResponse } from '../services/clients/api-client';
 import { Observable } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
 export class UserIdentityService {
+    constructor(private bhClient: BHClient) {}
 
-  constructor(private bhClient: BHClient) { }
-
-  getUserInformation(): Observable<UserProfileResponse> {
-    return this.bhClient.getUserProfile();
-  }
+    getUserInformation(): Observable<UserProfileResponse> {
+        return this.bhClient.getUserProfile();
+    }
 }

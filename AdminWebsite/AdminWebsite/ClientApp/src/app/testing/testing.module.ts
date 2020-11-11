@@ -16,25 +16,23 @@ import { RemovePopupStubComponent } from './stubs/remove-popup-stub';
 import { BookingEditStubComponent } from './stubs/booking-edit-stub';
 
 @NgModule({
-  imports: [
-    CommonModule
-  ],
-  declarations: [
-    BreadcrumbStubComponent,
-    CancelPopupStubComponent,
-    ConfirmationPopupStubComponent,
-    ContactUsStubComponent,
-    DashboardStubComponent,
-    FooterStubComponent,
-    HeaderStubComponent,
-    PaginationStubComponent,
-    ParticipantsListStubComponent,
-    SearchEmailStubComponent,
-    RemovePopupStubComponent,
-    BookingEditStubComponent,
-    SearchEmailStubComponent,
-    SignOutPopupStubComponent,
-    SignOutStubComponent,
-  ]
+    imports: [CommonModule],
+    declarations: [
+        BreadcrumbStubComponent,
+        CancelPopupStubComponent,
+        ConfirmationPopupStubComponent,
+        ContactUsStubComponent,
+        DashboardStubComponent,
+        FooterStubComponent,
+        HeaderStubComponent,
+        PaginationStubComponent,
+        ParticipantsListStubComponent,
+        SearchEmailStubComponent,
+        RemovePopupStubComponent,
+        BookingEditStubComponent,
+        SearchEmailStubComponent,
+        SignOutPopupStubComponent,
+        SignOutStubComponent
+    ]
 })
-export class TestingModule { }
+export class TestingModule {}

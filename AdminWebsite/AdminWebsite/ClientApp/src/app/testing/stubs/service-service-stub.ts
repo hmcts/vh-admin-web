@@ -3,7 +3,7 @@ import { Observable, of } from 'rxjs';
 import { PersonResponse } from '../../services/clients/api-client';
 
 const participantList: PersonResponse[] = JSON.parse(
-  `
+    `
     [
       {
         "id": 1,
@@ -31,19 +31,16 @@ const participantList: PersonResponse[] = JSON.parse(
     `
 );
 export class SearchServiceStub {
-
-
-  TitleList: IDropDownModel[] =
-    [
-      {
-        value: 'Mrs'
-      },
-      {
-        value: 'Miss'
-      }
+    TitleList: IDropDownModel[] = [
+        {
+            value: 'Mrs'
+        },
+        {
+            value: 'Miss'
+        }
     ];
 
-  search(terms: Observable<string>) {
-    return of(participantList);
-  }
+    search(terms: Observable<string>) {
+        return of(participantList);
+    }
 }

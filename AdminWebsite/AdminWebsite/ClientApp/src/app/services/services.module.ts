@@ -4,10 +4,7 @@ import { CommonModule } from '@angular/common';
 import { ServicesRoutingModule } from './services-routing.module';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    ServicesRoutingModule
-  ],
-  declarations: []
+    imports: [CommonModule, ServicesRoutingModule],
+    declarations: []
 })
-export class ServicesModule { }
+export class ServicesModule {}

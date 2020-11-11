@@ -17,47 +17,47 @@
     transform: rotate(90deg);
 }
 
-.vh-header-entity{
-  color:#1F71F7;
-  font-weight:bold;
-  text-decoration:none;
+.vh-header-entity {
+    color: #1f71f7;
+    font-weight: bold;
+    text-decoration: none;
 }
 
 .vh-date {
-  float: right;
-  font-weight:bold;
-  margin-bottom: 0px;
+    float: right;
+    font-weight: bold;
+    margin-bottom: 0px;
 }
 
 .rowbottom {
-  border-bottom: 1px solid #bfc1c3;
-  text-align: left;
-  margin-bottom: 10px;
+    border-bottom: 1px solid #bfc1c3;
+    text-align: left;
+    margin-bottom: 10px;
 }
 
-.vh-table-row{
-  display:table-row;
+.vh-table-row {
+    display: table-row;
 }
 
 .vh-wrap {
-  padding: 0;
-  margin-right: 0;
-  margin-left: 0;
-  overflow-wrap: break-word;
-  -ms-hyphens: auto;
-  -moz-hyphens: auto;
-  -webkit-hyphens: auto;
-  hyphens: auto;
+    padding: 0;
+    margin-right: 0;
+    margin-left: 0;
+    overflow-wrap: break-word;
+    -ms-hyphens: auto;
+    -moz-hyphens: auto;
+    -webkit-hyphens: auto;
+    hyphens: auto;
 }
 
 .vh-answer-group-heading {
-  margin-bottom: 5px;
+    margin-bottom: 5px;
 }
 
-.embeddedQuestionAnswer{
-  padding: 0;
+.embeddedQuestionAnswer {
+    padding: 0;
 }
 
-.embeddedQuestionAnswer span{
-  margin-bottom: 0px;
+.embeddedQuestionAnswer span {
+    margin-bottom: 0px;
 }
