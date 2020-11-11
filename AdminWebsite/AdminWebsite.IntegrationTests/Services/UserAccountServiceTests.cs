@@ -5,6 +5,7 @@ using Moq;
 using NUnit.Framework;
 using System.Collections.Generic;
 using AdminWebsite.BookingsAPI.Client;
+using Microsoft.Extensions.Logging;
 
 namespace AdminWebsite.IntegrationTests.Services
 {
@@ -12,17 +13,19 @@ namespace AdminWebsite.IntegrationTests.Services
     {
         private Mock<IUserApiClient> _userApiClient;
         private Mock<IBookingsApiClient> _bookingsApiClient;
+        private Mock<ILogger<UserAccountService>> _logger;
 
         [SetUp]
         public void Setup()
         {
             _userApiClient = new Mock<IUserApiClient>();
             _bookingsApiClient = new Mock<IBookingsApiClient>();
+            _logger = new Mock<ILogger<UserAccountService>>();
         }
 
         private UserAccountService GetService()
         {
-            return new UserAccountService(_userApiClient.Object, _bookingsApiClient.Object);
+            return new UserAccountService(_userApiClient.Object, _bookingsApiClient.Object, _logger.Object);
         }
 
         [Test]

@@ -13,6 +13,7 @@ using System.Net;
 using System.Threading.Tasks;
 using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.UnitTests.Helper;
+using Microsoft.Extensions.Logging;
 using UserServiceException = AdminWebsite.Security.UserServiceException;
 
 namespace AdminWebsite.UnitTests.Services
@@ -23,6 +24,7 @@ namespace AdminWebsite.UnitTests.Services
         private Mock<IUserApiClient> _userApiClient;
         private Mock<IBookingsApiClient> _bookingsApiClient;
         private Mock<IOptions<SecuritySettings>> _securitySettings;
+        private Mock<ILogger<UserAccountService>> _logger;
 
         private UserAccountService _service;
 
@@ -31,6 +33,7 @@ namespace AdminWebsite.UnitTests.Services
         {
             _userApiClient = new Mock<IUserApiClient>();
             _bookingsApiClient = new Mock<IBookingsApiClient>();
+            _logger = new Mock<ILogger<UserAccountService>>();
             _appSettings = new Mock<IOptions<AppConfigSettings>>();
             _appSettings.Setup(x => x.Value)
                 .Returns(new AppConfigSettings());
@@ -39,7 +42,7 @@ namespace AdminWebsite.UnitTests.Services
             _securitySettings.Setup(x => x.Value)
                 .Returns(new SecuritySettings());
 
-            _service = new UserAccountService(_userApiClient.Object, _bookingsApiClient.Object);
+            _service = new UserAccountService(_userApiClient.Object, _bookingsApiClient.Object, _logger.Object);
 
             _userApiClient.Setup(x => x.GetUserByEmailAsync(It.IsAny<string>()))
                 .Throws(ClientException.ForUserService(HttpStatusCode.NotFound));
