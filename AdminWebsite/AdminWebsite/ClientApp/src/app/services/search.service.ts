@@ -7,73 +7,71 @@ import { BHClient, PersonResponse } from '../services/clients/api-client';
 import { Constants } from '../common/constants';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
 export class SearchService {
+    // empty since the functionality is yet to be implemented
+    ParticipantList: ParticipantModel[] = [];
 
-  // empty since the functionality is yet to be implemented
-  ParticipantList: ParticipantModel[] = [];
-
-  TitleList: IDropDownModel[] =
-    [
-      {
-        value: Constants.PleaseSelect
-      },
-      {
-        value: 'Mr'
-      },
-      {
-        value: 'Mrs'
-      },
-      {
-        value: 'Miss'
-      },
-      {
-        value: 'Ms'
-      },
-      {
-        value: 'Rev'
-      },
-      {
-        value: 'Dr'
-      },
-      {
-        value: 'Lord'
-
-      },
-      {
-        value: 'Lady'
-      },
-      {
-        value: 'Sir'
-      },
-      {
-        value: 'Right Hon'
-      },
-      {
-        value: 'Viscount'
-      },
-      {
-        value: 'Duke'
-      },
-      {
-        value: 'Duchess'
-      }
+    TitleList: IDropDownModel[] = [
+        {
+            value: Constants.PleaseSelect
+        },
+        {
+            value: 'Mr'
+        },
+        {
+            value: 'Mrs'
+        },
+        {
+            value: 'Miss'
+        },
+        {
+            value: 'Ms'
+        },
+        {
+            value: 'Rev'
+        },
+        {
+            value: 'Dr'
+        },
+        {
+            value: 'Lord'
+        },
+        {
+            value: 'Lady'
+        },
+        {
+            value: 'Sir'
+        },
+        {
+            value: 'Right Hon'
+        },
+        {
+            value: 'Viscount'
+        },
+        {
+            value: 'Duke'
+        },
+        {
+            value: 'Duchess'
+        }
     ];
 
-  constructor(private bhClient: BHClient) { }
+    constructor(private bhClient: BHClient) {}
 
-  search(terms: Observable<string>) {
-    return terms.pipe(debounceTime(500))
-      .pipe(distinctUntilChanged())
-      .pipe(switchMap(term => this.searchEntries(term)));
-  }
-
-  searchEntries(term): Observable<Array<PersonResponse>> {
-    const allResults: PersonResponse[] = [];
-    if (term.length > 2) {
-      return this.bhClient.postPersonBySearchTerm(term);
+    search(terms: Observable<string>) {
+        return terms
+            .pipe(debounceTime(500))
+            .pipe(distinctUntilChanged())
+            .pipe(switchMap(term => this.searchEntries(term)));
     }
-    return of(allResults);
-  }
+
+    searchEntries(term): Observable<Array<PersonResponse>> {
+        const allResults: PersonResponse[] = [];
+        if (term.length > 2) {
+            return this.bhClient.postPersonBySearchTerm(term);
+        }
+        return of(allResults);
+    }
 }

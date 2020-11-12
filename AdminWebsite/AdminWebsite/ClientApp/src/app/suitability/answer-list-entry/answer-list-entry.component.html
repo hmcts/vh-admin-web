@@ -3,33 +3,31 @@
     <div class="govuk-grid-column-two-thirds">
       <a href="javascript:void(0)" (click)="toggle()" class="vh-header-entity govuk-body vh-expander" [class.expanded]="expanded">
         <span class="chevron"></span>
-        <span class="vh-ml15 " *ngIf="!isRepresentative">
-          {{ questionnaire.displayName }} - {{questionnaire.hearingRole}} ({{ questionnaire.caseNumber }})
+        <span class="vh-ml15" *ngIf="!isRepresentative">
+          {{ questionnaire.displayName }} - {{ questionnaire.hearingRole }} ({{ questionnaire.caseNumber }})
         </span>
-        <span class="vh-ml15 " *ngIf="isRepresentative">
-          {{ questionnaire.displayName }} - Representing {{questionnaire.representee}} ({{ questionnaire.caseNumber }})
+        <span class="vh-ml15" *ngIf="isRepresentative">
+          {{ questionnaire.displayName }} - Representing {{ questionnaire.representee }} ({{ questionnaire.caseNumber }})
         </span>
-
       </a>
     </div>
     <div class="govuk-grid-column-one-third">
       <span class="vh-date govuk-body">
-        {{questionnaire.updatedAt |date: 'h:mm a, dd MMMM yyyy'}}
+        {{ questionnaire.updatedAt | date: 'h:mm a, dd MMMM yyyy' }}
       </span>
     </div>
-
   </div>
   <div class="rowbottom"></div>
 
   <div *ngIf="expanded" class="vh-ml15">
     <div class="govuk-grid-row" *ngFor="let answerGroup of answers">
-      <span class="govuk-heading-s vh-answer-group-heading">{{answerGroup.title}}</span>
+      <span class="govuk-heading-s vh-answer-group-heading">{{ answerGroup.title }}</span>
 
       <div *ngFor="let answer of answerGroup.answers">
         <div class="govuk-grid-row">
           <div class="govuk-grid-column-two-thirds">
             <span class="govuk-body vh-table-row">{{ answer.question }}</span>
-            <span class="govuk-hint vh-table-row">{{answer.notes}}</span>
+            <span class="govuk-hint vh-table-row">{{ answer.notes }}</span>
             <div *ngFor="let embeddedQuestionAnswer of answer.embeddedQuestionAnswers">
               <div class="govuk-grid-column-one-third embeddedQuestionAnswer">
                 <span class="govuk-hint">&nbsp;{{ embeddedQuestionAnswer.question }}</span>
@@ -43,16 +41,12 @@
             </div>
           </div>
           <div class="govuk-grid-column-one-third">
-            <span class="govuk-body vh-date vh-wrap vh-mr15" >{{ answer.answer }}</span>
+            <span class="govuk-body vh-date vh-wrap vh-mr15">{{ answer.answer }}</span>
           </div>
         </div>
 
         <div class="rowbottom vh-mr15"></div>
-
       </div>
-
     </div>
-
   </div>
 </div>
-

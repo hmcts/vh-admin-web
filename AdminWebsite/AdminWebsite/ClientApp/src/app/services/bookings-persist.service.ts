@@ -5,103 +5,104 @@ import { ParticipantModel } from '../common/model/participant.model';
 
 @Injectable({ providedIn: 'root' })
 export class BookingPersistService {
+    private _bookingList: Array<BookingsListModel> = [];
+    private _nextCursor: string;
+    private _selectedGroupIndex: number;
+    private _selectedItemIndex: number;
+    private readonly SelectedHearingIdKey = 'SelectedHearingIdKey';
 
-  private _bookingList: Array<BookingsListModel> = [];
-  private _nextCursor: string;
-  private _selectedGroupIndex: number;
-  private _selectedItemIndex: number;
-  private readonly SelectedHearingIdKey = 'SelectedHearingIdKey';
-
-  resetAll() {
-    this._bookingList = [];
-    this._nextCursor = undefined;
-    this.selectedGroupIndex = -1;
-    this.selectedItemIndex = -1;
-    sessionStorage.removeItem(this.SelectedHearingIdKey);
-  }
-
-  updateBooking(hearing: HearingModel): BookingsDetailsModel {
-    if (this._bookingList.length > this._selectedGroupIndex &&
-      this._bookingList[this._selectedGroupIndex].BookingsDetails.length > this._selectedItemIndex) {
-      const hearingUpdate = this._bookingList[this._selectedGroupIndex].BookingsDetails[this.selectedItemIndex];
-      if (hearingUpdate.HearingId === hearing.hearing_id) {
-        const newStartDate = new Date(hearing.scheduled_date_time);
-
-        hearingUpdate.IsStartTimeChanged = hearingUpdate.StartTime.toString() !== newStartDate.toString();
-        hearingUpdate.Selected = true;
-
-        hearingUpdate.HearingCaseName = hearing.cases && hearing.cases.length > 0 ? hearing.cases[0].name : '';
-        hearingUpdate.HearingCaseNumber = hearing.cases && hearing.cases.length > 0 ? hearing.cases[0].number : '';
-        hearingUpdate.StartTime = newStartDate;
-        hearingUpdate.Duration = hearing.scheduled_duration;
-        hearingUpdate.CourtAddress = hearing.court_name;
-        hearingUpdate.CourtRoom = hearing.court_room;
-        hearingUpdate.CreatedBy = hearing.created_by;
-        hearingUpdate.Status = hearing.status;
-        if (this.isValidDate(hearing.created_date)) {
-          hearingUpdate.CreatedDate = new Date(hearing.created_date);
-        }
-        hearingUpdate.LastEditBy = hearing.updated_by;
-
-        if (this.isValidDate(hearing.updated_date)) {
-          hearingUpdate.LastEditDate = new Date(hearing.updated_date);
-        }
-        hearingUpdate.JudgeName = this.getJudgeName(hearing.participants);
-        return hearingUpdate;
-      }
+    resetAll() {
+        this._bookingList = [];
+        this._nextCursor = undefined;
+        this.selectedGroupIndex = -1;
+        this.selectedItemIndex = -1;
+        sessionStorage.removeItem(this.SelectedHearingIdKey);
     }
-  }
 
-  isValidDate(value: any): boolean {
-    if (value) {
-      const timestamp = Date.parse(value.toString());
-      return isNaN(timestamp) === false;
+    updateBooking(hearing: HearingModel): BookingsDetailsModel {
+        if (
+            this._bookingList.length > this._selectedGroupIndex &&
+            this._bookingList[this._selectedGroupIndex].BookingsDetails.length > this._selectedItemIndex
+        ) {
+            const hearingUpdate = this._bookingList[this._selectedGroupIndex].BookingsDetails[this.selectedItemIndex];
+            if (hearingUpdate.HearingId === hearing.hearing_id) {
+                const newStartDate = new Date(hearing.scheduled_date_time);
+
+                hearingUpdate.IsStartTimeChanged = hearingUpdate.StartTime.toString() !== newStartDate.toString();
+                hearingUpdate.Selected = true;
+
+                hearingUpdate.HearingCaseName = hearing.cases && hearing.cases.length > 0 ? hearing.cases[0].name : '';
+                hearingUpdate.HearingCaseNumber = hearing.cases && hearing.cases.length > 0 ? hearing.cases[0].number : '';
+                hearingUpdate.StartTime = newStartDate;
+                hearingUpdate.Duration = hearing.scheduled_duration;
+                hearingUpdate.CourtAddress = hearing.court_name;
+                hearingUpdate.CourtRoom = hearing.court_room;
+                hearingUpdate.CreatedBy = hearing.created_by;
+                hearingUpdate.Status = hearing.status;
+                if (this.isValidDate(hearing.created_date)) {
+                    hearingUpdate.CreatedDate = new Date(hearing.created_date);
+                }
+                hearingUpdate.LastEditBy = hearing.updated_by;
+
+                if (this.isValidDate(hearing.updated_date)) {
+                    hearingUpdate.LastEditDate = new Date(hearing.updated_date);
+                }
+                hearingUpdate.JudgeName = this.getJudgeName(hearing.participants);
+                return hearingUpdate;
+            }
+        }
     }
-    return false;
-  }
 
-  getJudgeName(participants: ParticipantModel[]) {
-    const judge = participants.find(x => x.case_role_name === 'Judge');
-    return judge ? judge.display_name : '';
-  }
+    isValidDate(value: any): boolean {
+        if (value) {
+            const timestamp = Date.parse(value.toString());
+            return isNaN(timestamp) === false;
+        }
+        return false;
+    }
 
-  set bookingList(value: Array<BookingsListModel>) {
-    this._bookingList = value;
-  }
+    getJudgeName(participants: ParticipantModel[]) {
+        const judge = participants.find(x => x.case_role_name === 'Judge');
+        return judge ? judge.display_name : '';
+    }
 
-  get bookingList(): Array<BookingsListModel> {
-    return this._bookingList;
-  }
+    set bookingList(value: Array<BookingsListModel>) {
+        this._bookingList = value;
+    }
 
-  set nextCursor(value: string) {
-    this._nextCursor = value;
-  }
+    get bookingList(): Array<BookingsListModel> {
+        return this._bookingList;
+    }
 
-  get nextCursor(): string {
-    return this._nextCursor;
-  }
+    set nextCursor(value: string) {
+        this._nextCursor = value;
+    }
 
-  set selectedGroupIndex(value: number) {
-    this._selectedGroupIndex = value;
-  }
+    get nextCursor(): string {
+        return this._nextCursor;
+    }
 
-  get selectedGroupIndex() {
-    return this._selectedGroupIndex;
-  }
+    set selectedGroupIndex(value: number) {
+        this._selectedGroupIndex = value;
+    }
 
-  set selectedItemIndex(value: number) {
-    this._selectedItemIndex = value;
-  }
+    get selectedGroupIndex() {
+        return this._selectedGroupIndex;
+    }
 
-  get selectedItemIndex() {
-    return this._selectedItemIndex;
-  }
+    set selectedItemIndex(value: number) {
+        this._selectedItemIndex = value;
+    }
 
-  set selectedHearingId(value: string) {
-    sessionStorage.setItem(this.SelectedHearingIdKey, value);
-  }
+    get selectedItemIndex() {
+        return this._selectedItemIndex;
+    }
 
-  get selectedHearingId() {
-    return sessionStorage.getItem(this.SelectedHearingIdKey);
-  }
+    set selectedHearingId(value: string) {
+        sessionStorage.setItem(this.SelectedHearingIdKey, value);
+    }
+
+    get selectedHearingId() {
+        return sessionStorage.getItem(this.SelectedHearingIdKey);
+    }
 }

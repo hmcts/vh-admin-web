@@ -11,18 +11,18 @@ import { Observable } from 'rxjs';
  */
 @Injectable()
 export class CustomAdalInterceptor implements HttpInterceptor {
-  constructor(public adalInteceptor: AdalInterceptor) { }
+    constructor(public adalInteceptor: AdalInterceptor) {}
 
-  intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    if (request.method === 'GET') {
-      const customRequest = request.clone({
-        setHeaders: {
-          'Cache-Control': 'no-cache',
-          'Pragma': 'no-cache'
+    intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+        if (request.method === 'GET') {
+            const customRequest = request.clone({
+                setHeaders: {
+                    'Cache-Control': 'no-cache',
+                    Pragma: 'no-cache'
+                }
+            });
+            return this.adalInteceptor.intercept(customRequest, next);
         }
-      });
-      return this.adalInteceptor.intercept(customRequest, next);
+        return this.adalInteceptor.intercept(request, next);
     }
-    return this.adalInteceptor.intercept(request, next);
-  }
 }

@@ -1,9 +1,8 @@
-import {HearingTypeResponse, HearingVenueResponse, JudgeResponse} from 'src/app/services/clients/api-client';
+import { HearingTypeResponse, HearingVenueResponse, JudgeResponse } from 'src/app/services/clients/api-client';
 
 export class MockValues {
-
-  static HearingTypesList: HearingTypeResponse[] = JSON.parse(
-    `
+    static HearingTypesList: HearingTypeResponse[] = JSON.parse(
+        `
     [
       {
         "code": "BTA",
@@ -24,10 +23,11 @@ export class MockValues {
         "name": "First Directions Appointment Hearing"
       }
     ]
-    `);
-
-  static HearingTypesSingle: HearingTypeResponse[] = JSON.parse(
     `
+    );
+
+    static HearingTypesSingle: HearingTypeResponse[] = JSON.parse(
+        `
     [
       {
         "code": "BTA",
@@ -36,10 +36,11 @@ export class MockValues {
         "name": "Basic Tax Appeals"
       }
     ]
-    `);
+    `
+    );
 
-  static Courts: HearingVenueResponse[] = JSON.parse(
-    `[
+    static Courts: HearingVenueResponse[] = JSON.parse(
+        `[
         {
            "id":1,
            "name":"Manchester Civil Justice Centre"
@@ -48,11 +49,11 @@ export class MockValues {
            "id":2,
            "name":"Birmingham Civil Justice Centre"
         }
-     ]`);
+     ]`
+    );
 
-
-  static Judges: JudgeResponse[] = JSON.parse(
-    `[
+    static Judges: JudgeResponse[] = JSON.parse(
+        `[
         {
           "first_name": "John",
           "last_name": "Doe",
@@ -77,5 +78,6 @@ export class MockValues {
            "display_name": "John4 Doe",
            "email": "John4.Doe@madeupemail.com"
         }
-     ]`);
+     ]`
+    );
 }

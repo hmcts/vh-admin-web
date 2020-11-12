@@ -1,75 +1,76 @@
 .sticky {
-  width: 100%;
-  position: fixed;
-  top: 0px;
-  z-index: 100;
+    width: 100%;
+    position: fixed;
+    top: 0px;
+    z-index: 100;
 }
 
 /* Ensures content padding to avoid overlapping by header */
 .header-spacing {
-  display: none;
-  position: relative;
-  height: 85px;
+    display: none;
+    position: relative;
+    height: 85px;
 }
 
 .header-spacing.sticky {
-  display: block;
+    display: block;
 }
 
 .vh-primary-navigation__link {
-  display: inline-block;
-  padding-top: 12px;
-  padding-bottom: 12px;
-  text-decoration: none;
+    display: inline-block;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-decoration: none;
 }
 
-  .vh-primary-navigation__link:link, .vh-primary-navigation__link:visited {
+.vh-primary-navigation__link:link,
+.vh-primary-navigation__link:visited {
     color: #ffffff;
-  }
+}
 
-  .vh-primary-navigation__link:focus {
+.vh-primary-navigation__link:focus {
     color: #ffffff;
     position: relative;
-  }
+}
 
-  .vh-primary-navigation__link[aria-current] {
+.vh-primary-navigation__link[aria-current] {
     color: #ffffff;
     position: relative;
     text-decoration: underline;
-  }
+}
 
-    .vh-primary-navigation__link[aria-current]:before {
-      background-color: #ffffff;
-      content: "";
-      display: block;
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      height: 5px;
-      width: 100%;
-    }
+.vh-primary-navigation__link[aria-current]:before {
+    background-color: #ffffff;
+    content: '';
+    display: block;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 5px;
+    width: 100%;
+}
 
-    .vh-primary-navigation__link[aria-current]:focus {
-      color: gray;
-      position: relative;
-    }
+.vh-primary-navigation__link[aria-current]:focus {
+    color: gray;
+    position: relative;
+}
 
-      .vh-primary-navigation__link[aria-current]:focus:before {
-        background-color: gray;
-      }
+.vh-primary-navigation__link[aria-current]:focus:before {
+    background-color: gray;
+}
 
 .vh-primary-navigation__link_active {
-  text-decoration: underline;
+    text-decoration: underline;
 }
 
 .hmcts-header__link:focus {
-  color: #ffffff;
+    color: #ffffff;
 }
 
 .right-align {
-  float: right;
+    float: right;
 }
 
 .hmcts-header__link {
-  border-bottom: none;
+    border-bottom: none;
 }

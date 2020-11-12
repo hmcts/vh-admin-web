@@ -5,59 +5,55 @@ import { ParticipantQuestionnaire } from '../participant-questionnaire';
 import { QuestionnaireService } from '../services/questionnaire.service';
 
 @Component({
-  selector: 'app-answers-list',
-  templateUrl: './answers-list.component.html',
-  styleUrls: ['./answers-list.component.css']
+    selector: 'app-answers-list',
+    templateUrl: './answers-list.component.html',
+    styleUrls: ['./answers-list.component.css']
 })
 export class AnswersListComponent implements OnInit, OnDestroy {
+    loaded = false;
+    hasMore = true;
+    answers = new Array<ParticipantQuestionnaire>();
+    nextCursor = '';
 
-  loaded = false;
-  hasMore = true;
-  answers = new Array<ParticipantQuestionnaire>();
-  nextCursor = '';
+    constructor(private location: Location, private questionnaireService: QuestionnaireService) {}
 
-  constructor(private location: Location,
-    private questionnaireService: QuestionnaireService
-  ) { }
-
-  ngOnInit() {
-    this.enableFullScreen(true);
-    this.loadNext();
-  }
-
-  loadNext() {
-    if (!this.hasMore) {
-      return;
+    ngOnInit() {
+        this.enableFullScreen(true);
+        this.loadNext();
     }
 
-    this.loaded = false;
-    this.questionnaireService.loadNext(this.nextCursor)
-      .then((responses: QuestionnaireResponses) => {
-        this.answers.push(...responses.items);
-        this.loaded = true;
-        this.hasMore = responses.hasMore;
-        this.nextCursor = responses.nextCursor;
-      });
-  }
+    loadNext() {
+        if (!this.hasMore) {
+            return;
+        }
 
-  back() {
-    this.location.back();
-  }
-
-  enableFullScreen(fullScreen: boolean) {
-    const mainContainer = document.getElementById('master-container');
-    if (!mainContainer) {
-      return;
+        this.loaded = false;
+        this.questionnaireService.loadNext(this.nextCursor).then((responses: QuestionnaireResponses) => {
+            this.answers.push(...responses.items);
+            this.loaded = true;
+            this.hasMore = responses.hasMore;
+            this.nextCursor = responses.nextCursor;
+        });
     }
 
-    if (fullScreen) {
-      mainContainer.classList.add('fullscreen');
-    } else {
-      mainContainer.classList.remove('fullscreen');
+    back() {
+        this.location.back();
     }
-  }
 
-  ngOnDestroy() {
-    this.enableFullScreen(false);
-  }
+    enableFullScreen(fullScreen: boolean) {
+        const mainContainer = document.getElementById('master-container');
+        if (!mainContainer) {
+            return;
+        }
+
+        if (fullScreen) {
+            mainContainer.classList.add('fullscreen');
+        } else {
+            mainContainer.classList.remove('fullscreen');
+        }
+    }
+
+    ngOnDestroy() {
+        this.enableFullScreen(false);
+    }
 }

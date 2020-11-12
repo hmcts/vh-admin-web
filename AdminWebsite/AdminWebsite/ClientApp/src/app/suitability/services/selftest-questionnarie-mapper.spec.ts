@@ -3,14 +3,14 @@ import { SuitabilityAnswerTestData } from '../../testing/data/suitability-answer
 import { SelfTestQuestionnaireMapper } from './self-test-questionnaire-mapper';
 
 describe('QuestionnaireMapper', () => {
-  const response = new SuitabilityAnswerTestData().plainResponse;
+    const response = new SuitabilityAnswerTestData().plainResponse;
 
-  it('should map all self test questions to answers', async () => {
-    const mapper = new SelfTestQuestionnaireMapper(response.answers);
-    const questions = mapper.mapAnswers();
-    const attributes = new SelfTestQuestionsMapAttributes();
+    it('should map all self test questions to answers', async () => {
+        const mapper = new SelfTestQuestionnaireMapper(response.answers);
+        const questions = mapper.mapAnswers();
+        const attributes = new SelfTestQuestionsMapAttributes();
 
-    expect(questions).toBeTruthy();
-    expect(questions.length).toBe(attributes.QuestionsOrder.length);
-  });
+        expect(questions).toBeTruthy();
+        expect(questions.length).toBe(attributes.QuestionsOrder.length);
+    });
 });

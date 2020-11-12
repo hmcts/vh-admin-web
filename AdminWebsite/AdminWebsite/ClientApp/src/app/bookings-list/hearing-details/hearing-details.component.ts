@@ -3,22 +3,22 @@ import { ParticipantDetailsModel } from 'src/app/common/model/participant-detail
 import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
 
 @Component({
-  selector: 'app-hearing-details',
-  templateUrl: 'hearing-details.component.html',
-  styleUrls: ['hearing-details.component.css']
+    selector: 'app-hearing-details',
+    templateUrl: 'hearing-details.component.html',
+    styleUrls: ['hearing-details.component.css']
 })
 export class HearingDetailsComponent {
-  @Input() hearing: BookingsDetailsModel = null;
-  @Input() participants: Array<ParticipantDetailsModel> = [];
+    @Input() hearing: BookingsDetailsModel = null;
+    @Input() participants: Array<ParticipantDetailsModel> = [];
 
-  constructor() { }
+    constructor() {}
 
-  getParticipantInfo(participantId: string): string {
-    let represents = '';
-    const participant = this.participants.find(p => p.ParticipantId === participantId);
-    if (participant) {
-      represents = participant.DisplayName + ', representing ' + participant.Representee;
+    getParticipantInfo(participantId: string): string {
+        let represents = '';
+        const participant = this.participants.find(p => p.ParticipantId === participantId);
+        if (participant) {
+            represents = participant.DisplayName + ', representing ' + participant.Representee;
+        }
+        return represents;
     }
-    return represents;
-  }
 }

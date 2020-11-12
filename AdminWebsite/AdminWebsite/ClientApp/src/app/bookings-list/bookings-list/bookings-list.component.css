@@ -1,5 +1,5 @@
 p {
-  overflow: hidden;
+    overflow: hidden;
 }
 
 .vh-sml {
@@ -11,7 +11,7 @@ p {
 }
 
 .vh-table {
-    font-family: "nta", Arial, sans-serif;
+    font-family: 'nta', Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     font-weight: bold;
@@ -30,8 +30,8 @@ p {
     padding-top: 3px;
 }
 
-.vh-a{
-  cursor:pointer;
+.vh-a {
+    cursor: pointer;
 }
 
 .rowbottom {
@@ -62,7 +62,8 @@ p {
     text-decoration: none;
 }
 
-.vh-cancelled-booking, .vh-confirmation-failed {
+.vh-cancelled-booking,
+.vh-confirmation-failed {
     color: #ffffff;
     background-color: #d4351c;
     margin-left: 9px;
@@ -74,14 +75,14 @@ p {
 }
 
 .vh-created-booking {
-  color: #ffffff;
-  background-color: #3868C2;
-  margin-left: 9px;
-  padding-top: 3px;
-  padding-bottom: 3px;
-  width: 50%;
-  font-weight: 200;
-  text-align: center;
+    color: #ffffff;
+    background-color: #3868c2;
+    margin-left: 9px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    width: 50%;
+    font-weight: 200;
+    text-align: center;
 }
 
 .vh-row-cancelled {
@@ -90,9 +91,9 @@ p {
 }
 
 .vh-row-created {
-  padding-top: 3px;
+    padding-top: 3px;
 }
 
 .vh-font-black {
-  color: #0b0c0c;
+    color: #0b0c0c;
 }

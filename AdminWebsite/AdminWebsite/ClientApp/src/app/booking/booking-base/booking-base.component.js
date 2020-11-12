@@ -1,5 +1,5 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+'use strict';
+Object.defineProperty(exports, '__esModule', { value: true });
 var BookingBaseComponent = /** @class */ (function () {
     function BookingBaseComponent(bookingService, router) {
         this.bookingService = bookingService;
@@ -13,13 +13,13 @@ var BookingBaseComponent = /** @class */ (function () {
     };
     BookingBaseComponent.prototype.navigateToSummary = function () {
         this.resetEditMode();
-      this.router.navigate([PageUrls.Summary]);
+        this.router.navigate([PageUrls.Summary]);
     };
     BookingBaseComponent.prototype.resetEditMode = function () {
         this.bookingService.resetEditMode();
         this.editMode = false;
     };
     return BookingBaseComponent;
-}());
+})();
 exports.BookingBaseComponent = BookingBaseComponent;
 //# sourceMappingURL=booking-base.component.js.map

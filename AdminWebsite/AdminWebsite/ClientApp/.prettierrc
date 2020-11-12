@@ -3,5 +3,16 @@
     "singleQuote": true,
     "printWidth": 140,
     "tabWidth": 4,
-    "arrowParens": "avoid"
+    "arrowParens": "avoid",
+    "htmlWhitespaceSensitivity": "css",
+    "overrides": [
+        {
+            "files": ["*.html", "*.scss", "*.json"],
+            "options": {
+                "tabWidth": 2
+            },
+            "excludeFiles": ["*.js.map"]
+        }
+    ],
+    "endOfLine": "auto"
 }

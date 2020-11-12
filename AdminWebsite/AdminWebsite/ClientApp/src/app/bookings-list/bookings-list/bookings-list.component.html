@@ -1,69 +1,65 @@
 <h1 class="govuk-heading-l">Video hearings</h1>
 <div *ngIf="recordsLoaded">
   <div id="vh-table" class="vh-table" appScrollTrigger (scrolledPast)="scrollHandler()">
-
     <div *ngFor="let booking of bookings; index as b">
       <div class="govuk-grid-row vh-row">
-        <div class="govuk-grid-column-full govuk-hint ">
-          {{booking.BookingsDate | amLocal | amDateFormat: 'dddd DD MMMM YYYY'}}
+        <div class="govuk-grid-column-full govuk-hint">
+          {{ booking.BookingsDate | amLocal | amDateFormat: 'dddd DD MMMM YYYY' }}
         </div>
       </div>
       <div class="govuk-grid-row vh-row">
         <div class="rowbottom"></div>
       </div>
 
-      <div *ngFor="let detail of booking.BookingsDetails; index as i"
-        [ngClass]="{'vh-row-selected':detail.Selected, 'vh-row-cancelled':detail.isCancelled, 'vh-row-created':detail.isCreated}">
-        <div class="govuk-grid-row vh-row vh-a" (click)="rowSelected(b,i)" [attr.id]="b+'_'+i">
+      <div
+        *ngFor="let detail of booking.BookingsDetails; index as i"
+        [ngClass]="{ 'vh-row-selected': detail.Selected, 'vh-row-cancelled': detail.isCancelled, 'vh-row-created': detail.isCreated }"
+      >
+        <div class="govuk-grid-row vh-row vh-a" (click)="rowSelected(b, i)" [attr.id]="b + '_' + i">
           <div class="govuk-grid-column-one-quarter">
-
-            <div class="vh-sml vh-col">{{detail.StartTime | amLocal | amDateFormat:'h:mm a'}}</div>
-            <div class="govuk-hint vh-sml vh-col vh-font-black">listed for {{detail.DurationInHoursAndMinutes}} </div>
-            <div *ngIf="detail.isCancelled" class="vh-cancelled-booking">{{detail.Status}}</div>
+            <div class="vh-sml vh-col">{{ detail.StartTime | amLocal | amDateFormat: 'h:mm a' }}</div>
+            <div class="govuk-hint vh-sml vh-col vh-font-black">listed for {{ detail.DurationInHoursAndMinutes }}</div>
+            <div *ngIf="detail.isCancelled" class="vh-cancelled-booking">{{ detail.Status }}</div>
             <div *ngIf="detail.isCreated" class="vh-created-booking">Confirmed</div>
             <div *ngIf="detail.hasBookingConfirmationFailed" class="vh-confirmation-failed">Failed</div>
           </div>
           <div class="govuk-grid-column-one-quarter">
-
-            <div class="vh-sml">{{detail.HearingCaseNumber}}</div>
-            <div class="vh-sml">{{detail.HearingCaseName}}</div>
-            <div class="vh-sml">{{detail.CaseType}}</div>
-            <div class="vh-sml">{{detail.HearingType}}</div>
+            <div class="vh-sml">{{ detail.HearingCaseNumber }}</div>
+            <div class="vh-sml">{{ detail.HearingCaseName }}</div>
+            <div class="vh-sml">{{ detail.CaseType }}</div>
+            <div class="vh-sml">{{ detail.HearingType }}</div>
           </div>
           <div class="govuk-grid-column-one-quarter">
-            <div class="vh-sml">{{detail.JudgeName}}</div>
-            <div class="govuk-hint vh-sml vh-font-black">{{detail.CourtAddress}}</div>
+            <div class="vh-sml">{{ detail.JudgeName }}</div>
+            <div class="govuk-hint vh-sml vh-font-black">{{ detail.CourtAddress }}</div>
           </div>
           <div class="govuk-grid-column-one-quarter">
             <div class="govuk-grid-row">
               <div class="govuk-grid-column-full">
-                <div class="govuk-hint vh-xsml vh-font-black">Created by: </div>
+                <div class="govuk-hint vh-xsml vh-font-black">Created by:</div>
 
-                <span class="govuk-hint vh-xsml vh-font-black">{{detail.CreatedBy}}</span>
+                <span class="govuk-hint vh-xsml vh-font-black">{{ detail.CreatedBy }}</span>
                 <span class="govuk-hint vh-xsml vh-font-black">
-                  {{detail.CreatedDate | appLongDatetime}}
+                  {{ detail.CreatedDate | appLongDatetime }}
                 </span>
               </div>
             </div>
             <div class="govuk-grid-row" *ngIf="detail.LastEditBy">
               <div class="govuk-grid-column-full vh-l">
-                <div class="govuk-hint vh-xsml vh-font-black">Last edited by: </div>
+                <div class="govuk-hint vh-xsml vh-font-black">Last edited by:</div>
 
-                <span class="govuk-hint vh-xsml vh-font-black">{{detail.LastEditBy}}</span>
+                <span class="govuk-hint vh-xsml vh-font-black">{{ detail.LastEditBy }}</span>
                 <span class="govuk-hint vh-xsml vh-font-black">
-                  {{detail.LastEditDate | appLongDatetime}}
+                  {{ detail.LastEditDate | appLongDatetime }}
                 </span>
               </div>
             </div>
           </div>
-
         </div>
         <div class="govuk-grid-row vh-row">
           <div class="rowbottom"></div>
         </div>
-
       </div>
-
     </div>
 
     <div class="govuk-grid-row">
@@ -73,7 +69,6 @@
         </div>
       </div>
     </div>
-
   </div>
 </div>
 <div class="govuk-grid-row">

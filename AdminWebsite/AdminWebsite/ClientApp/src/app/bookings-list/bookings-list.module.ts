@@ -11,26 +11,21 @@ import { PopupModule } from '../popups/popup.module';
 import { CopySipComponent } from './copy-sip/copy-sip.component';
 
 @NgModule({
-  imports: [
-    SharedModule,
-    BookingsListRoutingModule,
-    PopupModule,
-    MomentModule
-  ],
-  declarations: [
-    BookingsListComponent,
-    BookingDetailsComponent,
-    ParticipantDetailsComponent,
-    BookingParticipantListComponent,
-    HearingDetailsComponent,
-    CopySipComponent,
-  ],
-  exports: [
-    BookingsListComponent,
-    BookingDetailsComponent,
-    ParticipantDetailsComponent,
-    BookingParticipantListComponent,
-    HearingDetailsComponent,
-  ]
+    imports: [SharedModule, BookingsListRoutingModule, PopupModule, MomentModule],
+    declarations: [
+        BookingsListComponent,
+        BookingDetailsComponent,
+        ParticipantDetailsComponent,
+        BookingParticipantListComponent,
+        HearingDetailsComponent,
+        CopySipComponent
+    ],
+    exports: [
+        BookingsListComponent,
+        BookingDetailsComponent,
+        ParticipantDetailsComponent,
+        BookingParticipantListComponent,
+        HearingDetailsComponent
+    ]
 })
-export class BookingsListModule { }
+export class BookingsListModule {}

@@ -1,14 +1,24 @@
 <div id="cancelPopup" class="popup-overlay">
-    <div class="popup popup-small" style="text-align: center;">
-        <h1 class="govuk-heading-m">There are unsaved changes.</h1>
-        <div class="content">
-            <h1 class="govuk-heading-m"> {{message}}</h1>
-            <div class="govuk-grid-row">
-                <div class="vh-top">
-                  <button id="btncancel" class="govuk-button hmcts-button--secondary vh-mr" type="submit" data-module="govuk-button" (click)="continueAddParticipant()">Continue editing</button>
-                  <button id="btnsubmit" class="govuk-button" type="submit" data-module="govuk-button" (click)="cancelBookingHearing()">Discard changes</button>
-                </div>
-            </div>
+  <div class="popup popup-small" style="text-align: center">
+    <h1 class="govuk-heading-m">There are unsaved changes.</h1>
+    <div class="content">
+      <h1 class="govuk-heading-m">{{ message }}</h1>
+      <div class="govuk-grid-row">
+        <div class="vh-top">
+          <button
+            id="btncancel"
+            class="govuk-button hmcts-button--secondary vh-mr"
+            type="submit"
+            data-module="govuk-button"
+            (click)="continueAddParticipant()"
+          >
+            Continue editing
+          </button>
+          <button id="btnsubmit" class="govuk-button" type="submit" data-module="govuk-button" (click)="cancelBookingHearing()">
+            Discard changes
+          </button>
         </div>
+      </div>
     </div>
+  </div>
 </div>
