@@ -14,6 +14,7 @@ namespace AdminWebsite.AcceptanceTests.Data
         {
             AssertDetails(hearing, testData);
             AssertCreatedDate(hearing.Created_date, DateTime.UtcNow);
+            AssertQuestionnaire(hearing, testData);
         }
 
         private static void AssertDetails(HearingDetailsResponse hearing, Test testData)
@@ -25,7 +26,7 @@ namespace AdminWebsite.AcceptanceTests.Data
             hearing.Hearing_type_name.Should().Be(testData.HearingDetails.HearingType.Name);
             hearing.Hearing_venue_name.Should().Be(testData.HearingSchedule.HearingVenue);
             hearing.Other_information.Should().Be(testData.OtherInformation);
-            hearing.Questionnaire_not_required.Should().Be(testData.HearingDetails.DoNotSendQuestionnaires);
+
         }
 
         private static void AssertCreatedDate(DateTime actual, DateTime expected)
@@ -36,6 +37,18 @@ namespace AdminWebsite.AcceptanceTests.Data
                 expected.AddMinutes(-2).ToShortTimeString(),
                 expected.AddMinutes(-1).ToShortTimeString(),
                 expected.ToShortTimeString());
+        }
+
+        private static void AssertQuestionnaire(HearingDetailsResponse hearing, Test testData)
+        {
+            if (!hearing.Cases.First().Name.Contains("Day") || hearing.Cases.First().Name.Contains("Day 1 of"))
+            {
+                hearing.Questionnaire_not_required.Should().Be(testData.HearingDetails.DoNotSendQuestionnaires);
+            }
+            else
+            {
+                hearing.Questionnaire_not_required.Should().BeTrue();
+            }
         }
 
         public static void AssertScheduledDate(DateTime actual, DateTime expected, bool isRunningOnSauceLabs)
