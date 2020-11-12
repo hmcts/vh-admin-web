@@ -92,7 +92,8 @@ namespace AdminWebsite.AcceptanceTests.Steps
             if (_c.Test.HearingSchedule.MultiDays)
             {
                 SelectMultiDaysHearing();
-                _c.Test.HearingSchedule.EndHearingDate = _c.Test.HearingSchedule.ScheduledDate.AddDays(_c.Test.HearingSchedule.NumberOfMultiDays);
+                _c.Test.HearingSchedule.EndHearingDate = _c.Test.HearingSchedule.ScheduledDate.AddDays(_c.Test.TestData.HearingSchedule.NumberOfMultiDays);
+                _c.Test.HearingSchedule.MultiDays = _c.Test.TestData.HearingSchedule.MultiDays;
             }
         }
 

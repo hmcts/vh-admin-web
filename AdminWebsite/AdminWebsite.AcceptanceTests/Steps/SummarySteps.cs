@@ -192,9 +192,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         private void VerifyBookingsCreated()
         {
-            var response = _c.Api.PollForHearingByUsername(Users.GetJudgeUser(_c.Users).Username, _c.Test.HearingDetails.CaseName);
-            var allHearings = RequestHelper.Deserialise<List<HearingDetailsResponse>>(response.Content);
-            var hearings = GetHearingFromHearings(allHearings);
+            var hearings = PollForAllHearings();
 
             foreach (var hearing in hearings)
             {
@@ -240,7 +238,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
                 }
 
                 var pollForAllHearings = hearings as HearingDetailsResponse[] ?? hearings.ToArray();
-                if (_c.Test.HearingSchedule.MultiDays && pollForAllHearings.Count().Equals(_c.Test.HearingSchedule.NumberOfMultiDays))
+                if (_c.Test.TestData.HearingSchedule.MultiDays && pollForAllHearings.Count().Equals(_c.Test.TestData.HearingSchedule.NumberOfMultiDays))
                 {
                     return pollForAllHearings;
                 }
