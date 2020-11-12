@@ -16,27 +16,23 @@ import { RemovePopupComponent } from '../popups/remove-popup/remove-popup.compon
 import { EndpointsComponent } from './endpoints/endpoints.component';
 
 export const Components: Type<any>[] = [
-  CreateHearingComponent,
-  HearingScheduleComponent,
-  AssignJudgeComponent,
-  AddParticipantComponent,
-  RemovePopupComponent,
-  OtherInformationComponent,
-  SummaryComponent,
-  BookingConfirmationComponent,
-  BreadcrumbComponent,
-  SearchEmailComponent,
-  ParticipantsListComponent,
-  EndpointsComponent
+    CreateHearingComponent,
+    HearingScheduleComponent,
+    AssignJudgeComponent,
+    AddParticipantComponent,
+    RemovePopupComponent,
+    OtherInformationComponent,
+    SummaryComponent,
+    BookingConfirmationComponent,
+    BreadcrumbComponent,
+    SearchEmailComponent,
+    ParticipantsListComponent,
+    EndpointsComponent
 ];
 
 @NgModule({
-  imports: [
-    SharedModule,
-    BookingRoutingModule,
-    PopupModule
-  ],
-  declarations: Components,
-  exports: Components
+    imports: [SharedModule, BookingRoutingModule, PopupModule],
+    declarations: Components,
+    exports: Components
 })
-export class BookingModule { }
+export class BookingModule {}

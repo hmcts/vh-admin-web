@@ -2,9 +2,7 @@
   <div class="govuk-grid-column-full">
     <h2 class="govuk-heading-l">You've signed in using an unsupported browser</h2>
     <p class="supported-browser-body">
-      It looks like you've signed in using {{ browserName }}. Unfortunately this browser is not currrently supported by
-      our
-      system.
+      It looks like you've signed in using {{ browserName }}. Unfortunately this browser is not currrently supported by our system.
     </p>
     <div>
       <p class="supported-browser-body">Please sign out and sign in again using the following browser:</p>
@@ -14,11 +12,16 @@
             <div class="govuk-grid-column-one-quarter">
               <div class="govuk-grid-row">
                 <div class="govuk-grid-column-one-third">
-                  <img src="{{browser.iconPath}}" height="48" width="48" class="govuk-!-margin-right-2"
-                    alt="{{browser.name}} browser logo" />
+                  <img
+                    src="{{ browser.iconPath }}"
+                    height="48"
+                    width="48"
+                    class="govuk-!-margin-right-2"
+                    alt="{{ browser.name }} browser logo"
+                  />
                 </div>
                 <div class="govuk-grid-column-two-thirds">
-                  <p>{{browser.name}}</p>
+                  <p>{{ browser.name }}</p>
                 </div>
               </div>
             </div>

@@ -10,24 +10,16 @@ import { AnswerListEntryComponent } from './answer-list-entry/answer-list-entry.
 import { ScrollableSuitabilityAnswersService } from './services/scrollable-suitability-answers.service';
 import { QuestionnaireMapperFactory } from './services/questionnaire-mapper-factory.service';
 
-export const routes: Routes = [
-  { path: 'questionnaire', component: AnswersListComponent, canActivate: [VhOfficerAdminGuard] },
-];
+export const routes: Routes = [{ path: 'questionnaire', component: AnswersListComponent, canActivate: [VhOfficerAdminGuard] }];
 
 @NgModule({
-  imports: [
-    SharedModule,
-    CommonModule,
-    RouterModule.forRoot(routes),
-  ],
-  providers: [
-    QuestionnaireService,
-    { provide: ScrollableSuitabilityAnswersService, useClass: QuestionnaireApiService },
-    QuestionnaireMapperFactory,
-  ],
-  exports: [
-    RouterModule
-  ],
-  declarations: [AnswersListComponent, AnswerListEntryComponent]
+    imports: [SharedModule, CommonModule, RouterModule.forRoot(routes)],
+    providers: [
+        QuestionnaireService,
+        { provide: ScrollableSuitabilityAnswersService, useClass: QuestionnaireApiService },
+        QuestionnaireMapperFactory
+    ],
+    exports: [RouterModule],
+    declarations: [AnswersListComponent, AnswerListEntryComponent]
 })
-export class SuitabilityModule { }
+export class SuitabilityModule {}

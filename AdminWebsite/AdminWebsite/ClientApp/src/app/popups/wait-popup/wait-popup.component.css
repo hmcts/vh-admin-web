@@ -1,54 +1,53 @@
 #dot-loader {
-  position: relative;
+    position: relative;
 }
 
 #dot-loader div {
-  width: 5px;
-  height: 5px;
-  background: #1b1b1c;
-  border-radius: 50%;
-  display: inline-block;
-  animation: dots 1s infinite;
-  margin-right: 10px;
+    width: 5px;
+    height: 5px;
+    background: #1b1b1c;
+    border-radius: 50%;
+    display: inline-block;
+    animation: dots 1s infinite;
+    margin-right: 10px;
 }
 
-
-  #dot-loader div:nth-child(1) {
-    animation-delay: .1s;
-  }
-  #dot-loader div:nth-child(2) {
-    animation-delay: .2s;
-  }
-  #dot-loader div:nth-child(3) {
-    animation-delay: .3s;
-  }
-  #dot-loader div:nth-child(4) {
-    animation-delay: .4s;
-  }
-  #dot-loader div:nth-child(5) {
-    animation-delay: .5s;
-  }
-  #dot-loader div:nth-child(6) {
-    animation-delay: .6s;
-  }
-  #dot-loader div:nth-child(7) {
-    animation-delay: .7s;
-  }
-  #dot-loader div:nth-child(8) {
-    animation-delay: .8s;
-  }
+#dot-loader div:nth-child(1) {
+    animation-delay: 0.1s;
+}
+#dot-loader div:nth-child(2) {
+    animation-delay: 0.2s;
+}
+#dot-loader div:nth-child(3) {
+    animation-delay: 0.3s;
+}
+#dot-loader div:nth-child(4) {
+    animation-delay: 0.4s;
+}
+#dot-loader div:nth-child(5) {
+    animation-delay: 0.5s;
+}
+#dot-loader div:nth-child(6) {
+    animation-delay: 0.6s;
+}
+#dot-loader div:nth-child(7) {
+    animation-delay: 0.7s;
+}
+#dot-loader div:nth-child(8) {
+    animation-delay: 0.8s;
+}
 
 @keyframes dots {
-  0% {
-    transform: scale(1);
-  }
+    0% {
+        transform: scale(1);
+    }
 
-  50% {
-    opacity: .3;
-    transform: scale(2);
-  }
+    50% {
+        opacity: 0.3;
+        transform: scale(2);
+    }
 
-  100% {
-    transform: scale(1);
-  }
+    100% {
+        transform: scale(1);
+    }
 }

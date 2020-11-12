@@ -12,13 +12,27 @@ export class BookingsListModel {
 }
 
 export class BookingsDetailsModel {
-
-    constructor(hearingId: string, startTime: Date, duration: number, hearingCaseNumber: string,
-        hearingCaseName: string, hearingType: string, judgeName: string, courtRoom: string,
-        courtAddress: string, createdBy: string, createdDate: Date, lastEditBy: string,
-        lastEditDate: Date, confirmedBy: string, confirmedDate: Date,
-        status: string, questionnaireNotRequired: boolean, audioRecordingRequired: boolean,
-        cancelReason: string, caseType: string
+    constructor(
+        hearingId: string,
+        startTime: Date,
+        duration: number,
+        hearingCaseNumber: string,
+        hearingCaseName: string,
+        hearingType: string,
+        judgeName: string,
+        courtRoom: string,
+        courtAddress: string,
+        createdBy: string,
+        createdDate: Date,
+        lastEditBy: string,
+        lastEditDate: Date,
+        confirmedBy: string,
+        confirmedDate: Date,
+        status: string,
+        questionnaireNotRequired: boolean,
+        audioRecordingRequired: boolean,
+        cancelReason: string,
+        caseType: string
     ) {
         this.HearingId = hearingId;
         this.StartTime = startTime;

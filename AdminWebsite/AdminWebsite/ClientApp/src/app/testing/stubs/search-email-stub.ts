@@ -3,23 +3,20 @@ import { ParticipantModel } from '../../common/model/participant.model';
 
 @Component({ selector: 'app-search-email', template: '' })
 export class SearchEmailStubComponent {
+    @Output()
+    findParticipant = new EventEmitter<ParticipantModel>();
 
-  @Output()
-  findParticipant = new EventEmitter<ParticipantModel>();
+    @Output()
+    participantsNotFound = new EventEmitter();
 
-  @Output()
-  participantsNotFound = new EventEmitter();
+    @Output()
+    emailChanged = new EventEmitter<string>();
 
-  @Output()
-  emailChanged = new EventEmitter<string>();
+    @ViewChild('emailInput')
+    emailInput: ElementRef;
 
-  @ViewChild('emailInput')
-  emailInput: ElementRef;
-
-  validateEmail() {
-    return true;
-  }
-  clearEmail() {
-
-  }
+    validateEmail() {
+        return true;
+    }
+    clearEmail() {}
 }

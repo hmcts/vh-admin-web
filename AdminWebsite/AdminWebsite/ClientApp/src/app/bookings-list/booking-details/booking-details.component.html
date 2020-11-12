@@ -7,7 +7,7 @@
     <div class="govuk-grid-column-full">
       <div>
         <div class="vh-title">
-          <h1 class="govuk-heading-l" id="hearingNumber">{{ hearing.HearingCaseNumber }} </h1>
+          <h1 class="govuk-heading-l" id="hearingNumber">{{ hearing.HearingCaseNumber }}</h1>
         </div>
         <div *ngIf="hearing.isCancelled" id="lblCancelled" class="vh-cancelled-booking">{{ hearing.Status }}</div>
         <div *ngIf="hearing.isCancelled" id="lblCancelledDetails" class="vh-cancelled-reason">{{ hearing.CancelReason }}</div>
@@ -22,8 +22,7 @@
       <app-hearing-details [hearing]="hearing" [participants]="participants"></app-hearing-details>
     </div>
     <div class="govuk-grid-column-one-half vh-top">
-      <app-booking-participant-list [participants]="participants" [judges]="judges"
-                                    [vh_officer_admin]="isVhOfficerAdmin">
+      <app-booking-participant-list [participants]="participants" [judges]="judges" [vh_officer_admin]="isVhOfficerAdmin">
       </app-booking-participant-list>
     </div>
   </div>
@@ -32,35 +31,47 @@
     <div class="govuk-grid-column-full">
       <div *ngIf="!hearing.isCancelled">
         <span *ngIf="!hearing.isCreated || (hearing.isCreated && isConfirmationTimeValid)">
-          <button *ngIf="!hearing.hasBookingConfirmationFailed" class="govuk-button vh-mt20 vh-mr-25" data-module="govuk-button" id="edit-button"
-                  (click)="editHearing()">
+          <button
+            *ngIf="!hearing.hasBookingConfirmationFailed"
+            class="govuk-button vh-mt20 vh-mr-25"
+            data-module="govuk-button"
+            id="edit-button"
+            (click)="editHearing()"
+          >
             Edit
           </button>
-          <button *ngIf="!hearing.hasBookingConfirmationFailed" class="govuk-button vh-mt20 vh-mr-25 vh-btn-cancel" data-module="govuk-button"
-                  id="cancel-button" (click)="cancelHearing()">
+          <button
+            *ngIf="!hearing.hasBookingConfirmationFailed"
+            class="govuk-button vh-mt20 vh-mr-25 vh-btn-cancel"
+            data-module="govuk-button"
+            id="cancel-button"
+            (click)="cancelHearing()"
+          >
             Cancel booking
           </button>
         </span>
-        <button *ngIf="!hearing.isCreated && isConfirmationTimeValid && isVhOfficerAdmin && !hearing.hasBookingConfirmationFailed" data-module="govuk-button" class="govuk-button vh-mt20 hmcts-button--secondary"
-                id="confirm-button" (click)="confirmHearing()">
+        <button
+          *ngIf="!hearing.isCreated && isConfirmationTimeValid && isVhOfficerAdmin && !hearing.hasBookingConfirmationFailed"
+          data-module="govuk-button"
+          class="govuk-button vh-mt20 hmcts-button--secondary"
+          id="confirm-button"
+          (click)="confirmHearing()"
+        >
           Confirm booking
         </button>
       </div>
     </div>
-
   </div>
 </div>
 
 <div *ngIf="showConfirming">
-    <app-wait-popup></app-wait-popup>
+  <app-wait-popup></app-wait-popup>
 </div>
 
 <div *ngIf="showConfirmingFailed">
-    <app-confirm-booking-failed-popup (close)="closeConfirmFailed($event)" [hearingId]="hearingId">
-    </app-confirm-booking-failed-popup>
+  <app-confirm-booking-failed-popup (close)="closeConfirmFailed($event)" [hearingId]="hearingId"> </app-confirm-booking-failed-popup>
 </div>
 
 <div *ngIf="showCancelBooking">
-  <app-cancel-booking-popup (cancelBooking)="cancelBooking($event)" (keepBooking)="keepBooking($event)">
-  </app-cancel-booking-popup>
+  <app-cancel-booking-popup (cancelBooking)="cancelBooking($event)" (keepBooking)="keepBooking($event)"> </app-cancel-booking-popup>
 </div>

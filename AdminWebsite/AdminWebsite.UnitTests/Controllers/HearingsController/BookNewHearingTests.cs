@@ -25,6 +25,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private Mock<IBookingsApiClient> _bookingsApiClient;
         private Mock<IUserIdentity> _userIdentity;
         private IUserAccountService _userAccountService;
+        private Mock<ILogger<UserAccountService>> _userAccountServiceLogger;
         private Mock<IValidator<EditHearingRequest>> _editHearingRequestValidator;
         private Mock<IVideoApiClient> _videoApiMock;
         private Mock<IPollyRetryService> _pollyRetryServiceMock;
@@ -37,8 +38,10 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _userApiClient = new Mock<IUserApiClient>();
             _bookingsApiClient = new Mock<IBookingsApiClient>();
             _userIdentity = new Mock<IUserIdentity>();
+            _userAccountServiceLogger = new Mock<ILogger<UserAccountService>>();
 
-            _userAccountService = new UserAccountService(_userApiClient.Object, _bookingsApiClient.Object);
+            _userAccountService = new UserAccountService(_userApiClient.Object, _bookingsApiClient.Object,
+                _userAccountServiceLogger.Object);
 
             _editHearingRequestValidator = new Mock<IValidator<EditHearingRequest>>();
             _videoApiMock = new Mock<IVideoApiClient>();

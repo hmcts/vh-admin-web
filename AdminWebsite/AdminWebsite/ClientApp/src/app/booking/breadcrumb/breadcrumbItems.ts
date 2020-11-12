@@ -47,6 +47,5 @@ export const BreadcrumbItems = [
         name: 'Summary',
         url: '/summary',
         active: false
-    },
-
+    }
 ];

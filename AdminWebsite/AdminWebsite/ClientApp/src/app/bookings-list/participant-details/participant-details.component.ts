@@ -1,18 +1,17 @@
-import { Component, Input} from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { ParticipantDetailsModel } from '../../common/model/participant-details.model';
 
 @Component({
-  selector: 'app-booking-participant-details',
-  templateUrl: 'participant-details.component.html',
-  styleUrls: ['participant-details.component.css']
+    selector: 'app-booking-participant-details',
+    templateUrl: 'participant-details.component.html',
+    styleUrls: ['participant-details.component.css']
 })
 export class ParticipantDetailsComponent {
+    @Input()
+    participant: ParticipantDetailsModel = null;
 
-  @Input()
-  participant: ParticipantDetailsModel = null;
+    @Input()
+    vh_officer_admin: boolean;
 
-  @Input()
-  vh_officer_admin: boolean;
-
-  constructor() { }
+    constructor() {}
 }

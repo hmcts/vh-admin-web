@@ -3,11 +3,15 @@
 
 <h2 class="govuk-heading-m">Hearing details</h2>
 
-<div *ngIf="failedSubmission && form.invalid" class="govuk-error-summary govuk-!-width-one-half"
-  aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
-  <h2 class="govuk-error-summary__title" id="error-summary-title">
-    Please complete the missing information
-  </h2>
+<div
+  *ngIf="failedSubmission && form.invalid"
+  class="govuk-error-summary govuk-!-width-one-half"
+  aria-labelledby="error-summary-title"
+  role="alert"
+  tabindex="-1"
+  data-module="error-summary"
+>
+  <h2 class="govuk-error-summary__title" id="error-summary-title">Please complete the missing information</h2>
   <div class="govuk-error-summary__body">
     <ul class="govuk-list govuk-error-summary__list">
       <li *ngIf="caseNumber.invalid">
@@ -28,94 +32,101 @@
 
 <form [formGroup]="form" class="govuk-form-group" (ngSubmit)="saveHearingDetails()">
   <div [ngClass]="caseNumberInvalid ? 'govuk-form-group--error' : 'govuk-form-group'">
-    <label class="govuk-label govuk-!-width-one-half" for="caseNumber">
-      Case number
-    </label>
-    <input id="caseNumber" class="govuk-input govuk-!-width-one-half"
-           type="text" formControlName="caseNumber" required (blur)="caseNumberOnBlur()">
+    <label class="govuk-label govuk-!-width-one-half" for="caseNumber"> Case number </label>
+    <input
+      id="caseNumber"
+      class="govuk-input govuk-!-width-one-half"
+      type="text"
+      formControlName="caseNumber"
+      required
+      (blur)="caseNumberOnBlur()"
+    />
     <div *ngIf="caseNumberInvalid" class="alert alert-danger">
-      <span id="caseNumber-error" class="govuk-error-message">
-        Please enter a case number
-      </span>
+      <span id="caseNumber-error" class="govuk-error-message"> Please enter a case number </span>
     </div>
   </div>
 
   <div [ngClass]="caseNameInvalid ? 'govuk-form-group--error' : 'govuk-form-group'">
-    <label class="govuk-label govuk-!-width-one-half" for="caseName">
-      Case name
-    </label>
-    <input id="caseName" placeholder="e.g. Ms A Smith vs HMRC" class="govuk-input govuk-!-width-one-half" type="text"
-      formControlName="caseName" required (blur)="caseNameOnBlur()">
+    <label class="govuk-label govuk-!-width-one-half" for="caseName"> Case name </label>
+    <input
+      id="caseName"
+      placeholder="e.g. Ms A Smith vs HMRC"
+      class="govuk-input govuk-!-width-one-half"
+      type="text"
+      formControlName="caseName"
+      required
+      (blur)="caseNameOnBlur()"
+    />
     <div *ngIf="caseNameInvalid" class="alert alert-danger">
-      <span id="caseName-error" class="govuk-error-message">
-        Please enter a case name
-      </span>
+      <span id="caseName-error" class="govuk-error-message"> Please enter a case name </span>
     </div>
   </div>
 
-  <div *ngIf="availableCaseTypes.length > 1"
-    [ngClass]="caseTypeInvalid ? 'govuk-form-group--error' : 'govuk-form-group'">
-    <label class="govuk-label govuk-!-width-one-half" for="caseType">
-      Case type
-    </label>
-    <select class="govuk-select govuk-!-width-one-half" id="caseType" formControlName="caseType"
-      [attr.disabled]="isExistingHearing">
+  <div *ngIf="availableCaseTypes.length > 1" [ngClass]="caseTypeInvalid ? 'govuk-form-group--error' : 'govuk-form-group'">
+    <label class="govuk-label govuk-!-width-one-half" for="caseType"> Case type </label>
+    <select class="govuk-select govuk-!-width-one-half" id="caseType" formControlName="caseType" [attr.disabled]="isExistingHearing">
       <option *ngFor="let availableCaseType of availableCaseTypes" [ngValue]="availableCaseType">
-        {{availableCaseType}}
+        {{ availableCaseType }}
       </option>
     </select>
     <div *ngIf="caseTypeInvalid" class="alert alert-danger">
-      <span id="caseType-error" class="govuk-error-message">
-        Please select a case type
-      </span>
+      <span id="caseType-error" class="govuk-error-message"> Please select a case type </span>
     </div>
   </div>
 
   <div [ngClass]="hearingTypeInvalid ? 'govuk-form-group--error' : 'govuk-form-group'">
-    <label class="govuk-label govuk-!-width-one-half" for="hearingType">
-      Hearing type
-    </label>
-    <select class="govuk-select govuk-!-width-one-half" id="hearingType" formControlName="hearingType"
-      [attr.disabled]="isExistingHearing">
+    <label class="govuk-label govuk-!-width-one-half" for="hearingType"> Hearing type </label>
+    <select class="govuk-select govuk-!-width-one-half" id="hearingType" formControlName="hearingType" [attr.disabled]="isExistingHearing">
       <option *ngFor="let availableHearingType of filteredHearingTypes" [ngValue]="availableHearingType.id">
-        {{availableHearingType.name}}
+        {{ availableHearingType.name }}
       </option>
     </select>
     <div *ngIf="hearingTypeInvalid" class="alert alert-danger">
-      <span id="hearingType-error" class="govuk-error-message">
-        Please select a hearing type
-      </span>
+      <span id="hearingType-error" class="govuk-error-message"> Please select a hearing type </span>
     </div>
   </div>
   <div *ngIf="!isExistingHearing" class="govuk-checkboxes__item">
-    <input class="govuk-checkboxes__input" id="questionnaireNotRequired" name="questionnaireNotRequired"
-           type="checkbox" [checked]="questionnaireNotRequired" formControlName="questionnaireNotRequired">
-    <label class="govuk-label govuk-checkboxes__label" for="questionnaireNotRequired">
-      Do not send questionnaires
-    </label>
+    <input
+      class="govuk-checkboxes__input"
+      id="questionnaireNotRequired"
+      name="questionnaireNotRequired"
+      type="checkbox"
+      [checked]="questionnaireNotRequired"
+      formControlName="questionnaireNotRequired"
+    />
+    <label class="govuk-label govuk-checkboxes__label" for="questionnaireNotRequired"> Do not send questionnaires </label>
   </div>
 
   <div class="govuk-!-padding-bottom-9"></div>
 
   <div class="sk-top">
-    <button id="nextButton" class="govuk-button vh-mr25" data-module="govuk-button"
-            (click)="saveHearingDetails()" alt="Save hearing details and view hearings schedule">
-      {{buttonAction}}
+    <button
+      id="nextButton"
+      class="govuk-button vh-mr25"
+      data-module="govuk-button"
+      (click)="saveHearingDetails()"
+      alt="Save hearing details and view hearings schedule"
+    >
+      {{ buttonAction }}
     </button>
-    <button id="cancelButton" class="govuk-button hmcts-button--secondary" data-module="govuk-button" value="Cancel" type="button"
-            (click)="confirmCancelBooking()" alt="Confirm cancellation of new booking and return to dashboard">
+    <button
+      id="cancelButton"
+      class="govuk-button hmcts-button--secondary"
+      data-module="govuk-button"
+      value="Cancel"
+      type="button"
+      (click)="confirmCancelBooking()"
+      alt="Confirm cancellation of new booking and return to dashboard"
+    >
       Cancel
     </button>
   </div>
-
 </form>
 
 <div *ngIf="attemptingCancellation">
-  <app-cancel-popup (continueBooking)="continueBooking($event)" (cancelBooking)="cancelBooking($event)">
-  </app-cancel-popup>
+  <app-cancel-popup (continueBooking)="continueBooking($event)" (cancelBooking)="cancelBooking($event)"> </app-cancel-popup>
 </div>
 
 <div *ngIf="attemptingDiscardChanges">
-  <app-discard-confirm-popup (continueEditing)="continueBooking($event)" (cancelChanges)="cancelChanges()">
-  </app-discard-confirm-popup>
+  <app-discard-confirm-popup (continueEditing)="continueBooking($event)" (cancelChanges)="cancelChanges()"> </app-discard-confirm-popup>
 </div>

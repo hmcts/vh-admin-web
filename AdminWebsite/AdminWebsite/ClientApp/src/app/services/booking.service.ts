@@ -6,52 +6,51 @@ const existingCaseTypeKey = 'selectedCaseType';
 const bookingEditKey = 'bookingEditKey';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
 export class BookingService {
-  constructor() {
-  }
+    constructor() {}
 
-  setEditMode() {
-    sessionStorage.setItem(bookingEditKey, bookingEditKey);
-  }
+    setEditMode() {
+        sessionStorage.setItem(bookingEditKey, bookingEditKey);
+    }
 
-  removeEditMode() {
-    sessionStorage.removeItem(bookingEditKey);
-  }
+    removeEditMode() {
+        sessionStorage.removeItem(bookingEditKey);
+    }
 
-  resetEditMode() {
-    sessionStorage.removeItem(bookingEditKey);
-    sessionStorage.removeItem(existingCaseTypeKey);
-  }
+    resetEditMode() {
+        sessionStorage.removeItem(bookingEditKey);
+        sessionStorage.removeItem(existingCaseTypeKey);
+    }
 
-  isEditMode(): boolean {
-    const editMode = sessionStorage.getItem(bookingEditKey);
-    return editMode === bookingEditKey;
-  }
+    isEditMode(): boolean {
+        const editMode = sessionStorage.getItem(bookingEditKey);
+        return editMode === bookingEditKey;
+    }
 
-  setParticipantEmail(participantEmail: string) {
-    sessionStorage.setItem(participantEmailKey, participantEmail);
-  }
+    setParticipantEmail(participantEmail: string) {
+        sessionStorage.setItem(participantEmailKey, participantEmail);
+    }
 
-  getParticipantEmail() {
-    return sessionStorage.getItem(participantEmailKey);
-  }
+    getParticipantEmail() {
+        return sessionStorage.getItem(participantEmailKey);
+    }
 
-  removeParticipantEmail() {
-    sessionStorage.removeItem(participantEmailKey);
-  }
+    removeParticipantEmail() {
+        sessionStorage.removeItem(participantEmailKey);
+    }
 
-  isParticipantEmail(): boolean {
-    const participantEmail = sessionStorage.getItem(participantEmailKey);
-    return participantEmail && participantEmail.length > 0;
-  }
+    isParticipantEmail(): boolean {
+        const participantEmail = sessionStorage.getItem(participantEmailKey);
+        return participantEmail && participantEmail.length > 0;
+    }
 
-  setExistingCaseType(selectedCaseType: string) {
-    sessionStorage.setItem(existingCaseTypeKey, selectedCaseType);
-  }
+    setExistingCaseType(selectedCaseType: string) {
+        sessionStorage.setItem(existingCaseTypeKey, selectedCaseType);
+    }
 
-  removeExistingCaseType() {
-    sessionStorage.removeItem(existingCaseTypeKey);
-  }
+    removeExistingCaseType() {
+        sessionStorage.removeItem(existingCaseTypeKey);
+    }
 }

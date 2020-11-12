@@ -4,11 +4,14 @@ import { Observable } from 'rxjs';
 
 @Injectable()
 export class ChangesGuard implements CanDeactivate<CanDeactiveComponent> {
-    constructor(private router: Router) {
-    }
+    constructor(private router: Router) {}
 
-    canDeactivate(component: CanDeactiveComponent, route: ActivatedRouteSnapshot, state: RouterStateSnapshot,
-        nextState?: RouterStateSnapshot) {
+    canDeactivate(
+        component: CanDeactiveComponent,
+        route: ActivatedRouteSnapshot,
+        state: RouterStateSnapshot,
+        nextState?: RouterStateSnapshot
+    ) {
         if (nextState.url === '/dashboard') {
             return component.hasChanges ? !component.hasChanges() : true;
         }
@@ -19,4 +22,3 @@ export class ChangesGuard implements CanDeactivate<CanDeactiveComponent> {
 export interface CanDeactiveComponent {
     hasChanges: () => Observable<boolean> | Promise<boolean> | boolean;
 }
-

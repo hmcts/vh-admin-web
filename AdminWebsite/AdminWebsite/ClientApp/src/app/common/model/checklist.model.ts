@@ -1,8 +1,15 @@
 import { Constants } from '../constants';
 
 export class ChecklistModel {
-    constructor(participantId: number, title: string, firstName: string,
-        surname: string, hearingCase: string, hearingName: string, completedDate: Date) {
+    constructor(
+        participantId: number,
+        title: string,
+        firstName: string,
+        surname: string,
+        hearingCase: string,
+        hearingName: string,
+        completedDate: Date
+    ) {
         this.ParticipantId = participantId;
         this.FirstName = firstName;
         this.Surname = surname;
@@ -30,32 +37,33 @@ export class ChecklistModel {
 }
 
 const Questions = {
-  Professional: {
-    'ANY_OTHER_CIRCUMSTANCES': 'Is there anything that could affect your ability to take part in video hearing?',
-    'SUITABLE_ROOM_AVAILABLE': 'Will you have access to a suitable room?',
-    'USER_CONSENT': 'Do you consider the hearing suitable for a video hearing?',
-    'NEED_INTERPRETER': 'If your client attending the hearing will they need an intepreter?',
-    'OTHER_PERSON_IN_ROOM': 'Will your client be attending the hearing with you?',
-    'EQUIPMENT_DEVICE_TYPE': 'Device',
-    'EQUIPMENT_CAM_AND_MIC_PRESENT': 'Camera and microphone present?',
-    'EQUIPMENT_BROWSER': 'Browser',
-    'EQUIPMENT_BANDWIDTH': 'Internet speed',
-    'EQUIPMENT_SAME_DEVICE': 'Is the same computer you would use?',
-    'OTHER_INFORMATION': 'Is there anything else you would like to draw to the court\'s attention?',
-    'EQUIPMENT_INTERNET': 'On the day of the hearing, will you have access to an internet connection?',
-    'EQUIPMENT_LAPTOP': 'On the day of the hearing, will you have access to a laptop?',
-    'EQUIPMENT_COMPUTER_CAMERA': 'On the day of the hearing, will you have access to a computer with a camera?',
-  },
-  Citizen: {
-    'ANY_OTHER_CIRCUMSTANCES': 'Is there anything the court should be aware of when it decides which type of hearing will be suitable?',
-    'SUITABLE_ROOM_AVAILABLE': 'On the day of your hearing, will you have acces to a suitable room?',
-    'USER_CONSENT': 'Your consent for a video hearing',
-    'NEED_INTERPRETER': 'Will you need an interpreter for your hearing?',
-    'EQUIPMENT_PHONE': 'On the day of the hearing, will you have access to a phone?',
-    'EQUIPMENT_INTERNET': 'On the day of the hearing, will you have access to an internet connection?',
-    'EQUIPMENT_LAPTOP': 'On the day of the hearing, will you have access to a laptop?',
-    'EQUIPMENT_COMPUTER_CAMERA': 'On the day of the hearing, will you have access to a computer with a camera?'
-  }
+    Professional: {
+        ANY_OTHER_CIRCUMSTANCES: 'Is there anything that could affect your ability to take part in video hearing?',
+        SUITABLE_ROOM_AVAILABLE: 'Will you have access to a suitable room?',
+        USER_CONSENT: 'Do you consider the hearing suitable for a video hearing?',
+        NEED_INTERPRETER: 'If your client attending the hearing will they need an intepreter?',
+        OTHER_PERSON_IN_ROOM: 'Will your client be attending the hearing with you?',
+        EQUIPMENT_DEVICE_TYPE: 'Device',
+        EQUIPMENT_CAM_AND_MIC_PRESENT: 'Camera and microphone present?',
+        EQUIPMENT_BROWSER: 'Browser',
+        EQUIPMENT_BANDWIDTH: 'Internet speed',
+        EQUIPMENT_SAME_DEVICE: 'Is the same computer you would use?',
+        // tslint:disable-next-line: quotemark
+        OTHER_INFORMATION: "Is there anything else you would like to draw to the court's attention?",
+        EQUIPMENT_INTERNET: 'On the day of the hearing, will you have access to an internet connection?',
+        EQUIPMENT_LAPTOP: 'On the day of the hearing, will you have access to a laptop?',
+        EQUIPMENT_COMPUTER_CAMERA: 'On the day of the hearing, will you have access to a computer with a camera?'
+    },
+    Citizen: {
+        ANY_OTHER_CIRCUMSTANCES: 'Is there anything the court should be aware of when it decides which type of hearing will be suitable?',
+        SUITABLE_ROOM_AVAILABLE: 'On the day of your hearing, will you have acces to a suitable room?',
+        USER_CONSENT: 'Your consent for a video hearing',
+        NEED_INTERPRETER: 'Will you need an interpreter for your hearing?',
+        EQUIPMENT_PHONE: 'On the day of the hearing, will you have access to a phone?',
+        EQUIPMENT_INTERNET: 'On the day of the hearing, will you have access to an internet connection?',
+        EQUIPMENT_LAPTOP: 'On the day of the hearing, will you have access to a laptop?',
+        EQUIPMENT_COMPUTER_CAMERA: 'On the day of the hearing, will you have access to a computer with a camera?'
+    }
 };
 
 export class AnswerQuestion {

@@ -1,9 +1,14 @@
-<div >
-    <div #sipAddress class="sipAddressBox" [hidden]="displayTooltip">
-        {{ tooltip }}
-    </div>
-    <div class="link" (mouseover)="onMouseOver($event)" (mousemove)="onMouseOver($event)" (mouseout)="onMouseOut()"
-        (click)="copyToClipboard(endpoint); $event.stopPropagation()">
-        {{endpoint.sip}}:{{endpoint.pin}}
-    </div>
+<div>
+  <div #sipAddress class="sipAddressBox" [hidden]="displayTooltip">
+    {{ tooltip }}
+  </div>
+  <div
+    class="link"
+    (mouseover)="onMouseOver($event)"
+    (mousemove)="onMouseOver($event)"
+    (mouseout)="onMouseOut()"
+    (click)="copyToClipboard(endpoint); $event.stopPropagation()"
+  >
+    {{ endpoint.sip }}:{{ endpoint.pin }}
+  </div>
 </div>

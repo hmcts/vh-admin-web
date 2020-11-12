@@ -13,14 +13,10 @@ describe('authguard', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            providers: [
-              AuthGuard,
-              { provide: AdalService, useClass: MockAdalService },
-              { provide: Router, useValue: router },
-            ],
-          }).compileComponents();
-          adalSvc = TestBed.inject(AdalService);
-          authGuard = TestBed.inject(AuthGuard);
+            providers: [AuthGuard, { provide: AdalService, useClass: MockAdalService }, { provide: Router, useValue: router }]
+        }).compileComponents();
+        adalSvc = TestBed.inject(AdalService);
+        authGuard = TestBed.inject(AuthGuard);
     });
 
     describe('when logged in with successful authentication', () => {

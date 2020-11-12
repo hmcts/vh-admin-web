@@ -11,7 +11,7 @@
 p {
     max-height: 30%;
     overflow: auto;
-    color: #0B0B0B;
+    color: #0b0b0b;
     font-family: Arial;
     font-size: 18px;
     line-height: 1.3157;
@@ -30,8 +30,10 @@ p {
     max-width: 600px !important;
 }
 
-.vh-mr{
+.vh-mr {
     margin-right: 30px;
 }
 
-.vh-top{margin-top: 30px;}
+.vh-top {
+    margin-top: 30px;
+}

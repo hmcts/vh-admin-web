@@ -3,32 +3,24 @@ import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-footer',
-  templateUrl: './footer.component.html',
-  styleUrls: ['./footer.component.css']
+    selector: 'app-footer',
+    templateUrl: './footer.component.html',
+    styleUrls: ['./footer.component.css']
 })
 export class FooterComponent implements OnInit {
-  hideContactUsLink = false;
+    hideContactUsLink = false;
 
-  constructor(private router: Router) {
-    this.router.events.pipe(
-      filter(event => event instanceof NavigationEnd)
-    ).subscribe(x => {
-      this.hideContactUs();
-    });
-  }
+    constructor(private router: Router) {
+        this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(x => {
+            this.hideContactUs();
+        });
+    }
 
-  ngOnInit() {
-    this.hideContactUs();
-  }
+    ngOnInit() {
+        this.hideContactUs();
+    }
 
-  hideContactUs() {
-    this.hideContactUsLink = this.router.url === '/contact-us';
-  }
+    hideContactUs() {
+        this.hideContactUsLink = this.router.url === '/contact-us';
+    }
 }
-
-
-
-
-
-
