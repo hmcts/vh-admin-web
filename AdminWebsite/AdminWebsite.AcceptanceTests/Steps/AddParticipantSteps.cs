@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using AcceptanceTests.Common.Configuration.Users;
 using AcceptanceTests.Common.Driver.Drivers;
 using AcceptanceTests.Common.Driver.Helpers;
@@ -174,6 +175,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AddParticipantsPage.DisplayNameTextfield).SendKeys(user.DisplayName);
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AddParticipantsPage.AddParticipantLink);
             _browsers[_c.CurrentUser].ScrollTo(AddParticipantsPage.AddParticipantLink);
+            Thread.Sleep(TimeSpan.FromSeconds(1));
             _browsers[_c.CurrentUser].ClickLink(AddParticipantsPage.AddParticipantLink);
         }
 
@@ -187,6 +189,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AddParticipantsPage.RepresentingTextfield).SendKeys(user.Representee);
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AddParticipantsPage.AddParticipantLink);
             _browsers[_c.CurrentUser].ScrollTo(AddParticipantsPage.AddParticipantLink);
+            Thread.Sleep(TimeSpan.FromSeconds(1));
             _browsers[_c.CurrentUser].ClickLink(AddParticipantsPage.AddParticipantLink);
         }
 

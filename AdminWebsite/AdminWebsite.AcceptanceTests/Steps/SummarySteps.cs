@@ -209,10 +209,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         private void VerifyBookingUpdated()
         {
-            Thread.Sleep(TimeSpan.FromSeconds(0.5));
-            var response = _c.Api.PollForHearingByUsername(Users.GetJudgeUser(_c.Users).Username, _c.Test.HearingDetails.CaseName);
-            var allHearings = RequestHelper.Deserialise<List<HearingDetailsResponse>>(response.Content);
-            var hearings = GetHearingFromHearings(allHearings);
+            var hearings = PollForAllHearings();
 
             foreach (var hearing in hearings)
             {
@@ -226,7 +223,35 @@ namespace AdminWebsite.AcceptanceTests.Steps
             }
         }
 
-        private List<HearingDetailsResponse> GetHearingFromHearings(IEnumerable<HearingDetailsResponse> allHearings)
+        private IEnumerable<HearingDetailsResponse> PollForAllHearings()
+        {
+            const int RETRIES = 10;
+            const int DELAY = 2;
+
+            for (var i = 0; i < RETRIES; i++)
+            {
+                var response = _c.Api.PollForHearingByUsername(Users.GetJudgeUser(_c.Users).Username, _c.Test.HearingDetails.CaseName);
+                var allHearings = RequestHelper.Deserialise<List<HearingDetailsResponse>>(response.Content);
+                var hearings = GetHearingFromHearings(allHearings);
+
+                if (!_c.Test.HearingSchedule.MultiDays)
+                {
+                    return hearings;
+                }
+
+                var pollForAllHearings = hearings as HearingDetailsResponse[] ?? hearings.ToArray();
+                if (_c.Test.HearingSchedule.MultiDays && pollForAllHearings.Count().Equals(_c.Test.HearingSchedule.NumberOfMultiDays))
+                {
+                    return pollForAllHearings;
+                }
+
+                Thread.Sleep(TimeSpan.FromSeconds(DELAY));
+            }
+            
+            throw new DataException($"All hearings not created after {RETRIES * DELAY} seconds");
+        }
+
+        private IEnumerable<HearingDetailsResponse> GetHearingFromHearings(IEnumerable<HearingDetailsResponse> allHearings)
         {
             var hearings = allHearings.Where(hearing => hearing.Cases.First().Name.Contains(_c.Test.HearingDetails.CaseName)).ToList();
 
