@@ -55,9 +55,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
                 var endDate = _c.Test.HearingSchedule.EndHearingDate.Date.ToString(DateFormats.LocalDateFormat(_c.WebConfig.SauceLabsConfiguration.RunningOnSauceLabs()));
                 _browsers[_c.CurrentUser].Clear(HearingSchedulePage.HearingEndDateTextField);
                 _browsers[_c.CurrentUser].Driver.WaitUntilVisible(HearingSchedulePage.HearingEndDateTextField).SendKeys(endDate);
-
             }
-
         }
 
         private void AddHearingTime()
@@ -92,12 +90,29 @@ namespace AdminWebsite.AcceptanceTests.Steps
             if (_c.Test.HearingSchedule.MultiDays)
             {
                 SelectMultiDaysHearing();
-                _c.Test.HearingSchedule.EndHearingDate = _c.Test.HearingSchedule.ScheduledDate.AddDays(_c.Test.TestData.HearingSchedule.NumberOfMultiDays);
+                _c.Test.HearingSchedule.EndHearingDate = AddExtraDaysIfEndDateFallsOnAWeekend();
                 _c.Test.HearingSchedule.NumberOfMultiDays = _c.Test.TestData.HearingSchedule.NumberOfMultiDays;
             }
         }
 
-       private void SelectMultiDaysHearing()
+        private DateTime AddExtraDaysIfEndDateFallsOnAWeekend()
+        {
+            var endDate = _c.Test.HearingSchedule.ScheduledDate.Date.AddDays(NotCountingToday());
+
+            return endDate.DayOfWeek switch
+            {
+                DayOfWeek.Saturday => endDate.AddDays(2),
+                DayOfWeek.Sunday => endDate.AddDays(1),
+                _ => endDate
+            };
+        }
+
+        private int NotCountingToday()
+        {
+            return _c.Test.TestData.HearingSchedule.NumberOfMultiDays - 1;
+        }
+
+        private void SelectMultiDaysHearing()
         {
             var isCheckboxSelected = _browsers[_c.CurrentUser].Driver.WaitUntilElementExists(HearingSchedulePage.MultiDaysCheckBox).Selected;
                 if (!isCheckboxSelected) { 
