@@ -238,7 +238,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
                 }
 
                 var pollForAllHearings = hearings as HearingDetailsResponse[] ?? hearings.ToArray();
-                if (_c.Test.HearingSchedule.MultiDays && pollForAllHearings.Count().Equals(_c.Test.HearingSchedule.NumberOfMultiDays))
+                if (pollForAllHearings.Count().Equals(_c.Test.HearingSchedule.NumberOfMultiDays))
                 {
                     return pollForAllHearings;
                 }
