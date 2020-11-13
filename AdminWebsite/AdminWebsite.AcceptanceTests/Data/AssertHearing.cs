@@ -51,8 +51,15 @@ namespace AdminWebsite.AcceptanceTests.Data
             }
         }
 
-        public static void AssertScheduledDate(DateTime actual, DateTime expected, bool isRunningOnSauceLabs)
+        public static void AssertScheduledDate(int day, DateTime actual, DateTime expected, bool isRunningOnSauceLabs)
         {
+            expected = expected.AddDays(day - 1);
+
+            if (expected.DayOfWeek == DayOfWeek.Saturday || expected.DayOfWeek == DayOfWeek.Sunday)
+            {
+                expected = expected.AddDays(2);
+            }
+
             actual.ToShortDateString().Should().Be(expected.ToShortDateString());
 
             if (isRunningOnSauceLabs)

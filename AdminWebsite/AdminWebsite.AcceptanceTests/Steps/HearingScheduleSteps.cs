@@ -99,12 +99,12 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             var endDate = _c.Test.HearingSchedule.ScheduledDate.Date.AddDays(NotCountingToday());
 
-            return endDate.DayOfWeek switch
+            if (endDate.DayOfWeek == DayOfWeek.Saturday || endDate.DayOfWeek == DayOfWeek.Sunday)
             {
-                DayOfWeek.Saturday => endDate.AddDays(2),
-                DayOfWeek.Sunday => endDate.AddDays(1),
-                _ => endDate
-            };
+                endDate = endDate.AddDays(2);
+            }
+
+            return endDate;
         }
 
         private int NotCountingToday()

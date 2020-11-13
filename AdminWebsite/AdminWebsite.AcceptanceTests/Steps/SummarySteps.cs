@@ -200,7 +200,8 @@ namespace AdminWebsite.AcceptanceTests.Steps
                 AssertHearing.AssertHearingDetails(hearing, _c.Test);
                 AssertHearing.AssertHearingParticipants(hearing.Participants, _c.Test.HearingParticipants, _c.Test.AddParticipant.Participant.Organisation);
                 AssertHearing.AssertCreatedBy(hearing.Created_by, _c.CurrentUser.Username);
-                AssertHearing.AssertScheduledDate(hearing.Scheduled_date_time, expectedScheduledDate, _c.WebConfig.SauceLabsConfiguration.RunningOnSauceLabs());
+                var day = GetDayOfHearing(hearing.Cases.First().Name);
+                AssertHearing.AssertScheduledDate(day, hearing.Scheduled_date_time, expectedScheduledDate, _c.WebConfig.SauceLabsConfiguration.RunningOnSauceLabs());
                 AssertHearing.AssertTimeSpansMatch(hearing.Scheduled_duration, _c.Test.HearingSchedule.DurationHours, _c.Test.HearingSchedule.DurationMinutes, _c.Test.HearingSchedule.MultiDays);
             }
         }
@@ -215,10 +216,19 @@ namespace AdminWebsite.AcceptanceTests.Steps
                 AssertHearing.AssertHearingDetails(hearing, _c.Test);
                 AssertHearing.AssertHearingParticipants(hearing.Participants, _c.Test.HearingParticipants, _c.Test.AddParticipant.Participant.Organisation);
                 AssertHearing.AssertCreatedBy(hearing.Created_by, _c.CurrentUser.Username);
-                AssertHearing.AssertScheduledDate(hearing.Scheduled_date_time, expectedScheduledDate, _c.WebConfig.SauceLabsConfiguration.RunningOnSauceLabs());
+                var day = GetDayOfHearing(hearing.Cases.First().Name);
+                AssertHearing.AssertScheduledDate(day, hearing.Scheduled_date_time, expectedScheduledDate, _c.WebConfig.SauceLabsConfiguration.RunningOnSauceLabs());
                 AssertHearing.AssertTimeSpansMatch(hearing.Scheduled_duration, _c.Test.HearingSchedule.DurationHours, _c.Test.HearingSchedule.DurationMinutes, _c.Test.HearingSchedule.MultiDays);
                 AssertHearing.AssertUpdatedStatus(hearing, _c.CurrentUser.Username, DateTime.Now);
             }
+        }
+
+        private static int GetDayOfHearing(string caseName)
+        {
+            if (!caseName.Contains("Day") || !caseName.Contains("of")) return 1;
+            var daysPart = caseName.Substring(caseName.Length - ("x of x").Length);
+            var day = daysPart.Substring(0, 1);
+            return int.Parse(day);
         }
 
         private IEnumerable<HearingDetailsResponse> PollForAllHearings()
