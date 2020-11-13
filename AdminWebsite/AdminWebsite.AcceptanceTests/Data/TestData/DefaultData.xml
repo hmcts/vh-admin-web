@@ -8,6 +8,7 @@
   <HearingSchedule>
     <DurationHours>00</DurationHours>
     <DurationMinutes>45</DurationMinutes>
+    <NumberOfMultiDays>3</NumberOfMultiDays>
     <HearingVenue>Birmingham Civil and Family Justice Centre</HearingVenue>
     <Room>1</Room>
   </HearingSchedule>
