@@ -201,7 +201,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
                 AssertHearing.AssertHearingParticipants(hearing.Participants, _c.Test.HearingParticipants, _c.Test.AddParticipant.Participant.Organisation);
                 AssertHearing.AssertCreatedBy(hearing.Created_by, _c.CurrentUser.Username);
                 var day = GetDayOfHearing(hearing.Cases.First().Name);
-                AssertHearing.AssertScheduledDate(day, hearing.Scheduled_date_time, expectedScheduledDate, _c.WebConfig.SauceLabsConfiguration.RunningOnSauceLabs());
+                AssertHearing.AssertScheduledDate(day, hearing.Scheduled_date_time, expectedScheduledDate, _c.Test.HearingSchedule.MultiDays, _c.WebConfig.SauceLabsConfiguration.RunningOnSauceLabs());
                 AssertHearing.AssertTimeSpansMatch(hearing.Scheduled_duration, _c.Test.HearingSchedule.DurationHours, _c.Test.HearingSchedule.DurationMinutes, _c.Test.HearingSchedule.MultiDays);
             }
         }
@@ -217,7 +217,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
                 AssertHearing.AssertHearingParticipants(hearing.Participants, _c.Test.HearingParticipants, _c.Test.AddParticipant.Participant.Organisation);
                 AssertHearing.AssertCreatedBy(hearing.Created_by, _c.CurrentUser.Username);
                 var day = GetDayOfHearing(hearing.Cases.First().Name);
-                AssertHearing.AssertScheduledDate(day, hearing.Scheduled_date_time, expectedScheduledDate, _c.WebConfig.SauceLabsConfiguration.RunningOnSauceLabs());
+                AssertHearing.AssertScheduledDate(day, hearing.Scheduled_date_time, expectedScheduledDate, _c.Test.HearingSchedule.MultiDays, _c.WebConfig.SauceLabsConfiguration.RunningOnSauceLabs());
                 AssertHearing.AssertTimeSpansMatch(hearing.Scheduled_duration, _c.Test.HearingSchedule.DurationHours, _c.Test.HearingSchedule.DurationMinutes, _c.Test.HearingSchedule.MultiDays);
                 AssertHearing.AssertUpdatedStatus(hearing, _c.CurrentUser.Username, DateTime.Now);
             }
