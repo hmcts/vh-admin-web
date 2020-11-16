@@ -31,7 +31,8 @@ export class BookingDetailsService {
             hearingResponse.questionnaire_not_required,
             hearingResponse.audio_recording_required,
             hearingResponse.cancel_reason,
-            hearingResponse.case_type_name
+            hearingResponse.case_type_name,
+            ''
         );
 
         model.OtherInformation = hearingResponse.other_information;
