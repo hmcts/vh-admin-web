@@ -57,7 +57,7 @@
     "@types/cucumber": "^4.0.7",
     "@types/jasmine": "^2.8.17",
     "@types/jasminewd2": "^2.0.8",
-    "@types/node": "^12.19.1",
+    "@types/node": "^12.19.2",
     "@types/uuid": "^3.4.9",
     "chai": "^4.2.0",
     "codelyzer": "^6.0.1",
