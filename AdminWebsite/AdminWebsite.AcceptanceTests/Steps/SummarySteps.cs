@@ -208,7 +208,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         private void VerifyBookingUpdated()
         {
-            var hearings = PollForAllHearings();
+            var hearings = PollForHearingUpdated();
 
             foreach (var hearing in hearings)
             {
@@ -229,6 +229,27 @@ namespace AdminWebsite.AcceptanceTests.Steps
             var daysPart = caseName.Substring(caseName.Length - ("x of x").Length);
             var day = daysPart.Substring(0, 1);
             return int.Parse(day);
+        }
+
+        private IEnumerable<HearingDetailsResponse> PollForHearingUpdated()
+        {
+            const int RETRIES = 10;
+            const int DELAY = 2;
+
+            for (var i = 0; i < RETRIES; i++)
+            {
+                var hearings = PollForAllHearings();
+
+                var pollForHearingUpdated = hearings as HearingDetailsResponse[] ?? hearings.ToArray();
+                if (pollForHearingUpdated.All(x => x.Updated_by != null))
+                {
+                    return pollForHearingUpdated;
+                }
+
+                Thread.Sleep(TimeSpan.FromSeconds(DELAY));
+            }
+
+            throw new DataException($"Hearings not updated after {RETRIES * DELAY} seconds");
         }
 
         private IEnumerable<HearingDetailsResponse> PollForAllHearings()
