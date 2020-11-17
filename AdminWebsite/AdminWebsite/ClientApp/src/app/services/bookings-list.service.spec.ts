@@ -31,7 +31,8 @@ export class ResponseTestData {
             false,
             true,
             'reason1',
-            'Financial Remedy'
+            'Financial Remedy',
+            'judge.green@email.com'
         );
         const b2 = new BookingsDetailsModel(
             '12',
@@ -53,7 +54,8 @@ export class ResponseTestData {
             false,
             true,
             'reason2',
-            'Financial Remedy'
+            'Financial Remedy',
+            'judge.green@email.com'
         );
         const b3 = new BookingsDetailsModel(
             '33',
@@ -75,7 +77,8 @@ export class ResponseTestData {
             false,
             true,
             'reason3',
-            'Financial Remedy'
+            'Financial Remedy',
+            'judge.green@email.com'
         );
 
         lists.push(b1);
@@ -111,7 +114,8 @@ export class ResponseTestData {
             false,
             true,
             'reason11',
-            'Financial Remedy'
+            'Financial Remedy',
+            'judge.green@email.com'
         );
         const b2 = new BookingsDetailsModel(
             '12',
@@ -133,7 +137,8 @@ export class ResponseTestData {
             false,
             true,
             'reason12',
-            'Financial Remedy'
+            'Financial Remedy',
+            'judge.green@email.com'
         );
         const b3 = new BookingsDetailsModel(
             '33',
@@ -155,7 +160,8 @@ export class ResponseTestData {
             false,
             true,
             'reason13',
-            'Financial Remedy'
+            'Financial Remedy',
+            'judge.green@email.com'
         );
 
         lists.push(b1);
@@ -185,7 +191,8 @@ export class ResponseTestData {
             false,
             true,
             'reason21',
-            'Financial Remedy'
+            'Financial Remedy',
+            'judge.green@email.com'
         );
         const b21 = new BookingsDetailsModel(
             '45',
@@ -207,7 +214,8 @@ export class ResponseTestData {
             false,
             true,
             'reason32',
-            'Financial Remedy'
+            'Financial Remedy',
+            'judge.green@email.com'
         );
         const b31 = new BookingsDetailsModel(
             '46',
@@ -229,7 +237,8 @@ export class ResponseTestData {
             false,
             true,
             'reason33',
-            'Financial Remedy'
+            'Financial Remedy',
+            'judge.green@email.com'
         );
 
         lists1.push(b11);
@@ -407,7 +416,8 @@ describe('Booking list service functionality', () => {
             false,
             true,
             'reason',
-            'Financial Remedy'
+            'Financial Remedy',
+            'judge.green@email.com'
         );
         bookingEdited.IsStartTimeChanged = true;
 
@@ -443,7 +453,8 @@ describe('Booking list service functionality', () => {
             false,
             true,
             'reason1',
-            'Financial Remedy'
+            'Financial Remedy',
+            'judge.green@email.com'
         );
 
         bookingEdited.IsStartTimeChanged = true;
