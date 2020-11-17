@@ -62,7 +62,8 @@ export class BookingDetailsTestData {
             true,
             true,
             'reason',
-            'Financial Remedy'
+            'Financial Remedy',
+            'judge.green@email.com'
         );
     }
 
