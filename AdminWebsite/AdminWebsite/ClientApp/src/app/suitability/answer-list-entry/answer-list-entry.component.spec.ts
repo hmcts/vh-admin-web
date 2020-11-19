@@ -93,4 +93,46 @@ describe('AnswerListEntryComponent', () => {
         expect(answers[0].answers.length).toBe(1);
         expect(answers[0].answers[0].answer).toBe('true');
     });
+    it('should filter answers for representative to suppress questions without answers', () => {
+        component.questionnaire = new ParticipantQuestionnaire({
+            answers: [
+                new SuitabilityAnswerGroup({
+                    title: 'Equipment',
+                    answers: [
+                        {
+                            answer: 'Good',
+                            notes: '',
+                            question: 'KIT_SELFTEST_SCORE',
+                            embeddedQuestionAnswers: new Array<EmbeddedSuitabilityQuestionAnswer>()
+                        },
+                        {
+                            answer: 'I will be presenting the case',
+                            notes: '',
+                            question: 'PRESENTING_THE_CASE',
+                            embeddedQuestionAnswers: new Array<EmbeddedSuitabilityQuestionAnswer>()
+                        },
+                        {
+                            answer: '',
+                            notes: '',
+                            question: 'OTHER_INFORMATION',
+                            embeddedQuestionAnswers: new Array<EmbeddedSuitabilityQuestionAnswer>()
+                        }
+                    ]
+                })
+            ],
+            representee: 'Citizen',
+            hearingRole: 'Representative',
+            caseNumber: '',
+            displayName: '',
+            participantId: '',
+            updatedAt: new Date()
+        });
+
+        expect(component.isRepresentative).toBeTruthy();
+
+        const answers = component.answers;
+        expect(answers.length).toBe(1);
+        expect(answers[0].answers.length).toBe(1);
+        expect(answers[0].answers[0].answer).toBe('Good');
+    });
 });
