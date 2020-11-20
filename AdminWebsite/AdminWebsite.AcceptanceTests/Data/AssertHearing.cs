@@ -92,7 +92,10 @@ namespace AdminWebsite.AcceptanceTests.Data
             foreach (var actualParticipant in participants)
             {
                 var expectedParticipant = testHearingParticipants.First(x => x.Lastname.ToLower().Equals(actualParticipant.Last_name.ToLower()));
-                actualParticipant.Contact_email.Should().Be(expectedParticipant.AlternativeEmail);
+                if (expectedParticipant.Role.ToLower() != "judge")
+                {
+                    actualParticipant.Contact_email.Should().Be(expectedParticipant.AlternativeEmail);
+                }
                 actualParticipant.Case_role_name.Should().Be(expectedParticipant.CaseRoleName);
                 actualParticipant.Display_name.Should().Be(expectedParticipant.DisplayName);
                 actualParticipant.First_name.Should().Be(expectedParticipant.Firstname);
