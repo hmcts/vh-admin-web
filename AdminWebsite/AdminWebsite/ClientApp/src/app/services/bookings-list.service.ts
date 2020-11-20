@@ -140,7 +140,9 @@ export class BookingsListService {
             hearing.audio_recording_required,
             hearing.cancel_reason,
             hearing.case_type_name,
-            hearing.court_room_account
+            hearing.court_room_account,
+            '',
+            ''
         );
     }
 }

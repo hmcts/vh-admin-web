@@ -32,6 +32,8 @@ export class BookingDetailsService {
             hearingResponse.audio_recording_required,
             hearingResponse.cancel_reason,
             hearingResponse.case_type_name,
+            '',
+            '',
             ''
         );
 

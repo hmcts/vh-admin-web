@@ -55,7 +55,9 @@ describe('HearingDetailsComponent', () => {
             true,
             'reason1',
             'Financial Remedy',
-            'judge.green@email.com'
+            'judge.green@email.com',
+            '1234567',
+            '11111'
         );
 
         component.hearing = h1;

@@ -39,7 +39,8 @@ namespace AdminWebsite.Controllers
                 RedirectUri = _securitySettings.RedirectUri,
                 PostLogoutRedirectUri = _securitySettings.PostLogoutRedirectUri,
                 InstrumentationKey = _securitySettings.InstrumentationKey,
-                TestUsernameStem = _testSettings.TestUsernameStem
+                TestUsernameStem = _testSettings.TestUsernameStem,
+                ConferencePhoneNumber =_securitySettings.ConferencePhoneNumber
             };
 
             return Ok(clientSettings);

@@ -42,7 +42,8 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
     timeSubscription: Subscription;
     $subscriptions: Subscription[] = [];
     cancelReason: string;
-
+    conferencePhoneNumber: string;
+    telephoneConferenceId: string;
     previousUrl: string = null;
 
     constructor(
@@ -60,19 +61,29 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
         this.showConfirmingFailed = false;
     }
 
-    ngOnInit() {
+    async ngOnInit() {
         this.hearingId = this.bookingPersistService.selectedHearingId;
         if (this.hearingId) {
-            this.$subscriptions.push(
-                this.videoHearingService.getHearingById(this.hearingId).subscribe(data => {
-                    this.mapHearing(data);
-                    // mapping to Hearing model for edit on summary page
-                    this.booking = this.videoHearingService.mapHearingDetailsResponseToHearingModel(data);
-                    this.setBookingInStorage();
-                    this.setTimeObserver();
-                    this.setSubscribers();
-                })
-            );
+
+            var hearingDetailsResponse = await this.videoHearingService.getHearingById(this.hearingId).toPromise();
+            this.mapHearing(hearingDetailsResponse);
+            this.getConferencePhoneDetails();
+            // mapping to Hearing model for edit on summary page
+            this.booking = this.videoHearingService.mapHearingDetailsResponseToHearingModel(hearingDetailsResponse);
+            this.setBookingInStorage();
+            this.setTimeObserver();
+            this.setSubscribers();
+
+            //this.$subscriptions.push(
+            //    this.videoHearingService.getHearingById(this.hearingId).subscribe(data => {
+            //        this.mapHearing(data);
+            //        // mapping to Hearing model for edit on summary page
+            //        this.booking = this.videoHearingService.mapHearingDetailsResponseToHearingModel(data);
+            //        this.setBookingInStorage();
+            //        this.setTimeObserver();
+            //        this.setSubscribers();
+            //    })
+            //);
         }
         this.$subscriptions.push(
             this.userIdentityService.getUserInformation().subscribe(userProfile => {
@@ -156,33 +167,74 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
         this.updateHearingStatus(UpdateBookingStatus.Cancelled, cancelReason);
     }
 
-    updateHearingStatus(status: UpdateBookingStatus, reason: string) {
+    async updateHearingStatus(status: UpdateBookingStatus, reason: string) {
         const updateBookingStatus = new UpdateBookingStatusRequest();
         updateBookingStatus.status = status;
         updateBookingStatus.updated_by = '';
         updateBookingStatus.cancel_reason = reason;
         this.showConfirming = true;
 
-        this.$subscriptions.push(
-            this.videoHearingService.updateBookingStatus(this.hearingId, updateBookingStatus).subscribe(
-                data => {
-                    if (data.success) {
-                        this.updateStatusHandler(status);
-                    } else {
-                        this.showConfirmingFailed = true;
-                        this.updateStatusHandler(UpdateBookingStatus.Failed);
-                    }
+        try {
+            const updateBookingStatusResponse = await this.videoHearingService.updateBookingStatus(this.hearingId, updateBookingStatus).toPromise();
+            if (updateBookingStatusResponse.success) {
 
-                    this.showConfirming = false;
-                    this.logger.info(`${this.loggerPrefix} Hearing status changed`, { hearingId: this.hearingId, status: status });
-                    this.logger.event(`${this.loggerPrefix} Hearing status changed`, { hearingId: this.hearingId, status: status });
-                },
-                error => {
-                    this.errorHandler(error, status);
-                    this.updateStatusHandler(UpdateBookingStatus.Failed);
-                }
-            )
-        );
+                this.telephoneConferenceId = updateBookingStatusResponse.telephone_conference_id;
+                this.conferencePhoneNumber = await this.videoHearingService.getConferencePhoneNumber();
+                console.log('TELEPHONE:  ' + this.conferencePhoneNumber + '    ' + this.telephoneConferenceId);
+                this.updateStatusHandler(status);
+            } else {
+                this.showConfirmingFailed = true;
+                this.updateStatusHandler(UpdateBookingStatus.Failed);
+            }
+
+            this.showConfirming = false;
+            this.logger.info(`${this.loggerPrefix} Hearing status changed`, { hearingId: this.hearingId, status: status });
+            this.logger.event(`${this.loggerPrefix} Hearing status changed`, { hearingId: this.hearingId, status: status });
+        
+        } catch (error) {
+            this.errorHandler(error, status);
+            this.updateStatusHandler(UpdateBookingStatus.Failed);
+        }
+
+
+        //this.$subscriptions.push(
+        //    this.videoHearingService.updateBookingStatus(this.hearingId, updateBookingStatus).subscribe(
+        //        data => {
+        //            if (data.success) {
+        //                this.updateStatusHandler(status);
+        //            } else {
+        //                this.showConfirmingFailed = true;
+        //                this.updateStatusHandler(UpdateBookingStatus.Failed);
+        //            }
+
+        //            this.showConfirming = false;
+        //            this.logger.info(`${this.loggerPrefix} Hearing status changed`, { hearingId: this.hearingId, status: status });
+        //            this.logger.event(`${this.loggerPrefix} Hearing status changed`, { hearingId: this.hearingId, status: status });
+        //        },
+        //        error => {
+        //            this.errorHandler(error, status);
+        //            this.updateStatusHandler(UpdateBookingStatus.Failed);
+        //        }
+        //    )
+        //);
+    }
+
+    async getConferencePhoneDetails() {
+        if (this.hearing.Status === 'Created') {
+            const phoneResponse = await this.videoHearingService.getTelephoneConferenceId(this.hearingId).toPromise();
+            this.telephoneConferenceId = phoneResponse.telephone_conference_id;
+            this.conferencePhoneNumber = await this.videoHearingService.getConferencePhoneNumber();
+            this.updateWithConferencePhoneDetails();
+        }
+    }
+
+    updateWithConferencePhoneDetails() {
+        if (this.telephoneConferenceId && this.conferencePhoneNumber) {
+            this.booking.conference_phone_number = this.conferencePhoneNumber;
+            this.booking.telephone_conference_id = this.telephoneConferenceId;
+            this.hearing.ConferencePhoneNumber = this.conferencePhoneNumber;
+            this.hearing.TelephoneConferenceId = this.telephoneConferenceId;
+        }
     }
 
     updateStatusHandler(status: UpdateBookingStatus) {
@@ -218,6 +270,8 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
             this.booking = this.videoHearingService.getCurrentRequest();
         }
         this.booking.status = status;
+        this.updateWithConferencePhoneDetails();
+
         this.setBookingInStorage();
     }
 

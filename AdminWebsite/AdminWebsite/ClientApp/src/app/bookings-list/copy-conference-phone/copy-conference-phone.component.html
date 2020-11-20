@@ -1,0 +1,12 @@
+<div>
+    <div #conferencePhone class="detailsBox" [hidden]="displayTooltip">
+        {{ tooltip }}
+    </div>
+    <div class="link govuk-body"
+         (mouseover)="onMouseOver($event)"
+         (mousemove)="onMouseOver($event)"
+         (mouseout)="onMouseOut()"
+         (click)="copyToClipboard(); $event.stopPropagation()">
+        {{ _detailsToCopy }}
+    </div>
+</div>

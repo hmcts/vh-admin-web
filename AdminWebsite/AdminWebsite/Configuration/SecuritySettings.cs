@@ -49,5 +49,11 @@
         /// The redirect uri on successful logout
         /// </summary>
         public string PostLogoutRedirectUri { get; set; }
+
+        /// <summary>
+        /// To join the conference phone number
+        /// </summary>
+        public string ConferencePhoneNumber { get; set; }
+
     }
 }
