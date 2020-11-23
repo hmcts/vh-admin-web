@@ -24,17 +24,15 @@ export class AnswerListEntryComponent implements OnInit {
     }
 
     get answers(): SuitabilityAnswerGroup[] {
-        if (this.isRepresentative) {
-            return this.questionnaire.answers;
-        } else {
-            return this.filterAnswers();
-        }
+        return this.filterAnswers();
     }
 
     filterAnswers(): SuitabilityAnswerGroup[] {
         const groupFiltered: SuitabilityAnswerGroup[] = [];
         this.questionnaire.answers.forEach(group => {
-            const answerFiltered = group.answers.filter(x => x.answer !== 'Not answered' && x.answer !== 'N/A');
+            const answerFiltered = group.answers.filter(
+                x => x.answer !== 'Not answered' && x.answer !== 'N/A' && x.answer !== '' && x.answer !== 'I will be presenting the case'
+            );
             if (answerFiltered && answerFiltered.length > 0) {
                 groupFiltered.push(new SuitabilityAnswerGroup({ title: group.title, answers: answerFiltered }));
             }

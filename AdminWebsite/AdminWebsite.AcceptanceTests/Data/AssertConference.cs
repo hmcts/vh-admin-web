@@ -54,7 +54,10 @@ namespace AdminWebsite.AcceptanceTests.Data
             {
                 var hearingParticipant = hearingParticipants.First(x => x.Contact_email.Equals(conferenceParticipant.Contact_email));
                 conferenceParticipant.Case_type_group.Should().Be(hearingParticipant.Case_role_name);
-                conferenceParticipant.Contact_email.Should().Be(hearingParticipant.Contact_email);
+                if (conferenceParticipant.User_role != UserRole.Judge)
+                {
+                    conferenceParticipant.Contact_email.Should().Be(hearingParticipant.Contact_email);
+                }
                 conferenceParticipant.Contact_telephone.Should().Be(hearingParticipant.Telephone_number);
                 conferenceParticipant.Current_status.Should().Be(ParticipantState.NotSignedIn);
                 conferenceParticipant.Display_name.Should().Be(hearingParticipant.Display_name);
