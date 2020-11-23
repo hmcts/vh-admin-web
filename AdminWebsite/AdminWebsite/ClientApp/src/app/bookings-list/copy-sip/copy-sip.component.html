@@ -2,12 +2,13 @@
   <div #sipAddress class="sipAddressBox" [hidden]="displayTooltip">
     {{ tooltip }}
   </div>
-  <div class="link"
-       (mouseover)="onMouseOver($event)"
-       (mousemove)="onMouseOver($event)"
-       (mouseout)="onMouseOut()"
-       (click)="copyToClipboard(); $event.stopPropagation()">
-      {{ _detailsToCopy }}
-
+  <div
+    class="link"
+    (mouseover)="onMouseOver($event)"
+    (mousemove)="onMouseOver($event)"
+    (mouseout)="onMouseOut()"
+    (click)="copyToClipboard(); $event.stopPropagation()"
+  >
+    {{ _detailsToCopy }}
   </div>
 </div>

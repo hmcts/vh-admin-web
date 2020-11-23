@@ -250,9 +250,7 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
 
     updateWithConferencePhoneDetails() {
         if (this.telephoneConferenceId && this.conferencePhoneNumber) {
-            this.booking.conference_phone_number = this.conferencePhoneNumber;
             this.booking.telephone_conference_id = this.telephoneConferenceId;
-            this.hearing.ConferencePhoneNumber = this.conferencePhoneNumber;
             this.hearing.TelephoneConferenceId = this.telephoneConferenceId;
             this.phoneDetails = `${this.conferencePhoneNumber} (ID: ${this.telephoneConferenceId})`;
         }

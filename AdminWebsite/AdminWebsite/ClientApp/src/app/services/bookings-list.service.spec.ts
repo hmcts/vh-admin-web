@@ -33,8 +33,7 @@ export class ResponseTestData {
             'reason1',
             'Financial Remedy',
             'judge.green@email.com',
-            '1234567',
-            '11111'
+            '1234567'
         );
         const b2 = new BookingsDetailsModel(
             '12',
@@ -58,8 +57,7 @@ export class ResponseTestData {
             'reason2',
             'Financial Remedy',
             'judge.green@email.com',
-            '1234567',
-            '11111'
+            '1234567'
         );
         const b3 = new BookingsDetailsModel(
             '33',
@@ -83,8 +81,7 @@ export class ResponseTestData {
             'reason3',
             'Financial Remedy',
             'judge.green@email.com',
-            '1234567',
-            '11111'
+            '1234567'
         );
 
         lists.push(b1);
@@ -122,8 +119,7 @@ export class ResponseTestData {
             'reason11',
             'Financial Remedy',
             'judge.green@email.com',
-            '1234567',
-            '11111'
+            '1234567'
         );
         const b2 = new BookingsDetailsModel(
             '12',
@@ -147,8 +143,7 @@ export class ResponseTestData {
             'reason12',
             'Financial Remedy',
             'judge.green@email.com',
-            '1234567',
-            '11111'
+            '1234567'
         );
         const b3 = new BookingsDetailsModel(
             '33',
@@ -172,8 +167,7 @@ export class ResponseTestData {
             'reason13',
             'Financial Remedy',
             'judge.green@email.com',
-            '1234567',
-            '11111'
+            '1234567'
         );
 
         lists.push(b1);
@@ -205,8 +199,7 @@ export class ResponseTestData {
             'reason21',
             'Financial Remedy',
             'judge.green@email.com',
-            '1234567',
-            '11111'
+            '1234567'
         );
         const b21 = new BookingsDetailsModel(
             '45',
@@ -230,8 +223,7 @@ export class ResponseTestData {
             'reason32',
             'Financial Remedy',
             'judge.green@email.com',
-            '1234567',
-            '11111'
+            '1234567'
         );
         const b31 = new BookingsDetailsModel(
             '46',
@@ -255,8 +247,7 @@ export class ResponseTestData {
             'reason33',
             'Financial Remedy',
             'judge.green@email.com',
-            '1234567',
-            '11111'
+            '1234567'
         );
 
         lists1.push(b11);
@@ -436,8 +427,7 @@ describe('Booking list service functionality', () => {
             'reason',
             'Financial Remedy',
             'judge.green@email.com',
-            '1234567',
-            '11111'
+            '1234567'
         );
         bookingEdited.IsStartTimeChanged = true;
 
@@ -475,8 +465,7 @@ describe('Booking list service functionality', () => {
             'reason1',
             'Financial Remedy',
             'judge.green@email.com',
-            '1234567',
-            '11111'
+            '1234567'
         );
 
         bookingEdited.IsStartTimeChanged = true;

@@ -64,8 +64,7 @@ export class BookingDetailsTestData {
             'reason',
             'Financial Remedy',
             'judge.green@email.com',
-            '1234567',
-            '11111'
+            '1234567'
         );
     }
 

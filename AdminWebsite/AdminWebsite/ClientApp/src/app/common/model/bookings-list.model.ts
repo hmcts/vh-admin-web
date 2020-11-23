@@ -35,7 +35,6 @@ export class BookingsDetailsModel {
         caseType: string,
         courtRoomAccount: string,
         telephoneConferenceId: string,
-        conferencePhoneNumber: string
     ) {
         this.HearingId = hearingId;
         this.StartTime = startTime;
@@ -61,7 +60,6 @@ export class BookingsDetailsModel {
         this.CaseType = caseType;
         this.CourtRoomAccount = courtRoomAccount;
         this.TelephoneConferenceId = telephoneConferenceId;
-        this.ConferencePhoneNumber = conferencePhoneNumber;
     }
 
     HearingId: string;
@@ -91,7 +89,6 @@ export class BookingsDetailsModel {
     Endpoints: EndpointModel[];
     CourtRoomAccount: string;
     TelephoneConferenceId: string;
-    ConferencePhoneNumber: string;
 
     get DurationInHoursAndMinutes(): string {
         return FormatShortDuration(this.Duration);

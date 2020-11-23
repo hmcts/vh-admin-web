@@ -104,8 +104,7 @@ export class BookingslistTestData {
             'reason1',
             'Financial Remedy',
             'judge.green@email.com',
-            '1234567',
-            '11111'
+            '1234567'
         );
         const b2 = new BookingsDetailsModel(
             '2',
@@ -129,8 +128,7 @@ export class BookingslistTestData {
             'reason2',
             'Financial Remedy',
             'judge.green@email.com',
-            '1234567',
-            '11111'
+            '1234567'
         );
         const b3 = new BookingsDetailsModel(
             '3',
@@ -154,8 +152,7 @@ export class BookingslistTestData {
             'reason3',
             'Financial Remedy',
             'judge.green@email.com',
-            '1234567',
-            '11111'
+            '1234567'
         );
 
         lists.push(b1);
@@ -192,8 +189,7 @@ export class BookingslistTestData {
             'reason4',
             'Financial Remedy',
             'judge.green@email.com',
-            '1234567',
-            '11111'
+            '1234567'
         );
         const b2 = new BookingsDetailsModel(
             '2',
@@ -217,8 +213,7 @@ export class BookingslistTestData {
             'reason5',
             'Financial Remedy',
             'judge.green@email.com',
-            '1234567',
-            '11111'
+            '1234567'
         );
         const b3 = new BookingsDetailsModel(
             '6',
@@ -242,8 +237,7 @@ export class BookingslistTestData {
             'reason6',
             'Financial Remedy',
             'judge.green@email.com',
-            '1234567',
-            '11111'
+            '1234567'
         );
 
         lists.push(b1);
@@ -283,8 +277,7 @@ export class ArrayBookingslistModelTestData {
             'reason7',
             'Financial Remedy',
             'judge.green@email.com',
-            '1234567',
-            '11111'
+            '1234567'
         );
         const b2 = new BookingsDetailsModel(
             '12',
@@ -308,8 +301,7 @@ export class ArrayBookingslistModelTestData {
             'reason8',
             'Financial Remedy',
             'judge.green@email.com',
-            '1234567',
-            '11111'
+            '1234567'
         );
         const b3 = new BookingsDetailsModel(
             '33',
@@ -333,8 +325,7 @@ export class ArrayBookingslistModelTestData {
             'reason9',
             'Financial Remedy',
             'judge.green@email.com',
-            '1234567',
-            '11111'
+            '1234567'
         );
 
         lists.push(b1);
@@ -367,8 +358,7 @@ export class ArrayBookingslistModelTestData {
             'reason10',
             'Financial Remedy',
             'judge.green@email.com',
-            '1234567',
-            '11111'
+            '1234567'
         );
         const b21 = new BookingsDetailsModel(
             '45',
@@ -392,8 +382,7 @@ export class ArrayBookingslistModelTestData {
             'reason11',
             'Financial Remedy',
             'judge.green@email.com',
-            '1234567',
-            '11111'
+            '1234567'
         );
         const b31 = new BookingsDetailsModel(
             '46',
@@ -417,8 +406,7 @@ export class ArrayBookingslistModelTestData {
             'reason12',
             'Financial Remedy',
             'judge.green@email.com',
-            '1234567',
-            '11111'
+            '1234567'
         );
 
         lists1.push(b11);
@@ -501,8 +489,7 @@ export class BookingPersistServiceSpy {
             'reason13',
             'Financial Remedy',
             'judge.green@email.com',
-            '1234567',
-            '11111'
+            '1234567'
         );
         booking.IsStartTimeChanged = true;
         return booking;
@@ -634,8 +621,7 @@ describe('BookingsListComponent', () => {
             'reason14',
             'Financial Remedy',
             'judge.green@email.com',
-            '1234567',
-            '11111'
+            '1234567'
         );
 
         component.resetBookingIndex(booking);
@@ -666,8 +652,7 @@ describe('BookingsListComponent', () => {
             'reason15',
             'Financial Remedy',
             'judge.green@email.com',
-            '1234567',
-            '11111'
+            '1234567'
         );
 
         component.resetBookingIndex(booking);

@@ -33,7 +33,6 @@ export class BookingDetailsService {
             hearingResponse.cancel_reason,
             hearingResponse.case_type_name,
             '',
-            '',
             ''
         );
 

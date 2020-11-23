@@ -24,8 +24,7 @@ describe('BookingsDetailsModel', () => {
             'reason',
             'Financial Remedy',
             '',
-            '1234567',
-            '11111'
+            '1234567'
         );
         expect(model.DurationInHoursAndMinutes).toBe('2 hours 25 minutes');
     });

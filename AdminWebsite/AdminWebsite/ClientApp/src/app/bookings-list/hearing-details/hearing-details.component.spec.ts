@@ -56,12 +56,11 @@ describe('HearingDetailsComponent', () => {
             'reason1',
             'Financial Remedy',
             'judge.green@email.com',
-            '1234567',
-            '11111'
+            '1234567'
         );
 
         component.hearing = h1;
-
+        const phoneDetails = '11111 (ID: 1234567)';
         fixture.whenStable().then(() => {
             fixture.detectChanges();
             const divElementRole = debugElement.queryAll(By.css('#hearing-name'));
@@ -69,7 +68,8 @@ describe('HearingDetailsComponent', () => {
             expect(divElementRole.length).toBe(1);
             const el = divElementRole[0].nativeElement as HTMLElement;
             expect(el.innerHTML).toContain('Smith vs Donner');
-            expect(component.phoneConferenceDetails).toBe('11111 (ID: 1234567)')
+            component.phoneDetails = phoneDetails;
+            expect(component.phoneConferenceDetails).toBe(phoneDetails)
             done();
         });
     });

@@ -33,6 +33,5 @@ export class HearingModel {
     endpoints?: EndpointModel[] | undefined;
     multiDays?: boolean | undefined;
     end_hearing_date_time?: Date | undefined;
-    conference_phone_number?: string | undefined;
     telephone_conference_id?: string | undefined;
 }

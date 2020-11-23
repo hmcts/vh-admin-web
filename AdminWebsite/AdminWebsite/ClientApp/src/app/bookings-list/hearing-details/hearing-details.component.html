@@ -1,128 +1,126 @@
 <h2 class="govuk-heading-m remove-header-padding" id="bookingDetailsTitle">Booking details</h2>
 <div class="govuk-panel govuk-panel--confirmation vh-panel">
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-one-third">
-            <div class="vh-xsml">Created by:</div>
-        </div>
-        <div class="govuk-grid-column-two-thirds vh-xsml">
-            <div class="govuk-grid-row vh_panel-r">
-                <div class="vh-xsml" id="created-by">
-                    <strong>{{ hearing?.CreatedBy }}</strong>
-                </div>
-            </div>
-            <div class="govuk-grid-row vh-b">
-                <div class="vh-xsml" id="created-date">{{ hearing?.CreatedDate | appLongDatetime }}</div>
-            </div>
-        </div>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-one-third">
+      <div class="vh-xsml">Created by:</div>
     </div>
-    <div class="govuk-grid-row" *ngIf="hearing?.LastEditBy && hearing?.LastEditBy.length > 0">
-        <div class="govuk-grid-column-one-third">
-            <span class="vh-xsml">Last edited by:</span>
+    <div class="govuk-grid-column-two-thirds vh-xsml">
+      <div class="govuk-grid-row vh_panel-r">
+        <div class="vh-xsml" id="created-by">
+          <strong>{{ hearing?.CreatedBy }}</strong>
         </div>
-        <div class="govuk-grid-column-two-thirds vh-xsml">
-            <div class="govuk-grid-row vh_panel-r">
-                <div class="vh-xsml" id="edit-by">
-                    <strong>{{ hearing?.LastEditBy }}</strong>
-                </div>
-            </div>
-            <div class="govuk-grid-row" [ngClass]="{ 'vh-b': hearing?.ConfirmedBy && hearing?.ConfirmedBy.length > 0 }">
-                <div class="vh-xsml" id="edit-date">{{ hearing?.LastEditDate | appLongDatetime }}</div>
-            </div>
-        </div>
+      </div>
+      <div class="govuk-grid-row vh-b">
+        <div class="vh-xsml" id="created-date">{{ hearing?.CreatedDate | appLongDatetime }}</div>
+      </div>
     </div>
-    <div class="govuk-grid-row" *ngIf="hearing?.ConfirmedBy && hearing?.ConfirmedBy.length > 0">
-        <div class="govuk-grid-column-one-third">
-            <span class="vh-xsml">Confirmed by:</span>
-        </div>
-        <div class="govuk-grid-column-two-thirds vh-xsml">
-            <div class="govuk-grid-row vh_panel-r">
-                <div class="vh-xsml" id="edit-by">
-                    <strong>{{ hearing?.ConfirmedBy }}</strong>
-                </div>
-            </div>
-            <div class="govuk-grid-row">
-                <div class="vh-xsml" id="edit-date">{{ hearing?.ConfirmedDate | appLongDatetime }}</div>
-            </div>
-        </div>
+  </div>
+  <div class="govuk-grid-row" *ngIf="hearing?.LastEditBy && hearing?.LastEditBy.length > 0">
+    <div class="govuk-grid-column-one-third">
+      <span class="vh-xsml">Last edited by:</span>
     </div>
+    <div class="govuk-grid-column-two-thirds vh-xsml">
+      <div class="govuk-grid-row vh_panel-r">
+        <div class="vh-xsml" id="edit-by">
+          <strong>{{ hearing?.LastEditBy }}</strong>
+        </div>
+      </div>
+      <div class="govuk-grid-row" [ngClass]="{ 'vh-b': hearing?.ConfirmedBy && hearing?.ConfirmedBy.length > 0 }">
+        <div class="vh-xsml" id="edit-date">{{ hearing?.LastEditDate | appLongDatetime }}</div>
+      </div>
+    </div>
+  </div>
+  <div class="govuk-grid-row" *ngIf="hearing?.ConfirmedBy && hearing?.ConfirmedBy.length > 0">
+    <div class="govuk-grid-column-one-third">
+      <span class="vh-xsml">Confirmed by:</span>
+    </div>
+    <div class="govuk-grid-column-two-thirds vh-xsml">
+      <div class="govuk-grid-row vh_panel-r">
+        <div class="vh-xsml" id="edit-by">
+          <strong>{{ hearing?.ConfirmedBy }}</strong>
+        </div>
+      </div>
+      <div class="govuk-grid-row">
+        <div class="vh-xsml" id="edit-date">{{ hearing?.ConfirmedDate | appLongDatetime }}</div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <h2 class="govuk-heading-s remove-header-padding">Hearing details</h2>
 <div class="vh-section">
-    <div class="govuk-grid-row vh-wrap">
-        <div class="govuk-body vh-sml" id="hearing-number">{{ hearing?.HearingCaseNumber }}</div>
-    </div>
-    <div class="govuk-grid-row">
-        <div class="govuk-body vh-sml" id="hearing-name">{{ hearing?.HearingCaseName }}</div>
-    </div>
-    <div class="govuk-grid-row">
-        <div class="govuk-body vh-sml" id="case-type">{{ hearing?.CaseType }}</div>
-    </div>
-    <div class="govuk-grid-row">
-        <div class="govuk-body vh-sml" id="hearing-type">{{ hearing?.HearingType }}</div>
-    </div>
+  <div class="govuk-grid-row vh-wrap">
+    <div class="govuk-body vh-sml" id="hearing-number">{{ hearing?.HearingCaseNumber }}</div>
+  </div>
+  <div class="govuk-grid-row">
+    <div class="govuk-body vh-sml" id="hearing-name">{{ hearing?.HearingCaseName }}</div>
+  </div>
+  <div class="govuk-grid-row">
+    <div class="govuk-body vh-sml" id="case-type">{{ hearing?.CaseType }}</div>
+  </div>
+  <div class="govuk-grid-row">
+    <div class="govuk-body vh-sml" id="hearing-type">{{ hearing?.HearingType }}</div>
+  </div>
 </div>
 
 <div *ngIf="phoneConferenceDetails.length > 0">
-        <h2 class="govuk-heading-s remove-header-padding">Joining by phone</h2>
-        <div class="vh-section">
-            <div class="govuk-grid-row">
-                <div class="govuk-grid-column-full" id="conferencePhoneDetails">
-                    <app-copy-conference-phone [phoneConferenceDetails]="phoneConferenceDetails"></app-copy-conference-phone>
-                </div>
-            </div>
-        </div>
+  <h2 class="govuk-heading-s remove-header-padding">Joining by phone</h2>
+  <div class="vh-section">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-full" id="conferencePhoneDetails">
+        <app-copy-conference-phone [phoneConferenceDetails]="phoneConferenceDetails"></app-copy-conference-phone>
+      </div>
     </div>
+  </div>
+</div>
 
-    <h2 class="govuk-heading-s remove-header-padding">Hearing schedule</h2>
-    <div class="vh-section">
-        <div class="govuk-grid-row vh-wrap">
-            <div class="govuk-body vh-sml" id="hearing-start">
-                {{
- hearing?.StartTime | appLongDatetime
-                }}
-            </div>
-        </div>
-        <div class="govuk-grid-row">
-            <div class="govuk-body vh-sml" id="court-room-address">
-                {{ hearing?.CourtAddress }}{{ hearing?.CourtRoom ? ', ' + hearing?.CourtRoom : '' }}
-            </div>
-        </div>
-        <div class="govuk-grid-row">
-            <div class="govuk-body vh-sml" id="duration">listed for {{ hearing?.DurationInHoursAndMinutes }}</div>
-        </div>
+<h2 class="govuk-heading-s remove-header-padding">Hearing schedule</h2>
+<div class="vh-section">
+  <div class="govuk-grid-row vh-wrap">
+    <div class="govuk-body vh-sml" id="hearing-start">
+      {{ hearing?.StartTime | appLongDatetime }}
     </div>
+  </div>
+  <div class="govuk-grid-row">
+    <div class="govuk-body vh-sml" id="court-room-address">
+      {{ hearing?.CourtAddress }}{{ hearing?.CourtRoom ? ', ' + hearing?.CourtRoom : '' }}
+    </div>
+  </div>
+  <div class="govuk-grid-row">
+    <div class="govuk-body vh-sml" id="duration">listed for {{ hearing?.DurationInHoursAndMinutes }}</div>
+  </div>
+</div>
 
-    <h2 class="govuk-heading-s remove-header-padding">Audio to be recorded</h2>
-    <div class="govuk-form-group vhtable">
-        <div class="govuk-body vh-text-break" id="audioRecorded">{{ hearing?.AudioRecordingRequired ? 'Yes' : 'No' }}</div>
-    </div>
+<h2 class="govuk-heading-s remove-header-padding">Audio to be recorded</h2>
+<div class="govuk-form-group vhtable">
+  <div class="govuk-body vh-text-break" id="audioRecorded">{{ hearing?.AudioRecordingRequired ? 'Yes' : 'No' }}</div>
+</div>
 
-    <div *ngIf="hearing?.Endpoints && hearing?.Endpoints.length > 0">
-        <h2 class="govuk-heading-s remove-header-padding">Video access points</h2>
-        <div class="govuk-form-group vhtable">
-            <div *ngFor="let endpoint of hearing?.Endpoints; let i = index" id="displayNameRow{{ +i }}" class="govuk-body vh-text-break">
-                <div class="govuk-grid-row">
-                    <div class="govuk-grid-column-full" id="displayName{{ +i }}">
-                        {{ endpoint.displayName }}
-                    </div>
-                </div>
-                <div *ngIf="getParticipantInfo(endpoint.defenceAdvocate)" class="govuk-grid-row">
-                    <div class="govuk-grid-column-full" id="defenceAdvocateRep{{ +i }}">
-                        <img src="/assets/images/link.png" class="icon" alt="link to endpoint" />
-                        {{ getParticipantInfo(endpoint.defenceAdvocate) }}
-                    </div>
-                </div>
-                <div class="govuk-grid-row">
-                    <div class="govuk-grid-column-full" id="sip{{ +i }}">
-                        <app-copy-sip [endpoint]="endpoint"></app-copy-sip>
-                    </div>
-                </div>
-            </div>
+<div *ngIf="hearing?.Endpoints && hearing?.Endpoints.length > 0">
+  <h2 class="govuk-heading-s remove-header-padding">Video access points</h2>
+  <div class="govuk-form-group vhtable">
+    <div *ngFor="let endpoint of hearing?.Endpoints; let i = index" id="displayNameRow{{ +i }}" class="govuk-body vh-text-break">
+      <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full" id="displayName{{ +i }}">
+          {{ endpoint.displayName }}
         </div>
+      </div>
+      <div *ngIf="getParticipantInfo(endpoint.defenceAdvocate)" class="govuk-grid-row">
+        <div class="govuk-grid-column-full" id="defenceAdvocateRep{{ +i }}">
+          <img src="/assets/images/link.png" class="icon" alt="link to endpoint" />
+          {{ getParticipantInfo(endpoint.defenceAdvocate) }}
+        </div>
+      </div>
+      <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full" id="sip{{ +i }}">
+          <app-copy-sip [endpoint]="endpoint"></app-copy-sip>
+        </div>
+      </div>
     </div>
+  </div>
+</div>
 
-    <h2 class="govuk-heading-s remove-header-padding">Other information</h2>
-    <div class="govuk-form-group vhtable">
-        <div class="govuk-body vh-text-break" id="otherInformation">{{ hearing?.OtherInformation }}</div>
-    </div>
+<h2 class="govuk-heading-s remove-header-padding">Other information</h2>
+<div class="govuk-form-group vhtable">
+  <div class="govuk-body vh-text-break" id="otherInformation">{{ hearing?.OtherInformation }}</div>
+</div>

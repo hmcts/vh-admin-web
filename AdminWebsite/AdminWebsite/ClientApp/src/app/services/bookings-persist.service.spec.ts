@@ -33,7 +33,6 @@ function MockBookedHearing(): BookingsDetailsModel {
         'reason',
         'Financial Remedy',
         '',
-        '',
         ''
     );
 }
