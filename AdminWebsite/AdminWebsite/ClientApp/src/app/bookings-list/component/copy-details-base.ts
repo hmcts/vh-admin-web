@@ -1,6 +1,6 @@
 import { ClipboardService } from 'ngx-clipboard';
 
-export abstract class CopyDetailsBase  {
+export abstract class CopyDetailsBase {
     displayTooltip: boolean;
     tooltip: string;
     elem: HTMLDivElement;
@@ -28,8 +28,9 @@ export abstract class CopyDetailsBase  {
         this.clipboardService.copyFromContent(this._detailsToCopy);
         this.tooltip = this.tooltipTextCopied;
         this.setTooltipVisibility(false);
-        setTimeout(() => { this.tooltip = this.tooltipTextCopy; }, 3000);
-
+        setTimeout(() => {
+            this.tooltip = this.tooltipTextCopy;
+        }, 3000);
     }
 
     onMouseOut(): void {

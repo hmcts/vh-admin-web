@@ -659,14 +659,11 @@ describe('BookingsListComponent', () => {
         expect(component.selectedGroupIndex).toBe(-1);
         expect(component.selectedItemIndex).toBe(-1);
     });
-    it(
-        'should get booking details by Id from data store',
-        fakeAsync(async () => {
-            await component.getEditedBookingFromStorage();
-            expect(videoHearingServiceSpy.getHearingById).toHaveBeenCalled();
-            expect(videoHearingServiceSpy.mapHearingDetailsResponseToHearingModel).toHaveBeenCalled();
-        })
-    );
+    it('should get booking details by Id from data store', fakeAsync(async () => {
+        await component.getEditedBookingFromStorage();
+        expect(videoHearingServiceSpy.getHearingById).toHaveBeenCalled();
+        expect(videoHearingServiceSpy.mapHearingDetailsResponseToHearingModel).toHaveBeenCalled();
+    }));
     it('should on destroy unsubscribe the subscriptions', () => {
         component.getList();
         component.ngOnDestroy();
