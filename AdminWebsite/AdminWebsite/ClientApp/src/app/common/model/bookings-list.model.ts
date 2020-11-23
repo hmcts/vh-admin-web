@@ -35,7 +35,7 @@ export class BookingsDetailsModel {
         caseType: string,
         courtRoomAccount: string,
         telephoneConferenceId: string,
-        conferencePhoneNumber:string
+        conferencePhoneNumber: string
     ) {
         this.HearingId = hearingId;
         this.StartTime = startTime;

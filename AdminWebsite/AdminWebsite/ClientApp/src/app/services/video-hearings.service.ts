@@ -18,7 +18,7 @@ import {
     ParticipantResponse,
     UpdateBookingStatusRequest,
     UpdateBookingStatusResponse,
-    MultiHearingRequest,
+    MultiHearingRequest,
     PhoneConferenceResponse
 } from './clients/api-client';
 import { HearingModel } from '../common/model/hearing.model';
@@ -40,7 +40,7 @@ export class VideoHearingsService {
     constructor(private bhClient: BHClient) {
         this.newRequestKey = 'bh-newRequest';
         this.bookingHasChangesKey = 'bookingHasChangesKey';
-        this.conferencePhoneNumberKey = 'conferencePhoneNumberKey'
+        this.conferencePhoneNumberKey = 'conferencePhoneNumberKey';
     }
 
     private checkForExistingHearing() {
@@ -346,7 +346,7 @@ export class VideoHearingsService {
         return this.bhClient.updateBookingStatus(hearingId, updateBookingStatus);
     }
 
-   async getConferencePhoneNumber()  {
+    async getConferencePhoneNumber() {
         const savedConferencePhoneNumber = sessionStorage.getItem(this.conferencePhoneNumberKey);
         if (savedConferencePhoneNumber === null) {
             const response = await this.bhClient.getConfigSettings().toPromise();
@@ -357,7 +357,7 @@ export class VideoHearingsService {
         }
     }
 
-    getTelephoneConferenceId(hearingId: string):Observable<PhoneConferenceResponse> {
-        return this.bhClient.getTelephoneConferenceIdById(hearingId); 
+    getTelephoneConferenceId(hearingId: string): Observable<PhoneConferenceResponse> {
+        return this.bhClient.getTelephoneConferenceIdById(hearingId);
     }
 }

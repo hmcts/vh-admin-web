@@ -364,9 +364,10 @@ describe('BookingDetailsComponent', () => {
         expect(component.isVhOfficerAdmin).toBeFalsy();
     });
     it('should not confirm booking if not the VH officer admin role', () => {
+        var initialStatus = component.booking.status;
         component.isVhOfficerAdmin = false;
         component.confirmHearing();
-        expect(component.booking.status).toBeFalsy();
+        expect(component.booking.status).toBe(initialStatus);
     });
     it('should persist status in the model', () => {
         component.booking = null;
@@ -402,18 +403,19 @@ describe('BookingDetailsComponent', () => {
         component.navigateBack();
         expect(routerSpy.navigateByUrl).toHaveBeenCalledWith(PageUrls.BookingsList);
     });
-    it('should not show pop up if the confirm failed', () => {
+    it('should not show pop up if the confirm not failed', () => {
         videoHearingServiceSpy.updateBookingStatus.and.returnValue(of(new UpdateBookingStatusResponse({ success: true })));
         component.isVhOfficerAdmin = true;
         component.confirmHearing();
         expect(component.showConfirmingFailed).toBeFalsy();
     });
-    it('should show pop up if the confirm failed', () => {
+    it('should show pop up if the confirm failed', fakeAsync(() => {
         videoHearingServiceSpy.updateBookingStatus.and.returnValue(of(new UpdateBookingStatusResponse({ success: false })));
         component.isVhOfficerAdmin = true;
         component.confirmHearing();
+        tick();
         expect(component.showConfirmingFailed).toBeTruthy();
-    });
+    }));
     it('should hide pop up if the close confirm failed ok button was clicked', () => {
         component.showConfirmingFailed = true;
         component.closeConfirmFailed();

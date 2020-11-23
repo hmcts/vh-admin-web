@@ -69,6 +69,7 @@ describe('HearingDetailsComponent', () => {
             expect(divElementRole.length).toBe(1);
             const el = divElementRole[0].nativeElement as HTMLElement;
             expect(el.innerHTML).toContain('Smith vs Donner');
+            expect(component.phoneConferenceDetails).toBe('11111 (ID: 1234567)')
             done();
         });
     });

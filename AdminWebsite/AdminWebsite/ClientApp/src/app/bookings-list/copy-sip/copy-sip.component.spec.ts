@@ -52,8 +52,10 @@ describe('CopySipComponent', () => {
         const endpoint = new EndpointModel();
         endpoint.sip = '12345@12345';
         endpoint.pin = '3000';
-        component.copyToClipboard(endpoint);
         const address = endpoint.sip + ':' + endpoint.pin;
+
+        component._detailsToCopy = address;
+        component.copyToClipboard();
         expect(clipboardServiceSpy.copyFromContent).toHaveBeenCalledWith(address);
         expect(component.displayTooltip).toBe(false);
         expect(component.tooltip).toBe('Address copied to clipboard');

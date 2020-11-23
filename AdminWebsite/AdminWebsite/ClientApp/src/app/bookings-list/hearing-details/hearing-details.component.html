@@ -64,65 +64,65 @@
 </div>
 
 <div *ngIf="phoneConferenceDetails.length > 0">
-    <h2 class="govuk-heading-s remove-header-padding">Joining by phone</h2>
+        <h2 class="govuk-heading-s remove-header-padding">Joining by phone</h2>
+        <div class="vh-section">
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-full" id="conferencePhoneDetails">
+                    <app-copy-conference-phone [phoneConferenceDetails]="phoneConferenceDetails"></app-copy-conference-phone>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h2 class="govuk-heading-s remove-header-padding">Hearing schedule</h2>
     <div class="vh-section">
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-full" id="conferencePhoneDetails">
-                <app-copy-conference-phone [phoneConferenceDetails]="phoneConferenceDetails"></app-copy-conference-phone>
-            </div>
-        </div>
-    </div>
-</div>
-
-<h2 class="govuk-heading-s remove-header-padding">Hearing schedule</h2>
-<div class="vh-section">
-    <div class="govuk-grid-row vh-wrap">
-        <div class="govuk-body vh-sml" id="hearing-start">
-            {{
+        <div class="govuk-grid-row vh-wrap">
+            <div class="govuk-body vh-sml" id="hearing-start">
+                {{
  hearing?.StartTime | appLongDatetime
-            }}
+                }}
+            </div>
+        </div>
+        <div class="govuk-grid-row">
+            <div class="govuk-body vh-sml" id="court-room-address">
+                {{ hearing?.CourtAddress }}{{ hearing?.CourtRoom ? ', ' + hearing?.CourtRoom : '' }}
+            </div>
+        </div>
+        <div class="govuk-grid-row">
+            <div class="govuk-body vh-sml" id="duration">listed for {{ hearing?.DurationInHoursAndMinutes }}</div>
         </div>
     </div>
-    <div class="govuk-grid-row">
-        <div class="govuk-body vh-sml" id="court-room-address">
-            {{ hearing?.CourtAddress }}{{ hearing?.CourtRoom ? ', ' + hearing?.CourtRoom : '' }}
-        </div>
-    </div>
-    <div class="govuk-grid-row">
-        <div class="govuk-body vh-sml" id="duration">listed for {{ hearing?.DurationInHoursAndMinutes }}</div>
-    </div>
-</div>
 
-<h2 class="govuk-heading-s remove-header-padding">Audio to be recorded</h2>
-<div class="govuk-form-group vhtable">
-    <div class="govuk-body vh-text-break" id="audioRecorded">{{ hearing?.AudioRecordingRequired ? 'Yes' : 'No' }}</div>
-</div>
-
-<div *ngIf="hearing?.Endpoints && hearing?.Endpoints.length > 0">
-    <h2 class="govuk-heading-s remove-header-padding">Video access points</h2>
+    <h2 class="govuk-heading-s remove-header-padding">Audio to be recorded</h2>
     <div class="govuk-form-group vhtable">
-        <div *ngFor="let endpoint of hearing?.Endpoints; let i = index" id="displayNameRow{{ +i }}" class="govuk-body vh-text-break">
-            <div class="govuk-grid-row">
-                <div class="govuk-grid-column-full" id="displayName{{ +i }}">
-                    {{ endpoint.displayName }}
+        <div class="govuk-body vh-text-break" id="audioRecorded">{{ hearing?.AudioRecordingRequired ? 'Yes' : 'No' }}</div>
+    </div>
+
+    <div *ngIf="hearing?.Endpoints && hearing?.Endpoints.length > 0">
+        <h2 class="govuk-heading-s remove-header-padding">Video access points</h2>
+        <div class="govuk-form-group vhtable">
+            <div *ngFor="let endpoint of hearing?.Endpoints; let i = index" id="displayNameRow{{ +i }}" class="govuk-body vh-text-break">
+                <div class="govuk-grid-row">
+                    <div class="govuk-grid-column-full" id="displayName{{ +i }}">
+                        {{ endpoint.displayName }}
+                    </div>
                 </div>
-            </div>
-            <div *ngIf="getParticipantInfo(endpoint.defenceAdvocate)" class="govuk-grid-row">
-                <div class="govuk-grid-column-full" id="defenceAdvocateRep{{ +i }}">
-                    <img src="/assets/images/link.png" class="icon" alt="link to endpoint" />
-                    {{ getParticipantInfo(endpoint.defenceAdvocate) }}
+                <div *ngIf="getParticipantInfo(endpoint.defenceAdvocate)" class="govuk-grid-row">
+                    <div class="govuk-grid-column-full" id="defenceAdvocateRep{{ +i }}">
+                        <img src="/assets/images/link.png" class="icon" alt="link to endpoint" />
+                        {{ getParticipantInfo(endpoint.defenceAdvocate) }}
+                    </div>
                 </div>
-            </div>
-            <div class="govuk-grid-row">
-                <div class="govuk-grid-column-full" id="sip{{ +i }}">
-                    <app-copy-sip [endpoint]="endpoint"></app-copy-sip>
+                <div class="govuk-grid-row">
+                    <div class="govuk-grid-column-full" id="sip{{ +i }}">
+                        <app-copy-sip [endpoint]="endpoint"></app-copy-sip>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<h2 class="govuk-heading-s remove-header-padding">Other information</h2>
-<div class="govuk-form-group vhtable">
-    <div class="govuk-body vh-text-break" id="otherInformation">{{ hearing?.OtherInformation }}</div>
-</div>
+    <h2 class="govuk-heading-s remove-header-padding">Other information</h2>
+    <div class="govuk-form-group vhtable">
+        <div class="govuk-body vh-text-break" id="otherInformation">{{ hearing?.OtherInformation }}</div>
+    </div>

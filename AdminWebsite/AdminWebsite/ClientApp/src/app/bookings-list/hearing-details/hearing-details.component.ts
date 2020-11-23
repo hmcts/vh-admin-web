@@ -10,16 +10,11 @@ import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
 export class HearingDetailsComponent {
     @Input() hearing: BookingsDetailsModel = null;
     @Input() participants: Array<ParticipantDetailsModel> = [];
-
-    //Dummy
-    get phoneConferenceDetails() {
-        return this.hearing.ConferencePhoneNumber &&
-            this.hearing.TelephoneConferenceId &&
-            this.hearing.ConferencePhoneNumber.length > 0 &&
-            this.hearing.TelephoneConferenceId.length > 0
-            ? `${this.hearing.ConferencePhoneNumber} (ID: ${this.hearing.TelephoneConferenceId})`
-            : '';
+    @Input() set phoneDetails(value: string) {
+        this.phoneConferenceDetails = value;
     }
+
+    phoneConferenceDetails: string = '';
 
     constructor() {}
 
