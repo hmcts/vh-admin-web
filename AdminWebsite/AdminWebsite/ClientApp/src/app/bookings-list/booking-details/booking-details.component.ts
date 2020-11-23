@@ -45,7 +45,7 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
     conferencePhoneNumber: string;
     telephoneConferenceId: string;
     previousUrl: string = null;
-    phoneDetails: string = '';
+    phoneDetails = '';
 
     constructor(
         private videoHearingService: VideoHearingsService,
@@ -185,7 +185,6 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
         }
     }
 
-   
     updateStatusHandler(status: UpdateBookingStatus) {
         if (status === UpdateBookingStatus.Cancelled) {
             this.showCancelBooking = false;
@@ -255,5 +254,4 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
             this.phoneDetails = `${this.conferencePhoneNumber} (ID: ${this.telephoneConferenceId})`;
         }
     }
-
 }

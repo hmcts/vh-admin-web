@@ -13,7 +13,8 @@ export class CopySipComponent extends CopyDetailsBase implements OnInit {
         if (value) {
             this._detailsToCopy = value.sip + ':' + value.pin;
         }
-    };
+    }
+
     displayTooltip: boolean;
     tooltip: string;
     @ViewChild('sipAddress', { static: false }) sipAddress: ElementRef;

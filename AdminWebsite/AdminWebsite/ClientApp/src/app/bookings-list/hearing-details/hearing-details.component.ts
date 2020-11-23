@@ -14,7 +14,7 @@ export class HearingDetailsComponent {
         this.phoneConferenceDetails = value;
     }
 
-    phoneConferenceDetails: string = '';
+    phoneConferenceDetails = '';
 
     constructor() {}
 

@@ -69,7 +69,7 @@ describe('HearingDetailsComponent', () => {
             const el = divElementRole[0].nativeElement as HTMLElement;
             expect(el.innerHTML).toContain('Smith vs Donner');
             component.phoneDetails = phoneDetails;
-            expect(component.phoneConferenceDetails).toBe(phoneDetails)
+            expect(component.phoneConferenceDetails).toBe(phoneDetails);
             done();
         });
     });
