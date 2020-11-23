@@ -33,6 +33,7 @@ namespace AdminWebsite.AcceptanceTests.Data
             conference.Scheduled_date_time.Should().Be(hearing.Scheduled_date_time);
             conference.Scheduled_duration.Should().Be(hearing.Scheduled_duration);
             conference.Started_date_time.Should().BeNull();
+            conference.Meeting_room.Telephone_conference_id.Should().NotBeNullOrWhiteSpace();
         }
 
         private static void AssertEndpoints(IReadOnlyCollection<EndpointResponse2> hearingEndpoints, IEnumerable<EndpointResponse> conferenceEndpoints)
