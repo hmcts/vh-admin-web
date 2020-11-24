@@ -68,7 +68,7 @@ parameters:
   - name: VhServices:BookingsApiResourceId
     value: vh-bookings-api-identifieruris
     secret: true
- - name: VhServices:ConferencePhoneNumber
+  - name: VhServices:ConferencePhoneNumber
     value: $(ConferencePhoneNumber)
  
   # AzureAd
@@ -169,6 +169,8 @@ parameters:
     secret: true
   - name: VhServices:VideoApiUrl
     value: $(video_api_url)
+  - name: VhServices:ConferencePhoneNumber
+    value: $(ConferencePhoneNumber)
 
 variables:
   - group: vh-domains-and-urls
