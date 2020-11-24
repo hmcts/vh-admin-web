@@ -70,8 +70,7 @@ parameters:
     secret: true
  - name: VhServices:ConferencePhoneNumber
     value: $(ConferencePhoneNumber)
-    secret: true
-
+ 
   # AzureAd
   - name: AzureAd:Authority
     value: $(Authority)

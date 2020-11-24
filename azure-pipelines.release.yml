@@ -199,8 +199,8 @@ stages:
           - name: VhServices:ValidateEmail
             value: $(reformemail)
           - name: VhServices:ConferencePhoneNumber
-            value: $(ConferencePhoneNumber)
-            secret: true
+            value: conference_phone_number
+            
         acceptanceTestSettings:
           # VhServices
           - name: VhServices:AdminWebUrl
