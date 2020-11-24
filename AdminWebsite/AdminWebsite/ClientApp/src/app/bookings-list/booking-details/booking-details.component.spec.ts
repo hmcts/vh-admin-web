@@ -23,7 +23,9 @@ import {
     UpdateBookingStatus,
     UpdateBookingStatusRequest,
     UpdateBookingStatusResponse,
-    UserProfileResponse
+    UserProfileResponse,
+    PhoneConferenceResponse,
+    ClientSettingsResponse
 } from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
 import { UserIdentityService } from '../../services/user-identity.service';
@@ -199,7 +201,9 @@ describe('BookingDetailsComponent', () => {
         'mapHearingDetailsResponseToHearingModel',
         'updateHearingRequest',
         'updateBookingStatus',
-        'getCurrentRequest'
+        'getCurrentRequest',
+        'getTelephoneConferenceId',
+        'getConferencePhoneNumber'
     ]);
     routerSpy = jasmine.createSpyObj('Router', ['navigate', 'navigateByUrl']);
     bookingServiceSpy = jasmine.createSpyObj('BookingService', [
@@ -412,6 +416,28 @@ describe('BookingDetailsComponent', () => {
         component.showConfirming = true;
         component.errorHandler('error', UpdateBookingStatus.Created);
         expect(component.showConfirming).toBeFalsy();
+    });
+    it('should get conference phone details', () => {
+        component.telephoneConferenceId = '7777';
+        component.conferencePhoneNumber = '12345';
+
+        component.updateWithConferencePhoneDetails();
+
+        expect(component.phoneDetails).toBe('12345 (ID: 7777)');
+        expect(component.booking.telephone_conference_id).toBe('7777');
+        expect(component.hearing.TelephoneConferenceId).toBe('7777');
+    });
+    it('should get conference phone details', async () => {
+        component.hearing.Status = 'Created';
+        videoHearingServiceSpy.getTelephoneConferenceId.and.returnValue(
+            of(new PhoneConferenceResponse({ telephone_conference_id: '7777' }))
+        );
+        videoHearingServiceSpy.getConferencePhoneNumber.and.returnValue('12345');
+        await component.getConferencePhoneDetails();
+        expect(component.telephoneConferenceId).toBe('7777');
+        expect(component.conferencePhoneNumber).toBe('12345');
+        expect(component.booking.telephone_conference_id).toBe('7777');
+        expect(component.hearing.TelephoneConferenceId).toBe('7777');
     });
     it('should set subscription to check hearing start time', fakeAsync(() => {
         component.isConfirmationTimeValid = true;

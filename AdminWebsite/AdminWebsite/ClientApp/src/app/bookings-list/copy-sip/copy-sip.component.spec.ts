@@ -60,4 +60,12 @@ describe('CopySipComponent', () => {
         expect(component.displayTooltip).toBe(false);
         expect(component.tooltip).toBe('Address copied to clipboard');
     });
+    it('should set on input details to copy', () => {
+        const endPointModel = new EndpointModel();
+        endPointModel.pin = 'pin';
+        endPointModel.sip = 'sip';
+        component.endpoint = endPointModel;
+
+        expect(component._detailsToCopy).toBe('sip:pin');
+    });
 });

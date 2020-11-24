@@ -21,7 +21,8 @@ namespace AdminWebsite.UnitTests
                 ClientSecret = "ClientSecret",
                 Authority = "Authority",
                 RedirectUri = "https://vh-admin-web.com",
-                PostLogoutRedirectUri = "https://vh-admin-web.com/"
+                PostLogoutRedirectUri = "https://vh-admin-web.com/",
+                ConferencePhoneNumber = "1111111"
             };
 
             var testSettings = new TestUserSecrets
@@ -50,6 +51,7 @@ namespace AdminWebsite.UnitTests
             clientSettings.RedirectUri.Should().Be(securitySettings.RedirectUri);
             clientSettings.PostLogoutRedirectUri.Should().Be(securitySettings.PostLogoutRedirectUri);
             clientSettings.TestUsernameStem.Should().Be(testSettings.TestUsernameStem);
+            clientSettings.ConferencePhoneNumber.Should().Be(securitySettings.ConferencePhoneNumber);
         }
     }
 }
