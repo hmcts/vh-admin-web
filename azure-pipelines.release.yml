@@ -199,7 +199,7 @@ stages:
           - name: VhServices:ValidateEmail
             value: $(reformemail)
           - name: VhServices:ConferencePhoneNumber
-            value: conference_phone_number
+            value: $(ConferencePhoneNumber)
             
         acceptanceTestSettings:
           # VhServices
