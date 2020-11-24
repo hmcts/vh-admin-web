@@ -22,13 +22,14 @@ namespace AdminWebsite.UnitTests
                 Authority = "Authority",
                 RedirectUri = "https://vh-admin-web.com",
                 PostLogoutRedirectUri = "https://vh-admin-web.com/",
-                ConferencePhoneNumber = "1111111"
             };
 
             var testSettings = new TestUserSecrets
             {
                 TestUsernameStem = "@email.com"
             };
+
+            var serviceSettings = new ServiceSettings { ConferencePhoneNumber = "1111111" };
 
             var httpContext = new DefaultHttpContext();
             httpContext.Request.Scheme = "https";
@@ -39,7 +40,11 @@ namespace AdminWebsite.UnitTests
                 HttpContext = httpContext
             };
 
-            var configSettingsController = new ConfigSettingsController(Options.Create(securitySettings), Options.Create(testSettings)) {
+            var configSettingsController = new ConfigSettingsController(
+                Options.Create(securitySettings),
+                Options.Create(testSettings),
+                Options.Create(serviceSettings)) {
+
                 ControllerContext = controllerContext
             };
 
@@ -51,7 +56,7 @@ namespace AdminWebsite.UnitTests
             clientSettings.RedirectUri.Should().Be(securitySettings.RedirectUri);
             clientSettings.PostLogoutRedirectUri.Should().Be(securitySettings.PostLogoutRedirectUri);
             clientSettings.TestUsernameStem.Should().Be(testSettings.TestUsernameStem);
-            clientSettings.ConferencePhoneNumber.Should().Be(securitySettings.ConferencePhoneNumber);
+            clientSettings.ConferencePhoneNumber.Should().Be(serviceSettings.ConferencePhoneNumber);
         }
     }
 }

@@ -15,11 +15,16 @@ namespace AdminWebsite.Controllers
     {
         private readonly SecuritySettings _securitySettings;
         private readonly TestUserSecrets _testSettings;
+        private readonly ServiceSettings _serviceSettings;
 
-        public ConfigSettingsController(IOptions<SecuritySettings> securitySettings, IOptions<TestUserSecrets> testSettings)
+        public ConfigSettingsController(
+            IOptions<SecuritySettings> securitySettings, 
+            IOptions<TestUserSecrets> testSettings,
+            IOptions<ServiceSettings> serviceSettings)
         {
             _securitySettings = securitySettings.Value;
             _testSettings = testSettings.Value;
+            _serviceSettings = serviceSettings.Value;
         }
 
         /// <summary>
@@ -40,7 +45,7 @@ namespace AdminWebsite.Controllers
                 PostLogoutRedirectUri = _securitySettings.PostLogoutRedirectUri,
                 InstrumentationKey = _securitySettings.InstrumentationKey,
                 TestUsernameStem = _testSettings.TestUsernameStem,
-                ConferencePhoneNumber =_securitySettings.ConferencePhoneNumber
+                ConferencePhoneNumber = _serviceSettings.ConferencePhoneNumber
             };
 
             return Ok(clientSettings);

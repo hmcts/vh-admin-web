@@ -198,6 +198,9 @@ stages:
             value: $(video_api_url)
           - name: VhServices:ValidateEmail
             value: $(reformemail)
+          - name: VhServices:ConferencePhoneNumber
+            value: $(ConferencePhoneNumber)
+            secret: true
         acceptanceTestSettings:
           # VhServices
           - name: VhServices:AdminWebUrl
