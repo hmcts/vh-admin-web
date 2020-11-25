@@ -39,10 +39,16 @@ Scenario: Cancel a booked hearing with Other cancel reason
 	When the user cancels the hearing with other reason and detail text
 	Then the hearing is cancelled
 
+Scenario: Confirme a booked hearing
+	Given the Video Hearings Officer user has progressed to the Booking Details page
+	When the user confirms the hearing
+	Then the hearing is available in video web
+	Then the user views the booking conference phone details
+
 @Smoketest-Extended
 Scenario: Cancel a confirmed hearing
 	Given the Video Hearings Officer user has progressed to the Booking Details page
-	When the user confirms the booking
+	When the user confirms the hearing
 	Then the hearing is available in video web
 	When the user cancels the hearing 
 	Then the hearing is cancelled

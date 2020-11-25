@@ -37,5 +37,7 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public static By KeepBookingButton = By.Id("btnKeepBooking");
         public static By CaseType = By.Id("case-type");
         public static By VideoAccessPoints(int i) => By.Id($"displayName{i.ToString()}");
+        public static By ConferencePhoneDetails = By.Id("conference_phone_details");
+
     }
 }
