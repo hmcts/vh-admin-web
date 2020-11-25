@@ -6,6 +6,7 @@ using AdminWebsite.Mappers;
 using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
+using AdminWebsite.Services.Models;
 using AdminWebsite.VideoAPI.Client;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
@@ -68,7 +69,7 @@ namespace AdminWebsite.Controllers
         [HearingInputSanitizer]
         public async Task<ActionResult<HearingDetailsResponse>> Post([FromBody] BookNewHearingRequest request)
         {
-            var usernameAdIdDict = new Dictionary<string, string>();
+            var usernameAdIdDict = new Dictionary<string, User>();
             try
             {
                 var nonJudgeParticipants = request.Participants.Where(p => p.Case_role_name != "Judge").ToList();
@@ -88,7 +89,13 @@ namespace AdminWebsite.Controllers
                 _logger.LogDebug("Successfully booked hearing {hearing}", hearingDetailsResponse.Id);
                 _logger.LogDebug("Attempting assign participants to the correct group");
                 await AssignParticipantToCorrectGroups(hearingDetailsResponse, usernameAdIdDict);
+
                 _logger.LogDebug("Successfully assigned participants to the correct group", hearingDetailsResponse.Id);
+
+                _logger.LogDebug("Sending email notification to the participants");
+                
+                _logger.LogDebug("Successfully sent emails to participants- {hearing}", hearingDetailsResponse.Id);
+
                 return Created("", hearingDetailsResponse);
             }
             catch (BookingsApiException e)
@@ -106,18 +113,18 @@ namespace AdminWebsite.Controllers
         }
 
         private async Task PopulateUserIdsAndUsernames(IList<ParticipantRequest> participants,
-            Dictionary<string, string> usernameAdIdDict)
+            Dictionary<string, User> usernameAdIdDict)
         {
             _logger.LogDebug("Assigning HMCTS usernames for participants");
             foreach (var participant in participants)
             {
                 // set the participant username according to AD
-                string adUserId;
+                User user;
                 if (string.IsNullOrWhiteSpace(participant.Username))
                 {
                     _logger.LogDebug("No username provided in booking for participant {email}. Checking AD by contact email",
                         participant.Contact_email);
-                    adUserId = await _userAccountService.UpdateParticipantUsername(participant);
+                    user = await _userAccountService.UpdateParticipantUsername(participant);
                 }
                 else
                 {
@@ -125,10 +132,11 @@ namespace AdminWebsite.Controllers
                     _logger.LogDebug(
                         "Username provided in booking for participant {email}. Getting id for username {username}",
                         participant.Contact_email, participant.Username);
-                    adUserId = await _userAccountService.GetAdUserIdForUsername(participant.Username);
+                    var adUserId = await _userAccountService.GetAdUserIdForUsername(participant.Username);
+                    user =  new User { UserName = adUserId };
                 }
                 // username's participant will be set by this point
-                usernameAdIdDict[participant.Username!] = adUserId;
+                usernameAdIdDict[participant.Username!] = user;
             }
         }
 
@@ -202,7 +210,7 @@ namespace AdminWebsite.Controllers
         [HearingInputSanitizer]
         public async Task<ActionResult<HearingDetailsResponse>> EditHearing(Guid hearingId, [FromBody] EditHearingRequest request)
         {
-            var usernameAdIdDict = new Dictionary<string, string>();
+            var usernameAdIdDict = new Dictionary<string, User>();
             if (hearingId == Guid.Empty)
             {
                 _logger.LogWarning("No hearing id found to edit");
@@ -264,8 +272,8 @@ namespace AdminWebsite.Controllers
                         else
                         {
                             // Update the request with newly created user details in AD
-                            var userId = await _userAccountService.UpdateParticipantUsername(newParticipant);
-                            usernameAdIdDict.Add(newParticipant.Username, userId);
+                            var user = await _userAccountService.UpdateParticipantUsername(newParticipant);
+                            usernameAdIdDict.Add(newParticipant.Username, user);
                         }
 
                         _logger.LogDebug("Adding participant {participant} to hearing {hearing}",
@@ -384,7 +392,7 @@ namespace AdminWebsite.Controllers
             }
         }
 
-        private async Task AssignParticipantToCorrectGroups(HearingDetailsResponse hearing,
+        private async Task EmailParticipants(HearingDetailsResponse hearing,
             Dictionary<string, string> newUsernameAdIdDict)
         {
             if (!newUsernameAdIdDict.Any())
@@ -395,6 +403,20 @@ namespace AdminWebsite.Controllers
             var tasks = (from pair in newUsernameAdIdDict
                          let participant = hearing.Participants.FirstOrDefault(x => x.Username == pair.Key)
                          select _userAccountService.AssignParticipantToGroup(pair.Value, participant.User_role_name)).ToList();
+            await Task.WhenAll(tasks);
+        }
+
+        private async Task AssignParticipantToCorrectGroups(HearingDetailsResponse hearing,
+            Dictionary<string, User> newUsernameAdIdDict)
+        {
+            if (!newUsernameAdIdDict.Any())
+            {
+                return;
+            }
+
+            var tasks = (from pair in newUsernameAdIdDict
+                         let participant = hearing.Participants.FirstOrDefault(x => x.Username == pair.Key)
+                         select _userAccountService.AssignParticipantToGroup(pair.Value.UserName, participant.User_role_name)).ToList();
             await Task.WhenAll(tasks);
         }
 
