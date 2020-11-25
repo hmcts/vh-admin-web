@@ -175,7 +175,9 @@ stages:
             value: vh-video-api-identifieruris
             secret: true
           - name: VhServices:VideoApiUrl
-            value: $(video_api_url)
+            value: $(video_api_url) 
+          - name: VhServices:ConferencePhoneNumber
+            value: $(ConferencePhoneNumber)
         acceptanceTestSettings:
           # VhServices
           - name: VhServices:AdminWebUrl
@@ -207,7 +209,8 @@ stages:
           - name: VhServices:BookingsApiResourceId
             value: vh-bookings-api-identifieruris
             secret: true
-
+          - name: VhServices:ConferencePhoneNumber
+            value: $(ConferencePhoneNumber)
           # AzureAd
           - name: AzureAd:Authority
             value: $(Authority)
