@@ -270,7 +270,8 @@ stages:
           - name: VhServices:BookingsApiResourceId
             value: vh-bookings-api-identifieruris
             secret: true
-
+          - name: VhServices:ConferencePhoneNumber
+            value: $(ConferencePhoneNumber)
           # AzureAd
           - name: AzureAd:Authority
             value: $(Authority)
