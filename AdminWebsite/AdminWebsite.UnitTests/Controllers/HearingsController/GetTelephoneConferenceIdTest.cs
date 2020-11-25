@@ -55,8 +55,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                     Pexip_node = "node"
                 }
             };
-
-
         }
 
         [Test]
