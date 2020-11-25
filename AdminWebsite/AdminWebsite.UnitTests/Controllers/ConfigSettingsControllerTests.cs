@@ -21,7 +21,7 @@ namespace AdminWebsite.UnitTests
                 ClientSecret = "ClientSecret",
                 Authority = "Authority",
                 RedirectUri = "https://vh-admin-web.com",
-                PostLogoutRedirectUri = "https://vh-admin-web.com/",
+                PostLogoutRedirectUri = "https://vh-admin-web.com/"
             };
 
             var testSettings = new TestUserSecrets
