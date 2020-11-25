@@ -33,7 +33,8 @@ export class BookingsDetailsModel {
         audioRecordingRequired: boolean,
         cancelReason: string,
         caseType: string,
-        courtRoomAccount: string
+        courtRoomAccount: string,
+        telephoneConferenceId: string
     ) {
         this.HearingId = hearingId;
         this.StartTime = startTime;
@@ -58,6 +59,7 @@ export class BookingsDetailsModel {
         this.CancelReason = cancelReason;
         this.CaseType = caseType;
         this.CourtRoomAccount = courtRoomAccount;
+        this.TelephoneConferenceId = telephoneConferenceId;
     }
 
     HearingId: string;
@@ -86,6 +88,7 @@ export class BookingsDetailsModel {
     CaseType: string;
     Endpoints: EndpointModel[];
     CourtRoomAccount: string;
+    TelephoneConferenceId: string;
 
     get DurationInHoursAndMinutes(): string {
         return FormatShortDuration(this.Duration);

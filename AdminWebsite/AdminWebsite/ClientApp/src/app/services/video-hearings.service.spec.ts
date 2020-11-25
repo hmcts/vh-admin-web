@@ -6,7 +6,8 @@ import {
     ParticipantResponse,
     CaseAndHearingRolesResponse,
     EndpointResponse,
-    MultiHearingRequest
+    MultiHearingRequest,
+    ClientSettingsResponse
 } from './clients/api-client';
 import { HearingModel } from '../common/model/hearing.model';
 import { CaseModel } from '../common/model/case.model';
@@ -19,9 +20,16 @@ describe('Video hearing service', () => {
     let service: VideoHearingsService;
     let clientApiSpy: jasmine.SpyObj<BHClient>;
     const newRequestKey = 'bh-newRequest';
-
+    const conferencePhoneNumberKey = 'conferencePhoneNumberKey';
     beforeEach(() => {
-        clientApiSpy = jasmine.createSpyObj<BHClient>(['getHearingTypes', 'getParticipantRoles', 'bookNewHearing', 'cloneHearing']);
+        clientApiSpy = jasmine.createSpyObj<BHClient>([
+            'getHearingTypes',
+            'getParticipantRoles',
+            'bookNewHearing',
+            'cloneHearing',
+            'getTelephoneConferenceIdById',
+            'getConfigSettings'
+        ]);
         service = new VideoHearingsService(clientApiSpy);
     });
 
@@ -391,5 +399,33 @@ describe('Video hearing service', () => {
 
         const model = service.mapEndpoints(endpoints);
         expect(model[0].display_name).toEqual(endpoint.displayName);
+    });
+    it('should get telephone conference Id for hearing', async () => {
+        clientApiSpy.getTelephoneConferenceIdById.and.returnValue(of());
+
+        await service.getTelephoneConferenceId('hearingId');
+        expect(clientApiSpy.getTelephoneConferenceIdById).toHaveBeenCalled();
+    });
+
+    it('should get conference phone number from session storage', async () => {
+        sessionStorage.setItem(conferencePhoneNumberKey, '12345');
+        const cachedRequest = sessionStorage.getItem(conferencePhoneNumberKey);
+        expect(cachedRequest).toBeDefined();
+
+        const phone = await service.getConferencePhoneNumber();
+        expect(phone).toBe('12345');
+    });
+    it('should persist conference phone number and get it from api', async () => {
+        sessionStorage.removeItem(conferencePhoneNumberKey);
+        clientApiSpy.getConfigSettings.and.returnValue(
+            of(new ClientSettingsResponse({ conference_phone_number: '12345', client_id: '6' }))
+        );
+
+        const phone = await service.getConferencePhoneNumber();
+        expect(clientApiSpy.getConfigSettings).toHaveBeenCalled();
+
+        const cachedRequest = sessionStorage.getItem(conferencePhoneNumberKey);
+
+        expect(cachedRequest).toBeDefined();
     });
 });

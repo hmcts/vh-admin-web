@@ -34,5 +34,10 @@
         /// The reform email
         /// </summary>
         public string TestUsernameStem { get; set; }
+
+        /// <summary>
+        /// To join the conference phone number
+        /// </summary>
+        public string ConferencePhoneNumber { get; set; }
     }
 }

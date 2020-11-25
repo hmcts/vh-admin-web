@@ -46,7 +46,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _userIdentity.Setup(x => x.GetUserIdentityName()).Returns("test");
             var request = new UpdateBookingStatusRequest
             {
-                Updated_by = "test", Cancel_reason = "", Status = UpdateBookingStatus.Cancelled
+                Updated_by = "test",
+                Cancel_reason = "",
+                Status = UpdateBookingStatus.Cancelled
             };
             var hearingId = Guid.NewGuid();
 
@@ -54,7 +56,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             var response = await _controller.UpdateBookingStatus(hearingId, request);
 
-            var result = (OkObjectResult) response;
+            var result = (OkObjectResult)response;
             result.StatusCode.Should().Be(StatusCodes.Status200OK);
             result.Value.Should().NotBeNull().And.BeAssignableTo<UpdateBookingStatusResponse>().Subject.Success.Should().BeTrue();
 
@@ -67,7 +69,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _userIdentity.Setup(x => x.GetUserIdentityName()).Returns("test");
             var request = new UpdateBookingStatusRequest
             {
-                Updated_by = "test", Cancel_reason = "", Status = UpdateBookingStatus.Failed
+                Updated_by = "test",
+                Cancel_reason = "",
+                Status = UpdateBookingStatus.Failed
             };
             var hearingId = Guid.NewGuid();
 
@@ -75,7 +79,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             var response = await _controller.UpdateBookingStatus(hearingId, request);
 
-            var result = (OkObjectResult) response;
+            var result = (OkObjectResult)response;
             result.StatusCode.Should().Be(StatusCodes.Status200OK);
             result.Value.Should().NotBeNull().And.BeAssignableTo<UpdateBookingStatusResponse>().Subject.Success.Should().BeTrue();
 
@@ -88,14 +92,22 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _userIdentity.Setup(x => x.GetUserIdentityName()).Returns("test");
             var request = new UpdateBookingStatusRequest
             {
-                Updated_by = "test", Cancel_reason = "", Status = UpdateBookingStatus.Created
+                Updated_by = "test",
+                Cancel_reason = "",
+                Status = UpdateBookingStatus.Created
             };
             var hearingId = Guid.NewGuid();
             var expectedConferenceDetailsResponse = new ConferenceDetailsResponse
             {
-                Id = Guid.NewGuid(), Hearing_id = hearingId, Meeting_room = new MeetingRoomResponse
+                Id = Guid.NewGuid(),
+                Hearing_id = hearingId,
+                Meeting_room = new MeetingRoomResponse
                 {
-                    Admin_uri = "admin", Judge_uri = "judge", Participant_uri = "participant", Pexip_node = "pexip"
+                    Admin_uri = "admin",
+                    Judge_uri = "judge",
+                    Participant_uri = "participant",
+                    Pexip_node = "pexip",
+                    Telephone_conference_id = "121212"
                 }
             };
 
@@ -117,9 +129,10 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             var response = await _controller.UpdateBookingStatus(hearingId, request);
 
-            var result = (OkObjectResult) response;
+            var result = (OkObjectResult)response;
             result.StatusCode.Should().Be(StatusCodes.Status200OK);
             result.Value.Should().NotBeNull().And.BeAssignableTo<UpdateBookingStatusResponse>().Subject.Success.Should().BeTrue();
+            result.Value.Should().NotBeNull().And.BeAssignableTo<UpdateBookingStatusResponse>().Subject.TelephoneConferenceId.Should().Be("121212");
 
             _bookingsApiClient.Verify(x => x.UpdateBookingStatusAsync(hearingId, request), Times.Once);
         }
@@ -130,15 +143,22 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _userIdentity.Setup(x => x.GetUserIdentityName()).Returns("test");
             var updateCreatedStatus = new UpdateBookingStatusRequest
             {
-                Updated_by = "test", Cancel_reason = "", Status = UpdateBookingStatus.Created
+                Updated_by = "test",
+                Cancel_reason = "",
+                Status = UpdateBookingStatus.Created
             };
 
             var hearingId = Guid.NewGuid();
             var expectedConferenceDetailsResponse = new ConferenceDetailsResponse
             {
-                Id = Guid.NewGuid(), Hearing_id = hearingId, Meeting_room = new MeetingRoomResponse
+                Id = Guid.NewGuid(),
+                Hearing_id = hearingId,
+                Meeting_room = new MeetingRoomResponse
                 {
-                    Admin_uri = "admin", Judge_uri = "judge", Participant_uri = "participant", Pexip_node = "pexip"
+                    Admin_uri = "admin",
+                    Judge_uri = "judge",
+                    Participant_uri = "participant",
+                    Pexip_node = "pexip"
                 }
             };
 
@@ -162,7 +182,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             var response = await _controller.UpdateBookingStatus(hearingId, updateCreatedStatus);
 
-            var result = (OkObjectResult) response;
+            var result = (OkObjectResult)response;
             result.StatusCode.Should().Be(StatusCodes.Status200OK);
             result.Value.Should().NotBeNull().And.BeAssignableTo<UpdateBookingStatusResponse>().Subject.Success.Should().BeFalse();
 
@@ -176,13 +196,16 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _userIdentity.Setup(x => x.GetUserIdentityName()).Returns("test");
             var updateCreatedStatus = new UpdateBookingStatusRequest
             {
-                Updated_by = "test", Cancel_reason = "", Status = UpdateBookingStatus.Created
+                Updated_by = "test",
+                Cancel_reason = "",
+                Status = UpdateBookingStatus.Created
             };
 
             var hearingId = Guid.NewGuid();
             var expectedConferenceDetailsResponse = new ConferenceDetailsResponse
             {
-                Id = Guid.NewGuid(), Hearing_id = hearingId
+                Id = Guid.NewGuid(),
+                Hearing_id = hearingId
             };
 
             _bookingsApiClient.Setup(x => x.UpdateBookingStatusAsync(hearingId, updateCreatedStatus));
@@ -205,7 +228,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             var response = await _controller.UpdateBookingStatus(hearingId, updateCreatedStatus);
 
-            var result = (OkObjectResult) response;
+            var result = (OkObjectResult)response;
             result.StatusCode.Should().Be(StatusCodes.Status200OK);
             result.Value.Should().NotBeNull().And.BeAssignableTo<UpdateBookingStatusResponse>().Subject.Success.Should().BeFalse();
 
@@ -219,15 +242,21 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _userIdentity.Setup(x => x.GetUserIdentityName()).Returns("test");
             var updateCreatedStatus = new UpdateBookingStatusRequest
             {
-                Updated_by = "test", Cancel_reason = "", Status = UpdateBookingStatus.Created
+                Updated_by = "test",
+                Cancel_reason = "",
+                Status = UpdateBookingStatus.Created
             };
 
             var hearingId = Guid.NewGuid();
             var expectedConferenceDetailsResponse = new ConferenceDetailsResponse
             {
-                Id = Guid.NewGuid(), Hearing_id = hearingId, Meeting_room = new MeetingRoomResponse
+                Id = Guid.NewGuid(),
+                Hearing_id = hearingId,
+                Meeting_room = new MeetingRoomResponse
                 {
-                    Judge_uri = "judge", Participant_uri = "participant", Pexip_node = "pexip"
+                    Judge_uri = "judge",
+                    Participant_uri = "participant",
+                    Pexip_node = "pexip"
                 }
             };
 
@@ -251,7 +280,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             var response = await _controller.UpdateBookingStatus(hearingId, updateCreatedStatus);
 
-            var result = (OkObjectResult) response;
+            var result = (OkObjectResult)response;
             result.StatusCode.Should().Be(StatusCodes.Status200OK);
             result.Value.Should().NotBeNull().And.BeAssignableTo<UpdateBookingStatusResponse>().Subject.Success.Should().BeFalse();
 
@@ -265,15 +294,21 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _userIdentity.Setup(x => x.GetUserIdentityName()).Returns("test");
             var updateCreatedStatus = new UpdateBookingStatusRequest
             {
-                Updated_by = "test", Cancel_reason = "", Status = UpdateBookingStatus.Created
+                Updated_by = "test",
+                Cancel_reason = "",
+                Status = UpdateBookingStatus.Created
             };
 
             var hearingId = Guid.NewGuid();
             var expectedConferenceDetailsResponse = new ConferenceDetailsResponse
             {
-                Id = Guid.NewGuid(), Hearing_id = hearingId, Meeting_room = new MeetingRoomResponse
+                Id = Guid.NewGuid(),
+                Hearing_id = hearingId,
+                Meeting_room = new MeetingRoomResponse
                 {
-                    Admin_uri = "admin", Judge_uri = "judge", Pexip_node = "pexip"
+                    Admin_uri = "admin",
+                    Judge_uri = "judge",
+                    Pexip_node = "pexip"
                 }
             };
 
@@ -297,7 +332,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             var response = await _controller.UpdateBookingStatus(hearingId, updateCreatedStatus);
 
-            var result = (OkObjectResult) response;
+            var result = (OkObjectResult)response;
             result.StatusCode.Should().Be(StatusCodes.Status200OK);
             result.Value.Should().NotBeNull().And.BeAssignableTo<UpdateBookingStatusResponse>().Subject.Success.Should().BeFalse();
 
@@ -311,15 +346,21 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _userIdentity.Setup(x => x.GetUserIdentityName()).Returns("test");
             var updateCreatedStatus = new UpdateBookingStatusRequest
             {
-                Updated_by = "test", Cancel_reason = "", Status = UpdateBookingStatus.Created
+                Updated_by = "test",
+                Cancel_reason = "",
+                Status = UpdateBookingStatus.Created
             };
 
             var hearingId = Guid.NewGuid();
             var expectedConferenceDetailsResponse = new ConferenceDetailsResponse
             {
-                Id = Guid.NewGuid(), Hearing_id = hearingId, Meeting_room = new MeetingRoomResponse
+                Id = Guid.NewGuid(),
+                Hearing_id = hearingId,
+                Meeting_room = new MeetingRoomResponse
                 {
-                    Admin_uri = "admin", Participant_uri = "participant", Pexip_node = "pexip"
+                    Admin_uri = "admin",
+                    Participant_uri = "participant",
+                    Pexip_node = "pexip"
                 }
             };
 
@@ -343,7 +384,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             var response = await _controller.UpdateBookingStatus(hearingId, updateCreatedStatus);
 
-            var result = (OkObjectResult) response;
+            var result = (OkObjectResult)response;
             result.StatusCode.Should().Be(StatusCodes.Status200OK);
             result.Value.Should().NotBeNull().And.BeAssignableTo<UpdateBookingStatusResponse>().Subject.Success.Should().BeFalse();
 
@@ -357,15 +398,21 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _userIdentity.Setup(x => x.GetUserIdentityName()).Returns("test");
             var updateCreatedStatus = new UpdateBookingStatusRequest
             {
-                Updated_by = "test", Cancel_reason = "", Status = UpdateBookingStatus.Created
+                Updated_by = "test",
+                Cancel_reason = "",
+                Status = UpdateBookingStatus.Created
             };
 
             var hearingId = Guid.NewGuid();
             var expectedConferenceDetailsResponse = new ConferenceDetailsResponse
             {
-                Id = Guid.NewGuid(), Hearing_id = hearingId, Meeting_room = new MeetingRoomResponse
+                Id = Guid.NewGuid(),
+                Hearing_id = hearingId,
+                Meeting_room = new MeetingRoomResponse
                 {
-                    Admin_uri = "admin", Judge_uri = "judge", Participant_uri = "participant"
+                    Admin_uri = "admin",
+                    Judge_uri = "judge",
+                    Participant_uri = "participant"
                 }
             };
 
@@ -389,7 +436,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             var response = await _controller.UpdateBookingStatus(hearingId, updateCreatedStatus);
 
-            var result = (OkObjectResult) response;
+            var result = (OkObjectResult)response;
             result.StatusCode.Should().Be(StatusCodes.Status200OK);
             result.Value.Should().NotBeNull().And.BeAssignableTo<UpdateBookingStatusResponse>().Subject.Success.Should().BeFalse();
 
@@ -403,9 +450,11 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _userIdentity.Setup(x => x.GetUserIdentityName()).Returns("test");
             var request = new UpdateBookingStatusRequest
             {
-                Updated_by = "test", Cancel_reason = "", Status = UpdateBookingStatus.Cancelled
+                Updated_by = "test",
+                Cancel_reason = "",
+                Status = UpdateBookingStatus.Cancelled
             };
-            
+
             var hearingId = Guid.NewGuid();
 
             _bookingsApiClient.Setup(x => x.UpdateBookingStatusAsync(hearingId, request))

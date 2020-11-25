@@ -1,9 +1,10 @@
 <div>
-  <div #sipAddress class="sipAddressBox" [hidden]="displayTooltip">
+  <div #conferencePhone class="detailsBox" [hidden]="displayTooltip">
     {{ tooltip }}
   </div>
   <div
-    class="link"
+    id="conference_phone_details"
+    class="link govuk-body"
     (mouseover)="onMouseOver($event)"
     (mousemove)="onMouseOver($event)"
     (mouseout)="onMouseOut()"
