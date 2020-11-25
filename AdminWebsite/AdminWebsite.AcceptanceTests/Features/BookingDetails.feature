@@ -10,6 +10,7 @@ Scenario: Bookings Details for single day hearing
 	And the user confirms the hearing
 	Then the hearing is available in video web
 	And the conference details match the hearing
+	And the user views the booking conference phone details
 
 @Smoketest @Smoketest-Extended
 Scenario: Bookings Details for multi days hearing
@@ -18,6 +19,7 @@ Scenario: Bookings Details for multi days hearing
 	And the user confirms all the hearings
 	Then the hearings are available in video web
 	And the conference details match the hearing
+	And the user views the booking conference phone details
 
 Scenario: Cancel a booked hearing
 	Given the Video Hearings Officer user has progressed to the Booking Details page
@@ -38,12 +40,6 @@ Scenario: Cancel a booked hearing with Other cancel reason
 	Given the Video Hearings Officer user has progressed to the Booking Details page
 	When the user cancels the hearing with other reason and detail text
 	Then the hearing is cancelled
-
-Scenario: Confirme a booked hearing
-	Given the Video Hearings Officer user has progressed to the Booking Details page
-	When the user confirms the hearing
-	Then the hearing is available in video web
-	Then the user views the booking conference phone details
 
 @Smoketest-Extended
 Scenario: Cancel a confirmed hearing
