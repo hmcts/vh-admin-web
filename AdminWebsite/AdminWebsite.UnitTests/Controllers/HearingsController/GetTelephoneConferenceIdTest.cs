@@ -90,7 +90,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var result = _controller.GetTelephoneConferenceIdById(_guid);
             var okRequestResult = (BadRequestObjectResult)result.Result;
             okRequestResult.StatusCode.Should().Be(400);
-
         }
     }
 }
