@@ -100,6 +100,9 @@ stages:
         - name: vh-video-api-$(environment)
           resourceGroup: vh-video-api-$(environment)
           healthEndpoint: $(video_api_url)healthcheck/health
+        - name: vh-notification-api-$(environment)
+          resourceGroup: vh-notification-api-$(environment)
+          healthEndpoint: $(notification_api_url)healthcheck/health
         - name: vh-test-api-$(environment)
           resourceGroup: vh-test-api-$(environment)
           healthEndpoint: $(test_api_url)health/health
@@ -175,7 +178,12 @@ stages:
             value: vh-video-api-identifieruris
             secret: true
           - name: VhServices:VideoApiUrl
-            value: $(video_api_url) 
+            value: $(video_api_url)
+          - name: VhServices:NotificationApiUrl
+            value: $(notification_api_url)
+          - name: VhServices:NotificationApiResourceId
+            value: vh-notification-api-identifieruris
+            secret: true
           - name: VhServices:ConferencePhoneNumber
             value: $(ConferencePhoneNumber)
         acceptanceTestSettings:
@@ -208,6 +216,11 @@ stages:
             value: $(bookings_api_url)
           - name: VhServices:BookingsApiResourceId
             value: vh-bookings-api-identifieruris
+            secret: true
+          - name: VhServices:NotificationApiUrl
+            value: $(notification_api_url)
+          - name: VhServices:NotificationApiResourceId
+            value: vh-notification-api-identifieruris
             secret: true
           - name: VhServices:ConferencePhoneNumber
             value: $(ConferencePhoneNumber)
