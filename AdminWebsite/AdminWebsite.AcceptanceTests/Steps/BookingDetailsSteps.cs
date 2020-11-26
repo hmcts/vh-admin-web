@@ -81,7 +81,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         private void VerifyTheBookingConferencePhoneDetails()
         {
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingDetailsPage.ConferencePhoneDetails).Text.Should().Contain(_c.WebConfig.VhServices.ConferencePhoneNumber);
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingDetailsPage.ConferencePhoneDetails).Text.Should().Contain(_c.WebConfig.KinlyConfiguration.ConferencePhoneNumber);
         }
 
         private void VerifyJudgeInParticipantsList()
