@@ -184,6 +184,24 @@ stages:
           - group: vh-wowza-prod
             env:
              - Prod
+          - group: KinlyConfiguration_Test
+            env:
+             - Preview
+             - Dev
+             - AAT
+             - Sandbox
+             - Test1
+             - Test2
+          - group: KinlyConfiguration_Test2
+            env:
+             - Demo
+          - group: KinlyConfiguration_Preprod
+            env:
+             - Preprod
+          - group: KinlyConfiguration_Prod
+            env:
+             - Prod
+
         appSettings:
           - name: ApplicationInsights:InstrumentationKey
             value: vh-core-infra-AppInsightsKey
@@ -244,9 +262,10 @@ stages:
             secret: true
           - name: VhServices:NotificationApiUrl
             value: $(notification_api_url)
-          - name: VhServices:ConferencePhoneNumber
+          # Kinly
+          - name: KinlyConfiguration:ConferencePhoneNumber
             value: $(ConferencePhoneNumber)
-            
+
         acceptanceTestSettings:
           # VhServices
           - name: VhServices:AdminWebUrl
@@ -309,6 +328,10 @@ stages:
             value: $(TestUserSecrets:TestUsernameStem)
           - name: TestUserSecrets:TestUserPassword
             value: $(TestUserSecrets:TestApiUserPassword)
+
+          # Kinly
+          - name: KinlyConfiguration:ConferencePhoneNumber
+            value: $(ConferencePhoneNumber)
 
           # SauceLabs
           - name: Saucelabs:Username

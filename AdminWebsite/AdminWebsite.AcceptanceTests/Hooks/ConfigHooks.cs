@@ -49,6 +49,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             RegisterIsLive(context);
             RegisterWowzaSettings(context);
             RegisterSauceLabsSettings(context);
+            RegisterKinlySettings(context);
             RunningAdminWebLocally(context);
             await GenerateBearerTokens(context);
         }
@@ -102,6 +103,12 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         {
             context.WebConfig.Wowza = Options.Create(_configRoot.GetSection("WowzaConfiguration").Get<WowzaConfiguration>()).Value;
             ConfigurationManager.VerifyConfigValuesSet(context.WebConfig.Wowza);
+        }
+
+        private void RegisterKinlySettings(TestContext context)
+        {
+            context.WebConfig.KinlyConfiguration = Options.Create(_configRoot.GetSection("KinlyConfiguration").Get<KinlyConfiguration>()).Value;
+            ConfigurationManager.VerifyConfigValuesSet(context.WebConfig.KinlyConfiguration);
         }
 
         private void RegisterSauceLabsSettings(TestContext context)

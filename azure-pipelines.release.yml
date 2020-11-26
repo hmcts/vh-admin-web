@@ -206,9 +206,11 @@ stages:
             value: $(notification_api_url)
           - name: VhServices:ValidateEmail
             value: $(reformemail)
-          - name: VhServices:ConferencePhoneNumber
-            value: $(ConferencePhoneNumber)
             
+            # Kinly
+          - name: KinlyConfiguration:ConferencePhoneNumber
+            value: $(ConferencePhoneNumber)
+
         acceptanceTestSettings:
           # VhServices
           - name: VhServices:AdminWebUrl
@@ -267,6 +269,10 @@ stages:
             value: $(TestUserSecrets:TestUsernameStem)
           - name: TestUserSecrets:TestUserPassword
             value: $(TestUserSecrets:TestApiUserPassword)
+
+          # Kinly
+          - name: KinlyConfiguration:ConferencePhoneNumber
+            value: $(ConferencePhoneNumber)
 
           # SauceLabs
           - name: Saucelabs:Username

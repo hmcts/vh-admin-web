@@ -124,6 +124,24 @@ stages:
           - group: vh-wowza-prod
             env:
              - Prod
+          - group: KinlyConfiguration_Test
+            env:
+             - Preview
+             - Dev
+             - AAT
+             - Sandbox
+             - Test1
+             - Test2
+          - group: KinlyConfiguration_Test2
+            env:
+             - Demo
+          - group: KinlyConfiguration_Preprod
+            env:
+             - Preprod
+          - group: KinlyConfiguration_Prod
+            env:
+             - Prod
+
         appSettings:
           - name: ApplicationInsights:InstrumentationKey
             value: vh-core-infra-AppInsightsKey
@@ -184,8 +202,10 @@ stages:
           - name: VhServices:NotificationApiResourceId
             value: vh-notification-api-identifieruris
             secret: true
-          - name: VhServices:ConferencePhoneNumber
+          # Kinly
+          - name: KinlyConfiguration:ConferencePhoneNumber
             value: $(ConferencePhoneNumber)
+
         acceptanceTestSettings:
           # VhServices
           - name: VhServices:AdminWebUrl
@@ -222,8 +242,10 @@ stages:
           - name: VhServices:NotificationApiResourceId
             value: vh-notification-api-identifieruris
             secret: true
-          - name: VhServices:ConferencePhoneNumber
+          # Kinly
+          - name: KinlyConfiguration:ConferencePhoneNumber
             value: $(ConferencePhoneNumber)
+
           # AzureAd
           - name: AzureAd:Authority
             value: $(Authority)
