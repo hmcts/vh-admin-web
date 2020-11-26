@@ -12,6 +12,7 @@ using System.Net;
 using System.Threading.Tasks;
 using AdminWebsite.VideoAPI.Client;
 using HealthCheckResponse = AdminWebsite.Models.HealthCheckResponse;
+using NotificationApi.Client;
 
 namespace AdminWebsite.UnitTests.Controllers
 {
@@ -21,6 +22,7 @@ namespace AdminWebsite.UnitTests.Controllers
         private Mock<IUserApiClient> _userApiClientMock;
         private Mock<IBookingsApiClient> _bookingsApiClientMock;
         private Mock<IVideoApiClient> _videoApiClientMock;
+        private Mock<INotificationApiClient> _notificationApiClientMock;
 
         [SetUp]
         public void Setup()
@@ -28,8 +30,10 @@ namespace AdminWebsite.UnitTests.Controllers
             _userApiClientMock = new Mock<IUserApiClient>();
             _bookingsApiClientMock = new Mock<IBookingsApiClient>();
             _videoApiClientMock = new Mock<IVideoApiClient>();
+            _notificationApiClientMock = new Mock<INotificationApiClient>();
 
-            _controller = new HealthCheckController(_userApiClientMock.Object, _bookingsApiClientMock.Object, _videoApiClientMock.Object);
+            _controller = new HealthCheckController(_userApiClientMock.Object, _bookingsApiClientMock.Object, _videoApiClientMock.Object,
+                                _notificationApiClientMock.Object);
 
             var judges = Builder<UserResponse>.CreateListOfSize(3).Build().ToList();
             

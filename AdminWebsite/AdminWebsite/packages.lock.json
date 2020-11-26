@@ -136,6 +136,15 @@
           "Microsoft.VisualStudio.Web.CodeGenerators.Mvc": "3.1.0"
         }
       },
+      "NotificationApi.Client": {
+        "type": "Direct",
+        "requested": "[0.1.9, )",
+        "resolved": "0.1.9",
+        "contentHash": "lsDNzwMnvhCHLlXRLimRsFj86w9QbRaj+i6b3hNjoaHJe5jIPam82xLzEsElsf0Ier87thoT9ugx64c0t9X46A==",
+        "dependencies": {
+          "Newtonsoft.Json": "12.0.3"
+        }
+      },
       "NWebsec.AspNetCore.Middleware": {
         "type": "Direct",
         "requested": "[3.0.0, )",

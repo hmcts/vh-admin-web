@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using AdminWebsite.VideoAPI.Client;
 using HealthCheckResponse = AdminWebsite.Models.HealthCheckResponse;
+using NotificationApi.Client;
 
 namespace AdminWebsite.Controllers
 {
@@ -21,12 +22,15 @@ namespace AdminWebsite.Controllers
         private readonly IUserApiClient _userApiClient;
         private readonly IBookingsApiClient _bookingsApiClient;
         private readonly IVideoApiClient _videoApiClient;
+        private readonly INotificationApiClient _notificationApiClient;
 
-        public HealthCheckController(IUserApiClient userApiClient, IBookingsApiClient bookingsApiClient, IVideoApiClient videoApiClient)
+        public HealthCheckController(IUserApiClient userApiClient, IBookingsApiClient bookingsApiClient, 
+            IVideoApiClient videoApiClient, INotificationApiClient notificationApiClient)
         {
             _userApiClient = userApiClient;
             _bookingsApiClient = bookingsApiClient;
             _videoApiClient = videoApiClient;
+            _notificationApiClient = notificationApiClient;
         }
 
         /// <summary>
@@ -44,6 +48,7 @@ namespace AdminWebsite.Controllers
                 BookingsApiHealth = { Successful = true },
                 UserApiHealth = { Successful = true },
                 VideoApiHealth = { Successful = true },
+                NotificationApiClientHealth = { Successful = true },
                 AppVersion = GetApplicationVersion()
             };
             try
@@ -88,7 +93,22 @@ namespace AdminWebsite.Controllers
                 }
             }
 
-            if (!response.UserApiHealth.Successful || !response.BookingsApiHealth.Successful || !response.VideoApiHealth.Successful)
+            try
+            {
+                await _notificationApiClient.CheckServiceHealthAuthAsync();
+            }
+            catch (Exception ex)
+            {
+                if (!(ex is NotificationApiException))
+                {
+                    response.NotificationApiClientHealth.Successful = false;
+                    response.NotificationApiClientHealth.ErrorMessage = ex.Message;
+                    response.NotificationApiClientHealth.Data = ex.Data;
+                }
+            }
+
+            if (!response.UserApiHealth.Successful || !response.BookingsApiHealth.Successful || !response.VideoApiHealth.Successful
+                || !response.NotificationApiClientHealth.Successful)
             {
                 return StatusCode((int)HttpStatusCode.InternalServerError, response);
             }
