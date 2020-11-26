@@ -6,6 +6,5 @@
         public bool RunningAdminWebLocally { get; set; }
         public string TestApiUrl { get; set; }
         public string TestApiResourceId { get; set; }
-        public string ConferencePhoneNumber { get; set; }
     }
 }

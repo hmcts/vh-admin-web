@@ -181,6 +181,24 @@ stages:
           - group: vh-wowza-prod
             env:
              - Prod
+          - group: KinlyConfiguration_Test
+            env:
+             - Preview
+             - Dev
+             - AAT
+             - Sandbox
+             - Test1
+             - Test2
+          - group: KinlyConfiguration_Test2
+            env:
+             - Demo
+          - group: KinlyConfiguration_Preprod
+            env:
+             - Preprod
+          - group: KinlyConfiguration_Prod
+            env:
+             - Prod
+
         appSettings:
           - name: ApplicationInsights:InstrumentationKey
             value: vh-core-infra-AppInsightsKey
@@ -236,9 +254,11 @@ stages:
             secret: true
           - name: VhServices:VideoApiUrl
             value: $(video_api_url)
-          - name: VhServices:ConferencePhoneNumber
-            value: $(ConferencePhoneNumber)
             
+          # Kinly
+          - name: KinlyConfiguration:ConferencePhoneNumber
+            value: $(ConferencePhoneNumber)
+
         acceptanceTestSettings:
           # VhServices
           - name: VhServices:AdminWebUrl
@@ -270,8 +290,6 @@ stages:
           - name: VhServices:BookingsApiResourceId
             value: vh-bookings-api-identifieruris
             secret: true
-          - name: VhServices:ConferencePhoneNumber
-            value: $(ConferencePhoneNumber)
           # AzureAd
           - name: AzureAd:Authority
             value: $(Authority)
@@ -296,6 +314,10 @@ stages:
             value: $(TestUserSecrets:TestUsernameStem)
           - name: TestUserSecrets:TestUserPassword
             value: $(TestUserSecrets:TestApiUserPassword)
+
+          # Kinly
+          - name: KinlyConfiguration:ConferencePhoneNumber
+            value: $(ConferencePhoneNumber)
 
           # SauceLabs
           - name: Saucelabs:Username
