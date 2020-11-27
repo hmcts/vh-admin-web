@@ -48,6 +48,7 @@ namespace AdminWebsite
             services.Configure<TestUserSecrets>(options => Configuration.Bind("TestUserSecrets", options));
             services.Configure<AppConfigSettings>(options => Configuration.Bind(options));
             services.Configure<SecuritySettings>(options => Configuration.Bind("ApplicationInsights", options));
+            services.Configure<ServiceSettings>(options => Configuration.Bind("KinlyConfiguration", options));
         }
         
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

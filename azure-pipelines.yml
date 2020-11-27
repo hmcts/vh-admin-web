@@ -68,8 +68,6 @@ parameters:
   - name: VhServices:BookingsApiResourceId
     value: vh-bookings-api-identifieruris
     secret: true
-  - name: VhServices:ConferencePhoneNumber
-    value: $(ConferencePhoneNumber)
  
   # AzureAd
   - name: AzureAd:Authority
@@ -95,6 +93,10 @@ parameters:
     value: $(TestUserSecrets:TestUsernameStem)
   - name: TestUserSecrets:TestUserPassword
     value: $(TestUserSecrets:TestApiUserPassword)
+
+    # Kinly
+  - name: KinlyConfiguration:ConferencePhoneNumber
+    value: $(ConferencePhoneNumber)
 
   # SauceLabs
   - name: Saucelabs:Username
@@ -169,7 +171,9 @@ parameters:
     secret: true
   - name: VhServices:VideoApiUrl
     value: $(video_api_url)
-  - name: VhServices:ConferencePhoneNumber
+
+  # Kinly
+  - name: KinlyConfiguration:ConferencePhoneNumber
     value: $(ConferencePhoneNumber)
 
 variables:
@@ -180,6 +184,7 @@ variables:
   - group: vh test users
   - group: Saucelabs
   - group: vh-wowza-dev
+  - group: KinlyConfiguration_Test
 
 trigger:
   branches:
