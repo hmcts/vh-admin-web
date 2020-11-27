@@ -243,8 +243,7 @@ stages:
             secret: true
           - name: VhServices:NotificationApiUrl
             value: $(notification_api_url)
-          - name: VhServices:ConferencePhoneNumber
-            value: $(ConferencePhoneNumber)
+
           # AzureAd
           - name: AzureAd:Authority
             value: $(Authority)
