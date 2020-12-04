@@ -91,5 +91,16 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var okRequestResult = (BadRequestObjectResult)result.Result;
             okRequestResult.StatusCode.Should().Be(400);
         }
+
+        [Test]
+        public void Should_return_not_found_if_exeptions_is_thrown()
+        {
+            _videoApiMock.Setup(x => x.GetConferenceByHearingRefIdAsync(It.IsAny<Guid>()))
+                .Throws(new VideoApiException("Error", 404, null, null, null));
+
+            var result = _controller.GetTelephoneConferenceIdById(_guid);
+            var okRequestResult = (NotFoundResult)result.Result;
+            okRequestResult.StatusCode.Should().Be(404);
+        }
     }
 }
