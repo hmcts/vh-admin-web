@@ -541,7 +541,7 @@ namespace AdminWebsite.Controllers
                 {
                     var conferenceDetailsResponse = await _pollyRetryService.WaitAndRetryAsync<VideoApiException, ConferenceDetailsResponse>
                     (
-                        6, _ => TimeSpan.FromSeconds(5),
+                        6, _ => TimeSpan.FromSeconds(8),
                         retryAttempt => _logger.LogWarning($"Failed to retrieve conference details from the VideoAPi for hearingId {hearingId}. Retrying attempt {retryAttempt}"),
                         videoApiResponseObject => !ConferenceExistsWithMeetingRoom(videoApiResponseObject),
                         () => _videoApiClient.GetConferenceByHearingRefIdAsync(hearingId)
