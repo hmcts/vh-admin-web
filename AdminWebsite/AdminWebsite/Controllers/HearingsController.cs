@@ -607,7 +607,12 @@ namespace AdminWebsite.Controllers
                 return NotFound();
             }
             catch (VideoApiException e)
-            {
+            {  
+                if(e.StatusCode == (int)HttpStatusCode.NotFound)
+                {
+                    return NotFound();
+                }
+
                 if (e.StatusCode == (int)HttpStatusCode.BadRequest)
                 {
                     return BadRequest(e.Response);

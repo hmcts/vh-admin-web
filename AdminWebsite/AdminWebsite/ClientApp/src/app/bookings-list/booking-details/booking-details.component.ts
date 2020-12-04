@@ -240,10 +240,18 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
 
     async getConferencePhoneDetails() {
         if (this.hearing.Status === 'Created') {
-            const phoneResponse = await this.videoHearingService.getTelephoneConferenceId(this.hearingId).toPromise();
-            this.telephoneConferenceId = phoneResponse.telephone_conference_id;
-            this.conferencePhoneNumber = await this.videoHearingService.getConferencePhoneNumber();
-            this.updateWithConferencePhoneDetails();
+            try {
+                const phoneResponse = await this.videoHearingService.getTelephoneConferenceId(this.hearingId).toPromise();
+                this.telephoneConferenceId = phoneResponse.telephone_conference_id;
+                this.conferencePhoneNumber = await this.videoHearingService.getConferencePhoneNumber();
+                this.updateWithConferencePhoneDetails();
+            } catch (error) {
+                this.logger.warn(
+                    `${this.loggerPrefix} Could not get conference phone Id , the hearing ${this.hearingId} is closed`,
+                    error.title
+                );
+                this.phoneDetails = '';
+            }
         }
     }
 
