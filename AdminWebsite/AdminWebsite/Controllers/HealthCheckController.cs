@@ -11,6 +11,7 @@ using AdminWebsite.VideoAPI.Client;
 using HealthCheckResponse = AdminWebsite.Models.HealthCheckResponse;
 using NotificationApi.Client;
 using NotificationApi.Contract;
+using Microsoft.Extensions.Logging;
 
 namespace AdminWebsite.Controllers
 {
@@ -24,14 +25,17 @@ namespace AdminWebsite.Controllers
         private readonly IBookingsApiClient _bookingsApiClient;
         private readonly IVideoApiClient _videoApiClient;
         private readonly INotificationApiClient _notificationApiClient;
+        private readonly ILogger<HealthCheckController> _logger;
 
         public HealthCheckController(IUserApiClient userApiClient, IBookingsApiClient bookingsApiClient, 
-            IVideoApiClient videoApiClient, INotificationApiClient notificationApiClient)
+            IVideoApiClient videoApiClient, INotificationApiClient notificationApiClient,
+             ILogger<HealthCheckController> logger)
         {
             _userApiClient = userApiClient;
             _bookingsApiClient = bookingsApiClient;
             _videoApiClient = videoApiClient;
             _notificationApiClient = notificationApiClient;
+            _logger = logger;
         }
 
         /// <summary>
@@ -56,56 +60,65 @@ namespace AdminWebsite.Controllers
             {
                 await _userApiClient.GetJudgesAsync();
             }
+            catch (UserServiceException uaEx)
+            {
+                _logger.LogError(uaEx, "There was a problem getting judgelist from UserAPI on health check. Status Code {StatusCode} - Message {Message}",
+                                       uaEx.StatusCode, uaEx.Response);
+            }
             catch (Exception ex)
             {
-                if (!(ex is UserServiceException))
-                {
-                    response.UserApiHealth.Successful = false;
-                    response.UserApiHealth.ErrorMessage = ex.Message;
-                    response.UserApiHealth.Data = ex.Data;
-                }
+                response.UserApiHealth.Successful = false;
+                response.UserApiHealth.ErrorMessage = ex.Message;
+                response.UserApiHealth.Data = ex.Data;
             }
 
             try
             {
                 await _bookingsApiClient.GetCaseTypesAsync();
             }
+            catch (BookingsApiException baEx)
+            {
+                _logger.LogError(baEx, "There was a problem getting casetypes from BookigAPI on health check. Status Code {StatusCode} - Message {Message}",
+                                       baEx.StatusCode, baEx.Response);
+            }
             catch (Exception ex)
             {
-                if (!(ex is BookingsApiException))
-                {
-                    response.BookingsApiHealth.Successful = false;
-                    response.BookingsApiHealth.ErrorMessage = ex.Message;
-                    response.BookingsApiHealth.Data = ex.Data;
-                }
+                response.BookingsApiHealth.Successful = false;
+                response.BookingsApiHealth.ErrorMessage = ex.Message;
+                response.BookingsApiHealth.Data = ex.Data;
             }
             
             try
             {
                 await _videoApiClient.GetExpiredOpenConferencesAsync();
             }
+            catch (VideoApiException baEx)
+            {
+                _logger.LogError(baEx, "There was a problem getting expiered open conferences from VideoApi on health check. " +
+                                        "Status Code {StatusCode} - Message {Message}",
+                                       baEx.StatusCode, baEx.Response);
+            }
             catch (Exception ex)
             {
-                if (!(ex is VideoApiException))
-                {
-                    response.VideoApiHealth.Successful = false;
-                    response.VideoApiHealth.ErrorMessage = ex.Message;
-                    response.VideoApiHealth.Data = ex.Data;
-                }
+                response.VideoApiHealth.Successful = false;
+                response.VideoApiHealth.ErrorMessage = ex.Message;
+                response.VideoApiHealth.Data = ex.Data;
             }
 
             try
             {
                 await _notificationApiClient.GetTemplateByNotificationTypeAsync(NotificationType.CreateIndividual);
             }
+            catch (NotificationApiException naEx)
+            {
+                _logger.LogError(naEx, "There was a problem getting templates on health check. Status Code {StatusCode} - Message {Message}",
+                                       naEx.StatusCode, naEx.Response);
+            }
             catch (Exception ex)
             {
-                if (!(ex is NotificationApiException))
-                {
-                    response.NotificationApiHealth.Successful = false;
-                    response.NotificationApiHealth.ErrorMessage = ex.Message;
-                    response.NotificationApiHealth.Data = ex.Data;
-                }
+                response.NotificationApiHealth.Successful = false;
+                response.NotificationApiHealth.ErrorMessage = ex.Message;
+                response.NotificationApiHealth.Data = ex.Data;
             }
 
             if (!response.UserApiHealth.Successful || !response.BookingsApiHealth.Successful || !response.VideoApiHealth.Successful
