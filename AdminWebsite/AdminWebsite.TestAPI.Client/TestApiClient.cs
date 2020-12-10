@@ -3834,6 +3834,9 @@ namespace AdminWebsite.TestAPI.Client
         [System.Runtime.Serialization.EnumMember(Value = @"QueueSubscriber")]
         QueueSubscriber = 8,
     
+        [System.Runtime.Serialization.EnumMember(Value = @"TestWeb")]
+        TestWeb = 9,
+    
     }
     
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
@@ -3885,6 +3888,9 @@ namespace AdminWebsite.TestAPI.Client
     
         [System.Runtime.Serialization.EnumMember(Value = @"Winger")]
         Winger = 9,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Tester")]
+        Tester = 10,
     
     }
     
@@ -4538,6 +4544,9 @@ namespace AdminWebsite.TestAPI.Client
     
         [Newtonsoft.Json.JsonProperty("telephone_conference_id", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Telephone_conference_id { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("telephone_conference_number", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Telephone_conference_number { get; set; }
     
     
     }

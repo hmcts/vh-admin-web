@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using AdminWebsite.VideoAPI.Client;
 using HealthCheckResponse = AdminWebsite.Models.HealthCheckResponse;
 using NotificationApi.Client;
+using NotificationApi.Contract;
 
 namespace AdminWebsite.UnitTests.Controllers
 {
@@ -109,6 +110,23 @@ namespace AdminWebsite.UnitTests.Controllers
         }
 
         [Test]
+        public async Task Should_return_internal_server_error_result_when_notification_api_not_reachable()
+        {
+            var exception = new AggregateException("Notification api error");
+
+            _notificationApiClientMock
+                .Setup(x => x.GetTemplateByNotificationTypeAsync(It.IsAny<NotificationType>()))
+                .ThrowsAsync(exception);
+
+            var result = await _controller.Health();
+            var typedResult = (ObjectResult)result;
+            typedResult.StatusCode.Should().Be((int)HttpStatusCode.InternalServerError);
+            var response = (HealthCheckResponse)typedResult.Value;
+            response.NotificationApiHealth.Successful.Should().BeFalse();
+            response.NotificationApiHealth.ErrorMessage.Should().NotBeNullOrWhiteSpace();
+        }
+
+        [Test]
         public async Task Should_return_ok_when_all_services_are_running()
         {
             var result = await _controller.Health();
@@ -119,6 +137,7 @@ namespace AdminWebsite.UnitTests.Controllers
             response.BookingsApiHealth.Successful.Should().BeTrue();
             response.UserApiHealth.Successful.Should().BeTrue();
             response.VideoApiHealth.Successful.Should().BeTrue();
+            response.NotificationApiHealth.Successful.Should().BeTrue();
         }
 
         [Test]

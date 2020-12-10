@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using AdminWebsite.VideoAPI.Client;
 using HealthCheckResponse = AdminWebsite.Models.HealthCheckResponse;
 using NotificationApi.Client;
+using NotificationApi.Contract;
 
 namespace AdminWebsite.Controllers
 {
@@ -48,7 +49,7 @@ namespace AdminWebsite.Controllers
                 BookingsApiHealth = { Successful = true },
                 UserApiHealth = { Successful = true },
                 VideoApiHealth = { Successful = true },
-                NotificationApiClientHealth = { Successful = true },
+                NotificationApiHealth = { Successful = true },
                 AppVersion = GetApplicationVersion()
             };
             try
@@ -95,20 +96,20 @@ namespace AdminWebsite.Controllers
 
             try
             {
-                await _notificationApiClient.CheckServiceHealthAuthAsync();
+                await _notificationApiClient.GetTemplateByNotificationTypeAsync(NotificationType.CreateIndividual);
             }
             catch (Exception ex)
             {
                 if (!(ex is NotificationApiException))
                 {
-                    response.NotificationApiClientHealth.Successful = false;
-                    response.NotificationApiClientHealth.ErrorMessage = ex.Message;
-                    response.NotificationApiClientHealth.Data = ex.Data;
+                    response.NotificationApiHealth.Successful = false;
+                    response.NotificationApiHealth.ErrorMessage = ex.Message;
+                    response.NotificationApiHealth.Data = ex.Data;
                 }
             }
 
             if (!response.UserApiHealth.Successful || !response.BookingsApiHealth.Successful || !response.VideoApiHealth.Successful
-                || !response.NotificationApiClientHealth.Successful)
+                || !response.NotificationApiHealth.Successful)
             {
                 return StatusCode((int)HttpStatusCode.InternalServerError, response);
             }
