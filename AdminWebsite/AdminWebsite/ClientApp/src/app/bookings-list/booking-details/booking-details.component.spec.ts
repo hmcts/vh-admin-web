@@ -214,7 +214,7 @@ describe('BookingDetailsComponent', () => {
     ]);
     bookingPersistServiceSpy = jasmine.createSpyObj('BookingPersistService', ['selectedHearingId']);
     userIdentityServiceSpy = jasmine.createSpyObj('UserIdentityService', ['getUserInformation']);
-    const loggerSpy: jasmine.SpyObj<Logger> = jasmine.createSpyObj('Logger', ['error', 'event', 'debug', 'info']);
+    const loggerSpy: jasmine.SpyObj<Logger> = jasmine.createSpyObj('Logger', ['error', 'event', 'debug', 'info', 'warn']);
     returnUrlServiceSpy = jasmine.createSpyObj<ReturnUrlService>('ReturnUrlService', ['popUrl', 'setUrl']);
 
     beforeEach(
@@ -438,6 +438,13 @@ describe('BookingDetailsComponent', () => {
         expect(component.conferencePhoneNumber).toBe('12345');
         expect(component.booking.telephone_conference_id).toBe('7777');
         expect(component.hearing.TelephoneConferenceId).toBe('7777');
+    });
+    it('should  throw exception by getting the conference phone details for closed hearing', async () => {
+        component.hearing.Status = 'Created';
+        videoHearingServiceSpy.getTelephoneConferenceId.and.throwError('Not Found');
+        await component.getConferencePhoneDetails();
+        expect(component.phoneDetails.length).toBe(0);
+        expect(loggerSpy.warn).toHaveBeenCalled();
     });
     it('should set subscription to check hearing start time', fakeAsync(() => {
         component.isConfirmationTimeValid = true;
