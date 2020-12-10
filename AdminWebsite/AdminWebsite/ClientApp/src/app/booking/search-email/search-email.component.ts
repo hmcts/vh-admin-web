@@ -103,7 +103,8 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
 
     validateEmail() {
         /* tslint:disable: max-line-length */
-        const pattern = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+        const pattern = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.(?:[a-zA-Z0-9](?:\.[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+
         this.isValidEmail =
             this.email &&
             this.email.length > 0 &&
