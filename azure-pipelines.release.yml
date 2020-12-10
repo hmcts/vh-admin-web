@@ -97,6 +97,9 @@ stages:
         - name: vh-video-api-$(environment)
           resourceGroup: vh-video-api-$(environment)
           healthEndpoint: $(video_api_url)healthcheck/health
+        - name: vh-notification-api-$(environment)
+          resourceGroup: vh-notification-api-$(environment)
+          healthEndpoint: $(notification_api_url)healthcheck/health
         - name: vh-test-api-$(environment)
           resourceGroup: vh-test-api-$(environment)
           healthEndpoint: $(test_api_url)health/health       
@@ -196,8 +199,18 @@ stages:
             secret: true
           - name: VhServices:VideoApiUrl
             value: $(video_api_url)
+          - name: VhServices:NotificationApiResourceId
+            value: vh-notification-api-identifieruris
+            secret: true
+          - name: VhServices:NotificationApiUrl
+            value: $(notification_api_url)
           - name: VhServices:ValidateEmail
             value: $(reformemail)
+            
+            # Kinly
+          - name: KinlyConfiguration:ConferencePhoneNumber
+            value: $(ConferencePhoneNumber)
+
         acceptanceTestSettings:
           # VhServices
           - name: VhServices:AdminWebUrl
@@ -225,6 +238,11 @@ stages:
           - name: VhServices:BookingsApiResourceId
             value: vh-bookings-api-identifieruris
             secret: true
+          - name: VhServices:NotificationApiResourceId
+            value: vh-notification-api-identifieruris
+            secret: true
+          - name: VhServices:NotificationApiUrl
+            value: $(notification_api_url)
 
           # AzureAd
           - name: AzureAd:Authority
@@ -250,6 +268,10 @@ stages:
             value: $(TestUserSecrets:TestUsernameStem)
           - name: TestUserSecrets:TestUserPassword
             value: $(TestUserSecrets:TestApiUserPassword)
+
+          # Kinly
+          - name: KinlyConfiguration:ConferencePhoneNumber
+            value: $(ConferencePhoneNumber)
 
           # SauceLabs
           - name: Saucelabs:Username

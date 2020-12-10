@@ -39,6 +39,7 @@ export class BookingPersistService {
                 hearingUpdate.CourtRoom = hearing.court_room;
                 hearingUpdate.CreatedBy = hearing.created_by;
                 hearingUpdate.Status = hearing.status;
+                hearingUpdate.TelephoneConferenceId = hearing.telephone_conference_id;
                 if (this.isValidDate(hearing.created_date)) {
                     hearingUpdate.CreatedDate = new Date(hearing.created_date);
                 }

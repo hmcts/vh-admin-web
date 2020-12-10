@@ -1,13 +1,12 @@
 import { ElementRef } from '@angular/core';
 import { ClipboardService } from 'ngx-clipboard';
-import { EndpointModel } from 'src/app/common/model/endpoint.model';
-import { CopySipComponent } from './copy-sip.component';
+import { CopyConferencePhoneComponent } from './copy-conference-phone.component';
 
-describe('CopySipComponent', () => {
-    let component: CopySipComponent;
+describe('CopyConferencePhoneComponent', () => {
+    let component: CopyConferencePhoneComponent;
     let mouseEvent: MouseEvent;
     let clipboardServiceSpy: jasmine.SpyObj<ClipboardService>;
-    let sipAddress: HTMLDivElement;
+    let element: HTMLDivElement;
 
     beforeAll(() => {
         mouseEvent = document.createEvent('MouseEvent');
@@ -17,9 +16,9 @@ describe('CopySipComponent', () => {
     });
 
     beforeEach(() => {
-        component = new CopySipComponent(clipboardServiceSpy);
+        component = new CopyConferencePhoneComponent(clipboardServiceSpy);
         component.ngOnInit();
-        sipAddress = document.createElement('div');
+        element = document.createElement('div');
     });
 
     it('should create', () => {
@@ -30,42 +29,30 @@ describe('CopySipComponent', () => {
         expect(component.displayTooltip).toBe(true);
     });
     it('should show the tooltip on mouse over event', () => {
-        component.sipAddress = new ElementRef(sipAddress);
+        component.conferencePhone = new ElementRef<HTMLDivElement>(element);
         component.onMouseOver(mouseEvent);
 
         const expectedTop = mouseEvent.clientY + 15 + 'px';
         const expectedLeft = mouseEvent.clientX + 20 + 'px';
-        expect(sipAddress.style.top).toBe(expectedTop);
-        expect(sipAddress.style.left).toBe(expectedLeft);
+        expect(element.style.top).toBe(expectedTop);
+        expect(element.style.left).toBe(expectedLeft);
 
         expect(component.displayTooltip).toBe(false);
-        expect(component.tooltip).toBe('Copy address');
+        expect(component.tooltip).toBe(component.tooltipTextCopy);
     });
     it('should not show tooltip if element if not ready', () => {
-        component.sipAddress = null;
+        component.elem = null;
         component.displayTooltip = true;
         component.onMouseOver(mouseEvent);
 
         expect(component.displayTooltip).toBeTruthy();
     });
-    it('should copy the endpoint sip address and pin to the clipboard', () => {
-        const endpoint = new EndpointModel();
-        endpoint.sip = '12345@12345';
-        endpoint.pin = '3000';
-        const address = endpoint.sip + ':' + endpoint.pin;
-
-        component._detailsToCopy = address;
+    it('should copy the phone number and phone conference id to the clipboard', () => {
+        const phoneDetails = '0000 111 2222 (ID: 1234)';
+        component._detailsToCopy = phoneDetails;
         component.copyToClipboard();
-        expect(clipboardServiceSpy.copyFromContent).toHaveBeenCalledWith(address);
+        expect(clipboardServiceSpy.copyFromContent).toHaveBeenCalledWith(phoneDetails);
         expect(component.displayTooltip).toBe(false);
-        expect(component.tooltip).toBe('Address copied to clipboard');
-    });
-    it('should set on input details to copy', () => {
-        const endPointModel = new EndpointModel();
-        endPointModel.pin = 'pin';
-        endPointModel.sip = 'sip';
-        component.endpoint = endPointModel;
-
-        expect(component._detailsToCopy).toBe('sip:pin');
+        expect(component.tooltip).toBe(component.tooltipTextCopied);
     });
 });

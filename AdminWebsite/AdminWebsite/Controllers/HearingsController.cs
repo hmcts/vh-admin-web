@@ -563,7 +563,7 @@ namespace AdminWebsite.Controllers
                 {
                     var conferenceDetailsResponse = await _pollyRetryService.WaitAndRetryAsync<VideoApiException, ConferenceDetailsResponse>
                     (
-                        6, _ => TimeSpan.FromSeconds(5),
+                        6, _ => TimeSpan.FromSeconds(8),
                         retryAttempt => _logger.LogWarning($"Failed to retrieve conference details from the VideoAPi for hearingId {hearingId}. Retrying attempt {retryAttempt}"),
                         videoApiResponseObject => !ConferenceExistsWithMeetingRoom(videoApiResponseObject),
                         () => _videoApiClient.GetConferenceByHearingRefIdAsync(hearingId)
@@ -571,7 +571,7 @@ namespace AdminWebsite.Controllers
 
                     if (ConferenceExistsWithMeetingRoom(conferenceDetailsResponse))
                     {
-                        return Ok(new UpdateBookingStatusResponse { Success = true });
+                        return Ok(new UpdateBookingStatusResponse { Success = true, TelephoneConferenceId = conferenceDetailsResponse.Meeting_room.Telephone_conference_id });
                     }
                 }
                 catch (VideoApiException ex)
@@ -599,6 +599,45 @@ namespace AdminWebsite.Controllers
                 if (e.StatusCode == (int)HttpStatusCode.NotFound)
                 {
                     return NotFound(e.Response);
+                }
+
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Gets for confirmed booking the telephone conference Id by hearing Id.
+        /// </summary>
+        /// <param name="hearingId">The unique sequential value of hearing ID.</param>
+        /// <returns> The telephone conference Id</returns>
+        [HttpGet("{hearingId}/telephoneConferenceId")]
+        [SwaggerOperation(OperationId = "GetTelephoneConferenceIdById")]
+        [ProducesResponseType(typeof(PhoneConferenceResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<ActionResult> GetTelephoneConferenceIdById(Guid hearingId)
+        {
+            try
+            {
+                var conferenceDetailsResponse = await _videoApiClient.GetConferenceByHearingRefIdAsync(hearingId);
+
+                if (ConferenceExistsWithMeetingRoom(conferenceDetailsResponse))
+                {
+                    return Ok(new PhoneConferenceResponse { TelephoneConferenceId = conferenceDetailsResponse.Meeting_room.Telephone_conference_id });
+                }
+
+                return NotFound();
+            }
+            catch (VideoApiException e)
+            {  
+                if(e.StatusCode == (int)HttpStatusCode.NotFound)
+                {
+                    return NotFound();
+                }
+
+                if (e.StatusCode == (int)HttpStatusCode.BadRequest)
+                {
+                    return BadRequest(e.Response);
                 }
 
                 throw;

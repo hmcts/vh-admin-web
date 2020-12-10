@@ -63,10 +63,23 @@
   </div>
 </div>
 
+<div *ngIf="phoneConferenceDetails.length > 0">
+  <h2 class="govuk-heading-s remove-header-padding">Joining by phone</h2>
+  <div class="vh-section">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-full" id="conferencePhoneDetails">
+        <app-copy-conference-phone [phoneConferenceDetails]="phoneConferenceDetails"></app-copy-conference-phone>
+      </div>
+    </div>
+  </div>
+</div>
+
 <h2 class="govuk-heading-s remove-header-padding">Hearing schedule</h2>
 <div class="vh-section">
   <div class="govuk-grid-row vh-wrap">
-    <div class="govuk-body vh-sml" id="hearing-start">{{ hearing?.StartTime | appLongDatetime }}</div>
+    <div class="govuk-body vh-sml" id="hearing-start">
+      {{ hearing?.StartTime | appLongDatetime }}
+    </div>
   </div>
   <div class="govuk-grid-row">
     <div class="govuk-body vh-sml" id="court-room-address">

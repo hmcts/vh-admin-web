@@ -10,6 +10,11 @@ import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
 export class HearingDetailsComponent {
     @Input() hearing: BookingsDetailsModel = null;
     @Input() participants: Array<ParticipantDetailsModel> = [];
+    @Input() set phoneDetails(value: string) {
+        this.phoneConferenceDetails = value;
+    }
+
+    phoneConferenceDetails = '';
 
     constructor() {}
 

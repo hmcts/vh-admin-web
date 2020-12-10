@@ -23,7 +23,9 @@ import {
     UpdateBookingStatus,
     UpdateBookingStatusRequest,
     UpdateBookingStatusResponse,
-    UserProfileResponse
+    UserProfileResponse,
+    PhoneConferenceResponse,
+    ClientSettingsResponse
 } from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
 import { UserIdentityService } from '../../services/user-identity.service';
@@ -63,7 +65,8 @@ export class BookingDetailsTestData {
             true,
             'reason',
             'Financial Remedy',
-            'judge.green@email.com'
+            'judge.green@email.com',
+            '1234567'
         );
     }
 
@@ -198,7 +201,9 @@ describe('BookingDetailsComponent', () => {
         'mapHearingDetailsResponseToHearingModel',
         'updateHearingRequest',
         'updateBookingStatus',
-        'getCurrentRequest'
+        'getCurrentRequest',
+        'getTelephoneConferenceId',
+        'getConferencePhoneNumber'
     ]);
     routerSpy = jasmine.createSpyObj('Router', ['navigate', 'navigateByUrl']);
     bookingServiceSpy = jasmine.createSpyObj('BookingService', [
@@ -209,7 +214,7 @@ describe('BookingDetailsComponent', () => {
     ]);
     bookingPersistServiceSpy = jasmine.createSpyObj('BookingPersistService', ['selectedHearingId']);
     userIdentityServiceSpy = jasmine.createSpyObj('UserIdentityService', ['getUserInformation']);
-    const loggerSpy: jasmine.SpyObj<Logger> = jasmine.createSpyObj('Logger', ['error', 'event', 'debug', 'info']);
+    const loggerSpy: jasmine.SpyObj<Logger> = jasmine.createSpyObj('Logger', ['error', 'event', 'debug', 'info', 'warn']);
     returnUrlServiceSpy = jasmine.createSpyObj<ReturnUrlService>('ReturnUrlService', ['popUrl', 'setUrl']);
 
     beforeEach(
@@ -350,9 +355,10 @@ describe('BookingDetailsComponent', () => {
         expect(component.isVhOfficerAdmin).toBeFalsy();
     });
     it('should not confirm booking if not the VH officer admin role', () => {
+        const initialStatus = component.booking.status;
         component.isVhOfficerAdmin = false;
         component.confirmHearing();
-        expect(component.booking.status).toBeFalsy();
+        expect(component.booking.status).toBe(initialStatus);
     });
     it('should persist status in the model', () => {
         component.booking = null;
@@ -388,18 +394,19 @@ describe('BookingDetailsComponent', () => {
         component.navigateBack();
         expect(routerSpy.navigateByUrl).toHaveBeenCalledWith(PageUrls.BookingsList);
     });
-    it('should not show pop up if the confirm failed', () => {
+    it('should not show pop up if the confirm not failed', () => {
         videoHearingServiceSpy.updateBookingStatus.and.returnValue(of(new UpdateBookingStatusResponse({ success: true })));
         component.isVhOfficerAdmin = true;
         component.confirmHearing();
         expect(component.showConfirmingFailed).toBeFalsy();
     });
-    it('should show pop up if the confirm failed', () => {
+    it('should show pop up if the confirm failed', fakeAsync(() => {
         videoHearingServiceSpy.updateBookingStatus.and.returnValue(of(new UpdateBookingStatusResponse({ success: false })));
         component.isVhOfficerAdmin = true;
         component.confirmHearing();
+        tick();
         expect(component.showConfirmingFailed).toBeTruthy();
-    });
+    }));
     it('should hide pop up if the close confirm failed ok button was clicked', () => {
         component.showConfirmingFailed = true;
         component.closeConfirmFailed();
@@ -409,6 +416,35 @@ describe('BookingDetailsComponent', () => {
         component.showConfirming = true;
         component.errorHandler('error', UpdateBookingStatus.Created);
         expect(component.showConfirming).toBeFalsy();
+    });
+    it('should get conference phone details', () => {
+        component.telephoneConferenceId = '7777';
+        component.conferencePhoneNumber = '12345';
+
+        component.updateWithConferencePhoneDetails();
+
+        expect(component.phoneDetails).toBe('12345 (ID: 7777)');
+        expect(component.booking.telephone_conference_id).toBe('7777');
+        expect(component.hearing.TelephoneConferenceId).toBe('7777');
+    });
+    it('should get conference phone details', async () => {
+        component.hearing.Status = 'Created';
+        videoHearingServiceSpy.getTelephoneConferenceId.and.returnValue(
+            of(new PhoneConferenceResponse({ telephone_conference_id: '7777' }))
+        );
+        videoHearingServiceSpy.getConferencePhoneNumber.and.returnValue('12345');
+        await component.getConferencePhoneDetails();
+        expect(component.telephoneConferenceId).toBe('7777');
+        expect(component.conferencePhoneNumber).toBe('12345');
+        expect(component.booking.telephone_conference_id).toBe('7777');
+        expect(component.hearing.TelephoneConferenceId).toBe('7777');
+    });
+    it('should  throw exception by getting the conference phone details for closed hearing', async () => {
+        component.hearing.Status = 'Created';
+        videoHearingServiceSpy.getTelephoneConferenceId.and.throwError('Not Found');
+        await component.getConferencePhoneDetails();
+        expect(component.phoneDetails.length).toBe(0);
+        expect(loggerSpy.warn).toHaveBeenCalled();
     });
     it('should set subscription to check hearing start time', fakeAsync(() => {
         component.isConfirmationTimeValid = true;

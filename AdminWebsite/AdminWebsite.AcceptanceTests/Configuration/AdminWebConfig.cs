@@ -10,5 +10,7 @@ namespace AdminWebsite.AcceptanceTests.Configuration
         public AdminWebVhServiceConfig VhServices { get; set; }
         public SauceLabsSettingsConfig SauceLabsConfiguration { get; set; }
         public WowzaConfiguration Wowza { get; set; }
+
+        public KinlyConfiguration KinlyConfiguration { get; set; }
     }
 }

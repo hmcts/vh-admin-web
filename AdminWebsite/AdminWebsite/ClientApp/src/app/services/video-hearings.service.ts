@@ -18,7 +18,8 @@ import {
     ParticipantResponse,
     UpdateBookingStatusRequest,
     UpdateBookingStatusResponse,
-    MultiHearingRequest
+    MultiHearingRequest,
+    PhoneConferenceResponse
 } from './clients/api-client';
 import { HearingModel } from '../common/model/hearing.model';
 import { CaseModel } from '../common/model/case.model';
@@ -31,12 +32,15 @@ import { EndpointModel } from '../common/model/endpoint.model';
 export class VideoHearingsService {
     private readonly newRequestKey: string;
     private readonly bookingHasChangesKey: string;
+    private readonly conferencePhoneNumberKey: string;
+
     private modelHearing: HearingModel;
     private participantRoles = new Map<string, CaseAndHearingRolesResponse[]>();
 
     constructor(private bhClient: BHClient) {
         this.newRequestKey = 'bh-newRequest';
         this.bookingHasChangesKey = 'bookingHasChangesKey';
+        this.conferencePhoneNumberKey = 'conferencePhoneNumberKey';
     }
 
     private checkForExistingHearing() {
@@ -340,5 +344,20 @@ export class VideoHearingsService {
 
     updateBookingStatus(hearingId: string, updateBookingStatus: UpdateBookingStatusRequest): Observable<UpdateBookingStatusResponse> {
         return this.bhClient.updateBookingStatus(hearingId, updateBookingStatus);
+    }
+
+    async getConferencePhoneNumber() {
+        const savedConferencePhoneNumber = sessionStorage.getItem(this.conferencePhoneNumberKey);
+        if (savedConferencePhoneNumber === null) {
+            const response = await this.bhClient.getConfigSettings().toPromise();
+            sessionStorage.setItem(this.conferencePhoneNumberKey, response.conference_phone_number);
+            return response.conference_phone_number;
+        } else {
+            return savedConferencePhoneNumber;
+        }
+    }
+
+    getTelephoneConferenceId(hearingId: string): Observable<PhoneConferenceResponse> {
+        return this.bhClient.getTelephoneConferenceIdById(hearingId);
     }
 }

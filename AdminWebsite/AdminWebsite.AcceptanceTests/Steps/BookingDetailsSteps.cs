@@ -73,6 +73,17 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingDetailsPage.Duration).Text.Should().Contain(expectedDuration);
         }
 
+        [Then(@"the user views the booking conference phone details")]
+        public void WhenTheUserViewsTheBookingConferencePhoneDetails()
+        {
+            VerifyTheBookingConferencePhoneDetails();
+        }
+
+        private void VerifyTheBookingConferencePhoneDetails()
+        {
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingDetailsPage.ConferencePhoneDetails).Text.Should().Contain(_c.WebConfig.KinlyConfiguration.ConferencePhoneNumber);
+        }
+
         private void VerifyJudgeInParticipantsList()
         {
             var hearings = GetHearings();

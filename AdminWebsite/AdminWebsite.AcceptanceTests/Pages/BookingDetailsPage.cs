@@ -29,7 +29,6 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public static By ParticipantUsername(Guid participantId) => By.Id($"participant-{participantId:D}-username");
         public static By ParticipantRepresentee(Guid participantId) => By.Id($"participant-{participantId:D}-representee");
         public static By ParticipantPhone(Guid participantId) => By.Id($"participant-{participantId:D}-phone");
-
         public static By CancelReasonDropdown = By.Id("cancel-reason");
         public static By CancelReasonDropdownErrorLabel = By.Id("cancelReason-error");
         public static By CancelReasonDetailsErrorLabel = By.Id("more-detail-error");
@@ -37,5 +36,6 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public static By KeepBookingButton = By.Id("btnKeepBooking");
         public static By CaseType = By.Id("case-type");
         public static By VideoAccessPoints(int i) => By.Id($"displayName{i.ToString()}");
+        public static By ConferencePhoneDetails = By.Id("conference_phone_details");
     }
 }

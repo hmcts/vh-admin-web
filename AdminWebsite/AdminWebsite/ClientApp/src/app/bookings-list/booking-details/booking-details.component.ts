@@ -42,8 +42,10 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
     timeSubscription: Subscription;
     $subscriptions: Subscription[] = [];
     cancelReason: string;
-
+    conferencePhoneNumber: string;
+    telephoneConferenceId: string;
     previousUrl: string = null;
+    phoneDetails = '';
 
     constructor(
         private videoHearingService: VideoHearingsService,
@@ -60,19 +62,17 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
         this.showConfirmingFailed = false;
     }
 
-    ngOnInit() {
+    async ngOnInit() {
         this.hearingId = this.bookingPersistService.selectedHearingId;
         if (this.hearingId) {
-            this.$subscriptions.push(
-                this.videoHearingService.getHearingById(this.hearingId).subscribe(data => {
-                    this.mapHearing(data);
-                    // mapping to Hearing model for edit on summary page
-                    this.booking = this.videoHearingService.mapHearingDetailsResponseToHearingModel(data);
-                    this.setBookingInStorage();
-                    this.setTimeObserver();
-                    this.setSubscribers();
-                })
-            );
+            const hearingDetailsResponse = await this.videoHearingService.getHearingById(this.hearingId).toPromise();
+            this.mapHearing(hearingDetailsResponse);
+            this.getConferencePhoneDetails();
+            // mapping to Hearing model for edit on summary page
+            this.booking = this.videoHearingService.mapHearingDetailsResponseToHearingModel(hearingDetailsResponse);
+            this.setBookingInStorage();
+            this.setTimeObserver();
+            this.setSubscribers();
         }
         this.$subscriptions.push(
             this.userIdentityService.getUserInformation().subscribe(userProfile => {
@@ -156,33 +156,33 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
         this.updateHearingStatus(UpdateBookingStatus.Cancelled, cancelReason);
     }
 
-    updateHearingStatus(status: UpdateBookingStatus, reason: string) {
+    async updateHearingStatus(status: UpdateBookingStatus, reason: string) {
         const updateBookingStatus = new UpdateBookingStatusRequest();
         updateBookingStatus.status = status;
         updateBookingStatus.updated_by = '';
         updateBookingStatus.cancel_reason = reason;
         this.showConfirming = true;
 
-        this.$subscriptions.push(
-            this.videoHearingService.updateBookingStatus(this.hearingId, updateBookingStatus).subscribe(
-                data => {
-                    if (data.success) {
-                        this.updateStatusHandler(status);
-                    } else {
-                        this.showConfirmingFailed = true;
-                        this.updateStatusHandler(UpdateBookingStatus.Failed);
-                    }
+        try {
+            const updateBookingStatusResponse = await this.videoHearingService
+                .updateBookingStatus(this.hearingId, updateBookingStatus)
+                .toPromise();
+            if (updateBookingStatusResponse.success) {
+                this.telephoneConferenceId = updateBookingStatusResponse.telephone_conference_id;
+                this.conferencePhoneNumber = await this.videoHearingService.getConferencePhoneNumber();
+                this.updateStatusHandler(status);
+            } else {
+                this.showConfirmingFailed = true;
+                this.updateStatusHandler(UpdateBookingStatus.Failed);
+            }
 
-                    this.showConfirming = false;
-                    this.logger.info(`${this.loggerPrefix} Hearing status changed`, { hearingId: this.hearingId, status: status });
-                    this.logger.event(`${this.loggerPrefix} Hearing status changed`, { hearingId: this.hearingId, status: status });
-                },
-                error => {
-                    this.errorHandler(error, status);
-                    this.updateStatusHandler(UpdateBookingStatus.Failed);
-                }
-            )
-        );
+            this.showConfirming = false;
+            this.logger.info(`${this.loggerPrefix} Hearing status changed`, { hearingId: this.hearingId, status: status });
+            this.logger.event(`${this.loggerPrefix} Hearing status changed`, { hearingId: this.hearingId, status: status });
+        } catch (error) {
+            this.errorHandler(error, status);
+            this.updateStatusHandler(UpdateBookingStatus.Failed);
+        }
     }
 
     updateStatusHandler(status: UpdateBookingStatus) {
@@ -218,6 +218,7 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
             this.booking = this.videoHearingService.getCurrentRequest();
         }
         this.booking.status = status;
+        this.updateWithConferencePhoneDetails();
         this.setBookingInStorage();
     }
 
@@ -235,5 +236,30 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
                 subscription.unsubscribe();
             }
         });
+    }
+
+    async getConferencePhoneDetails() {
+        if (this.hearing.Status === 'Created') {
+            try {
+                const phoneResponse = await this.videoHearingService.getTelephoneConferenceId(this.hearingId).toPromise();
+                this.telephoneConferenceId = phoneResponse.telephone_conference_id;
+                this.conferencePhoneNumber = await this.videoHearingService.getConferencePhoneNumber();
+                this.updateWithConferencePhoneDetails();
+            } catch (error) {
+                this.logger.warn(
+                    `${this.loggerPrefix} Could not get conference phone Id , the hearing ${this.hearingId} is closed`,
+                    error.title
+                );
+                this.phoneDetails = '';
+            }
+        }
+    }
+
+    updateWithConferencePhoneDetails() {
+        if (this.telephoneConferenceId && this.conferencePhoneNumber) {
+            this.booking.telephone_conference_id = this.telephoneConferenceId;
+            this.hearing.TelephoneConferenceId = this.telephoneConferenceId;
+            this.phoneDetails = `${this.conferencePhoneNumber} (ID: ${this.telephoneConferenceId})`;
+        }
     }
 }

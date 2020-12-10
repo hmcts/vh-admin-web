@@ -58,6 +58,11 @@ parameters:
   - name: VhServices:UserApiResourceId
     value: vh-user-api-identifieruris
     secret: true
+  - name: VhServices:NotificationApiUrl
+    value: $(notification_api_url)
+  - name: VhServices:NotificationApiResourceId
+    value: vh-notification-api-identifieruris
+    secret: true
   - name: VhServices:TestApiUrl
     value: $(test_api_url)
   - name: VhServices:TestApiResourceId
@@ -68,7 +73,7 @@ parameters:
   - name: VhServices:BookingsApiResourceId
     value: vh-bookings-api-identifieruris
     secret: true
-
+ 
   # AzureAd
   - name: AzureAd:Authority
     value: $(Authority)
@@ -93,6 +98,10 @@ parameters:
     value: $(TestUserSecrets:TestUsernameStem)
   - name: TestUserSecrets:TestUserPassword
     value: $(TestUserSecrets:TestApiUserPassword)
+
+    # Kinly
+  - name: KinlyConfiguration:ConferencePhoneNumber
+    value: $(ConferencePhoneNumber)
 
   # SauceLabs
   - name: Saucelabs:Username
@@ -167,6 +176,14 @@ parameters:
     secret: true
   - name: VhServices:VideoApiUrl
     value: $(video_api_url)
+  - name: VhServices:NotificationApiUrl
+    value: $(notification_api_url)
+  - name: VhServices:NotificationApiResourceId
+    value: vh-notification-api-identifieruris
+    secret: true
+  # Kinly
+  - name: KinlyConfiguration:ConferencePhoneNumber
+    value: $(ConferencePhoneNumber)
 
 variables:
   - group: vh-domains-and-urls
@@ -176,6 +193,7 @@ variables:
   - group: vh test users
   - group: Saucelabs
   - group: vh-wowza-dev
+  - group: KinlyConfiguration_Test
 
 trigger:
   branches:
@@ -266,6 +284,9 @@ extends:
         - name: vh-video-api-$(environment)
           resourceGroup: vh-video-api-$(environment)
           healthEndpoint: $(video_api_url)healthcheck/health
+        - name: vh-notification-api-$(environment)
+          resourceGroup: vh-notification-api-$(environment)
+          healthEndpoint: $(notification_api_url)healthcheck/health
         - name: vh-test-api-$(environment)
           resourceGroup: vh-test-api-$(environment)
           healthEndpoint: $(test_api_url)health/health
