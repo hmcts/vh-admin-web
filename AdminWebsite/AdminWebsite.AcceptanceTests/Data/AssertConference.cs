@@ -10,7 +10,7 @@ namespace AdminWebsite.AcceptanceTests.Data
         public static void Assert(HearingDetailsResponse hearing, ConferenceDetailsResponse conference)
         {
             AssertConferenceDetails(hearing, conference);
-            AssertEndpoints(hearing.Endpoints, conference.Endpoints);
+            AssertEndpoints(hearing.Endpoints, conference.Endpoints, hearing.Participants);
             AssertConferenceParticipants(hearing.Participants, conference.Participants);
         }
 
@@ -36,7 +36,8 @@ namespace AdminWebsite.AcceptanceTests.Data
             conference.Meeting_room.Telephone_conference_id.Should().NotBeNullOrWhiteSpace();
         }
 
-        private static void AssertEndpoints(IReadOnlyCollection<EndpointResponse2> hearingEndpoints, IEnumerable<EndpointResponse> conferenceEndpoints)
+        private static void AssertEndpoints(IReadOnlyCollection<EndpointResponse2> hearingEndpoints,
+            IEnumerable<EndpointResponse> conferenceEndpoints, List<ParticipantResponse> hearingParticipants)
         {
             foreach (var conferenceEndpoint in conferenceEndpoints)
             {
@@ -45,6 +46,10 @@ namespace AdminWebsite.AcceptanceTests.Data
                 if (conferenceEndpoint.Defence_advocate == null)
                 {
                     hearingEndpoint.Defence_advocate_id.Should().BeNull();
+                }
+                else
+                {
+                    hearingParticipants.Any(x => x.Username.Equals(conferenceEndpoint.Defence_advocate)).Should().BeTrue();
                 }
 
                 conferenceEndpoint.Display_name.Should().Be(hearingEndpoint.Display_name);
