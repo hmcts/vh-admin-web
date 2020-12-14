@@ -40,10 +40,16 @@ namespace AdminWebsite.AcceptanceTests.Data
         {
             foreach (var conferenceEndpoint in conferenceEndpoints)
             {
-                var hearingEndpoint = hearingEndpoints.First(x => x.Id.Equals(conferenceEndpoint.Id));
+                var hearingEndpoint = hearingEndpoints.First(x => x.Sip.Equals(conferenceEndpoint.Sip_address));
+ 
+                if (conferenceEndpoint.Defence_advocate == null)
+                {
+                    hearingEndpoint.Defence_advocate_id.Should().BeNull();
+                }
+
                 conferenceEndpoint.Display_name.Should().Be(hearingEndpoint.Display_name);
+                conferenceEndpoint.Id.Should().NotBeEmpty();
                 conferenceEndpoint.Pin.Should().Be(hearingEndpoint.Pin);
-                conferenceEndpoint.Sip_address.Should().Be(hearingEndpoint.Sip);
                 conferenceEndpoint.Status.Should().Be(EndpointState.NotYetJoined);
             }
         }
