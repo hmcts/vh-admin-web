@@ -1,4 +1,4 @@
-﻿Feature: Login
+Feature: Login
 	As a registered video hearings user
 	I would like to login and Logout
 	So that I can access and sign out of the application
@@ -20,5 +20,15 @@ Scenario: Video Hearings Officer login
 
 Scenario: Judge login denied
 	Given a new browser is open for a Judge
+	When the user logs in with valid credentials
+	Then the user is on the Unauthorised page
+
+Scenario: Panel Member login denied
+	Given a new browser is open for a Panel Member
+	When the user logs in with valid credentials
+	Then the user is on the Unauthorised page
+
+Scenario: Winger login denied
+	Given a new browser is open for a Winger
 	When the user logs in with valid credentials
 	Then the user is on the Unauthorised page
