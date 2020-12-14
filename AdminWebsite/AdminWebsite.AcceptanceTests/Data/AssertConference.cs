@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using AdminWebsite.TestAPI.Client;
 using FluentAssertions;
@@ -49,7 +50,7 @@ namespace AdminWebsite.AcceptanceTests.Data
                 }
                 else
                 {
-                    hearingParticipants.Any(x => x.Username.Equals(conferenceEndpoint.Defence_advocate)).Should().BeTrue();
+                    hearingParticipants.Any(x => x.Username.Equals(conferenceEndpoint.Defence_advocate, StringComparison.CurrentCultureIgnoreCase)).Should().BeTrue();
                 }
 
                 conferenceEndpoint.Display_name.Should().Be(hearingEndpoint.Display_name);
