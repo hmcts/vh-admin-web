@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using AdminWebsite.TestAPI.Client;
 using FluentAssertions;
@@ -10,7 +11,7 @@ namespace AdminWebsite.AcceptanceTests.Data
         public static void Assert(HearingDetailsResponse hearing, ConferenceDetailsResponse conference)
         {
             AssertConferenceDetails(hearing, conference);
-            AssertEndpoints(hearing.Endpoints, conference.Endpoints);
+            AssertEndpoints(hearing.Endpoints, conference.Endpoints, hearing.Participants);
             AssertConferenceParticipants(hearing.Participants, conference.Participants);
         }
 
@@ -36,14 +37,25 @@ namespace AdminWebsite.AcceptanceTests.Data
             conference.Meeting_room.Telephone_conference_id.Should().NotBeNullOrWhiteSpace();
         }
 
-        private static void AssertEndpoints(IReadOnlyCollection<EndpointResponse2> hearingEndpoints, IEnumerable<EndpointResponse> conferenceEndpoints)
+        private static void AssertEndpoints(IReadOnlyCollection<EndpointResponse2> hearingEndpoints,
+            IEnumerable<EndpointResponse> conferenceEndpoints, List<ParticipantResponse> hearingParticipants)
         {
             foreach (var conferenceEndpoint in conferenceEndpoints)
             {
-                var hearingEndpoint = hearingEndpoints.First(x => x.Id.Equals(conferenceEndpoint.Id));
+                var hearingEndpoint = hearingEndpoints.First(x => x.Sip.Equals(conferenceEndpoint.Sip_address));
+ 
+                if (conferenceEndpoint.Defence_advocate == null)
+                {
+                    hearingEndpoint.Defence_advocate_id.Should().BeNull();
+                }
+                else
+                {
+                    hearingParticipants.Any(x => x.Username.Equals(conferenceEndpoint.Defence_advocate, StringComparison.CurrentCultureIgnoreCase)).Should().BeTrue();
+                }
+
                 conferenceEndpoint.Display_name.Should().Be(hearingEndpoint.Display_name);
+                conferenceEndpoint.Id.Should().NotBeEmpty();
                 conferenceEndpoint.Pin.Should().Be(hearingEndpoint.Pin);
-                conferenceEndpoint.Sip_address.Should().Be(hearingEndpoint.Sip);
                 conferenceEndpoint.Status.Should().Be(EndpointState.NotYetJoined);
             }
         }

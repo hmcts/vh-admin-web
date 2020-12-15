@@ -23,6 +23,7 @@ using AdminWebsite.Contracts.Responses;
 using AdminWebsite.VideoAPI.Client;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
+using NotificationApi.Client;
 
 namespace AdminWebsite.Extensions
 {
@@ -77,6 +78,7 @@ namespace AdminWebsite.Extensions
             serviceCollection.AddTransient<HearingApiTokenHandler>();
             serviceCollection.AddTransient<UserApiTokenHandler>();
             serviceCollection.AddTransient<VideoApiTokenHandler>();
+            serviceCollection.AddTransient<NotificationApiTokenHandler>();
             serviceCollection.AddScoped<ITokenProvider, TokenProvider>();
             serviceCollection.AddScoped<IUserAccountService, UserAccountService>();
             serviceCollection.AddScoped<SecuritySettings>();
@@ -100,6 +102,10 @@ namespace AdminWebsite.Extensions
             serviceCollection.AddHttpClient<IVideoApiClient, VideoApiClient>()
                 .AddHttpMessageHandler(() => container.GetService<VideoApiTokenHandler>())
                 .AddTypedClient(httpClient => (IVideoApiClient) new VideoApiClient(httpClient) { BaseUrl = settings.VideoApiUrl, ReadResponseAsString = true });
+
+            serviceCollection.AddHttpClient<INotificationApiClient, NotificationApiClient>()
+                .AddHttpMessageHandler(() => container.GetService<NotificationApiTokenHandler>())
+                .AddTypedClient(httpClient => (INotificationApiClient)new NotificationApiClient(settings.NotificationApiUrl, httpClient) { ReadResponseAsString = true });
 
             serviceCollection.AddTransient<IUserIdentity, UserIdentity>((ctx) =>
             {
