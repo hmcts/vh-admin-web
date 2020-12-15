@@ -2,6 +2,7 @@ using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
+using AdminWebsite.Services.Models;
 using AdminWebsite.UnitTests.Helper;
 using AdminWebsite.VideoAPI.Client;
 using FizzWare.NBuilder;
@@ -10,6 +11,7 @@ using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
+using NotificationApi.Client;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -28,6 +30,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private Mock<IValidator<EditHearingRequest>> _editHearingRequestValidator;
         private Mock<IVideoApiClient> _videoApiMock;
         private Mock<IPollyRetryService> _pollyRetryServiceMock;
+        private Mock<INotificationApiClient> _notificationApiMock;
+
 
         private AdminWebsite.Controllers.HearingsController _controller;
 
@@ -39,6 +43,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _userAccountService = new Mock<IUserAccountService>();
             _editHearingRequestValidator = new Mock<IValidator<EditHearingRequest>>();
             _videoApiMock = new Mock<IVideoApiClient>();
+            _notificationApiMock = new Mock<INotificationApiClient>();
             _pollyRetryServiceMock = new Mock<IPollyRetryService>();
 
             _controller = new AdminWebsite.Controllers.HearingsController(_bookingsApiClient.Object,
@@ -47,12 +52,13 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 _editHearingRequestValidator.Object,
                 _videoApiMock.Object,
                 _pollyRetryServiceMock.Object,
-                new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>().Object);
+                new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>().Object,
+                _notificationApiMock.Object);
 
             _userAccountService
                 .Setup(x => x.UpdateParticipantUsername(It.IsAny<AdminWebsite.BookingsAPI.Client.ParticipantRequest>()))
                 .Callback<AdminWebsite.BookingsAPI.Client.ParticipantRequest>(p => { p.Username ??= p.Contact_email; })
-                .ReturnsAsync(Guid.NewGuid().ToString());
+                .ReturnsAsync(new User());
         }
 
         [Test]

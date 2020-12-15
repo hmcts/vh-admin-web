@@ -10,6 +10,8 @@ using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
+using NotificationApi.Client;
+using NotificationApi.Contract.Requests;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -29,6 +31,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private Mock<IValidator<EditHearingRequest>> _editHearingRequestValidator;
         private Mock<IVideoApiClient> _videoApiMock;
         private Mock<IPollyRetryService> _pollyRetryServiceMock;
+        private Mock<INotificationApiClient> _notificationApiMock;
 
         private AdminWebsite.Controllers.HearingsController _controller;
 
@@ -39,6 +42,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _bookingsApiClient = new Mock<IBookingsApiClient>();
             _userIdentity = new Mock<IUserIdentity>();
             _userAccountServiceLogger = new Mock<ILogger<UserAccountService>>();
+            _notificationApiMock = new Mock<INotificationApiClient>();
 
             _userAccountService = new UserAccountService(_userApiClient.Object, _bookingsApiClient.Object,
                 _userAccountServiceLogger.Object);
@@ -53,7 +57,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 _editHearingRequestValidator.Object,
                 _videoApiMock.Object,
                 _pollyRetryServiceMock.Object,
-                new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>().Object);
+                new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>().Object,
+                _notificationApiMock.Object);
         }
 
         [Test]
@@ -114,6 +119,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 };
                 _userApiClient.Setup(x => x.GetUserByAdUserIdAsync(It.Is<string>(e => e == participant.Username)))
                     .ReturnsAsync(profile);
+                //_notificationApiMock
+                //    .Setup(x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(request =>
+                //        userRequest.Recovery_email == participant.Contact_email)));
             }
 
             foreach (var participant in request.Participants.Where(x => string.IsNullOrWhiteSpace(x.Username)))

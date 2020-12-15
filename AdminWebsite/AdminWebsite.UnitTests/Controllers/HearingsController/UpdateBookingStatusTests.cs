@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
+using NotificationApi.Client;
 using NUnit.Framework;
 using System;
 using System.Threading.Tasks;
@@ -21,6 +22,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private readonly Mock<IUserIdentity> _userIdentity;
         private readonly AdminWebsite.Controllers.HearingsController _controller;
         private readonly Mock<IPollyRetryService> _pollyRetryServiceMock;
+        private Mock<INotificationApiClient> _notificationApiMock;
 
         public UpdateBookingStatusTests()
         {
@@ -30,6 +32,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var editHearingRequestValidator = new Mock<IValidator<EditHearingRequest>>();
             var videoApiMock = new Mock<IVideoApiClient>();
             _pollyRetryServiceMock = new Mock<IPollyRetryService>();
+            _notificationApiMock = new Mock<INotificationApiClient>();
 
             _controller = new AdminWebsite.Controllers.HearingsController(_bookingsApiClient.Object,
                 _userIdentity.Object,
@@ -37,7 +40,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 editHearingRequestValidator.Object,
                 videoApiMock.Object,
                 _pollyRetryServiceMock.Object,
-                new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>().Object);
+                new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>().Object,
+                _notificationApiMock.Object);
         }
 
         [Test]

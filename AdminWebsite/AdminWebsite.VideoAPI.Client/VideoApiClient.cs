@@ -6890,6 +6890,9 @@ namespace AdminWebsite.VideoAPI.Client
         [System.Runtime.Serialization.EnumMember(Value = @"Representative")]
         Representative = 6,
     
+        [System.Runtime.Serialization.EnumMember(Value = @"JudicialOfficeHolder")]
+        JudicialOfficeHolder = 7,
+    
     }
     
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]

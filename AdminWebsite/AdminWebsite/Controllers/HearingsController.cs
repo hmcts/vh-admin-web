@@ -11,6 +11,9 @@ using AdminWebsite.VideoAPI.Client;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using NotificationApi.Client;
+using NotificationApi.Contract;
+using NotificationApi.Contract.Requests;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Collections.Generic;
@@ -39,6 +42,7 @@ namespace AdminWebsite.Controllers
         private readonly IVideoApiClient _videoApiClient;
         private readonly IPollyRetryService _pollyRetryService;
         private readonly ILogger<HearingsController> _logger;
+        private readonly INotificationApiClient _notificationApiClient;
 
         /// <summary>
         /// Instantiates the controller
@@ -46,7 +50,7 @@ namespace AdminWebsite.Controllers
         public HearingsController(IBookingsApiClient bookingsApiClient, IUserIdentity userIdentity,
             IUserAccountService userAccountService, IValidator<EditHearingRequest> editHearingRequestValidator,
             IVideoApiClient videoApiClient, IPollyRetryService pollyRetryService,
-            ILogger<HearingsController> logger)
+            ILogger<HearingsController> logger, INotificationApiClient notificationApiClient)
         {
             _bookingsApiClient = bookingsApiClient;
             _userIdentity = userIdentity;
@@ -55,6 +59,7 @@ namespace AdminWebsite.Controllers
             _videoApiClient = videoApiClient;
             _pollyRetryService = pollyRetryService;
             _logger = logger;
+            _notificationApiClient = notificationApiClient;
         }
 
         /// <summary>
@@ -93,7 +98,7 @@ namespace AdminWebsite.Controllers
                 _logger.LogDebug("Successfully assigned participants to the correct group", hearingDetailsResponse.Id);
 
                 _logger.LogDebug("Sending email notification to the participants");
-                
+                await EmailParticipants(hearingDetailsResponse, usernameAdIdDict);
                 _logger.LogDebug("Successfully sent emails to participants- {hearing}", hearingDetailsResponse.Id);
 
                 return Created("", hearingDetailsResponse);
@@ -373,6 +378,15 @@ namespace AdminWebsite.Controllers
                 _logger.LogDebug("Attempting assign participants to the correct group");
                 await AssignParticipantToCorrectGroups(updatedHearing, usernameAdIdDict);
                 _logger.LogDebug("Successfully assigned participants to the correct group", updatedHearing.Id);
+
+                // Send a notification email to newly created participants
+                if (newParticipantList.Any())
+                {
+                    _logger.LogDebug("Sending email notification to the participants");
+                    await EmailParticipants(updatedHearing, usernameAdIdDict);
+                    _logger.LogDebug("Successfully sent emails to participants- {hearing}", updatedHearing.Id);
+                }
+                
                 return Ok(updatedHearing);
             }
             catch (BookingsApiException e)
@@ -393,17 +407,39 @@ namespace AdminWebsite.Controllers
         }
 
         private async Task EmailParticipants(HearingDetailsResponse hearing,
-            Dictionary<string, string> newUsernameAdIdDict)
+            Dictionary<string, User> newUsernameAdIdDict)
         {
-            if (!newUsernameAdIdDict.Any())
+            foreach (var item in newUsernameAdIdDict)
             {
-                return;
+                if (!string.IsNullOrEmpty(item.Value?.Password))
+                {
+                    var participant = hearing.Participants.FirstOrDefault(x => x.Username == item.Key);
+                    var request = MapAddNotificationRequest(hearing.Id, participant, item.Value.Password);
+                    // Send a notification only for the newly created users
+                    await _notificationApiClient.CreateNewNotificationAsync(request);
+                }
             }
+        }
 
-            var tasks = (from pair in newUsernameAdIdDict
-                         let participant = hearing.Participants.FirstOrDefault(x => x.Username == pair.Key)
-                         select _userAccountService.AssignParticipantToGroup(pair.Value, participant.User_role_name)).ToList();
-            await Task.WhenAll(tasks);
+        private AddNotificationRequest MapAddNotificationRequest(Guid hearingId, ParticipantResponse participant, string password)
+        {
+            var parameters = new Dictionary<string, string>
+            {
+                {"name", $"{participant.First_name} {participant.Last_name}"},
+                {"username", $"{participant.Username}"},
+                {"random password", $"{password}"}
+            };
+            var addNotificationRequest = new AddNotificationRequest
+            {
+                HearingId = hearingId,
+                MessageType = MessageType.Email,
+                ContactEmail = participant.Contact_email,
+                NotificationType = participant.User_role_name == "Individual" ? NotificationType.CreateIndividual : NotificationType.CreateRepresentative,
+                ParticipantId = participant.Id,
+                PhoneNumber = participant.Telephone_number,
+                Parameters = parameters,
+            };
+            return addNotificationRequest;
         }
 
         private async Task AssignParticipantToCorrectGroups(HearingDetailsResponse hearing,
@@ -419,7 +455,7 @@ namespace AdminWebsite.Controllers
                          select _userAccountService.AssignParticipantToGroup(pair.Value.UserName, participant.User_role_name)).ToList();
             await Task.WhenAll(tasks);
         }
-
+        
         /// <summary>
         /// Gets bookings hearing by Id.
         /// </summary>
