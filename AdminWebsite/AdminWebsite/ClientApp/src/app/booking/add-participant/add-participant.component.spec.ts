@@ -1017,6 +1017,11 @@ describe('AddParticipantComponent set representer', () => {
         const result = component.isRoleRepresentative(roleToFind);
         expect(result).toBe(true);
     });
+    it('should indicate that role is representative', () => {
+        const roleToFind = 'presenting officer';
+        const result = component.isRoleRepresentative(roleToFind);
+        expect(result).toBe(true);
+    });
     it('should indicate that role is not representative', () => {
         const roleToFind = 'somerole';
         const result = component.isRoleRepresentative(roleToFind);
