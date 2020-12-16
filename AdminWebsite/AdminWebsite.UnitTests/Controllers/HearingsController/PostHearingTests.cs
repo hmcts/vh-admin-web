@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NotificationApi.Client;
+using NotificationApi.Contract.Requests;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -330,6 +331,95 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var response = await _controller.CloneHearing(Guid.NewGuid(), request);
 
             response.Should().BeOfType<BadRequestObjectResult>();
+        }
+
+        [Test]
+        public async Task Should_send_email_for_new_representative_participant_added()
+        {
+            var participant = new BookingsAPI.Client.ParticipantRequest
+            {
+                Username = string.Empty, // New participant
+                Case_role_name = "Claimant",
+                Hearing_role_name = "Representative"
+            };
+
+            var newUserName = "some_new_user@name.net";
+            // setup response
+            var pat1 = Builder<ParticipantResponse>.CreateNew()
+                .With(x => x.Id = Guid.NewGuid())
+                .With(x => x.User_role_name = "Representative")
+                .With(x => x.Username = newUserName)
+                .Build();
+            var hearingDetailsResponse = Builder<HearingDetailsResponse>.CreateNew()
+                .With(x => x.Participants = new List<ParticipantResponse> { pat1 }).Build();
+            _bookingsApiClient.Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
+                .ReturnsAsync(hearingDetailsResponse);
+            _userAccountService
+                .Setup(x => x.UpdateParticipantUsername(It.IsAny<AdminWebsite.BookingsAPI.Client.ParticipantRequest>()))
+                .Callback<AdminWebsite.BookingsAPI.Client.ParticipantRequest>(p => { p.Username = newUserName; })
+                .ReturnsAsync(new User() { UserName = newUserName, Password = "test123" });
+
+            await PostWithParticipants(participant);
+
+            _notificationApiMock.Verify(x => x.CreateNewNotificationAsync(It.IsAny<AddNotificationRequest>()), Times.Once);
+        }
+
+        [Test]
+        public async Task Should_send_email_for_new_individual_participant_added()
+        {
+            var participant = new BookingsAPI.Client.ParticipantRequest
+            {
+                Username = string.Empty, // New participant
+                Case_role_name = "Claimant",
+                Hearing_role_name = "Individual"
+            };
+
+            var newUserName = "some_new_user@name.net";
+            // setup response
+            var pat1 = Builder<ParticipantResponse>.CreateNew()
+                .With(x => x.Id = Guid.NewGuid())
+                .With(x => x.User_role_name = "Individual")
+                .With(x => x.Username = newUserName)
+                .Build();
+            var hearingDetailsResponse = Builder<HearingDetailsResponse>.CreateNew()
+                .With(x => x.Participants = new List<ParticipantResponse> { pat1 }).Build();
+            _bookingsApiClient.Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
+                .ReturnsAsync(hearingDetailsResponse);
+            _userAccountService
+                .Setup(x => x.UpdateParticipantUsername(It.IsAny<AdminWebsite.BookingsAPI.Client.ParticipantRequest>()))
+                .Callback<AdminWebsite.BookingsAPI.Client.ParticipantRequest>(p => { p.Username = newUserName; })
+                .ReturnsAsync(new User() { UserName = newUserName, Password = "test123" });
+
+            await PostWithParticipants(participant);
+
+            _notificationApiMock.Verify(x => x.CreateNewNotificationAsync(It.IsAny<AddNotificationRequest>()), Times.Once);
+        }
+
+        [Test]
+        public async Task Should_not_send_email_for_existing_participant_added()
+        {
+            var existingUserName = "some_new_user@name.net";
+            var participant = new BookingsAPI.Client.ParticipantRequest
+            {
+                Username = existingUserName,
+                Case_role_name = "Claimant",
+                Hearing_role_name = "Representative"
+            };
+
+            // setup response
+            var pat1 = Builder<ParticipantResponse>.CreateNew()
+                .With(x => x.Id = Guid.NewGuid())
+                .With(x => x.User_role_name = "Representative")
+                .With(x => x.Username = existingUserName)
+                .Build();
+            var hearingDetailsResponse = Builder<HearingDetailsResponse>.CreateNew()
+                .With(x => x.Participants = new List<ParticipantResponse> { pat1 }).Build();
+            _bookingsApiClient.Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
+                .ReturnsAsync(hearingDetailsResponse);
+                
+            await PostWithParticipants(participant);
+
+            _notificationApiMock.Verify(x => x.CreateNewNotificationAsync(It.IsAny<AddNotificationRequest>()), Times.Never);
         }
 
         private MultiHearingRequest GetMultiHearingRequest()

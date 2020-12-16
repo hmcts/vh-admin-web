@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NotificationApi.Client;
+using NotificationApi.Contract.Requests;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -142,7 +143,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 .Setup(x => x.UpdateParticipantUsername(It.IsAny<AdminWebsite.BookingsAPI.Client.ParticipantRequest>()))
                 .Callback<AdminWebsite.BookingsAPI.Client.ParticipantRequest>(p => p.Username = p.Contact_email)
                 .ReturnsAsync(new User());
-
+            
         }
         
         [Test]
@@ -221,7 +222,32 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             ((OkObjectResult) result.Result).StatusCode.Should().Be(200);
             _bookingsApiClient.Verify(x => x.AddParticipantsToHearingAsync(It.IsAny<Guid>(), It.IsAny<AddParticipantsToHearingRequest>()), Times.Once);
         }
-        
+
+        [Test]
+        public async Task Should_send_email_for_new_individual_participant_added()
+        {
+            var userName = "old@user.com";
+            _userAccountService
+                .Setup(x => x.UpdateParticipantUsername(It.IsAny<AdminWebsite.BookingsAPI.Client.ParticipantRequest>()))
+                .Callback<AdminWebsite.BookingsAPI.Client.ParticipantRequest>(p => p.Username = userName)
+                .ReturnsAsync(new User() { UserName = userName, Password = "test123" });
+
+            var result = await _controller.EditHearing(_validId, _addNewParticipantRequest);
+            ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
+            _notificationApiMock.Verify(x => x.CreateNewNotificationAsync(It.IsAny<AddNotificationRequest>()), Times.Once);
+        }
+
+        [Test]
+        public async Task Should_not_send_email_for_existing_individual_participant_added()
+        {
+            // Existing User
+            _addNewParticipantRequest.Participants[0].Id = Guid.NewGuid();
+            
+            var result = await _controller.EditHearing(_validId, _addNewParticipantRequest);
+            ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
+            _notificationApiMock.Verify(x => x.CreateNewNotificationAsync(It.IsAny<AddNotificationRequest>()), Times.Never);
+        }
+
         [Test]
         public async Task Should_update_existing_participants()
         {
