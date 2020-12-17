@@ -1011,6 +1011,11 @@
           "Newtonsoft.Json": "9.0.1"
         }
       },
+      "Microsoft.VisualStudio.Azure.Containers.Tools.Targets": {
+        "type": "Transitive",
+        "resolved": "1.10.9",
+        "contentHash": "Sug+YeP9YYigFnUdvPCUJjBz7cc2VVR7UBZkIRwPWmVR/HmIM5HbcpX940s4BM3xgL3QHGp3qN7AqkcZ/MjZEw=="
+      },
       "Microsoft.VisualStudio.Web.CodeGeneration": {
         "type": "Transitive",
         "resolved": "3.1.0",
@@ -2728,6 +2733,7 @@
           "Microsoft.Graph": "1.21.0",
           "Microsoft.IdentityModel.Clients.ActiveDirectory": "5.2.6",
           "Microsoft.OpenApi": "1.1.4",
+          "Microsoft.VisualStudio.Azure.Containers.Tools.Targets": "1.10.9",
           "Microsoft.VisualStudio.Web.CodeGeneration.Design": "3.1.0",
           "NWebsec.AspNetCore.Middleware": "3.0.0",
           "NotificationApi.Client": "0.1.11",
