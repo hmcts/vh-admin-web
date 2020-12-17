@@ -9,27 +9,37 @@ namespace AdminWebsite.AcceptanceTests.Helpers
     {
         public static User GetDefaultParticipantUser(List<User> users)
         {
-            return users.First(x => x.User_type == UserType.Individual);
+            return users.FirstOrDefault(x => x.User_type == UserType.Individual);
         }
 
         public static User GetJudgeUser(List<User> users)
         {
-            return users.First(x => x.User_type == UserType.Judge);
+            return users.FirstOrDefault(x => x.User_type == UserType.Judge);
         }
 
         public static User GetIndividualUser(List<User> users)
         {
-            return users.First(x => x.User_type == UserType.Individual);
+            return users.FirstOrDefault(x => x.User_type == UserType.Individual);
         }
 
         public static User GetRepresentativeUser(List<User> users)
         {
-            return users.First(x => x.User_type == UserType.Representative);
+            return users.FirstOrDefault(x => x.User_type == UserType.Representative);
+        }
+
+        public static User GetPanelMemberUser(List<User> users)
+        {
+            return users.FirstOrDefault(x => x.User_type == UserType.PanelMember);
+        }
+
+        public static User GetWingerUser(List<User> users)
+        {
+            return users.FirstOrDefault(x => x.User_type == UserType.Winger);
         }
 
         public static User GetUserFromDisplayName(List<User> users, string displayName)
         {
-            return users.First(x => x.Display_name.ToLower().Contains(displayName.ToLower().Replace(" ", "")));
+            return users.FirstOrDefault(x => x.Display_name.ToLower().Contains(displayName.ToLower().Replace(" ", "")));
         }
 
         public static User GetUser(List<User> users, string numberString, string user)
