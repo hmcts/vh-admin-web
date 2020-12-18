@@ -81,6 +81,17 @@ namespace AdminWebsite.UnitTests.Services
         }
 
         [Test]
+        public async Task Should_add_JOH_role_to_JOH_user_group()
+        {
+            await _service.AssignParticipantToGroup("rep@test.com", "Judicial Office Holder");
+
+            _userApiClient.Verify(x => x.AddUserToGroupAsync(It.Is<AddUserToGroupRequest>(y => y.Group_name == UserAccountService.External)),
+                Times.Once);
+            _userApiClient.Verify(x => x.AddUserToGroupAsync(It.Is<AddUserToGroupRequest>(y => y.Group_name == UserAccountService.JudicialOfficeHolder)),
+                Times.Once);
+        }
+
+        [Test]
         public async Task Should_not_create_users_that_already_exists()
         {
             var participant = new BookingsAPI.Client.ParticipantRequest
