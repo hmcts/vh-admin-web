@@ -22,3 +22,14 @@ Scenario: Judge login denied
 	Given a new browser is open for a Judge
 	When the user logs in with valid credentials
 	Then the user is on the Unauthorised page
+
+Scenario: Panel member login denied
+	Given a new browser is open for a Panel Member
+	When the user logs in with valid credentials
+	Then the user is on the Unauthorised page
+
+@Winger
+Scenario: Winger login denied
+	Given a new browser is open for a Winger
+	When the user logs in with valid credentials
+	Then the user is on the Unauthorised page
