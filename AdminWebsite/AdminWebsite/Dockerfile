@@ -9,7 +9,7 @@ ARG skip_client_build=false
 WORKDIR /app 
 COPY AdminWebsite/ClientApp . 
 RUN [[ ${skip_client_build} = true ]] && echo "Skipping npm install" || npm install
-RUN [[ ${skip_client_build} = true ]] && mkdir dist2 || npm run-script build-prod
+RUN [[ ${skip_client_build} = true ]] && mkdir dist || npm run-script build-prod
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
 WORKDIR /src
