@@ -14,3 +14,8 @@ Scenario: Booking Confirmation Book Another Hearing
 	When the user views the booking confirmation form
 	And the user clicks the Book another hearing button
 	Then the user is on the Hearing Details page
+
+Scenario: Email Notification For Newly Added Participants
+	Given the Video Hearings Officer user has progressed to the Booking Confirmation page
+	When the user views the booking confirmation form
+	Then the participant has been notified

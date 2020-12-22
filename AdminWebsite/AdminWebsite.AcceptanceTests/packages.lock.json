@@ -109,6 +109,19 @@
         "resolved": "12.0.3",
         "contentHash": "6mgjfnRB4jKMlzHSl+VD+oUc1IebOZabkbyWj2RiTgWwYPPuaK1H97G1sHqGwPlS5npiF5Q0OrxN1wni2n5QWg=="
       },
+      "Notify": {
+        "type": "Direct",
+        "requested": "[2.9.0, )",
+        "resolved": "2.9.0",
+        "contentHash": "BMtBAu2uWs4qoALJTO95W03tTOjOqmOG2/FmrNlFdM+cLx7r9EK+8LdPvmGDLwtAxlGcbRtqrUM+IR9xeil/8g==",
+        "dependencies": {
+          "JWT": "5.0.1",
+          "Newtonsoft.Json": "10.0.3",
+          "System.Collections.Specialized": "4.3.0",
+          "System.Reflection": "4.3.0",
+          "System.Runtime.Extensions": "4.3.0"
+        }
+      },
       "NUnit": {
         "type": "Direct",
         "requested": "[3.12.0, )",
@@ -390,6 +403,18 @@
         "type": "Transitive",
         "resolved": "1.11.25",
         "contentHash": "UO02+QzWpKDhz2XApSZ74S+9fylNrK9npqvO4NgtW9LiFLHVRqXQmdI+1tn7JRzGnATkCCbtyIeqbJZl3pSRJQ=="
+      },
+      "JWT": {
+        "type": "Transitive",
+        "resolved": "5.0.1",
+        "contentHash": "9zwqx/Ii2WH3UK1qzEYmWEUD7YxDNsC/ikcxJxjnV+dbE+LN1rdtDRtJwEaNqBZNycVyw+Ga9d8SM8lXa4a2CA==",
+        "dependencies": {
+          "NETStandard.Library": "1.6.1",
+          "Newtonsoft.Json": "9.0.1",
+          "System.ComponentModel.Primitives": "4.3.0",
+          "System.Reflection.TypeExtensions": "4.5.1",
+          "System.Security.Cryptography.Csp": "4.3.0"
+        }
       },
       "Microsoft.Azure.KeyVault.Core": {
         "type": "Transitive",
@@ -1223,12 +1248,8 @@
       },
       "System.Reflection.TypeExtensions": {
         "type": "Transitive",
-        "resolved": "4.3.0",
-        "contentHash": "7u6ulLcZbyxB5Gq0nMkQttcdBTx57ibzw+4IOXEfR+sXYQoHvjW5LTLyNr8O22UIMrqYbchJQJnos4eooYzYJA==",
-        "dependencies": {
-          "System.Reflection": "4.3.0",
-          "System.Runtime": "4.3.0"
-        }
+        "resolved": "4.5.1",
+        "contentHash": "fO8GMEkgoKioJ7cglZbhcnBgkCWWn9poS3G2jevS+fuwW9xJXMx7/1kr7dkwOJfo0pWqxLFWVcxlOr+WeK5ipA=="
       },
       "System.Resources.ResourceManager": {
         "type": "Transitive",

@@ -12,5 +12,6 @@ namespace AdminWebsite.AcceptanceTests.Configuration
         public WowzaConfiguration Wowza { get; set; }
 
         public KinlyConfiguration KinlyConfiguration { get; set; }
+        public NotifyConfiguration NotifyConfiguration { get; set; }
     }
 }
