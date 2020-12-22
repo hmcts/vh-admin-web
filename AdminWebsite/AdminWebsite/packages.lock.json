@@ -127,6 +127,12 @@
         "resolved": "1.1.4",
         "contentHash": "6SW0tpbJslc8LAY1XniRfLVcJa7bJUbbwvo2/ZRqfkMbJrsqIj9045vg3STtZhDhYRKhpYgjqGU11eeW4Pzyrg=="
       },
+      "Microsoft.VisualStudio.Azure.Containers.Tools.Targets": {
+        "type": "Direct",
+        "requested": "[1.10.9, )",
+        "resolved": "1.10.9",
+        "contentHash": "Sug+YeP9YYigFnUdvPCUJjBz7cc2VVR7UBZkIRwPWmVR/HmIM5HbcpX940s4BM3xgL3QHGp3qN7AqkcZ/MjZEw=="
+      },
       "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
         "type": "Direct",
         "requested": "[3.1.0, )",
