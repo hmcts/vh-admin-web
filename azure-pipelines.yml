@@ -226,15 +226,16 @@ resources:
 extends:
   template: stages\dotnet-package.yml@templates
   parameters:
+    useNugetConfig: true
+    nugetConfigPath: AdminWebsite
     coreProjectPath: AdminWebsite/AdminWebsite
     nodeProjectPath: AdminWebsite/AdminWebsite/ClientApp
     PackageApp: ${{ parameters.PackageApp }}
     PackageAcceptanceTests: ${{ parameters.PackageACTests }}
-    packageManagers:
-      - nuget
-      - npm
     Test: ${{ or(parameters.RunUnitTests, parameters.RunIntegTests, parameters.RunMutationTests) }}
     testParameters:
+      useNugetConfig: true
+      nugetConfigPath: AdminWebsite
       coreProjectPath: AdminWebsite/AdminWebsite
       nodeProjectPath: AdminWebsite/AdminWebsite/ClientApp
       RunNode: true

@@ -343,8 +343,6 @@ jasmine-tests
 # specflow generated feature files (will be created on build)
 *.feature.cs
 
-# NuGet config
-/AdminWebsite/NuGet.Config
 
 # local env settings files
 /AdminWebsite/AdminWebsite.AcceptanceTests/Configuration/Environments/
