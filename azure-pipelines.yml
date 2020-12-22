@@ -73,7 +73,11 @@ parameters:
   - name: VhServices:BookingsApiResourceId
     value: vh-bookings-api-identifieruris
     secret: true
- 
+
+  # GOV Notify Configuration
+  - name: NotifyConfiguration:ApiKey
+    value: $(notify-api-key)
+    
   # AzureAd
   - name: AzureAd:Authority
     value: $(Authority)
@@ -181,6 +185,11 @@ parameters:
   - name: VhServices:NotificationApiResourceId
     value: vh-notification-api-identifieruris
     secret: true
+
+  # GOV Notify Configuration
+  - name: NotifyConfiguration:ApiKey
+    value: $(notify-api-key)
+    
   # Kinly
   - name: KinlyConfiguration:ConferencePhoneNumber
     value: $(ConferencePhoneNumber)
@@ -194,6 +203,7 @@ variables:
   - group: Saucelabs
   - group: vh-wowza-dev
   - group: KinlyConfiguration_Test
+  - group: govuk-notify-preview
 
 trigger:
   branches:

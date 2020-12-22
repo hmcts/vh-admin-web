@@ -201,7 +201,31 @@ stages:
           - group: KinlyConfiguration_Prod
             env:
              - Prod
-
+          - group: govuk-notify-preview
+            env:
+             - Preview
+          - group: govuk-notify-dev
+            env:
+             - Dev
+          - group: govuk-notify-aat
+            env:
+             - AAT
+          - group: govuk-notify-sandbox
+            env:
+             - Sandbox
+          - group: govuk-notify-test1
+            env:
+             - Test1
+             - Test2
+          - group: govuk-notify-demo
+            env:
+             - Demo
+          - group: govuk-notify-preprod
+            env:
+             - PreProd
+          - group: govuk-notify-prod
+            env:
+             - Prod
         appSettings:
           - name: ApplicationInsights:InstrumentationKey
             value: vh-core-infra-AppInsightsKey
@@ -266,6 +290,10 @@ stages:
           - name: KinlyConfiguration:ConferencePhoneNumber
             value: $(ConferencePhoneNumber)
 
+          # GOV Notify Configuration
+          - name: NotifyConfiguration:ApiKey
+            value: $(notify-api-key)            
+
         acceptanceTestSettings:
           # VhServices
           - name: VhServices:AdminWebUrl
@@ -327,7 +355,11 @@ stages:
             value: $(TestUserSecrets:TestUsernameStem)
           - name: TestUserSecrets:TestUserPassword
             value: $(TestUserSecrets:TestApiUserPassword)
-
+            
+          # GOV Notify Configuration
+          - name: NotifyConfiguration:ApiKey
+            value: $(notify-api-key)
+            
           # Kinly
           - name: KinlyConfiguration:ConferencePhoneNumber
             value: $(ConferencePhoneNumber)
