@@ -6,10 +6,14 @@ using AdminWebsite.Mappers;
 using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
+using AdminWebsite.Services.Models;
 using AdminWebsite.VideoAPI.Client;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using NotificationApi.Client;
+using NotificationApi.Contract;
+using NotificationApi.Contract.Requests;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Collections.Generic;
@@ -38,6 +42,7 @@ namespace AdminWebsite.Controllers
         private readonly IVideoApiClient _videoApiClient;
         private readonly IPollyRetryService _pollyRetryService;
         private readonly ILogger<HearingsController> _logger;
+        private readonly INotificationApiClient _notificationApiClient;
 
         /// <summary>
         /// Instantiates the controller
@@ -45,7 +50,7 @@ namespace AdminWebsite.Controllers
         public HearingsController(IBookingsApiClient bookingsApiClient, IUserIdentity userIdentity,
             IUserAccountService userAccountService, IValidator<EditHearingRequest> editHearingRequestValidator,
             IVideoApiClient videoApiClient, IPollyRetryService pollyRetryService,
-            ILogger<HearingsController> logger)
+            ILogger<HearingsController> logger, INotificationApiClient notificationApiClient)
         {
             _bookingsApiClient = bookingsApiClient;
             _userIdentity = userIdentity;
@@ -54,6 +59,7 @@ namespace AdminWebsite.Controllers
             _videoApiClient = videoApiClient;
             _pollyRetryService = pollyRetryService;
             _logger = logger;
+            _notificationApiClient = notificationApiClient;
         }
 
         /// <summary>
@@ -68,7 +74,7 @@ namespace AdminWebsite.Controllers
         [HearingInputSanitizer]
         public async Task<ActionResult<HearingDetailsResponse>> Post([FromBody] BookNewHearingRequest request)
         {
-            var usernameAdIdDict = new Dictionary<string, string>();
+            var usernameAdIdDict = new Dictionary<string, User>();
             try
             {
                 var nonJudgeParticipants = request.Participants.Where(p => p.Case_role_name != "Judge").ToList();
@@ -88,7 +94,13 @@ namespace AdminWebsite.Controllers
                 _logger.LogDebug("Successfully booked hearing {hearing}", hearingDetailsResponse.Id);
                 _logger.LogDebug("Attempting assign participants to the correct group");
                 await AssignParticipantToCorrectGroups(hearingDetailsResponse, usernameAdIdDict);
+
                 _logger.LogDebug("Successfully assigned participants to the correct group", hearingDetailsResponse.Id);
+
+                _logger.LogDebug("Sending email notification to the participants");
+                await EmailParticipants(hearingDetailsResponse, usernameAdIdDict);
+                _logger.LogDebug("Successfully sent emails to participants- {hearing}", hearingDetailsResponse.Id);
+
                 return Created("", hearingDetailsResponse);
             }
             catch (BookingsApiException e)
@@ -106,18 +118,18 @@ namespace AdminWebsite.Controllers
         }
 
         private async Task PopulateUserIdsAndUsernames(IList<ParticipantRequest> participants,
-            Dictionary<string, string> usernameAdIdDict)
+            Dictionary<string, User> usernameAdIdDict)
         {
             _logger.LogDebug("Assigning HMCTS usernames for participants");
             foreach (var participant in participants)
             {
                 // set the participant username according to AD
-                string adUserId;
+                User user;
                 if (string.IsNullOrWhiteSpace(participant.Username))
                 {
                     _logger.LogDebug("No username provided in booking for participant {email}. Checking AD by contact email",
                         participant.Contact_email);
-                    adUserId = await _userAccountService.UpdateParticipantUsername(participant);
+                    user = await _userAccountService.UpdateParticipantUsername(participant);
                 }
                 else
                 {
@@ -125,10 +137,11 @@ namespace AdminWebsite.Controllers
                     _logger.LogDebug(
                         "Username provided in booking for participant {email}. Getting id for username {username}",
                         participant.Contact_email, participant.Username);
-                    adUserId = await _userAccountService.GetAdUserIdForUsername(participant.Username);
+                    var adUserId = await _userAccountService.GetAdUserIdForUsername(participant.Username);
+                    user =  new User { UserName = adUserId };
                 }
                 // username's participant will be set by this point
-                usernameAdIdDict[participant.Username!] = adUserId;
+                usernameAdIdDict[participant.Username!] = user;
             }
         }
 
@@ -202,7 +215,7 @@ namespace AdminWebsite.Controllers
         [HearingInputSanitizer]
         public async Task<ActionResult<HearingDetailsResponse>> EditHearing(Guid hearingId, [FromBody] EditHearingRequest request)
         {
-            var usernameAdIdDict = new Dictionary<string, string>();
+            var usernameAdIdDict = new Dictionary<string, User>();
             if (hearingId == Guid.Empty)
             {
                 _logger.LogWarning("No hearing id found to edit");
@@ -264,8 +277,8 @@ namespace AdminWebsite.Controllers
                         else
                         {
                             // Update the request with newly created user details in AD
-                            var userId = await _userAccountService.UpdateParticipantUsername(newParticipant);
-                            usernameAdIdDict.Add(newParticipant.Username, userId);
+                            var user = await _userAccountService.UpdateParticipantUsername(newParticipant);
+                            usernameAdIdDict.Add(newParticipant.Username, user);
                         }
 
                         _logger.LogDebug("Adding participant {participant} to hearing {hearing}",
@@ -365,6 +378,15 @@ namespace AdminWebsite.Controllers
                 _logger.LogDebug("Attempting assign participants to the correct group");
                 await AssignParticipantToCorrectGroups(updatedHearing, usernameAdIdDict);
                 _logger.LogDebug("Successfully assigned participants to the correct group", updatedHearing.Id);
+
+                // Send a notification email to newly created participants
+                if (newParticipantList.Any())
+                {
+                    _logger.LogDebug("Sending email notification to the participants");
+                    await EmailParticipants(updatedHearing, usernameAdIdDict);
+                    _logger.LogDebug("Successfully sent emails to participants- {hearing}", updatedHearing.Id);
+                }
+                
                 return Ok(updatedHearing);
             }
             catch (BookingsApiException e)
@@ -384,8 +406,44 @@ namespace AdminWebsite.Controllers
             }
         }
 
+        private async Task EmailParticipants(HearingDetailsResponse hearing,
+            Dictionary<string, User> newUsernameAdIdDict)
+        {
+            foreach (var item in newUsernameAdIdDict)
+            {
+                if (!string.IsNullOrEmpty(item.Value?.Password))
+                {
+                    var participant = hearing.Participants.FirstOrDefault(x => x.Username == item.Key);
+                    var request = MapAddNotificationRequest(hearing.Id, participant, item.Value.Password);
+                    // Send a notification only for the newly created users
+                    await _notificationApiClient.CreateNewNotificationAsync(request);
+                }
+            }
+        }
+
+        private AddNotificationRequest MapAddNotificationRequest(Guid hearingId, ParticipantResponse participant, string password)
+        {
+            var parameters = new Dictionary<string, string>
+            {
+                {"name", $"{participant.First_name} {participant.Last_name}"},
+                {"username", $"{participant.Username}"},
+                {"random password", $"{password}"}
+            };
+            var addNotificationRequest = new AddNotificationRequest
+            {
+                HearingId = hearingId,
+                MessageType = MessageType.Email,
+                ContactEmail = participant.Contact_email,
+                NotificationType = participant.User_role_name == "Individual" ? NotificationType.CreateIndividual : NotificationType.CreateRepresentative,
+                ParticipantId = participant.Id,
+                PhoneNumber = participant.Telephone_number,
+                Parameters = parameters,
+            };
+            return addNotificationRequest;
+        }
+
         private async Task AssignParticipantToCorrectGroups(HearingDetailsResponse hearing,
-            Dictionary<string, string> newUsernameAdIdDict)
+            Dictionary<string, User> newUsernameAdIdDict)
         {
             if (!newUsernameAdIdDict.Any())
             {
@@ -394,10 +452,10 @@ namespace AdminWebsite.Controllers
 
             var tasks = (from pair in newUsernameAdIdDict
                          let participant = hearing.Participants.FirstOrDefault(x => x.Username == pair.Key)
-                         select _userAccountService.AssignParticipantToGroup(pair.Value, participant.User_role_name)).ToList();
+                         select _userAccountService.AssignParticipantToGroup(pair.Value.UserName, participant.User_role_name)).ToList();
             await Task.WhenAll(tasks);
         }
-
+        
         /// <summary>
         /// Gets bookings hearing by Id.
         /// </summary>

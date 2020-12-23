@@ -50,6 +50,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             RegisterWowzaSettings(context);
             RegisterSauceLabsSettings(context);
             RegisterKinlySettings(context);
+            RegisterNotifySettings(context);
             RunningAdminWebLocally(context);
             await GenerateBearerTokens(context);
         }
@@ -119,6 +120,12 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             context.WebConfig.SauceLabsConfiguration.AccessKey.Should().NotBeNullOrWhiteSpace();
             context.WebConfig.SauceLabsConfiguration.Username.Should().NotBeNullOrWhiteSpace();
             context.WebConfig.SauceLabsConfiguration.RealDeviceApiKey.Should().NotBeNullOrWhiteSpace();
+        }
+
+        private void RegisterNotifySettings(TestContext context)
+        {
+            context.WebConfig.NotifyConfiguration = Options.Create(_configRoot.GetSection("NotifyConfiguration").Get<NotifyConfiguration>()).Value;
+            ConfigurationManager.VerifyConfigValuesSet(context.WebConfig.NotifyConfiguration);
         }
 
         private static void RunningAdminWebLocally(TestContext context)

@@ -73,7 +73,11 @@ parameters:
   - name: VhServices:BookingsApiResourceId
     value: vh-bookings-api-identifieruris
     secret: true
- 
+
+  # GOV Notify Configuration
+  - name: NotifyConfiguration:ApiKey
+    value: $(notify-api-key)
+    
   # AzureAd
   - name: AzureAd:Authority
     value: $(Authority)
@@ -181,6 +185,11 @@ parameters:
   - name: VhServices:NotificationApiResourceId
     value: vh-notification-api-identifieruris
     secret: true
+
+  # GOV Notify Configuration
+  - name: NotifyConfiguration:ApiKey
+    value: $(notify-api-key)
+    
   # Kinly
   - name: KinlyConfiguration:ConferencePhoneNumber
     value: $(ConferencePhoneNumber)
@@ -194,6 +203,7 @@ variables:
   - group: Saucelabs
   - group: vh-wowza-dev
   - group: KinlyConfiguration_Test
+  - group: govuk-notify-preview
 
 trigger:
   branches:
@@ -226,15 +236,16 @@ resources:
 extends:
   template: stages\dotnet-package.yml@templates
   parameters:
+    useNugetConfig: true
+    nugetConfigPath: AdminWebsite
     coreProjectPath: AdminWebsite/AdminWebsite
     nodeProjectPath: AdminWebsite/AdminWebsite/ClientApp
     PackageApp: ${{ parameters.PackageApp }}
     PackageAcceptanceTests: ${{ parameters.PackageACTests }}
-    packageManagers:
-      - nuget
-      - npm
     Test: ${{ or(parameters.RunUnitTests, parameters.RunIntegTests, parameters.RunMutationTests) }}
     testParameters:
+      useNugetConfig: true
+      nugetConfigPath: AdminWebsite
       coreProjectPath: AdminWebsite/AdminWebsite
       nodeProjectPath: AdminWebsite/AdminWebsite/ClientApp
       RunNode: true
@@ -286,7 +297,7 @@ extends:
           healthEndpoint: $(video_api_url)healthcheck/health
         - name: vh-notification-api-$(environment)
           resourceGroup: vh-notification-api-$(environment)
-          healthEndpoint: $(notification_api_url)healthcheck/health
+          healthEndpoint: $(notification_api_url)Health/health
         - name: vh-test-api-$(environment)
           resourceGroup: vh-test-api-$(environment)
           healthEndpoint: $(test_api_url)health/health

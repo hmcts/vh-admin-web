@@ -98,14 +98,21 @@ namespace AdminWebsite.Extensions
             serviceCollection.AddHttpClient<IUserApiClient, UserApiClient>()
                .AddHttpMessageHandler(() => container.GetService<UserApiTokenHandler>())
                .AddTypedClient(httpClient => (IUserApiClient) new UserApiClient(httpClient) { BaseUrl = settings.UserApiUrl, ReadResponseAsString = true });
-            
+
             serviceCollection.AddHttpClient<IVideoApiClient, VideoApiClient>()
                 .AddHttpMessageHandler(() => container.GetService<VideoApiTokenHandler>())
                 .AddTypedClient(httpClient => (IVideoApiClient) new VideoApiClient(httpClient) { BaseUrl = settings.VideoApiUrl, ReadResponseAsString = true });
 
             serviceCollection.AddHttpClient<INotificationApiClient, NotificationApiClient>()
                 .AddHttpMessageHandler(() => container.GetService<NotificationApiTokenHandler>())
-                .AddTypedClient(httpClient => (INotificationApiClient)new NotificationApiClient(settings.NotificationApiUrl, httpClient) { ReadResponseAsString = true });
+                .AddTypedClient(httpClient =>
+                {
+                    var client = NotificationApiClient.GetClient(httpClient);
+                    client.BaseUrl = settings.NotificationApiUrl;
+                    client.ReadResponseAsString = true;
+                    return (INotificationApiClient)client;
+
+                });
 
             serviceCollection.AddTransient<IUserIdentity, UserIdentity>((ctx) =>
             {
@@ -118,7 +125,7 @@ namespace AdminWebsite.Extensions
 
             return serviceCollection;
         }
-
+       
         public static IServiceCollection AddJsonOptions(this IServiceCollection serviceCollection)
         {
             var contractResolver = new DefaultContractResolver

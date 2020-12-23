@@ -67,6 +67,11 @@ namespace AdminWebsite.AcceptanceTests.Steps
             Progression(FromString(page), "Login", page);
         }
 
+        [When(@"the user has progressed to the (.*) page")]
+        public void WhenIHaveContinuedToThePage(string page)
+        {
+            Progression(FromString("Video Access Points"), "Video Access Points", page);
+        }
 
         [Given(@"the (.*) user has progressed to the (.*) page of a multi days hearing")]
         public void GivenIAmOnThePageOfMultiDaysHearing(string user, string page)

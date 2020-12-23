@@ -99,7 +99,7 @@ stages:
           healthEndpoint: $(video_api_url)healthcheck/health
         - name: vh-notification-api-$(environment)
           resourceGroup: vh-notification-api-$(environment)
-          healthEndpoint: $(notification_api_url)healthcheck/health
+          healthEndpoint: $(notification_api_url)Health/health
         - name: vh-test-api-$(environment)
           resourceGroup: vh-test-api-$(environment)
           healthEndpoint: $(test_api_url)health/health       
@@ -142,6 +142,31 @@ stages:
              - Prod
           - name: AppUri
             value: $(AppUri_Prod)
+            env:
+             - Prod
+          - group: govuk-notify-preview
+            env:
+             - Preview
+          - group: govuk-notify-dev
+            env:
+             - Dev
+          - group: govuk-notify-aat
+            env:
+             - AAT
+          - group: govuk-notify-sandbox
+            env:
+             - Sandbox
+          - group: govuk-notify-test1
+            env:
+             - Test1
+             - Test2
+          - group: govuk-notify-demo
+            env:
+             - Demo
+          - group: govuk-notify-preprod
+            env:
+             - PreProd
+          - group: govuk-notify-prod
             env:
              - Prod
         appSettings:
@@ -206,6 +231,10 @@ stages:
             value: $(notification_api_url)
           - name: VhServices:ValidateEmail
             value: $(reformemail)
+
+          # GOV Notify Configuration
+          - name: NotifyConfiguration:ApiKey
+            value: $(notify-api-key)
             
             # Kinly
           - name: KinlyConfiguration:ConferencePhoneNumber
@@ -269,6 +298,10 @@ stages:
           - name: TestUserSecrets:TestUserPassword
             value: $(TestUserSecrets:TestApiUserPassword)
 
+          # GOV Notify Configuration
+          - name: NotifyConfiguration:ApiKey
+            value: $(notify-api-key)
+            
           # Kinly
           - name: KinlyConfiguration:ConferencePhoneNumber
             value: $(ConferencePhoneNumber)

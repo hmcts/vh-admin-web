@@ -7,6 +7,7 @@ using AdminWebsite.AcceptanceTests.Configuration;
 using AdminWebsite.AcceptanceTests.Data;
 using AdminWebsite.AcceptanceTests.Pages;
 using AdminWebsite.TestAPI.Client;
+using Notify.Interfaces;
 
 namespace AdminWebsite.AcceptanceTests.Helpers
 {
@@ -22,5 +23,6 @@ namespace AdminWebsite.AcceptanceTests.Helpers
         public string Token { get; set; }
         public List<User> Users { get; set; }
         public AdminWebConfig WebConfig { get; set; }
+        public IAsyncNotificationClient NotifyClient { get; set; }
     }
 }
