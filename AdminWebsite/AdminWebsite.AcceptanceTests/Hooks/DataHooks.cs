@@ -20,11 +20,13 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         private const int ALLOCATE_USERS_FOR_MINUTES = 3;
         private readonly TestContext _c;
         private readonly Random _random;
+        private readonly ScenarioContext _scenario;
 
-        public DataHooks(TestContext context)
+        public DataHooks(TestContext context, ScenarioContext scenario)
         {
             _c = context;
             _random = new Random();
+            _scenario = scenario;
         }
 
         [BeforeScenario(Order = (int)HooksSequence.DataHooks)]
@@ -46,11 +48,21 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             var userTypes = new List<UserType>
             {
                 UserType.Judge,
-                UserType.VideoHearingsOfficer,
-                UserType.CaseAdmin,
-                UserType.Individual,
-                UserType.Representative
+                UserType.VideoHearingsOfficer
             };
+
+            if (_scenario.ScenarioInfo.Tags.Contains(UserType.Winger.ToString()))
+            {
+                userTypes.Add(UserType.Winger);
+                userTypes.Add(UserType.Individual);
+            }
+            else 
+            {
+                userTypes.Add(UserType.CaseAdmin);
+                userTypes.Add(UserType.Individual);
+                userTypes.Add(UserType.Representative);
+                userTypes.Add(UserType.PanelMember);
+            }
 
             var request = new AllocateUsersRequest()
             {
@@ -113,10 +125,12 @@ namespace AdminWebsite.AcceptanceTests.Hooks
 
         public HearingDetailsResponse CreateHearing(bool withAudioRecording = false)
         {
-            var hearingRequest = new HearingRequestBuilder()
-                .WithUsers(_c.Users)
-                .WithAudioRecordingRequired(withAudioRecording)
-                .Build();
+            var isWinger = _c.Users.Any(X => X.User_type == UserType.Winger);
+
+            var hearingRequest = isWinger ? CreateHearingForWinger() : new HearingRequestBuilder()
+                 .WithUsers(_c.Users)
+                 .WithAudioRecordingRequired(withAudioRecording)
+                 .Build();
 
             var hearingResponse = _c.Api.CreateHearing(hearingRequest);
             hearingResponse.StatusCode.Should().Be(HttpStatusCode.Created);
@@ -125,6 +139,15 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             ParticipantsShouldExistInTheDb(hearing.Id);
             NUnit.Framework.TestContext.WriteLine($"Hearing created with Hearing Id {hearing.Id}");
             return hearing;
+        }
+
+        private CreateHearingRequest CreateHearingForWinger()
+        {
+            return new HearingRequestBuilder()
+                  .WithUsers(_c.Users)
+                  .WithCACDCaseType()
+                  .WithAudioRecordingRequired(false)
+                  .Build();
         }
 
         public ConferenceDetailsResponse CreateConference()

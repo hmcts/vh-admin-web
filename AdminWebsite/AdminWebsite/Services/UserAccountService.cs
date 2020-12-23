@@ -53,7 +53,8 @@ namespace AdminWebsite.Services
     {
         public static readonly string External = "External";
         public static readonly string VirtualRoomProfessionalUser = "VirtualRoomProfessionalUser";
-        
+        public static readonly string JudicialOfficeHolder = "JudicialOfficeHolder";
+
         private readonly IUserApiClient _userApiClient;
         private readonly IBookingsApiClient _bookingsApiClient;
         private readonly ILogger<UserAccountService> _logger;
@@ -216,27 +217,33 @@ namespace AdminWebsite.Services
         public async Task AssignParticipantToGroup(string username, string userRole)
         {
             const string REPRESENTATIVE_ROLE = "Representative";
-            
-            // Add user to user group.
-            var addUserToGroupRequest = new AddUserToGroupRequest
-            {
-                User_id = username,
-                Group_name = External
-            };
+            const string JOH_ROLE = "Judicial Office Holder";
 
-            await _userApiClient.AddUserToGroupAsync(addUserToGroupRequest);
-            _logger.LogDebug("{username} to group {group}.", username, addUserToGroupRequest.Group_name);
-            if (userRole == REPRESENTATIVE_ROLE )
+            // Add user to user group.
+            await AddGroup(username, External);
+            switch (userRole)
             {
-                addUserToGroupRequest = new AddUserToGroupRequest
+                case REPRESENTATIVE_ROLE:
+                    await AddGroup(username, VirtualRoomProfessionalUser);
+                    break;
+                case JOH_ROLE:
+                    await AddGroup(username, JudicialOfficeHolder);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private async Task AddGroup(string username, string groupName)
+        {
+                var addUserToGroupRequest = new AddUserToGroupRequest
                 {
                     User_id = username,
-                    Group_name = VirtualRoomProfessionalUser
+                    Group_name = groupName
                 };
-                
+
                 await _userApiClient.AddUserToGroupAsync(addUserToGroupRequest);
                 _logger.LogDebug("{username} to group {group}.", username, addUserToGroupRequest.Group_name);
-            }
         }
 
         private async Task<bool> CheckUsernameExistsInAdAsync(string username)
