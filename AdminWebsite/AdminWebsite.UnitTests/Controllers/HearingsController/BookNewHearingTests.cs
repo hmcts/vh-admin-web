@@ -119,9 +119,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 };
                 _userApiClient.Setup(x => x.GetUserByAdUserIdAsync(It.Is<string>(e => e == participant.Username)))
                     .ReturnsAsync(profile);
-                //_notificationApiMock
-                //    .Setup(x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(request =>
-                //        userRequest.Recovery_email == participant.Contact_email)));
             }
 
             foreach (var participant in request.Participants.Where(x => string.IsNullOrWhiteSpace(x.Username)))
