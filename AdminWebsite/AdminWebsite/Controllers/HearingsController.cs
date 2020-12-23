@@ -370,7 +370,7 @@ namespace AdminWebsite.Controllers
             catch (BookingsApiException e)
             {
                 _logger.LogError(e,
-                    "Failed to edit hearing {hearing}. Status Code {StatusCode} - Message {Message}",
+                    "Failed to edit hearing {hearing}. Status Code {StatusCode} - Message {Message} ",
                     hearingId, e.StatusCode, e.Response);
                 if (e.StatusCode == (int)HttpStatusCode.BadRequest)
                 {
