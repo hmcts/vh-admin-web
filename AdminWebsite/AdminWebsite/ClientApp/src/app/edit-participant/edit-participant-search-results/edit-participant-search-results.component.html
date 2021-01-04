@@ -1,0 +1,32 @@
+<h2 class="govuk-heading-m">Results</h2>
+
+<div *ngIf="userNotFound">
+  <div class="govuk-warning-text">
+    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+    <strong class="govuk-warning-text__text">
+      <span class="govuk-warning-text__assistive">Warning</span>
+      Sorry, we can't find a user with that name.
+    </strong>
+  </div>
+</div>
+
+<div *ngIf="!userNotFound">
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-one-quarter govuk-!-font-weight-bold">Contact Email</div>
+    <div class="govuk-grid-column-one-quarter govuk-!-font-weight-bold">Full name</div>
+    <div class="govuk-grid-column-one-quarter govuk-!-font-weight-bold">User name</div>
+  </div>
+  <hr />
+  <div class="govuk-grid-row">
+    <div id="contactEmail" class="govuk-grid-column-one-quarter">
+      {{ contactEmail }}
+    </div>
+    <div id="fullName" class="govuk-grid-column-one-quarter">
+      {{ result.fullName }}
+    </div>
+    <div id="username" class="govuk-grid-column-one-quarter">
+      {{ result.username }}
+    </div>
+  </div>
+  <hr />
+</div>
