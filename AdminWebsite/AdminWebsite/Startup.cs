@@ -26,7 +26,6 @@ namespace AdminWebsite
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<ITelemetryInitializer>(new CloudRoleNameInitializer());
-
             services.AddSwagger();
             services.AddJsonOptions();
             RegisterSettings(services);
