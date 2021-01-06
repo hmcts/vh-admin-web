@@ -26,6 +26,7 @@ namespace AdminWebsite
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<ITelemetryInitializer>(new CloudRoleNameInitializer());
+
             services.AddSwagger();
             services.AddJsonOptions();
             RegisterSettings(services);
@@ -33,7 +34,6 @@ namespace AdminWebsite
             services.AddCustomTypes();
 
             services.RegisterAuthSchemes(Configuration);
-            services.AddMvc(opt => opt.Filters.Add(typeof(LoggingMiddleware))).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
             // In production, the Angular files will be served from this directory
@@ -76,8 +76,8 @@ namespace AdminWebsite
             {
                 app.UseSpaStaticFiles();
             }
-            app.UseAuthentication();
 
+            app.UseAuthentication();
             app.UseMiddleware<ExceptionMiddleware>();
 
             // HTTP Response Headers
