@@ -24,6 +24,7 @@ using AdminWebsite.VideoAPI.Client;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using NotificationApi.Client;
+using AdminWebsite.Middleware;
 
 namespace AdminWebsite.Extensions
 {
@@ -86,6 +87,7 @@ namespace AdminWebsite.Extensions
             serviceCollection.AddSingleton<IClaimsCacheProvider, MemoryClaimsCacheProvider>();
             serviceCollection.AddScoped<ICachedUserClaimBuilder, CachedUserClaimBuilder>();
             serviceCollection.AddSingleton<IPollyRetryService, PollyRetryService>();
+            serviceCollection.AddScoped<ILoggingDataExtractor, LoggingDataExtractor>();
 
             // Build the hearings api client using a reusable HttpClient factory and predefined base url
             var container = serviceCollection.BuildServiceProvider();

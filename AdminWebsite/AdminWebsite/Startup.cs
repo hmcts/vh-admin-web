@@ -34,7 +34,7 @@ namespace AdminWebsite
             services.AddCustomTypes();
 
             services.RegisterAuthSchemes(Configuration);
-
+            services.AddMvc(opt => opt.Filters.Add(typeof(LoggingMiddleware))).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
             // In production, the Angular files will be served from this directory
@@ -79,6 +79,8 @@ namespace AdminWebsite
             }
             app.UseAuthentication();
 
+            app.UseMiddleware<ExceptionMiddleware>();
+
             // HTTP Response Headers
             app.UseXContentTypeOptions();
             app.UseReferrerPolicy(opts => opts.NoReferrer());
@@ -102,8 +104,6 @@ namespace AdminWebsite
                     spa.UseProxyToSpaDevelopmentServer(ngBaseUri);
                 }
             });
-
-            app.UseMiddleware<ExceptionMiddleware>();
         }
     }
 }
