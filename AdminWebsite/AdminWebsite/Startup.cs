@@ -34,7 +34,6 @@ namespace AdminWebsite
             services.AddCustomTypes();
 
             services.RegisterAuthSchemes(Configuration);
-
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
             // In production, the Angular files will be served from this directory
@@ -77,7 +76,9 @@ namespace AdminWebsite
             {
                 app.UseSpaStaticFiles();
             }
+
             app.UseAuthentication();
+            app.UseMiddleware<ExceptionMiddleware>();
 
             // HTTP Response Headers
             app.UseXContentTypeOptions();
@@ -102,8 +103,6 @@ namespace AdminWebsite
                     spa.UseProxyToSpaDevelopmentServer(ngBaseUri);
                 }
             });
-
-            app.UseMiddleware<ExceptionMiddleware>();
         }
     }
 }

@@ -162,7 +162,7 @@ stages:
           healthEndpoint: $(video_api_url)healthcheck/health
         - name: vh-notification-api-$(environment)
           resourceGroup: vh-notification-api-$(environment)
-          healthEndpoint: $(notification_api_url)Health/health
+          healthEndpoint: $(notification_api_url)healthcheck/health
         - name: vh-test-api-$(environment)
           resourceGroup: vh-test-api-$(environment)
           healthEndpoint: $(test_api_url)health/health
