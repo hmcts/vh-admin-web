@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using AddEndpointRequest = AdminWebsite.BookingsAPI.Client.AddEndpointRequest;
 using ParticipantRequest = AdminWebsite.BookingsAPI.Client.ParticipantRequest;
 using UpdateEndpointRequest = AdminWebsite.BookingsAPI.Client.UpdateEndpointRequest;
@@ -89,30 +90,34 @@ namespace AdminWebsite.Controllers
                 }
 
                 request.Created_by = _userIdentity.GetUserIdentityName();
-                _logger.LogDebug("Attempting to send booking request to Booking API");
+                
+                _logger.LogDebug("BookNewHearing - Attempting to send booking request to Booking API");
                 var hearingDetailsResponse = await _bookingsApiClient.BookNewHearingAsync(request);
-                _logger.LogDebug("Successfully booked hearing {hearing}", hearingDetailsResponse.Id);
-                _logger.LogDebug("Attempting assign participants to the correct group");
+                _logger.LogDebug("BookNewHearing - Successfully booked hearing {hearing}", hearingDetailsResponse.Id);
+                
+                _logger.LogDebug("BookNewHearing - Attempting assign participants to the correct group");
                 await AssignParticipantToCorrectGroups(hearingDetailsResponse, usernameAdIdDict);
+                _logger.LogDebug("BookNewHearing - Successfully assigned participants to the correct group", hearingDetailsResponse.Id);
 
-                _logger.LogDebug("Successfully assigned participants to the correct group", hearingDetailsResponse.Id);
-
-                _logger.LogDebug("Sending email notification to the participants");
+                _logger.LogDebug("BookNewHearing - Sending email notification to the participants");
                 await EmailParticipants(hearingDetailsResponse, usernameAdIdDict);
-                _logger.LogDebug("Successfully sent emails to participants- {hearing}", hearingDetailsResponse.Id);
+                _logger.LogDebug("BookNewHearing - Successfully sent emails to participants- {hearing}", hearingDetailsResponse.Id);
 
                 return Created("", hearingDetailsResponse);
             }
             catch (BookingsApiException e)
             {
-                _logger.LogError(e,
-                    "There was a problem saving the booking. Status Code {StatusCode} - Message {Message}",
-                    e.StatusCode, e.Response);
+                _logger.LogError(e, "BookNewHearing - There was a problem saving the booking. Status Code {StatusCode} - Message {Message}", e.StatusCode, e.Response);
                 if (e.StatusCode == (int) HttpStatusCode.BadRequest)
                 {
                     return BadRequest(e.Response);
                 }
 
+                throw;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, $"BookNewHearing - Failed to save hearing - Message: {e.Message} -  for request: {JsonConvert.SerializeObject(request)}");
                 throw;
             }
         }
@@ -442,20 +447,42 @@ namespace AdminWebsite.Controllers
             return addNotificationRequest;
         }
 
-        private async Task AssignParticipantToCorrectGroups(HearingDetailsResponse hearing,
-            Dictionary<string, User> newUsernameAdIdDict)
+        private async Task AssignParticipantToCorrectGroups(HearingDetailsResponse hearing, Dictionary<string, User> newUsernameAdIdDict)
         {
             if (!newUsernameAdIdDict.Any())
             {
+                _logger.LogDebug($"{nameof(AssignParticipantToCorrectGroups)} - No users in dictionary for hearingId: {hearing.Id}");
                 return;
             }
 
-            var tasks = (from pair in newUsernameAdIdDict
-                         let participant = hearing.Participants.FirstOrDefault(x => x.Username == pair.Key)
-                         select _userAccountService.AssignParticipantToGroup(pair.Value.UserName, participant.User_role_name)).ToList();
+            var tasks = newUsernameAdIdDict.Select(pair => new
+                {
+                    pair,
+                    participant = hearing.Participants.FirstOrDefault(x => x.Username == pair.Key)
+                })
+                .Select(t => AssignParticipantToGroupWithRetry(t.pair.Key, t.pair.Value.UserName, t.participant.User_role_name, hearing.Id))
+                .ToList();
+            
             await Task.WhenAll(tasks);
         }
-        
+
+        private async Task AssignParticipantToGroupWithRetry(string username, string userId, string userRoleName, Guid hearingId)
+        {
+            await _pollyRetryService.WaitAndRetryAsync<Exception, Task>
+            (
+                3, _ => TimeSpan.FromSeconds(3),
+                retryAttempt => _logger.LogDebug($"{nameof(AssignParticipantToCorrectGroups)} - Failed to add username: {username} userId {userId} to role: {userRoleName} on AAD for hearingId: {hearingId}. Retrying attempt {retryAttempt}"),
+                result => result.IsFaulted,
+                async () =>
+                {
+                    _logger.LogDebug($"{nameof(AssignParticipantToCorrectGroups)} - Adding username: {username} userId {userId} to role: {userRoleName} on AAD for hearingId: {hearingId}");
+                    await _userAccountService.AssignParticipantToGroup(userId, userRoleName);
+                    _logger.LogDebug($"{nameof(AssignParticipantToCorrectGroups)} - Added username: {username} userId {userId} to role: {userRoleName} on AAD for hearingId: {hearingId}");
+                    return Task.CompletedTask;
+                }
+            );
+        }
+
         /// <summary>
         /// Gets bookings hearing by Id.
         /// </summary>
