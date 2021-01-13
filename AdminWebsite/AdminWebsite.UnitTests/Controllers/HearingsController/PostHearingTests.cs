@@ -218,6 +218,34 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var result = await _controller.Post(hearing);
             result.Result.Should().BeOfType<BadRequestObjectResult>();
         }
+        
+        [Test]
+        public void Should_throw_BookingsApiException()
+        {
+            var hearing = new BookNewHearingRequest
+            {
+                Participants = new List<BookingsAPI.Client.ParticipantRequest>()
+            };
+
+            _bookingsApiClient.Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
+                .Throws(ClientException.ForBookingsAPI(HttpStatusCode.InternalServerError));
+
+            Assert.ThrowsAsync<BookingsApiException>(() => _controller.Post(hearing));
+        }
+        
+        [Test]
+        public void Should_throw_Exception()
+        {
+            var hearing = new BookNewHearingRequest
+            {
+                Participants = new List<BookingsAPI.Client.ParticipantRequest>()
+            };
+
+            _bookingsApiClient.Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
+                .Throws(new Exception("Some internal error"));
+
+            Assert.ThrowsAsync<Exception>(() => _controller.Post(hearing));
+        }
 
         [Test]
         public async Task Should_pass_current_user_as_created_by_to_service()
