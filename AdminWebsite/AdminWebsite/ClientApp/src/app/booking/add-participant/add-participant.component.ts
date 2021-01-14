@@ -674,6 +674,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         this.isShowErrorSummary = false;
         this.isRoleSelected = true;
         this.isPartySelected = true;
+        this.participantDetails = null;
 
         if (this.hearing.participants.length > 1) {
             this.displayNext();
