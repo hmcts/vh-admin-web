@@ -348,7 +348,6 @@ describe('AddParticipantComponent', () => {
         expect(role.untouched).toBeTruthy();
         expect(party.untouched).toBeTruthy();
         expect(firstName.untouched).toBeTruthy();
-        expect(participant).toBeNull();
     });
     it('should display next button and hide add button after clear all fields', () => {
         component.getParticipant(participant);

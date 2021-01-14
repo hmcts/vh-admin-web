@@ -347,6 +347,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         this.logger.warn(`${this.loggerPrefix} Participant not found.`);
         this.displayErrorNoParticipants = false;
         this.displayClear();
+        this.participantDetails = new ParticipantModel();
     }
 
     emailChanged() {
@@ -674,7 +675,6 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         this.isShowErrorSummary = false;
         this.isRoleSelected = true;
         this.isPartySelected = true;
-        this.participantDetails = null;
 
         if (this.hearing.participants.length > 1) {
             this.displayNext();
