@@ -147,6 +147,21 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             };
             _userApiClient
                 .Setup(x => x.GetUserByEmailAsync(existingPat3.Contact_email)).ReturnsAsync(existingUser3);
+            
+            _pollyRetryServiceMock.Setup(x => x.WaitAndRetryAsync<Exception, Task>
+                (
+                    It.IsAny<int>(), It.IsAny<Func<int, TimeSpan>>(), It.IsAny<Action<int>>(),
+                    It.IsAny<Func<Task, bool>>(), It.IsAny<Func<Task<Task>>>()
+                ))
+                .Callback(async (int retries, Func<int, TimeSpan> sleepDuration, Action<int> retryAction,
+                    Func<Task, bool> handleResultCondition, Func<Task> executeFunction) =>
+                {
+                    sleepDuration(1);
+                    retryAction(1);
+                    handleResultCondition(Task.CompletedTask);
+                    await executeFunction();
+                })
+                .ReturnsAsync(Task.CompletedTask);
 
             // setup response
             var pat1 = Builder<ParticipantResponse>.CreateNew()
