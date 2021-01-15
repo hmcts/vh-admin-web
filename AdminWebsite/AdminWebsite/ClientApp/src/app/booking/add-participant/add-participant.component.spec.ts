@@ -906,7 +906,7 @@ describe('AddParticipantComponent edit mode no participants added', () => {
         expect(component.displayAddButton).toBeFalsy();
         expect(component.displayUpdateButton).toBeFalsy();
         expect(component.participantDetails).not.toBeNull();
-        expect(component.participantDetails.username).toBeUndefined();
+        expect(component.participantDetails.username).toBeNull();
     });
 });
 describe('AddParticipantComponent set representer', () => {
