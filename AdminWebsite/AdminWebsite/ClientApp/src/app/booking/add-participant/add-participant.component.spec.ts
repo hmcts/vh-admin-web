@@ -894,6 +894,20 @@ describe('AddParticipantComponent edit mode no participants added', () => {
         expect(component.form.get('firstName').disabled).toBeTruthy();
         expect(component.form.get('lastName').disabled).toBeTruthy();
     });
+    it('should set values correctly when no participant found', () => {
+        participant.is_exist_person = true;
+        component.participantDetails = participant;
+        component.getParticipant(participant);
+
+        component.notFoundParticipant();
+        expect(component.displayErrorNoParticipants).toBeFalsy();
+        expect(component.displayNextButton).toBeFalsy();
+        expect(component.displayClearButton).toBeTruthy();
+        expect(component.displayAddButton).toBeFalsy();
+        expect(component.displayUpdateButton).toBeFalsy();
+        expect(component.participantDetails).not.toBeNull();
+        expect(component.participantDetails.username).toBeNull();
+    });
 });
 describe('AddParticipantComponent set representer', () => {
     beforeEach(
