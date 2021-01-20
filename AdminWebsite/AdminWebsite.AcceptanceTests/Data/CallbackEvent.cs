@@ -2,7 +2,6 @@
 using System.ComponentModel.DataAnnotations;
 using AdminWebsite.TestAPI.Client;
 
-
 namespace AdminWebsite.AcceptanceTests.Data
 {
     public class CallbackEvent

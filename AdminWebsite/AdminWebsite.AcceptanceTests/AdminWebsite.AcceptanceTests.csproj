@@ -48,6 +48,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AdminWebsite.TestAPI.Client\AdminWebsite.TestAPI.Client.csproj" />
+    <ProjectReference Include="..\AdminWebsite.VideoAPI.Client\AdminWebsite.VideoAPI.Client.csproj" />
   </ItemGroup>
 
   <ItemGroup>
