@@ -29,7 +29,6 @@ export class BookingsDetailsModel {
         confirmedBy: string,
         confirmedDate: Date,
         status: string,
-        questionnaireNotRequired: boolean,
         audioRecordingRequired: boolean,
         cancelReason: string,
         caseType: string,
@@ -54,7 +53,6 @@ export class BookingsDetailsModel {
         this.Selected = false;
         this.Status = status;
         this.Cancelled = this.Status === 'Cancelled';
-        this.QuestionnaireNotRequired = questionnaireNotRequired;
         this.AudioRecordingRequired = audioRecordingRequired;
         this.CancelReason = cancelReason;
         this.CaseType = caseType;
@@ -81,7 +79,6 @@ export class BookingsDetailsModel {
     Cancelled: boolean;
     OtherInformation: string;
     Status: string;
-    QuestionnaireNotRequired: boolean;
     IsStartTimeChanged: boolean;
     AudioRecordingRequired: boolean;
     CancelReason: string;

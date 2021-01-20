@@ -142,7 +142,6 @@ export class VideoHearingsService {
         hearing.scheduled_date_time = new Date(booking.scheduled_date_time);
         hearing.scheduled_duration = booking.scheduled_duration;
         hearing.participants = this.mapParticipantModelToEditParticipantRequest(booking.participants);
-        hearing.questionnaire_not_required = booking.questionnaire_not_required;
         hearing.audio_recording_required = booking.audio_recording_required;
         hearing.endpoints = this.mapEndpointModelToEditEndpointRequest(booking.endpoints);
         return hearing;

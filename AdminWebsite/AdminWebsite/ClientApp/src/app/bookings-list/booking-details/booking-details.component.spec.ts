@@ -62,7 +62,6 @@ export class BookingDetailsTestData {
             null,
             'Booked',
             true,
-            true,
             'reason',
             'Financial Remedy',
             'judge.green@email.com',
@@ -266,7 +265,6 @@ describe('BookingDetailsComponent', () => {
         expect(component.hearing.HearingId).toBe('44');
         expect(component.hearing.Duration).toBe(120);
         expect(component.hearing.HearingCaseNumber).toBe('XX3456234565');
-        expect(component.hearing.QuestionnaireNotRequired).toBeTruthy();
         expect(component.hearing.AudioRecordingRequired).toBeTruthy();
     }));
 
@@ -277,7 +275,6 @@ describe('BookingDetailsComponent', () => {
         expect(component.booking.hearing_id).toBe('44');
         expect(component.booking.scheduled_duration).toBe(120);
         expect(component.booking.cases[0].number).toBe('XX3456234565');
-        expect(component.hearing.QuestionnaireNotRequired).toBeTruthy();
         expect(component.hearing.AudioRecordingRequired).toBeTruthy();
     });
     it('should call service to map hearing response to HearingModel', () => {

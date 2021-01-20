@@ -312,7 +312,6 @@ describe('Video hearing service', () => {
         expect(editHearingRequest.scheduled_date_time).toEqual(hearingModel.scheduled_date_time);
         expect(editHearingRequest.scheduled_duration).toEqual(hearingModel.scheduled_duration);
         expect(editHearingRequest.participants.length).toBeGreaterThan(0);
-        expect(editHearingRequest.questionnaire_not_required).toBeTruthy();
         expect(editHearingRequest.audio_recording_required).toBeTruthy();
 
         expect(actualParticipant.title).toEqual(expectedParticipant.title);
@@ -376,7 +375,6 @@ describe('Video hearing service', () => {
         expect(editHearingRequest.participants[0].case_role_name).toEqual(hearingModel.participants[0].case_role_name);
         expect(editHearingRequest.case.name).toEqual(hearingModel.cases[0].name);
         expect(editHearingRequest.case.number).toEqual(hearingModel.cases[0].number);
-        expect(editHearingRequest.questionnaire_not_required).toEqual(hearingModel.questionnaire_not_required);
         expect(editHearingRequest.audio_recording_required).toEqual(hearingModel.audio_recording_required);
         expect(editHearingRequest.endpoints[0].display_name).toEqual(hearingModel.endpoints[0].displayName);
     });

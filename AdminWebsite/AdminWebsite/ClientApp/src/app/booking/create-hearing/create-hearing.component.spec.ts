@@ -48,7 +48,6 @@ describe('CreateHearingComponent with multiple case types', () => {
     let caseNumberControl: AbstractControl;
     let caseTypeControl: AbstractControl;
     let hearingTypeControl: AbstractControl;
-    let questionnaireNotRequiredControl: AbstractControl;
 
     const newHearing = initHearingRequest();
 
@@ -86,7 +85,6 @@ describe('CreateHearingComponent with multiple case types', () => {
         caseNumberControl = component.form.controls['caseNumber'];
         caseTypeControl = component.form.controls['caseType'];
         hearingTypeControl = component.form.controls['hearingType'];
-        questionnaireNotRequiredControl = component.form.controls['questionnaireNotRequired'];
     });
 
     it('should create', () => {
@@ -166,7 +164,6 @@ describe('CreateHearingComponent with multiple case types', () => {
         caseNumberControl.setValue('12345');
         caseTypeControl.setValue('Tax');
         hearingTypeControl.setValue(2);
-        questionnaireNotRequiredControl.setValue(true);
 
         expect(component.form.valid).toBeTruthy();
         component.saveHearingDetails();
@@ -174,7 +171,6 @@ describe('CreateHearingComponent with multiple case types', () => {
         const hearingTypeName = MockValues.HearingTypesList.find(c => c.id === component.hearing.hearing_type_id).name;
         expect(component.hearing.hearing_type_name).toBe(hearingTypeName);
         expect(component.hearing.cases.length).toBe(1);
-        expect(component.hearing.questionnaire_not_required).toBeTruthy();
     });
 });
 
@@ -287,7 +283,6 @@ describe('CreateHearingComponent with existing request in session', () => {
         expect(component.caseNumber.value).toBe(existingRequest.cases[0].number);
         expect(component.caseName.value).toBe(existingRequest.cases[0].name);
         expect(component.hearingType.value).toBe(existingRequest.hearing_type_id);
-        expect(component.questionnaireNotRequired).toBe(existingRequest.questionnaire_not_required);
     }));
 
     it('should hide cancel and discard pop up confirmation', () => {

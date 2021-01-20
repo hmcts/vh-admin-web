@@ -28,7 +28,6 @@ function MockBookedHearing(): BookingsDetailsModel {
         'last.confirmed@admin.com',
         new Date(),
         'booked',
-        false,
         true,
         'reason',
         'Financial Remedy',

@@ -136,7 +136,6 @@ export class BookingsListService {
             hearing.confirmed_by,
             hearing.confirmed_date,
             hearing.status,
-            hearing.questionnaire_not_required,
             hearing.audio_recording_required,
             hearing.cancel_reason,
             hearing.case_type_name,

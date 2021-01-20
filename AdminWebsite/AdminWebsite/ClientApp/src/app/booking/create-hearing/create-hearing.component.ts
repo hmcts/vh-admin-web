@@ -97,7 +97,6 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
             ],
             caseType: [this.selectedCaseType, [Validators.required, Validators.pattern('^((?!Please select).)*$')]],
             hearingType: [this.hearing.hearing_type_id, [Validators.required, Validators.min(1)]],
-            questionnaireNotRequired: [this.hearing.questionnaire_not_required]
         });
     }
 
@@ -112,9 +111,6 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
     }
     get hearingType() {
         return this.form.get('hearingType');
-    }
-    get questionnaireNotRequired() {
-        return this.form.get('questionnaireNotRequired').value;
     }
 
     get caseNameInvalid() {
@@ -204,8 +200,6 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
         this.hearing.case_type_id = this.form.value.caseType;
         this.hearing.hearing_type_id = this.form.value.hearingType;
         this.hearing.hearing_type_name = this.availableHearingTypes.find(c => c.id === this.hearing.hearing_type_id).name;
-        this.hearing.questionnaire_not_required =
-            this.form.value.questionnaireNotRequired === null ? false : this.form.value.questionnaireNotRequired;
 
         this.hearingService.updateHearingRequest(this.hearing);
         this.logger.debug(`${this.loggerPrefix} Updated hearing request details`, { hearing: this.hearing });

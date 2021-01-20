@@ -28,7 +28,6 @@ export class BookingDetailsService {
             hearingResponse.confirmed_by,
             hearingResponse.confirmed_date,
             hearingResponse.status,
-            hearingResponse.questionnaire_not_required,
             hearingResponse.audio_recording_required,
             hearingResponse.cancel_reason,
             hearingResponse.case_type_name,

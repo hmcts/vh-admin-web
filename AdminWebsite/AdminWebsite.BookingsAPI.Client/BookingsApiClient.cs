@@ -5235,11 +5235,7 @@ namespace AdminWebsite.BookingsAPI.Client
         [Newtonsoft.Json.JsonProperty("status", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
         public BookingStatus Status { get; set; }
-    
-        /// <summary>QuestionnaireNotRequired</summary>
-        [Newtonsoft.Json.JsonProperty("questionnaire_not_required", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public bool Questionnaire_not_required { get; set; }
-    
+
         /// <summary>Gets or sets the audio recording required flag, value true  is indicated that recording is required, otherwise false</summary>
         [Newtonsoft.Json.JsonProperty("audio_recording_required", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public bool Audio_recording_required { get; set; }

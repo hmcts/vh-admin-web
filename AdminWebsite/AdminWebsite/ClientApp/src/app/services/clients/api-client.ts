@@ -3536,8 +3536,6 @@ export class EditHearingRequest implements IEditHearingRequest {
     participants?: EditParticipantRequest[] | undefined;
     /** Any other information about the hearing */
     other_information?: string | undefined;
-    /** QuestionnaireNotRequired */
-    questionnaire_not_required?: boolean;
     /** Gets or sets audio recording required flag */
     audio_recording_required?: boolean;
     /** List of endpoints for the hearing */
@@ -3563,7 +3561,6 @@ export class EditHearingRequest implements IEditHearingRequest {
                 for (let item of _data['participants']) this.participants!.push(EditParticipantRequest.fromJS(item));
             }
             this.other_information = _data['other_information'];
-            this.questionnaire_not_required = _data['questionnaire_not_required'];
             this.audio_recording_required = _data['audio_recording_required'];
             if (Array.isArray(_data['endpoints'])) {
                 this.endpoints = [] as any;
@@ -3591,7 +3588,6 @@ export class EditHearingRequest implements IEditHearingRequest {
             for (let item of this.participants) data['participants'].push(item.toJSON());
         }
         data['other_information'] = this.other_information;
-        data['questionnaire_not_required'] = this.questionnaire_not_required;
         data['audio_recording_required'] = this.audio_recording_required;
         if (Array.isArray(this.endpoints)) {
             data['endpoints'] = [];
@@ -3616,8 +3612,6 @@ export interface IEditHearingRequest {
     participants?: EditParticipantRequest[] | undefined;
     /** Any other information about the hearing */
     other_information?: string | undefined;
-    /** QuestionnaireNotRequired */
-    questionnaire_not_required?: boolean;
     /** Gets or sets audio recording required flag */
     audio_recording_required?: boolean;
     /** List of endpoints for the hearing */
