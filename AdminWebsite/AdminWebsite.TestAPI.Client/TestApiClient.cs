@@ -74,6 +74,25 @@ namespace AdminWebsite.TestAPI.Client
         /// <exception cref="TestApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<System.Collections.Generic.List<AllocationDetailsResponse>> UnallocateUsersAsync(UnallocateUsersRequest body, System.Threading.CancellationToken cancellationToken);
     
+        /// <summary>Get allocated users by allocatedBy</summary>
+        /// <param name="username">Username of the user that has allocated users</param>
+        /// <returns>Success</returns>
+        /// <exception cref="TestApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<System.Collections.Generic.List<AllocationDetailsResponse>> AllocatedUsersAsync(string username);
+    
+        /// <summary>Get allocated users by allocatedBy</summary>
+        /// <param name="username">Username of the user that has allocated users</param>
+        /// <returns>Success</returns>
+        /// <exception cref="TestApiException">A server side error occurred.</exception>
+        System.Collections.Generic.List<AllocationDetailsResponse> AllocatedUsers(string username);
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Get allocated users by allocatedBy</summary>
+        /// <param name="username">Username of the user that has allocated users</param>
+        /// <returns>Success</returns>
+        /// <exception cref="TestApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<System.Collections.Generic.List<AllocationDetailsResponse>> AllocatedUsersAsync(string username, System.Threading.CancellationToken cancellationToken);
+    
         /// <summary>Get the details of a conference by id</summary>
         /// <param name="conferenceId">Id of the conference</param>
         /// <returns>Success</returns>
@@ -226,24 +245,24 @@ namespace AdminWebsite.TestAPI.Client
         /// <exception cref="TestApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<System.Collections.Generic.List<TaskResponse>> GetTasksByConferenceIdAsync(System.Guid conferenceId, System.Threading.CancellationToken cancellationToken);
     
-        /// <summary>Create video event</summary>
+        /// <summary>Create event</summary>
         /// <param name="body">Conference event request</param>
         /// <returns>Success</returns>
         /// <exception cref="TestApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task CreateVideoEventAsync(ConferenceEventRequest body);
+        System.Threading.Tasks.Task CreateEventAsync(ConferenceEventRequest body);
     
-        /// <summary>Create video event</summary>
+        /// <summary>Create event</summary>
         /// <param name="body">Conference event request</param>
         /// <returns>Success</returns>
         /// <exception cref="TestApiException">A server side error occurred.</exception>
-        void CreateVideoEvent(ConferenceEventRequest body);
+        void CreateEvent(ConferenceEventRequest body);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Create video event</summary>
+        /// <summary>Create event</summary>
         /// <param name="body">Conference event request</param>
         /// <returns>Success</returns>
         /// <exception cref="TestApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task CreateVideoEventAsync(ConferenceEventRequest body, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task CreateEventAsync(ConferenceEventRequest body, System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Get the test call result for a participant</summary>
         /// <param name="conferenceId">Conference Id of the conference</param>
@@ -907,6 +926,104 @@ namespace AdminWebsite.TestAPI.Client
                                 throw new TestApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             throw new TestApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new TestApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new TestApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new TestApiException("Unauthorized", status_, responseText_, headers_, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new TestApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (response_ != null)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+            }
+        }
+    
+        /// <summary>Get allocated users by allocatedBy</summary>
+        /// <param name="username">Username of the user that has allocated users</param>
+        /// <returns>Success</returns>
+        /// <exception cref="TestApiException">A server side error occurred.</exception>
+        public System.Threading.Tasks.Task<System.Collections.Generic.List<AllocationDetailsResponse>> AllocatedUsersAsync(string username)
+        {
+            return AllocatedUsersAsync(username, System.Threading.CancellationToken.None);
+        }
+    
+        /// <summary>Get allocated users by allocatedBy</summary>
+        /// <param name="username">Username of the user that has allocated users</param>
+        /// <returns>Success</returns>
+        /// <exception cref="TestApiException">A server side error occurred.</exception>
+        public System.Collections.Generic.List<AllocationDetailsResponse> AllocatedUsers(string username)
+        {
+            return System.Threading.Tasks.Task.Run(async () => await AllocatedUsersAsync(username, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
+        }
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Get allocated users by allocatedBy</summary>
+        /// <param name="username">Username of the user that has allocated users</param>
+        /// <returns>Success</returns>
+        /// <exception cref="TestApiException">A server side error occurred.</exception>
+        public async System.Threading.Tasks.Task<System.Collections.Generic.List<AllocationDetailsResponse>> AllocatedUsersAsync(string username, System.Threading.CancellationToken cancellationToken)
+        {
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/allocations/allocatedUsers/{username}");
+            urlBuilder_.Replace("{username}", System.Uri.EscapeDataString(ConvertToString(username, System.Globalization.CultureInfo.InvariantCulture)));
+    
+            var client_ = _httpClient;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+    
+                    PrepareRequest(client_, request_, urlBuilder_);
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+                    PrepareRequest(client_, request_, url_);
+    
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+    
+                        ProcessResponse(client_, response_);
+    
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.List<AllocationDetailsResponse>>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new TestApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
                         }
                         else
                         if (status_ == 400)
@@ -1814,30 +1931,30 @@ namespace AdminWebsite.TestAPI.Client
             }
         }
     
-        /// <summary>Create video event</summary>
+        /// <summary>Create event</summary>
         /// <param name="body">Conference event request</param>
         /// <returns>Success</returns>
         /// <exception cref="TestApiException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task CreateVideoEventAsync(ConferenceEventRequest body)
+        public System.Threading.Tasks.Task CreateEventAsync(ConferenceEventRequest body)
         {
-            return CreateVideoEventAsync(body, System.Threading.CancellationToken.None);
+            return CreateEventAsync(body, System.Threading.CancellationToken.None);
         }
     
-        /// <summary>Create video event</summary>
+        /// <summary>Create event</summary>
         /// <param name="body">Conference event request</param>
         /// <returns>Success</returns>
         /// <exception cref="TestApiException">A server side error occurred.</exception>
-        public void CreateVideoEvent(ConferenceEventRequest body)
+        public void CreateEvent(ConferenceEventRequest body)
         {
-            System.Threading.Tasks.Task.Run(async () => await CreateVideoEventAsync(body, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
+            System.Threading.Tasks.Task.Run(async () => await CreateEventAsync(body, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
         }
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Create video event</summary>
+        /// <summary>Create event</summary>
         /// <param name="body">Conference event request</param>
         /// <returns>Success</returns>
         /// <exception cref="TestApiException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task CreateVideoEventAsync(ConferenceEventRequest body, System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task CreateEventAsync(ConferenceEventRequest body, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/conferences/events");
@@ -4050,6 +4167,10 @@ namespace AdminWebsite.TestAPI.Client
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
         public UserType User_type { get; set; }
     
+        /// <summary>The user that allocated the user</summary>
+        [Newtonsoft.Json.JsonProperty("allocated_by", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Allocated_by { get; set; }
+    
     
     }
     
@@ -4162,6 +4283,10 @@ namespace AdminWebsite.TestAPI.Client
         [Newtonsoft.Json.JsonProperty("user_types", Required = Newtonsoft.Json.Required.Always, ItemConverterType = typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
         public System.Collections.Generic.List<UserType> User_types { get; set; } = new System.Collections.Generic.List<UserType>();
     
+        /// <summary>The user that allocated the user</summary>
+        [Newtonsoft.Json.JsonProperty("allocated_by", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Allocated_by { get; set; }
+    
     
     }
     
@@ -4199,6 +4324,10 @@ namespace AdminWebsite.TestAPI.Client
         /// <summary>Allocated</summary>
         [Newtonsoft.Json.JsonProperty("allocated", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public bool Allocated { get; set; }
+    
+        /// <summary>Allocated By</summary>
+        [Newtonsoft.Json.JsonProperty("allocated_by", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Allocated_by { get; set; }
     
     
     }
@@ -4833,26 +4962,6 @@ namespace AdminWebsite.TestAPI.Client
     }
     
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
-    public enum RoomType
-    {
-        [System.Runtime.Serialization.EnumMember(Value = @"WaitingRoom")]
-        WaitingRoom = 0,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"HearingRoom")]
-        HearingRoom = 1,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"ConsultationRoom1")]
-        ConsultationRoom1 = 2,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"ConsultationRoom2")]
-        ConsultationRoom2 = 3,
-    
-        [System.Runtime.Serialization.EnumMember(Value = @"AdminRoom")]
-        AdminRoom = 4,
-    
-    }
-    
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
     public partial class ConferenceEventRequest 
     {
         [Newtonsoft.Json.JsonProperty("event_id", Required = Newtonsoft.Json.Required.AllowNull)]
@@ -4871,13 +4980,11 @@ namespace AdminWebsite.TestAPI.Client
         [Newtonsoft.Json.JsonProperty("participant_id", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Participant_id { get; set; }
     
-        [Newtonsoft.Json.JsonProperty("transfer_from", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public RoomType Transfer_from { get; set; }
+        [Newtonsoft.Json.JsonProperty("transfer_from", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Transfer_from { get; set; }
     
-        [Newtonsoft.Json.JsonProperty("transfer_to", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public RoomType Transfer_to { get; set; }
+        [Newtonsoft.Json.JsonProperty("transfer_to", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Transfer_to { get; set; }
     
         [Newtonsoft.Json.JsonProperty("reason", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Reason { get; set; }
@@ -5280,6 +5387,18 @@ namespace AdminWebsite.TestAPI.Client
         /// <summary>Case Type</summary>
         [Newtonsoft.Json.JsonProperty("case_type", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Case_type { get; set; }
+    
+        /// <summary>The user that created the hearing</summary>
+        [Newtonsoft.Json.JsonProperty("created_by", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Created_by { get; set; }
+    
+        /// <summary>An optional parameter to add some text before the case name to help identify a case</summary>
+        [Newtonsoft.Json.JsonProperty("custom_case_name_prefix", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Custom_case_name_prefix { get; set; }
+    
+        /// <summary>Endpoints</summary>
+        [Newtonsoft.Json.JsonProperty("endpoints", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int Endpoints { get; set; }
     
         /// <summary>Participants need to answer questionnaire before video web</summary>
         [Newtonsoft.Json.JsonProperty("questionnaire_not_required", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
