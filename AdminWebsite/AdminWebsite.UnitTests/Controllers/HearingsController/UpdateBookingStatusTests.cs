@@ -22,7 +22,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private readonly Mock<IUserIdentity> _userIdentity;
         private readonly AdminWebsite.Controllers.HearingsController _controller;
         private readonly Mock<IPollyRetryService> _pollyRetryServiceMock;
-        private Mock<INotificationApiClient> _notificationApiMock;
+        private readonly Mock<INotificationApiClient> _notificationApiMock;
 
         public UpdateBookingStatusTests()
         {

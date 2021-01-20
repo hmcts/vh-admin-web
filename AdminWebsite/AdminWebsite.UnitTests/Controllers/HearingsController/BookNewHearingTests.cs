@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NotificationApi.Client;
-using NotificationApi.Contract.Requests;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -62,7 +61,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
 
         [Test]
-        public async Task should_book_hearing()
+        public async Task Should_book_hearing()
         {
             // request with existing person, new user, existing user in AD but not in persons table 
             var request = new BookNewHearingRequest
