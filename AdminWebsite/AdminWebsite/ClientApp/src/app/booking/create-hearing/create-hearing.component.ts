@@ -96,7 +96,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
                 [Validators.required, Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)]
             ],
             caseType: [this.selectedCaseType, [Validators.required, Validators.pattern('^((?!Please select).)*$')]],
-            hearingType: [this.hearing.hearing_type_id, [Validators.required, Validators.min(1)]],
+            hearingType: [this.hearing.hearing_type_id, [Validators.required, Validators.min(1)]]
         });
     }
 
