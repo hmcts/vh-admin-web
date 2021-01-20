@@ -1,5 +1,6 @@
 ﻿using System;
 using AdminWebsite.TestAPI.Client;
+using AdminWebsite.Testing.Common.Data;
 using FizzWare.NBuilder;
 
 namespace AdminWebsite.AcceptanceTests.Data
@@ -24,13 +25,13 @@ namespace AdminWebsite.AcceptanceTests.Data
             return this;
         }
 
-        public CallbackEventRequestBuilder FromRoomType(RoomType? roomType)
+        public CallbackEventRequestBuilder FromRoomType(RoomType roomType)
         {
             _request.With(x => x.TransferFrom = roomType);
             return this;
         }
 
-        public CallbackEventRequestBuilder ToRoomType(RoomType? roomType)
+        public CallbackEventRequestBuilder ToRoomType(RoomType roomType)
         {
             _request.With(x => x.TransferTo = roomType);
             return this;

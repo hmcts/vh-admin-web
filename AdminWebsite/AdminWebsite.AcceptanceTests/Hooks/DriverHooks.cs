@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using AcceptanceTests.Common.Configuration.Users;
 using AcceptanceTests.Common.Data.Time;
 using AcceptanceTests.Common.Driver.Drivers;
 using AcceptanceTests.Common.Driver.Settings;
@@ -22,6 +21,13 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             _objectContainer = objectContainer;
         }
 
+        [BeforeTestRun(Order = (int)HooksSequence.CleanUpDriverInstances)]
+        [AfterTestRun(Order = (int)HooksSequence.CleanUpDriverInstances)]
+        public static void KillAnyLocalProcesses()
+        {
+            DriverManager.KillAnyLocalDriverProcesses();
+        }
+        
         [BeforeScenario(Order = (int)HooksSequence.InitialiseBrowserHooks)]
         public void InitialiseBrowserContainer()
         {
@@ -32,7 +38,6 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         [BeforeScenario(Order = (int)HooksSequence.ConfigureDriverHooks)]
         public void ConfigureDriver(TestContext context, ScenarioContext scenario)
         {
-            DriverManager.KillAnyLocalDriverProcesses();
             context.WebConfig.TestConfig.TargetBrowser = DriverManager.GetTargetBrowser(NUnit.Framework.TestContext.Parameters["TargetBrowser"]);
             context.WebConfig.TestConfig.TargetBrowserVersion = NUnit.Framework.TestContext.Parameters["TargetBrowserVersion"];
             context.WebConfig.TestConfig.TargetDevice = DriverManager.GetTargetDevice(NUnit.Framework.TestContext.Parameters["TargetDevice"]);
@@ -92,15 +97,11 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         [AfterScenario(Order = (int)HooksSequence.TearDownBrowserHooks)]
         public void TearDownBrowser()
         {
-            if (_browsers != null)
+            if (_browsers == null) return;
+            foreach (var browser in _browsers.Values)
             {
-                foreach (var browser in _browsers.Values)
-                {
-                    browser.BrowserTearDown();
-                }
+                browser.BrowserTearDown();
             }
-
-            DriverManager.KillAnyLocalDriverProcesses();
         }
     }
 }
