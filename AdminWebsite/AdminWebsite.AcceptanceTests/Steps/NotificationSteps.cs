@@ -1,13 +1,6 @@
-﻿using AcceptanceTests.Common.Driver.Drivers;
-using AcceptanceTests.Common.Driver.Helpers;
-using AdminWebsite.AcceptanceTests.Helpers;
-using AdminWebsite.AcceptanceTests.Pages;
-using AdminWebsite.TestAPI.Client;
+﻿using AdminWebsite.AcceptanceTests.Helpers;
 using FluentAssertions;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using TechTalk.SpecFlow;
 
@@ -17,10 +10,8 @@ namespace AdminWebsite.AcceptanceTests.Steps
     public class NotificationSteps
     {
         private readonly TestContext _testContext;
-        private readonly Dictionary<User, UserBrowser> _browsers;
 
-        public NotificationSteps(TestContext testContext,
-             Dictionary<User, UserBrowser> browsers)
+        public NotificationSteps(TestContext testContext)
         {
             _testContext = testContext;
         }

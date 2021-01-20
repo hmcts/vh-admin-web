@@ -1773,11 +1773,8 @@
           "Newtonsoft.Json": "12.0.3"
         }
       },
-      "adminwebsite.videoapi.client": {
-        "type": "Project",
-        "dependencies": {
-          "Newtonsoft.Json": "12.0.3"
-        }
+      "adminwebsite.testing.common": {
+        "type": "Project"
       }
     }
   }

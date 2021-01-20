@@ -18,6 +18,7 @@ import { BookingBaseComponentDirective as BookingBaseComponent } from '../bookin
 import { ParticipantsListComponent } from '../participants-list/participants-list.component';
 import { SearchEmailComponent } from '../search-email/search-email.component';
 import { ParticipantService } from '../services/participant.service';
+import { UndecoratedClassesWithDecoratedFieldsTransform } from '@angular/core/schematics/migrations/undecorated-classes-with-decorated-fields/transform';
 
 @Component({
     selector: 'app-add-participant',
@@ -347,6 +348,9 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         this.logger.warn(`${this.loggerPrefix} Participant not found.`);
         this.displayErrorNoParticipants = false;
         this.displayClear();
+        if (this.participantDetails) {
+            this.participantDetails.username = null;
+        }
     }
 
     emailChanged() {
