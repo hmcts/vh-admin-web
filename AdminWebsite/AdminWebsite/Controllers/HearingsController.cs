@@ -419,6 +419,9 @@ namespace AdminWebsite.Controllers
                 if (!string.IsNullOrEmpty(item.Value?.Password))
                 {
                     var participant = hearing.Participants.FirstOrDefault(x => x.Username == item.Key);
+
+                    if (participant == null) continue;
+
                     var request = MapAddNotificationRequest(hearing.Id, participant, item.Value.Password);
                     // Send a notification only for the newly created users
                     await _notificationApiClient.CreateNewNotificationAsync(request);
@@ -449,18 +452,19 @@ namespace AdminWebsite.Controllers
 
         private async Task AssignParticipantToCorrectGroups(HearingDetailsResponse hearing, Dictionary<string, User> newUsernameAdIdDict)
         {
-            if (!newUsernameAdIdDict.Any())
+            var participantGroup = newUsernameAdIdDict.Select(pair => new
+            {
+                pair,
+                participant = hearing.Participants.FirstOrDefault(x => x.Username == pair.Key)
+            });
+
+            if (!newUsernameAdIdDict.Any() || participantGroup.Any(x => x.participant == null))
             {
                 _logger.LogDebug($"{nameof(AssignParticipantToCorrectGroups)} - No users in dictionary for hearingId: {hearing.Id}");
                 return;
             }
 
-            var tasks = newUsernameAdIdDict.Select(pair => new
-                {
-                    pair,
-                    participant = hearing.Participants.FirstOrDefault(x => x.Username == pair.Key)
-                })
-                .Select(t => AssignParticipantToGroupWithRetry(t.pair.Key, t.pair.Value.UserName, t.participant.User_role_name, hearing.Id))
+            var tasks = participantGroup.Select(t => AssignParticipantToGroupWithRetry(t.pair.Key, t.pair.Value.UserName, t.participant.User_role_name, hearing.Id))
                 .ToList();
             
             await Task.WhenAll(tasks);
