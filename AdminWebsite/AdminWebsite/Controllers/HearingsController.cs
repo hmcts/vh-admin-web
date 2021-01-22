@@ -632,11 +632,11 @@ namespace AdminWebsite.Controllers
                     (
                         6, _ => TimeSpan.FromSeconds(8),
                         retryAttempt => _logger.LogWarning($"Failed to retrieve conference details from the VideoAPi for hearingId {hearingId}. Retrying attempt {retryAttempt}"),
-                        videoApiResponseObject => !ConferenceExistsWithMeetingRoom(videoApiResponseObject),
+                        videoApiResponseObject => videoApiResponseObject.HasInvalidMeetingRoom(),
                         () => _videoApiClient.GetConferenceByHearingRefIdAsync(hearingId)
                     );
 
-                    if (ConferenceExistsWithMeetingRoom(conferenceDetailsResponse))
+                    if (!conferenceDetailsResponse.HasInvalidMeetingRoom())
                     {
                         return Ok(new UpdateBookingStatusResponse { Success = true, TelephoneConferenceId = conferenceDetailsResponse.Meeting_room.Telephone_conference_id });
                     }
@@ -688,7 +688,7 @@ namespace AdminWebsite.Controllers
             {
                 var conferenceDetailsResponse = await _videoApiClient.GetConferenceByHearingRefIdAsync(hearingId);
 
-                if (ConferenceExistsWithMeetingRoom(conferenceDetailsResponse))
+                if (!conferenceDetailsResponse.HasInvalidMeetingRoom())
                 {
                     return Ok(new PhoneConferenceResponse { TelephoneConferenceId = conferenceDetailsResponse.Meeting_room.Telephone_conference_id });
                 }
@@ -709,16 +709,6 @@ namespace AdminWebsite.Controllers
 
                 throw;
             }
-        }
-
-        private static bool ConferenceExistsWithMeetingRoom(ConferenceDetailsResponse conference)
-        {
-            var success = !(conference?.Meeting_room == null
-                            || string.IsNullOrWhiteSpace(conference.Meeting_room.Admin_uri)
-                            || string.IsNullOrWhiteSpace(conference.Meeting_room.Participant_uri)
-                            || string.IsNullOrWhiteSpace(conference.Meeting_room.Judge_uri)
-                            || string.IsNullOrWhiteSpace(conference.Meeting_room.Pexip_node));
-            return success;
         }
     }
 }
