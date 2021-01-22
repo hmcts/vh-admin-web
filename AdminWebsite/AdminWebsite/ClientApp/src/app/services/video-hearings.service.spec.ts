@@ -133,7 +133,7 @@ describe('Video hearing service', () => {
         model.other_information = 'note';
         model.cases = [caseModel];
         model.participants = [];
-        model.questionnaire_not_required = true;
+        model.questionnaire_not_required = false;
         model.audio_recording_required = true;
         const response = new HearingDetailsResponse({ id: '1234566' });
         clientApiSpy.bookNewHearing.and.returnValue(of(response));
@@ -157,7 +157,7 @@ describe('Video hearing service', () => {
         model.other_information = 'note';
         model.cases = [caseModel];
         model.participants = [];
-        model.questionnaire_not_required = true;
+        model.questionnaire_not_required = false;
         model.audio_recording_required = true;
         const request = service.mapHearing(model);
 
@@ -170,7 +170,7 @@ describe('Video hearing service', () => {
         expect(request.cases[0].number).toBe('Number 1');
         expect(request.scheduled_date_time).toEqual(new Date(date));
         expect(request.scheduled_duration).toBe(30);
-        expect(request.questionnaire_not_required).toBe(true);
+        expect(request.questionnaire_not_required).toBe(false);
         expect(request.audio_recording_required).toBe(true);
     });
 
@@ -190,7 +190,7 @@ describe('Video hearing service', () => {
         model.other_information = 'note';
         model.cases = [caseModel];
         model.participants = [];
-        model.questionnaire_not_required = true;
+        model.questionnaire_not_required = false;
         model.audio_recording_required = true;
 
         const request = service.mapHearingDetailsResponseToHearingModel(model);
@@ -204,7 +204,7 @@ describe('Video hearing service', () => {
         expect(request.cases[0].number).toBe('Number 1');
         expect(request.scheduled_date_time).toEqual(new Date(date));
         expect(request.scheduled_duration).toBe(30);
-        expect(request.questionnaire_not_required).toBeTruthy();
+        expect(request.questionnaire_not_required).toBeFalsy();
         expect(request.audio_recording_required).toBeTruthy();
     });
 
@@ -291,7 +291,7 @@ describe('Video hearing service', () => {
         hearingModel.scheduled_duration = 45;
         hearingModel.participants = participants;
         hearingModel.cases = [caseModel];
-        hearingModel.questionnaire_not_required = true;
+        hearingModel.questionnaire_not_required = false;
         hearingModel.audio_recording_required = true;
         const endpoints: EndpointModel[] = [];
         const endpoint = new EndpointModel();
@@ -312,7 +312,7 @@ describe('Video hearing service', () => {
         expect(editHearingRequest.scheduled_date_time).toEqual(hearingModel.scheduled_date_time);
         expect(editHearingRequest.scheduled_duration).toEqual(hearingModel.scheduled_duration);
         expect(editHearingRequest.participants.length).toBeGreaterThan(0);
-        expect(editHearingRequest.questionnaire_not_required).toBeTruthy();
+        expect(editHearingRequest.questionnaire_not_required).toBeFalsy();
         expect(editHearingRequest.audio_recording_required).toBeTruthy();
 
         expect(actualParticipant.title).toEqual(expectedParticipant.title);
@@ -352,7 +352,7 @@ describe('Video hearing service', () => {
         hearingModel.scheduled_duration = 45;
         hearingModel.participants = participants;
         hearingModel.cases = [caseModel];
-        hearingModel.questionnaire_not_required = true;
+        hearingModel.questionnaire_not_required = false;
         hearingModel.audio_recording_required = true;
         const endpoints: EndpointModel[] = [];
         const endpoint = new EndpointModel();

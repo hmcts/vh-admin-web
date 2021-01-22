@@ -172,7 +172,7 @@ let now = new Date();
 now.setMonth(now.getMonth());
 now = new Date(now);
 hearingModel.scheduled_date_time = now;
-hearingModel.questionnaire_not_required = true;
+hearingModel.questionnaire_not_required = false;
 hearingModel.audio_recording_required = true;
 
 const updateBookingStatusRequest = new UpdateBookingStatusRequest();

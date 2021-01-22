@@ -559,7 +559,7 @@ namespace AdminWebsite.Controllers
                             Number = editHearingRequest.Case.Number
                     }
                 },
-                Questionnaire_not_required = editHearingRequest.QuestionnaireNotRequired,
+                Questionnaire_not_required = false,
                 Audio_recording_required = editHearingRequest.AudioRecordingRequired
             };
             return updateHearingRequest;

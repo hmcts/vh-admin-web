@@ -40,14 +40,7 @@ namespace AdminWebsite.AcceptanceTests.Data
 
         private static void AssertQuestionnaire(HearingDetailsResponse hearing, Test testData)
         {
-            if (!hearing.Cases.First().Name.Contains("Day") || hearing.Cases.First().Name.Contains("Day 1 of"))
-            {
-                hearing.Questionnaire_not_required.Should().Be(testData.HearingDetails.DoNotSendQuestionnaires);
-            }
-            else
-            {
-                hearing.Questionnaire_not_required.Should().BeTrue();
-            }
+            hearing.Questionnaire_not_required.Should().BeFalse();
         }
 
         public static void AssertScheduledDate(int day, DateTime actual, DateTime expected, bool isMultiDayHearing, bool isRunningOnSauceLabs)
