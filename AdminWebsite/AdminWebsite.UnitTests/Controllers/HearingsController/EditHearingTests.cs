@@ -42,6 +42,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private HearingDetailsResponse _updatedExistingParticipantHearingOriginal;
         private HearingDetailsResponse _existingHearingWithEndpointsOriginal;
 
+        private Mock<ILogger<HearingsService>> _participantGroupLogger;
+        private IHearingsService _hearingsService;
+
         private AdminWebsite.Controllers.HearingsController _controller;
 
         [SetUp]
@@ -55,14 +58,16 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _notificationApiMock = new Mock<INotificationApiClient>();
             _pollyRetryServiceMock = new Mock<IPollyRetryService>();
 
+            _participantGroupLogger = new Mock<ILogger<HearingsService>>();
+            _hearingsService = new HearingsService(_pollyRetryServiceMock.Object,
+                _userAccountService.Object, _notificationApiMock.Object, _videoApiMock.Object, _bookingsApiClient.Object, _participantGroupLogger.Object);
+
             _controller = new AdminWebsite.Controllers.HearingsController(_bookingsApiClient.Object,
                 _userIdentity.Object,
                 _userAccountService.Object,
                 _editHearingRequestValidator.Object,
-                _videoApiMock.Object,
-                _pollyRetryServiceMock.Object,
                 new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>().Object,
-                _notificationApiMock.Object);
+                _hearingsService);
 
             _validId = Guid.NewGuid();
             _addNewParticipantRequest = new EditHearingRequest

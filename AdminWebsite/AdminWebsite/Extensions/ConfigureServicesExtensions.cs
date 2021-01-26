@@ -79,6 +79,7 @@ namespace AdminWebsite.Extensions
             serviceCollection.AddTransient<UserApiTokenHandler>();
             serviceCollection.AddTransient<VideoApiTokenHandler>();
             serviceCollection.AddTransient<NotificationApiTokenHandler>();
+            serviceCollection.AddTransient<IHearingsService, HearingsService>();
             serviceCollection.AddScoped<ITokenProvider, TokenProvider>();
             serviceCollection.AddScoped<IUserAccountService, UserAccountService>();
             serviceCollection.AddScoped<SecuritySettings>();

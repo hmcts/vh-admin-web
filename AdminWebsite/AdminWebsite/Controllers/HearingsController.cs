@@ -11,9 +11,6 @@ using AdminWebsite.VideoAPI.Client;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using NotificationApi.Client;
-using NotificationApi.Contract;
-using NotificationApi.Contract.Requests;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Collections.Generic;
@@ -40,27 +37,22 @@ namespace AdminWebsite.Controllers
         private readonly IUserIdentity _userIdentity;
         private readonly IUserAccountService _userAccountService;
         private readonly IValidator<EditHearingRequest> _editHearingRequestValidator;
-        private readonly IVideoApiClient _videoApiClient;
-        private readonly IPollyRetryService _pollyRetryService;
         private readonly ILogger<HearingsController> _logger;
-        private readonly INotificationApiClient _notificationApiClient;
+        private readonly IHearingsService _hearingsService;
 
         /// <summary>
         /// Instantiates the controller
         /// </summary>
         public HearingsController(IBookingsApiClient bookingsApiClient, IUserIdentity userIdentity,
             IUserAccountService userAccountService, IValidator<EditHearingRequest> editHearingRequestValidator,
-            IVideoApiClient videoApiClient, IPollyRetryService pollyRetryService,
-            ILogger<HearingsController> logger, INotificationApiClient notificationApiClient)
+            ILogger<HearingsController> logger, IHearingsService hearingsService)
         {
             _bookingsApiClient = bookingsApiClient;
             _userIdentity = userIdentity;
             _userAccountService = userAccountService;
             _editHearingRequestValidator = editHearingRequestValidator;
-            _videoApiClient = videoApiClient;
-            _pollyRetryService = pollyRetryService;
             _logger = logger;
-            _notificationApiClient = notificationApiClient;
+            _hearingsService = hearingsService;
         }
 
         /// <summary>
@@ -85,7 +77,7 @@ namespace AdminWebsite.Controllers
                 {
                     var endpointsWithDa = request.Endpoints
                         .Where(x => !string.IsNullOrWhiteSpace(x.Defence_advocate_username)).ToList();
-                    AssignEndpointDefenceAdvocates(endpointsWithDa, request.Participants.AsReadOnly());
+                    _hearingsService.AssignEndpointDefenceAdvocates(endpointsWithDa, request.Participants.AsReadOnly());
 
                 }
 
@@ -96,11 +88,11 @@ namespace AdminWebsite.Controllers
                 _logger.LogDebug("BookNewHearing - Successfully booked hearing {hearing}", hearingDetailsResponse.Id);
                 
                 _logger.LogDebug("BookNewHearing - Attempting assign participants to the correct group");
-                await AssignParticipantToCorrectGroups(hearingDetailsResponse, usernameAdIdDict);
+                await _hearingsService.AssignParticipantToCorrectGroups(hearingDetailsResponse, usernameAdIdDict);
                 _logger.LogDebug("BookNewHearing - Successfully assigned participants to the correct group", hearingDetailsResponse.Id);
 
                 _logger.LogDebug("BookNewHearing - Sending email notification to the participants");
-                await EmailParticipants(hearingDetailsResponse, usernameAdIdDict);
+                await _hearingsService.EmailParticipants(hearingDetailsResponse, usernameAdIdDict);
                 _logger.LogDebug("BookNewHearing - Successfully sent emails to participants- {hearing}", hearingDetailsResponse.Id);
 
                 return Created("", hearingDetailsResponse);
@@ -119,48 +111,6 @@ namespace AdminWebsite.Controllers
             {
                 _logger.LogError(e, $"BookNewHearing - Failed to save hearing - Message: {e.Message} -  for request: {JsonConvert.SerializeObject(request)}");
                 throw;
-            }
-        }
-
-        private async Task PopulateUserIdsAndUsernames(IList<ParticipantRequest> participants,
-            Dictionary<string, User> usernameAdIdDict)
-        {
-            _logger.LogDebug("Assigning HMCTS usernames for participants");
-            foreach (var participant in participants)
-            {
-                // set the participant username according to AD
-                User user;
-                if (string.IsNullOrWhiteSpace(participant.Username))
-                {
-                    _logger.LogDebug("No username provided in booking for participant {email}. Checking AD by contact email",
-                        participant.Contact_email);
-                    user = await _userAccountService.UpdateParticipantUsername(participant);
-                }
-                else
-                {
-                    // get user
-                    _logger.LogDebug(
-                        "Username provided in booking for participant {email}. Getting id for username {username}",
-                        participant.Contact_email, participant.Username);
-                    var adUserId = await _userAccountService.GetAdUserIdForUsername(participant.Username);
-                    user =  new User { UserName = adUserId };
-                }
-                // username's participant will be set by this point
-                usernameAdIdDict[participant.Username!] = user;
-            }
-        }
-
-        private void AssignEndpointDefenceAdvocates(List<EndpointRequest> endpointsWithDa, IReadOnlyCollection<ParticipantRequest> participants)
-        {
-            // update the username of defence advocate 
-            foreach (var endpoint in endpointsWithDa)
-            {
-                _logger.LogDebug("Attempting to find defence advocate {da} for endpoint {ep}",
-                    endpoint.Defence_advocate_username, endpoint.Display_name);
-                var defenceAdvocate = participants.Single(x =>
-                    x.Username.Equals(endpoint.Defence_advocate_username,
-                        StringComparison.CurrentCultureIgnoreCase));
-                endpoint.Defence_advocate_username = defenceAdvocate.Username;
             }
         }
 
@@ -203,7 +153,6 @@ namespace AdminWebsite.Controllers
                 throw;
             }
         }
-
 
         /// <summary>
         /// Edit a hearing
@@ -266,55 +215,11 @@ namespace AdminWebsite.Controllers
                 {
                     if (!participant.Id.HasValue)
                     {
-                        // Add a new participant
-                        // Map the request except the username
-                        var newParticipant = NewParticipantRequestMapper.MapTo(participant);
-                        // Judge is manually created in AD, no need to create one
-                        if (participant.CaseRoleName == "Judge")
-                        {
-                            if (hearing.Participants != null && hearing.Participants.Any(p => p.Username.Equals(participant.ContactEmail)))
-                            {
-                                //If the judge already exists in the database, there is no need to add again.
-                                continue;
-                            }
-                            newParticipant.Username = participant.ContactEmail;
-                        }
-                        else
-                        {
-                            // Update the request with newly created user details in AD
-                            var user = await _userAccountService.UpdateParticipantUsername(newParticipant);
-                            usernameAdIdDict.Add(newParticipant.Username, user);
-                        }
-
-                        _logger.LogDebug("Adding participant {participant} to hearing {hearing}",
-                            newParticipant.Display_name, hearingId);
-                        newParticipantList.Add(newParticipant);
+                        await _hearingsService.ProcessNewParticipants(hearingId, participant, hearing, usernameAdIdDict, newParticipantList);
                     }
                     else
                     {
-                        var existingParticipant = hearing.Participants.FirstOrDefault(p => p.Id.Equals(participant.Id));
-                        if (existingParticipant != null)
-                        {
-                            if (existingParticipant.User_role_name == "Individual" || existingParticipant.User_role_name == "Representative")
-                            {
-                                //Update participant
-                                _logger.LogDebug("Updating existing participant {participant} in hearing {hearing}",
-                                    existingParticipant.Id, hearingId);
-                                var updateParticipantRequest = UpdateParticipantRequestMapper.MapTo(participant);
-                                await _bookingsApiClient.UpdateParticipantDetailsAsync(hearingId, participant.Id.Value, updateParticipantRequest);
-                            }
-                            else if (existingParticipant.User_role_name == "Judge")
-                            {
-                                //Update Judge
-                                _logger.LogDebug("Updating judge {participant} in hearing {hearing}",
-                                    existingParticipant.Id, hearingId);
-                                var updateParticipantRequest = new UpdateParticipantRequest
-                                {
-                                    Display_name = participant.DisplayName
-                                };
-                                await _bookingsApiClient.UpdateParticipantDetailsAsync(hearingId, participant.Id.Value, updateParticipantRequest);
-                            }
-                        }
+                        await _hearingsService.ProcessExistingParticipants(hearingId, hearing, participant);
                     }
                 }
 
@@ -329,66 +234,21 @@ namespace AdminWebsite.Controllers
                 }
 
                 // Add new participants
-                if (newParticipantList.Any())
-                {
-                    _logger.LogDebug("Saving new participants {participantCount} to hearing {hearing}",
-                        newParticipantList.Count, hearingId);
-                    await _bookingsApiClient.AddParticipantsToHearingAsync(hearingId, new AddParticipantsToHearingRequest()
-                    {
-                        Participants = newParticipantList
-                    });
-                }
+                await _hearingsService.SaveNewParticipants(hearingId, newParticipantList);
 
                 // endpoints.
-                if (hearing.Endpoints != null)
-                {
-                    var listOfEndpointsToDelete = hearing.Endpoints.Where(e => request.Endpoints.All(re => re.Id != e.Id));
-                    foreach (var endpointToDelete in listOfEndpointsToDelete)
-                    {
-                        _logger.LogDebug("Removing endpoint {endpoint} - {endpointDisplayName} from hearing {hearing}",
-                            endpointToDelete.Id, endpointToDelete.Display_name, hearingId);
-                        await _bookingsApiClient.RemoveEndPointFromHearingAsync(hearing.Id, endpointToDelete.Id);
-                    }
-                    foreach (var endpoint in request.Endpoints)
-                    {
-                        var epToUpdate = newParticipantList
-                            .Find(p => p.Contact_email.Equals(endpoint.DefenceAdvocateUsername, StringComparison.CurrentCultureIgnoreCase));
-                        if (epToUpdate != null)
-                        {
-                            endpoint.DefenceAdvocateUsername = epToUpdate.Username;
-                        }
+                await _hearingsService.ProcessEndpoints(hearingId, request, hearing, newParticipantList);
 
-                        if (!endpoint.Id.HasValue)
-                        {
-                            _logger.LogDebug("Adding endpoint {endpointDisplayName} to hearing {hearing}",
-                                endpoint.DisplayName, hearingId);
-                            var addEndpointRequest = new AddEndpointRequest { Display_name = endpoint.DisplayName, Defence_advocate_username = endpoint.DefenceAdvocateUsername };
-                            await _bookingsApiClient.AddEndPointToHearingAsync(hearing.Id, addEndpointRequest);
-                        }
-                        else
-                        {
-                            var existingEndpointToEdit = hearing.Endpoints.FirstOrDefault(e => e.Id.Equals(endpoint.Id));
-                            if (existingEndpointToEdit != null && (existingEndpointToEdit.Display_name != endpoint.DisplayName ||
-                                existingEndpointToEdit.Defence_advocate_id.ToString() != endpoint.DefenceAdvocateUsername))
-                            {
-                                _logger.LogDebug("Updating endpoint {endpoint} - {endpointDisplayName} in hearing {hearing}",
-                                    existingEndpointToEdit.Id, existingEndpointToEdit.Display_name, hearingId);
-                                var updateEndpointRequest = new UpdateEndpointRequest { Display_name = endpoint.DisplayName, Defence_advocate_username = endpoint.DefenceAdvocateUsername };
-                                await _bookingsApiClient.UpdateDisplayNameForEndpointAsync(hearing.Id, endpoint.Id.Value, updateEndpointRequest);
-                            }
-                        }
-                    }
-                }
                 var updatedHearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
                 _logger.LogDebug("Attempting assign participants to the correct group");
-                await AssignParticipantToCorrectGroups(updatedHearing, usernameAdIdDict);
+                await _hearingsService.AssignParticipantToCorrectGroups(updatedHearing, usernameAdIdDict);
                 _logger.LogDebug("Successfully assigned participants to the correct group", updatedHearing.Id);
 
                 // Send a notification email to newly created participants
                 if (newParticipantList.Any())
                 {
                     _logger.LogDebug("Sending email notification to the participants");
-                    await EmailParticipants(updatedHearing, usernameAdIdDict);
+                    await _hearingsService.EmailParticipants(updatedHearing, usernameAdIdDict);
                     _logger.LogDebug("Successfully sent emails to participants- {hearing}", updatedHearing.Id);
                 }
                 
@@ -411,60 +271,7 @@ namespace AdminWebsite.Controllers
             }
         }
 
-        private async Task EmailParticipants(HearingDetailsResponse hearing,
-            Dictionary<string, User> newUsernameAdIdDict)
-        {
-            foreach (var item in newUsernameAdIdDict)
-            {
-                if (!string.IsNullOrEmpty(item.Value?.Password))
-                {
-                    var participant = hearing.Participants.FirstOrDefault(x => x.Username == item.Key);
-
-                    if (participant == null) continue;
-
-                    var request = AddNotificationRequestMapper.MapTo(hearing.Id, participant, item.Value.Password);
-                    // Send a notification only for the newly created users
-                    await _notificationApiClient.CreateNewNotificationAsync(request);
-                }
-            }
-        }
-
-        private async Task AssignParticipantToCorrectGroups(HearingDetailsResponse hearing, Dictionary<string, User> newUsernameAdIdDict)
-        {
-            var participantGroup = newUsernameAdIdDict.Select(pair => new
-            {
-                pair,
-                participant = hearing.Participants.FirstOrDefault(x => x.Username == pair.Key)
-            });
-
-            if (!newUsernameAdIdDict.Any() || participantGroup.Any(x => x.participant == null))
-            {
-                _logger.LogDebug($"{nameof(AssignParticipantToCorrectGroups)} - No users in dictionary for hearingId: {hearing.Id}");
-                return;
-            }
-
-            var tasks = participantGroup.Select(t => AssignParticipantToGroupWithRetry(t.pair.Key, t.pair.Value.UserName, t.participant.User_role_name, hearing.Id))
-                .ToList();
-            
-            await Task.WhenAll(tasks);
-        }
-
-        private async Task AssignParticipantToGroupWithRetry(string username, string userId, string userRoleName, Guid hearingId)
-        {
-            await _pollyRetryService.WaitAndRetryAsync<Exception, Task>
-            (
-                3, _ => TimeSpan.FromSeconds(3),
-                retryAttempt => _logger.LogDebug($"{nameof(AssignParticipantToCorrectGroups)} - Failed to add username: {username} userId {userId} to role: {userRoleName} on AAD for hearingId: {hearingId}. Retrying attempt {retryAttempt}"),
-                result => result.IsFaulted,
-                async () =>
-                {
-                    _logger.LogDebug($"{nameof(AssignParticipantToCorrectGroups)} - Adding username: {username} userId {userId} to role: {userRoleName} on AAD for hearingId: {hearingId}");
-                    await _userAccountService.AssignParticipantToGroup(userId, userRoleName);
-                    _logger.LogDebug($"{nameof(AssignParticipantToCorrectGroups)} - Added username: {username} userId {userId} to role: {userRoleName} on AAD for hearingId: {hearingId}");
-                    return Task.CompletedTask;
-                }
-            );
-        }
+        
 
         /// <summary>
         /// Gets bookings hearing by Id.
@@ -551,13 +358,7 @@ namespace AdminWebsite.Controllers
 
                 try
                 {
-                    var conferenceDetailsResponse = await _pollyRetryService.WaitAndRetryAsync<VideoApiException, ConferenceDetailsResponse>
-                    (
-                        6, _ => TimeSpan.FromSeconds(8),
-                        retryAttempt => _logger.LogWarning($"Failed to retrieve conference details from the VideoAPi for hearingId {hearingId}. Retrying attempt {retryAttempt}"),
-                        videoApiResponseObject => videoApiResponseObject.HasInvalidMeetingRoom(),
-                        () => _videoApiClient.GetConferenceByHearingRefIdAsync(hearingId)
-                    );
+                    var conferenceDetailsResponse = await _hearingsService.GetConferenceDetailsByHearingIdWithRetry(hearingId, errorMessage);
 
                     if (!conferenceDetailsResponse.HasInvalidMeetingRoom())
                     {
@@ -609,7 +410,7 @@ namespace AdminWebsite.Controllers
         {
             try
             {
-                var conferenceDetailsResponse = await _videoApiClient.GetConferenceByHearingRefIdAsync(hearingId);
+                var conferenceDetailsResponse = await _hearingsService.GetConferenceDetailsByHearingId(hearingId);
 
                 if (!conferenceDetailsResponse.HasInvalidMeetingRoom())
                 {
@@ -631,6 +432,34 @@ namespace AdminWebsite.Controllers
                 }
 
                 throw;
+            }
+        }
+
+        private async Task PopulateUserIdsAndUsernames(IList<ParticipantRequest> participants,
+            Dictionary<string, User> usernameAdIdDict)
+        {
+            _logger.LogDebug("Assigning HMCTS usernames for participants");
+            foreach (var participant in participants)
+            {
+                // set the participant username according to AD
+                User user;
+                if (string.IsNullOrWhiteSpace(participant.Username))
+                {
+                    _logger.LogDebug("No username provided in booking for participant {email}. Checking AD by contact email",
+                        participant.Contact_email);
+                    user = await _userAccountService.UpdateParticipantUsername(participant);
+                }
+                else
+                {
+                    // get user
+                    _logger.LogDebug(
+                        "Username provided in booking for participant {email}. Getting id for username {username}",
+                        participant.Contact_email, participant.Username);
+                    var adUserId = await _userAccountService.GetAdUserIdForUsername(participant.Username);
+                    user = new User { UserName = adUserId };
+                }
+                // username's participant will be set by this point
+                usernameAdIdDict[participant.Username!] = user;
             }
         }
     }
