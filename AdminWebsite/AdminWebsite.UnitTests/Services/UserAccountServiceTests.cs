@@ -108,6 +108,29 @@ namespace AdminWebsite.UnitTests.Services
         }
 
         [Test]
+        public async Task Should_create_users_if_not_exists()
+        {
+            var participant = new BookingsAPI.Client.ParticipantRequest
+            {
+                First_name = "First Name Space",
+                Last_name = "Last Name Space",
+                Username = "notexistin@user.com"
+            };
+
+            _userApiClient.Setup(x => x.GetUserByEmailAsync(It.IsAny<string>()))
+                .ReturnsAsync((UserProfile)null);
+            _userApiClient.Setup(x => x.CreateUserAsync(It.IsAny<CreateUserRequest>()))
+                .ReturnsAsync(new NewUserResponse { Username = participant.Username });
+
+            await _service.UpdateParticipantUsername(participant);
+
+            _userApiClient.Verify(x => x.CreateUserAsync(It.Is<CreateUserRequest>(c => c.First_name == participant.First_name.Replace(" ",string.Empty)
+                                                                                      && c.Last_name == participant.Last_name.Replace(" ", string.Empty)
+                                                                                      && !c.Is_test_user 
+                                                                                            )), Times.Once);
+        }
+
+        [Test]
         public async Task GetUserGroupDataAsync_Returns_UserGroupData()
         {
             var userRole = UserRoleType.VhOfficer;
@@ -155,7 +178,9 @@ namespace AdminWebsite.UnitTests.Services
                 .ReturnsAsync((UserProfile) null);
 
 
-            Assert.ThrowsAsync<UserServiceException>(() => _service.UpdateParticipantPassword(UserName));
+            var exception = Assert.ThrowsAsync<UserServiceException>(() => _service.UpdateParticipantPassword(UserName));
+
+            exception.Reason.Should().Be("Unable to generate new password");
         }
 
         [Test]

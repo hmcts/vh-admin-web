@@ -9,6 +9,8 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using AdminWebsite.Helper;
+using AdminWebsite.Extensions;
 
 namespace AdminWebsite.Services
 {
@@ -51,9 +53,11 @@ namespace AdminWebsite.Services
 
     public class UserAccountService : IUserAccountService
     {
-        public static readonly string External = "External";
-        public static readonly string VirtualRoomProfessionalUser = "VirtualRoomProfessionalUser";
-        public static readonly string JudicialOfficeHolder = "JudicialOfficeHolder";
+        public const string RepresentativeRole = "Representative";
+        public const string JohRole = "Judicial Office Holder";
+        public const string External = "External";
+        public const string VirtualRoomProfessionalUser = "VirtualRoomProfessionalUser";
+        public const string JudicialOfficeHolder = "JudicialOfficeHolder";
 
         private readonly IUserApiClient _userApiClient;
         private readonly IBookingsApiClient _bookingsApiClient;
@@ -130,19 +134,25 @@ namespace AdminWebsite.Services
         {
             try
             {
-                _logger.LogDebug("Attempting to get an AD user with username {username} found.", username);
+                _logger.LogDebug($"{nameof(GetAdUserIdForUsername)} - Attempting to get an AD user with username {username} found.", username);
                 var user = await _userApiClient.GetUserByAdUserIdAsync(username);
-                _logger.LogDebug("AD User with username {username} found.", username);
+                _logger.LogDebug($"{nameof(GetAdUserIdForUsername)} - AD User with username {username} found.", username);
+
+                if(user.HasValidUserRole())
+                {
+                    _logger.LogWarning($"{nameof(GetAdUserIdForUsername)} - AD user with username {username} does not have a user role.");
+                }
+                
                 return user.User_id;
             }
             catch (UserAPI.Client.UserServiceException e)
             {
                 if (e.StatusCode == (int) HttpStatusCode.NotFound)
                 {
-                    _logger.LogWarning("AD User with username {username} not found.", username);
+                    _logger.LogWarning($"{nameof(GetAdUserIdForUsername)} - AD User with username {username} not found.", username);
                     return null;
                 }
-                _logger.LogError(e, "Unhandled error getting an AD user with username {username}.", username);
+                _logger.LogError(e, $"{nameof(GetAdUserIdForUsername)} - Unhandled error getting an AD user with username {username}.", username);
                 throw;
             }
         }
@@ -222,34 +232,29 @@ namespace AdminWebsite.Services
 
         public async Task AssignParticipantToGroup(string username, string userRole)
         {
-            const string REPRESENTATIVE_ROLE = "Representative";
-            const string JOH_ROLE = "Judicial Office Holder";
-
-            // Add user to user group.
             await AddGroup(username, External);
+            
             switch (userRole)
             {
-                case REPRESENTATIVE_ROLE:
+                case RepresentativeRole:
                     await AddGroup(username, VirtualRoomProfessionalUser);
                     break;
-                case JOH_ROLE:
+                case JohRole:
                     await AddGroup(username, JudicialOfficeHolder);
-                    break;
-                default:
                     break;
             }
         }
 
         private async Task AddGroup(string username, string groupName)
         {
-                var addUserToGroupRequest = new AddUserToGroupRequest
-                {
-                    User_id = username,
-                    Group_name = groupName
-                };
+            var addUserToGroupRequest = new AddUserToGroupRequest
+            {
+                User_id = username,
+                Group_name = groupName
+            };
 
-                await _userApiClient.AddUserToGroupAsync(addUserToGroupRequest);
-                _logger.LogDebug("{username} to group {group}.", username, addUserToGroupRequest.Group_name);
+            await _userApiClient.AddUserToGroupAsync(addUserToGroupRequest);
+            _logger.LogDebug("{username} to group {group}.", username, addUserToGroupRequest.Group_name);
         }
 
         private async Task<bool> CheckUsernameExistsInAdAsync(string username)

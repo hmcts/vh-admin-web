@@ -253,9 +253,9 @@
       },
       "VH.AcceptanceTests.Common": {
         "type": "Direct",
-        "requested": "[1.21.1, )",
-        "resolved": "1.21.1",
-        "contentHash": "bpFOEza2VZeU71bF++VW2RtfzQYMeBd2VqW0l1etRhHR2iNA0wcMtOrdZPQ6saOI0ht/5AhahB+rQizvZunFXQ==",
+        "requested": "[1.21.6, )",
+        "resolved": "1.21.6",
+        "contentHash": "ALzE2ld1PmHky7+Uta9Kwe9P0G8HYO+LVGcn7wG9UbHWzQaK3YcjT8dRfE5inY+Jd0SgG8MYQayrG2d0ArKHuA==",
         "dependencies": {
           "Appium.WebDriver": "4.2.1",
           "Azure.Storage.Blobs": "12.7.0",
@@ -1772,6 +1772,9 @@
         "dependencies": {
           "Newtonsoft.Json": "12.0.3"
         }
+      },
+      "adminwebsite.testing.common": {
+        "type": "Project"
       }
     }
   }

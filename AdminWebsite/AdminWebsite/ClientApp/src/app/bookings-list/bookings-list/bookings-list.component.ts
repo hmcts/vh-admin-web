@@ -64,13 +64,11 @@ export class BookingsListComponent implements OnInit, OnDestroy {
             Object.assign(this.bookings, this.bookingPersistService.bookingList);
             this.loaded = true;
             this.recordsLoaded = true;
-            setTimeout(() => {
-                this.unselectRows(this.bookingPersistService.selectedGroupIndex, this.bookingPersistService.selectedItemIndex);
-                this.bookingPersistService.resetAll();
-                this.resetBookingIndex(updatedBooking);
+            this.unselectRows(this.bookingPersistService.selectedGroupIndex, this.bookingPersistService.selectedItemIndex);
+            this.bookingPersistService.resetAll();
+            this.resetBookingIndex(updatedBooking);
 
-                this.closeHearingDetails();
-            }, 500);
+            this.closeHearingDetails();
         } else {
             this.getList();
         }

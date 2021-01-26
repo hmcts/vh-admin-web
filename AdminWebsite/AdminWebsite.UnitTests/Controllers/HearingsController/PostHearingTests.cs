@@ -202,6 +202,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             await PostWithParticipants(participant);
 
             _userAccountService.Verify(x => x.UpdateParticipantUsername(participant), Times.Never);
+            _userAccountService.Verify(x => x.AssignParticipantToGroup(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
         }
 
         [Test]
@@ -217,6 +218,34 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             var result = await _controller.Post(hearing);
             result.Result.Should().BeOfType<BadRequestObjectResult>();
+        }
+        
+        [Test]
+        public void Should_throw_BookingsApiException()
+        {
+            var hearing = new BookNewHearingRequest
+            {
+                Participants = new List<BookingsAPI.Client.ParticipantRequest>()
+            };
+
+            _bookingsApiClient.Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
+                .Throws(ClientException.ForBookingsAPI(HttpStatusCode.InternalServerError));
+
+            Assert.ThrowsAsync<BookingsApiException>(() => _controller.Post(hearing));
+        }
+        
+        [Test]
+        public void Should_throw_Exception()
+        {
+            var hearing = new BookNewHearingRequest
+            {
+                Participants = new List<BookingsAPI.Client.ParticipantRequest>()
+            };
+
+            _bookingsApiClient.Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
+                .Throws(new Exception("Some internal error"));
+
+            Assert.ThrowsAsync<Exception>(() => _controller.Post(hearing));
         }
 
         [Test]
@@ -245,6 +274,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             _bookingsApiClient.Verify(x => x.BookNewHearingAsync(It.Is<BookNewHearingRequest>(
                 request => request.Created_by == CURRENT_USERNAME)), Times.Once);
+            _userAccountService.Verify(x => x.AssignParticipantToGroup(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
         }
 
         [Test]

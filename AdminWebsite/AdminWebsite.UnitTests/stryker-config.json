@@ -2,7 +2,8 @@
     "stryker-config": {
         "reporters": [
             "Progress",
-            "ClearText"
+            "ClearText",
+            "Html"
         ],
         "log-level": "info",
         "timeout-ms": 10000,
@@ -21,16 +22,18 @@
         "*LogTrace",
         "*LogError",
         "*LogInformation",
-        "*AddModelError"
+        "*LogWarning",
+        "*AddModelError",
+        "*HasValidUserRole"
       ],
       "mutate": [
         "!Startup.cs",
         "!Program.cs",
-        "!Extensions/ConfigureServicesExtensions.cs",
+        "!Extensions/Configure*Extensions.cs",
         "!Swagger/AuthResponsesOperationFilter.cs",
         "!Pages/Error.cshtml.cs",
         "!Middleware/ExceptionMiddleware.cs",
-        "!Security/BaseServiceTokenHandler.cs",
+        "!Security/*TokenHandler.cs",
         "!Security/UserServiceException.cs",
         "!Services/ApplicationLogger.cs"
       ]

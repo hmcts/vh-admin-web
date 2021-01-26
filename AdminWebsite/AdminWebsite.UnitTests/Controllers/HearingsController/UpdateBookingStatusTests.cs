@@ -3,6 +3,7 @@ using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
 using AdminWebsite.VideoAPI.Client;
+using Castle.Core.Internal;
 using FluentAssertions;
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
@@ -19,10 +20,11 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
     public class UpdateBookingStatusTests
     {
         private readonly Mock<IBookingsApiClient> _bookingsApiClient;
+        private readonly Mock<IVideoApiClient> _videoApiClient;
         private readonly Mock<IUserIdentity> _userIdentity;
         private readonly AdminWebsite.Controllers.HearingsController _controller;
         private readonly Mock<IPollyRetryService> _pollyRetryServiceMock;
-        private Mock<INotificationApiClient> _notificationApiMock;
+        private readonly Mock<INotificationApiClient> _notificationApiMock;
 
         public UpdateBookingStatusTests()
         {
@@ -30,7 +32,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _userIdentity = new Mock<IUserIdentity>();
             var userAccountService = new Mock<IUserAccountService>();
             var editHearingRequestValidator = new Mock<IValidator<EditHearingRequest>>();
-            var videoApiMock = new Mock<IVideoApiClient>();
+            _videoApiClient = new Mock<IVideoApiClient>();
             _pollyRetryServiceMock = new Mock<IPollyRetryService>();
             _notificationApiMock = new Mock<INotificationApiClient>();
 
@@ -38,7 +40,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 _userIdentity.Object,
                 userAccountService.Object,
                 editHearingRequestValidator.Object,
-                videoApiMock.Object,
+                _videoApiClient.Object,
                 _pollyRetryServiceMock.Object,
                 new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>().Object,
                 _notificationApiMock.Object);
@@ -139,6 +141,11 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             result.Value.Should().NotBeNull().And.BeAssignableTo<UpdateBookingStatusResponse>().Subject.TelephoneConferenceId.Should().Be("121212");
 
             _bookingsApiClient.Verify(x => x.UpdateBookingStatusAsync(hearingId, request), Times.Once);
+            _pollyRetryServiceMock.Verify(x => x.WaitAndRetryAsync<VideoApiException, ConferenceDetailsResponse>
+                (
+                    It.IsAny<int>(), It.IsAny<Func<int, TimeSpan>>(), It.IsAny<Action<int>>(),
+                    It.IsAny<Func<ConferenceDetailsResponse, bool>>(), It.IsAny<Func<Task<ConferenceDetailsResponse>>>()
+                ),Times.AtLeastOnce);
         }
 
         [Test]
@@ -279,17 +286,28 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                     retryAction(1);
                     handleResultCondition(expectedConferenceDetailsResponse);
                     await executeFunction();
-                })
+                }) 
                 .ThrowsAsync(new VideoApiException("", 0, "", null, null));
 
             var response = await _controller.UpdateBookingStatus(hearingId, updateCreatedStatus);
 
             var result = (OkObjectResult)response;
             result.StatusCode.Should().Be(StatusCodes.Status200OK);
-            result.Value.Should().NotBeNull().And.BeAssignableTo<UpdateBookingStatusResponse>().Subject.Success.Should().BeFalse();
+            var updateBookingStatusResp = (UpdateBookingStatusResponse)result.Value;
+            updateBookingStatusResp.Should().NotBeNull();
+            updateBookingStatusResp.Success.Should().BeFalse();
+            updateBookingStatusResp.Message.Should().Be($"Failed to get the conference from video api, possibly the conference was not created or the kinly meeting room is null - hearingId: {hearingId}");
 
             _bookingsApiClient.Verify(x => x.UpdateBookingStatusAsync(hearingId, updateCreatedStatus), Times.Once);
-            _bookingsApiClient.Verify(x => x.UpdateBookingStatusAsync(hearingId, It.Is<UpdateBookingStatusRequest>(pred => pred.Status == UpdateBookingStatus.Failed)), Times.Once);
+            _bookingsApiClient.Verify(x => x.UpdateBookingStatusAsync(hearingId, It.Is<UpdateBookingStatusRequest>(b => b.Status == UpdateBookingStatus.Failed
+                                                                                                                     && b.Updated_by == "System"
+                                                                                                                     && b.Cancel_reason == string.Empty
+                                                                                                                                )), Times.Once);
+            _pollyRetryServiceMock.Verify(x => x.WaitAndRetryAsync<VideoApiException, ConferenceDetailsResponse>
+               (
+                   It.IsAny<int>(), It.IsAny<Func<int, TimeSpan>>(), It.IsAny<Action<int>>(),
+                   It.IsAny<Func<ConferenceDetailsResponse, bool>>(), It.IsAny<Func<Task<ConferenceDetailsResponse>>>()
+               ), Times.AtLeastOnce);
         }
 
         [Test]

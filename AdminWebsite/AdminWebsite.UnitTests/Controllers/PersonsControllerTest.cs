@@ -55,6 +55,17 @@ namespace AdminWebsite.UnitTests.Controllers
         [Test]
         public async Task Should_return_request_if_match_to_search_term()
         {
+            _response.Add(new PersonResponse
+                            {
+                                Id = Guid.NewGuid(),
+                                Contact_email = "jackman@madeUpEmail.com",
+                                First_name = "Jack",
+                                Last_name = "Mann",
+                                Telephone_number = "111222333",
+                                Title = "Mr",
+                                Middle_names = "No",
+                                Username = "jackman@test.net"
+            });
             _bookingsApiClient.Setup(x => x.PostPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
                               .ReturnsAsync(_response);
 
@@ -63,6 +74,9 @@ namespace AdminWebsite.UnitTests.Controllers
 
             var okRequestResult = (OkObjectResult)result.Result;
             okRequestResult.StatusCode.Should().NotBeNull();
+            var personRespList = (List<PersonResponse>)okRequestResult.Value;
+            personRespList.Count.Should().Be(1);
+            personRespList[0].Contact_email.Should().Be(_response[0].Contact_email);
         }
 
         [Test]
