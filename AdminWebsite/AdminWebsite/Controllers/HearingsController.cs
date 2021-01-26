@@ -257,7 +257,7 @@ namespace AdminWebsite.Controllers
             try
             {
                 //Save hearing details
-                var updateHearingRequest = MapHearingUpdateRequest(request);
+                var updateHearingRequest = HearingUpdateRequestMapper.MapTo(request, _userIdentity.GetUserIdentityName());
                 await _bookingsApiClient.UpdateHearingDetailsAsync(hearingId, updateHearingRequest);
 
                 var newParticipantList = new List<ParticipantRequest>();
@@ -268,7 +268,7 @@ namespace AdminWebsite.Controllers
                     {
                         // Add a new participant
                         // Map the request except the username
-                        var newParticipant = MapNewParticipantRequest(participant);
+                        var newParticipant = NewParticipantRequestMapper.MapTo(participant);
                         // Judge is manually created in AD, no need to create one
                         if (participant.CaseRoleName == "Judge")
                         {
@@ -300,7 +300,7 @@ namespace AdminWebsite.Controllers
                                 //Update participant
                                 _logger.LogDebug("Updating existing participant {participant} in hearing {hearing}",
                                     existingParticipant.Id, hearingId);
-                                var updateParticipantRequest = MapUpdateParticipantRequest(participant);
+                                var updateParticipantRequest = UpdateParticipantRequestMapper.MapTo(participant);
                                 await _bookingsApiClient.UpdateParticipantDetailsAsync(hearingId, participant.Id.Value, updateParticipantRequest);
                             }
                             else if (existingParticipant.User_role_name == "Judge")
@@ -422,32 +422,11 @@ namespace AdminWebsite.Controllers
 
                     if (participant == null) continue;
 
-                    var request = MapAddNotificationRequest(hearing.Id, participant, item.Value.Password);
+                    var request = AddNotificationRequestMapper.MapTo(hearing.Id, participant, item.Value.Password);
                     // Send a notification only for the newly created users
                     await _notificationApiClient.CreateNewNotificationAsync(request);
                 }
             }
-        }
-
-        private AddNotificationRequest MapAddNotificationRequest(Guid hearingId, ParticipantResponse participant, string password)
-        {
-            var parameters = new Dictionary<string, string>
-            {
-                {"name", $"{participant.First_name} {participant.Last_name}"},
-                {"username", $"{participant.Username}"},
-                {"random password", $"{password}"}
-            };
-            var addNotificationRequest = new AddNotificationRequest
-            {
-                HearingId = hearingId,
-                MessageType = MessageType.Email,
-                ContactEmail = participant.Contact_email,
-                NotificationType = participant.User_role_name == "Individual" ? NotificationType.CreateIndividual : NotificationType.CreateRepresentative,
-                ParticipantId = participant.Id,
-                PhoneNumber = participant.Telephone_number,
-                Parameters = parameters,
-            };
-            return addNotificationRequest;
         }
 
         private async Task AssignParticipantToCorrectGroups(HearingDetailsResponse hearing, Dictionary<string, User> newUsernameAdIdDict)
@@ -543,62 +522,6 @@ namespace AdminWebsite.Controllers
 
                 throw;
             }
-        }
-
-        private UpdateHearingRequest MapHearingUpdateRequest(EditHearingRequest editHearingRequest)
-        {
-            var updateHearingRequest = new UpdateHearingRequest
-            {
-                Hearing_room_name = editHearingRequest.HearingRoomName,
-                Hearing_venue_name = editHearingRequest.HearingVenueName,
-                Other_information = editHearingRequest.OtherInformation,
-                Scheduled_date_time = editHearingRequest.ScheduledDateTime,
-                Scheduled_duration = editHearingRequest.ScheduledDuration,
-                Updated_by = _userIdentity.GetUserIdentityName(),
-                Cases = new List<CaseRequest>
-                {
-                    new CaseRequest
-                    {
-                            Name = editHearingRequest.Case.Name,
-                            Number = editHearingRequest.Case.Number
-                    }
-                },
-                Questionnaire_not_required = false,
-                Audio_recording_required = editHearingRequest.AudioRecordingRequired
-            };
-            return updateHearingRequest;
-        }
-
-        private UpdateParticipantRequest MapUpdateParticipantRequest(EditParticipantRequest participant)
-        {
-            var updateParticipantRequest = new UpdateParticipantRequest
-            {
-                Title = participant.Title,
-                Display_name = participant.DisplayName,
-                Organisation_name = participant.OrganisationName,
-                Telephone_number = participant.TelephoneNumber,
-                Representee = participant.Representee,
-            };
-            return updateParticipantRequest;
-        }
-
-        private ParticipantRequest MapNewParticipantRequest(EditParticipantRequest participant)
-        {
-            var newParticipant = new ParticipantRequest()
-            {
-                Case_role_name = participant.CaseRoleName,
-                Contact_email = participant.ContactEmail,
-                Display_name = participant.DisplayName,
-                First_name = participant.FirstName,
-                Last_name = participant.LastName,
-                Hearing_role_name = participant.HearingRoleName,
-                Middle_names = participant.MiddleNames,
-                Representee = participant.Representee,
-                Telephone_number = participant.TelephoneNumber,
-                Title = participant.Title,
-                Organisation_name = participant.OrganisationName,
-            };
-            return newParticipant;
         }
 
         /// <summary>
