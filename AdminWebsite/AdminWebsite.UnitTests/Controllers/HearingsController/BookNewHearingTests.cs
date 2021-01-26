@@ -200,6 +200,11 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             createdObjectResult.StatusCode.Should().Be(201);
 
             request.Participants.Any(x => string.IsNullOrWhiteSpace(x.Username)).Should().BeFalse();
+            _pollyRetryServiceMock.Verify(x => x.WaitAndRetryAsync<Exception, Task>
+                (
+                    It.IsAny<int>(), It.IsAny<Func<int, TimeSpan>>(), It.IsAny<Action<int>>(),
+                    It.IsAny<Func<Task, bool>>(), It.IsAny<Func<Task<Task>>>()
+                ),Times.Exactly(3));
         }
     }
 }
