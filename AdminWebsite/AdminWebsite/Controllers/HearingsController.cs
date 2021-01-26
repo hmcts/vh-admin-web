@@ -419,6 +419,9 @@ namespace AdminWebsite.Controllers
                 if (!string.IsNullOrEmpty(item.Value?.Password))
                 {
                     var participant = hearing.Participants.FirstOrDefault(x => x.Username == item.Key);
+
+                    if (participant == null) continue;
+
                     var request = MapAddNotificationRequest(hearing.Id, participant, item.Value.Password);
                     // Send a notification only for the newly created users
                     await _notificationApiClient.CreateNewNotificationAsync(request);
@@ -449,18 +452,19 @@ namespace AdminWebsite.Controllers
 
         private async Task AssignParticipantToCorrectGroups(HearingDetailsResponse hearing, Dictionary<string, User> newUsernameAdIdDict)
         {
-            if (!newUsernameAdIdDict.Any())
+            var participantGroup = newUsernameAdIdDict.Select(pair => new
+            {
+                pair,
+                participant = hearing.Participants.FirstOrDefault(x => x.Username == pair.Key)
+            });
+
+            if (!newUsernameAdIdDict.Any() || participantGroup.Any(x => x.participant == null))
             {
                 _logger.LogDebug($"{nameof(AssignParticipantToCorrectGroups)} - No users in dictionary for hearingId: {hearing.Id}");
                 return;
             }
 
-            var tasks = newUsernameAdIdDict.Select(pair => new
-                {
-                    pair,
-                    participant = hearing.Participants.FirstOrDefault(x => x.Username == pair.Key)
-                })
-                .Select(t => AssignParticipantToGroupWithRetry(t.pair.Key, t.pair.Value.UserName, t.participant.User_role_name, hearing.Id))
+            var tasks = participantGroup.Select(t => AssignParticipantToGroupWithRetry(t.pair.Key, t.pair.Value.UserName, t.participant.User_role_name, hearing.Id))
                 .ToList();
             
             await Task.WhenAll(tasks);
@@ -628,11 +632,11 @@ namespace AdminWebsite.Controllers
                     (
                         6, _ => TimeSpan.FromSeconds(8),
                         retryAttempt => _logger.LogWarning($"Failed to retrieve conference details from the VideoAPi for hearingId {hearingId}. Retrying attempt {retryAttempt}"),
-                        videoApiResponseObject => !ConferenceExistsWithMeetingRoom(videoApiResponseObject),
+                        videoApiResponseObject => videoApiResponseObject.HasInvalidMeetingRoom(),
                         () => _videoApiClient.GetConferenceByHearingRefIdAsync(hearingId)
                     );
 
-                    if (ConferenceExistsWithMeetingRoom(conferenceDetailsResponse))
+                    if (!conferenceDetailsResponse.HasInvalidMeetingRoom())
                     {
                         return Ok(new UpdateBookingStatusResponse { Success = true, TelephoneConferenceId = conferenceDetailsResponse.Meeting_room.Telephone_conference_id });
                     }
@@ -684,7 +688,7 @@ namespace AdminWebsite.Controllers
             {
                 var conferenceDetailsResponse = await _videoApiClient.GetConferenceByHearingRefIdAsync(hearingId);
 
-                if (ConferenceExistsWithMeetingRoom(conferenceDetailsResponse))
+                if (!conferenceDetailsResponse.HasInvalidMeetingRoom())
                 {
                     return Ok(new PhoneConferenceResponse { TelephoneConferenceId = conferenceDetailsResponse.Meeting_room.Telephone_conference_id });
                 }
@@ -705,16 +709,6 @@ namespace AdminWebsite.Controllers
 
                 throw;
             }
-        }
-
-        private static bool ConferenceExistsWithMeetingRoom(ConferenceDetailsResponse conference)
-        {
-            var success = !(conference?.Meeting_room == null
-                            || string.IsNullOrWhiteSpace(conference.Meeting_room.Admin_uri)
-                            || string.IsNullOrWhiteSpace(conference.Meeting_room.Participant_uri)
-                            || string.IsNullOrWhiteSpace(conference.Meeting_room.Judge_uri)
-                            || string.IsNullOrWhiteSpace(conference.Meeting_room.Pexip_node));
-            return success;
         }
     }
 }

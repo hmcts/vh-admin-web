@@ -9,6 +9,8 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using AdminWebsite.Helper;
+using AdminWebsite.Extensions;
 
 namespace AdminWebsite.Services
 {
@@ -136,7 +138,7 @@ namespace AdminWebsite.Services
                 var user = await _userApiClient.GetUserByAdUserIdAsync(username);
                 _logger.LogDebug($"{nameof(GetAdUserIdForUsername)} - AD User with username {username} found.", username);
 
-                if (string.IsNullOrWhiteSpace(user.User_role) || !Enum.TryParse<UserRoleType>(user.User_role, out var role) || role == UserRoleType.None)
+                if(user.HasValidUserRole())
                 {
                     _logger.LogWarning($"{nameof(GetAdUserIdForUsername)} - AD user with username {username} does not have a user role.");
                 }
