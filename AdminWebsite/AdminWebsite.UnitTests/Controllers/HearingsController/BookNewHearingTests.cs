@@ -10,12 +10,12 @@ using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
-using NotificationApi.Client;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using NotificationApi.Client;
 using EndpointResponse = AdminWebsite.BookingsAPI.Client.EndpointResponse;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
@@ -29,6 +29,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private Mock<ILogger<UserAccountService>> _userAccountServiceLogger;
         private Mock<IValidator<EditHearingRequest>> _editHearingRequestValidator;
         private Mock<IVideoApiClient> _videoApiMock;
+        private IHearingsService _hearingsService;
+        private Mock<ILogger<HearingsService>> _hearingsServiceLogger;
         private Mock<IPollyRetryService> _pollyRetryServiceMock;
         private Mock<INotificationApiClient> _notificationApiMock;
 
@@ -41,23 +43,25 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _bookingsApiClient = new Mock<IBookingsApiClient>();
             _userIdentity = new Mock<IUserIdentity>();
             _userAccountServiceLogger = new Mock<ILogger<UserAccountService>>();
-            _notificationApiMock = new Mock<INotificationApiClient>();
-
             _userAccountService = new UserAccountService(_userApiClient.Object, _bookingsApiClient.Object,
                 _userAccountServiceLogger.Object);
-
             _editHearingRequestValidator = new Mock<IValidator<EditHearingRequest>>();
             _videoApiMock = new Mock<IVideoApiClient>();
+
+            _hearingsServiceLogger = new Mock<ILogger<HearingsService>>();
             _pollyRetryServiceMock = new Mock<IPollyRetryService>();
+            _notificationApiMock = new Mock<INotificationApiClient>();
+
+            _hearingsService = new HearingsService(_hearingsServiceLogger.Object, _notificationApiMock.Object,
+                _pollyRetryServiceMock.Object, _userAccountService, _videoApiMock.Object);
 
             _controller = new AdminWebsite.Controllers.HearingsController(_bookingsApiClient.Object,
                 _userIdentity.Object,
                 _userAccountService,
                 _editHearingRequestValidator.Object,
                 _videoApiMock.Object,
-                _pollyRetryServiceMock.Object,
-                new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>().Object,
-                _notificationApiMock.Object);
+                _hearingsService,
+                new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>().Object);
         }
 
         [Test]

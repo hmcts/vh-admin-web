@@ -30,7 +30,6 @@ namespace AdminWebsite
             services.AddSwagger();
             services.AddJsonOptions();
             RegisterSettings(services);
-
             services.AddCustomTypes();
 
             services.RegisterAuthSchemes(Configuration);

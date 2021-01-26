@@ -9,7 +9,6 @@ using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
-using NotificationApi.Client;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -24,8 +23,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private Mock<IUserAccountService> _userAccountService;
         private Mock<IValidator<EditHearingRequest>> _editHearingRequestValidator;
         private Mock<IVideoApiClient> _videoApiMock;
-        private Mock<IPollyRetryService> _pollyRetryServiceMock;
-        private Mock<INotificationApiClient> _notificationApiMock;
+        private Mock<IHearingsService> _hearingsServiceMock;
 
         private AdminWebsite.Controllers.HearingsController _controller;
         private HearingDetailsResponse _vhExistingHearing;
@@ -39,17 +37,15 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _userAccountService = new Mock<IUserAccountService>();
             _editHearingRequestValidator = new Mock<IValidator<EditHearingRequest>>();
             _videoApiMock = new Mock<IVideoApiClient>();
-            _pollyRetryServiceMock = new Mock<IPollyRetryService>();
-            _notificationApiMock = new Mock<INotificationApiClient>();
+            _hearingsServiceMock = new Mock<IHearingsService>();
 
             _controller = new AdminWebsite.Controllers.HearingsController(_bookingsApiClient.Object,
                 _userIdentity.Object,
                 _userAccountService.Object,
                 _editHearingRequestValidator.Object,
                 _videoApiMock.Object,
-                _pollyRetryServiceMock.Object,
-                new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>().Object,
-                _notificationApiMock.Object);
+                _hearingsServiceMock.Object,
+                new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>().Object);
 
             _vhExistingHearing = new HearingDetailsResponse
             {

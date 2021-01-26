@@ -21,8 +21,10 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private Mock<IUserAccountService> _userAccountService;
         private Mock<IValidator<EditHearingRequest>> _editHearingRequestValidator;
         private Mock<IVideoApiClient> _videoApiMock;
+        private Mock<ILogger<HearingsService>> _hearingsServiceLoggerMock;
         private Mock<IPollyRetryService> _pollyRetryServiceMock;
         private Mock<INotificationApiClient> _notificationApiMock;
+        private IHearingsService _hearingsService;
 
         private AdminWebsite.Controllers.HearingsController _controller;
         private ConferenceDetailsResponse _conference;
@@ -36,17 +38,21 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _userAccountService = new Mock<IUserAccountService>();
             _editHearingRequestValidator = new Mock<IValidator<EditHearingRequest>>();
             _videoApiMock = new Mock<IVideoApiClient>();
+
+            _hearingsServiceLoggerMock = new Mock<ILogger<HearingsService>>();
             _pollyRetryServiceMock = new Mock<IPollyRetryService>();
             _notificationApiMock = new Mock<INotificationApiClient>();
+
+            _hearingsService = new HearingsService(_hearingsServiceLoggerMock.Object, _notificationApiMock.Object,
+                _pollyRetryServiceMock.Object, _userAccountService.Object, _videoApiMock.Object);
 
             _controller = new AdminWebsite.Controllers.HearingsController(_bookingsApiClient.Object,
                 _userIdentity.Object,
                 _userAccountService.Object,
                 _editHearingRequestValidator.Object,
                 _videoApiMock.Object,
-                _pollyRetryServiceMock.Object,
-                new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>().Object,
-                _notificationApiMock.Object);
+                _hearingsService,
+                new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>().Object);
 
             _conference = new ConferenceDetailsResponse
             {

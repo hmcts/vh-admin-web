@@ -30,8 +30,10 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private Mock<IUserAccountService> _userAccountService;
         private Mock<IValidator<EditHearingRequest>> _editHearingRequestValidator;
         private Mock<IVideoApiClient> _videoApiMock;
-        private Mock<IPollyRetryService> _pollyRetryServiceMock;
+        private Mock<ILogger<HearingsService>> _hearingsServiceLogger;
         private Mock<INotificationApiClient> _notificationApiMock;
+        private Mock<IPollyRetryService> _pollyRetryMock;
+        private IHearingsService _hearingsService;
 
 
         private AdminWebsite.Controllers.HearingsController _controller;
@@ -44,17 +46,21 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _userAccountService = new Mock<IUserAccountService>();
             _editHearingRequestValidator = new Mock<IValidator<EditHearingRequest>>();
             _videoApiMock = new Mock<IVideoApiClient>();
+
+            _hearingsServiceLogger = new Mock<ILogger<HearingsService>>();
             _notificationApiMock = new Mock<INotificationApiClient>();
-            _pollyRetryServiceMock = new Mock<IPollyRetryService>();
+            _pollyRetryMock = new Mock<IPollyRetryService>();
+            _hearingsService = new HearingsService(_hearingsServiceLogger.Object, _notificationApiMock.Object,
+                _pollyRetryMock.Object,
+                _userAccountService.Object, _videoApiMock.Object);
 
             _controller = new AdminWebsite.Controllers.HearingsController(_bookingsApiClient.Object,
                 _userIdentity.Object,
                 _userAccountService.Object,
                 _editHearingRequestValidator.Object,
                 _videoApiMock.Object,
-                _pollyRetryServiceMock.Object,
-                new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>().Object,
-                _notificationApiMock.Object);
+                _hearingsService,
+                new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>().Object);
 
             _userAccountService
                 .Setup(x => x.UpdateParticipantUsername(It.IsAny<AdminWebsite.BookingsAPI.Client.ParticipantRequest>()))

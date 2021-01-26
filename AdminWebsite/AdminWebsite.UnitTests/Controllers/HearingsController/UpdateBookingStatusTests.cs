@@ -22,7 +22,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private readonly Mock<IUserIdentity> _userIdentity;
         private readonly AdminWebsite.Controllers.HearingsController _controller;
         private readonly Mock<IPollyRetryService> _pollyRetryServiceMock;
-        private readonly Mock<INotificationApiClient> _notificationApiMock;
 
         public UpdateBookingStatusTests()
         {
@@ -31,17 +30,21 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var userAccountService = new Mock<IUserAccountService>();
             var editHearingRequestValidator = new Mock<IValidator<EditHearingRequest>>();
             var videoApiMock = new Mock<IVideoApiClient>();
+
+            var hearingsServiceLogger = new Mock<ILogger<HearingsService>>();
+            var notificationApiMock = new Mock<INotificationApiClient>();
             _pollyRetryServiceMock = new Mock<IPollyRetryService>();
-            _notificationApiMock = new Mock<INotificationApiClient>();
+            var hearingsService = new HearingsService(hearingsServiceLogger.Object, notificationApiMock.Object,
+                _pollyRetryServiceMock.Object,
+                userAccountService.Object, videoApiMock.Object);
 
             _controller = new AdminWebsite.Controllers.HearingsController(_bookingsApiClient.Object,
                 _userIdentity.Object,
                 userAccountService.Object,
                 editHearingRequestValidator.Object,
                 videoApiMock.Object,
-                _pollyRetryServiceMock.Object,
-                new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>().Object,
-                _notificationApiMock.Object);
+                hearingsService,
+                new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>().Object);
         }
 
         [Test]

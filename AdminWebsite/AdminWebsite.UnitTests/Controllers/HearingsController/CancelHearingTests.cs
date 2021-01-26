@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
-using NotificationApi.Client;
 using NUnit.Framework;
 using System;
 using System.Threading.Tasks;
@@ -26,8 +25,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private Guid _guid;
         private UpdateBookingStatusRequest _updateBookingStatusRequest;
         private Mock<IVideoApiClient> _videoApiMock;
-        private Mock<IPollyRetryService> _pollyRetryServiceMock;
-        private Mock<INotificationApiClient> _notificationApiMock;
+        private Mock<IHearingsService> _hearingsServiceMock;
 
         [SetUp]
         public void Setup()
@@ -37,21 +35,19 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _userAccountService = new Mock<IUserAccountService>();
             _editHearingRequestValidator = new Mock<IValidator<EditHearingRequest>>();
             _videoApiMock = new Mock<IVideoApiClient>();
-            _pollyRetryServiceMock = new Mock<IPollyRetryService>();
-            _notificationApiMock = new Mock<INotificationApiClient>();
+            _hearingsServiceMock = new Mock<IHearingsService>();
 
             _controller = new AdminWebsite.Controllers.HearingsController(_bookingsApiClient.Object,
                 _userIdentity.Object,
                 _userAccountService.Object,
                 _editHearingRequestValidator.Object,
                 _videoApiMock.Object,
-                _pollyRetryServiceMock.Object,
-                new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>().Object,
-                _notificationApiMock.Object);
+                _hearingsServiceMock.Object,
+                new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>().Object);
                 
             _guid = Guid.NewGuid();
 
-            _updateBookingStatusRequest = new UpdateBookingStatusRequest() { Status = UpdateBookingStatus.Cancelled, Updated_by = "admin user" };
+            _updateBookingStatusRequest = new UpdateBookingStatusRequest { Status = UpdateBookingStatus.Cancelled, Updated_by = "admin user" };
         }
 
         [Test]
