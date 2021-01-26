@@ -312,7 +312,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var participant = updatedHearing.Participants[0];
             _notificationApiMock.Verify(x => x.CreateNewNotificationAsync(It.IsAny<AddNotificationRequest>()), Times.Once);
             _bookingsApiClient.Verify(x => x.UpdateHearingDetailsAsync(It.IsAny<Guid>(), It.Is<UpdateHearingRequest>(u => !u.Cases.IsNullOrEmpty())), Times.Once);
-            _pollyRetryServiceMock.Verify(x => x.WaitAndRetryAsync<Exception, Task>
+            _pollyRetryMock.Verify(x => x.WaitAndRetryAsync<Exception, Task>
                (
                    It.IsAny<int>(), It.IsAny<Func<int, TimeSpan>>(), It.IsAny<Action<int>>(),
                    It.IsAny<Func<Task, bool>>(), It.IsAny<Func<Task<Task>>>()
