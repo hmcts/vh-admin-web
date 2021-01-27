@@ -23,7 +23,7 @@ describe('ParticipantService', () => {
     it('should map roles to party model array', inject([ParticipantService], (service: ParticipantService) => {
         const response = new CaseAndHearingRolesResponse();
         response.name = 'Defendant';
-        response.hearing_roles = [new HearingRole({name: 'Litigant in person', user_role: 'Individual'})];
+        response.hearing_roles = [new HearingRole({ name: 'Litigant in person', user_role: 'Individual' })];
         const responses: CaseAndHearingRolesResponse[] = [];
         responses.push(response);
 

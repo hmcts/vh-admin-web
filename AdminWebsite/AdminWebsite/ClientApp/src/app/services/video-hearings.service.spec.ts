@@ -7,7 +7,8 @@ import {
     CaseAndHearingRolesResponse,
     EndpointResponse,
     MultiHearingRequest,
-    ClientSettingsResponse, HearingRole
+    ClientSettingsResponse,
+    HearingRole
 } from './clients/api-client';
 import { HearingModel } from '../common/model/hearing.model';
 import { CaseModel } from '../common/model/case.model';
@@ -98,8 +99,9 @@ describe('Video hearing service', () => {
         const serverResponse = new CaseAndHearingRolesResponse({
             name: 'Defendant',
             hearing_roles: [
-                new HearingRole({name: 'Representative', user_role: 'Representative'}),
-                new HearingRole({name: 'Litigant in person', user_role: 'Individual'})]
+                new HearingRole({ name: 'Representative', user_role: 'Representative' }),
+                new HearingRole({ name: 'Litigant in person', user_role: 'Individual' })
+            ]
         });
         clientApiSpy.getParticipantRoles.and.returnValue(of([serverResponse]));
 
