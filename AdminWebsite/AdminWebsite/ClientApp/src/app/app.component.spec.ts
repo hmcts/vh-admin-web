@@ -1,12 +1,14 @@
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { fakeAsync, TestBed, waitForAsync } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AdalService } from 'adal-angular4';
+import { of } from 'rxjs';
 import { AppComponent } from './app.component';
 import { WindowLocation, WindowRef } from './security/window-ref';
 import { ClientSettingsResponse } from './services/clients/api-client';
 import { ConfigService } from './services/config.service';
+import { ConnectionService } from './services/connection.service';
 import { DeviceType } from './services/device-type';
 import { PageTrackerService } from './services/page-tracker.service';
 import { VideoHearingsService } from './services/video-hearings.service';
@@ -34,6 +36,8 @@ describe('AppComponent', () => {
     let pageTracker: jasmine.SpyObj<PageTrackerService>;
     let window: jasmine.SpyObj<WindowRef>;
     let deviceTypeServiceSpy: jasmine.SpyObj<DeviceType>;
+    let httpClient: jasmine.SpyObj<HttpClient>;
+    // let connection: jasmine.SpyObj<ConnectionService>;
 
     const clientSettings = new ClientSettingsResponse({
         tenant_id: 'tenantid',
@@ -53,6 +57,8 @@ describe('AppComponent', () => {
             pageTracker = jasmine.createSpyObj('PageTrackerService', ['trackNavigation', 'trackPreviousPage']);
 
             deviceTypeServiceSpy = jasmine.createSpyObj<DeviceType>(['isSupportedBrowser']);
+            // connection = jasmine.createSpyObj<ConnectionService>(['hasConnection$']);
+            httpClient = jasmine.createSpyObj<HttpClient>(['head']);
 
             TestBed.configureTestingModule({
                 imports: [HttpClientModule, RouterTestingModule],
@@ -71,7 +77,18 @@ describe('AppComponent', () => {
                     { provide: PageTrackerService, useValue: pageTracker },
                     { provide: WindowRef, useValue: window },
                     { provide: VideoHearingsService, useValue: videoHearingServiceSpy },
-                    { provide: DeviceType, useValue: deviceTypeServiceSpy }
+                    { provide: DeviceType, useValue: deviceTypeServiceSpy },
+                    { provide: HttpClient, useValue: httpClient },
+                    {
+                        provide: ConnectionService, useFactory: () => {
+                            return {
+                                hasConnection$: {
+                                    subscribe: () => of(null),
+                                    pipe: () => of(null),
+                                }
+                            }
+                        }
+                    }
                 ]
             }).compileComponents();
         })

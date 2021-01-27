@@ -26,6 +26,7 @@ import { PopupModule } from './popups/popup.module';
 import { SharedModule } from './shared/shared.module';
 import { ErrorComponent } from './error/error.component';
 import { ErrorService } from './services/error.service';
+import { ConnectionErrorComponent } from './connection-error/connection-error.component';
 import { LoggerService, LOG_ADAPTER } from './services/logger.service';
 import { PageTrackerService } from './services/page-tracker.service';
 import { AppInsightsLogger } from './services/app-insights-logger.service';
@@ -39,6 +40,7 @@ import { DeviceDetectorModule } from 'ngx-device-detector';
 import { ChangePasswordComponent } from './change-password/change-password.component';
 import { GetAudioFileModule } from './get-audio-file/get-audio-file.module';
 import { DeleteParticipantModule } from './delete-participant/delete-participant.module';
+import { ConnectionService } from '../app/services/connection.service';
 
 export function getSettings(configService: ConfigService) {
     return () => configService.loadConfig();
@@ -52,6 +54,7 @@ export function getSettings(configService: ConfigService) {
         LogoutComponent,
         UnauthorisedComponent,
         ErrorComponent,
+        ConnectionErrorComponent,
         UnsupportedBrowserComponent,
         ChangePasswordComponent
     ],
@@ -94,7 +97,8 @@ export function getSettings(configService: ConfigService) {
         ErrorService,
         PageTrackerService,
         AppInsightsLogger,
-        WindowRef
+        WindowRef,
+        ConnectionService
     ],
     bootstrap: [AppComponent]
 })
