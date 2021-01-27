@@ -1,7 +1,7 @@
 import { TestBed, inject } from '@angular/core/testing';
 import { ParticipantService } from './participant.service';
 import { HttpClientModule } from '@angular/common/http';
-import { CaseAndHearingRolesResponse } from '../../services/clients/api-client';
+import { CaseAndHearingRolesResponse, HearingRole } from '../../services/clients/api-client';
 import { ParticipantModel } from '../../common/model/participant.model';
 import { HearingModel } from '../../common/model/hearing.model';
 import { Logger } from '../../services/logger';
@@ -23,7 +23,7 @@ describe('ParticipantService', () => {
     it('should map roles to party model array', inject([ParticipantService], (service: ParticipantService) => {
         const response = new CaseAndHearingRolesResponse();
         response.name = 'Defendant';
-        response.hearing_roles = ['Litigant in person'];
+        response.hearing_roles = [new HearingRole({name: 'Litigant in person', user_role: 'Individual'})];
         const responses: CaseAndHearingRolesResponse[] = [];
         responses.push(response);
 
@@ -32,7 +32,7 @@ describe('ParticipantService', () => {
         expect(models.length).toBe(1);
         expect(models[0].name).toBe('Defendant');
         expect(models[0].hearingRoles.length).toBe(1);
-        expect(models[0].hearingRoles[0]).toBe('Litigant in person');
+        expect(models[0].hearingRoles[0].name).toBe('Litigant in person');
     }));
     it('should return empty party model array', inject([ParticipantService], (service: ParticipantService) => {
         const responses: CaseAndHearingRolesResponse[] = [];

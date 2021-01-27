@@ -71,9 +71,12 @@ namespace AdminWebsite.UnitTests
             var response = await _controller.GetParticipantRoles("type1");
             response.Should().NotBeNull();
             var result = (OkObjectResult)response.Result;
-            List<CaseAndHearingRolesResponse> caseRoles = (List<CaseAndHearingRolesResponse>)result.Value;
+            var caseRoles = (List<CaseAndHearingRolesResponse>)result.Value;
             caseRoles[0].Name.Should().Be("type1");
-            caseRoles[0].HearingRoles.Count.Should().Be(1);
+            caseRoles[0].HearingRoles.Should().NotBeNull();
+            caseRoles[0].HearingRoles.Count().Should().Be(1);
+            caseRoles[0].HearingRoles.First().Name.Should().Be("type1");
+            caseRoles[0].HearingRoles.First().UserRole.Should().Be("role1");
         }
 
         [Test]
@@ -94,7 +97,7 @@ namespace AdminWebsite.UnitTests
             var result = (OkObjectResult)response.Result;
             List<CaseAndHearingRolesResponse> caseRoles = (List<CaseAndHearingRolesResponse>)result.Value;
             caseRoles[0].Name.Should().Be("type1");
-            caseRoles[0].HearingRoles.Count.Should().Be(4);
+            caseRoles[0].HearingRoles.Count().Should().Be(4);
             caseRoles[0].HearingRoles.Should().BeInAscendingOrder();
         }
 
@@ -126,7 +129,7 @@ namespace AdminWebsite.UnitTests
 
         private void SetTestCase(List<CaseRoleResponse> listTypes)
         {
-            var listHearingRoles = new List<HearingRoleResponse> { new HearingRoleResponse { Name = "type1" } };
+            var listHearingRoles = new List<HearingRoleResponse> { new HearingRoleResponse { Name = "type1", User_role = "role1"} };
 
             _userIdentityMock.Setup(x => x.GetAdministratorCaseTypes()).Returns(new List<string> { "type1", "type2" });
             _bookingsApiClientMock.Setup(x => x.GetCaseRolesForCaseTypeAsync(It.IsAny<string>())).ReturnsAsync(listTypes);
