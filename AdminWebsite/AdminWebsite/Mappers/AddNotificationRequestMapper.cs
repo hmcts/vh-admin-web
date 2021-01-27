@@ -8,6 +8,8 @@ namespace AdminWebsite.Mappers
 {
     public static class AddNotificationRequestMapper
     {
+        private const string Individual = "INDIVIDUAL";
+
         public static AddNotificationRequest MapTo(Guid hearingId, ParticipantResponse participant, string password)
         {
             var parameters = new Dictionary<string, string>
@@ -21,10 +23,10 @@ namespace AdminWebsite.Mappers
                 HearingId = hearingId,
                 MessageType = MessageType.Email,
                 ContactEmail = participant.Contact_email,
-                NotificationType = participant.User_role_name == "Individual" ? NotificationType.CreateIndividual : NotificationType.CreateRepresentative,
+                NotificationType = participant.User_role_name.ToUpper() == Individual ? NotificationType.CreateIndividual : NotificationType.CreateRepresentative,
                 ParticipantId = participant.Id,
                 PhoneNumber = participant.Telephone_number,
-                Parameters = parameters,
+                Parameters = parameters
             };
             return addNotificationRequest;
         }
