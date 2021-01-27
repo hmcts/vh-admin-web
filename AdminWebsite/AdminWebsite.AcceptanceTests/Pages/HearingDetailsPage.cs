@@ -8,7 +8,6 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public static By CaseNameTextfield = By.Id("caseName");
         public static By CaseTypeDropdown = By.Id("caseType");
         public static By HearingTypeDropdown = By.Id("hearingType");
-        public static By SendQuestionnairesCheckbox = By.Id("questionnaireNotRequired");
         public static By NextButton = By.Id("nextButton");
         public static By CancelButton = By.Id("cancelButton");
     }

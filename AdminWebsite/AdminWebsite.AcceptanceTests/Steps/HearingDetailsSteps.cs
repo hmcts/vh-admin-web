@@ -37,7 +37,6 @@ namespace AdminWebsite.AcceptanceTests.Steps
             SetCaseType();
             SetHearingType();
             _c.Test.HearingDetails.DoNotSendQuestionnaires = _c.Test.TestData.HearingDetails.DoNotSendQuestionnaires;
-            SendQuestionnaires();
             _browsers[_c.CurrentUser].Click(HearingDetailsPage.NextButton);
         }
 
@@ -48,7 +47,6 @@ namespace AdminWebsite.AcceptanceTests.Steps
             SetCaseType();
             SetHearingType();
             _c.Test.HearingDetails.DoNotSendQuestionnaires = false;
-            SendQuestionnaires();
             _browsers[_c.CurrentUser].Click(HearingDetailsPage.NextButton);
         }
 
@@ -87,21 +85,6 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
             _c.Test.HearingDetails.HearingType = hearingType;
             _commonSharedSteps.WhenTheUserSelectsTheOptionFromTheDropdown(_browsers[_c.CurrentUser].Driver, HearingDetailsPage.HearingTypeDropdown, HearingType.ToString(hearingType));
-        }
-
-        public void SendQuestionnaires()
-        {
-            var isCheckboxSelected = _browsers[_c.CurrentUser].Driver.WaitUntilElementExists(HearingDetailsPage.SendQuestionnairesCheckbox).Selected;
-            if (_c.Test.HearingDetails.DoNotSendQuestionnaires)
-            {
-                if (!isCheckboxSelected)
-                    _browsers[_c.CurrentUser].ClickCheckbox(HearingDetailsPage.SendQuestionnairesCheckbox);
-            }
-            else
-            {
-                if (isCheckboxSelected)
-                    _browsers[_c.CurrentUser].ClickCheckbox(HearingDetailsPage.SendQuestionnairesCheckbox);
-            }
-        }
+        } 
     }
 }
