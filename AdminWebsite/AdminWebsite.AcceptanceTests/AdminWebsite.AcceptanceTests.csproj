@@ -43,7 +43,7 @@
     <PackageReference Include="SpecFlow" Version="3.5.5" />
     <PackageReference Include="SpecFlow.NUnit" Version="3.5.5" />
     <PackageReference Include="SpecFlow.Tools.MsBuild.Generation" Version="3.5.5" />
-    <PackageReference Include="VH.AcceptanceTests.Common" Version="1.21.1" />
+    <PackageReference Include="VH.AcceptanceTests.Common" Version="1.21.6" />
   </ItemGroup>
 
   <ItemGroup>
@@ -64,38 +64,6 @@
     <None Update="TestAudioFiles\TestAudioFile.mp4">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <ContentWithTargetPath Include="Configuration\Environments\appsettings.aat.json" Condition="Exists('Configuration\Environments\appsettings.aat.json')">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <TargetPath>appsettings.aat.json</TargetPath>
-    </ContentWithTargetPath>
-    <ContentWithTargetPath Include="Configuration\Environments\appsettings.demo.json" Condition="Exists('Configuration\Environments\appsettings.demo.json')">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <TargetPath>appsettings.demo.json</TargetPath>
-    </ContentWithTargetPath>
-    <ContentWithTargetPath Include="Configuration\Environments\appsettings.dev.json" Condition="Exists('Configuration\Environments\appsettings.dev.json')">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <TargetPath>appsettings.dev.json</TargetPath>
-    </ContentWithTargetPath>
-    <ContentWithTargetPath Include="Configuration\Environments\appsettings.local.json" Condition="Exists('Configuration\Environments\appsettings.local.json')">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <TargetPath>appsettings.local.json</TargetPath>
-    </ContentWithTargetPath>
-    <ContentWithTargetPath Include="Configuration\Environments\appsettings.localapis.json" Condition="Exists('Configuration\Environments\appsettings.localapis.json')">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <TargetPath>appsettings.localapis.json</TargetPath>
-    </ContentWithTargetPath>
-    <ContentWithTargetPath Include="Configuration\Environments\appsettings.preprod.json" Condition="Exists('Configuration\Environments\appsettings.preprod.json')">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <TargetPath>appsettings.preprod.json</TargetPath>
-    </ContentWithTargetPath>
-    <ContentWithTargetPath Include="Configuration\Environments\appsettings.sandbox.json" Condition="Exists('Configuration\Environments\appsettings.sandbox.json')">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <TargetPath>appsettings.sandbox.json</TargetPath>
-    </ContentWithTargetPath>
-    <ContentWithTargetPath Include="Configuration\Environments\appsettings.sandbox.json" Condition="Exists('Configuration\Environments\appsettings.sandbox.json')">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <TargetPath>appsettings.sandbox.json</TargetPath>
-    </ContentWithTargetPath>
     <ContentWithTargetPath Include="Configuration\Environments\saucelabs.json" Condition="Exists('Configuration\Environments\saucelabs.json')">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <TargetPath>saucelabs.json</TargetPath>
