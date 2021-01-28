@@ -20,7 +20,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             _c = c;
             _browsers = browsers;
-            _participant = Users.GetIndividualUser(_c.Users);
+            _participant = Users.GetIndividualUser(_c.Users); 
         }
 
         [When(@"I search for the participant by contact email")]
@@ -35,6 +35,12 @@ namespace AdminWebsite.AcceptanceTests.Steps
             SearchParticipantBy("user@notexists.com");
         }
 
+        [When(@"I search for a Judge user account")]
+        public void WhenISearchForAJudgeUserAccount()
+        {
+            _participant = Users.GetJudgeUser(_c.Users);
+            SearchParticipantBy(_participant.Contact_email);
+        }
 
         [Then(@"the pariticpant's details are retrieved")]
         public void ThenThePariticpantSDetailsAreRetrieved()
