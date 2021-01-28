@@ -42,7 +42,7 @@ namespace AdminWebsite.AcceptanceTests.Data
         {
             if (!hearing.Cases.First().Name.Contains("Day") || hearing.Cases.First().Name.Contains("Day 1 of"))
             {
-                hearing.Questionnaire_not_required.Should().Be(testData.HearingDetails.DoNotSendQuestionnaires);
+                hearing.Questionnaire_not_required.Should().BeFalse();
             }
             else
             {
