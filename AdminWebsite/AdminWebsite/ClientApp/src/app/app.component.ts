@@ -8,7 +8,7 @@ import { HeaderComponent } from './shared/header/header.component';
 import { VideoHearingsService } from './services/video-hearings.service';
 import { BookingService } from './services/booking.service';
 import { DeviceType } from './services/device-type';
-import { ConnectionService } from './services/connection.service';
+import { ConnectionService } from './services/connection/connection.service';
 
 @Component({
     selector: 'app-root',

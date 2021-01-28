@@ -2,7 +2,7 @@ import { Component, OnInit, EventEmitter, ViewChild, Input, HostListener, Elemen
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { startWith } from 'rxjs/operators';
-import { ConnectionService } from 'src/app/services/connection.service';
+import { ConnectionService } from 'src/app/services/connection/connection.service';
 
 @Component({
     selector: 'app-header',

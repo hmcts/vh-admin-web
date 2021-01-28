@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { of } from 'rxjs';
-import { ConnectionService } from '../services/connection.service';
+import { ConnectionService } from '../services/connection/connection.service';
 import { PageTrackerService } from '../services/page-tracker.service';
 import { ErrorComponent } from './error.component';
 

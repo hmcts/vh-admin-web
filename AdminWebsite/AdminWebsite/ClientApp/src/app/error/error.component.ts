@@ -1,9 +1,8 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { ObserveOnOperator } from 'rxjs/internal/operators/observeOn';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { finalize, map, startWith } from 'rxjs/operators';
-import { ConnectionService } from '../services/connection.service';
+import { ConnectionService } from '../services/connection/connection.service';
 import { PageTrackerService } from '../services/page-tracker.service';
 
 @Component({

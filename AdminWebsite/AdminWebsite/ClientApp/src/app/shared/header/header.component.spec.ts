@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { HeaderComponent } from './header.component';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { By } from '@angular/platform-browser';
-import { ConnectionService } from 'src/app/services/connection.service';
+import { ConnectionService } from 'src/app/services/connection/connection.service';
 import { of } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 

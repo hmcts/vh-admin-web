@@ -1,28 +1,35 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Inject, Injectable, Optional } from '@angular/core';
 import { Observable, ReplaySubject, Subject, throwError, timer } from 'rxjs';
 import { mergeMap, retryWhen, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { ConnectionServiceConfigToken, ConnectionServiceConfig } from './connection';
 
 @Injectable({
     providedIn: 'root'
 })
 export class ConnectionService {
-    constructor(private http: HttpClient) {
+    private defaults: ConnectionServiceConfig = {
+        url: '/assets/images/favicons/favicon.ico?_:' + new Date().getTime(),
+        method: 'head',
+        interval: 10000,
+        retryInterval: 1000,
+        maxRetryAttempts: 3
+    };
+
+    private config: ConnectionServiceConfig;
+
+    constructor(private http: HttpClient, @Inject(ConnectionServiceConfigToken) @Optional() config: ConnectionServiceConfig) {
+        this.config = { ...this.defaults, ...config };
         this.startTimer();
     }
 
-    private url = '/assets/images/favicons/favicon.ico?_=' + new Date().getTime();
-    private method = 'head';
-    private interval = 10000;
-    private retryInterval = 1000;
-    private maxRetryAttempts = 3;
     private unsubscribe$: Subject<boolean> = null;
 
     private startTimer() {
         this.unsubscribe();
         this.unsubscribe$ = new Subject();
 
-        timer(0, this.interval)
+        timer(0, this.config.interval)
             .pipe(
                 takeUntil(this.unsubscribe$),
                 switchMap(() => this.checkConnection()),
@@ -49,11 +56,11 @@ export class ConnectionService {
     hasConnection$ = new ReplaySubject<boolean>();
 
     checkConnection(restartTimerOnSuccess = false): Observable<any> {
-        return this.http[this.method](this.url, { responseType: 'text' }).pipe(
+        return this.http[this.config.method](this.config.url, { responseType: 'text' }).pipe(
             retryWhen(
                 retryStrategy({
-                    maxRetryAttempts: this.maxRetryAttempts,
-                    retryInterval: this.retryInterval
+                    maxRetryAttempts: this.config.maxRetryAttempts,
+                    retryInterval: this.config.retryInterval
                 })
             ),
             tap(() => {

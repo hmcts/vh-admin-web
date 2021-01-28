@@ -8,7 +8,7 @@ import { AppComponent } from './app.component';
 import { WindowLocation, WindowRef } from './security/window-ref';
 import { ClientSettingsResponse } from './services/clients/api-client';
 import { ConfigService } from './services/config.service';
-import { ConnectionService } from './services/connection.service';
+import { ConnectionService } from './services/connection/connection.service';
 import { DeviceType } from './services/device-type';
 import { PageTrackerService } from './services/page-tracker.service';
 import { VideoHearingsService } from './services/video-hearings.service';
@@ -57,7 +57,6 @@ describe('AppComponent', () => {
             pageTracker = jasmine.createSpyObj('PageTrackerService', ['trackNavigation', 'trackPreviousPage']);
 
             deviceTypeServiceSpy = jasmine.createSpyObj<DeviceType>(['isSupportedBrowser']);
-            // connection = jasmine.createSpyObj<ConnectionService>(['hasConnection$']);
             httpClient = jasmine.createSpyObj<HttpClient>(['head']);
 
             TestBed.configureTestingModule({
