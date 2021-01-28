@@ -1,6 +1,5 @@
 ﻿using System;
 using AdminWebsite.TestAPI.Client;
-using AdminWebsite.Testing.Common.Data;
 
 
 namespace AdminWebsite.AcceptanceTests.Data
@@ -13,9 +12,9 @@ namespace AdminWebsite.AcceptanceTests.Data
         public Guid ConferenceId { get; set; }
         public Guid ParticipantId { get; set; }
 
-        public RoomType TransferFrom { get; set; }
+        public string TransferFrom { get; set; }
 
-        public RoomType TransferTo { get; set; }
+        public string TransferTo { get; set; }
 
         public string Reason { get; set; }
     }
