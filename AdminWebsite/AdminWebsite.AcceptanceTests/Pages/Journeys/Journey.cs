@@ -6,6 +6,7 @@
         BookingDetails,
         BookingsList,
         ChangePassword,
+        EditParticipantName,
         GetAudioFile,
         Questionnaire
     }
