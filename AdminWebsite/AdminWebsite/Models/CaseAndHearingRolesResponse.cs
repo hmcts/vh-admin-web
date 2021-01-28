@@ -12,9 +12,7 @@ namespace AdminWebsite.Models
         {
             return obj switch
             {
-                null => 1,
-                CaseAndHearingRolesResponse caseRole => string.Compare(Name, caseRole.Name, StringComparison.Ordinal),
-                _ => 0
+                null => 1, CaseAndHearingRolesResponse caseRole => string.Compare(Name, caseRole.Name, StringComparison.Ordinal), _ => 0
             };
         }
     }
