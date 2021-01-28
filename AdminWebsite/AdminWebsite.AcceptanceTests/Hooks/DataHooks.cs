@@ -185,7 +185,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         {
             var judge = _c.Test.ConferenceResponse.Participants.First(x => x.User_role == UserRole.Judge);
             
-            var request = new CallbackEventRequestBuilder()
+            var request = new ConferenceEventRequestBuilder()
                 .WithConferenceId(_c.Test.ConferenceResponse.Id)
                 .WithParticipantId(judge.Id)
                 .WithEventType(EventType.Start)
@@ -200,7 +200,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         {
             var judge = _c.Test.ConferenceResponse.Participants.First(x => x.User_role == UserRole.Judge);
             
-            var request = new CallbackEventRequestBuilder()
+            var request = new ConferenceEventRequestBuilder()
                 .WithConferenceId(_c.Test.ConferenceResponse.Id)
                 .WithParticipantId(judge.Id)
                 .WithEventType(EventType.Close)
