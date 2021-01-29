@@ -71,14 +71,10 @@ namespace AdminWebsite.Controllers
                 foreach (var item in caseRoles)
                 {
                     var caseRole = new CaseAndHearingRolesResponse { Name = item.Name };
-
                     var hearingRoles = await _bookingsApiClient.GetHearingRolesForCaseRoleAsync(caseTypeName, item.Name);
-                    
-                    caseRole.HearingRoles = hearingRoles.OrderBy(x => x.Name).Select(x => new HearingRole
-                    {
-                        Name = x.Name, UserRole = x.User_role
-                    });
-                    
+
+                    caseRole.HearingRoles = hearingRoles.ConvertAll(x => new HearingRole {Name = x.Name, UserRole = x.User_role});
+
                     response.Add(caseRole);
                 }
             }
