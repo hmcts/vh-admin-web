@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using HearingTypeResponse = AdminWebsite.Contracts.Responses.HearingTypeResponse;
 
@@ -21,16 +20,14 @@ namespace AdminWebsite.Controllers
     {
         private readonly IBookingsApiClient _bookingsApiClient;
         private readonly IUserIdentity _identity;
-        private readonly JavaScriptEncoder _encoder;
 
         /// <summary>
         /// Instantiate the controller
         /// </summary>
-        public ReferenceDataController(IBookingsApiClient bookingsApiClient, IUserIdentity identity, JavaScriptEncoder encoder)
+        public ReferenceDataController(IBookingsApiClient bookingsApiClient, IUserIdentity identity)
         {
             _bookingsApiClient = bookingsApiClient;
             _identity = identity;
-            _encoder = encoder;
         }
 
         /// <summary>
@@ -71,9 +68,10 @@ namespace AdminWebsite.Controllers
                 foreach (var item in caseRoles)
                 {
                     var caseRole = new CaseAndHearingRolesResponse { Name = item.Name };
-
                     var hearingRoles = await _bookingsApiClient.GetHearingRolesForCaseRoleAsync(caseTypeName, item.Name);
-                    caseRole.HearingRoles = hearingRoles.OrderBy(x => x.Name).Select(x => x.Name).ToList();
+
+                    caseRole.HearingRoles = hearingRoles.ConvertAll(x => new HearingRole {Name = x.Name, UserRole = x.User_role});
+
                     response.Add(caseRole);
                 }
             }

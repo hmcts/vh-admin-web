@@ -278,7 +278,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
     setupHearingRoles(caseRoleName: string) {
         const list = this.caseAndHearingRoles.find(x => x.name === caseRoleName && x.name !== 'Judge');
-        this.hearingRoleList = list ? list.hearingRoles : [];
+        this.hearingRoleList = list ? list.hearingRoles.map(x => x.name) : [];
         if (!this.hearingRoleList.find(s => s === this.constants.PleaseSelect)) {
             this.hearingRoleList.unshift(this.constants.PleaseSelect);
         }
@@ -303,7 +303,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         // if it's added in the existing hearing participant, then allowed all fields to edit.
         this.resetPartyAndRole();
 
-        this.isRepresentative = this.isRoleRepresentative(this.participantDetails.hearing_role_name);
+        this.isRepresentative = this.isRoleRepresentative(this.participantDetails.hearing_role_name, this.party.value);
 
         this.form.setValue({
             party: this.participantDetails.case_role_name,
@@ -441,7 +441,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
     roleSelected() {
         this.isRoleSelected = this.role.value !== this.constants.PleaseSelect;
-        if (!this.isRoleRepresentative(this.role.value)) {
+        if (!this.isRoleRepresentative(this.role.value, this.party.value)) {
             this.companyName.clearValidators();
             this.representing.clearValidators();
 
@@ -468,7 +468,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
             this.companyNameIndividual.setValue('');
         }
         this.showDetails = true;
-        this.isRepresentative = this.isRoleRepresentative(this.role.value);
+        this.isRepresentative = this.isRoleRepresentative(this.role.value, this.party.value);
     }
 
     titleSelected() {
@@ -591,7 +591,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         newParticipant.hearing_role_name = this.role.value;
         newParticipant.email = this.searchEmail ? this.searchEmail.email : '';
         newParticipant.display_name = this.displayName.value;
-        if (this.isRoleRepresentative(this.role.value)) {
+        if (this.isRoleRepresentative(this.role.value, this.party.value)) {
             newParticipant.company = this.companyName.value;
         } else {
             newParticipant.company = this.companyNameIndividual.value;
@@ -787,8 +787,19 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
             }
         });
     }
-    isRoleRepresentative(hearingRole: string): boolean {
-        const representativeRoles = ['representative', 'app advocate', 'prosecution advocate', 'respondent advocate', 'presenting officer'];
-        return representativeRoles.includes(hearingRole.toLowerCase());
+    isRoleRepresentative(hearingRole: string, party: string): boolean {
+        console.log('*** ' + party + ' : ' + hearingRole);
+        console.log(JSON.stringify(this.caseAndHearingRoles));
+
+        const partyHearingRoles = this.caseAndHearingRoles.find(
+            x => x.name === party && x.name !== 'Judge' && x.hearingRoles.find(y => y.name === hearingRole)
+        );
+
+        if (!partyHearingRoles) {
+            return false;
+        }
+
+        const findHearingRole = partyHearingRoles.hearingRoles.find(x => x.name === hearingRole);
+        return findHearingRole && findHearingRole.userRole === 'Representative';
     }
 }

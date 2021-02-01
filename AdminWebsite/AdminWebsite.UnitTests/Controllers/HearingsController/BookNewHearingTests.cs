@@ -2,7 +2,6 @@ using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
-using AdminWebsite.UserAPI.Client;
 using AdminWebsite.VideoAPI.Client;
 using FizzWare.NBuilder;
 using FluentAssertions;
@@ -16,6 +15,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using UserApi.Client;
+using UserApi.Contract.Requests;
+using UserApi.Contract.Responses;
 using EndpointResponse = AdminWebsite.BookingsAPI.Client.EndpointResponse;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
@@ -31,6 +33,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private Mock<IVideoApiClient> _videoApiMock;
         private Mock<IPollyRetryService> _pollyRetryServiceMock;
         private Mock<INotificationApiClient> _notificationApiMock;
+        private Mock<ILogger<HearingsService>> _participantGroupLogger;
+        private IHearingsService _hearingsService;
 
         private AdminWebsite.Controllers.HearingsController _controller;
 
@@ -50,14 +54,17 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _videoApiMock = new Mock<IVideoApiClient>();
             _pollyRetryServiceMock = new Mock<IPollyRetryService>();
 
+            _participantGroupLogger = new Mock<ILogger<HearingsService>>();
+            _hearingsService = new HearingsService(_pollyRetryServiceMock.Object,
+                _userAccountService, _notificationApiMock.Object, _videoApiMock.Object, _bookingsApiClient.Object,
+                _participantGroupLogger.Object);
+
             _controller = new AdminWebsite.Controllers.HearingsController(_bookingsApiClient.Object,
                 _userIdentity.Object,
                 _userAccountService,
                 _editHearingRequestValidator.Object,
-                _videoApiMock.Object,
-                _pollyRetryServiceMock.Object,
                 new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>().Object,
-                _notificationApiMock.Object);
+                _hearingsService);
         }
 
         [Test]
@@ -111,10 +118,10 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             {
                 var profile = new UserProfile
                 {
-                    User_id = Guid.NewGuid().ToString(),
-                    User_name = participant.Username,
-                    First_name = participant.First_name,
-                    Last_name = participant.Last_name
+                    UserId = Guid.NewGuid().ToString(),
+                    UserName = participant.Username,
+                    FirstName = participant.First_name,
+                    LastName = participant.Last_name
                 };
                 _userApiClient.Setup(x => x.GetUserByAdUserIdAsync(It.Is<string>(e => e == participant.Username)))
                     .ReturnsAsync(profile);
@@ -124,29 +131,29 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             {
                 var newUser = new NewUserResponse()
                 {
-                    User_id = Guid.NewGuid().ToString(),
+                    UserId = Guid.NewGuid().ToString(),
                     Username = $"{participant.First_name}.{participant.Last_name}@hmcts.net",
-                    One_time_password = "randomTest123"
+                    OneTimePassword = "randomTest123"
                 };
                 _userApiClient
                     .Setup(x => x.CreateUserAsync(It.Is<CreateUserRequest>(userRequest =>
-                        userRequest.Recovery_email == participant.Contact_email))).ReturnsAsync(newUser);
+                        userRequest.RecoveryEmail == participant.Contact_email))).ReturnsAsync(newUser);
             }
 
             var existingPat3 = request.Participants.Single(x => x.Contact_email == "contact3@email.com");
 
             var existingUser3 = new UserProfile()
             {
-                User_id = Guid.NewGuid().ToString(),
-                User_name = $"{existingPat3.First_name}.{existingPat3.Last_name}@hmcts.net",
+                UserId = Guid.NewGuid().ToString(),
+                UserName = $"{existingPat3.First_name}.{existingPat3.Last_name}@hmcts.net",
                 Email = existingPat3.Contact_email,
-                First_name = existingPat3.First_name,
-                Last_name = existingPat3.Last_name,
-                Display_name = existingPat3.Display_name,
+                FirstName = existingPat3.First_name,
+                LastName = existingPat3.Last_name,
+                DisplayName = existingPat3.Display_name,
             };
             _userApiClient
                 .Setup(x => x.GetUserByEmailAsync(existingPat3.Contact_email)).ReturnsAsync(existingUser3);
-            
+
             _pollyRetryServiceMock.Setup(x => x.WaitAndRetryAsync<Exception, Task>
                 (
                     It.IsAny<int>(), It.IsAny<Func<int, TimeSpan>>(), It.IsAny<Action<int>>(),
@@ -197,10 +204,10 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             request.Participants.Any(x => string.IsNullOrWhiteSpace(x.Username)).Should().BeFalse();
             _pollyRetryServiceMock.Verify(x => x.WaitAndRetryAsync<Exception, Task>
-                (
-                    It.IsAny<int>(), It.IsAny<Func<int, TimeSpan>>(), It.IsAny<Action<int>>(),
-                    It.IsAny<Func<Task, bool>>(), It.IsAny<Func<Task<Task>>>()
-                ),Times.Exactly(3));
+            (
+                It.IsAny<int>(), It.IsAny<Func<int, TimeSpan>>(), It.IsAny<Action<int>>(),
+                It.IsAny<Func<Task, bool>>(), It.IsAny<Func<Task<Task>>>()
+            ), Times.Exactly(3));
         }
     }
 }

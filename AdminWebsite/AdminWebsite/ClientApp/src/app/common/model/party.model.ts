@@ -1,3 +1,5 @@
+import { HearingRoleModel } from './hearing-role.model';
+
 // represents case role for a given hearing case type.
 export class PartyModel {
     constructor(name: string) {
@@ -6,5 +8,5 @@ export class PartyModel {
     }
 
     name: string;
-    hearingRoles: Array<string>;
+    hearingRoles: Array<HearingRoleModel>;
 }

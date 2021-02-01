@@ -9,7 +9,6 @@ using Moq;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 
 namespace AdminWebsite.UnitTests
@@ -25,7 +24,7 @@ namespace AdminWebsite.UnitTests
         {
             _bookingsApiClientMock = new Mock<IBookingsApiClient>();
             _userIdentityMock = new Mock<IUserIdentity>();
-            _controller = new ReferenceDataController(_bookingsApiClientMock.Object, _userIdentityMock.Object, JavaScriptEncoder.Default);
+            _controller = new ReferenceDataController(_bookingsApiClientMock.Object, _userIdentityMock.Object);
         }
 
         [Test]
@@ -71,31 +70,12 @@ namespace AdminWebsite.UnitTests
             var response = await _controller.GetParticipantRoles("type1");
             response.Should().NotBeNull();
             var result = (OkObjectResult)response.Result;
-            List<CaseAndHearingRolesResponse> caseRoles = (List<CaseAndHearingRolesResponse>)result.Value;
+            var caseRoles = (List<CaseAndHearingRolesResponse>)result.Value;
             caseRoles[0].Name.Should().Be("type1");
-            caseRoles[0].HearingRoles.Count.Should().Be(1);
-        }
-
-        [Test]
-        public async Task Should_return_participants_roles_in_asc_order()
-        {
-            var listTypes = new List<CaseRoleResponse> { new CaseRoleResponse { Name = "type1" } };
-            var listHearingRoles = new List<HearingRoleResponse> {
-                new HearingRoleResponse { Name = "b type" },
-                new HearingRoleResponse { Name = "z type" },
-                new HearingRoleResponse { Name = "d type" },
-                new HearingRoleResponse { Name = "a type" },
-            };
-            _bookingsApiClientMock.Setup(x => x.GetCaseRolesForCaseTypeAsync(It.IsAny<string>())).ReturnsAsync(listTypes);
-            _bookingsApiClientMock.Setup(x => x.GetHearingRolesForCaseRoleAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(listHearingRoles);
-
-            var response = await _controller.GetParticipantRoles("type1");
-            response.Should().NotBeNull();
-            var result = (OkObjectResult)response.Result;
-            List<CaseAndHearingRolesResponse> caseRoles = (List<CaseAndHearingRolesResponse>)result.Value;
-            caseRoles[0].Name.Should().Be("type1");
-            caseRoles[0].HearingRoles.Count.Should().Be(4);
-            caseRoles[0].HearingRoles.Should().BeInAscendingOrder();
+            caseRoles[0].HearingRoles.Should().NotBeNull();
+            caseRoles[0].HearingRoles.Count().Should().Be(1);
+            caseRoles[0].HearingRoles.First().Name.Should().Be("type1");
+            caseRoles[0].HearingRoles.First().UserRole.Should().Be("role1");
         }
 
         [Test]
@@ -126,7 +106,7 @@ namespace AdminWebsite.UnitTests
 
         private void SetTestCase(List<CaseRoleResponse> listTypes)
         {
-            var listHearingRoles = new List<HearingRoleResponse> { new HearingRoleResponse { Name = "type1" } };
+            var listHearingRoles = new List<HearingRoleResponse> { new HearingRoleResponse { Name = "type1", User_role = "role1"} };
 
             _userIdentityMock.Setup(x => x.GetAdministratorCaseTypes()).Returns(new List<string> { "type1", "type2" });
             _bookingsApiClientMock.Setup(x => x.GetCaseRolesForCaseTypeAsync(It.IsAny<string>())).ReturnsAsync(listTypes);

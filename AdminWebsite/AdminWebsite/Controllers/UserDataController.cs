@@ -5,6 +5,7 @@ using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
+using UserApi.Client;
 
 namespace AdminWebsite.Controllers
 {
@@ -23,11 +24,11 @@ namespace AdminWebsite.Controllers
         ///     Get Judges
         /// </summary>
         [HttpGet("judges", Name = "GetJudges")]
-        [ProducesResponseType(typeof(IList<JudgeResponse>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        public ActionResult<IList<JudgeResponse>> GetJudges()
+        [ProducesResponseType(typeof(IList<JudgeResponse>), (int) HttpStatusCode.OK)]
+        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        public async Task<ActionResult<IList<JudgeResponse>>> GetJudges()
         {
-            var response = _userAccountService.GetJudgeUsers();
+            var response = await _userAccountService.GetJudgeUsers();
             return Ok(response);
         }
 
@@ -47,7 +48,7 @@ namespace AdminWebsite.Controllers
             {
                 return Ok(await _userAccountService.UpdateParticipantPassword(userName));
             }
-            catch (UserAPI.Client.UserServiceException e)
+            catch (UserApiException e)
             {
                 if (e.StatusCode == (int)HttpStatusCode.BadRequest)
                 {

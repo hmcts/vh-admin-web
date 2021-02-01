@@ -76,9 +76,10 @@ describe('ChangePasswordComponent', () => {
     });
     it('should input box to have focus if the input is invalid', async () => {
         component.goToDiv('userName');
-        const input = fixture.nativeElement.querySelector('#userName:focus');
+        const input = fixture.nativeElement.querySelector('#userName');
+        const activeElement = document.activeElement;
         fixture.detectChanges();
-        expect(input).toBeTruthy();
+        expect(input).toBe(activeElement);
     });
     it('should on destroy unsubscribe the subscriptions', () => {
         component.userName.setValue('user.name@domain.com');
