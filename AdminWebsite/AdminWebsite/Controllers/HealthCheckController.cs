@@ -1,5 +1,4 @@
 ﻿using AdminWebsite.BookingsAPI.Client;
-using AdminWebsite.UserAPI.Client;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
@@ -12,6 +11,7 @@ using HealthCheckResponse = AdminWebsite.Models.HealthCheckResponse;
 using NotificationApi.Client;
 using NotificationApi.Contract;
 using Microsoft.Extensions.Logging;
+using UserApi.Client;
 
 namespace AdminWebsite.Controllers
 {
@@ -60,7 +60,7 @@ namespace AdminWebsite.Controllers
             {
                 await _userApiClient.GetJudgesAsync();
             }
-            catch (UserServiceException uaEx)
+            catch (UserApiException uaEx)
             {
                 _logger.LogError(uaEx, "There was a problem getting judgelist from UserAPI on health check. Status Code {StatusCode} - Message {Message}",
                                        uaEx.StatusCode, uaEx.Response);

@@ -58,6 +58,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="UserApi.Client" Version="1.23.2-pullrequest0104-0010" />
   </ItemGroup>
 
   <ItemGroup>
@@ -89,7 +90,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AdminWebsite.BookingsAPI.Client\AdminWebsite.BookingsAPI.Client.csproj" />
-    <ProjectReference Include="..\AdminWebsite.UserAPI.Client\AdminWebsite.UserAPI.Client.csproj" />
     <ProjectReference Include="..\AdminWebsite.VideoAPI.Client\AdminWebsite.VideoAPI.Client.csproj" />
   </ItemGroup>
 

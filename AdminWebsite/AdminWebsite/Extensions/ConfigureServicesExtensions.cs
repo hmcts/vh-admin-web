@@ -5,7 +5,6 @@ using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
 using AdminWebsite.Swagger;
-using AdminWebsite.UserAPI.Client;
 using AdminWebsite.Validators;
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
@@ -17,13 +16,13 @@ using Swashbuckle.AspNetCore.Swagger;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net.Http;
 using System.Reflection;
 using AdminWebsite.Contracts.Responses;
 using AdminWebsite.VideoAPI.Client;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using NotificationApi.Client;
+using UserApi.Client;
 
 namespace AdminWebsite.Extensions
 {
@@ -144,40 +143,6 @@ namespace AdminWebsite.Extensions
                 });
 
             return serviceCollection;
-        }
-        
-        /// <summary>
-        /// Temporary work-around until typed-client bug is restored
-        /// https://github.com/dotnet/aspnetcore/issues/13346#issuecomment-535544207
-        /// </summary>
-        /// <param name="builder"></param>
-        /// <param name="factory"></param>
-        /// <typeparam name="TClient"></typeparam>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException"></exception>
-        private static IHttpClientBuilder AddTypedClient<TClient>(this IHttpClientBuilder builder,
-            Func<HttpClient, TClient> factory)
-            where TClient : class
-        {
-            if (builder == null)
-            {
-                throw new ArgumentNullException(nameof(builder));
-            }
-
-            if (factory == null)
-            {
-                throw new ArgumentNullException(nameof(factory));
-            }
-
-            builder.Services.AddTransient(s =>
-            {
-                var httpClientFactory = s.GetRequiredService<IHttpClientFactory>();
-                var httpClient = httpClientFactory.CreateClient(builder.Name);
-
-                return factory(httpClient);
-            });
-
-            return builder;
         }
     }
 }
