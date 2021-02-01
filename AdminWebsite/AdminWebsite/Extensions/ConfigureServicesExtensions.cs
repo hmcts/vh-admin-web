@@ -96,9 +96,15 @@ namespace AdminWebsite.Extensions
                 .AddTypedClient(httpClient => (IBookingsApiClient) new BookingsApiClient(httpClient) { BaseUrl = settings.BookingsApiUrl, ReadResponseAsString = true });
 
             serviceCollection.AddHttpClient<IUserApiClient, UserApiClient>()
-               .AddHttpMessageHandler(() => container.GetService<UserApiTokenHandler>())
-               .AddTypedClient(httpClient => (IUserApiClient) new UserApiClient(httpClient) { BaseUrl = settings.UserApiUrl, ReadResponseAsString = true });
-
+                .AddHttpMessageHandler(() => container.GetService<UserApiTokenHandler>())
+                .AddTypedClient(httpClient =>
+                {
+                    var client = UserApiClient.GetClient(httpClient);
+                    client.BaseUrl = settings.UserApiUrl;
+                    client.ReadResponseAsString = true;
+                    return (IUserApiClient)client;
+                });
+            
             serviceCollection.AddHttpClient<IVideoApiClient, VideoApiClient>()
                 .AddHttpMessageHandler(() => container.GetService<VideoApiTokenHandler>())
                 .AddTypedClient(httpClient => (IVideoApiClient) new VideoApiClient(httpClient) { BaseUrl = settings.VideoApiUrl, ReadResponseAsString = true });

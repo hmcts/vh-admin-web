@@ -215,9 +215,9 @@
       },
       "UserApi.Client": {
         "type": "Direct",
-        "requested": "[1.23.2-pullrequest0104-0010, )",
-        "resolved": "1.23.2-pullrequest0104-0010",
-        "contentHash": "wdDRvc09yMzWVNzZLM1wmd/Wvx2tBn6aKR+7F+QyfpENEcage5xVeZ9iRCmv+Y1Q5FbP++WyM61iL+w/pbYgVA==",
+        "requested": "[1.23.4-pullrequest0104-0011, )",
+        "resolved": "1.23.4-pullrequest0104-0011",
+        "contentHash": "dQwEYlwfcqVtO+JMBn6VDy1luC90ih5vn0ckq9IBlyCWQ3N1twofieHzMWdU1SuvW2b+gjuWDkbGIn1XdIpIcw==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
           "Newtonsoft.Json": "12.0.3"
@@ -2550,12 +2550,6 @@
         }
       },
       "adminwebsite.bookingsapi.client": {
-        "type": "Project",
-        "dependencies": {
-          "Newtonsoft.Json": "12.0.3"
-        }
-      },
-      "adminwebsite.userapi.client": {
         "type": "Project",
         "dependencies": {
           "Newtonsoft.Json": "12.0.3"
