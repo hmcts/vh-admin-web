@@ -1,6 +1,5 @@
 using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Controllers;
-using AdminWebsite.UserAPI.Client;
 using FizzWare.NBuilder;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
@@ -15,6 +14,8 @@ using HealthCheckResponse = AdminWebsite.Models.HealthCheckResponse;
 using NotificationApi.Client;
 using NotificationApi.Contract;
 using Microsoft.Extensions.Logging;
+using UserApi.Client;
+using UserApi.Contract.Responses;
 
 namespace AdminWebsite.UnitTests.Controllers
 {
@@ -59,7 +60,7 @@ namespace AdminWebsite.UnitTests.Controllers
         [Test]
         public async Task Should_return_user_api_exception_when_user_api_not_found()
         {
-            var exception = new UserServiceException("User api error", 404, "response", null, new Exception());
+            var exception = new UserApiException("User api error", 404, "response", null, new Exception());
 
             _userApiClientMock
                 .Setup(x => x.GetJudgesAsync())

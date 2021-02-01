@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net;
 using AdminWebsite.BookingsAPI.Client;
+using UserApi.Client;
 
 namespace AdminWebsite.UnitTests.Helper
 {
@@ -23,7 +24,7 @@ namespace AdminWebsite.UnitTests.Helper
 
         public static Exception ForUserService(HttpStatusCode statusCode)
         {
-            return new AdminWebsite.UserAPI.Client.UserServiceException(
+            return new UserApiException(
                 statusCode.ToString(),
                 (int)statusCode,
                 statusCode.ToString(),
