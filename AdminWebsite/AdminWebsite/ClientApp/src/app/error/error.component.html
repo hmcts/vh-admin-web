@@ -1,16 +1,17 @@
 <div class="govuk-grid-row">
   <ng-container *ngIf="hasConnection$ | async">
     <div class="govuk-grid-column-full">
-      <h1 class="govuk-heading-xl">Sorry, there is a problem with the service</h1>
-      <p class="govuk-body">Please try again later.</p>
+      <h1 class="govuk-heading-xl">You've been signed out of the service</h1>
+      <p class="govuk-body">There was a problem with the service, please sign back in and check the task you were working on.</p>
+      <p class="govuk-body">If you keep seeing this message, please raise a Service Now ticket.</p>
     </div>
   </ng-container>
 
   <ng-container *ngIf="!(hasConnection$ | async)">
     <div class="govuk-grid-column-full">
       <h1 class="govuk-heading-xl">There's a problem with your connection</h1>
-      <p class="govuk-body">Please click "Reconnect" to return to the previous page. Call us if you keep seeing this message.</p>
-      <p class="govuk-body">If you keep seeing this message contact the video hearings team.</p>
+      <p class="govuk-body">Please try to reconnect to return to the previous page.</p>
+      <p class="govuk-body">If you keep seeing this message, please raise a Service Now ticket.</p>
 
       <div class="govuk-!-padding-top-4 govuk-!-padding-bottom-4">
         <button
@@ -25,9 +26,6 @@
           Reconnect
         </button>
       </div>
-
-      <h2 class="govuk-heading-m">Contact us for help</h2>
-      <p class="govuk-body">Call the Video Hearings team on <strong>0300 303 0655</strong></p>
     </div>
   </ng-container>
 </div>
