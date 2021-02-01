@@ -2640,8 +2640,8 @@
       },
       "UserApi.Client": {
         "type": "Transitive",
-        "resolved": "1.23.4-pullrequest0104-0011",
-        "contentHash": "dQwEYlwfcqVtO+JMBn6VDy1luC90ih5vn0ckq9IBlyCWQ3N1twofieHzMWdU1SuvW2b+gjuWDkbGIn1XdIpIcw==",
+        "resolved": "1.23.4",
+        "contentHash": "uew7JDpcbc74lQa0id9sc0HaxkF9ubThTzXQ5JYJYWsQMUNQbxwEfEnjQq3q9y1hnV8iodt0Sm3m32j+DMa1sg==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
           "Newtonsoft.Json": "12.0.3"
@@ -2672,7 +2672,7 @@
           "Swashbuckle.AspNetCore.Annotations": "5.2.1",
           "Swashbuckle.AspNetCore.Newtonsoft": "5.2.1",
           "Swashbuckle.AspNetCore.Swagger": "5.2.1",
-          "UserApi.Client": "1.23.4-pullrequest0104-0011"
+          "UserApi.Client": "1.23.4"
         }
       },
       "adminwebsite.bookingsapi.client": {

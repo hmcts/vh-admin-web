@@ -3,7 +3,8 @@ import { ParticipantEditResultModel } from 'src/app/common/model/participant-edi
 
 @Component({
     selector: 'app-edit-participant-search-results',
-    templateUrl: './edit-participant-search-results.component.html'
+    templateUrl: './edit-participant-search-results.component.html',
+    styleUrls: ['./edit-participant-search-results.component.scss']
 })
 export class EditParticipantSearchResultsComponent {
     private readonly loggerPrefix = '[EditParticipant] -';

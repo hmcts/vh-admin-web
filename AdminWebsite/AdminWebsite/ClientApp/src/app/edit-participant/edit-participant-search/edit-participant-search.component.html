@@ -5,7 +5,15 @@
 <form [formGroup]="form" class="govuk-form-group">
   <div class="govuk-form-group">
     <label class="govuk-label govuk-!-one-half" for="contactEmail"> Enter contact email address </label>
-    <input id="contactEmail" class="govuk-input govuk-!-width-one-half" type="text" formControlName="contactEmail" required />
+    <input
+      id="contactEmail"
+      class="govuk-input govuk-!-width-one-half"
+      type="search"
+      (search)="search()"
+      (input)="clearSearch()"
+      formControlName="contactEmail"
+      required
+    />
     <button class="govuk-button govuk-!-margin-left-2" data-module="govuk-button" id="submit" (click)="search()" [disabled]="form.invalid">
       Search
     </button>

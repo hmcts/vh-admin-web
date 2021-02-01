@@ -28,6 +28,11 @@ export class EditParticipantSearchComponent implements OnInit {
         return this.form.get('contactEmail');
     }
 
+    clearSearch() {
+        this.hasSearched = false;
+        this.result = undefined;
+    }
+
     async search(): Promise<void> {
         if (this.form.valid) {
             this.logger.debug(`${this.loggerPrefix} Attempting to search for contact email`, { contactEmail: this.contactEmail.value });

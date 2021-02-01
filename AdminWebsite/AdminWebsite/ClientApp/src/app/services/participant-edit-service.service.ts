@@ -8,9 +8,8 @@ export class ParticipantEditService {
 
     async searchForUsername(username: string): Promise<ParticipantEditResultModel> {
         try {
-            const result = await this.bhClient.postPersonBySearchTerm(username).toPromise();
-            if (result) {
-                const person = result[0];
+            const person = await this.bhClient.getPersonForUpdateByContactEmail(username).toPromise();
+            if (person) {
                 return new ParticipantEditResultModel(person.id, `${person.first_name} ${person.last_name}`, person.username);
             } else {
                 return null;

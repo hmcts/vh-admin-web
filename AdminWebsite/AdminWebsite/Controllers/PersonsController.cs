@@ -128,5 +128,21 @@ namespace AdminWebsite.Controllers
             await _userAccountService.DeleteParticipantAccountAsync(usernameCleaned);
             return NoContent();
         }
+
+        /// <summary>
+        /// Search for non judge persons by contact email
+        /// </summary>
+        /// <param name="contactEmail"></param>
+        /// <returns>A person</returns>
+        [HttpGet(Name = "GetPersonForUpdateByContactEmail")]
+        [SwaggerOperation(OperationId = "GetPersonForUpdateByContactEmail")]
+        [ProducesResponseType(typeof(PersonResponse), (int) HttpStatusCode.OK)]
+        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        public async Task<ActionResult<PersonResponse>> GetPersonForUpdateByContactEmail(
+            [FromQuery] string contactEmail)
+        {
+            var person = await _bookingsApiClient.GetPersonByContactEmailAsync(contactEmail);
+            return Ok(person);
+        }
     }
 }
