@@ -19,7 +19,9 @@
   <hr />
   <div class="govuk-grid-row vh-result-wrap">
     <div id="contactEmail" class="govuk-grid-column-one-quarter">
-      {{ contactEmail }}
+      <a href="javascript:void(0)" (click)="editParticipant(result.hearingId)" class="govuk-link govuk-link--no-visited-state">
+        {{ contactEmail }}
+      </a>
     </div>
     <div id="fullName" class="govuk-grid-column-one-quarter">
       {{ result.fullName }}
