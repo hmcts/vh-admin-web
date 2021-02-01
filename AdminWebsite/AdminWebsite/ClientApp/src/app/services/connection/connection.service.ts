@@ -10,7 +10,6 @@ import { ConnectionServiceConfigToken, ConnectionServiceConfig } from './connect
 export class ConnectionService {
     private defaults: ConnectionServiceConfig = {
         url: '/assets/images/favicons/favicon.ico?_:' + new Date().getTime(),
-        method: 'head',
         interval: 10000,
         retryInterval: 1000,
         maxRetryAttempts: 3
@@ -56,7 +55,7 @@ export class ConnectionService {
     hasConnection$ = new ReplaySubject<boolean>();
 
     checkConnection(restartTimerOnSuccess = false): Observable<any> {
-        return this.http[this.config.method](this.config.url, { responseType: 'text' }).pipe(
+        return this.http.head(this.config.url, { responseType: 'text' }).pipe(
             retryWhen(
                 retryStrategy({
                     maxRetryAttempts: this.config.maxRetryAttempts,
