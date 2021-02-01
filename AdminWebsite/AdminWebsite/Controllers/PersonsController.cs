@@ -1,4 +1,5 @@
-﻿using AdminWebsite.BookingsAPI.Client;
+﻿using System;
+using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Configuration;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -8,7 +9,9 @@ using System.Linq;
 using System.Net;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using AdminWebsite.Contracts.Requests;
 using AdminWebsite.Services;
+using UserApi.Client;
 
 namespace AdminWebsite.Controllers
 {
@@ -141,8 +144,56 @@ namespace AdminWebsite.Controllers
         public async Task<ActionResult<PersonResponse>> GetPersonForUpdateByContactEmail(
             [FromQuery] string contactEmail)
         {
-            var person = await _bookingsApiClient.GetPersonByContactEmailAsync(contactEmail);
-            return Ok(person);
+            try
+            {
+                var person = await _bookingsApiClient.SearchForNonJudicialPersonsByContactEmailAsync(contactEmail);
+                return Ok(person);
+            }
+            catch (BookingsApiException e)
+            {
+                return StatusCode(e.StatusCode, e.Response);
+            }
+        }
+
+        /// <returns>A person</returns>
+        /// <summary>
+        /// Update the personal details
+        /// </summary>
+        /// <param name="personId">The id of the person to update</param>
+        /// <param name="payload">Updated details of the person</param>
+        /// <returns></returns>
+        [HttpPut("{personId}")]
+        [SwaggerOperation(OperationId = "UpdatePersonDetails")]
+        [ProducesResponseType((int) HttpStatusCode.Accepted)]
+        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        public async Task<ActionResult<IList<PersonResponse>>> UpdatePersonDetails([FromRoute] Guid personId,
+            [FromBody] UpdateAccountDetailsRequest payload)
+        {
+            try
+            {
+                var useridString = await _userAccountService.GetAdUserIdForUsername(payload.CurrentUsername);
+                var userId = Guid.Parse(useridString);
+                var updatedPerson =
+                    await _userAccountService.UpdateUserAccountDetails(userId, payload.FirstName, payload.LastName);
+
+                var updateBookingPersonRequest = new UpdatePersonDetailsRequest
+                {
+                    First_name = updatedPerson.FirstName,
+                    Last_name = updatedPerson.LastName,
+                    Username = updatedPerson.Email
+                };
+                await _bookingsApiClient.UpdatePersonDetailsAsync(personId, updateBookingPersonRequest);
+                return Accepted();
+            }
+            catch (UserApiException e)
+            {
+                return StatusCode(e.StatusCode, e.Response);
+            }
+            catch (BookingsApiException e)
+            {
+                return StatusCode(e.StatusCode, e.Response);
+            }
         }
     }
 }
