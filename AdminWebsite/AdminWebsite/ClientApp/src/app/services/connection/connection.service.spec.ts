@@ -52,7 +52,7 @@ describe('Connection service (connected)', () => {
     });
 });
 
-fdescribe('connection service (disconnected)', () => {
+describe('connection service (disconnected)', () => {
 
     // bad URL to be injected
     const url = 'nothing/to/see/here';
