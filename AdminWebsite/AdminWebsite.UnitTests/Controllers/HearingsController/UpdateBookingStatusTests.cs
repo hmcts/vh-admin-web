@@ -3,7 +3,6 @@ using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
 using AdminWebsite.VideoAPI.Client;
-using Castle.Core.Internal;
 using FluentAssertions;
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
@@ -26,8 +25,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private readonly Mock<IPollyRetryService> _pollyRetryServiceMock;
         private readonly Mock<INotificationApiClient> _notificationApiMock;
 
-        private Mock<ILogger<HearingsService>> _participantGroupLogger;
-        private IHearingsService _hearingsService;
+        private readonly Mock<ILogger<HearingsService>> _participantGroupLogger;
+        private readonly IHearingsService _hearingsService;
 
         public UpdateBookingStatusTests()
         {

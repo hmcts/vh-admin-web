@@ -13,8 +13,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdminWebsite.IntegrationTes
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdminWebsite.BookingsAPI.Client", "AdminWebsite.BookingsAPI.Client\AdminWebsite.BookingsAPI.Client.csproj", "{ECA8A457-BA02-42E9-A70F-49DE1618E252}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdminWebsite.UserAPI.Client", "AdminWebsite.UserAPI.Client\AdminWebsite.UserAPI.Client.csproj", "{57E4FA3E-41B2-43E6-8577-9D8502EE885E}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution", "Solution", "{36646BC3-5BD3-4860-841D-01E07EDCF7CF}"
 	ProjectSection(SolutionItems) = preProject
 		..\azure-pipelines.yml = ..\azure-pipelines.yml
@@ -55,10 +53,6 @@ Global
 		{ECA8A457-BA02-42E9-A70F-49DE1618E252}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ECA8A457-BA02-42E9-A70F-49DE1618E252}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ECA8A457-BA02-42E9-A70F-49DE1618E252}.Release|Any CPU.Build.0 = Release|Any CPU
-		{57E4FA3E-41B2-43E6-8577-9D8502EE885E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{57E4FA3E-41B2-43E6-8577-9D8502EE885E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{57E4FA3E-41B2-43E6-8577-9D8502EE885E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{57E4FA3E-41B2-43E6-8577-9D8502EE885E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{29FB2372-E224-48FB-9FD2-27415F03139E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{29FB2372-E224-48FB-9FD2-27415F03139E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{29FB2372-E224-48FB-9FD2-27415F03139E}.Release|Any CPU.ActiveCfg = Release|Any CPU

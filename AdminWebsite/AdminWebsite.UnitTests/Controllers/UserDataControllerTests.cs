@@ -2,7 +2,6 @@
 using AdminWebsite.Controllers;
 using AdminWebsite.Services;
 using AdminWebsite.UnitTests.Helper;
-using AdminWebsite.UserAPI.Client;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -12,6 +11,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using UserApi.Client;
+using UserApi.Contract.Responses;
 
 namespace AdminWebsite.UnitTests.Controllers
 {
@@ -19,9 +20,9 @@ namespace AdminWebsite.UnitTests.Controllers
     {
         private UserDataController _controller;
         private Mock<IUserApiClient> _apiClient;
-        protected Mock<IUserAccountService> _userAccountService;
+        private Mock<IUserAccountService> _userAccountService;
 
-        private readonly List<JudgeResponse> judgeResponse = new List<JudgeResponse>();
+        private readonly List<JudgeResponse> _judgeResponse = new List<JudgeResponse>();
 
         [SetUp]
         public void Setup()
@@ -30,11 +31,13 @@ namespace AdminWebsite.UnitTests.Controllers
             _controller = new UserDataController(_userAccountService.Object);
 
             _apiClient = new Mock<IUserApiClient>();
-            var groupResponse = new GroupsResponse() { Display_name = "MadeUpGroup1", Group_id = Guid.NewGuid().ToString() };
-            _apiClient.Setup(x => x.GetGroupByName("MadeUpGroup1")).Returns(groupResponse);
+            var groupResponse = new GroupsResponse()
+                {DisplayName = "MadeUpGroup1", GroupId = Guid.NewGuid().ToString()};
+            _apiClient.Setup(x => x.GetGroupByNameAsync("MadeUpGroup1")).ReturnsAsync(groupResponse);
 
-            var groupResponseTest = new GroupsResponse() { Display_name = "MadeUpGroup2", Group_id = Guid.NewGuid().ToString() };
-            _apiClient.Setup(x => x.GetGroupByName("MadeUpGroup2")).Returns(groupResponseTest);
+            var groupResponseTest = new GroupsResponse()
+                {DisplayName = "MadeUpGroup2", GroupId = Guid.NewGuid().ToString()};
+            _apiClient.Setup(x => x.GetGroupByNameAsync("MadeUpGroup2")).ReturnsAsync(groupResponseTest);
 
             var judgeData = new JudgeResponse()
             {
@@ -43,7 +46,7 @@ namespace AdminWebsite.UnitTests.Controllers
                 FirstName = "Test",
                 LastName = "Judge01"
             };
-            judgeResponse.Add(judgeData);
+            _judgeResponse.Add(judgeData);
             judgeData = new JudgeResponse()
             {
                 Email = "Test.Judge02@madeupemail.com",
@@ -51,20 +54,20 @@ namespace AdminWebsite.UnitTests.Controllers
                 FirstName = "Test",
                 LastName = "Judge021"
             };
-            judgeResponse.Add(judgeData);
+            _judgeResponse.Add(judgeData);
         }
 
         [Test]
         public void Should_return_a_list_of_judges()
         {
-            _userAccountService.Setup(x => x.GetJudgeUsers()).Returns(judgeResponse);
+            _userAccountService.Setup(x => x.GetJudgeUsers()).ReturnsAsync(_judgeResponse);
 
             _controller = new UserDataController(_userAccountService.Object);
             var result = _controller.GetJudges().Result;
-            var okObjectResult = (OkObjectResult)result;
+            var okObjectResult = (OkObjectResult) result.Result;
             okObjectResult.StatusCode.Should().Be(200);
 
-            var judges = (List<JudgeResponse>)okObjectResult.Value;
+            var judges = (List<JudgeResponse>) okObjectResult.Value;
 
             var testJudge = judges.First(j =>
                 j.Email.Equals("Test.Judge01@madeupemail.com", StringComparison.CurrentCultureIgnoreCase));
@@ -77,7 +80,8 @@ namespace AdminWebsite.UnitTests.Controllers
         [Test]
         public void Should_return_a_bad_request_when_no_username_is_passed()
         {
-            _userAccountService.Setup(x => x.UpdateParticipantPassword(It.IsAny<string>())).ThrowsAsync(ClientException.ForUserService(HttpStatusCode.BadRequest));
+            _userAccountService.Setup(x => x.UpdateParticipantPassword(It.IsAny<string>()))
+                .ThrowsAsync(ClientException.ForUserService(HttpStatusCode.BadRequest));
             var response = _controller.UpdateUser("");
             response.Result.Should().BeOfType<BadRequestObjectResult>();
         }
@@ -85,7 +89,8 @@ namespace AdminWebsite.UnitTests.Controllers
         [Test]
         public void Should_return_a_not_found_when_invalid_username_is_passed()
         {
-            _userAccountService.Setup(x => x.UpdateParticipantPassword(It.IsAny<string>())).ThrowsAsync(ClientException.ForUserService(HttpStatusCode.NotFound));
+            _userAccountService.Setup(x => x.UpdateParticipantPassword(It.IsAny<string>()))
+                .ThrowsAsync(ClientException.ForUserService(HttpStatusCode.NotFound));
             var response = _controller.UpdateUser("unknown.user@domain.com");
             response.Result.Should().BeOfType<NotFoundObjectResult>();
         }
@@ -97,15 +102,17 @@ namespace AdminWebsite.UnitTests.Controllers
             {
                 Password = "NewPassword"
             };
-            
-            _userAccountService.Setup(x => x.UpdateParticipantPassword(It.IsAny<string>())).ReturnsAsync(expectedResponse);
+
+            _userAccountService.Setup(x => x.UpdateParticipantPassword(It.IsAny<string>()))
+                .ReturnsAsync(expectedResponse);
             _controller = new UserDataController(_userAccountService.Object);
             var response = await _controller.UpdateUser("test");
             var result = response as OkObjectResult;
             result.Should().NotBeNull();
             result.StatusCode.Should().Be(200);
             result.Value.Should().NotBeNull().And.BeAssignableTo<UpdateUserPasswordResponse>();
-            result.Value.As<UpdateUserPasswordResponse>().Password.Should().NotBeNull().And.Be(expectedResponse.Password);
+            result.Value.As<UpdateUserPasswordResponse>().Password.Should().NotBeNull().And
+                .Be(expectedResponse.Password);
         }
     }
 }

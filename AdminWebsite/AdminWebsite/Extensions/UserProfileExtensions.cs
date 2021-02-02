@@ -1,6 +1,6 @@
 ﻿
 using AdminWebsite.Security;
-using AdminWebsite.UserAPI.Client;
+using UserApi.Contract.Responses;
 using System;
 
 namespace AdminWebsite.Extensions
@@ -9,7 +9,7 @@ namespace AdminWebsite.Extensions
     {
         public static bool HasValidUserRole(this UserProfile user)
         {
-            if (string.IsNullOrWhiteSpace(user.User_role) || !Enum.TryParse<UserRoleType>(user.User_role, out var role) || role == UserRoleType.None)
+            if (string.IsNullOrWhiteSpace(user.UserRole) || !Enum.TryParse<UserRoleType>(user.UserRole, out var role) || role == UserRoleType.None)
             {
                 return false;
             }
