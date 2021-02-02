@@ -13,7 +13,7 @@ import { ParticipantModel } from '../../common/model/participant.model';
 import { PartyModel } from '../../common/model/party.model';
 import { DiscardConfirmPopupComponent } from '../../popups/discard-confirm-popup/discard-confirm-popup.component';
 import { BookingService } from '../../services/booking.service';
-import { CaseAndHearingRolesResponse, ClientSettingsResponse } from '../../services/clients/api-client';
+import { CaseAndHearingRolesResponse, ClientSettingsResponse, HearingRole } from '../../services/clients/api-client';
 import { ConfigService } from '../../services/config.service';
 import { Logger } from '../../services/logger';
 import { SearchService } from '../../services/search.service';
@@ -23,16 +23,28 @@ import { ParticipantsListComponent } from '../participants-list/participants-lis
 import { SearchEmailComponent } from '../search-email/search-email.component';
 import { ParticipantService } from '../services/participant.service';
 import { AddParticipantComponent } from './add-participant.component';
+import { HearingRoleModel } from '../../common/model/hearing-role.model';
 
 let component: AddParticipantComponent;
 let fixture: ComponentFixture<AddParticipantComponent>;
 
 const roleList: CaseAndHearingRolesResponse[] = [
-    new CaseAndHearingRolesResponse({ name: 'Claimant', hearing_roles: ['Representative', 'Litigant in person'] })
+    new CaseAndHearingRolesResponse({
+        name: 'Claimant',
+        hearing_roles: [
+            new HearingRole({ name: 'Representative', user_role: 'Representative' }),
+            new HearingRole({ name: 'Litigant in person', user_role: 'Individual' }),
+            new HearingRole({ name: 'presenting officer', user_role: 'Representative' })
+        ]
+    })
 ];
 
 const partyR = new PartyModel('Claimant');
-partyR.hearingRoles = ['Representative', 'Litigant in person'];
+partyR.hearingRoles = [
+    new HearingRoleModel('Representative', 'Representative'),
+    new HearingRoleModel('Litigant in person', 'Individual'),
+    new HearingRoleModel('presenting officer', 'Representative')
+];
 const partyList: PartyModel[] = [partyR];
 
 let role: AbstractControl;
@@ -446,7 +458,8 @@ describe('AddParticipantComponent', () => {
         expect(component.roleList.length).toBe(2);
         expect(component.roleList[0]).toEqual(Constants.PleaseSelect);
 
-        expect(component.hearingRoleList.length).toBe(3);
+        console.log(JSON.stringify(component.hearingRoleList));
+        expect(component.hearingRoleList.length).toBe(4);
         expect(component.hearingRoleList[0]).toEqual(Constants.PleaseSelect);
     });
     it('party selected will reset hearing roles', () => {
@@ -456,18 +469,24 @@ describe('AddParticipantComponent', () => {
         expect(component.hearingRoleList.length).toBe(1);
     });
     it('should not add second time value: Please select to a hearing role list', () => {
-        const partyL = new PartyModel('Claimant');
-        partyL.hearingRoles = [Constants.PleaseSelect, 'Representative'];
-        const partyLst: PartyModel[] = [partyL];
+        const roles = new PartyModel('Claimant');
+        roles.hearingRoles = [
+            new HearingRoleModel(Constants.PleaseSelect, 'None'),
+            new HearingRoleModel('Representative', 'Representative')
+        ];
+        const partyLst: PartyModel[] = [roles];
         component.caseAndHearingRoles = partyLst;
         role.setValue('Claimant');
         component.setupHearingRoles('Claimant');
         expect(component.hearingRoleList.length).toBe(2);
     });
     it('the hearing role list should be empty if selected party name was not found, ', () => {
-        const partyL = new PartyModel('Claimant');
-        partyL.hearingRoles = [Constants.PleaseSelect, 'Representative'];
-        const partyLst: PartyModel[] = [partyL];
+        const roles = new PartyModel('Claimant');
+        roles.hearingRoles = [
+            new HearingRoleModel(Constants.PleaseSelect, 'None'),
+            new HearingRoleModel('Representative', 'Representative')
+        ];
+        const partyLst: PartyModel[] = [roles];
         component.caseAndHearingRoles = partyLst;
         component.setupHearingRoles('Defendant');
         expect(component.hearingRoleList.length).toBe(1);
@@ -944,6 +963,8 @@ describe('AddParticipantComponent set representer', () => {
     );
 
     it('should show company and name of representing person', () => {
+        component.caseAndHearingRoles = partyList;
+        component.form.get('party').setValue('Claimant');
         component.form.get('role').setValue('Representative');
 
         component.roleSelected();
@@ -1026,19 +1047,19 @@ describe('AddParticipantComponent set representer', () => {
         expect(component.$subscriptions[0].closed).toBeTruthy();
         expect(component.$subscriptions[1].closed).toBeTruthy();
     });
-    it('should indicate that role is representative', () => {
-        const roleToFind = 'representative';
-        const result = component.isRoleRepresentative(roleToFind);
+    it('should indicate that role Representative is Representative', () => {
+        component.caseAndHearingRoles = partyList;
+        const result = component.isRoleRepresentative('Representative', 'Claimant');
         expect(result).toBe(true);
     });
-    it('should indicate that role is representative', () => {
-        const roleToFind = 'presenting officer';
-        const result = component.isRoleRepresentative(roleToFind);
+    it('should indicate that role presenting officer is Representative', () => {
+        component.caseAndHearingRoles = partyList;
+        const result = component.isRoleRepresentative('presenting officer', 'Claimant');
         expect(result).toBe(true);
     });
     it('should indicate that role is not representative', () => {
-        const roleToFind = 'somerole';
-        const result = component.isRoleRepresentative(roleToFind);
+        component.caseAndHearingRoles = partyList;
+        const result = component.isRoleRepresentative('someRole', 'Claimant');
         expect(result).toBe(false);
     });
     it('should not navigate to next page if no participants in the hearing', () => {

@@ -4,6 +4,7 @@ import { ParticipantModel } from '../../common/model/participant.model';
 import { PartyModel } from '../../common/model/party.model';
 import { CaseAndHearingRolesResponse } from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
+import { HearingRoleModel } from '../../common/model/hearing-role.model';
 
 @Injectable({
     providedIn: 'root'
@@ -15,7 +16,7 @@ export class ParticipantService {
     mapParticipantsRoles(caseRoles: CaseAndHearingRolesResponse[]) {
         const participantRoles = caseRoles.map(s => {
             const item = new PartyModel(s.name);
-            item.hearingRoles = s.hearing_roles;
+            item.hearingRoles = s.hearing_roles.map(x => new HearingRoleModel(x.name, x.user_role));
             return item;
         });
         return participantRoles;
