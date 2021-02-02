@@ -45,7 +45,8 @@ namespace AdminWebsite.Controllers
                 PostLogoutRedirectUri = _securitySettings.PostLogoutRedirectUri,
                 InstrumentationKey = _securitySettings.InstrumentationKey,
                 TestUsernameStem = _testSettings.TestUsernameStem,
-                ConferencePhoneNumber = _serviceSettings.ConferencePhoneNumber
+                ConferencePhoneNumber = _serviceSettings.ConferencePhoneNumber,
+                OptionOnJoinByPhoneDate = _serviceSettings.OptionOnJoinByPhoneDate
             };
 
             return Ok(clientSettings);
