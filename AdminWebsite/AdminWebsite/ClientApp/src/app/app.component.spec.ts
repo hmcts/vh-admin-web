@@ -1,13 +1,14 @@
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { fakeAsync, TestBed, waitForAsync } from '@angular/core/testing';
+import { fakeAsync, TestBed, waitForAsync, inject, tick, discardPeriodicTasks } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AdalService } from 'adal-angular4';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { AppComponent } from './app.component';
 import { WindowLocation, WindowRef } from './security/window-ref';
 import { ClientSettingsResponse } from './services/clients/api-client';
 import { ConfigService } from './services/config.service';
+import { ConnectionServiceConfigToken } from './services/connection/connection';
 import { ConnectionService } from './services/connection/connection.service';
 import { DeviceType } from './services/device-type';
 import { PageTrackerService } from './services/page-tracker.service';
@@ -36,8 +37,6 @@ describe('AppComponent', () => {
     let pageTracker: jasmine.SpyObj<PageTrackerService>;
     let window: jasmine.SpyObj<WindowRef>;
     let deviceTypeServiceSpy: jasmine.SpyObj<DeviceType>;
-    let httpClient: jasmine.SpyObj<HttpClient>;
-    // let connection: jasmine.SpyObj<ConnectionService>;
 
     const clientSettings = new ClientSettingsResponse({
         tenant_id: 'tenantid',
@@ -45,6 +44,15 @@ describe('AppComponent', () => {
         post_logout_redirect_uri: '/dashboard',
         redirect_uri: '/dashboard'
     });
+
+    let httpClient: jasmine.SpyObj<HttpClient>;
+
+    const mockConnectionService = {
+        hasConnection$: {
+            subscribe: () => of(null),
+            pipe: () => of(null),
+        }
+    };
 
     beforeEach(
         waitForAsync(() => {
@@ -57,6 +65,7 @@ describe('AppComponent', () => {
             pageTracker = jasmine.createSpyObj('PageTrackerService', ['trackNavigation', 'trackPreviousPage']);
 
             deviceTypeServiceSpy = jasmine.createSpyObj<DeviceType>(['isSupportedBrowser']);
+
             httpClient = jasmine.createSpyObj<HttpClient>(['head']);
 
             TestBed.configureTestingModule({
@@ -77,17 +86,7 @@ describe('AppComponent', () => {
                     { provide: WindowRef, useValue: window },
                     { provide: VideoHearingsService, useValue: videoHearingServiceSpy },
                     { provide: DeviceType, useValue: deviceTypeServiceSpy },
-                    { provide: HttpClient, useValue: httpClient },
-                    {
-                        provide: ConnectionService, useFactory: () => {
-                            return {
-                                hasConnection$: {
-                                    subscribe: () => of(null),
-                                    pipe: () => of(null),
-                                }
-                            }
-                        }
-                    }
+                    { provide: ConnectionService, useFactory: () => mockConnectionService }
                 ]
             }).compileComponents();
         })
@@ -133,6 +132,7 @@ describe('AppComponent', () => {
         };
         expect(lastRoutingArgs.url).toEqual('/login');
         expect(lastRoutingArgs.queryParams.returnUrl).toEqual('/url?search#hash');
+
     }));
 
     it('should navigate to unsupported browser page if browser is not compatible', () => {
@@ -142,4 +142,86 @@ describe('AppComponent', () => {
         component.checkBrowser();
         expect(router.navigateByUrl).toHaveBeenCalledWith('unsupported-browser');
     });
+});
+
+describe('AppComponent - ConnectionService', () => {
+    const router = {
+        navigate: jasmine.createSpy('navigate'),
+        navigateByUrl: jasmine.createSpy('navigateByUrl')
+    };
+
+    const videoHearingServiceSpy = jasmine.createSpyObj('VideoHearingsService', ['hasUnsavedChanges']);
+
+    let configServiceSpy: jasmine.SpyObj<ConfigService>;
+    let pageTracker: jasmine.SpyObj<PageTrackerService>;
+    let window: jasmine.SpyObj<WindowRef>;
+    let deviceTypeServiceSpy: jasmine.SpyObj<DeviceType>;
+
+    const clientSettings = new ClientSettingsResponse({
+        tenant_id: 'tenantid',
+        client_id: 'clientid',
+        post_logout_redirect_uri: '/dashboard',
+        redirect_uri: '/dashboard'
+    });
+
+    let httpClient: jasmine.SpyObj<HttpClient>;
+
+    beforeEach(
+        waitForAsync(() => {
+            configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['clientSettings', 'getClientSettings', 'loadConfig']);
+            configServiceSpy.clientSettings = clientSettings;
+
+            window = jasmine.createSpyObj('WindowRef', ['getLocation']);
+            window.getLocation.and.returnValue(new WindowLocation('/url'));
+
+            pageTracker = jasmine.createSpyObj('PageTrackerService', ['trackNavigation', 'trackPreviousPage']);
+
+            deviceTypeServiceSpy = jasmine.createSpyObj<DeviceType>(['isSupportedBrowser']);
+
+            httpClient = jasmine.createSpyObj<HttpClient>(['head']);
+
+            TestBed.configureTestingModule({
+                imports: [HttpClientModule, RouterTestingModule],
+                declarations: [
+                    AppComponent,
+                    HeaderComponent,
+                    FooterStubComponent,
+                    SignOutPopupStubComponent,
+                    CancelPopupStubComponent,
+                    UnsupportedBrowserComponent
+                ],
+                providers: [
+                    { provide: AdalService, useValue: adalService },
+                    { provide: ConfigService, useValue: configServiceSpy },
+                    { provide: Router, useValue: router },
+                    { provide: PageTrackerService, useValue: pageTracker },
+                    { provide: WindowRef, useValue: window },
+                    { provide: VideoHearingsService, useValue: videoHearingServiceSpy },
+                    { provide: DeviceType, useValue: deviceTypeServiceSpy },
+                    { provide: ConnectionServiceConfigToken, useValue: { interval: 1000 } }
+                ]
+            }).compileComponents();
+        })
+    );
+
+    it('should redirect if the connection is lost', fakeAsync(
+        inject([HttpClient], (http: HttpClient) => {
+            const service = TestBed.inject(ConnectionService);
+
+            // make sure the observable from head errors
+            spyOn(http, 'head').and.returnValue(throwError);
+
+            // need this to start the timer in the async zone
+            tick(0);
+
+            expect(http.head).toHaveBeenCalledTimes(1);
+
+            TestBed.createComponent(AppComponent);
+
+            expect(router.navigate).toHaveBeenCalled();
+
+            const lastRouterCall = router.navigate.calls.mostRecent();
+            const url = lastRouterCall.args[0][0];
+            expect(url).toEqual('/error');
+        })));
 });
