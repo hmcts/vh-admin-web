@@ -85,17 +85,6 @@
       <span id="hearingType-error" class="govuk-error-message"> Please select a hearing type </span>
     </div>
   </div>
-  <div *ngIf="!isExistingHearing" class="govuk-checkboxes__item">
-    <input
-      class="govuk-checkboxes__input"
-      id="questionnaireNotRequired"
-      name="questionnaireNotRequired"
-      type="checkbox"
-      [checked]="questionnaireNotRequired"
-      formControlName="questionnaireNotRequired"
-    />
-    <label class="govuk-label govuk-checkboxes__label" for="questionnaireNotRequired"> Do not send questionnaires </label>
-  </div>
 
   <div class="govuk-!-padding-bottom-9"></div>
 

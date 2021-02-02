@@ -3,7 +3,7 @@
   <HearingDetails>
     <CaseType>Civil Money Claims</CaseType>
     <HearingType>Application to set Judgment Aside</HearingType>
-    <DoNotSendQuestionnaires>true</DoNotSendQuestionnaires>
+    <DoNotSendQuestionnaires>false</DoNotSendQuestionnaires>
   </HearingDetails>
   <HearingSchedule>
     <DurationHours>00</DurationHours>
