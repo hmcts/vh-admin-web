@@ -23,8 +23,7 @@ export class AppComponent implements OnInit {
         tenant: '',
         clientId: '',
         redirectUri: '',
-        postLogoutRedirectUri: '',
-        expireOffsetSeconds: -3480
+        postLogoutRedirectUri: ''
     };
 
     @ViewChild(HeaderComponent, { static: true })
