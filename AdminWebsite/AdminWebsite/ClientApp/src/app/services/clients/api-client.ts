@@ -3086,7 +3086,7 @@ export class ClientSettingsResponse implements IClientSettingsResponse {
     /** To join the conference phone number */
     conference_phone_number?: string | undefined;
     /** The date to switch on option to join by phone */
-    option_on_join_by_phone_date?: string | undefined;
+    join_by_phone_from_date?: string | undefined;
 
     constructor(data?: IClientSettingsResponse) {
         if (data) {
@@ -3105,7 +3105,7 @@ export class ClientSettingsResponse implements IClientSettingsResponse {
             this.instrumentation_key = _data['instrumentation_key'];
             this.test_username_stem = _data['test_username_stem'];
             this.conference_phone_number = _data['conference_phone_number'];
-            this.option_on_join_by_phone_date = _data['option_on_join_by_phone_date'];
+            this.join_by_phone_from_date = _data['join_by_phone_from_date'];
         }
     }
 
@@ -3125,7 +3125,7 @@ export class ClientSettingsResponse implements IClientSettingsResponse {
         data['instrumentation_key'] = this.instrumentation_key;
         data['test_username_stem'] = this.test_username_stem;
         data['conference_phone_number'] = this.conference_phone_number;
-        data['option_on_join_by_phone_date'] = this.option_on_join_by_phone_date;
+        data['join_by_phone_from_date'] = this.join_by_phone_from_date;
         return data;
     }
 }
@@ -3147,7 +3147,7 @@ export interface IClientSettingsResponse {
     /** To join the conference phone number */
     conference_phone_number?: string | undefined;
     /** The date to switch on option to join by phone */
-    option_on_join_by_phone_date?: string | undefined;
+    join_by_phone_from_date?: string | undefined;
 }
 
 export class HealthCheck implements IHealthCheck {

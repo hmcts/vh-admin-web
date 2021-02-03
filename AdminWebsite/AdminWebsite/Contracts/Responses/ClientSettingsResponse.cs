@@ -42,6 +42,6 @@
         /// <summary>
         ///  The date to switch on option to join by phone 
         /// </summary>
-        public string OptionOnJoinByPhoneDate { get; set; }
+        public string JoinByPhoneFromDate { get; set; }
     }
 }

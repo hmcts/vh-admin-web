@@ -149,8 +149,8 @@ describe('HearingDetailsComponent join by phone', () => {
         'judge.green@email.com',
         '1234567'
     );
-    it('should not display option to join by phone if config has not the set date', () => {
-        const config = new ClientSettingsResponse({ option_on_join_by_phone_date: '' });
+    it('should display option to join by phone if config has not the set date', () => {
+        const config = new ClientSettingsResponse({ join_by_phone_from_date: '' });
         activatedRoute = <any>{
             snapshot: {
                 data: { configSettings: config }
@@ -162,7 +162,7 @@ describe('HearingDetailsComponent join by phone', () => {
         expect(result).toBe(false);
     });
     it('should not display option to join by phone if booking has not confirmation date', () => {
-        const config = new ClientSettingsResponse({ option_on_join_by_phone_date: new Date('2020-10-22').toISOString() });
+        const config = new ClientSettingsResponse({ join_by_phone_from_date: new Date('2020-10-22').toISOString() });
         activatedRoute = <any>{
             snapshot: {
                 data: { configSettings: config }
@@ -176,7 +176,7 @@ describe('HearingDetailsComponent join by phone', () => {
     });
     it('should not display option to join by phone if booking confirmation date less than config date', () => {
         const config = new ClientSettingsResponse({
-            option_on_join_by_phone_date: new Date('2020-10-22').toISOString()
+            join_by_phone_from_date: new Date('2020-10-22').toISOString()
         });
         activatedRoute = <any>{
             snapshot: {
@@ -191,7 +191,7 @@ describe('HearingDetailsComponent join by phone', () => {
     });
     it('should display option to join by phone if booking confirmation date greater than config date', () => {
         const config = new ClientSettingsResponse({
-            option_on_join_by_phone_date: new Date('2020-10-22').toISOString()
+            join_by_phone_from_date: new Date('2020-10-22').toISOString()
         });
         activatedRoute = <any>{
             snapshot: {

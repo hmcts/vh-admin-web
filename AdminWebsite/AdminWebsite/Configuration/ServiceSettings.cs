@@ -15,7 +15,7 @@
         /// </summary>
         public string ConferencePhoneNumber { get; set; }
 
-        public string OptionOnJoinByPhoneDate { get; set; }
+        public string JoinByPhoneFromDate { get; set; }
 
     }
 }

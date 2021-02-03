@@ -46,7 +46,7 @@ namespace AdminWebsite.Controllers
                 InstrumentationKey = _securitySettings.InstrumentationKey,
                 TestUsernameStem = _testSettings.TestUsernameStem,
                 ConferencePhoneNumber = _serviceSettings.ConferencePhoneNumber,
-                OptionOnJoinByPhoneDate = _serviceSettings.OptionOnJoinByPhoneDate
+                JoinByPhoneFromDate = _serviceSettings.JoinByPhoneFromDate
             };
 
             return Ok(clientSettings);

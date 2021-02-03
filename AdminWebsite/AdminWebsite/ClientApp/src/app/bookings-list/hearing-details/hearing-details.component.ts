@@ -29,8 +29,11 @@ export class HearingDetailsComponent {
 
     isJoinByPhone(): boolean {
         const config = this.route.snapshot.data['configSettings'];
-        const datePhone = config.option_on_join_by_phone_date;
-        if (datePhone.length > 0 && this.hearing.ConfirmedDate) {
+        const datePhone = config.join_by_phone_from_date;
+        if (!datePhone || datePhone.length === 0) {
+            return true;
+        }
+        if (this.hearing.ConfirmedDate) {
             return Date.parse(this.hearing.ConfirmedDate.toString()) >= Date.parse(datePhone);
         } else {
             return false;
