@@ -94,7 +94,7 @@ export function getSettings(configService: ConfigService) {
         ErrorService,
         PageTrackerService,
         AppInsightsLogger,
-        WindowRef,
+        WindowRef
     ],
     bootstrap: [AppComponent]
 })
