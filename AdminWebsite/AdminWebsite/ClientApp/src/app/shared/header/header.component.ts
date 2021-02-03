@@ -38,7 +38,7 @@ export class HeaderComponent {
     constructor(private router: Router, private connection: ConnectionService) {
         this.$confirmLogout = new EventEmitter();
         this.$confirmSaveBooking = new EventEmitter();
-        this.showMenuItems$ = this.connection.hasConnection$.pipe(startWith(true));
+        this.showMenuItems$ = connection.hasConnection$;
     }
 
     @HostListener('window:scroll', ['$event'])

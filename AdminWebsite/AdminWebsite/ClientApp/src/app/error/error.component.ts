@@ -14,7 +14,7 @@ export class ErrorComponent {
     isConnecting$ = new BehaviorSubject(false);
 
     constructor(private connection: ConnectionService, private router: Router, private pageTracker: PageTrackerService) {
-        this.hasConnection$ = connection.hasConnection$.pipe(startWith(true));
+        this.hasConnection$ = connection.hasConnection$;
     }
 
     reconnect() {
