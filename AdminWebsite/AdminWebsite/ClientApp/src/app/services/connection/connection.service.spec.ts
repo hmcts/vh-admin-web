@@ -20,30 +20,32 @@ describe('Connection service (connected)', () => {
         });
     });
 
-    it('should make requests on the interval', fakeAsync(inject([HttpClient], (http: HttpClient) => {
-        // construct the service inside the async zone
-        // otherwise, timer runs outside async zone & is unaffected by tick()
-        service = TestBed.inject(ConnectionService);
+    it('should make requests on the interval', fakeAsync(
+        inject([HttpClient], (http: HttpClient) => {
+            // construct the service inside the async zone
+            // otherwise, timer runs outside async zone & is unaffected by tick()
+            service = TestBed.inject(ConnectionService);
 
-        // cannot run XHR requests inside fakeAsync zone, so replace it with a spy
-        // return a positive response (just a 'complete') from the HEAD request
-        spyOn(http, 'head').and.returnValue(of());
+            // cannot run XHR requests inside fakeAsync zone, so replace it with a spy
+            // return a positive response (just a 'complete') from the HEAD request
+            spyOn(http, 'head').and.returnValue(of());
 
-        // simulate 0 ms elapsed to start the timer in the service (required)
-        tick(0);
-        expect(http.head).toHaveBeenCalledTimes(1);
+            // simulate 0 ms elapsed to start the timer in the service (required)
+            tick(0);
+            expect(http.head).toHaveBeenCalledTimes(1);
 
-        // two subsequent ticks should each increment the number of requests
-        tick(1000);
-        expect(http.head).toHaveBeenCalledTimes(2);
-        tick(1000);
-        expect(http.head).toHaveBeenCalledTimes(3);
+            // two subsequent ticks should each increment the number of requests
+            tick(1000);
+            expect(http.head).toHaveBeenCalledTimes(2);
+            tick(1000);
+            expect(http.head).toHaveBeenCalledTimes(3);
 
-        // clear the task queue
-        discardPeriodicTasks();
-    })));
+            // clear the task queue
+            discardPeriodicTasks();
+        })
+    ));
 
-    it('hasConnection subject emits true', (done) => {
+    it('hasConnection subject emits true', done => {
         service = TestBed.inject(ConnectionService);
         service.hasConnection$.subscribe(x => {
             expect(x).toBeTruthy();
@@ -53,7 +55,6 @@ describe('Connection service (connected)', () => {
 });
 
 describe('connection service (disconnected)', () => {
-
     // bad URL to be injected
     const url = 'nothing/to/see/here';
 
@@ -61,21 +62,17 @@ describe('connection service (disconnected)', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            providers: [
-                ConnectionService,
-                { provide: ConnectionServiceConfigToken, useValue: { url, maxRetryAttempts: 2 } }
-            ],
+            providers: [ConnectionService, { provide: ConnectionServiceConfigToken, useValue: { url, maxRetryAttempts: 2 } }],
             imports: [HttpClientModule]
         });
 
         service = TestBed.inject(ConnectionService);
     });
 
-    it('hasConnection subject emits false after specified number of retries', (done) => {
+    it('hasConnection subject emits false after specified number of retries', done => {
         service.hasConnection$.subscribe(x => {
             expect(x).toBeFalsy();
             done();
         });
     });
-
 });

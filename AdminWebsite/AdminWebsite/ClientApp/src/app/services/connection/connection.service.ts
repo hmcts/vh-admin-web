@@ -31,7 +31,7 @@ export class ConnectionService {
         timer(0, this.config.interval)
             .pipe(
                 takeUntil(this.unsubscribe$),
-                switchMap(() => this.checkConnection()),
+                switchMap(() => this.checkConnection())
             )
             .subscribe(
                 () => {

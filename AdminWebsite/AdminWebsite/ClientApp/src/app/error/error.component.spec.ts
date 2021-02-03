@@ -15,7 +15,7 @@ describe('ErrorComponent', () => {
     const connection = {
         hasConnection$: {
             subscribe: () => of(null),
-            pipe: () => of(null),
+            pipe: () => of(null)
         }
     };
 
@@ -28,8 +28,8 @@ describe('ErrorComponent', () => {
                     { provide: Router, useValue: jasmine.createSpyObj<Router>(['navigate']) },
                     { provide: HttpClient, useValue: httpClient },
                     { provide: ConnectionService, useValue: connection },
-                    { provide: PageTrackerService, useValue: pageTracker },
-                ],
+                    { provide: PageTrackerService, useValue: pageTracker }
+                ]
             }).compileComponents();
         })
     );

@@ -50,7 +50,7 @@ describe('AppComponent', () => {
     const mockConnectionService = {
         hasConnection$: {
             subscribe: () => of(null),
-            pipe: () => of(null),
+            pipe: () => of(null)
         }
     };
 
@@ -132,7 +132,6 @@ describe('AppComponent', () => {
         };
         expect(lastRoutingArgs.url).toEqual('/login');
         expect(lastRoutingArgs.queryParams.returnUrl).toEqual('/url?search#hash');
-
     }));
 
     it('should navigate to unsupported browser page if browser is not compatible', () => {
@@ -223,5 +222,6 @@ describe('AppComponent - ConnectionService', () => {
             const lastRouterCall = router.navigate.calls.mostRecent();
             const url = lastRouterCall.args[0][0];
             expect(url).toEqual('/error');
-        })));
+        })
+    ));
 });

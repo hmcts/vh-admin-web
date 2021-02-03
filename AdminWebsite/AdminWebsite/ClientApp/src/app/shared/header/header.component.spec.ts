@@ -14,7 +14,7 @@ describe('HeaderComponent', () => {
     const connection = {
         hasConnection$: {
             subscribe: () => of(null),
-            pipe: () => of(null),
+            pipe: () => of(null)
         }
     };
 
@@ -31,7 +31,8 @@ describe('HeaderComponent', () => {
                     { provide: Router, useValue: jasmine.createSpyObj<Router>(['navigate']) },
                     { provide: HttpClient, useValue: httpClient },
                     {
-                        provide: ConnectionService, useValue: connection
+                        provide: ConnectionService,
+                        useValue: connection
                     }
                 ],
                 schemas: [NO_ERRORS_SCHEMA]
