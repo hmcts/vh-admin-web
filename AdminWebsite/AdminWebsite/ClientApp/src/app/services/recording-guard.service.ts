@@ -13,6 +13,6 @@ export class RecordingGuardService {
 
     mandatoryRecordingWithInterpreter(participants: ParticipantModel[])
     {
-        return participants.some(pat => pat.hearing_role_name==="Interpreter ")
+        return participants.some(pat => pat.hearing_role_name.trim()==="Interpreter")
     }
 }

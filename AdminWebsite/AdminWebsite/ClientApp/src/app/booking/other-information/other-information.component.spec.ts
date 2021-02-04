@@ -18,19 +18,16 @@ let otherInformation: AbstractControl;
 let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
 
 const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
-const interpreter : ParticipantModel = new ParticipantModel();
-const notInterpreter : ParticipantModel = new ParticipantModel();
-
-function initHearingRequest(): HearingModel {
-    interpreter.case_role_name = 'Interpreter ';
-    notInterpreter.case_role_name = 'Not Interpreter';
-
-    const newHearing = new HearingModel();
-    newHearing.cases = [];
-    newHearing.participants = [];
-    newHearing.other_information = 'some text';
-    return newHearing;
-}
+const interpreter: ParticipantModel  = {
+    hearing_role_name: 'Interpreter ',
+    is_judge: false,
+    is_exist_person: false
+ };
+ const notInterpreter: ParticipantModel = {
+    hearing_role_name: 'Not Interpreter ',
+    is_judge: false,
+    is_exist_person: false
+ };
 
 describe('OtherInformationComponent', () => {
     let component: OtherInformationComponent;
@@ -44,7 +41,6 @@ describe('OtherInformationComponent', () => {
 
     beforeEach(
         waitForAsync(() => {
-            const hearing = initHearingRequest();
             routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
             TestBed.configureTestingModule({
@@ -62,7 +58,10 @@ describe('OtherInformationComponent', () => {
                     DiscardConfirmPopupComponent
                 ]
             }).compileComponents();
-            videoHearingsServiceSpy.getCurrentRequest.and.returnValue(hearing);
+            videoHearingsServiceSpy.getCurrentRequest.and.returnValue({ 
+                    participants: [],
+                    other_information: 'some text' 
+                });
         })
     );
 
