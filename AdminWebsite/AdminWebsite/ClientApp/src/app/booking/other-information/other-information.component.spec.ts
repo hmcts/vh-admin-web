@@ -27,6 +27,7 @@ function initHearingRequest(): HearingModel {
 
     const newHearing = new HearingModel();
     newHearing.cases = [];
+    newHearing.participants = [];
     newHearing.other_information = 'some text';
     return newHearing;
 }
@@ -177,8 +178,8 @@ describe('OtherInformationComponent', () => {
         component.ngOnInit();
         fixture.autoDetectChanges();
         expect(component.interpreterPresent).toBe(true);
-        //expect(component.hearing.audio_recording_required).toBe(true);
-        //expect(component.form.controls['audioChoice'].value).toBe(true);
+        expect(component.hearing.audio_recording_required).toBe(true);
+        expect(component.form.controls['audioChoice'].value).toBe(true);
     });
     it('should be allowed to set audio recording options when hearing does not have an interpreter', () =>{
         component.hearing.participants.push(notInterpreter);
