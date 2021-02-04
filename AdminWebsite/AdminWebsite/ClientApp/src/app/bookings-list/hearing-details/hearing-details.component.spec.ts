@@ -159,7 +159,7 @@ describe('HearingDetailsComponent join by phone', () => {
         const component = new HearingDetailsComponent(activatedRoute);
         component.hearing = hearing;
         const result = component.isJoinByPhone();
-        expect(result).toBe(false);
+        expect(result).toBe(true);
     });
     it('should not display option to join by phone if booking has not confirmation date', () => {
         const config = new ClientSettingsResponse({ join_by_phone_from_date: new Date('2020-10-22').toISOString() });
