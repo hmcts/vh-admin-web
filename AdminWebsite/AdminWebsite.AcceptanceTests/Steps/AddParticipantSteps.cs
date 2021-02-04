@@ -22,6 +22,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
     {
         private const int TimeoutToRetrieveUserFromAad = 60;
         private const string RepresentingText = "Representing";
+        private const string InterpreterText = "Interpreting for";
         private readonly TestContext _c;
         private readonly Dictionary<User, UserBrowser> _browsers;
         private string _individualDisplayName = RepresentingText;
@@ -38,8 +39,17 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             AddExistingClaimantIndividual();
             AddExistingClaimantRep();
-            AddNewDefendantIndividual();
+            AddNewDefendantIndividual(PartyRole.LitigantInPerson);
             AddNewDefendantRep();
+            VerifyUsersAreAddedToTheParticipantsList();
+            ClickNext();
+        }
+
+        [When(@"the user completes the add participants form with an Interpreter")]
+        public void WhenTheUserCompletesTheAddParticipantsFormWithAnInterpreter()
+        {
+            AddNewDefendantIndividual(PartyRole.LitigantInPerson);
+            AddNewDefendantIndividual(PartyRole.Interpreter);
             VerifyUsersAreAddedToTheParticipantsList();
             ClickNext();
         }
@@ -75,12 +85,11 @@ namespace AdminWebsite.AcceptanceTests.Steps
             SetExistingRepDetails(rep);
         }
 
-        private void AddNewDefendantIndividual()
+        private void AddNewDefendantIndividual(PartyRole partyRole)
         {
-
             var individual = CreateNewUser("Individual");
             individual.CaseRoleName = Party.Defendant.Name;
-            individual.HearingRoleName = PartyRole.LitigantInPerson.Name;
+            individual.HearingRoleName = partyRole.Name;
             _individualDisplayName = individual.DisplayName;
             _c.Test.HearingParticipants.Add(individual);
             SetParty(individual.CaseRoleName);
@@ -137,6 +146,13 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AddParticipantsPage.IndividualOrganisationTextfield).SendKeys(organisation);
             var telephone = _c.Test.TestData.AddParticipant.Participant.Phone;
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AddParticipantsPage.PhoneTextfield).SendKeys(telephone);
+            if (user.HearingRoleName == PartyRole.Interpreter.Name)
+            {
+                var citizen = _c.Test.HearingParticipants.First(p => p.HearingRoleName == PartyRole.LitigantInPerson.Name);
+                _commonSharedSteps.WhenTheUserSelectsTheOptionFromTheDropdown(_browsers[_c.CurrentUser].Driver,
+                    AddParticipantsPage.InterpreteeDropdown, citizen.DisplayName);
+                user.Interpretee = citizen.DisplayName;
+            }
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AddParticipantsPage.DisplayNameTextfield).SendKeys(user.DisplayName);
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AddParticipantsPage.AddParticipantLink);
             _browsers[_c.CurrentUser].ScrollTo(AddParticipantsPage.AddParticipantLink);
@@ -253,6 +269,10 @@ namespace AdminWebsite.AcceptanceTests.Steps
                 if (participant.HearingRoleName == PartyRole.Representative.Name)
                 {
                     expectedParticipant = $"{fullNameTitle} {RepresentingText} {participant.Representee}";
+                }
+                if (participant.HearingRoleName == PartyRole.Interpreter.Name)
+                {
+                    expectedParticipant = $"{fullNameTitle} {InterpreterText} {participant.Interpretee}";
                 }
 
                 actualResult.Any(x => x.Replace(Environment.NewLine, " ").Equals(expectedParticipant)).Should()

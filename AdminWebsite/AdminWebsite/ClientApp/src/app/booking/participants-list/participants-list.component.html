@@ -34,16 +34,23 @@
     <div *ngFor="let pat of participants">
       <div *ngIf="!pat.is_judge">
         <div class="govuk-grid-row vh-row">
-          <div class="govuk-grid-column-two-thirds vhtable-header">
+          <div *ngIf="isInterpreter(pat) || isInterpretee(pat); else noImage" class="govuk-grid-column-one-third vh-image-10">
+            <img src="/assets/images/interpreter.png" height="30" width="30" class="govuk-header__logotype-crest" alt="Interpreter link" />
+          </div>
+          <ng-template #noImage>
+            <div class="vh-no-image"></div>
+          </ng-template>
+          <div class="govuk-grid-column-one-half vhtable-header">
             {{ pat.title }} {{ pat.first_name }} {{ pat.last_name }}
-            <div *ngIf="pat.hearing_role_name === 'Representative'; else notRepresenting">
-              <span>Representing</span>
+            <div *ngIf="isRepresentative(pat) || isInterpreter(pat); else notRepresenting">
+              <span>{{ isRepresentative(pat) ? 'Representing' : 'Interpreting for' }}</span>
             </div>
             <ng-template #notRepresenting>
-              {{ pat.hearing_role_name }}
+              <div>{{ pat.hearing_role_name }}</div>
             </ng-template>
             <div>
               <strong>{{ pat.representee }}</strong>
+              <strong>{{ getInterpreteeDisplayName(pat) }} </strong>
             </div>
           </div>
           <div class="govuk-grid-column-one-third vhtable-cell" *ngIf="isEditRemoveVisible">

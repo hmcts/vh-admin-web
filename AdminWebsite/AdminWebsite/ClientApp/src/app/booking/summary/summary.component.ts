@@ -3,6 +3,7 @@ import { FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { EndpointModel } from 'src/app/common/model/endpoint.model';
+import { RemoveInterpreterPopupComponent } from 'src/app/popups/remove-interpreter-popup/remove-interpreter-popup.component';
 import { Constants } from '../../common/constants';
 import { FormatShortDuration } from '../../common/formatters/format-short-duration';
 import { HearingModel } from '../../common/model/hearing.model';
@@ -15,6 +16,7 @@ import { ReferenceDataService } from '../../services/reference-data.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { PageUrls } from '../../shared/page-url.constants';
 import { ParticipantsListComponent } from '../participants-list/participants-list.component';
+import { ParticipantService } from '../services/participant.service';
 
 @Component({
     selector: 'app-summary',
@@ -56,10 +58,13 @@ export class SummaryComponent implements OnInit, OnDestroy {
     multiDays: boolean;
     endHearingDate: Date;
 
+    showConfirmRemoveParticipantInterpretedFor = false;
+
     @ViewChild(ParticipantsListComponent, { static: true })
     participantsListComponent: ParticipantsListComponent;
 
     @ViewChild(RemovePopupComponent) removePopupComponent: RemovePopupComponent;
+    @ViewChild(RemoveInterpreterPopupComponent) removeInterpreterPopupComponent: RemoveInterpreterPopupComponent;
 
     constructor(
         private hearingService: VideoHearingsService,
@@ -67,7 +72,8 @@ export class SummaryComponent implements OnInit, OnDestroy {
         private referenceDataService: ReferenceDataService,
         private bookingService: BookingService,
         private logger: Logger,
-        private recordingGuardService: RecordingGuardService
+        private recordingGuardService: RecordingGuardService,
+        private participantService: ParticipantService
     ) {
         this.attemptingCancellation = false;
         this.showErrorSaving = false;
@@ -101,9 +107,20 @@ export class SummaryComponent implements OnInit, OnDestroy {
         const isNotLast = filteredParticipants && filteredParticipants.length > 1;
         const title = participant && participant.title ? `${participant.title}` : '';
         this.removerFullName = participant ? `${title} ${participant.first_name} ${participant.last_name}` : '';
-        this.showConfirmationRemoveParticipant = true;
+        // this.showConfirmationRemoveParticipant = true;
+        const interpretedFor = this.hearing.participants.find(p => p.interpreterFor === participant.email);
+        if (interpretedFor) {
+            this.showConfirmRemoveParticipantInterpretedFor = true;
+        } else {
+            this.showConfirmationRemoveParticipant = true;
+        }
         setTimeout(() => {
-            this.removePopupComponent.isLastParticipant = !isNotLast;
+            // this.removePopupComponent.isLastParticipant = !isNotLast;
+            if (interpretedFor) {
+                this.removeInterpreterPopupComponent.isLastParticipant = !isNotLast;
+            } else {
+                this.removePopupComponent.isLastParticipant = !isNotLast;
+            }
         }, 500);
     }
 
@@ -131,6 +148,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
                 });
             }
             this.hearing.participants.splice(indexOfParticipant, 1);
+            this.removeLinkedParticipant(this.selectedParticipantEmail);
             this.hearingService.updateHearingRequest(this.hearing);
             this.hearingService.setBookingHasChanged(true);
             this.bookingService.removeParticipantEmail();
@@ -289,5 +307,33 @@ export class SummaryComponent implements OnInit, OnDestroy {
             represents = participant.display_name + ', representing ' + participant.representee;
         }
         return represents;
+    }
+
+    handleContinueRemoveInterpreter() {
+        this.showConfirmRemoveParticipantInterpretedFor = false;
+        this.removeParticipantAndInterpreter();
+    }
+    handleCancelRemoveInterpreter() {
+        this.showConfirmRemoveParticipantInterpretedFor = false;
+    }
+    private removeLinkedParticipant(email: string): void {
+        // removes both the linked participants.
+        const interpreterExists = this.hearing.linked_participants.find(p => p.participantEmail === email);
+        const interpreteeExists = this.hearing.linked_participants.find(p => p.linkedParticipantEmail === email);
+        if (interpreterExists || interpreteeExists) {
+            this.hearing.linked_participants = [];
+        }
+    }
+    private removeParticipantAndInterpreter() {
+        const interpreter = this.hearing.participants.find(i => i.interpreterFor === this.selectedParticipantEmail);
+        if (interpreter) {
+            this.participantService.removeParticipant(this.hearing, interpreter.email);
+        }
+        this.participantService.removeParticipant(this.hearing, this.selectedParticipantEmail);
+        this.removeLinkedParticipant(this.selectedParticipantEmail);
+        this.hearingService.updateHearingRequest(this.hearing);
+        this.hearingService.setBookingHasChanged(true);
+        this.bookingService.removeParticipantEmail();
+        this.isLastParticipanRemoved();
     }
 }

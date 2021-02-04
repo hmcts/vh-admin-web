@@ -1,0 +1,42 @@
+<p>remove-interpreter-popup works!</p>
+<div id="removeInterpreterPopup" class="vh-popup-overlay">
+  <div class="vh-popup-aligned">
+    <h1 class="govuk-heading-m">This participant is linked to an interpreter</h1>
+
+    <div class="govuk-warning-text">
+      <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+      <strong class="govuk-warning-text__text">
+        <span class="govuk-warning-text__assistive">Warning</span>
+        Removing this participant will also remove their interpreter.
+      </strong>
+    </div>
+
+    <p class="govuk-body govuk-!-margin-bottom-4">
+      If you wish to keep the interpreter you'll first need to link them to another participant.
+    </p>
+
+    <div class="aligned-centre">
+      <button
+        id="btnConfirmRemoveInterpreter"
+        class="govuk-button govuk-!-margin-right-1"
+        type="button"
+        data-module="govuk-button"
+        aria-label="Confirm remove an interpreter"
+        (click)="continueRemoveInterpreter()"
+      >
+        Continue and remove interpreter
+      </button>
+
+      <button
+        id="btnCancelRemoveInterpreter"
+        class="govuk-button govuk-button--secondary"
+        type="button"
+        data-module="govuk-button"
+        aria-label="Cancel removing an interpreter"
+        (click)="cancelRemoveInterpreter()"
+      >
+        Cancel
+      </button>
+    </div>
+  </div>
+</div>

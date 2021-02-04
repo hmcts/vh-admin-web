@@ -1,4 +1,5 @@
 import { CaseRoles } from '../model/case-roles';
+import { HearingRoles } from './hearing-roles.model';
 
 export class ParticipantDetailsModel {
     constructor(
@@ -48,6 +49,7 @@ export class ParticipantDetailsModel {
     Representee: string;
     Company: string;
     Phone: string;
+    Interpretee: string;
 
     // flag to indicate if participant is the last in the list and don't need decoration bottom line
     Flag: boolean;
@@ -75,5 +77,17 @@ export class ParticipantDetailsModel {
             this.CaseRoleName.toLowerCase() === CaseRoles.PANEL_MEMBER.toLowerCase()
             ? false
             : true;
+    }
+
+    get isInterpreter() {
+        return this.HearingRoleName && this.HearingRoleName.toLowerCase().trim() === HearingRoles.INTERPRETER;
+    }
+
+    get isRepOrInterpreter(): boolean {
+        return (
+            this.HearingRoleName &&
+            (this.HearingRoleName.toLowerCase().trim() === HearingRoles.INTERPRETER ||
+                this.HearingRoleName.toLowerCase().trim() === HearingRoles.REPRESENTATIVE)
+        );
     }
 }

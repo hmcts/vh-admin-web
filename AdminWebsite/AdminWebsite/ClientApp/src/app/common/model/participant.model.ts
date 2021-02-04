@@ -1,3 +1,5 @@
+import { LinkedParticipantType } from './linked-participant-type.model';
+
 export class ParticipantModel {
     id?: string | undefined;
     title?: string | undefined;
@@ -14,4 +16,6 @@ export class ParticipantModel {
     company?: string | undefined;
     is_judge: boolean;
     is_exist_person: boolean;
+    interpreterFor?: string | undefined;
+    linkedParticipantType?: LinkedParticipantType | undefined;
 }

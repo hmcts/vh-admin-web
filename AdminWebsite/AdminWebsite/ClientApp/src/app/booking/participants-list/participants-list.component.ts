@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { HearingRoles } from 'src/app/common/model/hearing-roles.model';
 import { Logger } from 'src/app/services/logger';
 import { PageUrls } from 'src/app/shared/page-url.constants';
 import { ParticipantModel } from '../../common/model/participant.model';
@@ -63,5 +64,21 @@ export class ParticipantsListComponent implements OnInit {
 
     get selectedParticipantToRemove() {
         return this.$selectedForRemove;
+    }
+
+    isInterpreter(participant: ParticipantModel): boolean {
+        return participant.hearing_role_name.toLowerCase().trim() === HearingRoles.INTERPRETER.toLowerCase();
+    }
+    isRepresentative(participant: ParticipantModel): boolean {
+        return participant.hearing_role_name.toLowerCase().trim() === HearingRoles.REPRESENTATIVE.toLowerCase();
+    }
+    getInterpreteeDisplayName(participant: ParticipantModel): string {
+        const interpretedFor = this.participants.find(p => p.email === participant.interpreterFor);
+        const interpretedForName = interpretedFor ? interpretedFor.display_name : '';
+        return interpretedForName;
+    }
+    isInterpretee(participant: ParticipantModel): boolean {
+        const interpretedFor = this.participants.find(p => p.interpreterFor === participant.email);
+        return interpretedFor ? true : false;
     }
 }

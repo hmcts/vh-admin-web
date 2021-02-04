@@ -38,6 +38,17 @@
     width: 15%;
 }
 
+.vh-image-10 {
+    width: 15%;
+    padding-left: 10%;
+}
+
+.vh-no-image {
+    float: left;
+    margin-left: 15%;
+    margin-top: 5%;
+}
+
 .vh-image-50 {
     width: 50%;
 }

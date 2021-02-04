@@ -24,6 +24,7 @@ import { SearchEmailComponent } from '../search-email/search-email.component';
 import { ParticipantService } from '../services/participant.service';
 import { AddParticipantComponent } from './add-participant.component';
 import { HearingRoleModel } from '../../common/model/hearing-role.model';
+import { LinkedParticipantModel } from 'src/app/common/model/linked-participant.model';
 
 let component: AddParticipantComponent;
 let fixture: ComponentFixture<AddParticipantComponent>;
@@ -34,7 +35,8 @@ const roleList: CaseAndHearingRolesResponse[] = [
         hearing_roles: [
             new HearingRole({ name: 'Representative', user_role: 'Representative' }),
             new HearingRole({ name: 'Litigant in person', user_role: 'Individual' }),
-            new HearingRole({ name: 'presenting officer', user_role: 'Representative' })
+            new HearingRole({ name: 'presenting officer', user_role: 'Representative' }),
+            new HearingRole({ name: 'Interpreter', user_role: 'Individual' })
         ]
     })
 ];
@@ -43,7 +45,8 @@ const partyR = new PartyModel('Claimant');
 partyR.hearingRoles = [
     new HearingRoleModel('Representative', 'Representative'),
     new HearingRoleModel('Litigant in person', 'Individual'),
-    new HearingRoleModel('presenting officer', 'Representative')
+    new HearingRoleModel('presenting officer', 'Representative'),
+    new HearingRoleModel('Interpreter', 'Interpreter')
 ];
 const partyList: PartyModel[] = [partyR];
 
@@ -57,6 +60,7 @@ let displayName: AbstractControl;
 let companyName: AbstractControl;
 let companyNameIndividual: AbstractControl;
 let representing: AbstractControl;
+let interpretee: AbstractControl;
 
 const participants: ParticipantModel[] = [];
 
@@ -187,7 +191,11 @@ describe('AddParticipantComponent', () => {
             ]);
             videoHearingsServiceSpy.getParticipantRoles.and.returnValue(Promise.resolve(roleList));
             videoHearingsServiceSpy.getCurrentRequest.and.returnValue(hearing);
-            participantServiceSpy = jasmine.createSpyObj<ParticipantService>(['mapParticipantsRoles', 'checkDuplication']);
+            participantServiceSpy = jasmine.createSpyObj<ParticipantService>([
+                'mapParticipantsRoles',
+                'checkDuplication',
+                'removeParticipant'
+            ]);
             participantServiceSpy.mapParticipantsRoles.and.returnValue(partyList);
             bookingServiceSpy = jasmine.createSpyObj<BookingService>(['isEditMode', 'resetEditMode']);
             bookingServiceSpy.isEditMode.and.returnValue(false);
@@ -220,6 +228,7 @@ describe('AddParticipantComponent', () => {
             displayName = component.form.controls['displayName'];
             companyName = component.form.controls['companyName'];
             representing = component.form.controls['representing'];
+            interpretee = component.form.controls['interpreterFor'];
         })
     );
 
@@ -459,7 +468,7 @@ describe('AddParticipantComponent', () => {
         expect(component.roleList[0]).toEqual(Constants.PleaseSelect);
 
         console.log(JSON.stringify(component.hearingRoleList));
-        expect(component.hearingRoleList.length).toBe(4);
+        expect(component.hearingRoleList.length).toBe(5);
         expect(component.hearingRoleList[0]).toEqual(Constants.PleaseSelect);
     });
     it('party selected will reset hearing roles', () => {
@@ -513,6 +522,79 @@ describe('AddParticipantComponent', () => {
     it('if pop up confirm to continue, dialog is hidden', () => {
         component.handleContinueBooking();
         expect(component.showCancelPopup).toBeFalsy();
+    });
+
+    it('should clear the linked participant model if interpreter is removed', () => {
+        component.hearing.participants = [];
+        component.ngOnInit();
+
+        const p1 = new ParticipantModel();
+        p1.first_name = 'firstname';
+        p1.last_name = 'lastname-interpretee';
+        p1.display_name = 'firstname lastname-interpretee';
+        p1.is_judge = false;
+        p1.email = 'firstname.lastname-interpretee@email.com';
+        p1.hearing_role_name = 'Litigant in Person';
+        p1.case_role_name = 'Claimant';
+
+        const p2 = new ParticipantModel();
+        p2.first_name = 'firstname';
+        p2.last_name = 'lastname-interpreter';
+        p1.display_name = 'firstname lastname-interpreter';
+        p2.is_judge = false;
+        p2.email = 'firstname.lastname-interpreter@email.com';
+        p2.hearing_role_name = 'Interpreter';
+        p2.case_role_name = 'Claimant';
+        p2.interpreterFor = 'firstname.lastname-interpretee@email.com';
+        component.hearing.participants.push(p1);
+        component.hearing.participants.push(p2);
+
+        const linkedParticipants: LinkedParticipantModel[] = [];
+        const lp = new LinkedParticipantModel();
+        lp.participantEmail = 'firstname.lastname-interpreter@email.com';
+        lp.linkedParticipantEmail = 'firstname.lastname-interpretee@email.com';
+        linkedParticipants.push(lp);
+        component.hearing.linked_participants = linkedParticipants;
+        component.selectedParticipantEmail = 'firstname.lastname-interpreter@email.com';
+        component.handleContinueRemoveInterpreter();
+        expect(component.hearing.linked_participants.length).toBe(0);
+        expect(participantServiceSpy.removeParticipant).toHaveBeenCalled();
+    });
+    it('should clear the linked participant model if interpretee is removed', () => {
+        component.hearing.participants = [];
+        component.ngOnInit();
+
+        const p1 = new ParticipantModel();
+        p1.first_name = 'firstname';
+        p1.last_name = 'lastname-interpretee';
+        p1.display_name = 'firstname lastname-interpretee';
+        p1.is_judge = false;
+        p1.email = 'firstname.lastname-interpretee@email.com';
+        p1.hearing_role_name = 'Litigant in Person';
+        p1.case_role_name = 'Claimant';
+
+        const p2 = new ParticipantModel();
+        p2.first_name = 'firstname';
+        p2.last_name = 'lastname-interpreter';
+        p1.display_name = 'firstname lastname-interpreter';
+        p2.is_judge = false;
+        p2.email = 'firstname.lastname-interpreter@email.com';
+        p2.hearing_role_name = 'Interpreter';
+        p2.case_role_name = 'Claimant';
+        p2.interpreterFor = 'firstname.lastname-interpretee@email.com';
+        component.hearing.participants.push(p1);
+        component.hearing.participants.push(p2);
+
+        const linkedParticipants: LinkedParticipantModel[] = [];
+        const lp = new LinkedParticipantModel();
+        lp.participantEmail = 'firstname.lastname-interpreter@email.com';
+        lp.linkedParticipantEmail = 'firstname.lastname-interpretee@email.com';
+        linkedParticipants.push(lp);
+        component.hearing.linked_participants = linkedParticipants;
+        component.selectedParticipantEmail = 'firstname.lastname-interpretee@email.com';
+        component.handleContinueRemoveInterpreter();
+        expect(component.hearing.linked_participants.length).toBe(0);
+        expect(participantServiceSpy.removeParticipant).toHaveBeenCalled();
     });
 });
 
@@ -672,7 +754,8 @@ describe('AddParticipantComponent edit mode', () => {
             displayName: participant.display_name,
             companyName: participant.company,
             companyNameIndividual: participant.company,
-            representing: participant.representee
+            representing: participant.representee,
+            interpreterFor: Constants.PleaseSelect
         });
         component.hearing = initHearingRequest();
         fixture.detectChanges();
@@ -696,7 +779,8 @@ describe('AddParticipantComponent edit mode', () => {
             displayName: participant.display_name,
             companyName: participant.company,
             companyNameIndividual: participant.company,
-            representing: participant.representee
+            representing: participant.representee,
+            interpreterFor: Constants.PleaseSelect
         });
         component.hearing = initHearingRequest();
         fixture.detectChanges();

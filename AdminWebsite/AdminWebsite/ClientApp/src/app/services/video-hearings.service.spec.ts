@@ -15,7 +15,7 @@ import { CaseModel } from '../common/model/case.model';
 import { ParticipantModel } from '../common/model/participant.model';
 import { of } from 'rxjs';
 import { EndpointModel } from '../common/model/endpoint.model';
-import { EndpointsComponent } from '../booking/endpoints/endpoints.component';
+import { LinkedParticipantModel, LinkedParticipantType } from '../common/model/linked-participant.model';
 
 describe('Video hearing service', () => {
     let service: VideoHearingsService;
@@ -431,5 +431,23 @@ describe('Video hearing service', () => {
         const cachedRequest = sessionStorage.getItem(conferencePhoneNumberKey);
 
         expect(cachedRequest).toBeDefined();
+    });
+    it('should map LinkedParticipantModel LinkedParticipantRequest', () => {
+        const linkedParticipantModelList: LinkedParticipantModel[] = [];
+        let linkedParticipantModel = new LinkedParticipantModel();
+        linkedParticipantModel.participantEmail = 'interpreter@email.com';
+        linkedParticipantModel.linkedParticipantEmail = 'interpretee@email.com';
+        linkedParticipantModelList.push(linkedParticipantModel);
+
+        linkedParticipantModel = new LinkedParticipantModel();
+        linkedParticipantModel.participantEmail = 'interpretee@email.com';
+        linkedParticipantModel.linkedParticipantEmail = 'interpreter@email.com';
+        linkedParticipantModelList.push(linkedParticipantModel);
+
+        const model = service.mapLinkedParticipants(linkedParticipantModelList);
+        expect(model[0].participant_contact_email).toEqual(linkedParticipantModelList[0].participantEmail);
+        expect(model[0].linked_participant_contact_email).toEqual(linkedParticipantModelList[0].linkedParticipantEmail);
+        expect(model[1].participant_contact_email).toEqual(linkedParticipantModelList[1].participantEmail);
+        expect(model[1].linked_participant_contact_email).toEqual(linkedParticipantModelList[1].linkedParticipantEmail);
     });
 });

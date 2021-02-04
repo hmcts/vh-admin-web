@@ -185,6 +185,59 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
 
         [Test]
+        public async Task Should_create_a_hearing_with_linked_participants()
+        {
+            var newHearingRequest = new BookNewHearingRequest
+            {
+                Participants = new List<BookingsAPI.Client.ParticipantRequest>
+                {
+                    new BookingsAPI.Client.ParticipantRequest
+                    {
+                        Case_role_name = "CaseRole", Contact_email = "contact1@email.com",
+                        Hearing_role_name = "HearingRole", Display_name = "display name1",
+                        First_name = "fname", Middle_names = "", Last_name = "lname1", Username = "username1@email.com",
+                        Organisation_name = "", Representee = "", Telephone_number = ""
+                    },
+                    new BookingsAPI.Client.ParticipantRequest
+                    {
+                        Case_role_name = "CaseRole", Contact_email = "contact2@email.com",
+                        Hearing_role_name = "HearingRole", Display_name = "display name2",
+                        First_name = "fname2", Middle_names = "", Last_name = "lname2",
+                        Username = "username2@email.com", Organisation_name = "", Representee = "",
+                        Telephone_number = ""
+                    },
+                },
+                Linked_participants = new List<LinkedParticipantRequest>
+                {
+                    new LinkedParticipantRequest 
+                        { Participant_contact_email = "user1@email.com", Linked_participant_contact_email = "user2@email.com"},
+                }
+            };
+            // setup response
+            var pat1 = Builder<ParticipantResponse>.CreateNew()
+                .With(x => x.Id = Guid.NewGuid())
+                .With(x => x.User_role_name = "Representative")
+                .With(x => x.Username = "username1@email.com")
+                .Build();
+            var pat2 = Builder<ParticipantResponse>.CreateNew()
+                .With(x => x.Id = Guid.NewGuid())
+                .With(x => x.User_role_name = "Individual")
+                .With(x => x.Username = "username2@email.com")
+                .Build();
+            var hearingDetailsResponse = Builder<HearingDetailsResponse>.CreateNew()
+                .With(x => x.Linked_participants = Builder<LinkedParticipantResponse>.CreateListOfSize(2).Build().ToList())
+                .With(x => x.Participants = new List<ParticipantResponse> { pat1, pat2 }).Build();
+            _bookingsApiClient.Setup(x => x.BookNewHearingAsync(newHearingRequest))
+                .ReturnsAsync(hearingDetailsResponse);
+
+            var result = await _controller.Post(newHearingRequest);
+
+            result.Result.Should().BeOfType<CreatedResult>();
+            var createdObjectResult = (CreatedResult)result.Result;
+            createdObjectResult.StatusCode.Should().Be(201);
+        }
+
+        [Test]
         public async Task Should_not_update_user_details_for_judge()
         {
             var participant = new BookingsAPI.Client.ParticipantRequest

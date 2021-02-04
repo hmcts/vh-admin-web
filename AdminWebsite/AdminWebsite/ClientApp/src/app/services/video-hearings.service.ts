@@ -19,12 +19,14 @@ import {
     UpdateBookingStatusRequest,
     UpdateBookingStatusResponse,
     MultiHearingRequest,
-    PhoneConferenceResponse
+    PhoneConferenceResponse,
+    LinkedParticipantRequest
 } from './clients/api-client';
 import { HearingModel } from '../common/model/hearing.model';
 import { CaseModel } from '../common/model/case.model';
 import { ParticipantModel } from '../common/model/participant.model';
 import { EndpointModel } from '../common/model/endpoint.model';
+import { LinkedParticipantModel } from '../common/model/linked-participant.model';
 
 @Injectable({
     providedIn: 'root'
@@ -203,6 +205,7 @@ export class VideoHearingsService {
         newHearingRequest.questionnaire_not_required = newRequest.questionnaire_not_required;
         newHearingRequest.audio_recording_required = newRequest.audio_recording_required;
         newHearingRequest.endpoints = this.mapEndpoints(newRequest.endpoints);
+        newHearingRequest.linked_participants = this.mapLinkedParticipants(newRequest.linked_participants);
         return newHearingRequest;
     }
 
@@ -336,6 +339,20 @@ export class VideoHearingsService {
             });
         }
         return endpoints;
+    }
+
+    mapLinkedParticipants(linkedParticipantModel: LinkedParticipantModel[]): LinkedParticipantRequest[] {
+        const linkedParticipantsRequest: LinkedParticipantRequest[] = [];
+        let linkedParticipantRequest: LinkedParticipantRequest;
+        if (linkedParticipantModel && linkedParticipantModel.length > 0) {
+            linkedParticipantModel.forEach(e => {
+                linkedParticipantRequest = new LinkedParticipantRequest();
+                linkedParticipantRequest.participant_contact_email = e.participantEmail;
+                linkedParticipantRequest.linked_participant_contact_email = e.linkedParticipantEmail;
+                linkedParticipantsRequest.push(linkedParticipantRequest);
+            });
+        }
+        return linkedParticipantsRequest;
     }
 
     getHearingById(hearingId: string): Observable<HearingDetailsResponse> {

@@ -24,5 +24,6 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public static By ParticipantsList = By.XPath("//*[contains(@class, 'vhtable-header')]");
         public static By InvalidEmailError = CommonLocators.ElementContainingText("Please enter a valid email address");
         public static By JudgeUserParticipantsList(string username) => CommonLocators.ElementContainingText(username);
+        public static By InterpreteeDropdown = By.Id("interpreterFor");
     }
 }

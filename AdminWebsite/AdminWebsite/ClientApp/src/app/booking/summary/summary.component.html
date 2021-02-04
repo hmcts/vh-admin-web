@@ -103,6 +103,7 @@
 
   <div class="govuk-grid-column-one-half" style="margin: 0">
     <app-participants-list [participants]="hearing.participants"></app-participants-list>
+    {{ hearing.linked_participants | json }}
   </div>
 </div>
 
@@ -124,4 +125,11 @@
 
 <div *ngIf="showErrorSaving">
   <app-save-failed-popup (tryAgain)="tryAgain($event)" (cancel)="cancel($event)"> </app-save-failed-popup>
+</div>
+<div *ngIf="showConfirmRemoveParticipantInterpretedFor">
+  <app-remove-interpreter-popup
+    (continueRemove)="handleContinueRemoveInterpreter($event)"
+    (cancelRemove)="handleCancelRemoveInterpreter($event)"
+  >
+  </app-remove-interpreter-popup>
 </div>
