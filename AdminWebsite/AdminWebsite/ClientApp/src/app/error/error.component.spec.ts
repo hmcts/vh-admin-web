@@ -6,12 +6,13 @@ import { ConnectionService } from '../services/connection/connection.service';
 import { PageTrackerService } from '../services/page-tracker.service';
 import { ErrorComponent } from './error.component';
 
-describe('ErrorComponent', () => {
+fdescribe('ErrorComponent', () => {
     let component: ErrorComponent;
     let fixture: ComponentFixture<ErrorComponent>;
 
     let httpClient: jasmine.SpyObj<HttpClient>;
     let pageTracker: jasmine.SpyObj<PageTrackerService>;
+
     const connection = {
         hasConnection$: {
             subscribe: () => of(null),
@@ -22,6 +23,8 @@ describe('ErrorComponent', () => {
     beforeEach(
         waitForAsync(() => {
             httpClient = jasmine.createSpyObj<HttpClient>(['head']);
+            pageTracker = jasmine.createSpyObj<PageTrackerService>(['']);
+
             TestBed.configureTestingModule({
                 declarations: [ErrorComponent],
                 providers: [

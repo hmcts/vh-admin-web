@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Inject, Injectable, Optional } from '@angular/core';
+import { Inject, Injectable, OnDestroy, Optional } from '@angular/core';
 import { Observable, ReplaySubject, Subject, throwError, timer } from 'rxjs';
 import { mergeMap, retryWhen, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { ConnectionServiceConfigToken, ConnectionServiceConfig } from './connection';
@@ -7,22 +7,42 @@ import { ConnectionServiceConfigToken, ConnectionServiceConfig } from './connect
 @Injectable({
     providedIn: 'root'
 })
-export class ConnectionService {
+export class ConnectionService implements OnDestroy {
     private defaults: ConnectionServiceConfig = {
         url: '/assets/images/favicons/favicon.ico?_:' + new Date().getTime(),
         interval: 10000,
         retryInterval: 1000,
         maxRetryAttempts: 3
     };
-
     private config: ConnectionServiceConfig;
+    private unsubscribe$: Subject<boolean> = null;
+
+    hasConnection$ = new ReplaySubject<boolean>();
 
     constructor(private http: HttpClient, @Inject(ConnectionServiceConfigToken) @Optional() config: ConnectionServiceConfig) {
         this.config = { ...this.defaults, ...config };
         this.startTimer();
     }
 
-    private unsubscribe$: Subject<boolean> = null;
+    checkConnection(restartTimerOnSuccess = false): Observable<any> {
+        return this.http.head(this.config.url, { responseType: 'text' }).pipe(
+            retryWhen(
+                retryStrategy({
+                    maxRetryAttempts: this.config.maxRetryAttempts,
+                    retryInterval: this.config.retryInterval
+                })
+            ),
+            tap(() => {
+                if (restartTimerOnSuccess) {
+                    this.startTimer();
+                }
+            })
+        );
+    }
+
+    ngOnDestroy() {
+        this.unsubscribe();
+    }
 
     private startTimer() {
         this.unsubscribe();
@@ -50,28 +70,6 @@ export class ConnectionService {
             this.unsubscribe$.complete();
             this.unsubscribe$ = null;
         }
-    }
-
-    hasConnection$ = new ReplaySubject<boolean>();
-
-    checkConnection(restartTimerOnSuccess = false): Observable<any> {
-        return this.http.head(this.config.url, { responseType: 'text' }).pipe(
-            retryWhen(
-                retryStrategy({
-                    maxRetryAttempts: this.config.maxRetryAttempts,
-                    retryInterval: this.config.retryInterval
-                })
-            ),
-            tap(() => {
-                if (restartTimerOnSuccess) {
-                    this.startTimer();
-                }
-            })
-        );
-    }
-
-    ngOnDestroy() {
-        this.unsubscribe();
     }
 }
 
