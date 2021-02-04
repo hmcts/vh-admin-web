@@ -5,6 +5,47 @@
     <div class="govuk-grid-column-two-thirds">
       <h1 class="govuk-heading-m" id="other-info-header">Other information</h1>
       <form [formGroup]="form" class="govuk-form-group" (ngSubmit)="next()">
+
+        <div class="govuk-!-margin-bottom-9" *ngIf="!switchOffRecording" >
+          <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+            <p class="govuk-body govuk-!-margin-bottom-1">
+              Record this hearing (sound only)?
+              <span *ngIf="interpreterPresent" class="vh-mandatory-comment">
+                <br>(mandatory for hearings with interpreters)
+              </span>
+            </p>
+          </legend>
+          <fieldset class="govuk-fieldset fieldset-margin" [disabled]="interpreterPresent">
+            <div class="govuk-radios" data-module="radios">
+              <div class="govuk-radios__item">
+                <input
+                  formControlName="audioChoice"
+                  class="govuk-radios__input"
+                  id="audio-choice-yes"
+                  type="radio"
+                  [value]="true"
+                  data-aria-controls="conditional-how-contacted-conditional"
+                />
+                <label class="govuk-label govuk-radios__label" for="audio-choice-yes"> Yes </label>
+              </div>
+
+              <div class="govuk-radios__item">
+                <input
+                  formControlName="audioChoice"
+                  class="govuk-radios__input"
+                  id="audio-choice-no"
+                  type="radio"
+                  [value]="false"
+                  data-aria-controls="conditional-how-contacted"
+                />
+                <label class="govuk-label govuk-radios__label" for="audio-choice-no"> No </label>
+              </div>
+            </div>
+          </fieldset>
+        </div>
+
+        <p class="govuk-body govuk-!-margin-bottom-5"></p>          
+
         <fieldset class="govuk-fieldset fieldset-margin" aria-describedby="other-information-text">
           <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
             <p class="govuk-body vh-over" id="other-information-text">

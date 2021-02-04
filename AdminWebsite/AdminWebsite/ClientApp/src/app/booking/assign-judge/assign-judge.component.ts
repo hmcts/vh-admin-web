@@ -12,7 +12,6 @@ import { ParticipantModel } from '../../common/model/participant.model';
 import { BookingService } from '../../services/booking.service';
 import { JudgeResponse } from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
-import { RecordingGuardService } from '../../services/recording-guard.service';
 import { BookingBaseComponentDirective as BookingBaseComponent } from '../booking-base/booking-base.component';
 
 @Component({
@@ -24,7 +23,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     hearing: HearingModel;
     judge: JudgeResponse;
     judgeDisplayName: FormControl;
-    audioChoice: FormControl;
+    
     failedSubmission: boolean;
     attemptingCancellation = false;
     attemptingDiscardChanges = false;
@@ -36,8 +35,6 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     isJudgeSelected = true;
     expanded = false;
     $subscriptions: Subscription[] = [];
-    audioRecording = true;
-    switchOffRecording = false;
 
     constructor(
         private fb: FormBuilder,
@@ -45,8 +42,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         protected hearingService: VideoHearingsService,
         private judgeService: JudgeDataService,
         protected bookingService: BookingService,
-        protected logger: Logger,
-        private recordingGuard: RecordingGuardService
+        protected logger: Logger
     ) {
         super(bookingService, router, hearingService, logger);
     }
@@ -81,7 +77,6 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         this.failedSubmission = false;
         this.checkForExistingRequest();
         this.loadJudges();
-        this.switchOffRecording = this.recordingGuard.switchOffRecording(this.hearing.case_type);
         this.initForm();
         super.ngOnInit();
     }
@@ -105,22 +100,9 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
             updateOn: 'blur'
         });
 
-        if (!this.switchOffRecording) {
-            if (this.hearing.audio_recording_required === null || this.hearing.audio_recording_required === undefined) {
-                this.hearing.audio_recording_required = true;
-            }
-        } else {
-            this.hearing.audio_recording_required = false;
-        }
-
-        this.audioRecording = this.setInitialAudio();
-
-        this.audioChoice = new FormControl(this.audioRecording, Validators.required);
-
         this.form = this.fb.group({
             judgeName: [this.judge.email, Validators.required],
-            judgeDisplayName: this.judgeDisplayName,
-            audioChoice: this.audioChoice
+            judgeDisplayName: this.judgeDisplayName
         });
 
         this.$subscriptions.push(
@@ -136,12 +118,6 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
                 this.judge.display_name = name;
             })
         );
-    }
-
-    private setInitialAudio() {
-        return this.hearing && this.hearing.audio_recording_required !== null && this.hearing.audio_recording_required !== undefined
-            ? this.hearing.audio_recording_required
-            : true;
     }
 
     get canNavigateNext() {
@@ -220,7 +196,6 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
             this.failedSubmission = false;
             this.form.markAsPristine();
             this.hasSaved = true;
-            this.hearing.audio_recording_required = this.audioChoice.value;
             this.changeDisplayName();
             this.hearingService.updateHearingRequest(this.hearing);
             this.logger.debug(`${this.loggerPrefix} Updated hearing judge and recording selection`, { hearing: this.hearing });

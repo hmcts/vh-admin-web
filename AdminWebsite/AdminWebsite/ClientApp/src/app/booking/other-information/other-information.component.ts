@@ -9,6 +9,7 @@ import { HearingModel } from '../../common/model/hearing.model';
 import { BookingService } from '../../services/booking.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { BookingBaseComponentDirective as BookingBaseComponent } from '../booking-base/booking-base.component';
+import { RecordingGuardService } from '../../services/recording-guard.service';
 
 @Component({
     selector: 'app-other-information',
@@ -21,7 +22,12 @@ export class OtherInformationComponent extends BookingBaseComponent implements O
     attemptingCancellation = false;
     attemptingDiscardChanges = false;
     canNavigate = true;
+    audioChoice: FormControl;
 
+    audioRecording = true;
+    switchOffRecording = false;
+    disableAudioRecording = false;
+    interpreterPresent = false;
     otherInformationText: string;
     otherInformation: FormControl;
 
@@ -30,24 +36,32 @@ export class OtherInformationComponent extends BookingBaseComponent implements O
         protected videoHearingService: VideoHearingsService,
         protected router: Router,
         protected bookingService: BookingService,
-        protected logger: Logger
+        protected logger: Logger,
+        private recordingGuard: RecordingGuardService
     ) {
         super(bookingService, router, videoHearingService, logger);
     }
 
     ngOnInit() {
         this.checkForExistingRequest();
+        this.switchOffRecording = this.recordingGuard.switchOffRecording(this.hearing.case_type);
+        this.interpreterPresent = this.recordingGuard.mandatoryRecordingWithInterpreter(this.hearing.participants);
         this.initForm();
         super.ngOnInit();
     }
 
     private initForm() {
+
+        this.audioRecording = this.setInitialAudio();
+        this.audioChoice = new FormControl(this.audioRecording, Validators.required);
+
         this.otherInformation = new FormControl(
             this.otherInformationText ? this.otherInformationText : '',
             Validators.pattern(Constants.TextInputPattern)
         );
 
         this.form = this.fb.group({
+            audioChoice: this.audioChoice,
             otherInformation: this.otherInformation
         });
     }
@@ -56,15 +70,34 @@ export class OtherInformationComponent extends BookingBaseComponent implements O
         return this.otherInformation.invalid && (this.otherInformation.dirty || this.otherInformation.touched);
     }
 
+    private setInitialAudio() {
+        if(this.switchOffRecording)
+        {
+            this.hearing.audio_recording_required = false;
+            return false;
+        }
+
+        if(this.interpreterPresent)
+        {
+            this.hearing.audio_recording_required = true;
+            return true;
+        }
+
+        return this.hearing && this.hearing.audio_recording_required !== null && this.hearing.audio_recording_required !== undefined
+            ? this.hearing.audio_recording_required
+            : true;
+    }
+
     private checkForExistingRequest() {
         this.hearing = this.videoHearingService.getCurrentRequest();
         this.otherInformationText = this.hearing.other_information;
     }
 
     next() {
+        this.hearing.audio_recording_required = this.audioChoice.value;
         this.hearing.other_information = this.otherInformation.value;
         this.videoHearingService.updateHearingRequest(this.hearing);
-        this.logger.debug(`${this.loggerPrefix} Updated hearing other information.`, { hearing: this.hearing });
+        this.logger.debug(`${this.loggerPrefix} Updated audio recording status and hearing other information.`, { hearing: this.hearing });
         this.form.markAsPristine();
         if (this.editMode) {
             this.resetEditMode();
