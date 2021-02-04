@@ -59,6 +59,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="UserApi.Client" Version="1.23.4-pullrequest0104-0011" />
+    <PackageReference Include="VH.Core.Configuration" Version="0.1.0" />
   </ItemGroup>
 
   <ItemGroup>
