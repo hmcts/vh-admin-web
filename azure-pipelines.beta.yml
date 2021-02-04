@@ -234,7 +234,9 @@ stages:
           # Kinly
           - name: KinlyConfiguration:ConferencePhoneNumber
             value: $(ConferencePhoneNumber)
-
+          - name: KinlyConfiguration:JoinByPhoneFromDate
+            value: $(JoinByPhoneFromDate)
+            
         acceptanceTestSettings:
           # VhServices
           - name: VhServices:AdminWebUrl
@@ -274,7 +276,9 @@ stages:
           # Kinly
           - name: KinlyConfiguration:ConferencePhoneNumber
             value: $(ConferencePhoneNumber)
-
+          - name: KinlyConfiguration:JoinByPhoneFromDate
+            value: $(JoinByPhoneFromDate)
+            
           # GOV Notify Configuration
           - name: NotifyConfiguration:ApiKey
             value: $(notify-api-key)
