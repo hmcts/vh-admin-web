@@ -45,7 +45,7 @@ export class OtherInformationComponent extends BookingBaseComponent implements O
     ngOnInit() {
         this.checkForExistingRequest();
         this.switchOffRecording = this.recordingGuard.switchOffRecording(this.hearing.case_type);
-        this.interpreterPresent = this.recordingGuard.mandatoryRecordingWithInterpreter(this.hearing.participants);
+        this.interpreterPresent = this.recordingGuard.mandatoryRecordingForHearingRole(this.hearing.participants);
         this.initForm();
         super.ngOnInit();
     }
@@ -71,14 +71,12 @@ export class OtherInformationComponent extends BookingBaseComponent implements O
     }
 
     private setInitialAudio() {
-        if(this.switchOffRecording)
-        {
+        if (this.switchOffRecording) {
             this.hearing.audio_recording_required = false;
             return false;
         }
 
-        if(this.interpreterPresent)
-        {
+        if (this.interpreterPresent) {
             this.hearing.audio_recording_required = true;
             return true;
         }

@@ -6,13 +6,13 @@ import { ParticipantModel } from '../common/model/participant.model';
 })
 export class RecordingGuardService {
     excludedCaseTypes: string[] = ['Court of Appeal Criminal Division'];
+    mandatoryRecordingRoles: string[] = ['Interpreter'];
 
     switchOffRecording(caseType: string): boolean {
         return this.excludedCaseTypes.indexOf(caseType) > -1;
     }
 
-    mandatoryRecordingWithInterpreter(participants: ParticipantModel[])
-    {
-        return participants.some(pat => pat.hearing_role_name.trim()==="Interpreter")
+    mandatoryRecordingForHearingRole(participants: ParticipantModel[]) {
+        return participants.some(pat => this.mandatoryRecordingRoles.includes(pat.hearing_role_name.trim()));
     }
 }

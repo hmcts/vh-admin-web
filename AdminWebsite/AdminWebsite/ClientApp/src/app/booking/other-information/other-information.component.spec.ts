@@ -58,9 +58,9 @@ describe('OtherInformationComponent', () => {
                     DiscardConfirmPopupComponent
                 ]
             }).compileComponents();
-            videoHearingsServiceSpy.getCurrentRequest.and.returnValue({ 
+            videoHearingsServiceSpy.getCurrentRequest.and.returnValue({
                     participants: [],
-                    other_information: 'some text' 
+                    other_information: 'some text'
                 });
         })
     );
@@ -145,7 +145,6 @@ describe('OtherInformationComponent', () => {
         component.otherInformationOnBlur();
         expect(component.form.controls['otherInformation'].value).toBe('text');
     });
-    //Audi recording tests
     it('should set audio recording to true by default', () => {
         component.hearing = null;
         component.ngOnInit();
@@ -171,7 +170,7 @@ describe('OtherInformationComponent', () => {
         fixture.autoDetectChanges();
         expect(component.switchOffRecording).toBe(false);
     });
-    it('should not be allowed to set audio recording options when hearing has an interpreter', () =>{
+    it('should not be allowed to set audio recording options when hearing has an interpreter', () => {
         component.hearing.case_type = 'Rents';
         component.hearing.participants.push(interpreter);
         component.ngOnInit();
@@ -180,7 +179,7 @@ describe('OtherInformationComponent', () => {
         expect(component.hearing.audio_recording_required).toBe(true);
         expect(component.form.controls['audioChoice'].value).toBe(true);
     });
-    it('should be allowed to set audio recording options when hearing does not have an interpreter', () =>{
+    it('should be allowed to set audio recording options when hearing does not have an interpreter', () => {
         component.hearing.participants.push(notInterpreter);
         component.ngOnInit();
         fixture.autoDetectChanges();

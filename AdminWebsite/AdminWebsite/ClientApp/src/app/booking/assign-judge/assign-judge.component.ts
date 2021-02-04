@@ -23,7 +23,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     hearing: HearingModel;
     judge: JudgeResponse;
     judgeDisplayName: FormControl;
-    
+
     failedSubmission: boolean;
     attemptingCancellation = false;
     attemptingDiscardChanges = false;
