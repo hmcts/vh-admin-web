@@ -22,8 +22,8 @@ export class ErrorComponent {
         this.connection
             .checkConnection(true)
             .pipe(finalize(() => this.isConnecting$.next(false)))
-            .subscribe(x => {
-                const previousUrl = this.pageTracker.getPreviousUrl;
+            .subscribe(() => {
+                const previousUrl = this.pageTracker.getPreviousUrl();
                 this.router.navigate([previousUrl]);
             });
     }

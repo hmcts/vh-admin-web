@@ -1,36 +1,33 @@
 import { HttpClient } from '@angular/common/http';
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { ComponentFixture, inject, TestBed, waitForAsync } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { of } from 'rxjs';
 import { ConnectionService } from '../services/connection/connection.service';
 import { PageTrackerService } from '../services/page-tracker.service';
 import { ErrorComponent } from './error.component';
 
-fdescribe('ErrorComponent', () => {
+describe('ErrorComponent', () => {
     let component: ErrorComponent;
     let fixture: ComponentFixture<ErrorComponent>;
 
-    let httpClient: jasmine.SpyObj<HttpClient>;
-    let pageTracker: jasmine.SpyObj<PageTrackerService>;
+    const pageTracker = {
+        getPreviousUrl: () => 'some-url'
+    }
 
-    const connection = {
-        hasConnection$: {
-            subscribe: () => of(null),
-            pipe: () => of(null)
-        }
+    const router = {
+        navigate: () => {}
     };
 
     beforeEach(
         waitForAsync(() => {
-            httpClient = jasmine.createSpyObj<HttpClient>(['head']);
-            pageTracker = jasmine.createSpyObj<PageTrackerService>(['']);
-
             TestBed.configureTestingModule({
                 declarations: [ErrorComponent],
+                imports: [HttpClientTestingModule],
                 providers: [
-                    { provide: Router, useValue: jasmine.createSpyObj<Router>(['navigate']) },
-                    { provide: HttpClient, useValue: httpClient },
-                    { provide: ConnectionService, useValue: connection },
+                    { provide: Router, useValue: router },
+                    HttpClient,
+                    ConnectionService,
                     { provide: PageTrackerService, useValue: pageTracker }
                 ]
             }).compileComponents();
@@ -46,4 +43,17 @@ fdescribe('ErrorComponent', () => {
     it('should create', () => {
         expect(component).toBeTruthy();
     });
+
+    it('should navigate on successful reconnect',
+        inject(
+            [HttpClient, PageTrackerService, Router],
+            (httpClient: HttpClient, tracker: PageTrackerService, router: Router) => {
+                spyOn(httpClient, 'head').and.returnValue(of(true));
+                spyOn(tracker, 'getPreviousUrl').and.callThrough();
+                spyOn(router, 'navigate');
+                component.reconnect();
+                expect(httpClient.head).toHaveBeenCalled();
+                expect(tracker.getPreviousUrl).toHaveBeenCalled();
+                expect(router.navigate).toHaveBeenCalledWith(['some-url']);
+            }));
 });
