@@ -29,7 +29,7 @@ namespace AdminWebsite.UnitTests
                 TestUsernameStem = "@email.com"
             };
 
-            var serviceSettings = new ServiceSettings { ConferencePhoneNumber = "1111111" };
+            var serviceSettings = new ServiceSettings { ConferencePhoneNumber = "1111111", JoinByPhoneFromDate= "2021-02-03" };
 
             var httpContext = new DefaultHttpContext();
             httpContext.Request.Scheme = "https";
@@ -57,6 +57,8 @@ namespace AdminWebsite.UnitTests
             clientSettings.PostLogoutRedirectUri.Should().Be(securitySettings.PostLogoutRedirectUri);
             clientSettings.TestUsernameStem.Should().Be(testSettings.TestUsernameStem);
             clientSettings.ConferencePhoneNumber.Should().Be(serviceSettings.ConferencePhoneNumber);
+            clientSettings.JoinByPhoneFromDate.Should().Be(serviceSettings.JoinByPhoneFromDate);
+
         }
     }
 }
