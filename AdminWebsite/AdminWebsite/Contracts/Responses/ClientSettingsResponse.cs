@@ -39,5 +39,9 @@
         /// To join the conference phone number
         /// </summary>
         public string ConferencePhoneNumber { get; set; }
+        /// <summary>
+        ///  The date to switch on option to join by phone 
+        /// </summary>
+        public string JoinByPhoneFromDate { get; set; }
     }
 }
