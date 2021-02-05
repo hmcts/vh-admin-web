@@ -11,11 +11,11 @@ describe('ErrorComponent', () => {
     let component: ErrorComponent;
     let fixture: ComponentFixture<ErrorComponent>;
 
-    const pageTracker = {
+    const pageTrackerMock = {
         getPreviousUrl: () => 'some-url'
     };
 
-    const router = {
+    const routerMock = {
         navigate: () => {}
     };
 
@@ -25,10 +25,10 @@ describe('ErrorComponent', () => {
                 declarations: [ErrorComponent],
                 imports: [HttpClientTestingModule],
                 providers: [
-                    { provide: Router, useValue: router },
+                    { provide: Router, useValue: routerMock },
                     HttpClient,
                     ConnectionService,
-                    { provide: PageTrackerService, useValue: pageTracker }
+                    { provide: PageTrackerService, useValue: pageTrackerMock }
                 ]
             }).compileComponents();
         })
