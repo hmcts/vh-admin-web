@@ -8,6 +8,7 @@ export let ENVIRONMENT_CONFIG: Config = new Config();
 
 @Injectable()
 export class ConfigService {
+
     clientSettings: ClientSettingsResponse;
     private settingsSessionKey = 'clientSettings';
     private httpClient: HttpClient;
