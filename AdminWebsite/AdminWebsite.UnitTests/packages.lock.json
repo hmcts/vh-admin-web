@@ -2667,8 +2667,8 @@
       },
       "VH.Core.Configuration": {
         "type": "Transitive",
-        "resolved": "0.1.0",
-        "contentHash": "im4MAtV8qasoiO9+jaWwoU0XwIheQBNjU+6U1Kn40gOo0yD/tEJuae2YhAX/JBF6qpoUZAkSMwT/q7RudnjFqw==",
+        "resolved": "0.1.12",
+        "contentHash": "uoDl/7HSRkueoe8e2uwPD1qCz1wuY0Tdzqf4HdQALuiK2qWXmFq/JYvnIl0g0IZmY4B1zsn7KKTOLvI4PMttuQ==",
         "dependencies": {
           "Microsoft.AspNetCore.Http.Connections.Common": "3.1.10",
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
@@ -2703,7 +2703,7 @@
           "Swashbuckle.AspNetCore.Newtonsoft": "5.2.1",
           "Swashbuckle.AspNetCore.Swagger": "5.2.1",
           "UserApi.Client": "1.23.4-pullrequest0104-0011",
-          "VH.Core.Configuration": "0.1.0"
+          "VH.Core.Configuration": "0.1.12"
         }
       },
       "adminwebsite.bookingsapi.client": {
