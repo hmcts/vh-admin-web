@@ -175,7 +175,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         private void VerifyAudioRecording()
         {
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(SummaryPage.AudioRecording).Text.Should().Be(_c.Test.AssignJudge.AudioRecord ? "Yes" : "No");
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(SummaryPage.AudioRecording).Text.Should().Be("Yes");
         }
 
         private void VerifyOtherInformation()

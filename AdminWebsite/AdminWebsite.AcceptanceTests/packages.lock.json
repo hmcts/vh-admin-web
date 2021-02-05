@@ -253,9 +253,9 @@
       },
       "VH.AcceptanceTests.Common": {
         "type": "Direct",
-        "requested": "[1.21.9, )",
-        "resolved": "1.21.9",
-        "contentHash": "9d/qDYJKDQ1T1ZxW+BpjG9O3re0wMYheHWxA4sIJhyEW++0fgzBhKuk7pcxxQenEcrk42EPV+xJrK5fv+gRLjw==",
+        "requested": "[1.21.13, )",
+        "resolved": "1.21.13",
+        "contentHash": "yRBMyRtgNhxii7gCOadhIl6VjOCxBZxrrXkTEpqCOeFnQinbF75ARDMK1OC0RXXWeO9ZWhK2D04PqnwbdOVVIA==",
         "dependencies": {
           "Appium.WebDriver": "4.2.1",
           "Azure.Storage.Blobs": "12.7.0",

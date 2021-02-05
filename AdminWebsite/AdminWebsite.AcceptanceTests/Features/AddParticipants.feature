@@ -19,3 +19,10 @@ Scenario: Cannot Add Participants with reform email address
 	Given the Video Hearings Officer user has progressed to the Add Participants page
 	When the user attempts to add a participant with a reform email
 	Then an error message is displayed for the invalid email
+
+@VIH-6938
+Scenario: Adding Interpreter sets and disables audio recording option
+	Given the Video Hearings Officer user has progressed to the Add Participants page
+	When the user completes the add participants form with an Interpreter
+	And the user has progressed to the Other Information page
+	Then audio recording is selected by default with options disabled
