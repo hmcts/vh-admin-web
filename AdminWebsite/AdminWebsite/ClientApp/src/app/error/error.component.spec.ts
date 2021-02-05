@@ -13,7 +13,7 @@ describe('ErrorComponent', () => {
 
     const pageTracker = {
         getPreviousUrl: () => 'some-url'
-    }
+    };
 
     const router = {
         navigate: () => {}
@@ -44,16 +44,16 @@ describe('ErrorComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it('should navigate on successful reconnect',
-        inject(
-            [HttpClient, PageTrackerService, Router],
-            (httpClient: HttpClient, tracker: PageTrackerService, router: Router) => {
-                spyOn(httpClient, 'head').and.returnValue(of(true));
-                spyOn(tracker, 'getPreviousUrl').and.callThrough();
-                spyOn(router, 'navigate');
-                component.reconnect();
-                expect(httpClient.head).toHaveBeenCalled();
-                expect(tracker.getPreviousUrl).toHaveBeenCalled();
-                expect(router.navigate).toHaveBeenCalledWith(['some-url']);
-            }));
+    it('should navigate on successful reconnect', inject(
+        [HttpClient, PageTrackerService, Router],
+        (httpClient: HttpClient, tracker: PageTrackerService, router: Router) => {
+            spyOn(httpClient, 'head').and.returnValue(of(true));
+            spyOn(tracker, 'getPreviousUrl').and.callThrough();
+            spyOn(router, 'navigate');
+            component.reconnect();
+            expect(httpClient.head).toHaveBeenCalled();
+            expect(tracker.getPreviousUrl).toHaveBeenCalled();
+            expect(router.navigate).toHaveBeenCalledWith(['some-url']);
+        }
+    ));
 });
