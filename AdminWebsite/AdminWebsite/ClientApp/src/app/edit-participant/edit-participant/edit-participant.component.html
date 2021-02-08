@@ -1,1 +1,34 @@
-<p>edit-participant works!</p>
+<h1 class="govuk-heading-l">Edit a participant's name</h1>
+
+<h2 class="govuk-heading-m">{{ person?.currentUsername }}</h2>
+
+<form *ngIf="person" [formGroup]="form" class="govuk-form-group">
+  <div class="govuk-form-group">
+    <input id="firstName" class="govuk-input govuk-!-width-one-half" type="text" formControlName="firstName" required />
+  </div>
+  <div class="govuk-form-group">
+    <input id="lastName" class="govuk-input govuk-!-width-one-half" type="text" formControlName="lastName" required />
+  </div>
+  <div *ngIf="!updateComplete">
+    <button
+      id="saveButton"
+      class="govuk-button govuk-!-margin-right-3"
+      data-module="govuk-button"
+      (click)="updateParticipant()"
+      alt="Update participant"
+    >
+      Save
+    </button>
+    <button
+      id="cancelButton"
+      class="govuk-button govuk-button--secondary"
+      data-module="govuk-button"
+      (click)="cancelEdit()"
+      type="button"
+      alt="Cancel edit"
+    >
+      Cancel
+    </button>
+  </div>
+  <div *ngIf="updateComplete" class="complete" id="completeSign">participant name updated</div>
+</form>

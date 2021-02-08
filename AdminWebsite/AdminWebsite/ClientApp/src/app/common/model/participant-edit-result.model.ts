@@ -1,3 +1,9 @@
 export class ParticipantEditResultModel {
-    constructor(public id: string, public fullName: string, public username: string) {}
+    constructor(
+        public personId: string,
+        public fullName: string,
+        public firstname: string,
+        public lastName: string,
+        public currentUsername: string
+    ) {}
 }

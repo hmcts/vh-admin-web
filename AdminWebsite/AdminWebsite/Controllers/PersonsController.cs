@@ -11,6 +11,7 @@ using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using AdminWebsite.Contracts.Requests;
 using AdminWebsite.Services;
+using Microsoft.AspNetCore.Authorization;
 using UserApi.Client;
 
 namespace AdminWebsite.Controllers
@@ -167,16 +168,18 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType((int) HttpStatusCode.Accepted)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        [AllowAnonymous]
         public async Task<ActionResult<IList<PersonResponse>>> UpdatePersonDetails([FromRoute] Guid personId,
             [FromBody] UpdateAccountDetailsRequest payload)
         {
+            
             try
             {
                 var useridString = await _userAccountService.GetAdUserIdForUsername(payload.CurrentUsername);
                 var userId = Guid.Parse(useridString);
                 var updatedPerson =
                     await _userAccountService.UpdateUserAccountDetails(userId, payload.FirstName, payload.LastName);
-
+            
                 var updateBookingPersonRequest = new UpdatePersonDetailsRequest
                 {
                     First_name = updatedPerson.FirstName,
