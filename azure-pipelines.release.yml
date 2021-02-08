@@ -239,7 +239,9 @@ stages:
             # Kinly
           - name: KinlyConfiguration:ConferencePhoneNumber
             value: $(ConferencePhoneNumber)
-
+          - name: KinlyConfiguration:JoinByPhoneFromDate
+            value: $(JoinByPhoneFromDate)
+            
         acceptanceTestSettings:
           # VhServices
           - name: VhServices:AdminWebUrl
@@ -305,7 +307,9 @@ stages:
           # Kinly
           - name: KinlyConfiguration:ConferencePhoneNumber
             value: $(ConferencePhoneNumber)
-
+          - name: KinlyConfiguration:JoinByPhoneFromDate
+            value: $(JoinByPhoneFromDate)
+            
           # SauceLabs
           - name: Saucelabs:Username
             value: $(Saucelabs:Username)
