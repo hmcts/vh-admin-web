@@ -54,7 +54,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
                 userTypes.Add(UserType.Winger);
                 userTypes.Add(UserType.Individual);
             }
-            else 
+            else
             {
                 userTypes.Add(UserType.CaseAdmin);
                 userTypes.Add(UserType.Individual);
@@ -83,10 +83,14 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         [BeforeScenario(Order = (int)HooksSequence.AudioRecording)]
         public async Task AddAudioRecording(ScenarioContext scenario)
         {
-            if (!scenario.ScenarioInfo.Tags.Contains("AudioRecording")) return;
+            if (!scenario.ScenarioInfo.Tags.Contains("AudioRecording"))
+            {
+                return;
+            }
+
             _c.Test.HearingResponse = CreateHearing(true);
             _c.Test.ConferenceResponse = CreateConference();
-            StartTheHearing(); 
+            StartTheHearing();
             CloseTheConference();
 
             var file = FileManager.CreateNewAudioFile("TestAudioFile.mp4", _c.Test.HearingResponse.Id.ToString());
@@ -105,7 +109,8 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         {
             var exist = false;
 
-            foreach (var response in from user in _c.Users where user.User_type != UserType.CaseAdmin && user.User_type != UserType.VideoHearingsOfficer 
+            foreach (var response in from user in _c.Users
+                where user.User_type != UserType.CaseAdmin && user.User_type != UserType.VideoHearingsOfficer
                 select _c.Api.GetPersonByUsername(user.Username))
             {
                 exist = response.StatusCode == HttpStatusCode.OK;
@@ -118,10 +123,12 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         {
             var isWinger = _c.Users.Any(X => X.User_type == UserType.Winger);
 
-            var hearingRequest = isWinger ? CreateHearingForWinger() : new HearingRequestBuilder()
-                 .WithUsers(_c.Users)
-                 .WithAudioRecordingRequired(withAudioRecording)
-                 .Build();
+            var hearingRequest = isWinger
+                ? CreateHearingForWinger()
+                : new HearingRequestBuilder()
+                    .WithUsers(_c.Users)
+                    .WithAudioRecordingRequired(withAudioRecording)
+                    .Build();
 
             var hearingResponse = _c.Api.CreateHearing(hearingRequest);
             hearingResponse.StatusCode.Should().Be(HttpStatusCode.Created);
@@ -135,10 +142,10 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         private CreateHearingRequest CreateHearingForWinger()
         {
             return new HearingRequestBuilder()
-                  .WithUsers(_c.Users)
-                  .WithCACDCaseType()
-                  .WithAudioRecordingRequired(false)
-                  .Build();
+                .WithUsers(_c.Users)
+                .WithCACDCaseType()
+                .WithAudioRecordingRequired(false)
+                .Build();
         }
 
         public ConferenceDetailsResponse CreateConference()
@@ -164,7 +171,8 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             var hearingResponse = _c.Api.GetHearing(hearingId);
             var hearing = RequestHelper.Deserialise<HearingDetailsResponse>(hearingResponse.Content);
             hearing.Should().NotBeNull();
-            foreach (var user in _c.Users.Where(user => user.User_type != UserType.CaseAdmin && user.User_type != UserType.VideoHearingsOfficer))
+            foreach (var user in _c.Users.Where(user =>
+                user.User_type != UserType.CaseAdmin && user.User_type != UserType.VideoHearingsOfficer))
             {
                 hearing.Participants.Any(x => x.Last_name.Equals(user.Last_name)).Should().BeTrue();
             }
@@ -173,7 +181,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         private void StartTheHearing()
         {
             var judge = _c.Test.ConferenceResponse.Participants.First(x => x.User_role == UserRole.Judge);
-            
+
             var request = new ConferenceEventRequestBuilder()
                 .WithConferenceId(_c.Test.ConferenceResponse.Id)
                 .WithParticipantId(judge.Id)
@@ -188,7 +196,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         private void CloseTheConference()
         {
             var judge = _c.Test.ConferenceResponse.Participants.First(x => x.User_role == UserRole.Judge);
-            
+
             var request = new ConferenceEventRequestBuilder()
                 .WithConferenceId(_c.Test.ConferenceResponse.Id)
                 .WithParticipantId(judge.Id)
