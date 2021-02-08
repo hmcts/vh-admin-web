@@ -6,10 +6,16 @@ import { AdminGuard } from '../security/admin.guard';
 
 import { BookingsListComponent } from './bookings-list/bookings-list.component';
 import { BookingDetailsComponent } from './booking-details/booking-details.component';
+import { ConfigSettingsResolveService } from 'src/app/bookings-list/services/config-settings-resolve.service';
 
 export const routes: Routes = [
     { path: 'bookings-list', component: BookingsListComponent, canActivate: [AuthGuard, AdminGuard] },
-    { path: 'booking-details', component: BookingDetailsComponent, canActivate: [AuthGuard, AdminGuard] }
+    {
+        path: 'booking-details',
+        component: BookingDetailsComponent,
+        resolve: { configSettings: ConfigSettingsResolveService },
+        canActivate: [AuthGuard, AdminGuard]
+    }
 ];
 
 @NgModule({
