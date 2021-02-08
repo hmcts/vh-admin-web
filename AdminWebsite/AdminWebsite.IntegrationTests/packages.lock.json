@@ -2764,11 +2764,19 @@
           "SonarAnalyzer.CSharp": "8.2.0.14119"
         }
       },
+      "VideoApi.Client": {
+        "type": "Transitive",
+        "resolved": "1.23.12",
+        "contentHash": "dWrIHAx7kti7WUyJ42EmQzicxJUh6D17q8sxJkDCe/8OSrEVFndd67Yw2rv03r5b/xGDRfyheZ+ayDUb5yJ1Ag==",
+        "dependencies": {
+          "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
+          "Newtonsoft.Json": "12.0.3"
+        }
+      },
       "adminwebsite": {
         "type": "Project",
         "dependencies": {
           "AdminWebsite.BookingsAPI.Client": "1.0.0",
-          "AdminWebsite.VideoAPI.Client": "1.0.0",
           "FluentValidation.AspNetCore": "8.6.1",
           "MicroElements.Swashbuckle.FluentValidation": "3.0.0-rc.5",
           "Microsoft.ApplicationInsights": "2.13.1",
@@ -2790,7 +2798,8 @@
           "Swashbuckle.AspNetCore.Newtonsoft": "5.2.1",
           "Swashbuckle.AspNetCore.Swagger": "5.2.1",
           "UserApi.Client": "1.23.4-pullrequest0104-0011",
-          "VH.Core.Configuration": "0.1.12"
+          "VH.Core.Configuration": "0.1.12",
+          "VideoApi.Client": "1.23.12"
         }
       },
       "adminwebsite.bookingsapi.client": {
@@ -2801,12 +2810,6 @@
       },
       "adminwebsite.testing.common": {
         "type": "Project"
-      },
-      "adminwebsite.videoapi.client": {
-        "type": "Project",
-        "dependencies": {
-          "Newtonsoft.Json": "12.0.3"
-        }
       }
     }
   }

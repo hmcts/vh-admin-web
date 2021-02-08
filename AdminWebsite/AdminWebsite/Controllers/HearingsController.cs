@@ -7,7 +7,6 @@ using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
 using AdminWebsite.Services.Models;
-using AdminWebsite.VideoAPI.Client;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -18,10 +17,8 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using AddEndpointRequest = AdminWebsite.BookingsAPI.Client.AddEndpointRequest;
 using ParticipantRequest = AdminWebsite.BookingsAPI.Client.ParticipantRequest;
-using UpdateEndpointRequest = AdminWebsite.BookingsAPI.Client.UpdateEndpointRequest;
-using UpdateParticipantRequest = AdminWebsite.BookingsAPI.Client.UpdateParticipantRequest;
+using VideoApi.Client;
 
 namespace AdminWebsite.Controllers
 {
@@ -362,7 +359,7 @@ namespace AdminWebsite.Controllers
 
                     if (!conferenceDetailsResponse.HasInvalidMeetingRoom())
                     {
-                        return Ok(new UpdateBookingStatusResponse { Success = true, TelephoneConferenceId = conferenceDetailsResponse.Meeting_room.Telephone_conference_id });
+                        return Ok(new UpdateBookingStatusResponse { Success = true, TelephoneConferenceId = conferenceDetailsResponse.MeetingRoom.TelephoneConferenceId });
                     }
                 }
                 catch (VideoApiException ex)
@@ -414,7 +411,7 @@ namespace AdminWebsite.Controllers
 
                 if (!conferenceDetailsResponse.HasInvalidMeetingRoom())
                 {
-                    return Ok(new PhoneConferenceResponse { TelephoneConferenceId = conferenceDetailsResponse.Meeting_room.Telephone_conference_id });
+                    return Ok(new PhoneConferenceResponse { TelephoneConferenceId = conferenceDetailsResponse.MeetingRoom.TelephoneConferenceId });
                 }
 
                 return NotFound();

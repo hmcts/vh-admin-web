@@ -6,12 +6,12 @@ using System;
 using System.Net;
 using System.Reflection;
 using System.Threading.Tasks;
-using AdminWebsite.VideoAPI.Client;
 using HealthCheckResponse = AdminWebsite.Models.HealthCheckResponse;
 using NotificationApi.Client;
 using NotificationApi.Contract;
 using Microsoft.Extensions.Logging;
 using UserApi.Client;
+using VideoApi.Client;
 
 namespace AdminWebsite.Controllers
 {

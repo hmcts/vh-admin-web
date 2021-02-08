@@ -4,7 +4,6 @@ using AdminWebsite.Security;
 using AdminWebsite.Services;
 using AdminWebsite.Services.Models;
 using AdminWebsite.UnitTests.Helper;
-using AdminWebsite.VideoAPI.Client;
 using FizzWare.NBuilder;
 using FluentAssertions;
 using FluentValidation;
@@ -19,6 +18,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using VideoApi.Client;
 using EndpointResponse = AdminWebsite.BookingsAPI.Client.EndpointResponse;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
@@ -106,8 +106,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             var da = "username@newemail.com";
             var endpoints = new EndpointRequest { Display_name = "displayname", Defence_advocate_username = da };
-            var endpointList = new List<EndpointRequest>();
-            endpointList.Add(endpoints);
+            var endpointList = new List<EndpointRequest> {endpoints};
 
             var hearing = new BookNewHearingRequest
             {

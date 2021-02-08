@@ -236,6 +236,16 @@
           "SonarAnalyzer.CSharp": "8.2.0.14119"
         }
       },
+      "VideoApi.Client": {
+        "type": "Direct",
+        "requested": "[1.23.12, )",
+        "resolved": "1.23.12",
+        "contentHash": "dWrIHAx7kti7WUyJ42EmQzicxJUh6D17q8sxJkDCe/8OSrEVFndd67Yw2rv03r5b/xGDRfyheZ+ayDUb5yJ1Ag==",
+        "dependencies": {
+          "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
+          "Newtonsoft.Json": "12.0.3"
+        }
+      },
       "FluentValidation": {
         "type": "Transitive",
         "resolved": "8.6.1",
@@ -2581,12 +2591,6 @@
         }
       },
       "adminwebsite.bookingsapi.client": {
-        "type": "Project",
-        "dependencies": {
-          "Newtonsoft.Json": "12.0.3"
-        }
-      },
-      "adminwebsite.videoapi.client": {
         "type": "Project",
         "dependencies": {
           "Newtonsoft.Json": "12.0.3"

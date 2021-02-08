@@ -4,7 +4,6 @@ using AdminWebsite.Security;
 using AdminWebsite.Services;
 using AdminWebsite.Services.Models;
 using AdminWebsite.UnitTests.Helper;
-using AdminWebsite.VideoAPI.Client;
 using Castle.Core.Internal;
 using FluentAssertions;
 using FluentValidation;
@@ -20,6 +19,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using VideoApi.Client;
 using AddEndpointRequest = AdminWebsite.BookingsAPI.Client.AddEndpointRequest;
 using UpdateEndpointRequest = AdminWebsite.BookingsAPI.Client.UpdateEndpointRequest;
 using UpdateParticipantRequest = AdminWebsite.BookingsAPI.Client.UpdateParticipantRequest;
@@ -310,7 +310,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var result = await _controller.EditHearing(_validId, _addNewParticipantRequest);
             ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
 
-            var participant = updatedHearing.Participants[0];
             _notificationApiMock.Verify(x => x.CreateNewNotificationAsync(It.IsAny<AddNotificationRequest>()), Times.Once);
             _bookingsApiClient.Verify(x => x.UpdateHearingDetailsAsync(It.IsAny<Guid>(), 
                 It.Is<UpdateHearingRequest>(u => !u.Cases.IsNullOrEmpty() && u.Questionnaire_not_required == false)), Times.Once);

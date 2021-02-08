@@ -2,7 +2,6 @@ using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
-using AdminWebsite.VideoAPI.Client;
 using FizzWare.NBuilder;
 using FluentAssertions;
 using FluentValidation;
@@ -18,6 +17,7 @@ using System.Threading.Tasks;
 using UserApi.Client;
 using UserApi.Contract.Requests;
 using UserApi.Contract.Responses;
+using VideoApi.Client;
 using EndpointResponse = AdminWebsite.BookingsAPI.Client.EndpointResponse;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
