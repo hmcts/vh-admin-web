@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
+import { LinkedParticipantModel, LinkedParticipantType } from 'src/app/common/model/linked-participant.model';
 import { Logger } from 'src/app/services/logger';
 import { ParticipantModel } from '../../common/model/participant.model';
 import { BookingService } from '../../services/booking.service';
@@ -125,6 +126,52 @@ describe('ParticipantsListComponent', () => {
         component.participants = participants;
 
         const participantModel = new ParticipantModel();
+        participantModel.title = 'Mrs';
+        participantModel.first_name = 'Sam';
+        participantModel.hearing_role_name = 'Litigant in Person';
+        participantModel.email = 'oliver.stone@email.com';
+        const ret = component.isInterpretee(participantModel);
+        expect(ret).toBe(true);
+    });
+    it('should return true if the participant is an interpretee in edit', () => {
+        const _participants: ParticipantModel[] = [];
+        const linkedParticipants: LinkedParticipantModel[] = [];
+        let linkedParticipant = new LinkedParticipantModel();
+        linkedParticipant.linkType = LinkedParticipantType.Interpreter;
+        linkedParticipant.linkedParticipantId = '200';
+        linkedParticipants.push(linkedParticipant);
+
+        let participant = new ParticipantModel();
+        participant.id = '100';
+        participant.title = 'Mr';
+        participant.first_name = 'Oliver';
+        participant.last_name = 'Stone';
+        participant.hearing_role_name = 'Litigant in Person';
+        participant.email = 'oliver.stone@email.com';
+        participant.linked_participants = linkedParticipants;
+        _participants.push(participant);
+
+        linkedParticipant = new LinkedParticipantModel();
+        linkedParticipant.linkType = LinkedParticipantType.Interpreter;
+        linkedParticipant.linkedParticipantId = '100';
+        linkedParticipants.push(linkedParticipant);
+
+        participant = new ParticipantModel();
+        participant.id = '200';
+        participant.title = 'Mr';
+        participant.first_name = 'Oliver';
+        participant.last_name = 'Styx';
+        participant.hearing_role_name = 'Styx';
+        participant.email = 'oliver.styx@email.com';
+        participant.linked_participants = linkedParticipants;
+        _participants.push(participant);
+
+        component.ngOnInit();
+        component.isEditMode = true;
+        component.participants = _participants;
+
+        const participantModel = new ParticipantModel();
+        participant.id = '100';
         participantModel.title = 'Mrs';
         participantModel.first_name = 'Sam';
         participantModel.hearing_role_name = 'Litigant in Person';

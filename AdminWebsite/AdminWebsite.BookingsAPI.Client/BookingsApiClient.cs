@@ -17,668 +17,626 @@ namespace AdminWebsite.BookingsAPI.Client
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "13.7.0.0 (NJsonSchema v10.1.24.0 (Newtonsoft.Json v12.0.0.0))")]
     public partial interface IBookingsApiClient
     {
-        /// <summary>Get available case types</summary>
-        /// <returns>A list of available case types</returns>
+        /// <summary>Allocate single user</summary>
+        /// <param name="body">Details of the required allocation</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.List<CaseTypeResponse>> GetCaseTypesAsync();
+        System.Threading.Tasks.Task<UserDetailsResponse> AllocateUserAsync(AllocateUserRequest body);
     
-        /// <summary>Get available case types</summary>
-        /// <returns>A list of available case types</returns>
+        /// <summary>Allocate single user</summary>
+        /// <param name="body">Details of the required allocation</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Collections.Generic.List<CaseTypeResponse> GetCaseTypes();
-    
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Get available case types</summary>
-        /// <returns>A list of available case types</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.List<CaseTypeResponse>> GetCaseTypesAsync(System.Threading.CancellationToken cancellationToken);
-    
-        /// <summary>Get case roles for a case type</summary>
-        /// <returns>Available case roles for given case type</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.List<CaseRoleResponse>> GetCaseRolesForCaseTypeAsync(string caseTypeName);
-    
-        /// <summary>Get case roles for a case type</summary>
-        /// <returns>Available case roles for given case type</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Collections.Generic.List<CaseRoleResponse> GetCaseRolesForCaseType(string caseTypeName);
+        UserDetailsResponse AllocateUser(AllocateUserRequest body);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Get case roles for a case type</summary>
-        /// <returns>Available case roles for given case type</returns>
+        /// <summary>Allocate single user</summary>
+        /// <param name="body">Details of the required allocation</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.List<CaseRoleResponse>> GetCaseRolesForCaseTypeAsync(string caseTypeName, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<UserDetailsResponse> AllocateUserAsync(AllocateUserRequest body, System.Threading.CancellationToken cancellationToken);
     
-        /// <summary>Get hearing roles for a case role of a case type</summary>
-        /// <param name="caseTypeName">Hearing case type</param>
-        /// <param name="caseRoleName">Hearing case role</param>
-        /// <returns>Available hearing roles for given case role</returns>
+        /// <summary>Allocate multiple users</summary>
+        /// <param name="body">Allocate users request</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.List<HearingRoleResponse>> GetHearingRolesForCaseRoleAsync(string caseTypeName, string caseRoleName);
+        System.Threading.Tasks.Task<System.Collections.Generic.List<UserDetailsResponse>> AllocateUsersAsync(AllocateUsersRequest body);
     
-        /// <summary>Get hearing roles for a case role of a case type</summary>
-        /// <param name="caseTypeName">Hearing case type</param>
-        /// <param name="caseRoleName">Hearing case role</param>
-        /// <returns>Available hearing roles for given case role</returns>
+        /// <summary>Allocate multiple users</summary>
+        /// <param name="body">Allocate users request</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Collections.Generic.List<HearingRoleResponse> GetHearingRolesForCaseRole(string caseTypeName, string caseRoleName);
-    
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Get hearing roles for a case role of a case type</summary>
-        /// <param name="caseTypeName">Hearing case type</param>
-        /// <param name="caseRoleName">Hearing case role</param>
-        /// <returns>Available hearing roles for given case role</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.List<HearingRoleResponse>> GetHearingRolesForCaseRoleAsync(string caseTypeName, string caseRoleName, System.Threading.CancellationToken cancellationToken);
-    
-        /// <summary>Add an endpoint to a given hearing</summary>
-        /// <param name="hearingId">The hearing id</param>
-        /// <param name="addEndpointRequest">Details of the endpoint to be added to a hearing</param>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task AddEndPointToHearingAsync(System.Guid hearingId, AddEndpointRequest addEndpointRequest);
-    
-        /// <summary>Add an endpoint to a given hearing</summary>
-        /// <param name="hearingId">The hearing id</param>
-        /// <param name="addEndpointRequest">Details of the endpoint to be added to a hearing</param>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        void AddEndPointToHearing(System.Guid hearingId, AddEndpointRequest addEndpointRequest);
+        System.Collections.Generic.List<UserDetailsResponse> AllocateUsers(AllocateUsersRequest body);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Add an endpoint to a given hearing</summary>
-        /// <param name="hearingId">The hearing id</param>
-        /// <param name="addEndpointRequest">Details of the endpoint to be added to a hearing</param>
+        /// <summary>Allocate multiple users</summary>
+        /// <param name="body">Allocate users request</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task AddEndPointToHearingAsync(System.Guid hearingId, AddEndpointRequest addEndpointRequest, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<System.Collections.Generic.List<UserDetailsResponse>> AllocateUsersAsync(AllocateUsersRequest body, System.Threading.CancellationToken cancellationToken);
     
-        /// <summary>Removes an endpoint from a given hearing</summary>
-        /// <param name="hearingId">The hearing id</param>
-        /// <param name="endpointId">The endpoint id</param>
+        /// <summary>Unallocate users by username</summary>
+        /// <param name="body">List of usernames to unallocate</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task RemoveEndPointFromHearingAsync(System.Guid hearingId, System.Guid endpointId);
+        System.Threading.Tasks.Task<System.Collections.Generic.List<AllocationDetailsResponse>> UnallocateUsersAsync(UnallocateUsersRequest body);
     
-        /// <summary>Removes an endpoint from a given hearing</summary>
-        /// <param name="hearingId">The hearing id</param>
-        /// <param name="endpointId">The endpoint id</param>
+        /// <summary>Unallocate users by username</summary>
+        /// <param name="body">List of usernames to unallocate</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        void RemoveEndPointFromHearing(System.Guid hearingId, System.Guid endpointId);
-    
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Removes an endpoint from a given hearing</summary>
-        /// <param name="hearingId">The hearing id</param>
-        /// <param name="endpointId">The endpoint id</param>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task RemoveEndPointFromHearingAsync(System.Guid hearingId, System.Guid endpointId, System.Threading.CancellationToken cancellationToken);
-    
-        /// <summary>Update an endpoint of a given hearing</summary>
-        /// <param name="hearingId">The hearing id</param>
-        /// <param name="endpointId">The endpoint id</param>
-        /// <param name="updateEndpointRequest">Details of the endpoint to be updated</param>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task UpdateDisplayNameForEndpointAsync(System.Guid hearingId, System.Guid endpointId, UpdateEndpointRequest updateEndpointRequest);
-    
-        /// <summary>Update an endpoint of a given hearing</summary>
-        /// <param name="hearingId">The hearing id</param>
-        /// <param name="endpointId">The endpoint id</param>
-        /// <param name="updateEndpointRequest">Details of the endpoint to be updated</param>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        void UpdateDisplayNameForEndpoint(System.Guid hearingId, System.Guid endpointId, UpdateEndpointRequest updateEndpointRequest);
+        System.Collections.Generic.List<AllocationDetailsResponse> UnallocateUsers(UnallocateUsersRequest body);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Update an endpoint of a given hearing</summary>
-        /// <param name="hearingId">The hearing id</param>
-        /// <param name="endpointId">The endpoint id</param>
-        /// <param name="updateEndpointRequest">Details of the endpoint to be updated</param>
+        /// <summary>Unallocate users by username</summary>
+        /// <param name="body">List of usernames to unallocate</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task UpdateDisplayNameForEndpointAsync(System.Guid hearingId, System.Guid endpointId, UpdateEndpointRequest updateEndpointRequest, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<System.Collections.Generic.List<AllocationDetailsResponse>> UnallocateUsersAsync(UnallocateUsersRequest body, System.Threading.CancellationToken cancellationToken);
     
-        /// <summary>Run a health check of the service</summary>
-        /// <returns>Error if fails, otherwise OK status</returns>
+        /// <summary>Get allocated users by allocatedBy</summary>
+        /// <param name="username">Username of the user that has allocated users</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<BookingsApiHealthResponse> CheckServiceHealthAsync();
+        System.Threading.Tasks.Task<System.Collections.Generic.List<AllocationDetailsResponse>> AllocatedUsersAsync(string username);
     
-        /// <summary>Run a health check of the service</summary>
-        /// <returns>Error if fails, otherwise OK status</returns>
+        /// <summary>Get allocated users by allocatedBy</summary>
+        /// <param name="username">Username of the user that has allocated users</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        BookingsApiHealthResponse CheckServiceHealth();
-    
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Run a health check of the service</summary>
-        /// <returns>Error if fails, otherwise OK status</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<BookingsApiHealthResponse> CheckServiceHealthAsync(System.Threading.CancellationToken cancellationToken);
-    
-        /// <summary>Get participants in a hearing</summary>
-        /// <param name="hearingId">The Id of the hearing</param>
-        /// <returns>List of participants</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.List<ParticipantResponse>> GetAllParticipantsInHearingAsync(System.Guid hearingId);
-    
-        /// <summary>Get participants in a hearing</summary>
-        /// <param name="hearingId">The Id of the hearing</param>
-        /// <returns>List of participants</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Collections.Generic.List<ParticipantResponse> GetAllParticipantsInHearing(System.Guid hearingId);
+        System.Collections.Generic.List<AllocationDetailsResponse> AllocatedUsers(string username);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Get participants in a hearing</summary>
-        /// <param name="hearingId">The Id of the hearing</param>
-        /// <returns>List of participants</returns>
+        /// <summary>Get allocated users by allocatedBy</summary>
+        /// <param name="username">Username of the user that has allocated users</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.List<ParticipantResponse>> GetAllParticipantsInHearingAsync(System.Guid hearingId, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<System.Collections.Generic.List<AllocationDetailsResponse>> AllocatedUsersAsync(string username, System.Threading.CancellationToken cancellationToken);
     
-        /// <summary>Add participant(s) to a hearing</summary>
-        /// <param name="hearingId">The Id of the hearing</param>
-        /// <param name="request">The participant information to add</param>
-        /// <returns>The participant</returns>
+        /// <summary>Get the details of a conference by id</summary>
+        /// <param name="conferenceId">Id of the conference</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task AddParticipantsToHearingAsync(System.Guid hearingId, AddParticipantsToHearingRequest request);
+        System.Threading.Tasks.Task<ConferenceDetailsResponse> GetConferenceByIdAsync(System.Guid conferenceId);
     
-        /// <summary>Add participant(s) to a hearing</summary>
-        /// <param name="hearingId">The Id of the hearing</param>
-        /// <param name="request">The participant information to add</param>
-        /// <returns>The participant</returns>
+        /// <summary>Get the details of a conference by id</summary>
+        /// <param name="conferenceId">Id of the conference</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        void AddParticipantsToHearing(System.Guid hearingId, AddParticipantsToHearingRequest request);
+        ConferenceDetailsResponse GetConferenceById(System.Guid conferenceId);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Add participant(s) to a hearing</summary>
-        /// <param name="hearingId">The Id of the hearing</param>
-        /// <param name="request">The participant information to add</param>
-        /// <returns>The participant</returns>
+        /// <summary>Get the details of a conference by id</summary>
+        /// <param name="conferenceId">Id of the conference</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task AddParticipantsToHearingAsync(System.Guid hearingId, AddParticipantsToHearingRequest request, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<ConferenceDetailsResponse> GetConferenceByIdAsync(System.Guid conferenceId, System.Threading.CancellationToken cancellationToken);
     
-        /// <summary>Get a single participant in a hearing</summary>
-        /// <param name="hearingId">The Id of the hearing</param>
-        /// <param name="participantId">The Id of the participant</param>
-        /// <returns>The participant</returns>
+        /// <summary>Get the details of a conference by hearing ref id</summary>
+        /// <param name="hearingRefId">Hearing ref Id of the conference</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<ParticipantResponse> GetParticipantInHearingAsync(System.Guid hearingId, System.Guid participantId);
+        System.Threading.Tasks.Task<ConferenceDetailsResponse> GetConferenceByHearingRefIdAsync(System.Guid hearingRefId);
     
-        /// <summary>Get a single participant in a hearing</summary>
-        /// <param name="hearingId">The Id of the hearing</param>
-        /// <param name="participantId">The Id of the participant</param>
-        /// <returns>The participant</returns>
+        /// <summary>Get the details of a conference by hearing ref id</summary>
+        /// <param name="hearingRefId">Hearing ref Id of the conference</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        ParticipantResponse GetParticipantInHearing(System.Guid hearingId, System.Guid participantId);
+        ConferenceDetailsResponse GetConferenceByHearingRefId(System.Guid hearingRefId);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Get a single participant in a hearing</summary>
-        /// <param name="hearingId">The Id of the hearing</param>
-        /// <param name="participantId">The Id of the participant</param>
-        /// <returns>The participant</returns>
+        /// <summary>Get the details of a conference by hearing ref id</summary>
+        /// <param name="hearingRefId">Hearing ref Id of the conference</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<ParticipantResponse> GetParticipantInHearingAsync(System.Guid hearingId, System.Guid participantId, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<ConferenceDetailsResponse> GetConferenceByHearingRefIdAsync(System.Guid hearingRefId, System.Threading.CancellationToken cancellationToken);
     
-        /// <summary>Remove a participant from a hearing</summary>
-        /// <param name="hearingId">Id of hearing to look up</param>
-        /// <param name="participantId">Id of participant to remove</param>
+        /// <summary>Request to book a conference</summary>
+        /// <param name="body">Details of a conference</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task RemoveParticipantFromHearingAsync(System.Guid hearingId, System.Guid participantId);
+        System.Threading.Tasks.Task<ConferenceDetailsResponse> BookNewConferenceAsync(BookNewConferenceRequest body);
     
-        /// <summary>Remove a participant from a hearing</summary>
-        /// <param name="hearingId">Id of hearing to look up</param>
-        /// <param name="participantId">Id of participant to remove</param>
+        /// <summary>Request to book a conference</summary>
+        /// <param name="body">Details of a conference</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        void RemoveParticipantFromHearing(System.Guid hearingId, System.Guid participantId);
-    
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Remove a participant from a hearing</summary>
-        /// <param name="hearingId">Id of hearing to look up</param>
-        /// <param name="participantId">Id of participant to remove</param>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task RemoveParticipantFromHearingAsync(System.Guid hearingId, System.Guid participantId, System.Threading.CancellationToken cancellationToken);
-    
-        /// <summary>Update participant details</summary>
-        /// <param name="hearingId">Id of hearing to look up</param>
-        /// <param name="participantId">Id of participant to remove</param>
-        /// <param name="request">The participant information to add</param>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task UpdateParticipantDetailsAsync(System.Guid hearingId, System.Guid participantId, UpdateParticipantRequest request);
-    
-        /// <summary>Update participant details</summary>
-        /// <param name="hearingId">Id of hearing to look up</param>
-        /// <param name="participantId">Id of participant to remove</param>
-        /// <param name="request">The participant information to add</param>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        void UpdateParticipantDetails(System.Guid hearingId, System.Guid participantId, UpdateParticipantRequest request);
+        ConferenceDetailsResponse BookNewConference(BookNewConferenceRequest body);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Update participant details</summary>
-        /// <param name="hearingId">Id of hearing to look up</param>
-        /// <param name="participantId">Id of participant to remove</param>
-        /// <param name="request">The participant information to add</param>
+        /// <summary>Request to book a conference</summary>
+        /// <param name="body">Details of a conference</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task UpdateParticipantDetailsAsync(System.Guid hearingId, System.Guid participantId, UpdateParticipantRequest request, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<ConferenceDetailsResponse> BookNewConferenceAsync(BookNewConferenceRequest body, System.Threading.CancellationToken cancellationToken);
     
-        /// <summary>Updates suitability answers for the participant</summary>
-        /// <param name="hearingId">Id of hearing</param>
-        /// <param name="participantId">Id of participant</param>
-        /// <param name="answers">A list of suitability answers to update</param>
-        /// <returns>Http status</returns>
+        /// <summary>Delete a conference by conference id</summary>
+        /// <param name="hearingRefId">Hearing Ref Id of the conference</param>
+        /// <param name="conferenceId">Conference Id of the conference</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task UpdateSuitabilityAnswersAsync(System.Guid hearingId, System.Guid participantId, System.Collections.Generic.IEnumerable<SuitabilityAnswersRequest> answers);
+        System.Threading.Tasks.Task ConferencesAsync(System.Guid hearingRefId, System.Guid conferenceId);
     
-        /// <summary>Updates suitability answers for the participant</summary>
-        /// <param name="hearingId">Id of hearing</param>
-        /// <param name="participantId">Id of participant</param>
-        /// <param name="answers">A list of suitability answers to update</param>
-        /// <returns>Http status</returns>
+        /// <summary>Delete a conference by conference id</summary>
+        /// <param name="hearingRefId">Hearing Ref Id of the conference</param>
+        /// <param name="conferenceId">Conference Id of the conference</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        void UpdateSuitabilityAnswers(System.Guid hearingId, System.Guid participantId, System.Collections.Generic.IEnumerable<SuitabilityAnswersRequest> answers);
+        void Conferences(System.Guid hearingRefId, System.Guid conferenceId);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Updates suitability answers for the participant</summary>
-        /// <param name="hearingId">Id of hearing</param>
-        /// <param name="participantId">Id of participant</param>
-        /// <param name="answers">A list of suitability answers to update</param>
-        /// <returns>Http status</returns>
+        /// <summary>Delete a conference by conference id</summary>
+        /// <param name="hearingRefId">Hearing Ref Id of the conference</param>
+        /// <param name="conferenceId">Conference Id of the conference</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task UpdateSuitabilityAnswersAsync(System.Guid hearingId, System.Guid participantId, System.Collections.Generic.IEnumerable<SuitabilityAnswersRequest> answers, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task ConferencesAsync(System.Guid hearingRefId, System.Guid conferenceId, System.Threading.CancellationToken cancellationToken);
     
-        /// <summary>Get details for a given hearing</summary>
-        /// <param name="hearingId">Id for a hearing</param>
-        /// <returns>Hearing details</returns>
+        /// <summary>Get conferences for today Judge</summary>
+        /// <param name="username">Username of the Judge</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<HearingDetailsResponse> GetHearingDetailsByIdAsync(System.Guid hearingId);
+        System.Threading.Tasks.Task<System.Collections.Generic.List<ConferenceForJudgeResponse>> GetConferencesForTodayJudgeAsync(string username);
     
-        /// <summary>Get details for a given hearing</summary>
-        /// <param name="hearingId">Id for a hearing</param>
-        /// <returns>Hearing details</returns>
+        /// <summary>Get conferences for today Judge</summary>
+        /// <param name="username">Username of the Judge</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        HearingDetailsResponse GetHearingDetailsById(System.Guid hearingId);
-    
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Get details for a given hearing</summary>
-        /// <param name="hearingId">Id for a hearing</param>
-        /// <returns>Hearing details</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<HearingDetailsResponse> GetHearingDetailsByIdAsync(System.Guid hearingId, System.Threading.CancellationToken cancellationToken);
-    
-        /// <summary>Update the details of a hearing such as venue, time and duration</summary>
-        /// <param name="hearingId">The id of the hearing to update</param>
-        /// <param name="request">Details to update</param>
-        /// <returns>Details of updated hearing</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<HearingDetailsResponse> UpdateHearingDetailsAsync(System.Guid hearingId, UpdateHearingRequest request);
-    
-        /// <summary>Update the details of a hearing such as venue, time and duration</summary>
-        /// <param name="hearingId">The id of the hearing to update</param>
-        /// <param name="request">Details to update</param>
-        /// <returns>Details of updated hearing</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        HearingDetailsResponse UpdateHearingDetails(System.Guid hearingId, UpdateHearingRequest request);
+        System.Collections.Generic.List<ConferenceForJudgeResponse> GetConferencesForTodayJudge(string username);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Update the details of a hearing such as venue, time and duration</summary>
-        /// <param name="hearingId">The id of the hearing to update</param>
-        /// <param name="request">Details to update</param>
-        /// <returns>Details of updated hearing</returns>
+        /// <summary>Get conferences for today Judge</summary>
+        /// <param name="username">Username of the Judge</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<HearingDetailsResponse> UpdateHearingDetailsAsync(System.Guid hearingId, UpdateHearingRequest request, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<System.Collections.Generic.List<ConferenceForJudgeResponse>> GetConferencesForTodayJudgeAsync(string username, System.Threading.CancellationToken cancellationToken);
     
-        /// <summary>Remove an existing hearing</summary>
-        /// <param name="hearingId">The hearing id</param>
+        /// <summary>Get conferences for today VHO</summary>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task RemoveHearingAsync(System.Guid hearingId);
+        System.Threading.Tasks.Task<System.Collections.Generic.List<ConferenceForAdminResponse>> GetConferencesForTodayVhoAsync();
     
-        /// <summary>Remove an existing hearing</summary>
-        /// <param name="hearingId">The hearing id</param>
+        /// <summary>Get conferences for today VHO</summary>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        void RemoveHearing(System.Guid hearingId);
-    
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Remove an existing hearing</summary>
-        /// <param name="hearingId">The hearing id</param>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task RemoveHearingAsync(System.Guid hearingId, System.Threading.CancellationToken cancellationToken);
-    
-        /// <summary>Update booking status</summary>
-        /// <param name="hearingId">Id of the hearing to update the status for</param>
-        /// <param name="request">Status of the hearing to change to</param>
-        /// <returns>Success status</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task UpdateBookingStatusAsync(System.Guid hearingId, UpdateBookingStatusRequest request);
-    
-        /// <summary>Update booking status</summary>
-        /// <param name="hearingId">Id of the hearing to update the status for</param>
-        /// <param name="request">Status of the hearing to change to</param>
-        /// <returns>Success status</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        void UpdateBookingStatus(System.Guid hearingId, UpdateBookingStatusRequest request);
+        System.Collections.Generic.List<ConferenceForAdminResponse> GetConferencesForTodayVho();
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Update booking status</summary>
-        /// <param name="hearingId">Id of the hearing to update the status for</param>
-        /// <param name="request">Status of the hearing to change to</param>
-        /// <returns>Success status</returns>
+        /// <summary>Get conferences for today VHO</summary>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task UpdateBookingStatusAsync(System.Guid hearingId, UpdateBookingStatusRequest request, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<System.Collections.Generic.List<ConferenceForAdminResponse>> GetConferencesForTodayVhoAsync(System.Threading.CancellationToken cancellationToken);
+    
+        /// <summary>Get audio recording links</summary>
+        /// <param name="hearingId">Hearing Id of the conference</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<AudioRecordingResponse> GetAudioRecordingLinksByHearingIdAsync(System.Guid hearingId);
+    
+        /// <summary>Get audio recording links</summary>
+        /// <param name="hearingId">Hearing Id of the conference</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        AudioRecordingResponse GetAudioRecordingLinksByHearingId(System.Guid hearingId);
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Get audio recording links</summary>
+        /// <param name="hearingId">Hearing Id of the conference</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<AudioRecordingResponse> GetAudioRecordingLinksByHearingIdAsync(System.Guid hearingId, System.Threading.CancellationToken cancellationToken);
+    
+        /// <summary>Get tasks for a conference</summary>
+        /// <param name="conferenceId">Conference Id of the conference</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<System.Collections.Generic.List<TaskResponse>> GetTasksByConferenceIdAsync(System.Guid conferenceId);
+    
+        /// <summary>Get tasks for a conference</summary>
+        /// <param name="conferenceId">Conference Id of the conference</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        System.Collections.Generic.List<TaskResponse> GetTasksByConferenceId(System.Guid conferenceId);
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Get tasks for a conference</summary>
+        /// <param name="conferenceId">Conference Id of the conference</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<System.Collections.Generic.List<TaskResponse>> GetTasksByConferenceIdAsync(System.Guid conferenceId, System.Threading.CancellationToken cancellationToken);
+    
+        /// <summary>Create event</summary>
+        /// <param name="body">Conference event request</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task CreateEventAsync(ConferenceEventRequest body);
+    
+        /// <summary>Create event</summary>
+        /// <param name="body">Conference event request</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        void CreateEvent(ConferenceEventRequest body);
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Create event</summary>
+        /// <param name="body">Conference event request</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task CreateEventAsync(ConferenceEventRequest body, System.Threading.CancellationToken cancellationToken);
+    
+        /// <summary>Get the test call result for a participant</summary>
+        /// <param name="conferenceId">Conference Id of the conference</param>
+        /// <param name="participantId">Participant Id of the participant</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<TestCallScoreResponse> GetSelfTestScoreAsync(System.Guid conferenceId, System.Guid participantId);
+    
+        /// <summary>Get the test call result for a participant</summary>
+        /// <param name="conferenceId">Conference Id of the conference</param>
+        /// <param name="participantId">Participant Id of the participant</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        TestCallScoreResponse GetSelfTestScore(System.Guid conferenceId, System.Guid participantId);
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Get the test call result for a participant</summary>
+        /// <param name="conferenceId">Conference Id of the conference</param>
+        /// <param name="participantId">Participant Id of the participant</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<TestCallScoreResponse> GetSelfTestScoreAsync(System.Guid conferenceId, System.Guid participantId, System.Threading.CancellationToken cancellationToken);
+    
+        /// <summary>Delete a participant</summary>
+        /// <param name="conferenceId">Conference Id of the conference</param>
+        /// <param name="participantId">Participant Id of the participant</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task DeleteParticipantAsync(System.Guid conferenceId, System.Guid participantId);
+    
+        /// <summary>Delete a participant</summary>
+        /// <param name="conferenceId">Conference Id of the conference</param>
+        /// <param name="participantId">Participant Id of the participant</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        void DeleteParticipant(System.Guid conferenceId, System.Guid participantId);
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Delete a participant</summary>
+        /// <param name="conferenceId">Conference Id of the conference</param>
+        /// <param name="participantId">Participant Id of the participant</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task DeleteParticipantAsync(System.Guid conferenceId, System.Guid participantId, System.Threading.CancellationToken cancellationToken);
+    
+        /// <summary>Check Service Health</summary>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<HealthResponse> CheckServiceHealthAsync();
+    
+        /// <summary>Check Service Health</summary>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        HealthResponse CheckServiceHealth();
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Check Service Health</summary>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<HealthResponse> CheckServiceHealthAsync(System.Threading.CancellationToken cancellationToken);
+    
+        /// <summary>Get the details of a hearing by id</summary>
+        /// <param name="hearingId">Id of the hearing</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<HearingDetailsResponse> GetHearingByIdAsync(System.Guid hearingId);
+    
+        /// <summary>Get the details of a hearing by id</summary>
+        /// <param name="hearingId">Id of the hearing</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        HearingDetailsResponse GetHearingById(System.Guid hearingId);
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Get the details of a hearing by id</summary>
+        /// <param name="hearingId">Id of the hearing</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<HearingDetailsResponse> GetHearingByIdAsync(System.Guid hearingId, System.Threading.CancellationToken cancellationToken);
+    
+        /// <summary>Confirm hearing by id</summary>
+        /// <param name="hearingId">Id of the hearing</param>
+        /// <param name="body">Update the booking status details</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<ConferenceDetailsResponse> ConfirmHearingByIdAsync(System.Guid hearingId, UpdateBookingStatusRequest body);
+    
+        /// <summary>Confirm hearing by id</summary>
+        /// <param name="hearingId">Id of the hearing</param>
+        /// <param name="body">Update the booking status details</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        ConferenceDetailsResponse ConfirmHearingById(System.Guid hearingId, UpdateBookingStatusRequest body);
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Confirm hearing by id</summary>
+        /// <param name="hearingId">Id of the hearing</param>
+        /// <param name="body">Update the booking status details</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<ConferenceDetailsResponse> ConfirmHearingByIdAsync(System.Guid hearingId, UpdateBookingStatusRequest body, System.Threading.CancellationToken cancellationToken);
+    
+        /// <summary>Delete hearing by id</summary>
+        /// <param name="hearingId">Id of the hearing</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task DeleteHearingByIdAsync(System.Guid hearingId);
+    
+        /// <summary>Delete hearing by id</summary>
+        /// <param name="hearingId">Id of the hearing</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        void DeleteHearingById(System.Guid hearingId);
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Delete hearing by id</summary>
+        /// <param name="hearingId">Id of the hearing</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task DeleteHearingByIdAsync(System.Guid hearingId, System.Threading.CancellationToken cancellationToken);
     
         /// <summary>Get list of all hearings for a given username</summary>
-        /// <param name="username">username of person to search against</param>
-        /// <returns>Hearing details</returns>
+        /// <param name="username">Username of the participant</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<System.Collections.Generic.List<HearingDetailsResponse>> GetHearingsByUsernameAsync(string username);
     
         /// <summary>Get list of all hearings for a given username</summary>
-        /// <param name="username">username of person to search against</param>
-        /// <returns>Hearing details</returns>
+        /// <param name="username">Username of the participant</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
         System.Collections.Generic.List<HearingDetailsResponse> GetHearingsByUsername(string username);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Get list of all hearings for a given username</summary>
-        /// <param name="username">username of person to search against</param>
-        /// <returns>Hearing details</returns>
+        /// <param name="username">Username of the participant</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<System.Collections.Generic.List<HearingDetailsResponse>> GetHearingsByUsernameAsync(string username, System.Threading.CancellationToken cancellationToken);
     
-        /// <summary>Request to book a new hearing</summary>
-        /// <param name="request">Details of a new hearing to book</param>
-        /// <returns>Details of the newly booked hearing</returns>
+        /// <summary>Create a hearing</summary>
+        /// <param name="body">Details of the new user</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<HearingDetailsResponse> BookNewHearingAsync(BookNewHearingRequest request);
+        System.Threading.Tasks.Task<HearingDetailsResponse> HearingsAsync(CreateHearingRequest body);
     
-        /// <summary>Request to book a new hearing</summary>
-        /// <param name="request">Details of a new hearing to book</param>
-        /// <returns>Details of the newly booked hearing</returns>
+        /// <summary>Create a hearing</summary>
+        /// <param name="body">Details of the new user</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        HearingDetailsResponse BookNewHearing(BookNewHearingRequest request);
-    
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Request to book a new hearing</summary>
-        /// <param name="request">Details of a new hearing to book</param>
-        /// <returns>Details of the newly booked hearing</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<HearingDetailsResponse> BookNewHearingAsync(BookNewHearingRequest request, System.Threading.CancellationToken cancellationToken);
-    
-        /// <summary>Create a new hearing with the details of a given hearing on given dates</summary>
-        /// <param name="hearingId">Original hearing to clone</param>
-        /// <param name="request">List of dates to create a new hearing on</param>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task CloneHearingAsync(System.Guid hearingId, CloneHearingRequest request);
-    
-        /// <summary>Create a new hearing with the details of a given hearing on given dates</summary>
-        /// <param name="hearingId">Original hearing to clone</param>
-        /// <param name="request">List of dates to create a new hearing on</param>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        void CloneHearing(System.Guid hearingId, CloneHearingRequest request);
+        HearingDetailsResponse Hearings(CreateHearingRequest body);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Create a new hearing with the details of a given hearing on given dates</summary>
-        /// <param name="hearingId">Original hearing to clone</param>
-        /// <param name="request">List of dates to create a new hearing on</param>
+        /// <summary>Create a hearing</summary>
+        /// <param name="body">Details of the new user</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task CloneHearingAsync(System.Guid hearingId, CloneHearingRequest request, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<HearingDetailsResponse> HearingsAsync(CreateHearingRequest body, System.Threading.CancellationToken cancellationToken);
     
-        /// <summary>Get a paged list of booked hearings</summary>
-        /// <param name="types">The hearing case types.</param>
-        /// <param name="cursor">Cursor specifying from which entries to read next page, is defaulted if not specified</param>
-        /// <param name="limit">The max number hearings records to return.</param>
-        /// <returns>The list of bookings video hearing</returns>
+        /// <summary>Updates suitability answers for the participant</summary>
+        /// <param name="hearingId">Id of hearing</param>
+        /// <param name="participantId">Id of participant</param>
+        /// <param name="body">A list of suitability answers to update</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<BookingsResponse> GetHearingsByTypesAsync(System.Collections.Generic.IEnumerable<int> types, string cursor, int? limit);
+        System.Threading.Tasks.Task UpdateSuitabilityAnswersAsync(System.Guid hearingId, System.Guid participantId, System.Collections.Generic.IEnumerable<SuitabilityAnswersRequest> body);
     
-        /// <summary>Get a paged list of booked hearings</summary>
-        /// <param name="types">The hearing case types.</param>
-        /// <param name="cursor">Cursor specifying from which entries to read next page, is defaulted if not specified</param>
-        /// <param name="limit">The max number hearings records to return.</param>
-        /// <returns>The list of bookings video hearing</returns>
+        /// <summary>Updates suitability answers for the participant</summary>
+        /// <param name="hearingId">Id of hearing</param>
+        /// <param name="participantId">Id of participant</param>
+        /// <param name="body">A list of suitability answers to update</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        BookingsResponse GetHearingsByTypes(System.Collections.Generic.IEnumerable<int> types, string cursor, int? limit);
-    
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Get a paged list of booked hearings</summary>
-        /// <param name="types">The hearing case types.</param>
-        /// <param name="cursor">Cursor specifying from which entries to read next page, is defaulted if not specified</param>
-        /// <param name="limit">The max number hearings records to return.</param>
-        /// <returns>The list of bookings video hearing</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<BookingsResponse> GetHearingsByTypesAsync(System.Collections.Generic.IEnumerable<int> types, string cursor, int? limit, System.Threading.CancellationToken cancellationToken);
-    
-        /// <summary>Anonymises the Hearings, Case, Person and Participant data.</summary>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task AnonymiseHearingsAsync();
-    
-        /// <summary>Anonymises the Hearings, Case, Person and Participant data.</summary>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        void AnonymiseHearings();
+        void UpdateSuitabilityAnswers(System.Guid hearingId, System.Guid participantId, System.Collections.Generic.IEnumerable<SuitabilityAnswersRequest> body);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Anonymises the Hearings, Case, Person and Participant data.</summary>
+        /// <summary>Updates suitability answers for the participant</summary>
+        /// <param name="hearingId">Id of hearing</param>
+        /// <param name="participantId">Id of participant</param>
+        /// <param name="body">A list of suitability answers to update</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task AnonymiseHearingsAsync(System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task UpdateSuitabilityAnswersAsync(System.Guid hearingId, System.Guid participantId, System.Collections.Generic.IEnumerable<SuitabilityAnswersRequest> body, System.Threading.CancellationToken cancellationToken);
     
-        /// <summary>Search for hearings by case number. Search will apply fuzzy matching</summary>
-        /// <returns>list of hearings matching search criteria</returns>
+        /// <summary>Get suitability answers for the person</summary>
+        /// <param name="username">Username of the person</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.List<AudioRecordedHearingsBySearchResponse>> SearchForHearingsAsync(string caseNumber, System.DateTime? date);
+        System.Threading.Tasks.Task<System.Collections.Generic.List<PersonSuitabilityAnswerResponse>> GetSuitabilityAnswersAsync(string username);
     
-        /// <summary>Search for hearings by case number. Search will apply fuzzy matching</summary>
-        /// <returns>list of hearings matching search criteria</returns>
+        /// <summary>Get suitability answers for the person</summary>
+        /// <param name="username">Username of the person</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Collections.Generic.List<AudioRecordedHearingsBySearchResponse> SearchForHearings(string caseNumber, System.DateTime? date);
-    
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Search for hearings by case number. Search will apply fuzzy matching</summary>
-        /// <returns>list of hearings matching search criteria</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.List<AudioRecordedHearingsBySearchResponse>> SearchForHearingsAsync(string caseNumber, System.DateTime? date, System.Threading.CancellationToken cancellationToken);
-    
-        /// <summary>Get all hearing venues available for booking</summary>
-        /// <returns>List of hearing venues</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.List<HearingVenueResponse>> GetHearingVenuesAsync();
-    
-        /// <summary>Get all hearing venues available for booking</summary>
-        /// <returns>List of hearing venues</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Collections.Generic.List<HearingVenueResponse> GetHearingVenues();
+        System.Collections.Generic.List<PersonSuitabilityAnswerResponse> GetSuitabilityAnswers(string username);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Get all hearing venues available for booking</summary>
-        /// <returns>List of hearing venues</returns>
+        /// <summary>Get suitability answers for the person</summary>
+        /// <param name="username">Username of the person</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.List<HearingVenueResponse>> GetHearingVenuesAsync(System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<System.Collections.Generic.List<PersonSuitabilityAnswerResponse>> GetSuitabilityAnswersAsync(string username, System.Threading.CancellationToken cancellationToken);
     
-        /// <summary>Get a participants by username</summary>
-        /// <param name="username">The username of the participant</param>
-        /// <returns>Participant</returns>
+        /// <summary>Get person by username</summary>
+        /// <param name="username">Username of the person</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.List<ParticipantResponse>> GetParticipantsByUsernameAsync(string username);
+        System.Threading.Tasks.Task<PersonResponse> PersonAsync(string username);
     
-        /// <summary>Get a participants by username</summary>
-        /// <param name="username">The username of the participant</param>
-        /// <returns>Participant</returns>
+        /// <summary>Get person by username</summary>
+        /// <param name="username">Username of the person</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Collections.Generic.List<ParticipantResponse> GetParticipantsByUsername(string username);
-    
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Get a participants by username</summary>
-        /// <param name="username">The username of the participant</param>
-        /// <returns>Participant</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.List<ParticipantResponse>> GetParticipantsByUsernameAsync(string username, System.Threading.CancellationToken cancellationToken);
-    
-        /// <summary>Get a person by username</summary>
-        /// <param name="username">The username of the person</param>
-        /// <returns>Person</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<PersonResponse> GetPersonByUsernameAsync(string username);
-    
-        /// <summary>Get a person by username</summary>
-        /// <param name="username">The username of the person</param>
-        /// <returns>Person</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        PersonResponse GetPersonByUsername(string username);
+        PersonResponse Person(string username);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Get a person by username</summary>
-        /// <param name="username">The username of the person</param>
-        /// <returns>Person</returns>
+        /// <summary>Get person by username</summary>
+        /// <param name="username">Username of the person</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<PersonResponse> GetPersonByUsernameAsync(string username, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<PersonResponse> PersonAsync(string username, System.Threading.CancellationToken cancellationToken);
     
-        /// <summary>Get all hearings for a person by username</summary>
+        /// <summary>Get all hearings by default case type</summary>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.List<HearingsByUsernameForDeletionResponse>> GetHearingsByUsernameForDeletionAsync(string username);
+        System.Threading.Tasks.Task<System.Collections.Generic.List<BookingsHearingResponse>> HearingsAllAsync();
     
-        /// <summary>Get all hearings for a person by username</summary>
+        /// <summary>Get all hearings by default case type</summary>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Collections.Generic.List<HearingsByUsernameForDeletionResponse> GetHearingsByUsernameForDeletion(string username);
-    
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Get all hearings for a person by username</summary>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.List<HearingsByUsernameForDeletionResponse>> GetHearingsByUsernameForDeletionAsync(string username, System.Threading.CancellationToken cancellationToken);
-    
-        /// <summary>Get a person by contact email</summary>
-        /// <param name="contactEmail">The contact email of the person</param>
-        /// <returns>Person</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<PersonResponse> GetPersonByContactEmailAsync(string contactEmail);
-    
-        /// <summary>Get a person by contact email</summary>
-        /// <param name="contactEmail">The contact email of the person</param>
-        /// <returns>Person</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        PersonResponse GetPersonByContactEmail(string contactEmail);
+        System.Collections.Generic.List<BookingsHearingResponse> HearingsAll();
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Get a person by contact email</summary>
-        /// <param name="contactEmail">The contact email of the person</param>
-        /// <returns>Person</returns>
+        /// <summary>Get all hearings by default case type</summary>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<PersonResponse> GetPersonByContactEmailAsync(string contactEmail, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<System.Collections.Generic.List<BookingsHearingResponse>> HearingsAllAsync(System.Threading.CancellationToken cancellationToken);
     
-        /// <summary>Find persons with contact email matching a search term.</summary>
-        /// <param name="term">Partial string to match contact email with, case-insensitive.</param>
-        /// <returns>Person list</returns>
+        /// <summary>Get test api user by username</summary>
+        /// <param name="username">Username of the user (case insensitive)</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.List<PersonResponse>> PostPersonBySearchTermAsync(SearchTermRequest term);
+        System.Threading.Tasks.Task<UserDetailsResponse> UsernameAsync(string username);
     
-        /// <summary>Find persons with contact email matching a search term.</summary>
-        /// <param name="term">Partial string to match contact email with, case-insensitive.</param>
-        /// <returns>Person list</returns>
+        /// <summary>Get test api user by username</summary>
+        /// <param name="username">Username of the user (case insensitive)</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Collections.Generic.List<PersonResponse> PostPersonBySearchTerm(SearchTermRequest term);
-    
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Find persons with contact email matching a search term.</summary>
-        /// <param name="term">Partial string to match contact email with, case-insensitive.</param>
-        /// <returns>Person list</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.List<PersonResponse>> PostPersonBySearchTermAsync(SearchTermRequest term, System.Threading.CancellationToken cancellationToken);
-    
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<PersonResponse> SearchForNonJudicialPersonsByContactEmailAsync(string contactEmail);
-    
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        PersonResponse SearchForNonJudicialPersonsByContactEmail(string contactEmail);
+        UserDetailsResponse Username(string username);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Get test api user by username</summary>
+        /// <param name="username">Username of the user (case insensitive)</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<PersonResponse> SearchForNonJudicialPersonsByContactEmailAsync(string contactEmail, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<UserDetailsResponse> UsernameAsync(string username, System.Threading.CancellationToken cancellationToken);
     
-        /// <summary>Get a list of suitability answers for a given person</summary>
-        /// <param name="username">The username of the person</param>
-        /// <returns>A list of suitability answers</returns>
+        /// <summary>Get user by user principal name</summary>
+        /// <param name="username">Username of the user (case insensitive)</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.List<PersonSuitabilityAnswerResponse>> GetPersonSuitabilityAnswersAsync(string username);
+        System.Threading.Tasks.Task<UserProfile> UserPrincipalNameAsync(string username);
     
-        /// <summary>Get a list of suitability answers for a given person</summary>
-        /// <param name="username">The username of the person</param>
-        /// <returns>A list of suitability answers</returns>
+        /// <summary>Get user by user principal name</summary>
+        /// <param name="username">Username of the user (case insensitive)</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Collections.Generic.List<PersonSuitabilityAnswerResponse> GetPersonSuitabilityAnswers(string username);
-    
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Get a list of suitability answers for a given person</summary>
-        /// <param name="username">The username of the person</param>
-        /// <returns>A list of suitability answers</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.List<PersonSuitabilityAnswerResponse>> GetPersonSuitabilityAnswersAsync(string username, System.Threading.CancellationToken cancellationToken);
-    
-        /// <summary>Get list of person from the old hearings</summary>
-        /// <returns>list of usernames</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<UserWithClosedConferencesResponse> GetPersonByClosedHearingsAsync();
-    
-        /// <summary>Get list of person from the old hearings</summary>
-        /// <returns>list of usernames</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        UserWithClosedConferencesResponse GetPersonByClosedHearings();
+        UserProfile UserPrincipalName(string username);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Get list of person from the old hearings</summary>
-        /// <returns>list of usernames</returns>
+        /// <summary>Get user by user principal name</summary>
+        /// <param name="username">Username of the user (case insensitive)</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<UserWithClosedConferencesResponse> GetPersonByClosedHearingsAsync(System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<UserProfile> UserPrincipalNameAsync(string username, System.Threading.CancellationToken cancellationToken);
     
-        /// <summary>Anonymise a person</summary>
-        /// <param name="username">username of person</param>
+        /// <summary>Check if user exists in AAD by username</summary>
+        /// <param name="username">Username of the user (case insensitive)</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task AnonymisePersonWithUsernameAsync(string username);
+        System.Threading.Tasks.Task<bool> AadAsync(string username);
     
-        /// <summary>Anonymise a person</summary>
-        /// <param name="username">username of person</param>
+        /// <summary>Check if user exists in AAD by username</summary>
+        /// <param name="username">Username of the user (case insensitive)</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        void AnonymisePersonWithUsername(string username);
-    
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Anonymise a person</summary>
-        /// <param name="username">username of person</param>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task AnonymisePersonWithUsernameAsync(string username, System.Threading.CancellationToken cancellationToken);
-    
-        /// <summary>Update the personal details</summary>
-        /// <param name="personId">The id of the person to update</param>
-        /// <param name="payload">Updated details of the person</param>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task UpdatePersonDetailsAsync(System.Guid personId, UpdatePersonDetailsRequest payload);
-    
-        /// <summary>Update the personal details</summary>
-        /// <param name="personId">The id of the person to update</param>
-        /// <param name="payload">Updated details of the person</param>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        void UpdatePersonDetails(System.Guid personId, UpdatePersonDetailsRequest payload);
+        bool Aad(string username);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Update the personal details</summary>
-        /// <param name="personId">The id of the person to update</param>
-        /// <param name="payload">Updated details of the person</param>
+        /// <summary>Check if user exists in AAD by username</summary>
+        /// <param name="username">Username of the user (case insensitive)</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task UpdatePersonDetailsAsync(System.Guid personId, UpdatePersonDetailsRequest payload, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<bool> AadAsync(string username, System.Threading.CancellationToken cancellationToken);
     
-        /// <summary>Get a cursor based list of suitability answers</summary>
-        /// <param name="cursor">Cursor specifying from which entries to read next page, is defaulted if not specified</param>
-        /// <param name="limit">The max number hearings records to return.</param>
-        /// <returns>The list of latest suitability answers for participants</returns>
+        /// <summary>Delete AAD user</summary>
+        /// <param name="contactEmail">Email of the user to delete</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<SuitabilityAnswersResponse> GetSuitabilityAnswersAsync(string cursor, int? limit);
+        System.Threading.Tasks.Task Aad2Async(string contactEmail);
     
-        /// <summary>Get a cursor based list of suitability answers</summary>
-        /// <param name="cursor">Cursor specifying from which entries to read next page, is defaulted if not specified</param>
-        /// <param name="limit">The max number hearings records to return.</param>
-        /// <returns>The list of latest suitability answers for participants</returns>
+        /// <summary>Delete AAD user</summary>
+        /// <param name="contactEmail">Email of the user to delete</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        SuitabilityAnswersResponse GetSuitabilityAnswers(string cursor, int? limit);
+        void Aad2(string contactEmail);
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Get a cursor based list of suitability answers</summary>
-        /// <param name="cursor">Cursor specifying from which entries to read next page, is defaulted if not specified</param>
-        /// <param name="limit">The max number hearings records to return.</param>
-        /// <returns>The list of latest suitability answers for participants</returns>
+        /// <summary>Delete AAD user</summary>
+        /// <param name="contactEmail">Email of the user to delete</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<SuitabilityAnswersResponse> GetSuitabilityAnswersAsync(string cursor, int? limit, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task Aad2Async(string contactEmail, System.Threading.CancellationToken cancellationToken);
+    
+        /// <summary>Refresh Judges Cache</summary>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task CacheAsync();
+    
+        /// <summary>Refresh Judges Cache</summary>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        void Cache();
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Refresh Judges Cache</summary>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task CacheAsync(System.Threading.CancellationToken cancellationToken);
+    
+        /// <summary>Reset user password</summary>
+        /// <param name="body">Details of the required user</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<UpdateUserResponse> PasswordAsync(ResetUserPasswordRequest body);
+    
+        /// <summary>Reset user password</summary>
+        /// <param name="body">Details of the required user</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        UpdateUserResponse Password(ResetUserPasswordRequest body);
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Reset user password</summary>
+        /// <param name="body">Details of the required user</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<UpdateUserResponse> PasswordAsync(ResetUserPasswordRequest body, System.Threading.CancellationToken cancellationToken);
+    
+        /// <summary>Delete hearings by partial case name or number</summary>
+        /// <param name="body">Partial case name or number text for the hearing</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<DeletedResponse> RemoveTestDataAsync(DeleteTestHearingDataRequest body);
+    
+        /// <summary>Delete hearings by partial case name or number</summary>
+        /// <param name="body">Partial case name or number text for the hearing</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        DeletedResponse RemoveTestData(DeleteTestHearingDataRequest body);
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Delete hearings by partial case name or number</summary>
+        /// <param name="body">Partial case name or number text for the hearing</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<DeletedResponse> RemoveTestDataAsync(DeleteTestHearingDataRequest body, System.Threading.CancellationToken cancellationToken);
     
     }
     
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "13.7.0.0 (NJsonSchema v10.1.24.0 (Newtonsoft.Json v12.0.0.0))")]
     public partial class BookingsApiClient : IBookingsApiClient
     {
-        private string _baseUrl = "https://http://localhost:5301";
+        private string _baseUrl = "http://localhost:5301";
         private System.Net.Http.HttpClient _httpClient;
         private System.Lazy<Newtonsoft.Json.JsonSerializerSettings> _settings;
     
@@ -709,313 +667,44 @@ namespace AdminWebsite.BookingsAPI.Client
         partial void PrepareRequest(System.Net.Http.HttpClient client, System.Net.Http.HttpRequestMessage request, System.Text.StringBuilder urlBuilder);
         partial void ProcessResponse(System.Net.Http.HttpClient client, System.Net.Http.HttpResponseMessage response);
     
-        /// <summary>Get available case types</summary>
-        /// <returns>A list of available case types</returns>
+        /// <summary>Allocate single user</summary>
+        /// <param name="body">Details of the required allocation</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<System.Collections.Generic.List<CaseTypeResponse>> GetCaseTypesAsync()
+        public System.Threading.Tasks.Task<UserDetailsResponse> AllocateUserAsync(AllocateUserRequest body)
         {
-            return GetCaseTypesAsync(System.Threading.CancellationToken.None);
+            return AllocateUserAsync(body, System.Threading.CancellationToken.None);
         }
     
-        /// <summary>Get available case types</summary>
-        /// <returns>A list of available case types</returns>
+        /// <summary>Allocate single user</summary>
+        /// <param name="body">Details of the required allocation</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public System.Collections.Generic.List<CaseTypeResponse> GetCaseTypes()
+        public UserDetailsResponse AllocateUser(AllocateUserRequest body)
         {
-            return System.Threading.Tasks.Task.Run(async () => await GetCaseTypesAsync(System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
+            return System.Threading.Tasks.Task.Run(async () => await AllocateUserAsync(body, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
         }
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Get available case types</summary>
-        /// <returns>A list of available case types</returns>
+        /// <summary>Allocate single user</summary>
+        /// <param name="body">Details of the required allocation</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task<System.Collections.Generic.List<CaseTypeResponse>> GetCaseTypesAsync(System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task<UserDetailsResponse> AllocateUserAsync(AllocateUserRequest body, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/casetypes");
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/allocations/allocateUser");
     
             var client_ = _httpClient;
             try
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-    
-                    PrepareRequest(client_, request_, urlBuilder_);
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-                    PrepareRequest(client_, request_, url_);
-    
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    try
-                    {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-    
-                        ProcessResponse(client_, response_);
-    
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.List<CaseTypeResponse>>(response_, headers_).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new BookingsApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (response_ != null)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-            }
-        }
-    
-        /// <summary>Get case roles for a case type</summary>
-        /// <returns>Available case roles for given case type</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<System.Collections.Generic.List<CaseRoleResponse>> GetCaseRolesForCaseTypeAsync(string caseTypeName)
-        {
-            return GetCaseRolesForCaseTypeAsync(caseTypeName, System.Threading.CancellationToken.None);
-        }
-    
-        /// <summary>Get case roles for a case type</summary>
-        /// <returns>Available case roles for given case type</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public System.Collections.Generic.List<CaseRoleResponse> GetCaseRolesForCaseType(string caseTypeName)
-        {
-            return System.Threading.Tasks.Task.Run(async () => await GetCaseRolesForCaseTypeAsync(caseTypeName, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
-        }
-    
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Get case roles for a case type</summary>
-        /// <returns>Available case roles for given case type</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task<System.Collections.Generic.List<CaseRoleResponse>> GetCaseRolesForCaseTypeAsync(string caseTypeName, System.Threading.CancellationToken cancellationToken)
-        {
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/casetypes/{caseTypeName}/caseroles");
-            urlBuilder_.Replace("{caseTypeName}", System.Uri.EscapeDataString(ConvertToString(caseTypeName, System.Globalization.CultureInfo.InvariantCulture)));
-    
-            var client_ = _httpClient;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-    
-                    PrepareRequest(client_, request_, urlBuilder_);
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-                    PrepareRequest(client_, request_, url_);
-    
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    try
-                    {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-    
-                        ProcessResponse(client_, response_);
-    
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.List<CaseRoleResponse>>(response_, headers_).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        if (status_ == 404)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new BookingsApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new BookingsApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (response_ != null)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-            }
-        }
-    
-        /// <summary>Get hearing roles for a case role of a case type</summary>
-        /// <param name="caseTypeName">Hearing case type</param>
-        /// <param name="caseRoleName">Hearing case role</param>
-        /// <returns>Available hearing roles for given case role</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<System.Collections.Generic.List<HearingRoleResponse>> GetHearingRolesForCaseRoleAsync(string caseTypeName, string caseRoleName)
-        {
-            return GetHearingRolesForCaseRoleAsync(caseTypeName, caseRoleName, System.Threading.CancellationToken.None);
-        }
-    
-        /// <summary>Get hearing roles for a case role of a case type</summary>
-        /// <param name="caseTypeName">Hearing case type</param>
-        /// <param name="caseRoleName">Hearing case role</param>
-        /// <returns>Available hearing roles for given case role</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public System.Collections.Generic.List<HearingRoleResponse> GetHearingRolesForCaseRole(string caseTypeName, string caseRoleName)
-        {
-            return System.Threading.Tasks.Task.Run(async () => await GetHearingRolesForCaseRoleAsync(caseTypeName, caseRoleName, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
-        }
-    
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Get hearing roles for a case role of a case type</summary>
-        /// <param name="caseTypeName">Hearing case type</param>
-        /// <param name="caseRoleName">Hearing case role</param>
-        /// <returns>Available hearing roles for given case role</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task<System.Collections.Generic.List<HearingRoleResponse>> GetHearingRolesForCaseRoleAsync(string caseTypeName, string caseRoleName, System.Threading.CancellationToken cancellationToken)
-        {
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/casetypes/{caseTypeName}/caseroles/{caseRoleName}/hearingroles");
-            urlBuilder_.Replace("{caseTypeName}", System.Uri.EscapeDataString(ConvertToString(caseTypeName, System.Globalization.CultureInfo.InvariantCulture)));
-            urlBuilder_.Replace("{caseRoleName}", System.Uri.EscapeDataString(ConvertToString(caseRoleName, System.Globalization.CultureInfo.InvariantCulture)));
-    
-            var client_ = _httpClient;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-    
-                    PrepareRequest(client_, request_, urlBuilder_);
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-                    PrepareRequest(client_, request_, url_);
-    
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    try
-                    {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-    
-                        ProcessResponse(client_, response_);
-    
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.List<HearingRoleResponse>>(response_, headers_).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        if (status_ == 404)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new BookingsApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new BookingsApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (response_ != null)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-            }
-        }
-    
-        /// <summary>Add an endpoint to a given hearing</summary>
-        /// <param name="hearingId">The hearing id</param>
-        /// <param name="addEndpointRequest">Details of the endpoint to be added to a hearing</param>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task AddEndPointToHearingAsync(System.Guid hearingId, AddEndpointRequest addEndpointRequest)
-        {
-            return AddEndPointToHearingAsync(hearingId, addEndpointRequest, System.Threading.CancellationToken.None);
-        }
-    
-        /// <summary>Add an endpoint to a given hearing</summary>
-        /// <param name="hearingId">The hearing id</param>
-        /// <param name="addEndpointRequest">Details of the endpoint to be added to a hearing</param>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public void AddEndPointToHearing(System.Guid hearingId, AddEndpointRequest addEndpointRequest)
-        {
-            System.Threading.Tasks.Task.Run(async () => await AddEndPointToHearingAsync(hearingId, addEndpointRequest, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
-        }
-    
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Add an endpoint to a given hearing</summary>
-        /// <param name="hearingId">The hearing id</param>
-        /// <param name="addEndpointRequest">Details of the endpoint to be added to a hearing</param>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task AddEndPointToHearingAsync(System.Guid hearingId, AddEndpointRequest addEndpointRequest, System.Threading.CancellationToken cancellationToken)
-        {
-            if (hearingId == null)
-                throw new System.ArgumentNullException("hearingId");
-    
-            if (addEndpointRequest == null)
-                throw new System.ArgumentNullException("addEndpointRequest");
-    
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/hearings/{hearingId}/endpoints");
-            urlBuilder_.Replace("{hearingId}", System.Uri.EscapeDataString(ConvertToString(hearingId, System.Globalization.CultureInfo.InvariantCulture)));
-    
-            var client_ = _httpClient;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    var content_ = new System.Net.Http.StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(addEndpointRequest, _settings.Value));
+                    var content_ = new System.Net.Http.StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(body, _settings.Value));
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
                     request_.Content = content_;
-                    request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Method = new System.Net.Http.HttpMethod("PATCH");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
     
                     PrepareRequest(client_, request_, urlBuilder_);
                     var url_ = urlBuilder_.ToString();
@@ -1035,9 +724,14 @@ namespace AdminWebsite.BookingsAPI.Client
                         ProcessResponse(client_, response_);
     
                         var status_ = (int)response_.StatusCode;
-                        if (status_ == 204)
+                        if (status_ == 200)
                         {
-                            return;
+                            var objectResponse_ = await ReadObjectResponseAsync<UserDetailsResponse>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
                         }
                         else
                         if (status_ == 400)
@@ -1047,23 +741,13 @@ namespace AdminWebsite.BookingsAPI.Client
                             {
                                 throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BookingsApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BookingsApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
-                        if (status_ == 404)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new BookingsApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
-                        }
-                        else
-                        if (status_ == 500)
+                        if (status_ == 401)
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BookingsApiException("A server side error occurred.", status_, responseText_, headers_, null);
+                            throw new BookingsApiException("Unauthorized", status_, responseText_, headers_, null);
                         }
                         else
                         {
@@ -1083,41 +767,674 @@ namespace AdminWebsite.BookingsAPI.Client
             }
         }
     
-        /// <summary>Removes an endpoint from a given hearing</summary>
-        /// <param name="hearingId">The hearing id</param>
-        /// <param name="endpointId">The endpoint id</param>
+        /// <summary>Allocate multiple users</summary>
+        /// <param name="body">Allocate users request</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task RemoveEndPointFromHearingAsync(System.Guid hearingId, System.Guid endpointId)
+        public System.Threading.Tasks.Task<System.Collections.Generic.List<UserDetailsResponse>> AllocateUsersAsync(AllocateUsersRequest body)
         {
-            return RemoveEndPointFromHearingAsync(hearingId, endpointId, System.Threading.CancellationToken.None);
+            return AllocateUsersAsync(body, System.Threading.CancellationToken.None);
         }
     
-        /// <summary>Removes an endpoint from a given hearing</summary>
-        /// <param name="hearingId">The hearing id</param>
-        /// <param name="endpointId">The endpoint id</param>
+        /// <summary>Allocate multiple users</summary>
+        /// <param name="body">Allocate users request</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public void RemoveEndPointFromHearing(System.Guid hearingId, System.Guid endpointId)
+        public System.Collections.Generic.List<UserDetailsResponse> AllocateUsers(AllocateUsersRequest body)
         {
-            System.Threading.Tasks.Task.Run(async () => await RemoveEndPointFromHearingAsync(hearingId, endpointId, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
+            return System.Threading.Tasks.Task.Run(async () => await AllocateUsersAsync(body, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
         }
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Removes an endpoint from a given hearing</summary>
-        /// <param name="hearingId">The hearing id</param>
-        /// <param name="endpointId">The endpoint id</param>
+        /// <summary>Allocate multiple users</summary>
+        /// <param name="body">Allocate users request</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task RemoveEndPointFromHearingAsync(System.Guid hearingId, System.Guid endpointId, System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task<System.Collections.Generic.List<UserDetailsResponse>> AllocateUsersAsync(AllocateUsersRequest body, System.Threading.CancellationToken cancellationToken)
         {
-            if (hearingId == null)
-                throw new System.ArgumentNullException("hearingId");
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/allocations/allocateUsers");
     
-            if (endpointId == null)
-                throw new System.ArgumentNullException("endpointId");
+            var client_ = _httpClient;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var content_ = new System.Net.Http.StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(body, _settings.Value));
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("PATCH");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+    
+                    PrepareRequest(client_, request_, urlBuilder_);
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+                    PrepareRequest(client_, request_, url_);
+    
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+    
+                        ProcessResponse(client_, response_);
+    
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.List<UserDetailsResponse>>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new BookingsApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new BookingsApiException("Unauthorized", status_, responseText_, headers_, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new BookingsApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (response_ != null)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+            }
+        }
+    
+        /// <summary>Unallocate users by username</summary>
+        /// <param name="body">List of usernames to unallocate</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public System.Threading.Tasks.Task<System.Collections.Generic.List<AllocationDetailsResponse>> UnallocateUsersAsync(UnallocateUsersRequest body)
+        {
+            return UnallocateUsersAsync(body, System.Threading.CancellationToken.None);
+        }
+    
+        /// <summary>Unallocate users by username</summary>
+        /// <param name="body">List of usernames to unallocate</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public System.Collections.Generic.List<AllocationDetailsResponse> UnallocateUsers(UnallocateUsersRequest body)
+        {
+            return System.Threading.Tasks.Task.Run(async () => await UnallocateUsersAsync(body, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
+        }
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Unallocate users by username</summary>
+        /// <param name="body">List of usernames to unallocate</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public async System.Threading.Tasks.Task<System.Collections.Generic.List<AllocationDetailsResponse>> UnallocateUsersAsync(UnallocateUsersRequest body, System.Threading.CancellationToken cancellationToken)
+        {
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/allocations/unallocateUsers");
+    
+            var client_ = _httpClient;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var content_ = new System.Net.Http.StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(body, _settings.Value));
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("PATCH");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+    
+                    PrepareRequest(client_, request_, urlBuilder_);
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+                    PrepareRequest(client_, request_, url_);
+    
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+    
+                        ProcessResponse(client_, response_);
+    
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.List<AllocationDetailsResponse>>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new BookingsApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new BookingsApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new BookingsApiException("Unauthorized", status_, responseText_, headers_, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new BookingsApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (response_ != null)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+            }
+        }
+    
+        /// <summary>Get allocated users by allocatedBy</summary>
+        /// <param name="username">Username of the user that has allocated users</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public System.Threading.Tasks.Task<System.Collections.Generic.List<AllocationDetailsResponse>> AllocatedUsersAsync(string username)
+        {
+            return AllocatedUsersAsync(username, System.Threading.CancellationToken.None);
+        }
+    
+        /// <summary>Get allocated users by allocatedBy</summary>
+        /// <param name="username">Username of the user that has allocated users</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public System.Collections.Generic.List<AllocationDetailsResponse> AllocatedUsers(string username)
+        {
+            return System.Threading.Tasks.Task.Run(async () => await AllocatedUsersAsync(username, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
+        }
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Get allocated users by allocatedBy</summary>
+        /// <param name="username">Username of the user that has allocated users</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public async System.Threading.Tasks.Task<System.Collections.Generic.List<AllocationDetailsResponse>> AllocatedUsersAsync(string username, System.Threading.CancellationToken cancellationToken)
+        {
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/allocations/allocatedUsers/{username}");
+            urlBuilder_.Replace("{username}", System.Uri.EscapeDataString(ConvertToString(username, System.Globalization.CultureInfo.InvariantCulture)));
+    
+            var client_ = _httpClient;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+    
+                    PrepareRequest(client_, request_, urlBuilder_);
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+                    PrepareRequest(client_, request_, url_);
+    
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+    
+                        ProcessResponse(client_, response_);
+    
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.List<AllocationDetailsResponse>>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new BookingsApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new BookingsApiException("Unauthorized", status_, responseText_, headers_, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new BookingsApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (response_ != null)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+            }
+        }
+    
+        /// <summary>Get the details of a conference by id</summary>
+        /// <param name="conferenceId">Id of the conference</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public System.Threading.Tasks.Task<ConferenceDetailsResponse> GetConferenceByIdAsync(System.Guid conferenceId)
+        {
+            return GetConferenceByIdAsync(conferenceId, System.Threading.CancellationToken.None);
+        }
+    
+        /// <summary>Get the details of a conference by id</summary>
+        /// <param name="conferenceId">Id of the conference</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public ConferenceDetailsResponse GetConferenceById(System.Guid conferenceId)
+        {
+            return System.Threading.Tasks.Task.Run(async () => await GetConferenceByIdAsync(conferenceId, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
+        }
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Get the details of a conference by id</summary>
+        /// <param name="conferenceId">Id of the conference</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public async System.Threading.Tasks.Task<ConferenceDetailsResponse> GetConferenceByIdAsync(System.Guid conferenceId, System.Threading.CancellationToken cancellationToken)
+        {
+            if (conferenceId == null)
+                throw new System.ArgumentNullException("conferenceId");
     
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/hearings/{hearingId}/endpoints/{endpointId}");
-            urlBuilder_.Replace("{hearingId}", System.Uri.EscapeDataString(ConvertToString(hearingId, System.Globalization.CultureInfo.InvariantCulture)));
-            urlBuilder_.Replace("{endpointId}", System.Uri.EscapeDataString(ConvertToString(endpointId, System.Globalization.CultureInfo.InvariantCulture)));
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/conferences/{conferenceId}");
+            urlBuilder_.Replace("{conferenceId}", System.Uri.EscapeDataString(ConvertToString(conferenceId, System.Globalization.CultureInfo.InvariantCulture)));
+    
+            var client_ = _httpClient;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+    
+                    PrepareRequest(client_, request_, urlBuilder_);
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+                    PrepareRequest(client_, request_, url_);
+    
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+    
+                        ProcessResponse(client_, response_);
+    
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ConferenceDetailsResponse>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new BookingsApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new BookingsApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new BookingsApiException("Unauthorized", status_, responseText_, headers_, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new BookingsApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (response_ != null)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+            }
+        }
+    
+        /// <summary>Get the details of a conference by hearing ref id</summary>
+        /// <param name="hearingRefId">Hearing ref Id of the conference</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public System.Threading.Tasks.Task<ConferenceDetailsResponse> GetConferenceByHearingRefIdAsync(System.Guid hearingRefId)
+        {
+            return GetConferenceByHearingRefIdAsync(hearingRefId, System.Threading.CancellationToken.None);
+        }
+    
+        /// <summary>Get the details of a conference by hearing ref id</summary>
+        /// <param name="hearingRefId">Hearing ref Id of the conference</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public ConferenceDetailsResponse GetConferenceByHearingRefId(System.Guid hearingRefId)
+        {
+            return System.Threading.Tasks.Task.Run(async () => await GetConferenceByHearingRefIdAsync(hearingRefId, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
+        }
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Get the details of a conference by hearing ref id</summary>
+        /// <param name="hearingRefId">Hearing ref Id of the conference</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public async System.Threading.Tasks.Task<ConferenceDetailsResponse> GetConferenceByHearingRefIdAsync(System.Guid hearingRefId, System.Threading.CancellationToken cancellationToken)
+        {
+            if (hearingRefId == null)
+                throw new System.ArgumentNullException("hearingRefId");
+    
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/conferences/hearings/{hearingRefId}");
+            urlBuilder_.Replace("{hearingRefId}", System.Uri.EscapeDataString(ConvertToString(hearingRefId, System.Globalization.CultureInfo.InvariantCulture)));
+    
+            var client_ = _httpClient;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+    
+                    PrepareRequest(client_, request_, urlBuilder_);
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+                    PrepareRequest(client_, request_, url_);
+    
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+    
+                        ProcessResponse(client_, response_);
+    
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ConferenceDetailsResponse>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new BookingsApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new BookingsApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new BookingsApiException("Unauthorized", status_, responseText_, headers_, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new BookingsApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (response_ != null)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+            }
+        }
+    
+        /// <summary>Request to book a conference</summary>
+        /// <param name="body">Details of a conference</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public System.Threading.Tasks.Task<ConferenceDetailsResponse> BookNewConferenceAsync(BookNewConferenceRequest body)
+        {
+            return BookNewConferenceAsync(body, System.Threading.CancellationToken.None);
+        }
+    
+        /// <summary>Request to book a conference</summary>
+        /// <param name="body">Details of a conference</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public ConferenceDetailsResponse BookNewConference(BookNewConferenceRequest body)
+        {
+            return System.Threading.Tasks.Task.Run(async () => await BookNewConferenceAsync(body, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
+        }
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Request to book a conference</summary>
+        /// <param name="body">Details of a conference</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public async System.Threading.Tasks.Task<ConferenceDetailsResponse> BookNewConferenceAsync(BookNewConferenceRequest body, System.Threading.CancellationToken cancellationToken)
+        {
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/conferences");
+    
+            var client_ = _httpClient;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var content_ = new System.Net.Http.StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(body, _settings.Value));
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+    
+                    PrepareRequest(client_, request_, urlBuilder_);
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+                    PrepareRequest(client_, request_, url_);
+    
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+    
+                        ProcessResponse(client_, response_);
+    
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 201)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ConferenceDetailsResponse>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new BookingsApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new BookingsApiException("Unauthorized", status_, responseText_, headers_, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new BookingsApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (response_ != null)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+            }
+        }
+    
+        /// <summary>Delete a conference by conference id</summary>
+        /// <param name="hearingRefId">Hearing Ref Id of the conference</param>
+        /// <param name="conferenceId">Conference Id of the conference</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public System.Threading.Tasks.Task ConferencesAsync(System.Guid hearingRefId, System.Guid conferenceId)
+        {
+            return ConferencesAsync(hearingRefId, conferenceId, System.Threading.CancellationToken.None);
+        }
+    
+        /// <summary>Delete a conference by conference id</summary>
+        /// <param name="hearingRefId">Hearing Ref Id of the conference</param>
+        /// <param name="conferenceId">Conference Id of the conference</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public void Conferences(System.Guid hearingRefId, System.Guid conferenceId)
+        {
+            System.Threading.Tasks.Task.Run(async () => await ConferencesAsync(hearingRefId, conferenceId, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
+        }
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Delete a conference by conference id</summary>
+        /// <param name="hearingRefId">Hearing Ref Id of the conference</param>
+        /// <param name="conferenceId">Conference Id of the conference</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public async System.Threading.Tasks.Task ConferencesAsync(System.Guid hearingRefId, System.Guid conferenceId, System.Threading.CancellationToken cancellationToken)
+        {
+            if (hearingRefId == null)
+                throw new System.ArgumentNullException("hearingRefId");
+    
+            if (conferenceId == null)
+                throw new System.ArgumentNullException("conferenceId");
+    
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/conferences/{hearingRefId}/{conferenceId}");
+            urlBuilder_.Replace("{hearingRefId}", System.Uri.EscapeDataString(ConvertToString(hearingRefId, System.Globalization.CultureInfo.InvariantCulture)));
+            urlBuilder_.Replace("{conferenceId}", System.Uri.EscapeDataString(ConvertToString(conferenceId, System.Globalization.CultureInfo.InvariantCulture)));
     
             var client_ = _httpClient;
             try
@@ -1149,16 +1466,6 @@ namespace AdminWebsite.BookingsAPI.Client
                             return;
                         }
                         else
-                        if (status_ == 400)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new BookingsApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
-                        }
-                        else
                         if (status_ == 404)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
@@ -1166,13 +1473,23 @@ namespace AdminWebsite.BookingsAPI.Client
                             {
                                 throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BookingsApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BookingsApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
-                        if (status_ == 500)
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new BookingsApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BookingsApiException("A server side error occurred.", status_, responseText_, headers_, null);
+                            throw new BookingsApiException("Unauthorized", status_, responseText_, headers_, null);
                         }
                         else
                         {
@@ -1192,57 +1509,481 @@ namespace AdminWebsite.BookingsAPI.Client
             }
         }
     
-        /// <summary>Update an endpoint of a given hearing</summary>
-        /// <param name="hearingId">The hearing id</param>
-        /// <param name="endpointId">The endpoint id</param>
-        /// <param name="updateEndpointRequest">Details of the endpoint to be updated</param>
+        /// <summary>Get conferences for today Judge</summary>
+        /// <param name="username">Username of the Judge</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task UpdateDisplayNameForEndpointAsync(System.Guid hearingId, System.Guid endpointId, UpdateEndpointRequest updateEndpointRequest)
+        public System.Threading.Tasks.Task<System.Collections.Generic.List<ConferenceForJudgeResponse>> GetConferencesForTodayJudgeAsync(string username)
         {
-            return UpdateDisplayNameForEndpointAsync(hearingId, endpointId, updateEndpointRequest, System.Threading.CancellationToken.None);
+            return GetConferencesForTodayJudgeAsync(username, System.Threading.CancellationToken.None);
         }
     
-        /// <summary>Update an endpoint of a given hearing</summary>
-        /// <param name="hearingId">The hearing id</param>
-        /// <param name="endpointId">The endpoint id</param>
-        /// <param name="updateEndpointRequest">Details of the endpoint to be updated</param>
+        /// <summary>Get conferences for today Judge</summary>
+        /// <param name="username">Username of the Judge</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public void UpdateDisplayNameForEndpoint(System.Guid hearingId, System.Guid endpointId, UpdateEndpointRequest updateEndpointRequest)
+        public System.Collections.Generic.List<ConferenceForJudgeResponse> GetConferencesForTodayJudge(string username)
         {
-            System.Threading.Tasks.Task.Run(async () => await UpdateDisplayNameForEndpointAsync(hearingId, endpointId, updateEndpointRequest, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
+            return System.Threading.Tasks.Task.Run(async () => await GetConferencesForTodayJudgeAsync(username, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
         }
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Update an endpoint of a given hearing</summary>
-        /// <param name="hearingId">The hearing id</param>
-        /// <param name="endpointId">The endpoint id</param>
-        /// <param name="updateEndpointRequest">Details of the endpoint to be updated</param>
+        /// <summary>Get conferences for today Judge</summary>
+        /// <param name="username">Username of the Judge</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task UpdateDisplayNameForEndpointAsync(System.Guid hearingId, System.Guid endpointId, UpdateEndpointRequest updateEndpointRequest, System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task<System.Collections.Generic.List<ConferenceForJudgeResponse>> GetConferencesForTodayJudgeAsync(string username, System.Threading.CancellationToken cancellationToken)
         {
-            if (hearingId == null)
-                throw new System.ArgumentNullException("hearingId");
-    
-            if (endpointId == null)
-                throw new System.ArgumentNullException("endpointId");
-    
-            if (updateEndpointRequest == null)
-                throw new System.ArgumentNullException("updateEndpointRequest");
-    
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/hearings/{hearingId}/endpoints/{endpointId}");
-            urlBuilder_.Replace("{hearingId}", System.Uri.EscapeDataString(ConvertToString(hearingId, System.Globalization.CultureInfo.InvariantCulture)));
-            urlBuilder_.Replace("{endpointId}", System.Uri.EscapeDataString(ConvertToString(endpointId, System.Globalization.CultureInfo.InvariantCulture)));
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/conferences/today/judge?");
+            if (username != null) 
+            {
+                urlBuilder_.Append(System.Uri.EscapeDataString("username") + "=").Append(System.Uri.EscapeDataString(ConvertToString(username, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+            }
+            urlBuilder_.Length--;
     
             var client_ = _httpClient;
             try
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-                    var content_ = new System.Net.Http.StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(updateEndpointRequest, _settings.Value));
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+    
+                    PrepareRequest(client_, request_, urlBuilder_);
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+                    PrepareRequest(client_, request_, url_);
+    
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+    
+                        ProcessResponse(client_, response_);
+    
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.List<ConferenceForJudgeResponse>>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new BookingsApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new BookingsApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new BookingsApiException("Unauthorized", status_, responseText_, headers_, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new BookingsApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (response_ != null)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+            }
+        }
+    
+        /// <summary>Get conferences for today VHO</summary>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public System.Threading.Tasks.Task<System.Collections.Generic.List<ConferenceForAdminResponse>> GetConferencesForTodayVhoAsync()
+        {
+            return GetConferencesForTodayVhoAsync(System.Threading.CancellationToken.None);
+        }
+    
+        /// <summary>Get conferences for today VHO</summary>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public System.Collections.Generic.List<ConferenceForAdminResponse> GetConferencesForTodayVho()
+        {
+            return System.Threading.Tasks.Task.Run(async () => await GetConferencesForTodayVhoAsync(System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
+        }
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Get conferences for today VHO</summary>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public async System.Threading.Tasks.Task<System.Collections.Generic.List<ConferenceForAdminResponse>> GetConferencesForTodayVhoAsync(System.Threading.CancellationToken cancellationToken)
+        {
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/conferences/today/vho");
+    
+            var client_ = _httpClient;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+    
+                    PrepareRequest(client_, request_, urlBuilder_);
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+                    PrepareRequest(client_, request_, url_);
+    
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+    
+                        ProcessResponse(client_, response_);
+    
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.List<ConferenceForAdminResponse>>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new BookingsApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new BookingsApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new BookingsApiException("Unauthorized", status_, responseText_, headers_, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new BookingsApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (response_ != null)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+            }
+        }
+    
+        /// <summary>Get audio recording links</summary>
+        /// <param name="hearingId">Hearing Id of the conference</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public System.Threading.Tasks.Task<AudioRecordingResponse> GetAudioRecordingLinksByHearingIdAsync(System.Guid hearingId)
+        {
+            return GetAudioRecordingLinksByHearingIdAsync(hearingId, System.Threading.CancellationToken.None);
+        }
+    
+        /// <summary>Get audio recording links</summary>
+        /// <param name="hearingId">Hearing Id of the conference</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public AudioRecordingResponse GetAudioRecordingLinksByHearingId(System.Guid hearingId)
+        {
+            return System.Threading.Tasks.Task.Run(async () => await GetAudioRecordingLinksByHearingIdAsync(hearingId, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
+        }
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Get audio recording links</summary>
+        /// <param name="hearingId">Hearing Id of the conference</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public async System.Threading.Tasks.Task<AudioRecordingResponse> GetAudioRecordingLinksByHearingIdAsync(System.Guid hearingId, System.Threading.CancellationToken cancellationToken)
+        {
+            if (hearingId == null)
+                throw new System.ArgumentNullException("hearingId");
+    
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/conferences/audio/{hearingId}");
+            urlBuilder_.Replace("{hearingId}", System.Uri.EscapeDataString(ConvertToString(hearingId, System.Globalization.CultureInfo.InvariantCulture)));
+    
+            var client_ = _httpClient;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+    
+                    PrepareRequest(client_, request_, urlBuilder_);
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+                    PrepareRequest(client_, request_, url_);
+    
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+    
+                        ProcessResponse(client_, response_);
+    
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<AudioRecordingResponse>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new BookingsApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new BookingsApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new BookingsApiException("Unauthorized", status_, responseText_, headers_, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new BookingsApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (response_ != null)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+            }
+        }
+    
+        /// <summary>Get tasks for a conference</summary>
+        /// <param name="conferenceId">Conference Id of the conference</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public System.Threading.Tasks.Task<System.Collections.Generic.List<TaskResponse>> GetTasksByConferenceIdAsync(System.Guid conferenceId)
+        {
+            return GetTasksByConferenceIdAsync(conferenceId, System.Threading.CancellationToken.None);
+        }
+    
+        /// <summary>Get tasks for a conference</summary>
+        /// <param name="conferenceId">Conference Id of the conference</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public System.Collections.Generic.List<TaskResponse> GetTasksByConferenceId(System.Guid conferenceId)
+        {
+            return System.Threading.Tasks.Task.Run(async () => await GetTasksByConferenceIdAsync(conferenceId, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
+        }
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Get tasks for a conference</summary>
+        /// <param name="conferenceId">Conference Id of the conference</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public async System.Threading.Tasks.Task<System.Collections.Generic.List<TaskResponse>> GetTasksByConferenceIdAsync(System.Guid conferenceId, System.Threading.CancellationToken cancellationToken)
+        {
+            if (conferenceId == null)
+                throw new System.ArgumentNullException("conferenceId");
+    
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/conferences/tasks/{conferenceId}");
+            urlBuilder_.Replace("{conferenceId}", System.Uri.EscapeDataString(ConvertToString(conferenceId, System.Globalization.CultureInfo.InvariantCulture)));
+    
+            var client_ = _httpClient;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+    
+                    PrepareRequest(client_, request_, urlBuilder_);
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+                    PrepareRequest(client_, request_, url_);
+    
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+    
+                        ProcessResponse(client_, response_);
+    
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.List<TaskResponse>>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new BookingsApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new BookingsApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new BookingsApiException("Unauthorized", status_, responseText_, headers_, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new BookingsApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (response_ != null)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+            }
+        }
+    
+        /// <summary>Create event</summary>
+        /// <param name="body">Conference event request</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public System.Threading.Tasks.Task CreateEventAsync(ConferenceEventRequest body)
+        {
+            return CreateEventAsync(body, System.Threading.CancellationToken.None);
+        }
+    
+        /// <summary>Create event</summary>
+        /// <param name="body">Conference event request</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public void CreateEvent(ConferenceEventRequest body)
+        {
+            System.Threading.Tasks.Task.Run(async () => await CreateEventAsync(body, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
+        }
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Create event</summary>
+        /// <param name="body">Conference event request</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public async System.Threading.Tasks.Task CreateEventAsync(ConferenceEventRequest body, System.Threading.CancellationToken cancellationToken)
+        {
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/conferences/events");
+    
+            var client_ = _httpClient;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var content_ = new System.Net.Http.StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(body, _settings.Value));
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
                     request_.Content = content_;
-                    request_.Method = new System.Net.Http.HttpMethod("PATCH");
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
     
                     PrepareRequest(client_, request_, urlBuilder_);
                     var url_ = urlBuilder_.ToString();
@@ -1267,16 +2008,6 @@ namespace AdminWebsite.BookingsAPI.Client
                             return;
                         }
                         else
-                        if (status_ == 400)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new BookingsApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
-                        }
-                        else
                         if (status_ == 404)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
@@ -1284,13 +2015,23 @@ namespace AdminWebsite.BookingsAPI.Client
                             {
                                 throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BookingsApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BookingsApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
-                        if (status_ == 500)
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new BookingsApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
                         {
                             string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new BookingsApiException("A server side error occurred.", status_, responseText_, headers_, null);
+                            throw new BookingsApiException("Unauthorized", status_, responseText_, headers_, null);
                         }
                         else
                         {
@@ -1310,30 +2051,260 @@ namespace AdminWebsite.BookingsAPI.Client
             }
         }
     
-        /// <summary>Run a health check of the service</summary>
-        /// <returns>Error if fails, otherwise OK status</returns>
+        /// <summary>Get the test call result for a participant</summary>
+        /// <param name="conferenceId">Conference Id of the conference</param>
+        /// <param name="participantId">Participant Id of the participant</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<BookingsApiHealthResponse> CheckServiceHealthAsync()
+        public System.Threading.Tasks.Task<TestCallScoreResponse> GetSelfTestScoreAsync(System.Guid conferenceId, System.Guid participantId)
+        {
+            return GetSelfTestScoreAsync(conferenceId, participantId, System.Threading.CancellationToken.None);
+        }
+    
+        /// <summary>Get the test call result for a participant</summary>
+        /// <param name="conferenceId">Conference Id of the conference</param>
+        /// <param name="participantId">Participant Id of the participant</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public TestCallScoreResponse GetSelfTestScore(System.Guid conferenceId, System.Guid participantId)
+        {
+            return System.Threading.Tasks.Task.Run(async () => await GetSelfTestScoreAsync(conferenceId, participantId, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
+        }
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Get the test call result for a participant</summary>
+        /// <param name="conferenceId">Conference Id of the conference</param>
+        /// <param name="participantId">Participant Id of the participant</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public async System.Threading.Tasks.Task<TestCallScoreResponse> GetSelfTestScoreAsync(System.Guid conferenceId, System.Guid participantId, System.Threading.CancellationToken cancellationToken)
+        {
+            if (conferenceId == null)
+                throw new System.ArgumentNullException("conferenceId");
+    
+            if (participantId == null)
+                throw new System.ArgumentNullException("participantId");
+    
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/conferences/{conferenceId}/participants/{participantId}/score");
+            urlBuilder_.Replace("{conferenceId}", System.Uri.EscapeDataString(ConvertToString(conferenceId, System.Globalization.CultureInfo.InvariantCulture)));
+            urlBuilder_.Replace("{participantId}", System.Uri.EscapeDataString(ConvertToString(participantId, System.Globalization.CultureInfo.InvariantCulture)));
+    
+            var client_ = _httpClient;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+    
+                    PrepareRequest(client_, request_, urlBuilder_);
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+                    PrepareRequest(client_, request_, url_);
+    
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+    
+                        ProcessResponse(client_, response_);
+    
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<TestCallScoreResponse>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new BookingsApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new BookingsApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new BookingsApiException("Unauthorized", status_, responseText_, headers_, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new BookingsApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (response_ != null)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+            }
+        }
+    
+        /// <summary>Delete a participant</summary>
+        /// <param name="conferenceId">Conference Id of the conference</param>
+        /// <param name="participantId">Participant Id of the participant</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public System.Threading.Tasks.Task DeleteParticipantAsync(System.Guid conferenceId, System.Guid participantId)
+        {
+            return DeleteParticipantAsync(conferenceId, participantId, System.Threading.CancellationToken.None);
+        }
+    
+        /// <summary>Delete a participant</summary>
+        /// <param name="conferenceId">Conference Id of the conference</param>
+        /// <param name="participantId">Participant Id of the participant</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public void DeleteParticipant(System.Guid conferenceId, System.Guid participantId)
+        {
+            System.Threading.Tasks.Task.Run(async () => await DeleteParticipantAsync(conferenceId, participantId, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
+        }
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Delete a participant</summary>
+        /// <param name="conferenceId">Conference Id of the conference</param>
+        /// <param name="participantId">Participant Id of the participant</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public async System.Threading.Tasks.Task DeleteParticipantAsync(System.Guid conferenceId, System.Guid participantId, System.Threading.CancellationToken cancellationToken)
+        {
+            if (conferenceId == null)
+                throw new System.ArgumentNullException("conferenceId");
+    
+            if (participantId == null)
+                throw new System.ArgumentNullException("participantId");
+    
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/conferences/{conferenceId}/participants/{participantId}");
+            urlBuilder_.Replace("{conferenceId}", System.Uri.EscapeDataString(ConvertToString(conferenceId, System.Globalization.CultureInfo.InvariantCulture)));
+            urlBuilder_.Replace("{participantId}", System.Uri.EscapeDataString(ConvertToString(participantId, System.Globalization.CultureInfo.InvariantCulture)));
+    
+            var client_ = _httpClient;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("DELETE");
+    
+                    PrepareRequest(client_, request_, urlBuilder_);
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+                    PrepareRequest(client_, request_, url_);
+    
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+    
+                        ProcessResponse(client_, response_);
+    
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 204)
+                        {
+                            return;
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new BookingsApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new BookingsApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new BookingsApiException("Unauthorized", status_, responseText_, headers_, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new BookingsApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (response_ != null)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+            }
+        }
+    
+        /// <summary>Check Service Health</summary>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public System.Threading.Tasks.Task<HealthResponse> CheckServiceHealthAsync()
         {
             return CheckServiceHealthAsync(System.Threading.CancellationToken.None);
         }
     
-        /// <summary>Run a health check of the service</summary>
-        /// <returns>Error if fails, otherwise OK status</returns>
+        /// <summary>Check Service Health</summary>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public BookingsApiHealthResponse CheckServiceHealth()
+        public HealthResponse CheckServiceHealth()
         {
             return System.Threading.Tasks.Task.Run(async () => await CheckServiceHealthAsync(System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
         }
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Run a health check of the service</summary>
-        /// <returns>Error if fails, otherwise OK status</returns>
+        /// <summary>Check Service Health</summary>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task<BookingsApiHealthResponse> CheckServiceHealthAsync(System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task<HealthResponse> CheckServiceHealthAsync(System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/HealthCheck/health");
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/health/health");
     
             var client_ = _httpClient;
             try
@@ -1363,7 +2334,7 @@ namespace AdminWebsite.BookingsAPI.Client
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<BookingsApiHealthResponse>(response_, headers_).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<HealthResponse>(response_, headers_).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -1373,12 +2344,18 @@ namespace AdminWebsite.BookingsAPI.Client
                         else
                         if (status_ == 500)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<BookingsApiHealthResponse>(response_, headers_).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<HealthResponse>(response_, headers_).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BookingsApiException<BookingsApiHealthResponse>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BookingsApiException<HealthResponse>("Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new BookingsApiException("Unauthorized", status_, responseText_, headers_, null);
                         }
                         else
                         {
@@ -1398,685 +2375,30 @@ namespace AdminWebsite.BookingsAPI.Client
             }
         }
     
-        /// <summary>Get participants in a hearing</summary>
-        /// <param name="hearingId">The Id of the hearing</param>
-        /// <returns>List of participants</returns>
+        /// <summary>Get the details of a hearing by id</summary>
+        /// <param name="hearingId">Id of the hearing</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<System.Collections.Generic.List<ParticipantResponse>> GetAllParticipantsInHearingAsync(System.Guid hearingId)
+        public System.Threading.Tasks.Task<HearingDetailsResponse> GetHearingByIdAsync(System.Guid hearingId)
         {
-            return GetAllParticipantsInHearingAsync(hearingId, System.Threading.CancellationToken.None);
+            return GetHearingByIdAsync(hearingId, System.Threading.CancellationToken.None);
         }
     
-        /// <summary>Get participants in a hearing</summary>
-        /// <param name="hearingId">The Id of the hearing</param>
-        /// <returns>List of participants</returns>
+        /// <summary>Get the details of a hearing by id</summary>
+        /// <param name="hearingId">Id of the hearing</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public System.Collections.Generic.List<ParticipantResponse> GetAllParticipantsInHearing(System.Guid hearingId)
+        public HearingDetailsResponse GetHearingById(System.Guid hearingId)
         {
-            return System.Threading.Tasks.Task.Run(async () => await GetAllParticipantsInHearingAsync(hearingId, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
-        }
-    
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Get participants in a hearing</summary>
-        /// <param name="hearingId">The Id of the hearing</param>
-        /// <returns>List of participants</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task<System.Collections.Generic.List<ParticipantResponse>> GetAllParticipantsInHearingAsync(System.Guid hearingId, System.Threading.CancellationToken cancellationToken)
-        {
-            if (hearingId == null)
-                throw new System.ArgumentNullException("hearingId");
-    
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/hearings/{hearingId}/participants");
-            urlBuilder_.Replace("{hearingId}", System.Uri.EscapeDataString(ConvertToString(hearingId, System.Globalization.CultureInfo.InvariantCulture)));
-    
-            var client_ = _httpClient;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-    
-                    PrepareRequest(client_, request_, urlBuilder_);
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-                    PrepareRequest(client_, request_, url_);
-    
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    try
-                    {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-    
-                        ProcessResponse(client_, response_);
-    
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.List<ParticipantResponse>>(response_, headers_).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        if (status_ == 400)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new BookingsApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
-                        }
-                        else
-                        if (status_ == 404)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new BookingsApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new BookingsApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (response_ != null)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-            }
-        }
-    
-        /// <summary>Add participant(s) to a hearing</summary>
-        /// <param name="hearingId">The Id of the hearing</param>
-        /// <param name="request">The participant information to add</param>
-        /// <returns>The participant</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task AddParticipantsToHearingAsync(System.Guid hearingId, AddParticipantsToHearingRequest request)
-        {
-            return AddParticipantsToHearingAsync(hearingId, request, System.Threading.CancellationToken.None);
-        }
-    
-        /// <summary>Add participant(s) to a hearing</summary>
-        /// <param name="hearingId">The Id of the hearing</param>
-        /// <param name="request">The participant information to add</param>
-        /// <returns>The participant</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public void AddParticipantsToHearing(System.Guid hearingId, AddParticipantsToHearingRequest request)
-        {
-            System.Threading.Tasks.Task.Run(async () => await AddParticipantsToHearingAsync(hearingId, request, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
+            return System.Threading.Tasks.Task.Run(async () => await GetHearingByIdAsync(hearingId, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
         }
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Add participant(s) to a hearing</summary>
-        /// <param name="hearingId">The Id of the hearing</param>
-        /// <param name="request">The participant information to add</param>
-        /// <returns>The participant</returns>
+        /// <summary>Get the details of a hearing by id</summary>
+        /// <param name="hearingId">Id of the hearing</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task AddParticipantsToHearingAsync(System.Guid hearingId, AddParticipantsToHearingRequest request, System.Threading.CancellationToken cancellationToken)
-        {
-            if (hearingId == null)
-                throw new System.ArgumentNullException("hearingId");
-    
-            if (request == null)
-                throw new System.ArgumentNullException("request");
-    
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/hearings/{hearingId}/participants");
-            urlBuilder_.Replace("{hearingId}", System.Uri.EscapeDataString(ConvertToString(hearingId, System.Globalization.CultureInfo.InvariantCulture)));
-    
-            var client_ = _httpClient;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    var content_ = new System.Net.Http.StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(request, _settings.Value));
-                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
-                    request_.Content = content_;
-                    request_.Method = new System.Net.Http.HttpMethod("POST");
-    
-                    PrepareRequest(client_, request_, urlBuilder_);
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-                    PrepareRequest(client_, request_, url_);
-    
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    try
-                    {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-    
-                        ProcessResponse(client_, response_);
-    
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 204)
-                        {
-                            return;
-                        }
-                        else
-                        if (status_ == 400)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new BookingsApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
-                        }
-                        else
-                        if (status_ == 404)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new BookingsApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new BookingsApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (response_ != null)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-            }
-        }
-    
-        /// <summary>Get a single participant in a hearing</summary>
-        /// <param name="hearingId">The Id of the hearing</param>
-        /// <param name="participantId">The Id of the participant</param>
-        /// <returns>The participant</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<ParticipantResponse> GetParticipantInHearingAsync(System.Guid hearingId, System.Guid participantId)
-        {
-            return GetParticipantInHearingAsync(hearingId, participantId, System.Threading.CancellationToken.None);
-        }
-    
-        /// <summary>Get a single participant in a hearing</summary>
-        /// <param name="hearingId">The Id of the hearing</param>
-        /// <param name="participantId">The Id of the participant</param>
-        /// <returns>The participant</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public ParticipantResponse GetParticipantInHearing(System.Guid hearingId, System.Guid participantId)
-        {
-            return System.Threading.Tasks.Task.Run(async () => await GetParticipantInHearingAsync(hearingId, participantId, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
-        }
-    
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Get a single participant in a hearing</summary>
-        /// <param name="hearingId">The Id of the hearing</param>
-        /// <param name="participantId">The Id of the participant</param>
-        /// <returns>The participant</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task<ParticipantResponse> GetParticipantInHearingAsync(System.Guid hearingId, System.Guid participantId, System.Threading.CancellationToken cancellationToken)
-        {
-            if (hearingId == null)
-                throw new System.ArgumentNullException("hearingId");
-    
-            if (participantId == null)
-                throw new System.ArgumentNullException("participantId");
-    
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/hearings/{hearingId}/participants/{participantId}");
-            urlBuilder_.Replace("{hearingId}", System.Uri.EscapeDataString(ConvertToString(hearingId, System.Globalization.CultureInfo.InvariantCulture)));
-            urlBuilder_.Replace("{participantId}", System.Uri.EscapeDataString(ConvertToString(participantId, System.Globalization.CultureInfo.InvariantCulture)));
-    
-            var client_ = _httpClient;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-    
-                    PrepareRequest(client_, request_, urlBuilder_);
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-                    PrepareRequest(client_, request_, url_);
-    
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    try
-                    {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-    
-                        ProcessResponse(client_, response_);
-    
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ParticipantResponse>(response_, headers_).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        if (status_ == 400)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new BookingsApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
-                        }
-                        else
-                        if (status_ == 404)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new BookingsApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new BookingsApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (response_ != null)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-            }
-        }
-    
-        /// <summary>Remove a participant from a hearing</summary>
-        /// <param name="hearingId">Id of hearing to look up</param>
-        /// <param name="participantId">Id of participant to remove</param>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task RemoveParticipantFromHearingAsync(System.Guid hearingId, System.Guid participantId)
-        {
-            return RemoveParticipantFromHearingAsync(hearingId, participantId, System.Threading.CancellationToken.None);
-        }
-    
-        /// <summary>Remove a participant from a hearing</summary>
-        /// <param name="hearingId">Id of hearing to look up</param>
-        /// <param name="participantId">Id of participant to remove</param>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public void RemoveParticipantFromHearing(System.Guid hearingId, System.Guid participantId)
-        {
-            System.Threading.Tasks.Task.Run(async () => await RemoveParticipantFromHearingAsync(hearingId, participantId, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
-        }
-    
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Remove a participant from a hearing</summary>
-        /// <param name="hearingId">Id of hearing to look up</param>
-        /// <param name="participantId">Id of participant to remove</param>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task RemoveParticipantFromHearingAsync(System.Guid hearingId, System.Guid participantId, System.Threading.CancellationToken cancellationToken)
-        {
-            if (hearingId == null)
-                throw new System.ArgumentNullException("hearingId");
-    
-            if (participantId == null)
-                throw new System.ArgumentNullException("participantId");
-    
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/hearings/{hearingId}/participants/{participantId}");
-            urlBuilder_.Replace("{hearingId}", System.Uri.EscapeDataString(ConvertToString(hearingId, System.Globalization.CultureInfo.InvariantCulture)));
-            urlBuilder_.Replace("{participantId}", System.Uri.EscapeDataString(ConvertToString(participantId, System.Globalization.CultureInfo.InvariantCulture)));
-    
-            var client_ = _httpClient;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("DELETE");
-    
-                    PrepareRequest(client_, request_, urlBuilder_);
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-                    PrepareRequest(client_, request_, url_);
-    
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    try
-                    {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-    
-                        ProcessResponse(client_, response_);
-    
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 204)
-                        {
-                            return;
-                        }
-                        else
-                        if (status_ == 400)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new BookingsApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
-                        }
-                        else
-                        if (status_ == 404)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new BookingsApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new BookingsApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (response_ != null)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-            }
-        }
-    
-        /// <summary>Update participant details</summary>
-        /// <param name="hearingId">Id of hearing to look up</param>
-        /// <param name="participantId">Id of participant to remove</param>
-        /// <param name="request">The participant information to add</param>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task UpdateParticipantDetailsAsync(System.Guid hearingId, System.Guid participantId, UpdateParticipantRequest request)
-        {
-            return UpdateParticipantDetailsAsync(hearingId, participantId, request, System.Threading.CancellationToken.None);
-        }
-    
-        /// <summary>Update participant details</summary>
-        /// <param name="hearingId">Id of hearing to look up</param>
-        /// <param name="participantId">Id of participant to remove</param>
-        /// <param name="request">The participant information to add</param>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public void UpdateParticipantDetails(System.Guid hearingId, System.Guid participantId, UpdateParticipantRequest request)
-        {
-            System.Threading.Tasks.Task.Run(async () => await UpdateParticipantDetailsAsync(hearingId, participantId, request, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
-        }
-    
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Update participant details</summary>
-        /// <param name="hearingId">Id of hearing to look up</param>
-        /// <param name="participantId">Id of participant to remove</param>
-        /// <param name="request">The participant information to add</param>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task UpdateParticipantDetailsAsync(System.Guid hearingId, System.Guid participantId, UpdateParticipantRequest request, System.Threading.CancellationToken cancellationToken)
-        {
-            if (hearingId == null)
-                throw new System.ArgumentNullException("hearingId");
-    
-            if (participantId == null)
-                throw new System.ArgumentNullException("participantId");
-    
-            if (request == null)
-                throw new System.ArgumentNullException("request");
-    
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/hearings/{hearingId}/participants/{participantId}");
-            urlBuilder_.Replace("{hearingId}", System.Uri.EscapeDataString(ConvertToString(hearingId, System.Globalization.CultureInfo.InvariantCulture)));
-            urlBuilder_.Replace("{participantId}", System.Uri.EscapeDataString(ConvertToString(participantId, System.Globalization.CultureInfo.InvariantCulture)));
-    
-            var client_ = _httpClient;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    var content_ = new System.Net.Http.StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(request, _settings.Value));
-                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
-                    request_.Content = content_;
-                    request_.Method = new System.Net.Http.HttpMethod("PUT");
-    
-                    PrepareRequest(client_, request_, urlBuilder_);
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-                    PrepareRequest(client_, request_, url_);
-    
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    try
-                    {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-    
-                        ProcessResponse(client_, response_);
-    
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            return;
-                        }
-                        else
-                        if (status_ == 400)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new BookingsApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
-                        }
-                        else
-                        if (status_ == 404)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new BookingsApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new BookingsApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (response_ != null)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-            }
-        }
-    
-        /// <summary>Updates suitability answers for the participant</summary>
-        /// <param name="hearingId">Id of hearing</param>
-        /// <param name="participantId">Id of participant</param>
-        /// <param name="answers">A list of suitability answers to update</param>
-        /// <returns>Http status</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task UpdateSuitabilityAnswersAsync(System.Guid hearingId, System.Guid participantId, System.Collections.Generic.IEnumerable<SuitabilityAnswersRequest> answers)
-        {
-            return UpdateSuitabilityAnswersAsync(hearingId, participantId, answers, System.Threading.CancellationToken.None);
-        }
-    
-        /// <summary>Updates suitability answers for the participant</summary>
-        /// <param name="hearingId">Id of hearing</param>
-        /// <param name="participantId">Id of participant</param>
-        /// <param name="answers">A list of suitability answers to update</param>
-        /// <returns>Http status</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public void UpdateSuitabilityAnswers(System.Guid hearingId, System.Guid participantId, System.Collections.Generic.IEnumerable<SuitabilityAnswersRequest> answers)
-        {
-            System.Threading.Tasks.Task.Run(async () => await UpdateSuitabilityAnswersAsync(hearingId, participantId, answers, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
-        }
-    
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Updates suitability answers for the participant</summary>
-        /// <param name="hearingId">Id of hearing</param>
-        /// <param name="participantId">Id of participant</param>
-        /// <param name="answers">A list of suitability answers to update</param>
-        /// <returns>Http status</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task UpdateSuitabilityAnswersAsync(System.Guid hearingId, System.Guid participantId, System.Collections.Generic.IEnumerable<SuitabilityAnswersRequest> answers, System.Threading.CancellationToken cancellationToken)
-        {
-            if (hearingId == null)
-                throw new System.ArgumentNullException("hearingId");
-    
-            if (participantId == null)
-                throw new System.ArgumentNullException("participantId");
-    
-            if (answers == null)
-                throw new System.ArgumentNullException("answers");
-    
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/hearings/{hearingId}/participants/{participantId}/suitability-answers");
-            urlBuilder_.Replace("{hearingId}", System.Uri.EscapeDataString(ConvertToString(hearingId, System.Globalization.CultureInfo.InvariantCulture)));
-            urlBuilder_.Replace("{participantId}", System.Uri.EscapeDataString(ConvertToString(participantId, System.Globalization.CultureInfo.InvariantCulture)));
-    
-            var client_ = _httpClient;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    var content_ = new System.Net.Http.StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(answers, _settings.Value));
-                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
-                    request_.Content = content_;
-                    request_.Method = new System.Net.Http.HttpMethod("PUT");
-    
-                    PrepareRequest(client_, request_, urlBuilder_);
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-                    PrepareRequest(client_, request_, url_);
-    
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    try
-                    {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-    
-                        ProcessResponse(client_, response_);
-    
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 400)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new BookingsApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
-                        }
-                        else
-                        if (status_ == 404)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new BookingsApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
-                        }
-                        else
-                        if (status_ == 204)
-                        {
-                            return;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new BookingsApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (response_ != null)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-            }
-        }
-    
-        /// <summary>Get details for a given hearing</summary>
-        /// <param name="hearingId">Id for a hearing</param>
-        /// <returns>Hearing details</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<HearingDetailsResponse> GetHearingDetailsByIdAsync(System.Guid hearingId)
-        {
-            return GetHearingDetailsByIdAsync(hearingId, System.Threading.CancellationToken.None);
-        }
-    
-        /// <summary>Get details for a given hearing</summary>
-        /// <param name="hearingId">Id for a hearing</param>
-        /// <returns>Hearing details</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public HearingDetailsResponse GetHearingDetailsById(System.Guid hearingId)
-        {
-            return System.Threading.Tasks.Task.Run(async () => await GetHearingDetailsByIdAsync(hearingId, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
-        }
-    
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Get details for a given hearing</summary>
-        /// <param name="hearingId">Id for a hearing</param>
-        /// <returns>Hearing details</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task<HearingDetailsResponse> GetHearingDetailsByIdAsync(System.Guid hearingId, System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task<HearingDetailsResponse> GetHearingByIdAsync(System.Guid hearingId, System.Threading.CancellationToken cancellationToken)
         {
             if (hearingId == null)
                 throw new System.ArgumentNullException("hearingId");
@@ -2121,16 +2443,6 @@ namespace AdminWebsite.BookingsAPI.Client
                             return objectResponse_.Object;
                         }
                         else
-                        if (status_ == 400)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new BookingsApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
-                        }
-                        else
                         if (status_ == 404)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
@@ -2138,7 +2450,23 @@ namespace AdminWebsite.BookingsAPI.Client
                             {
                                 throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BookingsApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BookingsApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new BookingsApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new BookingsApiException("Unauthorized", status_, responseText_, headers_, null);
                         }
                         else
                         {
@@ -2158,141 +2486,33 @@ namespace AdminWebsite.BookingsAPI.Client
             }
         }
     
-        /// <summary>Update the details of a hearing such as venue, time and duration</summary>
-        /// <param name="hearingId">The id of the hearing to update</param>
-        /// <param name="request">Details to update</param>
-        /// <returns>Details of updated hearing</returns>
+        /// <summary>Confirm hearing by id</summary>
+        /// <param name="hearingId">Id of the hearing</param>
+        /// <param name="body">Update the booking status details</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<HearingDetailsResponse> UpdateHearingDetailsAsync(System.Guid hearingId, UpdateHearingRequest request)
+        public System.Threading.Tasks.Task<ConferenceDetailsResponse> ConfirmHearingByIdAsync(System.Guid hearingId, UpdateBookingStatusRequest body)
         {
-            return UpdateHearingDetailsAsync(hearingId, request, System.Threading.CancellationToken.None);
+            return ConfirmHearingByIdAsync(hearingId, body, System.Threading.CancellationToken.None);
         }
     
-        /// <summary>Update the details of a hearing such as venue, time and duration</summary>
-        /// <param name="hearingId">The id of the hearing to update</param>
-        /// <param name="request">Details to update</param>
-        /// <returns>Details of updated hearing</returns>
+        /// <summary>Confirm hearing by id</summary>
+        /// <param name="hearingId">Id of the hearing</param>
+        /// <param name="body">Update the booking status details</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public HearingDetailsResponse UpdateHearingDetails(System.Guid hearingId, UpdateHearingRequest request)
+        public ConferenceDetailsResponse ConfirmHearingById(System.Guid hearingId, UpdateBookingStatusRequest body)
         {
-            return System.Threading.Tasks.Task.Run(async () => await UpdateHearingDetailsAsync(hearingId, request, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
-        }
-    
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Update the details of a hearing such as venue, time and duration</summary>
-        /// <param name="hearingId">The id of the hearing to update</param>
-        /// <param name="request">Details to update</param>
-        /// <returns>Details of updated hearing</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task<HearingDetailsResponse> UpdateHearingDetailsAsync(System.Guid hearingId, UpdateHearingRequest request, System.Threading.CancellationToken cancellationToken)
-        {
-            if (hearingId == null)
-                throw new System.ArgumentNullException("hearingId");
-    
-            if (request == null)
-                throw new System.ArgumentNullException("request");
-    
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/hearings/{hearingId}");
-            urlBuilder_.Replace("{hearingId}", System.Uri.EscapeDataString(ConvertToString(hearingId, System.Globalization.CultureInfo.InvariantCulture)));
-    
-            var client_ = _httpClient;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    var content_ = new System.Net.Http.StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(request, _settings.Value));
-                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
-                    request_.Content = content_;
-                    request_.Method = new System.Net.Http.HttpMethod("PUT");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-    
-                    PrepareRequest(client_, request_, urlBuilder_);
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-                    PrepareRequest(client_, request_, url_);
-    
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    try
-                    {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-    
-                        ProcessResponse(client_, response_);
-    
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<HearingDetailsResponse>(response_, headers_).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        if (status_ == 400)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new BookingsApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
-                        }
-                        else
-                        if (status_ == 404)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new BookingsApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new BookingsApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (response_ != null)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-            }
-        }
-    
-        /// <summary>Remove an existing hearing</summary>
-        /// <param name="hearingId">The hearing id</param>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task RemoveHearingAsync(System.Guid hearingId)
-        {
-            return RemoveHearingAsync(hearingId, System.Threading.CancellationToken.None);
-        }
-    
-        /// <summary>Remove an existing hearing</summary>
-        /// <param name="hearingId">The hearing id</param>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public void RemoveHearing(System.Guid hearingId)
-        {
-            System.Threading.Tasks.Task.Run(async () => await RemoveHearingAsync(hearingId, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
+            return System.Threading.Tasks.Task.Run(async () => await ConfirmHearingByIdAsync(hearingId, body, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
         }
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Remove an existing hearing</summary>
-        /// <param name="hearingId">The hearing id</param>
+        /// <summary>Confirm hearing by id</summary>
+        /// <param name="hearingId">Id of the hearing</param>
+        /// <param name="body">Update the booking status details</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task RemoveHearingAsync(System.Guid hearingId, System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task<ConferenceDetailsResponse> ConfirmHearingByIdAsync(System.Guid hearingId, UpdateBookingStatusRequest body, System.Threading.CancellationToken cancellationToken)
         {
             if (hearingId == null)
                 throw new System.ArgumentNullException("hearingId");
@@ -2306,115 +2526,121 @@ namespace AdminWebsite.BookingsAPI.Client
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-                    request_.Method = new System.Net.Http.HttpMethod("DELETE");
-    
-                    PrepareRequest(client_, request_, urlBuilder_);
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-                    PrepareRequest(client_, request_, url_);
-    
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    try
-                    {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-    
-                        ProcessResponse(client_, response_);
-    
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 204)
-                        {
-                            return;
-                        }
-                        else
-                        if (status_ == 400)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new BookingsApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
-                        }
-                        else
-                        if (status_ == 404)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new BookingsApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new BookingsApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (response_ != null)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-            }
-        }
-    
-        /// <summary>Update booking status</summary>
-        /// <param name="hearingId">Id of the hearing to update the status for</param>
-        /// <param name="request">Status of the hearing to change to</param>
-        /// <returns>Success status</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task UpdateBookingStatusAsync(System.Guid hearingId, UpdateBookingStatusRequest request)
-        {
-            return UpdateBookingStatusAsync(hearingId, request, System.Threading.CancellationToken.None);
-        }
-    
-        /// <summary>Update booking status</summary>
-        /// <param name="hearingId">Id of the hearing to update the status for</param>
-        /// <param name="request">Status of the hearing to change to</param>
-        /// <returns>Success status</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public void UpdateBookingStatus(System.Guid hearingId, UpdateBookingStatusRequest request)
-        {
-            System.Threading.Tasks.Task.Run(async () => await UpdateBookingStatusAsync(hearingId, request, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
-        }
-    
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Update booking status</summary>
-        /// <param name="hearingId">Id of the hearing to update the status for</param>
-        /// <param name="request">Status of the hearing to change to</param>
-        /// <returns>Success status</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task UpdateBookingStatusAsync(System.Guid hearingId, UpdateBookingStatusRequest request, System.Threading.CancellationToken cancellationToken)
-        {
-            if (hearingId == null)
-                throw new System.ArgumentNullException("hearingId");
-    
-            if (request == null)
-                throw new System.ArgumentNullException("request");
-    
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/hearings/{hearingId}");
-            urlBuilder_.Replace("{hearingId}", System.Uri.EscapeDataString(ConvertToString(hearingId, System.Globalization.CultureInfo.InvariantCulture)));
-    
-            var client_ = _httpClient;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    var content_ = new System.Net.Http.StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(request, _settings.Value));
+                    var content_ = new System.Net.Http.StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(body, _settings.Value));
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
                     request_.Content = content_;
                     request_.Method = new System.Net.Http.HttpMethod("PATCH");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+    
+                    PrepareRequest(client_, request_, urlBuilder_);
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+                    PrepareRequest(client_, request_, url_);
+    
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+    
+                        ProcessResponse(client_, response_);
+    
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 201)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ConferenceDetailsResponse>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new BookingsApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new BookingsApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new BookingsApiException("Unauthorized", status_, responseText_, headers_, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new BookingsApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (response_ != null)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+            }
+        }
+    
+        /// <summary>Delete hearing by id</summary>
+        /// <param name="hearingId">Id of the hearing</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public System.Threading.Tasks.Task DeleteHearingByIdAsync(System.Guid hearingId)
+        {
+            return DeleteHearingByIdAsync(hearingId, System.Threading.CancellationToken.None);
+        }
+    
+        /// <summary>Delete hearing by id</summary>
+        /// <param name="hearingId">Id of the hearing</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public void DeleteHearingById(System.Guid hearingId)
+        {
+            System.Threading.Tasks.Task.Run(async () => await DeleteHearingByIdAsync(hearingId, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
+        }
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Delete hearing by id</summary>
+        /// <param name="hearingId">Id of the hearing</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public async System.Threading.Tasks.Task DeleteHearingByIdAsync(System.Guid hearingId, System.Threading.CancellationToken cancellationToken)
+        {
+            if (hearingId == null)
+                throw new System.ArgumentNullException("hearingId");
+    
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/hearings/{hearingId}");
+            urlBuilder_.Replace("{hearingId}", System.Uri.EscapeDataString(ConvertToString(hearingId, System.Globalization.CultureInfo.InvariantCulture)));
+    
+            var client_ = _httpClient;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("DELETE");
     
                     PrepareRequest(client_, request_, urlBuilder_);
                     var url_ = urlBuilder_.ToString();
@@ -2446,7 +2672,7 @@ namespace AdminWebsite.BookingsAPI.Client
                             {
                                 throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BookingsApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BookingsApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 400)
@@ -2456,17 +2682,13 @@ namespace AdminWebsite.BookingsAPI.Client
                             {
                                 throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BookingsApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BookingsApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
-                        if (status_ == 409)
+                        if (status_ == 401)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new BookingsApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new BookingsApiException("Unauthorized", status_, responseText_, headers_, null);
                         }
                         else
                         {
@@ -2487,8 +2709,8 @@ namespace AdminWebsite.BookingsAPI.Client
         }
     
         /// <summary>Get list of all hearings for a given username</summary>
-        /// <param name="username">username of person to search against</param>
-        /// <returns>Hearing details</returns>
+        /// <param name="username">Username of the participant</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
         public System.Threading.Tasks.Task<System.Collections.Generic.List<HearingDetailsResponse>> GetHearingsByUsernameAsync(string username)
         {
@@ -2496,8 +2718,8 @@ namespace AdminWebsite.BookingsAPI.Client
         }
     
         /// <summary>Get list of all hearings for a given username</summary>
-        /// <param name="username">username of person to search against</param>
-        /// <returns>Hearing details</returns>
+        /// <param name="username">Username of the participant</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
         public System.Collections.Generic.List<HearingDetailsResponse> GetHearingsByUsername(string username)
         {
@@ -2506,18 +2728,14 @@ namespace AdminWebsite.BookingsAPI.Client
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Get list of all hearings for a given username</summary>
-        /// <param name="username">username of person to search against</param>
-        /// <returns>Hearing details</returns>
+        /// <param name="username">Username of the participant</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
         public async System.Threading.Tasks.Task<System.Collections.Generic.List<HearingDetailsResponse>> GetHearingsByUsernameAsync(string username, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/hearings?");
-            if (username != null) 
-            {
-                urlBuilder_.Append(System.Uri.EscapeDataString("username") + "=").Append(System.Uri.EscapeDataString(ConvertToString(username, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
-            }
-            urlBuilder_.Length--;
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/hearings/username/{username}");
+            urlBuilder_.Replace("{username}", System.Uri.EscapeDataString(ConvertToString(username, System.Globalization.CultureInfo.InvariantCulture)));
     
             var client_ = _httpClient;
             try
@@ -2562,7 +2780,23 @@ namespace AdminWebsite.BookingsAPI.Client
                             {
                                 throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BookingsApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BookingsApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new BookingsApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new BookingsApiException("Unauthorized", status_, responseText_, headers_, null);
                         }
                         else
                         {
@@ -2582,34 +2816,31 @@ namespace AdminWebsite.BookingsAPI.Client
             }
         }
     
-        /// <summary>Request to book a new hearing</summary>
-        /// <param name="request">Details of a new hearing to book</param>
-        /// <returns>Details of the newly booked hearing</returns>
+        /// <summary>Create a hearing</summary>
+        /// <param name="body">Details of the new user</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<HearingDetailsResponse> BookNewHearingAsync(BookNewHearingRequest request)
+        public System.Threading.Tasks.Task<HearingDetailsResponse> HearingsAsync(CreateHearingRequest body)
         {
-            return BookNewHearingAsync(request, System.Threading.CancellationToken.None);
+            return HearingsAsync(body, System.Threading.CancellationToken.None);
         }
     
-        /// <summary>Request to book a new hearing</summary>
-        /// <param name="request">Details of a new hearing to book</param>
-        /// <returns>Details of the newly booked hearing</returns>
+        /// <summary>Create a hearing</summary>
+        /// <param name="body">Details of the new user</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public HearingDetailsResponse BookNewHearing(BookNewHearingRequest request)
+        public HearingDetailsResponse Hearings(CreateHearingRequest body)
         {
-            return System.Threading.Tasks.Task.Run(async () => await BookNewHearingAsync(request, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
+            return System.Threading.Tasks.Task.Run(async () => await HearingsAsync(body, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
         }
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Request to book a new hearing</summary>
-        /// <param name="request">Details of a new hearing to book</param>
-        /// <returns>Details of the newly booked hearing</returns>
+        /// <summary>Create a hearing</summary>
+        /// <param name="body">Details of the new user</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task<HearingDetailsResponse> BookNewHearingAsync(BookNewHearingRequest request, System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task<HearingDetailsResponse> HearingsAsync(CreateHearingRequest body, System.Threading.CancellationToken cancellationToken)
         {
-            if (request == null)
-                throw new System.ArgumentNullException("request");
-    
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/hearings");
     
@@ -2618,7 +2849,7 @@ namespace AdminWebsite.BookingsAPI.Client
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-                    var content_ = new System.Net.Http.StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(request, _settings.Value));
+                    var content_ = new System.Net.Http.StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(body, _settings.Value));
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
                     request_.Content = content_;
                     request_.Method = new System.Net.Http.HttpMethod("POST");
@@ -2659,1077 +2890,13 @@ namespace AdminWebsite.BookingsAPI.Client
                             {
                                 throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BookingsApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new BookingsApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (response_ != null)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-            }
-        }
-    
-        /// <summary>Create a new hearing with the details of a given hearing on given dates</summary>
-        /// <param name="hearingId">Original hearing to clone</param>
-        /// <param name="request">List of dates to create a new hearing on</param>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task CloneHearingAsync(System.Guid hearingId, CloneHearingRequest request)
-        {
-            return CloneHearingAsync(hearingId, request, System.Threading.CancellationToken.None);
-        }
-    
-        /// <summary>Create a new hearing with the details of a given hearing on given dates</summary>
-        /// <param name="hearingId">Original hearing to clone</param>
-        /// <param name="request">List of dates to create a new hearing on</param>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public void CloneHearing(System.Guid hearingId, CloneHearingRequest request)
-        {
-            System.Threading.Tasks.Task.Run(async () => await CloneHearingAsync(hearingId, request, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
-        }
-    
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Create a new hearing with the details of a given hearing on given dates</summary>
-        /// <param name="hearingId">Original hearing to clone</param>
-        /// <param name="request">List of dates to create a new hearing on</param>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task CloneHearingAsync(System.Guid hearingId, CloneHearingRequest request, System.Threading.CancellationToken cancellationToken)
-        {
-            if (hearingId == null)
-                throw new System.ArgumentNullException("hearingId");
-    
-            if (request == null)
-                throw new System.ArgumentNullException("request");
-    
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/hearings/{hearingId}/clone");
-            urlBuilder_.Replace("{hearingId}", System.Uri.EscapeDataString(ConvertToString(hearingId, System.Globalization.CultureInfo.InvariantCulture)));
-    
-            var client_ = _httpClient;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    var content_ = new System.Net.Http.StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(request, _settings.Value));
-                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
-                    request_.Content = content_;
-                    request_.Method = new System.Net.Http.HttpMethod("POST");
-    
-                    PrepareRequest(client_, request_, urlBuilder_);
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-                    PrepareRequest(client_, request_, url_);
-    
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    try
-                    {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-    
-                        ProcessResponse(client_, response_);
-    
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 204)
-                        {
-                            return;
-                        }
-                        else
-                        if (status_ == 400)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new BookingsApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new BookingsApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (response_ != null)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-            }
-        }
-    
-        /// <summary>Get a paged list of booked hearings</summary>
-        /// <param name="types">The hearing case types.</param>
-        /// <param name="cursor">Cursor specifying from which entries to read next page, is defaulted if not specified</param>
-        /// <param name="limit">The max number hearings records to return.</param>
-        /// <returns>The list of bookings video hearing</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<BookingsResponse> GetHearingsByTypesAsync(System.Collections.Generic.IEnumerable<int> types, string cursor, int? limit)
-        {
-            return GetHearingsByTypesAsync(types, cursor, limit, System.Threading.CancellationToken.None);
-        }
-    
-        /// <summary>Get a paged list of booked hearings</summary>
-        /// <param name="types">The hearing case types.</param>
-        /// <param name="cursor">Cursor specifying from which entries to read next page, is defaulted if not specified</param>
-        /// <param name="limit">The max number hearings records to return.</param>
-        /// <returns>The list of bookings video hearing</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public BookingsResponse GetHearingsByTypes(System.Collections.Generic.IEnumerable<int> types, string cursor, int? limit)
-        {
-            return System.Threading.Tasks.Task.Run(async () => await GetHearingsByTypesAsync(types, cursor, limit, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
-        }
-    
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Get a paged list of booked hearings</summary>
-        /// <param name="types">The hearing case types.</param>
-        /// <param name="cursor">Cursor specifying from which entries to read next page, is defaulted if not specified</param>
-        /// <param name="limit">The max number hearings records to return.</param>
-        /// <returns>The list of bookings video hearing</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task<BookingsResponse> GetHearingsByTypesAsync(System.Collections.Generic.IEnumerable<int> types, string cursor, int? limit, System.Threading.CancellationToken cancellationToken)
-        {
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/hearings/types?");
-            if (types != null) 
-            {
-                foreach (var item_ in types) { urlBuilder_.Append(System.Uri.EscapeDataString("types") + "=").Append((item_ == null) ? "" : System.Uri.EscapeDataString(ConvertToString(item_, System.Globalization.CultureInfo.InvariantCulture))).Append("&"); }
-            }
-            if (cursor != null) 
-            {
-                urlBuilder_.Append(System.Uri.EscapeDataString("cursor") + "=").Append(System.Uri.EscapeDataString(ConvertToString(cursor, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
-            }
-            if (limit != null) 
-            {
-                urlBuilder_.Append(System.Uri.EscapeDataString("limit") + "=").Append(System.Uri.EscapeDataString(ConvertToString(limit, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
-            }
-            urlBuilder_.Length--;
-    
-            var client_ = _httpClient;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-    
-                    PrepareRequest(client_, request_, urlBuilder_);
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-                    PrepareRequest(client_, request_, url_);
-    
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    try
-                    {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-    
-                        ProcessResponse(client_, response_);
-    
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<BookingsResponse>(response_, headers_).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        if (status_ == 400)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new BookingsApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
-                        }
-                        else
-                        if (status_ == 404)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new BookingsApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new BookingsApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (response_ != null)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-            }
-        }
-    
-        /// <summary>Anonymises the Hearings, Case, Person and Participant data.</summary>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task AnonymiseHearingsAsync()
-        {
-            return AnonymiseHearingsAsync(System.Threading.CancellationToken.None);
-        }
-    
-        /// <summary>Anonymises the Hearings, Case, Person and Participant data.</summary>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public void AnonymiseHearings()
-        {
-            System.Threading.Tasks.Task.Run(async () => await AnonymiseHearingsAsync(System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
-        }
-    
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Anonymises the Hearings, Case, Person and Participant data.</summary>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task AnonymiseHearingsAsync(System.Threading.CancellationToken cancellationToken)
-        {
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/hearings/anonymisehearings");
-    
-            var client_ = _httpClient;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Content = new System.Net.Http.StringContent(string.Empty, System.Text.Encoding.UTF8, "application/json");
-                    request_.Method = new System.Net.Http.HttpMethod("PATCH");
-    
-                    PrepareRequest(client_, request_, urlBuilder_);
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-                    PrepareRequest(client_, request_, url_);
-    
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    try
-                    {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-    
-                        ProcessResponse(client_, response_);
-    
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 204)
-                        {
-                            return;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new BookingsApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (response_ != null)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-            }
-        }
-    
-        /// <summary>Search for hearings by case number. Search will apply fuzzy matching</summary>
-        /// <returns>list of hearings matching search criteria</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<System.Collections.Generic.List<AudioRecordedHearingsBySearchResponse>> SearchForHearingsAsync(string caseNumber, System.DateTime? date)
-        {
-            return SearchForHearingsAsync(caseNumber, date, System.Threading.CancellationToken.None);
-        }
-    
-        /// <summary>Search for hearings by case number. Search will apply fuzzy matching</summary>
-        /// <returns>list of hearings matching search criteria</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public System.Collections.Generic.List<AudioRecordedHearingsBySearchResponse> SearchForHearings(string caseNumber, System.DateTime? date)
-        {
-            return System.Threading.Tasks.Task.Run(async () => await SearchForHearingsAsync(caseNumber, date, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
-        }
-    
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Search for hearings by case number. Search will apply fuzzy matching</summary>
-        /// <returns>list of hearings matching search criteria</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task<System.Collections.Generic.List<AudioRecordedHearingsBySearchResponse>> SearchForHearingsAsync(string caseNumber, System.DateTime? date, System.Threading.CancellationToken cancellationToken)
-        {
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/hearings/audiorecording/search?");
-            if (caseNumber != null) 
-            {
-                urlBuilder_.Append(System.Uri.EscapeDataString("CaseNumber") + "=").Append(System.Uri.EscapeDataString(ConvertToString(caseNumber, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
-            }
-            if (date != null) 
-            {
-                urlBuilder_.Append(System.Uri.EscapeDataString("Date") + "=").Append(System.Uri.EscapeDataString(date.Value.ToString("s", System.Globalization.CultureInfo.InvariantCulture))).Append("&");
-            }
-            urlBuilder_.Length--;
-    
-            var client_ = _httpClient;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-    
-                    PrepareRequest(client_, request_, urlBuilder_);
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-                    PrepareRequest(client_, request_, url_);
-    
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    try
-                    {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-    
-                        ProcessResponse(client_, response_);
-    
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.List<AudioRecordedHearingsBySearchResponse>>(response_, headers_).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        if (status_ == 400)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new BookingsApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new BookingsApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (response_ != null)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-            }
-        }
-    
-        /// <summary>Get all hearing venues available for booking</summary>
-        /// <returns>List of hearing venues</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<System.Collections.Generic.List<HearingVenueResponse>> GetHearingVenuesAsync()
-        {
-            return GetHearingVenuesAsync(System.Threading.CancellationToken.None);
-        }
-    
-        /// <summary>Get all hearing venues available for booking</summary>
-        /// <returns>List of hearing venues</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public System.Collections.Generic.List<HearingVenueResponse> GetHearingVenues()
-        {
-            return System.Threading.Tasks.Task.Run(async () => await GetHearingVenuesAsync(System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
-        }
-    
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Get all hearing venues available for booking</summary>
-        /// <returns>List of hearing venues</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task<System.Collections.Generic.List<HearingVenueResponse>> GetHearingVenuesAsync(System.Threading.CancellationToken cancellationToken)
-        {
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/hearingvenues");
-    
-            var client_ = _httpClient;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-    
-                    PrepareRequest(client_, request_, urlBuilder_);
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-                    PrepareRequest(client_, request_, url_);
-    
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    try
-                    {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-    
-                        ProcessResponse(client_, response_);
-    
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.List<HearingVenueResponse>>(response_, headers_).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        if (status_ == 404)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new BookingsApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new BookingsApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (response_ != null)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-            }
-        }
-    
-        /// <summary>Get a participants by username</summary>
-        /// <param name="username">The username of the participant</param>
-        /// <returns>Participant</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<System.Collections.Generic.List<ParticipantResponse>> GetParticipantsByUsernameAsync(string username)
-        {
-            return GetParticipantsByUsernameAsync(username, System.Threading.CancellationToken.None);
-        }
-    
-        /// <summary>Get a participants by username</summary>
-        /// <param name="username">The username of the participant</param>
-        /// <returns>Participant</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public System.Collections.Generic.List<ParticipantResponse> GetParticipantsByUsername(string username)
-        {
-            return System.Threading.Tasks.Task.Run(async () => await GetParticipantsByUsernameAsync(username, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
-        }
-    
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Get a participants by username</summary>
-        /// <param name="username">The username of the participant</param>
-        /// <returns>Participant</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task<System.Collections.Generic.List<ParticipantResponse>> GetParticipantsByUsernameAsync(string username, System.Threading.CancellationToken cancellationToken)
-        {
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/Participants/username/{username}");
-            urlBuilder_.Replace("{username}", System.Uri.EscapeDataString(ConvertToString(username, System.Globalization.CultureInfo.InvariantCulture)));
-    
-            var client_ = _httpClient;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-    
-                    PrepareRequest(client_, request_, urlBuilder_);
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-                    PrepareRequest(client_, request_, url_);
-    
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    try
-                    {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-    
-                        ProcessResponse(client_, response_);
-    
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.List<ParticipantResponse>>(response_, headers_).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        if (status_ == 400)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new BookingsApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
-                        }
-                        else
-                        if (status_ == 404)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new BookingsApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new BookingsApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (response_ != null)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-            }
-        }
-    
-        /// <summary>Get a person by username</summary>
-        /// <param name="username">The username of the person</param>
-        /// <returns>Person</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<PersonResponse> GetPersonByUsernameAsync(string username)
-        {
-            return GetPersonByUsernameAsync(username, System.Threading.CancellationToken.None);
-        }
-    
-        /// <summary>Get a person by username</summary>
-        /// <param name="username">The username of the person</param>
-        /// <returns>Person</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public PersonResponse GetPersonByUsername(string username)
-        {
-            return System.Threading.Tasks.Task.Run(async () => await GetPersonByUsernameAsync(username, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
-        }
-    
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Get a person by username</summary>
-        /// <param name="username">The username of the person</param>
-        /// <returns>Person</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task<PersonResponse> GetPersonByUsernameAsync(string username, System.Threading.CancellationToken cancellationToken)
-        {
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/persons/username/{username}");
-            urlBuilder_.Replace("{username}", System.Uri.EscapeDataString(ConvertToString(username, System.Globalization.CultureInfo.InvariantCulture)));
-    
-            var client_ = _httpClient;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-    
-                    PrepareRequest(client_, request_, urlBuilder_);
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-                    PrepareRequest(client_, request_, url_);
-    
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    try
-                    {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-    
-                        ProcessResponse(client_, response_);
-    
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<PersonResponse>(response_, headers_).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        if (status_ == 400)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new BookingsApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
-                        }
-                        else
-                        if (status_ == 404)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new BookingsApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new BookingsApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (response_ != null)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-            }
-        }
-    
-        /// <summary>Get all hearings for a person by username</summary>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<System.Collections.Generic.List<HearingsByUsernameForDeletionResponse>> GetHearingsByUsernameForDeletionAsync(string username)
-        {
-            return GetHearingsByUsernameForDeletionAsync(username, System.Threading.CancellationToken.None);
-        }
-    
-        /// <summary>Get all hearings for a person by username</summary>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public System.Collections.Generic.List<HearingsByUsernameForDeletionResponse> GetHearingsByUsernameForDeletion(string username)
-        {
-            return System.Threading.Tasks.Task.Run(async () => await GetHearingsByUsernameForDeletionAsync(username, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
-        }
-    
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Get all hearings for a person by username</summary>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task<System.Collections.Generic.List<HearingsByUsernameForDeletionResponse>> GetHearingsByUsernameForDeletionAsync(string username, System.Threading.CancellationToken cancellationToken)
-        {
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/persons/username/hearings?");
-            if (username != null) 
-            {
-                urlBuilder_.Append(System.Uri.EscapeDataString("username") + "=").Append(System.Uri.EscapeDataString(ConvertToString(username, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
-            }
-            urlBuilder_.Length--;
-    
-            var client_ = _httpClient;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-    
-                    PrepareRequest(client_, request_, urlBuilder_);
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-                    PrepareRequest(client_, request_, url_);
-    
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    try
-                    {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-    
-                        ProcessResponse(client_, response_);
-    
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.List<HearingsByUsernameForDeletionResponse>>(response_, headers_).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        if (status_ == 404)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new BookingsApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new BookingsApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (response_ != null)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-            }
-        }
-    
-        /// <summary>Get a person by contact email</summary>
-        /// <param name="contactEmail">The contact email of the person</param>
-        /// <returns>Person</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<PersonResponse> GetPersonByContactEmailAsync(string contactEmail)
-        {
-            return GetPersonByContactEmailAsync(contactEmail, System.Threading.CancellationToken.None);
-        }
-    
-        /// <summary>Get a person by contact email</summary>
-        /// <param name="contactEmail">The contact email of the person</param>
-        /// <returns>Person</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public PersonResponse GetPersonByContactEmail(string contactEmail)
-        {
-            return System.Threading.Tasks.Task.Run(async () => await GetPersonByContactEmailAsync(contactEmail, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
-        }
-    
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Get a person by contact email</summary>
-        /// <param name="contactEmail">The contact email of the person</param>
-        /// <returns>Person</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task<PersonResponse> GetPersonByContactEmailAsync(string contactEmail, System.Threading.CancellationToken cancellationToken)
-        {
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/persons/contactEmail/{contactEmail}");
-            urlBuilder_.Replace("{contactEmail}", System.Uri.EscapeDataString(ConvertToString(contactEmail, System.Globalization.CultureInfo.InvariantCulture)));
-    
-            var client_ = _httpClient;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-    
-                    PrepareRequest(client_, request_, urlBuilder_);
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-                    PrepareRequest(client_, request_, url_);
-    
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    try
-                    {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-    
-                        ProcessResponse(client_, response_);
-    
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<PersonResponse>(response_, headers_).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        if (status_ == 400)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new BookingsApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
-                        }
-                        else
-                        if (status_ == 404)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new BookingsApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new BookingsApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (response_ != null)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-            }
-        }
-    
-        /// <summary>Find persons with contact email matching a search term.</summary>
-        /// <param name="term">Partial string to match contact email with, case-insensitive.</param>
-        /// <returns>Person list</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<System.Collections.Generic.List<PersonResponse>> PostPersonBySearchTermAsync(SearchTermRequest term)
-        {
-            return PostPersonBySearchTermAsync(term, System.Threading.CancellationToken.None);
-        }
-    
-        /// <summary>Find persons with contact email matching a search term.</summary>
-        /// <param name="term">Partial string to match contact email with, case-insensitive.</param>
-        /// <returns>Person list</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public System.Collections.Generic.List<PersonResponse> PostPersonBySearchTerm(SearchTermRequest term)
-        {
-            return System.Threading.Tasks.Task.Run(async () => await PostPersonBySearchTermAsync(term, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
-        }
-    
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Find persons with contact email matching a search term.</summary>
-        /// <param name="term">Partial string to match contact email with, case-insensitive.</param>
-        /// <returns>Person list</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task<System.Collections.Generic.List<PersonResponse>> PostPersonBySearchTermAsync(SearchTermRequest term, System.Threading.CancellationToken cancellationToken)
-        {
-            if (term == null)
-                throw new System.ArgumentNullException("term");
-    
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/persons");
-    
-            var client_ = _httpClient;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    var content_ = new System.Net.Http.StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(term, _settings.Value));
-                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
-                    request_.Content = content_;
-                    request_.Method = new System.Net.Http.HttpMethod("POST");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-    
-                    PrepareRequest(client_, request_, urlBuilder_);
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-                    PrepareRequest(client_, request_, url_);
-    
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    try
-                    {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-    
-                        ProcessResponse(client_, response_);
-    
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.List<PersonResponse>>(response_, headers_).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        if (status_ == 400)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new BookingsApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new BookingsApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (response_ != null)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-            }
-        }
-    
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<PersonResponse> SearchForNonJudicialPersonsByContactEmailAsync(string contactEmail)
-        {
-            return SearchForNonJudicialPersonsByContactEmailAsync(contactEmail, System.Threading.CancellationToken.None);
-        }
-    
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public PersonResponse SearchForNonJudicialPersonsByContactEmail(string contactEmail)
-        {
-            return System.Threading.Tasks.Task.Run(async () => await SearchForNonJudicialPersonsByContactEmailAsync(contactEmail, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
-        }
-    
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task<PersonResponse> SearchForNonJudicialPersonsByContactEmailAsync(string contactEmail, System.Threading.CancellationToken cancellationToken)
-        {
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/persons?");
-            if (contactEmail != null) 
-            {
-                urlBuilder_.Append(System.Uri.EscapeDataString("contactEmail") + "=").Append(System.Uri.EscapeDataString(ConvertToString(contactEmail, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
-            }
-            urlBuilder_.Length--;
-    
-            var client_ = _httpClient;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-    
-                    PrepareRequest(client_, request_, urlBuilder_);
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-                    PrepareRequest(client_, request_, url_);
-    
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    try
-                    {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-    
-                        ProcessResponse(client_, response_);
-    
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<PersonResponse>(response_, headers_).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        if (status_ == 404)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new BookingsApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
-                        }
-                        else
-                        if (status_ == 400)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new BookingsApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BookingsApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 401)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<string>(response_, headers_).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new BookingsApiException<string>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new BookingsApiException("Unauthorized", status_, responseText_, headers_, null);
                         }
                         else
                         {
@@ -3749,33 +2916,151 @@ namespace AdminWebsite.BookingsAPI.Client
             }
         }
     
-        /// <summary>Get a list of suitability answers for a given person</summary>
-        /// <param name="username">The username of the person</param>
-        /// <returns>A list of suitability answers</returns>
+        /// <summary>Updates suitability answers for the participant</summary>
+        /// <param name="hearingId">Id of hearing</param>
+        /// <param name="participantId">Id of participant</param>
+        /// <param name="body">A list of suitability answers to update</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<System.Collections.Generic.List<PersonSuitabilityAnswerResponse>> GetPersonSuitabilityAnswersAsync(string username)
+        public System.Threading.Tasks.Task UpdateSuitabilityAnswersAsync(System.Guid hearingId, System.Guid participantId, System.Collections.Generic.IEnumerable<SuitabilityAnswersRequest> body)
         {
-            return GetPersonSuitabilityAnswersAsync(username, System.Threading.CancellationToken.None);
+            return UpdateSuitabilityAnswersAsync(hearingId, participantId, body, System.Threading.CancellationToken.None);
         }
     
-        /// <summary>Get a list of suitability answers for a given person</summary>
-        /// <param name="username">The username of the person</param>
-        /// <returns>A list of suitability answers</returns>
+        /// <summary>Updates suitability answers for the participant</summary>
+        /// <param name="hearingId">Id of hearing</param>
+        /// <param name="participantId">Id of participant</param>
+        /// <param name="body">A list of suitability answers to update</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public System.Collections.Generic.List<PersonSuitabilityAnswerResponse> GetPersonSuitabilityAnswers(string username)
+        public void UpdateSuitabilityAnswers(System.Guid hearingId, System.Guid participantId, System.Collections.Generic.IEnumerable<SuitabilityAnswersRequest> body)
         {
-            return System.Threading.Tasks.Task.Run(async () => await GetPersonSuitabilityAnswersAsync(username, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
+            System.Threading.Tasks.Task.Run(async () => await UpdateSuitabilityAnswersAsync(hearingId, participantId, body, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
         }
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Get a list of suitability answers for a given person</summary>
-        /// <param name="username">The username of the person</param>
-        /// <returns>A list of suitability answers</returns>
+        /// <summary>Updates suitability answers for the participant</summary>
+        /// <param name="hearingId">Id of hearing</param>
+        /// <param name="participantId">Id of participant</param>
+        /// <param name="body">A list of suitability answers to update</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task<System.Collections.Generic.List<PersonSuitabilityAnswerResponse>> GetPersonSuitabilityAnswersAsync(string username, System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task UpdateSuitabilityAnswersAsync(System.Guid hearingId, System.Guid participantId, System.Collections.Generic.IEnumerable<SuitabilityAnswersRequest> body, System.Threading.CancellationToken cancellationToken)
+        {
+            if (hearingId == null)
+                throw new System.ArgumentNullException("hearingId");
+    
+            if (participantId == null)
+                throw new System.ArgumentNullException("participantId");
+    
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/hearings/{hearingId}/participants/{participantId}/update-suitability-answers");
+            urlBuilder_.Replace("{hearingId}", System.Uri.EscapeDataString(ConvertToString(hearingId, System.Globalization.CultureInfo.InvariantCulture)));
+            urlBuilder_.Replace("{participantId}", System.Uri.EscapeDataString(ConvertToString(participantId, System.Globalization.CultureInfo.InvariantCulture)));
+    
+            var client_ = _httpClient;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var content_ = new System.Net.Http.StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(body, _settings.Value));
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("PUT");
+    
+                    PrepareRequest(client_, request_, urlBuilder_);
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+                    PrepareRequest(client_, request_, url_);
+    
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+    
+                        ProcessResponse(client_, response_);
+    
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 204)
+                        {
+                            return;
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new BookingsApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new BookingsApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new BookingsApiException("Unauthorized", status_, responseText_, headers_, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new BookingsApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (response_ != null)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+            }
+        }
+    
+        /// <summary>Get suitability answers for the person</summary>
+        /// <param name="username">Username of the person</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public System.Threading.Tasks.Task<System.Collections.Generic.List<PersonSuitabilityAnswerResponse>> GetSuitabilityAnswersAsync(string username)
+        {
+            return GetSuitabilityAnswersAsync(username, System.Threading.CancellationToken.None);
+        }
+    
+        /// <summary>Get suitability answers for the person</summary>
+        /// <param name="username">Username of the person</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public System.Collections.Generic.List<PersonSuitabilityAnswerResponse> GetSuitabilityAnswers(string username)
+        {
+            return System.Threading.Tasks.Task.Run(async () => await GetSuitabilityAnswersAsync(username, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
+        }
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Get suitability answers for the person</summary>
+        /// <param name="username">Username of the person</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public async System.Threading.Tasks.Task<System.Collections.Generic.List<PersonSuitabilityAnswerResponse>> GetSuitabilityAnswersAsync(string username, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/persons/username/{username}/suitability-answers");
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/hearings/get-suitability-answers/{username}");
             urlBuilder_.Replace("{username}", System.Uri.EscapeDataString(ConvertToString(username, System.Globalization.CultureInfo.InvariantCulture)));
     
             var client_ = _httpClient;
@@ -3814,16 +3099,6 @@ namespace AdminWebsite.BookingsAPI.Client
                             return objectResponse_.Object;
                         }
                         else
-                        if (status_ == 400)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new BookingsApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
-                        }
-                        else
                         if (status_ == 404)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
@@ -3831,85 +3106,23 @@ namespace AdminWebsite.BookingsAPI.Client
                             {
                                 throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BookingsApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BookingsApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
+                        if (status_ == 400)
                         {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new BookingsApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (response_ != null)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-            }
-        }
-    
-        /// <summary>Get list of person from the old hearings</summary>
-        /// <returns>list of usernames</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<UserWithClosedConferencesResponse> GetPersonByClosedHearingsAsync()
-        {
-            return GetPersonByClosedHearingsAsync(System.Threading.CancellationToken.None);
-        }
-    
-        /// <summary>Get list of person from the old hearings</summary>
-        /// <returns>list of usernames</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public UserWithClosedConferencesResponse GetPersonByClosedHearings()
-        {
-            return System.Threading.Tasks.Task.Run(async () => await GetPersonByClosedHearingsAsync(System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
-        }
-    
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Get list of person from the old hearings</summary>
-        /// <returns>list of usernames</returns>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task<UserWithClosedConferencesResponse> GetPersonByClosedHearingsAsync(System.Threading.CancellationToken cancellationToken)
-        {
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/persons/userswithclosedhearings");
-    
-            var client_ = _httpClient;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-    
-                    PrepareRequest(client_, request_, urlBuilder_);
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-                    PrepareRequest(client_, request_, url_);
-    
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    try
-                    {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-    
-                        ProcessResponse(client_, response_);
-    
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<UserWithClosedConferencesResponse>(response_, headers_).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            return objectResponse_.Object;
+                            throw new BookingsApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new BookingsApiException("Unauthorized", status_, responseText_, headers_, null);
                         }
                         else
                         {
@@ -3929,30 +3142,33 @@ namespace AdminWebsite.BookingsAPI.Client
             }
         }
     
-        /// <summary>Anonymise a person</summary>
-        /// <param name="username">username of person</param>
+        /// <summary>Get person by username</summary>
+        /// <param name="username">Username of the person</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task AnonymisePersonWithUsernameAsync(string username)
+        public System.Threading.Tasks.Task<PersonResponse> PersonAsync(string username)
         {
-            return AnonymisePersonWithUsernameAsync(username, System.Threading.CancellationToken.None);
+            return PersonAsync(username, System.Threading.CancellationToken.None);
         }
     
-        /// <summary>Anonymise a person</summary>
-        /// <param name="username">username of person</param>
+        /// <summary>Get person by username</summary>
+        /// <param name="username">Username of the person</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public void AnonymisePersonWithUsername(string username)
+        public PersonResponse Person(string username)
         {
-            System.Threading.Tasks.Task.Run(async () => await AnonymisePersonWithUsernameAsync(username, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
+            return System.Threading.Tasks.Task.Run(async () => await PersonAsync(username, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
         }
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Anonymise a person</summary>
-        /// <param name="username">username of person</param>
+        /// <summary>Get person by username</summary>
+        /// <param name="username">Username of the person</param>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task AnonymisePersonWithUsernameAsync(string username, System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task<PersonResponse> PersonAsync(string username, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/persons/username/{username}/anonymise");
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/hearings/person/{username}");
             urlBuilder_.Replace("{username}", System.Uri.EscapeDataString(ConvertToString(username, System.Globalization.CultureInfo.InvariantCulture)));
     
             var client_ = _httpClient;
@@ -3960,8 +3176,8 @@ namespace AdminWebsite.BookingsAPI.Client
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-                    request_.Content = new System.Net.Http.StringContent(string.Empty, System.Text.Encoding.UTF8, "application/json");
-                    request_.Method = new System.Net.Http.HttpMethod("PATCH");
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
     
                     PrepareRequest(client_, request_, urlBuilder_);
                     var url_ = urlBuilder_.ToString();
@@ -3983,7 +3199,12 @@ namespace AdminWebsite.BookingsAPI.Client
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            return;
+                            var objectResponse_ = await ReadObjectResponseAsync<PersonResponse>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
                         }
                         else
                         if (status_ == 404)
@@ -3993,102 +3214,7 @@ namespace AdminWebsite.BookingsAPI.Client
                             {
                                 throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BookingsApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
-                            throw new BookingsApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (response_ != null)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-            }
-        }
-    
-        /// <summary>Update the personal details</summary>
-        /// <param name="personId">The id of the person to update</param>
-        /// <param name="payload">Updated details of the person</param>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task UpdatePersonDetailsAsync(System.Guid personId, UpdatePersonDetailsRequest payload)
-        {
-            return UpdatePersonDetailsAsync(personId, payload, System.Threading.CancellationToken.None);
-        }
-    
-        /// <summary>Update the personal details</summary>
-        /// <param name="personId">The id of the person to update</param>
-        /// <param name="payload">Updated details of the person</param>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public void UpdatePersonDetails(System.Guid personId, UpdatePersonDetailsRequest payload)
-        {
-            System.Threading.Tasks.Task.Run(async () => await UpdatePersonDetailsAsync(personId, payload, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
-        }
-    
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Update the personal details</summary>
-        /// <param name="personId">The id of the person to update</param>
-        /// <param name="payload">Updated details of the person</param>
-        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task UpdatePersonDetailsAsync(System.Guid personId, UpdatePersonDetailsRequest payload, System.Threading.CancellationToken cancellationToken)
-        {
-            if (personId == null)
-                throw new System.ArgumentNullException("personId");
-    
-            if (payload == null)
-                throw new System.ArgumentNullException("payload");
-    
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/persons/{personId}");
-            urlBuilder_.Replace("{personId}", System.Uri.EscapeDataString(ConvertToString(personId, System.Globalization.CultureInfo.InvariantCulture)));
-    
-            var client_ = _httpClient;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    var content_ = new System.Net.Http.StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(payload, _settings.Value));
-                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
-                    request_.Content = content_;
-                    request_.Method = new System.Net.Http.HttpMethod("PUT");
-    
-                    PrepareRequest(client_, request_, urlBuilder_);
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-                    PrepareRequest(client_, request_, url_);
-    
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    try
-                    {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-    
-                        ProcessResponse(client_, response_);
-    
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 202)
-                        {
-                            return;
-                        }
-                        else
-                        if (status_ == 404)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new BookingsApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BookingsApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
                         }
                         else
                         if (status_ == 400)
@@ -4098,7 +3224,13 @@ namespace AdminWebsite.BookingsAPI.Client
                             {
                                 throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BookingsApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BookingsApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new BookingsApiException("Unauthorized", status_, responseText_, headers_, null);
                         }
                         else
                         {
@@ -4118,45 +3250,30 @@ namespace AdminWebsite.BookingsAPI.Client
             }
         }
     
-        /// <summary>Get a cursor based list of suitability answers</summary>
-        /// <param name="cursor">Cursor specifying from which entries to read next page, is defaulted if not specified</param>
-        /// <param name="limit">The max number hearings records to return.</param>
-        /// <returns>The list of latest suitability answers for participants</returns>
+        /// <summary>Get all hearings by default case type</summary>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<SuitabilityAnswersResponse> GetSuitabilityAnswersAsync(string cursor, int? limit)
+        public System.Threading.Tasks.Task<System.Collections.Generic.List<BookingsHearingResponse>> HearingsAllAsync()
         {
-            return GetSuitabilityAnswersAsync(cursor, limit, System.Threading.CancellationToken.None);
+            return HearingsAllAsync(System.Threading.CancellationToken.None);
         }
     
-        /// <summary>Get a cursor based list of suitability answers</summary>
-        /// <param name="cursor">Cursor specifying from which entries to read next page, is defaulted if not specified</param>
-        /// <param name="limit">The max number hearings records to return.</param>
-        /// <returns>The list of latest suitability answers for participants</returns>
+        /// <summary>Get all hearings by default case type</summary>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public SuitabilityAnswersResponse GetSuitabilityAnswers(string cursor, int? limit)
+        public System.Collections.Generic.List<BookingsHearingResponse> HearingsAll()
         {
-            return System.Threading.Tasks.Task.Run(async () => await GetSuitabilityAnswersAsync(cursor, limit, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
+            return System.Threading.Tasks.Task.Run(async () => await HearingsAllAsync(System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
         }
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>Get a cursor based list of suitability answers</summary>
-        /// <param name="cursor">Cursor specifying from which entries to read next page, is defaulted if not specified</param>
-        /// <param name="limit">The max number hearings records to return.</param>
-        /// <returns>The list of latest suitability answers for participants</returns>
+        /// <summary>Get all hearings by default case type</summary>
+        /// <returns>Success</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task<SuitabilityAnswersResponse> GetSuitabilityAnswersAsync(string cursor, int? limit, System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task<System.Collections.Generic.List<BookingsHearingResponse>> HearingsAllAsync(System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/suitability-answers?");
-            if (cursor != null) 
-            {
-                urlBuilder_.Append(System.Uri.EscapeDataString("cursor") + "=").Append(System.Uri.EscapeDataString(ConvertToString(cursor, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
-            }
-            if (limit != null) 
-            {
-                urlBuilder_.Append(System.Uri.EscapeDataString("limit") + "=").Append(System.Uri.EscapeDataString(ConvertToString(limit, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
-            }
-            urlBuilder_.Length--;
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/hearings/all/hearings");
     
             var client_ = _httpClient;
             try
@@ -4186,7 +3303,7 @@ namespace AdminWebsite.BookingsAPI.Client
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<SuitabilityAnswersResponse>(response_, headers_).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.List<BookingsHearingResponse>>(response_, headers_).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -4201,7 +3318,727 @@ namespace AdminWebsite.BookingsAPI.Client
                             {
                                 throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            throw new BookingsApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                            throw new BookingsApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new BookingsApiException("Unauthorized", status_, responseText_, headers_, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new BookingsApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (response_ != null)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+            }
+        }
+    
+        /// <summary>Get test api user by username</summary>
+        /// <param name="username">Username of the user (case insensitive)</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public System.Threading.Tasks.Task<UserDetailsResponse> UsernameAsync(string username)
+        {
+            return UsernameAsync(username, System.Threading.CancellationToken.None);
+        }
+    
+        /// <summary>Get test api user by username</summary>
+        /// <param name="username">Username of the user (case insensitive)</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public UserDetailsResponse Username(string username)
+        {
+            return System.Threading.Tasks.Task.Run(async () => await UsernameAsync(username, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
+        }
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Get test api user by username</summary>
+        /// <param name="username">Username of the user (case insensitive)</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public async System.Threading.Tasks.Task<UserDetailsResponse> UsernameAsync(string username, System.Threading.CancellationToken cancellationToken)
+        {
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/users/username/{username}");
+            urlBuilder_.Replace("{username}", System.Uri.EscapeDataString(ConvertToString(username, System.Globalization.CultureInfo.InvariantCulture)));
+    
+            var client_ = _httpClient;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+    
+                    PrepareRequest(client_, request_, urlBuilder_);
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+                    PrepareRequest(client_, request_, url_);
+    
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+    
+                        ProcessResponse(client_, response_);
+    
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<UserDetailsResponse>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new BookingsApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new BookingsApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new BookingsApiException("Unauthorized", status_, responseText_, headers_, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new BookingsApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (response_ != null)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+            }
+        }
+    
+        /// <summary>Get user by user principal name</summary>
+        /// <param name="username">Username of the user (case insensitive)</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public System.Threading.Tasks.Task<UserProfile> UserPrincipalNameAsync(string username)
+        {
+            return UserPrincipalNameAsync(username, System.Threading.CancellationToken.None);
+        }
+    
+        /// <summary>Get user by user principal name</summary>
+        /// <param name="username">Username of the user (case insensitive)</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public UserProfile UserPrincipalName(string username)
+        {
+            return System.Threading.Tasks.Task.Run(async () => await UserPrincipalNameAsync(username, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
+        }
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Get user by user principal name</summary>
+        /// <param name="username">Username of the user (case insensitive)</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public async System.Threading.Tasks.Task<UserProfile> UserPrincipalNameAsync(string username, System.Threading.CancellationToken cancellationToken)
+        {
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/users/userPrincipalName/{username}");
+            urlBuilder_.Replace("{username}", System.Uri.EscapeDataString(ConvertToString(username, System.Globalization.CultureInfo.InvariantCulture)));
+    
+            var client_ = _httpClient;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+    
+                    PrepareRequest(client_, request_, urlBuilder_);
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+                    PrepareRequest(client_, request_, url_);
+    
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+    
+                        ProcessResponse(client_, response_);
+    
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<UserProfile>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new BookingsApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new BookingsApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new BookingsApiException("Unauthorized", status_, responseText_, headers_, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new BookingsApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (response_ != null)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+            }
+        }
+    
+        /// <summary>Check if user exists in AAD by username</summary>
+        /// <param name="username">Username of the user (case insensitive)</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public System.Threading.Tasks.Task<bool> AadAsync(string username)
+        {
+            return AadAsync(username, System.Threading.CancellationToken.None);
+        }
+    
+        /// <summary>Check if user exists in AAD by username</summary>
+        /// <param name="username">Username of the user (case insensitive)</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public bool Aad(string username)
+        {
+            return System.Threading.Tasks.Task.Run(async () => await AadAsync(username, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
+        }
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Check if user exists in AAD by username</summary>
+        /// <param name="username">Username of the user (case insensitive)</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public async System.Threading.Tasks.Task<bool> AadAsync(string username, System.Threading.CancellationToken cancellationToken)
+        {
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/users/aad/{username}");
+            urlBuilder_.Replace("{username}", System.Uri.EscapeDataString(ConvertToString(username, System.Globalization.CultureInfo.InvariantCulture)));
+    
+            var client_ = _httpClient;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+    
+                    PrepareRequest(client_, request_, urlBuilder_);
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+                    PrepareRequest(client_, request_, url_);
+    
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+    
+                        ProcessResponse(client_, response_);
+    
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<bool>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new BookingsApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new BookingsApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new BookingsApiException("Unauthorized", status_, responseText_, headers_, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new BookingsApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (response_ != null)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+            }
+        }
+    
+        /// <summary>Delete AAD user</summary>
+        /// <param name="contactEmail">Email of the user to delete</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public System.Threading.Tasks.Task Aad2Async(string contactEmail)
+        {
+            return Aad2Async(contactEmail, System.Threading.CancellationToken.None);
+        }
+    
+        /// <summary>Delete AAD user</summary>
+        /// <param name="contactEmail">Email of the user to delete</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public void Aad2(string contactEmail)
+        {
+            System.Threading.Tasks.Task.Run(async () => await Aad2Async(contactEmail, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
+        }
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Delete AAD user</summary>
+        /// <param name="contactEmail">Email of the user to delete</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public async System.Threading.Tasks.Task Aad2Async(string contactEmail, System.Threading.CancellationToken cancellationToken)
+        {
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/users/aad/{contactEmail}");
+            urlBuilder_.Replace("{contactEmail}", System.Uri.EscapeDataString(ConvertToString(contactEmail, System.Globalization.CultureInfo.InvariantCulture)));
+    
+            var client_ = _httpClient;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("DELETE");
+    
+                    PrepareRequest(client_, request_, urlBuilder_);
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+                    PrepareRequest(client_, request_, url_);
+    
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+    
+                        ProcessResponse(client_, response_);
+    
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 204)
+                        {
+                            return;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new BookingsApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new BookingsApiException("Unauthorized", status_, responseText_, headers_, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new BookingsApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (response_ != null)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+            }
+        }
+    
+        /// <summary>Refresh Judges Cache</summary>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public System.Threading.Tasks.Task CacheAsync()
+        {
+            return CacheAsync(System.Threading.CancellationToken.None);
+        }
+    
+        /// <summary>Refresh Judges Cache</summary>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public void Cache()
+        {
+            System.Threading.Tasks.Task.Run(async () => await CacheAsync(System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
+        }
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Refresh Judges Cache</summary>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public async System.Threading.Tasks.Task CacheAsync(System.Threading.CancellationToken cancellationToken)
+        {
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/users/judges/cache");
+    
+            var client_ = _httpClient;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+    
+                    PrepareRequest(client_, request_, urlBuilder_);
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+                    PrepareRequest(client_, request_, url_);
+    
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+    
+                        ProcessResponse(client_, response_);
+    
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            return;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new BookingsApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new BookingsApiException("Unauthorized", status_, responseText_, headers_, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new BookingsApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (response_ != null)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+            }
+        }
+    
+        /// <summary>Reset user password</summary>
+        /// <param name="body">Details of the required user</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public System.Threading.Tasks.Task<UpdateUserResponse> PasswordAsync(ResetUserPasswordRequest body)
+        {
+            return PasswordAsync(body, System.Threading.CancellationToken.None);
+        }
+    
+        /// <summary>Reset user password</summary>
+        /// <param name="body">Details of the required user</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public UpdateUserResponse Password(ResetUserPasswordRequest body)
+        {
+            return System.Threading.Tasks.Task.Run(async () => await PasswordAsync(body, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
+        }
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Reset user password</summary>
+        /// <param name="body">Details of the required user</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public async System.Threading.Tasks.Task<UpdateUserResponse> PasswordAsync(ResetUserPasswordRequest body, System.Threading.CancellationToken cancellationToken)
+        {
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/users/aad/password");
+    
+            var client_ = _httpClient;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var content_ = new System.Net.Http.StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(body, _settings.Value));
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("PATCH");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+    
+                    PrepareRequest(client_, request_, urlBuilder_);
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+                    PrepareRequest(client_, request_, url_);
+    
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+    
+                        ProcessResponse(client_, response_);
+    
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<UpdateUserResponse>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new BookingsApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new BookingsApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new BookingsApiException("Unauthorized", status_, responseText_, headers_, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new BookingsApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (response_ != null)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+            }
+        }
+    
+        /// <summary>Delete hearings by partial case name or number</summary>
+        /// <param name="body">Partial case name or number text for the hearing</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public System.Threading.Tasks.Task<DeletedResponse> RemoveTestDataAsync(DeleteTestHearingDataRequest body)
+        {
+            return RemoveTestDataAsync(body, System.Threading.CancellationToken.None);
+        }
+    
+        /// <summary>Delete hearings by partial case name or number</summary>
+        /// <param name="body">Partial case name or number text for the hearing</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public DeletedResponse RemoveTestData(DeleteTestHearingDataRequest body)
+        {
+            return System.Threading.Tasks.Task.Run(async () => await RemoveTestDataAsync(body, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
+        }
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Delete hearings by partial case name or number</summary>
+        /// <param name="body">Partial case name or number text for the hearing</param>
+        /// <returns>Success</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public async System.Threading.Tasks.Task<DeletedResponse> RemoveTestDataAsync(DeleteTestHearingDataRequest body, System.Threading.CancellationToken cancellationToken)
+        {
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/utilities/removeTestData");
+    
+            var client_ = _httpClient;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var content_ = new System.Net.Http.StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(body, _settings.Value));
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+    
+                    PrepareRequest(client_, request_, urlBuilder_);
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+                    PrepareRequest(client_, request_, url_);
+    
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+    
+                        ProcessResponse(client_, response_);
+    
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<DeletedResponse>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new BookingsApiException<ProblemDetails>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 401)
+                        {
+                            string responseText_ = ( response_.Content == null ) ? string.Empty : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new BookingsApiException("Unauthorized", status_, responseText_, headers_, null);
                         }
                         else
                         {
@@ -4323,55 +4160,181 @@ namespace AdminWebsite.BookingsAPI.Client
         }
     }
 
-    /// <summary>A case type and the hearing types possible
-    ///             </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
-    public partial class CaseTypeResponse 
+    public enum Application
     {
-        /// <summary>The case type display name
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Name { get; set; }
+        [System.Runtime.Serialization.EnumMember(Value = @"None")]
+        None = 0,
     
-        /// <summary>Unique identifier
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public int Id { get; set; }
+        [System.Runtime.Serialization.EnumMember(Value = @"AdminWeb")]
+        AdminWeb = 1,
     
-        /// <summary>The hearing types
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("hearing_types", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Collections.Generic.List<HearingTypeResponse> Hearing_types { get; set; }
+        [System.Runtime.Serialization.EnumMember(Value = @"BookingsApi")]
+        BookingsApi = 2,
     
+        [System.Runtime.Serialization.EnumMember(Value = @"ServiceWeb")]
+        ServiceWeb = 3,
     
-    }
+        [System.Runtime.Serialization.EnumMember(Value = @"TestApi")]
+        TestApi = 4,
     
-    /// <summary>A hearing type
-    ///             </summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
-    public partial class HearingTypeResponse 
-    {
-        /// <summary>The hearing type display name
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Name { get; set; }
+        [System.Runtime.Serialization.EnumMember(Value = @"UserApi")]
+        UserApi = 5,
     
-        /// <summary>Unique identifier for the hearing type
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public int Id { get; set; }
+        [System.Runtime.Serialization.EnumMember(Value = @"VideoApi")]
+        VideoApi = 6,
     
+        [System.Runtime.Serialization.EnumMember(Value = @"VideoWeb")]
+        VideoWeb = 7,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"QueueSubscriber")]
+        QueueSubscriber = 8,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"TestWeb")]
+        TestWeb = 9,
     
     }
     
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
-    public partial class CaseRoleResponse 
+    public enum TestType
     {
-        [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Name { get; set; }
+        [System.Runtime.Serialization.EnumMember(Value = @"Automated")]
+        Automated = 0,
     
-        [Newtonsoft.Json.JsonProperty("user_role", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string User_role { get; set; }
+        [System.Runtime.Serialization.EnumMember(Value = @"Manual")]
+        Manual = 1,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Performance")]
+        Performance = 2,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"ITHC")]
+        ITHC = 3,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Demo")]
+        Demo = 4,
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
+    public enum UserType
+    {
+        [System.Runtime.Serialization.EnumMember(Value = @"None")]
+        None = 0,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"CaseAdmin")]
+        CaseAdmin = 1,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"VideoHearingsOfficer")]
+        VideoHearingsOfficer = 2,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"HearingFacilitationSupport")]
+        HearingFacilitationSupport = 3,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Judge")]
+        Judge = 4,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Individual")]
+        Individual = 5,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Representative")]
+        Representative = 6,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Observer")]
+        Observer = 7,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"PanelMember")]
+        PanelMember = 8,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Winger")]
+        Winger = 9,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Tester")]
+        Tester = 10,
+    
+    }
+    
+    /// <summary>Allocate a single user request model</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class AllocateUserRequest 
+    {
+        [Newtonsoft.Json.JsonProperty("application", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public Application Application { get; set; }
+    
+        /// <summary>Allocate a different expiry time for the user other than the default 10 minutes</summary>
+        [Newtonsoft.Json.JsonProperty("expiry_in_minutes", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int Expiry_in_minutes { get; set; }
+    
+        /// <summary>Will the user be required for a prod test?</summary>
+        [Newtonsoft.Json.JsonProperty("is_prod_user", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool Is_prod_user { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("test_type", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public TestType Test_type { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("user_type", Required = Newtonsoft.Json.Required.Always)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public UserType User_type { get; set; }
+    
+        /// <summary>The user that allocated the user</summary>
+        [Newtonsoft.Json.JsonProperty("allocated_by", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Allocated_by { get; set; }
+    
+    
+    }
+    
+    /// <summary>GetUserDetailsResponse</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class UserDetailsResponse 
+    {
+        /// <summary>Id</summary>
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid Id { get; set; }
+    
+        /// <summary>Username</summary>
+        [Newtonsoft.Json.JsonProperty("username", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Username { get; set; }
+    
+        /// <summary>ContactEmail</summary>
+        [Newtonsoft.Json.JsonProperty("contact_email", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Contact_email { get; set; }
+    
+        /// <summary>First Name</summary>
+        [Newtonsoft.Json.JsonProperty("first_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string First_name { get; set; }
+    
+        /// <summary>Last Name</summary>
+        [Newtonsoft.Json.JsonProperty("last_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Last_name { get; set; }
+    
+        /// <summary>Display Name</summary>
+        [Newtonsoft.Json.JsonProperty("display_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Display_name { get; set; }
+    
+        /// <summary>Number</summary>
+        [Newtonsoft.Json.JsonProperty("number", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int Number { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("user_type", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public UserType User_type { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("application", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public Application Application { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("test_type", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public TestType Test_type { get; set; }
+    
+        /// <summary>Is a prod user</summary>
+        [Newtonsoft.Json.JsonProperty("is_prod_user", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool Is_prod_user { get; set; }
+    
+        /// <summary>CreatedDate</summary>
+        [Newtonsoft.Json.JsonProperty("created_date", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTime Created_date { get; set; }
     
     
     }
@@ -4394,9 +4357,6 @@ namespace AdminWebsite.BookingsAPI.Client
         [Newtonsoft.Json.JsonProperty("instance", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Instance { get; set; }
     
-        [Newtonsoft.Json.JsonProperty("extensions", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Collections.Generic.Dictionary<string, object> Extensions { get; set; }
-    
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
     
         [Newtonsoft.Json.JsonExtensionData]
@@ -4409,220 +4369,318 @@ namespace AdminWebsite.BookingsAPI.Client
     
     }
     
+    /// <summary>Allocate users request model</summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
-    public partial class HearingRoleResponse 
+    public partial class AllocateUsersRequest 
     {
-        [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Name { get; set; }
+        [Newtonsoft.Json.JsonProperty("application", Required = Newtonsoft.Json.Required.Always)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public Application Application { get; set; }
     
-        [Newtonsoft.Json.JsonProperty("user_role", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string User_role { get; set; }
+        /// <summary>Allocate a different expiry time for the user other than the default 10 minutes</summary>
+        [Newtonsoft.Json.JsonProperty("expiry_in_minutes", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int Expiry_in_minutes { get; set; }
+    
+        /// <summary>Will the user be required for a prod test?</summary>
+        [Newtonsoft.Json.JsonProperty("is_prod_user", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool Is_prod_user { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("test_type", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public TestType Test_type { get; set; }
+    
+        /// <summary>A list of the User types (e.g. Judge, Individual etc...)</summary>
+        [Newtonsoft.Json.JsonProperty("user_types", Required = Newtonsoft.Json.Required.Always, ItemConverterType = typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public System.Collections.Generic.List<UserType> User_types { get; set; } = new System.Collections.Generic.List<UserType>();
+    
+        /// <summary>The user that allocated the user</summary>
+        [Newtonsoft.Json.JsonProperty("allocated_by", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Allocated_by { get; set; }
     
     
     }
     
+    /// <summary>Unallocate a list of users</summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
-    public partial class AddEndpointRequest : EndpointRequest
+    public partial class UnallocateUsersRequest 
     {
-    
-    }
-    
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
-    public partial class EndpointRequest 
-    {
-        [Newtonsoft.Json.JsonProperty("display_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Display_name { get; set; }
-    
-        [Newtonsoft.Json.JsonProperty("defence_advocate_username", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Defence_advocate_username { get; set; }
+        /// <summary>Usernames of the users to unallocate</summary>
+        [Newtonsoft.Json.JsonProperty("usernames", Required = Newtonsoft.Json.Required.Always)]
+        public System.Collections.Generic.List<string> Usernames { get; set; } = new System.Collections.Generic.List<string>();
     
     
     }
     
+    /// <summary>Allocate a user request model</summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
-    public partial class UpdateEndpointRequest : EndpointRequest
+    public partial class AllocationDetailsResponse 
     {
-    
-    }
-    
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
-    public partial class BookingsApiHealthResponse 
-    {
-        [Newtonsoft.Json.JsonProperty("database_health", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public HealthCheck Database_health { get; set; }
-    
-        [Newtonsoft.Json.JsonProperty("app_version", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public ApplicationVersion App_version { get; set; }
-    
-    
-    }
-    
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
-    public partial class HealthCheck 
-    {
-        [Newtonsoft.Json.JsonProperty("successful", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public bool Successful { get; set; }
-    
-        [Newtonsoft.Json.JsonProperty("error_message", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Error_message { get; set; }
-    
-        [Newtonsoft.Json.JsonProperty("data", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public IDictionary Data { get; set; }
-    
-    
-    }
-    
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
-    public abstract partial class IDictionary 
-    {
-        [Newtonsoft.Json.JsonProperty("Item", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public object Item { get; set; }
-    
-        [Newtonsoft.Json.JsonProperty("Keys", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Collections.Generic.List<object> Keys { get; set; }
-    
-        [Newtonsoft.Json.JsonProperty("Values", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Collections.Generic.List<object> Values { get; set; }
-    
-        [Newtonsoft.Json.JsonProperty("IsReadOnly", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public bool IsReadOnly { get; set; }
-    
-        [Newtonsoft.Json.JsonProperty("IsFixedSize", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public bool IsFixedSize { get; set; }
-    
-    
-    }
-    
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
-    public partial class ApplicationVersion 
-    {
-        [Newtonsoft.Json.JsonProperty("file_version", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string File_version { get; set; }
-    
-        [Newtonsoft.Json.JsonProperty("information_version", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Information_version { get; set; }
-    
-    
-    }
-    
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
-    public partial class ParticipantResponse 
-    {
-        /// <summary>Participant Id
-        ///             </summary>
+        /// <summary>Id</summary>
         [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.Guid Id { get; set; }
     
-        /// <summary>Participant Display Name
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("display_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Display_name { get; set; }
+        /// <summary>User Id</summary>
+        [Newtonsoft.Json.JsonProperty("user_id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid User_id { get; set; }
     
-        /// <summary>The name of the participant's case role
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("case_role_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Case_role_name { get; set; }
-    
-        /// <summary>The name of the participant's hearing role
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("hearing_role_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Hearing_role_name { get; set; }
-    
-        /// <summary>The name of the participant's user role
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("user_role_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string User_role_name { get; set; }
-    
-        /// <summary>Participant Title.
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("title", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Title { get; set; }
-    
-        /// <summary>Participant first name.
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("first_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string First_name { get; set; }
-    
-        /// <summary>Participant middle name.
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("middle_names", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Middle_names { get; set; }
-    
-        /// <summary>Participant last name.
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("last_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Last_name { get; set; }
-    
-        /// <summary>Participant contact email
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("contact_email", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Contact_email { get; set; }
-    
-        /// <summary>Participant telephone number
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("telephone_number", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Telephone_number { get; set; }
-    
-        /// <summary>Participant username
-        ///             </summary>
+        /// <summary>Username</summary>
         [Newtonsoft.Json.JsonProperty("username", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Username { get; set; }
     
-        /// <summary>Gets or sets the organisation name.
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("organisation", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Organisation { get; set; }
+        /// <summary>ExpiresAt</summary>
+        [Newtonsoft.Json.JsonProperty("expires_at", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTime? Expires_at { get; set; }
     
-        /// <summary>Gets or sets the person name that Representative represents.
-        ///             </summary>
+        /// <summary>Allocated</summary>
+        [Newtonsoft.Json.JsonProperty("allocated", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool Allocated { get; set; }
+    
+        /// <summary>Allocated By</summary>
+        [Newtonsoft.Json.JsonProperty("allocated_by", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Allocated_by { get; set; }
+    
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
+    public enum ConferenceState
+    {
+        [System.Runtime.Serialization.EnumMember(Value = @"NotStarted")]
+        NotStarted = 0,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"InSession")]
+        InSession = 1,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Paused")]
+        Paused = 2,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Suspended")]
+        Suspended = 3,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Closed")]
+        Closed = 4,
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
+    public enum UserRole
+    {
+        [System.Runtime.Serialization.EnumMember(Value = @"None")]
+        None = 0,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"CaseAdmin")]
+        CaseAdmin = 1,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"VideoHearingsOfficer")]
+        VideoHearingsOfficer = 2,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"HearingFacilitationSupport")]
+        HearingFacilitationSupport = 3,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Judge")]
+        Judge = 4,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Individual")]
+        Individual = 5,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Representative")]
+        Representative = 6,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"JudicialOfficeHolder")]
+        JudicialOfficeHolder = 7,
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
+    public enum ParticipantState
+    {
+        [System.Runtime.Serialization.EnumMember(Value = @"None")]
+        None = 0,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"NotSignedIn")]
+        NotSignedIn = 1,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Joining")]
+        Joining = 2,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Available")]
+        Available = 3,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"InHearing")]
+        InHearing = 4,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"InConsultation")]
+        InConsultation = 5,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Disconnected")]
+        Disconnected = 6,
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class ParticipantDetailsResponse 
+    {
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid Id { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("ref_id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid Ref_id { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Name { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("first_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string First_name { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("last_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Last_name { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("contact_email", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Contact_email { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("contact_telephone", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Contact_telephone { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("display_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Display_name { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("username", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Username { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("user_role", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public UserRole User_role { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("case_type_group", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Case_type_group { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("hearing_role", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Hearing_role { get; set; }
+    
         [Newtonsoft.Json.JsonProperty("representee", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Representee { get; set; }
     
-        /// <summary>The participant linked to this participant response
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("linked_participants", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Collections.Generic.List<LinkedParticipantResponse> Linked_participants { get; set; }
-    
-    
-    }
-    
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
-    public partial class LinkedParticipantResponse 
-    {
-        /// <summary>The linked participant in the response
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("linked_id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Guid Linked_id { get; set; }
-    
-        /// <summary>The type of the linked participant
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("type", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("current_status", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public LinkedParticipantType Type { get; set; }
+        public ParticipantState Current_status { get; set; }
     
     
     }
     
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
-    public enum LinkedParticipantType
+    public enum EndpointState
     {
-        [System.Runtime.Serialization.EnumMember(Value = @"Interpreter")]
-        Interpreter = 0,
+        [System.Runtime.Serialization.EnumMember(Value = @"NotYetJoined")]
+        NotYetJoined = 0,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Connected")]
+        Connected = 1,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Disconnected")]
+        Disconnected = 2,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"InConsultation")]
+        InConsultation = 3,
     
     }
     
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
-    public partial class AddParticipantsToHearingRequest 
+    public partial class EndpointResponse 
     {
-        /// <summary>List of participants
-        ///             </summary>
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid Id { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("display_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Display_name { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("sip_address", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Sip_address { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("pin", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Pin { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("status", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public EndpointState Status { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("defence_advocate", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Defence_advocate { get; set; }
+    
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class MeetingRoomResponse 
+    {
+        [Newtonsoft.Json.JsonProperty("admin_uri", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Admin_uri { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("judge_uri", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Judge_uri { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("participant_uri", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Participant_uri { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("pexip_node", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Pexip_node { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("pexip_self_test_node", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Pexip_self_test_node { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("telephone_conference_id", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Telephone_conference_id { get; set; }
+    
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class ConferenceDetailsResponse 
+    {
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid Id { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("hearing_id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid Hearing_id { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("scheduled_date_time", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTime Scheduled_date_time { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("started_date_time", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTime? Started_date_time { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("closed_date_time", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTime? Closed_date_time { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("case_type", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Case_type { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("case_number", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Case_number { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("case_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Case_name { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("scheduled_duration", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int Scheduled_duration { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("current_status", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public ConferenceState Current_status { get; set; }
+    
         [Newtonsoft.Json.JsonProperty("participants", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Collections.Generic.List<ParticipantRequest> Participants { get; set; }
+        public System.Collections.Generic.List<ParticipantDetailsResponse> Participants { get; set; }
     
-        /// <summary>List of linked participants
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("linked_participants", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Collections.Generic.List<LinkedParticipantRequest> Linked_participants { get; set; }
+        [Newtonsoft.Json.JsonProperty("endpoints", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.List<EndpointResponse> Endpoints { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("meeting_room", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public MeetingRoomResponse Meeting_room { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("hearing_venue_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Hearing_venue_name { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("audio_recording_required", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool Audio_recording_required { get; set; }
     
     
     }
@@ -4630,267 +4688,565 @@ namespace AdminWebsite.BookingsAPI.Client
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
     public partial class ParticipantRequest 
     {
-        /// <summary>Participant Title.
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("title", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Title { get; set; }
+        [Newtonsoft.Json.JsonProperty("participant_ref_id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid Participant_ref_id { get; set; }
     
-        /// <summary>Participant first name.
-        ///             </summary>
+        [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.Always)]
+        public string Name { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("display_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Display_name { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("username", Required = Newtonsoft.Json.Required.Always)]
+        public string Username { get; set; }
+    
         [Newtonsoft.Json.JsonProperty("first_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string First_name { get; set; }
     
-        /// <summary>Participant middle name.
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("middle_names", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Middle_names { get; set; }
-    
-        /// <summary>Participant last name.
-        ///             </summary>
         [Newtonsoft.Json.JsonProperty("last_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Last_name { get; set; }
     
-        /// <summary>Participant Contact Email
-        ///             </summary>
         [Newtonsoft.Json.JsonProperty("contact_email", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Contact_email { get; set; }
     
-        /// <summary>Participant Telephone number
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("telephone_number", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Telephone_number { get; set; }
+        [Newtonsoft.Json.JsonProperty("contact_telephone", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Contact_telephone { get; set; }
     
-        /// <summary>Participant Username
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("username", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Username { get; set; }
-    
-        /// <summary>Participant Display Name
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("display_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Display_name { get; set; }
-    
-        /// <summary>The name of the participant's case role
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("case_role_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Case_role_name { get; set; }
-    
-        /// <summary>The name of the participant's hearing role
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("hearing_role_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Hearing_role_name { get; set; }
-    
-        /// <summary>The representee of a representative
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("representee", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Representee { get; set; }
-    
-        /// <summary>The organisation name
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("organisation_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Organisation_name { get; set; }
-    
-    
-    }
-    
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
-    public partial class LinkedParticipantRequest 
-    {
-        [Newtonsoft.Json.JsonProperty("participant_contact_email", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Participant_contact_email { get; set; }
-    
-        [Newtonsoft.Json.JsonProperty("linked_participant_contact_email", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Linked_participant_contact_email { get; set; }
-    
-        [Newtonsoft.Json.JsonProperty("type", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("user_role", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public LinkedParticipantType Type { get; set; }
+        public UserRole User_role { get; set; }
     
+        [Newtonsoft.Json.JsonProperty("hearing_role", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Hearing_role { get; set; }
     
-    }
+        [Newtonsoft.Json.JsonProperty("case_type_group", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Case_type_group { get; set; }
     
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
-    public partial class UpdateParticipantRequest 
-    {
-        /// <summary>Participant Title.
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("title", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Title { get; set; }
-    
-        /// <summary>Participant Telephone number
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("telephone_number", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Telephone_number { get; set; }
-    
-        /// <summary>Participant Display Name
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("display_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Display_name { get; set; }
-    
-        /// <summary>Participant Organisation
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("organisation_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Organisation_name { get; set; }
-    
-        /// <summary>Representee
-        ///             </summary>
         [Newtonsoft.Json.JsonProperty("representee", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Representee { get; set; }
     
-        /// <summary>List of linked participants
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("linked_participants", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Collections.Generic.List<LinkedParticipantRequest> Linked_participants { get; set; }
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class AddEndpointRequest 
+    {
+        [Newtonsoft.Json.JsonProperty("display_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Display_name { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("sip_address", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Sip_address { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("pin", Required = Newtonsoft.Json.Required.Always)]
+        public string Pin { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("defence_advocate", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Defence_advocate { get; set; }
     
     
     }
     
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
-    public partial class SuitabilityAnswersRequest 
+    public partial class BookNewConferenceRequest 
     {
-        /// <summary>Key used to identify the question</summary>
-        [Newtonsoft.Json.JsonProperty("key", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Key { get; set; }
+        [Newtonsoft.Json.JsonProperty("hearing_ref_id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid Hearing_ref_id { get; set; }
     
-        /// <summary>Answer the question</summary>
-        [Newtonsoft.Json.JsonProperty("answer", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Answer { get; set; }
+        [Newtonsoft.Json.JsonProperty("case_type", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Case_type { get; set; }
     
-        /// <summary>Extended answer to the question</summary>
-        [Newtonsoft.Json.JsonProperty("extended_answer", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Extended_answer { get; set; }
-    
-    
-    }
-    
-    /// <summary>Detailed information of a hearing</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
-    public partial class HearingDetailsResponse 
-    {
-        /// <summary>Hearing Id
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Guid Id { get; set; }
-    
-        /// <summary>The date and time for a hearing
-        ///             </summary>
         [Newtonsoft.Json.JsonProperty("scheduled_date_time", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.DateTime Scheduled_date_time { get; set; }
     
-        /// <summary>The duration of a hearing (number of minutes)
-        ///             </summary>
+        [Newtonsoft.Json.JsonProperty("case_number", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Case_number { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("case_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Case_name { get; set; }
+    
         [Newtonsoft.Json.JsonProperty("scheduled_duration", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public int Scheduled_duration { get; set; }
     
-        /// <summary>The name of the hearing venue
-        ///             </summary>
+        [Newtonsoft.Json.JsonProperty("participants", Required = Newtonsoft.Json.Required.Always)]
+        public System.Collections.Generic.List<ParticipantRequest> Participants { get; set; } = new System.Collections.Generic.List<ParticipantRequest>();
+    
         [Newtonsoft.Json.JsonProperty("hearing_venue_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Hearing_venue_name { get; set; }
     
-        /// <summary>The name of the case type
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("case_type_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Case_type_name { get; set; }
-    
-        /// <summary>The name of the hearing type
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("hearing_type_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Hearing_type_name { get; set; }
-    
-        /// <summary>List of cases associated to the hearing
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("cases", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Collections.Generic.List<CaseResponse> Cases { get; set; }
-    
-        /// <summary>List of participants in hearing
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("participants", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Collections.Generic.List<ParticipantResponse> Participants { get; set; }
-    
-        /// <summary>The hearing room name at the hearing venue
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("hearing_room_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Hearing_room_name { get; set; }
-    
-        /// <summary>Any other information about the hearing
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("other_information", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Other_information { get; set; }
-    
-        [Newtonsoft.Json.JsonProperty("created_date", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.DateTime Created_date { get; set; }
-    
-        /// <summary>The VH admin username that created the hearing
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("created_by", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Created_by { get; set; }
-    
-        /// <summary>The last date and time any details for the hearing was updated
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("updated_by", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Updated_by { get; set; }
-    
-        /// <summary>User id of the who last updated the hearing
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("updated_date", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.DateTime Updated_date { get; set; }
-    
-        /// <summary>The VH admin username that confirmed the hearing
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("confirmed_by", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Confirmed_by { get; set; }
-    
-        /// <summary>The date and time when the hearing was confirmed
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("confirmed_date", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.DateTime? Confirmed_date { get; set; }
-    
-        /// <summary>Gets or sets the booking status of the hearing</summary>
-        [Newtonsoft.Json.JsonProperty("status", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public BookingStatus Status { get; set; }
-    
-        /// <summary>QuestionnaireNotRequired</summary>
-        [Newtonsoft.Json.JsonProperty("questionnaire_not_required", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public bool Questionnaire_not_required { get; set; }
-    
-        /// <summary>Gets or sets the audio recording required flag, value true  is indicated that recording is required, otherwise false</summary>
         [Newtonsoft.Json.JsonProperty("audio_recording_required", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public bool Audio_recording_required { get; set; }
     
-        /// <summary>Gets or sets the hearing cancel reason</summary>
-        [Newtonsoft.Json.JsonProperty("cancel_reason", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Cancel_reason { get; set; }
-    
-        /// <summary>Gets the endpoints for a hearing</summary>
         [Newtonsoft.Json.JsonProperty("endpoints", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Collections.Generic.List<EndpointResponse> Endpoints { get; set; }
-    
-        /// <summary>The group id for a hearing</summary>
-        [Newtonsoft.Json.JsonProperty("group_id", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Guid? Group_id { get; set; }
+        public System.Collections.Generic.List<AddEndpointRequest> Endpoints { get; set; }
     
     
     }
     
-    /// <summary>Case Information</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class ParticipantForJudgeResponse 
+    {
+        [Newtonsoft.Json.JsonProperty("display_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Display_name { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("role", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public UserRole Role { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("representee", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Representee { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("case_type_group", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Case_type_group { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("hearing_role", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Hearing_role { get; set; }
+    
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class ConferenceForJudgeResponse 
+    {
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid Id { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("scheduled_date_time", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTime Scheduled_date_time { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("scheduled_duration", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int Scheduled_duration { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("case_type", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Case_type { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("case_number", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Case_number { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("case_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Case_name { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("status", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public ConferenceState Status { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("participants", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.List<ParticipantForJudgeResponse> Participants { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("number_of_endpoints", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int Number_of_endpoints { get; set; }
+    
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class ParticipantSummaryResponse 
+    {
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid Id { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("username", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Username { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("display_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Display_name { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("first_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string First_name { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("last_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Last_name { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("contact_email", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Contact_email { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("contact_telephone", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Contact_telephone { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("status", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public ParticipantState Status { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("user_role", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public UserRole User_role { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("hearing_role", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Hearing_role { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("representee", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Representee { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("case_group", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Case_group { get; set; }
+    
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class ConferenceForAdminResponse 
+    {
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid Id { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("scheduled_date_time", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTime Scheduled_date_time { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("started_date_time", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTime? Started_date_time { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("closed_date_time", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTime? Closed_date_time { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("case_type", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Case_type { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("case_number", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Case_number { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("case_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Case_name { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("scheduled_duration", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int Scheduled_duration { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("status", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public ConferenceState Status { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("participants", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.List<ParticipantSummaryResponse> Participants { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("hearing_ref_id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid Hearing_ref_id { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("hearing_venue_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Hearing_venue_name { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("telephone_conference_id", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Telephone_conference_id { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("telephone_conference_number", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Telephone_conference_number { get; set; }
+    
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class AudioRecordingResponse 
+    {
+        [Newtonsoft.Json.JsonProperty("audio_file_links", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.List<string> Audio_file_links { get; set; }
+    
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
+    public enum TaskType
+    {
+        [System.Runtime.Serialization.EnumMember(Value = @"Hearing")]
+        Hearing = 0,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Judge")]
+        Judge = 1,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Participant")]
+        Participant = 2,
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
+    public enum TaskStatus
+    {
+        [System.Runtime.Serialization.EnumMember(Value = @"ToDo")]
+        ToDo = 0,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Done")]
+        Done = 1,
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class TaskResponse 
+    {
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public long Id { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("origin_id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid Origin_id { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("body", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Body { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("type", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public TaskType Type { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("status", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public TaskStatus Status { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("created", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTime Created { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("updated", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTime? Updated { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("updated_by", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Updated_by { get; set; }
+    
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
+    public enum EventType
+    {
+        [System.Runtime.Serialization.EnumMember(Value = @"None")]
+        None = 0,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Joined")]
+        Joined = 1,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Disconnected")]
+        Disconnected = 2,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Transfer")]
+        Transfer = 3,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Help")]
+        Help = 4,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Pause")]
+        Pause = 5,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Close")]
+        Close = 6,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Leave")]
+        Leave = 7,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Consultation")]
+        Consultation = 8,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"MediaPermissionDenied")]
+        MediaPermissionDenied = 9,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"ParticipantJoining")]
+        ParticipantJoining = 10,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"SelfTestFailed")]
+        SelfTestFailed = 11,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Suspend")]
+        Suspend = 12,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"VhoCall")]
+        VhoCall = 13,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"ParticipantNotSignedIn")]
+        ParticipantNotSignedIn = 14,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Start")]
+        Start = 15,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"CountdownFinished")]
+        CountdownFinished = 16,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"EndpointJoined")]
+        EndpointJoined = 17,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"EndpointDisconnected")]
+        EndpointDisconnected = 18,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"EndpointTransfer")]
+        EndpointTransfer = 19,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"ConnectingToEventHub")]
+        ConnectingToEventHub = 20,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"SelectingMedia")]
+        SelectingMedia = 21,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"ConnectingToConference")]
+        ConnectingToConference = 22,
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class ConferenceEventRequest 
+    {
+        [Newtonsoft.Json.JsonProperty("event_id", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Event_id { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("event_type", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public EventType Event_type { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("time_stamp_utc", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTime Time_stamp_utc { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("conference_id", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Conference_id { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("participant_id", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Participant_id { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("transfer_from", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Transfer_from { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("transfer_to", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Transfer_to { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("reason", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Reason { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("phone", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Phone { get; set; }
+    
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
+    public enum TestScore
+    {
+        [System.Runtime.Serialization.EnumMember(Value = @"Good")]
+        Good = 0,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Okay")]
+        Okay = 1,
+    
+        [System.Runtime.Serialization.EnumMember(Value = @"Bad")]
+        Bad = 2,
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class TestCallScoreResponse 
+    {
+        [Newtonsoft.Json.JsonProperty("score", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public TestScore Score { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("passed", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool Passed { get; set; }
+    
+    
+    }
+    
+    /// <summary>Healthcheck response</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class HealthDetailsResponse 
+    {
+        /// <summary>Whether the check was successful</summary>
+        [Newtonsoft.Json.JsonProperty("successful", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool Successful { get; set; }
+    
+        /// <summary>Any associated error message with an unsuccessful response</summary>
+        [Newtonsoft.Json.JsonProperty("error_message", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Error_message { get; set; }
+    
+        /// <summary>Any associated data</summary>
+        [Newtonsoft.Json.JsonProperty("data", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.Dictionary<string, object> Data { get; set; }
+    
+    
+    }
+    
+    /// <summary>Version of the app</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class AppVersionResponse 
+    {
+        /// <summary>File Version of the app</summary>
+        [Newtonsoft.Json.JsonProperty("file_version", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string File_version { get; set; }
+    
+        /// <summary>Information Version of the app</summary>
+        [Newtonsoft.Json.JsonProperty("information_version", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Information_version { get; set; }
+    
+    
+    }
+    
+    /// <summary>Determine the health of the test api and connected apis</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class HealthResponse 
+    {
+        [Newtonsoft.Json.JsonProperty("bookings_api_health", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public HealthDetailsResponse Bookings_api_health { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("test_api_health", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public HealthDetailsResponse Test_api_health { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("user_api_health", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public HealthDetailsResponse User_api_health { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("video_api_health", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public HealthDetailsResponse Video_api_health { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("version", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public AppVersionResponse Version { get; set; }
+    
+    
+    }
+    
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
     public partial class CaseResponse 
     {
-        /// <summary>The case number
-        ///             </summary>
         [Newtonsoft.Json.JsonProperty("number", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Number { get; set; }
     
-        /// <summary>The case name
-        ///             </summary>
         [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Name { get; set; }
     
-        /// <summary>Is lead case for hearing
-        ///             </summary>
         [Newtonsoft.Json.JsonProperty("is_lead_case", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public bool Is_lead_case { get; set; }
+    
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class ParticipantResponse 
+    {
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid Id { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("display_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Display_name { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("case_role_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Case_role_name { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("hearing_role_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Hearing_role_name { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("user_role_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string User_role_name { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("title", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Title { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("first_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string First_name { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("middle_names", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Middle_names { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("last_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Last_name { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("contact_email", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Contact_email { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("telephone_number", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Telephone_number { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("username", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Username { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("organisation", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Organisation { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("representee", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Representee { get; set; }
     
     
     }
@@ -4913,7 +5269,7 @@ namespace AdminWebsite.BookingsAPI.Client
     }
     
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
-    public partial class EndpointResponse 
+    public partial class EndpointResponse2 
     {
         [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.Guid Id { get; set; }
@@ -4934,177 +5290,78 @@ namespace AdminWebsite.BookingsAPI.Client
     }
     
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
-    public partial class BookNewHearingRequest 
+    public partial class HearingDetailsResponse 
     {
-        /// <summary>The date and time for a hearing
-        ///             </summary>
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid Id { get; set; }
+    
         [Newtonsoft.Json.JsonProperty("scheduled_date_time", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.DateTime Scheduled_date_time { get; set; }
     
-        /// <summary>The duration of a hearing (number of minutes)
-        ///             </summary>
         [Newtonsoft.Json.JsonProperty("scheduled_duration", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public int Scheduled_duration { get; set; }
     
-        /// <summary>The name of the hearing venue
-        ///             </summary>
         [Newtonsoft.Json.JsonProperty("hearing_venue_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Hearing_venue_name { get; set; }
     
-        /// <summary>The name of the case type
-        ///             </summary>
         [Newtonsoft.Json.JsonProperty("case_type_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Case_type_name { get; set; }
     
-        /// <summary>The name of the hearing type
-        ///             </summary>
         [Newtonsoft.Json.JsonProperty("hearing_type_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Hearing_type_name { get; set; }
     
-        /// <summary>List of cases associated to the hearing
-        ///             </summary>
         [Newtonsoft.Json.JsonProperty("cases", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Collections.Generic.List<CaseRequest> Cases { get; set; }
+        public System.Collections.Generic.List<CaseResponse> Cases { get; set; }
     
-        /// <summary>List of participants in hearing
-        ///             </summary>
         [Newtonsoft.Json.JsonProperty("participants", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Collections.Generic.List<ParticipantRequest> Participants { get; set; }
+        public System.Collections.Generic.List<ParticipantResponse> Participants { get; set; }
     
-        /// <summary>The hearing room name at the hearing venue
-        ///             </summary>
         [Newtonsoft.Json.JsonProperty("hearing_room_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Hearing_room_name { get; set; }
     
-        /// <summary>Any other information about the hearing
-        ///             </summary>
         [Newtonsoft.Json.JsonProperty("other_information", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Other_information { get; set; }
     
-        /// <summary>The VH admin username that created the hearing
-        ///             </summary>
+        [Newtonsoft.Json.JsonProperty("created_date", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTime Created_date { get; set; }
+    
         [Newtonsoft.Json.JsonProperty("created_by", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Created_by { get; set; }
     
-        /// <summary>QuestionnaireNotRequired</summary>
+        [Newtonsoft.Json.JsonProperty("updated_by", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Updated_by { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("updated_date", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTime Updated_date { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("confirmed_by", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Confirmed_by { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("confirmed_date", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTime? Confirmed_date { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("status", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public BookingStatus Status { get; set; }
+    
         [Newtonsoft.Json.JsonProperty("questionnaire_not_required", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public bool Questionnaire_not_required { get; set; }
     
-        /// <summary>Gets or sets the audio recording required flag, value true  is indicated that recording is required, otherwise false</summary>
         [Newtonsoft.Json.JsonProperty("audio_recording_required", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public bool Audio_recording_required { get; set; }
     
-        [Newtonsoft.Json.JsonProperty("endpoints", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Collections.Generic.List<EndpointRequest> Endpoints { get; set; }
-    
-        /// <summary>Get or sets the linked participants, interpreters to interpretedFor</summary>
-        [Newtonsoft.Json.JsonProperty("linked_participants", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Collections.Generic.List<LinkedParticipantRequest> Linked_participants { get; set; }
-    
-    
-    }
-    
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
-    public partial class CaseRequest 
-    {
-        /// <summary>The case number
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("number", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Number { get; set; }
-    
-        /// <summary>The case name
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Name { get; set; }
-    
-        /// <summary>Is lead case for hearing
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("is_lead_case", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public bool Is_lead_case { get; set; }
-    
-    
-    }
-    
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
-    public partial class CloneHearingRequest 
-    {
-        [Newtonsoft.Json.JsonProperty("dates", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Collections.Generic.List<System.DateTime> Dates { get; set; }
-    
-    
-    }
-    
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
-    public partial class UpdateHearingRequest 
-    {
-        /// <summary>Hearing Schedule Date and Time
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("scheduled_date_time", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.DateTime Scheduled_date_time { get; set; }
-    
-        /// <summary>Duration of the hearing
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("scheduled_duration", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public int Scheduled_duration { get; set; }
-    
-        /// <summary>The name of the hearing venue</summary>
-        [Newtonsoft.Json.JsonProperty("hearing_venue_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Hearing_venue_name { get; set; }
-    
-        /// <summary>The hearing room name at the hearing venue
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("hearing_room_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Hearing_room_name { get; set; }
-    
-        /// <summary>Any other information about the hearing
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("other_information", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Other_information { get; set; }
-    
-        /// <summary>List of cases associated to the hearing
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("cases", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Collections.Generic.List<CaseRequest> Cases { get; set; }
-    
-        /// <summary>User updated the hearing record
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("updated_by", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Updated_by { get; set; }
-    
-        /// <summary>QuestionnaireNotRequired</summary>
-        [Newtonsoft.Json.JsonProperty("questionnaire_not_required", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public bool? Questionnaire_not_required { get; set; }
-    
-        /// <summary>Gets or sets the audio recording required flag, value true  is indicated that recording is required, otherwise false</summary>
-        [Newtonsoft.Json.JsonProperty("audio_recording_required", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public bool? Audio_recording_required { get; set; }
-    
-    
-    }
-    
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
-    public partial class UpdateBookingStatusRequest 
-    {
-        /// <summary>The user requesting to update the status
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("updated_by", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Updated_by { get; set; }
-    
-        /// <summary>New status of the hearing
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("status", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public UpdateBookingStatus Status { get; set; }
-    
-        /// <summary>The reason for cancelling the video hearing</summary>
         [Newtonsoft.Json.JsonProperty("cancel_reason", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Cancel_reason { get; set; }
     
+        [Newtonsoft.Json.JsonProperty("endpoints", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.List<EndpointResponse2> Endpoints { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("group_id", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid? Group_id { get; set; }
+    
     
     }
     
-    /// <summary>Booking status to update
-    ///             </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
     public enum UpdateBookingStatus
     {
@@ -5120,286 +5377,111 @@ namespace AdminWebsite.BookingsAPI.Client
     }
     
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
-    public partial class BookingsResponse : PagedCursorBasedResponse
+    public partial class UpdateBookingStatusRequest 
     {
-        /// <summary>Gets or sets list of bookings hearings.</summary>
-        [Newtonsoft.Json.JsonProperty("hearings", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Collections.Generic.List<BookingsByDateResponse> Hearings { get; set; }
+        [Newtonsoft.Json.JsonProperty("updated_by", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Updated_by { get; set; }
     
-    
-    }
-    
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
-    public partial class BookingsByDateResponse 
-    {
-        /// <summary>The hearings grouped by date without time.</summary>
-        [Newtonsoft.Json.JsonProperty("scheduled_date", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.DateTime Scheduled_date { get; set; }
-    
-        /// <summary>Gets or sets list of bookings hearings.</summary>
-        [Newtonsoft.Json.JsonProperty("hearings", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Collections.Generic.List<BookingsHearingResponse> Hearings { get; set; }
-    
-    
-    }
-    
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
-    public partial class BookingsHearingResponse 
-    {
-        /// <summary>Gets or sets the hearing ID.</summary>
-        [Newtonsoft.Json.JsonProperty("hearing_id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Guid Hearing_id { get; set; }
-    
-        /// <summary>Gets or sets the hearing number/reference.</summary>
-        [Newtonsoft.Json.JsonProperty("hearing_number", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Hearing_number { get; set; }
-    
-        /// <summary>Gets or sets the hearing title/name.</summary>
-        [Newtonsoft.Json.JsonProperty("hearing_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Hearing_name { get; set; }
-    
-        /// <summary>Gets or sets the hearing scheduled date and time.</summary>
-        [Newtonsoft.Json.JsonProperty("scheduled_date_time", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.DateTime Scheduled_date_time { get; set; }
-    
-        /// <summary>Gets or sets the hearing duration.</summary>
-        [Newtonsoft.Json.JsonProperty("scheduled_duration", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public int Scheduled_duration { get; set; }
-    
-        /// <summary>Gets or sets the name of the case type.</summary>
-        [Newtonsoft.Json.JsonProperty("case_type_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Case_type_name { get; set; }
-    
-        /// <summary>Gets or sets the hearing case type.</summary>
-        [Newtonsoft.Json.JsonProperty("hearing_type_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Hearing_type_name { get; set; }
-    
-        /// <summary>Gets or sets the court room.</summary>
-        [Newtonsoft.Json.JsonProperty("court_room", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Court_room { get; set; }
-    
-        /// <summary>Gets or sets the court address.</summary>
-        [Newtonsoft.Json.JsonProperty("court_address", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Court_address { get; set; }
-    
-        /// <summary>Gets or sets Judge name.</summary>
-        [Newtonsoft.Json.JsonProperty("judge_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Judge_name { get; set; }
-    
-        /// <summary>Gets or sets the name/email person who create the hearing.</summary>
-        [Newtonsoft.Json.JsonProperty("created_by", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Created_by { get; set; }
-    
-        /// <summary>Gets or sets the created date of hearing.</summary>
-        [Newtonsoft.Json.JsonProperty("created_date", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.DateTime Created_date { get; set; }
-    
-        /// <summary>Gets or sets the name/email person who last edit the hearing.</summary>
-        [Newtonsoft.Json.JsonProperty("last_edit_by", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Last_edit_by { get; set; }
-    
-        /// <summary>Gets or sets the last edited date of hearing.</summary>
-        [Newtonsoft.Json.JsonProperty("last_edit_date", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.DateTime? Last_edit_date { get; set; }
-    
-        /// <summary>The VH admin username that confirmed the hearing
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("confirmed_by", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Confirmed_by { get; set; }
-    
-        /// <summary>The date and time when the hearing was confirmed
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("confirmed_date", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.DateTime? Confirmed_date { get; set; }
-    
-        /// <summary>Gets the scheduled date without time.</summary>
-        [Newtonsoft.Json.JsonProperty("hearing_date", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.DateTime Hearing_date { get; set; }
-    
-        /// <summary>Gets or sets the booking status of the hearing.</summary>
         [Newtonsoft.Json.JsonProperty("status", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public BookingStatus Status { get; set; }
-    
-        /// <summary>QuestionnaireNotRequired</summary>
-        [Newtonsoft.Json.JsonProperty("questionnaire_not_required", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public bool Questionnaire_not_required { get; set; }
-    
-        /// <summary>Gets or sets the audio recording required flag, value true  is indicated that recording is required, otherwise false</summary>
-        [Newtonsoft.Json.JsonProperty("audio_recording_required", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public bool Audio_recording_required { get; set; }
+        public UpdateBookingStatus Status { get; set; }
     
         [Newtonsoft.Json.JsonProperty("cancel_reason", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Cancel_reason { get; set; }
     
-        /// <summary>The group id for a hearing</summary>
-        [Newtonsoft.Json.JsonProperty("group_id", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Guid? Group_id { get; set; }
-    
-        /// <summary>Gets or sets Judge/Court account (username).</summary>
-        [Newtonsoft.Json.JsonProperty("court_room_account", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Court_room_account { get; set; }
-    
-    
-    }
-    
-    /// <summary>Base class for paged cursor base pagination responses where each
-    /// response represents a next cursor to get data.</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
-    public abstract partial class PagedCursorBasedResponse 
-    {
-        /// <summary>Gets or sets a unique sequential value to get next set of records. 
-        /// value is set to 0 if no records to return.</summary>
-        [Newtonsoft.Json.JsonProperty("next_cursor", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Next_cursor { get; set; }
-    
-        /// <summary>Gets or sets the maximum number of items returned for the page.</summary>
-        [Newtonsoft.Json.JsonProperty("limit", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public int Limit { get; set; }
-    
-        /// <summary>Absolute url to the previous page of items.
-        /// Will be null for the first page.</summary>
-        [Newtonsoft.Json.JsonProperty("prev_page_url", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Prev_page_url { get; set; }
-    
-        /// <summary>Absolute url for the next page of items.
-        /// Will be null for the last page.</summary>
-        [Newtonsoft.Json.JsonProperty("next_page_url", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Next_page_url { get; set; }
-    
-    
-    }
-    
-    /// <summary>hearing information queried by case number</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
-    public partial class AudioRecordedHearingsBySearchResponse 
-    {
-        /// <summary>Hearing Id
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Guid Id { get; set; }
-    
-        /// <summary>The date and time for a hearing
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("scheduled_date_time", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.DateTime Scheduled_date_time { get; set; }
-    
-        /// <summary>The name of the hearing venue
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("hearing_venue_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Hearing_venue_name { get; set; }
-    
-        /// <summary>The case number
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("case_number", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Case_number { get; set; }
-    
-        /// <summary>The case name
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("case_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Case_name { get; set; }
-    
-        /// <summary>The courtroom account
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("courtroom_account", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Courtroom_account { get; set; }
-    
-        /// <summary>The courtroom account name
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("courtroom_account_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Courtroom_account_name { get; set; }
-    
-        /// <summary>The hearing room name at the hearing venue
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("hearing_room_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Hearing_room_name { get; set; }
-    
-        /// <summary>The group id for a hearing</summary>
-        [Newtonsoft.Json.JsonProperty("group_id", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Guid? Group_id { get; set; }
-    
-    
-    }
-    
-    /// <summary>Hearing Venue</summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
-    public partial class HearingVenueResponse 
-    {
-        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public int Id { get; set; }
-    
-        [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Name { get; set; }
-    
     
     }
     
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
-    public partial class PersonResponse 
+    public partial class User 
     {
-        /// <summary>Participant Id
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Guid Id { get; set; }
-    
-        /// <summary>Participant Title.
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("title", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Title { get; set; }
-    
-        /// <summary>Participant first name.
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("first_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string First_name { get; set; }
-    
-        /// <summary>Participant middle name.
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("middle_names", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Middle_names { get; set; }
-    
-        /// <summary>Participant last name.
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("last_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Last_name { get; set; }
-    
-        /// <summary>Participant contact email
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("contact_email", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Contact_email { get; set; }
-    
-        /// <summary>Participant telephone number
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("telephone_number", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Telephone_number { get; set; }
-    
-        /// <summary>Participant username
-        ///             </summary>
         [Newtonsoft.Json.JsonProperty("username", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Username { get; set; }
     
-        /// <summary>Organisation of representative
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("organisation", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Organisation { get; set; }
+        [Newtonsoft.Json.JsonProperty("contact_email", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Contact_email { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("first_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string First_name { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("last_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Last_name { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("display_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Display_name { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("number", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int Number { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("test_type", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public TestType Test_type { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("user_type", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public UserType User_type { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("application", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public Application Application { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("is_prod_user", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool Is_prod_user { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("created_date", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTime Created_date { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid Id { get; set; }
     
     
     }
     
+    /// <summary>Create a hearing request</summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
-    public partial class HearingsByUsernameForDeletionResponse 
+    public partial class CreateHearingRequest 
     {
-        [Newtonsoft.Json.JsonProperty("hearing_id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Guid Hearing_id { get; set; }
+        /// <summary>Records the hearing audio</summary>
+        [Newtonsoft.Json.JsonProperty("audio_recording_required", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool Audio_recording_required { get; set; }
     
+        [Newtonsoft.Json.JsonProperty("application", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public Application Application { get; set; }
+    
+        /// <summary>Case Type</summary>
+        [Newtonsoft.Json.JsonProperty("case_type", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Case_type { get; set; }
+    
+        /// <summary>The user that created the hearing</summary>
+        [Newtonsoft.Json.JsonProperty("created_by", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Created_by { get; set; }
+    
+        /// <summary>An optional parameter to add some text before the case name to help identify a case</summary>
+        [Newtonsoft.Json.JsonProperty("custom_case_name_prefix", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Custom_case_name_prefix { get; set; }
+    
+        /// <summary>Endpoints</summary>
+        [Newtonsoft.Json.JsonProperty("endpoints", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int Endpoints { get; set; }
+    
+        /// <summary>Participants need to answer questionnaire before video web</summary>
+        [Newtonsoft.Json.JsonProperty("questionnaire_not_required", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool Questionnaire_not_required { get; set; }
+    
+        /// <summary>Hearing scheduled date and time</summary>
         [Newtonsoft.Json.JsonProperty("scheduled_date_time", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.DateTime Scheduled_date_time { get; set; }
     
-        [Newtonsoft.Json.JsonProperty("case_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Case_name { get; set; }
+        [Newtonsoft.Json.JsonProperty("test_type", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public TestType Test_type { get; set; }
     
-        [Newtonsoft.Json.JsonProperty("case_number", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Case_number { get; set; }
+        /// <summary>List of users to include as participants</summary>
+        [Newtonsoft.Json.JsonProperty("users", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.List<User> Users { get; set; }
     
+        /// <summary>Hearing venue name</summary>
         [Newtonsoft.Json.JsonProperty("venue", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Venue { get; set; }
     
@@ -5407,10 +5489,31 @@ namespace AdminWebsite.BookingsAPI.Client
     }
     
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
-    public partial class SearchTermRequest 
+    public partial class SuitabilityAnswersRequest 
     {
-        [Newtonsoft.Json.JsonProperty("term", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Term { get; set; }
+        [Newtonsoft.Json.JsonProperty("key", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Key { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("answer", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Answer { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("extended_answer", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Extended_answer { get; set; }
+    
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class SuitabilityAnswerResponse 
+    {
+        [Newtonsoft.Json.JsonProperty("key", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Key { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("answer", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Answer { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("extended_answer", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Extended_answer { get; set; }
     
     
     }
@@ -5439,49 +5542,150 @@ namespace AdminWebsite.BookingsAPI.Client
     
     }
     
-    /// <summary>Suitability Answer Response Object</summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
-    public partial class SuitabilityAnswerResponse 
+    public partial class PersonResponse 
     {
-        /// <summary>Key used to identify the question</summary>
-        [Newtonsoft.Json.JsonProperty("key", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Key { get; set; }
+        [Newtonsoft.Json.JsonProperty("id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid Id { get; set; }
     
-        /// <summary>Answer the question</summary>
-        [Newtonsoft.Json.JsonProperty("answer", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Answer { get; set; }
+        [Newtonsoft.Json.JsonProperty("title", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Title { get; set; }
     
-        /// <summary>Extended answer to the question</summary>
-        [Newtonsoft.Json.JsonProperty("extended_answer", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Extended_answer { get; set; }
-    
-    
-    }
-    
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
-    public partial class UserWithClosedConferencesResponse 
-    {
-        [Newtonsoft.Json.JsonProperty("usernames", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Collections.Generic.List<string> Usernames { get; set; }
-    
-    
-    }
-    
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
-    public partial class UpdatePersonDetailsRequest 
-    {
-        /// <summary>Participant first name.
-        ///             </summary>
         [Newtonsoft.Json.JsonProperty("first_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string First_name { get; set; }
     
-        /// <summary>Participant last name.
-        ///             </summary>
+        [Newtonsoft.Json.JsonProperty("middle_names", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Middle_names { get; set; }
+    
         [Newtonsoft.Json.JsonProperty("last_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Last_name { get; set; }
     
-        /// <summary>Participant Username
-        ///             </summary>
+        [Newtonsoft.Json.JsonProperty("contact_email", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Contact_email { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("telephone_number", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Telephone_number { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("username", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Username { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("organisation", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Organisation { get; set; }
+    
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class BookingsHearingResponse 
+    {
+        [Newtonsoft.Json.JsonProperty("hearing_id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid Hearing_id { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("hearing_number", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Hearing_number { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("hearing_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Hearing_name { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("scheduled_date_time", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTime Scheduled_date_time { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("scheduled_duration", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int Scheduled_duration { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("case_type_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Case_type_name { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("hearing_type_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Hearing_type_name { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("court_room", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Court_room { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("court_address", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Court_address { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("judge_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Judge_name { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("created_by", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Created_by { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("created_date", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTime Created_date { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("last_edit_by", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Last_edit_by { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("last_edit_date", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTime? Last_edit_date { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("confirmed_by", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Confirmed_by { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("confirmed_date", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTime? Confirmed_date { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("hearing_date", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.DateTime Hearing_date { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("status", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public BookingStatus Status { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("questionnaire_not_required", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool Questionnaire_not_required { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("audio_recording_required", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool Audio_recording_required { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("cancel_reason", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Cancel_reason { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("group_id", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid? Group_id { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("court_room_account", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Court_room_account { get; set; }
+    
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class UserProfile 
+    {
+        [Newtonsoft.Json.JsonProperty("user_id", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string User_id { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("user_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string User_name { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("email", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Email { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("display_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Display_name { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("first_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string First_name { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("last_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Last_name { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("user_role", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string User_role { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("case_type", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.List<string> Case_type { get; set; }
+    
+    
+    }
+    
+    /// <summary>Reset user password request</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class ResetUserPasswordRequest 
+    {
+        /// <summary>Username of user to reset</summary>
         [Newtonsoft.Json.JsonProperty("username", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Username { get; set; }
     
@@ -5489,62 +5693,36 @@ namespace AdminWebsite.BookingsAPI.Client
     }
     
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
-    public partial class SuitabilityAnswersResponse : PagedCursorBasedResponse
+    public partial class UpdateUserResponse 
     {
-        /// <summary>Gets or sets a list of participants suitability answers.</summary>
-        [Newtonsoft.Json.JsonProperty("participant_suitability_answer_response", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Collections.Generic.List<ParticipantSuitabilityAnswerResponse> Participant_suitability_answer_response { get; set; }
+        [Newtonsoft.Json.JsonProperty("new_password", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string New_password { get; set; }
     
     
     }
     
+    /// <summary>Remove Hearing data request</summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
-    public partial class ParticipantSuitabilityAnswerResponse 
+    public partial class DeleteTestHearingDataRequest 
     {
-        /// <summary>Gets or sets the participant ID
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("participant_id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Guid Participant_id { get; set; }
+        /// <summary>Partial Hearing Case Name (must contain 'Test')</summary>
+        [Newtonsoft.Json.JsonProperty("partial_hearing_case_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Partial_hearing_case_name { get; set; }
     
-        /// <summary>Gets or sets the hearing case number
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("case_number", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Case_number { get; set; }
+        /// <summary>The limit of how many hearings to search through for the title. Default is 1000</summary>
+        [Newtonsoft.Json.JsonProperty("limit", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int? Limit { get; set; }
     
-        /// <summary>Gets or sets the participant hearing role
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("hearing_role", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Hearing_role { get; set; }
     
-        /// <summary>Gets or sets the participant title
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("title", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Title { get; set; }
+    }
     
-        /// <summary>Gets or sets the participant first name
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("first_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string First_name { get; set; }
-    
-        /// <summary>Gets or sets the participant last name
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("last_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Last_name { get; set; }
-    
-        /// <summary>Last updated date and time of the suitability answers
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("updated_at", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.DateTime Updated_at { get; set; }
-    
-        /// <summary>Gets or sets the name of represented person
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("representee", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Representee { get; set; }
-    
-        /// <summary>List of answers
-        ///             </summary>
-        [Newtonsoft.Json.JsonProperty("answers", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Collections.Generic.List<SuitabilityAnswerResponse> Answers { get; set; }
+    /// <summary>Delete test hearings via the utility response</summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class DeletedResponse 
+    {
+        /// <summary>Number of deleted hearings</summary>
+        [Newtonsoft.Json.JsonProperty("number_of_deleted_hearings", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int Number_of_deleted_hearings { get; set; }
     
     
     }

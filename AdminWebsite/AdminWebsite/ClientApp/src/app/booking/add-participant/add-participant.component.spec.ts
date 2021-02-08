@@ -553,7 +553,6 @@ describe('AddParticipantComponent', () => {
         expect(component.hearingRoleList).toContain('Interpreter');
     }));
     it('should not show the interpreter option in hearings role if an interpreter participant is added', fakeAsync(() => {
-        console.log('------');
         component.ngOnInit();
         component.ngAfterViewInit();
         tick(600);
