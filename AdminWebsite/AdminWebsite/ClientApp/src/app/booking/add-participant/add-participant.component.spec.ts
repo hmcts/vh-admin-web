@@ -565,16 +565,11 @@ describe('AddParticipantComponent', () => {
         participant.first_name = 'firstName';
         participant.last_name = 'lastName';
         participant.hearing_role_name = 'Witness';
-        // _participants.push(participant);
         component.hearing.participants.push(participant);
-        //component.setupHearingRoles('Claimant');
-        //tick(600);
-        //expect(component.hearingRoleList).toContain('Interpreter');
         participant = new ParticipantModel();
         participant.first_name = 'firstName';
         participant.last_name = 'lastName';
         participant.hearing_role_name = 'Interpreter';
-        //_participants
         component.hearing.participants.push(participant);
         component.setupHearingRoles('Claimant');
         tick(600);
