@@ -1,4 +1,4 @@
-import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, flushMicrotasks, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import { AbstractControl, Validators } from '@angular/forms';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { of, Subscription } from 'rxjs';
@@ -369,6 +369,7 @@ describe('AddParticipantComponent', () => {
         expect(role.untouched).toBeTruthy();
         expect(party.untouched).toBeTruthy();
         expect(firstName.untouched).toBeTruthy();
+        expect(interpretee.value).toBe(Constants.PleaseSelect);
     });
     it('should display next button and hide add button after clear all fields', () => {
         component.getParticipant(participant);
@@ -523,7 +524,82 @@ describe('AddParticipantComponent', () => {
         component.handleContinueBooking();
         expect(component.showCancelPopup).toBeFalsy();
     });
-
+    it('should not list an interpreter in hearing roles if there are not interpretees in the participant list', fakeAsync(() => {
+        component.ngOnInit();
+        component.ngAfterViewInit();
+        tick(600);
+        expect(component.hearingRoleList).toContain('Interpreter');
+        component.hearing.participants = [];
+        component.setupHearingRoles('Claimant');
+        tick(600);
+        expect(component.hearingRoleList).not.toContain('Interpreter');
+    }));
+    it('should show the interpreter in hearings role if lip or witness is added', fakeAsync(() => {
+        component.ngOnInit();
+        component.ngAfterViewInit();
+        tick(600);
+        component.hearing.participants = [];
+        component.setupHearingRoles('Claimant');
+        expect(component.hearingRoleList).not.toContain('Interpreter');
+        const _participants: ParticipantModel[] = [];
+        const participant = new ParticipantModel();
+        participant.first_name = 'firstName';
+        participant.last_name = 'lastName';
+        participant.hearing_role_name = 'Witness';
+        _participants.push(participant);
+        component.hearing.participants = _participants;
+        component.setupHearingRoles('Claimant');
+        tick(600);
+        expect(component.hearingRoleList).toContain('Interpreter');
+    }));
+    it('should not show the interpreter option in hearings role if an interpreter participant is added', fakeAsync(() => {
+        console.log('------');
+        component.ngOnInit();
+        component.ngAfterViewInit();
+        tick(600);
+        component.hearing.participants = [];
+        component.setupHearingRoles('Claimant');
+        expect(component.hearingRoleList).not.toContain('Interpreter');
+        const _participants: ParticipantModel[] = [];
+        let participant = new ParticipantModel();
+        participant.first_name = 'firstName';
+        participant.last_name = 'lastName';
+        participant.hearing_role_name = 'Witness';
+        // _participants.push(participant);
+        component.hearing.participants.push(participant);
+        //component.setupHearingRoles('Claimant');
+        //tick(600);
+        //expect(component.hearingRoleList).toContain('Interpreter');
+        participant = new ParticipantModel();
+        participant.first_name = 'firstName';
+        participant.last_name = 'lastName';
+        participant.hearing_role_name = 'Interpreter';
+        //_participants
+        component.hearing.participants.push(participant);
+        component.setupHearingRoles('Claimant');
+        tick(600);
+        expect(component.hearingRoleList).not.toContain('Interpreter');
+    }));
+    it('should validate the interpreter drop down', () => {
+        component.ngOnInit();
+        component.ngAfterViewInit();
+        expect(interpretee.valid).toBeFalsy();
+        interpretee.setValue('test4@test.com');
+        expect(interpretee.valid).toBeTruthy();
+        interpretee.setValue('Please select');
+        expect(interpretee.valid).toBeFalsy();
+    });
+    it('should turn off the interpreter validations if the hearing role is not interpreter', () => {
+        component.ngOnInit();
+        component.ngAfterViewInit();
+        component.form.get('role').setValue('Interpreter');
+        component.roleSelected();
+        component.form.get('interpreterFor').setValue('abc@email.com');
+        component.form.get('role').setValue('Claimant');
+        component.roleSelected();
+        expect(component.isRepresentative).toBeFalsy();
+        expect(component.form.get('interpreterFor').value).toEqual(Constants.PleaseSelect);
+    });
     it('should clear the linked participant model if interpreter is removed', () => {
         component.hearing.participants = [];
         component.ngOnInit();
@@ -597,7 +673,6 @@ describe('AddParticipantComponent', () => {
         expect(participantServiceSpy.removeParticipant).toHaveBeenCalled();
     });
 });
-
 describe('AddParticipantComponent edit mode', () => {
     beforeEach(
         waitForAsync(() => {
@@ -848,7 +923,6 @@ describe('AddParticipantComponent edit mode', () => {
         expect(routerSpy.navigate).toHaveBeenCalled();
     });
 });
-
 describe('AddParticipantComponent edit mode no participants added', () => {
     beforeEach(
         waitForAsync(() => {

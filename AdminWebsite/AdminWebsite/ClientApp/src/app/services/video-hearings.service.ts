@@ -20,7 +20,8 @@ import {
     UpdateBookingStatusResponse,
     MultiHearingRequest,
     PhoneConferenceResponse,
-    LinkedParticipantRequest
+    LinkedParticipantRequest,
+    LinkedParticipantResponse
 } from './clients/api-client';
 import { HearingModel } from '../common/model/hearing.model';
 import { CaseModel } from '../common/model/case.model';
@@ -318,10 +319,25 @@ export class VideoHearingsService {
                 participant.representee = p.representee;
                 participant.company = p.organisation;
                 participant.is_judge = p.case_role_name === 'Judge';
+                participant.linked_participants = this.mapLinkedParticipantResponseToLinkedParticipantModel(p.linked_participants);
                 participants.push(participant);
             });
         }
         return participants;
+    }
+
+    mapLinkedParticipantResponseToLinkedParticipantModel(response: LinkedParticipantResponse[]): LinkedParticipantModel[] {
+        const linkedParticipants: LinkedParticipantModel[] = [];
+        let linkedParticipant: LinkedParticipantModel;
+        if (response && response.length > 0) {
+            response.forEach(p => {
+                linkedParticipant = new LinkedParticipantModel();
+                linkedParticipant.linkType = p.type;
+                linkedParticipant.linkedParticipantId = p.linked_id;
+                linkedParticipants.push(linkedParticipant);
+            });
+        }
+        return linkedParticipants;
     }
 
     mapEndpointResponseToEndpointModel(response: EndpointResponse[]): EndpointModel[] {

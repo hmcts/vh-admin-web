@@ -209,7 +209,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 },
                 Linked_participants = new List<LinkedParticipantRequest>
                 {
-                    new LinkedParticipantRequest 
+                    new LinkedParticipantRequest
                         { Participant_contact_email = "user1@email.com", Linked_participant_contact_email = "user2@email.com"},
                 }
             };
@@ -218,14 +218,17 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 .With(x => x.Id = Guid.NewGuid())
                 .With(x => x.User_role_name = "Representative")
                 .With(x => x.Username = "username1@email.com")
+                .With(x => x.Linked_participants = new List<LinkedParticipantResponse> 
+                    { new LinkedParticipantResponse { Linked_id = Guid.NewGuid(), Type = LinkedParticipantType.Interpreter } })
                 .Build();
             var pat2 = Builder<ParticipantResponse>.CreateNew()
                 .With(x => x.Id = Guid.NewGuid())
                 .With(x => x.User_role_name = "Individual")
                 .With(x => x.Username = "username2@email.com")
+                .With(x => x.Linked_participants = new List<LinkedParticipantResponse> 
+                    { new LinkedParticipantResponse { Linked_id = Guid.NewGuid(), Type = LinkedParticipantType.Interpreter } })
                 .Build();
             var hearingDetailsResponse = Builder<HearingDetailsResponse>.CreateNew()
-                .With(x => x.Linked_participants = Builder<LinkedParticipantResponse>.CreateListOfSize(2).Build().ToList())
                 .With(x => x.Participants = new List<ParticipantResponse> { pat1, pat2 }).Build();
             _bookingsApiClient.Setup(x => x.BookNewHearingAsync(newHearingRequest))
                 .ReturnsAsync(hearingDetailsResponse);

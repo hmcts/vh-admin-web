@@ -19,7 +19,7 @@ import { ParticipantsListComponent } from '../participants-list/participants-lis
 import { SearchEmailComponent } from '../search-email/search-email.component';
 import { ParticipantService } from '../services/participant.service';
 import { HearingRoles } from '../../common/model/hearing-roles.model';
-import { LinkedParticipantModel } from 'src/app/common/model/linked-participant.model';
+import { LinkedParticipantModel, LinkedParticipantType } from 'src/app/common/model/linked-participant.model';
 
 @Component({
     selector: 'app-add-participant',
@@ -893,7 +893,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         );
         return hearingHasInterpretees.length > 0 ? true : false;
     }
-    private updateHearingRoleList(hearingRoleList: string[]) {
+    updateHearingRoleList(hearingRoleList: string[]) {
         // hide the interpreter value if participant list is empty or participant list has an interpreter.
         if (this.hearingHasAnInterpreter() || !this.hearingHasInterpretees()) {
             this.hearingRoleList = this.hearingRoleList.filter(item => item.toLowerCase().trim() !== HearingRoles.INTERPRETER); // TODO:: Fix migration for this.

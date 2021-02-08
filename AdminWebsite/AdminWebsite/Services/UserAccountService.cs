@@ -197,7 +197,7 @@ namespace AdminWebsite.Services
             if (userProfile != null)
             {
                 _logger.LogWarning("AD user {username} found.", userName);
-                var response = await _userApiClient.UpdateUserAsync(userName);
+                var response = await _userApiClient.ResetUserPasswordAsync(userName);
                 _logger.LogWarning("AD user {username} password has been reset.", userName);
                 return new UpdateUserPasswordResponse
                 {

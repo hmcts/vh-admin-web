@@ -158,14 +158,14 @@ namespace AdminWebsite.UnitTests.Services
                 .Setup(x => x.GetUserByAdUserNameAsync(UserName))
                 .ReturnsAsync(userProfile);
 
-            _userApiClient.Setup(x => x.UpdateUserAsync(UserName)).ReturnsAsync(updatedUserResponse);
+            _userApiClient.Setup(x => x.ResetUserPasswordAsync(UserName)).ReturnsAsync(updatedUserResponse);
             
             var response = await _service.UpdateParticipantPassword(UserName);
             
             response.Should().NotBeNull();
             response.Password.Should().Be(updatedUserResponse.New_password);
             
-            _userApiClient.Verify(x => x.UpdateUserAsync(UserName), Times.Once);
+            _userApiClient.Verify(x => x.ResetUserPasswordAsync(UserName), Times.Once);
         }
 
         [Test]

@@ -8,7 +8,8 @@ import {
     EndpointResponse,
     MultiHearingRequest,
     ClientSettingsResponse,
-    HearingRole
+    HearingRole,
+    LinkedParticipantResponse
 } from './clients/api-client';
 import { HearingModel } from '../common/model/hearing.model';
 import { CaseModel } from '../common/model/case.model';
@@ -449,5 +450,16 @@ describe('Video hearing service', () => {
         expect(model[0].linked_participant_contact_email).toEqual(linkedParticipantModelList[0].linkedParticipantEmail);
         expect(model[1].participant_contact_email).toEqual(linkedParticipantModelList[1].participantEmail);
         expect(model[1].linked_participant_contact_email).toEqual(linkedParticipantModelList[1].linkedParticipantEmail);
+    });
+    it('should map LinkedParticipantResponse to LinkedParticipantModel', () => {
+        const linkedParticipants: LinkedParticipantResponse[] = [];
+        const linkedParticipant = new LinkedParticipantResponse();
+        linkedParticipant.type = LinkedParticipantType.Interpreter;
+        linkedParticipant.linked_id = '100';
+        linkedParticipants.push(linkedParticipant);
+
+        const model = service.mapLinkedParticipantResponseToLinkedParticipantModel(linkedParticipants);
+        expect(model[0].linkType).toEqual(linkedParticipant.type);
+        expect(model[0].linkedParticipantId).toEqual(linkedParticipant.linked_id);
     });
 });

@@ -158,7 +158,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             var request = new UpdateBookingStatusRequest()
             {
                 Updated_by = vho.Username,
-                AdditionalProperties = null,
+                //AdditionalProperties = null,
                 Cancel_reason = null,
                 Status = UpdateBookingStatus.Created
             };

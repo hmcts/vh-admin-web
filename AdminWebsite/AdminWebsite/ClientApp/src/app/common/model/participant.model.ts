@@ -1,4 +1,4 @@
-import { LinkedParticipantType } from './linked-participant-type.model';
+import { LinkedParticipantModel } from './linked-participant.model';
 
 export class ParticipantModel {
     id?: string | undefined;
@@ -17,5 +17,5 @@ export class ParticipantModel {
     is_judge: boolean;
     is_exist_person: boolean;
     interpreterFor?: string | undefined;
-    linkedParticipantType?: LinkedParticipantType | undefined;
+    linked_participants?: LinkedParticipantModel[] | undefined;
 }

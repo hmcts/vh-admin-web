@@ -8,6 +8,5 @@ export class LinkedParticipantModel {
 }
 
 export enum LinkedParticipantType {
-    Interpreter,
-    Interpretee
+    Interpreter = 'Interpreter'
 }
