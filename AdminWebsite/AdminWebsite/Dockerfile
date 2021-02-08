@@ -14,7 +14,7 @@ RUN [[ ${skip_client_build} = true ]] && mkdir dist || npm run-script build-prod
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
 WORKDIR /src
 COPY . .
-RUN dotnet restore "AdminWebsite/AdminWebsite.csproj"
+RUN dotnet restore --configfile nuget.config "AdminWebsite/AdminWebsite.csproj"
 COPY . .
 WORKDIR "/src/AdminWebsite"
 RUN dotnet build "AdminWebsite.csproj" -c Release -o /app/build

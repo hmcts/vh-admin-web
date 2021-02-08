@@ -106,7 +106,9 @@ parameters:
     # Kinly
   - name: KinlyConfiguration:ConferencePhoneNumber
     value: $(ConferencePhoneNumber)
-
+  - name: KinlyConfiguration:JoinByPhoneFromDate
+    value: $(JoinByPhoneFromDate)
+    
   # SauceLabs
   - name: Saucelabs:Username
     value: $(Saucelabs:Username)
@@ -193,7 +195,9 @@ parameters:
   # Kinly
   - name: KinlyConfiguration:ConferencePhoneNumber
     value: $(ConferencePhoneNumber)
-
+  - name: KinlyConfiguration:JoinByPhoneFromDate
+    value: $(JoinByPhoneFromDate)
+    
 variables:
   - group: vh-domains-and-urls
   - group: vh-apps-settings-generic

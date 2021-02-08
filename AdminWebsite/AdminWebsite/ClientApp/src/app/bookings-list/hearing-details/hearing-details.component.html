@@ -63,7 +63,7 @@
   </div>
 </div>
 
-<div *ngIf="phoneConferenceDetails.length > 0">
+<div *ngIf="phoneConferenceDetails.length > 0 && isJoinByPhone()">
   <h2 class="govuk-heading-s remove-header-padding">Joining by phone</h2>
   <div class="vh-section">
     <div class="govuk-grid-row">
