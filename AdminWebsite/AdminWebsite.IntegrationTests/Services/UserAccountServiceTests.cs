@@ -1,11 +1,13 @@
 using AdminWebsite.Services;
-using AdminWebsite.UserAPI.Client;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using AdminWebsite.BookingsAPI.Client;
 using Microsoft.Extensions.Logging;
+using UserApi.Client;
+using UserApi.Contract.Responses;
 
 namespace AdminWebsite.IntegrationTests.Services
 {
@@ -29,16 +31,16 @@ namespace AdminWebsite.IntegrationTests.Services
         }
 
         [Test]
-        public void Should_return_list_of_judges()
+        public async Task Should_return_list_of_judges()
         {
             var judgesList = new List<UserResponse>();
-            var judge = new UserResponse { Display_name = "john maclain", Email = "john.maclain@email.com", First_name = "john", Last_name = "maclain" };
+            var judge = new UserResponse { DisplayName = "john maclain", Email = "john.maclain@email.com", FirstName = "john", LastName = "maclain" };
             judgesList.Add(judge);
-            judge = new UserResponse { Display_name = "john wayne", Email = "john.wayne@email.com", First_name = "john", Last_name = "wayne" };
+            judge = new UserResponse { DisplayName = "john wayne", Email = "john.wayne@email.com", FirstName = "john", LastName = "wayne" };
             judgesList.Add(judge);
 
-            _userApiClient.Setup(x => x.GetJudges()).Returns(judgesList);
-            var group = GetService().GetJudgeUsers();
+            _userApiClient.Setup(x => x.GetJudgesAsync()).ReturnsAsync(judgesList);
+            var group =await GetService().GetJudgeUsers();
             group.Should().NotBeNullOrEmpty();
         }
     }

@@ -58,6 +58,8 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="UserApi.Client" Version="1.23.4-pullrequest0104-0011" />
+    <PackageReference Include="VH.Core.Configuration" Version="0.1.12" />
   </ItemGroup>
 
   <ItemGroup>
@@ -89,7 +91,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AdminWebsite.BookingsAPI.Client\AdminWebsite.BookingsAPI.Client.csproj" />
-    <ProjectReference Include="..\AdminWebsite.UserAPI.Client\AdminWebsite.UserAPI.Client.csproj" />
     <ProjectReference Include="..\AdminWebsite.VideoAPI.Client\AdminWebsite.VideoAPI.Client.csproj" />
   </ItemGroup>
 

@@ -2,15 +2,16 @@
 using AdminWebsite.Contracts.Responses;
 using AdminWebsite.Security;
 using AdminWebsite.Services.Models;
-using AdminWebsite.UserAPI.Client;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using AdminWebsite.Helper;
 using AdminWebsite.Extensions;
+using Microsoft.Extensions.Logging;
+using UserApi.Client;
+using UserApi.Contract.Requests;
+using UserApi.Contract.Responses;
 
 namespace AdminWebsite.Services
 {
@@ -22,7 +23,7 @@ namespace AdminWebsite.Services
         /// <remarks>
         /// Filters test accounts if configured to run as live environment 
         /// </remarks>
-        IEnumerable<JudgeResponse> GetJudgeUsers();
+        Task<IEnumerable<JudgeResponse>> GetJudgeUsers();
         /// <summary>
         /// Creates a user based on the participant information or updates the participant username if it already exists
         /// </summary>
@@ -89,23 +90,23 @@ namespace AdminWebsite.Services
                 var newUser = await CreateNewUserInAD(participant);
                 return new User() 
                             {  
-                                UserName = newUser.User_id,
-                                Password = newUser.One_time_password
+                                UserName = newUser.UserId,
+                                Password = newUser.OneTimePassword
                             };
             }
 
-            participant.Username = userProfile.User_name;
+            participant.Username = userProfile.UserName;
             return new User() { 
-                UserName = userProfile.User_id 
+                UserName = userProfile.UserId 
             };
         }
 
         public async Task<UserRole> GetUserRoleAsync(string userName)
         {
             var user = await _userApiClient.GetUserByAdUserNameAsync(userName);
-            Enum.TryParse<UserRoleType>(user.User_role, out var userRoleResult);
+            Enum.TryParse<UserRoleType>(user.UserRole, out var userRoleResult);
 
-            return new UserRole { UserRoleType = userRoleResult, CaseTypes = user.Case_type };
+            return new UserRole { UserRoleType = userRoleResult, CaseTypes = user.CaseType };
         }
 
         private async Task<UserProfile> GetUserByContactEmail(string emailAddress)
@@ -117,7 +118,7 @@ namespace AdminWebsite.Services
                 _logger.LogDebug("User with contact email {contactEmail} found.", emailAddress);
                 return user;
             }
-            catch (UserAPI.Client.UserServiceException e)
+            catch (UserApiException e)
             {
                 if (e.StatusCode == (int) HttpStatusCode.NotFound)
                 {
@@ -143,9 +144,9 @@ namespace AdminWebsite.Services
                     _logger.LogWarning($"{nameof(GetAdUserIdForUsername)} - AD user with username {username} does not have a user role.");
                 }
                 
-                return user.User_id;
+                return user.UserId;
             }
-            catch (UserAPI.Client.UserServiceException e)
+            catch (UserApiException e)
             {
                 if (e.StatusCode == (int) HttpStatusCode.NotFound)
                 {
@@ -163,10 +164,10 @@ namespace AdminWebsite.Services
             _logger.LogDebug("Attempting to create an AD user with contact email {contactEmail}.", participant.Contact_email);
             var createUserRequest = new CreateUserRequest
             {
-                First_name = participant.First_name?.Replace(BLANK, string.Empty),
-                Last_name = participant.Last_name?.Replace(BLANK, string.Empty),
-                Recovery_email = participant.Contact_email,
-                Is_test_user = false
+                FirstName = participant.First_name?.Replace(BLANK, string.Empty),
+                LastName = participant.Last_name?.Replace(BLANK, string.Empty),
+                RecoveryEmail = participant.Contact_email,
+                IsTestUser = false
             };
 
             var newUserResponse = await _userApiClient.CreateUserAsync(createUserRequest);
@@ -176,15 +177,15 @@ namespace AdminWebsite.Services
         }
 
         /// <inheritdoc />
-        public IEnumerable<JudgeResponse> GetJudgeUsers()
+        public async Task<IEnumerable<JudgeResponse>> GetJudgeUsers()
         {
             _logger.LogDebug("Attempting to get all judge accounts.");
-            var judgesList = _userApiClient.GetJudges();
+            var judgesList = await _userApiClient.GetJudgesAsync();
             return judgesList.Select(x => new JudgeResponse
             {
-                FirstName = x.First_name,
-                LastName = x.Last_name,
-                DisplayName = x.Display_name,
+                FirstName = x.FirstName,
+                LastName = x.LastName,
+                DisplayName = x.DisplayName,
                 Email = x.Email
             }).ToList();
         }
@@ -201,7 +202,7 @@ namespace AdminWebsite.Services
                 _logger.LogWarning("AD user {username} password has been reset.", userName);
                 return new UpdateUserPasswordResponse
                 {
-                    Password = response.New_password
+                    Password = response.NewPassword
                 };
             }
 
@@ -249,12 +250,12 @@ namespace AdminWebsite.Services
         {
             var addUserToGroupRequest = new AddUserToGroupRequest
             {
-                User_id = username,
-                Group_name = groupName
+                UserId = username,
+                GroupName = groupName
             };
 
             await _userApiClient.AddUserToGroupAsync(addUserToGroupRequest);
-            _logger.LogDebug("{username} to group {group}.", username, addUserToGroupRequest.Group_name);
+            _logger.LogDebug("{username} to group {group}.", username, addUserToGroupRequest.GroupName);
         }
 
         private async Task<bool> CheckUsernameExistsInAdAsync(string username)
@@ -263,7 +264,7 @@ namespace AdminWebsite.Services
             {
                 _logger.LogDebug("Attempting to check if {username} exists in AD", username);
                 var person = await _userApiClient.GetUserByAdUserNameAsync(username);
-                Enum.TryParse<UserRoleType>(person.User_role, out var userRoleResult);
+                Enum.TryParse<UserRoleType>(person.UserRole, out var userRoleResult);
                 if (userRoleResult == UserRoleType.Judge || userRoleResult == UserRoleType.VhOfficer)
                 {
                     var e = new Security.UserServiceException()
@@ -277,7 +278,7 @@ namespace AdminWebsite.Services
                 _logger.LogDebug("{username} exists in AD", username);
                 return true;
             }
-            catch (UserAPI.Client.UserServiceException e)
+            catch (UserApiException e)
             {
                 _logger.LogError(e, "Failed to get user {username} in User API. Status Code {StatusCode} - Message {Message}",
                     username, e.StatusCode, e.Response);
