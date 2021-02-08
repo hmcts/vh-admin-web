@@ -16,12 +16,14 @@ namespace AdminWebsite
 
         private static IHostBuilder CreateWebHostBuilder(string[] args)
         {
-            const string mountPath = "/mnt/secrets/vh-admin-web";
+            const string vhInfraCore = "/mnt/secrets/vh-admin-web";
+            const string vhAdminWeb = "/mnt/secrets/vh-admin-web";
 
             return Host.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration((configBuilder) =>
                 {
-                    configBuilder.AddAksKeyVaultSecretProvider(mountPath);
+                    configBuilder.AddAksKeyVaultSecretProvider(vhInfraCore);
+                    configBuilder.AddAksKeyVaultSecretProvider(vhAdminWeb);
                 })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
@@ -35,7 +37,8 @@ namespace AdminWebsite
                     });
                     webBuilder.ConfigureAppConfiguration(configBuilder =>
                     {
-                        configBuilder.AddAksKeyVaultSecretProvider(mountPath);
+                        configBuilder.AddAksKeyVaultSecretProvider(vhInfraCore);
+                        configBuilder.AddAksKeyVaultSecretProvider(vhAdminWeb);
                     });
                 });
         }
