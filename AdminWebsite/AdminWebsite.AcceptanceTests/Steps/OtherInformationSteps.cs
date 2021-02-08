@@ -32,6 +32,14 @@ namespace AdminWebsite.AcceptanceTests.Steps
             ClickNext();
         }
 
+        [When(@"the user sets audio recording to No")]
+        public void WhenTheUserSetsAudioRecordingToNo()
+        {
+            SetAudioRecording(_c.Test.AssignJudge.AudioRecord);
+            ProgressToNextPage();
+        }
+
+
         private void SetOtherInformation()
         {
             _c.Test.OtherInformation = _c.Test.OtherInformation != null ? "Updated other information" : _c.Test.TestData.OtherInformation.Other;

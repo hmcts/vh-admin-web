@@ -304,13 +304,20 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AddParticipantsPage.InvalidEmailError).Displayed.Should().BeTrue();
         }
 
-        [Then(@"audio recording is selected by default with options disabled")]
-        public void ThenAudioRecordingIsSelectedByDefaultWithOptionsDisabled()
+        [Then(@"audio recording is selected by default with options (.*)")]
+        public void ThenAudioRecordingIsSelectedByDefaultWithOptions(string option)
         {
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(OtherInformationPage.AudioRecordingInterpreterMessage).Displayed.Should().BeTrue();
+            var enabled = option != "disabled";
+            if (!enabled)
+            {
+               _browsers[_c.CurrentUser].Driver.WaitUntilVisible(OtherInformationPage.AudioRecordingInterpreterMessage).Displayed.Should().BeTrue();
+            }
+
             _browsers[_c.CurrentUser].Driver.FindElement(OtherInformationPage.AudioRecordYesRadioButton).Selected.Should().BeTrue();
-            _browsers[_c.CurrentUser].Driver.FindElement(OtherInformationPage.AudioRecordYesRadioButton).Enabled.Should().BeFalse();
+            _browsers[_c.CurrentUser].Driver.FindElement(OtherInformationPage.AudioRecordYesRadioButton).Enabled.Should().Be(enabled); 
         }
+
+
 
     }
 }

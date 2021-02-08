@@ -26,3 +26,14 @@ Scenario: Adding Interpreter sets and disables audio recording option
 	When the user completes the add participants form with an Interpreter
 	And the user has progressed to the Other Information page
 	Then audio recording is selected by default with options disabled
+
+Scenario: Adding participant sets and enables audio recording  option
+	Given the Video Hearings Officer user has progressed to the Add Participants page
+	When the user completes the add participants form
+	And the user has progressed to the Other Information page
+	Then audio recording is selected by default with options enabled
+
+Scenario: Edit Audio Recording option
+	Given the Video Hearings Officer user has progressed to the Other information page
+	When the user sets audio recording to No
+	Then audio recording is set to No
