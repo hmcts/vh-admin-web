@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using AcceptanceTests.Common.Driver.Drivers;
 using AcceptanceTests.Common.Driver.Enums;
 using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.AcceptanceTests.Pages;
 using AdminWebsite.TestAPI.Client;
+using FluentAssertions;
 using TechTalk.SpecFlow;
 
 namespace AdminWebsite.AcceptanceTests.Steps
@@ -37,6 +39,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
                 .SetDriver(_c.Driver));
 
             _browsers[_c.CurrentUser].LaunchBrowser();
+            _browsers[_c.CurrentUser].BaseUrl.Should().Be(_c.WebConfig.VhServices.AdminWebUrl);
             _browsers[_c.CurrentUser].NavigateToPage();
 
             if (_c.WebConfig.TestConfig.TargetBrowser != TargetBrowser.Ie11)

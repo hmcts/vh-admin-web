@@ -4688,38 +4688,38 @@ namespace AdminWebsite.TestAPI.Client
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
     public partial class ParticipantRequest 
     {
-        [Newtonsoft.Json.JsonProperty("participant_ref_id", Required = Newtonsoft.Json.Required.Always)]
+        [Newtonsoft.Json.JsonProperty("participant_ref_id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.Guid Participant_ref_id { get; set; }
     
-        [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.AllowNull)]
+        [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.Always)]
         public string Name { get; set; }
     
-        [Newtonsoft.Json.JsonProperty("display_name", Required = Newtonsoft.Json.Required.AllowNull)]
+        [Newtonsoft.Json.JsonProperty("display_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Display_name { get; set; }
     
-        [Newtonsoft.Json.JsonProperty("username", Required = Newtonsoft.Json.Required.AllowNull)]
+        [Newtonsoft.Json.JsonProperty("username", Required = Newtonsoft.Json.Required.Always)]
         public string Username { get; set; }
     
-        [Newtonsoft.Json.JsonProperty("first_name", Required = Newtonsoft.Json.Required.AllowNull)]
+        [Newtonsoft.Json.JsonProperty("first_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string First_name { get; set; }
     
-        [Newtonsoft.Json.JsonProperty("last_name", Required = Newtonsoft.Json.Required.AllowNull)]
+        [Newtonsoft.Json.JsonProperty("last_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Last_name { get; set; }
     
-        [Newtonsoft.Json.JsonProperty("contact_email", Required = Newtonsoft.Json.Required.AllowNull)]
+        [Newtonsoft.Json.JsonProperty("contact_email", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Contact_email { get; set; }
     
         [Newtonsoft.Json.JsonProperty("contact_telephone", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Contact_telephone { get; set; }
     
-        [Newtonsoft.Json.JsonProperty("user_role", Required = Newtonsoft.Json.Required.Always)]
+        [Newtonsoft.Json.JsonProperty("user_role", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
         public UserRole User_role { get; set; }
     
-        [Newtonsoft.Json.JsonProperty("hearing_role", Required = Newtonsoft.Json.Required.AllowNull)]
+        [Newtonsoft.Json.JsonProperty("hearing_role", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Hearing_role { get; set; }
     
-        [Newtonsoft.Json.JsonProperty("case_type_group", Required = Newtonsoft.Json.Required.AllowNull)]
+        [Newtonsoft.Json.JsonProperty("case_type_group", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Case_type_group { get; set; }
     
         [Newtonsoft.Json.JsonProperty("representee", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -4731,13 +4731,13 @@ namespace AdminWebsite.TestAPI.Client
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
     public partial class AddEndpointRequest 
     {
-        [Newtonsoft.Json.JsonProperty("display_name", Required = Newtonsoft.Json.Required.AllowNull)]
+        [Newtonsoft.Json.JsonProperty("display_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Display_name { get; set; }
     
-        [Newtonsoft.Json.JsonProperty("sip_address", Required = Newtonsoft.Json.Required.AllowNull)]
+        [Newtonsoft.Json.JsonProperty("sip_address", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Sip_address { get; set; }
     
-        [Newtonsoft.Json.JsonProperty("pin", Required = Newtonsoft.Json.Required.AllowNull)]
+        [Newtonsoft.Json.JsonProperty("pin", Required = Newtonsoft.Json.Required.Always)]
         public string Pin { get; set; }
     
         [Newtonsoft.Json.JsonProperty("defence_advocate", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -4749,26 +4749,26 @@ namespace AdminWebsite.TestAPI.Client
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
     public partial class BookNewConferenceRequest 
     {
-        [Newtonsoft.Json.JsonProperty("hearing_ref_id", Required = Newtonsoft.Json.Required.Always)]
+        [Newtonsoft.Json.JsonProperty("hearing_ref_id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.Guid Hearing_ref_id { get; set; }
     
-        [Newtonsoft.Json.JsonProperty("case_type", Required = Newtonsoft.Json.Required.AllowNull)]
+        [Newtonsoft.Json.JsonProperty("case_type", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Case_type { get; set; }
     
         [Newtonsoft.Json.JsonProperty("scheduled_date_time", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.DateTime Scheduled_date_time { get; set; }
     
-        [Newtonsoft.Json.JsonProperty("case_number", Required = Newtonsoft.Json.Required.AllowNull)]
+        [Newtonsoft.Json.JsonProperty("case_number", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Case_number { get; set; }
     
         [Newtonsoft.Json.JsonProperty("case_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Case_name { get; set; }
     
-        [Newtonsoft.Json.JsonProperty("scheduled_duration", Required = Newtonsoft.Json.Required.Always)]
+        [Newtonsoft.Json.JsonProperty("scheduled_duration", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public int Scheduled_duration { get; set; }
     
-        [Newtonsoft.Json.JsonProperty("participants", Required = Newtonsoft.Json.Required.AllowNull)]
-        public System.Collections.Generic.List<ParticipantRequest> Participants { get; set; }
+        [Newtonsoft.Json.JsonProperty("participants", Required = Newtonsoft.Json.Required.Always)]
+        public System.Collections.Generic.List<ParticipantRequest> Participants { get; set; } = new System.Collections.Generic.List<ParticipantRequest>();
     
         [Newtonsoft.Json.JsonProperty("hearing_venue_name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Hearing_venue_name { get; set; }
@@ -5074,7 +5074,7 @@ namespace AdminWebsite.TestAPI.Client
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.1.24.0 (Newtonsoft.Json v12.0.0.0)")]
     public partial class ConferenceEventRequest 
     {
-        [Newtonsoft.Json.JsonProperty("event_id", Required = Newtonsoft.Json.Required.AllowNull)]
+        [Newtonsoft.Json.JsonProperty("event_id", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Event_id { get; set; }
     
         [Newtonsoft.Json.JsonProperty("event_type", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -5084,7 +5084,7 @@ namespace AdminWebsite.TestAPI.Client
         [Newtonsoft.Json.JsonProperty("time_stamp_utc", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.DateTime Time_stamp_utc { get; set; }
     
-        [Newtonsoft.Json.JsonProperty("conference_id", Required = Newtonsoft.Json.Required.AllowNull)]
+        [Newtonsoft.Json.JsonProperty("conference_id", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Conference_id { get; set; }
     
         [Newtonsoft.Json.JsonProperty("participant_id", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -5200,15 +5200,6 @@ namespace AdminWebsite.TestAPI.Client
         [Newtonsoft.Json.JsonProperty("is_lead_case", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public bool Is_lead_case { get; set; }
     
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
-    
-        [Newtonsoft.Json.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties; }
-            set { _additionalProperties = value; }
-        }
-    
     
     }
     
@@ -5257,15 +5248,6 @@ namespace AdminWebsite.TestAPI.Client
         [Newtonsoft.Json.JsonProperty("representee", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Representee { get; set; }
     
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
-    
-        [Newtonsoft.Json.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties; }
-            set { _additionalProperties = value; }
-        }
-    
     
     }
     
@@ -5303,15 +5285,6 @@ namespace AdminWebsite.TestAPI.Client
     
         [Newtonsoft.Json.JsonProperty("defence_advocate_id", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.Guid? Defence_advocate_id { get; set; }
-    
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
-    
-        [Newtonsoft.Json.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties; }
-            set { _additionalProperties = value; }
-        }
     
     
     }
@@ -5386,15 +5359,6 @@ namespace AdminWebsite.TestAPI.Client
         [Newtonsoft.Json.JsonProperty("group_id", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.Guid? Group_id { get; set; }
     
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
-    
-        [Newtonsoft.Json.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties; }
-            set { _additionalProperties = value; }
-        }
-    
     
     }
     
@@ -5424,15 +5388,6 @@ namespace AdminWebsite.TestAPI.Client
     
         [Newtonsoft.Json.JsonProperty("cancel_reason", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Cancel_reason { get; set; }
-    
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
-    
-        [Newtonsoft.Json.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties; }
-            set { _additionalProperties = value; }
-        }
     
     
     }
@@ -5545,15 +5500,6 @@ namespace AdminWebsite.TestAPI.Client
         [Newtonsoft.Json.JsonProperty("extended_answer", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Extended_answer { get; set; }
     
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
-    
-        [Newtonsoft.Json.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties; }
-            set { _additionalProperties = value; }
-        }
-    
     
     }
     
@@ -5568,15 +5514,6 @@ namespace AdminWebsite.TestAPI.Client
     
         [Newtonsoft.Json.JsonProperty("extended_answer", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Extended_answer { get; set; }
-    
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
-    
-        [Newtonsoft.Json.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties; }
-            set { _additionalProperties = value; }
-        }
     
     
     }
@@ -5601,15 +5538,6 @@ namespace AdminWebsite.TestAPI.Client
     
         [Newtonsoft.Json.JsonProperty("answers", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.Collections.Generic.List<SuitabilityAnswerResponse> Answers { get; set; }
-    
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
-    
-        [Newtonsoft.Json.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties; }
-            set { _additionalProperties = value; }
-        }
     
     
     }
@@ -5643,15 +5571,6 @@ namespace AdminWebsite.TestAPI.Client
     
         [Newtonsoft.Json.JsonProperty("organisation", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Organisation { get; set; }
-    
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
-    
-        [Newtonsoft.Json.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties; }
-            set { _additionalProperties = value; }
-        }
     
     
     }
@@ -5728,15 +5647,6 @@ namespace AdminWebsite.TestAPI.Client
     
         [Newtonsoft.Json.JsonProperty("court_room_account", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Court_room_account { get; set; }
-    
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties = new System.Collections.Generic.Dictionary<string, object>();
-    
-        [Newtonsoft.Json.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties; }
-            set { _additionalProperties = value; }
-        }
     
     
     }
