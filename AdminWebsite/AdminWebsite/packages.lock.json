@@ -144,9 +144,9 @@
       },
       "NotificationApi.Client": {
         "type": "Direct",
-        "requested": "[0.1.12, )",
-        "resolved": "0.1.12",
-        "contentHash": "4C/DEMsChFs8267TgfvNfbdVVmq0zKUy20T4BDEZ+LioYgtWBzO/PkleP2D28BqwSnMBfhH4B4zbZxZFRj8m9g==",
+        "requested": "[1.23.0, )",
+        "resolved": "1.23.0",
+        "contentHash": "rzislQceHVFFCKkzszDXWCmY7d9oeMH0K+senpuWHP+mK046QmVgb/l4BBkJYTgiVEht5pUfFLJO8yr27GaW3A==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
           "Newtonsoft.Json": "12.0.3"
@@ -215,9 +215,9 @@
       },
       "UserApi.Client": {
         "type": "Direct",
-        "requested": "[1.23.4-pullrequest0104-0011, )",
-        "resolved": "1.23.4-pullrequest0104-0011",
-        "contentHash": "dQwEYlwfcqVtO+JMBn6VDy1luC90ih5vn0ckq9IBlyCWQ3N1twofieHzMWdU1SuvW2b+gjuWDkbGIn1XdIpIcw==",
+        "requested": "[1.23.7, )",
+        "resolved": "1.23.7",
+        "contentHash": "6/HirwaJj71b4F/1uqgwb0qx+f6t37OEbjhjjUJzKOFAnH3EQWWKzyc50TAJ4v3jVY0jQl0sGDEjtc2aYHpCLg==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
           "Newtonsoft.Json": "12.0.3"
@@ -238,9 +238,9 @@
       },
       "VideoApi.Client": {
         "type": "Direct",
-        "requested": "[1.23.12, )",
-        "resolved": "1.23.12",
-        "contentHash": "dWrIHAx7kti7WUyJ42EmQzicxJUh6D17q8sxJkDCe/8OSrEVFndd67Yw2rv03r5b/xGDRfyheZ+ayDUb5yJ1Ag==",
+        "requested": "[1.23.13, )",
+        "resolved": "1.23.13",
+        "contentHash": "oSD46GhGkgBEgYS+MWzVLu4zafKve4GZaK8ANOhFow/a9KVQNcyIrlmebCUZ8UkwlJIhmawwLJZU5hawXzc8Vg==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
           "Newtonsoft.Json": "12.0.3"

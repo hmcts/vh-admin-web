@@ -127,7 +127,7 @@ namespace AdminWebsite.Services
                         _logger.LogWarning(
                             $"Failed to retrieve conference details from the VideoAPi for hearingId {hearingId}. Retrying attempt {retryAttempt}"),
                     videoApiResponseObject => videoApiResponseObject.HasInvalidMeetingRoom(),
-                    () => _videoApiClient.GetConferenceByHearingRefIdAsync(hearingId, true)
+                    () => _videoApiClient.GetConferenceByHearingRefIdAsync(hearingId, false)
                 );
                 return details;
             }
@@ -141,7 +141,7 @@ namespace AdminWebsite.Services
 
         public async Task<ConferenceDetailsResponse> GetConferenceDetailsByHearingId(Guid hearingId)
         {
-            return await _videoApiClient.GetConferenceByHearingRefIdAsync(hearingId, true);
+            return await _videoApiClient.GetConferenceByHearingRefIdAsync(hearingId, false);
         }
 
         public async Task ProcessNewParticipants(Guid hearingId, EditParticipantRequest participant, HearingDetailsResponse hearing,
