@@ -452,7 +452,7 @@ describe('SummaryComponent  with existing request', () => {
         fixture.detectChanges();
         expect(loggerSpy.info).toHaveBeenCalled();
     });
-    it('should unsibscribe subcription on destroy', () => {
+    it('should unsubscribe subcription on destroy', () => {
         component.ngOnDestroy();
         component.$subscriptions.forEach(s => expect(s.closed).toBe(true));
     });

@@ -11,14 +11,23 @@ import { CancelPopupStubComponent } from '../../testing/stubs/cancel-popup-stub'
 import { ConfirmationPopupStubComponent } from '../../testing/stubs/confirmation-popup-stub';
 import { BreadcrumbComponent } from '../breadcrumb/breadcrumb.component';
 import { OtherInformationComponent } from './other-information.component';
+import { ParticipantModel } from '../../common/model/participant.model';
 
 let routerSpy: jasmine.SpyObj<Router>;
 let otherInformation: AbstractControl;
 let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
-const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
 
-const hearing = new HearingModel();
-hearing.other_information = 'some text';
+const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
+const interpreter: ParticipantModel = {
+    hearing_role_name: 'Interpreter ',
+    is_judge: false,
+    is_exist_person: false
+};
+const notInterpreter: ParticipantModel = {
+    hearing_role_name: 'Not Interpreter ',
+    is_judge: false,
+    is_exist_person: false
+};
 
 describe('OtherInformationComponent', () => {
     let component: OtherInformationComponent;
@@ -49,17 +58,18 @@ describe('OtherInformationComponent', () => {
                     DiscardConfirmPopupComponent
                 ]
             }).compileComponents();
-            videoHearingsServiceSpy.getCurrentRequest.and.returnValue(hearing);
+            videoHearingsServiceSpy.getCurrentRequest.and.returnValue({
+                participants: [],
+                other_information: 'some text'
+            });
         })
     );
-
     beforeEach(() => {
         fixture = TestBed.createComponent(OtherInformationComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
         otherInformation = component.form.controls['otherInformation'];
     });
-
     it('should create', () => {
         expect(component).toBeTruthy();
     });
@@ -132,5 +142,45 @@ describe('OtherInformationComponent', () => {
         component.form.controls['otherInformation'].setValue('<script>text</script>');
         component.otherInformationOnBlur();
         expect(component.form.controls['otherInformation'].value).toBe('text');
+    });
+    it('should set audio recording to true by default', () => {
+        component.hearing = null;
+        component.ngOnInit();
+        expect(component.audioChoice.value).toBe(true);
+    });
+    it('should set audio recording to false and update hearing model', () => {
+        component.ngOnInit();
+        component.audioChoice.setValue(false);
+        fixture.detectChanges();
+        component.next();
+        expect(component.hearing.audio_recording_required).toBe(false);
+    });
+    it('should not be allowed to set audio recording options for case type CACD to recording', () => {
+        component.hearing.case_type = 'Court of Appeal Criminal Division';
+        component.ngOnInit();
+        fixture.autoDetectChanges();
+        expect(component.switchOffRecording).toBe(true);
+        expect(component.hearing.audio_recording_required).toBe(false);
+    });
+    it('should be allowed to set audio recording options for case type', () => {
+        component.hearing.case_type = 'Rents';
+        component.ngOnInit();
+        fixture.autoDetectChanges();
+        expect(component.switchOffRecording).toBe(false);
+    });
+    it('should not be allowed to set audio recording options when hearing has an interpreter', () => {
+        component.hearing.case_type = 'Rents';
+        component.hearing.participants.push(interpreter);
+        component.ngOnInit();
+        fixture.autoDetectChanges();
+        expect(component.interpreterPresent).toBe(true);
+        expect(component.hearing.audio_recording_required).toBe(true);
+        expect(component.form.controls['audioChoice'].value).toBe(true);
+    });
+    it('should be allowed to set audio recording options when hearing does not have an interpreter', () => {
+        component.hearing.participants.push(notInterpreter);
+        component.ngOnInit();
+        fixture.autoDetectChanges();
+        expect(component.interpreterPresent).toBe(false);
     });
 });
