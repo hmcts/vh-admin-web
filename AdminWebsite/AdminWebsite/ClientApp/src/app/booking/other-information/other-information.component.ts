@@ -51,7 +51,6 @@ export class OtherInformationComponent extends BookingBaseComponent implements O
     }
 
     private initForm() {
-
         this.audioRecording = this.setInitialAudio();
         this.audioChoice = new FormControl(this.audioRecording, Validators.required);
 

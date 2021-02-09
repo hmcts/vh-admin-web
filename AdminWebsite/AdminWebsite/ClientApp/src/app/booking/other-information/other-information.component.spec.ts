@@ -18,16 +18,16 @@ let otherInformation: AbstractControl;
 let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
 
 const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
-const interpreter: ParticipantModel  = {
+const interpreter: ParticipantModel = {
     hearing_role_name: 'Interpreter ',
     is_judge: false,
     is_exist_person: false
- };
- const notInterpreter: ParticipantModel = {
+};
+const notInterpreter: ParticipantModel = {
     hearing_role_name: 'Not Interpreter ',
     is_judge: false,
     is_exist_person: false
- };
+};
 
 describe('OtherInformationComponent', () => {
     let component: OtherInformationComponent;
@@ -59,19 +59,17 @@ describe('OtherInformationComponent', () => {
                 ]
             }).compileComponents();
             videoHearingsServiceSpy.getCurrentRequest.and.returnValue({
-                    participants: [],
-                    other_information: 'some text'
-                });
+                participants: [],
+                other_information: 'some text'
+            });
         })
     );
-
     beforeEach(() => {
         fixture = TestBed.createComponent(OtherInformationComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
         otherInformation = component.form.controls['otherInformation'];
     });
-
     it('should create', () => {
         expect(component).toBeTruthy();
     });
