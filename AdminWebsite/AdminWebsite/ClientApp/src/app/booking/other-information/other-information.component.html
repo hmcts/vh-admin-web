@@ -6,13 +6,13 @@
       <h1 class="govuk-heading-m" id="other-info-header">Other information</h1>
       <form [formGroup]="form" class="govuk-form-group" (ngSubmit)="next()">
         <div class="govuk-!-margin-bottom-9" *ngIf="!switchOffRecording">
-          <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
-            <p class="govuk-body govuk-!-margin-bottom-1">
-              Record this hearing (sound only)?
-              <span *ngIf="interpreterPresent" class="vh-mandatory-comment"> <br />(mandatory for hearings with interpreters) </span>
-            </p>
-          </legend>
           <fieldset class="govuk-fieldset fieldset-margin" [disabled]="interpreterPresent">
+            <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+              <p class="govuk-body govuk-!-margin-bottom-1">
+                Record this hearing (sound only)?
+                <span *ngIf="interpreterPresent" class="vh-mandatory-comment"> <br />(mandatory for hearings with interpreters) </span>
+              </p>
+            </legend>
             <div class="govuk-radios" data-module="radios">
               <div class="govuk-radios__item">
                 <input
