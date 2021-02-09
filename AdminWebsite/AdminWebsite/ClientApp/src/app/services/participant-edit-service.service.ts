@@ -32,6 +32,10 @@ export class ParticipantEditService {
         this.participant = participant;
     }
 
+    retrieveParticipantToEdit(): ParticipantEditResultModel {
+        return this.participant;
+    }
+
     updateParticipantName(personId: string, currentUsername: string, firstName: string, lastName: string): Promise<void> {
         const request = new UpdateAccountDetailsRequest({
             current_username: currentUsername,

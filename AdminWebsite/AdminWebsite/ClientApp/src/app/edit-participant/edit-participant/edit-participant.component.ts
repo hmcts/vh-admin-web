@@ -20,7 +20,7 @@ export class EditParticipantComponent implements OnInit {
     constructor(private service: ParticipantEditService, private router: Router, private fb: FormBuilder, private logger: Logger) {}
 
     ngOnInit(): void {
-        this.person = this.service.participant;
+        this.person = this.service.retrieveParticipantToEdit();
         if (!this.person) {
             this.router.navigateByUrl(PageUrls.EditParticipantSearch);
             return;

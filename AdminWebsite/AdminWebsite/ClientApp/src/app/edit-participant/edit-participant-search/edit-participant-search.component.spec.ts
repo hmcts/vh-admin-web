@@ -4,7 +4,7 @@ import { Logger } from 'src/app/services/logger';
 import { ParticipantEditService } from 'src/app/services/participant-edit-service.service';
 import { EditParticipantSearchComponent } from './edit-participant-search.component';
 
-const existingPerson = new ParticipantEditResultModel('123456789', 'John Doe', 'john.doe@hearing.com');
+const existingPerson = new ParticipantEditResultModel('123456789', 'John Doe', 'John', 'Doe', 'john.doe@hearing.com');
 
 describe('EditParticipantSearchComponent', () => {
     let component: EditParticipantSearchComponent;
@@ -61,5 +61,15 @@ describe('EditParticipantSearchComponent', () => {
 
         expect(component.hasSearched).toBeTruthy();
         expect(component.result).toBe(null);
+    });
+
+    it('should reset search on clear', () => {
+        component.hasSearched = true;
+        component.result = existingPerson;
+
+        component.clearSearch();
+
+        expect(component.hasSearched).toBeFalsy();
+        expect(component.result).toBeUndefined();
     });
 });

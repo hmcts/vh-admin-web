@@ -10,7 +10,6 @@ import { PageUrls } from 'src/app/shared/page-url.constants';
     styleUrls: ['./edit-participant-search-results.component.scss']
 })
 export class EditParticipantSearchResultsComponent {
-    private readonly loggerPrefix = '[EditParticipant] -';
     @Input() contactEmail: string;
     @Input() result: ParticipantEditResultModel;
     constructor(private service: ParticipantEditService, private router: Router) {}
