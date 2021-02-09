@@ -38,8 +38,17 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             AddExistingClaimantIndividual();
             AddExistingClaimantRep();
-            AddNewDefendantIndividual();
+            AddNewDefendantIndividual(PartyRole.LitigantInPerson);
             AddNewDefendantRep();
+            VerifyUsersAreAddedToTheParticipantsList();
+            ClickNext();
+        }
+
+        [When(@"the user completes the add participants form with an Interpreter")]
+        public void WhenTheUserCompletesTheAddParticipantsFormWithAnInterpreter()
+        {
+            AddNewDefendantIndividual(PartyRole.LitigantInPerson);
+            AddNewDefendantIndividual(PartyRole.Interpreter);
             VerifyUsersAreAddedToTheParticipantsList();
             ClickNext();
         }
@@ -75,12 +84,11 @@ namespace AdminWebsite.AcceptanceTests.Steps
             SetExistingRepDetails(rep);
         }
 
-        private void AddNewDefendantIndividual()
+        private void AddNewDefendantIndividual(PartyRole partyRole)
         {
-
             var individual = CreateNewUser("Individual");
             individual.CaseRoleName = Party.Defendant.Name;
-            individual.HearingRoleName = PartyRole.LitigantInPerson.Name;
+            individual.HearingRoleName = partyRole.Name;
             _individualDisplayName = individual.DisplayName;
             _c.Test.HearingParticipants.Add(individual);
             SetParty(individual.CaseRoleName);
@@ -295,5 +303,21 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AddParticipantsPage.InvalidEmailError).Displayed.Should().BeTrue();
         }
+
+        [Then(@"audio recording is selected by default with options (.*)")]
+        public void ThenAudioRecordingIsSelectedByDefaultWithOptions(string option)
+        {
+            var enabled = option != "disabled";
+            if (!enabled)
+            {
+               _browsers[_c.CurrentUser].Driver.WaitUntilVisible(OtherInformationPage.AudioRecordingInterpreterMessage).Displayed.Should().BeTrue();
+            }
+
+            _browsers[_c.CurrentUser].Driver.FindElement(OtherInformationPage.AudioRecordYesRadioButton).Selected.Should().BeTrue();
+            _browsers[_c.CurrentUser].Driver.FindElement(OtherInformationPage.AudioRecordYesRadioButton).Enabled.Should().Be(enabled); 
+        }
+
+
+
     }
 }
