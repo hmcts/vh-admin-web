@@ -294,30 +294,6 @@ describe('AssignJudgeComponent', () => {
         expect(component.$subscriptions[0].closed).toBeTruthy();
         expect(component.$subscriptions[1].closed).toBeTruthy();
     });
-    it('should set audio recording to true by default', () => {
-        component.hearing = null;
-        component.ngOnInit();
-        expect(component.audioChoice.value).toBe(true);
-    });
-    it('should set audio recording to false and update hearing model', () => {
-        component.ngOnInit();
-        component.audioChoice.setValue(false);
-        fixture.detectChanges();
-        component.saveJudge();
-        expect(component.hearing.audio_recording_required).toBe(false);
-    });
-    it('should not allowed to set audio recording options for case type to recording', () => {
-        component.hearing.case_type = 'Court of Appeal Criminal Division';
-        component.ngOnInit();
-        fixture.autoDetectChanges();
-        expect(component.switchOffRecording).toBe(true);
-    });
-    it('should allowed to set audio recording options for case type', () => {
-        component.hearing.case_type = 'Rents';
-        component.ngOnInit();
-        fixture.autoDetectChanges();
-        expect(component.switchOffRecording).toBe(false);
-    });
     it('should navigate if judge is saved', () => {
         const savedHearing = initHearingRequest();
         expect(savedHearing.participants.length > 0).toBe(true);
