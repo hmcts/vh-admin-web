@@ -9,7 +9,6 @@
       id="contactEmail"
       class="govuk-input govuk-!-width-one-half"
       type="search"
-      (search)="search()"
       (input)="clearSearch()"
       formControlName="contactEmail"
       required
@@ -26,4 +25,10 @@
     [contactEmail]="contactEmail.value"
     [result]="result"
   ></app-edit-participant-search-results>
+</div>
+
+<div class="govuk-grid-row" *ngIf="loadingData">
+  <div class="govuk-grid-column-full vh-loader-container">
+    <div class="vh-loader"></div>
+  </div>
 </div>

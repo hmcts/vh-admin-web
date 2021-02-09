@@ -2789,7 +2789,7 @@
           "Swashbuckle.AspNetCore.Annotations": "5.2.1",
           "Swashbuckle.AspNetCore.Newtonsoft": "5.2.1",
           "Swashbuckle.AspNetCore.Swagger": "5.2.1",
-          "UserApi.Client": "1.23.5-pullrequest0107-0002"
+          "UserApi.Client": "1.23.5-pullrequest0107-0002",
           "VH.Core.Configuration": "0.1.12"
         }
       },

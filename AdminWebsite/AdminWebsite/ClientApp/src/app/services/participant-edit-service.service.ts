@@ -1,15 +1,16 @@
 import { Injectable } from '@angular/core';
 import { ParticipantEditResultModel } from '../common/model/participant-edit-result.model';
 import { BHClient, UpdateAccountDetailsRequest } from './clients/api-client';
+import { Logger } from './logger';
 
 @Injectable({ providedIn: 'root' })
 export class ParticipantEditService {
     participant: ParticipantEditResultModel;
-    constructor(private bhClient: BHClient) {}
+    constructor(private bhClient: BHClient, private logger: Logger) {}
 
-    async searchForUsername(username: string): Promise<ParticipantEditResultModel> {
+    async searchForPerson(contactEmail: string): Promise<ParticipantEditResultModel> {
         try {
-            const person = await this.bhClient.getPersonForUpdateByContactEmail(username).toPromise();
+            const person = await this.bhClient.getPersonForUpdateByContactEmail(contactEmail).toPromise();
             if (person) {
                 return new ParticipantEditResultModel(
                     person.id,
@@ -21,7 +22,8 @@ export class ParticipantEditService {
             } else {
                 return null;
             }
-        } catch {
+        } catch (error) {
+            this.logger.error(`Failed to find person ${contactEmail}. ${error.response}`, error);
             return null;
         }
     }

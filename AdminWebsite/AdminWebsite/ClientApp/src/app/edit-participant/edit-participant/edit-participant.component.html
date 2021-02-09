@@ -16,6 +16,7 @@
       data-module="govuk-button"
       (click)="updateParticipant()"
       alt="Update participant"
+      [disabled]="showSpinner"
     >
       Save
     </button>
@@ -26,9 +27,16 @@
       (click)="cancelEdit()"
       type="button"
       alt="Cancel edit"
+      [disabled]="showSpinner"
     >
       Cancel
     </button>
   </div>
   <div *ngIf="updateComplete" class="complete" id="completeSign">participant name updated</div>
 </form>
+
+<div class="govuk-grid-row" *ngIf="showSpinner">
+  <div class="govuk-grid-column-full vh-loader-container">
+    <div class="vh-loader"></div>
+  </div>
+</div>

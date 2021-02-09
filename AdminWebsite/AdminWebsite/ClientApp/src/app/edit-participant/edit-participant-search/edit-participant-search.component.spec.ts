@@ -13,13 +13,13 @@ describe('EditParticipantSearchComponent', () => {
     const logger = jasmine.createSpyObj<Logger>('Logger', ['debug', 'info', 'error', 'warn']);
 
     beforeAll(() => {
-        service = jasmine.createSpyObj<ParticipantEditService>('ParticipantEditService', ['searchForUsername']);
+        service = jasmine.createSpyObj<ParticipantEditService>('ParticipantEditService', ['searchForPerson']);
         formBuilder = new FormBuilder();
     });
 
     beforeEach(() => {
         component = new EditParticipantSearchComponent(formBuilder, service, logger);
-        service.searchForUsername.and.returnValue(Promise.resolve(existingPerson));
+        service.searchForPerson.and.returnValue(Promise.resolve(existingPerson));
         component.ngOnInit();
     });
 
@@ -39,7 +39,7 @@ describe('EditParticipantSearchComponent', () => {
 
         await component.search();
 
-        expect(service.searchForUsername).toHaveBeenCalledTimes(0);
+        expect(service.searchForPerson).toHaveBeenCalledTimes(0);
     });
 
     it('should update result on successful search', async () => {
@@ -55,7 +55,7 @@ describe('EditParticipantSearchComponent', () => {
     it('should update result on unsuccessful search', async () => {
         const contactEmail = 'john@doe.com';
         component.form.setValue({ contactEmail: contactEmail });
-        service.searchForUsername.and.returnValue(Promise.resolve(null));
+        service.searchForPerson.and.returnValue(Promise.resolve(null));
 
         await component.search();
 

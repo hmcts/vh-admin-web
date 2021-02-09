@@ -45,7 +45,7 @@ export class EditParticipantSearchComponent implements OnInit {
     }
 
     async getResults(username: string): Promise<ParticipantEditResultModel> {
-        const response = await this.service.searchForUsername(username);
+        const response = await this.service.searchForPerson(username);
         if (response) {
             this.logger.debug(`${this.loggerPrefix} Found user`, { contactEmail: this.contactEmail.value });
             return response;

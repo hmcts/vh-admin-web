@@ -16,6 +16,7 @@ export class EditParticipantComponent implements OnInit {
     form: FormGroup;
     person: ParticipantEditResultModel;
     updateComplete: boolean;
+    showSpinner: boolean;
     constructor(private service: ParticipantEditService, private router: Router, private fb: FormBuilder, private logger: Logger) {}
 
     ngOnInit(): void {
@@ -43,14 +44,17 @@ export class EditParticipantComponent implements OnInit {
         if (this.form.valid) {
             this.logger.debug(`${this.loggerPrefix} Attempting to update participant`, { person: this.person.personId });
             try {
+                this.showSpinner = true;
                 await this.service.updateParticipantName(
                     this.person.personId,
                     this.person.currentUsername,
                     this.firstName.value,
                     this.lastName.value
                 );
+                this.showSpinner = false;
                 this.updateComplete = true;
             } catch (err) {
+                this.showSpinner = false;
                 this.logger.error(`${this.loggerPrefix} Failed to update participant`, err, { person: this.person.personId });
             }
         }
