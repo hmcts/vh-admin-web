@@ -88,7 +88,7 @@ export class ParticipantsListComponent implements OnInit {
     }
     isInterpretee(participant: ParticipantModel): boolean {
         let interpretee: ParticipantModel;
-        if (this.isEditMode && participant.linked_participants.length > 0) {
+        if (this.isEditMode && participant.linked_participants && participant.linked_participants.length > 0) {
             interpretee = this.participants.find(p => p.id === participant.linked_participants[0].linkedParticipantId);
         } else {
             interpretee = this.participants.find(p => p.interpreterFor === participant.email);
