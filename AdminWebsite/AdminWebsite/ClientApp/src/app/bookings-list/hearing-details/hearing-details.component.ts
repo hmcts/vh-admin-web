@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core';
 import { ParticipantDetailsModel } from 'src/app/common/model/participant-details.model';
 import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
 import { ActivatedRoute } from '@angular/router';
+import { Logger } from '../../services/logger';
 
 @Component({
     selector: 'app-hearing-details',
@@ -15,8 +16,9 @@ export class HearingDetailsComponent {
         this.phoneConferenceDetails = value;
     }
 
+    private readonly loggerPrefix = '[HearingDetails] -';
     phoneConferenceDetails = '';
-    constructor(private route: ActivatedRoute) {}
+    constructor(private route: ActivatedRoute, private logger: Logger) {}
 
     getParticipantInfo(participantId: string): string {
         let represents = '';
@@ -30,13 +32,21 @@ export class HearingDetailsComponent {
     isJoinByPhone(): boolean {
         const config = this.route.snapshot.data['configSettings'];
         const datePhone = config.join_by_phone_from_date;
+        this.logger.debug(`${this.loggerPrefix} join by phone from date setting is: ${datePhone}`);
+
         if (!datePhone || datePhone.length === 0) {
             return true;
         }
+        const dateFrom = this.getDateFromString(datePhone);
         if (this.hearing.ConfirmedDate) {
-            return Date.parse(this.hearing.ConfirmedDate.toString()) >= Date.parse(datePhone);
+            return Date.parse(this.hearing.ConfirmedDate.toString()) >= Date.parse(dateFrom.toString());
         } else {
             return false;
         }
+    }
+
+    getDateFromString(datePhone: string): Date {
+        const dateParts = datePhone.split('-');
+        return new Date(+dateParts[0], +dateParts[1] - 1, +dateParts[2]);
     }
 }
