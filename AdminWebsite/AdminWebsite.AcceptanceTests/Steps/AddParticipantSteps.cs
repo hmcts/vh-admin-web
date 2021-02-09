@@ -40,7 +40,6 @@ namespace AdminWebsite.AcceptanceTests.Steps
             AddExistingClaimantIndividual();
             AddExistingClaimantRep();
             AddNewDefendantIndividual(PartyRole.LitigantInPerson);
-            AddNewDefendantIndividual(PartyRole.Interpreter);
             AddNewDefendantRep();
             VerifyUsersAreAddedToTheParticipantsList();
             ClickNext();
@@ -316,5 +315,21 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AddParticipantsPage.InvalidEmailError).Displayed.Should().BeTrue();
         }
+
+        [Then(@"audio recording is selected by default with options (.*)")]
+        public void ThenAudioRecordingIsSelectedByDefaultWithOptions(string option)
+        {
+            var enabled = option != "disabled";
+            if (!enabled)
+            {
+               _browsers[_c.CurrentUser].Driver.WaitUntilVisible(OtherInformationPage.AudioRecordingInterpreterMessage).Displayed.Should().BeTrue();
+            }
+
+            _browsers[_c.CurrentUser].Driver.FindElement(OtherInformationPage.AudioRecordYesRadioButton).Selected.Should().BeTrue();
+            _browsers[_c.CurrentUser].Driver.FindElement(OtherInformationPage.AudioRecordYesRadioButton).Enabled.Should().Be(enabled); 
+        }
+
+
+
     }
 }
