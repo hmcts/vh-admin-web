@@ -896,7 +896,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     updateHearingRoleList(hearingRoleList: string[]) {
         // hide the interpreter value if participant list is empty or participant list has an interpreter.
         if (this.hearingHasAnInterpreter() || !this.hearingHasInterpretees()) {
-            this.hearingRoleList = this.hearingRoleList.filter(item => item.toLowerCase().trim() !== HearingRoles.INTERPRETER); // TODO:: Fix migration for this.
+            this.hearingRoleList = this.hearingRoleList.filter(item => item.toLowerCase().trim() !== HearingRoles.INTERPRETER);
         }
     }
     private removeParticipantAndInterpreter() {
@@ -916,7 +916,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     private addLinkedParticipant(newParticipant: ParticipantModel): void {
         if (newParticipant.interpreterFor) {
             const interpretee = this.getInterpretee(newParticipant.interpreterFor);
-            let linkedParticipant = Object.assign(new LinkedParticipantModel(), {
+            const linkedParticipant = Object.assign(new LinkedParticipantModel(), {
                 participantEmail: newParticipant.email,
                 linkedParticipantEmail: interpretee
             });

@@ -109,21 +109,21 @@ describe('ParticipantsListComponent', () => {
         expect(ret).toBe(true);
     });
     it('should return true if the participant is an interpretee', () => {
-        const pat1 = new ParticipantModel();
-        pat1.title = 'Mr';
-        pat1.first_name = 'Oliver';
-        pat1.last_name = 'Stone';
-        pat1.hearing_role_name = 'Litigant in Person';
-        pat1.email = 'oliver.stone@email.com';
-        const pat2 = new ParticipantModel();
-        pat2.title = 'Mr';
-        pat2.first_name = 'Oliver';
-        pat2.last_name = 'Styx';
-        pat2.hearing_role_name = 'Interpreter';
-        pat2.interpreterFor = 'oliver.stone@email.com';
-        const participants: ParticipantModel[] = [pat1, pat2];
+        const pat01 = new ParticipantModel();
+        pat01.title = 'Mr';
+        pat01.first_name = 'Oliver';
+        pat01.last_name = 'Stone';
+        pat01.hearing_role_name = 'Litigant in Person';
+        pat01.email = 'oliver.stone@email.com';
+        const pat02 = new ParticipantModel();
+        pat02.title = 'Mr';
+        pat02.first_name = 'Oliver';
+        pat02.last_name = 'Styx';
+        pat02.hearing_role_name = 'Interpreter';
+        pat02.interpreterFor = 'oliver.stone@email.com';
+        const _participants: ParticipantModel[] = [pat01, pat02];
         component.ngOnInit();
-        component.participants = participants;
+        component.participants = _participants;
 
         const participantModel = new ParticipantModel();
         participantModel.title = 'Mrs';
@@ -137,7 +137,7 @@ describe('ParticipantsListComponent', () => {
         let linkedParticipant = new LinkedParticipantModel();
         linkedParticipant.linkType = LinkedParticipantType.Interpreter;
         linkedParticipant.linkedParticipantId = '200';
-        let participant1 = new ParticipantModel();
+        const participant1 = new ParticipantModel();
         participant1.id = '100';
         participant1.first_name = 'Oliver';
         participant1.last_name = 'Stone';
@@ -149,7 +149,7 @@ describe('ParticipantsListComponent', () => {
         linkedParticipant = new LinkedParticipantModel();
         linkedParticipant.linkType = LinkedParticipantType.Interpreter;
         linkedParticipant.linkedParticipantId = '100';
-        let participant2 = new ParticipantModel();
+        const participant2 = new ParticipantModel();
         participant2.id = '200';
         participant2.first_name = 'Oliver';
         participant2.last_name = 'Styx';
@@ -158,13 +158,13 @@ describe('ParticipantsListComponent', () => {
         const lp2: LinkedParticipantModel[] = [linkedParticipant];
         participant2.linked_participants = lp2;
 
-        const participants: ParticipantModel[] = [participant1, participant2];
+        const _hearparticipants: ParticipantModel[] = [participant1, participant2];
         component.ngOnInit();
         component.isEditMode = true;
-        component.participants = participants;
+        component.participants = _hearparticipants;
 
         const participantModel = new ParticipantModel();
-        let linkedParticipant1 = new LinkedParticipantModel();
+        const linkedParticipant1 = new LinkedParticipantModel();
         linkedParticipant1.linkType = LinkedParticipantType.Interpreter;
         linkedParticipant1.linkedParticipantId = '100';
         const lp: LinkedParticipantModel[] = [linkedParticipant1];
@@ -174,23 +174,23 @@ describe('ParticipantsListComponent', () => {
         expect(ret).toBe(true);
     });
     it('should return the display name of the interpretee linked to the interpreter', () => {
-        const pat1 = new ParticipantModel();
-        pat1.title = 'Mr';
-        pat1.first_name = 'Oliver';
-        pat1.last_name = 'Stone';
-        pat1.hearing_role_name = 'Litigant in Person';
-        pat1.email = 'oliver.stone@email.com';
-        pat1.display_name = 'Oliver Stone';
-        const pat2 = new ParticipantModel();
-        pat2.title = 'Mr';
-        pat2.first_name = 'Oliver';
-        pat2.last_name = 'Styx';
-        pat2.hearing_role_name = 'Interpreter';
-        pat2.interpreterFor = 'oliver.stone@email.com';
-        pat2.display_name = 'Oliver Styx';
-        const participants: ParticipantModel[] = [pat1, pat2];
+        const party01 = new ParticipantModel();
+        party01.title = 'Mr';
+        party01.first_name = 'Oliver';
+        party01.last_name = 'Stone';
+        party01.hearing_role_name = 'Litigant in Person';
+        party01.email = 'oliver.stone@email.com';
+        party01.display_name = 'Oliver Stone';
+        const party02 = new ParticipantModel();
+        party02.title = 'Mr';
+        party02.first_name = 'Oliver';
+        party02.last_name = 'Styx';
+        party02.hearing_role_name = 'Interpreter';
+        party02.interpreterFor = 'oliver.stone@email.com';
+        party02.display_name = 'Oliver Styx';
+        const participantsModel: ParticipantModel[] = [party01, party02];
         component.ngOnInit();
-        component.participants = participants;
+        component.participants = participantsModel;
 
         const participantModel = new ParticipantModel();
         participantModel.title = 'Mr';
@@ -207,40 +207,40 @@ describe('ParticipantsListComponent', () => {
         linkedParticipant.linkType = LinkedParticipantType.Interpreter;
         linkedParticipant.linkedParticipantId = '200';
 
-        const pat1 = new ParticipantModel();
-        pat1.id = '100';
-        pat1.title = 'Mr';
-        pat1.first_name = 'Oliver';
-        pat1.last_name = 'Stone';
-        pat1.hearing_role_name = 'Litigant in Person';
-        pat1.email = 'oliver.stone@email.com';
-        pat1.display_name = 'Oliver Stone';
+        const _pat1 = new ParticipantModel();
+        _pat1.id = '100';
+        _pat1.title = 'Mr';
+        _pat1.first_name = 'Oliver';
+        _pat1.last_name = 'Stone';
+        _pat1.hearing_role_name = 'Litigant in Person';
+        _pat1.email = 'oliver.stone@email.com';
+        _pat1.display_name = 'Oliver Stone';
         const lp1: LinkedParticipantModel[] = [linkedParticipant];
-        pat1.linked_participants = lp1;
+        _pat1.linked_participants = lp1;
 
         linkedParticipant = new LinkedParticipantModel();
         linkedParticipant.linkType = LinkedParticipantType.Interpreter;
         linkedParticipant.linkedParticipantId = '100';
 
-        const pat2 = new ParticipantModel();
-        pat2.id = '200';
-        pat2.title = 'Mr';
-        pat2.first_name = 'Oliver';
-        pat2.last_name = 'Styx';
-        pat2.hearing_role_name = 'Interpreter';
-        pat2.interpreterFor = 'oliver.stone@email.com';
-        pat2.email = 'oliver.styx@email.com';
-        pat2.display_name = 'Oliver Styx';
+        const _pat2 = new ParticipantModel();
+        _pat2.id = '200';
+        _pat2.title = 'Mr';
+        _pat2.first_name = 'Oliver';
+        _pat2.last_name = 'Styx';
+        _pat2.hearing_role_name = 'Interpreter';
+        _pat2.interpreterFor = 'oliver.stone@email.com';
+        _pat2.email = 'oliver.styx@email.com';
+        _pat2.display_name = 'Oliver Styx';
         const lp2: LinkedParticipantModel[] = [linkedParticipant];
         pat1.linked_participants = lp2;
 
-        const participants: ParticipantModel[] = [pat1, pat2];
+        const _hearingParticipants: ParticipantModel[] = [_pat1, _pat2];
         component.ngOnInit();
         component.isEditMode = true;
-        component.participants = participants;
+        component.participants = _hearingParticipants;
 
         const participantModel = new ParticipantModel();
-        let linkedParticipant1 = new LinkedParticipantModel();
+        const linkedParticipant1 = new LinkedParticipantModel();
         linkedParticipant1.linkType = LinkedParticipantType.Interpreter;
         linkedParticipant1.linkedParticipantId = '100';
         const lp: LinkedParticipantModel[] = [linkedParticipant1];
