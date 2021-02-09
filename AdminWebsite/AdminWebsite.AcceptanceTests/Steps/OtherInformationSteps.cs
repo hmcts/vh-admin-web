@@ -25,12 +25,20 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [When(@"the user completes the other information form")]
         public void ProgressToNextPage()
         {
-            Thread.Sleep(TimeSpan.FromSeconds(1));
+                Thread.Sleep(TimeSpan.FromSeconds(1));
             SetOtherInformation();
             _browsers[_c.CurrentUser].Clear(OtherInformationPage.OtherInformationTextfield);
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(OtherInformationPage.OtherInformationTextfield).SendKeys(_c.Test.OtherInformation);
             ClickNext();
         }
+
+        [When(@"the user sets audio recording to No")]
+        public void WhenTheUserSetsAudioRecordingToNo()
+        {
+            SetAudioRecording(_c.Test.AssignJudge.AudioRecord);
+            ProgressToNextPage();
+        }
+
 
         private void SetOtherInformation()
         {
@@ -41,6 +49,14 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(OtherInformationPage.NextButton);
             _browsers[_c.CurrentUser].Click(OtherInformationPage.NextButton);
+        }
+
+        private void SetAudioRecording(bool audioRecord)
+        {
+            _browsers[_c.CurrentUser].ClickRadioButton(audioRecord
+                ? OtherInformationPage.AudioRecordYesRadioButton
+                : OtherInformationPage.AudioRecordNoRadioButton);
+            _c.Test.AssignJudge.AudioRecord = audioRecord;
         }
     }
 }
