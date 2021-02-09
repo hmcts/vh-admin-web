@@ -11,7 +11,6 @@ using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using AdminWebsite.Contracts.Requests;
 using AdminWebsite.Services;
-using Microsoft.AspNetCore.Authorization;
 using UserApi.Client;
 
 namespace AdminWebsite.Controllers
@@ -83,32 +82,32 @@ namespace AdminWebsite.Controllers
         /// <returns></returns>
         [HttpGet("username/hearings", Name = "GetHearingsByUsernameForDeletion")]
         [SwaggerOperation(OperationId = "GetHearingsByUsernameForDeletion")]
-        [ProducesResponseType(typeof(List<HearingsByUsernameForDeletionResponse>), (int) HttpStatusCode.OK)]
-        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(List<HearingsByUsernameForDeletionResponse>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<ActionResult<List<HearingsByUsernameForDeletionResponse>>> GetHearingsByUsernameForDeletionAsync([FromQuery] string username)
         {
             var userId = await _userAccountService.GetAdUserIdForUsername(username);
             var userExists = !string.IsNullOrWhiteSpace(userId);
-            
+
             try
             {
-                
+
                 var response = await _bookingsApiClient.GetHearingsByUsernameForDeletionAsync(username);
                 return Ok(response);
             }
             catch (BookingsApiException e)
             {
-                if (userExists && e.StatusCode == (int) HttpStatusCode.NotFound)
+                if (userExists && e.StatusCode == (int)HttpStatusCode.NotFound)
                 {
                     return Ok(new List<HearingsByUsernameForDeletionResponse>());
-                } 
-                
-                if (!userExists && e.StatusCode == (int) HttpStatusCode.NotFound)
+                }
+
+                if (!userExists && e.StatusCode == (int)HttpStatusCode.NotFound)
                 {
                     return NotFound();
                 }
-                
-                if (e.StatusCode == (int) HttpStatusCode.Unauthorized)
+
+                if (e.StatusCode == (int)HttpStatusCode.Unauthorized)
                 {
                     return Unauthorized();
                 }
@@ -124,8 +123,8 @@ namespace AdminWebsite.Controllers
         /// <returns></returns>
         [HttpDelete("username/{username}", Name = "DeletePersonWithUsername")]
         [SwaggerOperation(OperationId = "DeletePersonWithUsername")]
-        [ProducesResponseType((int) HttpStatusCode.NoContent)]
-        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> DeletePersonWithUsernameAsync(string username)
         {
             var usernameCleaned = username.ToLower().Trim();
@@ -140,8 +139,8 @@ namespace AdminWebsite.Controllers
         /// <returns>A person</returns>
         [HttpGet(Name = "GetPersonForUpdateByContactEmail")]
         [SwaggerOperation(OperationId = "GetPersonForUpdateByContactEmail")]
-        [ProducesResponseType(typeof(PersonResponse), (int) HttpStatusCode.OK)]
-        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(PersonResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<ActionResult<PersonResponse>> GetPersonForUpdateByContactEmail(
             [FromQuery] string contactEmail)
         {
@@ -165,21 +164,20 @@ namespace AdminWebsite.Controllers
         /// <returns></returns>
         [HttpPut("{personId}")]
         [SwaggerOperation(OperationId = "UpdatePersonDetails")]
-        [ProducesResponseType((int) HttpStatusCode.Accepted)]
-        [ProducesResponseType((int) HttpStatusCode.NotFound)]
-        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
-        [AllowAnonymous]
+        [ProducesResponseType((int)HttpStatusCode.Accepted)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult<IList<PersonResponse>>> UpdatePersonDetails([FromRoute] Guid personId,
             [FromBody] UpdateAccountDetailsRequest payload)
         {
-            
+
             try
             {
                 var useridString = await _userAccountService.GetAdUserIdForUsername(payload.CurrentUsername);
                 var userId = Guid.Parse(useridString);
                 var updatedPerson =
                     await _userAccountService.UpdateUserAccountDetails(userId, payload.FirstName, payload.LastName);
-            
+
                 var updateBookingPersonRequest = new UpdatePersonDetailsRequest
                 {
                     First_name = updatedPerson.FirstName,
