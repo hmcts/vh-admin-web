@@ -187,54 +187,44 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task Should_create_a_hearing_with_linked_participants()
         {
-            var newHearingRequest = new BookNewHearingRequest
+            // request.
+            var newHearingRequest = new BookNewHearingRequest()
             {
                 Participants = new List<BookingsAPI.Client.ParticipantRequest>
                 {
-                    new BookingsAPI.Client.ParticipantRequest
-                    {
-                        Case_role_name = "CaseRole", Contact_email = "contact1@email.com",
-                        Hearing_role_name = "HearingRole", Display_name = "display name1",
-                        First_name = "fname", Middle_names = "", Last_name = "lname1", Username = "username1@email.com",
-                        Organisation_name = "", Representee = "", Telephone_number = ""
-                    },
-                    new BookingsAPI.Client.ParticipantRequest
-                    {
-                        Case_role_name = "CaseRole", Contact_email = "contact2@email.com",
-                        Hearing_role_name = "HearingRole", Display_name = "display name2",
-                        First_name = "fname2", Middle_names = "", Last_name = "lname2",
-                        Username = "username2@email.com", Organisation_name = "", Representee = "",
-                        Telephone_number = ""
-                    },
+                    new BookingsAPI.Client.ParticipantRequest { Case_role_name = "CaseRole", Contact_email = "firstName1.lastName1@email.com",
+                        Display_name = "firstName1 lastName1", First_name = "firstName1", Hearing_role_name = "Litigant in person", Last_name = "lastName1", Middle_names = "",
+                        Organisation_name = "", Representee = "", Telephone_number = "1234567890", Title = "Mr.", Username = "firstName1.lastName1@email.net" },
+                    new BookingsAPI.Client.ParticipantRequest { Case_role_name = "CaseRole", Contact_email = "firstName2.lastName2@email.com",
+                        Display_name = "firstName2 lastName2", First_name = "firstName2", Hearing_role_name = "Interpreter", Last_name = "lastName2", Middle_names = "",
+                        Organisation_name = "", Representee = "", Telephone_number = "1234567890", Title = "Mr.", Username = "firstName2.lastName2@email.net" },
+
                 },
                 Linked_participants = new List<LinkedParticipantRequest>
-                {
-                    new LinkedParticipantRequest
-                        { Participant_contact_email = "user1@email.com", Linked_participant_contact_email = "user2@email.com"},
-                }
+                    {
+                        new LinkedParticipantRequest { Participant_contact_email = "firstName1.lastName1@email.com",
+                            Linked_participant_contact_email = "firstName2.lastName2@email.com", Type = LinkedParticipantType.Interpreter },
+                        new LinkedParticipantRequest { Participant_contact_email = "firstName2.lastName2@email.com",
+                            Linked_participant_contact_email = "firstName1.lastName1@email.com", Type = LinkedParticipantType.Interpreter }
+                    }
             };
-            // setup response
-            var pat1 = Builder<ParticipantResponse>.CreateNew()
-                .With(x => x.Id = Guid.NewGuid())
-                .With(x => x.User_role_name = "Representative")
-                .With(x => x.Username = "username1@email.com")
-                .With(x => x.Linked_participants = new List<LinkedParticipantResponse> 
-                    { new LinkedParticipantResponse { Linked_id = Guid.NewGuid(), Type = LinkedParticipantType.Interpreter } })
+            // set response.
+            var linkedParticipant1 = new List<LinkedParticipantResponse>() { new LinkedParticipantResponse() { Linked_id = Guid.NewGuid(), Type = LinkedParticipantType.Interpreter } };
+            var participant1 = Builder<ParticipantResponse>.CreateNew().With(x => x.Id = Guid.NewGuid())
+                .With(x => x.User_role_name = "Individual").With(x => x.Username = "firstName1.lastName1@email.net")
+                .With(x => x.Linked_participants = linkedParticipant1)
                 .Build();
-            var pat2 = Builder<ParticipantResponse>.CreateNew()
-                .With(x => x.Id = Guid.NewGuid())
-                .With(x => x.User_role_name = "Individual")
-                .With(x => x.Username = "username2@email.com")
-                .With(x => x.Linked_participants = new List<LinkedParticipantResponse> 
-                    { new LinkedParticipantResponse { Linked_id = Guid.NewGuid(), Type = LinkedParticipantType.Interpreter } })
+            var linkedParticipant2 = new List<LinkedParticipantResponse>() { new LinkedParticipantResponse() { Linked_id = Guid.NewGuid(), Type = LinkedParticipantType.Interpreter } };
+            var participant2 = Builder<ParticipantResponse>.CreateNew().With(x => x.Id = Guid.NewGuid())
+                .With(x => x.User_role_name = "Individual").With(x => x.Username = "firstName1.lastName1@email.net")
+                .With(x => x.Linked_participants = linkedParticipant2)
                 .Build();
             var hearingDetailsResponse = Builder<HearingDetailsResponse>.CreateNew()
-                .With(x => x.Participants = new List<ParticipantResponse> { pat1, pat2 }).Build();
+                .With(x => x.Endpoints = Builder<EndpointResponse>.CreateListOfSize(2).Build().ToList())
+                .With(x => x.Participants = new List<ParticipantResponse> { participant1, participant2 }).Build();
             _bookingsApiClient.Setup(x => x.BookNewHearingAsync(newHearingRequest))
                 .ReturnsAsync(hearingDetailsResponse);
-
             var result = await _controller.Post(newHearingRequest);
-
             result.Result.Should().BeOfType<CreatedResult>();
             var createdObjectResult = (CreatedResult)result.Result;
             createdObjectResult.StatusCode.Should().Be(201);

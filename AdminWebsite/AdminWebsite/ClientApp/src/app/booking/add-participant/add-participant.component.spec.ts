@@ -116,7 +116,7 @@ p4.phone = '32332';
 p4.hearing_role_name = 'Litigant in person';
 p4.case_role_name = 'Claimant';
 p4.company = 'CN';
-p3.id = '1234';
+p4.id = '1234';
 
 participants.push(p1);
 participants.push(p2);

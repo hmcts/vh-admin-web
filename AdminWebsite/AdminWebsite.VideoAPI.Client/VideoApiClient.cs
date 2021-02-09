@@ -290,14 +290,14 @@ namespace AdminWebsite.VideoAPI.Client
     
         /// <summary>Get conferences by hearing ref id</summary>
         /// <param name="hearingRefId">Hearing ID</param>
-        /// <returns>Full details including participants and statuses of a conference</returns>
+        /// <param name="includeClosed">Include closed conferences in search</param>
         /// <returns>Full details including participants and statuses of a conference</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<ConferenceDetailsResponse> GetConferenceByHearingRefIdAsync(System.Guid hearingRefId, bool? includeClosed);
     
         /// <summary>Get conferences by hearing ref id</summary>
         /// <param name="hearingRefId">Hearing ID</param>
-        /// <returns>Full details including participants and statuses of a conference</returns>
+        /// <param name="includeClosed">Include closed conferences in search</param>
         /// <returns>Full details including participants and statuses of a conference</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         ConferenceDetailsResponse GetConferenceByHearingRefId(System.Guid hearingRefId, bool? includeClosed);
@@ -305,7 +305,7 @@ namespace AdminWebsite.VideoAPI.Client
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Get conferences by hearing ref id</summary>
         /// <param name="hearingRefId">Hearing ID</param>
-        /// <returns>Full details including participants and statuses of a conference</returns>
+        /// <param name="includeClosed">Include closed conferences in search</param>
         /// <returns>Full details including participants and statuses of a conference</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<ConferenceDetailsResponse> GetConferenceByHearingRefIdAsync(System.Guid hearingRefId, bool? includeClosed, System.Threading.CancellationToken cancellationToken);
@@ -2558,7 +2558,7 @@ namespace AdminWebsite.VideoAPI.Client
     
         /// <summary>Get conferences by hearing ref id</summary>
         /// <param name="hearingRefId">Hearing ID</param>
-        /// <returns>Full details including participants and statuses of a conference</returns>
+        /// <param name="includeClosed">Include closed conferences in search</param>
         /// <returns>Full details including participants and statuses of a conference</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         public System.Threading.Tasks.Task<ConferenceDetailsResponse> GetConferenceByHearingRefIdAsync(System.Guid hearingRefId, bool? includeClosed)
@@ -2568,7 +2568,7 @@ namespace AdminWebsite.VideoAPI.Client
     
         /// <summary>Get conferences by hearing ref id</summary>
         /// <param name="hearingRefId">Hearing ID</param>
-        /// <returns>Full details including participants and statuses of a conference</returns>
+        /// <param name="includeClosed">Include closed conferences in search</param>
         /// <returns>Full details including participants and statuses of a conference</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         public ConferenceDetailsResponse GetConferenceByHearingRefId(System.Guid hearingRefId, bool? includeClosed)
@@ -2579,7 +2579,7 @@ namespace AdminWebsite.VideoAPI.Client
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>Get conferences by hearing ref id</summary>
         /// <param name="hearingRefId">Hearing ID</param>
-        /// <returns>Full details including participants and statuses of a conference</returns>
+        /// <param name="includeClosed">Include closed conferences in search</param>
         /// <returns>Full details including participants and statuses of a conference</returns>
         /// <exception cref="VideoApiException">A server side error occurred.</exception>
         public async System.Threading.Tasks.Task<ConferenceDetailsResponse> GetConferenceByHearingRefIdAsync(System.Guid hearingRefId, bool? includeClosed, System.Threading.CancellationToken cancellationToken)
