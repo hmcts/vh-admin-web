@@ -40,7 +40,6 @@ namespace AdminWebsite.AcceptanceTests.Steps
             AddExistingClaimantIndividual();
             AddExistingClaimantRep();
             AddNewDefendantIndividual(PartyRole.LitigantInPerson);
-            AddNewDefendantIndividual(PartyRole.Interpreter);
             AddNewDefendantRep();
             VerifyUsersAreAddedToTheParticipantsList();
             ClickNext();
