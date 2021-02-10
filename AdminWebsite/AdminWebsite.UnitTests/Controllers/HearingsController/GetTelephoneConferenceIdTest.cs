@@ -104,7 +104,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public void Should_return_not_found_if_exeptions_is_thrown()
         {
-            _videoApiMock.Setup(x => x.GetConferenceByHearingRefIdAsync(It.IsAny<Guid>(),false))
+            _videoApiMock.Setup(x => x.GetConferenceByHearingRefIdAsync(It.IsAny<Guid>(), false))
                 .Throws(new VideoApiException("Error", 404, null, null, null));
 
             var result = _controller.GetTelephoneConferenceIdById(_guid);

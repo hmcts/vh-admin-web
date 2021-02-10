@@ -39,6 +39,7 @@ import { DeviceDetectorModule } from 'ngx-device-detector';
 import { ChangePasswordComponent } from './change-password/change-password.component';
 import { GetAudioFileModule } from './get-audio-file/get-audio-file.module';
 import { DeleteParticipantModule } from './delete-participant/delete-participant.module';
+import { EditParticipantModule } from './edit-participant/edit-participant.module';
 
 export function getSettings(configService: ConfigService) {
     return () => configService.loadConfig();
@@ -66,7 +67,8 @@ export function getSettings(configService: ConfigService) {
         PopupModule,
         DeviceDetectorModule.forRoot(),
         GetAudioFileModule,
-        DeleteParticipantModule
+        DeleteParticipantModule,
+        EditParticipantModule
     ],
     providers: [
         HttpClientModule,

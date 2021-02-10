@@ -50,6 +50,8 @@ namespace AdminWebsite.Services
         Task AssignParticipantToGroup(string username, string userRole);
 
         Task<string> GetAdUserIdForUsername(string username);
+
+        Task<UserResponse> UpdateUserAccountDetails(Guid userId, string firstName, string lastName);
     }
 
     public class UserAccountService : IUserAccountService
@@ -246,6 +248,24 @@ namespace AdminWebsite.Services
             }
         }
 
+        /// <summary>
+        /// Update an existing account
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="firstName"></param>
+        /// <param name="lastName"></param>
+        /// <returns>Updated user details</returns>
+        /// <exception cref="UserApiException"></exception>
+        public Task<UserResponse> UpdateUserAccountDetails(Guid userId, string firstName, string lastName)
+        {
+            var request = new UpdateUserAccountRequest
+            {
+                FirstName = firstName,
+                LastName = lastName
+            };
+            return _userApiClient.UpdateUserAccountAsync(userId, request);
+        }
+        
         private async Task AddGroup(string username, string groupName)
         {
             var addUserToGroupRequest = new AddUserToGroupRequest

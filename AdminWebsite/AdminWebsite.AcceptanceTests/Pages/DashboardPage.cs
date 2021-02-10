@@ -9,5 +9,6 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public static By GetAudioFilePanel = By.Id("getAudioLinkBtn");
         public static By ChangePasswordPanel = By.Id("changePasswordBtn");
         public static By DeleteUserPanel = By.Id("deleteUserBtn");
+        public static By EditParticipantName = By.Id("editUserBtn");
     }
 }
