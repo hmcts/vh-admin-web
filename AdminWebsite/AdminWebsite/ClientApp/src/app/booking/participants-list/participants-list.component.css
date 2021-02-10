@@ -44,9 +44,9 @@
 }
 
 .vh-no-image {
-    float: left;
-    margin-left: 15%;
-    margin-top: 5%;
+    display: flex;
+    margin-left: 15em;
+    margin-top: 5em;
 }
 
 .vh-image-50 {

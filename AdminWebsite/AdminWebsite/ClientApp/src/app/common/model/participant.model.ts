@@ -16,6 +16,6 @@ export class ParticipantModel {
     company?: string | undefined;
     is_judge: boolean;
     is_exist_person: boolean;
-    interpreterFor?: string | undefined;
-    linked_participants?: LinkedParticipantModel[] | undefined;
+    interpreterFor?: string;
+    linked_participants?: LinkedParticipantModel[];
 }

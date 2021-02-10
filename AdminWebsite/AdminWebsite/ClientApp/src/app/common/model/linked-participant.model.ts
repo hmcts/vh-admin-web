@@ -1,9 +1,9 @@
 export class LinkedParticipantModel {
-    id?: string | undefined;
-    participantId?: string | undefined;
-    participantEmail?: string | undefined;
-    linkedParticipantId?: string | undefined;
-    linkedParticipantEmail?: string | undefined;
+    id?: string;
+    participantId?: string;
+    participantEmail?: string;
+    linkedParticipantId?: string;
+    linkedParticipantEmail?: string;
     linkType?: LinkedParticipantType;
 }
 

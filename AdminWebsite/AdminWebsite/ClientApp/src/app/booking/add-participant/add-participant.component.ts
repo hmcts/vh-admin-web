@@ -290,7 +290,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
     setupHearingRoles(caseRoleName: string) {
         const list = this.caseAndHearingRoles.find(x => x.name === caseRoleName && x.name !== 'Judge');
-        this.hearingRoleList = list ? list.hearingRoles.map(x => x.name.trim()) : [];
+        this.hearingRoleList = list ? list.hearingRoles.map(x => x.name) : [];
         this.updateHearingRoleList(this.hearingRoleList);
         if (!this.hearingRoleList.find(s => s === this.constants.PleaseSelect)) {
             this.hearingRoleList.unshift(this.constants.PleaseSelect);
@@ -326,10 +326,10 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
             lastName: this.participantDetails.last_name,
             phone: this.participantDetails.phone || '',
             displayName: this.participantDetails.display_name || '',
-            companyName: this.participantDetails.company ? this.participantDetails.company : '',
-            companyNameIndividual: this.participantDetails.company ? this.participantDetails.company : '',
-            representing: this.participantDetails.representee ? this.participantDetails.representee : '',
-            interpreterFor: this.participantDetails.interpreterFor ? this.participantDetails.interpreterFor : this.constants.PleaseSelect
+            companyName: this.participantDetails.company || '',
+            companyNameIndividual: this.participantDetails.company || '',
+            representing: this.participantDetails.representee  || '',
+            interpreterFor: this.participantDetails.interpreterFor || this.constants.PleaseSelect
         });
 
         setTimeout(() => {
@@ -850,15 +850,17 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
             HearingRoles.MACKENZIE_FRIEND
         ];
         this.interpreteeList = this.hearing.participants.filter(item =>
-            interpreteeHearingRolesList.includes(item.hearing_role_name.toLowerCase().trim())
+            interpreteeHearingRolesList.includes(item.hearing_role_name.toLowerCase())
         );
-        const interpreterForModel = Object.assign(new ParticipantModel(), {
+        const interpreteeModel: ParticipantModel = {
             id: this.constants.PleaseSelect,
             first_name: this.constants.PleaseSelect,
             last_name: '',
-            email: this.constants.PleaseSelect
-        });
-        this.interpreteeList.unshift(interpreterForModel);
+            email: this.constants.PleaseSelect,
+            is_exist_person: false,
+            is_judge: false
+        }
+        this.interpreteeList.unshift(interpreteeModel);
     }
     private setInterpreterForValidation() {
         if (this.isRoleInterpreter(this.role.value)) {
@@ -873,13 +875,13 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         }
     }
     private isRoleInterpreter(hearingRole: string): boolean {
-        return hearingRole.trim().toLowerCase() === HearingRoles.INTERPRETER.toLowerCase();
+        return hearingRole.toLowerCase() === HearingRoles.INTERPRETER.toLowerCase();
     }
     private hearingHasAnInterpreter(): boolean {
-        const hearingHasInterpreter = this.hearing.participants.find(
-            p => p.hearing_role_name.toLowerCase().trim() === HearingRoles.INTERPRETER.toLowerCase()
+        const hearingHasInterpreter = this.hearing.participants.some(
+            p => p.hearing_role_name.toLowerCase() === HearingRoles.INTERPRETER.toLowerCase()
         );
-        return hearingHasInterpreter ? true : false;
+        return hearingHasInterpreter;
     }
     private hearingHasInterpretees(): boolean {
         const interpreteeHearingRolesList: Array<string> = [
@@ -888,15 +890,15 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
             HearingRoles.APP,
             HearingRoles.MACKENZIE_FRIEND
         ];
-        const hearingHasInterpretees = this.hearing.participants.filter(item =>
-            interpreteeHearingRolesList.includes(item.hearing_role_name.toLowerCase().trim())
+        const hearingHasInterpretees = this.hearing.participants.some(item =>
+            interpreteeHearingRolesList.includes(item.hearing_role_name.toLowerCase())
         );
-        return hearingHasInterpretees.length > 0 ? true : false;
+        return hearingHasInterpretees;
     }
     updateHearingRoleList(hearingRoleList: string[]) {
         // hide the interpreter value if participant list is empty or participant list has an interpreter.
         if (this.hearingHasAnInterpreter() || !this.hearingHasInterpretees()) {
-            this.hearingRoleList = this.hearingRoleList.filter(item => item.toLowerCase().trim() !== HearingRoles.INTERPRETER);
+            this.hearingRoleList = this.hearingRoleList.filter(item => item.toLowerCase() !== HearingRoles.INTERPRETER);
         }
     }
     private removeParticipantAndInterpreter() {
