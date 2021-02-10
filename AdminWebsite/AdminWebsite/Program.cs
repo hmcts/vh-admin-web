@@ -16,7 +16,7 @@ namespace AdminWebsite
 
         private static IHostBuilder CreateWebHostBuilder(string[] args)
         {
-            const string vhInfraCore = "/mnt/secrets/vh-admin-web";
+            const string vhInfraCore = "/mnt/secrets/vh-infra-core";
             const string vhAdminWeb = "/mnt/secrets/vh-admin-web";
 
             return Host.CreateDefaultBuilder(args)
