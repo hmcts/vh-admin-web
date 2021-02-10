@@ -328,7 +328,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
             displayName: this.participantDetails.display_name || '',
             companyName: this.participantDetails.company || '',
             companyNameIndividual: this.participantDetails.company || '',
-            representing: this.participantDetails.representee  || '',
+            representing: this.participantDetails.representee || '',
             interpreterFor: this.participantDetails.interpreterFor || this.constants.PleaseSelect
         });
 

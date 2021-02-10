@@ -36,11 +36,19 @@
 
 .vh-image-15 {
     width: 15%;
+    img {
+        height: 40px;
+        width: 40px;
+    }
 }
 
 .vh-image-10 {
     width: 15%;
     padding-left: 10%;
+    img {
+        height: 30px;
+        width: 30px;
+    }
 }
 
 .vh-no-image {

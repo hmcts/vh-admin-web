@@ -9,7 +9,7 @@ import { BookingService } from '../../services/booking.service';
 @Component({
     selector: 'app-participants-list',
     templateUrl: './participants-list.component.html',
-    styleUrls: ['./participants-list.component.css']
+    styleUrls: ['./participants-list.component.scss']
 })
 export class ParticipantsListComponent implements OnInit {
     private readonly loggerPrefix = '[ParticipantsList] -';
