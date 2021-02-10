@@ -113,6 +113,11 @@ namespace AdminWebsite.AcceptanceTests.Steps
                 return Journey.GetAudioFile;
             }
 
+            if (page.ToLower().Equals(Page.EditParticipantName.Name.ToLower()))
+            {
+                return Journey.EditParticipantName;
+            }
+
             return Journey.BookingConfirmation;
         }
 
@@ -128,7 +133,8 @@ namespace AdminWebsite.AcceptanceTests.Steps
                 {Journey.BookingsList, new BookingListJourney()},
                 {Journey.ChangePassword, new ChangePasswordJourney()},
                 {Journey.GetAudioFile, new GetAudioFileJourney()},
-                {Journey.Questionnaire, new QuestionnaireJourney()}
+                {Journey.Questionnaire, new QuestionnaireJourney()},
+                {Journey.EditParticipantName, new EditParticipantNameJourney()}
             };
             journeys[userJourney].VerifyUserIsApplicableToJourney(_c.CurrentUser.User_type);
             journeys[userJourney].VerifyDestinationIsInThatJourney(endPage);
