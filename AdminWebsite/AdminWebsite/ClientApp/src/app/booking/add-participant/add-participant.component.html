@@ -245,7 +245,7 @@
 <div *ngIf="attemptingDiscardChanges">
   <app-discard-confirm-popup (continueEditing)="handleContinueBooking()" (cancelChanges)="cancelChanges()"> </app-discard-confirm-popup>
 </div>
-<div *ngIf="showConfirmRemoveParticipantInterpretedFor">
+<div *ngIf="showConfirmRemoveInterpretee">
   <app-remove-interpreter-popup (continueRemove)="handleContinueRemoveInterpreter()" (cancelRemove)="handleCancelRemoveInterpreter()">
   </app-remove-interpreter-popup>
 </div>

@@ -58,7 +58,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
     multiDays: boolean;
     endHearingDate: Date;
 
-    showConfirmRemoveParticipantInterpretedFor = false;
+    showConfirmRemoveInterpretee = false;
 
     @ViewChild(ParticipantsListComponent, { static: true })
     participantsListComponent: ParticipantsListComponent;
@@ -110,7 +110,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
         // this.showConfirmationRemoveParticipant = true;
         const interpretedFor = this.hearing.participants.find(p => p.interpreterFor === participant.email);
         if (interpretedFor) {
-            this.showConfirmRemoveParticipantInterpretedFor = true;
+            this.showConfirmRemoveInterpretee = true;
         } else {
             this.showConfirmationRemoveParticipant = true;
         }
@@ -310,11 +310,11 @@ export class SummaryComponent implements OnInit, OnDestroy {
     }
 
     handleContinueRemoveInterpreter() {
-        this.showConfirmRemoveParticipantInterpretedFor = false;
+        this.showConfirmRemoveInterpretee = false;
         this.removeParticipantAndInterpreter();
     }
     handleCancelRemoveInterpreter() {
-        this.showConfirmRemoveParticipantInterpretedFor = false;
+        this.showConfirmRemoveInterpretee = false;
     }
     private removeLinkedParticipant(email: string): void {
         // removes both the linked participants.

@@ -77,7 +77,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     private interpreterFor: FormControl;
     interpreteeList: ParticipantModel[] = [];
     isInterpreter = false;
-    showConfirmRemoveParticipantInterpretedFor = false;
+    showConfirmRemoveInterpretee = false;
 
     @ViewChild(SearchEmailComponent) searchEmail: SearchEmailComponent;
 
@@ -329,7 +329,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
             companyName: this.participantDetails.company || '',
             companyNameIndividual: this.participantDetails.company || '',
             representing: this.participantDetails.representee || '',
-            interpreterFor: this.participantDetails.interpreterFor || this.constants.PleaseSelect
+            interpreterFor: this.setInterpretee(this.participantDetails) || this.constants.PleaseSelect
         });
 
         setTimeout(() => {
@@ -589,7 +589,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
             const interpretedFor = this.hearing.participants.find(p => p.interpreterFor === participant.email);
             if (interpretedFor) {
-                this.showConfirmRemoveParticipantInterpretedFor = true;
+                this.showConfirmRemoveInterpretee = true;
             } else {
                 this.showConfirmationRemoveParticipant = true;
             }
@@ -832,12 +832,12 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     }
 
     handleContinueRemoveInterpreter() {
-        this.showConfirmRemoveParticipantInterpretedFor = false;
+        this.showConfirmRemoveInterpretee = false;
         this.removeParticipantAndInterpreter();
         this.populateInterpretedForList();
     }
     handleCancelRemoveInterpreter() {
-        this.showConfirmRemoveParticipantInterpretedFor = false;
+        this.showConfirmRemoveInterpretee = false;
     }
     get interpreterForInvalid() {
         return this.interpreterFor.invalid && (this.interpreterFor.dirty || this.interpreterFor.touched || this.isShowErrorSummary);
@@ -941,4 +941,12 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         const interpretee = this.hearing.participants.find(p => p.email === email);
         return interpretee ? interpretee.email : '';
     }
+    private setInterpretee(participant: ParticipantModel): string {
+        let interpreteeEmail = '';
+        if (participant.linked_participants) {
+            const interpretee = this.hearing.participants.find(p => p.id === participant.linked_participants[0].linkedParticipantId);
+            interpreteeEmail = interpretee ? interpretee.email : '';
+        }        
+        return interpreteeEmail;
+    }    
 }
