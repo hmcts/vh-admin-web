@@ -1,0 +1,34 @@
+<h1 class="govuk-heading-l">Edit a participant's name</h1>
+
+<h2 class="govuk-heading-m">Search for a participant contact email address</h2>
+
+<form [formGroup]="form" class="govuk-form-group">
+  <div class="govuk-form-group">
+    <label class="govuk-label govuk-!-one-half" for="contactEmail"> Enter contact email address </label>
+    <input
+      id="contactEmail"
+      class="govuk-input govuk-!-width-one-half"
+      type="search"
+      (input)="clearSearch()"
+      formControlName="contactEmail"
+      required
+    />
+    <button class="govuk-button govuk-!-margin-left-2" data-module="govuk-button" id="submit" (click)="search()" [disabled]="form.invalid">
+      Search
+    </button>
+  </div>
+</form>
+
+<div class="govuk-body">
+  <app-edit-participant-search-results
+    *ngIf="hasSearched"
+    [contactEmail]="contactEmail.value"
+    [result]="result"
+  ></app-edit-participant-search-results>
+</div>
+
+<div class="govuk-grid-row" *ngIf="loadingData">
+  <div class="govuk-grid-column-full vh-loader-container">
+    <div class="vh-loader"></div>
+  </div>
+</div>

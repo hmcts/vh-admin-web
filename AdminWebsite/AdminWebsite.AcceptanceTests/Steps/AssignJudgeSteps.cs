@@ -32,7 +32,6 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             _browsers[_c.CurrentUser].WaitForPageToLoad();
             SetTheJudge();
-            SetAudioRecording(_c.Test.TestData.AssignJudge.AudioRecord);
             ClickNext();
         }
 
@@ -47,18 +46,9 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _c.Test.HearingParticipants.Add(judge);
         }
 
-        private void SetAudioRecording(bool audioRecord)
-        {
-            _browsers[_c.CurrentUser].ClickRadioButton(audioRecord
-                ? AssignJudgePage.AudioRecordYesRadioButton
-                : AssignJudgePage.AudioRecordNoRadioButton);
-            _c.Test.AssignJudge.AudioRecord = audioRecord;
-        }
-
         public void EditAudioRecording()
         {
             Thread.Sleep(TimeSpan.FromSeconds(1));
-            SetAudioRecording(!_c.Test.TestData.AssignJudge.AudioRecord);
             ClickNext();
             Thread.Sleep(TimeSpan.FromSeconds(1));
         }

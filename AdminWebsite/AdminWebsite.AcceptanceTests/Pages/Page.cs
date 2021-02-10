@@ -20,6 +20,7 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public static readonly Page BookingDetails = new Page("Booking Details", "booking-details");
         public static readonly Page Questionnaire = new Page("Questionnaire", "questionnaire");
         public static readonly Page ChangePassword = new Page("Change Password", "change-password");
+        public static readonly Page EditParticipantName = new Page("Edit Participant Name", "edit-participant");
         public static readonly Page GetAudioFile = new Page("Get Audio File", "get-audio-file");
         public static readonly Page DeleteUser = new Page("Delete User", "delete-user");
         public static readonly Page HearingDetails = new Page("Hearing Details", "book-hearing");
@@ -78,6 +79,7 @@ namespace AdminWebsite.AcceptanceTests.Pages
                 yield return ContactUs;
                 yield return OpenGovernmentLicence;
                 yield return UnsupportedBrowser;
+                yield return EditParticipantName;
             }
         }
     }

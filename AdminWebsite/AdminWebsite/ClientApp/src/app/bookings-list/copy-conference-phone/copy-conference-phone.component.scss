@@ -1,4 +1,4 @@
-@import '~govuk-frontend/govuk/all';
+@import '~govuk-frontend/govuk/base';
 
 .detailsBox {
   @include govuk-font(14, $weight: 'regular', $tabular: false, $line-height: false);
