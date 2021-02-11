@@ -24,7 +24,7 @@ import { LinkedParticipantModel, LinkedParticipantType } from 'src/app/common/mo
 @Component({
     selector: 'app-add-participant',
     templateUrl: './add-participant.component.html',
-    styleUrls: ['./add-participant.component.css']
+    styleUrls: ['./add-participant.component.scss']
 })
 export class AddParticipantComponent extends BookingBaseComponent implements OnInit, AfterViewInit, AfterContentInit, OnDestroy {
     constants = Constants;
@@ -931,8 +931,8 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     }
     private removeLinkedParticipant(email: string): void {
         // removes both the linked participants.
-        const interpreterExists = this.hearing.linked_participants.find(p => p.participantEmail === email);
-        const interpreteeExists = this.hearing.linked_participants.find(p => p.linkedParticipantEmail === email);
+        const interpreterExists = this.hearing.linked_participants.some(p => p.participantEmail === email);
+        const interpreteeExists = this.hearing.linked_participants.some(p => p.linkedParticipantEmail === email);
         if (interpreterExists || interpreteeExists) {
             this.hearing.linked_participants = [];
         }
@@ -946,7 +946,9 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         if (participant.linked_participants) {
             const interpretee = this.hearing.participants.find(p => p.id === participant.linked_participants[0].linkedParticipantId);
             interpreteeEmail = interpretee ? interpretee.email : '';
-        }        
+        } else {
+            interpreteeEmail = participant.interpreterFor;
+        }
         return interpreteeEmail;
-    }    
+    }
 }

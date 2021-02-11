@@ -110,7 +110,7 @@
         </div>
 
         <div *ngIf="isInterpreter">
-          <div class="govuk-form-group" [ngClass]="{ 'govuk-form-group--error': interpreterForInvalid }">
+          <div class="govuk-form-group" [class.govuk-form-group--error]="interpreterForInvalid">
             <legend id="interpreterFor-error" *ngIf="interpreterForInvalid">
               <span class="govuk-error-message">
                 {{ constants.Error.InterpreterForErrorMsg }}

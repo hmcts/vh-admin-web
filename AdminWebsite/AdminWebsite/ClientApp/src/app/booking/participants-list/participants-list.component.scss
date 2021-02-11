@@ -36,10 +36,6 @@
 
 .vh-image-15 {
     width: 15%;
-    img {
-        height: 40px;
-        width: 40px;
-    }
 }
 
 .vh-image-10 {
@@ -49,12 +45,6 @@
         height: 40px;
         width: 40px;
     }
-}
-
-.vh-no-image {
-    float: left;
-    margin-left: 4em;
-    margin-top: 1em;
 }
 
 .vh-image-50 {
@@ -68,4 +58,12 @@
 .vh-wrap-text {
     word-break: break-all;
     overflow-wrap: break-word;
+}
+
+.vh-row-flex {
+    display: flex;
+    justify-content: flex-end;
+    .icon {
+        flex: 0 0 15%;
+    }
 }
