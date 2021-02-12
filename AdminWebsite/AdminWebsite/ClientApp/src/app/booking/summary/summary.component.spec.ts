@@ -420,13 +420,7 @@ describe('SummaryComponent  with multi days request', () => {
     videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
     videoHearingsServiceSpy.updateHearing.and.returnValue(of(new HearingDetailsResponse()));
 
-    component = new SummaryComponent(
-        videoHearingsServiceSpy,
-        routerSpy,
-        bookingServiceSpy,
-        loggerSpy,
-        recordingGuardServiceSpy
-    );
+    component = new SummaryComponent(videoHearingsServiceSpy, routerSpy, bookingServiceSpy, loggerSpy, recordingGuardServiceSpy);
 
     it('should display summary data from existing hearing with multi days', () => {
         component.hearing = existingRequest;
