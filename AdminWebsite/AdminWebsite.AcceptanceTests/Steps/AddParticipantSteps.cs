@@ -50,6 +50,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             AddNewDefendantIndividual(PartyRole.LitigantInPerson);
             AddNewDefendantIndividual(PartyRole.Interpreter);
+            AddNewDefendantRep();
             VerifyUsersAreAddedToTheParticipantsList();
             ClickNext();
         }
@@ -288,12 +289,28 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         public void EditANewParticipant(string alternativeEmail)
         {
-            _c.Test.HearingParticipants.First(x => x.AlternativeEmail.ToLower().Equals(alternativeEmail.ToLower())).DisplayName = $"{_c.Test.AddParticipant.Participant.NewUserPrefix}Updated display name";
+            var user = GetParticipantByEmailAndUpdateDisplayName(alternativeEmail);
             _browsers[_c.CurrentUser].Clear(AddParticipantsPage.DisplayNameTextfield);
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AddParticipantsPage.DisplayNameTextfield).SendKeys(_c.Test.HearingParticipants.First(x => x.AlternativeEmail.ToLower().Equals(alternativeEmail.ToLower())).DisplayName);
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AddParticipantsPage.DisplayNameTextfield).SendKeys(user.DisplayName);
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AddParticipantsPage.NextButton);
             _browsers[_c.CurrentUser].ScrollTo(AddParticipantsPage.NextButton);
             _browsers[_c.CurrentUser].Click(AddParticipantsPage.NextButton);
+        }
+
+        public void EditAnInterpreter(string alternativeEmail)
+        {
+            var user = GetParticipantByEmailAndUpdateDisplayName(alternativeEmail);
+            _browsers[_c.CurrentUser].Clear(AddParticipantsPage.DisplayNameTextfield);
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AddParticipantsPage.DisplayNameTextfield).SendKeys(user.DisplayName);
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AddParticipantsPage.NextButton);
+            _browsers[_c.CurrentUser].ScrollTo(AddParticipantsPage.NextButton);
+            _browsers[_c.CurrentUser].Click(AddParticipantsPage.NextButton);
+        }
+
+        private UserAccount GetParticipantByEmailAndUpdateDisplayName(string alternativeEmail)
+        {
+            return _c.Test.HearingParticipants.First(x => x.AlternativeEmail.ToLower().Equals(alternativeEmail.ToLower()));
+            user.DisplayName = $"{_c.Test.AddParticipant.Participant.NewUserPrefix}Updated display name";
         }
 
         [When(@"the user attempts to add a participant with a reform email")]
