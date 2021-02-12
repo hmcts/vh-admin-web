@@ -1,0 +1,18 @@
+@import '~govuk-frontend/govuk/base';
+
+.complete {
+  float: left;
+  display: block;
+  padding: 3px 8px 3px 8px;
+  border: 2px solid govuk-colour('blue');
+  border-radius: 2px;
+  font-family: 'GDS Transport', Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: 700;
+  font-size: 18px;
+  color: #fff;
+  width: auto;
+  background: govuk-colour('blue');
+  text-transform: uppercase;
+}
