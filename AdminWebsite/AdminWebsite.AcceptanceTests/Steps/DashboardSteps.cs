@@ -43,6 +43,10 @@ namespace AdminWebsite.AcceptanceTests.Steps
             {
                 _browsers[_c.CurrentUser].Click(DashboardPage.DeleteUserPanel);
             }
+            else if (_c.Route.Equals(Page.EditParticipantName))
+            {
+                _browsers[_c.CurrentUser].Click(DashboardPage.EditParticipantName);
+            }
             else
             {
                 _browsers[_c.CurrentUser].Click(DashboardPage.BookVideoHearingPanel);

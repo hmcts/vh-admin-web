@@ -4,3 +4,6 @@
 .vh-over {
     overflow: hidden;
 }
+.vh-mandatory-comment {
+    color: #888 !important;
+}

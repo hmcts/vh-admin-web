@@ -140,6 +140,13 @@ namespace AdminWebsite.AcceptanceTests.Steps
             ProgressToNextPage();
         }
 
+        [Then(@"audio recording is set to No")]
+        public void ThenAudioRecordingIsSetToNo()
+        {
+            VerifyAudioRecording(false);
+        }
+
+
         private void VerifyHearingDetails()
         {
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(SummaryPage.CaseNumber).Text.Should().Be(_c.Test.HearingDetails.CaseNumber);
@@ -173,9 +180,9 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(SummaryPage.CourtAddress).Text.Should().Be(courtAddress);
         }
 
-        private void VerifyAudioRecording()
+        private void VerifyAudioRecording(bool audioFlag=true)
         {
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(SummaryPage.AudioRecording).Text.Should().Be(_c.Test.AssignJudge.AudioRecord ? "Yes" : "No");
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(SummaryPage.AudioRecording).Text.Should().Be(audioFlag ? "Yes":"No");
         }
 
         private void VerifyOtherInformation()
