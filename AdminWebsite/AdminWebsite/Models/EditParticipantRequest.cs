@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using AdminWebsite.BookingsAPI.Client;
 
 namespace AdminWebsite.Models
 {
@@ -67,5 +69,9 @@ namespace AdminWebsite.Models
         /// </summary>
         public string OrganisationName { get; set; }
 
+        /// <summary>
+        ///     List of linked participants
+        /// </summary>
+        public List<LinkedParticipantRequest> LinkedParticipants { get; set; }
     }
 }

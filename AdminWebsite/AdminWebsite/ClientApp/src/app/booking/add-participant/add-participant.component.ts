@@ -943,7 +943,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     }
     private setInterpretee(participant: ParticipantModel): string {
         let interpreteeEmail = '';
-        if (participant.linked_participants) {
+        if (participant.linked_participants && participant.linked_participants.length > 0) {
             const interpretee = this.hearing.participants.find(p => p.id === participant.linked_participants[0].linkedParticipantId);
             interpreteeEmail = interpretee ? interpretee.email : '';
         } else {

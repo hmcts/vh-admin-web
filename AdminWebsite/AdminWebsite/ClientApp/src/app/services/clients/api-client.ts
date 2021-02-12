@@ -3688,6 +3688,8 @@ export class EditParticipantRequest implements IEditParticipantRequest {
     representee?: string | undefined;
     /** Organisation name */
     organisation_name?: string | undefined;
+    /** List of linked participants */
+    linked_participants?: LinkedParticipantRequest[] | undefined;
 
     constructor(data?: IEditParticipantRequest) {
         if (data) {
@@ -3711,6 +3713,10 @@ export class EditParticipantRequest implements IEditParticipantRequest {
             this.hearing_role_name = _data['hearing_role_name'];
             this.representee = _data['representee'];
             this.organisation_name = _data['organisation_name'];
+            if (Array.isArray(_data['linked_participants'])) {
+                this.linked_participants = [] as any;
+                for (let item of _data['linked_participants']) this.linked_participants!.push(LinkedParticipantRequest.fromJS(item));
+            }
         }
     }
 
@@ -3735,6 +3741,10 @@ export class EditParticipantRequest implements IEditParticipantRequest {
         data['hearing_role_name'] = this.hearing_role_name;
         data['representee'] = this.representee;
         data['organisation_name'] = this.organisation_name;
+        if (Array.isArray(this.linked_participants)) {
+            data['linked_participants'] = [];
+            for (let item of this.linked_participants) data['linked_participants'].push(item.toJSON());
+        }
         return data;
     }
 }
@@ -3765,6 +3775,8 @@ export interface IEditParticipantRequest {
     representee?: string | undefined;
     /** Organisation name */
     organisation_name?: string | undefined;
+    /** List of linked participants */
+    linked_participants?: LinkedParticipantRequest[] | undefined;
 }
 
 export class EditEndpointRequest implements IEditEndpointRequest {
