@@ -7,7 +7,7 @@ namespace AdminWebsite.Models
         public string Name { get; set; }
         public string UserRole { get; set; }
         
-        public int CompareTo(object? obj)
+        public int CompareTo(object obj)
         {
             return obj switch
             {
