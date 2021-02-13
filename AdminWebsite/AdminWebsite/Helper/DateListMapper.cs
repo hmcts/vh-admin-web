@@ -5,23 +5,8 @@ namespace AdminWebsite.Helper
 {
     public static class DateListMapper
     {
-        public static List<DateTime> GetListOfWorkingDates(string startDate, string endDate)
-        {
-            try
-            {
-                var start = DateTime.Parse(startDate);
-                var end = DateTime.Parse(endDate);
-                return GetListOfWorkingDates(start, end);
-            }
-            catch (Exception)
-            {
-                return new List<DateTime>();
-            }
-        }
-
         public static List<DateTime> GetListOfWorkingDates(DateTime startDate, DateTime endDate)
         {
-
             var dates = new List<DateTime>();
             var nextDate = startDate.AddDays(1);
 
