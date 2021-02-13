@@ -25,8 +25,7 @@ namespace AdminWebsite.Mappers
                     }
                 },
                 Questionnaire_not_required = false,
-                Audio_recording_required = editHearingRequest.AudioRecordingRequired,
-                
+                Audio_recording_required = editHearingRequest.AudioRecordingRequired
             };
             return updateHearingRequest;
         }
