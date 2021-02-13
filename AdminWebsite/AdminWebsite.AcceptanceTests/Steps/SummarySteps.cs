@@ -261,8 +261,8 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         private IEnumerable<HearingDetailsResponse> PollForAllHearings()
         {
-            const int RETRIES = 20;
-            const int DELAY = 3;
+            const int RETRIES = 10;
+            const int DELAY = 2;
 
             for (var i = 0; i < RETRIES; i++)
             {
