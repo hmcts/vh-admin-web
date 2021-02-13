@@ -2,7 +2,7 @@ using System;
 
 namespace AdminWebsite.Models
 {
-    public sealed class HearingRole : IComparable, IEquatable<HearingRole>
+    public sealed class HearingRole : IComparable
     {
         public HearingRole(string name, string userRole)
         {
@@ -25,16 +25,11 @@ namespace AdminWebsite.Models
 
         public override bool Equals(object obj)
         {
-            if (!(obj is string other))
+            if (!(obj is HearingRole other))
             {
                 return false;
             }
             return CompareTo(other) == 0;
-        }
-
-        public bool Equals(HearingRole other)
-        {
-            return other != null && (Name == other.Name && UserRole == other.UserRole);
         }
 
         public override int GetHashCode()
