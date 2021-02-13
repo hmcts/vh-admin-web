@@ -59,9 +59,21 @@ namespace AdminWebsite.UnitTests.Attributes
         }
 
         [Test]
-        public void Should_compare_equals_operator()
+        public void Should_compare_equals_operator_true()
         {
             (_roleBeginningWithA == _sameRoleBeginningWithA).Should().Be(true);
+        }
+
+        [Test]
+        public void Should_compare_equals_operator_false()
+        {
+            (_roleBeginningWithA == _roleBeginningWithZ).Should().Be(false);
+        }
+
+        [Test]
+        public void Should_compare_equals_operator_null()
+        {
+            (_roleBeginningWithA == null).Should().Be(false);
         }
 
         [Test]
