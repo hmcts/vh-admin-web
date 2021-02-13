@@ -83,7 +83,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public void Should_return_not_found_if_no_meeting_room_exists()
         {
-            _conference.Meeting_room.Pexip_node = null;
+            _conference.MeetingRoom.PexipNode = null;
             _videoApiMock.Setup(x => x.GetConferenceByHearingRefIdAsync(It.IsAny<Guid>(), It.IsAny<bool>())).ReturnsAsync(_conference);
 
             var result = _controller.GetTelephoneConferenceIdById(_guid);
