@@ -40,7 +40,7 @@ namespace AdminWebsite.UnitTests.Mappers
                 User_role_name = "Individual"
             };
 
-            var result = AddNotificationRequestMapper.MapTo(hearingId, source, password);
+            var result = AddNotificationRequestMapper.MapToNewUserNotification(hearingId, source, password);
 
             result.Should().NotBeNull();
             result.HearingId.Should().Be(hearingId);
@@ -82,7 +82,7 @@ namespace AdminWebsite.UnitTests.Mappers
                 User_role_name = "Representative"
             };
 
-            var result = AddNotificationRequestMapper.MapTo(hearingId, source, password);
+            var result = AddNotificationRequestMapper.MapToNewUserNotification(hearingId, source, password);
 
             result.Should().NotBeNull();
             result.HearingId.Should().Be(hearingId);
