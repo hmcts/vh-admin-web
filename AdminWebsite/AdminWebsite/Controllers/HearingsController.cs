@@ -233,10 +233,52 @@ namespace AdminWebsite.Controllers
                     await _bookingsApiClient.RemoveParticipantFromHearingAsync(hearingId, participantToDelete.Id);
                 }
 
+                if (request.Participants.Any(x => x.LinkedParticipants != null))
+                {
+                    foreach (var requestParticipant in request.Participants.Where(x => x.LinkedParticipants.Any()))
+                    {
+                        var participant = hearing.Participants.First(x => x.Id == requestParticipant.Id);
+                        var linkedParticipantsInRequest = request.Participants.First(x => x.Id == participant.Id)
+                            .LinkedParticipants.ToList();
+                    
+                        var requests = new List<LinkedParticipantRequest>();
+
+                        foreach (var linkedParticipantInRequest in linkedParticipantsInRequest)
+                        {
+                            var linkedId = linkedParticipantInRequest.LinkedId;
+                            var existingLink = false;
+                                
+                            if (participant.Linked_participants != null)
+                            {
+                                existingLink = participant.Linked_participants.Exists(x => x.Linked_id == linkedId);   
+                            }
+
+                            if (!existingLink)
+                            {
+                                var linkedParticipant =
+                                    hearing.Participants.First(x => x.Id == linkedParticipantInRequest.LinkedId);
+                                requests.Add(new LinkedParticipantRequest
+                                {
+                                    Participant_contact_email = participant.Contact_email,
+                                    Linked_participant_contact_email = linkedParticipant.Contact_email
+                                });
+                            }
+                        }
+
+                        var updateParticipantRequest = new UpdateParticipantRequest
+                        {
+                            Linked_participants = requests
+                        };
+                        
+                        await _bookingsApiClient.UpdateParticipantDetailsAsync(hearingId, participant.Id,
+                            updateParticipantRequest);
+                    }
+                }
+
                 // Add new participants
                 await _hearingsService.SaveNewParticipants(hearingId, newParticipantList);
 
-                // endpoints.
+                // endpoints
                 await _hearingsService.ProcessEndpoints(hearingId, request, hearing, newParticipantList);
 
                 var updatedHearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
@@ -270,9 +312,7 @@ namespace AdminWebsite.Controllers
                 throw;
             }
         }
-
         
-
         /// <summary>
         /// Gets bookings hearing by Id.
         /// </summary>

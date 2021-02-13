@@ -52,6 +52,7 @@ namespace AdminWebsite.Models
         /// Gets or sets audio recording required flag
         /// </summary>
         public bool AudioRecordingRequired { get; set; }
+        
         /// <summary>
         /// List of endpoints for the hearing
         /// </summary>
