@@ -203,24 +203,24 @@ namespace AdminWebsite.Services
         {
             _logger.LogDebug("Attempting to reset AD user {Username}", userName);
             var userProfile = await _userApiClient.GetUserByAdUserNameAsync(userName);
-            
-            if (userProfile != null)
+
+            if (userProfile == null)
             {
-                _logger.LogDebug("AD user {Username} found", userName);
-                var passwordResetResponse = await _userApiClient.ResetUserPasswordAsync(userName);
-                _logger.LogDebug("AD user {Username} password has been reset", userName);
-                var passwordResetNotificationRequest = AddNotificationRequestMapper.MapToPasswordResetNotification(
-                    $"{userProfile.FirstName} {userProfile.LastName}", passwordResetResponse.NewPassword,
-                    userProfile.Email);
-                await _notificationApiClient.CreateNewNotificationAsync(passwordResetNotificationRequest);
+                var e = new UserServiceException
+                {
+                    Reason = "Unable to generate new password"
+                };
+                _logger.LogError(e, "Unable to reset password for AD user {Username}", userName);
+                throw e;
             }
 
-            var e = new UserServiceException
-            {
-                Reason = "Unable to generate new password"
-            };
-            _logger.LogError(e, "Unable to reset password for AD user {Username}", userName);
-            throw e;
+            _logger.LogDebug("AD user {Username} found", userName);
+            var passwordResetResponse = await _userApiClient.ResetUserPasswordAsync(userName);
+            _logger.LogDebug("AD user {Username} password has been reset", userName);
+            var passwordResetNotificationRequest = AddNotificationRequestMapper.MapToPasswordResetNotification(
+                $"{userProfile.FirstName} {userProfile.LastName}", passwordResetResponse.NewPassword,
+                userProfile.Email);
+            await _notificationApiClient.CreateNewNotificationAsync(passwordResetNotificationRequest);
         }
 
         public async Task DeleteParticipantAccountAsync(string username)

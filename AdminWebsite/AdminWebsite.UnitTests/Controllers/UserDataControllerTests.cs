@@ -100,7 +100,7 @@ namespace AdminWebsite.UnitTests.Controllers
         {
             _controller = new UserDataController(_userAccountService.Object);
             var response = await _controller.ResetPassword("test");
-            var result = response as OkObjectResult;
+            var result = response as OkResult;
             result.Should().NotBeNull();
             result.StatusCode.Should().Be(200);
         }

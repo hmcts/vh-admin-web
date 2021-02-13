@@ -2133,8 +2133,8 @@ export class BHClient {
      * @param body (optional)
      * @return Success
      */
-    updateUser(body: string | null | undefined): Observable<UpdateUserPasswordResponse> {
-        let url_ = this.baseUrl + '/api/accounts/updateUser';
+    resetPassword(body: string | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + '/api/accounts/resetpassword';
         url_ = url_.replace(/[?&]$/, '');
 
         const content_ = JSON.stringify(body);
@@ -2144,8 +2144,7 @@ export class BHClient {
             observe: 'response',
             responseType: 'blob',
             headers: new HttpHeaders({
-                'Content-Type': 'application/json-patch+json',
-                Accept: 'application/json'
+                'Content-Type': 'application/json-patch+json'
             })
         };
 
@@ -2153,23 +2152,23 @@ export class BHClient {
             .request('patch', url_, options_)
             .pipe(
                 _observableMergeMap((response_: any) => {
-                    return this.processUpdateUser(response_);
+                    return this.processResetPassword(response_);
                 })
             )
             .pipe(
                 _observableCatch((response_: any) => {
                     if (response_ instanceof HttpResponseBase) {
                         try {
-                            return this.processUpdateUser(<any>response_);
+                            return this.processResetPassword(<any>response_);
                         } catch (e) {
-                            return <Observable<UpdateUserPasswordResponse>>(<any>_observableThrow(e));
+                            return <Observable<void>>(<any>_observableThrow(e));
                         }
-                    } else return <Observable<UpdateUserPasswordResponse>>(<any>_observableThrow(response_));
+                    } else return <Observable<void>>(<any>_observableThrow(response_));
                 })
             );
     }
 
-    protected processUpdateUser(response: HttpResponseBase): Observable<UpdateUserPasswordResponse> {
+    protected processResetPassword(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body : (<any>response).error instanceof Blob ? (<any>response).error : undefined;
@@ -2183,10 +2182,7 @@ export class BHClient {
         if (status === 200) {
             return blobToText(responseBlob).pipe(
                 _observableMergeMap(_responseText => {
-                    let result200: any = null;
-                    let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result200 = UpdateUserPasswordResponse.fromJS(resultData200);
-                    return _observableOf(result200);
+                    return _observableOf<void>(<any>null);
                 })
             );
         } else if (status === 404) {
@@ -2214,7 +2210,7 @@ export class BHClient {
                 })
             );
         }
-        return _observableOf<UpdateUserPasswordResponse>(<any>null);
+        return _observableOf<void>(<any>null);
     }
 
     /**
@@ -4345,7 +4341,7 @@ export interface IHearingTypeResponse {
 
 export class HearingRole implements IHearingRole {
     name?: string | undefined;
-    user_role?: string | undefined;
+    readonly user_role?: string | undefined;
 
     constructor(data?: IHearingRole) {
         if (data) {
@@ -4358,7 +4354,7 @@ export class HearingRole implements IHearingRole {
     init(_data?: any) {
         if (_data) {
             this.name = _data['name'];
-            this.user_role = _data['user_role'];
+            (<any>this).user_role = _data['user_role'];
         }
     }
 
@@ -4696,41 +4692,6 @@ export interface IJudgeResponse {
     display_name?: string | undefined;
     /** Judge username/email */
     email?: string | undefined;
-}
-
-export class UpdateUserPasswordResponse implements IUpdateUserPasswordResponse {
-    password?: string | undefined;
-
-    constructor(data?: IUpdateUserPasswordResponse) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.password = _data['password'];
-        }
-    }
-
-    static fromJS(data: any): UpdateUserPasswordResponse {
-        data = typeof data === 'object' ? data : {};
-        let result = new UpdateUserPasswordResponse();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data['password'] = this.password;
-        return data;
-    }
-}
-
-export interface IUpdateUserPasswordResponse {
-    password?: string | undefined;
 }
 
 export class UserProfileResponse implements IUserProfileResponse {
