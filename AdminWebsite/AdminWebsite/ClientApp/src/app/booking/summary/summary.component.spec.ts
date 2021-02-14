@@ -496,15 +496,14 @@ describe('SummaryComponent  with multi days request', () => {
     videoHearingsServiceSpy.updateHearing.and.returnValue(of(new HearingDetailsResponse()));
     participantServiceSpy = jasmine.createSpyObj<ParticipantService>('ParticipantService', ['removeParticipant']);
 
-
     component = new SummaryComponent(
         videoHearingsServiceSpy,
         routerSpy,
-        referenceDataServiceServiceSpy,
         bookingServiceSpy,
         loggerSpy,
         recordingGuardServiceSpy,
         participantServiceSpy
+    );
 
     it('should display summary data from existing hearing with multi days', () => {
         component.hearing = existingRequest;
