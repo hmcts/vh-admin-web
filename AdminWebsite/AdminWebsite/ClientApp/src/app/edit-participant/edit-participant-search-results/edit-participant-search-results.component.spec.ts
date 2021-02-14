@@ -1,6 +1,5 @@
 import { Router } from '@angular/router';
 import { ParticipantEditResultModel } from 'src/app/common/model/participant-edit-result.model';
-import { Logger } from 'src/app/services/logger';
 import { ParticipantEditService } from 'src/app/services/participant-edit-service.service';
 import { PageUrls } from 'src/app/shared/page-url.constants';
 import { EditParticipantSearchResultsComponent } from './edit-participant-search-results.component';
@@ -34,5 +33,15 @@ describe('EditParticipantSearchResultsComponent', () => {
 
         expect(service.assignParticipantToEdit).toHaveBeenCalledWith(result);
         expect(router.navigateByUrl).toHaveBeenCalledWith(PageUrls.EditParticipant);
+    });
+
+    it('should return not found warning text', () => {
+        component.isUnauthorisedSearch = false;
+        expect(component.warningText).toContain("we can't find a user");
+    });
+
+    it('should return unauthorised warning text', () => {
+        component.isUnauthorisedSearch = true;
+        expect(component.warningText).toContain('Only non Judge accounts can be edited');
     });
 });

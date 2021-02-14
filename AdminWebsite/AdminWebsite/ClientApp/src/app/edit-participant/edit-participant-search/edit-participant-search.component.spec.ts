@@ -1,5 +1,6 @@
 import { FormBuilder } from '@angular/forms';
 import { ParticipantEditResultModel } from 'src/app/common/model/participant-edit-result.model';
+import { BookHearingException } from 'src/app/services/clients/api-client';
 import { Logger } from 'src/app/services/logger';
 import { ParticipantEditService } from 'src/app/services/participant-edit-service.service';
 import { EditParticipantSearchComponent } from './edit-participant-search.component';
@@ -61,6 +62,17 @@ describe('EditParticipantSearchComponent', () => {
 
         expect(component.hasSearched).toBeTruthy();
         expect(component.result).toBe(null);
+    });
+
+    it('should update result on unauthorised search', async () => {
+        const contactEmail = 'john@doe.com';
+        const exception = new BookHearingException('Unauthorized', 401, 'Only searches for non Judge persons are allowed', null, null);
+        service.searchForPerson.and.callFake(() => {
+            throw exception;
+        });
+
+        await component.getResults(contactEmail);
+        expect(component.unauthorisedParticipant).toBeTruthy();
     });
 
     it('should reset search on clear', () => {
