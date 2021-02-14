@@ -75,7 +75,6 @@ namespace AdminWebsite.AcceptanceTests.Steps
             VerifyNewUsersCreatedInAad();
         }
 
-
         public void ClickBook()
         {
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(SummaryPage.BookButton);
@@ -116,10 +115,19 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _addParticipantSteps.EditANewParticipant(_newUserToEdit.AlternativeEmail);
         }
 
+        [When(@"the user edits an Interpreter")]
+        public void WhenTheUserEditsAnInterpreter()
+        { 
+            var user = GetParticipantBy("Interpreter");
+            _browsers[_c.CurrentUser].Click(SummaryPage.EditParticipantLink(user.Firstname));
+            _addParticipantSteps.EditAnInterpreter(user.AlternativeEmail);
+        }
+
+
         [When(@"the user removes participant")]
         public void WhenTheUserRemovesParticipant()
         {
-            _browsers[_c.CurrentUser].Click(SummaryPage.RemoveParticipantLink(GetParticipantFirstName("Litigant in person")));
+            _browsers[_c.CurrentUser].Click(SummaryPage.RemoveParticipantLink(GetParticipantBy("Litigant in person").Firstname));
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(SummaryPage.RemoveInterpreterMessage).Displayed.Should().BeTrue();
             _browsers[_c.CurrentUser].Click(SummaryPage.RemoveInterpreter);
         }
@@ -127,7 +135,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [When(@"the user removes Interpreter")]
         public void WhenTheUserRemovesInterpreter()
         {
-            _browsers[_c.CurrentUser].Click(SummaryPage.RemoveParticipantLink(GetParticipantFirstName("Interpreter")));
+            _browsers[_c.CurrentUser].Click(SummaryPage.RemoveParticipantLink(GetParticipantBy("Interpreter").Firstname));
             _browsers[_c.CurrentUser].Click(SummaryPage.RemoveParticipant);
             RemoveParticipant("Interpreter");
         }
@@ -137,9 +145,9 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _c.Test.HearingParticipants.Remove(_c.Test.HearingParticipants.Where(h => h.HearingRoleName == role).FirstOrDefault());
         }
 
-        private string GetParticipantFirstName(string role)
+        private UserAccount GetParticipantBy(string role)
         {
-            return _c.Test.HearingParticipants.Where(h => h.HearingRoleName == role).Select(h => h.Firstname).FirstOrDefault();
+            return _c.Test.HearingParticipants.Where(h => h.HearingRoleName == role).FirstOrDefault();
         }
 
         [When(@"the user edits an endpoint display name")]

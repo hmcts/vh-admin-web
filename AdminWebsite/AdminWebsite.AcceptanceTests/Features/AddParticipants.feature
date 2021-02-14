@@ -23,7 +23,8 @@ Scenario: Cannot Add Participants with reform email address
 Scenario: Add Participant as Interpreter
 	Given the Video Hearings Officer user has progressed to the Add Participants page
 	When the user completes the add participants form with an Interpreter
-	Then the user is on the Video Access Points page
+	And the user has progressed to the Summary page
+	Then the user views the information on the summary form
 	
 @VIH-6938
 Scenario: Adding Interpreter sets and disables audio recording option
@@ -56,3 +57,10 @@ Scenario: Removing Interpreter
 	And the user has progressed to the Summary page
 	And the user removes Interpreter
 	Then the user views the information on the summary form
+
+Scenario: Edit Interpreter
+	Given the Video Hearings Officer user has progressed to the Add Participants page
+	When the user completes the add participants form with an Interpreter
+	And the user has progressed to the Summary page
+	When the user edits an Interpreter
+	Then the participant details are updated
