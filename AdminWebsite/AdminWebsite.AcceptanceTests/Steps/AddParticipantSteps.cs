@@ -310,7 +310,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         private UserAccount GetParticipantByEmailAndUpdateDisplayName(string alternativeEmail)
         {
             return _c.Test.HearingParticipants.First(x => x.AlternativeEmail.ToLower().Equals(alternativeEmail.ToLower()));
-            user.DisplayName = $"{_c.Test.AddParticipant.Participant.NewUserPrefix}Updated display name";
+            // user.DisplayName = $"{_c.Test.AddParticipant.Participant.NewUserPrefix}Updated display name";
         }
 
         [When(@"the user attempts to add a participant with a reform email")]
