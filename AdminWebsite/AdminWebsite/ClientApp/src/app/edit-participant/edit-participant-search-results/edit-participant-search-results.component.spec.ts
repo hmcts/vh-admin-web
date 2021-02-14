@@ -37,6 +37,7 @@ describe('EditParticipantSearchResultsComponent', () => {
 
     it('should return not found warning text', () => {
         component.isUnauthorisedSearch = false;
+        // tslint:disable-next-line: quotemark
         expect(component.warningText).toContain("we can't find a user");
     });
 
