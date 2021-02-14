@@ -74,14 +74,12 @@ export class ParticipantsListComponent implements OnInit {
     }
     getInterpreteeDisplayName(participant: ParticipantModel): string {
         let interpretee: ParticipantModel;
-        if (
-            this.isEditMode &&
-            participant.hearing_role_name.toLowerCase().trim() === HearingRoles.INTERPRETER &&
-            participant.linked_participants.length > 0
-        ) {
-            interpretee = this.participants.find(p => p.id === participant.linked_participants[0].linkedParticipantId);
-        } else {
-            interpretee = this.participants.find(p => p.email === participant.interpreterFor);
+        if (participant.hearing_role_name.toLowerCase().trim() === HearingRoles.INTERPRETER) {
+            if (this.isEditMode && participant.linked_participants.length > 0) {
+                interpretee = this.participants.find(p => p.id === participant.linked_participants[0].linkedParticipantId);
+            } else {
+                interpretee = this.participants.find(p => p.email === participant.interpreterFor);
+            }
         }
         const interpretedForName = interpretee ? interpretee.display_name : '';
         return interpretedForName;

@@ -12,7 +12,6 @@ import { BookingService } from '../../services/booking.service';
 import { HearingDetailsResponse, HearingTypeResponse, MultiHearingRequest } from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
 import { RecordingGuardService } from '../../services/recording-guard.service';
-import { ReferenceDataService } from '../../services/reference-data.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { PageUrls } from '../../shared/page-url.constants';
 import { ParticipantsListComponent } from '../participants-list/participants-list.component';
@@ -69,7 +68,6 @@ export class SummaryComponent implements OnInit, OnDestroy {
     constructor(
         private hearingService: VideoHearingsService,
         private router: Router,
-        private referenceDataService: ReferenceDataService,
         private bookingService: BookingService,
         private logger: Logger,
         private recordingGuardService: RecordingGuardService,
@@ -229,8 +227,8 @@ export class SummaryComponent implements OnInit, OnDestroy {
                     await this.hearingService.cloneMultiHearings(
                         hearingDetailsResponse.id,
                         new MultiHearingRequest({
-                            start_date: this.hearing.scheduled_date_time.toString(),
-                            end_date: this.hearing.end_hearing_date_time.toString()
+                            start_date: new Date(this.hearing.scheduled_date_time),
+                            end_date: new Date(this.hearing.end_hearing_date_time)
                         })
                     );
                 }

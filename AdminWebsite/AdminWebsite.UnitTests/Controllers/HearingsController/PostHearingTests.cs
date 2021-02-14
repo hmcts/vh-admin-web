@@ -20,6 +20,9 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using EndpointResponse = AdminWebsite.BookingsAPI.Client.EndpointResponse;
+using LinkedParticipantRequest = AdminWebsite.BookingsAPI.Client.LinkedParticipantRequest;
+using LinkedParticipantResponse = AdminWebsite.BookingsAPI.Client.LinkedParticipantResponse;
+using LinkedParticipantType = AdminWebsite.BookingsAPI.Client.LinkedParticipantType;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {
@@ -104,10 +107,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             };
             var participantList = new List<BookingsAPI.Client.ParticipantRequest> { participant };
 
-            var da = "username@newemail.com";
+            const string da = "username@newemail.com";
             var endpoints = new EndpointRequest { Display_name = "displayname", Defence_advocate_username = da };
-            var endpointList = new List<EndpointRequest>();
-            endpointList.Add(endpoints);
+            var endpointList = new List<EndpointRequest> {endpoints};
 
             var hearing = new BookNewHearingRequest
             {
@@ -392,7 +394,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         {
             var startDate = new DateTime(2020, 10, 1);
             var endDate = new DateTime(2020, 10, 1);
-            var request = new MultiHearingRequest { StartDate = startDate.ToString(), EndDate = endDate.ToString() };
+            var request = new MultiHearingRequest { StartDate = startDate, EndDate = endDate};
 
 
             var response = await _controller.CloneHearing(Guid.NewGuid(), request);
@@ -502,11 +504,11 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _notificationApiMock.Verify(x => x.CreateNewNotificationAsync(It.IsAny<AddNotificationRequest>()), Times.Never);
         }
 
-        private MultiHearingRequest GetMultiHearingRequest()
+        private static MultiHearingRequest GetMultiHearingRequest()
         {
             var startDate = new DateTime(2020, 10, 1);
             var endDate = new DateTime(2020, 10, 6);
-            return new MultiHearingRequest { StartDate = startDate.ToString(), EndDate = endDate.ToString() };
+            return new MultiHearingRequest { StartDate = startDate, EndDate = endDate };
         }
 
         private Task<ActionResult<HearingDetailsResponse>> PostNewHearing()

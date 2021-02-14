@@ -92,7 +92,11 @@ export class BookingDetailsService {
 
     private getInterpretee(hearingResponse: HearingDetailsResponse, participant: ParticipantResponse): string {
         let interpreteeDisplayName = '';
-        if (participant.hearing_role_name.toLowerCase().trim() === HearingRoles.INTERPRETER) {
+        if (
+            participant.hearing_role_name.toLowerCase().trim() === HearingRoles.INTERPRETER &&
+            participant.linked_participants &&
+            participant.linked_participants.length > 0
+        ) {
             const interpreteeId = participant.linked_participants[0].linked_id;
             const interpretee = hearingResponse.participants.find(p => p.id === interpreteeId);
             interpreteeDisplayName = interpretee?.display_name;

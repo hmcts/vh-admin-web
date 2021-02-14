@@ -37,16 +37,17 @@ namespace AdminWebsite.Controllers
         /// </summary>
         /// <param name="userName"></param>
         /// <returns></returns>
-        [HttpPatch("updateUser")]
-        [SwaggerOperation(OperationId = "UpdateUser")]
-        [ProducesResponseType(typeof(UpdateUserPasswordResponse), (int)HttpStatusCode.OK)]
+        [HttpPatch("resetpassword")]
+        [SwaggerOperation(OperationId = "ResetPassword")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult> UpdateUser([FromBody]string userName)
+        public async Task<ActionResult> ResetPassword([FromBody]string userName)
         {
             try
             {
-                return Ok(await _userAccountService.UpdateParticipantPassword(userName));
+                await _userAccountService.ResetParticipantPassword(userName);
+                return Ok();
             }
             catch (UserApiException e)
             {

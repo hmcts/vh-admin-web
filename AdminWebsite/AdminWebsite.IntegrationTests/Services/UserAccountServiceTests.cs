@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using AdminWebsite.BookingsAPI.Client;
 using Microsoft.Extensions.Logging;
+using NotificationApi.Client;
 using UserApi.Client;
 using UserApi.Contract.Responses;
 
@@ -15,19 +16,22 @@ namespace AdminWebsite.IntegrationTests.Services
     {
         private Mock<IUserApiClient> _userApiClient;
         private Mock<IBookingsApiClient> _bookingsApiClient;
+        private Mock<INotificationApiClient> _notificationApiClient;
         private Mock<ILogger<UserAccountService>> _logger;
 
         [SetUp]
         public void Setup()
         {
             _userApiClient = new Mock<IUserApiClient>();
+            _notificationApiClient = new Mock<INotificationApiClient>();
             _bookingsApiClient = new Mock<IBookingsApiClient>();
             _logger = new Mock<ILogger<UserAccountService>>();
         }
 
         private UserAccountService GetService()
         {
-            return new UserAccountService(_userApiClient.Object, _bookingsApiClient.Object, _logger.Object);
+            return new UserAccountService(_userApiClient.Object, _bookingsApiClient.Object,
+                _notificationApiClient.Object, _logger.Object);
         }
 
         [Test]

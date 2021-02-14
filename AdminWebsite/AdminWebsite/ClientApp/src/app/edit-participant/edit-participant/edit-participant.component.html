@@ -4,9 +4,11 @@
 
 <form *ngIf="person" [formGroup]="form" class="govuk-form-group">
   <div class="govuk-form-group">
+    <label class="govuk-label" for="firstName">First name</label>
     <input id="firstName" class="govuk-input govuk-!-width-one-half" type="text" formControlName="firstName" required />
   </div>
   <div class="govuk-form-group">
+    <label class="govuk-label" for="lastName">Last name</label>
     <input id="lastName" class="govuk-input govuk-!-width-one-half" type="text" formControlName="lastName" required />
   </div>
   <div *ngIf="!updateComplete">

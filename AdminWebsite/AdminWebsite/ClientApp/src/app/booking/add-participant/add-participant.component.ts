@@ -504,8 +504,8 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
             const newParticipant = new ParticipantModel();
             this.mapParticipant(newParticipant);
             if (!this.participantService.checkDuplication(newParticipant.email, this.hearing.participants)) {
-                this.hearing.participants.push(newParticipant);
                 this.addLinkedParticipant(newParticipant);
+                this.hearing.participants.push(newParticipant);
                 this.populateInterpretedForList();
                 this.videoHearingService.updateHearingRequest(this.hearing);
                 this.logger.debug(`${this.loggerPrefix} Saved participant to booking. Clearing form.`, {
@@ -625,6 +625,14 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         newParticipant.representee = this.representing.value;
         newParticipant.is_exist_person = this.existingPersonEmails.findIndex(x => x === newParticipant.email) > -1;
         newParticipant.interpreterFor = this.interpreterFor.value === this.constants.PleaseSelect ? null : this.interpreterFor.value;
+        newParticipant.linked_participants = [];
+        if (newParticipant.hearing_role_name.toLowerCase() === HearingRoles.INTERPRETER) {
+            const linkedParticipant = new LinkedParticipantModel();
+            linkedParticipant.linkType = LinkedParticipantType.Interpreter;
+            linkedParticipant.participantEmail = newParticipant.email;
+            linkedParticipant.linkedParticipantEmail = newParticipant.interpreterFor;
+            newParticipant.linked_participants.push(linkedParticipant);
+        }
     }
 
     addParticipantCancel() {
@@ -918,10 +926,11 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     private addLinkedParticipant(newParticipant: ParticipantModel): void {
         if (newParticipant.interpreterFor) {
             const interpretee = this.getInterpretee(newParticipant.interpreterFor);
-            const linkedParticipant = Object.assign(new LinkedParticipantModel(), {
+            const linkedParticipant: LinkedParticipantModel = {
                 participantEmail: newParticipant.email,
-                linkedParticipantEmail: interpretee
-            });
+                linkedParticipantEmail: interpretee,
+                linkType: LinkedParticipantType.Interpreter
+            };
             this.hearing.linked_participants.push(linkedParticipant);
         }
     }

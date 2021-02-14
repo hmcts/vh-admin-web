@@ -2,7 +2,6 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ClipboardService } from 'ngx-clipboard';
 import { Subscription } from 'rxjs';
-import { UpdateUserPasswordResponse } from '../services/clients/api-client';
 import { Logger } from '../services/logger';
 import { UserDataService } from '../services/user-data.service';
 
@@ -16,8 +15,6 @@ export class ChangePasswordComponent implements OnInit, OnDestroy {
     failedSubmission: boolean;
     isValidEmail: boolean;
     showUpdateSuccess: boolean;
-    showCopyPasswordButton: boolean;
-    password: string;
     popupMessage: string;
     saveSuccess: boolean;
     $subcription: Subscription;
@@ -30,7 +27,6 @@ export class ChangePasswordComponent implements OnInit, OnDestroy {
     ) {
         this.showUpdateSuccess = false;
         this.isValidEmail = true;
-        this.showCopyPasswordButton = false;
     }
 
     ngOnInit() {
@@ -66,30 +62,22 @@ export class ChangePasswordComponent implements OnInit, OnDestroy {
 
             this.logger.debug(`${this.loggerPrefix} Attempting to reset password for user.`, { username: this.userName.value });
             this.$subcription = this.userDataService.updateUser(this.userName.value).subscribe(
-                (data: UpdateUserPasswordResponse) => {
+                () => {
                     // tslint:disable-next-line: quotemark
                     this.popupMessage = "User's password has been changed";
                     this.showUpdateSuccess = true;
-                    this.password = data.password;
-                    this.showCopyPasswordButton = true;
                     this.logger.info(`${this.loggerPrefix} User password has been reset.`, { username: this.userName.value });
                     this.saveSuccess = true;
                 },
                 error => {
                     this.popupMessage = 'User does not exist - please try again';
                     this.showUpdateSuccess = true;
-                    this.showCopyPasswordButton = false;
                     this.logger.error(`${this.loggerPrefix} User does not exist.`, error, { username: this.userName.value });
                 }
             );
         } else {
             this.failedSubmission = true;
         }
-    }
-
-    copyPassword() {
-        this.clipboardService.copyFromContent(this.password);
-        this.logger.debug(`${this.loggerPrefix} Copied new password to clipboard.`, { username: this.userName.value });
     }
 
     okay(): void {

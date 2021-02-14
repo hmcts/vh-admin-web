@@ -89,7 +89,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
 
         [Test]
-        public void Should_return_bad_reguest_if_exeptions_is_thrown()
+        public void Should_return_bad_request_if_exceptions_is_thrown()
         {
             _videoApiMock.Setup(x => x.GetConferenceByHearingRefIdAsync(It.IsAny<Guid>(), It.IsAny<Boolean>()))
                             .Throws(new VideoApiException("Error", 400, null, null, null));
@@ -100,7 +100,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
 
         [Test]
-        public void Should_return_not_found_if_exeptions_is_thrown()
+        public void Should_return_not_found_if_exceptions_is_thrown()
         {
             _videoApiMock.Setup(x => x.GetConferenceByHearingRefIdAsync(It.IsAny<Guid>(), It.IsAny<Boolean>()))
                 .Throws(new VideoApiException("Error", 404, null, null, null));

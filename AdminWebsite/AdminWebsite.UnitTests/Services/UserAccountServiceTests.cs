@@ -13,6 +13,9 @@ using System.Threading.Tasks;
 using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.UnitTests.Helper;
 using Microsoft.Extensions.Logging;
+using NotificationApi.Client;
+using NotificationApi.Contract;
+using NotificationApi.Contract.Requests;
 using UserApi.Client;
 using UserApi.Contract.Requests;
 using UserApi.Contract.Responses;
@@ -25,6 +28,7 @@ namespace AdminWebsite.UnitTests.Services
         private Mock<IOptions<AppConfigSettings>> _appSettings;
         private Mock<IUserApiClient> _userApiClient;
         private Mock<IBookingsApiClient> _bookingsApiClient;
+        private Mock<INotificationApiClient> _notificationApiClient;
         private Mock<IOptions<SecuritySettings>> _securitySettings;
         private Mock<ILogger<UserAccountService>> _logger;
 
@@ -35,6 +39,7 @@ namespace AdminWebsite.UnitTests.Services
         {
             _userApiClient = new Mock<IUserApiClient>();
             _bookingsApiClient = new Mock<IBookingsApiClient>();
+            _notificationApiClient = new Mock<INotificationApiClient>();
             _logger = new Mock<ILogger<UserAccountService>>();
             _appSettings = new Mock<IOptions<AppConfigSettings>>();
             _appSettings.Setup(x => x.Value)
@@ -44,7 +49,8 @@ namespace AdminWebsite.UnitTests.Services
             _securitySettings.Setup(x => x.Value)
                 .Returns(new SecuritySettings());
 
-            _service = new UserAccountService(_userApiClient.Object, _bookingsApiClient.Object, _logger.Object);
+            _service = new UserAccountService(_userApiClient.Object, _bookingsApiClient.Object,
+                _notificationApiClient.Object, _logger.Object);
 
             _userApiClient.Setup(x => x.GetUserByEmailAsync(It.IsAny<string>()))
                 .Throws(ClientException.ForUserService(HttpStatusCode.NotFound));
@@ -175,12 +181,12 @@ namespace AdminWebsite.UnitTests.Services
 
             _userApiClient.Setup(x => x.ResetUserPasswordAsync(userName)).ReturnsAsync(updatedUserResponse);
 
-            var response = await _service.UpdateParticipantPassword(userName);
-
-            response.Should().NotBeNull();
-            response.Password.Should().Be(updatedUserResponse.NewPassword);
+            await _service.ResetParticipantPassword(userName);
 
             _userApiClient.Verify(x => x.ResetUserPasswordAsync(userName), Times.Once);
+            _notificationApiClient.Verify(x=> x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(request => 
+                request.NotificationType ==NotificationType.PasswordReset && request.Parameters.ContainsValue(updatedUserResponse.NewPassword)
+                )));
         }
 
         [Test]
@@ -194,7 +200,7 @@ namespace AdminWebsite.UnitTests.Services
 
 
             var exception =
-                Assert.ThrowsAsync<UserServiceException>(() => _service.UpdateParticipantPassword(userName));
+                Assert.ThrowsAsync<UserServiceException>(() => _service.ResetParticipantPassword(userName));
 
             exception.Reason.Should().Be("Unable to generate new password");
         }
