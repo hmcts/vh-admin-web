@@ -40,7 +40,7 @@ namespace AdminWebsite.UnitTests.Controllers.PersonController
             var contactEmail = "john@doe.com";
             var person = Builder<PersonResponse>.CreateNew().Build();
             _bookingsApiClient
-                .Setup(x => x.SearchForNonJudicialPersonsByContactEmailAsync(contactEmail))
+                .Setup(x => x.SearchForNonJudgePersonsByContactEmailAsync(contactEmail))
                 .ReturnsAsync(person);
             
             var actionResult = await _controller.GetPersonForUpdateByContactEmail(contactEmail);
@@ -55,7 +55,7 @@ namespace AdminWebsite.UnitTests.Controllers.PersonController
         {
             var contactEmail = "john@doe.com";
             _bookingsApiClient
-                .Setup(x => x.SearchForNonJudicialPersonsByContactEmailAsync(contactEmail))
+                .Setup(x => x.SearchForNonJudgePersonsByContactEmailAsync(contactEmail))
                 .Throws(ClientException.ForBookingsAPI(HttpStatusCode.NotFound));
             
             var actionResult = await _controller.GetPersonForUpdateByContactEmail(contactEmail);

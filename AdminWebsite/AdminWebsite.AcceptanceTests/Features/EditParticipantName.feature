@@ -19,4 +19,4 @@ Scenario: Edit Participant Does Not Exists
 Scenario: Edit Participant Should Not Retrieve Judge
 	Given the Video Hearings Officer user has progressed to the Edit Participant Name page
 	When I search for a Judge user account
-	Then the user does not exists message is displayed
+	Then the user is not allowed to be edited message is displayed
