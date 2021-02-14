@@ -43,6 +43,6 @@ describe('EditParticipantSearchResultsComponent', () => {
 
     it('should return unauthorised warning text', () => {
         component.isUnauthorisedSearch = true;
-        expect(component.warningText).toContain('Only non Judge accounts can be edited');
+        expect(component.warningText).toContain('Judge accounts cannot be edited');
     });
 });
