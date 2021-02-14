@@ -42,6 +42,26 @@ namespace AdminWebsite.AcceptanceTests.Steps
             SearchParticipantBy(_participant.Contact_email);
         }
 
+        [When(@"then update First and Last Name")]
+        public void WhenThenUpdateFirstAndLastName()
+        {
+            var emailLink = EditParticipantNamePage.ContactEmailLink(_participant.Contact_email);
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(emailLink);
+            _browsers[_c.CurrentUser].Click(emailLink);
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(EditParticipantNamePage.FirstNameField).Clear();
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(EditParticipantNamePage.FirstNameField).SendKeys(_participant.First_name);
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(EditParticipantNamePage.LastNameField).Clear();
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(EditParticipantNamePage.LastNameField).SendKeys(_participant.Last_name);
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(EditParticipantNamePage.SaveButton);
+            _browsers[_c.CurrentUser].Click(EditParticipantNamePage.SaveButton);
+        }
+
+        [Then(@"the pariticpant's details are updated")]
+        public void ThenThePariticpantSDetailsAreUpdated()
+        {
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(EditParticipantNamePage.CompleteSignField).Text.ToLower().Trim().Should().Be(EditParticipantNamePage.CompleteSignText);
+        }
+
         [Then(@"the pariticpant's details are retrieved")]
         public void ThenThePariticpantSDetailsAreRetrieved()
         {

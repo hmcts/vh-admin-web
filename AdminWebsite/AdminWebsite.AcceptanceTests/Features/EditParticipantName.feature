@@ -7,7 +7,8 @@
 Scenario: Edit Participant Name
 	Given the Video Hearings Officer user has progressed to the Edit Participant Name page
 	When I search for the participant by contact email
-	Then the pariticpant's details are retrieved
+	And then update First and Last Name
+	Then the pariticpant's details are updated
 
 @VIH-6637
 Scenario: Edit Participant Does Not Exists
