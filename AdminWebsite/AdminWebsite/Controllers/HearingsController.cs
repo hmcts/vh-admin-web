@@ -233,16 +233,8 @@ namespace AdminWebsite.Controllers
                     await _bookingsApiClient.RemoveParticipantFromHearingAsync(hearingId, participantToDelete.Id);
                 }
 
-                try
-                {
-                    await _hearingsService.UpdateParticipantLinks(hearingId, request, hearing);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                    throw;
-                }
-
+                await _hearingsService.UpdateParticipantLinks(hearingId, request, hearing);
+              
                 // Add new participants
                 await _hearingsService.SaveNewParticipants(hearingId, newParticipantList);
 
