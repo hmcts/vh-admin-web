@@ -80,39 +80,29 @@ namespace AdminWebsite.UnitTests.Controllers
         [Test]
         public void Should_return_a_bad_request_when_no_username_is_passed()
         {
-            _userAccountService.Setup(x => x.UpdateParticipantPassword(It.IsAny<string>()))
+            _userAccountService.Setup(x => x.ResetParticipantPassword(It.IsAny<string>()))
                 .ThrowsAsync(ClientException.ForUserService(HttpStatusCode.BadRequest));
-            var response = _controller.UpdateUser("");
+            var response = _controller.ResetPassword("");
             response.Result.Should().BeOfType<BadRequestObjectResult>();
         }
 
         [Test]
         public void Should_return_a_not_found_when_invalid_username_is_passed()
         {
-            _userAccountService.Setup(x => x.UpdateParticipantPassword(It.IsAny<string>()))
+            _userAccountService.Setup(x => x.ResetParticipantPassword(It.IsAny<string>()))
                 .ThrowsAsync(ClientException.ForUserService(HttpStatusCode.NotFound));
-            var response = _controller.UpdateUser("unknown.user@domain.com");
+            var response = _controller.ResetPassword("unknown.user@domain.com");
             response.Result.Should().BeOfType<NotFoundObjectResult>();
         }
 
         [Test]
         public async Task Should_return_no_content_when_valid_username_is_passed()
         {
-            var expectedResponse = new UpdateUserPasswordResponse
-            {
-                Password = "NewPassword"
-            };
-
-            _userAccountService.Setup(x => x.UpdateParticipantPassword(It.IsAny<string>()))
-                .ReturnsAsync(expectedResponse);
             _controller = new UserDataController(_userAccountService.Object);
-            var response = await _controller.UpdateUser("test");
-            var result = response as OkObjectResult;
+            var response = await _controller.ResetPassword("test");
+            var result = response as OkResult;
             result.Should().NotBeNull();
             result.StatusCode.Should().Be(200);
-            result.Value.Should().NotBeNull().And.BeAssignableTo<UpdateUserPasswordResponse>();
-            result.Value.As<UpdateUserPasswordResponse>().Password.Should().NotBeNull().And
-                .Be(expectedResponse.Password);
         }
     }
 }

@@ -13,6 +13,7 @@ export class EditParticipantSearchComponent implements OnInit {
     private readonly loggerPrefix = '[EditParticipant] -';
     form: FormGroup;
     hasSearched: boolean;
+    unauthorisedParticipant: boolean;
     loadingData: boolean;
     result: ParticipantEditResultModel;
     subscriptions$ = new Subscription();
@@ -45,12 +46,19 @@ export class EditParticipantSearchComponent implements OnInit {
     }
 
     async getResults(username: string): Promise<ParticipantEditResultModel> {
-        const response = await this.service.searchForPerson(username);
-        if (response) {
-            this.logger.debug(`${this.loggerPrefix} Found user`, { contactEmail: this.contactEmail.value });
-            return response;
-        } else {
-            this.logger.warn(`${this.loggerPrefix} Contact email not found`, { contactEmail: this.contactEmail.value });
+        try {
+            const response = await this.service.searchForPerson(username);
+            if (response) {
+                this.logger.debug(`${this.loggerPrefix} Found user`, { contactEmail: this.contactEmail.value });
+                return response;
+            } else {
+                this.logger.warn(`${this.loggerPrefix} Contact email not found`, { contactEmail: this.contactEmail.value });
+                return null;
+            }
+        } catch (error) {
+            if (error?.status === 401) {
+                this.unauthorisedParticipant = true;
+            }
             return null;
         }
     }

@@ -3,18 +3,38 @@ import { Router } from '@angular/router';
 import { HeaderComponent } from './header.component';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { By } from '@angular/platform-browser';
+import { ConnectionService } from 'src/app/services/connection/connection.service';
+import { of } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 
 declare const window: any;
 
 describe('HeaderComponent', () => {
+    let httpClient: jasmine.SpyObj<HttpClient>;
+    const connection = {
+        hasConnection$: {
+            subscribe: () => of(null),
+            pipe: () => of(null)
+        }
+    };
+
     describe('view', () => {
         let component: HeaderComponent;
         let fixture: ComponentFixture<HeaderComponent>;
 
         beforeEach(() => {
+            httpClient = jasmine.createSpyObj<HttpClient>(['head']);
+
             TestBed.configureTestingModule({
                 declarations: [HeaderComponent],
-                providers: [{ provide: Router, useValue: jasmine.createSpyObj<Router>(['navigate']) }],
+                providers: [
+                    { provide: Router, useValue: jasmine.createSpyObj<Router>(['navigate']) },
+                    { provide: HttpClient, useValue: httpClient },
+                    {
+                        provide: ConnectionService,
+                        useValue: connection
+                    }
+                ],
                 schemas: [NO_ERRORS_SCHEMA]
             }).compileComponents();
             fixture = TestBed.createComponent(HeaderComponent);
@@ -23,7 +43,7 @@ describe('HeaderComponent', () => {
         });
 
         it('user should see Signout button once logged in', () => {
-            component.ngOnInit();
+            // component.ngOnInit();
             component.loggedIn = true;
             fixture.detectChanges();
             const signOutElement = fixture.debugElement.queryAll(By.css('#linkSignOut'));
@@ -33,7 +53,7 @@ describe('HeaderComponent', () => {
         });
 
         it('user should not see Signout button if not logged in', () => {
-            component.ngOnInit();
+            // component.ngOnInit();
             component.loggedIn = false;
             fixture.detectChanges();
             const signOutElement = fixture.debugElement.queryAll(By.css('#linkSignOut'));
@@ -41,7 +61,7 @@ describe('HeaderComponent', () => {
         });
 
         it('user should confirm logout when pressing logout', () => {
-            component.ngOnInit();
+            // component.ngOnInit();
             component.loggedIn = true;
             fixture.detectChanges();
             const signOutElement = fixture.debugElement.query(By.css('#linkSignOut'));
@@ -51,24 +71,32 @@ describe('HeaderComponent', () => {
         });
     });
 
-    describe('functionality', () => {
+    describe('functionality:', () => {
         let component: HeaderComponent;
         let router: jasmine.SpyObj<Router>;
 
         beforeEach(() => {
             router = jasmine.createSpyObj<Router>(['navigate']);
-            component = new HeaderComponent(router);
+
+            TestBed.configureTestingModule({
+                declarations: [HeaderComponent],
+                providers: [
+                    { provide: Router, useValue: router },
+                    { provide: HttpClient, useValue: httpClient },
+                    { provide: ConnectionService, useValue: connection }
+                ],
+                schemas: [NO_ERRORS_SCHEMA]
+            }).compileComponents();
+
+            const fixture = TestBed.createComponent(HeaderComponent);
+            component = fixture.componentInstance;
         });
 
         it('header component should have top menu items', () => {
-            component.topMenuItems = [];
-            component.ngOnInit();
             expect(component.topMenuItems.length).toBeGreaterThan(0);
         });
 
         it('selected top menu item has active property set to true, others item active set to false', () => {
-            component.topMenuItems = [];
-            component.ngOnInit();
             component.loggedIn = true;
             component.navigateToSelectedMenuItem(0);
             expect(component.topMenuItems[0].active).toBeTruthy();
@@ -80,13 +108,11 @@ describe('HeaderComponent', () => {
         });
 
         it('user should navigate by selecting top menu item', () => {
-            component.ngOnInit();
             component.navigateToSelectedMenuItem(0);
             expect(router.navigate).toHaveBeenCalledWith([component.topMenuItems[0].url]);
         });
 
         it('should be sticky if having scrolled', () => {
-            component.ngOnInit();
             window.pageYOffset = 10;
             component.headerElement = {
                 nativeElement: { offsetTop: 0 }
