@@ -35,8 +35,6 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(ChangePasswordPage.UsernameTextfield).SendKeys(_participant.Username);
             _browsers[_c.CurrentUser].Click(ChangePasswordPage.UpdateButton);
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(ChangePasswordPage.PasswordHasBeenChangedMessage).Displayed.Should().BeTrue();
-            _browsers[_c.CurrentUser].Click(ChangePasswordPage.OkButton);
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(ChangePasswordPage.CopyPasswordButton).Displayed.Should().BeTrue();
         }
 
         [When(@"the participant accesses the application using the reset password")]
@@ -53,10 +51,11 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(LoginPage.CurrentPassword).Displayed.Should().BeTrue();
         }
 
-        [Then(@"the copy password button is displayed")]
-        public void ThenTheCopyPasswordButtonIsDisplayed()
+        [Then(@"the changed password message can be dismissed")]
+        public void ThenTheChangedPasswordMessageCanBeDismissed()
         {
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(ChangePasswordPage.CopyPasswordButton).Displayed.Should().BeTrue();
+            _browsers[_c.CurrentUser].Click(ChangePasswordPage.OkButton);
+            _browsers[_c.CurrentUser].Driver.WaitUntilElementNotVisible(ChangePasswordPage.PasswordHasBeenChangedMessage);
         }
 
         [When(@"the user changes their password")]
