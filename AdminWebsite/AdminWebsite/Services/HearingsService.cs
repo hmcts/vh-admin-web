@@ -26,8 +26,18 @@ namespace AdminWebsite.Services
         void AssignEndpointDefenceAdvocates(List<EndpointRequest> endpointsWithDa,
             IReadOnlyCollection<ParticipantRequest> participants);
 
-        Task EmailParticipants(HearingDetailsResponse hearing,
+        Task SendNewUserEmailParticipants(HearingDetailsResponse hearing,
             Dictionary<string, User> newUsernameAdIdDict);
+
+        Task SendHearingUpdateEmail(HearingDetailsResponse originalHearing, HearingDetailsResponse updatedHearing);
+        
+        /// <summary>
+        /// This will notify all participants (excluding the judge) a hearing has been booked.
+        /// Not to be confused with the "confirmed process".
+        /// </summary>
+        /// <param name="hearing"></param>
+        /// <returns></returns>
+        Task SendHearingConfirmationEmail(HearingDetailsResponse hearing);
 
         Task ProcessNewParticipants(Guid hearingId, EditParticipantRequest participant, HearingDetailsResponse hearing,
             Dictionary<string, User> usernameAdIdDict, List<ParticipantRequest> newParticipantList);
@@ -98,7 +108,7 @@ namespace AdminWebsite.Services
             }
         }
 
-        public async Task EmailParticipants(HearingDetailsResponse hearing,
+        public async Task SendNewUserEmailParticipants(HearingDetailsResponse hearing,
             Dictionary<string, User> newUsernameAdIdDict)
         {
             foreach (var item in newUsernameAdIdDict)
@@ -113,6 +123,35 @@ namespace AdminWebsite.Services
                     // Send a notification only for the newly created users
                     await _notificationApiClient.CreateNewNotificationAsync(request);
                 }
+            }
+        }
+
+        public async Task SendHearingUpdateEmail(HearingDetailsResponse originalHearing, HearingDetailsResponse updatedHearing)
+        {
+            var @case = updatedHearing.Cases.First();
+            var caseName = @case.Name;
+            var caseNumber = @case.Number;
+            var requests = updatedHearing.Participants
+                .Where(x => !x.User_role_name.Contains("Judge", StringComparison.CurrentCultureIgnoreCase))
+                .Select(participant =>
+                    AddNotificationRequestMapper.MapToHearingAmendmentNotification(updatedHearing.Id, participant,
+                        caseName, caseNumber, originalHearing.Scheduled_date_time, updatedHearing.Scheduled_date_time))
+                .ToList();
+            foreach (var request in requests)
+            {
+                await _notificationApiClient.CreateNewNotificationAsync(request);
+            }
+        }
+        
+        public async Task SendHearingConfirmationEmail(HearingDetailsResponse hearing)
+        {
+            var requests = hearing.Participants
+                .Where(x => !x.User_role_name.Contains("Judge", StringComparison.CurrentCultureIgnoreCase))
+                .Select(participant => AddNotificationRequestMapper.MapToHearingConfirmationNotification(hearing, participant))
+                .ToList();
+            foreach (var request in requests)
+            {
+                await _notificationApiClient.CreateNewNotificationAsync(request);
             }
         }
 

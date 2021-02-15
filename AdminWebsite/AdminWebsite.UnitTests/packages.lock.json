@@ -2,6 +2,17 @@
   "version": 1,
   "dependencies": {
     ".NETCoreApp,Version=v3.1": {
+      "Autofac.Extras.Moq": {
+        "type": "Direct",
+        "requested": "[6.0.0, )",
+        "resolved": "6.0.0",
+        "contentHash": "jssPHhCWlOL23LRXRvXkrOC86y0VA2tzqwv3DVLvkBO+DGWI3mOTwGdRuCeXnYzQPYF0o9X5SZLwV+fj4x8u7w==",
+        "dependencies": {
+          "Autofac": "6.0.0",
+          "Moq": "4.7.0",
+          "System.ComponentModel.TypeConverter": "4.1.0"
+        }
+      },
       "coverlet.msbuild": {
         "type": "Direct",
         "requested": "[3.0.2, )",
@@ -86,6 +97,14 @@
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
           "Newtonsoft.Json": "12.0.3"
+        }
+      },
+      "Autofac": {
+        "type": "Transitive",
+        "resolved": "6.0.0",
+        "contentHash": "tRVRXGxwXbQmPy1ZGso115O55ffVW4mWtufjOy7hduQ1BNVR1j7RQQjxpYuB6tJw5OrgqRWYVJLJ8RwYNz/j+A==",
+        "dependencies": {
+          "System.Diagnostics.DiagnosticSource": "4.7.1"
         }
       },
       "Castle.Core": {
