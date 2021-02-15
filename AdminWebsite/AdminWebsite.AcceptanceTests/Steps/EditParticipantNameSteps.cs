@@ -20,26 +20,12 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             _c = c;
             _browsers = browsers;
-            _participant = Users.GetIndividualUser(_c.Users); 
         }
 
-        [When(@"I search for the participant by contact email")]
-        public void WhenISearchForTheParticipantByContactEmail()
-        {
-            SearchParticipantBy(_participant.Contact_email);
-        }
-
-        [When(@"I search for a user that does not exists")]
-        public void WhenISearchForAUserThatDoesNotExists()
-        {
-            SearchParticipantBy("user@notexists.com");
-        }
-
-        [When(@"I search for a Judge user account")]
-        public void WhenISearchForAJudgeUserAccount()
-        {
-            _participant = Users.GetJudgeUser(_c.Users);
-            SearchParticipantBy(_participant.Contact_email);
+        [When(@"I search for '(.*)' by contact email")]
+        public void WhenISearchForTheParticipantByContactEmail(string userType)
+        {            
+            SearchParticipantBy(userType);
         }
 
         [When(@"then update First and Last Name")]
@@ -62,12 +48,6 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(EditParticipantNamePage.CompleteSignField).Text.ToLower().Trim().Should().Be(EditParticipantNamePage.CompleteSignText);
         }
 
-        [Then(@"the pariticpant's details are retrieved")]
-        public void ThenThePariticpantSDetailsAreRetrieved()
-        {
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(EditParticipantNamePage.FullNameField).Text.Trim().Should().Be(_participant.Display_name);
-        }
-
         [Then(@"the user does not exists message is displayed")]
         public void ThenTheUserDoesNotExistsMessageIsDisplayed()
         {
@@ -80,12 +60,37 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(EditParticipantNamePage.JudgeNotAllowedToBeEditedMessage).Displayed.Should().BeTrue();
         }
 
-        private void SearchParticipantBy(string contactEmail)
+        private void SearchParticipantBy(string userType)
         {
+            var contactEmail = GetParticipantEmail(userType);
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(EditParticipantNamePage.ContactEmailTextField).SendKeys(contactEmail);
             _browsers[_c.CurrentUser].Driver.WaitUntilElementClickable(EditParticipantNamePage.SubmitButton);
             _browsers[_c.CurrentUser].Click(EditParticipantNamePage.SubmitButton);
 
+        }
+
+        private string GetParticipantEmail(string userType)
+        {
+            switch(userType)
+            {
+                case "Individual":
+                    _participant = Users.GetIndividualUser(_c.Users);
+                    break;
+                case "Representative":
+                    _participant = Users.GetRepresentativeUser(_c.Users);
+                    break;
+                case "PanelMember":
+                    _participant = Users.GetPanelMemberUser(_c.Users);
+                    break;
+                case "Judge":
+                    _participant = Users.GetJudgeUser(_c.Users);
+                    break;
+                default:
+                    _participant = null;
+                    break;
+            } 
+            
+            return _participant == null ? "user@notexists.com": _participant.Contact_email;
         }
 
     }
