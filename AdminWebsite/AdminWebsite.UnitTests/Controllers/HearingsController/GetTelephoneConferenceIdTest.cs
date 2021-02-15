@@ -2,7 +2,6 @@
 using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
-using AdminWebsite.VideoAPI.Client;
 using FluentAssertions;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
@@ -11,6 +10,8 @@ using Moq;
 using NotificationApi.Client;
 using NUnit.Framework;
 using System;
+using VideoApi.Client;
+using VideoApi.Contract.Responses;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {
@@ -55,13 +56,13 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             _conference = new ConferenceDetailsResponse
             {
-                Meeting_room = new MeetingRoomResponse
+                MeetingRoom = new MeetingRoomResponse
                 {
-                    Telephone_conference_id = "454545",
-                    Admin_uri = "uri",
-                    Judge_uri = "uri",
-                    Participant_uri = "uri",
-                    Pexip_node = "node"
+                    TelephoneConferenceId = "454545",
+                    AdminUri = "uri",
+                    JudgeUri = "uri",
+                    ParticipantUri = "uri",
+                    PexipNode = "node"
                 }
             };
         }
@@ -75,13 +76,13 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             okRequestResult.StatusCode.Should().Be(200);
 
             var phoneDetails = (PhoneConferenceResponse)((OkObjectResult)result.Result).Value;
-            phoneDetails.TelephoneConferenceId.Should().Be(_conference.Meeting_room.Telephone_conference_id);
+            phoneDetails.TelephoneConferenceId.Should().Be(_conference.MeetingRoom.TelephoneConferenceId);
         }
 
         [Test]
         public void Should_return_not_found_if_no_meeting_room_exists()
         {
-            _conference.Meeting_room.Pexip_node = null;
+            _conference.MeetingRoom.PexipNode = null;
             _videoApiMock.Setup(x => x.GetConferenceByHearingRefIdAsync(It.IsAny<Guid>(), It.IsAny<Boolean>())).ReturnsAsync(_conference);
             var result = _controller.GetTelephoneConferenceIdById(_guid);
             var okRequestResult = (NotFoundResult)result.Result;
