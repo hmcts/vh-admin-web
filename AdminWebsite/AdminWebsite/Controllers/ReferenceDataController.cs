@@ -70,7 +70,7 @@ namespace AdminWebsite.Controllers
                     var caseRole = new CaseAndHearingRolesResponse { Name = item.Name };
                     var hearingRoles = await _bookingsApiClient.GetHearingRolesForCaseRoleAsync(caseTypeName, item.Name);
 
-                    caseRole.HearingRoles = hearingRoles.ConvertAll(x => new HearingRole {Name = x.Name, UserRole = x.User_role});
+                    caseRole.HearingRoles = hearingRoles.ConvertAll(x => new HearingRole(x.Name, x.User_role));
 
                     response.Add(caseRole);
                 }

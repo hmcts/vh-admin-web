@@ -108,7 +108,7 @@ namespace AdminWebsite.Services
 
                     if (participant == null) continue;
 
-                    var request = AddNotificationRequestMapper.MapTo(hearing.Id, participant, item.Value.Password);
+                    var request = AddNotificationRequestMapper.MapToNewUserNotification(hearing.Id, participant, item.Value.Password);
                     // Send a notification only for the newly created users
                     await _notificationApiClient.CreateNewNotificationAsync(request);
                 }
