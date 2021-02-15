@@ -811,11 +811,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _bookingsApiClient.Verify(x => x.UpdateParticipantDetailsAsync(
                 _validId, individual.Id,
                 It.IsAny<UpdateParticipantRequest>()), Times.AtLeastOnce);
-
-            var actionResult = (OkObjectResult) result.Result;
-            var response = (HearingDetailsResponse) actionResult.Value;
-            response.Participants.Exists(x => x.Linked_participants != null && x.Linked_participants.Count > 0).Should()
-                .BeTrue();
         }
         
         [Test]
