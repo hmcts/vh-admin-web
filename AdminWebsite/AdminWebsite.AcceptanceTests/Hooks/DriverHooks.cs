@@ -54,7 +54,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
 
             var sauceLabsOptions = new SauceLabsOptions()
             {
-                EnableLogging = false,
+                EnableLogging = EnableLogging(),
                 Name = scenario.ScenarioInfo.Title
             };
 
@@ -67,12 +67,10 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             context.TimeZone = new TimeZone(context.WebConfig.SauceLabsConfiguration.RunningOnSauceLabs(), context.WebConfig.TestConfig.TargetOS);
         }
 
-        private static bool EnableLogging(ScenarioInfo scenario)
+        private static bool EnableLogging()
         {
-            return false; // Disabling temporarily to monitor random build failures
-            //return !scenario.Tags.Contains("DisableLogging");
+            return false;
         }
-
 
         [AfterScenario(Order = (int)HooksSequence.LogResultHooks)]
         public void LogResult(TestContext context, ScenarioContext scenarioContext)
