@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ParticipantEditResultModel } from '../common/model/participant-edit-result.model';
-import { BHClient, UpdateAccountDetailsRequest } from './clients/api-client';
+import { BHClient, BookHearingException, UpdateAccountDetailsRequest } from './clients/api-client';
 import { Logger } from './logger';
 
 @Injectable({ providedIn: 'root' })
@@ -24,6 +24,9 @@ export class ParticipantEditService {
             }
         } catch (error) {
             this.logger.error(`Failed to find person ${contactEmail}. ${error.response}`, error);
+            if (BookHearingException.isBookHearingException(error)) {
+                throw error as BookHearingException;
+            }
             return null;
         }
     }

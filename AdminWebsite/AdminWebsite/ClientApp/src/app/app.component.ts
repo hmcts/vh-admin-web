@@ -8,6 +8,7 @@ import { HeaderComponent } from './shared/header/header.component';
 import { VideoHearingsService } from './services/video-hearings.service';
 import { BookingService } from './services/booking.service';
 import { DeviceType } from './services/device-type';
+import { ConnectionService } from './services/connection/connection.service';
 
 @Component({
     selector: 'app-root',
@@ -42,7 +43,8 @@ export class AppComponent implements OnInit {
         private videoHearingsService: VideoHearingsService,
         private bookingService: BookingService,
         private deviceTypeService: DeviceType,
-        private renderer: Renderer2
+        private renderer: Renderer2,
+        private connection: ConnectionService
     ) {
         this.config.tenant = this.configService.clientSettings.tenant_id;
         this.config.clientId = this.configService.clientSettings.client_id;
@@ -52,6 +54,12 @@ export class AppComponent implements OnInit {
 
         pageTracker.trackNavigation(router);
         pageTracker.trackPreviousPage(router);
+
+        connection.hasConnection$.subscribe(connectionStatus => {
+            if (!connectionStatus) {
+                this.router.navigate(['/error']);
+            }
+        });
     }
 
     ngOnInit() {
