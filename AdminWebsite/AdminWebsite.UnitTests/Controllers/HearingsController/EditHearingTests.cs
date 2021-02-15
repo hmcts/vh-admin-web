@@ -868,12 +868,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _bookingsApiClient.Verify(x => x.UpdateParticipantDetailsAsync(
                 _validId, individual.Id, 
                 It.IsAny<UpdateParticipantRequest>()), Times.AtLeastOnce);
-
-            var actionResult = (OkObjectResult) result.Result;
-            var response = (HearingDetailsResponse) actionResult.Value;
-            response.Participants[0].Linked_participants.Should().
-                ContainSingle(
-                    x => x.Linked_id == _updatedExistingParticipantHearingOriginal.Participants[1].Id);
         } 
         
         [Test]
