@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using AdminWebsite.Controllers;
 using AdminWebsite.Models;
-using AdminWebsite.VideoAPI.Client;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
+using VideoApi.Client;
+using VideoApi.Contract.Responses;
 
 namespace AdminWebsite.UnitTests.Controllers
 {
@@ -31,7 +32,7 @@ namespace AdminWebsite.UnitTests.Controllers
         {
             var audioResponse = new AudioRecordingResponse
             {
-                Audio_file_links = new List<string> { "someLinkToFile" }
+                AudioFileLinks = new List<string> { "someLinkToFile" }
             };
 
             _videoApiClientMock.Setup(x => x.GetAudioRecordingLinkAsync(It.IsAny<Guid>())).ReturnsAsync(audioResponse);
@@ -44,7 +45,7 @@ namespace AdminWebsite.UnitTests.Controllers
             var item = actionResult.Value.As<HearingAudioRecordingResponse>();
             item.Should().NotBeNull()
                 .And.Subject.As<HearingAudioRecordingResponse>().AudioFileLinks.Count.Should().Be(1);
-            item.AudioFileLinks[0].Should().Be(audioResponse.Audio_file_links[0]);
+            item.AudioFileLinks[0].Should().Be(audioResponse.AudioFileLinks[0]);
         }
 
         [Test]
@@ -66,8 +67,8 @@ namespace AdminWebsite.UnitTests.Controllers
         {
             var audioResponse = new List<CvpAudioFileResponse>{ new CvpAudioFileResponse
             {
-                File_name = "someFile",
-                Sas_token_url = "someLink"
+                FileName = "someFile",
+                SasTokenUrl = "someLink"
             } };
 
             _videoApiClientMock.Setup(x => x.GetAudioRecordingLinkCvpByCloudRoomAsync(It.IsAny<string>(), It.IsAny<string>()))
@@ -92,8 +93,8 @@ namespace AdminWebsite.UnitTests.Controllers
             {
                 new CvpAudioFileResponse
                 {
-                    File_name = "someFile",
-                    Sas_token_url = "someLink"
+                    FileName = "someFile",
+                    SasTokenUrl = "someLink"
                 }
             };
 
@@ -117,8 +118,8 @@ namespace AdminWebsite.UnitTests.Controllers
         {
             var audioResponse = new List<CvpAudioFileResponse>{ new CvpAudioFileResponse
             {
-                File_name = "someFile",
-                Sas_token_url = "someLink"
+                FileName = "someFile",
+                SasTokenUrl = "someLink"
             } };
 
             _videoApiClientMock.Setup(x => x.GetAudioRecordingLinkAllCvpAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))

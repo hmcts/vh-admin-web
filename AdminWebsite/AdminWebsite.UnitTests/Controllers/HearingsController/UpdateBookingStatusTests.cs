@@ -2,7 +2,6 @@ using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
-using AdminWebsite.VideoAPI.Client;
 using FluentAssertions;
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
@@ -13,6 +12,8 @@ using NotificationApi.Client;
 using NUnit.Framework;
 using System;
 using System.Threading.Tasks;
+using VideoApi.Client;
+using VideoApi.Contract.Responses;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {
@@ -110,14 +111,14 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var expectedConferenceDetailsResponse = new ConferenceDetailsResponse
             {
                 Id = Guid.NewGuid(),
-                Hearing_id = hearingId,
-                Meeting_room = new MeetingRoomResponse
+                HearingId = hearingId,
+                MeetingRoom = new MeetingRoomResponse
                 {
-                    Admin_uri = "admin",
-                    Judge_uri = "judge",
-                    Participant_uri = "participant",
-                    Pexip_node = "pexip",
-                    Telephone_conference_id = "121212"
+                    AdminUri = "admin",
+                    JudgeUri = "judge",
+                    ParticipantUri = "participant",
+                    PexipNode = "pexip",
+                    TelephoneConferenceId = "121212"
                 }
             };
 
@@ -167,13 +168,13 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var expectedConferenceDetailsResponse = new ConferenceDetailsResponse
             {
                 Id = Guid.NewGuid(),
-                Hearing_id = hearingId,
-                Meeting_room = new MeetingRoomResponse
+                HearingId = hearingId,
+                MeetingRoom = new MeetingRoomResponse
                 {
-                    Admin_uri = "admin",
-                    Judge_uri = "judge",
-                    Participant_uri = "participant",
-                    Pexip_node = "pexip"
+                    AdminUri = "admin",
+                    JudgeUri = "judge",
+                    ParticipantUri = "participant",
+                    PexipNode = "pexip"
                 }
             };
 
@@ -220,7 +221,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var expectedConferenceDetailsResponse = new ConferenceDetailsResponse
             {
                 Id = Guid.NewGuid(),
-                Hearing_id = hearingId
+                HearingId = hearingId
             };
 
             _bookingsApiClient.Setup(x => x.UpdateBookingStatusAsync(hearingId, updateCreatedStatus));
@@ -266,12 +267,12 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var expectedConferenceDetailsResponse = new ConferenceDetailsResponse
             {
                 Id = Guid.NewGuid(),
-                Hearing_id = hearingId,
-                Meeting_room = new MeetingRoomResponse
+                HearingId = hearingId,
+                MeetingRoom = new MeetingRoomResponse
                 {
-                    Judge_uri = "judge",
-                    Participant_uri = "participant",
-                    Pexip_node = "pexip"
+                    JudgeUri = "judge",
+                    ParticipantUri = "participant",
+                    PexipNode = "pexip"
                 }
             };
 
@@ -329,12 +330,12 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var expectedConferenceDetailsResponse = new ConferenceDetailsResponse
             {
                 Id = Guid.NewGuid(),
-                Hearing_id = hearingId,
-                Meeting_room = new MeetingRoomResponse
+                HearingId = hearingId,
+                MeetingRoom = new MeetingRoomResponse
                 {
-                    Admin_uri = "admin",
-                    Judge_uri = "judge",
-                    Pexip_node = "pexip"
+                    AdminUri = "admin",
+                    JudgeUri = "judge",
+                    PexipNode = "pexip"
                 }
             };
 
@@ -381,12 +382,12 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var expectedConferenceDetailsResponse = new ConferenceDetailsResponse
             {
                 Id = Guid.NewGuid(),
-                Hearing_id = hearingId,
-                Meeting_room = new MeetingRoomResponse
+                HearingId = hearingId,
+                MeetingRoom = new MeetingRoomResponse
                 {
-                    Admin_uri = "admin",
-                    Participant_uri = "participant",
-                    Pexip_node = "pexip"
+                    AdminUri = "admin",
+                    ParticipantUri = "participant",
+                    PexipNode = "pexip"
                 }
             };
 
@@ -433,12 +434,12 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var expectedConferenceDetailsResponse = new ConferenceDetailsResponse
             {
                 Id = Guid.NewGuid(),
-                Hearing_id = hearingId,
-                Meeting_room = new MeetingRoomResponse
+                HearingId = hearingId,
+                MeetingRoom = new MeetingRoomResponse
                 {
-                    Admin_uri = "admin",
-                    Judge_uri = "judge",
-                    Participant_uri = "participant"
+                    AdminUri = "admin",
+                    JudgeUri = "judge",
+                    ParticipantUri = "participant"
                 }
             };
 

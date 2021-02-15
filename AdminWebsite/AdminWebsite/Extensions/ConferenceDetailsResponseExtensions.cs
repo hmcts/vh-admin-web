@@ -1,5 +1,4 @@
-﻿
-using AdminWebsite.VideoAPI.Client;
+﻿using VideoApi.Contract.Responses;
 
 namespace AdminWebsite.Extensions
 {
@@ -7,11 +6,11 @@ namespace AdminWebsite.Extensions
     {
         public static bool HasInvalidMeetingRoom(this ConferenceDetailsResponse conference)
         {
-            return (conference?.Meeting_room == null
-                            || string.IsNullOrWhiteSpace(conference.Meeting_room.Admin_uri)
-                            || string.IsNullOrWhiteSpace(conference.Meeting_room.Participant_uri)
-                            || string.IsNullOrWhiteSpace(conference.Meeting_room.Judge_uri)
-                            || string.IsNullOrWhiteSpace(conference.Meeting_room.Pexip_node));
+            return (conference?.MeetingRoom == null
+                            || string.IsNullOrWhiteSpace(conference.MeetingRoom.AdminUri)
+                            || string.IsNullOrWhiteSpace(conference.MeetingRoom.ParticipantUri)
+                            || string.IsNullOrWhiteSpace(conference.MeetingRoom.JudgeUri)
+                            || string.IsNullOrWhiteSpace(conference.MeetingRoom.PexipNode));
         }
     }
 }

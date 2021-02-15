@@ -18,11 +18,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using AdminWebsite.Contracts.Responses;
-using AdminWebsite.VideoAPI.Client;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using NotificationApi.Client;
 using UserApi.Client;
+using VideoApi.Client;
 
 namespace AdminWebsite.Extensions
 {
