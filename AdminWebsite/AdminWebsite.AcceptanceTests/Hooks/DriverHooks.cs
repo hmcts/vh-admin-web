@@ -69,7 +69,8 @@ namespace AdminWebsite.AcceptanceTests.Hooks
 
         private static bool EnableLogging(ScenarioInfo scenario)
         {
-            return !scenario.Tags.Contains("DisableLogging");
+            return false; // Disabling temporarily to monitor random build failures
+            //return !scenario.Tags.Contains("DisableLogging");
         }
 
 
