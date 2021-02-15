@@ -54,7 +54,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
 
             var sauceLabsOptions = new SauceLabsOptions()
             {
-                EnableLogging = EnableLogging(scenario.ScenarioInfo),
+                EnableLogging = false,
                 Name = scenario.ScenarioInfo.Title
             };
 
