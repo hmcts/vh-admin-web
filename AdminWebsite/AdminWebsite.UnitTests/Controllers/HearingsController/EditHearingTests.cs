@@ -21,6 +21,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using AddEndpointRequest = AdminWebsite.BookingsAPI.Client.AddEndpointRequest;
+using LinkedParticipantResponse = AdminWebsite.BookingsAPI.Client.LinkedParticipantResponse;
 using LinkedParticipantType = AdminWebsite.BookingsAPI.Client.LinkedParticipantType;
 using UpdateEndpointRequest = AdminWebsite.BookingsAPI.Client.UpdateEndpointRequest;
 using UpdateParticipantRequest = AdminWebsite.BookingsAPI.Client.UpdateParticipantRequest;
@@ -333,7 +334,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
 
         [Test]
-        public async Task Should_not_update_existing_participants_if_participnt_not_found_in_hearing()
+        public async Task Should_not_update_existing_participants_if_participant_not_found_in_hearing()
         {
             _addNewParticipantRequest.Participants[0].Id = Guid.NewGuid();
 
@@ -811,6 +812,69 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 _validId, individual.Id, 
                 It.IsAny<UpdateParticipantRequest>()), Times.AtLeastOnce);
         }
+        
+        [Test]
+        public async Task Should_Not_Update_LinkedParticipants_If_Link_Already_Exists()
+        {
+            _updatedExistingParticipantHearingOriginal.Participants.Add(new ParticipantResponse
+            {
+                Id = Guid.NewGuid(),
+                User_role_name = "Individual",
+                Contact_email = "link@user.com",
+                Username = "link@user.com"
+            });
+            _updatedExistingParticipantHearingOriginal.Participants[0].Linked_participants = new List<LinkedParticipantResponse>
+            {
+                new LinkedParticipantResponse
+                {
+                    Linked_id = _updatedExistingParticipantHearingOriginal.Participants[1].Id,
+                    Type = LinkedParticipantType.Interpreter
+                }
+            };
+            
+            var updatedHearing = new HearingDetailsResponse
+                {Participants = _updatedExistingParticipantHearingOriginal.Participants};
+            var individual = _updatedExistingParticipantHearingOriginal.Participants.First(x =>
+                    x.User_role_name.ToLower() == "individual");
+            
+            _bookingsApiClient.SetupSequence(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
+                .ReturnsAsync(_updatedExistingParticipantHearingOriginal)
+                .ReturnsAsync(updatedHearing);
+
+            var addParticipantLinksToHearingRequest = new EditHearingRequest
+            {
+                Case = new EditCaseRequest { Name = "Case", Number = "123" },
+                Participants = new List<EditParticipantRequest>
+                {
+                    new EditParticipantRequest
+                    {
+                        Id = individual.Id,
+                        LinkedParticipants = new List<LinkedParticipant>
+                        {
+                            new LinkedParticipant
+                            {
+                                Id = Guid.NewGuid(),
+                                ParticipantId = _updatedExistingParticipantHearingOriginal.Participants[0].Id,
+                                LinkedId = _updatedExistingParticipantHearingOriginal.Participants[1].Id,
+                                Type = LinkedParticipantType.Interpreter
+                            }
+                        }
+                    }
+                }
+            };
+            
+            var result = await _controller.EditHearing(_validId, addParticipantLinksToHearingRequest);
+            ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
+            _bookingsApiClient.Verify(x => x.UpdateParticipantDetailsAsync(
+                _validId, individual.Id, 
+                It.IsAny<UpdateParticipantRequest>()), Times.AtLeastOnce);
+
+            var actionResult = (OkObjectResult) result.Result;
+            var response = (HearingDetailsResponse) actionResult.Value;
+            response.Participants[0].Linked_participants.Should().
+                ContainSingle(
+                    x => x.Linked_id == _updatedExistingParticipantHearingOriginal.Participants[1].Id);
+        } 
         
         [Test]
         public async Task Should_Not_Update_LinkedParticipants_If_Not_In_Request()
