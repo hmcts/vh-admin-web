@@ -779,14 +779,14 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var individual =
                 _updatedExistingParticipantHearingOriginal.Participants.First(x =>
                     x.User_role_name.ToLower() == "individual");
-            
+
             _bookingsApiClient.SetupSequence(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(_updatedExistingParticipantHearingOriginal)
                 .ReturnsAsync(updatedHearing);
 
             var addParticipantLinksToHearingRequest = new EditHearingRequest
             {
-                Case = new EditCaseRequest { Name = "Case", Number = "123" },
+                Case = new EditCaseRequest {Name = "Case", Number = "123"},
                 Participants = new List<EditParticipantRequest>
                 {
                     new EditParticipantRequest
@@ -805,12 +805,17 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                     }
                 }
             };
-            
+
             var result = await _controller.EditHearing(_validId, addParticipantLinksToHearingRequest);
-            ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
+            ((OkObjectResult) result.Result).StatusCode.Should().Be(200);
             _bookingsApiClient.Verify(x => x.UpdateParticipantDetailsAsync(
-                _validId, individual.Id, 
+                _validId, individual.Id,
                 It.IsAny<UpdateParticipantRequest>()), Times.AtLeastOnce);
+
+            var actionResult = (OkObjectResult) result.Result;
+            var response = (HearingDetailsResponse) actionResult.Value;
+            response.Participants.Exists(x => x.Linked_participants != null && x.Linked_participants.Count > 0).Should()
+                .BeTrue();
         }
         
         [Test]

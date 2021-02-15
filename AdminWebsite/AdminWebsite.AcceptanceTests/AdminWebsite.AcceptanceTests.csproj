@@ -75,10 +75,4 @@
     <Content Include="Features\*.feature" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Compile Update="Features\EditParticipantName.feature.cs">
-      <DependentUpon>EditParticipantName.feature</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
 </Project>
