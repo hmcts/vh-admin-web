@@ -2133,8 +2133,8 @@ export class BHClient {
      * @param body (optional)
      * @return Success
      */
-    updateUser(body: string | null | undefined): Observable<UpdateUserPasswordResponse> {
-        let url_ = this.baseUrl + '/api/accounts/updateUser';
+    resetPassword(body: string | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + '/api/accounts/resetpassword';
         url_ = url_.replace(/[?&]$/, '');
 
         const content_ = JSON.stringify(body);
@@ -2144,8 +2144,7 @@ export class BHClient {
             observe: 'response',
             responseType: 'blob',
             headers: new HttpHeaders({
-                'Content-Type': 'application/json-patch+json',
-                Accept: 'application/json'
+                'Content-Type': 'application/json-patch+json'
             })
         };
 
@@ -2153,23 +2152,23 @@ export class BHClient {
             .request('patch', url_, options_)
             .pipe(
                 _observableMergeMap((response_: any) => {
-                    return this.processUpdateUser(response_);
+                    return this.processResetPassword(response_);
                 })
             )
             .pipe(
                 _observableCatch((response_: any) => {
                     if (response_ instanceof HttpResponseBase) {
                         try {
-                            return this.processUpdateUser(<any>response_);
+                            return this.processResetPassword(<any>response_);
                         } catch (e) {
-                            return <Observable<UpdateUserPasswordResponse>>(<any>_observableThrow(e));
+                            return <Observable<void>>(<any>_observableThrow(e));
                         }
-                    } else return <Observable<UpdateUserPasswordResponse>>(<any>_observableThrow(response_));
+                    } else return <Observable<void>>(<any>_observableThrow(response_));
                 })
             );
     }
 
-    protected processUpdateUser(response: HttpResponseBase): Observable<UpdateUserPasswordResponse> {
+    protected processResetPassword(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body : (<any>response).error instanceof Blob ? (<any>response).error : undefined;
@@ -2183,10 +2182,7 @@ export class BHClient {
         if (status === 200) {
             return blobToText(responseBlob).pipe(
                 _observableMergeMap(_responseText => {
-                    let result200: any = null;
-                    let resultData200 = _responseText === '' ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                    result200 = UpdateUserPasswordResponse.fromJS(resultData200);
-                    return _observableOf(result200);
+                    return _observableOf<void>(<any>null);
                 })
             );
         } else if (status === 404) {
@@ -2214,7 +2210,7 @@ export class BHClient {
                 })
             );
         }
-        return _observableOf<UpdateUserPasswordResponse>(<any>null);
+        return _observableOf<void>(<any>null);
     }
 
     /**
@@ -2827,6 +2823,53 @@ export interface IEndpointRequest {
     defence_advocate_username?: string | undefined;
 }
 
+export enum LinkedParticipantType {
+    Interpreter = 'Interpreter'
+}
+
+export class LinkedParticipantRequest implements ILinkedParticipantRequest {
+    participant_contact_email?: string | undefined;
+    linked_participant_contact_email?: string | undefined;
+    type?: LinkedParticipantType;
+
+    constructor(data?: ILinkedParticipantRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.participant_contact_email = _data['participant_contact_email'];
+            this.linked_participant_contact_email = _data['linked_participant_contact_email'];
+            this.type = _data['type'];
+        }
+    }
+
+    static fromJS(data: any): LinkedParticipantRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new LinkedParticipantRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['participant_contact_email'] = this.participant_contact_email;
+        data['linked_participant_contact_email'] = this.linked_participant_contact_email;
+        data['type'] = this.type;
+        return data;
+    }
+}
+
+export interface ILinkedParticipantRequest {
+    participant_contact_email?: string | undefined;
+    linked_participant_contact_email?: string | undefined;
+    type?: LinkedParticipantType;
+}
+
 export class BookNewHearingRequest implements IBookNewHearingRequest {
     scheduled_date_time?: Date;
     scheduled_duration?: number;
@@ -2841,6 +2884,7 @@ export class BookNewHearingRequest implements IBookNewHearingRequest {
     questionnaire_not_required?: boolean;
     audio_recording_required?: boolean;
     endpoints?: EndpointRequest[] | undefined;
+    linked_participants?: LinkedParticipantRequest[] | undefined;
 
     constructor(data?: IBookNewHearingRequest) {
         if (data) {
@@ -2873,6 +2917,10 @@ export class BookNewHearingRequest implements IBookNewHearingRequest {
             if (Array.isArray(_data['endpoints'])) {
                 this.endpoints = [] as any;
                 for (let item of _data['endpoints']) this.endpoints!.push(EndpointRequest.fromJS(item));
+            }
+            if (Array.isArray(_data['linked_participants'])) {
+                this.linked_participants = [] as any;
+                for (let item of _data['linked_participants']) this.linked_participants!.push(LinkedParticipantRequest.fromJS(item));
             }
         }
     }
@@ -2908,6 +2956,10 @@ export class BookNewHearingRequest implements IBookNewHearingRequest {
             data['endpoints'] = [];
             for (let item of this.endpoints) data['endpoints'].push(item.toJSON());
         }
+        if (Array.isArray(this.linked_participants)) {
+            data['linked_participants'] = [];
+            for (let item of this.linked_participants) data['linked_participants'].push(item.toJSON());
+        }
         return data;
     }
 }
@@ -2926,6 +2978,7 @@ export interface IBookNewHearingRequest {
     questionnaire_not_required?: boolean;
     audio_recording_required?: boolean;
     endpoints?: EndpointRequest[] | undefined;
+    linked_participants?: LinkedParticipantRequest[] | undefined;
 }
 
 export class CaseResponse implements ICaseResponse {
@@ -2971,6 +3024,45 @@ export interface ICaseResponse {
     is_lead_case?: boolean;
 }
 
+export class LinkedParticipantResponse implements ILinkedParticipantResponse {
+    linked_id?: string;
+    type?: LinkedParticipantType;
+
+    constructor(data?: ILinkedParticipantResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.linked_id = _data['linked_id'];
+            this.type = _data['type'];
+        }
+    }
+
+    static fromJS(data: any): LinkedParticipantResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new LinkedParticipantResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['linked_id'] = this.linked_id;
+        data['type'] = this.type;
+        return data;
+    }
+}
+
+export interface ILinkedParticipantResponse {
+    linked_id?: string;
+    type?: LinkedParticipantType;
+}
+
 export class ParticipantResponse implements IParticipantResponse {
     id?: string;
     display_name?: string | undefined;
@@ -2986,6 +3078,7 @@ export class ParticipantResponse implements IParticipantResponse {
     username?: string | undefined;
     organisation?: string | undefined;
     representee?: string | undefined;
+    linked_participants?: LinkedParticipantResponse[] | undefined;
 
     constructor(data?: IParticipantResponse) {
         if (data) {
@@ -3011,6 +3104,10 @@ export class ParticipantResponse implements IParticipantResponse {
             this.username = _data['username'];
             this.organisation = _data['organisation'];
             this.representee = _data['representee'];
+            if (Array.isArray(_data['linked_participants'])) {
+                this.linked_participants = [] as any;
+                for (let item of _data['linked_participants']) this.linked_participants!.push(LinkedParticipantResponse.fromJS(item));
+            }
         }
     }
 
@@ -3037,6 +3134,10 @@ export class ParticipantResponse implements IParticipantResponse {
         data['username'] = this.username;
         data['organisation'] = this.organisation;
         data['representee'] = this.representee;
+        if (Array.isArray(this.linked_participants)) {
+            data['linked_participants'] = [];
+            for (let item of this.linked_participants) data['linked_participants'].push(item.toJSON());
+        }
         return data;
     }
 }
@@ -3056,6 +3157,7 @@ export interface IParticipantResponse {
     username?: string | undefined;
     organisation?: string | undefined;
     representee?: string | undefined;
+    linked_participants?: LinkedParticipantResponse[] | undefined;
 }
 
 export class EndpointResponse implements IEndpointResponse {
@@ -3473,8 +3575,8 @@ export interface IHealthCheckResponse {
 }
 
 export class MultiHearingRequest implements IMultiHearingRequest {
-    start_date?: string | undefined;
-    end_date?: string | undefined;
+    start_date?: Date;
+    end_date?: Date;
 
     constructor(data?: IMultiHearingRequest) {
         if (data) {
@@ -3486,8 +3588,8 @@ export class MultiHearingRequest implements IMultiHearingRequest {
 
     init(_data?: any) {
         if (_data) {
-            this.start_date = _data['start_date'];
-            this.end_date = _data['end_date'];
+            this.start_date = _data['start_date'] ? new Date(_data['start_date'].toString()) : <any>undefined;
+            this.end_date = _data['end_date'] ? new Date(_data['end_date'].toString()) : <any>undefined;
         }
     }
 
@@ -3500,15 +3602,15 @@ export class MultiHearingRequest implements IMultiHearingRequest {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data['start_date'] = this.start_date;
-        data['end_date'] = this.end_date;
+        data['start_date'] = this.start_date ? this.start_date.toISOString() : <any>undefined;
+        data['end_date'] = this.end_date ? this.end_date.toISOString() : <any>undefined;
         return data;
     }
 }
 
 export interface IMultiHearingRequest {
-    start_date?: string | undefined;
-    end_date?: string | undefined;
+    start_date?: Date;
+    end_date?: Date;
 }
 
 /** Case request */
@@ -4239,7 +4341,7 @@ export interface IHearingTypeResponse {
 
 export class HearingRole implements IHearingRole {
     name?: string | undefined;
-    user_role?: string | undefined;
+    readonly user_role?: string | undefined;
 
     constructor(data?: IHearingRole) {
         if (data) {
@@ -4252,7 +4354,7 @@ export class HearingRole implements IHearingRole {
     init(_data?: any) {
         if (_data) {
             this.name = _data['name'];
-            this.user_role = _data['user_role'];
+            (<any>this).user_role = _data['user_role'];
         }
     }
 
@@ -4590,41 +4692,6 @@ export interface IJudgeResponse {
     display_name?: string | undefined;
     /** Judge username/email */
     email?: string | undefined;
-}
-
-export class UpdateUserPasswordResponse implements IUpdateUserPasswordResponse {
-    password?: string | undefined;
-
-    constructor(data?: IUpdateUserPasswordResponse) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.password = _data['password'];
-        }
-    }
-
-    static fromJS(data: any): UpdateUserPasswordResponse {
-        data = typeof data === 'object' ? data : {};
-        let result = new UpdateUserPasswordResponse();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data['password'] = this.password;
-        return data;
-    }
-}
-
-export interface IUpdateUserPasswordResponse {
-    password?: string | undefined;
 }
 
 export class UserProfileResponse implements IUserProfileResponse {

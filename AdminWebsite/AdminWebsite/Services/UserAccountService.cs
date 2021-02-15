@@ -1,14 +1,17 @@
-﻿using AdminWebsite.BookingsAPI.Client;
-using AdminWebsite.Contracts.Responses;
-using AdminWebsite.Security;
-using AdminWebsite.Services.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using AdminWebsite.BookingsAPI.Client;
+using AdminWebsite.Contracts.Responses;
 using AdminWebsite.Extensions;
+using AdminWebsite.Mappers;
+using AdminWebsite.Security;
+using AdminWebsite.Services.Models;
 using Microsoft.Extensions.Logging;
+using NotificationApi.Client;
+using NotificationApi.Contract.Requests;
 using UserApi.Client;
 using UserApi.Contract.Requests;
 using UserApi.Contract.Responses;
@@ -38,7 +41,7 @@ namespace AdminWebsite.Services
         /// </summary>
         /// <param name="userName"></param>
         /// <returns></returns>
-        Task<UpdateUserPasswordResponse> UpdateParticipantPassword(string userName);
+        Task ResetParticipantPassword(string userName);
 
         /// <summary>
         /// Delete a user account in AD, then anonymise the person in Bookings API
@@ -64,6 +67,7 @@ namespace AdminWebsite.Services
 
         private readonly IUserApiClient _userApiClient;
         private readonly IBookingsApiClient _bookingsApiClient;
+        private readonly INotificationApiClient _notificationApiClient;
         private readonly ILogger<UserAccountService> _logger;
 
         /// <summary>
@@ -71,12 +75,14 @@ namespace AdminWebsite.Services
         /// </summary>
         /// <param name="userApiClient"></param>
         /// <param name="bookingsApiClient"></param>
+        /// <param name="notificationApiClient"></param>
         /// <param name="logger"></param>
-        public UserAccountService(IUserApiClient userApiClient, IBookingsApiClient bookingsApiClient, ILogger<UserAccountService> logger)
+        public UserAccountService(IUserApiClient userApiClient, IBookingsApiClient bookingsApiClient, INotificationApiClient notificationApiClient, ILogger<UserAccountService> logger)
         {
             _userApiClient = userApiClient;
             _bookingsApiClient = bookingsApiClient;
             _logger = logger;
+            _notificationApiClient = notificationApiClient;
         }
 
         /// <inheritdoc />
@@ -90,15 +96,16 @@ namespace AdminWebsite.Services
                 _logger.LogDebug("User with contact email {contactEmail} does not exist. Creating an account.", participant.Contact_email);
                 // create the user in AD.
                 var newUser = await CreateNewUserInAD(participant);
-                return new User() 
-                            {  
+                return new User
+                {  
                                 UserName = newUser.UserId,
                                 Password = newUser.OneTimePassword
                             };
             }
 
             participant.Username = userProfile.UserName;
-            return new User() { 
+            return new User
+            { 
                 UserName = userProfile.UserId 
             };
         }
@@ -192,28 +199,28 @@ namespace AdminWebsite.Services
             }).ToList();
         }
 
-        public async Task<UpdateUserPasswordResponse> UpdateParticipantPassword(string userName)
+        public async Task ResetParticipantPassword(string userName)
         {
-            _logger.LogDebug("Attempting to reset AD user {username}.", userName);
+            _logger.LogDebug("Attempting to reset AD user {Username}", userName);
             var userProfile = await _userApiClient.GetUserByAdUserNameAsync(userName);
-            
-            if (userProfile != null)
+
+            if (userProfile == null)
             {
-                _logger.LogWarning("AD user {username} found.", userName);
-                var response = await _userApiClient.ResetUserPasswordAsync(userName);
-                _logger.LogWarning("AD user {username} password has been reset.", userName);
-                return new UpdateUserPasswordResponse
+                var e = new UserServiceException
                 {
-                    Password = response.NewPassword
+                    Reason = "Unable to generate new password"
                 };
+                _logger.LogError(e, "Unable to reset password for AD user {Username}", userName);
+                throw e;
             }
 
-            var e = new Security.UserServiceException
-            {
-                Reason = "Unable to generate new password"
-            };
-            _logger.LogError(e, "Unable to reset password for AD user {username}.", userName);
-            throw e;
+            _logger.LogDebug("AD user {Username} found", userName);
+            var passwordResetResponse = await _userApiClient.ResetUserPasswordAsync(userName);
+            _logger.LogDebug("AD user {Username} password has been reset", userName);
+            var passwordResetNotificationRequest = AddNotificationRequestMapper.MapToPasswordResetNotification(
+                $"{userProfile.FirstName} {userProfile.LastName}", passwordResetResponse.NewPassword,
+                userProfile.Email);
+            await _notificationApiClient.CreateNewNotificationAsync(passwordResetNotificationRequest);
         }
 
         public async Task DeleteParticipantAccountAsync(string username)
@@ -287,7 +294,7 @@ namespace AdminWebsite.Services
                 Enum.TryParse<UserRoleType>(person.UserRole, out var userRoleResult);
                 if (userRoleResult == UserRoleType.Judge || userRoleResult == UserRoleType.VhOfficer)
                 {
-                    var e = new Security.UserServiceException()
+                    var e = new UserServiceException
                     {
                         Reason = $"Unable to delete account with role {userRoleResult}"
                     };

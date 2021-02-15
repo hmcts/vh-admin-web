@@ -87,24 +87,22 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _c.Test.HearingSchedule.DurationMinutes = _c.Test.HearingSchedule.DurationMinutes == 0 ? _c.Test.TestData.HearingSchedule.DurationMinutes : 25;
             _c.Test.HearingSchedule.HearingVenue = _c.Test.HearingSchedule.HearingVenue != null ? "Manchester Civil and Family Justice Centre" : _c.Test.TestData.HearingSchedule.HearingVenue;
             _c.Test.HearingSchedule.Room = _c.Test.HearingSchedule.Room != null ? "2" : _c.Test.TestData.HearingSchedule.Room;
-            if (_c.Test.HearingSchedule.MultiDays)
-            {
-                SelectMultiDaysHearing();
-                _c.Test.HearingSchedule.EndHearingDate = AddExtraDaysIfEndDateFallsOnAWeekend();
-                _c.Test.HearingSchedule.NumberOfMultiDays = _c.Test.TestData.HearingSchedule.NumberOfMultiDays;
-            }
+            
+            if (!_c.Test.HearingSchedule.MultiDays) return;
+            SelectMultiDaysHearing();
+            _c.Test.HearingSchedule.ScheduledDate = AddExtraDaysIfDateIsOnAWeekend(_c.Test.HearingSchedule.ScheduledDate);
+            _c.Test.HearingSchedule.EndHearingDate = AddExtraDaysIfDateIsOnAWeekend(_c.Test.HearingSchedule.ScheduledDate.Date.AddDays(NotCountingToday()));
+            _c.Test.HearingSchedule.NumberOfMultiDays = _c.Test.TestData.HearingSchedule.NumberOfMultiDays;
         }
 
-        private DateTime AddExtraDaysIfEndDateFallsOnAWeekend()
+        private static DateTime AddExtraDaysIfDateIsOnAWeekend(DateTime date)
         {
-            var endDate = _c.Test.HearingSchedule.ScheduledDate.Date.AddDays(NotCountingToday());
+            return FallOnAWeekend(date) ? date.AddDays(2) : date;
+        }
 
-            if (endDate.DayOfWeek == DayOfWeek.Saturday || endDate.DayOfWeek == DayOfWeek.Sunday)
-            {
-                endDate = endDate.AddDays(2);
-            }
-
-            return endDate;
+        private static bool FallOnAWeekend(DateTime date)
+        {
+            return date.DayOfWeek == DayOfWeek.Saturday || date.DayOfWeek == DayOfWeek.Sunday;
         }
 
         private int NotCountingToday()

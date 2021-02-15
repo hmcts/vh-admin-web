@@ -53,6 +53,12 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(EditParticipantNamePage.UserNotFounMessage).Displayed.Should().BeTrue();
         }
+        
+        [Then(@"the user is not allowed to be edited message is displayed")]
+        public void ThenTheUserIsNotAllowedToBeEditedMessageIsDisplayed()
+        {
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(EditParticipantNamePage.JudgeNotAllowedToBeEditedMessage).Displayed.Should().BeTrue();
+        }
 
         private void SearchParticipantBy(string contactEmail)
         {
