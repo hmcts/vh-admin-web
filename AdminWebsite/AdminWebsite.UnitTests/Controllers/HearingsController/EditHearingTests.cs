@@ -21,6 +21,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using AddEndpointRequest = AdminWebsite.BookingsAPI.Client.AddEndpointRequest;
+using LinkedParticipantType = AdminWebsite.BookingsAPI.Client.LinkedParticipantType;
 using UpdateEndpointRequest = AdminWebsite.BookingsAPI.Client.UpdateEndpointRequest;
 using UpdateParticipantRequest = AdminWebsite.BookingsAPI.Client.UpdateParticipantRequest;
 
@@ -824,9 +825,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var individual1 = _updatedExistingParticipantHearingOriginal.Participants[0];
             var individual2 = _updatedExistingParticipantHearingOriginal.Participants[1];
             
-            individual1.Linked_participants = new List<LinkedParticipantResponse>()
+            individual1.Linked_participants = new List<BookingsAPI.Client.LinkedParticipantResponse>()
             {
-                new LinkedParticipantResponse
+                new BookingsAPI.Client.LinkedParticipantResponse
                 {
                     Linked_id = individual2.Id,
                     Type = LinkedParticipantType.Interpreter
