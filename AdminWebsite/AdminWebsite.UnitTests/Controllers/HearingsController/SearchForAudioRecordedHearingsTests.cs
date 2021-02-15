@@ -3,7 +3,6 @@ using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
 using AdminWebsite.UnitTests.Helper;
-using AdminWebsite.VideoAPI.Client;
 using FluentAssertions;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
@@ -16,6 +15,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using VideoApi.Client;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {
