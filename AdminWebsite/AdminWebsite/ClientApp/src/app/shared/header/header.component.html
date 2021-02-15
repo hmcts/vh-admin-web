@@ -20,7 +20,7 @@
       </nav>
     </div>
   </div>
-  <nav class="hmcts-primary-navigation" aria-label="Primary navigation">
+  <nav *ngIf="showMenuItems$ | async" class="hmcts-primary-navigation" aria-label="Primary navigation">
     <div class="hmcts-primary-navigation__container">
       <ul id="navigation" style="display: inline-block" class="hmcts-primary-navigation__list" aria-label="Top Level Navigation">
         <li class="hmcts-primary-navigation__item" *ngFor="let topItem of topMenuItems; index as i">

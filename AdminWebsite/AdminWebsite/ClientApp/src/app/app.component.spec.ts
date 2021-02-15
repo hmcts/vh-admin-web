@@ -1,12 +1,15 @@
-import { HttpClientModule } from '@angular/common/http';
-import { fakeAsync, TestBed, waitForAsync } from '@angular/core/testing';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { fakeAsync, TestBed, waitForAsync, inject, tick, discardPeriodicTasks } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AdalService } from 'adal-angular4';
+import { of, throwError } from 'rxjs';
 import { AppComponent } from './app.component';
 import { WindowLocation, WindowRef } from './security/window-ref';
 import { ClientSettingsResponse } from './services/clients/api-client';
 import { ConfigService } from './services/config.service';
+import { ConnectionServiceConfigToken } from './services/connection/connection';
+import { ConnectionService } from './services/connection/connection.service';
 import { DeviceType } from './services/device-type';
 import { PageTrackerService } from './services/page-tracker.service';
 import { VideoHearingsService } from './services/video-hearings.service';
@@ -42,6 +45,15 @@ describe('AppComponent', () => {
         redirect_uri: '/dashboard'
     });
 
+    let httpClient: jasmine.SpyObj<HttpClient>;
+
+    const mockConnectionService = {
+        hasConnection$: {
+            subscribe: () => of(null),
+            pipe: () => of(null)
+        }
+    };
+
     beforeEach(
         waitForAsync(() => {
             configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['clientSettings', 'getClientSettings', 'loadConfig']);
@@ -53,6 +65,8 @@ describe('AppComponent', () => {
             pageTracker = jasmine.createSpyObj('PageTrackerService', ['trackNavigation', 'trackPreviousPage']);
 
             deviceTypeServiceSpy = jasmine.createSpyObj<DeviceType>(['isSupportedBrowser']);
+
+            httpClient = jasmine.createSpyObj<HttpClient>(['head']);
 
             TestBed.configureTestingModule({
                 imports: [HttpClientModule, RouterTestingModule],
@@ -71,7 +85,8 @@ describe('AppComponent', () => {
                     { provide: PageTrackerService, useValue: pageTracker },
                     { provide: WindowRef, useValue: window },
                     { provide: VideoHearingsService, useValue: videoHearingServiceSpy },
-                    { provide: DeviceType, useValue: deviceTypeServiceSpy }
+                    { provide: DeviceType, useValue: deviceTypeServiceSpy },
+                    { provide: ConnectionService, useFactory: () => mockConnectionService }
                 ]
             }).compileComponents();
         })
@@ -126,4 +141,87 @@ describe('AppComponent', () => {
         component.checkBrowser();
         expect(router.navigateByUrl).toHaveBeenCalledWith('unsupported-browser');
     });
+});
+
+describe('AppComponent - ConnectionService', () => {
+    const router = {
+        navigate: jasmine.createSpy('navigate'),
+        navigateByUrl: jasmine.createSpy('navigateByUrl')
+    };
+
+    const videoHearingServiceSpy = jasmine.createSpyObj('VideoHearingsService', ['hasUnsavedChanges']);
+
+    let configServiceSpy: jasmine.SpyObj<ConfigService>;
+    let pageTracker: jasmine.SpyObj<PageTrackerService>;
+    let window: jasmine.SpyObj<WindowRef>;
+    let deviceTypeServiceSpy: jasmine.SpyObj<DeviceType>;
+
+    const clientSettings = new ClientSettingsResponse({
+        tenant_id: 'tenantid',
+        client_id: 'clientid',
+        post_logout_redirect_uri: '/dashboard',
+        redirect_uri: '/dashboard'
+    });
+
+    let httpClient: jasmine.SpyObj<HttpClient>;
+
+    beforeEach(
+        waitForAsync(() => {
+            configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['clientSettings', 'getClientSettings', 'loadConfig']);
+            configServiceSpy.clientSettings = clientSettings;
+
+            window = jasmine.createSpyObj('WindowRef', ['getLocation']);
+            window.getLocation.and.returnValue(new WindowLocation('/url'));
+
+            pageTracker = jasmine.createSpyObj('PageTrackerService', ['trackNavigation', 'trackPreviousPage']);
+
+            deviceTypeServiceSpy = jasmine.createSpyObj<DeviceType>(['isSupportedBrowser']);
+
+            httpClient = jasmine.createSpyObj<HttpClient>(['head']);
+
+            TestBed.configureTestingModule({
+                imports: [HttpClientModule, RouterTestingModule],
+                declarations: [
+                    AppComponent,
+                    HeaderComponent,
+                    FooterStubComponent,
+                    SignOutPopupStubComponent,
+                    CancelPopupStubComponent,
+                    UnsupportedBrowserComponent
+                ],
+                providers: [
+                    { provide: AdalService, useValue: adalService },
+                    { provide: ConfigService, useValue: configServiceSpy },
+                    { provide: Router, useValue: router },
+                    { provide: PageTrackerService, useValue: pageTracker },
+                    { provide: WindowRef, useValue: window },
+                    { provide: VideoHearingsService, useValue: videoHearingServiceSpy },
+                    { provide: DeviceType, useValue: deviceTypeServiceSpy },
+                    { provide: ConnectionServiceConfigToken, useValue: { interval: 1000 } }
+                ]
+            }).compileComponents();
+        })
+    );
+
+    it('should redirect if the connection is lost', fakeAsync(
+        inject([HttpClient], (http: HttpClient) => {
+            const service = TestBed.inject(ConnectionService);
+
+            // make sure the observable from head errors
+            spyOn(http, 'head').and.returnValue(throwError);
+
+            // need this to start the timer in the async zone
+            tick(0);
+
+            expect(http.head).toHaveBeenCalledTimes(1);
+
+            TestBed.createComponent(AppComponent);
+
+            expect(router.navigate).toHaveBeenCalled();
+
+            const lastRouterCall = router.navigate.calls.mostRecent();
+            const url = lastRouterCall.args[0][0];
+            expect(url).toEqual('/error');
+        })
+    ));
 });
