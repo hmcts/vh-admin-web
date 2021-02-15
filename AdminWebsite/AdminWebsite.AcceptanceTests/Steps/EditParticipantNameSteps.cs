@@ -20,32 +20,32 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             _c = c;
             _browsers = browsers;
-            _participant = Users.GetIndividualUser(_c.Users); 
         }
 
-        [When(@"I search for the participant by contact email")]
-        public void WhenISearchForTheParticipantByContactEmail()
-        {
-            SearchParticipantBy(_participant.Contact_email);
+        [When(@"I search for '(.*)' by contact email")]
+        public void WhenISearchForTheParticipantByContactEmail(string userType)
+        {            
+            SearchParticipantBy(userType);
         }
 
-        [When(@"I search for a user that does not exists")]
-        public void WhenISearchForAUserThatDoesNotExists()
+        [When(@"then update First and Last Name")]
+        public void WhenThenUpdateFirstAndLastName()
         {
-            SearchParticipantBy("user@notexists.com");
+            var emailLink = EditParticipantNamePage.ContactEmailLink(_participant.Contact_email);
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(emailLink);
+            _browsers[_c.CurrentUser].Click(emailLink);
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(EditParticipantNamePage.FirstNameField).Clear();
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(EditParticipantNamePage.FirstNameField).SendKeys(_participant.First_name);
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(EditParticipantNamePage.LastNameField).Clear();
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(EditParticipantNamePage.LastNameField).SendKeys(_participant.Last_name);
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(EditParticipantNamePage.SaveButton);
+            _browsers[_c.CurrentUser].Click(EditParticipantNamePage.SaveButton);
         }
 
-        [When(@"I search for a Judge user account")]
-        public void WhenISearchForAJudgeUserAccount()
+        [Then(@"the pariticpant's details are updated")]
+        public void ThenThePariticpantSDetailsAreUpdated()
         {
-            _participant = Users.GetJudgeUser(_c.Users);
-            SearchParticipantBy(_participant.Contact_email);
-        }
-
-        [Then(@"the pariticpant's details are retrieved")]
-        public void ThenThePariticpantSDetailsAreRetrieved()
-        {
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(EditParticipantNamePage.FullNameField).Text.Trim().Should().Be(_participant.Display_name);
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(EditParticipantNamePage.CompleteSignField).Text.ToLower().Trim().Should().Be(EditParticipantNamePage.CompleteSignText);
         }
 
         [Then(@"the user does not exists message is displayed")]
@@ -53,13 +53,44 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(EditParticipantNamePage.UserNotFounMessage).Displayed.Should().BeTrue();
         }
-
-        private void SearchParticipantBy(string contactEmail)
+        
+        [Then(@"the user is not allowed to be edited message is displayed")]
+        public void ThenTheUserIsNotAllowedToBeEditedMessageIsDisplayed()
         {
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(EditParticipantNamePage.JudgeNotAllowedToBeEditedMessage).Displayed.Should().BeTrue();
+        }
+
+        private void SearchParticipantBy(string userType)
+        {
+            var contactEmail = GetParticipantEmail(userType);
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(EditParticipantNamePage.ContactEmailTextField).SendKeys(contactEmail);
             _browsers[_c.CurrentUser].Driver.WaitUntilElementClickable(EditParticipantNamePage.SubmitButton);
             _browsers[_c.CurrentUser].Click(EditParticipantNamePage.SubmitButton);
 
+        }
+
+        private string GetParticipantEmail(string userType)
+        {
+            switch(userType)
+            {
+                case "Individual":
+                    _participant = Users.GetIndividualUser(_c.Users);
+                    break;
+                case "Representative":
+                    _participant = Users.GetRepresentativeUser(_c.Users);
+                    break;
+                case "PanelMember":
+                    _participant = Users.GetPanelMemberUser(_c.Users);
+                    break;
+                case "Judge":
+                    _participant = Users.GetJudgeUser(_c.Users);
+                    break;
+                default:
+                    _participant = null;
+                    break;
+            } 
+            
+            return _participant == null ? "user@notexists.com": _participant.Contact_email;
         }
 
     }

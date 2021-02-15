@@ -48,7 +48,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _notificationApiMock = new Mock<INotificationApiClient>();
 
             _userAccountService = new UserAccountService(_userApiClient.Object, _bookingsApiClient.Object,
-                _userAccountServiceLogger.Object);
+                _notificationApiMock.Object, _userAccountServiceLogger.Object);
 
             _editHearingRequestValidator = new Mock<IValidator<EditHearingRequest>>();
             _videoApiMock = new Mock<IVideoApiClient>();

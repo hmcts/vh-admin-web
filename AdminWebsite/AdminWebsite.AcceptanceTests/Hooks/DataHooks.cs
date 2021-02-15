@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Threading;
 using System.Threading.Tasks;
 using AcceptanceTests.Common.Api.Helpers;
 using AcceptanceTests.Common.AudioRecordings;
@@ -20,13 +19,11 @@ namespace AdminWebsite.AcceptanceTests.Hooks
     {
         private const int ALLOCATE_USERS_FOR_MINUTES = 3;
         private readonly TestContext _c;
-        private readonly Random _random;
         private readonly ScenarioContext _scenario;
 
         public DataHooks(TestContext context, ScenarioContext scenario)
         {
             _c = context;
-            _random = new Random();
             _scenario = scenario;
         }
 
@@ -37,11 +34,9 @@ namespace AdminWebsite.AcceptanceTests.Hooks
 
             var exist = CheckIfParticipantsAlreadyExistInTheDb();
 
-            if (!exist || scenario.ScenarioInfo.Tags.Contains("QuestionnairesAlreadyPartiallyCompleted"))
-            {
-                _c.Test.HearingResponse = CreateHearing();
-                RefreshJudgeDropdownList();
-            }
+            if (exist && !scenario.ScenarioInfo.Tags.Contains("QuestionnairesAlreadyPartiallyCompleted")) return;
+            _c.Test.HearingResponse = CreateHearing();
+            RefreshJudgeDropdownList();
         }
 
         private void AllocateUsers()
@@ -74,8 +69,6 @@ namespace AdminWebsite.AcceptanceTests.Hooks
                 User_types = userTypes
             };
 
-            Thread.Sleep(TimeSpan.FromSeconds(GetRandomNumberForParallelExecution(8)));
-
             var response = _c.Api.AllocateUsers(request);
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             response.Should().NotBeNull();
@@ -85,18 +78,10 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             _c.Users.Should().NotBeNullOrEmpty();
         }
 
-        public double GetRandomNumberForParallelExecution(int maximum)
-        {
-            return _random.NextDouble() * maximum;
-        }
-
         [BeforeScenario(Order = (int)HooksSequence.AudioRecording)]
         public async Task AddAudioRecording(ScenarioContext scenario)
         {
-            if (!scenario.ScenarioInfo.Tags.Contains("AudioRecording"))
-            {
-                return;
-            }
+            if (!scenario.ScenarioInfo.Tags.Contains("AudioRecording")) return;
 
             _c.Test.HearingResponse = CreateHearing(true);
             _c.Test.ConferenceResponse = CreateConference();
@@ -129,9 +114,9 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             return exist;
         }
 
-        public HearingDetailsResponse CreateHearing(bool withAudioRecording = false)
+        private HearingDetailsResponse CreateHearing(bool withAudioRecording = false)
         {
-            var isWinger = _c.Users.Any(X => X.User_type == UserType.Winger);
+            var isWinger = _c.Users.Any(x => x.User_type == UserType.Winger);
 
             var hearingRequest = isWinger
                 ? CreateHearingForWinger()
@@ -158,7 +143,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
                 .Build();
         }
 
-        public ConferenceDetailsResponse CreateConference()
+        private ConferenceDetailsResponse CreateConference()
         {
             var vho = _c.Users.First(x => x.User_type == UserType.VideoHearingsOfficer);
 
