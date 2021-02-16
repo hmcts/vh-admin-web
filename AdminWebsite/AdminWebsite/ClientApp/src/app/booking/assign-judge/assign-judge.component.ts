@@ -21,7 +21,7 @@ import { BookingBaseComponentDirective as BookingBaseComponent } from '../bookin
 })
 export class AssignJudgeComponent extends BookingBaseComponent implements OnInit, OnDestroy {
     hearing: HearingModel;
-    selectedJudgeEmail: string;
+    courtAccountJudgeEmail: string;
     judge: JudgeResponse;
     judgeEmail: string;
     judgePhone: string;
@@ -51,15 +51,6 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         protected logger: Logger
     ) {
         super(bookingService, router, hearingService, logger);
-    }
-
-    static mapJudge(judge: ParticipantModel): JudgeResponse {
-        return new JudgeResponse({
-            email: judge.email,
-            first_name: judge.first_name,
-            last_name: judge.last_name,
-            display_name: judge.display_name
-        });
     }
 
     static mapJudgeToModel(judge: JudgeResponse, judgePhone: string): ParticipantModel {
@@ -144,9 +135,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
             this.judge = new JudgeResponse({ email: this.constants.PleaseSelect, display_name: '' });
         } else {
             this.logger.debug(`${this.loggerPrefix} Found judge in hearing. Populating existing selection.`);
-            this.judge = AssignJudgeComponent.mapJudge(existingJudge);
-            this.judgeEmail = existingJudge.email;
-            this.judgePhone = existingJudge.phone;
+            this.judge = new JudgeResponse(existingJudge);
             this.canNavigate = true;
         }
         this.judgeDisplayNameFld = new FormControl(this.judge.display_name, {
@@ -198,11 +187,11 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
             this.judge.first_name = selectedJudge.first_name;
             this.judge.last_name = selectedJudge.last_name;
             this.judge.email = selectedJudge.email;
-            this.selectedJudgeEmail = selectedJudge.email;
+            this.courtAccountJudgeEmail = selectedJudge.email;
             if (!this.isJudgeDisplayNameSet()) {
                 this.judge.display_name = selectedJudge.display_name;
             }
-            this.judgeDisplayNameFld.patchValue(this.judge.display_name);
+            this.judgeDisplayNameFld.setValue(this.judge.display_name);
             const newJudge = AssignJudgeComponent.mapJudgeToModel(this.judge, this.judgePhone);
 
             const indexOfJudge = this.hearing.participants.findIndex(x => x.is_judge === true);
@@ -224,7 +213,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
 
     changeDisplayName() {
         if (this.judge && this.judge.display_name) {
-            const indexOfJudge = this.hearing.participants.findIndex(x => x.is_judge === true);
+            const indexOfJudge = this.hearing.participants.findIndex(x => x.is_judge);
             if (indexOfJudge !== -1) {
                 this.hearing.participants[indexOfJudge].display_name = this.judge.display_name;
             }
@@ -236,9 +225,9 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     changeEmail() {
         let judgeEmail = this.judgeEmail;
         if (this.judgeEmail === '') {
-            judgeEmail = this.selectedJudgeEmail;
+            judgeEmail = this.courtAccountJudgeEmail;
         }
-        const indexOfJudge = this.hearing.participants.findIndex(x => x.is_judge === true);
+        const indexOfJudge = this.hearing.participants.findIndex(x => x.is_judge);
         if (indexOfJudge !== -1) {
             this.hearing.participants[indexOfJudge].email = judgeEmail;
         }
@@ -247,7 +236,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     }
 
     changeTelephone() {
-        const indexOfJudge = this.hearing.participants.findIndex(x => x.is_judge === true);
+        const indexOfJudge = this.hearing.participants.findIndex(x => x.is_judge);
         if (indexOfJudge !== -1) {
             this.hearing.participants[indexOfJudge].phone = this.judgePhone;
         }
