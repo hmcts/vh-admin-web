@@ -12,14 +12,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using AddEndpointRequest = AdminWebsite.BookingsAPI.Client.AddEndpointRequest;
-using LinkedParticipantRequest = AdminWebsite.BookingsAPI.Client.LinkedParticipantRequest;
 using ParticipantRequest = AdminWebsite.BookingsAPI.Client.ParticipantRequest;
 using VideoApi.Client;
 
