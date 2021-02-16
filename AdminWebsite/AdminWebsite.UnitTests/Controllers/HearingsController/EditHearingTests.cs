@@ -883,9 +883,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var individual1 = _updatedExistingParticipantHearingOriginal.Participants[0];
             var individual2 = _updatedExistingParticipantHearingOriginal.Participants[1];
             
-            individual1.Linked_participants = new List<BookingsAPI.Client.LinkedParticipantResponse>()
+            individual1.Linked_participants = new List<LinkedParticipantResponse>()
             {
-                new BookingsAPI.Client.LinkedParticipantResponse
+                new LinkedParticipantResponse
                 {
                     Linked_id = individual2.Id,
                     Type = LinkedParticipantType.Interpreter
