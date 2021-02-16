@@ -233,7 +233,7 @@ namespace AdminWebsite.Controllers
                     await _bookingsApiClient.RemoveParticipantFromHearingAsync(hearingId, participantToDelete.Id);
                 }
 
-                await _hearingsService.UpdateParticipantLinks(hearingId, request, hearing);
+                await _hearingsService.UpdateParticipantLinks(hearingId, request, originalHearing);
               
                 // Add new participants
                 await _hearingsService.SaveNewParticipants(hearingId, newParticipantList);
