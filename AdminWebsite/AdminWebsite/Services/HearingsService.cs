@@ -99,7 +99,7 @@ namespace AdminWebsite.Services
             // update the username of defence advocate 
             foreach (var endpoint in endpointsWithDa)
             {
-                _logger.LogDebug("Attempting to find defence advocate {da} for endpoint {ep}",
+                _logger.LogDebug("Attempting to find defence advocate {DefenceAdvocate} for endpoint {Endpoint}",
                     endpoint.Defence_advocate_username, endpoint.Display_name);
                 var defenceAdvocate = participants.Single(x =>
                     x.Username.Equals(endpoint.Defence_advocate_username,
@@ -128,6 +128,10 @@ namespace AdminWebsite.Services
 
         public async Task SendHearingUpdateEmail(HearingDetailsResponse originalHearing, HearingDetailsResponse updatedHearing)
         {
+            if (updatedHearing.IsGenericHearing())
+            {
+                return;
+            }
             var @case = updatedHearing.Cases.First();
             var caseName = @case.Name;
             var caseNumber = @case.Number;
@@ -145,6 +149,10 @@ namespace AdminWebsite.Services
         
         public async Task SendHearingConfirmationEmail(HearingDetailsResponse hearing)
         {
+            if (hearing.IsGenericHearing())
+            {
+                return;
+            }
             var requests = hearing.Participants
                 .Where(x => !x.User_role_name.Contains("Judge", StringComparison.CurrentCultureIgnoreCase))
                 .Select(participant => AddNotificationRequestMapper.MapToHearingConfirmationNotification(hearing, participant))
@@ -164,7 +172,7 @@ namespace AdminWebsite.Services
                     6, _ => TimeSpan.FromSeconds(8),
                     retryAttempt =>
                         _logger.LogWarning(
-                            $"Failed to retrieve conference details from the VideoAPi for hearingId {hearingId}. Retrying attempt {retryAttempt}"),
+                            "Failed to retrieve conference details from the VideoAPi for hearingId {Hearing}. Retrying attempt {RetryAttempt}", hearingId, retryAttempt),
                     videoApiResponseObject => videoApiResponseObject.HasInvalidMeetingRoom(),
                     () => _videoApiClient.GetConferenceByHearingRefIdAsync(hearingId, false)
                 );
@@ -207,7 +215,7 @@ namespace AdminWebsite.Services
                 usernameAdIdDict.Add(newParticipant.Username, user);
             }
 
-            _logger.LogDebug("Adding participant {participant} to hearing {hearing}",
+            _logger.LogDebug("Adding participant {Participant} to hearing {Hearing}",
                 newParticipant.Display_name, hearingId);
             newParticipantList.Add(newParticipant);
         }
@@ -222,7 +230,7 @@ namespace AdminWebsite.Services
                     existingParticipant.User_role_name == "Representative")
                 {
                     //Update participant
-                    _logger.LogDebug("Updating existing participant {participant} in hearing {hearing}",
+                    _logger.LogDebug("Updating existing participant {Participant} in hearing {Hearing}",
                         existingParticipant.Id, hearingId);
                     var updateParticipantRequest = UpdateParticipantRequestMapper.MapTo(participant);
                     await _bookingsApiClient.UpdateParticipantDetailsAsync(hearingId, participant.Id.Value,
@@ -231,7 +239,7 @@ namespace AdminWebsite.Services
                 else if (existingParticipant.User_role_name == "Judge")
                 {
                     //Update Judge
-                    _logger.LogDebug("Updating judge {participant} in hearing {hearing}",
+                    _logger.LogDebug("Updating judge {Participant} in hearing {Hearing}",
                         existingParticipant.Id, hearingId);
                     var updateParticipantRequest = new UpdateParticipantRequest
                     {
@@ -251,7 +259,7 @@ namespace AdminWebsite.Services
                 var listOfEndpointsToDelete = hearing.Endpoints.Where(e => request.Endpoints.All(re => re.Id != e.Id));
                 foreach (var endpointToDelete in listOfEndpointsToDelete)
                 {
-                    _logger.LogDebug("Removing endpoint {endpoint} - {endpointDisplayName} from hearing {hearing}",
+                    _logger.LogDebug("Removing endpoint {Endpoint} - {EndpointDisplayName} from hearing {Hearing}",
                         endpointToDelete.Id, endpointToDelete.Display_name, hearingId);
                     await _bookingsApiClient.RemoveEndPointFromHearingAsync(hearing.Id, endpointToDelete.Id);
                 }
@@ -268,7 +276,7 @@ namespace AdminWebsite.Services
 
                     if (!endpoint.Id.HasValue)
                     {
-                        _logger.LogDebug("Adding endpoint {endpointDisplayName} to hearing {hearing}",
+                        _logger.LogDebug("Adding endpoint {EndpointDisplayName} to hearing {Hearing}",
                             endpoint.DisplayName, hearingId);
                         var addEndpointRequest = new AddEndpointRequest
                         { Display_name = endpoint.DisplayName, Defence_advocate_username = endpoint.DefenceAdvocateUsername };
@@ -281,7 +289,7 @@ namespace AdminWebsite.Services
                                                                existingEndpointToEdit.Defence_advocate_id.ToString() !=
                                                                endpoint.DefenceAdvocateUsername))
                         {
-                            _logger.LogDebug("Updating endpoint {endpoint} - {endpointDisplayName} in hearing {hearing}",
+                            _logger.LogDebug("Updating endpoint {Endpoint} - {EndpointDisplayName} in hearing {Hearing}",
                                 existingEndpointToEdit.Id, existingEndpointToEdit.Display_name, hearingId);
                             var updateEndpointRequest = new UpdateEndpointRequest
                             {
@@ -300,7 +308,7 @@ namespace AdminWebsite.Services
         {
             if (newParticipantList.Any())
             {
-                _logger.LogDebug("Saving new participants {participantCount} to hearing {hearing}",
+                _logger.LogDebug("Saving new participants {ParticipantCount} to hearing {Hearing}",
                     newParticipantList.Count, hearingId);
                 await _bookingsApiClient.AddParticipantsToHearingAsync(hearingId, new AddParticipantsToHearingRequest()
                 {

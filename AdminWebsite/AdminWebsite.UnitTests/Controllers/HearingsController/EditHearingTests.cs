@@ -1,3 +1,8 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
 using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Models;
 using AdminWebsite.Security;
@@ -12,17 +17,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NotificationApi.Client;
+using NotificationApi.Contract;
 using NotificationApi.Contract.Requests;
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
 using VideoApi.Client;
-using AddEndpointRequest = AdminWebsite.BookingsAPI.Client.AddEndpointRequest;
-using UpdateEndpointRequest = AdminWebsite.BookingsAPI.Client.UpdateEndpointRequest;
-using UpdateParticipantRequest = AdminWebsite.BookingsAPI.Client.UpdateParticipantRequest;
+using CaseResponse = AdminWebsite.BookingsAPI.Client.CaseResponse;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {
@@ -88,9 +87,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 }
             };
             
-            var cases = new List<BookingsAPI.Client.CaseResponse>
+            var cases = new List<CaseResponse>
             {
-                new BookingsAPI.Client.CaseResponse {Name = "Case", Number = "123"}
+                new CaseResponse {Name = "Case", Number = "123"}
             };
             
             _updatedExistingParticipantHearingOriginal = new HearingDetailsResponse
@@ -120,7 +119,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                         Username = "old@user.com"
                     }
                 },
-                Cases = cases
+                Cases = cases,
+                Case_type_name = "Unit Test"
             };
 
             var guid1 = Guid.NewGuid();
@@ -141,14 +141,15 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             _existingHearingWithEndpointsOriginal = new HearingDetailsResponse 
             { 
-                Endpoints = new List<BookingsAPI.Client.EndpointResponse> 
+                Endpoints = new List<EndpointResponse> 
                 { 
-                    new BookingsAPI.Client.EndpointResponse { Display_name = "data1", Id = guid1,  Pin= "0000", Sip = "1111111111" },
-                    new BookingsAPI.Client.EndpointResponse { Display_name = "data2", Id = guid2,  Pin= "1111", Sip = "2222222222", Defence_advocate_id = Guid.NewGuid() },
-                    new BookingsAPI.Client.EndpointResponse { Display_name = "data3", Id = guid3,  Pin= "2222", Sip = "5544332234" },
-                    new BookingsAPI.Client.EndpointResponse { Display_name = "data4", Id = guid4,  Pin= "2222", Sip = "5544332234", Defence_advocate_id = Guid.NewGuid() },
+                    new EndpointResponse { Display_name = "data1", Id = guid1,  Pin= "0000", Sip = "1111111111" },
+                    new EndpointResponse { Display_name = "data2", Id = guid2,  Pin= "1111", Sip = "2222222222", Defence_advocate_id = Guid.NewGuid() },
+                    new EndpointResponse { Display_name = "data3", Id = guid3,  Pin= "2222", Sip = "5544332234" },
+                    new EndpointResponse { Display_name = "data4", Id = guid4,  Pin= "2222", Sip = "5544332234", Defence_advocate_id = Guid.NewGuid() },
                 },
-                Cases = cases
+                Cases = cases,
+                Case_type_name = "Unit Test"
             };
             
             _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
@@ -156,8 +157,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             
             _editHearingRequestValidator.Setup(x => x.Validate(It.IsAny<EditHearingRequest>())).Returns(new ValidationResult());
             _userAccountService
-                .Setup(x => x.UpdateParticipantUsername(It.IsAny<AdminWebsite.BookingsAPI.Client.ParticipantRequest>()))
-                .Callback<AdminWebsite.BookingsAPI.Client.ParticipantRequest>(p => p.Username = p.Contact_email)
+                .Setup(x => x.UpdateParticipantUsername(It.IsAny<BookingsAPI.Client.ParticipantRequest>()))
+                .Callback<BookingsAPI.Client.ParticipantRequest>(p => p.Username = p.Contact_email)
                 .ReturnsAsync(new User());
             
         }
@@ -222,7 +223,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var updatedHearing = _updatedExistingParticipantHearingOriginal = new HearingDetailsResponse
             {
                 Participants = _updatedExistingParticipantHearingOriginal.Participants,
-                Cases = _updatedExistingParticipantHearingOriginal.Cases
+                Cases = _updatedExistingParticipantHearingOriginal.Cases,
+                Case_type_name = "Unit Test"
             };
             updatedHearing.Participants[0].First_name = "New user firstname";
             updatedHearing.Participants.Add(new ParticipantResponse
@@ -252,7 +254,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var updatedHearing = _updatedExistingParticipantHearingOriginal = new HearingDetailsResponse
             {
                 Participants = _updatedExistingParticipantHearingOriginal.Participants,
-                Cases = _updatedExistingParticipantHearingOriginal.Cases
+                Cases = _updatedExistingParticipantHearingOriginal.Cases,
+                Case_type_name = "Unit Test"
             };
             updatedHearing.Participants[0].First_name = "New user firstname";
             updatedHearing.Participants.Add(new ParticipantResponse
@@ -268,17 +271,17 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 .ReturnsAsync(updatedHearing);
 
             _userAccountService
-                .Setup(x => x.UpdateParticipantUsername(It.IsAny<AdminWebsite.BookingsAPI.Client.ParticipantRequest>()))
-                .Callback<AdminWebsite.BookingsAPI.Client.ParticipantRequest>(p => p.Username = userName)
-                .ReturnsAsync(new User() { UserName = userName, Password = "test123" });
+                .Setup(x => x.UpdateParticipantUsername(It.IsAny<BookingsAPI.Client.ParticipantRequest>()))
+                .Callback<BookingsAPI.Client.ParticipantRequest>(p => p.Username = userName)
+                .ReturnsAsync(new User { UserName = userName, Password = "test123" });
 
             var result = await _controller.EditHearing(_validId, _addNewParticipantRequest);
             ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
 
             var participant = updatedHearing.Participants[0];
             _notificationApiMock.Verify(x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r =>
-                    r.MessageType == NotificationApi.Contract.MessageType.Email &&
-                    r.NotificationType == NotificationApi.Contract.NotificationType.CreateIndividual &&
+                    r.MessageType == MessageType.Email &&
+                    r.NotificationType == NotificationType.CreateIndividual &&
                     r.ContactEmail == participant.Contact_email &&
                     r.PhoneNumber == participant.Telephone_number &&
                     r.Parameters.ContainsKey("name") && r.Parameters["name"] == $"{participant.First_name} {participant.Last_name}" &&
@@ -301,7 +304,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var updatedHearing = _updatedExistingParticipantHearingOriginal = new HearingDetailsResponse
             {
                 Participants = _updatedExistingParticipantHearingOriginal.Participants, 
-                Cases = _updatedExistingParticipantHearingOriginal.Cases
+                Cases = _updatedExistingParticipantHearingOriginal.Cases,
+                Case_type_name = "Unit Test"
             };
             updatedHearing.Participants[0].First_name = "New user firstname";
             updatedHearing.Participants[0].Username = "old1@user.com";
@@ -320,14 +324,14 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 .ReturnsAsync(updatedHearing);
 
             _userAccountService
-                .Setup(x => x.UpdateParticipantUsername(It.Is<AdminWebsite.BookingsAPI.Client.ParticipantRequest>(r => r.Contact_email == "new@user.com")))
-                .Callback<AdminWebsite.BookingsAPI.Client.ParticipantRequest>(p => p.Username = userName)
-                .ReturnsAsync(new User() { UserName = userName, Password = "test123" });
+                .Setup(x => x.UpdateParticipantUsername(It.Is<BookingsAPI.Client.ParticipantRequest>(r => r.Contact_email == "new@user.com")))
+                .Callback<BookingsAPI.Client.ParticipantRequest>(p => p.Username = userName)
+                .ReturnsAsync(new User { UserName = userName, Password = "test123" });
 
             _userAccountService
-              .Setup(x => x.UpdateParticipantUsername(It.Is<AdminWebsite.BookingsAPI.Client.ParticipantRequest>(r => r.Contact_email == "new2@user.com")))
-              .Callback<AdminWebsite.BookingsAPI.Client.ParticipantRequest>(p => p.Username = "old1@user.com")
-              .ReturnsAsync(new User() { UserName = "old1@user.com", Password = "test123" });
+              .Setup(x => x.UpdateParticipantUsername(It.Is<BookingsAPI.Client.ParticipantRequest>(r => r.Contact_email == "new2@user.com")))
+              .Callback<BookingsAPI.Client.ParticipantRequest>(p => p.Username = "old1@user.com")
+              .ReturnsAsync(new User { UserName = "old1@user.com", Password = "test123" });
 
             var result = await _controller.EditHearing(_validId, _addNewParticipantRequest);
             ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
@@ -519,7 +523,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var updatedHearing = new HearingDetailsResponse
             {
                 Participants = _updatedExistingParticipantHearingOriginal.Participants,
-                Cases = _updatedExistingParticipantHearingOriginal.Cases
+                Cases = _updatedExistingParticipantHearingOriginal.Cases,
+                Case_type_name = "Unit Test"
             };
             updatedHearing.Participants.Add(new ParticipantResponse
             {
@@ -550,7 +555,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var updatedHearing = new HearingDetailsResponse
             {
                 Participants = updatedPatList, 
-                Cases = _updatedExistingParticipantHearingOriginal.Cases
+                Cases = _updatedExistingParticipantHearingOriginal.Cases,
+                Case_type_name = "Unit Test"
             };
             updatedHearing.Participants.Add(new ParticipantResponse
             {
@@ -578,7 +584,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var updatedHearing = new HearingDetailsResponse
             {
                 Participants = _updatedExistingParticipantHearingOriginal.Participants,
-                Cases = _updatedExistingParticipantHearingOriginal.Cases
+                Cases = _updatedExistingParticipantHearingOriginal.Cases,
+                Case_type_name = "Unit Test"
             };
             updatedHearing.Participants.Add(new ParticipantResponse
             {
@@ -677,7 +684,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var updatedHearing = new HearingDetailsResponse
             {
                 Participants = _updatedExistingParticipantHearingOriginal.Participants,
-                Cases = _updatedExistingParticipantHearingOriginal.Cases
+                Cases = _updatedExistingParticipantHearingOriginal.Cases,
+                Case_type_name = "Unit Test"
             };
             updatedHearing.Participants.Add(new ParticipantResponse
             {
@@ -759,7 +767,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var updatedHearing = new HearingDetailsResponse
             {
                 Participants = newPats,
-                Cases = _updatedExistingParticipantHearingOriginal.Cases
+                Cases = _updatedExistingParticipantHearingOriginal.Cases,
+                Case_type_name = "Unit Test"
             };
             
             _bookingsApiClient.SetupSequence(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
