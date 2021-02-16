@@ -129,13 +129,13 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         this.$subscriptions.push(
             this.judgeEmailFld.valueChanges.subscribe(email => {
                 this.judgeEmail = email;
-            } )
+            })
         );
 
         this.$subscriptions.push(
             this.judgePhoneFld.valueChanges.subscribe(phone => {
                 this.judgePhone = phone;
-            } )
+            })
         );
     }
 
@@ -154,7 +154,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
             updateOn: 'blur'
         });
         this.judgeEmailFld = new FormControl(this.judgeEmail, {
-            validators:  [Validators.email],
+            validators: [Validators.email],
             updateOn: 'blur'
         });
         this.judgePhoneFld = new FormControl(this.judgePhone, {
@@ -178,8 +178,10 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     }
 
     get judgeDisplayNameInvalid() {
-        return this.judgeDisplayNameFld.invalid &&
-        (this.judgeDisplayNameFld.dirty || this.judgeDisplayNameFld.touched || this.failedSubmission);
+        return (
+            this.judgeDisplayNameFld.invalid &&
+            (this.judgeDisplayNameFld.dirty || this.judgeDisplayNameFld.touched || this.failedSubmission)
+        );
     }
 
     get judgeEmailInvalid() {
@@ -233,7 +235,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
 
     changeEmail() {
         let judgeEmail = this.judgeEmail;
-        if (this.judgeEmail === '' ) {
+        if (this.judgeEmail === '') {
             judgeEmail = this.selectedJudgeEmail;
         }
         const indexOfJudge = this.hearing.participants.findIndex(x => x.is_judge === true);
