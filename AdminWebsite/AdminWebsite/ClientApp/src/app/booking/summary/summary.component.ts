@@ -3,6 +3,8 @@ import { FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { EndpointModel } from 'src/app/common/model/endpoint.model';
+import { HearingRoles } from 'src/app/common/model/hearing-roles.model';
+import { ParticipantModel } from 'src/app/common/model/participant.model';
 import { RemoveInterpreterPopupComponent } from 'src/app/popups/remove-interpreter-popup/remove-interpreter-popup.component';
 import { Constants } from '../../common/constants';
 import { FormatShortDuration } from '../../common/formatters/format-short-duration';
@@ -105,16 +107,20 @@ export class SummaryComponent implements OnInit, OnDestroy {
         const isNotLast = filteredParticipants && filteredParticipants.length > 1;
         const title = participant && participant.title ? `${participant.title}` : '';
         this.removerFullName = participant ? `${title} ${participant.first_name} ${participant.last_name}` : '';
-        // this.showConfirmationRemoveParticipant = true;
-        const interpretedFor = this.hearing.participants.find(p => p.interpreterFor === participant.email);
-        if (interpretedFor) {
+
+        const isInterpretee =
+            (participant.linked_participants &&
+                participant.linked_participants.length > 0 &&
+                participant.hearing_role_name.toLowerCase() !== HearingRoles.INTERPRETER) ||
+            this.hearing.participants.some(p => p.interpreterFor === participant.email);
+        if (isInterpretee) {
             this.showConfirmRemoveInterpretee = true;
         } else {
             this.showConfirmationRemoveParticipant = true;
         }
         setTimeout(() => {
             // this.removePopupComponent.isLastParticipant = !isNotLast;
-            if (interpretedFor) {
+            if (isInterpretee) {
                 this.removeInterpreterPopupComponent.isLastParticipant = !isNotLast;
             } else {
                 this.removePopupComponent.isLastParticipant = !isNotLast;
@@ -309,7 +315,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
 
     handleContinueRemoveInterpreter() {
         this.showConfirmRemoveInterpretee = false;
-        this.removeParticipantAndInterpreter();
+        this.removeInterpreteeAndInterpreter();
     }
     handleCancelRemoveInterpreter() {
         this.showConfirmRemoveInterpretee = false;
@@ -322,8 +328,15 @@ export class SummaryComponent implements OnInit, OnDestroy {
             this.hearing.linked_participants = [];
         }
     }
-    private removeParticipantAndInterpreter() {
-        const interpreter = this.hearing.participants.find(i => i.interpreterFor === this.selectedParticipantEmail);
+    private removeInterpreteeAndInterpreter() {
+        const interpretee = this.hearing.participants.find(x => x.email.toLowerCase() === this.selectedParticipantEmail.toLowerCase());
+        let interpreter: ParticipantModel;
+        if (interpretee.linked_participants && interpretee.linked_participants.length > 0) {
+            interpreter = this.hearing.participants.find(i => i.id === interpretee.linked_participants[0].linkedParticipantId);
+        } else {
+            interpreter = this.hearing.participants.find(i => i.interpreterFor === this.selectedParticipantEmail);
+        }
+        // const interpreter = this.hearing.participants.find(i => i.interpreterFor === this.selectedParticipantEmail);
         if (interpreter) {
             this.participantService.removeParticipant(this.hearing, interpreter.email);
         }

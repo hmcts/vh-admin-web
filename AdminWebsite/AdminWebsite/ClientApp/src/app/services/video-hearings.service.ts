@@ -21,7 +21,8 @@ import {
     MultiHearingRequest,
     PhoneConferenceResponse,
     LinkedParticipantRequest,
-    LinkedParticipantResponse
+    LinkedParticipantResponse,
+    LinkedParticipant
 } from './clients/api-client';
 import { HearingModel } from '../common/model/hearing.model';
 import { CaseModel } from '../common/model/case.model';
@@ -181,7 +182,23 @@ export class VideoHearingsService {
         editParticipant.telephone_number = participant.phone;
         editParticipant.title = participant.title;
         editParticipant.organisation_name = participant.company;
+        editParticipant.linked_participants = this.mapLinkedParticipantModelToEditLinkedParticipantRequest(participant.linked_participants);
         return editParticipant;
+    }
+
+    mapLinkedParticipantModelToEditLinkedParticipantRequest(linkedParticipants: LinkedParticipantModel[]): LinkedParticipant[] {
+        let list: LinkedParticipant[] = [];
+        if (linkedParticipants && linkedParticipants.length > 0) {
+            list = linkedParticipants.map(x => this.mappingToEditLinkedParticipantRequest(x));
+        }
+        return list;
+    }
+    mappingToEditLinkedParticipantRequest(linkedParticipant: LinkedParticipantModel): LinkedParticipant {
+        const editLinkedParticipant = new LinkedParticipant();
+        editLinkedParticipant.type = linkedParticipant.linkType;
+        editLinkedParticipant.linked_id = linkedParticipant.linkedParticipantId;
+        editLinkedParticipant.participant_id = linkedParticipant.participantId;
+        return editLinkedParticipant;
     }
 
     mappingToEditEndpointRequest(endpoint: EndpointModel): EditEndpointRequest {

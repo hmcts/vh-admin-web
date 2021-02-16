@@ -24,7 +24,7 @@ export class BHClient {
 
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(BH_API_BASE_URL) baseUrl?: string) {
         this.http = http;
-        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : 'https://localhost:5400';
+        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : 'https://https://localhost:5400';
     }
 
     /**
@@ -114,11 +114,7 @@ export class BHClient {
     /**
      * @return Success
      */
-    getCvpAudioRecordingsAll(
-        cloudroom: string | null,
-        date: string | null,
-        caseReference: string | null
-    ): Observable<CvpForAudioFileResponse[]> {
+    getCvpAudioRecordingsAll(cloudroom: string, date: string, caseReference: string): Observable<CvpForAudioFileResponse[]> {
         let url_ = this.baseUrl + '/api/audio/cvp/all/{cloudroom}/{date}/{caseReference}';
         if (cloudroom === undefined || cloudroom === null) throw new Error("The parameter 'cloudroom' must be defined.");
         url_ = url_.replace('{cloudroom}', encodeURIComponent('' + cloudroom));
@@ -207,7 +203,7 @@ export class BHClient {
     /**
      * @return Success
      */
-    getCvpAudioRecordingsByCloudRoom(cloudroom: string | null, date: string | null): Observable<CvpForAudioFileResponse[]> {
+    getCvpAudioRecordingsByCloudRoom(cloudroom: string, date: string): Observable<CvpForAudioFileResponse[]> {
         let url_ = this.baseUrl + '/api/audio/cvp/cloudroom/{cloudroom}/{date}';
         if (cloudroom === undefined || cloudroom === null) throw new Error("The parameter 'cloudroom' must be defined.");
         url_ = url_.replace('{cloudroom}', encodeURIComponent('' + cloudroom));
@@ -294,7 +290,7 @@ export class BHClient {
     /**
      * @return Success
      */
-    getCvpAudioRecordingsByDate(date: string | null, caseReference: string | null): Observable<CvpForAudioFileResponse[]> {
+    getCvpAudioRecordingsByDate(date: string, caseReference: string): Observable<CvpForAudioFileResponse[]> {
         let url_ = this.baseUrl + '/api/audio/cvp/date/{date}/{caseReference}';
         if (date === undefined || date === null) throw new Error("The parameter 'date' must be defined.");
         url_ = url_.replace('{date}', encodeURIComponent('' + date));
@@ -384,9 +380,10 @@ export class BHClient {
      * @param limit (optional) The max number of hearings to be returned.
      * @return Success
      */
-    getBookingsList(cursor: string | null | undefined, limit: number | undefined): Observable<BookingsResponse> {
+    getBookingsList(cursor: string | undefined, limit: number | undefined): Observable<BookingsResponse> {
         let url_ = this.baseUrl + '/api/hearings?';
-        if (cursor !== undefined && cursor !== null) url_ += 'cursor=' + encodeURIComponent('' + cursor) + '&';
+        if (cursor === null) throw new Error("The parameter 'cursor' cannot be null.");
+        else if (cursor !== undefined) url_ += 'cursor=' + encodeURIComponent('' + cursor) + '&';
         if (limit === null) throw new Error("The parameter 'limit' cannot be null.");
         else if (limit !== undefined) url_ += 'limit=' + encodeURIComponent('' + limit) + '&';
         url_ = url_.replace(/[?&]$/, '');
@@ -1099,12 +1096,14 @@ export class BHClient {
      * @return Success
      */
     searchForAudioRecordedHearings(
-        caseNumber: string | null | undefined,
-        date: Date | null | undefined
+        caseNumber: string | undefined,
+        date: Date | undefined
     ): Observable<HearingsForAudioFileSearchResponse[]> {
         let url_ = this.baseUrl + '/api/hearings/audiorecording/search?';
-        if (caseNumber !== undefined && caseNumber !== null) url_ += 'caseNumber=' + encodeURIComponent('' + caseNumber) + '&';
-        if (date !== undefined && date !== null) url_ += 'date=' + encodeURIComponent(date ? '' + date.toJSON() : '') + '&';
+        if (caseNumber === null) throw new Error("The parameter 'caseNumber' cannot be null.");
+        else if (caseNumber !== undefined) url_ += 'caseNumber=' + encodeURIComponent('' + caseNumber) + '&';
+        if (date === null) throw new Error("The parameter 'date' cannot be null.");
+        else if (date !== undefined) url_ += 'date=' + encodeURIComponent(date ? '' + date.toJSON() : '') + '&';
         url_ = url_.replace(/[?&]$/, '');
 
         let options_: any = {
@@ -1281,7 +1280,7 @@ export class BHClient {
      * @param body (optional) The email address search term.
      * @return Success
      */
-    postPersonBySearchTerm(body: string | null | undefined): Observable<PersonResponse[]> {
+    postPersonBySearchTerm(body: string | undefined): Observable<PersonResponse[]> {
         let url_ = this.baseUrl + '/api/persons';
         url_ = url_.replace(/[?&]$/, '');
 
@@ -1370,9 +1369,10 @@ export class BHClient {
      * @param contactEmail (optional)
      * @return Success
      */
-    getPersonForUpdateByContactEmail(contactEmail: string | null | undefined): Observable<PersonResponse> {
+    getPersonForUpdateByContactEmail(contactEmail: string | undefined): Observable<PersonResponse> {
         let url_ = this.baseUrl + '/api/persons?';
-        if (contactEmail !== undefined && contactEmail !== null) url_ += 'contactEmail=' + encodeURIComponent('' + contactEmail) + '&';
+        if (contactEmail === null) throw new Error("The parameter 'contactEmail' cannot be null.");
+        else if (contactEmail !== undefined) url_ += 'contactEmail=' + encodeURIComponent('' + contactEmail) + '&';
         url_ = url_.replace(/[?&]$/, '');
 
         let options_: any = {
@@ -1453,9 +1453,10 @@ export class BHClient {
      * @param username (optional)
      * @return Success
      */
-    getHearingsByUsernameForDeletion(username: string | null | undefined): Observable<HearingsByUsernameForDeletionResponse[]> {
+    getHearingsByUsernameForDeletion(username: string | undefined): Observable<HearingsByUsernameForDeletionResponse[]> {
         let url_ = this.baseUrl + '/api/persons/username/hearings?';
-        if (username !== undefined && username !== null) url_ += 'username=' + encodeURIComponent('' + username) + '&';
+        if (username === null) throw new Error("The parameter 'username' cannot be null.");
+        else if (username !== undefined) url_ += 'username=' + encodeURIComponent('' + username) + '&';
         url_ = url_.replace(/[?&]$/, '');
 
         let options_: any = {
@@ -1539,7 +1540,7 @@ export class BHClient {
      * @param username username of person
      * @return Success
      */
-    deletePersonWithUsername(username: string | null): Observable<void> {
+    deletePersonWithUsername(username: string): Observable<void> {
         let url_ = this.baseUrl + '/api/persons/username/{username}';
         if (username === undefined || username === null) throw new Error("The parameter 'username' must be defined.");
         url_ = url_.replace('{username}', encodeURIComponent('' + username));
@@ -1796,9 +1797,10 @@ export class BHClient {
      * @param caseTypeName (optional)
      * @return Success
      */
-    getParticipantRoles(caseTypeName: string | null | undefined): Observable<CaseAndHearingRolesResponse[]> {
+    getParticipantRoles(caseTypeName: string | undefined): Observable<CaseAndHearingRolesResponse[]> {
         let url_ = this.baseUrl + '/api/reference/participantroles?';
-        if (caseTypeName !== undefined && caseTypeName !== null) url_ += 'caseTypeName=' + encodeURIComponent('' + caseTypeName) + '&';
+        if (caseTypeName === null) throw new Error("The parameter 'caseTypeName' cannot be null.");
+        else if (caseTypeName !== undefined) url_ += 'caseTypeName=' + encodeURIComponent('' + caseTypeName) + '&';
         url_ = url_.replace(/[?&]$/, '');
 
         let options_: any = {
@@ -1967,9 +1969,10 @@ export class BHClient {
      * @param limit (optional) The max number of participants with suitability answers to be returned.
      * @return Success
      */
-    getSuitabilityAnswers(cursor: string | null | undefined, limit: number | undefined): Observable<SuitabilityAnswersResponse> {
+    getSuitabilityAnswers(cursor: string | undefined, limit: number | undefined): Observable<SuitabilityAnswersResponse> {
         let url_ = this.baseUrl + '/api/suitability-answers?';
-        if (cursor !== undefined && cursor !== null) url_ += 'cursor=' + encodeURIComponent('' + cursor) + '&';
+        if (cursor === null) throw new Error("The parameter 'cursor' cannot be null.");
+        else if (cursor !== undefined) url_ += 'cursor=' + encodeURIComponent('' + cursor) + '&';
         if (limit === null) throw new Error("The parameter 'limit' cannot be null.");
         else if (limit !== undefined) url_ += 'limit=' + encodeURIComponent('' + limit) + '&';
         url_ = url_.replace(/[?&]$/, '');
@@ -2133,7 +2136,7 @@ export class BHClient {
      * @param body (optional)
      * @return Success
      */
-    resetPassword(body: string | null | undefined): Observable<void> {
+    resetPassword(body: string | undefined): Observable<void> {
         let url_ = this.baseUrl + '/api/accounts/resetpassword';
         url_ = url_.replace(/[?&]$/, '');
 
@@ -2285,10 +2288,11 @@ export class BHClient {
     }
 }
 
-export class HearingAudioRecordingResponse implements IHearingAudioRecordingResponse {
-    audio_file_links?: string[] | undefined;
+export class BookingsByDateResponse implements IBookingsByDateResponse {
+    scheduled_date?: Date;
+    hearings?: BookingsHearingResponse[] | undefined;
 
-    constructor(data?: IHearingAudioRecordingResponse) {
+    constructor(data?: IBookingsByDateResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
@@ -2298,143 +2302,35 @@ export class HearingAudioRecordingResponse implements IHearingAudioRecordingResp
 
     init(_data?: any) {
         if (_data) {
-            if (Array.isArray(_data['audio_file_links'])) {
-                this.audio_file_links = [] as any;
-                for (let item of _data['audio_file_links']) this.audio_file_links!.push(item);
+            this.scheduled_date = _data['scheduled_date'] ? new Date(_data['scheduled_date'].toString()) : <any>undefined;
+            if (Array.isArray(_data['hearings'])) {
+                this.hearings = [] as any;
+                for (let item of _data['hearings']) this.hearings!.push(BookingsHearingResponse.fromJS(item));
             }
         }
     }
 
-    static fromJS(data: any): HearingAudioRecordingResponse {
+    static fromJS(data: any): BookingsByDateResponse {
         data = typeof data === 'object' ? data : {};
-        let result = new HearingAudioRecordingResponse();
+        let result = new BookingsByDateResponse();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        if (Array.isArray(this.audio_file_links)) {
-            data['audio_file_links'] = [];
-            for (let item of this.audio_file_links) data['audio_file_links'].push(item);
+        data['scheduled_date'] = this.scheduled_date ? this.scheduled_date.toISOString() : <any>undefined;
+        if (Array.isArray(this.hearings)) {
+            data['hearings'] = [];
+            for (let item of this.hearings) data['hearings'].push(item.toJSON());
         }
         return data;
     }
 }
 
-export interface IHearingAudioRecordingResponse {
-    audio_file_links?: string[] | undefined;
-}
-
-export class ProblemDetails implements IProblemDetails {
-    type?: string | undefined;
-    title?: string | undefined;
-    status?: number | undefined;
-    detail?: string | undefined;
-    instance?: string | undefined;
-    readonly extensions?: { [key: string]: any } | undefined;
-
-    constructor(data?: IProblemDetails) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.type = _data['type'];
-            this.title = _data['title'];
-            this.status = _data['status'];
-            this.detail = _data['detail'];
-            this.instance = _data['instance'];
-            if (_data['extensions']) {
-                (<any>this).extensions = {} as any;
-                for (let key in _data['extensions']) {
-                    if (_data['extensions'].hasOwnProperty(key)) (<any>this).extensions![key] = _data['extensions'][key];
-                }
-            }
-        }
-    }
-
-    static fromJS(data: any): ProblemDetails {
-        data = typeof data === 'object' ? data : {};
-        let result = new ProblemDetails();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data['type'] = this.type;
-        data['title'] = this.title;
-        data['status'] = this.status;
-        data['detail'] = this.detail;
-        data['instance'] = this.instance;
-        if (this.extensions) {
-            data['extensions'] = {};
-            for (let key in this.extensions) {
-                if (this.extensions.hasOwnProperty(key)) data['extensions'][key] = this.extensions[key];
-            }
-        }
-        return data;
-    }
-}
-
-export interface IProblemDetails {
-    type?: string | undefined;
-    title?: string | undefined;
-    status?: number | undefined;
-    detail?: string | undefined;
-    instance?: string | undefined;
-    extensions?: { [key: string]: any } | undefined;
-}
-
-export class CvpForAudioFileResponse implements ICvpForAudioFileResponse {
-    file_name?: string | undefined;
-    sas_token_uri?: string | undefined;
-
-    constructor(data?: ICvpForAudioFileResponse) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.file_name = _data['file_name'];
-            this.sas_token_uri = _data['sas_token_uri'];
-        }
-    }
-
-    static fromJS(data: any): CvpForAudioFileResponse {
-        data = typeof data === 'object' ? data : {};
-        let result = new CvpForAudioFileResponse();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data['file_name'] = this.file_name;
-        data['sas_token_uri'] = this.sas_token_uri;
-        return data;
-    }
-}
-
-export interface ICvpForAudioFileResponse {
-    file_name?: string | undefined;
-    sas_token_uri?: string | undefined;
-}
-
-export enum BookingStatus {
-    Booked = 'Booked',
-    Created = 'Created',
-    Cancelled = 'Cancelled',
-    Failed = 'Failed'
+export interface IBookingsByDateResponse {
+    scheduled_date?: Date;
+    hearings?: BookingsHearingResponse[] | undefined;
 }
 
 export class BookingsHearingResponse implements IBookingsHearingResponse {
@@ -2560,51 +2456,6 @@ export interface IBookingsHearingResponse {
     court_room_account?: string | undefined;
 }
 
-export class BookingsByDateResponse implements IBookingsByDateResponse {
-    scheduled_date?: Date;
-    hearings?: BookingsHearingResponse[] | undefined;
-
-    constructor(data?: IBookingsByDateResponse) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.scheduled_date = _data['scheduled_date'] ? new Date(_data['scheduled_date'].toString()) : <any>undefined;
-            if (Array.isArray(_data['hearings'])) {
-                this.hearings = [] as any;
-                for (let item of _data['hearings']) this.hearings!.push(BookingsHearingResponse.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): BookingsByDateResponse {
-        data = typeof data === 'object' ? data : {};
-        let result = new BookingsByDateResponse();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data['scheduled_date'] = this.scheduled_date ? this.scheduled_date.toISOString() : <any>undefined;
-        if (Array.isArray(this.hearings)) {
-            data['hearings'] = [];
-            for (let item of this.hearings) data['hearings'].push(item.toJSON());
-        }
-        return data;
-    }
-}
-
-export interface IBookingsByDateResponse {
-    scheduled_date?: Date;
-    hearings?: BookingsHearingResponse[] | undefined;
-}
-
 export class BookingsResponse implements IBookingsResponse {
     hearings?: BookingsByDateResponse[] | undefined;
     next_cursor?: string | undefined;
@@ -2662,212 +2513,11 @@ export interface IBookingsResponse {
     next_page_url?: string | undefined;
 }
 
-export class CaseRequest implements ICaseRequest {
-    number?: string | undefined;
-    name?: string | undefined;
-    is_lead_case?: boolean;
-
-    constructor(data?: ICaseRequest) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.number = _data['number'];
-            this.name = _data['name'];
-            this.is_lead_case = _data['is_lead_case'];
-        }
-    }
-
-    static fromJS(data: any): CaseRequest {
-        data = typeof data === 'object' ? data : {};
-        let result = new CaseRequest();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data['number'] = this.number;
-        data['name'] = this.name;
-        data['is_lead_case'] = this.is_lead_case;
-        return data;
-    }
-}
-
-export interface ICaseRequest {
-    number?: string | undefined;
-    name?: string | undefined;
-    is_lead_case?: boolean;
-}
-
-export class ParticipantRequest implements IParticipantRequest {
-    title?: string | undefined;
-    first_name?: string | undefined;
-    middle_names?: string | undefined;
-    last_name?: string | undefined;
-    contact_email?: string | undefined;
-    telephone_number?: string | undefined;
-    username?: string | undefined;
-    display_name?: string | undefined;
-    case_role_name?: string | undefined;
-    hearing_role_name?: string | undefined;
-    representee?: string | undefined;
-    organisation_name?: string | undefined;
-
-    constructor(data?: IParticipantRequest) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.title = _data['title'];
-            this.first_name = _data['first_name'];
-            this.middle_names = _data['middle_names'];
-            this.last_name = _data['last_name'];
-            this.contact_email = _data['contact_email'];
-            this.telephone_number = _data['telephone_number'];
-            this.username = _data['username'];
-            this.display_name = _data['display_name'];
-            this.case_role_name = _data['case_role_name'];
-            this.hearing_role_name = _data['hearing_role_name'];
-            this.representee = _data['representee'];
-            this.organisation_name = _data['organisation_name'];
-        }
-    }
-
-    static fromJS(data: any): ParticipantRequest {
-        data = typeof data === 'object' ? data : {};
-        let result = new ParticipantRequest();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data['title'] = this.title;
-        data['first_name'] = this.first_name;
-        data['middle_names'] = this.middle_names;
-        data['last_name'] = this.last_name;
-        data['contact_email'] = this.contact_email;
-        data['telephone_number'] = this.telephone_number;
-        data['username'] = this.username;
-        data['display_name'] = this.display_name;
-        data['case_role_name'] = this.case_role_name;
-        data['hearing_role_name'] = this.hearing_role_name;
-        data['representee'] = this.representee;
-        data['organisation_name'] = this.organisation_name;
-        return data;
-    }
-}
-
-export interface IParticipantRequest {
-    title?: string | undefined;
-    first_name?: string | undefined;
-    middle_names?: string | undefined;
-    last_name?: string | undefined;
-    contact_email?: string | undefined;
-    telephone_number?: string | undefined;
-    username?: string | undefined;
-    display_name?: string | undefined;
-    case_role_name?: string | undefined;
-    hearing_role_name?: string | undefined;
-    representee?: string | undefined;
-    organisation_name?: string | undefined;
-}
-
-export class EndpointRequest implements IEndpointRequest {
-    display_name?: string | undefined;
-    defence_advocate_username?: string | undefined;
-
-    constructor(data?: IEndpointRequest) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.display_name = _data['display_name'];
-            this.defence_advocate_username = _data['defence_advocate_username'];
-        }
-    }
-
-    static fromJS(data: any): EndpointRequest {
-        data = typeof data === 'object' ? data : {};
-        let result = new EndpointRequest();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data['display_name'] = this.display_name;
-        data['defence_advocate_username'] = this.defence_advocate_username;
-        return data;
-    }
-}
-
-export interface IEndpointRequest {
-    display_name?: string | undefined;
-    defence_advocate_username?: string | undefined;
-}
-
-export enum LinkedParticipantType {
-    Interpreter = 'Interpreter'
-}
-
-export class LinkedParticipantRequest implements ILinkedParticipantRequest {
-    participant_contact_email?: string | undefined;
-    linked_participant_contact_email?: string | undefined;
-    type?: LinkedParticipantType;
-
-    constructor(data?: ILinkedParticipantRequest) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.participant_contact_email = _data['participant_contact_email'];
-            this.linked_participant_contact_email = _data['linked_participant_contact_email'];
-            this.type = _data['type'];
-        }
-    }
-
-    static fromJS(data: any): LinkedParticipantRequest {
-        data = typeof data === 'object' ? data : {};
-        let result = new LinkedParticipantRequest();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data['participant_contact_email'] = this.participant_contact_email;
-        data['linked_participant_contact_email'] = this.linked_participant_contact_email;
-        data['type'] = this.type;
-        return data;
-    }
-}
-
-export interface ILinkedParticipantRequest {
-    participant_contact_email?: string | undefined;
-    linked_participant_contact_email?: string | undefined;
-    type?: LinkedParticipantType;
+export enum BookingStatus {
+    Booked = 'Booked',
+    Created = 'Created',
+    Cancelled = 'Cancelled',
+    Failed = 'Failed'
 }
 
 export class BookNewHearingRequest implements IBookNewHearingRequest {
@@ -2981,6 +2631,49 @@ export interface IBookNewHearingRequest {
     linked_participants?: LinkedParticipantRequest[] | undefined;
 }
 
+export class CaseRequest implements ICaseRequest {
+    number?: string | undefined;
+    name?: string | undefined;
+    is_lead_case?: boolean;
+
+    constructor(data?: ICaseRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.number = _data['number'];
+            this.name = _data['name'];
+            this.is_lead_case = _data['is_lead_case'];
+        }
+    }
+
+    static fromJS(data: any): CaseRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new CaseRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['number'] = this.number;
+        data['name'] = this.name;
+        data['is_lead_case'] = this.is_lead_case;
+        return data;
+    }
+}
+
+export interface ICaseRequest {
+    number?: string | undefined;
+    name?: string | undefined;
+    is_lead_case?: boolean;
+}
+
 export class CaseResponse implements ICaseResponse {
     number?: string | undefined;
     name?: string | undefined;
@@ -3024,63 +2717,11 @@ export interface ICaseResponse {
     is_lead_case?: boolean;
 }
 
-export class LinkedParticipantResponse implements ILinkedParticipantResponse {
-    linked_id?: string;
-    type?: LinkedParticipantType;
-
-    constructor(data?: ILinkedParticipantResponse) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.linked_id = _data['linked_id'];
-            this.type = _data['type'];
-        }
-    }
-
-    static fromJS(data: any): LinkedParticipantResponse {
-        data = typeof data === 'object' ? data : {};
-        let result = new LinkedParticipantResponse();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data['linked_id'] = this.linked_id;
-        data['type'] = this.type;
-        return data;
-    }
-}
-
-export interface ILinkedParticipantResponse {
-    linked_id?: string;
-    type?: LinkedParticipantType;
-}
-
-export class ParticipantResponse implements IParticipantResponse {
-    id?: string;
+export class EndpointRequest implements IEndpointRequest {
     display_name?: string | undefined;
-    case_role_name?: string | undefined;
-    hearing_role_name?: string | undefined;
-    user_role_name?: string | undefined;
-    title?: string | undefined;
-    first_name?: string | undefined;
-    middle_names?: string | undefined;
-    last_name?: string | undefined;
-    contact_email?: string | undefined;
-    telephone_number?: string | undefined;
-    username?: string | undefined;
-    organisation?: string | undefined;
-    representee?: string | undefined;
-    linked_participants?: LinkedParticipantResponse[] | undefined;
+    defence_advocate_username?: string | undefined;
 
-    constructor(data?: IParticipantResponse) {
+    constructor(data?: IEndpointRequest) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
@@ -3090,74 +2731,29 @@ export class ParticipantResponse implements IParticipantResponse {
 
     init(_data?: any) {
         if (_data) {
-            this.id = _data['id'];
             this.display_name = _data['display_name'];
-            this.case_role_name = _data['case_role_name'];
-            this.hearing_role_name = _data['hearing_role_name'];
-            this.user_role_name = _data['user_role_name'];
-            this.title = _data['title'];
-            this.first_name = _data['first_name'];
-            this.middle_names = _data['middle_names'];
-            this.last_name = _data['last_name'];
-            this.contact_email = _data['contact_email'];
-            this.telephone_number = _data['telephone_number'];
-            this.username = _data['username'];
-            this.organisation = _data['organisation'];
-            this.representee = _data['representee'];
-            if (Array.isArray(_data['linked_participants'])) {
-                this.linked_participants = [] as any;
-                for (let item of _data['linked_participants']) this.linked_participants!.push(LinkedParticipantResponse.fromJS(item));
-            }
+            this.defence_advocate_username = _data['defence_advocate_username'];
         }
     }
 
-    static fromJS(data: any): ParticipantResponse {
+    static fromJS(data: any): EndpointRequest {
         data = typeof data === 'object' ? data : {};
-        let result = new ParticipantResponse();
+        let result = new EndpointRequest();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data['id'] = this.id;
         data['display_name'] = this.display_name;
-        data['case_role_name'] = this.case_role_name;
-        data['hearing_role_name'] = this.hearing_role_name;
-        data['user_role_name'] = this.user_role_name;
-        data['title'] = this.title;
-        data['first_name'] = this.first_name;
-        data['middle_names'] = this.middle_names;
-        data['last_name'] = this.last_name;
-        data['contact_email'] = this.contact_email;
-        data['telephone_number'] = this.telephone_number;
-        data['username'] = this.username;
-        data['organisation'] = this.organisation;
-        data['representee'] = this.representee;
-        if (Array.isArray(this.linked_participants)) {
-            data['linked_participants'] = [];
-            for (let item of this.linked_participants) data['linked_participants'].push(item.toJSON());
-        }
+        data['defence_advocate_username'] = this.defence_advocate_username;
         return data;
     }
 }
 
-export interface IParticipantResponse {
-    id?: string;
+export interface IEndpointRequest {
     display_name?: string | undefined;
-    case_role_name?: string | undefined;
-    hearing_role_name?: string | undefined;
-    user_role_name?: string | undefined;
-    title?: string | undefined;
-    first_name?: string | undefined;
-    middle_names?: string | undefined;
-    last_name?: string | undefined;
-    contact_email?: string | undefined;
-    telephone_number?: string | undefined;
-    username?: string | undefined;
-    organisation?: string | undefined;
-    representee?: string | undefined;
-    linked_participants?: LinkedParticipantResponse[] | undefined;
+    defence_advocate_username?: string | undefined;
 }
 
 export class EndpointResponse implements IEndpointResponse {
@@ -3348,6 +2944,692 @@ export interface IHearingDetailsResponse {
     group_id?: string | undefined;
 }
 
+export class HearingsByUsernameForDeletionResponse implements IHearingsByUsernameForDeletionResponse {
+    hearing_id?: string;
+    scheduled_date_time?: Date;
+    case_name?: string | undefined;
+    case_number?: string | undefined;
+    venue?: string | undefined;
+
+    constructor(data?: IHearingsByUsernameForDeletionResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.hearing_id = _data['hearing_id'];
+            this.scheduled_date_time = _data['scheduled_date_time'] ? new Date(_data['scheduled_date_time'].toString()) : <any>undefined;
+            this.case_name = _data['case_name'];
+            this.case_number = _data['case_number'];
+            this.venue = _data['venue'];
+        }
+    }
+
+    static fromJS(data: any): HearingsByUsernameForDeletionResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new HearingsByUsernameForDeletionResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['hearing_id'] = this.hearing_id;
+        data['scheduled_date_time'] = this.scheduled_date_time ? this.scheduled_date_time.toISOString() : <any>undefined;
+        data['case_name'] = this.case_name;
+        data['case_number'] = this.case_number;
+        data['venue'] = this.venue;
+        return data;
+    }
+}
+
+export interface IHearingsByUsernameForDeletionResponse {
+    hearing_id?: string;
+    scheduled_date_time?: Date;
+    case_name?: string | undefined;
+    case_number?: string | undefined;
+    venue?: string | undefined;
+}
+
+export class HearingVenueResponse implements IHearingVenueResponse {
+    id?: number;
+    name?: string | undefined;
+
+    constructor(data?: IHearingVenueResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data['id'];
+            this.name = _data['name'];
+        }
+    }
+
+    static fromJS(data: any): HearingVenueResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new HearingVenueResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['id'] = this.id;
+        data['name'] = this.name;
+        return data;
+    }
+}
+
+export interface IHearingVenueResponse {
+    id?: number;
+    name?: string | undefined;
+}
+
+export class LinkedParticipantRequest implements ILinkedParticipantRequest {
+    participant_contact_email?: string | undefined;
+    linked_participant_contact_email?: string | undefined;
+    type?: LinkedParticipantType;
+
+    constructor(data?: ILinkedParticipantRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.participant_contact_email = _data['participant_contact_email'];
+            this.linked_participant_contact_email = _data['linked_participant_contact_email'];
+            this.type = _data['type'];
+        }
+    }
+
+    static fromJS(data: any): LinkedParticipantRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new LinkedParticipantRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['participant_contact_email'] = this.participant_contact_email;
+        data['linked_participant_contact_email'] = this.linked_participant_contact_email;
+        data['type'] = this.type;
+        return data;
+    }
+}
+
+export interface ILinkedParticipantRequest {
+    participant_contact_email?: string | undefined;
+    linked_participant_contact_email?: string | undefined;
+    type?: LinkedParticipantType;
+}
+
+export class LinkedParticipantResponse implements ILinkedParticipantResponse {
+    linked_id?: string;
+    type?: LinkedParticipantType;
+
+    constructor(data?: ILinkedParticipantResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.linked_id = _data['linked_id'];
+            this.type = _data['type'];
+        }
+    }
+
+    static fromJS(data: any): LinkedParticipantResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new LinkedParticipantResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['linked_id'] = this.linked_id;
+        data['type'] = this.type;
+        return data;
+    }
+}
+
+export interface ILinkedParticipantResponse {
+    linked_id?: string;
+    type?: LinkedParticipantType;
+}
+
+export enum LinkedParticipantType {
+    Interpreter = 'Interpreter'
+}
+
+export class ParticipantRequest implements IParticipantRequest {
+    title?: string | undefined;
+    first_name?: string | undefined;
+    middle_names?: string | undefined;
+    last_name?: string | undefined;
+    contact_email?: string | undefined;
+    telephone_number?: string | undefined;
+    username?: string | undefined;
+    display_name?: string | undefined;
+    case_role_name?: string | undefined;
+    hearing_role_name?: string | undefined;
+    representee?: string | undefined;
+    organisation_name?: string | undefined;
+
+    constructor(data?: IParticipantRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.title = _data['title'];
+            this.first_name = _data['first_name'];
+            this.middle_names = _data['middle_names'];
+            this.last_name = _data['last_name'];
+            this.contact_email = _data['contact_email'];
+            this.telephone_number = _data['telephone_number'];
+            this.username = _data['username'];
+            this.display_name = _data['display_name'];
+            this.case_role_name = _data['case_role_name'];
+            this.hearing_role_name = _data['hearing_role_name'];
+            this.representee = _data['representee'];
+            this.organisation_name = _data['organisation_name'];
+        }
+    }
+
+    static fromJS(data: any): ParticipantRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new ParticipantRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['title'] = this.title;
+        data['first_name'] = this.first_name;
+        data['middle_names'] = this.middle_names;
+        data['last_name'] = this.last_name;
+        data['contact_email'] = this.contact_email;
+        data['telephone_number'] = this.telephone_number;
+        data['username'] = this.username;
+        data['display_name'] = this.display_name;
+        data['case_role_name'] = this.case_role_name;
+        data['hearing_role_name'] = this.hearing_role_name;
+        data['representee'] = this.representee;
+        data['organisation_name'] = this.organisation_name;
+        return data;
+    }
+}
+
+export interface IParticipantRequest {
+    title?: string | undefined;
+    first_name?: string | undefined;
+    middle_names?: string | undefined;
+    last_name?: string | undefined;
+    contact_email?: string | undefined;
+    telephone_number?: string | undefined;
+    username?: string | undefined;
+    display_name?: string | undefined;
+    case_role_name?: string | undefined;
+    hearing_role_name?: string | undefined;
+    representee?: string | undefined;
+    organisation_name?: string | undefined;
+}
+
+export class ParticipantResponse implements IParticipantResponse {
+    id?: string;
+    display_name?: string | undefined;
+    case_role_name?: string | undefined;
+    hearing_role_name?: string | undefined;
+    user_role_name?: string | undefined;
+    title?: string | undefined;
+    first_name?: string | undefined;
+    middle_names?: string | undefined;
+    last_name?: string | undefined;
+    contact_email?: string | undefined;
+    telephone_number?: string | undefined;
+    username?: string | undefined;
+    organisation?: string | undefined;
+    representee?: string | undefined;
+    linked_participants?: LinkedParticipantResponse[] | undefined;
+
+    constructor(data?: IParticipantResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data['id'];
+            this.display_name = _data['display_name'];
+            this.case_role_name = _data['case_role_name'];
+            this.hearing_role_name = _data['hearing_role_name'];
+            this.user_role_name = _data['user_role_name'];
+            this.title = _data['title'];
+            this.first_name = _data['first_name'];
+            this.middle_names = _data['middle_names'];
+            this.last_name = _data['last_name'];
+            this.contact_email = _data['contact_email'];
+            this.telephone_number = _data['telephone_number'];
+            this.username = _data['username'];
+            this.organisation = _data['organisation'];
+            this.representee = _data['representee'];
+            if (Array.isArray(_data['linked_participants'])) {
+                this.linked_participants = [] as any;
+                for (let item of _data['linked_participants']) this.linked_participants!.push(LinkedParticipantResponse.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): ParticipantResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new ParticipantResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['id'] = this.id;
+        data['display_name'] = this.display_name;
+        data['case_role_name'] = this.case_role_name;
+        data['hearing_role_name'] = this.hearing_role_name;
+        data['user_role_name'] = this.user_role_name;
+        data['title'] = this.title;
+        data['first_name'] = this.first_name;
+        data['middle_names'] = this.middle_names;
+        data['last_name'] = this.last_name;
+        data['contact_email'] = this.contact_email;
+        data['telephone_number'] = this.telephone_number;
+        data['username'] = this.username;
+        data['organisation'] = this.organisation;
+        data['representee'] = this.representee;
+        if (Array.isArray(this.linked_participants)) {
+            data['linked_participants'] = [];
+            for (let item of this.linked_participants) data['linked_participants'].push(item.toJSON());
+        }
+        return data;
+    }
+}
+
+export interface IParticipantResponse {
+    id?: string;
+    display_name?: string | undefined;
+    case_role_name?: string | undefined;
+    hearing_role_name?: string | undefined;
+    user_role_name?: string | undefined;
+    title?: string | undefined;
+    first_name?: string | undefined;
+    middle_names?: string | undefined;
+    last_name?: string | undefined;
+    contact_email?: string | undefined;
+    telephone_number?: string | undefined;
+    username?: string | undefined;
+    organisation?: string | undefined;
+    representee?: string | undefined;
+    linked_participants?: LinkedParticipantResponse[] | undefined;
+}
+
+export class ParticipantSuitabilityAnswerResponse implements IParticipantSuitabilityAnswerResponse {
+    participant_id?: string;
+    case_number?: string | undefined;
+    hearing_role?: string | undefined;
+    title?: string | undefined;
+    first_name?: string | undefined;
+    last_name?: string | undefined;
+    updated_at?: Date;
+    representee?: string | undefined;
+    answers?: SuitabilityAnswerResponse[] | undefined;
+
+    constructor(data?: IParticipantSuitabilityAnswerResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.participant_id = _data['participant_id'];
+            this.case_number = _data['case_number'];
+            this.hearing_role = _data['hearing_role'];
+            this.title = _data['title'];
+            this.first_name = _data['first_name'];
+            this.last_name = _data['last_name'];
+            this.updated_at = _data['updated_at'] ? new Date(_data['updated_at'].toString()) : <any>undefined;
+            this.representee = _data['representee'];
+            if (Array.isArray(_data['answers'])) {
+                this.answers = [] as any;
+                for (let item of _data['answers']) this.answers!.push(SuitabilityAnswerResponse.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): ParticipantSuitabilityAnswerResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new ParticipantSuitabilityAnswerResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['participant_id'] = this.participant_id;
+        data['case_number'] = this.case_number;
+        data['hearing_role'] = this.hearing_role;
+        data['title'] = this.title;
+        data['first_name'] = this.first_name;
+        data['last_name'] = this.last_name;
+        data['updated_at'] = this.updated_at ? this.updated_at.toISOString() : <any>undefined;
+        data['representee'] = this.representee;
+        if (Array.isArray(this.answers)) {
+            data['answers'] = [];
+            for (let item of this.answers) data['answers'].push(item.toJSON());
+        }
+        return data;
+    }
+}
+
+export interface IParticipantSuitabilityAnswerResponse {
+    participant_id?: string;
+    case_number?: string | undefined;
+    hearing_role?: string | undefined;
+    title?: string | undefined;
+    first_name?: string | undefined;
+    last_name?: string | undefined;
+    updated_at?: Date;
+    representee?: string | undefined;
+    answers?: SuitabilityAnswerResponse[] | undefined;
+}
+
+export class PersonResponse implements IPersonResponse {
+    id?: string;
+    title?: string | undefined;
+    first_name?: string | undefined;
+    middle_names?: string | undefined;
+    last_name?: string | undefined;
+    contact_email?: string | undefined;
+    telephone_number?: string | undefined;
+    username?: string | undefined;
+    organisation?: string | undefined;
+
+    constructor(data?: IPersonResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data['id'];
+            this.title = _data['title'];
+            this.first_name = _data['first_name'];
+            this.middle_names = _data['middle_names'];
+            this.last_name = _data['last_name'];
+            this.contact_email = _data['contact_email'];
+            this.telephone_number = _data['telephone_number'];
+            this.username = _data['username'];
+            this.organisation = _data['organisation'];
+        }
+    }
+
+    static fromJS(data: any): PersonResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new PersonResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['id'] = this.id;
+        data['title'] = this.title;
+        data['first_name'] = this.first_name;
+        data['middle_names'] = this.middle_names;
+        data['last_name'] = this.last_name;
+        data['contact_email'] = this.contact_email;
+        data['telephone_number'] = this.telephone_number;
+        data['username'] = this.username;
+        data['organisation'] = this.organisation;
+        return data;
+    }
+}
+
+export interface IPersonResponse {
+    id?: string;
+    title?: string | undefined;
+    first_name?: string | undefined;
+    middle_names?: string | undefined;
+    last_name?: string | undefined;
+    contact_email?: string | undefined;
+    telephone_number?: string | undefined;
+    username?: string | undefined;
+    organisation?: string | undefined;
+}
+
+export class SuitabilityAnswerResponse implements ISuitabilityAnswerResponse {
+    key?: string | undefined;
+    answer?: string | undefined;
+    extended_answer?: string | undefined;
+
+    constructor(data?: ISuitabilityAnswerResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.key = _data['key'];
+            this.answer = _data['answer'];
+            this.extended_answer = _data['extended_answer'];
+        }
+    }
+
+    static fromJS(data: any): SuitabilityAnswerResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new SuitabilityAnswerResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['key'] = this.key;
+        data['answer'] = this.answer;
+        data['extended_answer'] = this.extended_answer;
+        return data;
+    }
+}
+
+export interface ISuitabilityAnswerResponse {
+    key?: string | undefined;
+    answer?: string | undefined;
+    extended_answer?: string | undefined;
+}
+
+export class SuitabilityAnswersResponse implements ISuitabilityAnswersResponse {
+    participant_suitability_answer_response?: ParticipantSuitabilityAnswerResponse[] | undefined;
+    next_cursor?: string | undefined;
+    limit?: number;
+    prev_page_url?: string | undefined;
+    next_page_url?: string | undefined;
+
+    constructor(data?: ISuitabilityAnswersResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data['participant_suitability_answer_response'])) {
+                this.participant_suitability_answer_response = [] as any;
+                for (let item of _data['participant_suitability_answer_response'])
+                    this.participant_suitability_answer_response!.push(ParticipantSuitabilityAnswerResponse.fromJS(item));
+            }
+            this.next_cursor = _data['next_cursor'];
+            this.limit = _data['limit'];
+            this.prev_page_url = _data['prev_page_url'];
+            this.next_page_url = _data['next_page_url'];
+        }
+    }
+
+    static fromJS(data: any): SuitabilityAnswersResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new SuitabilityAnswersResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.participant_suitability_answer_response)) {
+            data['participant_suitability_answer_response'] = [];
+            for (let item of this.participant_suitability_answer_response)
+                data['participant_suitability_answer_response'].push(item.toJSON());
+        }
+        data['next_cursor'] = this.next_cursor;
+        data['limit'] = this.limit;
+        data['prev_page_url'] = this.prev_page_url;
+        data['next_page_url'] = this.next_page_url;
+        return data;
+    }
+}
+
+export interface ISuitabilityAnswersResponse {
+    participant_suitability_answer_response?: ParticipantSuitabilityAnswerResponse[] | undefined;
+    next_cursor?: string | undefined;
+    limit?: number;
+    prev_page_url?: string | undefined;
+    next_page_url?: string | undefined;
+}
+
+export enum UpdateBookingStatus {
+    Created = 'Created',
+    Cancelled = 'Cancelled',
+    Failed = 'Failed'
+}
+
+export class UpdateBookingStatusRequest implements IUpdateBookingStatusRequest {
+    updated_by?: string | undefined;
+    status?: UpdateBookingStatus;
+    cancel_reason?: string | undefined;
+
+    constructor(data?: IUpdateBookingStatusRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.updated_by = _data['updated_by'];
+            this.status = _data['status'];
+            this.cancel_reason = _data['cancel_reason'];
+        }
+    }
+
+    static fromJS(data: any): UpdateBookingStatusRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateBookingStatusRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['updated_by'] = this.updated_by;
+        data['status'] = this.status;
+        data['cancel_reason'] = this.cancel_reason;
+        return data;
+    }
+}
+
+export interface IUpdateBookingStatusRequest {
+    updated_by?: string | undefined;
+    status?: UpdateBookingStatus;
+    cancel_reason?: string | undefined;
+}
+
+export class UpdateAccountDetailsRequest implements IUpdateAccountDetailsRequest {
+    first_name?: string | undefined;
+    last_name?: string | undefined;
+    current_username?: string | undefined;
+
+    constructor(data?: IUpdateAccountDetailsRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.first_name = _data['first_name'];
+            this.last_name = _data['last_name'];
+            this.current_username = _data['current_username'];
+        }
+    }
+
+    static fromJS(data: any): UpdateAccountDetailsRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateAccountDetailsRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['first_name'] = this.first_name;
+        data['last_name'] = this.last_name;
+        data['current_username'] = this.current_username;
+        return data;
+    }
+}
+
+export interface IUpdateAccountDetailsRequest {
+    first_name?: string | undefined;
+    last_name?: string | undefined;
+    current_username?: string | undefined;
+}
+
 /** Configuration to initialise the UI application */
 export class ClientSettingsResponse implements IClientSettingsResponse {
     /** The Azure Tenant Id */
@@ -3429,12 +3711,18 @@ export interface IClientSettingsResponse {
     join_by_phone_from_date?: string | undefined;
 }
 
-export class HealthCheck implements IHealthCheck {
-    successful?: boolean;
-    error_message?: string | undefined;
-    data?: { [key: string]: any } | undefined;
+/** Defines a type of hearing based on case */
+export class HearingTypeResponse implements IHearingTypeResponse {
+    /** The short code for the type */
+    code?: string | undefined;
+    /** Which case type it belongs to */
+    group?: string | undefined;
+    /** Unique identifier for this type of hearing */
+    id?: number | undefined;
+    /** Hearing type display name */
+    name?: string | undefined;
 
-    constructor(data?: IHealthCheck) {
+    constructor(data?: IHearingTypeResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
@@ -3444,42 +3732,136 @@ export class HealthCheck implements IHealthCheck {
 
     init(_data?: any) {
         if (_data) {
-            this.successful = _data['successful'];
-            this.error_message = _data['error_message'];
-            if (_data['data']) {
-                this.data = {} as any;
-                for (let key in _data['data']) {
-                    if (_data['data'].hasOwnProperty(key)) this.data![key] = _data['data'][key];
-                }
-            }
+            this.code = _data['code'];
+            this.group = _data['group'];
+            this.id = _data['id'];
+            this.name = _data['name'];
         }
     }
 
-    static fromJS(data: any): HealthCheck {
+    static fromJS(data: any): HearingTypeResponse {
         data = typeof data === 'object' ? data : {};
-        let result = new HealthCheck();
+        let result = new HearingTypeResponse();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data['successful'] = this.successful;
-        data['error_message'] = this.error_message;
-        if (this.data) {
-            data['data'] = {};
-            for (let key in this.data) {
-                if (this.data.hasOwnProperty(key)) data['data'][key] = this.data[key];
-            }
-        }
+        data['code'] = this.code;
+        data['group'] = this.group;
+        data['id'] = this.id;
+        data['name'] = this.name;
         return data;
     }
 }
 
-export interface IHealthCheck {
-    successful?: boolean;
-    error_message?: string | undefined;
-    data?: { [key: string]: any } | undefined;
+/** Defines a type of hearing based on case */
+export interface IHearingTypeResponse {
+    /** The short code for the type */
+    code?: string | undefined;
+    /** Which case type it belongs to */
+    group?: string | undefined;
+    /** Unique identifier for this type of hearing */
+    id?: number | undefined;
+    /** Hearing type display name */
+    name?: string | undefined;
+}
+
+/** A judge existing in the system */
+export class JudgeResponse implements IJudgeResponse {
+    /** Judge first name */
+    first_name?: string | undefined;
+    /** Judge last name */
+    last_name?: string | undefined;
+    /** Judge display name as in the identity system */
+    display_name?: string | undefined;
+    /** Judge username/email */
+    email?: string | undefined;
+
+    constructor(data?: IJudgeResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.first_name = _data['first_name'];
+            this.last_name = _data['last_name'];
+            this.display_name = _data['display_name'];
+            this.email = _data['email'];
+        }
+    }
+
+    static fromJS(data: any): JudgeResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new JudgeResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['first_name'] = this.first_name;
+        data['last_name'] = this.last_name;
+        data['display_name'] = this.display_name;
+        data['email'] = this.email;
+        return data;
+    }
+}
+
+/** A judge existing in the system */
+export interface IJudgeResponse {
+    /** Judge first name */
+    first_name?: string | undefined;
+    /** Judge last name */
+    last_name?: string | undefined;
+    /** Judge display name as in the identity system */
+    display_name?: string | undefined;
+    /** Judge username/email */
+    email?: string | undefined;
+}
+
+export class UserProfileResponse implements IUserProfileResponse {
+    is_vh_officer_administrator_role?: boolean;
+    is_case_administrator?: boolean;
+
+    constructor(data?: IUserProfileResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.is_vh_officer_administrator_role = _data['is_vh_officer_administrator_role'];
+            this.is_case_administrator = _data['is_case_administrator'];
+        }
+    }
+
+    static fromJS(data: any): UserProfileResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new UserProfileResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['is_vh_officer_administrator_role'] = this.is_vh_officer_administrator_role;
+        data['is_case_administrator'] = this.is_case_administrator;
+        return data;
+    }
+}
+
+export interface IUserProfileResponse {
+    is_vh_officer_administrator_role?: boolean;
+    is_case_administrator?: boolean;
 }
 
 export class ApplicationVersion implements IApplicationVersion {
@@ -3521,14 +3903,11 @@ export interface IApplicationVersion {
     information_version?: string | undefined;
 }
 
-export class HealthCheckResponse implements IHealthCheckResponse {
-    bookings_api_health?: HealthCheck;
-    user_api_health?: HealthCheck;
-    video_api_health?: HealthCheck;
-    notification_api_health?: HealthCheck;
-    app_version?: ApplicationVersion;
+export class CaseAndHearingRolesResponse implements ICaseAndHearingRolesResponse {
+    name?: string | undefined;
+    hearing_roles?: HearingRole[] | undefined;
 
-    constructor(data?: IHealthCheckResponse) {
+    constructor(data?: ICaseAndHearingRolesResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
@@ -3538,47 +3917,42 @@ export class HealthCheckResponse implements IHealthCheckResponse {
 
     init(_data?: any) {
         if (_data) {
-            this.bookings_api_health = _data['bookings_api_health'] ? HealthCheck.fromJS(_data['bookings_api_health']) : <any>undefined;
-            this.user_api_health = _data['user_api_health'] ? HealthCheck.fromJS(_data['user_api_health']) : <any>undefined;
-            this.video_api_health = _data['video_api_health'] ? HealthCheck.fromJS(_data['video_api_health']) : <any>undefined;
-            this.notification_api_health = _data['notification_api_health']
-                ? HealthCheck.fromJS(_data['notification_api_health'])
-                : <any>undefined;
-            this.app_version = _data['app_version'] ? ApplicationVersion.fromJS(_data['app_version']) : <any>undefined;
+            this.name = _data['name'];
+            if (Array.isArray(_data['hearing_roles'])) {
+                this.hearing_roles = [] as any;
+                for (let item of _data['hearing_roles']) this.hearing_roles!.push(HearingRole.fromJS(item));
+            }
         }
     }
 
-    static fromJS(data: any): HealthCheckResponse {
+    static fromJS(data: any): CaseAndHearingRolesResponse {
         data = typeof data === 'object' ? data : {};
-        let result = new HealthCheckResponse();
+        let result = new CaseAndHearingRolesResponse();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data['bookings_api_health'] = this.bookings_api_health ? this.bookings_api_health.toJSON() : <any>undefined;
-        data['user_api_health'] = this.user_api_health ? this.user_api_health.toJSON() : <any>undefined;
-        data['video_api_health'] = this.video_api_health ? this.video_api_health.toJSON() : <any>undefined;
-        data['notification_api_health'] = this.notification_api_health ? this.notification_api_health.toJSON() : <any>undefined;
-        data['app_version'] = this.app_version ? this.app_version.toJSON() : <any>undefined;
+        data['name'] = this.name;
+        if (Array.isArray(this.hearing_roles)) {
+            data['hearing_roles'] = [];
+            for (let item of this.hearing_roles) data['hearing_roles'].push(item.toJSON());
+        }
         return data;
     }
 }
 
-export interface IHealthCheckResponse {
-    bookings_api_health?: HealthCheck;
-    user_api_health?: HealthCheck;
-    video_api_health?: HealthCheck;
-    notification_api_health?: HealthCheck;
-    app_version?: ApplicationVersion;
+export interface ICaseAndHearingRolesResponse {
+    name?: string | undefined;
+    hearing_roles?: HearingRole[] | undefined;
 }
 
-export class MultiHearingRequest implements IMultiHearingRequest {
-    start_date?: Date;
-    end_date?: Date;
+export class CvpForAudioFileResponse implements ICvpForAudioFileResponse {
+    file_name?: string | undefined;
+    sas_token_uri?: string | undefined;
 
-    constructor(data?: IMultiHearingRequest) {
+    constructor(data?: ICvpForAudioFileResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
@@ -3588,29 +3962,29 @@ export class MultiHearingRequest implements IMultiHearingRequest {
 
     init(_data?: any) {
         if (_data) {
-            this.start_date = _data['start_date'] ? new Date(_data['start_date'].toString()) : <any>undefined;
-            this.end_date = _data['end_date'] ? new Date(_data['end_date'].toString()) : <any>undefined;
+            this.file_name = _data['file_name'];
+            this.sas_token_uri = _data['sas_token_uri'];
         }
     }
 
-    static fromJS(data: any): MultiHearingRequest {
+    static fromJS(data: any): CvpForAudioFileResponse {
         data = typeof data === 'object' ? data : {};
-        let result = new MultiHearingRequest();
+        let result = new CvpForAudioFileResponse();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data['start_date'] = this.start_date ? this.start_date.toISOString() : <any>undefined;
-        data['end_date'] = this.end_date ? this.end_date.toISOString() : <any>undefined;
+        data['file_name'] = this.file_name;
+        data['sas_token_uri'] = this.sas_token_uri;
         return data;
     }
 }
 
-export interface IMultiHearingRequest {
-    start_date?: Date;
-    end_date?: Date;
+export interface ICvpForAudioFileResponse {
+    file_name?: string | undefined;
+    sas_token_uri?: string | undefined;
 }
 
 /** Case request */
@@ -3656,123 +4030,6 @@ export interface IEditCaseRequest {
     number?: string | undefined;
     /** The case name */
     name?: string | undefined;
-}
-
-/** Participant request */
-export class EditParticipantRequest implements IEditParticipantRequest {
-    /** Participant Id. */
-    id?: string | undefined;
-    /** Participant Title. */
-    title?: string | undefined;
-    /** Participant first name. */
-    first_name?: string | undefined;
-    /** Participant middle name. */
-    middle_names?: string | undefined;
-    /** Participant last name. */
-    last_name?: string | undefined;
-    /** Participant Contact Email */
-    contact_email?: string | undefined;
-    /** Participant Telephone number */
-    telephone_number?: string | undefined;
-    /** Participant Display Name */
-    display_name?: string | undefined;
-    /** The name of the participant's case role */
-    case_role_name?: string | undefined;
-    /** The name of the participant's hearing role */
-    hearing_role_name?: string | undefined;
-    /** The representee of a representative */
-    representee?: string | undefined;
-    /** Organisation name */
-    organisation_name?: string | undefined;
-    /** List of linked participants */
-    linked_participants?: LinkedParticipantRequest[] | undefined;
-
-    constructor(data?: IEditParticipantRequest) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data['id'];
-            this.title = _data['title'];
-            this.first_name = _data['first_name'];
-            this.middle_names = _data['middle_names'];
-            this.last_name = _data['last_name'];
-            this.contact_email = _data['contact_email'];
-            this.telephone_number = _data['telephone_number'];
-            this.display_name = _data['display_name'];
-            this.case_role_name = _data['case_role_name'];
-            this.hearing_role_name = _data['hearing_role_name'];
-            this.representee = _data['representee'];
-            this.organisation_name = _data['organisation_name'];
-            if (Array.isArray(_data['linked_participants'])) {
-                this.linked_participants = [] as any;
-                for (let item of _data['linked_participants']) this.linked_participants!.push(LinkedParticipantRequest.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): EditParticipantRequest {
-        data = typeof data === 'object' ? data : {};
-        let result = new EditParticipantRequest();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data['id'] = this.id;
-        data['title'] = this.title;
-        data['first_name'] = this.first_name;
-        data['middle_names'] = this.middle_names;
-        data['last_name'] = this.last_name;
-        data['contact_email'] = this.contact_email;
-        data['telephone_number'] = this.telephone_number;
-        data['display_name'] = this.display_name;
-        data['case_role_name'] = this.case_role_name;
-        data['hearing_role_name'] = this.hearing_role_name;
-        data['representee'] = this.representee;
-        data['organisation_name'] = this.organisation_name;
-        if (Array.isArray(this.linked_participants)) {
-            data['linked_participants'] = [];
-            for (let item of this.linked_participants) data['linked_participants'].push(item.toJSON());
-        }
-        return data;
-    }
-}
-
-/** Participant request */
-export interface IEditParticipantRequest {
-    /** Participant Id. */
-    id?: string | undefined;
-    /** Participant Title. */
-    title?: string | undefined;
-    /** Participant first name. */
-    first_name?: string | undefined;
-    /** Participant middle name. */
-    middle_names?: string | undefined;
-    /** Participant last name. */
-    last_name?: string | undefined;
-    /** Participant Contact Email */
-    contact_email?: string | undefined;
-    /** Participant Telephone number */
-    telephone_number?: string | undefined;
-    /** Participant Display Name */
-    display_name?: string | undefined;
-    /** The name of the participant's case role */
-    case_role_name?: string | undefined;
-    /** The name of the participant's hearing role */
-    hearing_role_name?: string | undefined;
-    /** The representee of a representative */
-    representee?: string | undefined;
-    /** Organisation name */
-    organisation_name?: string | undefined;
-    /** List of linked participants */
-    linked_participants?: LinkedParticipantRequest[] | undefined;
 }
 
 export class EditEndpointRequest implements IEditEndpointRequest {
@@ -3927,18 +4184,36 @@ export interface IEditHearingRequest {
     endpoints?: EditEndpointRequest[] | undefined;
 }
 
-export enum UpdateBookingStatus {
-    Created = 'Created',
-    Cancelled = 'Cancelled',
-    Failed = 'Failed'
-}
+/** Participant request */
+export class EditParticipantRequest implements IEditParticipantRequest {
+    /** Participant Id. */
+    id?: string | undefined;
+    /** Participant Title. */
+    title?: string | undefined;
+    /** Participant first name. */
+    first_name?: string | undefined;
+    /** Participant middle name. */
+    middle_names?: string | undefined;
+    /** Participant last name. */
+    last_name?: string | undefined;
+    /** Participant Contact Email */
+    contact_email?: string | undefined;
+    /** Participant Telephone number */
+    telephone_number?: string | undefined;
+    /** Participant Display Name */
+    display_name?: string | undefined;
+    /** The name of the participant's case role */
+    case_role_name?: string | undefined;
+    /** The name of the participant's hearing role */
+    hearing_role_name?: string | undefined;
+    /** The representee of a representative */
+    representee?: string | undefined;
+    /** Organisation name */
+    organisation_name?: string | undefined;
+    /** List of linked participants */
+    linked_participants?: LinkedParticipant[] | undefined;
 
-export class UpdateBookingStatusRequest implements IUpdateBookingStatusRequest {
-    updated_by?: string | undefined;
-    status?: UpdateBookingStatus;
-    cancel_reason?: string | undefined;
-
-    constructor(data?: IUpdateBookingStatusRequest) {
+    constructor(data?: IEditParticipantRequest) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
@@ -3948,40 +4223,90 @@ export class UpdateBookingStatusRequest implements IUpdateBookingStatusRequest {
 
     init(_data?: any) {
         if (_data) {
-            this.updated_by = _data['updated_by'];
-            this.status = _data['status'];
-            this.cancel_reason = _data['cancel_reason'];
+            this.id = _data['id'];
+            this.title = _data['title'];
+            this.first_name = _data['first_name'];
+            this.middle_names = _data['middle_names'];
+            this.last_name = _data['last_name'];
+            this.contact_email = _data['contact_email'];
+            this.telephone_number = _data['telephone_number'];
+            this.display_name = _data['display_name'];
+            this.case_role_name = _data['case_role_name'];
+            this.hearing_role_name = _data['hearing_role_name'];
+            this.representee = _data['representee'];
+            this.organisation_name = _data['organisation_name'];
+            if (Array.isArray(_data['linked_participants'])) {
+                this.linked_participants = [] as any;
+                for (let item of _data['linked_participants']) this.linked_participants!.push(LinkedParticipant.fromJS(item));
+            }
         }
     }
 
-    static fromJS(data: any): UpdateBookingStatusRequest {
+    static fromJS(data: any): EditParticipantRequest {
         data = typeof data === 'object' ? data : {};
-        let result = new UpdateBookingStatusRequest();
+        let result = new EditParticipantRequest();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data['updated_by'] = this.updated_by;
-        data['status'] = this.status;
-        data['cancel_reason'] = this.cancel_reason;
+        data['id'] = this.id;
+        data['title'] = this.title;
+        data['first_name'] = this.first_name;
+        data['middle_names'] = this.middle_names;
+        data['last_name'] = this.last_name;
+        data['contact_email'] = this.contact_email;
+        data['telephone_number'] = this.telephone_number;
+        data['display_name'] = this.display_name;
+        data['case_role_name'] = this.case_role_name;
+        data['hearing_role_name'] = this.hearing_role_name;
+        data['representee'] = this.representee;
+        data['organisation_name'] = this.organisation_name;
+        if (Array.isArray(this.linked_participants)) {
+            data['linked_participants'] = [];
+            for (let item of this.linked_participants) data['linked_participants'].push(item.toJSON());
+        }
         return data;
     }
 }
 
-export interface IUpdateBookingStatusRequest {
-    updated_by?: string | undefined;
-    status?: UpdateBookingStatus;
-    cancel_reason?: string | undefined;
+/** Participant request */
+export interface IEditParticipantRequest {
+    /** Participant Id. */
+    id?: string | undefined;
+    /** Participant Title. */
+    title?: string | undefined;
+    /** Participant first name. */
+    first_name?: string | undefined;
+    /** Participant middle name. */
+    middle_names?: string | undefined;
+    /** Participant last name. */
+    last_name?: string | undefined;
+    /** Participant Contact Email */
+    contact_email?: string | undefined;
+    /** Participant Telephone number */
+    telephone_number?: string | undefined;
+    /** Participant Display Name */
+    display_name?: string | undefined;
+    /** The name of the participant's case role */
+    case_role_name?: string | undefined;
+    /** The name of the participant's hearing role */
+    hearing_role_name?: string | undefined;
+    /** The representee of a representative */
+    representee?: string | undefined;
+    /** Organisation name */
+    organisation_name?: string | undefined;
+    /** List of linked participants */
+    linked_participants?: LinkedParticipant[] | undefined;
 }
 
-export class UpdateBookingStatusResponse implements IUpdateBookingStatusResponse {
-    success?: boolean;
-    message?: string | undefined;
-    telephone_conference_id?: string | undefined;
+export class HealthCheck implements IHealthCheck {
+    successful?: boolean;
+    error_message?: string | undefined;
+    data?: { [key: string]: any } | undefined;
 
-    constructor(data?: IUpdateBookingStatusResponse) {
+    constructor(data?: IHealthCheck) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
@@ -3991,32 +4316,175 @@ export class UpdateBookingStatusResponse implements IUpdateBookingStatusResponse
 
     init(_data?: any) {
         if (_data) {
-            this.success = _data['success'];
-            this.message = _data['message'];
-            this.telephone_conference_id = _data['telephone_conference_id'];
+            this.successful = _data['successful'];
+            this.error_message = _data['error_message'];
+            if (_data['data']) {
+                this.data = {} as any;
+                for (let key in _data['data']) {
+                    if (_data['data'].hasOwnProperty(key)) this.data![key] = _data['data'][key];
+                }
+            }
         }
     }
 
-    static fromJS(data: any): UpdateBookingStatusResponse {
+    static fromJS(data: any): HealthCheck {
         data = typeof data === 'object' ? data : {};
-        let result = new UpdateBookingStatusResponse();
+        let result = new HealthCheck();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data['success'] = this.success;
-        data['message'] = this.message;
-        data['telephone_conference_id'] = this.telephone_conference_id;
+        data['successful'] = this.successful;
+        data['error_message'] = this.error_message;
+        if (this.data) {
+            data['data'] = {};
+            for (let key in this.data) {
+                if (this.data.hasOwnProperty(key)) data['data'][key] = this.data[key];
+            }
+        }
         return data;
     }
 }
 
-export interface IUpdateBookingStatusResponse {
-    success?: boolean;
-    message?: string | undefined;
-    telephone_conference_id?: string | undefined;
+export interface IHealthCheck {
+    successful?: boolean;
+    error_message?: string | undefined;
+    data?: { [key: string]: any } | undefined;
+}
+
+export class HealthCheckResponse implements IHealthCheckResponse {
+    bookings_api_health?: HealthCheck;
+    user_api_health?: HealthCheck;
+    video_api_health?: HealthCheck;
+    notification_api_health?: HealthCheck;
+    app_version?: ApplicationVersion;
+
+    constructor(data?: IHealthCheckResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.bookings_api_health = _data['bookings_api_health'] ? HealthCheck.fromJS(_data['bookings_api_health']) : <any>undefined;
+            this.user_api_health = _data['user_api_health'] ? HealthCheck.fromJS(_data['user_api_health']) : <any>undefined;
+            this.video_api_health = _data['video_api_health'] ? HealthCheck.fromJS(_data['video_api_health']) : <any>undefined;
+            this.notification_api_health = _data['notification_api_health']
+                ? HealthCheck.fromJS(_data['notification_api_health'])
+                : <any>undefined;
+            this.app_version = _data['app_version'] ? ApplicationVersion.fromJS(_data['app_version']) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): HealthCheckResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new HealthCheckResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['bookings_api_health'] = this.bookings_api_health ? this.bookings_api_health.toJSON() : <any>undefined;
+        data['user_api_health'] = this.user_api_health ? this.user_api_health.toJSON() : <any>undefined;
+        data['video_api_health'] = this.video_api_health ? this.video_api_health.toJSON() : <any>undefined;
+        data['notification_api_health'] = this.notification_api_health ? this.notification_api_health.toJSON() : <any>undefined;
+        data['app_version'] = this.app_version ? this.app_version.toJSON() : <any>undefined;
+        return data;
+    }
+}
+
+export interface IHealthCheckResponse {
+    bookings_api_health?: HealthCheck;
+    user_api_health?: HealthCheck;
+    video_api_health?: HealthCheck;
+    notification_api_health?: HealthCheck;
+    app_version?: ApplicationVersion;
+}
+
+export class HearingAudioRecordingResponse implements IHearingAudioRecordingResponse {
+    audio_file_links?: string[] | undefined;
+
+    constructor(data?: IHearingAudioRecordingResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data['audio_file_links'])) {
+                this.audio_file_links = [] as any;
+                for (let item of _data['audio_file_links']) this.audio_file_links!.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): HearingAudioRecordingResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new HearingAudioRecordingResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.audio_file_links)) {
+            data['audio_file_links'] = [];
+            for (let item of this.audio_file_links) data['audio_file_links'].push(item);
+        }
+        return data;
+    }
+}
+
+export interface IHearingAudioRecordingResponse {
+    audio_file_links?: string[] | undefined;
+}
+
+export class HearingRole implements IHearingRole {
+    name?: string | undefined;
+    readonly user_role?: string | undefined;
+
+    constructor(data?: IHearingRole) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data['name'];
+            (<any>this).user_role = _data['user_role'];
+        }
+    }
+
+    static fromJS(data: any): HearingRole {
+        data = typeof data === 'object' ? data : {};
+        let result = new HearingRole();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['name'] = this.name;
+        data['user_role'] = this.user_role;
+        return data;
+    }
+}
+
+export interface IHearingRole {
+    name?: string | undefined;
+    user_role?: string | undefined;
 }
 
 export class HearingsForAudioFileSearchResponse implements IHearingsForAudioFileSearchResponse {
@@ -4098,6 +4566,92 @@ export interface IHearingsForAudioFileSearchResponse {
     hearing_room_name?: string | undefined;
 }
 
+export class LinkedParticipant implements ILinkedParticipant {
+    id?: string;
+    participant_id?: string;
+    linked_id?: string;
+    type?: LinkedParticipantType;
+
+    constructor(data?: ILinkedParticipant) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data['id'];
+            this.participant_id = _data['participant_id'];
+            this.linked_id = _data['linked_id'];
+            this.type = _data['type'];
+        }
+    }
+
+    static fromJS(data: any): LinkedParticipant {
+        data = typeof data === 'object' ? data : {};
+        let result = new LinkedParticipant();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['id'] = this.id;
+        data['participant_id'] = this.participant_id;
+        data['linked_id'] = this.linked_id;
+        data['type'] = this.type;
+        return data;
+    }
+}
+
+export interface ILinkedParticipant {
+    id?: string;
+    participant_id?: string;
+    linked_id?: string;
+    type?: LinkedParticipantType;
+}
+
+export class MultiHearingRequest implements IMultiHearingRequest {
+    start_date?: Date;
+    end_date?: Date;
+
+    constructor(data?: IMultiHearingRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.start_date = _data['start_date'] ? new Date(_data['start_date'].toString()) : <any>undefined;
+            this.end_date = _data['end_date'] ? new Date(_data['end_date'].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): MultiHearingRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new MultiHearingRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['start_date'] = this.start_date ? this.start_date.toISOString() : <any>undefined;
+        data['end_date'] = this.end_date ? this.end_date.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export interface IMultiHearingRequest {
+    start_date?: Date;
+    end_date?: Date;
+}
+
 export class PhoneConferenceResponse implements IPhoneConferenceResponse {
     telephone_conference_id?: string | undefined;
 
@@ -4133,18 +4687,12 @@ export interface IPhoneConferenceResponse {
     telephone_conference_id?: string | undefined;
 }
 
-export class PersonResponse implements IPersonResponse {
-    id?: string;
-    title?: string | undefined;
-    first_name?: string | undefined;
-    middle_names?: string | undefined;
-    last_name?: string | undefined;
-    contact_email?: string | undefined;
-    telephone_number?: string | undefined;
-    username?: string | undefined;
-    organisation?: string | undefined;
+export class UpdateBookingStatusResponse implements IUpdateBookingStatusResponse {
+    success?: boolean;
+    message?: string | undefined;
+    telephone_conference_id?: string | undefined;
 
-    constructor(data?: IPersonResponse) {
+    constructor(data?: IUpdateBookingStatusResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
@@ -4154,595 +4702,83 @@ export class PersonResponse implements IPersonResponse {
 
     init(_data?: any) {
         if (_data) {
-            this.id = _data['id'];
+            this.success = _data['success'];
+            this.message = _data['message'];
+            this.telephone_conference_id = _data['telephone_conference_id'];
+        }
+    }
+
+    static fromJS(data: any): UpdateBookingStatusResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateBookingStatusResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['success'] = this.success;
+        data['message'] = this.message;
+        data['telephone_conference_id'] = this.telephone_conference_id;
+        return data;
+    }
+}
+
+export interface IUpdateBookingStatusResponse {
+    success?: boolean;
+    message?: string | undefined;
+    telephone_conference_id?: string | undefined;
+}
+
+export class ProblemDetails implements IProblemDetails {
+    type?: string | undefined;
+    title?: string | undefined;
+    status?: number | undefined;
+    detail?: string | undefined;
+    instance?: string | undefined;
+
+    constructor(data?: IProblemDetails) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.type = _data['type'];
             this.title = _data['title'];
-            this.first_name = _data['first_name'];
-            this.middle_names = _data['middle_names'];
-            this.last_name = _data['last_name'];
-            this.contact_email = _data['contact_email'];
-            this.telephone_number = _data['telephone_number'];
-            this.username = _data['username'];
-            this.organisation = _data['organisation'];
+            this.status = _data['status'];
+            this.detail = _data['detail'];
+            this.instance = _data['instance'];
         }
     }
 
-    static fromJS(data: any): PersonResponse {
+    static fromJS(data: any): ProblemDetails {
         data = typeof data === 'object' ? data : {};
-        let result = new PersonResponse();
+        let result = new ProblemDetails();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data['id'] = this.id;
+        data['type'] = this.type;
         data['title'] = this.title;
-        data['first_name'] = this.first_name;
-        data['middle_names'] = this.middle_names;
-        data['last_name'] = this.last_name;
-        data['contact_email'] = this.contact_email;
-        data['telephone_number'] = this.telephone_number;
-        data['username'] = this.username;
-        data['organisation'] = this.organisation;
+        data['status'] = this.status;
+        data['detail'] = this.detail;
+        data['instance'] = this.instance;
         return data;
     }
 }
 
-export interface IPersonResponse {
-    id?: string;
+export interface IProblemDetails {
+    type?: string | undefined;
     title?: string | undefined;
-    first_name?: string | undefined;
-    middle_names?: string | undefined;
-    last_name?: string | undefined;
-    contact_email?: string | undefined;
-    telephone_number?: string | undefined;
-    username?: string | undefined;
-    organisation?: string | undefined;
-}
-
-export class HearingsByUsernameForDeletionResponse implements IHearingsByUsernameForDeletionResponse {
-    hearing_id?: string;
-    scheduled_date_time?: Date;
-    case_name?: string | undefined;
-    case_number?: string | undefined;
-    venue?: string | undefined;
-
-    constructor(data?: IHearingsByUsernameForDeletionResponse) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.hearing_id = _data['hearing_id'];
-            this.scheduled_date_time = _data['scheduled_date_time'] ? new Date(_data['scheduled_date_time'].toString()) : <any>undefined;
-            this.case_name = _data['case_name'];
-            this.case_number = _data['case_number'];
-            this.venue = _data['venue'];
-        }
-    }
-
-    static fromJS(data: any): HearingsByUsernameForDeletionResponse {
-        data = typeof data === 'object' ? data : {};
-        let result = new HearingsByUsernameForDeletionResponse();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data['hearing_id'] = this.hearing_id;
-        data['scheduled_date_time'] = this.scheduled_date_time ? this.scheduled_date_time.toISOString() : <any>undefined;
-        data['case_name'] = this.case_name;
-        data['case_number'] = this.case_number;
-        data['venue'] = this.venue;
-        return data;
-    }
-}
-
-export interface IHearingsByUsernameForDeletionResponse {
-    hearing_id?: string;
-    scheduled_date_time?: Date;
-    case_name?: string | undefined;
-    case_number?: string | undefined;
-    venue?: string | undefined;
-}
-
-export class UpdateAccountDetailsRequest implements IUpdateAccountDetailsRequest {
-    first_name?: string | undefined;
-    last_name?: string | undefined;
-    current_username?: string | undefined;
-
-    constructor(data?: IUpdateAccountDetailsRequest) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.first_name = _data['first_name'];
-            this.last_name = _data['last_name'];
-            this.current_username = _data['current_username'];
-        }
-    }
-
-    static fromJS(data: any): UpdateAccountDetailsRequest {
-        data = typeof data === 'object' ? data : {};
-        let result = new UpdateAccountDetailsRequest();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data['first_name'] = this.first_name;
-        data['last_name'] = this.last_name;
-        data['current_username'] = this.current_username;
-        return data;
-    }
-}
-
-export interface IUpdateAccountDetailsRequest {
-    first_name?: string | undefined;
-    last_name?: string | undefined;
-    current_username?: string | undefined;
-}
-
-/** Defines a type of hearing based on case */
-export class HearingTypeResponse implements IHearingTypeResponse {
-    /** The short code for the type */
-    code?: string | undefined;
-    /** Which case type it belongs to */
-    group?: string | undefined;
-    /** Unique identifier for this type of hearing */
-    id?: number | undefined;
-    /** Hearing type display name */
-    name?: string | undefined;
-
-    constructor(data?: IHearingTypeResponse) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.code = _data['code'];
-            this.group = _data['group'];
-            this.id = _data['id'];
-            this.name = _data['name'];
-        }
-    }
-
-    static fromJS(data: any): HearingTypeResponse {
-        data = typeof data === 'object' ? data : {};
-        let result = new HearingTypeResponse();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data['code'] = this.code;
-        data['group'] = this.group;
-        data['id'] = this.id;
-        data['name'] = this.name;
-        return data;
-    }
-}
-
-/** Defines a type of hearing based on case */
-export interface IHearingTypeResponse {
-    /** The short code for the type */
-    code?: string | undefined;
-    /** Which case type it belongs to */
-    group?: string | undefined;
-    /** Unique identifier for this type of hearing */
-    id?: number | undefined;
-    /** Hearing type display name */
-    name?: string | undefined;
-}
-
-export class HearingRole implements IHearingRole {
-    name?: string | undefined;
-    readonly user_role?: string | undefined;
-
-    constructor(data?: IHearingRole) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.name = _data['name'];
-            (<any>this).user_role = _data['user_role'];
-        }
-    }
-
-    static fromJS(data: any): HearingRole {
-        data = typeof data === 'object' ? data : {};
-        let result = new HearingRole();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data['name'] = this.name;
-        data['user_role'] = this.user_role;
-        return data;
-    }
-}
-
-export interface IHearingRole {
-    name?: string | undefined;
-    user_role?: string | undefined;
-}
-
-export class CaseAndHearingRolesResponse implements ICaseAndHearingRolesResponse {
-    name?: string | undefined;
-    hearing_roles?: HearingRole[] | undefined;
-
-    constructor(data?: ICaseAndHearingRolesResponse) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.name = _data['name'];
-            if (Array.isArray(_data['hearing_roles'])) {
-                this.hearing_roles = [] as any;
-                for (let item of _data['hearing_roles']) this.hearing_roles!.push(HearingRole.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): CaseAndHearingRolesResponse {
-        data = typeof data === 'object' ? data : {};
-        let result = new CaseAndHearingRolesResponse();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data['name'] = this.name;
-        if (Array.isArray(this.hearing_roles)) {
-            data['hearing_roles'] = [];
-            for (let item of this.hearing_roles) data['hearing_roles'].push(item.toJSON());
-        }
-        return data;
-    }
-}
-
-export interface ICaseAndHearingRolesResponse {
-    name?: string | undefined;
-    hearing_roles?: HearingRole[] | undefined;
-}
-
-export class HearingVenueResponse implements IHearingVenueResponse {
-    id?: number;
-    name?: string | undefined;
-
-    constructor(data?: IHearingVenueResponse) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data['id'];
-            this.name = _data['name'];
-        }
-    }
-
-    static fromJS(data: any): HearingVenueResponse {
-        data = typeof data === 'object' ? data : {};
-        let result = new HearingVenueResponse();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data['id'] = this.id;
-        data['name'] = this.name;
-        return data;
-    }
-}
-
-export interface IHearingVenueResponse {
-    id?: number;
-    name?: string | undefined;
-}
-
-export class SuitabilityAnswerResponse implements ISuitabilityAnswerResponse {
-    key?: string | undefined;
-    answer?: string | undefined;
-    extended_answer?: string | undefined;
-
-    constructor(data?: ISuitabilityAnswerResponse) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.key = _data['key'];
-            this.answer = _data['answer'];
-            this.extended_answer = _data['extended_answer'];
-        }
-    }
-
-    static fromJS(data: any): SuitabilityAnswerResponse {
-        data = typeof data === 'object' ? data : {};
-        let result = new SuitabilityAnswerResponse();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data['key'] = this.key;
-        data['answer'] = this.answer;
-        data['extended_answer'] = this.extended_answer;
-        return data;
-    }
-}
-
-export interface ISuitabilityAnswerResponse {
-    key?: string | undefined;
-    answer?: string | undefined;
-    extended_answer?: string | undefined;
-}
-
-export class ParticipantSuitabilityAnswerResponse implements IParticipantSuitabilityAnswerResponse {
-    participant_id?: string;
-    case_number?: string | undefined;
-    hearing_role?: string | undefined;
-    title?: string | undefined;
-    first_name?: string | undefined;
-    last_name?: string | undefined;
-    updated_at?: Date;
-    representee?: string | undefined;
-    answers?: SuitabilityAnswerResponse[] | undefined;
-
-    constructor(data?: IParticipantSuitabilityAnswerResponse) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.participant_id = _data['participant_id'];
-            this.case_number = _data['case_number'];
-            this.hearing_role = _data['hearing_role'];
-            this.title = _data['title'];
-            this.first_name = _data['first_name'];
-            this.last_name = _data['last_name'];
-            this.updated_at = _data['updated_at'] ? new Date(_data['updated_at'].toString()) : <any>undefined;
-            this.representee = _data['representee'];
-            if (Array.isArray(_data['answers'])) {
-                this.answers = [] as any;
-                for (let item of _data['answers']) this.answers!.push(SuitabilityAnswerResponse.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): ParticipantSuitabilityAnswerResponse {
-        data = typeof data === 'object' ? data : {};
-        let result = new ParticipantSuitabilityAnswerResponse();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data['participant_id'] = this.participant_id;
-        data['case_number'] = this.case_number;
-        data['hearing_role'] = this.hearing_role;
-        data['title'] = this.title;
-        data['first_name'] = this.first_name;
-        data['last_name'] = this.last_name;
-        data['updated_at'] = this.updated_at ? this.updated_at.toISOString() : <any>undefined;
-        data['representee'] = this.representee;
-        if (Array.isArray(this.answers)) {
-            data['answers'] = [];
-            for (let item of this.answers) data['answers'].push(item.toJSON());
-        }
-        return data;
-    }
-}
-
-export interface IParticipantSuitabilityAnswerResponse {
-    participant_id?: string;
-    case_number?: string | undefined;
-    hearing_role?: string | undefined;
-    title?: string | undefined;
-    first_name?: string | undefined;
-    last_name?: string | undefined;
-    updated_at?: Date;
-    representee?: string | undefined;
-    answers?: SuitabilityAnswerResponse[] | undefined;
-}
-
-export class SuitabilityAnswersResponse implements ISuitabilityAnswersResponse {
-    participant_suitability_answer_response?: ParticipantSuitabilityAnswerResponse[] | undefined;
-    next_cursor?: string | undefined;
-    limit?: number;
-    prev_page_url?: string | undefined;
-    next_page_url?: string | undefined;
-
-    constructor(data?: ISuitabilityAnswersResponse) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            if (Array.isArray(_data['participant_suitability_answer_response'])) {
-                this.participant_suitability_answer_response = [] as any;
-                for (let item of _data['participant_suitability_answer_response'])
-                    this.participant_suitability_answer_response!.push(ParticipantSuitabilityAnswerResponse.fromJS(item));
-            }
-            this.next_cursor = _data['next_cursor'];
-            this.limit = _data['limit'];
-            this.prev_page_url = _data['prev_page_url'];
-            this.next_page_url = _data['next_page_url'];
-        }
-    }
-
-    static fromJS(data: any): SuitabilityAnswersResponse {
-        data = typeof data === 'object' ? data : {};
-        let result = new SuitabilityAnswersResponse();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        if (Array.isArray(this.participant_suitability_answer_response)) {
-            data['participant_suitability_answer_response'] = [];
-            for (let item of this.participant_suitability_answer_response)
-                data['participant_suitability_answer_response'].push(item.toJSON());
-        }
-        data['next_cursor'] = this.next_cursor;
-        data['limit'] = this.limit;
-        data['prev_page_url'] = this.prev_page_url;
-        data['next_page_url'] = this.next_page_url;
-        return data;
-    }
-}
-
-export interface ISuitabilityAnswersResponse {
-    participant_suitability_answer_response?: ParticipantSuitabilityAnswerResponse[] | undefined;
-    next_cursor?: string | undefined;
-    limit?: number;
-    prev_page_url?: string | undefined;
-    next_page_url?: string | undefined;
-}
-
-/** A judge existing in the system */
-export class JudgeResponse implements IJudgeResponse {
-    /** Judge first name */
-    first_name?: string | undefined;
-    /** Judge last name */
-    last_name?: string | undefined;
-    /** Judge display name as in the identity system */
-    display_name?: string | undefined;
-    /** Judge username/email */
-    email?: string | undefined;
-
-    constructor(data?: IJudgeResponse) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.first_name = _data['first_name'];
-            this.last_name = _data['last_name'];
-            this.display_name = _data['display_name'];
-            this.email = _data['email'];
-        }
-    }
-
-    static fromJS(data: any): JudgeResponse {
-        data = typeof data === 'object' ? data : {};
-        let result = new JudgeResponse();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data['first_name'] = this.first_name;
-        data['last_name'] = this.last_name;
-        data['display_name'] = this.display_name;
-        data['email'] = this.email;
-        return data;
-    }
-}
-
-/** A judge existing in the system */
-export interface IJudgeResponse {
-    /** Judge first name */
-    first_name?: string | undefined;
-    /** Judge last name */
-    last_name?: string | undefined;
-    /** Judge display name as in the identity system */
-    display_name?: string | undefined;
-    /** Judge username/email */
-    email?: string | undefined;
-}
-
-export class UserProfileResponse implements IUserProfileResponse {
-    is_vh_officer_administrator_role?: boolean;
-    is_case_administrator?: boolean;
-
-    constructor(data?: IUserProfileResponse) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.is_vh_officer_administrator_role = _data['is_vh_officer_administrator_role'];
-            this.is_case_administrator = _data['is_case_administrator'];
-        }
-    }
-
-    static fromJS(data: any): UserProfileResponse {
-        data = typeof data === 'object' ? data : {};
-        let result = new UserProfileResponse();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data['is_vh_officer_administrator_role'] = this.is_vh_officer_administrator_role;
-        data['is_case_administrator'] = this.is_case_administrator;
-        return data;
-    }
-}
-
-export interface IUserProfileResponse {
-    is_vh_officer_administrator_role?: boolean;
-    is_case_administrator?: boolean;
+    status?: number | undefined;
+    detail?: string | undefined;
+    instance?: string | undefined;
 }
 
 export class BookHearingException extends Error {

@@ -72,6 +72,6 @@ namespace AdminWebsite.Models
         /// <summary>
         ///     List of linked participants
         /// </summary>
-        public List<LinkedParticipantRequest> LinkedParticipants { get; set; }
+        public IList<LinkedParticipant> LinkedParticipants { get; set; }
     }
 }

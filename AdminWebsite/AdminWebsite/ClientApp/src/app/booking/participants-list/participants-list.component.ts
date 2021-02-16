@@ -75,7 +75,7 @@ export class ParticipantsListComponent implements OnInit {
     getInterpreteeDisplayName(participant: ParticipantModel): string {
         let interpretee: ParticipantModel;
         if (participant.hearing_role_name.toLowerCase().trim() === HearingRoles.INTERPRETER) {
-            if (this.isEditMode && participant.linked_participants.length > 0) {
+            if (participant.linked_participants && participant.linked_participants.length > 0) {
                 interpretee = this.participants.find(p => p.id === participant.linked_participants[0].linkedParticipantId);
             } else {
                 interpretee = this.participants.find(p => p.email === participant.interpreterFor);
@@ -86,7 +86,7 @@ export class ParticipantsListComponent implements OnInit {
     }
     isInterpretee(participant: ParticipantModel): boolean {
         let interpretee: boolean;
-        if (this.isEditMode && participant.linked_participants && participant.linked_participants.length > 0) {
+        if (participant.linked_participants && participant.linked_participants.length > 0) {
             interpretee = this.participants.some(p => p.id === participant.linked_participants[0].linkedParticipantId);
         } else {
             interpretee = this.participants.some(p => p.interpreterFor === participant.email);
