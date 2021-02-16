@@ -11,8 +11,7 @@ Scenario: Bookings Details for single day hearing
 	Then the hearing is available in video web
 	And the conference details match the hearing
 	And the user views the booking conference phone details
-
-@Smoketest @Smoketest-Extended
+	
 Scenario: Bookings Details for multi days hearing
 	Given the Video Hearings Officer user has progressed to the Booking Details page of a multi days hearing
 	When the user views the booking details
