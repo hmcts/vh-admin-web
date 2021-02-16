@@ -1,0 +1,8 @@
+---
+apiVersion: v2
+name: vh-admin-web
+home: https://github.com/hmcts/vh-admin-web
+version: 0.0.1
+description: Helm Chart for test Hearing test-api
+maintainers:
+  - name: VH Devops
