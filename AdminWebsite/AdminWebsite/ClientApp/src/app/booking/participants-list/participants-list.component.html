@@ -18,7 +18,8 @@
             <div>
               <strong>Judge</strong>
             </div>
-            <div class="govuk-hint vh-wrap" id="judge-name">{{ pat.email }}</div>
+            <div class="govuk-hint vh-wrap" id="judge-email">{{ pat.email }}</div>
+            <div class="govuk-hint vh-wrap" id="judge-phone">{{ pat.phone }}</div>
           </div>
           <div class="govuk-grid-column-one-third vhtable-cell" *ngIf="isSummaryPage">
             <a [routerLink]="['/assign-judge']" class="vhlink" (click)="editJudge()">Change</a>

@@ -21,8 +21,14 @@ import { BookingBaseComponentDirective as BookingBaseComponent } from '../bookin
 })
 export class AssignJudgeComponent extends BookingBaseComponent implements OnInit, OnDestroy {
     hearing: HearingModel;
+    selectedJudgeEmail: string;
     judge: JudgeResponse;
-    judgeDisplayName: FormControl;
+    judgeEmail: string;
+    judgePhone: string;
+
+    judgeDisplayNameFld: FormControl;
+    judgeEmailFld: FormControl;
+    judgePhoneFld: FormControl;
 
     failedSubmission: boolean;
     attemptingCancellation = false;
@@ -56,7 +62,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         });
     }
 
-    static mapJudgeToModel(judge: JudgeResponse): ParticipantModel {
+    static mapJudgeToModel(judge: JudgeResponse, judgePhone: string): ParticipantModel {
         const newParticipant = new ParticipantModel();
         newParticipant.title = 'Judge';
         newParticipant.first_name = judge.first_name;
@@ -65,7 +71,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         newParticipant.display_name = judge.display_name;
         newParticipant.email = judge.email;
         newParticipant.is_judge = true;
-        newParticipant.phone = '';
+        newParticipant.phone = judgePhone;
         newParticipant.id = null;
         newParticipant.username = judge.email;
         newParticipant.case_role_name = 'Judge';
@@ -87,37 +93,74 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     }
 
     private initForm() {
-        const find_judge = this.hearing.participants.find(x => x.is_judge === true);
-        if (!find_judge) {
-            this.judge = new JudgeResponse({ email: this.constants.PleaseSelect, display_name: '' });
-        } else {
-            this.logger.debug(`${this.loggerPrefix} Found judge in hearing. Populating existing selection.`);
-            this.judge = AssignJudgeComponent.mapJudge(find_judge);
-            this.canNavigate = true;
-        }
-        this.judgeDisplayName = new FormControl(this.judge.display_name, {
-            validators: [Validators.required, Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)],
-            updateOn: 'blur'
-        });
+        const existingJudge = this.hearing.participants.find(x => x.is_judge === true);
+
+        this.populateFormFields(existingJudge);
 
         this.form = this.fb.group({
-            judgeName: [this.judge.email, Validators.required],
-            judgeDisplayName: this.judgeDisplayName
+            judgeName: [this.judge.display_name, Validators.required],
+            judgeDisplayNameFld: this.judgeDisplayNameFld,
+            judgeEmailFld: this.judgeEmailFld,
+            judgePhoneFld: this.judgePhoneFld
         });
 
+        this.updateJudgeSummary();
+    }
+
+    updateJudgeSummary() {
         this.$subscriptions.push(
             this.judgeName.valueChanges.subscribe(judgeUserId => {
                 this.addJudge(judgeUserId);
                 this.isJudgeSelected = judgeUserId !== null;
+                this.judgeEmail = '';
+                this.judgeEmailFld.setValue('');
+                this.judgePhone = '';
+                this.judgePhoneFld.setValue('');
                 this.canNavigate = this.isJudgeSelected;
             })
         );
 
         this.$subscriptions.push(
-            this.judgeDisplayName.valueChanges.subscribe(name => {
+            this.judgeDisplayNameFld.valueChanges.subscribe(name => {
                 this.judge.display_name = name;
             })
         );
+
+        this.$subscriptions.push(
+            this.judgeEmailFld.valueChanges.subscribe(email => {
+                this.judgeEmail = email;
+            } )
+        );
+
+        this.$subscriptions.push(
+            this.judgePhoneFld.valueChanges.subscribe(phone => {
+                this.judgePhone = phone;
+            } )
+        );
+    }
+
+    populateFormFields(existingJudge: ParticipantModel) {
+        if (!existingJudge) {
+            this.judge = new JudgeResponse({ email: this.constants.PleaseSelect, display_name: '' });
+        } else {
+            this.logger.debug(`${this.loggerPrefix} Found judge in hearing. Populating existing selection.`);
+            this.judge = AssignJudgeComponent.mapJudge(existingJudge);
+            this.judgeEmail = existingJudge.email;
+            this.judgePhone = existingJudge.phone;
+            this.canNavigate = true;
+        }
+        this.judgeDisplayNameFld = new FormControl(this.judge.display_name, {
+            validators: [Validators.required, Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)],
+            updateOn: 'blur'
+        });
+        this.judgeEmailFld = new FormControl(this.judgeEmail, {
+            validators:  [Validators.email],
+            updateOn: 'blur'
+        });
+        this.judgePhoneFld = new FormControl(this.judgePhone, {
+            validators: [Validators.pattern(Constants.PhonePattern)],
+            updateOn: 'blur'
+        });
     }
 
     get canNavigateNext() {
@@ -135,20 +178,30 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     }
 
     get judgeDisplayNameInvalid() {
-        return this.judgeDisplayName.invalid && (this.judgeDisplayName.dirty || this.judgeDisplayName.touched || this.failedSubmission);
+        return this.judgeDisplayNameFld.invalid &&
+        (this.judgeDisplayNameFld.dirty || this.judgeDisplayNameFld.touched || this.failedSubmission);
+    }
+
+    get judgeEmailInvalid() {
+        return this.judgeEmailFld.invalid && (this.judgeEmailFld.dirty || this.judgeEmailFld.touched || this.failedSubmission);
+    }
+
+    get judgePhoneInvalid() {
+        return this.judgePhoneFld.invalid && (this.judgePhoneFld.dirty || this.judgePhoneFld.touched || this.failedSubmission);
     }
 
     public addJudge(judgeId: string) {
         if (judgeId) {
-            const selectedJudge = this.availableJudges.find(j => j.email === judgeId);
+            const selectedJudge = this.availableJudges.find(j => j.display_name === judgeId);
             this.judge.first_name = selectedJudge.first_name;
             this.judge.last_name = selectedJudge.last_name;
             this.judge.email = selectedJudge.email;
+            this.selectedJudgeEmail = selectedJudge.email;
             if (!this.isJudgeDisplayNameSet()) {
                 this.judge.display_name = selectedJudge.display_name;
             }
-            this.judgeDisplayName.patchValue(this.judge.display_name);
-            const newJudge = AssignJudgeComponent.mapJudgeToModel(this.judge);
+            this.judgeDisplayNameFld.patchValue(this.judge.display_name);
+            const newJudge = AssignJudgeComponent.mapJudgeToModel(this.judge, this.judgePhone);
 
             const indexOfJudge = this.hearing.participants.findIndex(x => x.is_judge === true);
             if (indexOfJudge > -1) {
@@ -174,8 +227,30 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
                 this.hearing.participants[indexOfJudge].display_name = this.judge.display_name;
             }
         }
-        const text = SanitizeInputText(this.judgeDisplayName.value);
-        this.judgeDisplayName.setValue(text);
+        const text = SanitizeInputText(this.judgeDisplayNameFld.value);
+        this.judgeDisplayNameFld.setValue(text);
+    }
+
+    changeEmail() {
+        let judgeEmail = this.judgeEmail;
+        if (this.judgeEmail === '' ) {
+            judgeEmail = this.selectedJudgeEmail;
+        }
+        const indexOfJudge = this.hearing.participants.findIndex(x => x.is_judge === true);
+        if (indexOfJudge !== -1) {
+            this.hearing.participants[indexOfJudge].email = judgeEmail;
+        }
+        const text = SanitizeInputText(this.judgeEmailFld.value);
+        this.judgeEmailFld.setValue(text);
+    }
+
+    changeTelephone() {
+        const indexOfJudge = this.hearing.participants.findIndex(x => x.is_judge === true);
+        if (indexOfJudge !== -1) {
+            this.hearing.participants[indexOfJudge].phone = this.judgePhone;
+        }
+        const text = SanitizeInputText(this.judgePhone);
+        this.judgePhoneFld.setValue(text);
     }
 
     saveJudge() {
