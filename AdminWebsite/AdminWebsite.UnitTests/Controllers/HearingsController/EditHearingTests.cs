@@ -851,7 +851,11 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 Username = "link@user.com"
             });
             var updatedHearing = new HearingDetailsResponse
-                {Participants = _updatedExistingParticipantHearingOriginal.Participants};
+            {
+                Participants = _updatedExistingParticipantHearingOriginal.Participants,
+                Cases = _updatedExistingParticipantHearingOriginal.Cases,
+                Case_type_name = "Unit Test"
+            };
             var individual =
                 _updatedExistingParticipantHearingOriginal.Participants.First(x =>
                     x.User_role_name.ToLower() == "individual");
@@ -909,7 +913,11 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             };
             
             var updatedHearing = new HearingDetailsResponse
-                {Participants = _updatedExistingParticipantHearingOriginal.Participants};
+                {
+                    Participants = _updatedExistingParticipantHearingOriginal.Participants,
+                    Cases = _updatedExistingParticipantHearingOriginal.Cases,
+                    Case_type_name = "Unit Test"
+                };
             var individual = _updatedExistingParticipantHearingOriginal.Participants.First(x =>
                     x.User_role_name.ToLower() == "individual");
             
@@ -970,7 +978,11 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             var participants = _updatedExistingParticipantHearingOriginal.Participants;
             var updatedHearing = new HearingDetailsResponse
-                {Participants = participants};
+                {
+                    Participants = participants,
+                    Cases = _updatedExistingParticipantHearingOriginal.Cases,
+                    Case_type_name = "Unit Test"
+                };
 
             _bookingsApiClient.SetupSequence(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(_updatedExistingParticipantHearingOriginal)
