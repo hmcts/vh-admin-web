@@ -92,6 +92,7 @@ namespace AdminWebsite.Controllers
                 await _hearingsService.SendNewUserEmailParticipants(hearingDetailsResponse, usernameAdIdDict);
                 _logger.LogDebug("BookNewHearing - Successfully sent emails to participants- {hearing}", hearingDetailsResponse.Id);
 
+                await _hearingsService.SendHearingConfirmationEmail(hearingDetailsResponse);
                 return Created("", hearingDetailsResponse);
             }
             catch (BookingsApiException e)
