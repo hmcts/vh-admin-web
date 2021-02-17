@@ -4,6 +4,7 @@ using AdminWebsite.Security;
 using AdminWebsite.Services;
 using AdminWebsite.Services.Models;
 using AdminWebsite.UnitTests.Helper;
+using AdminWebsite.UnitTests.Helpers;
 using FizzWare.NBuilder;
 using FluentAssertions;
 using FluentValidation;
@@ -80,13 +81,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             };
 
             // setup response
-            var pat1 = Builder<ParticipantResponse>.CreateNew()
-                .With(x => x.Id = Guid.NewGuid())
-                .With(x => x.User_role_name = "Representative")
-                .With(x => x.Username = "username")
-                .Build();
-            var hearingDetailsResponse = Builder<HearingDetailsResponse>.CreateNew()
-                .With(x => x.Participants = new List<ParticipantResponse> { pat1 }).Build();
+            var hearingDetailsResponse = HearingResponseBuilder.Build()
+                                    .WithParticipant("Representative", "username");
             _bookingsApiClient.Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
                 .ReturnsAsync(hearingDetailsResponse);
 
@@ -118,12 +114,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             };
 
             // setup response
-            var pat1 = Builder<ParticipantResponse>.CreateNew()
-                .With(x => x.Id = Guid.NewGuid())
-                .With(x => x.User_role_name = "Representative")
-                .With(x => x.Username = participant.Username).Build();
-            var hearingDetailsResponse = Builder<HearingDetailsResponse>.CreateNew()
-                .With(x => x.Participants = new List<ParticipantResponse> { pat1 }).Build();
+            var hearingDetailsResponse = HearingResponseBuilder.Build()
+                                        .WithParticipant("Representative", participant.Username);
             _bookingsApiClient.Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
                 .ReturnsAsync(hearingDetailsResponse);
 
@@ -163,19 +155,10 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 }
             };
             // setup response
-            var pat1 = Builder<ParticipantResponse>.CreateNew()
-                .With(x => x.Id = Guid.NewGuid())
-                .With(x => x.User_role_name = "Representative")
-                .With(x => x.Username = "username1@email.com")
-                .Build();
-            var pat2 = Builder<ParticipantResponse>.CreateNew()
-                .With(x => x.Id = Guid.NewGuid())
-                .With(x => x.User_role_name = "Individual")
-                .With(x => x.Username = "username2@email.com")
-                .Build();
-            var hearingDetailsResponse = Builder<HearingDetailsResponse>.CreateNew()
-                .With(x => x.Endpoints = Builder<EndpointResponse>.CreateListOfSize(2).Build().ToList())
-                .With(x => x.Participants = new List<ParticipantResponse> { pat1, pat2 }).Build();
+            var hearingDetailsResponse = HearingResponseBuilder.Build()
+                                        .WithEndPoints(2)
+                                        .WithParticipant("Representative", "username1@email.com")
+                                        .WithParticipant("Individual", "username2@email.com");
             _bookingsApiClient.Setup(x => x.BookNewHearingAsync(newHearingRequest))
                 .ReturnsAsync(hearingDetailsResponse);
 
@@ -243,11 +226,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             };
 
             // setup  response
-            var judge = Builder<ParticipantResponse>.CreateNew()
-                .With(x => x.Id = Guid.NewGuid())
-                .With(x => x.User_role_name = "Judge").Build();
-            var hearingDetailsResponse = Builder<HearingDetailsResponse>.CreateNew()
-                .With(x => x.Participants = new List<ParticipantResponse> { judge }).Build();
+            var hearingDetailsResponse = HearingResponseBuilder.Build()
+                                            .WithParticipant("Judge");
             _bookingsApiClient.Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
                 .ReturnsAsync(hearingDetailsResponse);
 
@@ -307,14 +287,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _userIdentity.Setup(x => x.GetUserIdentityName()).Returns(CURRENT_USERNAME);
 
             // setup response
-            var pat1 = Builder<ParticipantResponse>.CreateNew()
-                .With(x => x.Id = Guid.NewGuid())
-                .With(x => x.User_role_name = "Representative").Build();
-            var pat2 = Builder<ParticipantResponse>.CreateNew()
-                .With(x => x.Id = Guid.NewGuid())
-                .With(x => x.User_role_name = "Individual").Build();
-            var hearingDetailsResponse = Builder<HearingDetailsResponse>.CreateNew()
-                .With(x => x.Participants = new List<ParticipantResponse> { pat1, pat2 }).Build();
+            var hearingDetailsResponse = HearingResponseBuilder.Build()
+                                        .WithParticipant("Representative")
+                                        .WithParticipant("Individual");
             _bookingsApiClient.Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
                 .ReturnsAsync(hearingDetailsResponse);
 
@@ -427,13 +402,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             var newUserName = "some_new_user@name.net";
             // setup response
-            var pat1 = Builder<ParticipantResponse>.CreateNew()
-                .With(x => x.Id = Guid.NewGuid())
-                .With(x => x.User_role_name = "Representative")
-                .With(x => x.Username = newUserName)
-                .Build();
-            var hearingDetailsResponse = Builder<HearingDetailsResponse>.CreateNew()
-                .With(x => x.Participants = new List<ParticipantResponse> { pat1 }).Build();
+            var hearingDetailsResponse = HearingResponseBuilder.Build()
+                                        .WithParticipant("Representative", newUserName);
             _bookingsApiClient.Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
                 .ReturnsAsync(hearingDetailsResponse);
             _userAccountService
@@ -458,13 +428,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             var newUserName = "some_new_user@name.net";
             // setup response
-            var pat1 = Builder<ParticipantResponse>.CreateNew()
-                .With(x => x.Id = Guid.NewGuid())
-                .With(x => x.User_role_name = "Individual")
-                .With(x => x.Username = newUserName)
-                .Build();
-            var hearingDetailsResponse = Builder<HearingDetailsResponse>.CreateNew()
-                .With(x => x.Participants = new List<ParticipantResponse> { pat1 }).Build();
+            var hearingDetailsResponse = HearingResponseBuilder.Build()
+                                        .WithParticipant("Individual", newUserName);
             _bookingsApiClient.Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
                 .ReturnsAsync(hearingDetailsResponse);
             _userAccountService
@@ -489,13 +454,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             };
 
             // setup response
-            var pat1 = Builder<ParticipantResponse>.CreateNew()
-                .With(x => x.Id = Guid.NewGuid())
-                .With(x => x.User_role_name = "Representative")
-                .With(x => x.Username = existingUserName)
-                .Build();
-            var hearingDetailsResponse = Builder<HearingDetailsResponse>.CreateNew()
-                .With(x => x.Participants = new List<ParticipantResponse> { pat1 }).Build();
+            var hearingDetailsResponse = HearingResponseBuilder.Build()
+                                         .WithParticipant("Representative", existingUserName);
             _bookingsApiClient.Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
                 .ReturnsAsync(hearingDetailsResponse);
                 
