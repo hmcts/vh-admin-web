@@ -1,8 +1,8 @@
 <div id="roundedborder">
   <h3 class="govuk-heading-m">{{ isEditMode ? 'Participants' : 'Participants added' }}</h3>
   <div class="vhtable" id="participants-list">
-    <div *ngFor="let pat of participants">
-      <div *ngIf="pat.is_judge">
+    <div *ngFor="let p of participants">
+      <div *ngIf="p.is_judge">
         <div class="govuk-grid-row vh-row">
           <div class="govuk-grid-column-one-third vh-image-15">
             <img
@@ -14,11 +14,11 @@
             />
           </div>
           <div class="govuk-grid-column-one-half vh-image-50 vh-wrap-text">
-            {{ pat.title === 'Judge' ? '' : pat.title }} {{ pat.display_name }}
+            {{ p.title === 'Judge' ? '' : p.title }} {{ p.display_name }}
             <div>
               <strong>Judge</strong>
             </div>
-            <div class="govuk-hint vh-wrap" id="judge-name">{{ pat.email }}</div>
+            <div class="govuk-hint vh-wrap" id="judge-name">{{ p.email }}</div>
           </div>
           <div class="govuk-grid-column-one-third vhtable-cell" *ngIf="isSummaryPage">
             <a [routerLink]="['/assign-judge']" class="vhlink" (click)="editJudge()">Change</a>
@@ -31,24 +31,24 @@
       </div>
     </div>
 
-    <div *ngFor="let pat of participants">
-      <div *ngIf="!pat.is_judge">
+    <div *ngFor="let p of participants">
+      <div *ngIf="!p.is_judge">
         <div class="govuk-grid-row vh-row">
           <div class="govuk-grid-column-two-thirds vhtable-header">
-            {{ pat.title }} {{ pat.first_name }} {{ pat.last_name }}
-            <div *ngIf="pat.hearing_role_name === 'Representative'; else notRepresenting">
+            {{ p.title }} {{ p.first_name }} {{ p.last_name }}
+            <div *ngIf="p.isRepresentative">
               <span>Representing</span>
+              <div>
+                <strong>{{ p.representee }}</strong>
+              </div>
             </div>
-            <ng-template #notRepresenting>
-              {{ pat.hearing_role_name }}
-            </ng-template>
             <div>
-              <strong>{{ pat.representee }}</strong>
+              {{ p.case_role_name }}
             </div>
           </div>
           <div class="govuk-grid-column-one-third vhtable-cell" *ngIf="isEditRemoveVisible">
-            <a class="vhlink" href="javascript:void(0)" (click)="editParticipant(pat.email)">Edit</a>
-            <a class="vhlink" href="javascript:void(0)" (click)="removeParticipant(pat.email)">Remove</a>
+            <a class="vhlink" href="javascript:void(0)" (click)="editParticipant(p.email)">Edit</a>
+            <a class="vhlink" href="javascript:void(0)" (click)="removeParticipant(p.email)">Remove</a>
           </div>
         </div>
 
