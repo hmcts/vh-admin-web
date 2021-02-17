@@ -477,6 +477,42 @@ describe('SummaryComponent  with existing request', () => {
         const result = component.getParticipantInfo('123123-1231');
         expect(result).toBe('');
     });
+    it('should remove an existing interpretee', () => {
+        component.hearing = initExistingHearingRequest();
+        component.hearing.participants = [];
+
+        const participants: ParticipantModel[] = [];
+        let participant = new ParticipantModel();
+        participant.first_name = 'firstname';
+        participant.last_name = 'lastname';
+        participant.email = 'firstname.lastname@email.com';
+        participant.case_role_name = 'Claimaint';
+        participant.hearing_role_name = 'Litigant in person';
+        participants.push(participant);
+
+        participant = new ParticipantModel();
+        participant.first_name = 'firstname1';
+        participant.last_name = 'lastname1';
+        participant.email = 'firstname1.lastname1@email.com';
+        participant.case_role_name = 'Claimaint';
+        participant.hearing_role_name = 'Interpreter';
+        participant.interpreterFor = 'firstname.lastname@email.com';
+        participants.push(participant);
+        component.hearing.participants = participants;
+
+        const lp = new LinkedParticipantModel();
+        lp.participantEmail = 'firstname.lastname@email.com';
+        lp.linkedParticipantEmail = 'firstname1.lastname1@email.com';
+        const lps: LinkedParticipantModel[] = [];
+        lps.push(lp);
+        component.hearing.linked_participants = lps;
+
+        component.selectedParticipantEmail = 'firstname1.lastname1@email.com';
+        component.handleContinueRemoveInterpreter();
+        expect(component.hearing.linked_participants).toEqual([]);
+        expect(component.hearing.participants.length).toBe(1);
+        expect(component.hearing.participants[0].first_name).toBe('firstname');
+    });
 });
 
 describe('SummaryComponent  with multi days request', () => {
