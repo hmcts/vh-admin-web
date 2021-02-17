@@ -30,7 +30,7 @@ namespace AdminWebsite.Services
             Dictionary<string, User> newUsernameAdIdDict);
 
         Task SendHearingUpdateEmail(HearingDetailsResponse originalHearing, HearingDetailsResponse updatedHearing);
-        
+
         /// <summary>
         /// This will notify all participants (excluding the judge) a hearing has been booked.
         /// Not to be confused with the "confirmed process".
@@ -49,11 +49,13 @@ namespace AdminWebsite.Services
             List<ParticipantRequest> newParticipantList);
 
         Task UpdateParticipantLinks(Guid hearingId, EditHearingRequest request, HearingDetailsResponse hearing);
-        
+
+        Task AddParticipantLinks(Guid hearingId, EditHearingRequest request);
+
         Task SaveNewParticipants(Guid hearingId, List<ParticipantRequest> newParticipantList);
 
         Task<ConferenceDetailsResponse> GetConferenceDetailsByHearingIdWithRetry(Guid hearingId, string errorMessage);
-      
+
         Task<ConferenceDetailsResponse> GetConferenceDetailsByHearingId(Guid hearingId);
     }
 
@@ -149,7 +151,7 @@ namespace AdminWebsite.Services
                 await _notificationApiClient.CreateNewNotificationAsync(request);
             }
         }
-        
+
         public async Task SendHearingConfirmationEmail(HearingDetailsResponse hearing)
         {
             if (hearing.IsGenericHearing())
@@ -313,6 +315,7 @@ namespace AdminWebsite.Services
             {
                 foreach (var requestParticipant in request.Participants.Where(x => x.LinkedParticipants.Any()))
                 {
+                    if (requestParticipant.Id == null) continue;
                     var participant = hearing.Participants.First(x => x.Id == requestParticipant.Id);
                     var linkedParticipantsInRequest = request.Participants.First(x => x.Id == participant.Id)
                         .LinkedParticipants.ToList();
@@ -344,11 +347,11 @@ namespace AdminWebsite.Services
                     var updateParticipantRequest = new UpdateParticipantRequest
                     {
                         Linked_participants = requests,
-                        Display_name = participant.Display_name,
-                        Organisation_name = participant.Organisation,
-                        Representee = participant.Representee,
-                        Telephone_number = participant.Telephone_number,
-                        Title = participant.Title
+                        Display_name = requestParticipant.DisplayName,
+                        Organisation_name = requestParticipant.OrganisationName,
+                        Representee = requestParticipant.Representee,
+                        Telephone_number = requestParticipant.TelephoneNumber,
+                        Title = requestParticipant.Title
                     };
 
                     await _bookingsApiClient.UpdateParticipantDetailsAsync(hearingId, participant.Id,
@@ -385,6 +388,38 @@ namespace AdminWebsite.Services
                     return Task.CompletedTask;
                 }
             );
+        }
+
+        public async Task AddParticipantLinks(Guid hearingId, EditHearingRequest request)
+        {
+            var updatedHearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
+            if (request.Participants.Any(x => x.LinkedParticipants != null && x.LinkedParticipants.Count > 0))
+            {
+                foreach (var requestParticipant in request.Participants.Where(x => x.LinkedParticipants.Any()))
+                {
+                    if (requestParticipant.Id != null) continue;
+                    var requests = new List<LinkedParticipantRequest>();
+                    foreach (var lp in requestParticipant.LinkedParticipants)
+                    {
+                        requests.Add(new LinkedParticipantRequest
+                        {
+                            Participant_contact_email = lp.ParticipantContactEmail,
+                            Linked_participant_contact_email = lp.LinkedParticipantContactEmail
+                        });
+                    }
+                    var updateParticipantRequest = new UpdateParticipantRequest
+                    {
+                        Linked_participants = requests,
+                        Display_name = requestParticipant.DisplayName,
+                        Organisation_name = requestParticipant.OrganisationName,
+                        Representee = requestParticipant.Representee,
+                        Telephone_number = requestParticipant.TelephoneNumber,
+                        Title = requestParticipant.Title
+                    };
+                    var newParticipant = updatedHearing.Participants.First(p => p.Contact_email == requestParticipant.ContactEmail);
+                    await _bookingsApiClient.UpdateParticipantDetailsAsync(hearingId, newParticipant.Id, updateParticipantRequest);
+                }
+            }
         }
     }
 }

@@ -237,7 +237,8 @@ namespace AdminWebsite.Controllers
               
                 // Add new participants
                 await _hearingsService.SaveNewParticipants(hearingId, newParticipantList);
-                await _hearingsService.UpdateParticipantLinks(hearingId, request, originalHearing);
+                await _hearingsService.AddParticipantLinks(hearingId, request);
+
                 // endpoints
                 await _hearingsService.ProcessEndpoints(hearingId, request, originalHearing, newParticipantList);
 

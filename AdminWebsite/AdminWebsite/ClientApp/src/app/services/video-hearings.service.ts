@@ -198,6 +198,8 @@ export class VideoHearingsService {
         editLinkedParticipant.type = linkedParticipant.linkType;
         editLinkedParticipant.linked_id = linkedParticipant.linkedParticipantId;
         editLinkedParticipant.participant_id = linkedParticipant.participantId;
+        editLinkedParticipant.participant_contact_email = linkedParticipant.participantEmail;
+        editLinkedParticipant.linked_participant_contact_email = linkedParticipant.linkedParticipantEmail;
         return editLinkedParticipant;
     }
 
