@@ -49,9 +49,11 @@ namespace AdminWebsite.Services
             List<ParticipantRequest> newParticipantList);
 
         Task UpdateParticipantLinks(Guid hearingId, EditHearingRequest request, HearingDetailsResponse hearing);
+        
         Task SaveNewParticipants(Guid hearingId, List<ParticipantRequest> newParticipantList);
 
         Task<ConferenceDetailsResponse> GetConferenceDetailsByHearingIdWithRetry(Guid hearingId, string errorMessage);
+      
         Task<ConferenceDetailsResponse> GetConferenceDetailsByHearingId(Guid hearingId);
     }
 

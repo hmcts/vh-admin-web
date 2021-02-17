@@ -22,8 +22,11 @@ using NotificationApi.Contract.Requests;
 using NUnit.Framework;
 using VideoApi.Client;
 using CaseResponse = AdminWebsite.BookingsAPI.Client.CaseResponse;
+using AddEndpointRequest = AdminWebsite.BookingsAPI.Client.AddEndpointRequest;
 using LinkedParticipantResponse = AdminWebsite.BookingsAPI.Client.LinkedParticipantResponse;
 using LinkedParticipantType = AdminWebsite.BookingsAPI.Client.LinkedParticipantType;
+using UpdateEndpointRequest = AdminWebsite.BookingsAPI.Client.UpdateEndpointRequest;
+using UpdateParticipantRequest = AdminWebsite.BookingsAPI.Client.UpdateParticipantRequest;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {
@@ -88,7 +91,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                     }
                 }
             };
-            
+
             var cases = new List<CaseResponse>
             {
                 new CaseResponse {Name = "Case", Number = "123"}
@@ -124,7 +127,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 Cases = cases,
                 Case_type_name = "Unit Test"
             };
-
+            
             var guid1 = Guid.NewGuid();
             var guid2 = Guid.NewGuid();
             var guid3 = Guid.NewGuid();
@@ -863,7 +866,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             var addParticipantLinksToHearingRequest = new EditHearingRequest
             {
-                Case = new EditCaseRequest { Name = "Case", Number = "123" },
+                Case = new EditCaseRequest {Name = "Case", Number = "123"},
                 Participants = new List<EditParticipantRequest>
                 {
                     new EditParticipantRequest
@@ -884,7 +887,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             };
 
             var result = await _controller.EditHearing(_validId, addParticipantLinksToHearingRequest);
-            ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
+            ((OkObjectResult) result.Result).StatusCode.Should().Be(200);
             _bookingsApiClient.Verify(x => x.UpdateParticipantDetailsAsync(
                 _validId, individual.Id,
                 It.IsAny<UpdateParticipantRequest>()), Times.AtLeastOnce);
@@ -949,8 +952,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _bookingsApiClient.Verify(x => x.UpdateParticipantDetailsAsync(
                 _validId, individual.Id,
                 It.IsAny<UpdateParticipantRequest>()), Times.AtLeastOnce);
-        }
-
+        } 
+        
         [Test]
         public async Task Should_Not_Update_LinkedParticipants_If_Not_In_Request()
         {

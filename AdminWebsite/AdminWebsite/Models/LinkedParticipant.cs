@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using AdminWebsite.BookingsAPI.Client;
 
 namespace AdminWebsite.Models

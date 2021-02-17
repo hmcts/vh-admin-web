@@ -233,10 +233,12 @@ namespace AdminWebsite.Controllers
                     await _bookingsApiClient.RemoveParticipantFromHearingAsync(hearingId, participantToDelete.Id);
                 }
 
+                await _hearingsService.UpdateParticipantLinks(hearingId, request, originalHearing);
+              
                 // Add new participants
                 await _hearingsService.SaveNewParticipants(hearingId, newParticipantList);
                 await _hearingsService.UpdateParticipantLinks(hearingId, request, originalHearing);
-                // endpoints.
+                // endpoints
                 await _hearingsService.ProcessEndpoints(hearingId, request, originalHearing, newParticipantList);
 
                 var updatedHearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
@@ -436,7 +438,7 @@ namespace AdminWebsite.Controllers
                 throw;
             }
         }
-
+        
         private async Task PopulateUserIdsAndUsernames(IList<ParticipantRequest> participants,
             Dictionary<string, User> usernameAdIdDict)
         {
