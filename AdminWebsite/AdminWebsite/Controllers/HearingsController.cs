@@ -233,11 +233,9 @@ namespace AdminWebsite.Controllers
                     await _bookingsApiClient.RemoveParticipantFromHearingAsync(hearingId, participantToDelete.Id);
                 }
 
-                await UpdateParticipantLinks(hearingId, request, hearing);
-
                 // Add new participants
                 await _hearingsService.SaveNewParticipants(hearingId, newParticipantList);
-
+                await _hearingsService.UpdateParticipantLinks(hearingId, request, hearing);
                 // endpoints.
                 await _hearingsService.ProcessEndpoints(hearingId, request, hearing, newParticipantList);
 
@@ -434,56 +432,6 @@ namespace AdminWebsite.Controllers
                 }
 
                 throw;
-            }
-        }
-
-        private async Task UpdateParticipantLinks(Guid hearingId, EditHearingRequest request, HearingDetailsResponse hearing)
-        {
-            if (request.Participants.Any(x => x.LinkedParticipants != null && x.LinkedParticipants.Count > 0))
-            {
-                foreach (var requestParticipant in request.Participants.Where(x => x.LinkedParticipants.Any()))
-                {
-                    var participant = hearing.Participants.First(x => x.Id == requestParticipant.Id);
-                    var linkedParticipantsInRequest = request.Participants.First(x => x.Id == participant.Id)
-                        .LinkedParticipants.ToList();
-
-                    var requests = new List<LinkedParticipantRequest>();
-
-                    foreach (var linkedParticipantInRequest in linkedParticipantsInRequest)
-                    {
-                        var linkedId = linkedParticipantInRequest.LinkedId;
-                        var existingLink = false;
-
-                        if (participant.Linked_participants != null)
-                        {
-                            existingLink = participant.Linked_participants.Exists(x => x.Linked_id == linkedId);
-                        }
-
-                        if (!existingLink)
-                        {
-                            var linkedParticipant =
-                                hearing.Participants.First(x => x.Id == linkedParticipantInRequest.LinkedId);
-                            requests.Add(new LinkedParticipantRequest
-                            {
-                                Participant_contact_email = participant.Contact_email,
-                                Linked_participant_contact_email = linkedParticipant.Contact_email
-                            });
-                        }
-                    }
-
-                    var updateParticipantRequest = new UpdateParticipantRequest
-                    {
-                        Linked_participants = requests, 
-                        Display_name = participant.Display_name, 
-                        Organisation_name = participant.Organisation, 
-                        Representee = participant.Representee, 
-                        Telephone_number = participant.Telephone_number, 
-                        Title = participant.Title
-                    };
-
-                    await _bookingsApiClient.UpdateParticipantDetailsAsync(hearingId, participant.Id,
-                        updateParticipantRequest);
-                }
             }
         }
 

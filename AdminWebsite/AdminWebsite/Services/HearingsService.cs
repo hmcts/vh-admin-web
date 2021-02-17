@@ -38,6 +38,7 @@ namespace AdminWebsite.Services
         Task ProcessEndpoints(Guid hearingId, EditHearingRequest request, HearingDetailsResponse hearing,
             List<ParticipantRequest> newParticipantList);
 
+        Task UpdateParticipantLinks(Guid hearingId, EditHearingRequest request, HearingDetailsResponse hearing);
         Task SaveNewParticipants(Guid hearingId, List<ParticipantRequest> newParticipantList);
 
         Task<ConferenceDetailsResponse> GetConferenceDetailsByHearingIdWithRetry(Guid hearingId, string errorMessage);
@@ -53,8 +54,8 @@ namespace AdminWebsite.Services
         private readonly IBookingsApiClient _bookingsApiClient;
         private readonly ILogger<HearingsService> _logger;
 
-        public HearingsService(IPollyRetryService pollyRetryService,IUserAccountService userAccountService, 
-            INotificationApiClient notificationApiClient, IVideoApiClient videoApiClient,IBookingsApiClient bookingsApiClient, ILogger<HearingsService> logger)
+        public HearingsService(IPollyRetryService pollyRetryService, IUserAccountService userAccountService,
+            INotificationApiClient notificationApiClient, IVideoApiClient videoApiClient, IBookingsApiClient bookingsApiClient, ILogger<HearingsService> logger)
         {
             _pollyRetryService = pollyRetryService;
             _userAccountService = userAccountService;
@@ -120,7 +121,7 @@ namespace AdminWebsite.Services
         {
             try
             {
-                var details =  await _pollyRetryService.WaitAndRetryAsync<VideoApiException, ConferenceDetailsResponse>
+                var details = await _pollyRetryService.WaitAndRetryAsync<VideoApiException, ConferenceDetailsResponse>
                 (
                     6, _ => TimeSpan.FromSeconds(8),
                     retryAttempt =>
@@ -253,6 +254,56 @@ namespace AdminWebsite.Services
                                 updateEndpointRequest);
                         }
                     }
+                }
+            }
+        }
+
+        public async Task UpdateParticipantLinks(Guid hearingId, EditHearingRequest request, HearingDetailsResponse hearing)
+        {
+            if (request.Participants.Any(x => x.LinkedParticipants != null && x.LinkedParticipants.Count > 0))
+            {
+                foreach (var requestParticipant in request.Participants.Where(x => x.LinkedParticipants.Any()))
+                {
+                    var participant = hearing.Participants.First(x => x.Id == requestParticipant.Id);
+                    var linkedParticipantsInRequest = request.Participants.First(x => x.Id == participant.Id)
+                        .LinkedParticipants.ToList();
+
+                    var requests = new List<LinkedParticipantRequest>();
+
+                    foreach (var linkedParticipantInRequest in linkedParticipantsInRequest)
+                    {
+                        var linkedId = linkedParticipantInRequest.LinkedId;
+                        var existingLink = false;
+
+                        if (participant.Linked_participants != null)
+                        {
+                            existingLink = participant.Linked_participants.Exists(x => x.Linked_id == linkedId);
+                        }
+
+                        if (!existingLink)
+                        {
+                            var linkedParticipant =
+                                hearing.Participants.First(x => x.Id == linkedParticipantInRequest.LinkedId);
+                            requests.Add(new LinkedParticipantRequest
+                            {
+                                Participant_contact_email = participant.Contact_email,
+                                Linked_participant_contact_email = linkedParticipant.Contact_email
+                            });
+                        }
+                    }
+
+                    var updateParticipantRequest = new UpdateParticipantRequest
+                    {
+                        Linked_participants = requests,
+                        Display_name = participant.Display_name,
+                        Organisation_name = participant.Organisation,
+                        Representee = participant.Representee,
+                        Telephone_number = participant.Telephone_number,
+                        Title = participant.Title
+                    };
+
+                    await _bookingsApiClient.UpdateParticipantDetailsAsync(hearingId, participant.Id,
+                        updateParticipantRequest);
                 }
             }
         }

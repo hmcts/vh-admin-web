@@ -284,6 +284,12 @@ describe('Video hearing service', () => {
         participant.phone = '123123123';
         participant.case_role_name = 'Defendant';
         participant.hearing_role_name = 'Litigant in person';
+        const linkedParticipants: LinkedParticipantModel[] = [];
+        const linkedParticipantModel = new LinkedParticipantModel();
+        linkedParticipantModel.linkType = LinkedParticipantType.Interpreter;
+        linkedParticipantModel.linkedParticipantId = '200';
+        linkedParticipantModel.participantId = '100';
+        participant.linked_participants = linkedParticipants;
         participants.push(participant);
         const caseModel = new CaseModel();
         caseModel.name = 'case1';
@@ -345,6 +351,12 @@ describe('Video hearing service', () => {
         participant.phone = '123123123';
         participant.case_role_name = 'Defendant';
         participant.hearing_role_name = 'Litigant in person';
+        const linkedParticipants: LinkedParticipantModel[] = [];
+        const linkedParticipantModel = new LinkedParticipantModel();
+        linkedParticipantModel.linkType = LinkedParticipantType.Interpreter;
+        linkedParticipantModel.linkedParticipantId = '200';
+        linkedParticipantModel.participantId = '100';
+        participant.linked_participants = linkedParticipants;
         participants.push(participant);
         const caseModel = new CaseModel();
         caseModel.name = 'case1';

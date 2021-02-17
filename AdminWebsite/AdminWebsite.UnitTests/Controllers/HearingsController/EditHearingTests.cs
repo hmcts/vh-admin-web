@@ -789,7 +789,11 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 Username = "link@user.com"
             });
             var updatedHearing = new HearingDetailsResponse
-            { Participants = _updatedExistingParticipantHearingOriginal.Participants };
+            {
+                Participants = _updatedExistingParticipantHearingOriginal.Participants,
+                Cases = _updatedExistingParticipantHearingOriginal.Cases,
+                Case_type_name = "Unit Test"
+            };
             var individual =
                 _updatedExistingParticipantHearingOriginal.Participants.First(x =>
                     x.User_role_name.ToLower() == "individual");
@@ -847,7 +851,11 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             };
 
             var updatedHearing = new HearingDetailsResponse
-            { Participants = _updatedExistingParticipantHearingOriginal.Participants };
+            {
+                Participants = _updatedExistingParticipantHearingOriginal.Participants,
+                Cases = _updatedExistingParticipantHearingOriginal.Cases,
+                Case_type_name = "Unit Test"
+            };
             var individual = _updatedExistingParticipantHearingOriginal.Participants.First(x =>
                     x.User_role_name.ToLower() == "individual");
 
@@ -882,12 +890,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _bookingsApiClient.Verify(x => x.UpdateParticipantDetailsAsync(
                 _validId, individual.Id,
                 It.IsAny<UpdateParticipantRequest>()), Times.AtLeastOnce);
-
-            var actionResult = (OkObjectResult)result.Result;
-            var response = (HearingDetailsResponse)actionResult.Value;
-            response.Participants[0].Linked_participants.Should().
-                ContainSingle(
-                    x => x.Linked_id == _updatedExistingParticipantHearingOriginal.Participants[1].Id);
         }
 
         [Test]
@@ -903,9 +905,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var individual1 = _updatedExistingParticipantHearingOriginal.Participants[0];
             var individual2 = _updatedExistingParticipantHearingOriginal.Participants[1];
 
-            individual1.Linked_participants = new List<BookingsAPI.Client.LinkedParticipantResponse>()
+            individual1.Linked_participants = new List<LinkedParticipantResponse>()
             {
-                new BookingsAPI.Client.LinkedParticipantResponse
+                new LinkedParticipantResponse
                 {
                     Linked_id = individual2.Id,
                     Type = LinkedParticipantType.Interpreter
@@ -914,7 +916,11 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             var participants = _updatedExistingParticipantHearingOriginal.Participants;
             var updatedHearing = new HearingDetailsResponse
-            { Participants = participants };
+            {
+                Participants = participants,
+                Cases = _updatedExistingParticipantHearingOriginal.Cases,
+                Case_type_name = "Unit Test"
+            };
 
             _bookingsApiClient.SetupSequence(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(_updatedExistingParticipantHearingOriginal)
@@ -925,6 +931,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
             _bookingsApiClient.Verify(x => x.UpdateParticipantDetailsAsync(updatedHearing.Id, individual1.Id, It.IsAny<UpdateParticipantRequest>()), Times.Never);
         }
+
         private void GivenApiThrowsExceptionOnUpdate(HttpStatusCode code)
         {
             _bookingsApiClient.Setup(x =>
