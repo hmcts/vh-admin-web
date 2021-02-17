@@ -488,6 +488,7 @@ describe('SummaryComponent  with existing request', () => {
         participant.email = 'firstname.lastname@email.com';
         participant.case_role_name = 'Claimaint';
         participant.hearing_role_name = 'Litigant in person';
+        participant.id = '100';
         participants.push(participant);
 
         participant = new ParticipantModel();
@@ -497,12 +498,15 @@ describe('SummaryComponent  with existing request', () => {
         participant.case_role_name = 'Claimaint';
         participant.hearing_role_name = 'Interpreter';
         participant.interpreterFor = 'firstname.lastname@email.com';
+        participant.id = '200';
         participants.push(participant);
         component.hearing.participants = participants;
 
         const lp = new LinkedParticipantModel();
         lp.participantEmail = 'firstname.lastname@email.com';
         lp.linkedParticipantEmail = 'firstname1.lastname1@email.com';
+        lp.linkedParticipantId = '200';
+        lp.linkedParticipantId = '100';
         const lps: LinkedParticipantModel[] = [];
         lps.push(lp);
         component.hearing.linked_participants = lps;
