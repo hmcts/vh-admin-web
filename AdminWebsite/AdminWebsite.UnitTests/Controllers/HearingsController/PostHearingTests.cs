@@ -4,7 +4,7 @@ using AdminWebsite.Security;
 using AdminWebsite.Services;
 using AdminWebsite.Services.Models;
 using AdminWebsite.UnitTests.Helper;
-using AdminWebsite.VideoAPI.Client;
+using AdminWebsite.UnitTests.Helpers;
 using FizzWare.NBuilder;
 using FluentAssertions;
 using FluentValidation;
@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using VideoApi.Client;
 using EndpointResponse = AdminWebsite.BookingsAPI.Client.EndpointResponse;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
@@ -77,13 +78,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             };
 
             // setup response
-            var pat1 = Builder<ParticipantResponse>.CreateNew()
-                .With(x => x.Id = Guid.NewGuid())
-                .With(x => x.User_role_name = "Representative")
-                .With(x => x.Username = "username")
-                .Build();
-            var hearingDetailsResponse = Builder<HearingDetailsResponse>.CreateNew()
-                .With(x => x.Participants = new List<ParticipantResponse> { pat1 }).Build();
+            var hearingDetailsResponse = HearingResponseBuilder.Build()
+                                    .WithParticipant("Representative", "username");
             _bookingsApiClient.Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
                 .ReturnsAsync(hearingDetailsResponse);
 
@@ -104,10 +100,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             };
             var participantList = new List<BookingsAPI.Client.ParticipantRequest> { participant };
 
-            var da = "username@newemail.com";
+            const string da = "username@newemail.com";
             var endpoints = new EndpointRequest { Display_name = "displayname", Defence_advocate_username = da };
-            var endpointList = new List<EndpointRequest>();
-            endpointList.Add(endpoints);
+            var endpointList = new List<EndpointRequest> {endpoints};
 
             var hearing = new BookNewHearingRequest
             {
@@ -116,12 +111,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             };
 
             // setup response
-            var pat1 = Builder<ParticipantResponse>.CreateNew()
-                .With(x => x.Id = Guid.NewGuid())
-                .With(x => x.User_role_name = "Representative")
-                .With(x => x.Username = participant.Username).Build();
-            var hearingDetailsResponse = Builder<HearingDetailsResponse>.CreateNew()
-                .With(x => x.Participants = new List<ParticipantResponse> { pat1 }).Build();
+            var hearingDetailsResponse = HearingResponseBuilder.Build()
+                                        .WithParticipant("Representative", participant.Username);
             _bookingsApiClient.Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
                 .ReturnsAsync(hearingDetailsResponse);
 
@@ -161,19 +152,10 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 }
             };
             // setup response
-            var pat1 = Builder<ParticipantResponse>.CreateNew()
-                .With(x => x.Id = Guid.NewGuid())
-                .With(x => x.User_role_name = "Representative")
-                .With(x => x.Username = "username1@email.com")
-                .Build();
-            var pat2 = Builder<ParticipantResponse>.CreateNew()
-                .With(x => x.Id = Guid.NewGuid())
-                .With(x => x.User_role_name = "Individual")
-                .With(x => x.Username = "username2@email.com")
-                .Build();
-            var hearingDetailsResponse = Builder<HearingDetailsResponse>.CreateNew()
-                .With(x => x.Endpoints = Builder<EndpointResponse>.CreateListOfSize(2).Build().ToList())
-                .With(x => x.Participants = new List<ParticipantResponse> { pat1, pat2 }).Build();
+            var hearingDetailsResponse = HearingResponseBuilder.Build()
+                                        .WithEndPoints(2)
+                                        .WithParticipant("Representative", "username1@email.com")
+                                        .WithParticipant("Individual", "username2@email.com");
             _bookingsApiClient.Setup(x => x.BookNewHearingAsync(newHearingRequest))
                 .ReturnsAsync(hearingDetailsResponse);
 
@@ -195,11 +177,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             };
 
             // setup  response
-            var judge = Builder<ParticipantResponse>.CreateNew()
-                .With(x => x.Id = Guid.NewGuid())
-                .With(x => x.User_role_name = "Judge").Build();
-            var hearingDetailsResponse = Builder<HearingDetailsResponse>.CreateNew()
-                .With(x => x.Participants = new List<ParticipantResponse> { judge }).Build();
+            var hearingDetailsResponse = HearingResponseBuilder.Build()
+                                            .WithParticipant("Judge");
             _bookingsApiClient.Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
                 .ReturnsAsync(hearingDetailsResponse);
 
@@ -259,14 +238,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _userIdentity.Setup(x => x.GetUserIdentityName()).Returns(CURRENT_USERNAME);
 
             // setup response
-            var pat1 = Builder<ParticipantResponse>.CreateNew()
-                .With(x => x.Id = Guid.NewGuid())
-                .With(x => x.User_role_name = "Representative").Build();
-            var pat2 = Builder<ParticipantResponse>.CreateNew()
-                .With(x => x.Id = Guid.NewGuid())
-                .With(x => x.User_role_name = "Individual").Build();
-            var hearingDetailsResponse = Builder<HearingDetailsResponse>.CreateNew()
-                .With(x => x.Participants = new List<ParticipantResponse> { pat1, pat2 }).Build();
+            var hearingDetailsResponse = HearingResponseBuilder.Build()
+                                        .WithParticipant("Representative")
+                                        .WithParticipant("Individual");
             _bookingsApiClient.Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
                 .ReturnsAsync(hearingDetailsResponse);
 
@@ -346,7 +320,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         {
             var startDate = new DateTime(2020, 10, 1);
             var endDate = new DateTime(2020, 10, 1);
-            var request = new MultiHearingRequest { StartDate = startDate.ToString(), EndDate = endDate.ToString() };
+            var request = new MultiHearingRequest { StartDate = startDate, EndDate = endDate};
 
 
             var response = await _controller.CloneHearing(Guid.NewGuid(), request);
@@ -379,13 +353,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             var newUserName = "some_new_user@name.net";
             // setup response
-            var pat1 = Builder<ParticipantResponse>.CreateNew()
-                .With(x => x.Id = Guid.NewGuid())
-                .With(x => x.User_role_name = "Representative")
-                .With(x => x.Username = newUserName)
-                .Build();
-            var hearingDetailsResponse = Builder<HearingDetailsResponse>.CreateNew()
-                .With(x => x.Participants = new List<ParticipantResponse> { pat1 }).Build();
+            var hearingDetailsResponse = HearingResponseBuilder.Build()
+                                        .WithParticipant("Representative", newUserName);
             _bookingsApiClient.Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
                 .ReturnsAsync(hearingDetailsResponse);
             _userAccountService
@@ -410,13 +379,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             var newUserName = "some_new_user@name.net";
             // setup response
-            var pat1 = Builder<ParticipantResponse>.CreateNew()
-                .With(x => x.Id = Guid.NewGuid())
-                .With(x => x.User_role_name = "Individual")
-                .With(x => x.Username = newUserName)
-                .Build();
-            var hearingDetailsResponse = Builder<HearingDetailsResponse>.CreateNew()
-                .With(x => x.Participants = new List<ParticipantResponse> { pat1 }).Build();
+            var hearingDetailsResponse = HearingResponseBuilder.Build()
+                                        .WithParticipant("Individual", newUserName);
             _bookingsApiClient.Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
                 .ReturnsAsync(hearingDetailsResponse);
             _userAccountService
@@ -441,13 +405,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             };
 
             // setup response
-            var pat1 = Builder<ParticipantResponse>.CreateNew()
-                .With(x => x.Id = Guid.NewGuid())
-                .With(x => x.User_role_name = "Representative")
-                .With(x => x.Username = existingUserName)
-                .Build();
-            var hearingDetailsResponse = Builder<HearingDetailsResponse>.CreateNew()
-                .With(x => x.Participants = new List<ParticipantResponse> { pat1 }).Build();
+            var hearingDetailsResponse = HearingResponseBuilder.Build()
+                                         .WithParticipant("Representative", existingUserName);
             _bookingsApiClient.Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
                 .ReturnsAsync(hearingDetailsResponse);
                 
@@ -456,11 +415,11 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _notificationApiMock.Verify(x => x.CreateNewNotificationAsync(It.IsAny<AddNotificationRequest>()), Times.Never);
         }
 
-        private MultiHearingRequest GetMultiHearingRequest()
+        private static MultiHearingRequest GetMultiHearingRequest()
         {
             var startDate = new DateTime(2020, 10, 1);
             var endDate = new DateTime(2020, 10, 6);
-            return new MultiHearingRequest { StartDate = startDate.ToString(), EndDate = endDate.ToString() };
+            return new MultiHearingRequest { StartDate = startDate, EndDate = endDate };
         }
 
         private Task<ActionResult<HearingDetailsResponse>> PostNewHearing()

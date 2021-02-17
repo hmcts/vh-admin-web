@@ -2,7 +2,6 @@
 using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
-using AdminWebsite.VideoAPI.Client;
 using FluentAssertions;
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
@@ -13,6 +12,7 @@ using NotificationApi.Client;
 using NUnit.Framework;
 using System;
 using System.Threading.Tasks;
+using VideoApi.Client;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {

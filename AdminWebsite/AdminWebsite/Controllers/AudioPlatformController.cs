@@ -1,5 +1,4 @@
-﻿using AdminWebsite.VideoAPI.Client;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
@@ -7,6 +6,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using VideoApi.Client;
+using VideoApi.Contract.Responses;
 using CvpForAudioFileResponse = AdminWebsite.Models.CvpForAudioFileResponse;
 using HearingAudioRecordingResponse = AdminWebsite.Models.HearingAudioRecordingResponse;
 
@@ -42,7 +43,7 @@ namespace AdminWebsite.Controllers
             try
             {
                 var response = await _videoAPiClient.GetAudioRecordingLinkAsync(hearingId);
-                return Ok(new HearingAudioRecordingResponse { AudioFileLinks = response.Audio_file_links });
+                return Ok(new HearingAudioRecordingResponse { AudioFileLinks = response.AudioFileLinks });
 
             }
             catch (VideoApiException ex)
@@ -111,10 +112,10 @@ namespace AdminWebsite.Controllers
             }
         }
 
-        private static List<CvpForAudioFileResponse> GetCvpForAudioFileResponses(List<CvpAudioFileResponse> cvpFilesResponse)
+        private static List<CvpForAudioFileResponse> GetCvpForAudioFileResponses(IEnumerable<CvpAudioFileResponse> cvpFilesResponse)
         {
             var response = cvpFilesResponse
-                .Select(x => new CvpForAudioFileResponse {FileName = x.File_name, SasTokenUri = x.Sas_token_url})
+                .Select(x => new CvpForAudioFileResponse {FileName = x.FileName, SasTokenUri = x.SasTokenUrl})
                 .ToList();
             
             return response;

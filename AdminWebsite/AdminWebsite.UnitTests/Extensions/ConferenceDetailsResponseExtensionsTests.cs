@@ -1,9 +1,8 @@
-﻿
-using AdminWebsite.Extensions;
-using AdminWebsite.VideoAPI.Client;
-using FluentAssertions;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using System;
+using AdminWebsite.Extensions;
+using FluentAssertions;
+using VideoApi.Contract.Responses;
 
 namespace AdminWebsite.UnitTests.Extensions
 {
@@ -17,14 +16,14 @@ namespace AdminWebsite.UnitTests.Extensions
             conferenceDetailsResp = new ConferenceDetailsResponse
             {
                 Id = Guid.NewGuid(),
-                Hearing_id = Guid.NewGuid(),
-                Meeting_room = new MeetingRoomResponse
+                HearingId = Guid.NewGuid(),
+                MeetingRoom = new MeetingRoomResponse
                 {
-                    Admin_uri = "admin",
-                    Judge_uri = "judge",
-                    Participant_uri = "participant",
-                    Pexip_node = "pexip",
-                    Telephone_conference_id = "121212"
+                    AdminUri = "admin",
+                    JudgeUri = "judge",
+                    ParticipantUri = "participant",
+                    PexipNode = "pexip",
+                    TelephoneConferenceId = "121212"
                 }
             };
         }
@@ -40,7 +39,7 @@ namespace AdminWebsite.UnitTests.Extensions
         [Test]
         public void Should_return_true_MeetingRoom_is_null()
         {
-            conferenceDetailsResp.Meeting_room = null;
+            conferenceDetailsResp.MeetingRoom = null;
 
             var result = conferenceDetailsResp.HasInvalidMeetingRoom();
 
@@ -50,7 +49,7 @@ namespace AdminWebsite.UnitTests.Extensions
         [Test]
         public void Should_return_true_AdminUri_is_null_or_empty()
         {
-            conferenceDetailsResp.Meeting_room.Admin_uri = string.Empty;
+            conferenceDetailsResp.MeetingRoom.AdminUri = string.Empty;
 
             var result = conferenceDetailsResp.HasInvalidMeetingRoom();
 
@@ -60,7 +59,7 @@ namespace AdminWebsite.UnitTests.Extensions
         [Test]
         public void Should_return_true_JudgeUri_is_null_or_empty()
         {
-            conferenceDetailsResp.Meeting_room.Judge_uri = string.Empty;
+            conferenceDetailsResp.MeetingRoom.JudgeUri = string.Empty;
 
             var result = conferenceDetailsResp.HasInvalidMeetingRoom();
 
@@ -70,7 +69,7 @@ namespace AdminWebsite.UnitTests.Extensions
         [Test]
         public void Should_return_true_ParticipantUri_is_null_or_empty()
         {
-            conferenceDetailsResp.Meeting_room.Participant_uri = string.Empty;
+            conferenceDetailsResp.MeetingRoom.ParticipantUri = string.Empty;
 
             var result = conferenceDetailsResp.HasInvalidMeetingRoom();
 
@@ -80,7 +79,7 @@ namespace AdminWebsite.UnitTests.Extensions
         [Test]
         public void Should_return_true_PexipNode_is_null_or_empty()
         {
-            conferenceDetailsResp.Meeting_room.Pexip_node = string.Empty;
+            conferenceDetailsResp.MeetingRoom.PexipNode = string.Empty;
 
             var result = conferenceDetailsResp.HasInvalidMeetingRoom();
 
