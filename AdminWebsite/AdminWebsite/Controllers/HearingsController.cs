@@ -258,14 +258,21 @@ namespace AdminWebsite.Controllers
                 _logger.LogDebug("Successfully assigned participants to the correct group");
 
                 // Send a notification email to newly created participants
+                var newParticipantEmails = newParticipantList.Select(p => p.Contact_email);
                 if (newParticipantList.Any())
                 {
                     _logger.LogDebug("Sending email notification to the participants");
                     await _hearingsService.SendNewUserEmailParticipants(updatedHearing, usernameAdIdDict);
+
+                    var participantsForConfirmation = updatedHearing.Participants
+                        .Where(p => newParticipantEmails.Contains(p.Contact_email)).ToList();
+                    await _hearingsService.SendHearingConfirmationEmail(updatedHearing, participantsForConfirmation);
                     _logger.LogDebug("Successfully sent emails to participants - {Hearing}", updatedHearing.Id);
                 }
 
-                await _hearingsService.SendHearingUpdateEmail(originalHearing, updatedHearing);
+                var participantsForAmendment = updatedHearing.Participants
+                    .Where(p => !newParticipantEmails.Contains(p.Contact_email)).ToList();
+                await _hearingsService.SendHearingUpdateEmail(originalHearing, updatedHearing, participantsForAmendment);
                 
                 return Ok(updatedHearing);
             }
