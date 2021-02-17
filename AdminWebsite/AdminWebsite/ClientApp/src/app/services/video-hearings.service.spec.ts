@@ -317,6 +317,8 @@ describe('Video hearing service', () => {
         const actualCase = editHearingRequest.case;
         const actualEndpoint = editHearingRequest.endpoints[0].display_name;
         const expectedEndpoint = hearingModel.endpoints[0].displayName;
+        const expectedLinkedParticipats = hearingModel.participants[0].linked_participants[0];
+        const actualLinkedParticipats = editHearingRequest.participants[0].linked_participants[0];
         expect(editHearingRequest.hearing_room_name).toEqual(hearingModel.court_room);
         expect(editHearingRequest.hearing_venue_name).toEqual(hearingModel.court_name);
         expect(editHearingRequest.other_information).toEqual(hearingModel.other_information);

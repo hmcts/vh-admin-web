@@ -725,6 +725,7 @@ describe('AddParticipantComponent edit mode', () => {
             displayName = component.form.controls['displayName'];
             companyName = component.form.controls['companyName'];
             companyNameIndividual = component.form.controls['companyNameIndividual'];
+            interpretee = component.form.controls['interpreterFor'];
         })
     );
     it('should initialize form controls', () => {
@@ -790,6 +791,7 @@ describe('AddParticipantComponent edit mode', () => {
         companyName.setValue('CC');
         component.isRoleSelected = true;
         component.isPartySelected = true;
+        interpretee.setValue('test4@email.com');
         component.updateParticipant();
         const updatedParticipant = component.hearing.participants.find(x => x.email === 'test3@test.com');
         expect(updatedParticipant.display_name).toBe('Sam');
@@ -915,6 +917,47 @@ describe('AddParticipantComponent edit mode', () => {
         component.cancelChanges();
         expect(component.attemptingDiscardChanges).toBeFalsy();
         expect(routerSpy.navigate).toHaveBeenCalled();
+    });
+    it('should clear the linked participant model if interpretee is removed on edit', () => {
+        component.editMode = true;
+        component.hearing.participants = [];
+        component.ngOnInit();
+
+        const part1 = new ParticipantModel();
+        part1.first_name = 'firstname';
+        part1.last_name = 'lastname-interpretee';
+        part1.display_name = 'firstname lastname-interpretee';
+        part1.is_judge = false;
+        part1.email = 'firstname.lastname-interpretee@email.com';
+        part1.hearing_role_name = 'Litigant in Person';
+        part1.case_role_name = 'Claimant';
+        part1.id = '100';
+
+        const part2 = new ParticipantModel();
+        part2.first_name = 'firstname';
+        part2.last_name = 'lastname-interpreter';
+        part2.display_name = 'firstname lastname-interpreter';
+        part2.is_judge = false;
+        part2.email = 'firstname.lastname-interpreter@email.com';
+        part2.hearing_role_name = 'Interpreter';
+        part2.case_role_name = 'Claimant';
+        part2.interpreterFor = 'firstname.lastname-interpretee@email.com';
+        part2.id = '300';
+        component.hearing.participants.push(part1);
+        component.hearing.participants.push(part2);
+
+        const linkedParticipants: LinkedParticipantModel[] = [];
+        const lp = new LinkedParticipantModel();
+        lp.participantEmail = 'firstname.lastname-interpreter@email.com';
+        lp.linkedParticipantEmail = 'firstname.lastname-interpretee@email.com';
+        lp.linkedParticipantId = '100';
+        lp.participantId = '300';
+        linkedParticipants.push(lp);
+        component.hearing.linked_participants = linkedParticipants;
+        component.selectedParticipantEmail = 'firstname.lastname-interpretee@email.com';
+        component.handleContinueRemoveInterpreter();
+        expect(component.hearing.linked_participants.length).toBe(0);
+        expect(participantServiceSpy.removeParticipant).toHaveBeenCalled();
     });
 });
 describe('AddParticipantComponent edit mode no participants added', () => {
