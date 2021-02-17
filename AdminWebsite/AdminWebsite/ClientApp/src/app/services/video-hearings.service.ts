@@ -118,19 +118,19 @@ export class VideoHearingsService {
 
     saveHearing(newRequest: HearingModel): Promise<HearingDetailsResponse> {
         const hearingRequest = this.mapHearing(newRequest);
-        const bookingRquest = new BookHearingRequest({
+        const bookingRequest = new BookHearingRequest({
             booking_details: hearingRequest
         });
 
         if (newRequest.multiDays) {
-            bookingRquest.is_multi_day = true;
-            bookingRquest.multi_hearing_details = new MultiHearingRequest({
-                start_date: newRequest.scheduled_date_time,
-                end_date: newRequest.end_hearing_date_time
+            bookingRequest.is_multi_day = true;
+            bookingRequest.multi_hearing_details = new MultiHearingRequest({
+                start_date: new Date(newRequest.scheduled_date_time),
+                end_date: new Date(newRequest.end_hearing_date_time)
             });
         }
 
-        return this.bhClient.bookNewHearing(hearingRequest).toPromise();
+        return this.bhClient.bookNewHearing(bookingRequest).toPromise();
     }
 
     cloneMultiHearings(hearingId: string, request: MultiHearingRequest): Promise<void> {

@@ -97,7 +97,7 @@ namespace AdminWebsite.Controllers
                 {
                     var listOfDates = DateListMapper.GetListOfWorkingDates(request.MultiHearingDetails.StartDate,
                         request.MultiHearingDetails.EndDate);
-                    var totalDays = listOfDates.Select(x => x.DayOfYear).Distinct().Count();
+                    var totalDays = listOfDates.Select(x => x.DayOfYear).Distinct().Count() +1; // include start date
                     await _hearingsService.SendMultiDayHearingConfirmationEmail(hearingDetailsResponse, totalDays);
                 }
                 else

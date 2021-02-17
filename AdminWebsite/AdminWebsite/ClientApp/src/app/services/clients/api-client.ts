@@ -475,7 +475,7 @@ export class BHClient {
 
     /**
      * Create a hearing
-     * @param body (optional)
+     * @param body (optional) Hearing Request object
      * @return Success
      */
     bookNewHearing(body: BookHearingRequest | undefined): Observable<HearingDetailsResponse> {
