@@ -217,7 +217,8 @@ namespace AdminWebsite.Controllers
             try
             {
                 //Save hearing details
-                var updateHearingRequest = HearingUpdateRequestMapper.MapTo(request, _userIdentity.GetUserIdentityName());
+                var updateHearingRequest =
+                    HearingUpdateRequestMapper.MapTo(request, _userIdentity.GetUserIdentityName());
                 await _bookingsApiClient.UpdateHearingDetailsAsync(hearingId, updateHearingRequest);
 
                 var newParticipantList = new List<ParticipantRequest>();
@@ -226,7 +227,8 @@ namespace AdminWebsite.Controllers
                 {
                     if (!participant.Id.HasValue)
                     {
-                        await _hearingsService.ProcessNewParticipants(hearingId, participant, originalHearing, usernameAdIdDict, newParticipantList);
+                        await _hearingsService.ProcessNewParticipants(hearingId, participant, originalHearing,
+                            usernameAdIdDict, newParticipantList);
                     }
                     else
                     {
@@ -236,7 +238,8 @@ namespace AdminWebsite.Controllers
 
                 // Delete existing participants if the request doesn't contain any update information
                 originalHearing.Participants ??= new List<ParticipantResponse>();
-                var deleteParticipantList = originalHearing.Participants.Where(p => request.Participants.All(rp => rp.Id != p.Id));
+                var deleteParticipantList =
+                    originalHearing.Participants.Where(p => request.Participants.All(rp => rp.Id != p.Id));
                 foreach (var participantToDelete in deleteParticipantList)
                 {
                     _logger.LogDebug("Removing existing participant {Participant} from hearing {Hearing}",
@@ -245,7 +248,7 @@ namespace AdminWebsite.Controllers
                 }
 
                 await _hearingsService.UpdateParticipantLinks(hearingId, request, originalHearing);
-              
+
                 // Add new participants
                 await _hearingsService.SaveNewParticipants(hearingId, newParticipantList);
 
@@ -270,10 +273,14 @@ namespace AdminWebsite.Controllers
                     _logger.LogDebug("Successfully sent emails to participants - {Hearing}", updatedHearing.Id);
                 }
 
+                if (!updatedHearing.HasScheduleAmended(originalHearing)) return Ok(updatedHearing);
+
                 var participantsForAmendment = updatedHearing.Participants
                     .Where(p => !newParticipantEmails.Contains(p.Contact_email)).ToList();
-                await _hearingsService.SendHearingUpdateEmail(originalHearing, updatedHearing, participantsForAmendment);
-                
+                await _hearingsService.SendHearingUpdateEmail(originalHearing, updatedHearing,
+                    participantsForAmendment);
+
+
                 return Ok(updatedHearing);
             }
             catch (BookingsApiException e)
@@ -281,14 +288,16 @@ namespace AdminWebsite.Controllers
                 _logger.LogError(e,
                     "Failed to edit hearing {Hearing}. Status Code {StatusCode} - Message {Message}",
                     hearingId, e.StatusCode, e.Response);
-                if (e.StatusCode == (int)HttpStatusCode.BadRequest)
+                if (e.StatusCode == (int) HttpStatusCode.BadRequest)
                 {
                     return BadRequest(e.Response);
                 }
-                if (e.StatusCode == (int)HttpStatusCode.NotFound)
+
+                if (e.StatusCode == (int) HttpStatusCode.NotFound)
                 {
                     return NotFound(e.Response);
                 }
+
                 throw;
             }
         }
