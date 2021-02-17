@@ -38,6 +38,7 @@ namespace AdminWebsite.Services
         /// <param name="hearing"></param>
         /// <returns></returns>
         Task SendHearingConfirmationEmail(HearingDetailsResponse hearing);
+        Task SendMultiDayHearingConfirmationEmail(HearingDetailsResponse hearing, int days);
 
         Task ProcessNewParticipants(Guid hearingId, EditParticipantRequest participant, HearingDetailsResponse hearing,
             Dictionary<string, User> usernameAdIdDict, List<ParticipantRequest> newParticipantList);
@@ -160,6 +161,24 @@ namespace AdminWebsite.Services
                 .Where(x => !x.User_role_name.Contains("Judge", StringComparison.CurrentCultureIgnoreCase))
                 .Select(participant => AddNotificationRequestMapper.MapToHearingConfirmationNotification(hearing, participant))
                 .ToList();
+            foreach (var request in requests)
+            {
+                await _notificationApiClient.CreateNewNotificationAsync(request);
+            }
+        }
+
+        public async Task SendMultiDayHearingConfirmationEmail(HearingDetailsResponse hearing, int days)
+        {
+            if (hearing.IsGenericHearing())
+            {
+                return;
+            }
+            
+            var requests = hearing.Participants
+                .Where(x => !x.User_role_name.Contains("Judge", StringComparison.CurrentCultureIgnoreCase))
+                .Select(participant => AddNotificationRequestMapper.MapToMultiDayHearingConfirmationNotification(hearing, participant, days))
+                .ToList();
+            
             foreach (var request in requests)
             {
                 await _notificationApiClient.CreateNewNotificationAsync(request);

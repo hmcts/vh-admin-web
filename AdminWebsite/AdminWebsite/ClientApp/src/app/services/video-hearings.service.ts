@@ -19,7 +19,8 @@ import {
     UpdateBookingStatusRequest,
     UpdateBookingStatusResponse,
     MultiHearingRequest,
-    PhoneConferenceResponse
+    PhoneConferenceResponse,
+    BookHearingRequest
 } from './clients/api-client';
 import { HearingModel } from '../common/model/hearing.model';
 import { CaseModel } from '../common/model/case.model';
@@ -117,6 +118,18 @@ export class VideoHearingsService {
 
     saveHearing(newRequest: HearingModel): Promise<HearingDetailsResponse> {
         const hearingRequest = this.mapHearing(newRequest);
+        const bookingRquest = new BookHearingRequest({
+            booking_details: hearingRequest
+        });
+
+        if (newRequest.multiDays) {
+            bookingRquest.is_multi_day = true;
+            bookingRquest.multi_hearing_details = new MultiHearingRequest({
+                start_date: newRequest.scheduled_date_time,
+                end_date: newRequest.end_hearing_date_time
+            });
+        }
+
         return this.bhClient.bookNewHearing(hearingRequest).toPromise();
     }
 

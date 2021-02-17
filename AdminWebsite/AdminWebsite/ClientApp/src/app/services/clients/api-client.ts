@@ -475,10 +475,10 @@ export class BHClient {
 
     /**
      * Create a hearing
-     * @param body (optional) Hearing Request object
+     * @param body (optional)
      * @return Success
      */
-    bookNewHearing(body: BookNewHearingRequest | undefined): Observable<HearingDetailsResponse> {
+    bookNewHearing(body: BookHearingRequest | undefined): Observable<HearingDetailsResponse> {
         let url_ = this.baseUrl + '/api/hearings';
         url_ = url_.replace(/[?&]$/, '');
 
@@ -2332,7 +2332,6 @@ export class ProblemDetails implements IProblemDetails {
     status?: number | undefined;
     detail?: string | undefined;
     instance?: string | undefined;
-    readonly extensions?: { [key: string]: any } | undefined;
 
     constructor(data?: IProblemDetails) {
         if (data) {
@@ -2349,12 +2348,6 @@ export class ProblemDetails implements IProblemDetails {
             this.status = _data['status'];
             this.detail = _data['detail'];
             this.instance = _data['instance'];
-            if (_data['extensions']) {
-                (<any>this).extensions = {} as any;
-                for (let key in _data['extensions']) {
-                    if (_data['extensions'].hasOwnProperty(key)) (<any>this).extensions![key] = _data['extensions'][key];
-                }
-            }
         }
     }
 
@@ -2372,12 +2365,6 @@ export class ProblemDetails implements IProblemDetails {
         data['status'] = this.status;
         data['detail'] = this.detail;
         data['instance'] = this.instance;
-        if (this.extensions) {
-            data['extensions'] = {};
-            for (let key in this.extensions) {
-                if (this.extensions.hasOwnProperty(key)) data['extensions'][key] = this.extensions[key];
-            }
-        }
         return data;
     }
 }
@@ -2388,7 +2375,6 @@ export interface IProblemDetails {
     status?: number | undefined;
     detail?: string | undefined;
     instance?: string | undefined;
-    extensions?: { [key: string]: any } | undefined;
 }
 
 export class CvpForAudioFileResponse implements ICvpForAudioFileResponse {
@@ -2979,6 +2965,90 @@ export interface IBookNewHearingRequest {
     audio_recording_required?: boolean;
     endpoints?: EndpointRequest[] | undefined;
     linked_participants?: LinkedParticipantRequest[] | undefined;
+}
+
+export class MultiHearingRequest implements IMultiHearingRequest {
+    start_date?: Date;
+    end_date?: Date;
+
+    constructor(data?: IMultiHearingRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.start_date = _data['start_date'] ? new Date(_data['start_date'].toString()) : <any>undefined;
+            this.end_date = _data['end_date'] ? new Date(_data['end_date'].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): MultiHearingRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new MultiHearingRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['start_date'] = this.start_date ? this.start_date.toISOString() : <any>undefined;
+        data['end_date'] = this.end_date ? this.end_date.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export interface IMultiHearingRequest {
+    start_date?: Date;
+    end_date?: Date;
+}
+
+export class BookHearingRequest implements IBookHearingRequest {
+    booking_details?: BookNewHearingRequest;
+    is_multi_day?: boolean;
+    multi_hearing_details?: MultiHearingRequest;
+
+    constructor(data?: IBookHearingRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.booking_details = _data['booking_details'] ? BookNewHearingRequest.fromJS(_data['booking_details']) : <any>undefined;
+            this.is_multi_day = _data['is_multi_day'];
+            this.multi_hearing_details = _data['multi_hearing_details']
+                ? MultiHearingRequest.fromJS(_data['multi_hearing_details'])
+                : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): BookHearingRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new BookHearingRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['booking_details'] = this.booking_details ? this.booking_details.toJSON() : <any>undefined;
+        data['is_multi_day'] = this.is_multi_day;
+        data['multi_hearing_details'] = this.multi_hearing_details ? this.multi_hearing_details.toJSON() : <any>undefined;
+        return data;
+    }
+}
+
+export interface IBookHearingRequest {
+    booking_details?: BookNewHearingRequest;
+    is_multi_day?: boolean;
+    multi_hearing_details?: MultiHearingRequest;
 }
 
 export class CaseResponse implements ICaseResponse {
@@ -3574,45 +3644,6 @@ export interface IHealthCheckResponse {
     app_version?: ApplicationVersion;
 }
 
-export class MultiHearingRequest implements IMultiHearingRequest {
-    start_date?: Date;
-    end_date?: Date;
-
-    constructor(data?: IMultiHearingRequest) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.start_date = _data['start_date'] ? new Date(_data['start_date'].toString()) : <any>undefined;
-            this.end_date = _data['end_date'] ? new Date(_data['end_date'].toString()) : <any>undefined;
-        }
-    }
-
-    static fromJS(data: any): MultiHearingRequest {
-        data = typeof data === 'object' ? data : {};
-        let result = new MultiHearingRequest();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data['start_date'] = this.start_date ? this.start_date.toISOString() : <any>undefined;
-        data['end_date'] = this.end_date ? this.end_date.toISOString() : <any>undefined;
-        return data;
-    }
-}
-
-export interface IMultiHearingRequest {
-    start_date?: Date;
-    end_date?: Date;
-}
-
 /** Case request */
 export class EditCaseRequest implements IEditCaseRequest {
     /** The case number */
@@ -3658,6 +3689,53 @@ export interface IEditCaseRequest {
     name?: string | undefined;
 }
 
+export class LinkedParticipant implements ILinkedParticipant {
+    id?: string;
+    participant_id?: string;
+    linked_id?: string;
+    type?: LinkedParticipantType;
+
+    constructor(data?: ILinkedParticipant) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data['id'];
+            this.participant_id = _data['participant_id'];
+            this.linked_id = _data['linked_id'];
+            this.type = _data['type'];
+        }
+    }
+
+    static fromJS(data: any): LinkedParticipant {
+        data = typeof data === 'object' ? data : {};
+        let result = new LinkedParticipant();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['id'] = this.id;
+        data['participant_id'] = this.participant_id;
+        data['linked_id'] = this.linked_id;
+        data['type'] = this.type;
+        return data;
+    }
+}
+
+export interface ILinkedParticipant {
+    id?: string;
+    participant_id?: string;
+    linked_id?: string;
+    type?: LinkedParticipantType;
+}
+
 /** Participant request */
 export class EditParticipantRequest implements IEditParticipantRequest {
     /** Participant Id. */
@@ -3684,6 +3762,8 @@ export class EditParticipantRequest implements IEditParticipantRequest {
     representee?: string | undefined;
     /** Organisation name */
     organisation_name?: string | undefined;
+    /** List of linked participants */
+    linked_participants?: LinkedParticipant[] | undefined;
 
     constructor(data?: IEditParticipantRequest) {
         if (data) {
@@ -3707,6 +3787,10 @@ export class EditParticipantRequest implements IEditParticipantRequest {
             this.hearing_role_name = _data['hearing_role_name'];
             this.representee = _data['representee'];
             this.organisation_name = _data['organisation_name'];
+            if (Array.isArray(_data['linked_participants'])) {
+                this.linked_participants = [] as any;
+                for (let item of _data['linked_participants']) this.linked_participants!.push(LinkedParticipant.fromJS(item));
+            }
         }
     }
 
@@ -3731,6 +3815,10 @@ export class EditParticipantRequest implements IEditParticipantRequest {
         data['hearing_role_name'] = this.hearing_role_name;
         data['representee'] = this.representee;
         data['organisation_name'] = this.organisation_name;
+        if (Array.isArray(this.linked_participants)) {
+            data['linked_participants'] = [];
+            for (let item of this.linked_participants) data['linked_participants'].push(item.toJSON());
+        }
         return data;
     }
 }
@@ -3761,6 +3849,8 @@ export interface IEditParticipantRequest {
     representee?: string | undefined;
     /** Organisation name */
     organisation_name?: string | undefined;
+    /** List of linked participants */
+    linked_participants?: LinkedParticipant[] | undefined;
 }
 
 export class EditEndpointRequest implements IEditEndpointRequest {

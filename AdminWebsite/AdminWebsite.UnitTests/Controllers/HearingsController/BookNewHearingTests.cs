@@ -3,7 +3,6 @@ using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
 using AdminWebsite.UnitTests.Helpers;
-using FizzWare.NBuilder;
 using FluentAssertions;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
@@ -15,11 +14,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AdminWebsite.Contracts.Requests;
+using NotificationApi.Contract;
+using NotificationApi.Contract.Requests;
 using UserApi.Client;
 using UserApi.Contract.Requests;
 using UserApi.Contract.Responses;
 using VideoApi.Client;
-using EndpointResponse = AdminWebsite.BookingsAPI.Client.EndpointResponse;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {
@@ -38,6 +39,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private IHearingsService _hearingsService;
 
         private AdminWebsite.Controllers.HearingsController _controller;
+        private BookNewHearingRequest _bookNewHearingRequest;
 
         [SetUp]
         public void Setup()
@@ -66,13 +68,151 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 _editHearingRequestValidator.Object,
                 new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>().Object,
                 _hearingsService);
+            
+            InitHearingForTest();
         }
 
         [Test]
         public async Task Should_book_hearing()
+        {   
+            // setup response
+            var hearingDetailsResponse = HearingResponseBuilder.Build()
+                                         .WithEndPoints(2)
+                                         .WithParticipant("Representative", "username1@hmcts.net")
+                                         .WithParticipant("Individual", "fname2.lname2@hmcts.net")
+                                         .WithParticipant("Individual", "fname3.lname3@hmcts.net")
+                                         .WithParticipant("Judicial Office Holder", "fname4.lname4@hmcts.net")
+                                         .WithParticipant("Judge", "judge.fudge@hmcts.net");
+            _bookingsApiClient.Setup(x => x.BookNewHearingAsync(_bookNewHearingRequest))
+                .ReturnsAsync(hearingDetailsResponse);
+
+            var bookingRequest = new BookHearingRequest
+            {
+                BookingDetails = _bookNewHearingRequest
+            };
+            var result = await _controller.Post(bookingRequest);
+
+            result.Result.Should().BeOfType<CreatedResult>();
+            var createdObjectResult = (CreatedResult) result.Result;
+            createdObjectResult.StatusCode.Should().Be(201);
+
+            _bookNewHearingRequest.Participants.Any(x => string.IsNullOrWhiteSpace(x.Username)).Should().BeFalse();
+            _pollyRetryServiceMock.Verify(x => x.WaitAndRetryAsync<Exception, Task>
+            (
+                It.IsAny<int>(), It.IsAny<Func<int, TimeSpan>>(), It.IsAny<Action<int>>(),
+                It.IsAny<Func<Task, bool>>(), It.IsAny<Func<Task<Task>>>()
+            ), Times.Exactly(4));
+
+            _notificationApiMock.Verify(
+                x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(notification =>
+                    notification.NotificationType == NotificationType.HearingConfirmationJudge)), Times.Never);
+            
+            _notificationApiMock.Verify(
+                x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(notification =>
+                    notification.NotificationType == NotificationType.HearingConfirmationLip)), Times.AtLeast(1));
+            
+            _notificationApiMock.Verify(
+                x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(notification =>
+                    notification.NotificationType == NotificationType.HearingConfirmationRepresentative)), Times.AtLeast(1));
+            
+            _notificationApiMock.Verify(
+                x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(notification =>
+                    notification.NotificationType == NotificationType.HearingConfirmationJoh)), Times.AtLeast(1));
+        }
+
+        [Test]
+        public async Task should_not_send_notice_email_for_generic_hearing()
+        {
+            // setup response
+            var hearingDetailsResponse = HearingResponseBuilder.Build()
+                .WithEndPoints(2)
+                .WithParticipant("Representative", "username1@hmcts.net")
+                .WithParticipant("Individual", "fname2.lname2@hmcts.net")
+                .WithParticipant("Individual", "fname3.lname3@hmcts.net")
+                .WithParticipant("Judicial Office Holder", "fname4.lname4@hmcts.net")
+                .WithParticipant("Judge", "judge.fudge@hmcts.net");
+            hearingDetailsResponse.Case_type_name = "Generic";
+            _bookingsApiClient.Setup(x => x.BookNewHearingAsync(_bookNewHearingRequest))
+                .ReturnsAsync(hearingDetailsResponse);
+
+            var bookingRequest = new BookHearingRequest
+            {
+                BookingDetails = _bookNewHearingRequest
+            };
+            var result = await _controller.Post(bookingRequest);
+
+            result.Result.Should().BeOfType<CreatedResult>();
+            var createdObjectResult = (CreatedResult) result.Result;
+            createdObjectResult.StatusCode.Should().Be(201);
+            
+            _notificationApiMock.Verify(
+                x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(notification =>
+                    notification.NotificationType == NotificationType.HearingConfirmationJudge)), Times.Never);
+            
+            _notificationApiMock.Verify(
+                x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(notification =>
+                    notification.NotificationType == NotificationType.HearingConfirmationLip)), Times.Never);
+            
+            _notificationApiMock.Verify(
+                x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(notification =>
+                    notification.NotificationType == NotificationType.HearingConfirmationRepresentative)), Times.Never);
+            
+            _notificationApiMock.Verify(
+                x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(notification =>
+                    notification.NotificationType == NotificationType.HearingConfirmationJoh)), Times.Never);
+        }
+
+        [Test]
+        public async Task should_send_multi_day_notice_confirmation_when_hearing_is_a_multi_day_hearing()
+        {
+            // setup response
+            var hearingDetailsResponse = HearingResponseBuilder.Build()
+                .WithEndPoints(2)
+                .WithParticipant("Representative", "username1@hmcts.net")
+                .WithParticipant("Individual", "fname2.lname2@hmcts.net")
+                .WithParticipant("Individual", "fname3.lname3@hmcts.net")
+                .WithParticipant("Judicial Office Holder", "fname4.lname4@hmcts.net")
+                .WithParticipant("Judge", "judge.fudge@hmcts.net");
+            _bookingsApiClient.Setup(x => x.BookNewHearingAsync(_bookNewHearingRequest))
+                .ReturnsAsync(hearingDetailsResponse);
+
+            var bookingRequest = new BookHearingRequest
+            {
+                BookingDetails = _bookNewHearingRequest,
+                IsMultiDay = true,
+                MultiHearingDetails = new MultiHearingRequest
+                {
+                    StartDate = hearingDetailsResponse.Scheduled_date_time,
+                    EndDate = hearingDetailsResponse.Scheduled_date_time.AddDays(7)
+                }
+            };
+            var result = await _controller.Post(bookingRequest);
+
+            result.Result.Should().BeOfType<CreatedResult>();
+            var createdObjectResult = (CreatedResult) result.Result;
+            createdObjectResult.StatusCode.Should().Be(201);
+            
+            _notificationApiMock.Verify(
+                x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(notification =>
+                    notification.NotificationType == NotificationType.HearingConfirmationJudgeMultiDay)), Times.Never);
+            
+            _notificationApiMock.Verify(
+                x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(notification =>
+                    notification.NotificationType == NotificationType.HearingConfirmationLipMultiDay)), Times.AtLeast(1));
+            
+            _notificationApiMock.Verify(
+                x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(notification =>
+                    notification.NotificationType == NotificationType.HearingConfirmationRepresentativeMultiDay)), Times.AtLeast(1));
+            
+            _notificationApiMock.Verify(
+                x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(notification =>
+                    notification.NotificationType == NotificationType.HearingConfirmationJohMultiDay)), Times.AtLeast(1));
+        }
+
+        private void InitHearingForTest()
         {
             // request with existing person, new user, existing user in AD but not in persons table 
-            var request = new BookNewHearingRequest
+            _bookNewHearingRequest = new BookNewHearingRequest
             {
                 Participants = new List<BookingsAPI.Client.ParticipantRequest>
                 {
@@ -99,6 +239,13 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                     },
                     new BookingsAPI.Client.ParticipantRequest
                     {
+                        Case_role_name = "Panel Member", Contact_email = "contact4@email.com",
+                        Hearing_role_name = "HearingRole", Display_name = "display name4",
+                        First_name = "fname4", Middle_names = "", Last_name = "lname4", Organisation_name = "",
+                        Representee = "", Telephone_number = ""
+                    },
+                    new BookingsAPI.Client.ParticipantRequest
+                    {
                         Case_role_name = "Judge", Contact_email = "judge@email.com",
                         Hearing_role_name = "Judge", Display_name = "Judge Fudge",
                         First_name = "Jack", Middle_names = "", Last_name = "Fudge",
@@ -115,7 +262,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 }
             };
 
-            foreach (var participant in request.Participants.Where(x => !string.IsNullOrWhiteSpace(x.Username)))
+            foreach (var participant in _bookNewHearingRequest.Participants.Where(x => !string.IsNullOrWhiteSpace(x.Username)))
             {
                 var profile = new UserProfile
                 {
@@ -128,7 +275,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                     .ReturnsAsync(profile);
             }
 
-            foreach (var participant in request.Participants.Where(x => string.IsNullOrWhiteSpace(x.Username)))
+            foreach (var participant in _bookNewHearingRequest.Participants.Where(x => string.IsNullOrWhiteSpace(x.Username)))
             {
                 var newUser = new NewUserResponse()
                 {
@@ -141,7 +288,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                         userRequest.RecoveryEmail == participant.Contact_email))).ReturnsAsync(newUser);
             }
 
-            var existingPat3 = request.Participants.Single(x => x.Contact_email == "contact3@email.com");
+            var existingPat3 = _bookNewHearingRequest.Participants.Single(x => x.Contact_email == "contact3@email.com");
 
             var existingUser3 = new UserProfile()
             {
@@ -170,28 +317,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 })
                 .ReturnsAsync(Task.CompletedTask);
 
-            // setup response
-            var hearingDetailsResponse = HearingResponseBuilder.Build()
-                                         .WithEndPoints(2)
-                                         .WithParticipant("Representative", "username1@hmcts.net")
-                                         .WithParticipant("Individual", "fname2.lname2@hmcts.net")
-                                         .WithParticipant("Individual", "fname3.lname3@hmcts.net")
-                                         .WithParticipant("Judge", "judge.fudge@hmcts.net");
-            _bookingsApiClient.Setup(x => x.BookNewHearingAsync(request))
-                .ReturnsAsync(hearingDetailsResponse);
-
-            var result = await _controller.Post(request);
-
-            result.Result.Should().BeOfType<CreatedResult>();
-            var createdObjectResult = (CreatedResult) result.Result;
-            createdObjectResult.StatusCode.Should().Be(201);
-
-            request.Participants.Any(x => string.IsNullOrWhiteSpace(x.Username)).Should().BeFalse();
-            _pollyRetryServiceMock.Verify(x => x.WaitAndRetryAsync<Exception, Task>
-            (
-                It.IsAny<int>(), It.IsAny<Func<int, TimeSpan>>(), It.IsAny<Action<int>>(),
-                It.IsAny<Func<Task, bool>>(), It.IsAny<Func<Task<Task>>>()
-            ), Times.Exactly(3));
         }
     }
 }
