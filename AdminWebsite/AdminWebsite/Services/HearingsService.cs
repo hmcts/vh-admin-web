@@ -48,9 +48,12 @@ namespace AdminWebsite.Services
         Task ProcessEndpoints(Guid hearingId, EditHearingRequest request, HearingDetailsResponse hearing,
             List<ParticipantRequest> newParticipantList);
 
+        Task UpdateParticipantLinks(Guid hearingId, EditHearingRequest request, HearingDetailsResponse hearing);
+        
         Task SaveNewParticipants(Guid hearingId, List<ParticipantRequest> newParticipantList);
 
         Task<ConferenceDetailsResponse> GetConferenceDetailsByHearingIdWithRetry(Guid hearingId, string errorMessage);
+      
         Task<ConferenceDetailsResponse> GetConferenceDetailsByHearingId(Guid hearingId);
     }
 
@@ -300,6 +303,51 @@ namespace AdminWebsite.Services
                                 updateEndpointRequest);
                         }
                     }
+                }
+            }
+        }
+
+        public async Task UpdateParticipantLinks(Guid hearingId, EditHearingRequest request, HearingDetailsResponse hearing)
+        {
+            if (request.Participants.Any(x => x.LinkedParticipants != null && x.LinkedParticipants.Count > 0))
+            {
+                foreach (var requestParticipant in request.Participants.Where(x => x.LinkedParticipants.Any()))
+                {
+                    var participant = hearing.Participants.First(x => x.Id == requestParticipant.Id);
+                    var linkedParticipantsInRequest = request.Participants.First(x => x.Id == participant.Id)
+                        .LinkedParticipants.ToList();
+
+                    var requests = new List<LinkedParticipantRequest>();
+
+                    foreach (var linkedParticipantInRequest in linkedParticipantsInRequest)
+                    {
+                        var linkedId = linkedParticipantInRequest.LinkedId;
+                        var existingLink = false;
+
+                        if (participant.Linked_participants != null)
+                        {
+                            existingLink = participant.Linked_participants.Exists(x => x.Linked_id == linkedId);
+                        }
+
+                        if (!existingLink)
+                        {
+                            var linkedParticipant =
+                                hearing.Participants.First(x => x.Id == linkedParticipantInRequest.LinkedId);
+                            requests.Add(new LinkedParticipantRequest
+                            {
+                                Participant_contact_email = participant.Contact_email,
+                                Linked_participant_contact_email = linkedParticipant.Contact_email
+                            });
+                        }
+                    }
+
+                    var updateParticipantRequest = new UpdateParticipantRequest
+                    {
+                        Linked_participants = requests
+                    };
+
+                    await _bookingsApiClient.UpdateParticipantDetailsAsync(hearingId, participant.Id,
+                        updateParticipantRequest);
                 }
             }
         }
