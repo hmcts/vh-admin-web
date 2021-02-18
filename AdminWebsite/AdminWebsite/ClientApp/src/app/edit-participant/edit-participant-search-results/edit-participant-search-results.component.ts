@@ -21,7 +21,7 @@ export class EditParticipantSearchResultsComponent {
 
     get warningText(): string {
         // tslint:disable-next-line: quotemark
-        return this.isUnauthorisedSearch ? 'Judge accounts cannot be edited' : "Sorry, we can't find a user with that name.";
+        return this.isUnauthorisedSearch ? 'Judge accounts cannot be edited' : "Sorry, we can't find a user with that email address.";
     }
 
     editParticipant() {

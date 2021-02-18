@@ -251,7 +251,10 @@ namespace AdminWebsite.Controllers
                     _logger.LogDebug("Successfully sent emails to participants - {Hearing}", updatedHearing.Id);
                 }
 
-                await _hearingsService.SendHearingUpdateEmail(originalHearing, updatedHearing);
+                if (updatedHearing.HasScheduleAmended(originalHearing))
+                {
+                    await _hearingsService.SendHearingUpdateEmail(originalHearing, updatedHearing);                    
+                }
                 
                 return Ok(updatedHearing);
             }
