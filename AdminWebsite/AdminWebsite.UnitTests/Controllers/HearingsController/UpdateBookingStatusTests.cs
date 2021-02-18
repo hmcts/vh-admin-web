@@ -1,7 +1,10 @@
+using System;
+using System.Threading.Tasks;
 using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
+using AdminWebsite.UnitTests.Helpers;
 using FluentAssertions;
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
@@ -9,9 +12,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NotificationApi.Client;
+using NotificationApi.Contract;
+using NotificationApi.Contract.Requests;
 using NUnit.Framework;
-using System;
-using System.Threading.Tasks;
 using VideoApi.Client;
 using VideoApi.Contract.Responses;
 
@@ -98,7 +101,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
 
         [Test]
-        public async Task UpdateBookingStatus_returns_success_response_when_conference_exists_with_meeting_room()
+        public async Task UpdateBookingStatus_returns_success_response_when_conference_exists_with_meeting_room_and_send_reminder_email()
         {
             _userIdentity.Setup(x => x.GetUserIdentityName()).Returns("test");
             var request = new UpdateBookingStatusRequest
@@ -108,6 +111,10 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 Status = UpdateBookingStatus.Created
             };
             var hearingId = Guid.NewGuid();
+            var hearing = InitBookingForResponse(hearingId);
+            _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
+                .ReturnsAsync(hearing);
+            
             var expectedConferenceDetailsResponse = new ConferenceDetailsResponse
             {
                 Id = Guid.NewGuid(),
@@ -151,6 +158,82 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                     It.IsAny<int>(), It.IsAny<Func<int, TimeSpan>>(), It.IsAny<Action<int>>(),
                     It.IsAny<Func<ConferenceDetailsResponse, bool>>(), It.IsAny<Func<Task<ConferenceDetailsResponse>>>()
                 ),Times.AtLeastOnce);
+
+            _notificationApiMock.Verify(
+                x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(notification =>
+                    notification.NotificationType == NotificationType.HearingReminderJoh)), Times.AtLeast(1));
+            
+            _notificationApiMock.Verify(
+                x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(notification =>
+                    notification.NotificationType == NotificationType.HearingReminderLip)), Times.AtLeast(1));
+            
+            _notificationApiMock.Verify(
+                x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(notification =>
+                    notification.NotificationType == NotificationType.HearingReminderRepresentative)), Times.AtLeast(1));
+        }
+        
+        [Test]
+        public async Task UpdateBookingStatus_returns_success_response_and_not_send_email_when_conference_exists_with_meeting_room_but_hearing_is_not_the_primary_of_a_multi_day_hearing()
+        {
+            _userIdentity.Setup(x => x.GetUserIdentityName()).Returns("test");
+            var request = new UpdateBookingStatusRequest
+            {
+                Updated_by = "test",
+                Cancel_reason = "",
+                Status = UpdateBookingStatus.Created
+            };
+            var hearingId = Guid.NewGuid();
+            var hearing = InitBookingForResponse(hearingId);
+            hearing.Group_id = Guid.NewGuid();
+            _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
+                .ReturnsAsync(hearing);
+            
+            var expectedConferenceDetailsResponse = new ConferenceDetailsResponse
+            {
+                Id = Guid.NewGuid(),
+                HearingId = hearingId,
+                MeetingRoom = new MeetingRoomResponse
+                {
+                    AdminUri = "admin",
+                    JudgeUri = "judge",
+                    ParticipantUri = "participant",
+                    PexipNode = "pexip",
+                    TelephoneConferenceId = "121212"
+                }
+            };
+
+            _bookingsApiClient.Setup(x => x.UpdateBookingStatusAsync(hearingId, request));
+            _pollyRetryServiceMock.Setup(x => x.WaitAndRetryAsync<VideoApiException, ConferenceDetailsResponse>
+                (
+                    It.IsAny<int>(), It.IsAny<Func<int, TimeSpan>>(), It.IsAny<Action<int>>(),
+                    It.IsAny<Func<ConferenceDetailsResponse, bool>>(), It.IsAny<Func<Task<ConferenceDetailsResponse>>>()
+                ))
+                .Callback(async (int retries, Func<int, TimeSpan> sleepDuration, Action<int> retryAction,
+                    Func<ConferenceDetailsResponse, bool> handleResultCondition, Func<Task<ConferenceDetailsResponse>> executeFunction) =>
+                {
+                    sleepDuration(1);
+                    retryAction(1);
+                    handleResultCondition(expectedConferenceDetailsResponse);
+                    await executeFunction();
+                })
+                .ReturnsAsync(expectedConferenceDetailsResponse);
+
+            var response = await _controller.UpdateBookingStatus(hearingId, request);
+
+            var result = (OkObjectResult)response;
+            result.StatusCode.Should().Be(StatusCodes.Status200OK);
+            result.Value.Should().NotBeNull().And.BeAssignableTo<UpdateBookingStatusResponse>().Subject.Success.Should().BeTrue();
+            result.Value.Should().NotBeNull().And.BeAssignableTo<UpdateBookingStatusResponse>().Subject.TelephoneConferenceId.Should().Be("121212");
+
+            _bookingsApiClient.Verify(x => x.UpdateBookingStatusAsync(hearingId, request), Times.Once);
+            _pollyRetryServiceMock.Verify(x => x.WaitAndRetryAsync<VideoApiException, ConferenceDetailsResponse>
+                (
+                    It.IsAny<int>(), It.IsAny<Func<int, TimeSpan>>(), It.IsAny<Action<int>>(),
+                    It.IsAny<Func<ConferenceDetailsResponse, bool>>(), It.IsAny<Func<Task<ConferenceDetailsResponse>>>()
+                ),Times.AtLeastOnce);
+
+            _notificationApiMock.Verify(x => x.CreateNewNotificationAsync(It.IsAny<AddNotificationRequest>()),
+                Times.Never);
         }
 
         [Test]
@@ -488,6 +571,18 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 .ThrowsAsync(new BookingsApiException("", StatusCodes.Status500InternalServerError, "", null, null));
 
             Assert.ThrowsAsync<BookingsApiException>(() => _controller.UpdateBookingStatus(hearingId, request));
+        }
+
+        private HearingDetailsResponse InitBookingForResponse(Guid hearingId)
+        {
+            var hearing = HearingResponseBuilder.Build()
+                .WithParticipant("Representative", "username1@hmcts.net")
+                .WithParticipant("Individual", "fname2.lname2@hmcts.net")
+                .WithParticipant("Judicial Office Holder", "fname3.lname3@hmcts.net")
+                .WithParticipant("Judge", "judge.fudge@hmcts.net");
+            hearing.Id = hearingId;
+            hearing.Group_id = hearingId;
+            return hearing;
         }
     }
 }
