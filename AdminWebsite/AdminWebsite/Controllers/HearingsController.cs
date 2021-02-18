@@ -237,12 +237,12 @@ namespace AdminWebsite.Controllers
               
                 // Add new participants
                 await _hearingsService.SaveNewParticipants(hearingId, newParticipantList);
-                await _hearingsService.AddParticipantLinks(hearingId, request);
 
                 // endpoints
                 await _hearingsService.ProcessEndpoints(hearingId, request, originalHearing, newParticipantList);
 
                 var updatedHearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
+                await _hearingsService.AddParticipantLinks(hearingId, request, updatedHearing);
                 _logger.LogDebug("Attempting assign participants to the correct group");
                 await _hearingsService.AssignParticipantToCorrectGroups(updatedHearing, usernameAdIdDict);
                 _logger.LogDebug("Successfully assigned participants to the correct group", updatedHearing.Id);

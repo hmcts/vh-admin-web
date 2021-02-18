@@ -50,7 +50,7 @@ namespace AdminWebsite.Services
 
         Task UpdateParticipantLinks(Guid hearingId, EditHearingRequest request, HearingDetailsResponse hearing);
 
-        Task AddParticipantLinks(Guid hearingId, EditHearingRequest request);
+        Task AddParticipantLinks(Guid hearingId, EditHearingRequest request, HearingDetailsResponse hearing);
 
         Task SaveNewParticipants(Guid hearingId, List<ParticipantRequest> newParticipantList);
 
@@ -390,9 +390,9 @@ namespace AdminWebsite.Services
             );
         }
 
-        public async Task AddParticipantLinks(Guid hearingId, EditHearingRequest request)
+        public async Task AddParticipantLinks(Guid hearingId, EditHearingRequest request, HearingDetailsResponse hearing)
         {
-            var updatedHearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
+            // var updatedHearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
             if (request.Participants.Any(x => x.LinkedParticipants != null && x.LinkedParticipants.Count > 0))
             {
                 foreach (var requestParticipant in request.Participants.Where(x => x.LinkedParticipants.Any()))
@@ -416,7 +416,7 @@ namespace AdminWebsite.Services
                         Telephone_number = requestParticipant.TelephoneNumber,
                         Title = requestParticipant.Title
                     };
-                    var newParticipant = updatedHearing.Participants.First(p => p.Contact_email == requestParticipant.ContactEmail);
+                    var newParticipant = hearing.Participants.First(p => p.Contact_email == requestParticipant.ContactEmail);
                     await _bookingsApiClient.UpdateParticipantDetailsAsync(hearingId, newParticipant.Id, updateParticipantRequest);
                 }
             }
