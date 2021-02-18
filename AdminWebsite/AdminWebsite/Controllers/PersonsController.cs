@@ -146,7 +146,7 @@ namespace AdminWebsite.Controllers
         {
             try
             {
-                var person = await _bookingsApiClient.SearchForNonJudicialPersonsByContactEmailAsync(contactEmail);
+                var person = await _bookingsApiClient.SearchForNonJudgePersonsByContactEmailAsync(contactEmail);
                 return Ok(person);
             }
             catch (BookingsApiException e)

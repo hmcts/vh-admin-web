@@ -12,10 +12,16 @@ import { PageUrls } from 'src/app/shared/page-url.constants';
 export class EditParticipantSearchResultsComponent {
     @Input() contactEmail: string;
     @Input() result: ParticipantEditResultModel;
+    @Input() isUnauthorisedSearch: boolean;
     constructor(private service: ParticipantEditService, private router: Router) {}
 
     get userNotFound() {
         return this.result === null;
+    }
+
+    get warningText(): string {
+        // tslint:disable-next-line: quotemark
+        return this.isUnauthorisedSearch ? 'Judge accounts cannot be edited' : "Sorry, we can't find a user with that email address.";
     }
 
     editParticipant() {

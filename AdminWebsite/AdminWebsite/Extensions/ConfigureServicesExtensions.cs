@@ -18,11 +18,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using AdminWebsite.Contracts.Responses;
-using AdminWebsite.VideoAPI.Client;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using NotificationApi.Client;
 using UserApi.Client;
+using VideoApi.Client;
 
 namespace AdminWebsite.Extensions
 {
@@ -104,10 +104,16 @@ namespace AdminWebsite.Extensions
                     client.ReadResponseAsString = true;
                     return (IUserApiClient)client;
                 });
-            
+
             serviceCollection.AddHttpClient<IVideoApiClient, VideoApiClient>()
                 .AddHttpMessageHandler(() => container.GetService<VideoApiTokenHandler>())
-                .AddTypedClient(httpClient => (IVideoApiClient) new VideoApiClient(httpClient) { BaseUrl = settings.VideoApiUrl, ReadResponseAsString = true });
+                .AddTypedClient(httpClient =>
+                {
+                    var client = VideoApiClient.GetClient(httpClient);
+                    client.BaseUrl = settings.VideoApiUrl;
+                    client.ReadResponseAsString = true;
+                    return (IVideoApiClient) client;
+                });
 
             serviceCollection.AddHttpClient<INotificationApiClient, NotificationApiClient>()
                 .AddHttpMessageHandler(() => container.GetService<NotificationApiTokenHandler>())

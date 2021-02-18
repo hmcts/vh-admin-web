@@ -16,7 +16,6 @@ import { BookingService } from '../../services/booking.service';
 import { HearingDetailsResponse } from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
 import { RecordingGuardService } from '../../services/recording-guard.service';
-import { ReferenceDataService } from '../../services/reference-data.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { MockValues } from '../../testing/data/test-objects';
 import { BookingEditStubComponent } from '../../testing/stubs/booking-edit-stub';
@@ -82,15 +81,12 @@ function initBadHearingRequest(): HearingModel {
 }
 
 let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
-let referenceDataServiceServiceSpy: jasmine.SpyObj<ReferenceDataService>;
 let routerSpy: jasmine.SpyObj<Router>;
 let loggerSpy: jasmine.SpyObj<Logger>;
 
 routerSpy = jasmine.createSpyObj('Router', ['navigate', 'url']);
 loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'info', 'warn', 'debug']);
 
-referenceDataServiceServiceSpy = jasmine.createSpyObj<ReferenceDataService>('ReferenceDataService', ['getCourts']);
-referenceDataServiceServiceSpy.getCourts.and.returnValue(of(MockValues.Courts));
 videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
     'getHearingTypes',
     'getCurrentRequest',
@@ -119,7 +115,6 @@ describe('SummaryComponent with valid request', () => {
 
             TestBed.configureTestingModule({
                 providers: [
-                    { provide: ReferenceDataService, useValue: referenceDataServiceServiceSpy },
                     { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
                     { provide: Router, useValue: routerSpy },
                     { provide: Logger, useValue: loggerSpy }
@@ -252,7 +247,6 @@ describe('SummaryComponent  with invalid request', () => {
 
             TestBed.configureTestingModule({
                 providers: [
-                    { provide: ReferenceDataService, useValue: referenceDataServiceServiceSpy },
                     { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
                     { provide: Router, useValue: routerSpy },
                     { provide: Logger, useValue: loggerSpy }
@@ -300,7 +294,6 @@ describe('SummaryComponent  with existing request', () => {
 
             TestBed.configureTestingModule({
                 providers: [
-                    { provide: ReferenceDataService, useValue: referenceDataServiceServiceSpy },
                     { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
                     { provide: Router, useValue: routerSpy },
                     { provide: Logger, useValue: loggerSpy }
@@ -427,14 +420,7 @@ describe('SummaryComponent  with multi days request', () => {
     videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
     videoHearingsServiceSpy.updateHearing.and.returnValue(of(new HearingDetailsResponse()));
 
-    component = new SummaryComponent(
-        videoHearingsServiceSpy,
-        routerSpy,
-        referenceDataServiceServiceSpy,
-        bookingServiceSpy,
-        loggerSpy,
-        recordingGuardServiceSpy
-    );
+    component = new SummaryComponent(videoHearingsServiceSpy, routerSpy, bookingServiceSpy, loggerSpy, recordingGuardServiceSpy);
 
     it('should display summary data from existing hearing with multi days', () => {
         component.hearing = existingRequest;

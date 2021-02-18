@@ -9,6 +9,5 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public static By UpdateButton = By.Id("submit");
         public static By PasswordHasBeenChangedMessage = CommonLocators.ElementContainingText("User's password has been changed");
         public static By OkButton = By.Id("btnOkay");
-        public static By CopyPasswordButton = By.Id("copyPassword");
     }
 }

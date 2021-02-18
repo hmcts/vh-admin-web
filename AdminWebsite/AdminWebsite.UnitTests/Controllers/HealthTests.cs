@@ -9,13 +9,13 @@ using System;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using AdminWebsite.VideoAPI.Client;
 using HealthCheckResponse = AdminWebsite.Models.HealthCheckResponse;
 using NotificationApi.Client;
 using NotificationApi.Contract;
 using Microsoft.Extensions.Logging;
 using UserApi.Client;
 using UserApi.Contract.Responses;
+using VideoApi.Client;
 
 namespace AdminWebsite.UnitTests.Controllers
 {
@@ -156,7 +156,7 @@ namespace AdminWebsite.UnitTests.Controllers
         }
 
         [Test]
-        public async Task Should_return_notifiy_exception_when_notification_api_not_found()
+        public async Task Should_return_notify_exception_when_notification_api_not_found()
         {
             var exception = new NotificationApiException("Notification api error", 404, "response", null, new Exception());
 

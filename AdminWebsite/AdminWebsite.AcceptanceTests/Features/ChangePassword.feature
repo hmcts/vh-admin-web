@@ -7,4 +7,4 @@
 Scenario: Change Password
 	Given the Video Hearings Officer user has progressed to the Change Password page
 	When the user resets the participants password
-	Then the copy password button is displayed
+	Then the changed password message can be dismissed

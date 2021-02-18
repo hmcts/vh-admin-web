@@ -7,7 +7,6 @@ using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
 using AdminWebsite.Services.Models;
-using AdminWebsite.VideoAPI.Client;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -18,10 +17,8 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using AddEndpointRequest = AdminWebsite.BookingsAPI.Client.AddEndpointRequest;
 using ParticipantRequest = AdminWebsite.BookingsAPI.Client.ParticipantRequest;
-using UpdateEndpointRequest = AdminWebsite.BookingsAPI.Client.UpdateEndpointRequest;
-using UpdateParticipantRequest = AdminWebsite.BookingsAPI.Client.UpdateParticipantRequest;
+using VideoApi.Client;
 
 namespace AdminWebsite.Controllers
 {
@@ -92,7 +89,7 @@ namespace AdminWebsite.Controllers
                 _logger.LogDebug("BookNewHearing - Successfully assigned participants to the correct group", hearingDetailsResponse.Id);
 
                 _logger.LogDebug("BookNewHearing - Sending email notification to the participants");
-                await _hearingsService.EmailParticipants(hearingDetailsResponse, usernameAdIdDict);
+                await _hearingsService.SendNewUserEmailParticipants(hearingDetailsResponse, usernameAdIdDict);
                 _logger.LogDebug("BookNewHearing - Successfully sent emails to participants- {hearing}", hearingDetailsResponse.Id);
 
                 return Created("", hearingDetailsResponse);
@@ -124,7 +121,7 @@ namespace AdminWebsite.Controllers
         [SwaggerOperation(OperationId = "CloneHearing")]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> CloneHearing(Guid hearingId, [FromBody]MultiHearingRequest hearingRequest)
+        public async Task<IActionResult> CloneHearing(Guid hearingId, MultiHearingRequest hearingRequest)
         {
             _logger.LogDebug("Attempting to clone hearing {hearing}", hearingId);
             var listOfDates = DateListMapper.GetListOfWorkingDates(hearingRequest.StartDate, hearingRequest.EndDate);
@@ -187,15 +184,15 @@ namespace AdminWebsite.Controllers
                 return BadRequest(ModelState);
             }
 
-            HearingDetailsResponse hearing;
+            HearingDetailsResponse originalHearing;
             try
             {
-                hearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
+                originalHearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
             }
             catch (BookingsApiException e)
             {
                 _logger.LogError(e,
-                    "Failed to get hearing {hearing}. Status Code {StatusCode} - Message {Message}",
+                    "Failed to get hearing {Hearing}. Status Code {StatusCode} - Message {Message}",
                     hearingId, e.StatusCode, e.Response);
                 if (e.StatusCode != (int)HttpStatusCode.NotFound)
                     throw;
@@ -215,29 +212,31 @@ namespace AdminWebsite.Controllers
                 {
                     if (!participant.Id.HasValue)
                     {
-                        await _hearingsService.ProcessNewParticipants(hearingId, participant, hearing, usernameAdIdDict, newParticipantList);
+                        await _hearingsService.ProcessNewParticipants(hearingId, participant, originalHearing, usernameAdIdDict, newParticipantList);
                     }
                     else
                     {
-                        await _hearingsService.ProcessExistingParticipants(hearingId, hearing, participant);
+                        await _hearingsService.ProcessExistingParticipants(hearingId, originalHearing, participant);
                     }
                 }
 
                 // Delete existing participants if the request doesn't contain any update information
-                hearing.Participants ??= new List<ParticipantResponse>();
-                var deleteParticipantList = hearing.Participants.Where(p => request.Participants.All(rp => rp.Id != p.Id));
+                originalHearing.Participants ??= new List<ParticipantResponse>();
+                var deleteParticipantList = originalHearing.Participants.Where(p => request.Participants.All(rp => rp.Id != p.Id));
                 foreach (var participantToDelete in deleteParticipantList)
                 {
-                    _logger.LogDebug("Removing existing participant {participant} from hearing {hearing}",
+                    _logger.LogDebug("Removing existing participant {Participant} from hearing {Hearing}",
                         participantToDelete.Id, hearingId);
                     await _bookingsApiClient.RemoveParticipantFromHearingAsync(hearingId, participantToDelete.Id);
                 }
 
+                await _hearingsService.UpdateParticipantLinks(hearingId, request, originalHearing);
+              
                 // Add new participants
                 await _hearingsService.SaveNewParticipants(hearingId, newParticipantList);
 
-                // endpoints.
-                await _hearingsService.ProcessEndpoints(hearingId, request, hearing, newParticipantList);
+                // endpoints
+                await _hearingsService.ProcessEndpoints(hearingId, request, originalHearing, newParticipantList);
 
                 var updatedHearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
                 _logger.LogDebug("Attempting assign participants to the correct group");
@@ -248,8 +247,13 @@ namespace AdminWebsite.Controllers
                 if (newParticipantList.Any())
                 {
                     _logger.LogDebug("Sending email notification to the participants");
-                    await _hearingsService.EmailParticipants(updatedHearing, usernameAdIdDict);
-                    _logger.LogDebug("Successfully sent emails to participants- {hearing}", updatedHearing.Id);
+                    await _hearingsService.SendNewUserEmailParticipants(updatedHearing, usernameAdIdDict);
+                    _logger.LogDebug("Successfully sent emails to participants - {Hearing}", updatedHearing.Id);
+                }
+
+                if (updatedHearing.HasScheduleAmended(originalHearing))
+                {
+                    await _hearingsService.SendHearingUpdateEmail(originalHearing, updatedHearing);                    
                 }
                 
                 return Ok(updatedHearing);
@@ -257,7 +261,7 @@ namespace AdminWebsite.Controllers
             catch (BookingsApiException e)
             {
                 _logger.LogError(e,
-                    "Failed to edit hearing {hearing}. Status Code {StatusCode} - Message {Message}",
+                    "Failed to edit hearing {Hearing}. Status Code {StatusCode} - Message {Message}",
                     hearingId, e.StatusCode, e.Response);
                 if (e.StatusCode == (int)HttpStatusCode.BadRequest)
                 {
@@ -362,7 +366,7 @@ namespace AdminWebsite.Controllers
 
                     if (!conferenceDetailsResponse.HasInvalidMeetingRoom())
                     {
-                        return Ok(new UpdateBookingStatusResponse { Success = true, TelephoneConferenceId = conferenceDetailsResponse.Meeting_room.Telephone_conference_id });
+                        return Ok(new UpdateBookingStatusResponse { Success = true, TelephoneConferenceId = conferenceDetailsResponse.MeetingRoom.TelephoneConferenceId });
                     }
                 }
                 catch (VideoApiException ex)
@@ -414,7 +418,7 @@ namespace AdminWebsite.Controllers
 
                 if (!conferenceDetailsResponse.HasInvalidMeetingRoom())
                 {
-                    return Ok(new PhoneConferenceResponse { TelephoneConferenceId = conferenceDetailsResponse.Meeting_room.Telephone_conference_id });
+                    return Ok(new PhoneConferenceResponse { TelephoneConferenceId = conferenceDetailsResponse.MeetingRoom.TelephoneConferenceId });
                 }
 
                 return NotFound();
@@ -434,7 +438,7 @@ namespace AdminWebsite.Controllers
                 throw;
             }
         }
-
+        
         private async Task PopulateUserIdsAndUsernames(IList<ParticipantRequest> participants,
             Dictionary<string, User> usernameAdIdDict)
         {

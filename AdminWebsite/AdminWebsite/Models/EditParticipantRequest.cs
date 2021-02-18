@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace AdminWebsite.Models
 {
@@ -67,5 +68,9 @@ namespace AdminWebsite.Models
         /// </summary>
         public string OrganisationName { get; set; }
 
+        /// <summary>
+        ///     List of linked participants
+        /// </summary>
+        public IList<LinkedParticipant> LinkedParticipants { get; set; }
     }
 }
