@@ -26,7 +26,7 @@ export const Constants = {
         DisplayNameErrorMsg: 'Please enter a display name',
         CompanyNameErrorMsg: 'Please enter a valid company name',
         OtherInformationErrorMsg: 'Please enter a valid other information text',
-        InterpreterForErrorMsg: 'Please select a participant to interpreter for'
+        InterpreterForErrorMsg: 'Please select a participant'
     },
     Contact: {
         phone: '0300 303 0655',
