@@ -40,6 +40,8 @@ namespace AdminWebsite.Services
         /// <returns></returns>
         Task SendHearingConfirmationEmail(HearingDetailsResponse hearing, List<ParticipantResponse> participants = null);
         Task SendMultiDayHearingConfirmationEmail(HearingDetailsResponse hearing, int days);
+        
+        Task SendHearingReminderEmail(HearingDetailsResponse hearing);
 
         Task ProcessNewParticipants(Guid hearingId, EditParticipantRequest participant, HearingDetailsResponse hearing,
             Dictionary<string, User> usernameAdIdDict, List<ParticipantRequest> newParticipantList);
@@ -188,6 +190,21 @@ namespace AdminWebsite.Services
             }
         }
 
+        public async Task SendHearingReminderEmail(HearingDetailsResponse hearing)
+        {
+            if (hearing.IsGenericHearing())
+            {
+                return;
+            }
+            
+            var requests = hearing.Participants
+                .Where(x => !x.User_role_name.Contains("Judge", StringComparison.CurrentCultureIgnoreCase))
+                .Select(participant => AddNotificationRequestMapper.MapToHearingReminderNotification(hearing, participant))
+                .ToList();
+
+            await Task.WhenAll(requests.Select(_notificationApiClient.CreateNewNotificationAsync));
+        }
+
         public async Task<ConferenceDetailsResponse> GetConferenceDetailsByHearingIdWithRetry(Guid hearingId, string errorMessage)
         {
             try
@@ -198,7 +215,7 @@ namespace AdminWebsite.Services
                     retryAttempt =>
                         _logger.LogWarning(
                             "Failed to retrieve conference details from the VideoAPi for hearingId {Hearing}. Retrying attempt {RetryAttempt}", hearingId, retryAttempt),
-                    videoApiResponseObject => videoApiResponseObject.HasInvalidMeetingRoom(),
+                    videoApiResponseObject => videoApiResponseObject.HasValidMeetingRoom(),
                     () => _videoApiClient.GetConferenceByHearingRefIdAsync(hearingId, false)
                 );
                 return details;

@@ -291,6 +291,14 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 .Setup(x => x.UpdateBookingStatusAsync(It.IsAny<Guid>(), It.IsAny<UpdateBookingStatusRequest>()))
                 .Verifiable();
 
+            var vhExistingHearing = new HearingDetailsResponse
+            {
+                Case_type_name = "Generic"
+            };
+
+            _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
+                .ReturnsAsync(vhExistingHearing);
+
             var response = await _controller.UpdateBookingStatus(Guid.NewGuid(), new UpdateBookingStatusRequest());
 
             response.Should().BeOfType<OkObjectResult>();
