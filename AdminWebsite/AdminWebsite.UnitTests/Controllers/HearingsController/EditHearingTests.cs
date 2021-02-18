@@ -336,7 +336,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             {
                 Participants = _updatedExistingParticipantHearingOriginal.Participants,
                 Cases = _updatedExistingParticipantHearingOriginal.Cases,
-                Case_type_name = "Unit Test"
+                Case_type_name = "Unit Test",
+                Scheduled_date_time = _updatedExistingParticipantHearingOriginal.Scheduled_date_time
             };
             updatedHearing.Participants[0].First_name = "New user firstname";
             updatedHearing.Participants[0].Username = "old1@user.com";
@@ -369,8 +370,25 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             _notificationApiMock.Verify(
                 x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r =>
-                    r.ParticipantId == newParticipant.Id)),
+                    r.NotificationType == NotificationType.CreateIndividual)),
                 Times.Once);
+            
+            _notificationApiMock.Verify(
+                x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r =>
+                    r.NotificationType == NotificationType.HearingAmendmentJoh)),
+                Times.Never);
+            _notificationApiMock.Verify(
+                x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r =>
+                    r.NotificationType == NotificationType.HearingAmendmentJudge)),
+                Times.Never);
+            _notificationApiMock.Verify(
+                x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r =>
+                    r.NotificationType == NotificationType.HearingAmendmentLip)),
+                Times.Never);
+            _notificationApiMock.Verify(
+                x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r =>
+                    r.NotificationType == NotificationType.HearingAmendmentRepresentative)),
+                Times.Never);
             _bookingsApiClient.Verify(x => x.UpdateHearingDetailsAsync(It.IsAny<Guid>(),
                 It.Is<UpdateHearingRequest>(u => !u.Cases.IsNullOrEmpty() && u.Questionnaire_not_required == false)), Times.Once);
             _pollyRetryServiceMock.Verify(x => x.WaitAndRetryAsync<Exception, Task>
@@ -379,7 +397,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                    It.IsAny<Func<Task, bool>>(), It.IsAny<Func<Task<Task>>>()
                ), Times.Never);
         }
-
+        
         [Test]
         public async Task Should_not_send_email_for_existing_individual_participant_added()
         {

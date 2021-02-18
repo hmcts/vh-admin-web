@@ -19,11 +19,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using AdminWebsite.Contracts.Requests;
+using NotificationApi.Contract;
 using VideoApi.Client;
 using EndpointResponse = AdminWebsite.BookingsAPI.Client.EndpointResponse;
 using LinkedParticipantRequest = AdminWebsite.BookingsAPI.Client.LinkedParticipantRequest;
 using LinkedParticipantResponse = AdminWebsite.BookingsAPI.Client.LinkedParticipantResponse;
 using LinkedParticipantType = AdminWebsite.BookingsAPI.Client.LinkedParticipantType;
+using CaseResponse = AdminWebsite.BookingsAPI.Client.CaseResponse;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {
@@ -113,13 +116,18 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 Endpoints = endpointList
             };
 
+            var bookingRequest = new BookHearingRequest
+            {
+                BookingDetails = hearing
+            };
+
             // setup response
             var hearingDetailsResponse = HearingResponseBuilder.Build()
                                         .WithParticipant("Representative", participant.Username);
             _bookingsApiClient.Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
                 .ReturnsAsync(hearingDetailsResponse);
 
-            await _controller.Post(hearing);
+            await _controller.Post(bookingRequest);
             _userAccountService.Verify(x => x.GetAdUserIdForUsername(participant.Username), Times.Once);
         }
 
@@ -154,6 +162,12 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                         {Display_name = "displayname2", Defence_advocate_username = "username2@email.com"},
                 }
             };
+            
+            var bookingRequest = new BookHearingRequest
+            {
+                BookingDetails = newHearingRequest
+            };
+            
             // setup response
             var hearingDetailsResponse = HearingResponseBuilder.Build()
                                         .WithEndPoints(2)
@@ -162,7 +176,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _bookingsApiClient.Setup(x => x.BookNewHearingAsync(newHearingRequest))
                 .ReturnsAsync(hearingDetailsResponse);
 
-            var result = await _controller.Post(newHearingRequest);
+            var result = await _controller.Post(bookingRequest);
 
             result.Result.Should().BeOfType<CreatedResult>();
             var createdObjectResult = (CreatedResult)result.Result;
@@ -193,6 +207,10 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                             Linked_participant_contact_email = "firstName1.lastName1@email.com", Type = LinkedParticipantType.Interpreter }
                     }
             };
+            var bookingRequest = new BookHearingRequest
+            {
+                BookingDetails = newHearingRequest
+            };
             // set response.
             var linkedParticipant1 = new List<LinkedParticipantResponse>() { new LinkedParticipantResponse() { Linked_id = Guid.NewGuid(), Type = LinkedParticipantType.Interpreter } };
             var participant1 = Builder<ParticipantResponse>.CreateNew().With(x => x.Id = Guid.NewGuid())
@@ -205,11 +223,12 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 .With(x => x.Linked_participants = linkedParticipant2)
                 .Build();
             var hearingDetailsResponse = Builder<HearingDetailsResponse>.CreateNew()
+                .With(x => x.Cases = Builder<CaseResponse>.CreateListOfSize(2).Build().ToList())
                 .With(x => x.Endpoints = Builder<EndpointResponse>.CreateListOfSize(2).Build().ToList())
                 .With(x => x.Participants = new List<ParticipantResponse> { participant1, participant2 }).Build();
             _bookingsApiClient.Setup(x => x.BookNewHearingAsync(newHearingRequest))
                 .ReturnsAsync(hearingDetailsResponse);
-            var result = await _controller.Post(newHearingRequest);
+            var result = await _controller.Post(bookingRequest);
             result.Result.Should().BeOfType<CreatedResult>();
             var createdObjectResult = (CreatedResult)result.Result;
             createdObjectResult.StatusCode.Should().Be(201);
@@ -244,11 +263,16 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             {
                 Participants = new List<BookingsAPI.Client.ParticipantRequest>()
             };
+            
+            var bookingRequest = new BookHearingRequest
+            {
+                BookingDetails = hearing
+            };
 
             _bookingsApiClient.Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
                 .Throws(ClientException.ForBookingsAPI(HttpStatusCode.BadRequest));
 
-            var result = await _controller.Post(hearing);
+            var result = await _controller.Post(bookingRequest);
             result.Result.Should().BeOfType<BadRequestObjectResult>();
         }
         
@@ -260,10 +284,15 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 Participants = new List<BookingsAPI.Client.ParticipantRequest>()
             };
 
+            var bookingRequest = new BookHearingRequest
+            {
+                BookingDetails = hearing
+            };
+            
             _bookingsApiClient.Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
                 .Throws(ClientException.ForBookingsAPI(HttpStatusCode.InternalServerError));
 
-            Assert.ThrowsAsync<BookingsApiException>(() => _controller.Post(hearing));
+            Assert.ThrowsAsync<BookingsApiException>(() => _controller.Post(bookingRequest));
         }
         
         [Test]
@@ -273,11 +302,16 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             {
                 Participants = new List<BookingsAPI.Client.ParticipantRequest>()
             };
+            
+            var bookingRequest = new BookHearingRequest
+            {
+                BookingDetails = hearing
+            };
 
             _bookingsApiClient.Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
                 .Throws(new Exception("Some internal error"));
 
-            Assert.ThrowsAsync<Exception>(() => _controller.Post(hearing));
+            Assert.ThrowsAsync<Exception>(() => _controller.Post(bookingRequest));
         }
 
         [Test]
@@ -413,7 +447,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             await PostWithParticipants(participant);
 
-            _notificationApiMock.Verify(x => x.CreateNewNotificationAsync(It.IsAny<AddNotificationRequest>()), Times.Once);
+            _notificationApiMock.Verify(x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(request =>
+                request.NotificationType == NotificationType.CreateRepresentative)), Times.Once);
         }
 
         [Test]
@@ -435,11 +470,12 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _userAccountService
                 .Setup(x => x.UpdateParticipantUsername(It.IsAny<AdminWebsite.BookingsAPI.Client.ParticipantRequest>()))
                 .Callback<AdminWebsite.BookingsAPI.Client.ParticipantRequest>(p => { p.Username = newUserName; })
-                .ReturnsAsync(new User() { UserName = newUserName, Password = "test123" });
+                .ReturnsAsync(new User { UserName = newUserName, Password = "test123" });
 
             await PostWithParticipants(participant);
 
-            _notificationApiMock.Verify(x => x.CreateNewNotificationAsync(It.IsAny<AddNotificationRequest>()), Times.Once);
+            _notificationApiMock.Verify(x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(request =>
+                request.NotificationType == NotificationType.CreateIndividual)), Times.Once);
         }
 
         [Test]
@@ -461,7 +497,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 
             await PostWithParticipants(participant);
 
-            _notificationApiMock.Verify(x => x.CreateNewNotificationAsync(It.IsAny<AddNotificationRequest>()), Times.Never);
+            _notificationApiMock.Verify(
+                x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(request =>
+                    request.NotificationType == NotificationType.CreateRepresentative)), Times.Never);
         }
 
         private static MultiHearingRequest GetMultiHearingRequest()
@@ -484,8 +522,13 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             {
                 Participants = new List<BookingsAPI.Client.ParticipantRequest>(participants)
             };
+            
+            var bookingRequest = new BookHearingRequest
+            {
+                BookingDetails = hearing
+            };
 
-            return await _controller.Post(hearing);
+            return await _controller.Post(bookingRequest);
         }
     }
 }

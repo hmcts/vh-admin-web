@@ -478,7 +478,7 @@ export class BHClient {
      * @param body (optional) Hearing Request object
      * @return Success
      */
-    bookNewHearing(body: BookNewHearingRequest | undefined): Observable<HearingDetailsResponse> {
+    bookNewHearing(body: BookHearingRequest | undefined): Observable<HearingDetailsResponse> {
         let url_ = this.baseUrl + '/api/hearings';
         url_ = url_.replace(/[?&]$/, '');
 
@@ -2967,6 +2967,90 @@ export interface IBookNewHearingRequest {
     linked_participants?: LinkedParticipantRequest[] | undefined;
 }
 
+export class MultiHearingRequest implements IMultiHearingRequest {
+    start_date?: Date;
+    end_date?: Date;
+
+    constructor(data?: IMultiHearingRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.start_date = _data['start_date'] ? new Date(_data['start_date'].toString()) : <any>undefined;
+            this.end_date = _data['end_date'] ? new Date(_data['end_date'].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): MultiHearingRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new MultiHearingRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['start_date'] = this.start_date ? this.start_date.toISOString() : <any>undefined;
+        data['end_date'] = this.end_date ? this.end_date.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export interface IMultiHearingRequest {
+    start_date?: Date;
+    end_date?: Date;
+}
+
+export class BookHearingRequest implements IBookHearingRequest {
+    booking_details?: BookNewHearingRequest;
+    is_multi_day?: boolean;
+    multi_hearing_details?: MultiHearingRequest;
+
+    constructor(data?: IBookHearingRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.booking_details = _data['booking_details'] ? BookNewHearingRequest.fromJS(_data['booking_details']) : <any>undefined;
+            this.is_multi_day = _data['is_multi_day'];
+            this.multi_hearing_details = _data['multi_hearing_details']
+                ? MultiHearingRequest.fromJS(_data['multi_hearing_details'])
+                : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): BookHearingRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new BookHearingRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data['booking_details'] = this.booking_details ? this.booking_details.toJSON() : <any>undefined;
+        data['is_multi_day'] = this.is_multi_day;
+        data['multi_hearing_details'] = this.multi_hearing_details ? this.multi_hearing_details.toJSON() : <any>undefined;
+        return data;
+    }
+}
+
+export interface IBookHearingRequest {
+    booking_details?: BookNewHearingRequest;
+    is_multi_day?: boolean;
+    multi_hearing_details?: MultiHearingRequest;
+}
+
 export class CaseResponse implements ICaseResponse {
     number?: string | undefined;
     name?: string | undefined;
@@ -3558,45 +3642,6 @@ export interface IHealthCheckResponse {
     video_api_health?: HealthCheck;
     notification_api_health?: HealthCheck;
     app_version?: ApplicationVersion;
-}
-
-export class MultiHearingRequest implements IMultiHearingRequest {
-    start_date?: Date;
-    end_date?: Date;
-
-    constructor(data?: IMultiHearingRequest) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.start_date = _data['start_date'] ? new Date(_data['start_date'].toString()) : <any>undefined;
-            this.end_date = _data['end_date'] ? new Date(_data['end_date'].toString()) : <any>undefined;
-        }
-    }
-
-    static fromJS(data: any): MultiHearingRequest {
-        data = typeof data === 'object' ? data : {};
-        let result = new MultiHearingRequest();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data['start_date'] = this.start_date ? this.start_date.toISOString() : <any>undefined;
-        data['end_date'] = this.end_date ? this.end_date.toISOString() : <any>undefined;
-        return data;
-    }
-}
-
-export interface IMultiHearingRequest {
-    start_date?: Date;
-    end_date?: Date;
 }
 
 /** Case request */
