@@ -154,14 +154,14 @@ namespace AdminWebsite.Mappers
                 Parameters = parameters
             };   
         }
-        
-        public static AddNotificationRequest MapToMultiDayHearingConfirmationNotification(HearingDetailsResponse hearing,
+
+        public static AddNotificationRequest MapToMultiDayHearingConfirmationNotification(
+            HearingDetailsResponse hearing,
             ParticipantResponse participant, int days)
         {
             var @case = hearing.Cases.First();
             var time = hearing.Scheduled_date_time.ToString("h:mm tt");
             var date = hearing.Scheduled_date_time.ToString("d MMMM yyyy");
-
             var parameters = new Dictionary<string, string>
             {
                 {"case name", @case.Name},
@@ -170,7 +170,6 @@ namespace AdminWebsite.Mappers
                 {"Start Day Month Year", date},
                 {"number of days", days.ToString()}
             };
-            
             NotificationType notificationType;
             if (participant.User_role_name.Contains("Judge", StringComparison.InvariantCultureIgnoreCase))
             {
@@ -178,7 +177,8 @@ namespace AdminWebsite.Mappers
                 parameters.Add("judge", participant.Display_name);
                 parameters.Add("courtroom account username", participant.Username);
             }
-            else if (participant.User_role_name.Contains("Judicial Office Holder", StringComparison.InvariantCultureIgnoreCase))
+            else if (participant.User_role_name.Contains("Judicial Office Holder",
+                StringComparison.InvariantCultureIgnoreCase))
             {
                 notificationType = NotificationType.HearingConfirmationJohMultiDay;
                 parameters.Add("judicial office holder", $"{participant.First_name} {participant.Last_name}");
@@ -204,7 +204,53 @@ namespace AdminWebsite.Mappers
                 ParticipantId = participant.Id,
                 PhoneNumber = participant.Telephone_number,
                 Parameters = parameters
-            };   
+            };
+        }
+
+        public static AddNotificationRequest MapToHearingReminderNotification(HearingDetailsResponse hearing,
+            ParticipantResponse participant)
+        {
+            var @case = hearing.Cases.First();
+            var time = hearing.Scheduled_date_time.ToString("h:mm tt");
+            var date = hearing.Scheduled_date_time.ToString("d MMMM yyyy");
+            
+            var parameters = new Dictionary<string, string>
+            {
+                {"case name", @case.Name},
+                {"case number", @case.Number},
+                {"time",time},
+                {"day month year",date},
+                {"username",participant.Username.ToLower()}
+            };
+            
+            NotificationType notificationType;
+             if (participant.User_role_name.Contains("Judicial Office Holder", StringComparison.InvariantCultureIgnoreCase))
+            {
+                notificationType = NotificationType.HearingReminderJoh;
+                parameters.Add("judicial office holder", $"{participant.First_name} {participant.Last_name}");
+            }
+            else if (participant.User_role_name.Contains("Representative", StringComparison.InvariantCultureIgnoreCase))
+            {
+                notificationType = NotificationType.HearingReminderRepresentative;
+                parameters.Add("client name", participant.Representee);
+                parameters.Add("solicitor name", $"{participant.First_name} {participant.Last_name}");
+            }
+            else
+            {
+                notificationType = NotificationType.HearingReminderLip;
+                parameters.Add("name", $"{participant.First_name} {participant.Last_name}");
+            }
+
+            return new AddNotificationRequest
+            {
+                HearingId = hearing.Id,
+                MessageType = MessageType.Email,
+                ContactEmail = participant.Contact_email,
+                NotificationType = notificationType,
+                ParticipantId = participant.Id,
+                PhoneNumber = participant.Telephone_number,
+                Parameters = parameters
+            };  
         }
     }
 }

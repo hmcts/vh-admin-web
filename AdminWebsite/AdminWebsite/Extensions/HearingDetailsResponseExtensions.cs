@@ -14,5 +14,10 @@ namespace AdminWebsite.Extensions
         {
             return hearing.Scheduled_date_time.Ticks != anotherHearing.Scheduled_date_time.Ticks;
         }
+        
+        public static bool IsAClone(this HearingDetailsResponse hearing)
+        {
+            return hearing.Id != hearing.Group_id;
+        }
     }
 }
