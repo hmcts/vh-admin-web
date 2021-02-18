@@ -1,5 +1,7 @@
-import { Component, EventEmitter, Input, OnInit } from '@angular/core';
+import { Component, ComponentFactoryResolver, EventEmitter, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { Router } from '@angular/router';
+import { HearingModel } from 'src/app/common/model/hearing.model';
+import { OtherInformationModel } from 'src/app/common/model/other-information.model';
 import { Logger } from 'src/app/services/logger';
 import { PageUrls } from 'src/app/shared/page-url.constants';
 import { ParticipantModel } from '../../common/model/participant.model';
@@ -10,10 +12,13 @@ import { BookingService } from '../../services/booking.service';
     templateUrl: './participants-list.component.html',
     styleUrls: ['./participants-list.component.css']
 })
-export class ParticipantsListComponent implements OnInit {
+export class ParticipantsListComponent implements OnInit, OnChanges {
     private readonly loggerPrefix = '[ParticipantsList] -';
     @Input()
-    participants: ParticipantModel[];
+    hearing: HearingModel;
+    otherInformationDetails: OtherInformationModel;
+    judgeEmailAvailable: boolean;
+    judgePhoneAvailable: boolean;
 
     $selectedForEdit: EventEmitter<string>;
     $selectedForRemove: EventEmitter<string>;
@@ -30,9 +35,19 @@ export class ParticipantsListComponent implements OnInit {
 
     ngOnInit() {
         const currentUrl = this.router.url;
+        this.otherInformationDetails = OtherInformationModel.init(this.hearing.other_information);
         if (currentUrl) {
             this.isSummaryPage = currentUrl.includes('summary');
             this.isEditRemoveVisible = !currentUrl.includes('assign-judge');
+        }
+    }
+
+    ngOnChanges(changes: SimpleChanges): void {
+        console.log(changes);
+        if (changes.hearings) {
+            this.otherInformationDetails = OtherInformationModel.init(this.hearing.other_information);
+            this.judgeEmailAvailable = this.otherInformationDetails.judgeEmail ? true : false;
+            this.judgePhoneAvailable = this.otherInformationDetails.judgePhone ? true : false;
         }
     }
 
