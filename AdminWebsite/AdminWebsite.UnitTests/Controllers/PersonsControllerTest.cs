@@ -30,7 +30,7 @@ namespace AdminWebsite.UnitTests.Controllers
             _userAccountService = new Mock<IUserAccountService>();
             var testSettings = new TestUserSecrets
             {
-                TestUsernameStem = "@madeUpEmail.com"
+                TestUsernameStem = "@hmcts.net1"
             };
 
             _controller = new AdminWebsite.Controllers.PersonsController(_bookingsApiClient.Object,
@@ -41,13 +41,13 @@ namespace AdminWebsite.UnitTests.Controllers
                 new PersonResponse
                 {
                   Id = Guid.NewGuid(),
-                  Contact_email = "adoman@test.net",
+                  Contact_email = "adoman@hmcts.net",
                   First_name = "Adam",
                   Last_name = "Mann",
                   Telephone_number ="111222333",
                   Title = "Ms",
                   Middle_names = "No",
-                  Username = "adoman@test.net"
+                  Username = "adoman@hmcts.net"
                 }
             };
         }
@@ -58,13 +58,13 @@ namespace AdminWebsite.UnitTests.Controllers
             _response.Add(new PersonResponse
                             {
                                 Id = Guid.NewGuid(),
-                                Contact_email = "jackman@madeUpEmail.com",
+                                Contact_email = "jackman@hmcts.net1",
                                 First_name = "Jack",
                                 Last_name = "Mann",
                                 Telephone_number = "111222333",
                                 Title = "Mr",
                                 Middle_names = "No",
-                                Username = "jackman@test.net"
+                                Username = "jackman@hmcts.net"
             });
             _bookingsApiClient.Setup(x => x.PostPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
                               .ReturnsAsync(_response);

@@ -48,14 +48,14 @@ describe('BookingParticipantListComponent', () => {
             'Alan',
             'Brake',
             'Citizen',
-            'email.p1@email.com',
-            'email1@co.uk',
-            'Defendant',
+            'email.p1@hmcts.net',
+            'email1@hmcts.net',
+            'Respondent',
             'Litigant in person',
             'Alan Brake',
             '',
             'ABC Solicitors',
-            'defendant',
+            'Respondent',
             '12345678'
         );
         const participantsList: Array<ParticipantDetailsModel> = [];
@@ -80,14 +80,14 @@ describe('BookingParticipantListComponent', () => {
             'Alan',
             'Brake',
             'Citizen',
-            'email.p1@email.com',
-            'email1@co.uk',
-            'Defendant',
+            'email.p1@hmcts.net',
+            'email1@hmcts.net',
+            'Respondent',
             'Litigant in person',
             'Alan Brake',
             '',
             'ABC Solicitors',
-            'defendant',
+            'Respondent',
             '12345678'
         );
         const participantsList: Array<ParticipantDetailsModel> = [];
@@ -111,14 +111,14 @@ describe('BookingParticipantListComponent', () => {
             'Alan',
             'Brake',
             'Judge',
-            'email.p1@email.com',
-            'email1@co.uk',
+            'email.p1@hmcts.net',
+            'email1@hmcts.net',
             'Judge',
             'Judge',
             'Alan Brake',
             '',
             'ABC Solicitors',
-            'defendant',
+            'Respondent',
             '12345678'
         );
         const participantsList: Array<ParticipantDetailsModel> = [];

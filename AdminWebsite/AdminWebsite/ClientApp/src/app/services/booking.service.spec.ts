@@ -44,7 +44,7 @@ describe('booking service', () => {
         expect(sessionStorage.getItem).toHaveBeenCalled();
     });
     it('should set participant email in storage', () => {
-        service.setParticipantEmail('some@emai.toset');
+        service.setParticipantEmail('some@hmcts.net');
         expect(sessionStorage.setItem).toHaveBeenCalled();
     });
     it('should get participant email from storage', () => {

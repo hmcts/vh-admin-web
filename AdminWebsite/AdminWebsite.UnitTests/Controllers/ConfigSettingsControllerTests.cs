@@ -26,7 +26,7 @@ namespace AdminWebsite.UnitTests
 
             var testSettings = new TestUserSecrets
             {
-                TestUsernameStem = "@email.com"
+                TestUsernameStem = "@hmcts.net"
             };
 
             var serviceSettings = new ServiceSettings { ConferencePhoneNumber = "1111111", JoinByPhoneFromDate= "2021-02-03" };

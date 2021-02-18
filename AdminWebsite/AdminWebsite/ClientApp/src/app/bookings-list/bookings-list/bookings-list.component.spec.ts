@@ -103,7 +103,7 @@ export class BookingslistTestData {
             true,
             'reason1',
             'Financial Remedy',
-            'judge.green@email.com',
+            'judge.green@hmcts.net',
             '1234567'
         );
         const b2 = new BookingsDetailsModel(
@@ -127,7 +127,7 @@ export class BookingslistTestData {
             true,
             'reason2',
             'Financial Remedy',
-            'judge.green@email.com',
+            'judge.green@hmcts.net',
             '1234567'
         );
         const b3 = new BookingsDetailsModel(
@@ -151,7 +151,7 @@ export class BookingslistTestData {
             true,
             'reason3',
             'Financial Remedy',
-            'judge.green@email.com',
+            'judge.green@hmcts.net',
             '1234567'
         );
 
@@ -188,7 +188,7 @@ export class BookingslistTestData {
             true,
             'reason4',
             'Financial Remedy',
-            'judge.green@email.com',
+            'judge.green@hmcts.net',
             '1234567'
         );
         const b2 = new BookingsDetailsModel(
@@ -212,7 +212,7 @@ export class BookingslistTestData {
             true,
             'reason5',
             'Financial Remedy',
-            'judge.green@email.com',
+            'judge.green@hmcts.net',
             '1234567'
         );
         const b3 = new BookingsDetailsModel(
@@ -236,7 +236,7 @@ export class BookingslistTestData {
             true,
             'reason6',
             'Financial Remedy',
-            'judge.green@email.com',
+            'judge.green@hmcts.net',
             '1234567'
         );
 
@@ -276,7 +276,7 @@ export class ArrayBookingslistModelTestData {
             true,
             'reason7',
             'Financial Remedy',
-            'judge.green@email.com',
+            'judge.green@hmcts.net',
             '1234567'
         );
         const b2 = new BookingsDetailsModel(
@@ -300,7 +300,7 @@ export class ArrayBookingslistModelTestData {
             true,
             'reason8',
             'Financial Remedy',
-            'judge.green@email.com',
+            'judge.green@hmcts.net',
             '1234567'
         );
         const b3 = new BookingsDetailsModel(
@@ -324,7 +324,7 @@ export class ArrayBookingslistModelTestData {
             true,
             'reason9',
             'Financial Remedy',
-            'judge.green@email.com',
+            'judge.green@hmcts.net',
             '1234567'
         );
 
@@ -357,7 +357,7 @@ export class ArrayBookingslistModelTestData {
             true,
             'reason10',
             'Financial Remedy',
-            'judge.green@email.com',
+            'judge.green@hmcts.net',
             '1234567'
         );
         const b21 = new BookingsDetailsModel(
@@ -381,7 +381,7 @@ export class ArrayBookingslistModelTestData {
             true,
             'reason11',
             'Financial Remedy',
-            'judge.green@email.com',
+            'judge.green@hmcts.net',
             '1234567'
         );
         const b31 = new BookingsDetailsModel(
@@ -405,7 +405,7 @@ export class ArrayBookingslistModelTestData {
             true,
             'reason12',
             'Financial Remedy',
-            'judge.green@email.com',
+            'judge.green@hmcts.net',
             '1234567'
         );
 
@@ -488,7 +488,7 @@ export class BookingPersistServiceSpy {
             true,
             'reason13',
             'Financial Remedy',
-            'judge.green@email.com',
+            'judge.green@hmcts.net',
             '1234567'
         );
         booking.IsStartTimeChanged = true;
@@ -620,7 +620,7 @@ describe('BookingsListComponent', () => {
             true,
             'reason14',
             'Financial Remedy',
-            'judge.green@email.com',
+            'judge.green@hmcts.net',
             '1234567'
         );
 
@@ -651,7 +651,7 @@ describe('BookingsListComponent', () => {
             true,
             'reason15',
             'Financial Remedy',
-            'judge.green@email.com',
+            'judge.green@hmcts.net',
             '1234567'
         );
 

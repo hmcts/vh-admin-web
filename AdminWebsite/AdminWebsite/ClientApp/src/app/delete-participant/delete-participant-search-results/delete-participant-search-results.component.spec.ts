@@ -69,7 +69,7 @@ describe('DeleteParticipantSearchResultsComponent', () => {
     });
 
     it('should navigate to booking details for edit', () => {
-        component.username = 'test@test.com';
+        component.username = 'test@hmcts.net';
         component.editHearing('1234');
         expect(videoHearingService.cancelRequest).toHaveBeenCalled();
         expect(router.navigate).toHaveBeenCalledWith([PageUrls.BookingDetails]);

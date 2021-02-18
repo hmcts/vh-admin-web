@@ -36,7 +36,7 @@ let formBuilder: FormBuilder;
 const logger = jasmine.createSpyObj<Logger>('Logger', ['debug', 'info', 'error', 'warn']);
 
 describe('DeleteParticipantComponent user exists in query params', () => {
-    const username = 'test@exists.com';
+    const username = 'test@hmcts.net';
     const activatedRoute: any = { queryParams: of({ username }) };
 
     beforeAll(async () => {
@@ -82,7 +82,7 @@ describe('DeleteParticipantComponent no user in query params', () => {
     });
 
     it('should init form', () => {
-        const username = 'unit@test.com';
+        const username = 'unit@hmcts.net';
         component.form.setValue({ username: username });
         expect(component.username.value).toBe(username);
 
@@ -101,7 +101,7 @@ describe('DeleteParticipantComponent no user in query params', () => {
     });
 
     it('should map hearings', async () => {
-        const username = 'unit@test.com';
+        const username = 'unit@hmcts.net';
         component.form.setValue({ username: username });
 
         await component.search();
@@ -111,7 +111,7 @@ describe('DeleteParticipantComponent no user in query params', () => {
     });
 
     it('should not map for non-existent account', async () => {
-        const username = 'unit@test.com';
+        const username = 'unit@hmcts.net';
         component.form.setValue({ username: username });
         service.getHearingsForUsername.and.returnValue(Promise.resolve(null));
         await component.search();

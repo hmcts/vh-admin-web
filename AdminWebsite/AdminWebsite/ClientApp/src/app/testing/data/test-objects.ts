@@ -12,9 +12,9 @@ export class MockValues {
       },
       {
         "code": "SAJ",
-        "group": "Civil Money Claims",
+        "group": "Generic",
         "id": 2,
-        "name": "Application to Set Aside Judgement (SAJ)"
+        "name": "Automated Test"
       },
       {
         "code": "FDAH",
@@ -58,25 +58,25 @@ export class MockValues {
           "first_name": "John",
           "last_name": "Doe",
           "display_name": "John Doe",
-          "email": "John.Doe@madeupemail.com"
+          "email": "John.Doe@hmcts.net"
         },
         {
            "first_name": "John2",
            "last_name": "Doe",
            "display_name": "John2 Doe",
-           "email": "John2.Doe@madeupemail.com"
+           "email": "John2.Doe@hmcts.net"
         },
         {
            "first_name": "John3",
            "last_name": "Doe",
            "display_name": "John3 Doe",
-           "email": "John3.Doe@madeupemail.com"
+           "email": "John3.Doe@hmcts.net"
         },
         {
            "first_name": "John4",
            "last_name": "Doe",
            "display_name": "John4 Doe",
-           "email": "John4.Doe@madeupemail.com"
+           "email": "John4.Doe@hmcts.net"
         }
      ]`
     );

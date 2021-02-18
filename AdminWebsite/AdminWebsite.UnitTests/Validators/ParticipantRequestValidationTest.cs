@@ -63,7 +63,7 @@ namespace AdminWebsite.UnitTests.Validators
         {
             var testRequest = new BookingsAPI.Client.ParticipantRequest
             {
-                Contact_email = "aa@aa.aa",
+                Contact_email = "aa@hmcts.net",
                 First_name = "Adam",
                 Last_name = "Adams",
                 Display_name = "Adam"

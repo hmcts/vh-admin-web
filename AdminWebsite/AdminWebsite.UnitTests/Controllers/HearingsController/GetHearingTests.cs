@@ -59,19 +59,19 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _vhExistingHearing = new HearingDetailsResponse
             {
                 Cases = new List<BookingsAPI.Client.CaseResponse>() { new BookingsAPI.Client.CaseResponse() { Name = "BBC vs ITV", Number = "TX/12345/2019", Is_lead_case = false } },
-                Case_type_name = "Civil Money Claims",
+                Case_type_name = "Generic",
                 Created_by = "CaseAdministrator",
                 Created_date = DateTime.UtcNow,
                 Hearing_room_name = "Room 6.41D",
-                Hearing_type_name = "Application to Set Judgment Aside",
+                Hearing_type_name = "Automated Test",
                 Hearing_venue_name = "Manchester Civil and Family Justice Centre",
                 Id = _guid,
                 Other_information = "Any other information about the hearing",
                 Participants = new List<ParticipantResponse>()
                 {
-                    new ParticipantResponse() { Case_role_name = "Judge", Contact_email = "Judge.Lumb@madeupemail.com", Display_name = "Judge Lumb", First_name = "Judge", Hearing_role_name = "Judge", Last_name = "Lumb", Middle_names = string.Empty, Telephone_number = string.Empty, Title = "Judge", Username = "Judge.Lumb@madeupemail.com" },
-                    new ParticipantResponse() { Case_role_name = "Claimant", Contact_email = "test.claimaint@emailaddress.net", Display_name = "Test Claimaint", First_name = "Test", Hearing_role_name = "Litigant in person", Last_name = "Claimaint", Middle_names = string.Empty, Telephone_number = string.Empty, Title = "Mr", Username = "Test.Claimaint@madeupemail.com" },
-                    new ParticipantResponse() { Case_role_name = "Defendant", Contact_email = "test.defendant@emailaddress.net", Display_name = "Test Defendant", First_name = "Test", Hearing_role_name = "Representative", Last_name = "Defendant", Middle_names = string.Empty, Telephone_number = string.Empty, Title = "Mr", Username = "Test.Defendant@madeupemail.com" },
+                    new ParticipantResponse() { Case_role_name = "Judge", Contact_email = "Judge.Lumb@hmcts.net", Display_name = "Judge Lumb", First_name = "Judge", Hearing_role_name = "Judge", Last_name = "Lumb", Middle_names = string.Empty, Telephone_number = string.Empty, Title = "Judge", Username = "Judge.Lumb@hmcts.net" },
+                    new ParticipantResponse() { Case_role_name = "Applicant", Contact_email = "test.applicant@hmcts.net", Display_name = "Test Applicant", First_name = "Test", Hearing_role_name = "Litigant in person", Last_name = "Applicant", Middle_names = string.Empty, Telephone_number = string.Empty, Title = "Mr", Username = "Test.Applicant@hmcts.net" },
+                    new ParticipantResponse() { Case_role_name = "Respondent", Contact_email = "test.respondent@hmcts.net", Display_name = "Test Respondent", First_name = "Test", Hearing_role_name = "Representative", Last_name = "Respondent", Middle_names = string.Empty, Telephone_number = string.Empty, Title = "Mr", Username = "Test.Respondent@hmcts.net" },
                 },
                 Scheduled_date_time = DateTime.UtcNow.AddDays(10),
                 Scheduled_duration = 60,
