@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <DefaultData>
   <HearingDetails>
-    <CaseType>Civil Money Claims</CaseType>
-    <HearingType>Application to set Judgment Aside</HearingType>
+    <CaseType>Generic</CaseType>
+    <HearingType>Automated Test</HearingType>
     <DoNotSendQuestionnaires>false</DoNotSendQuestionnaires>
   </HearingDetails>
   <HearingSchedule>

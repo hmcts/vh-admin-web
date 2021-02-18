@@ -8,7 +8,7 @@ import { EditParticipantComponent } from './edit-participant.component';
 
 describe('EditParticipantComponent', () => {
     let component: EditParticipantComponent;
-    const existingPerson = new ParticipantEditResultModel('123456789', 'John Doe', 'John', 'Doe', 'john.doe@hearing.com');
+    const existingPerson = new ParticipantEditResultModel('123456789', 'John Doe', 'John', 'Doe', 'john.doe@hmcts.net');
 
     let service: jasmine.SpyObj<ParticipantEditService>;
     let formBuilder: FormBuilder;

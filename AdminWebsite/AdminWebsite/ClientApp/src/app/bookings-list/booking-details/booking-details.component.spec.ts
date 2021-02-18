@@ -65,7 +65,7 @@ export class BookingDetailsTestData {
             true,
             'reason',
             'Financial Remedy',
-            'judge.green@email.com',
+            'judge.green@hmcts.net',
             '1234567'
         );
     }
@@ -79,14 +79,14 @@ export class BookingDetailsTestData {
             'Alan',
             'Brake',
             'Judge',
-            'email.p1@email.com',
-            'email1@co.uk',
-            'Claimant',
+            'email.p1@hmcts.net',
+            'email1@hmcts.net',
+            'Applicant',
             'Representative',
             'Alan Brake',
             '',
             'ABC Solicitors',
-            'defendant',
+            'Respondent',
             '12345678'
         );
         const p2 = new ParticipantDetailsModel(
@@ -95,14 +95,14 @@ export class BookingDetailsTestData {
             'Roy',
             'Bark',
             'Citizen',
-            'email.p2@email.com',
-            'email2@co.uk',
-            'Claimant',
+            'email.p2@hmcts.net',
+            'email2@hmcts.net',
+            'Applicant',
             'Litigant in person',
             'Roy Bark',
             '',
             'ABC Solicitors',
-            'defendant',
+            'Respondent',
             '12345678'
         );
         const p3 = new ParticipantDetailsModel(
@@ -111,14 +111,14 @@ export class BookingDetailsTestData {
             'Fill',
             'Green',
             'Professional',
-            'email.p3@email.com',
-            'email3@co.uk',
-            'Defendant',
+            'email.p3@hmcts.net',
+            'email3@hmcts.net',
+            'Respondent',
             'Litigant in person',
             'Fill',
             '',
             'ABC Solicitors',
-            'defendant',
+            'Respondent',
             '12345678'
         );
         participants.push(p2);

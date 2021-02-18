@@ -53,7 +53,7 @@ describe('ChangePasswordComponent', () => {
         expect(component.failedSubmission).toBe(true);
     });
     it('should show a save success if password was updated.', () => {
-        component.userName.setValue('user.name@domain.com');
+        component.userName.setValue('user.name@hmcts.net');
         component.updateUser();
         fixture.detectChanges();
         expect(userDataServiceSpy.updateUser).toHaveBeenCalled();
@@ -71,7 +71,7 @@ describe('ChangePasswordComponent', () => {
         expect(input).toBe(activeElement);
     });
     it('should on destroy unsubscribe the subscriptions', () => {
-        component.userName.setValue('user.name@domain.com');
+        component.userName.setValue('user.name@hmcts.net');
         component.updateUser();
         component.ngOnDestroy();
         expect(component.$subcription.closed).toBeTruthy();

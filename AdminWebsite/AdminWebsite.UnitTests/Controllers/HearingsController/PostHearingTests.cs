@@ -75,7 +75,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var participant = new BookingsAPI.Client.ParticipantRequest
             {
                 Username = "username",
-                Case_role_name = "Claimant",
+                Case_role_name = "Applicant",
                 Hearing_role_name = "Representative"
             };
 
@@ -95,14 +95,14 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         {
             var participant = new BookingsAPI.Client.ParticipantRequest
             {
-                Username = "username@newemail.com",
-                Case_role_name = "Claimant",
+                Username = "username@hmcts.net",
+                Case_role_name = "Applicant",
                 Hearing_role_name = "Representative",
-                Contact_email = "username@email.com"
+                Contact_email = "username@hmcts.net"
             };
             var participantList = new List<BookingsAPI.Client.ParticipantRequest> { participant };
 
-            const string da = "username@newemail.com";
+            const string da = "username@hmcts.net";
             var endpoints = new EndpointRequest { Display_name = "displayname", Defence_advocate_username = da };
             var endpointList = new List<EndpointRequest> {endpoints};
 
@@ -136,26 +136,26 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 {
                     new BookingsAPI.Client.ParticipantRequest
                     {
-                        Case_role_name = "CaseRole", Contact_email = "contact1@email.com",
+                        Case_role_name = "CaseRole", Contact_email = "contact1@hmcts.net",
                         Hearing_role_name = "HearingRole", Display_name = "display name1",
-                        First_name = "fname", Middle_names = "", Last_name = "lname1", Username = "username1@email.com",
+                        First_name = "fname", Middle_names = "", Last_name = "lname1", Username = "username1@hmcts.net",
                         Organisation_name = "", Representee = "", Telephone_number = ""
                     },
                     new BookingsAPI.Client.ParticipantRequest
                     {
-                        Case_role_name = "CaseRole", Contact_email = "contact2@email.com",
+                        Case_role_name = "CaseRole", Contact_email = "contact2@hmcts.net",
                         Hearing_role_name = "HearingRole", Display_name = "display name2",
                         First_name = "fname2", Middle_names = "", Last_name = "lname2",
-                        Username = "username2@email.com", Organisation_name = "", Representee = "",
+                        Username = "username2@hmcts.net", Organisation_name = "", Representee = "",
                         Telephone_number = ""
                     },
                 },
                 Endpoints = new List<EndpointRequest>
                 {
                     new EndpointRequest
-                        {Display_name = "displayname1", Defence_advocate_username = "username1@email.com"},
+                        {Display_name = "displayname1", Defence_advocate_username = "username1@hmcts.net"},
                     new EndpointRequest
-                        {Display_name = "displayname2", Defence_advocate_username = "username2@email.com"},
+                        {Display_name = "displayname2", Defence_advocate_username = "username2@hmcts.net"},
                 }
             };
             
@@ -167,8 +167,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             // setup response
             var hearingDetailsResponse = HearingResponseBuilder.Build()
                                         .WithEndPoints(2)
-                                        .WithParticipant("Representative", "username1@email.com")
-                                        .WithParticipant("Individual", "username2@email.com");
+                                        .WithParticipant("Representative", "username1@hmcts.net")
+                                        .WithParticipant("Individual", "username2@hmcts.net");
             _bookingsApiClient.Setup(x => x.BookNewHearingAsync(newHearingRequest))
                 .ReturnsAsync(hearingDetailsResponse);
 
@@ -262,7 +262,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task Should_pass_current_user_as_created_by_to_service()
         {
-            const string CURRENT_USERNAME = "test@user.com";
+            const string CURRENT_USERNAME = "test@hmcts.net";
             _userIdentity.Setup(x => x.GetUserIdentityName()).Returns(CURRENT_USERNAME);
 
             // setup response
@@ -286,7 +286,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task Should_update_booking_status()
         {
-            _userIdentity.Setup(x => x.GetUserIdentityName()).Returns("admin@email.com");
+            _userIdentity.Setup(x => x.GetUserIdentityName()).Returns("admin@hmcts.net");
             _bookingsApiClient
                 .Setup(x => x.UpdateBookingStatusAsync(It.IsAny<Guid>(), It.IsAny<UpdateBookingStatusRequest>()))
                 .Verifiable();
@@ -311,7 +311,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task Should_catch_BookingsApiException_by_updating_booking_status_and_returns_bad_result()
         {
-            _userIdentity.Setup(x => x.GetUserIdentityName()).Returns("admin@email.com");
+            _userIdentity.Setup(x => x.GetUserIdentityName()).Returns("admin@hmcts.net");
             _bookingsApiClient.Setup(x =>
                     x.UpdateBookingStatusAsync(It.IsAny<Guid>(), It.IsAny<UpdateBookingStatusRequest>()))
                 .Throws(new BookingsApiException("Error", 400, "response", null, null));
@@ -324,7 +324,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task Should_catch_BookingsApiException_by_updating_booking_status_and_returns_not_found_result()
         {
-            _userIdentity.Setup(x => x.GetUserIdentityName()).Returns("admin@email.com");
+            _userIdentity.Setup(x => x.GetUserIdentityName()).Returns("admin@hmcts.net");
             _bookingsApiClient.Setup(x =>
                     x.UpdateBookingStatusAsync(It.IsAny<Guid>(), It.IsAny<UpdateBookingStatusRequest>()))
                 .Throws(new BookingsApiException("Error", 404, "response", null, null));
@@ -383,11 +383,11 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var participant = new BookingsAPI.Client.ParticipantRequest
             {
                 Username = string.Empty, // New participant
-                Case_role_name = "Claimant",
+                Case_role_name = "Applicant",
                 Hearing_role_name = "Representative"
             };
 
-            var newUserName = "some_new_user@name.net";
+            var newUserName = "some_new_user@hmcts.net";
             // setup response
             var hearingDetailsResponse = HearingResponseBuilder.Build()
                                         .WithParticipant("Representative", newUserName);
@@ -410,11 +410,11 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var participant = new BookingsAPI.Client.ParticipantRequest
             {
                 Username = string.Empty, // New participant
-                Case_role_name = "Claimant",
+                Case_role_name = "Applicant",
                 Hearing_role_name = "Individual"
             };
 
-            var newUserName = "some_new_user@name.net";
+            var newUserName = "some_new_user@hmcts.net";
             // setup response
             var hearingDetailsResponse = HearingResponseBuilder.Build()
                                         .WithParticipant("Individual", newUserName);
@@ -434,11 +434,11 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task Should_not_send_email_for_existing_participant_added()
         {
-            var existingUserName = "some_new_user@name.net";
+            var existingUserName = "some_new_user@hmcts.net";
             var participant = new BookingsAPI.Client.ParticipantRequest
             {
                 Username = existingUserName,
-                Case_role_name = "Claimant",
+                Case_role_name = "Applicant",
                 Hearing_role_name = "Representative"
             };
 

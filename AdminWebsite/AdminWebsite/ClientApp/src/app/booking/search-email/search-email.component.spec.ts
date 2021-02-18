@@ -17,42 +17,42 @@ describe('SeachEmailComponent', () => {
     [
       {
         "id": 1,
-        "contact_email": "vb.email1@go.couk",
+        "contact_email": "vb.email1@hmcts.net",
         "role": "Appellant",
         "title": "Mrs",
         "first_name": "Alisa",
         "middle_names":"No",
         "last_name": "Smith",
         "photelephone_numberne": "1111222222",
-        "username": "vb.email1@go.couk"
+        "username": "vb.email1@hmcts.net"
       },
       {
         "id": 2,
-        "contact_email": "vb.email2@go.couk",
+        "contact_email": "vb.email2@hmcts.net",
         "role": "Appellant",
         "title": "Mrs",
         "first_name": "Alisa",
         "middle_names":"No",
         "last_name": "Smith",
         "telephone_number": "1111222222",
-        "username": "vb.email2@go.couk"
+        "username": "vb.email2@hmcts.net"
       }
     ]
     `
     );
 
     const participantModel = new ParticipantModel();
-    participantModel.email = 'aa@aa.aa';
+    participantModel.email = 'aa@hmcts.net';
     participantModel.first_name = 'Ann';
     participantModel.last_name = 'Smith';
     participantModel.title = 'Mrs';
-    participantModel.case_role_name = 'Defendant';
+    participantModel.case_role_name = 'Respondent';
     participantModel.hearing_role_name = 'Litigant in person';
     participantModel.phone = '12345678';
     participantModel.display_name = 'Ann';
 
     const configSettings = new ClientSettingsResponse();
-    configSettings.test_username_stem = '@some.fortest.com';
+    configSettings.test_username_stem = '@hmcts.net';
 
     let searchServiceSpy: jasmine.SpyObj<SearchService>;
     let configServiceSpy: jasmine.SpyObj<ConfigService>;
@@ -96,7 +96,7 @@ describe('SeachEmailComponent', () => {
         expect(component.results.length).toEqual(0);
     });
     it('should validate email', () => {
-        component.email = 'email@aa.aa';
+        component.email = 'email@hmcts.net';
         component.validateEmail();
         expect(component.isValidEmail).toBeTruthy();
     });
@@ -106,14 +106,14 @@ describe('SeachEmailComponent', () => {
         expect(component.isValidEmail).toBeFalsy();
     });
     it('should clear email', () => {
-        component.email = 'email@aa.aa';
+        component.email = 'email@hmcts.net';
         component.clearEmail();
         expect(component.email).toEqual('');
         expect(component.isValidEmail).toBeTruthy();
         expect(component.notFoundParticipant).toBeFalsy();
     });
     it('should validate input email if email was not found in the list', () => {
-        component.email = 'email@aa.aa';
+        component.email = 'email@hmcts.net';
         fixture.detectChanges();
         component.blurEmail();
         expect(component.isValidEmail).toBeTruthy();
@@ -136,18 +136,18 @@ describe('SeachEmailComponent', () => {
         spyOn(component.findParticipant, 'emit');
         const participantsList: ParticipantModel[] = [];
         const participant = new ParticipantModel();
-        participant.email = 'citizen.one@email.com';
+        participant.email = 'citizen.one@hmcts.net';
         participant.first_name = 'citizen';
         participant.last_name = 'one';
         participantModel.title = 'Mr.';
-        participantModel.case_role_name = 'Defendant';
+        participantModel.case_role_name = 'Respondent';
         participantModel.hearing_role_name = 'Litigant in person';
         participantModel.phone = '12345678';
         participantModel.display_name = 'Citizen One';
         participantsList.push(participant);
         component.results = participantsList;
 
-        component.populateParticipantInfo('citizen.one@email.com');
+        component.populateParticipantInfo('citizen.one@hmcts.net');
         fixture.detectChanges();
         expect(component.isShowResult).toBeFalsy();
         expect(component.findParticipant.emit).toHaveBeenCalled();
@@ -157,7 +157,7 @@ describe('SeachEmailComponent', () => {
         const participantsList: ParticipantModel[] = [];
         component.results = participantsList;
 
-        component.populateParticipantInfo('citizen.one@email.com');
+        component.populateParticipantInfo('citizen.one@hmcts.net');
         fixture.detectChanges();
         expect(component.isShowResult).toBeFalsy();
         expect(component.findParticipant.emit).not.toHaveBeenCalled();
@@ -203,13 +203,13 @@ describe('SeachEmailComponent', () => {
     });
     it('should map PersonResponse to ParticipantModel', () => {
         const person = new PersonResponse({
-            contact_email: 'aa@aa.aa',
+            contact_email: 'aa@hmcts.net',
             first_name: 'Sam',
             last_name: 'Green',
             title: 'Ms',
             middle_names: 'No',
             telephone_number: '11111111',
-            username: 'aa@aa.aa',
+            username: 'aa@hmcts.net',
             organisation: 'Name of a company'
         });
 
@@ -257,7 +257,7 @@ describe('SeachEmailComponent', () => {
 describe('SearchEmailComponent email validate', () => {
     let component: SearchEmailComponent;
     const configSettings = new ClientSettingsResponse();
-    configSettings.test_username_stem = '@some.fortest.com';
+    configSettings.test_username_stem = '@hmcts.net';
 
     let searchServiceSpy: jasmine.SpyObj<SearchService>;
     let configServiceSpy: jasmine.SpyObj<ConfigService>;
@@ -273,7 +273,7 @@ describe('SearchEmailComponent email validate', () => {
         configServiceSpy.getClientSettings.and.returnValue(of(configSettings));
         component.getEmailPattern();
         tick();
-        expect(component.invalidPattern).toBe('@some.fortest.com');
+        expect(component.invalidPattern).toBe('@hmcts.net');
         expect(loggerSpy.info).toHaveBeenCalled();
     }));
     it('should log error if config service return no email pattern for validation', fakeAsync(() => {

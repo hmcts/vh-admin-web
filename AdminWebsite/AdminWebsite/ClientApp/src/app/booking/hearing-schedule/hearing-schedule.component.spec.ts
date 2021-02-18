@@ -425,15 +425,15 @@ describe('HearingScheduleComponent returning to page', () => {
     });
     it('should set venue for existing hearing', () => {
         component.availableCourts = [
-            new HearingVenueResponse({ id: 1, name: 'aa@bb.kk' }),
-            new HearingVenueResponse({ id: 2, name: 'aa@bb.kk1' })
+            new HearingVenueResponse({ id: 1, name: 'aa@hmcts.net' }),
+            new HearingVenueResponse({ id: 2, name: 'aa@hmcts.net1' })
         ];
         component.hearing = new HearingModel();
-        component.hearing.court_name = 'aa@bb.kk1';
+        component.hearing.court_name = 'aa@hmcts.net1';
         component.isExistinHearing = true;
         component.setVenueForExistingHearing();
 
-        expect(component.selectedCourtName).toBe('aa@bb.kk1');
+        expect(component.selectedCourtName).toBe('aa@hmcts.net1');
     });
 
     it('should sanitize text for court room', () => {

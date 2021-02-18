@@ -14,7 +14,7 @@ describe('ParticipantDeleteServiceService', () => {
 
     it('should return null if api returns an error', async () => {
         apiClient.getPersonForUpdateByContactEmail.and.throwError('unit test error');
-        const result = await service.searchForPerson('user@test.com');
+        const result = await service.searchForPerson('user@hmcts.net');
         expect(result).toBeNull();
     });
 
@@ -25,7 +25,7 @@ describe('ParticipantDeleteServiceService', () => {
         });
         let actualError: BookHearingException;
         try {
-            await service.searchForPerson('user@test.com');
+            await service.searchForPerson('user@hmcts.net');
         } catch (error) {
             actualError = error;
         }
@@ -37,11 +37,11 @@ describe('ParticipantDeleteServiceService', () => {
             id: 'id',
             first_name: 'John',
             last_name: 'Doe',
-            username: 'test@doe.com'
+            username: 'test@hmcts.net'
         });
         apiClient.getPersonForUpdateByContactEmail.and.returnValue(of(existingPerson));
 
-        const response = await service.searchForPerson('user@test.com');
+        const response = await service.searchForPerson('user@hmcts.net');
         expect(response).toBeDefined();
         expect(response.personId).toBe(existingPerson.id);
         expect(response.firstname).toBe(existingPerson.first_name);

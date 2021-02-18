@@ -218,35 +218,35 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 {
                     new BookingsAPI.Client.ParticipantRequest
                     {
-                        Case_role_name = "CaseRole", Contact_email = "contact1@email.com",
+                        Case_role_name = "CaseRole", Contact_email = "contact1@hmcts.net",
                         Hearing_role_name = "HearingRole", Display_name = "display name1",
                         First_name = "fname", Middle_names = "", Last_name = "lname1", Username = "username1@hmcts.net",
                         Organisation_name = "", Representee = "", Telephone_number = ""
                     },
                     new BookingsAPI.Client.ParticipantRequest
                     {
-                        Case_role_name = "CaseRole", Contact_email = "contact2@email.com",
+                        Case_role_name = "CaseRole", Contact_email = "contact2@hmcts.net",
                         Hearing_role_name = "HearingRole", Display_name = "display name2",
                         First_name = "fname2", Middle_names = "", Last_name = "lname2", Organisation_name = "",
                         Representee = "", Telephone_number = ""
                     },
                     new BookingsAPI.Client.ParticipantRequest
                     {
-                        Case_role_name = "CaseRole", Contact_email = "contact3@email.com",
+                        Case_role_name = "CaseRole", Contact_email = "contact3@hmcts.net",
                         Hearing_role_name = "HearingRole", Display_name = "display name3",
                         First_name = "fname3", Middle_names = "", Last_name = "lname3", Organisation_name = "",
                         Representee = "", Telephone_number = ""
                     },
                     new BookingsAPI.Client.ParticipantRequest
                     {
-                        Case_role_name = "Panel Member", Contact_email = "contact4@email.com",
+                        Case_role_name = "Panel Member", Contact_email = "contact4@hmcts.net",
                         Hearing_role_name = "HearingRole", Display_name = "display name4",
                         First_name = "fname4", Middle_names = "", Last_name = "lname4", Organisation_name = "",
                         Representee = "", Telephone_number = ""
                     },
                     new BookingsAPI.Client.ParticipantRequest
                     {
-                        Case_role_name = "Judge", Contact_email = "judge@email.com",
+                        Case_role_name = "Judge", Contact_email = "judge@hmcts.net",
                         Hearing_role_name = "Judge", Display_name = "Judge Fudge",
                         First_name = "Jack", Middle_names = "", Last_name = "Fudge",
                         Username = "judge.fudge@hmcts.net", Organisation_name = "", Representee = "",
@@ -288,7 +288,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                         userRequest.RecoveryEmail == participant.Contact_email))).ReturnsAsync(newUser);
             }
 
-            var existingPat3 = _bookNewHearingRequest.Participants.Single(x => x.Contact_email == "contact3@email.com");
+            var existingPat3 = _bookNewHearingRequest.Participants.Single(x => x.Contact_email == "contact3@hmcts.net");
 
             var existingUser3 = new UserProfile()
             {

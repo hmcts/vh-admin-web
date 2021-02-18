@@ -85,7 +85,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 {
                     new EditParticipantRequest
                     {
-                        ContactEmail = "new@user.com",
+                        ContactEmail = "new@hmcts.net",
                         FirstName = "Test_FirstName",
                         LastName = "Test_LastName"
                     }
@@ -105,8 +105,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                     {
                         Id = Guid.NewGuid(),
                         User_role_name = "Individual",
-                        Contact_email = "old@user.com",
-                        Username = "old@user.com"
+                        Contact_email = "old@hmcts.net",
+                        Username = "old@hmcts.net"
                     }
                 },
                 Cases = cases
@@ -120,8 +120,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                     {
                         Id = Guid.NewGuid(),
                         User_role_name = "Individual",
-                        Contact_email = "old@user.com",
-                        Username = "old@user.com"
+                        Contact_email = "old@hmcts.net",
+                        Username = "old@hmcts.net"
                     }
                 },
                 Cases = cases,
@@ -137,8 +137,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 Case = new EditCaseRequest { Name = "Case", Number = "123" },
                 Participants = new List<EditParticipantRequest>(),
                 Endpoints = new List<EditEndpointRequest> { 
-                    new EditEndpointRequest {  Id = null, DisplayName = "New Endpoint" , DefenceAdvocateUsername = "username@email.com" },
-                    new EditEndpointRequest {  Id = guid1, DisplayName = "data1", DefenceAdvocateUsername = "edit-user@email.com" },
+                    new EditEndpointRequest {  Id = null, DisplayName = "New Endpoint" , DefenceAdvocateUsername = "username@hmcts.net" },
+                    new EditEndpointRequest {  Id = guid1, DisplayName = "data1", DefenceAdvocateUsername = "edit-user@hmcts.net" },
                     new EditEndpointRequest {  Id = guid2, DisplayName = "data2-edit" },
                     new EditEndpointRequest {  Id = guid4, DisplayName = "data4-edit", DefenceAdvocateUsername = "" },
                 }
@@ -235,8 +235,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             updatedHearing.Participants.Add(new ParticipantResponse
             {
                 Id = Guid.NewGuid(),
-                Contact_email = "new@user.com",
-                Username = "new@user.com",
+                Contact_email = "new@hmcts.net",
+                Username = "new@hmcts.net",
                 User_role_name = "Individual"
             });
             _bookingsApiClient.SetupSequence(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
@@ -255,7 +255,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task Should_send_email_for_new_individual_participant_added()
         {
-            var userName = "old@user.com";
+            var userName = "old@hmcts.net";
             var updatedHearing = _updatedExistingParticipantHearingOriginal = new HearingDetailsResponse
             {
                 Participants = _updatedExistingParticipantHearingOriginal.Participants,
@@ -266,8 +266,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             updatedHearing.Participants.Add(new ParticipantResponse
             {
                 Id = Guid.NewGuid(),
-                Contact_email = "new@user.com",
-                Username = "new@user.com",
+                Contact_email = "new@hmcts.net",
+                Username = "new@hmcts.net",
                 Telephone_number = "030434545",
                 User_role_name = "Individual"
             });
@@ -301,11 +301,11 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         public async Task Should_send_email_with_only_matching_participant()
         {
             _addNewParticipantRequest.Participants.Add( new EditParticipantRequest {
-                                                            ContactEmail = "new2@user.com",
+                                                            ContactEmail = "new2@hmcts.net",
                                                             FirstName = "Test2_FirstName",
                                                             LastName = "Test2_LastName",
                                                         });
-            var userName = "old@user.com";
+            var userName = "old@hmcts.net";
             var updatedHearing = _updatedExistingParticipantHearingOriginal = new HearingDetailsResponse
             {
                 Participants = _updatedExistingParticipantHearingOriginal.Participants, 
@@ -314,12 +314,12 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 Scheduled_date_time = _updatedExistingParticipantHearingOriginal.Scheduled_date_time
             };
             updatedHearing.Participants[0].First_name = "New user firstname";
-            updatedHearing.Participants[0].Username = "old1@user.com";
+            updatedHearing.Participants[0].Username = "old1@hmcts.net";
             var newParticipant = new ParticipantResponse
             {
                 Id = Guid.NewGuid(),
-                Contact_email = "new@user.com",
-                Username = "new@user.com",
+                Contact_email = "new@hmcts.net",
+                Username = "new@hmcts.net",
                 Telephone_number = "030434545",
                 User_role_name = "Individual"
             };
@@ -330,14 +330,14 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 .ReturnsAsync(updatedHearing);
 
             _userAccountService
-                .Setup(x => x.UpdateParticipantUsername(It.Is<BookingsAPI.Client.ParticipantRequest>(r => r.Contact_email == "new@user.com")))
+                .Setup(x => x.UpdateParticipantUsername(It.Is<BookingsAPI.Client.ParticipantRequest>(r => r.Contact_email == "new@hmcts.net")))
                 .Callback<BookingsAPI.Client.ParticipantRequest>(p => p.Username = userName)
                 .ReturnsAsync(new User { UserName = userName, Password = "test123" });
 
             _userAccountService
-              .Setup(x => x.UpdateParticipantUsername(It.Is<BookingsAPI.Client.ParticipantRequest>(r => r.Contact_email == "new2@user.com")))
-              .Callback<BookingsAPI.Client.ParticipantRequest>(p => p.Username = "old1@user.com")
-              .ReturnsAsync(new User { UserName = "old1@user.com", Password = "test123" });
+              .Setup(x => x.UpdateParticipantUsername(It.Is<BookingsAPI.Client.ParticipantRequest>(r => r.Contact_email == "new2@hmcts.net")))
+              .Callback<BookingsAPI.Client.ParticipantRequest>(p => p.Username = "old1@hmcts.net")
+              .ReturnsAsync(new User { UserName = "old1@hmcts.net", Password = "test123" });
 
             var result = await _controller.EditHearing(_validId, _addNewParticipantRequest);
             ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
@@ -426,14 +426,14 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task Should_add_judge_if_no_any_records_for_judge_exists_in_database()
         {
-            _addNewParticipantRequest.Participants.ForEach(x => { x.ContactEmail = "existing@judge.com"; x.CaseRoleName = "Judge"; });
-            _updatedExistingParticipantHearingOriginal.Participants.ForEach(x => x.Username = "notexisting@judge.com");
+            _addNewParticipantRequest.Participants.ForEach(x => { x.ContactEmail = "existing@hmcts.net"; x.CaseRoleName = "Judge"; });
+            _updatedExistingParticipantHearingOriginal.Participants.ForEach(x => x.Username = "notexisting@hmcts.net");
             _updatedExistingParticipantHearingOriginal.Participants.Add(new ParticipantResponse
             {
                 Id = Guid.NewGuid(),
                 User_role_name = "Individual",
-                Contact_email = "old@user.com",
-                Username = "other@judge.com"
+                Contact_email = "old@hmcts.net",
+                Username = "other@hmcts.net"
             });
 
             var result = await _controller.EditHearing(_validId, _addNewParticipantRequest);
@@ -446,14 +446,14 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task Should_not_add_judge_if_the_records_for_judge_exists_in_database()
         {
-            _addNewParticipantRequest.Participants.ForEach(x => { x.ContactEmail = "existing@judge.com"; x.CaseRoleName = "Judge"; });
-            _updatedExistingParticipantHearingOriginal.Participants.ForEach(x => x.Username = "existing@judge.com");
+            _addNewParticipantRequest.Participants.ForEach(x => { x.ContactEmail = "existing@hmcts.net"; x.CaseRoleName = "Judge"; });
+            _updatedExistingParticipantHearingOriginal.Participants.ForEach(x => x.Username = "existing@hmcts.net");
             _updatedExistingParticipantHearingOriginal.Participants.Add(new ParticipantResponse
             {
                 Id = Guid.NewGuid(),
                 User_role_name = "Individual",
-                Contact_email = "old@user.com",
-                Username = "existing@judge.com"
+                Contact_email = "old@hmcts.net",
+                Username = "existing@hmcts.net"
             });
 
             var result = await _controller.EditHearing(_validId, _addNewParticipantRequest);
@@ -465,8 +465,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task Should_not_add_judge_if_one_record_for_judge_exists_in_database()
         {
-            _addNewParticipantRequest.Participants.ForEach(x => { x.ContactEmail = "existing@judge.com"; x.CaseRoleName = "Judge"; });
-            _updatedExistingParticipantHearingOriginal.Participants.ForEach(x => x.Username = "existing@judge.com");
+            _addNewParticipantRequest.Participants.ForEach(x => { x.ContactEmail = "existing@hmcts.net"; x.CaseRoleName = "Judge"; });
+            _updatedExistingParticipantHearingOriginal.Participants.ForEach(x => x.Username = "existing@hmcts.net");
 
             var result = await _controller.EditHearing(_validId, _addNewParticipantRequest);
             ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
@@ -478,7 +478,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task Should_add_judge_if_participants_list_of_the_hearing_null()
         {
-            _addNewParticipantRequest.Participants.ForEach(x => { x.ContactEmail = "existing@judge.com"; x.CaseRoleName = "Judge"; });
+            _addNewParticipantRequest.Participants.ForEach(x => { x.ContactEmail = "existing@hmcts.net"; x.CaseRoleName = "Judge"; });
             _updatedExistingParticipantHearingOriginal.Participants = null;
 
             var result = await _controller.EditHearing(_validId, _addNewParticipantRequest);
@@ -491,7 +491,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task Should_add_judge_if_no_any_participants_in_the_list_for_the_hearing()
         {
-            _addNewParticipantRequest.Participants.ForEach(x => { x.ContactEmail = "existing@judge.com"; x.CaseRoleName = "Judge"; });
+            _addNewParticipantRequest.Participants.ForEach(x => { x.ContactEmail = "existing@hmcts.net"; x.CaseRoleName = "Judge"; });
             _updatedExistingParticipantHearingOriginal.Participants = new List<ParticipantResponse>();
 
             var result = await _controller.EditHearing(_validId, _addNewParticipantRequest);
@@ -509,8 +509,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             {
                 First_name = "Existing",
                 Last_name = "Judge",
-                Contact_email = "existing@judge.com",
-                Username = "existing@judge.com",
+                Contact_email = "existing@hmcts.net",
+                Username = "existing@hmcts.net",
                 Case_role_name = "Judge",
                 User_role_name = "Judge",
                 Id = existingJudgeId
@@ -518,7 +518,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var judgeIndex =
                 _updatedExistingParticipantHearingOriginal.Participants.FindIndex(x => x.Id == existingJudgeId);
 
-            const string newJudgeEmail = "new@judge.com";
+            const string newJudgeEmail = "new@hmcts.net";
             _addNewParticipantRequest.Participants.Add(new EditParticipantRequest
             {
                 CaseRoleName = "Judge",
@@ -532,8 +532,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             newPats.Add(new ParticipantResponse
             {
                 Id = Guid.NewGuid(),
-                Contact_email = "new@user.com",
-                Username = "new@user.com",
+                Contact_email = "new@hmcts.net",
+                Username = "new@hmcts.net",
                 User_role_name = "Individual"
             });
             var judge = newPats.First(x => x.Case_role_name == "Judge");
@@ -552,8 +552,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             updatedHearing.Participants.Add(new ParticipantResponse
             {
                 Id = Guid.NewGuid(),
-                Contact_email = "new@user.com",
-                Username = "new@user.com",
+                Contact_email = "new@hmcts.net",
+                Username = "new@hmcts.net",
                 User_role_name = "Individual"
             });
             updatedHearing.Participants[judgeIndex] = judge;
@@ -584,8 +584,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             updatedHearing.Participants.Add(new ParticipantResponse
             {
                 Id = Guid.NewGuid(),
-                Contact_email = "new@user.com",
-                Username = "new@user.com",
+                Contact_email = "new@hmcts.net",
+                Username = "new@hmcts.net",
                 User_role_name = "Individual"
             });
             _bookingsApiClient.SetupSequence(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
@@ -613,8 +613,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             updatedHearing.Participants.Add(new ParticipantResponse
             {
                 Id = Guid.NewGuid(),
-                Contact_email = "new@user.com",
-                Username = "new@user.com",
+                Contact_email = "new@hmcts.net",
+                Username = "new@hmcts.net",
                 User_role_name = "Individual"
             });
             _addNewParticipantRequest.Participants[0].Id = updatedHearing.Participants[0].Id;
@@ -657,14 +657,14 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task Should_delete_two_missing_participant_if_two_with_no_matching_id_exist_for_the_hearing()
         {
-            _addNewParticipantRequest.Participants.ForEach(x => { x.ContactEmail = "existing@judge.com"; x.CaseRoleName = "Judge"; });
-            _updatedExistingParticipantHearingOriginal.Participants.ForEach(x => x.Contact_email= "old@judge.com");
+            _addNewParticipantRequest.Participants.ForEach(x => { x.ContactEmail = "existing@hmcts.net"; x.CaseRoleName = "Judge"; });
+            _updatedExistingParticipantHearingOriginal.Participants.ForEach(x => x.Contact_email= "old@hmcts.net");
             _updatedExistingParticipantHearingOriginal.Participants.Add(new ParticipantResponse
             {
                 Id = Guid.NewGuid(),
                 User_role_name = "Individual",
-                Contact_email = "old@judge.com",
-                Username = "old@judge.com"
+                Contact_email = "old@hmcts.net",
+                Username = "old@hmcts.net"
             });
 
             var result = await _controller.EditHearing(_validId, _addNewParticipantRequest);
@@ -677,15 +677,15 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task Should_not_delete_missing_participant_if_all_match_id_for_updated_hearing()
         {
-            _addNewParticipantRequest.Participants.ForEach(x => { x.ContactEmail = "old@judge.com"; x.CaseRoleName = "Judge"; });
-            _addNewParticipantRequest.Participants.Add(new EditParticipantRequest { ContactEmail = "old@judge.com" });
-            _updatedExistingParticipantHearingOriginal.Participants.ForEach(x => x.Contact_email = "old@judge.com");
+            _addNewParticipantRequest.Participants.ForEach(x => { x.ContactEmail = "old@hmcts.net"; x.CaseRoleName = "Judge"; });
+            _addNewParticipantRequest.Participants.Add(new EditParticipantRequest { ContactEmail = "old@hmcts.net" });
+            _updatedExistingParticipantHearingOriginal.Participants.ForEach(x => x.Contact_email = "old@hmcts.net");
             _updatedExistingParticipantHearingOriginal.Participants.Add(new ParticipantResponse
             {
                 Id = Guid.NewGuid(),
                 User_role_name = "Individual",
-                Contact_email = "old@judge.com",
-                Username = "old@judge.com"
+                Contact_email = "old@hmcts.net",
+                Username = "old@hmcts.net"
             });
 
             var idFirstParticipant = _updatedExistingParticipantHearingOriginal.Participants[0].Id;
@@ -713,8 +713,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             updatedHearing.Participants.Add(new ParticipantResponse
             {
                 Id = Guid.NewGuid(),
-                Contact_email = "new@user.com",
-                Username = "new@user.com",
+                Contact_email = "new@hmcts.net",
+                Username = "new@hmcts.net",
                 User_role_name = "Individual"
             });
             
@@ -754,13 +754,13 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             {
                 First_name = "Existing",
                 Last_name = "Judge",
-                Contact_email = "existing@judge.com",
-                Username = "existing@judge.com",
+                Contact_email = "existing@hmcts.net",
+                Username = "existing@hmcts.net",
                 Case_role_name = "Judge",
                 Id = existingJudgeId
             });
             
-            const string newJudgeEmail = "new@judge.com";
+            const string newJudgeEmail = "new@hmcts.net";
             _addNewParticipantRequest.Participants.Add(new EditParticipantRequest
             {
                 CaseRoleName = "Judge",
@@ -774,8 +774,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             newPats.Add(new ParticipantResponse
             {
                 Id = Guid.NewGuid(),
-                Contact_email = "new@user.com",
-                Username = "new@user.com",
+                Contact_email = "new@hmcts.net",
+                Username = "new@hmcts.net",
                 User_role_name = "Individual"
             });
             newPats.Add(new ParticipantResponse
@@ -865,8 +865,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             {
                 Id = Guid.NewGuid(),
                 User_role_name = "Individual",
-                Contact_email = "link@user.com",
-                Username = "link@user.com"
+                Contact_email = "link@hmcts.net",
+                Username = "link@hmcts.net"
             });
             var updatedHearing = new HearingDetailsResponse
             {
@@ -918,8 +918,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             {
                 Id = Guid.NewGuid(),
                 User_role_name = "Individual",
-                Contact_email = "link@user.com",
-                Username = "link@user.com"
+                Contact_email = "link@hmcts.net",
+                Username = "link@hmcts.net"
             });
             _updatedExistingParticipantHearingOriginal.Participants[0].Linked_participants = new List<LinkedParticipantResponse>
             {
@@ -979,8 +979,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             {
                 Id = Guid.NewGuid(),
                 User_role_name = "Individual",
-                Contact_email = "link@user.com",
-                Username = "link@user.com"
+                Contact_email = "link@hmcts.net",
+                Username = "link@hmcts.net"
             });
             var individual1 = _updatedExistingParticipantHearingOriginal.Participants[0];
             var individual2 = _updatedExistingParticipantHearingOriginal.Participants[1];

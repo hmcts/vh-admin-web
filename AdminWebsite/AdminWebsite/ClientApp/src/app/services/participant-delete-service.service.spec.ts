@@ -33,19 +33,19 @@ describe('ParticipantDeleteServiceService', () => {
             })
         ];
         apiClient.getHearingsByUsernameForDeletion.and.returnValue(of(hearings));
-        const result = await service.getHearingsForUsername('user@test.com');
+        const result = await service.getHearingsForUsername('user@hmcts.net');
         expect(result).toEqual(hearings);
     });
 
     it('should return null if api returns an error', async () => {
         apiClient.getHearingsByUsernameForDeletion.and.throwError('unit test error');
-        const result = await service.getHearingsForUsername('user@test.com');
+        const result = await service.getHearingsForUsername('user@hmcts.net');
         expect(result).toBeNull();
     });
 
     it('should call api when deleting person with username ', async () => {
         apiClient.deletePersonWithUsername.and.returnValue(of());
-        const username = 'test.unit@here.com';
+        const username = 'test.unit@hmcts.net';
         await service.deleteUserAccount(username);
         expect(apiClient.deletePersonWithUsername).toHaveBeenCalledWith(username);
     });
