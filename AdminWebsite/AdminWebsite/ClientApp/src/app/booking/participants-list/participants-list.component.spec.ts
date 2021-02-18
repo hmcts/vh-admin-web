@@ -24,7 +24,7 @@ describe('ParticipantsListComponent', () => {
     const pat1 = new ParticipantModel();
     pat1.title = 'Mrs';
     pat1.first_name = 'Sam';
-    const participants: ParticipantModel[] = [pat1, pat1];
+    const participants: any[] = [pat1, pat1];
 
     beforeEach(
         waitForAsync(() => {
