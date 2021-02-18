@@ -65,7 +65,7 @@ export class ParticipantDetailsModel {
 
     get isRepresenting() {
         return (
-            this.HearingRoleName && this.HearingRoleName.indexOf('Representative') > -1 && this.Representee && this.Representee.length > 0
+            this.UserRoleName && this.UserRoleName.indexOf('Representative') > -1 && !!this.Representee
         );
     }
 
