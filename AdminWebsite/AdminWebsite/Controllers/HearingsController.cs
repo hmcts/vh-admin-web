@@ -1,5 +1,11 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
 using AdminWebsite.Attributes;
 using AdminWebsite.BookingsAPI.Client;
+using AdminWebsite.Contracts.Requests;
 using AdminWebsite.Extensions;
 using AdminWebsite.Helper;
 using AdminWebsite.Mappers;
@@ -10,14 +16,8 @@ using AdminWebsite.Services.Models;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Swashbuckle.AspNetCore.Annotations;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
-using ParticipantRequest = AdminWebsite.BookingsAPI.Client.ParticipantRequest;
+using Swashbuckle.AspNetCore.Annotations;
 using VideoApi.Client;
 
 namespace AdminWebsite.Controllers
@@ -62,35 +62,48 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType(typeof(HearingDetailsResponse), (int) HttpStatusCode.Created)]
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         [HearingInputSanitizer]
-        public async Task<ActionResult<HearingDetailsResponse>> Post([FromBody] BookNewHearingRequest request)
+        public async Task<ActionResult<HearingDetailsResponse>> Post([FromBody] BookHearingRequest request)
         {
+            var newBookingRequest = request.BookingDetails;
             var usernameAdIdDict = new Dictionary<string, User>();
             try
             {
-                var nonJudgeParticipants = request.Participants.Where(p => p.Case_role_name != "Judge").ToList();
+                var nonJudgeParticipants = newBookingRequest.Participants.Where(p => p.Case_role_name != "Judge").ToList();
                 await PopulateUserIdsAndUsernames(nonJudgeParticipants, usernameAdIdDict);
 
-                if (request.Endpoints != null && request.Endpoints.Any())
+                if (newBookingRequest.Endpoints != null && newBookingRequest.Endpoints.Any())
                 {
-                    var endpointsWithDa = request.Endpoints
+                    var endpointsWithDa = newBookingRequest.Endpoints
                         .Where(x => !string.IsNullOrWhiteSpace(x.Defence_advocate_username)).ToList();
-                    _hearingsService.AssignEndpointDefenceAdvocates(endpointsWithDa, request.Participants.AsReadOnly());
+                    _hearingsService.AssignEndpointDefenceAdvocates(endpointsWithDa, newBookingRequest.Participants.AsReadOnly());
 
                 }
 
-                request.Created_by = _userIdentity.GetUserIdentityName();
+                newBookingRequest.Created_by = _userIdentity.GetUserIdentityName();
                 
                 _logger.LogDebug("BookNewHearing - Attempting to send booking request to Booking API");
-                var hearingDetailsResponse = await _bookingsApiClient.BookNewHearingAsync(request);
-                _logger.LogDebug("BookNewHearing - Successfully booked hearing {hearing}", hearingDetailsResponse.Id);
+                var hearingDetailsResponse = await _bookingsApiClient.BookNewHearingAsync(newBookingRequest);
+                _logger.LogDebug("BookNewHearing - Successfully booked hearing {Hearing}", hearingDetailsResponse.Id);
                 
                 _logger.LogDebug("BookNewHearing - Attempting assign participants to the correct group");
                 await _hearingsService.AssignParticipantToCorrectGroups(hearingDetailsResponse, usernameAdIdDict);
-                _logger.LogDebug("BookNewHearing - Successfully assigned participants to the correct group", hearingDetailsResponse.Id);
+                _logger.LogDebug("BookNewHearing - Successfully assigned participants to the correct group");
 
                 _logger.LogDebug("BookNewHearing - Sending email notification to the participants");
                 await _hearingsService.SendNewUserEmailParticipants(hearingDetailsResponse, usernameAdIdDict);
-                _logger.LogDebug("BookNewHearing - Successfully sent emails to participants- {hearing}", hearingDetailsResponse.Id);
+                _logger.LogDebug("BookNewHearing - Successfully sent emails to participants- {Hearing}", hearingDetailsResponse.Id);
+
+                if (request.IsMultiDay)
+                {
+                    var listOfDates = DateListMapper.GetListOfWorkingDates(request.MultiHearingDetails.StartDate,
+                        request.MultiHearingDetails.EndDate);
+                    var totalDays = listOfDates.Select(x => x.DayOfYear).Distinct().Count() +1; // include start date
+                    await _hearingsService.SendMultiDayHearingConfirmationEmail(hearingDetailsResponse, totalDays);
+                }
+                else
+                {
+                    await _hearingsService.SendHearingConfirmationEmail(hearingDetailsResponse);
+                }
 
                 return Created("", hearingDetailsResponse);
             }
@@ -106,7 +119,8 @@ namespace AdminWebsite.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError(e, $"BookNewHearing - Failed to save hearing - Message: {e.Message} -  for request: {JsonConvert.SerializeObject(request)}");
+                _logger.LogError(e, "BookNewHearing - Failed to save hearing - {Message} -  for request: {RequestBody}",
+                    e.Message, JsonConvert.SerializeObject(newBookingRequest));
                 throw;
             }
         }
@@ -123,7 +137,7 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> CloneHearing(Guid hearingId, MultiHearingRequest hearingRequest)
         {
-            _logger.LogDebug("Attempting to clone hearing {hearing}", hearingId);
+            _logger.LogDebug("Attempting to clone hearing {Hearing}", hearingId);
             var listOfDates = DateListMapper.GetListOfWorkingDates(hearingRequest.StartDate, hearingRequest.EndDate);
             if (listOfDates.Count == 0)
             {
@@ -135,7 +149,7 @@ namespace AdminWebsite.Controllers
             {
                 _logger.LogDebug("Sending request to clone hearing to Bookings API");
                 await _bookingsApiClient.CloneHearingAsync(hearingId, cloneHearingRequest);
-                _logger.LogDebug("Successfully cloned hearing {hearing}", hearingId);
+                _logger.LogDebug("Successfully cloned hearing {Hearing}", hearingId);
                 return NoContent();
             }
             catch (BookingsApiException e)
@@ -173,7 +187,7 @@ namespace AdminWebsite.Controllers
                 ModelState.AddModelError(nameof(hearingId), $"Please provide a valid {nameof(hearingId)}");
                 return BadRequest(ModelState);
             }
-            _logger.LogDebug("Attempting to edit hearing {hearing}", hearingId);
+            _logger.LogDebug("Attempting to edit hearing {Hearing}", hearingId);
 
             var result = _editHearingRequestValidator.Validate(request);
 
@@ -203,7 +217,8 @@ namespace AdminWebsite.Controllers
             try
             {
                 //Save hearing details
-                var updateHearingRequest = HearingUpdateRequestMapper.MapTo(request, _userIdentity.GetUserIdentityName());
+                var updateHearingRequest =
+                    HearingUpdateRequestMapper.MapTo(request, _userIdentity.GetUserIdentityName());
                 await _bookingsApiClient.UpdateHearingDetailsAsync(hearingId, updateHearingRequest);
 
                 var newParticipantList = new List<ParticipantRequest>();
@@ -212,7 +227,8 @@ namespace AdminWebsite.Controllers
                 {
                     if (!participant.Id.HasValue)
                     {
-                        await _hearingsService.ProcessNewParticipants(hearingId, participant, originalHearing, usernameAdIdDict, newParticipantList);
+                        await _hearingsService.ProcessNewParticipants(hearingId, participant, originalHearing,
+                            usernameAdIdDict, newParticipantList);
                     }
                     else
                     {
@@ -222,7 +238,8 @@ namespace AdminWebsite.Controllers
 
                 // Delete existing participants if the request doesn't contain any update information
                 originalHearing.Participants ??= new List<ParticipantResponse>();
-                var deleteParticipantList = originalHearing.Participants.Where(p => request.Participants.All(rp => rp.Id != p.Id));
+                var deleteParticipantList =
+                    originalHearing.Participants.Where(p => request.Participants.All(rp => rp.Id != p.Id));
                 foreach (var participantToDelete in deleteParticipantList)
                 {
                     _logger.LogDebug("Removing existing participant {Participant} from hearing {Hearing}",
@@ -231,7 +248,7 @@ namespace AdminWebsite.Controllers
                 }
 
                 await _hearingsService.UpdateParticipantLinks(hearingId, request, originalHearing);
-              
+
                 // Add new participants
                 await _hearingsService.SaveNewParticipants(hearingId, newParticipantList);
 
@@ -241,21 +258,29 @@ namespace AdminWebsite.Controllers
                 var updatedHearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
                 _logger.LogDebug("Attempting assign participants to the correct group");
                 await _hearingsService.AssignParticipantToCorrectGroups(updatedHearing, usernameAdIdDict);
-                _logger.LogDebug("Successfully assigned participants to the correct group", updatedHearing.Id);
+                _logger.LogDebug("Successfully assigned participants to the correct group");
 
                 // Send a notification email to newly created participants
+                var newParticipantEmails = newParticipantList.Select(p => p.Contact_email);
                 if (newParticipantList.Any())
                 {
                     _logger.LogDebug("Sending email notification to the participants");
                     await _hearingsService.SendNewUserEmailParticipants(updatedHearing, usernameAdIdDict);
+
+                    var participantsForConfirmation = updatedHearing.Participants
+                        .Where(p => newParticipantEmails.Contains(p.Contact_email)).ToList();
+                    await _hearingsService.SendHearingConfirmationEmail(updatedHearing, participantsForConfirmation);
                     _logger.LogDebug("Successfully sent emails to participants - {Hearing}", updatedHearing.Id);
                 }
 
-                if (updatedHearing.HasScheduleAmended(originalHearing))
-                {
-                    await _hearingsService.SendHearingUpdateEmail(originalHearing, updatedHearing);                    
-                }
-                
+                if (!updatedHearing.HasScheduleAmended(originalHearing)) return Ok(updatedHearing);
+
+                var participantsForAmendment = updatedHearing.Participants
+                    .Where(p => !newParticipantEmails.Contains(p.Contact_email)).ToList();
+                await _hearingsService.SendHearingUpdateEmail(originalHearing, updatedHearing,
+                    participantsForAmendment);
+
+
                 return Ok(updatedHearing);
             }
             catch (BookingsApiException e)
@@ -263,14 +288,16 @@ namespace AdminWebsite.Controllers
                 _logger.LogError(e,
                     "Failed to edit hearing {Hearing}. Status Code {StatusCode} - Message {Message}",
                     hearingId, e.StatusCode, e.Response);
-                if (e.StatusCode == (int)HttpStatusCode.BadRequest)
+                if (e.StatusCode == (int) HttpStatusCode.BadRequest)
                 {
                     return BadRequest(e.Response);
                 }
-                if (e.StatusCode == (int)HttpStatusCode.NotFound)
+
+                if (e.StatusCode == (int) HttpStatusCode.NotFound)
                 {
                     return NotFound(e.Response);
                 }
+
                 throw;
             }
         }
@@ -371,7 +398,7 @@ namespace AdminWebsite.Controllers
                 }
                 catch (VideoApiException ex)
                 {
-                    _logger.LogError(ex, $"{errorMessage}: {ex.Message}");
+                    _logger.LogError(ex, "Failed to confirm a hearing. {ErrorMessage}", errorMessage);
                 }
 
                 // Set the booking status to failed as the video api failed
@@ -449,7 +476,7 @@ namespace AdminWebsite.Controllers
                 User user;
                 if (string.IsNullOrWhiteSpace(participant.Username))
                 {
-                    _logger.LogDebug("No username provided in booking for participant {email}. Checking AD by contact email",
+                    _logger.LogDebug("No username provided in booking for participant {Email}. Checking AD by contact email",
                         participant.Contact_email);
                     user = await _userAccountService.UpdateParticipantUsername(participant);
                 }
@@ -457,7 +484,7 @@ namespace AdminWebsite.Controllers
                 {
                     // get user
                     _logger.LogDebug(
-                        "Username provided in booking for participant {email}. Getting id for username {username}",
+                        "Username provided in booking for participant {Email}. Getting id for username {Username}",
                         participant.Contact_email, participant.Username);
                     var adUserId = await _userAccountService.GetAdUserIdForUsername(participant.Username);
                     user = new User { UserName = adUserId };
