@@ -289,6 +289,7 @@ describe('Video hearing service', () => {
         linkedParticipantModel.linkType = LinkedParticipantType.Interpreter;
         linkedParticipantModel.linkedParticipantId = '200';
         linkedParticipantModel.participantId = '100';
+        linkedParticipants.push(linkedParticipantModel);
         participant.linked_participants = linkedParticipants;
         participants.push(participant);
         const caseModel = new CaseModel();
@@ -317,8 +318,8 @@ describe('Video hearing service', () => {
         const actualCase = editHearingRequest.case;
         const actualEndpoint = editHearingRequest.endpoints[0].display_name;
         const expectedEndpoint = hearingModel.endpoints[0].displayName;
-        const expectedLinkedParticipats = hearingModel.participants[0].linked_participants[0];
-        const actualLinkedParticipats = editHearingRequest.participants[0].linked_participants[0];
+        const actualLinkedParticipants = editHearingRequest.participants[0].linked_participants[0];
+        const expectedLinkedParticipants = hearingModel.participants[0].linked_participants[0];
         expect(editHearingRequest.hearing_room_name).toEqual(hearingModel.court_room);
         expect(editHearingRequest.hearing_venue_name).toEqual(hearingModel.court_name);
         expect(editHearingRequest.other_information).toEqual(hearingModel.other_information);
@@ -327,7 +328,6 @@ describe('Video hearing service', () => {
         expect(editHearingRequest.participants.length).toBeGreaterThan(0);
         expect(editHearingRequest.questionnaire_not_required).toBeFalsy();
         expect(editHearingRequest.audio_recording_required).toBeTruthy();
-
         expect(actualParticipant.title).toEqual(expectedParticipant.title);
         expect(actualParticipant.first_name).toEqual(expectedParticipant.first_name);
         expect(actualParticipant.last_name).toEqual(expectedParticipant.last_name);
@@ -336,8 +336,9 @@ describe('Video hearing service', () => {
         expect(actualParticipant.case_role_name).toEqual(expectedParticipant.case_role_name);
         expect(actualCase.name).toEqual(expectedCase.name);
         expect(actualCase.number).toEqual(expectedCase.number);
-
         expect(actualEndpoint).toEqual(expectedEndpoint);
+        expect(actualLinkedParticipants.linked_id).toEqual(expectedLinkedParticipants.linkedParticipantId);
+        expect(actualLinkedParticipants.type).toEqual(expectedLinkedParticipants.linkType);
     });
 
     it('should map Existing hearing', () => {
@@ -358,6 +359,7 @@ describe('Video hearing service', () => {
         linkedParticipantModel.linkType = LinkedParticipantType.Interpreter;
         linkedParticipantModel.linkedParticipantId = '200';
         linkedParticipantModel.participantId = '100';
+        linkedParticipants.push(linkedParticipantModel);
         participant.linked_participants = linkedParticipants;
         participants.push(participant);
         const caseModel = new CaseModel();
@@ -398,6 +400,12 @@ describe('Video hearing service', () => {
         expect(editHearingRequest.questionnaire_not_required).toEqual(hearingModel.questionnaire_not_required);
         expect(editHearingRequest.audio_recording_required).toEqual(hearingModel.audio_recording_required);
         expect(editHearingRequest.endpoints[0].display_name).toEqual(hearingModel.endpoints[0].displayName);
+        expect(editHearingRequest.participants[0].linked_participants[0].linked_id).toEqual(
+            hearingModel.participants[0].linked_participants[0].linkedParticipantId
+        );
+        expect(editHearingRequest.participants[0].linked_participants[0].type).toEqual(
+            hearingModel.participants[0].linked_participants[0].linkType
+        );
     });
 
     it('should map EndpointResponse to EndpointModel', () => {
@@ -447,7 +455,7 @@ describe('Video hearing service', () => {
 
         expect(cachedRequest).toBeDefined();
     });
-    it('should map LinkedParticipantModel LinkedParticipantRequest', () => {
+    it('should map LinkedParticipantModel to LinkedParticipantRequest', () => {
         const linkedParticipantModelList: LinkedParticipantModel[] = [];
         let linkedParticipantModel = new LinkedParticipantModel();
         linkedParticipantModel.participantEmail = 'interpreter@email.com';
@@ -458,6 +466,7 @@ describe('Video hearing service', () => {
         linkedParticipantModel.participantEmail = 'interpretee@email.com';
         linkedParticipantModel.linkedParticipantEmail = 'interpreter@email.com';
         linkedParticipantModelList.push(linkedParticipantModel);
+        console.log(linkedParticipantModelList);
 
         const model = service.mapLinkedParticipants(linkedParticipantModelList);
         expect(model[0].participant_contact_email).toEqual(linkedParticipantModelList[0].participantEmail);

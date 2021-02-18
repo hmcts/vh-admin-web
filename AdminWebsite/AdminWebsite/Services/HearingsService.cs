@@ -392,7 +392,6 @@ namespace AdminWebsite.Services
 
         public async Task AddParticipantLinks(Guid hearingId, EditHearingRequest request, HearingDetailsResponse hearing)
         {
-            // var updatedHearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
             if (request.Participants.Any(x => x.LinkedParticipants != null && x.LinkedParticipants.Count > 0))
             {
                 foreach (var requestParticipant in request.Participants.Where(x => x.LinkedParticipants.Any()))

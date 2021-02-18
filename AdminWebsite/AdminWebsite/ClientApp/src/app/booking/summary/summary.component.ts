@@ -336,7 +336,6 @@ export class SummaryComponent implements OnInit, OnDestroy {
         } else {
             interpreter = this.hearing.participants.find(i => i.interpreterFor === this.selectedParticipantEmail);
         }
-        // const interpreter = this.hearing.participants.find(i => i.interpreterFor === this.selectedParticipantEmail);
         if (interpreter) {
             this.participantService.removeParticipant(this.hearing, interpreter.email);
         }

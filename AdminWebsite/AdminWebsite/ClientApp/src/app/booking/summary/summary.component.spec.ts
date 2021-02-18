@@ -5,6 +5,7 @@ import { of } from 'rxjs';
 import { EndpointModel } from 'src/app/common/model/endpoint.model';
 import { LinkedParticipantModel } from 'src/app/common/model/linked-participant.model';
 import { CancelPopupComponent } from 'src/app/popups/cancel-popup/cancel-popup.component';
+import { RemoveInterpreterPopupComponent } from 'src/app/popups/remove-interpreter-popup/remove-interpreter-popup.component';
 import { SaveFailedPopupComponent } from 'src/app/popups/save-failed-popup/save-failed-popup.component';
 import { BreadcrumbStubComponent } from 'src/app/testing/stubs/breadcrumb-stub';
 import { LongDatetimePipe } from '../../../app/shared/directives/date-time.pipe';
@@ -335,7 +336,8 @@ describe('SummaryComponent  with invalid request', () => {
                     RemovePopupComponent,
                     WaitPopupComponent,
                     SaveFailedPopupComponent,
-                    LongDatetimePipe
+                    LongDatetimePipe,
+                    RemoveInterpreterPopupComponent
                 ]
             }).compileComponents();
         })
