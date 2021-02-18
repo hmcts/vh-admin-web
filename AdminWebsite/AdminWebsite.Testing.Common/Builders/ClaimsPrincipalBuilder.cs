@@ -5,7 +5,7 @@ namespace AdminWebsite.Testing.Common.Builders
 {
     public class ClaimsPrincipalBuilder
     {
-        public static string Username = "john@doe.com";
+        private const string Username = "john@hmcts.net";
 
         private readonly List<Claim> _claims;
         public ClaimsPrincipalBuilder()

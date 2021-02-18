@@ -124,7 +124,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             var user = new UserAccount();
             var prefix = _c.Test.TestData.AddParticipant.Participant.NewUserPrefix;
-            user.AlternativeEmail = $"{prefix}{Faker.Internet.Email()}";
+            user.AlternativeEmail = $"{prefix}{Faker.RandomNumber.Next()}@hmcts.net";
             var firstname = Faker.Name.First();
             var lastname = Faker.Name.Last();
             var displayName = $"{firstname} {lastname}";

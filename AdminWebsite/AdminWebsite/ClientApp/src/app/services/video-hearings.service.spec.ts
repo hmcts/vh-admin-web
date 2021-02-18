@@ -98,7 +98,7 @@ describe('Video hearing service', () => {
     it('should cache participant roles', async () => {
         // given the api responds with
         const serverResponse = new CaseAndHearingRolesResponse({
-            name: 'Defendant',
+            name: 'Respondent',
             hearing_roles: [
                 new HearingRole({ name: 'Representative', user_role: 'Representative' }),
                 new HearingRole({ name: 'Litigant in person', user_role: 'Individual' })
@@ -107,11 +107,11 @@ describe('Video hearing service', () => {
         clientApiSpy.getParticipantRoles.and.returnValue(of([serverResponse]));
 
         // we get the response the first time
-        const response = await service.getParticipantRoles('Defendant');
+        const response = await service.getParticipantRoles('Respondent');
         expect(response).toEqual([serverResponse]);
 
         // second time we get a cached value
-        await service.getParticipantRoles('Defendant');
+        await service.getParticipantRoles('Respondent');
         expect(clientApiSpy.getParticipantRoles).toHaveBeenCalledTimes(1);
     });
 
@@ -220,11 +220,11 @@ describe('Video hearing service', () => {
         participant.first_name = 'Dan';
         participant.middle_names = 'Ivan';
         participant.last_name = 'Smith';
-        participant.username = 'dan@email.aa';
+        participant.username = 'dan@hmcts.net';
         participant.display_name = 'Dan Smith';
-        participant.contact_email = 'dan@email.aa';
+        participant.contact_email = 'dan@hmcts.net';
         participant.telephone_number = '123123123';
-        participant.case_role_name = 'Defendant';
+        participant.case_role_name = 'Respondent';
         participant.hearing_role_name = 'Litigant in person';
         participants.push(participant);
 
@@ -249,11 +249,11 @@ describe('Video hearing service', () => {
         participant.first_name = 'Dan';
         participant.middle_names = 'Ivan';
         participant.last_name = 'Smith';
-        participant.username = 'dan@email.aa';
+        participant.username = 'dan@hmcts.net';
         participant.display_name = 'Dan Smith';
-        participant.email = 'dan@email.aa';
+        participant.email = 'dan@hmcts.net';
         participant.phone = '123123123';
-        participant.case_role_name = 'Defendant';
+        participant.case_role_name = 'Respondent';
         participant.hearing_role_name = 'Litigant in person';
         participants.push(participant);
 
@@ -278,11 +278,11 @@ describe('Video hearing service', () => {
         participant.first_name = 'Dan';
         participant.middle_names = 'Ivan';
         participant.last_name = 'Smith';
-        participant.username = 'dan@email.aa';
+        participant.username = 'dan@hmcts.net';
         participant.display_name = 'Dan Smith';
-        participant.email = 'dan@email.aa';
+        participant.email = 'dan@hmcts.net';
         participant.phone = '123123123';
-        participant.case_role_name = 'Defendant';
+        participant.case_role_name = 'Respondent';
         participant.hearing_role_name = 'Litigant in person';
         const linkedParticipants: LinkedParticipantModel[] = [];
         const linkedParticipantModel = new LinkedParticipantModel();
@@ -348,11 +348,11 @@ describe('Video hearing service', () => {
         participant.first_name = 'Dan';
         participant.middle_names = 'Ivan';
         participant.last_name = 'Smith';
-        participant.username = 'dan@email.aa';
+        participant.username = 'dan@hmcts.net';
         participant.display_name = 'Dan Smith';
-        participant.email = 'dan@email.aa';
+        participant.email = 'dan@hmcts.net';
         participant.phone = '123123123';
-        participant.case_role_name = 'Defendant';
+        participant.case_role_name = 'Respondent';
         participant.hearing_role_name = 'Litigant in person';
         const linkedParticipants: LinkedParticipantModel[] = [];
         const linkedParticipantModel = new LinkedParticipantModel();

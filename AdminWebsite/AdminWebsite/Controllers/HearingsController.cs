@@ -394,8 +394,13 @@ namespace AdminWebsite.Controllers
                 {
                     var conferenceDetailsResponse = await _hearingsService.GetConferenceDetailsByHearingIdWithRetry(hearingId, errorMessage);
 
-                    if (!conferenceDetailsResponse.HasInvalidMeetingRoom())
+                    if (conferenceDetailsResponse.HasValidMeetingRoom())
                     {
+                        var hearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
+                        if (!hearing.IsAClone())
+                        {
+                            await _hearingsService.SendHearingReminderEmail(hearing);
+                        }
                         return Ok(new UpdateBookingStatusResponse { Success = true, TelephoneConferenceId = conferenceDetailsResponse.MeetingRoom.TelephoneConferenceId });
                     }
                 }
@@ -446,7 +451,7 @@ namespace AdminWebsite.Controllers
             {
                 var conferenceDetailsResponse = await _hearingsService.GetConferenceDetailsByHearingId(hearingId);
 
-                if (!conferenceDetailsResponse.HasInvalidMeetingRoom())
+                if (conferenceDetailsResponse.HasValidMeetingRoom())
                 {
                     return Ok(new PhoneConferenceResponse { TelephoneConferenceId = conferenceDetailsResponse.MeetingRoom.TelephoneConferenceId });
                 }

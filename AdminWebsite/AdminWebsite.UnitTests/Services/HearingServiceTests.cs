@@ -82,6 +82,31 @@ namespace AdminWebsite.UnitTests.Services
                     Times.Never);
         }
         
+        [Test]
+        public async Task should_send_reminder_email_to_all_participants_except_a_judge()
+        {
+            var judge = _hearing.Participants.First(x => x.User_role_name == "Judge");
+            await _service.SendHearingReminderEmail(_hearing);
+
+            _mocker.Mock<INotificationApiClient>()
+                .Verify(
+                    x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.ParticipantId != judge.Id)),
+                    Times.Exactly(3));
+        }
+
+        [Test]
+        public async Task should_not_send_reminder_email_when_hearing_is_generic_case_type()
+        {
+            var judge = _hearing.Participants.First(x => x.User_role_name == "Judge");
+            _hearing.Case_type_name = "Generic";
+            await _service.SendHearingReminderEmail(_hearing);
+
+            _mocker.Mock<INotificationApiClient>()
+                .Verify(
+                    x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.ParticipantId != judge.Id)),
+                    Times.Never);
+        }
+        
         private HearingDetailsResponse InitHearing()
         {
             var cases = new List<CaseResponse>

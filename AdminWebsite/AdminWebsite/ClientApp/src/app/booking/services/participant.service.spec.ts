@@ -22,7 +22,7 @@ describe('ParticipantService', () => {
     }));
     it('should map roles to party model array', inject([ParticipantService], (service: ParticipantService) => {
         const response = new CaseAndHearingRolesResponse();
-        response.name = 'Defendant';
+        response.name = 'Respondent';
         response.hearing_roles = [new HearingRole({ name: 'Litigant in person', user_role: 'Individual' })];
         const responses: CaseAndHearingRolesResponse[] = [];
         responses.push(response);
@@ -30,7 +30,7 @@ describe('ParticipantService', () => {
         const models = service.mapParticipantsRoles(responses);
         expect(models).toBeTruthy();
         expect(models.length).toBe(1);
-        expect(models[0].name).toBe('Defendant');
+        expect(models[0].name).toBe('Respondent');
         expect(models[0].hearingRoles.length).toBe(1);
         expect(models[0].hearingRoles[0].name).toBe('Litigant in person');
     }));
@@ -42,15 +42,15 @@ describe('ParticipantService', () => {
     }));
     it('should check email duplication and return false', inject([ParticipantService], (service: ParticipantService) => {
         const part1 = new ParticipantModel();
-        part1.email = 'aa@aa.aa';
+        part1.email = 'aa@hmcts.net';
         const participants: ParticipantModel[] = [];
         participants.push(part1);
-        const result = service.checkDuplication('bb@bb.bb', participants);
+        const result = service.checkDuplication('bb@hmcts.net', participants);
         expect(result).toBeFalsy();
     }));
     it('should check duplication returns false as no participants', inject([ParticipantService], (service: ParticipantService) => {
         const participants: ParticipantModel[] = [];
-        const result = service.checkDuplication('bb@bb.bb', participants);
+        const result = service.checkDuplication('bb@hmcts.net', participants);
         expect(result).toBeFalsy();
     }));
     it('should throw exception if email is invalid', inject([ParticipantService], (service: ParticipantService) => {
@@ -60,42 +60,42 @@ describe('ParticipantService', () => {
     }));
     it('should check email duplication and return true', inject([ParticipantService], (service: ParticipantService) => {
         const part1 = new ParticipantModel();
-        part1.email = 'aa@aa.aa';
+        part1.email = 'aa@hmcts.net';
         const participants: ParticipantModel[] = [];
         participants.push(part1);
-        const result = service.checkDuplication('aa@aa.aa', participants);
+        const result = service.checkDuplication('aa@hmcts.net', participants);
         expect(result).toBeTruthy();
     }));
     it('should remove participant', inject([ParticipantService], (service: ParticipantService) => {
         const hearing: HearingModel = new HearingModel();
         const part1 = new ParticipantModel();
-        part1.email = 'aa@aa.aa';
+        part1.email = 'aa@hmcts.net';
         const participants: ParticipantModel[] = [];
         participants.push(part1);
         hearing.participants = participants;
-        const result = service.removeParticipant(hearing, 'aa@aa.aa');
+        const result = service.removeParticipant(hearing, 'aa@hmcts.net');
         expect(hearing.participants.length).toBe(0);
     }));
     it('should not remove participant, if email is not in the list', inject([ParticipantService], (service: ParticipantService) => {
         const hearing: HearingModel = new HearingModel();
         const part1 = new ParticipantModel();
-        part1.email = 'aa@aa.aa';
+        part1.email = 'aa@hmcts.net';
         const participants: ParticipantModel[] = [];
         participants.push(part1);
         hearing.participants = participants;
-        const result = service.removeParticipant(hearing, 'bb@bb.bb');
+        const result = service.removeParticipant(hearing, 'bb@hmcts.net');
         expect(hearing.participants.length).toBe(1);
     }));
     it('should remove participant and log a message', inject([ParticipantService], (service: ParticipantService) => {
         const hearing: HearingModel = new HearingModel();
         hearing.hearing_id = '12345';
         const part1 = new ParticipantModel();
-        part1.email = 'aa@aa.aa';
+        part1.email = 'aa@hmcts.net';
         part1.id = '123';
         const participants: ParticipantModel[] = [];
         participants.push(part1);
         hearing.participants = participants;
-        const result = service.removeParticipant(hearing, 'aa@aa.aa');
+        const result = service.removeParticipant(hearing, 'aa@hmcts.net');
         expect(loggerSpy.info).toHaveBeenCalled();
     }));
 });

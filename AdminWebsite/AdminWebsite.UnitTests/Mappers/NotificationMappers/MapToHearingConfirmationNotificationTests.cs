@@ -148,9 +148,9 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             return new ParticipantResponse
             {
                 Id = Guid.NewGuid(),
-                Username = "testusername@hearing.com",
+                Username = "testusername@hmcts.net",
                 Case_role_name = "caserolename",
-                Contact_email = "contact@email.com",
+                Contact_email = "contact@hmcts.net",
                 First_name = "John",
                 Hearing_role_name = "hearingrolename",
                 Last_name = "Doe",

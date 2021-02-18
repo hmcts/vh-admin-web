@@ -9,42 +9,12 @@ using NUnit.Framework;
 
 namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
 {
-    public class MapToMultiDayHearingConfirmationNotificationTests
+    public class MapToHearingReminderNotificationTests
     {
         [Test]
-        public void should_map_to_judge_confirmation_notification()
+        public void should_map_to_lip_reminder_notification()
         {
-            var expectedNotificationType = NotificationType.HearingConfirmationJudgeMultiDay;
-            var participant = InitParticipant("Judge");
-            var hearing = InitHearing();
-
-            var expectedParameters = new Dictionary<string, string>
-            {
-                {"case name", hearing.Cases.First().Name},
-                {"case number", hearing.Cases.First().Number},
-                {"time", "1:10 PM"},
-                {"Start Day Month Year", "12 October 2020"},
-                {"judge", participant.Display_name},
-                {"courtroom account username", participant.Username},
-                {"number of days", "4"}
-            };
-            
-            var result = AddNotificationRequestMapper.MapToMultiDayHearingConfirmationNotification(hearing, participant, 4);
-            
-            result.Should().NotBeNull();
-            result.HearingId.Should().Be(hearing.Id);
-            result.ParticipantId.Should().Be(participant.Id);
-            result.ContactEmail.Should().Be(participant.Contact_email);
-            result.NotificationType.Should().Be(expectedNotificationType);
-            result.MessageType.Should().Be(MessageType.Email);
-            result.PhoneNumber.Should().Be(participant.Telephone_number);
-            result.Parameters.Should().BeEquivalentTo(expectedParameters);
-        }
-        
-        [Test]
-        public void should_map_to_lip_confirmation_notification()
-        {
-            var expectedNotificationType = NotificationType.HearingConfirmationLipMultiDay;
+            var expectedNotificationType = NotificationType.HearingReminderLip;
             var participant = InitParticipant("Individual");
             var hearing = InitHearing();
 
@@ -53,13 +23,13 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
                 {"case name", hearing.Cases.First().Name},
                 {"case number", hearing.Cases.First().Number},
                 {"time", "1:10 PM"},
-                {"Start Day Month Year", "12 October 2020"},
+                {"day month year", "12 October 2020"},
                 {"name", $"{participant.First_name} {participant.Last_name}"},
-                {"number of days", "4"}
+                {"username", participant.Username}
             };
-            
-            var result = AddNotificationRequestMapper.MapToMultiDayHearingConfirmationNotification(hearing, participant, 4);
-            
+
+            var result = AddNotificationRequestMapper.MapToHearingReminderNotification(hearing, participant);
+
             result.Should().NotBeNull();
             result.HearingId.Should().Be(hearing.Id);
             result.ParticipantId.Should().Be(participant.Id);
@@ -69,11 +39,11 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             result.PhoneNumber.Should().Be(participant.Telephone_number);
             result.Parameters.Should().BeEquivalentTo(expectedParameters);
         }
-        
+
         [Test]
-        public void should_map_to_representative_confirmation_notification()
+        public void should_map_to_representative_reminder_notification()
         {
-            var expectedNotificationType = NotificationType.HearingConfirmationRepresentativeMultiDay;
+            var expectedNotificationType = NotificationType.HearingReminderRepresentative;
             var participant = InitParticipant("Representative", "Jane Doe");
             var hearing = InitHearing();
 
@@ -82,14 +52,14 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
                 {"case name", hearing.Cases.First().Name},
                 {"case number", hearing.Cases.First().Number},
                 {"time", "1:10 PM"},
-                {"Start Day Month Year", "12 October 2020"},
+                {"day month year", "12 October 2020"},
                 {"solicitor name", $"{participant.First_name} {participant.Last_name}"},
                 {"client name", $"{participant.Representee}"},
-                {"number of days", "4"}
+                {"username", participant.Username}
             };
-            
-            var result = AddNotificationRequestMapper.MapToMultiDayHearingConfirmationNotification(hearing, participant, 4);
-            
+
+            var result = AddNotificationRequestMapper.MapToHearingReminderNotification(hearing, participant);
+
             result.Should().NotBeNull();
             result.HearingId.Should().Be(hearing.Id);
             result.ParticipantId.Should().Be(participant.Id);
@@ -103,7 +73,7 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
         [Test]
         public void should_map_to_joh_confirmation_notification()
         {
-            var expectedNotificationType = NotificationType.HearingConfirmationJohMultiDay;
+            var expectedNotificationType = NotificationType.HearingReminderJoh;
             var participant = InitParticipant("Judicial Office Holder");
             var hearing = InitHearing();
 
@@ -112,13 +82,13 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
                 {"case name", hearing.Cases.First().Name},
                 {"case number", hearing.Cases.First().Number},
                 {"time", "1:10 PM"},
-                {"Start Day Month Year", "12 October 2020"},
+                {"day month year", "12 October 2020"},
                 {"judicial office holder", $"{participant.First_name} {participant.Last_name}"},
-                {"number of days", "4"}
+                {"username", participant.Username}
             };
-            
-            var result = AddNotificationRequestMapper.MapToMultiDayHearingConfirmationNotification(hearing, participant, 4);
-            
+
+            var result = AddNotificationRequestMapper.MapToHearingReminderNotification(hearing, participant);
+
             result.Should().NotBeNull();
             result.HearingId.Should().Be(hearing.Id);
             result.ParticipantId.Should().Be(participant.Id);
@@ -143,7 +113,6 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
                 Id = Guid.NewGuid(),
                 Cases = new List<CaseResponse> {@case},
                 Scheduled_date_time = new DateTime(2020, 10, 12, 13, 10, 0)
-                
             };
         }
 

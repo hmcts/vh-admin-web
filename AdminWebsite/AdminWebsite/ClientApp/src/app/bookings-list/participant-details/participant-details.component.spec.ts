@@ -32,14 +32,14 @@ describe('ParticipantDetailsComponent', () => {
             'Alan',
             'Brake',
             'Citizen',
-            'email.p1@email.com',
-            'email@ee.ee',
-            'Defendant',
-            'Defendant LIP',
+            'email.p1@hmcts.net',
+            'email@hmcts.net',
+            'Respondent',
+            'Respondent LIP',
             'Alan Brake',
             '',
             'ABC Solicitors',
-            'defendant',
+            'Respondent',
             '12345678'
         );
         pr.IndexInList = 0;
@@ -50,6 +50,6 @@ describe('ParticipantDetailsComponent', () => {
         expect(divElementRole.length).toBeGreaterThan(0);
         expect(divElementRole.length).toBe(1);
         const el = divElementRole[0].nativeElement as HTMLElement;
-        expect(el.innerHTML).toContain('Defendant');
+        expect(el.innerHTML).toContain('Respondent');
     });
 });

@@ -59,7 +59,7 @@ describe('HearingDetailsComponent', () => {
             true,
             'reason1',
             'Financial Remedy',
-            'judge.green@email.com',
+            'judge.green@hmcts.net',
             '1234567'
         );
 
@@ -149,7 +149,7 @@ describe('HearingDetailsComponent join by phone', () => {
         true,
         'reason1',
         'Financial Remedy',
-        'judge.green@email.com',
+        'judge.green@hmcts.net',
         '1234567'
     );
     it('should display option to join by phone if config has not the set date', () => {

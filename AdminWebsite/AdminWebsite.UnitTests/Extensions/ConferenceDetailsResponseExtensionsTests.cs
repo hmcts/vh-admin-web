@@ -29,61 +29,61 @@ namespace AdminWebsite.UnitTests.Extensions
         }
 
         [Test]
-        public void Should_return_false_MeetingRoom_is_valid()
+        public void Should_return_true_MeetingRoom_is_valid()
         {  
-            var result = conferenceDetailsResp.HasInvalidMeetingRoom();
+            var result = conferenceDetailsResp.HasValidMeetingRoom();
+
+            result.Should().BeTrue();
+        }
+
+        [Test]
+        public void Should_return_false_MeetingRoom_is_null()
+        {
+            conferenceDetailsResp.MeetingRoom = null;
+
+            var result = conferenceDetailsResp.HasValidMeetingRoom();
 
             result.Should().BeFalse();
         }
 
         [Test]
-        public void Should_return_true_MeetingRoom_is_null()
-        {
-            conferenceDetailsResp.MeetingRoom = null;
-
-            var result = conferenceDetailsResp.HasInvalidMeetingRoom();
-
-            result.Should().BeTrue();
-        }
-
-        [Test]
-        public void Should_return_true_AdminUri_is_null_or_empty()
+        public void Should_return_false_AdminUri_is_null_or_empty()
         {
             conferenceDetailsResp.MeetingRoom.AdminUri = string.Empty;
 
-            var result = conferenceDetailsResp.HasInvalidMeetingRoom();
+            var result = conferenceDetailsResp.HasValidMeetingRoom();
 
-            result.Should().BeTrue();
+            result.Should().BeFalse();
         }
 
         [Test]
-        public void Should_return_true_JudgeUri_is_null_or_empty()
+        public void Should_return_false_JudgeUri_is_null_or_empty()
         {
             conferenceDetailsResp.MeetingRoom.JudgeUri = string.Empty;
 
-            var result = conferenceDetailsResp.HasInvalidMeetingRoom();
+            var result = conferenceDetailsResp.HasValidMeetingRoom();
 
-            result.Should().BeTrue();
+            result.Should().BeFalse();
         }
 
         [Test]
-        public void Should_return_true_ParticipantUri_is_null_or_empty()
+        public void Should_return_false_ParticipantUri_is_null_or_empty()
         {
             conferenceDetailsResp.MeetingRoom.ParticipantUri = string.Empty;
 
-            var result = conferenceDetailsResp.HasInvalidMeetingRoom();
+            var result = conferenceDetailsResp.HasValidMeetingRoom();
 
-            result.Should().BeTrue();
+            result.Should().BeFalse();
         }
 
         [Test]
-        public void Should_return_true_PexipNode_is_null_or_empty()
+        public void Should_return_false_PexipNode_is_null_or_empty()
         {
             conferenceDetailsResp.MeetingRoom.PexipNode = string.Empty;
 
-            var result = conferenceDetailsResp.HasInvalidMeetingRoom();
+            var result = conferenceDetailsResp.HasValidMeetingRoom();
 
-            result.Should().BeTrue();
+            result.Should().BeFalse();
         }
 
     }

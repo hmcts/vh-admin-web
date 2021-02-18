@@ -27,7 +27,7 @@ import { SummaryComponent } from './summary.component';
 
 function initExistingHearingRequest(): HearingModel {
     const pat1 = new ParticipantModel();
-    pat1.email = 'aa@aa.aa';
+    pat1.email = 'aa@hmcts.net';
     pat1.representee = 'citizen 01';
     pat1.display_name = 'solicitor 01';
     pat1.id = '123123-123';
@@ -160,7 +160,7 @@ describe('SummaryComponent with valid request', () => {
     });
     it('should remove participant', () => {
         component.ngOnInit();
-        component.selectedParticipantEmail = 'aa@aa.aa';
+        component.selectedParticipantEmail = 'aa@hmcts.net';
         component.removeParticipant();
         fixture.detectChanges();
         expect(component.hearing.participants.length).toBe(0);
@@ -169,10 +169,10 @@ describe('SummaryComponent with valid request', () => {
     it('should not remove participant by not existing email', () => {
         component.ngOnInit();
         const pat1 = new ParticipantModel();
-        pat1.email = 'aa@aa.aa';
+        pat1.email = 'aa@hmcts.net';
         component.hearing.participants = [];
         component.hearing.participants.push(pat1);
-        component.selectedParticipantEmail = 'bb@bb.bb';
+        component.selectedParticipantEmail = 'bb@hmcts.net';
 
         expect(component.hearing.participants.length).toBe(1);
         component.removeParticipant();
@@ -406,7 +406,7 @@ describe('SummaryComponent  with existing request', () => {
         fixture.detectChanges();
         expect(component.caseNumber).toBe('TX/12345/2018');
         expect(component.caseName).toBe('Mr. Test User vs HMRC');
-        expect(component.caseHearingType).toBe('Application to Set Aside Judgement (SAJ)');
+        expect(component.caseHearingType).toBe('Automated Test');
         expect(component.courtRoomAddress).toBeTruthy();
         expect(component.hearingDuration).toBe('listed for 1 hour 20 minutes');
     });
@@ -442,7 +442,7 @@ describe('SummaryComponent  with existing request', () => {
         component.hearing = initExistingHearingRequest();
         component.hearing.hearing_id = '12345';
         component.hearing.participants[0].id = '678';
-        component.selectedParticipantEmail = 'aa@aa.aa';
+        component.selectedParticipantEmail = 'aa@hmcts.net';
         component.removeParticipant();
         fixture.detectChanges();
         expect(loggerSpy.info).toHaveBeenCalled();

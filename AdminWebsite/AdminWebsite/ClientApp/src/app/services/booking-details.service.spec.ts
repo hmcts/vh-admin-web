@@ -23,15 +23,15 @@ export class ResponseTestData {
         response.scheduled_date_time = new Date('2019-10-22 13:58:40.3730067');
         response.scheduled_duration = 125;
         response.hearing_venue_name = 'Coronation Street';
-        response.case_type_name = 'Civil Money Claims';
-        response.hearing_type_name = 'Application to Set Judgment Aside';
+        response.case_type_name = 'Generic';
+        response.hearing_type_name = 'Automated Test';
         response.other_information = 'some note';
         response.hearing_room_name = '777';
         response.created_date = new Date('2019-10-22 13:58:40.3730067');
-        response.created_by = 'stub.response@madeupemail.com';
-        response.updated_by = 'stub.response@madeupemail.com';
+        response.created_by = 'stub.response@hmcts.net';
+        response.updated_by = 'stub.response@hmcts.net';
         response.updated_date = new Date('2019-10-22 13:58:40.3730067');
-        response.confirmed_by = 'stub.response@madeupemail.com';
+        response.confirmed_by = 'stub.response@hmcts.net';
         response.confirmed_date = new Date('2019-10-22 13:58:40.3730067');
         response.audio_recording_required = true;
 
@@ -41,7 +41,7 @@ export class ResponseTestData {
         par1.first_name = 'Jo';
         par1.last_name = 'Smith';
         par1.user_role_name = 'Citizen';
-        par1.username = 'username@email.address';
+        par1.username = 'username@hmcts.net';
         par1.telephone_number = '123456789';
         par1.hearing_role_name = 'Litigant in Person';
 
@@ -51,7 +51,7 @@ export class ResponseTestData {
         par2.first_name = 'Judge';
         par2.last_name = 'Smith';
         par2.user_role_name = 'Judge';
-        par2.username = 'usernamejudge@email.address';
+        par2.username = 'usernamejudge@hmcts.net';
         par2.hearing_role_name = 'Judge';
 
         response.participants = [];
@@ -98,11 +98,11 @@ describe('booking details service', () => {
         expect(model.CourtRoom).toBe('777');
         expect(model.HearingCaseName).toBe('Smith vs Donner');
         expect(model.HearingCaseNumber).toBe('XX3456234565');
-        expect(model.HearingType).toBe('Application to Set Judgment Aside');
+        expect(model.HearingType).toBe('Automated Test');
         expect(model.StartTime).toEqual(new Date('2019-10-22 13:58:40.3730067'));
-        expect(model.CreatedBy).toBe('stub.response@madeupemail.com');
-        expect(model.LastEditBy).toBe('stub.response@madeupemail.com');
-        expect(model.ConfirmedBy).toBe('stub.response@madeupemail.com');
+        expect(model.CreatedBy).toBe('stub.response@hmcts.net');
+        expect(model.LastEditBy).toBe('stub.response@hmcts.net');
+        expect(model.ConfirmedBy).toBe('stub.response@hmcts.net');
         expect(model.AudioRecordingRequired).toBe(true);
     });
 
