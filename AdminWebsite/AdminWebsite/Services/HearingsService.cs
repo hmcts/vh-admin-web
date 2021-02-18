@@ -29,15 +29,19 @@ namespace AdminWebsite.Services
         Task SendNewUserEmailParticipants(HearingDetailsResponse hearing,
             Dictionary<string, User> newUsernameAdIdDict);
 
-        Task SendHearingUpdateEmail(HearingDetailsResponse originalHearing, HearingDetailsResponse updatedHearing);
-        
+        Task SendHearingUpdateEmail(HearingDetailsResponse originalHearing, HearingDetailsResponse updatedHearing, List<ParticipantResponse> participants = null);
+
         /// <summary>
         /// This will notify all participants (excluding the judge) a hearing has been booked.
         /// Not to be confused with the "confirmed process".
         /// </summary>
         /// <param name="hearing"></param>
+        /// <param name="participants"></param>
         /// <returns></returns>
-        Task SendHearingConfirmationEmail(HearingDetailsResponse hearing);
+        Task SendHearingConfirmationEmail(HearingDetailsResponse hearing, List<ParticipantResponse> participants = null);
+        Task SendMultiDayHearingConfirmationEmail(HearingDetailsResponse hearing, int days);
+        
+        Task SendHearingReminderEmail(HearingDetailsResponse hearing);
 
         Task ProcessNewParticipants(Guid hearingId, EditParticipantRequest participant, HearingDetailsResponse hearing,
             Dictionary<string, User> usernameAdIdDict, List<ParticipantRequest> newParticipantList);
@@ -129,7 +133,7 @@ namespace AdminWebsite.Services
             }
         }
 
-        public async Task SendHearingUpdateEmail(HearingDetailsResponse originalHearing, HearingDetailsResponse updatedHearing)
+        public async Task SendHearingUpdateEmail(HearingDetailsResponse originalHearing, HearingDetailsResponse updatedHearing, List<ParticipantResponse> participants = null)
         {
             if (updatedHearing.IsGenericHearing())
             {
@@ -138,7 +142,8 @@ namespace AdminWebsite.Services
             var @case = updatedHearing.Cases.First();
             var caseName = @case.Name;
             var caseNumber = @case.Number;
-            var requests = updatedHearing.Participants
+            var participantsToEmail = participants ?? updatedHearing.Participants;
+            var requests = participantsToEmail
                 .Where(x => !x.User_role_name.Contains("Judge", StringComparison.CurrentCultureIgnoreCase))
                 .Select(participant =>
                     AddNotificationRequestMapper.MapToHearingAmendmentNotification(updatedHearing.Id, participant,
@@ -150,13 +155,14 @@ namespace AdminWebsite.Services
             }
         }
         
-        public async Task SendHearingConfirmationEmail(HearingDetailsResponse hearing)
+        public async Task SendHearingConfirmationEmail(HearingDetailsResponse hearing, List<ParticipantResponse> participants = null)
         {
             if (hearing.IsGenericHearing())
             {
                 return;
             }
-            var requests = hearing.Participants
+            var participantsToEmail = participants ?? hearing.Participants;
+            var requests = participantsToEmail
                 .Where(x => !x.User_role_name.Contains("Judge", StringComparison.CurrentCultureIgnoreCase))
                 .Select(participant => AddNotificationRequestMapper.MapToHearingConfirmationNotification(hearing, participant))
                 .ToList();
@@ -164,6 +170,39 @@ namespace AdminWebsite.Services
             {
                 await _notificationApiClient.CreateNewNotificationAsync(request);
             }
+        }
+
+        public async Task SendMultiDayHearingConfirmationEmail(HearingDetailsResponse hearing, int days)
+        {
+            if (hearing.IsGenericHearing())
+            {
+                return;
+            }
+            
+            var requests = hearing.Participants
+                .Where(x => !x.User_role_name.Contains("Judge", StringComparison.CurrentCultureIgnoreCase))
+                .Select(participant => AddNotificationRequestMapper.MapToMultiDayHearingConfirmationNotification(hearing, participant, days))
+                .ToList();
+            
+            foreach (var request in requests)
+            {
+                await _notificationApiClient.CreateNewNotificationAsync(request);
+            }
+        }
+
+        public async Task SendHearingReminderEmail(HearingDetailsResponse hearing)
+        {
+            if (hearing.IsGenericHearing())
+            {
+                return;
+            }
+            
+            var requests = hearing.Participants
+                .Where(x => !x.User_role_name.Contains("Judge", StringComparison.CurrentCultureIgnoreCase))
+                .Select(participant => AddNotificationRequestMapper.MapToHearingReminderNotification(hearing, participant))
+                .ToList();
+
+            await Task.WhenAll(requests.Select(_notificationApiClient.CreateNewNotificationAsync));
         }
 
         public async Task<ConferenceDetailsResponse> GetConferenceDetailsByHearingIdWithRetry(Guid hearingId, string errorMessage)
@@ -176,7 +215,7 @@ namespace AdminWebsite.Services
                     retryAttempt =>
                         _logger.LogWarning(
                             "Failed to retrieve conference details from the VideoAPi for hearingId {Hearing}. Retrying attempt {RetryAttempt}", hearingId, retryAttempt),
-                    videoApiResponseObject => videoApiResponseObject.HasInvalidMeetingRoom(),
+                    videoApiResponseObject => videoApiResponseObject.HasValidMeetingRoom(),
                     () => _videoApiClient.GetConferenceByHearingRefIdAsync(hearingId, false)
                 );
                 return details;

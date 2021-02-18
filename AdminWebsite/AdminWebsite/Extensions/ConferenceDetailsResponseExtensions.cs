@@ -4,13 +4,13 @@ namespace AdminWebsite.Extensions
 {
     public static class ConferenceDetailsResponseExtensions
     {
-        public static bool HasInvalidMeetingRoom(this ConferenceDetailsResponse conference)
+        public static bool HasValidMeetingRoom(this ConferenceDetailsResponse conference)
         {
-            return (conference?.MeetingRoom == null
-                            || string.IsNullOrWhiteSpace(conference.MeetingRoom.AdminUri)
-                            || string.IsNullOrWhiteSpace(conference.MeetingRoom.ParticipantUri)
-                            || string.IsNullOrWhiteSpace(conference.MeetingRoom.JudgeUri)
-                            || string.IsNullOrWhiteSpace(conference.MeetingRoom.PexipNode));
+            if (conference?.MeetingRoom == null) return false;
+            return !string.IsNullOrWhiteSpace(conference.MeetingRoom.AdminUri) &&
+                   !string.IsNullOrWhiteSpace(conference.MeetingRoom.ParticipantUri) &&
+                   !string.IsNullOrWhiteSpace(conference.MeetingRoom.JudgeUri) &&
+                   !string.IsNullOrWhiteSpace(conference.MeetingRoom.PexipNode);
         }
     }
 }

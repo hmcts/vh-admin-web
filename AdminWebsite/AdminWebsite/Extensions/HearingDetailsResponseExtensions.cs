@@ -12,7 +12,12 @@ namespace AdminWebsite.Extensions
         
         public static bool HasScheduleAmended(this HearingDetailsResponse hearing, HearingDetailsResponse anotherHearing)
         {
-            return hearing.Scheduled_date_time.Ticks == anotherHearing.Scheduled_date_time.Ticks;
+            return hearing.Scheduled_date_time.Ticks != anotherHearing.Scheduled_date_time.Ticks;
+        }
+        
+        public static bool IsAClone(this HearingDetailsResponse hearing)
+        {
+            return hearing.Id != hearing.Group_id;
         }
     }
 }
