@@ -325,8 +325,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task Should_send_email_with_only_matching_participant()
         {
-            _addNewParticipantRequest.Participants.Add(new EditParticipantRequest
-                                                            ContactEmail = "new2@hmcts.net",
+            _addNewParticipantRequest.Participants.Add(new EditParticipantRequest { 
+                ContactEmail = "new2@hmcts.net",
                 FirstName = "Test2_FirstName",
                 LastName = "Test2_LastName",
             });
