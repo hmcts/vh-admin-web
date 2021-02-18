@@ -64,9 +64,7 @@ export class ParticipantDetailsModel {
     }
 
     get isRepresenting() {
-        return (
-            this.UserRoleName && this.UserRoleName.indexOf('Representative') > -1 && !!this.Representee
-        );
+        return this.UserRoleName && this.UserRoleName.indexOf('Representative') > -1 && !!this.Representee;
     }
 
     showCaseRole(): boolean {
