@@ -35,7 +35,7 @@ namespace AdminWebsite.UnitTests.Controllers.PersonController
             
             var testSettings = new TestUserSecrets
             {
-                TestUsernameStem = "@madeUpEmail.com"
+                TestUsernameStem = "@hmcts.net"
             };
             
             _controller = new AdminWebsite.Controllers.PersonsController(_bookingsApiClient.Object,
@@ -50,12 +50,12 @@ namespace AdminWebsite.UnitTests.Controllers.PersonController
             {
                 FirstName = "New",
                 LastName = "Me",
-                CurrentUsername = "old.me@test.com"
+                CurrentUsername = "old.me@hmcts.net"
             };
 
             _updatedUserResponse = new UserResponse
             {
-                Email = "new.me@test.com",
+                Email = "new.me@hmcts.net",
                 DisplayName = "New Me",
                 FirstName = "New",
                 LastName = "Me"

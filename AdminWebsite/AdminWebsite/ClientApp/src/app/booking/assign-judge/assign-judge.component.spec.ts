@@ -24,7 +24,7 @@ function initHearingRequest(): HearingModel {
     const participants: ParticipantModel[] = [];
     const p1 = new ParticipantModel();
     p1.display_name = 'display name1';
-    p1.email = 'test1@TestBed.com';
+    p1.email = 'test1@hmcts.net';
     p1.first_name = 'first';
     p1.last_name = 'last';
     p1.is_judge = true;
@@ -32,7 +32,7 @@ function initHearingRequest(): HearingModel {
 
     const p2 = new ParticipantModel();
     p2.display_name = 'display name2';
-    p2.email = 'test2@TestBed.com';
+    p2.email = 'test2@hmcts.net';
     p2.first_name = 'first2';
     p2.last_name = 'last2';
     p2.is_judge = false;
@@ -131,7 +131,7 @@ describe('AssignJudgeComponent', () => {
         dropDown.dispatchEvent(new Event('change'));
         fixture.detectChanges();
 
-        expect(component.judge.email).toBe('John2.Doe@madeupemail.com');
+        expect(component.judge.email).toBe('John2.Doe@hmcts.net');
         expect(component.form.valid).toBeTruthy();
     });
     it('should initialize form and create judgeDisplayName control', () => {
@@ -187,7 +187,7 @@ describe('AssignJudgeComponent', () => {
         expect(component.canNavigate).toBeTruthy();
         expect(component.judge.first_name).toBe('first');
         expect(component.judge.display_name).toBe('display name1');
-        expect(component.judge.email).toBe('test1@TestBed.com');
+        expect(component.judge.email).toBe('test1@hmcts.net');
         expect(component.judge.last_name).toBe('last');
     });
     it('should get available judges', () => {
@@ -251,8 +251,8 @@ describe('AssignJudgeComponent', () => {
         component.judge.display_name = 'New Name Set';
         component.hearing = new HearingModel();
         component.hearing.participants = [];
-        component.availableJudges = [new JudgeResponse({ display_name: 'New Name Set', email: 'email@email.com' })];
-        component.addJudge('email@email.com');
+        component.availableJudges = [new JudgeResponse({ display_name: 'New Name Set', email: 'email@hmcts.net' })];
+        component.addJudge('email@hmcts.net');
         expect(component.hearing.participants.length).toBeGreaterThan(0);
     });
     it('should sanitize display name of the judge if it was entered', () => {

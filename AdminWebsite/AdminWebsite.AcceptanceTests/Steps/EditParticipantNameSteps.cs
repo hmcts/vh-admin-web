@@ -90,7 +90,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
                     break;
             } 
             
-            return _participant == null ? "user@notexists.com": _participant.Contact_email;
+            return _participant == null ? "user@hmcts.net": _participant.Contact_email;
         }
 
     }
