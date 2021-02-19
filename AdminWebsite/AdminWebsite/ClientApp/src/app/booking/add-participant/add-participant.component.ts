@@ -489,6 +489,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
             const newParticipant = new ParticipantModel();
             this.mapParticipant(newParticipant);
             if (!this.participantService.checkDuplication(newParticipant.email, this.hearing.participants)) {
+                (newParticipant as ParticipantModel & { isRepresentative: boolean }).isRepresentative = !!newParticipant.representee;
                 this.hearing.participants.push(newParticipant);
                 this.videoHearingService.updateHearingRequest(this.hearing);
                 this.logger.debug(`${this.loggerPrefix} Saved participant to booking. Clearing form.`, {

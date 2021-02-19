@@ -260,7 +260,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
                 if (participant.HearingRoleName == PartyRole.Representative.Name)
                 {
-                    expectedParticipant = $"{fullNameTitle} {RepresentingText} {participant.Representee}";
+                    expectedParticipant = $"{fullNameTitle} {RepresentingText} {participant.Representee} {participant.CaseRoleName}";
                 }
 
                 actualResult.Any(x => x.Replace(Environment.NewLine, " ").Equals(expectedParticipant)).Should()
