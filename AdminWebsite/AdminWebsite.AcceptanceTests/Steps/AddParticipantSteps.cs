@@ -256,11 +256,11 @@ namespace AdminWebsite.AcceptanceTests.Steps
                 if (participant.Role.ToLower().Equals("judge") || participant.Role.ToLower().Equals("judge")) continue;
 
                 var fullNameTitle = $"{title} {participant.Firstname} {participant.Lastname}";
-                var expectedParticipant = $"{fullNameTitle} {participant.HearingRoleName}";
+                var expectedParticipant = $"{fullNameTitle} {participant.CaseRoleName}";
 
                 if (participant.HearingRoleName == PartyRole.Representative.Name)
                 {
-                    expectedParticipant = $"{fullNameTitle} {RepresentingText} {participant.Representee}";
+                    expectedParticipant = $"{fullNameTitle} {RepresentingText} {participant.Representee} {participant.CaseRoleName}";
                 }
 
                 actualResult.Any(x => x.Replace(Environment.NewLine, " ").Equals(expectedParticipant)).Should()
