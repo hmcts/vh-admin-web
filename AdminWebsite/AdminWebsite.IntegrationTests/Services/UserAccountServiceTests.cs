@@ -38,9 +38,9 @@ namespace AdminWebsite.IntegrationTests.Services
         public async Task Should_return_list_of_judges()
         {
             var judgesList = new List<UserResponse>();
-            var judge = new UserResponse { DisplayName = "john maclain", Email = "john.maclain@email.com", FirstName = "john", LastName = "maclain" };
+            var judge = new UserResponse { DisplayName = "john maclain", Email = "john.maclain@hmcts.net", FirstName = "john", LastName = "maclain" };
             judgesList.Add(judge);
-            judge = new UserResponse { DisplayName = "john wayne", Email = "john.wayne@email.com", FirstName = "john", LastName = "wayne" };
+            judge = new UserResponse { DisplayName = "john wayne", Email = "john.wayne@hmcts.net", FirstName = "john", LastName = "wayne" };
             judgesList.Add(judge);
 
             _userApiClient.Setup(x => x.GetJudgesAsync()).ReturnsAsync(judgesList);

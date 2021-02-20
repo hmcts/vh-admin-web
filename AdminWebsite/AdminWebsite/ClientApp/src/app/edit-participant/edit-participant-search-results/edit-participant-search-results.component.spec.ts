@@ -4,7 +4,7 @@ import { ParticipantEditService } from 'src/app/services/participant-edit-servic
 import { PageUrls } from 'src/app/shared/page-url.constants';
 import { EditParticipantSearchResultsComponent } from './edit-participant-search-results.component';
 
-const result = new ParticipantEditResultModel('123456789', 'John Doe', 'John', 'Doe', 'john.doe@hearing.com');
+const result = new ParticipantEditResultModel('123456789', 'John Doe', 'John', 'Doe', 'john.doe@hmcts.net');
 
 describe('EditParticipantSearchResultsComponent', () => {
     let component: EditParticipantSearchResultsComponent;
@@ -15,7 +15,7 @@ describe('EditParticipantSearchResultsComponent', () => {
         router = jasmine.createSpyObj<Router>('Router', ['navigateByUrl']);
 
         component = new EditParticipantSearchResultsComponent(service, router);
-        component.contactEmail = 'john@doe.com';
+        component.contactEmail = 'john@hmcts.net';
         component.result = result;
     });
 

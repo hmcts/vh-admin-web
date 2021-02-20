@@ -30,7 +30,7 @@ function initExistingHearingRequest(): HearingModel {
     existingRequest.hearing_type_id = 2;
     existingRequest.hearing_venue_id = 1;
     existingRequest.questionnaire_not_required = false;
-    existingRequest.case_type = 'Civil Money Claims';
+    existingRequest.case_type = 'Generic';
 
     return existingRequest;
 }
@@ -233,7 +233,7 @@ describe('CreateHearingComponent with existing request in session', () => {
     let component: CreateHearingComponent;
     let fixture: ComponentFixture<CreateHearingComponent>;
     const existingRequest = initExistingHearingRequest();
-    existingRequest.hearing_type_name = 'Application to Set Aside Judgement (SAJ)';
+    existingRequest.hearing_type_name = 'Automated Test';
 
     beforeEach(() => {
         videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [

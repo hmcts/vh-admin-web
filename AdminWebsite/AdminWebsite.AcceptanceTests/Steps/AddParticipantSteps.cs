@@ -122,7 +122,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             var user = new UserAccount();
             var prefix = _c.Test.TestData.AddParticipant.Participant.NewUserPrefix;
-            user.AlternativeEmail = $"{prefix}{Faker.Internet.Email()}";
+            user.AlternativeEmail = $"{prefix}{Faker.RandomNumber.Next()}@hmcts.net";
             var firstname = Faker.Name.First();
             var lastname = Faker.Name.Last();
             var displayName = $"{firstname} {lastname}";
@@ -256,11 +256,11 @@ namespace AdminWebsite.AcceptanceTests.Steps
                 if (participant.Role.ToLower().Equals("judge") || participant.Role.ToLower().Equals("judge")) continue;
 
                 var fullNameTitle = $"{title} {participant.Firstname} {participant.Lastname}";
-                var expectedParticipant = $"{fullNameTitle} {participant.HearingRoleName}";
+                var expectedParticipant = $"{fullNameTitle} {participant.CaseRoleName}";
 
                 if (participant.HearingRoleName == PartyRole.Representative.Name)
                 {
-                    expectedParticipant = $"{fullNameTitle} {RepresentingText} {participant.Representee}";
+                    expectedParticipant = $"{fullNameTitle} {RepresentingText} {participant.Representee} {participant.CaseRoleName}";
                 }
 
                 actualResult.Any(x => x.Replace(Environment.NewLine, " ").Equals(expectedParticipant)).Should()

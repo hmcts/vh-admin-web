@@ -24,7 +24,7 @@ describe('ParticipantsListComponent', () => {
     const pat1 = new ParticipantModel();
     pat1.title = 'Mrs';
     pat1.first_name = 'Sam';
-    const participants: ParticipantModel[] = [pat1, pat1];
+    const participants: any[] = [pat1, pat1];
 
     beforeEach(
         waitForAsync(() => {
@@ -72,7 +72,7 @@ describe('ParticipantsListComponent', () => {
         expect(bookingServiceSpy.setEditMode).toHaveBeenCalled();
     });
     it('should edit participant details', () => {
-        component.editParticipant('email@aa.aa');
+        component.editParticipant('email@hmcts.net');
         fixture.detectChanges();
         expect(bookingServiceSpy.setEditMode).toHaveBeenCalled();
         expect(component.isSummaryPage).toBeTruthy();
@@ -81,7 +81,7 @@ describe('ParticipantsListComponent', () => {
     });
     it('should emit on remove', () => {
         spyOn(component.$selectedForRemove, 'emit');
-        component.removeParticipant('email@aa.aa');
+        component.removeParticipant('email@hmcts.net');
         expect(component.$selectedForRemove.emit).toHaveBeenCalled();
     });
 });

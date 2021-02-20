@@ -27,7 +27,7 @@ namespace AdminWebsite.UnitTests.Controllers.PersonController
             _userAccountService = new Mock<IUserAccountService>();
             var testSettings = new TestUserSecrets
             {
-                TestUsernameStem = "@madeUpEmail.com"
+                TestUsernameStem = "@hmcts.net"
             };
 
             _controller = new AdminWebsite.Controllers.PersonsController(_bookingsApiClient.Object,
@@ -37,7 +37,7 @@ namespace AdminWebsite.UnitTests.Controllers.PersonController
         [Test]
         public async Task should_return_ok_with_person()
         {
-            var contactEmail = "john@doe.com";
+            var contactEmail = "john@hmcts.net";
             var person = Builder<PersonResponse>.CreateNew().Build();
             _bookingsApiClient
                 .Setup(x => x.SearchForNonJudgePersonsByContactEmailAsync(contactEmail))
@@ -53,7 +53,7 @@ namespace AdminWebsite.UnitTests.Controllers.PersonController
         [Test]
         public async Task should_return_status_code_from_bookings_api_exception()
         {
-            var contactEmail = "john@doe.com";
+            var contactEmail = "john@hmcts.net";
             _bookingsApiClient
                 .Setup(x => x.SearchForNonJudgePersonsByContactEmailAsync(contactEmail))
                 .Throws(ClientException.ForBookingsAPI(HttpStatusCode.NotFound));

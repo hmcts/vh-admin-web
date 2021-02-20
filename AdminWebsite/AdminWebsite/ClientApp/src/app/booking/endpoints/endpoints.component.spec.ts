@@ -180,17 +180,17 @@ describe('EndpointsComponent', () => {
     it('it should validate fields on next click and navigate to other information page if validations pass', () => {
         component.ngOnInit();
         component.endpoints.controls[0].get('displayName').setValue('200');
-        component.endpoints.controls[0].get('defenceAdvocate').setValue('username@email.com');
+        component.endpoints.controls[0].get('defenceAdvocate').setValue('username@hmcts.net');
         component.addEndpoint();
         component.endpoints.controls[1].get('displayName').setValue('201');
-        component.endpoints.controls[1].get('defenceAdvocate').setValue('username1@email.com');
+        component.endpoints.controls[1].get('defenceAdvocate').setValue('username1@hmcts.net');
         component.saveEndpoints();
         expect(component.duplicateDa).toBe(false);
         expect(component.failedValidation).toBe(false);
         expect(component.hearing.endpoints[0].displayName).toBe('200');
-        expect(component.hearing.endpoints[0].defenceAdvocate).toBe('username@email.com');
+        expect(component.hearing.endpoints[0].defenceAdvocate).toBe('username@hmcts.net');
         expect(component.hearing.endpoints[1].displayName).toBe('201');
-        expect(component.hearing.endpoints[1].defenceAdvocate).toBe('username1@email.com');
+        expect(component.hearing.endpoints[1].defenceAdvocate).toBe('username1@hmcts.net');
         expect(videoHearingsServiceSpy.updateHearingRequest).toHaveBeenCalled();
         expect(routerSpy.navigate).toHaveBeenCalledWith(['/other-information']);
     });
@@ -213,11 +213,11 @@ describe('EndpointsComponent', () => {
         component.hearing = existinghearing;
 
         component.endpoints.controls[0].get('displayName').setValue('new display name');
-        component.endpoints.controls[0].get('defenceAdvocate').setValue('user@email.com');
+        component.endpoints.controls[0].get('defenceAdvocate').setValue('user@hmcts.net');
         component.saveEndpoints();
         expect(component.failedValidation).toBe(false);
         expect(component.hearing.endpoints[0].displayName).toBe('new display name');
-        expect(component.hearing.endpoints[0].defenceAdvocate).toBe('user@email.com');
+        expect(component.hearing.endpoints[0].defenceAdvocate).toBe('user@hmcts.net');
         expect(videoHearingsServiceSpy.updateHearingRequest).toHaveBeenCalled();
 
         expect(routerSpy.navigate).toHaveBeenCalledWith(['/summary']);
@@ -226,13 +226,13 @@ describe('EndpointsComponent', () => {
     it('it should remove an endpoint from the endpoint array on remove click', () => {
         component.ngOnInit();
         component.endpoints.controls[0].get('displayName').setValue('200');
-        component.endpoints.controls[0].get('defenceAdvocate').setValue('username@email.com');
+        component.endpoints.controls[0].get('defenceAdvocate').setValue('username@hmcts.net');
         component.addEndpoint();
         component.endpoints.controls[1].get('displayName').setValue('201');
-        component.endpoints.controls[1].get('defenceAdvocate').setValue('username1@email.com');
+        component.endpoints.controls[1].get('defenceAdvocate').setValue('username1@hmcts.net');
         component.addEndpoint();
         component.endpoints.controls[2].get('displayName').setValue('202');
-        component.endpoints.controls[2].get('defenceAdvocate').setValue('username2@email.com');
+        component.endpoints.controls[2].get('defenceAdvocate').setValue('username2@hmcts.net');
 
         component.removeEndpoint(1);
         component.saveEndpoints();
@@ -241,25 +241,25 @@ describe('EndpointsComponent', () => {
     it('should map participant list to defence advocate model', () => {
         const participantModel = new ParticipantModel();
         participantModel.id = '1000';
-        participantModel.username = 'username@email.com';
+        participantModel.username = 'username@hmcts.net';
         participantModel.display_name = 'display name';
         component.ngOnInit();
         const dA = component.mapParticipantsToDefenceAdvocateModel(participantModel);
         expect(dA).toBeTruthy();
         expect(dA.id).toBe('1000');
-        expect(dA.username).toBe('username@email.com');
+        expect(dA.username).toBe('username@hmcts.net');
         expect(dA.displayName).toBe('display name');
         expect(dA.isSelected).toBe(null);
     });
     it('should return the username from id', () => {
         const participantModel = new ParticipantModel();
         participantModel.id = '1000';
-        participantModel.username = 'username@email.com';
+        participantModel.username = 'username@hmcts.net';
         participantModel.display_name = 'display name';
         component.hearing.participants.push(participantModel);
         component.ngOnInit();
         let result = component.getUsernameFromId('1000');
-        expect(result).toBe('username@email.com');
+        expect(result).toBe('username@hmcts.net');
         result = component.getUsernameFromId('1001');
         expect(result).toBe('1001');
     });

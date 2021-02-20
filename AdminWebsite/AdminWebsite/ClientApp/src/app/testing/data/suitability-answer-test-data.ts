@@ -36,7 +36,7 @@ export class SuitabilityAnswerTestData {
             }),
 
             new SuitabilityAnswerResponse({
-                answer: 'chambers@west.co.uk',
+                answer: 'chambers@hmcts.net',
                 key: 'PRESENTING_EMAIL'
             })
         ]

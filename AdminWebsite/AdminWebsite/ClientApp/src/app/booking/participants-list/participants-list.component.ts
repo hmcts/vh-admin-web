@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, OnChanges, OnInit, SimpleChanges } from
 import { Router } from '@angular/router';
 import { HearingModel } from 'src/app/common/model/hearing.model';
 import { OtherInformationModel } from 'src/app/common/model/other-information.model';
+import { ParticipantModel } from 'src/app/common/model/participant.model';
 import { Logger } from 'src/app/services/logger';
 import { PageUrls } from 'src/app/shared/page-url.constants';
 import { BookingService } from '../../services/booking.service';
@@ -14,6 +15,7 @@ import { BookingService } from '../../services/booking.service';
 export class ParticipantsListComponent implements OnInit, OnChanges {
     private readonly loggerPrefix = '[ParticipantsList] -';
     @Input()
+    participants: (ParticipantModel & { isRepresentative: boolean })[];
     hearing: HearingModel;
     otherInformationDetails: OtherInformationModel;
     judgeEmailAvailable: boolean;
@@ -47,6 +49,10 @@ export class ParticipantsListComponent implements OnInit, OnChanges {
             this.judgeEmailAvailable = this.otherInformationDetails.judgeEmail ? true : false;
             this.judgePhoneAvailable = this.otherInformationDetails.judgePhone ? true : false;
         }
+
+        (changes.participants.currentValue as (ParticipantModel & { isRepresentative: boolean })[]).forEach(p => {
+            p.isRepresentative = !!p.representee;
+        });
     }
 
     editJudge() {
