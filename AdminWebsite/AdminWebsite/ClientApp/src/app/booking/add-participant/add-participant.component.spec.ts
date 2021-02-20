@@ -534,24 +534,6 @@ describe('AddParticipantComponent', () => {
         tick(600);
         expect(component.hearingRoleList).not.toContain('Interpreter');
     }));
-    it('should show the interpreter in hearings role if lip or witness is added', fakeAsync(() => {
-        component.ngOnInit();
-        component.ngAfterViewInit();
-        tick(600);
-        component.hearing.participants = [];
-        component.setupHearingRoles('Claimant');
-        expect(component.hearingRoleList).not.toContain('Interpreter');
-        const _participants: ParticipantModel[] = [];
-        const participant1 = new ParticipantModel();
-        participant1.first_name = 'firstName';
-        participant1.last_name = 'lastName';
-        participant1.hearing_role_name = 'Witness';
-        _participants.push(participant1);
-        component.hearing.participants = _participants;
-        component.setupHearingRoles('Claimant');
-        tick(600);
-        expect(component.hearingRoleList).toContain('Interpreter');
-    }));
     it('should not show the interpreter option in hearings role if an interpreter participant is added', fakeAsync(() => {
         component.ngOnInit();
         component.ngAfterViewInit();

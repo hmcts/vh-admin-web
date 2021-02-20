@@ -70,7 +70,7 @@ describe('participant details model', () => {
             'title',
             'first_name',
             'last_name',
-            'user_role_name',
+            'Representative',
             'username',
             'contact_email',
             'case_role_name',

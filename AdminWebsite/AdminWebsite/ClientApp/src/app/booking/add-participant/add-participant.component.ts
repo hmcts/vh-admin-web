@@ -508,6 +508,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
             const newParticipant = new ParticipantModel();
             this.mapParticipant(newParticipant);
             if (!this.participantService.checkDuplication(newParticipant.email, this.hearing.participants)) {
+                (newParticipant as ParticipantModel & { isRepresentative: boolean }).isRepresentative = !!newParticipant.representee;
                 this.addLinkedParticipant(newParticipant);
                 this.hearing.participants.push(newParticipant);
                 this.populateInterpretedForList();
@@ -933,9 +934,9 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     private updateHearingRoleList(hearingRoleList: string[]) {
         // hide the interpreter value if participant list is empty or participant list has an interpreter.
         if (this.hearingHasAnInterpreter() || !this.hearingHasInterpretees()) {
-            if (!this.interpreterSelected) {
-                this.hearingRoleList = this.hearingRoleList.filter(item => item.toLowerCase() !== HearingRoles.INTERPRETER);
-            }
+            // if (!this.interpreterSelected) {
+            this.hearingRoleList = this.hearingRoleList.filter(item => item.toLowerCase() !== HearingRoles.INTERPRETER);
+            // }
         }
     }
     private removeInterpreteeAndInterpreter() {

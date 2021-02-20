@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, SimpleChanges } from '@angular/core';
 import { Router } from '@angular/router';
 import { HearingRoles } from 'src/app/common/model/hearing-roles.model';
 import { Logger } from 'src/app/services/logger';
@@ -14,7 +14,7 @@ import { BookingService } from '../../services/booking.service';
 export class ParticipantsListComponent implements OnInit {
     private readonly loggerPrefix = '[ParticipantsList] -';
     @Input()
-    participants: ParticipantModel[];
+    participants: (ParticipantModel & { isRepresentative: boolean })[];
 
     $selectedForEdit: EventEmitter<string>;
     $selectedForRemove: EventEmitter<string>;
@@ -27,6 +27,12 @@ export class ParticipantsListComponent implements OnInit {
     constructor(private bookingService: BookingService, private router: Router, private logger: Logger) {
         this.$selectedForEdit = new EventEmitter<string>();
         this.$selectedForRemove = new EventEmitter<string>();
+    }
+
+    ngOnChanges(changes: SimpleChanges) {
+        (changes.participants.currentValue as (ParticipantModel & { isRepresentative: boolean })[]).forEach(p => {
+            p.isRepresentative = !!p.representee;
+        });
     }
 
     ngOnInit() {

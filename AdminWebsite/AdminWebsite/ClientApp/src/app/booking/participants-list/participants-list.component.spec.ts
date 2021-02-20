@@ -17,7 +17,7 @@ const router = {
 let bookingServiceSpy: jasmine.SpyObj<BookingService>;
 const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
 
-function newParticipants(): ParticipantModel[] {
+function newParticipants(): any[] {
     const participants: ParticipantModel[] = [];
     let newParticipant = new ParticipantModel();
     newParticipant.title = 'Mr.';
@@ -60,7 +60,7 @@ function interpreter(): ParticipantModel {
     currentParticipant.linked_participants = [];
     return currentParticipant;
 }
-function existingParticipants(): ParticipantModel[] {
+function existingParticipants(): any[] {
     let linkedParticipants: LinkedParticipantModel[] = [];
     const participants: ParticipantModel[] = [];
 
@@ -114,7 +114,7 @@ describe('ParticipantsListComponent', () => {
     pat2.title = 'Mrs';
     pat2.first_name = 'Sam';
     pat2.hearing_role_name = 'LIP';
-    const participants: ParticipantModel[] = [pat1, pat1];
+    const participants: any[] = [pat1, pat2];
 
     const participantModel = new ParticipantModel();
     participantModel.title = 'Mr';
