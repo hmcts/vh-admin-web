@@ -95,7 +95,7 @@ function existingParticipants(): any[] {
     newParticipant.display_name = 'James Doe';
     newParticipant.hearing_role_name = 'Interpreter';
     newParticipant.email = 'James.Doe@email.com';
-    newParticipant.interpreterFor = 'John.Doe@email.com';
+    newParticipant.interpreterFor = '';
     newParticipant.linked_participants = linkedParticipants;
     participants.push(newParticipant);
     return participants;
@@ -225,7 +225,6 @@ describe('ParticipantsListComponent', () => {
     });
     it('should return display name of the interpretee in edit mode', () => {
         component.ngOnInit();
-        component.isEditMode = true;
         component.participants = existingParticipants();
 
         const _linkedParticipants: LinkedParticipantModel[] = [];
@@ -235,6 +234,7 @@ describe('ParticipantsListComponent', () => {
         _linkedParticipants.push(linkedParticipant);
 
         const currentParticipant = interpreter();
+        currentParticipant.interpreterFor = '';
         currentParticipant.linked_participants = _linkedParticipants;
         const result = component.getInterpreteeDisplayName(currentParticipant);
         expect(result).toBe('John Doe');

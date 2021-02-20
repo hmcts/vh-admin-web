@@ -119,7 +119,6 @@ export class SummaryComponent implements OnInit, OnDestroy {
             this.showConfirmationRemoveParticipant = true;
         }
         setTimeout(() => {
-            // this.removePopupComponent.isLastParticipant = !isNotLast;
             if (isInterpretee) {
                 this.removeInterpreterPopupComponent.isLastParticipant = !isNotLast;
             } else {

@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { of } from 'rxjs';
 import { EndpointModel } from 'src/app/common/model/endpoint.model';
-import { LinkedParticipantModel } from 'src/app/common/model/linked-participant.model';
+import { LinkedParticipantModel, LinkedParticipantType } from 'src/app/common/model/linked-participant.model';
 import { CancelPopupComponent } from 'src/app/popups/cancel-popup/cancel-popup.component';
 import { RemoveInterpreterPopupComponent } from 'src/app/popups/remove-interpreter-popup/remove-interpreter-popup.component';
 import { SaveFailedPopupComponent } from 'src/app/popups/save-failed-popup/save-failed-popup.component';
@@ -131,7 +131,8 @@ describe('SummaryComponent with valid request', () => {
                     RemovePopupComponent,
                     WaitPopupComponent,
                     SaveFailedPopupComponent,
-                    LongDatetimePipe
+                    LongDatetimePipe,
+                    RemoveInterpreterPopupComponent
                 ],
                 imports: [RouterTestingModule]
             }).compileComponents();
@@ -245,7 +246,6 @@ describe('SummaryComponent with valid request', () => {
         expect(component.hearing.linked_participants).toEqual([]);
         expect(component.hearing.participants).toEqual([]);
     });
-
     it('should remove interpreter and clear the linked participant list on remove interpreter', () => {
         component.ngOnInit();
         component.hearing.participants = [];
@@ -479,10 +479,15 @@ describe('SummaryComponent  with existing request', () => {
         const result = component.getParticipantInfo('123123-1231');
         expect(result).toBe('');
     });
-    it('should remove an existing interpretee', () => {
+    it('should remove an existing interpretee and interpreter', () => {
         component.hearing = initExistingHearingRequest();
         component.hearing.participants = [];
 
+        const linkedParticipants: LinkedParticipantModel[] = [];
+        let lp = new LinkedParticipantModel();
+        lp.linkType = LinkedParticipantType.Interpreter;
+        lp.linkedParticipantId = '200';
+        linkedParticipants.push(lp);
         const participants: ParticipantModel[] = [];
         let participant = new ParticipantModel();
         participant.first_name = 'firstname';
@@ -491,33 +496,38 @@ describe('SummaryComponent  with existing request', () => {
         participant.case_role_name = 'Claimaint';
         participant.hearing_role_name = 'Litigant in person';
         participant.id = '100';
+        participant.linked_participants = linkedParticipants;
         participants.push(participant);
 
+        const linkedParticipants1: LinkedParticipantModel[] = [];
+        let lp1 = new LinkedParticipantModel();
+        lp1.linkType = LinkedParticipantType.Interpreter;
+        lp1.linkedParticipantId = '100';
+        linkedParticipants1.push(lp1);
         participant = new ParticipantModel();
         participant.first_name = 'firstname1';
         participant.last_name = 'lastname1';
         participant.email = 'firstname1.lastname1@email.com';
         participant.case_role_name = 'Claimaint';
         participant.hearing_role_name = 'Interpreter';
-        participant.interpreterFor = 'firstname.lastname@email.com';
+        participant.interpreterFor = '';
         participant.id = '200';
+        participant.linked_participants = linkedParticipants1;
         participants.push(participant);
         component.hearing.participants = participants;
 
-        const lp = new LinkedParticipantModel();
-        lp.participantEmail = 'firstname.lastname@email.com';
-        lp.linkedParticipantEmail = 'firstname1.lastname1@email.com';
-        lp.linkedParticipantId = '200';
-        lp.linkedParticipantId = '100';
+        const lp3 = new LinkedParticipantModel();
+        lp3.participantEmail = 'firstname.lastname@email.com';
+        lp3.linkedParticipantEmail = 'firstname1.lastname1@email.com';
+        lp3.linkedParticipantId = '200';
         const lps: LinkedParticipantModel[] = [];
-        lps.push(lp);
+        lps.push(lp3);
         component.hearing.linked_participants = lps;
 
         component.selectedParticipantEmail = 'firstname1.lastname1@email.com';
         component.handleContinueRemoveInterpreter();
         expect(component.hearing.linked_participants).toEqual([]);
-        expect(component.hearing.participants.length).toBe(1);
-        expect(component.hearing.participants[0].first_name).toBe('firstname');
+        expect(component.hearing.participants.length).toBe(0);
     });
 });
 
