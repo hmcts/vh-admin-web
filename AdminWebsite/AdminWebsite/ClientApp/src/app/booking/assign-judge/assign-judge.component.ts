@@ -86,7 +86,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     }
 
     private initForm() {
-        const existingJudge = this.hearing.participants.find(x => x.is_judge === true);
+        const existingJudge = this.hearing.participants.find(x => x.is_judge);
 
         this.populateFormFields(existingJudge);
 
@@ -116,18 +116,11 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         this.$subscriptions.push(
             this.judgeDisplayNameFld.valueChanges.subscribe(name => {
                 this.judge.display_name = name;
-            })
-        );
-
-        this.$subscriptions.push(
+            }),
             this.judgeEmailFld.valueChanges.subscribe(email => {
-                console.log('subscribe email', email);
                 this.otherInformationDetails.judgeEmail = email;
                 this.hearing.other_information = JSON.stringify(this.otherInformationDetails);
-            })
-        );
-
-        this.$subscriptions.push(
+            }),
             this.judgePhoneFld.valueChanges.subscribe(phone => {
                 this.otherInformationDetails.judgePhone = phone;
                 this.hearing.other_information = JSON.stringify(this.otherInformationDetails);
@@ -228,11 +221,6 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     }
 
     changeEmail() {
-        console.log('change email', this.otherInformationDetails.judgeEmail);
-        let judgeEmail = this.otherInformationDetails.judgeEmail;
-        if (this.otherInformationDetails.judgeEmail === '') {
-            judgeEmail = this.courtAccountJudgeEmail;
-        }
         const indexOfJudge = this.hearing.participants.findIndex(x => x.is_judge);
         if (indexOfJudge !== -1) {
             this.hearing.other_information = JSON.stringify(this.otherInformationDetails);

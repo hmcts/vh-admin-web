@@ -1,12 +1,7 @@
 export class OtherInformationModel {
-    constructor() {
-        this.judgeEmail = '';
-        this.judgePhone = '';
-        this.otherInformation = '';
-    }
-    judgeEmail?: string | undefined;
-    judgePhone?: string | undefined;
-    otherInformation?: string | undefined;
+    judgeEmail?: string;
+    judgePhone?: string;
+    otherInformation?: string;
 
     static init(otherInformation: string): OtherInformationModel {
         let otherInfo: OtherInformationModel = {};
