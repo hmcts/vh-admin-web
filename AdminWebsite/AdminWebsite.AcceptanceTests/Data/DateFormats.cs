@@ -6,7 +6,10 @@ namespace AdminWebsite.AcceptanceTests.Data
     {
         public static string LocalDateFormat(bool runningOnSaucelabs)
         {
-            return runningOnSaucelabs ? new CultureInfo("es-PR").DateTimeFormat.ShortDatePattern : CultureInfo.CurrentUICulture.DateTimeFormat.ShortDatePattern;
+            if (runningOnSaucelabs) return new CultureInfo("es-PR").DateTimeFormat.ShortDatePattern;
+            return CultureInfo.CurrentCulture.Name.ToLower().Equals("en-us") || CultureInfo.CurrentCulture.TwoLetterISOLanguageName.ToLower().Equals("iv")
+                ? new CultureInfo("en-GB").DateTimeFormat.ShortDatePattern
+                : CultureInfo.CurrentUICulture.DateTimeFormat.ShortDatePattern;
         }
 
         public static string HearingSummaryDate = "dddd dd MMMM yyyy, h:mmtt";
