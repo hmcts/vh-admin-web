@@ -484,7 +484,7 @@ describe('SummaryComponent  with existing request', () => {
         component.hearing.participants = [];
 
         const linkedParticipants: LinkedParticipantModel[] = [];
-        let lp = new LinkedParticipantModel();
+        const lp = new LinkedParticipantModel();
         lp.linkType = LinkedParticipantType.Interpreter;
         lp.linkedParticipantId = '200';
         linkedParticipants.push(lp);
@@ -500,7 +500,7 @@ describe('SummaryComponent  with existing request', () => {
         participants.push(participant);
 
         const linkedParticipants1: LinkedParticipantModel[] = [];
-        let lp1 = new LinkedParticipantModel();
+        const lp1 = new LinkedParticipantModel();
         lp1.linkType = LinkedParticipantType.Interpreter;
         lp1.linkedParticipantId = '100';
         linkedParticipants1.push(lp1);
