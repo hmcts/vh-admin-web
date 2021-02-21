@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { of } from 'rxjs';
@@ -22,6 +22,7 @@ import { VideoHearingsService } from '../../services/video-hearings.service';
 import { MockValues } from '../../testing/data/test-objects';
 import { BookingEditStubComponent } from '../../testing/stubs/booking-edit-stub';
 import { ParticipantsListStubComponent } from '../../testing/stubs/participant-list-stub';
+import { ParticipantsListComponent } from '../participants-list/participants-list.component';
 import { ParticipantService } from '../services/participant.service';
 import { SummaryComponent } from './summary.component';
 
@@ -556,6 +557,15 @@ describe('SummaryComponent  with multi days request', () => {
         recordingGuardServiceSpy,
         participantServiceSpy
     );
+    component.participantsListComponent = new ParticipantsListComponent(
+        bookingServiceSpy,
+        jasmine.createSpyObj<Router>(['navigate']),
+        loggerSpy
+    );
+    component.removeInterpreterPopupComponent = new RemoveInterpreterPopupComponent();
+    component.removeInterpreterPopupComponent.isLastParticipant = false;
+    component.removePopupComponent = new RemovePopupComponent();
+    component.removePopupComponent.isLastParticipant = false;
 
     it('should display summary data from existing hearing with multi days', () => {
         component.hearing = existingRequest;
@@ -573,4 +583,52 @@ describe('SummaryComponent  with multi days request', () => {
         expect(new Date(component.hearingDate).getFullYear()).toEqual(new Date(existingRequest.scheduled_date_time).getFullYear());
         expect(new Date(component.endHearingDate).getFullYear()).toEqual(new Date(existingRequest.end_hearing_date_time).getFullYear());
     });
+
+    it('should confirm remove participant', fakeAsync(() => {
+        component.ngOnInit();
+
+        const linkedParticipants: LinkedParticipantModel[] = [];
+        const lp = new LinkedParticipantModel();
+        lp.linkType = LinkedParticipantType.Interpreter;
+        lp.linkedParticipantId = '200';
+        linkedParticipants.push(lp);
+        const participants: ParticipantModel[] = [];
+        let participant = new ParticipantModel();
+        participant.first_name = 'firstname';
+        participant.last_name = 'lastname';
+        participant.email = 'firstname.lastname@email.com';
+        participant.case_role_name = 'Claimaint';
+        participant.hearing_role_name = 'Litigant in person';
+        participant.id = '100';
+        participant.linked_participants = linkedParticipants;
+        participants.push(participant);
+
+        const linkedParticipants1: LinkedParticipantModel[] = [];
+        const lp1 = new LinkedParticipantModel();
+        lp1.linkType = LinkedParticipantType.Interpreter;
+        lp1.linkedParticipantId = '100';
+        linkedParticipants1.push(lp1);
+        participant = new ParticipantModel();
+        participant.first_name = 'firstname1';
+        participant.last_name = 'lastname1';
+        participant.email = 'firstname1.lastname1@email.com';
+        participant.case_role_name = 'Claimaint';
+        participant.hearing_role_name = 'Interpreter';
+        participant.interpreterFor = '';
+        participant.id = '200';
+        participant.linked_participants = linkedParticipants1;
+        participants.push(participant);
+        component.hearing.participants = participants;
+
+        const participantList = component.participantsListComponent;
+        participantList.removeParticipant('firstname.lastname@email.com');
+        participantList.selectedParticipant.emit();
+        tick(600);
+        expect(component.showConfirmRemoveInterpretee).toBe(true);
+
+        participantList.removeParticipant('firstname1.lastname1@email.com');
+        participantList.selectedParticipant.emit();
+        tick(600);
+        expect(component.showConfirmationRemoveParticipant).toBe(true);
+    }));
 });

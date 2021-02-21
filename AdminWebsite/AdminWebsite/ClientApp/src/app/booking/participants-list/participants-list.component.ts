@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { Router } from '@angular/router';
 import { HearingRoles } from 'src/app/common/model/hearing-roles.model';
 import { Logger } from 'src/app/services/logger';
@@ -11,7 +11,7 @@ import { BookingService } from '../../services/booking.service';
     templateUrl: './participants-list.component.html',
     styleUrls: ['./participants-list.component.scss']
 })
-export class ParticipantsListComponent implements OnInit {
+export class ParticipantsListComponent implements OnInit, OnChanges {
     private readonly loggerPrefix = '[ParticipantsList] -';
     @Input()
     participants: (ParticipantModel & { isRepresentative: boolean })[];
