@@ -93,7 +93,12 @@ namespace AdminWebsite.Extensions
 
             serviceCollection.AddHttpClient<IBookingsApiClient, BookingsApiClient>()
                 .AddHttpMessageHandler(() => container.GetService<HearingApiTokenHandler>())
-                .AddTypedClient(httpClient => (IBookingsApiClient) new BookingsApiClient(httpClient) { BaseUrl = settings.BookingsApiUrl, ReadResponseAsString = true });
+                .AddTypedClient(httpClient =>
+                {
+                    httpClient.Timeout = TimeSpan.FromMinutes(3);
+                    return (IBookingsApiClient) new BookingsApiClient(httpClient)
+                            {BaseUrl = settings.BookingsApiUrl, ReadResponseAsString = true};
+                });
 
             serviceCollection.AddHttpClient<IUserApiClient, UserApiClient>()
                 .AddHttpMessageHandler(() => container.GetService<UserApiTokenHandler>())
@@ -109,6 +114,7 @@ namespace AdminWebsite.Extensions
                 .AddHttpMessageHandler(() => container.GetService<VideoApiTokenHandler>())
                 .AddTypedClient(httpClient =>
                 {
+                    httpClient.Timeout = TimeSpan.FromMinutes(3);
                     var client = VideoApiClient.GetClient(httpClient);
                     client.BaseUrl = settings.VideoApiUrl;
                     client.ReadResponseAsString = true;
@@ -119,6 +125,7 @@ namespace AdminWebsite.Extensions
                 .AddHttpMessageHandler(() => container.GetService<NotificationApiTokenHandler>())
                 .AddTypedClient(httpClient =>
                 {
+                    httpClient.Timeout = TimeSpan.FromMinutes(3);
                     var client = NotificationApiClient.GetClient(httpClient);
                     client.BaseUrl = settings.NotificationApiUrl;
                     client.ReadResponseAsString = true;

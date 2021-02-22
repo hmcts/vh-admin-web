@@ -9,9 +9,11 @@ import { BookingDetailsService } from '../../services/booking-details.service';
 import { BookingService } from '../../services/booking.service';
 import { BookingPersistService } from '../../services/bookings-persist.service';
 import {
+    BookHearingException,
     HearingDetailsResponse,
     UpdateBookingStatus,
     UpdateBookingStatusRequest,
+    UpdateBookingStatusResponse,
     UserProfileResponse
 } from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
@@ -142,9 +144,9 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
         this.showCancelBooking = true;
     }
 
-    confirmHearing() {
+    async confirmHearing() {
         if (this.isVhOfficerAdmin) {
-            this.updateHearingStatus(UpdateBookingStatus.Created, '');
+            await this.updateHearingStatus(UpdateBookingStatus.Created, '');
         }
     }
 
@@ -164,14 +166,25 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
         this.showConfirming = true;
 
         try {
-            const updateBookingStatusResponse = await this.videoHearingService
+            this.logger.debug(`${this.loggerPrefix} Attempting to update hearing status`, { hearingId: this.hearingId, status: status });
+            let updateBookingStatusResponse: UpdateBookingStatusResponse;
+
+            updateBookingStatusResponse = await this.videoHearingService
                 .updateBookingStatus(this.hearingId, updateBookingStatus)
                 .toPromise();
             if (updateBookingStatusResponse.success) {
+                this.logger.debug(`${this.loggerPrefix} Successfully updated hearing status`, {
+                    hearingId: this.hearingId,
+                    status: status
+                });
                 this.telephoneConferenceId = updateBookingStatusResponse.telephone_conference_id;
                 this.conferencePhoneNumber = await this.videoHearingService.getConferencePhoneNumber();
                 this.updateStatusHandler(status);
             } else {
+                this.logger.debug(`${this.loggerPrefix} Failed to update hearing status`, {
+                    hearingId: this.hearingId,
+                    response: updateBookingStatusResponse
+                });
                 this.showConfirmingFailed = true;
                 this.updateStatusHandler(UpdateBookingStatus.Failed);
             }
@@ -180,6 +193,14 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
             this.logger.info(`${this.loggerPrefix} Hearing status changed`, { hearingId: this.hearingId, status: status });
             this.logger.event(`${this.loggerPrefix} Hearing status changed`, { hearingId: this.hearingId, status: status });
         } catch (error) {
+            if (BookHearingException.isBookHearingException(error) && error.status > 500) {
+                this.logger.info(`${this.loggerPrefix} Handling 500s`, { hearingId: this.hearingId, status: status });
+                this.showConfirming = false;
+                this.showConfirmingFailed = false;
+                this.updateStatusHandler(UpdateBookingStatus.Created);
+                return;
+            }
+            this.logger.error(`${this.loggerPrefix} Unexpected error during confirm process`, error, { hearingId: this.hearingId });
             this.errorHandler(error, status);
             this.updateStatusHandler(UpdateBookingStatus.Failed);
         }

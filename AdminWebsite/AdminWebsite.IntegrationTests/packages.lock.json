@@ -2514,8 +2514,8 @@
       },
       "UserApi.Client": {
         "type": "Transitive",
-        "resolved": "1.23.9",
-        "contentHash": "8l/K0DZmr3jXl3T8M6lT1KvyvBFhRcK7OoFJ0dL/Rjp2c5CmJ/IZjoO0zCn0n9ej+hsyfTRW6dUY/JUequbi8g==",
+        "resolved": "1.24.1",
+        "contentHash": "Pui8mLCyv8Lvz8T3t8NEwruTUEm6csPeGw/d3Rr8ffH77cgsnQ2mhxEBypp4xTo2UeIbiJ3F6WBqhRqK71Fh6w==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
           "Newtonsoft.Json": "12.0.3"
@@ -2535,8 +2535,8 @@
       },
       "VideoApi.Client": {
         "type": "Transitive",
-        "resolved": "1.23.28",
-        "contentHash": "oEQhDOimu2wKJp9pGFsxRsyEeRxG7Q+4VHiaaiC0abFGtOk06Xfhh54VyzrnxI9zlG8yrc/nKSB/S66MKcu4QQ==",
+        "resolved": "1.23.32",
+        "contentHash": "iTWT7jRPp5grOn3G/uEiU5hyrq4NKDeZ5LcUyvmgdxwRWL+YDwN3UNF7XZZSpi9lE9BD8gu77w69N0FBeZX8sQ==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
           "Newtonsoft.Json": "12.0.3"
@@ -2566,9 +2566,9 @@
           "Swashbuckle.AspNetCore.Annotations": "5.6.3",
           "Swashbuckle.AspNetCore.Newtonsoft": "5.6.3",
           "Swashbuckle.AspNetCore.Swagger": "5.6.3",
-          "UserApi.Client": "1.23.9",
+          "UserApi.Client": "1.24.1",
           "VH.Core.Configuration": "0.1.12",
-          "VideoApi.Client": "1.23.28"
+          "VideoApi.Client": "1.23.32"
         }
       },
       "adminwebsite.bookingsapi.client": {

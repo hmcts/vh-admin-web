@@ -194,15 +194,30 @@ namespace AdminWebsite.Services
         {
             if (hearing.IsGenericHearing())
             {
+                _logger.LogDebug("Not sending reminder emails for generic hearing {Hearing}", hearing.Id);
                 return;
             }
-            
-            var requests = hearing.Participants
-                .Where(x => !x.User_role_name.Contains("Judge", StringComparison.CurrentCultureIgnoreCase))
-                .Select(participant => AddNotificationRequestMapper.MapToHearingReminderNotification(hearing, participant))
-                .ToList();
 
-            await Task.WhenAll(requests.Select(_notificationApiClient.CreateNewNotificationAsync));
+            try
+            {
+                var requests = hearing.Participants
+                    .Where(x => !x.User_role_name.Contains("Judge", StringComparison.CurrentCultureIgnoreCase))
+                    .Select(participant =>
+                        AddNotificationRequestMapper.MapToHearingReminderNotification(hearing, participant))
+                    .ToList();
+                _logger.LogDebug("Prepared {EmailCount} reminder emails for generic hearing {Hearing}", requests.Count,
+                    hearing.Id);
+                foreach (var request in requests)
+                {
+                    _logger.LogDebug("Sending reminder email for hearing {Hearing} and participant {Participant}",
+                        hearing.Id, request.ParticipantId);
+                }
+                await Task.WhenAll(requests.Select(_notificationApiClient.CreateNewNotificationAsync));
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Failed to send reminder email for hearing {Hearing}", hearing.Id);
+            }
         }
 
         public async Task<ConferenceDetailsResponse> GetConferenceDetailsByHearingIdWithRetry(Guid hearingId, string errorMessage)
