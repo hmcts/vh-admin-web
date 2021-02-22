@@ -215,7 +215,7 @@ namespace AdminWebsite.Services
                     retryAttempt =>
                         _logger.LogWarning(
                             "Failed to retrieve conference details from the VideoAPi for hearingId {Hearing}. Retrying attempt {RetryAttempt}", hearingId, retryAttempt),
-                    videoApiResponseObject => videoApiResponseObject.HasValidMeetingRoom(),
+                    videoApiResponseObject => !videoApiResponseObject.HasValidMeetingRoom(),
                     () => _videoApiClient.GetConferenceByHearingRefIdAsync(hearingId, false)
                 );
                 return details;
