@@ -33,14 +33,23 @@
 
     <div *ngFor="let p of participants">
       <div *ngIf="!p.is_judge">
-        <div class="govuk-grid-row vh-row">
-          <div class="govuk-grid-column-two-thirds vhtable-header">
+        <div class="govuk-grid-row vh-row vh-row-flex">
+          <div class="govuk-grid-column-one-third vh-image-10 icon">
+            <img
+              *ngIf="isInterpreter(p) || isInterpretee(p)"
+              src="/assets/images/interpreter.png"
+              class="govuk-header__logotype-crest"
+              alt="Interpreter link"
+            />
+          </div>
+          <div class="govuk-grid-column-one-half vhtable-header">
             {{ p.title }} {{ p.first_name }} {{ p.last_name }}
-            <div *ngIf="p.isRepresentative">
-              <span>Representing</span>
-              <div>
-                <strong>{{ p.representee }}</strong>
-              </div>
+            <div *ngIf="p.isRepresentative || isInterpreter(p)">
+              <span>{{ p.isRepresentative ? 'Representing' : 'Interpreting for' }}</span>
+            </div>
+            <div>
+              <strong>{{ p.representee }}</strong>
+              <strong>{{ getInterpreteeDisplayName(p) }} </strong>
             </div>
             <div>
               {{ p.case_role_name }}

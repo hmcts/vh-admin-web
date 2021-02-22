@@ -1,5 +1,6 @@
-import { Component, EventEmitter, Input, OnInit, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { Router } from '@angular/router';
+import { HearingRoles } from 'src/app/common/model/hearing-roles.model';
 import { Logger } from 'src/app/services/logger';
 import { PageUrls } from 'src/app/shared/page-url.constants';
 import { ParticipantModel } from '../../common/model/participant.model';
@@ -8,9 +9,9 @@ import { BookingService } from '../../services/booking.service';
 @Component({
     selector: 'app-participants-list',
     templateUrl: './participants-list.component.html',
-    styleUrls: ['./participants-list.component.css']
+    styleUrls: ['./participants-list.component.scss']
 })
-export class ParticipantsListComponent implements OnInit {
+export class ParticipantsListComponent implements OnInit, OnChanges {
     private readonly loggerPrefix = '[ParticipantsList] -';
     @Input()
     participants: (ParticipantModel & { isRepresentative: boolean })[];
@@ -69,5 +70,33 @@ export class ParticipantsListComponent implements OnInit {
 
     get selectedParticipantToRemove() {
         return this.$selectedForRemove;
+    }
+
+    isInterpreter(participant: ParticipantModel): boolean {
+        return participant.hearing_role_name.toLowerCase().trim() === HearingRoles.INTERPRETER.toLowerCase();
+    }
+    isRepresentative(participant: ParticipantModel): boolean {
+        return participant.hearing_role_name.toLowerCase().trim() === HearingRoles.REPRESENTATIVE.toLowerCase();
+    }
+    getInterpreteeDisplayName(participant: ParticipantModel): string {
+        let interpretee: ParticipantModel;
+        if (participant.hearing_role_name.toLowerCase().trim() === HearingRoles.INTERPRETER) {
+            if (participant.interpreterFor) {
+                interpretee = this.participants.find(p => p.email === participant.interpreterFor);
+            } else if (participant.linked_participants && participant.linked_participants.length > 0) {
+                interpretee = this.participants.find(p => p.id === participant.linked_participants[0].linkedParticipantId);
+            }
+        }
+        const interpretedForName = interpretee ? interpretee.display_name : '';
+        return interpretedForName;
+    }
+    isInterpretee(participant: ParticipantModel): boolean {
+        let interpretee: boolean;
+        if (participant.linked_participants && participant.linked_participants.length > 0) {
+            interpretee = this.participants.some(p => p.id === participant.linked_participants[0].linkedParticipantId);
+        } else {
+            interpretee = this.participants.some(p => p.interpreterFor === participant.email);
+        }
+        return interpretee;
     }
 }
