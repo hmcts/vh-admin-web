@@ -24,7 +24,7 @@ import { SearchEmailComponent } from '../search-email/search-email.component';
 import { ParticipantService } from '../services/participant.service';
 import { AddParticipantComponent } from './add-participant.component';
 import { HearingRoleModel } from '../../common/model/hearing-role.model';
-import { LinkedParticipantModel } from 'src/app/common/model/linked-participant.model';
+import { LinkedParticipantModel, LinkedParticipantType } from 'src/app/common/model/linked-participant.model';
 
 let component: AddParticipantComponent;
 let fixture: ComponentFixture<AddParticipantComponent>;
@@ -654,6 +654,30 @@ describe('AddParticipantComponent', () => {
         component.handleContinueRemoveInterpreter();
         expect(component.hearing.linked_participants.length).toBe(0);
         expect(participantServiceSpy.removeParticipant).toHaveBeenCalled();
+    });
+
+    it('should create a linked participant', () => {
+        component.ngOnInit();
+
+        component.showDetails = true;
+        spyOn(component.searchEmail, 'validateEmail').and.returnValue(true);
+        component.searchEmail.email = 'mock@hmcts.net';
+        role.setValue('Applicant');
+        party.setValue('Interpreter');
+        firstName.setValue('Sam');
+        lastName.setValue('Green');
+        title.setValue('Mrs');
+        phone.setValue('12345');
+        displayName.setValue('Sam Green');
+        companyName.setValue('CC');
+        interpretee.setValue('mock1@hmcts.net');
+
+        component.isRoleSelected = true;
+        component.isPartySelected = true;
+        component.isTitleSelected = true;
+
+        component.saveParticipant();
+        expect();
     });
 });
 describe('AddParticipantComponent edit mode', () => {
