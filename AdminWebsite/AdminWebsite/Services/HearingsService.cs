@@ -12,6 +12,7 @@ using NotificationApi.Client;
 using VideoApi.Client;
 using VideoApi.Contract.Responses;
 using AddEndpointRequest = AdminWebsite.BookingsAPI.Client.AddEndpointRequest;
+using EndpointResponse = AdminWebsite.BookingsAPI.Client.EndpointResponse;
 using ParticipantRequest = AdminWebsite.BookingsAPI.Client.ParticipantRequest;
 using UpdateEndpointRequest = AdminWebsite.BookingsAPI.Client.UpdateEndpointRequest;
 using UpdateParticipantRequest = AdminWebsite.BookingsAPI.Client.UpdateParticipantRequest;
@@ -215,7 +216,7 @@ namespace AdminWebsite.Services
                     retryAttempt =>
                         _logger.LogWarning(
                             "Failed to retrieve conference details from the VideoAPi for hearingId {Hearing}. Retrying attempt {RetryAttempt}", hearingId, retryAttempt),
-                    videoApiResponseObject => videoApiResponseObject.HasValidMeetingRoom(),
+                    videoApiResponseObject => !videoApiResponseObject.HasValidMeetingRoom(),
                     () => _videoApiClient.GetConferenceByHearingRefIdAsync(hearingId, false)
                 );
                 return details;
@@ -296,54 +297,76 @@ namespace AdminWebsite.Services
         public async Task ProcessEndpoints(Guid hearingId, EditHearingRequest request, HearingDetailsResponse hearing,
             List<ParticipantRequest> newParticipantList)
         {
-            if (hearing.Endpoints != null)
+            if (hearing.Endpoints == null)
             {
-                var listOfEndpointsToDelete = hearing.Endpoints.Where(e => request.Endpoints.All(re => re.Id != e.Id));
-                foreach (var endpointToDelete in listOfEndpointsToDelete)
+                return;
+            }
+
+            var listOfEndpointsToDelete = hearing.Endpoints.Where(e => request.Endpoints.All(re => re.Id != e.Id));
+            await RemoveEndpointsFromHearing(hearing, listOfEndpointsToDelete);
+
+            foreach (var endpoint in request.Endpoints)
+            {
+                var epToUpdate = newParticipantList
+                    .Find(p => p.Contact_email.Equals(endpoint.DefenceAdvocateUsername,
+                        StringComparison.CurrentCultureIgnoreCase));
+                if (epToUpdate != null)
                 {
-                    _logger.LogDebug("Removing endpoint {Endpoint} - {EndpointDisplayName} from hearing {Hearing}",
-                        endpointToDelete.Id, endpointToDelete.Display_name, hearingId);
-                    await _bookingsApiClient.RemoveEndPointFromHearingAsync(hearing.Id, endpointToDelete.Id);
+                    endpoint.DefenceAdvocateUsername = epToUpdate.Username;
                 }
 
-                foreach (var endpoint in request.Endpoints)
+                if (endpoint.Id.HasValue)
                 {
-                    var epToUpdate = newParticipantList
-                        .Find(p => p.Contact_email.Equals(endpoint.DefenceAdvocateUsername,
-                            StringComparison.CurrentCultureIgnoreCase));
-                    if (epToUpdate != null)
-                    {
-                        endpoint.DefenceAdvocateUsername = epToUpdate.Username;
-                    }
-
-                    if (!endpoint.Id.HasValue)
-                    {
-                        _logger.LogDebug("Adding endpoint {EndpointDisplayName} to hearing {Hearing}",
-                            endpoint.DisplayName, hearingId);
-                        var addEndpointRequest = new AddEndpointRequest
-                        { Display_name = endpoint.DisplayName, Defence_advocate_username = endpoint.DefenceAdvocateUsername };
-                        await _bookingsApiClient.AddEndPointToHearingAsync(hearing.Id, addEndpointRequest);
-                    }
-                    else
-                    {
-                        var existingEndpointToEdit = hearing.Endpoints.FirstOrDefault(e => e.Id.Equals(endpoint.Id));
-                        if (existingEndpointToEdit != null && (existingEndpointToEdit.Display_name != endpoint.DisplayName ||
-                                                               existingEndpointToEdit.Defence_advocate_id.ToString() !=
-                                                               endpoint.DefenceAdvocateUsername))
-                        {
-                            _logger.LogDebug("Updating endpoint {Endpoint} - {EndpointDisplayName} in hearing {Hearing}",
-                                existingEndpointToEdit.Id, existingEndpointToEdit.Display_name, hearingId);
-                            var updateEndpointRequest = new UpdateEndpointRequest
-                            {
-                                Display_name = endpoint.DisplayName,
-                                Defence_advocate_username = endpoint.DefenceAdvocateUsername
-                            };
-                            await _bookingsApiClient.UpdateDisplayNameForEndpointAsync(hearing.Id, endpoint.Id.Value,
-                                updateEndpointRequest);
-                        }
-                    }
+                    await UpdateEndpointInHearing(hearingId, hearing, endpoint);
+                }
+                else
+                {
+                    await AddEndpointToHearing(hearingId, hearing, endpoint);
                 }
             }
+        }
+        
+        private async Task RemoveEndpointsFromHearing(HearingDetailsResponse hearing, IEnumerable<EndpointResponse> listOfEndpointsToDelete)
+        {
+            foreach (var endpointToDelete in listOfEndpointsToDelete)
+            {
+                _logger.LogDebug("Removing endpoint {Endpoint} - {EndpointDisplayName} from hearing {Hearing}",
+                    endpointToDelete.Id, endpointToDelete.Display_name, hearing.Id);
+                await _bookingsApiClient.RemoveEndPointFromHearingAsync(hearing.Id, endpointToDelete.Id);
+            }
+        }
+        
+        private async Task AddEndpointToHearing(Guid hearingId, HearingDetailsResponse hearing,
+            EditEndpointRequest endpoint)
+        {
+            _logger.LogDebug("Adding endpoint {EndpointDisplayName} to hearing {Hearing}",
+                endpoint.DisplayName, hearingId);
+            var addEndpointRequest = new AddEndpointRequest
+            {
+                Display_name = endpoint.DisplayName,
+                Defence_advocate_username = endpoint.DefenceAdvocateUsername
+            };
+            await _bookingsApiClient.AddEndPointToHearingAsync(hearing.Id, addEndpointRequest);
+        }
+        
+        private async Task UpdateEndpointInHearing(Guid hearingId, HearingDetailsResponse hearing,
+            EditEndpointRequest endpoint)
+        {
+            var existingEndpointToEdit = hearing.Endpoints.FirstOrDefault(e => e.Id.Equals(endpoint.Id));
+            if (existingEndpointToEdit == null ||
+                existingEndpointToEdit.Display_name == endpoint.DisplayName &&
+                existingEndpointToEdit.Defence_advocate_id.ToString() == endpoint.DefenceAdvocateUsername)
+                return;
+
+            _logger.LogDebug("Updating endpoint {Endpoint} - {EndpointDisplayName} in hearing {Hearing}",
+                existingEndpointToEdit.Id, existingEndpointToEdit.Display_name, hearingId);
+            var updateEndpointRequest = new UpdateEndpointRequest
+            {
+                Display_name = endpoint.DisplayName,
+                Defence_advocate_username = endpoint.DefenceAdvocateUsername
+            };
+            await _bookingsApiClient.UpdateDisplayNameForEndpointAsync(hearing.Id, endpoint.Id.Value,
+                updateEndpointRequest);
         }
 
         public async Task UpdateParticipantLinks(Guid hearingId, EditHearingRequest request, HearingDetailsResponse hearing)
