@@ -4449,8 +4449,8 @@ namespace AdminWebsite.TestAPI.Client
         [System.Runtime.Serialization.EnumMember(Value = @"VideoHearingsOfficer")]
         VideoHearingsOfficer = 2,
     
-        [System.Runtime.Serialization.EnumMember(Value = @"HearingFacilitationSupport")]
-        HearingFacilitationSupport = 3,
+        [System.Runtime.Serialization.EnumMember(Value = @"Witness")]
+        Witness = 3,
     
         [System.Runtime.Serialization.EnumMember(Value = @"Judge")]
         Judge = 4,
@@ -4740,6 +4740,18 @@ namespace AdminWebsite.TestAPI.Client
     }
     
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.3.4.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class RoomResponse 
+    {
+        [Newtonsoft.Json.JsonProperty("label", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Label { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("locked", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool Locked { get; set; }
+    
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.3.4.0 (Newtonsoft.Json v12.0.0.0)")]
     public enum LinkedParticipantType
     {
         [System.Runtime.Serialization.EnumMember(Value = @"Interpreter")]
@@ -4809,6 +4821,9 @@ namespace AdminWebsite.TestAPI.Client
         [Newtonsoft.Json.JsonProperty("current_status", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
         public ParticipantState Current_status { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("current_room", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public RoomResponse Current_room { get; set; }
     
         [Newtonsoft.Json.JsonProperty("linked_participants", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.Collections.Generic.List<LinkedParticipantResponse> Linked_participants { get; set; }
@@ -5149,6 +5164,9 @@ namespace AdminWebsite.TestAPI.Client
     
         [Newtonsoft.Json.JsonProperty("case_group", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Case_group { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("current_room", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public RoomResponse Current_room { get; set; }
     
     
     }
