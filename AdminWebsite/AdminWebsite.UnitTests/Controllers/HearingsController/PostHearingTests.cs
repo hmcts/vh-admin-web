@@ -23,6 +23,10 @@ using AdminWebsite.Contracts.Requests;
 using NotificationApi.Contract;
 using VideoApi.Client;
 using EndpointResponse = AdminWebsite.BookingsAPI.Client.EndpointResponse;
+using LinkedParticipantRequest = AdminWebsite.BookingsAPI.Client.LinkedParticipantRequest;
+using LinkedParticipantResponse = AdminWebsite.BookingsAPI.Client.LinkedParticipantResponse;
+using LinkedParticipantType = AdminWebsite.BookingsAPI.Client.LinkedParticipantType;
+using CaseResponse = AdminWebsite.BookingsAPI.Client.CaseResponse;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {
@@ -174,6 +178,57 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             var result = await _controller.Post(bookingRequest);
 
+            result.Result.Should().BeOfType<CreatedResult>();
+            var createdObjectResult = (CreatedResult)result.Result;
+            createdObjectResult.StatusCode.Should().Be(201);
+        }
+
+        [Test]
+        public async Task Should_create_a_hearing_with_linked_participants()
+        {
+            // request.
+            var newHearingRequest = new BookNewHearingRequest()
+            {
+                Participants = new List<BookingsAPI.Client.ParticipantRequest>
+                {
+                    new BookingsAPI.Client.ParticipantRequest { Case_role_name = "CaseRole", Contact_email = "firstName1.lastName1@email.com",
+                        Display_name = "firstName1 lastName1", First_name = "firstName1", Hearing_role_name = "Litigant in person", Last_name = "lastName1", Middle_names = "",
+                        Organisation_name = "", Representee = "", Telephone_number = "1234567890", Title = "Mr.", Username = "firstName1.lastName1@email.net" },
+                    new BookingsAPI.Client.ParticipantRequest { Case_role_name = "CaseRole", Contact_email = "firstName2.lastName2@email.com",
+                        Display_name = "firstName2 lastName2", First_name = "firstName2", Hearing_role_name = "Interpreter", Last_name = "lastName2", Middle_names = "",
+                        Organisation_name = "", Representee = "", Telephone_number = "1234567890", Title = "Mr.", Username = "firstName2.lastName2@email.net" },
+
+                },
+                Linked_participants = new List<LinkedParticipantRequest>
+                    {
+                        new LinkedParticipantRequest { Participant_contact_email = "firstName1.lastName1@email.com",
+                            Linked_participant_contact_email = "firstName2.lastName2@email.com", Type = LinkedParticipantType.Interpreter },
+                        new LinkedParticipantRequest { Participant_contact_email = "firstName2.lastName2@email.com",
+                            Linked_participant_contact_email = "firstName1.lastName1@email.com", Type = LinkedParticipantType.Interpreter }
+                    }
+            };
+            var bookingRequest = new BookHearingRequest
+            {
+                BookingDetails = newHearingRequest
+            };
+            // set response.
+            var linkedParticipant1 = new List<LinkedParticipantResponse>() { new LinkedParticipantResponse() { Linked_id = Guid.NewGuid(), Type = LinkedParticipantType.Interpreter } };
+            var participant1 = Builder<ParticipantResponse>.CreateNew().With(x => x.Id = Guid.NewGuid())
+                .With(x => x.User_role_name = "Individual").With(x => x.Username = "firstName1.lastName1@email.net")
+                .With(x => x.Linked_participants = linkedParticipant1)
+                .Build();
+            var linkedParticipant2 = new List<LinkedParticipantResponse>() { new LinkedParticipantResponse() { Linked_id = Guid.NewGuid(), Type = LinkedParticipantType.Interpreter } };
+            var participant2 = Builder<ParticipantResponse>.CreateNew().With(x => x.Id = Guid.NewGuid())
+                .With(x => x.User_role_name = "Individual").With(x => x.Username = "firstName1.lastName1@email.net")
+                .With(x => x.Linked_participants = linkedParticipant2)
+                .Build();
+            var hearingDetailsResponse = Builder<HearingDetailsResponse>.CreateNew()
+                .With(x => x.Cases = Builder<CaseResponse>.CreateListOfSize(2).Build().ToList())
+                .With(x => x.Endpoints = Builder<EndpointResponse>.CreateListOfSize(2).Build().ToList())
+                .With(x => x.Participants = new List<ParticipantResponse> { participant1, participant2 }).Build();
+            _bookingsApiClient.Setup(x => x.BookNewHearingAsync(newHearingRequest))
+                .ReturnsAsync(hearingDetailsResponse);
+            var result = await _controller.Post(bookingRequest);
             result.Result.Should().BeOfType<CreatedResult>();
             var createdObjectResult = (CreatedResult)result.Result;
             createdObjectResult.StatusCode.Should().Be(201);

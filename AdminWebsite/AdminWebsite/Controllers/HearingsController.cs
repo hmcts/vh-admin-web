@@ -16,8 +16,10 @@ using AdminWebsite.Services.Models;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System.Collections;
 using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Annotations;
+using LinkedParticipantRequest = AdminWebsite.BookingsAPI.Client.LinkedParticipantRequest;
 using VideoApi.Client;
 
 namespace AdminWebsite.Controllers
@@ -59,8 +61,8 @@ namespace AdminWebsite.Controllers
         /// <returns>VideoHearingId</returns>
         [HttpPost]
         [SwaggerOperation(OperationId = "BookNewHearing")]
-        [ProducesResponseType(typeof(HearingDetailsResponse), (int) HttpStatusCode.Created)]
-        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(HearingDetailsResponse), (int)HttpStatusCode.Created)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [HearingInputSanitizer]
         public async Task<ActionResult<HearingDetailsResponse>> Post([FromBody] BookHearingRequest request)
         {
@@ -80,11 +82,11 @@ namespace AdminWebsite.Controllers
                 }
 
                 newBookingRequest.Created_by = _userIdentity.GetUserIdentityName();
-                
+
                 _logger.LogDebug("BookNewHearing - Attempting to send booking request to Booking API");
                 var hearingDetailsResponse = await _bookingsApiClient.BookNewHearingAsync(newBookingRequest);
                 _logger.LogDebug("BookNewHearing - Successfully booked hearing {Hearing}", hearingDetailsResponse.Id);
-                
+
                 _logger.LogDebug("BookNewHearing - Attempting assign participants to the correct group");
                 await _hearingsService.AssignParticipantToCorrectGroups(hearingDetailsResponse, usernameAdIdDict);
                 _logger.LogDebug("BookNewHearing - Successfully assigned participants to the correct group");
@@ -97,7 +99,7 @@ namespace AdminWebsite.Controllers
                 {
                     var listOfDates = DateListMapper.GetListOfWorkingDates(request.MultiHearingDetails.StartDate,
                         request.MultiHearingDetails.EndDate);
-                    var totalDays = listOfDates.Select(x => x.DayOfYear).Distinct().Count() +1; // include start date
+                    var totalDays = listOfDates.Select(x => x.DayOfYear).Distinct().Count() + 1; // include start date
                     await _hearingsService.SendMultiDayHearingConfirmationEmail(hearingDetailsResponse, totalDays);
                 }
                 else
@@ -110,7 +112,7 @@ namespace AdminWebsite.Controllers
             catch (BookingsApiException e)
             {
                 _logger.LogError(e, "BookNewHearing - There was a problem saving the booking. Status Code {StatusCode} - Message {Message}", e.StatusCode, e.Response);
-                if (e.StatusCode == (int) HttpStatusCode.BadRequest)
+                if (e.StatusCode == (int)HttpStatusCode.BadRequest)
                 {
                     return BadRequest(e.Response);
                 }
@@ -256,6 +258,7 @@ namespace AdminWebsite.Controllers
                 await _hearingsService.ProcessEndpoints(hearingId, request, originalHearing, newParticipantList);
 
                 var updatedHearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
+                await _hearingsService.AddParticipantLinks(hearingId, request, updatedHearing);
                 _logger.LogDebug("Attempting assign participants to the correct group");
                 await _hearingsService.AssignParticipantToCorrectGroups(updatedHearing, usernameAdIdDict);
                 _logger.LogDebug("Successfully assigned participants to the correct group");
@@ -288,12 +291,12 @@ namespace AdminWebsite.Controllers
                 _logger.LogError(e,
                     "Failed to edit hearing {Hearing}. Status Code {StatusCode} - Message {Message}",
                     hearingId, e.StatusCode, e.Response);
-                if (e.StatusCode == (int) HttpStatusCode.BadRequest)
+                if (e.StatusCode == (int)HttpStatusCode.BadRequest)
                 {
                     return BadRequest(e.Response);
                 }
 
-                if (e.StatusCode == (int) HttpStatusCode.NotFound)
+                if (e.StatusCode == (int)HttpStatusCode.NotFound)
                 {
                     return NotFound(e.Response);
                 }
@@ -302,7 +305,7 @@ namespace AdminWebsite.Controllers
             }
         }
 
-        
+
 
         /// <summary>
         /// Gets bookings hearing by Id.
@@ -342,7 +345,7 @@ namespace AdminWebsite.Controllers
         [SwaggerOperation(OperationId = "SearchForAudioRecordedHearings")]
         [ProducesResponseType(typeof(List<HearingsForAudioFileSearchResponse>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> SearchForAudioRecordedHearingsAsync([FromQuery]string caseNumber, [FromQuery] DateTime? date = null)
+        public async Task<IActionResult> SearchForAudioRecordedHearingsAsync([FromQuery] string caseNumber, [FromQuery] DateTime? date = null)
         {
             try
             {
@@ -379,9 +382,12 @@ namespace AdminWebsite.Controllers
 
             try
             {
+                _logger.LogDebug("Attempting to update hearing {Hearing} to booking status {BookingStatus}", hearingId,
+                    updateBookingStatusRequest.Status);
                 updateBookingStatusRequest.Updated_by = _userIdentity.GetUserIdentityName();
                 await _bookingsApiClient.UpdateBookingStatusAsync(hearingId, updateBookingStatusRequest);
-
+                _logger.LogDebug("Updated hearing {Hearing} to booking status {BookingStatus}", hearingId,
+                    updateBookingStatusRequest.Status);
                 if (updateBookingStatusRequest.Status != BookingsAPI.Client.UpdateBookingStatus.Created)
                 {
                     return Ok(new UpdateBookingStatusResponse { Success = true });
@@ -389,13 +395,15 @@ namespace AdminWebsite.Controllers
 
                 try
                 {
+                    _logger.LogDebug("Hearing {Hearing} is confirmed. Polling for Conference in VideoApi", hearingId);
                     var conferenceDetailsResponse = await _hearingsService.GetConferenceDetailsByHearingIdWithRetry(hearingId, errorMessage);
-
+                    _logger.LogInformation("Found conference for hearing {Hearing}", hearingId);
                     if (conferenceDetailsResponse.HasValidMeetingRoom())
                     {
                         var hearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
                         if (!hearing.IsAClone())
                         {
+                            _logger.LogInformation("Sending a reminder email for hearing {Hearing}", hearingId);
                             await _hearingsService.SendHearingReminderEmail(hearing);
                         }
                         return Ok(new UpdateBookingStatusResponse { Success = true, TelephoneConferenceId = conferenceDetailsResponse.MeetingRoom.TelephoneConferenceId });
@@ -406,6 +414,8 @@ namespace AdminWebsite.Controllers
                     _logger.LogError(ex, "Failed to confirm a hearing. {ErrorMessage}", errorMessage);
                 }
 
+                _logger.LogError("There was an unknown error for hearing {Hearing}. Updating status to failed",
+                    hearingId);
                 // Set the booking status to failed as the video api failed
                 await _bookingsApiClient.UpdateBookingStatusAsync(hearingId, new UpdateBookingStatusRequest
                 {
@@ -428,6 +438,7 @@ namespace AdminWebsite.Controllers
                     return NotFound(e.Response);
                 }
 
+                _logger.LogError(e, "There was an unknown error updating status for hearing {Hearing}", hearingId);
                 throw;
             }
         }
@@ -456,8 +467,8 @@ namespace AdminWebsite.Controllers
                 return NotFound();
             }
             catch (VideoApiException e)
-            {  
-                if(e.StatusCode == (int)HttpStatusCode.NotFound)
+            {
+                if (e.StatusCode == (int)HttpStatusCode.NotFound)
                 {
                     return NotFound();
                 }
@@ -470,7 +481,7 @@ namespace AdminWebsite.Controllers
                 throw;
             }
         }
-        
+
         private async Task PopulateUserIdsAndUsernames(IList<ParticipantRequest> participants,
             Dictionary<string, User> usernameAdIdDict)
         {

@@ -20,13 +20,19 @@
   <div class="govuk-grid-column-full">
     <div id="participant-{{ participant?.ParticipantId }}-name" *ngIf="participant?.HearingRoleName !== 'Judge'">
       {{ participant?.fullName }}
-      <div id="participant-{{ participant?.ParticipantId }}-hearing-role-name" class="govuk-hint" *ngIf="!participant.isRepresenting">
+      <div id="participant-{{ participant?.ParticipantId }}-hearing-role-name" class="govuk-hint" *ngIf="!participant.isRepOrInterpreter">
         {{ participant?.HearingRoleName }}
       </div>
       <div class="govuk-hint vh-margin-bottom" *ngIf="participant.isRepresenting">
         <span>Representing</span>
         <div id="participant-{{ participant?.ParticipantId }}-representee" class="vh-text-color-black">
           {{ participant.Representee }}
+        </div>
+      </div>
+      <div class="govuk-hint vh-margin-bottom" *ngIf="participant.isInterpreter">
+        <span>Interpreting for</span>
+        <div id="participant-{{ participant?.ParticipantId }}-representee" class="vh-text-color-black">
+          {{ participant?.Interpretee }}
         </div>
       </div>
       <div id="participant-{{ participant?.ParticipantId }}-case-role-name" class="govuk-hint" *ngIf="participant.showCaseRole()">

@@ -32,7 +32,6 @@ export class HearingDetailsComponent {
     isJoinByPhone(): boolean {
         const config = this.route.snapshot.data['configSettings'];
         const datePhone = config.join_by_phone_from_date;
-        this.logger.debug(`${this.loggerPrefix} join by phone from date setting is: ${datePhone}`);
 
         if (!datePhone || datePhone.length === 0) {
             return true;
