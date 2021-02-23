@@ -16,6 +16,7 @@ java:
       resourceGroup: vh-infra-core-{{ .Values.global.environment }}
       usePodIdentity: true
       secrets:
+        - applicationinsights--instrumentationkey
         - notifyconfiguration--apikey
         - wowzaconfiguration--storageaccountkey
     vh-admin-web:
@@ -25,7 +26,6 @@ java:
       secrets:
         - azuread--clientsecret
         - azuread--clientid
-        - applicationinsights-instrumentationkey
         - azuread--temporarypassword
         - testusersecrets--testuserpassword
   environment:
@@ -42,15 +42,15 @@ java:
     VHSERVICES__ADMINWEBRESOURCEID:	https://vh-admin-web.{{ .Values.global.environment }}.platform.hmcts.net
     VHSERVICES__ADMINWEBURL:	https://localhost:5400/"
     VHSERVICES__BOOKINGSAPIRESOURCEID:	https://vh-bookings-api.{{ .Values.global.environment }}.platform.hmcts.net
-    VHSERVICES__BOOKINGSAPIURL:	https://vh-bookings-api.{{ .Values.global.environment }}.platform.hmcts.net
+    VHSERVICES__BOOKINGSAPIURL:	https://vh-bookings-api.{{ .Values.global.environment }}.platform.hmcts.net/
     VHSERVICES__TESTAPIRESOURCEID:	https://vh-test-api.{{ .Values.global.environment }}.platform.hmcts.net
-    VHSERVICES__TESTAPIURL:	https://vh-test-api.{{ .Values.global.environment }}.platform.hmcts.net
+    VHSERVICES__TESTAPIURL:	https://vh-test-api.{{ .Values.global.environment }}.platform.hmcts.net/
     VHSERVICES__USERAPIRESOURCEID:	https://vh-user-api.{{ .Values.global.environment }}.platform.hmcts.net
-    VHSERVICES__USERAPIURL:	https://vh-user-api.{{ .Values.global.environment }}.platform.hmcts.net
+    VHSERVICES__USERAPIURL:	https://vh-user-api.{{ .Values.global.environment }}.platform.hmcts.net/
     VHSERVICES__VIDEOAPIRESOURCEID:	https://vh-video-api.{{ .Values.global.environment }}.platform.hmcts.net
-    VHSERVICES__VIDEOAPIURL:	https://vh-video-api.{{ .Values.global.environment }}.platform.hmcts.net
+    VHSERVICES__VIDEOAPIURL:	https://vh-video-api.{{ .Values.global.environment }}.platform.hmcts.net/
     VHSERVICES__NOTIFICATIONAPIRESOURCEID:	https://vh-notification-api.{{ .Values.global.environment }}.platform.hmcts.net
-    VHSERVICES__NOTIFICATIONAPIURL:	https://vh-notification-api.{{ .Values.global.environment }}.platform.hmcts.net
+    VHSERVICES__NOTIFICATIONAPIURL:	https://vh-notification-api.{{ .Values.global.environment }}.platform.hmcts.net/
     KINLYCONFIGURATION__CONFERENCEPHONENUMBER:	"01234567890"
     KINLYCONFIGURATION__JOINBYPHONEFROMDATE:	""
     WOWZACONFIGURATION__STORAGEACCOUNTNAME:	vhwowza{{ .Values.global.environment }}
