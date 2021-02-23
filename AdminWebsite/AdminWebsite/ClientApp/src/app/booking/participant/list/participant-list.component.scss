@@ -21,7 +21,7 @@
   margin-top: -1em;
 }
 
-app-participant-item {
+.participant-item {
   &:not(:last-child) {
     &:after {
       content: '';
