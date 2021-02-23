@@ -109,6 +109,22 @@
           <input id="phone" formControlName="phone" class="govuk-input govuk-input--width-20" type="text" />
         </div>
 
+        <div *ngIf="isInterpreter">
+          <div class="govuk-form-group" [class.govuk-form-group--error]="interpreterForInvalid">
+            <legend id="interpreterFor-error" *ngIf="interpreterForInvalid">
+              <span class="govuk-error-message">
+                {{ constants.Error.InterpreterForErrorMsg }}
+              </span>
+            </legend>
+            <label class="govuk-label" for="interpreterFor"> Interpreting for </label>
+            <select id="interpreterFor" formControlName="interpreterFor" class="govuk-select vh-input-w390">
+              <option *ngFor="let interpreterFor of interpreteeList" [ngValue]="interpreterFor.email">
+                {{ interpreterFor.first_name }} {{ interpreterFor.last_name }}
+              </option>
+            </select>
+          </div>
+        </div>
+
         <div class="govuk-form-group" [ngClass]="{ 'govuk-form-group--error': displayNameInvalid }">
           <legend id="display-name-error" *ngIf="displayNameInvalid">
             <span class="govuk-error-message">
@@ -228,4 +244,8 @@
 
 <div *ngIf="attemptingDiscardChanges">
   <app-discard-confirm-popup (continueEditing)="handleContinueBooking()" (cancelChanges)="cancelChanges()"> </app-discard-confirm-popup>
+</div>
+<div *ngIf="showConfirmRemoveInterpretee">
+  <app-remove-interpreter-popup (continueRemove)="handleContinueRemoveInterpreter()" (cancelRemove)="handleCancelRemoveInterpreter()">
+  </app-remove-interpreter-popup>
 </div>

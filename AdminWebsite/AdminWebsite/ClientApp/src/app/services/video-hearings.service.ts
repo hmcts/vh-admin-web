@@ -20,12 +20,16 @@ import {
     UpdateBookingStatusResponse,
     MultiHearingRequest,
     PhoneConferenceResponse,
-    BookHearingRequest
+    BookHearingRequest,
+    LinkedParticipantRequest,
+    LinkedParticipantResponse,
+    LinkedParticipant
 } from './clients/api-client';
 import { HearingModel } from '../common/model/hearing.model';
 import { CaseModel } from '../common/model/case.model';
 import { ParticipantModel } from '../common/model/participant.model';
 import { EndpointModel } from '../common/model/endpoint.model';
+import { LinkedParticipantModel } from '../common/model/linked-participant.model';
 
 @Injectable({
     providedIn: 'root'
@@ -191,7 +195,25 @@ export class VideoHearingsService {
         editParticipant.telephone_number = participant.phone;
         editParticipant.title = participant.title;
         editParticipant.organisation_name = participant.company;
+        editParticipant.linked_participants = this.mapLinkedParticipantModelToEditLinkedParticipantRequest(participant.linked_participants);
         return editParticipant;
+    }
+
+    mapLinkedParticipantModelToEditLinkedParticipantRequest(linkedParticipants: LinkedParticipantModel[]): LinkedParticipant[] {
+        let list: LinkedParticipant[] = [];
+        if (linkedParticipants && linkedParticipants.length > 0) {
+            list = linkedParticipants.map(x => this.mappingToEditLinkedParticipantRequest(x));
+        }
+        return list;
+    }
+    mappingToEditLinkedParticipantRequest(linkedParticipant: LinkedParticipantModel): LinkedParticipant {
+        const editLinkedParticipant = new LinkedParticipant();
+        editLinkedParticipant.type = linkedParticipant.linkType;
+        editLinkedParticipant.linked_id = linkedParticipant.linkedParticipantId;
+        editLinkedParticipant.participant_id = linkedParticipant.participantId;
+        editLinkedParticipant.participant_contact_email = linkedParticipant.participantEmail;
+        editLinkedParticipant.linked_participant_contact_email = linkedParticipant.linkedParticipantEmail;
+        return editLinkedParticipant;
     }
 
     mappingToEditEndpointRequest(endpoint: EndpointModel): EditEndpointRequest {
@@ -216,6 +238,7 @@ export class VideoHearingsService {
         newHearingRequest.questionnaire_not_required = newRequest.questionnaire_not_required;
         newHearingRequest.audio_recording_required = newRequest.audio_recording_required;
         newHearingRequest.endpoints = this.mapEndpoints(newRequest.endpoints);
+        newHearingRequest.linked_participants = this.mapLinkedParticipants(newRequest.linked_participants);
         return newHearingRequest;
     }
 
@@ -328,10 +351,25 @@ export class VideoHearingsService {
                 participant.representee = p.representee;
                 participant.company = p.organisation;
                 participant.is_judge = p.case_role_name === 'Judge';
+                participant.linked_participants = this.mapLinkedParticipantResponseToLinkedParticipantModel(p.linked_participants);
                 participants.push(participant);
             });
         }
         return participants;
+    }
+
+    mapLinkedParticipantResponseToLinkedParticipantModel(response: LinkedParticipantResponse[]): LinkedParticipantModel[] {
+        const linkedParticipants: LinkedParticipantModel[] = [];
+        let linkedParticipant: LinkedParticipantModel;
+        if (response && response.length > 0) {
+            response.forEach(p => {
+                linkedParticipant = new LinkedParticipantModel();
+                linkedParticipant.linkType = p.type;
+                linkedParticipant.linkedParticipantId = p.linked_id;
+                linkedParticipants.push(linkedParticipant);
+            });
+        }
+        return linkedParticipants;
     }
 
     mapEndpointResponseToEndpointModel(response: EndpointResponse[]): EndpointModel[] {
@@ -349,6 +387,20 @@ export class VideoHearingsService {
             });
         }
         return endpoints;
+    }
+
+    mapLinkedParticipants(linkedParticipantModel: LinkedParticipantModel[]): LinkedParticipantRequest[] {
+        const linkedParticipantsRequest: LinkedParticipantRequest[] = [];
+        let linkedParticipantRequest: LinkedParticipantRequest;
+        if (linkedParticipantModel && linkedParticipantModel.length > 0) {
+            linkedParticipantModel.forEach(e => {
+                linkedParticipantRequest = new LinkedParticipantRequest();
+                linkedParticipantRequest.participant_contact_email = e.participantEmail;
+                linkedParticipantRequest.linked_participant_contact_email = e.linkedParticipantEmail;
+                linkedParticipantsRequest.push(linkedParticipantRequest);
+            });
+        }
+        return linkedParticipantsRequest;
     }
 
     getHearingById(hearingId: string): Observable<HearingDetailsResponse> {

@@ -70,8 +70,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public void Should_return_ok_status_and_telephone_conference_id_if_hearing_is_confirmed()
         {
-            _videoApiMock.Setup(x => x.GetConferenceByHearingRefIdAsync(It.IsAny<Guid>(), It.IsAny<bool>())).ReturnsAsync(_conference);
-
+            _videoApiMock.Setup(x => x.GetConferenceByHearingRefIdAsync(It.IsAny<Guid>(), It.IsAny<Boolean>())).ReturnsAsync(_conference);
             var result = _controller.GetTelephoneConferenceIdById(_guid);
             var okRequestResult = (OkObjectResult)result.Result;
             okRequestResult.StatusCode.Should().Be(200);
@@ -84,8 +83,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         public void Should_return_not_found_if_no_meeting_room_exists()
         {
             _conference.MeetingRoom.PexipNode = null;
-            _videoApiMock.Setup(x => x.GetConferenceByHearingRefIdAsync(It.IsAny<Guid>(), It.IsAny<bool>())).ReturnsAsync(_conference);
-
+            _videoApiMock.Setup(x => x.GetConferenceByHearingRefIdAsync(It.IsAny<Guid>(), It.IsAny<Boolean>())).ReturnsAsync(_conference);
             var result = _controller.GetTelephoneConferenceIdById(_guid);
             var okRequestResult = (NotFoundResult)result.Result;
             okRequestResult.StatusCode.Should().Be(404);
@@ -94,8 +92,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public void Should_return_bad_request_if_exceptions_is_thrown()
         {
-            _videoApiMock.Setup(x => x.GetConferenceByHearingRefIdAsync(It.IsAny<Guid>(), It.IsAny<bool>()))
-                .Throws(new VideoApiException("Error", 400, null, null, null));
+            _videoApiMock.Setup(x => x.GetConferenceByHearingRefIdAsync(It.IsAny<Guid>(), It.IsAny<Boolean>()))
+                            .Throws(new VideoApiException("Error", 400, null, null, null));
 
             var result = _controller.GetTelephoneConferenceIdById(_guid);
             var okRequestResult = (BadRequestObjectResult)result.Result;
@@ -105,7 +103,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public void Should_return_not_found_if_exceptions_is_thrown()
         {
-            _videoApiMock.Setup(x => x.GetConferenceByHearingRefIdAsync(It.IsAny<Guid>(), It.IsAny<bool>()))
+            _videoApiMock.Setup(x => x.GetConferenceByHearingRefIdAsync(It.IsAny<Guid>(), It.IsAny<Boolean>()))
                 .Throws(new VideoApiException("Error", 404, null, null, null));
 
             var result = _controller.GetTelephoneConferenceIdById(_guid);
