@@ -67,4 +67,40 @@ describe('ParticipantItemComponent', () => {
         expect(bookingServiceSpy.setEditMode).toHaveBeenCalledWith();
         expect(router.navigate).toHaveBeenCalled();
     });
+
+    it('should return true if participant has a representative', () => {
+        component.participant = { representee: 'rep', is_judge: false, is_exist_person: false };
+        fixture.detectChanges();
+        expect(component.isRepresentative).toBeTruthy();
+    });
+
+    it('should return true if participant is a judge', () => {
+        component.participant = { is_judge: true, is_exist_person: false };
+        fixture.detectChanges();
+        expect(component.isJudge).toBeTruthy();
+    });
+
+    it('should return false if participant`s case role is None', () => {
+        component.participant = { case_role_name: 'None', is_judge: true, is_exist_person: false };
+        fixture.detectChanges();
+        expect(component.hasCaseRole).toBeFalsy();
+    });
+
+    it('should return true if participant is an observer', () => {
+        component.participant = { hearing_role_name: 'Observer', is_judge: true, is_exist_person: false };
+        fixture.detectChanges();
+        expect(component.isObserverOrPanelMember).toBeTruthy();
+    });
+
+    it('should return true if participant is a panel member', () => {
+        component.participant = { hearing_role_name: 'Panel Member', is_judge: true, is_exist_person: false };
+        fixture.detectChanges();
+        expect(component.isObserverOrPanelMember).toBeTruthy();
+    });
+
+    it('should return true if participant has a case role and is not a Panel Member', () => {
+        component.participant = { hearing_role_name: 'Judge', case_role_name: 'Judge', is_judge: true, is_exist_person: false };
+        fixture.detectChanges();
+        expect(component.displayCaseRole).toBeTruthy();
+    });
 });
