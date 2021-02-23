@@ -5,33 +5,40 @@
 
 .container {
   padding: 1em 0;
-}
 
-.edit {
-  font-size: 18px;
-  padding: 5px 5px 5px 0px;
-  text-align: left;
-}
+  .judge-row, .participant-row {
+    display: flex;
+    align-items: center;
 
-.crest {
-  width: 15%;
-}
+    > div {
+      padding-left: 15px;
+      flex: 1 1 auto;
+    }
+  }
 
-.vh-image-50 {
-  width: 50%;
+  .judge-row {
+    > div:first-child {
+      flex: 0 0 auto;
+    }
+    &__email {
+      color: #505a5f;
+      font-size: 1.1875rem;
+      line-height: 1.31578947;
+    }
+  }
+
+  .participant-row {
+    justify-content: space-between;
+    // image width + padding-left
+    margin-left: 55px;
+
+    &__name {
+        font-weight: bold;
+    }
+  }
 }
 
 .wrap {
   word-break: break-all;
   overflow-wrap: break-word;
-}
-
-.participant-name {
-  font-weight: bold;
-}
-
-.judge-email {
-  color: #505a5f;
-  font-size: 1.1875rem;
-  line-height: 1.31578947;
 }

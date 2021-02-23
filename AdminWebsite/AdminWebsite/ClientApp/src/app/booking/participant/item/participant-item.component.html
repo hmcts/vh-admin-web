@@ -1,6 +1,6 @@
 <div *ngIf="participant" class="govuk-grid-row container">
-  <ng-container *ngIf="isJudge">
-    <div class="govuk-grid-column-one-third crest">
+  <div class="judge-row" *ngIf="isJudge">
+    <div>
       <img
         src="/assets/images/govuk-crest.png"
         height="40"
@@ -10,22 +10,22 @@
       />
     </div>
 
-    <div class="govuk-grid-column-one-half vh-image-50 wrap">
+    <div class="wrap">
       {{ participant.title === 'Judge' ? '' : participant.title }} {{ participant.display_name }}
       <div>
         <strong>Judge</strong>
       </div>
-      <div class="judge-email" id="judge-name">{{ participant.email }}</div>
+      <div class="judge-row__email" id="judge-name">{{ participant.email }}</div>
     </div>
 
-    <div class="govuk-grid-column-one-third edit" *ngIf="isSummaryPage">
+    <div *ngIf="isSummaryPage">
       <a [routerLink]="['/assign-judge']" class="vhlink" (click)="editJudge()">Change</a>
     </div>
-  </ng-container>
+  </div>
 
-  <ng-container *ngIf="!isJudge">
-    <div class="govuk-grid-column-two-thirds vhtable-header">
-      <div class="participant-name">{{ participant.title }} {{ participant.first_name }} {{ participant.last_name }}</div>
+  <div class="participant-row" *ngIf="!isJudge">
+    <div class="vhtable-header">
+      <div class="participant-row__name">{{ participant.title }} {{ participant.first_name }} {{ participant.last_name }}</div>
 
       <div *ngIf="isRepresentative; else individual">
         <div>{{ participant.hearing_role_name }} for</div>
@@ -46,9 +46,9 @@
         </div>
       </ng-template>
     </div>
-    <div class="govuk-grid-column-one-third edit" *ngIf="canEdit">
+    <div *ngIf="canEdit">
       <a class="vhlink" href="javascript:void(0)" (click)="editParticipant(participant)">Edit</a>
       <a class="vhlink" href="javascript:void(0)" (click)="removeParticipant(participant)">Remove</a>
     </div>
-  </ng-container>
+  </div>
 </div>
