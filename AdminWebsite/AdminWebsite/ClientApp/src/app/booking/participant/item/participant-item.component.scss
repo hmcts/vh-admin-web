@@ -1,0 +1,37 @@
+:host {
+  display: block;
+  line-height: 1.3em;
+}
+
+.container {
+  padding: 1em 0;
+}
+
+.edit {
+  font-size: 18px;
+  padding: 5px 5px 5px 0px;
+  text-align: left;
+}
+
+.crest {
+  width: 15%;
+}
+
+.vh-image-50 {
+  width: 50%;
+}
+
+.wrap {
+  word-break: break-all;
+  overflow-wrap: break-word;
+}
+
+.participant-name {
+  font-weight: bold;
+}
+
+.judge-email {
+  color: #505a5f;
+  font-size: 1.1875rem;
+  line-height: 1.31578947;
+}
