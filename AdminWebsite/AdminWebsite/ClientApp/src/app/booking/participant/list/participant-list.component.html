@@ -1,10 +1,11 @@
 <h3 class="govuk-heading-m">{{ isEditMode ? 'Participants' : 'Participants added' }}</h3>
-<div class="participant-list"
-  id="participants-list">
-  <app-participant-item *ngFor="let p of sortedParticipants"
+<div class="participant-list" id="participants-list">
+  <app-participant-item
+    *ngFor="let p of sortedParticipants"
     [participant]="p"
     [canEdit]="isEditRemoveVisible"
     [isSummaryPage]="isSummaryPage"
     (edit)="editParticipant($event)"
-    (remove)="removeParticipant($event)"></app-participant-item>
+    (remove)="removeParticipant($event)"
+  ></app-participant-item>
 </div>

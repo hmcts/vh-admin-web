@@ -6,7 +6,8 @@
 .container {
   padding: 1em 0;
 
-  .judge-row, .participant-row {
+  .judge-row,
+  .participant-row {
     display: flex;
     align-items: center;
 
@@ -40,7 +41,7 @@
     margin-left: 55px;
 
     &__name {
-        font-weight: bold;
+      font-weight: bold;
     }
   }
 }

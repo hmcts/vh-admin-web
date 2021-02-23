@@ -152,7 +152,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
             this.hearing.participants.splice(indexOfParticipant, 1);
 
             this.removeLinkedParticipant(this.selectedParticipantEmail);
-            
+
             this.hearing.participants = [...this.hearing.participants];
 
             this.hearingService.updateHearingRequest(this.hearing);

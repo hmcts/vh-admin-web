@@ -512,7 +512,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
                 this.hearing.participants.push(newParticipant);
                 this.hearing.participants = [...this.hearing.participants];
-                
+
                 this.populateInterpretedForList();
                 this.videoHearingService.updateHearingRequest(this.hearing);
                 this.logger.debug(`${this.loggerPrefix} Saved participant to booking. Clearing form.`, {
