@@ -5,6 +5,7 @@ export class OtherInformationModel {
 
     static init(otherInformation: string): OtherInformationModel {
         let otherInfo: OtherInformationModel = {};
+
         try {
             otherInfo = JSON.parse(otherInformation);
         } catch (error) {

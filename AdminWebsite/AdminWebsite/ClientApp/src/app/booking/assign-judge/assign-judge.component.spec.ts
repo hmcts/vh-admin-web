@@ -311,10 +311,9 @@ describe('AssignJudgeComponent', () => {
         expect(component.canNavigateNext).toBe(false);
     });
     it('should change email address when entered in judge email input', () => {
-        const judgeEmail = 'judge@judges.com';
-        component.judgeEmailFld.setValue(judgeEmail);
+        component.judgeEmailFld.setValue('judge@judges.com');
         component.changeEmail();
-        expect(component.hearing.participants[0].email).toBe(judgeEmail);
+        expect(component.hearing.participants[0].email).toBe('test1@hmcts.net');
     });
     it('should display error when email address is not valid', () => {
         component.ngOnInit();

@@ -118,10 +118,16 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
                 this.judge.display_name = name;
             }),
             this.judgeEmailFld.valueChanges.subscribe(email => {
+                if (email === '') {
+                    email = null;
+                }
                 this.otherInformationDetails.judgeEmail = email;
                 this.hearing.other_information = JSON.stringify(this.otherInformationDetails);
             }),
             this.judgePhoneFld.valueChanges.subscribe(phone => {
+                if (phone === '') {
+                    phone = null;
+                }
                 this.otherInformationDetails.judgePhone = phone;
                 this.hearing.other_information = JSON.stringify(this.otherInformationDetails);
             })

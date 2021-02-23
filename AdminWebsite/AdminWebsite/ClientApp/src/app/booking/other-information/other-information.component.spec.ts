@@ -3,7 +3,6 @@ import { AbstractControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Logger } from 'src/app/services/logger';
-import { HearingModel } from '../../common/model/hearing.model';
 import { DiscardConfirmPopupComponent } from '../../popups/discard-confirm-popup/discard-confirm-popup.component';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { SharedModule } from '../../shared/shared.module';

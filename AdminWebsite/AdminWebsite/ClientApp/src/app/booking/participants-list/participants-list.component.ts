@@ -15,11 +15,8 @@ import { BookingService } from '../../services/booking.service';
 export class ParticipantsListComponent implements OnInit, OnChanges {
     private readonly loggerPrefix = '[ParticipantsList] -';
     @Input()
-    participants: (ParticipantModel & { isRepresentative: boolean })[];
     hearing: HearingModel;
-    otherInformationDetails: OtherInformationModel;
-    judgeEmailAvailable: boolean;
-    judgePhoneAvailable: boolean;
+    participants: (ParticipantModel & { isRepresentative: boolean })[];
 
     $selectedForEdit: EventEmitter<string>;
     $selectedForRemove: EventEmitter<string>;
@@ -36,7 +33,6 @@ export class ParticipantsListComponent implements OnInit, OnChanges {
 
     ngOnInit() {
         const currentUrl = this.router.url;
-        this.otherInformationDetails = OtherInformationModel.init(this.hearing.other_information);
         if (currentUrl) {
             this.isSummaryPage = currentUrl.includes('summary');
             this.isEditRemoveVisible = !currentUrl.includes('assign-judge');
@@ -44,15 +40,19 @@ export class ParticipantsListComponent implements OnInit, OnChanges {
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-        if (changes.hearings) {
-            this.otherInformationDetails = OtherInformationModel.init(this.hearing.other_information);
-            this.judgeEmailAvailable = this.otherInformationDetails.judgeEmail ? true : false;
-            this.judgePhoneAvailable = this.otherInformationDetails.judgePhone ? true : false;
-        }
-
-        (changes.participants.currentValue as (ParticipantModel & { isRepresentative: boolean })[]).forEach(p => {
+       (changes.participants?.currentValue as (ParticipantModel & { isRepresentative: boolean })[])?.forEach(p => {
             p.isRepresentative = !!p.representee;
-        });
+       });
+    }
+
+    getJudgeEmail(participant: ParticipantModel): string {
+        const otherInformation = OtherInformationModel.init(this.hearing.other_information);
+        return otherInformation.judgeEmail ?? participant.email;
+    }
+
+    getJudgePhone(participant: ParticipantModel): string {
+        const otherInformation = OtherInformationModel.init(this.hearing.other_information);
+        return otherInformation.judgePhone ?? participant.phone;
     }
 
     editJudge() {

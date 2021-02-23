@@ -1,6 +1,6 @@
 <div id="roundedborder">
   <h3 class="govuk-heading-m">{{ isEditMode ? 'Participants' : 'Participants added' }}</h3>
-  <div class="vhtable" id="participants-list">
+    <div class="vhtable" id="participants-list">
     <div *ngFor="let pat of hearing.participants">
       <div *ngIf="pat.is_judge">
         <div class="govuk-grid-row vh-row">
@@ -19,17 +19,16 @@
               <strong>Judge</strong>
             </div>
             <div class="govuk-hint vh-wrap" id="judge-email">
-              {{ judgeEmailAvailable ? otherInformationDetails.judgeEmail : pat.email }}
+                {{ getJudgeEmail(pat) }}
             </div>
             <div class="govuk-hint vh-wrap" id="judge-phone">
-              {{ judgePhoneAvailable ? otherInformationDetails.judgePhone : pat.phone }}
+                {{ getJudgePhone(pat) }}
             </div>
           </div>
           <div class="govuk-grid-column-one-third vhtable-cell" *ngIf="isSummaryPage">
             <a [routerLink]="['/assign-judge']" class="vhlink" (click)="editJudge()">Change</a>
           </div>
         </div>
-
         <div class="govuk-grid-row vh-row">
           <div class="rowbottom"></div>
         </div>
