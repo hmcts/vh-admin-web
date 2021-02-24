@@ -49,7 +49,7 @@ Scenario: Removing Participant and Interpreter
 	When the user completes the add participants form with an Interpreter
 	And the user has progressed to the Summary page
 	And the user removes participant
-	Then the user is on the Add Participants page
+	Then the user views the information on the summary form
 
 Scenario: Removing Interpreter
 	Given the Video Hearings Officer user has progressed to the Add Participants page
@@ -63,4 +63,4 @@ Scenario: Edit Interpreter
 	When the user completes the add participants form with an Interpreter
 	And the user has progressed to the Summary page
 	When the user edits an Interpreter
-	Then the participant details are updated
+	Then the user views the information on the summary form
