@@ -44,15 +44,20 @@
           </div>
           <div class="govuk-grid-column-one-half vhtable-header">
             {{ p.title }} {{ p.first_name }} {{ p.last_name }}
-            <div *ngIf="p.isRepresentative || isInterpreter(p)">
+            <div *ngIf="p.isRepresentative || isInterpreter(p); else notRepresenting">
               <span>{{ p.isRepresentative ? 'Representing' : 'Interpreting for' }}</span>
             </div>
             <div>
               <strong>{{ p.representee }}</strong>
               <strong>{{ getInterpreteeDisplayName(p) }} </strong>
             </div>
+            <ng-template #notRepresenting>
+              <div>
+                {{ p.hearing_role_name }}
+              </div>
+            </ng-template>
             <div>
-              {{ p.case_role_name }}
+              {{ getCaseName(p) }}
             </div>
           </div>
           <div class="govuk-grid-column-one-third vhtable-cell" *ngIf="isEditRemoveVisible">

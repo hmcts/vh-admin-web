@@ -99,4 +99,11 @@ export class ParticipantsListComponent implements OnInit, OnChanges {
         }
         return interpretee;
     }
+    getCaseName(particpant: ParticipantModel): string {
+        return particpant.case_role_name.toLowerCase() === 'none' ||
+            particpant.case_role_name.toLowerCase() === 'observer' ||
+            particpant.case_role_name.toLowerCase() === 'panel member'
+            ? ''
+            : particpant.case_role_name;
+    }
 }

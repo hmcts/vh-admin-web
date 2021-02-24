@@ -110,10 +110,12 @@ describe('ParticipantsListComponent', () => {
     pat1.title = 'Mrs';
     pat1.first_name = 'Sam';
     pat1.hearing_role_name = 'Observer';
+    pat1.case_role_name = 'none';
     const pat2 = new ParticipantModel();
     pat2.title = 'Mrs';
     pat2.first_name = 'Sam';
     pat2.hearing_role_name = 'LIP';
+    pat2.case_role_name = 'applicant';
     const participants: any[] = [pat1, pat2];
 
     const participantModel = new ParticipantModel();
@@ -238,5 +240,14 @@ describe('ParticipantsListComponent', () => {
         currentParticipant.linked_participants = _linkedParticipants;
         const result = component.getInterpreteeDisplayName(currentParticipant);
         expect(result).toBe('John Doe');
+    });
+    it('should return the case name if the case role is not none', () => {
+        component.ngOnInit();
+        component.participants = participants;
+
+        let result = component.getCaseName(component.participants[0]);
+        expect(result).toBe('');
+        result = component.getCaseName(component.participants[1]);
+        expect(result).toBe('applicant');
     });
 });
