@@ -127,9 +127,13 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [When(@"the user removes participant")]
         public void WhenTheUserRemovesParticipant()
         {
-            _browsers[_c.CurrentUser].Click(SummaryPage.RemoveParticipantLink(GetParticipantBy("Litigant in person").Firstname));
+            var participant = GetParticipantBy("Litigant in person");
+            _browsers[_c.CurrentUser].Click(SummaryPage.RemoveParticipantLink(participant.Firstname));
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(SummaryPage.RemoveInterpreterMessage).Displayed.Should().BeTrue();
             _browsers[_c.CurrentUser].Click(SummaryPage.RemoveInterpreter);
+            _c.Test.HearingParticipants.Remove(participant);
+            _c.Test.HearingParticipants.Remove(GetParticipantBy("Interpreter"));
+
         }
 
         [When(@"the user removes Interpreter")]
