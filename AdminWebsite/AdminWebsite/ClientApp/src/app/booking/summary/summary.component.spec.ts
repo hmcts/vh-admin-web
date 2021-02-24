@@ -22,7 +22,7 @@ import { VideoHearingsService } from '../../services/video-hearings.service';
 import { MockValues } from '../../testing/data/test-objects';
 import { BookingEditStubComponent } from '../../testing/stubs/booking-edit-stub';
 import { ParticipantsListStubComponent } from '../../testing/stubs/participant-list-stub';
-import { ParticipantListComponent } from '../participant/list/participant-list.component';
+import { ParticipantListComponent } from '../participant';
 import { ParticipantService } from '../services/participant.service';
 import { SummaryComponent } from './summary.component';
 
