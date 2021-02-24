@@ -134,7 +134,7 @@ describe('AssignJudgeComponent', () => {
         dropDown.dispatchEvent(new Event('change'));
         fixture.detectChanges();
 
-        expect(component.hearing.other_information).toBe('John2.Doe@hmcts.net');
+        expect(component.judge.email).toBe('John2.Doe@hmcts.net');
         expect(component.form.valid).toBeTruthy();
     });
     it('should initialize form and create judgeDisplayName control', () => {

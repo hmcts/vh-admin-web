@@ -187,7 +187,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
 
     public addJudge(judgeUserName: string) {
         if (judgeUserName) {
-            const selectedJudge = this.availableJudges.find(j => j.email === judgeUserName);
+            const selectedJudge = this.availableJudges.find(j => j.display_name === judgeUserName);
             this.judge.first_name = selectedJudge.first_name;
             this.judge.last_name = selectedJudge.last_name;
             this.judge.email = selectedJudge.email;
