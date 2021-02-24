@@ -96,6 +96,14 @@ namespace AdminWebsite.AcceptanceTests.Data
                 {
                     actualParticipant.Contact_email.Should().Be(expectedParticipant.AlternativeEmail);
                 }
+
+                if (!string.IsNullOrEmpty(expectedParticipant.Interpretee))
+                {
+                    var interpertee = participants.FirstOrDefault(p => p.Display_name == expectedParticipant.Interpretee);
+                    actualParticipant.Linked_participants.Single(p => p.Linked_id == interpertee.Id).Should().NotBeNull();
+                    interpertee.Linked_participants.Single(p => p.Linked_id == actualParticipant.Id).Should().NotBeNull();
+                }
+
                 actualParticipant.Case_role_name.Should().Be(expectedParticipant.CaseRoleName);
                 // actualParticipant.Display_name.Should().Be($"{expectedParticipant.Firstname} {expectedParticipant.Role}"); TODO: removed as workaround for new user naming conventions
                 actualParticipant.First_name.Should().Be(expectedParticipant.Firstname);
