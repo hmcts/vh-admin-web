@@ -19,11 +19,11 @@ import { Logger } from '../../services/logger';
 import { SearchService } from '../../services/search.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { RemovePopupStubComponent } from '../../testing/stubs/remove-popup-stub';
-import { ParticipantsListComponent } from '../participants-list/participants-list.component';
 import { SearchEmailComponent } from '../search-email/search-email.component';
 import { ParticipantService } from '../services/participant.service';
 import { AddParticipantComponent } from './add-participant.component';
 import { HearingRoleModel } from '../../common/model/hearing-role.model';
+import { ParticipantListComponent } from '../participant';
 import { LinkedParticipantModel, LinkedParticipantType } from 'src/app/common/model/linked-participant.model';
 
 let component: AddParticipantComponent;
@@ -215,7 +215,7 @@ describe('AddParticipantComponent', () => {
             );
 
             component.searchEmail = new SearchEmailComponent(searchService, configServiceSpy, loggerSpy);
-            component.participantsListComponent = new ParticipantsListComponent(bookingServiceSpy, routerSpy, loggerSpy);
+            component.participantsListComponent = new ParticipantListComponent(routerSpy, loggerSpy);
 
             component.ngOnInit();
 
@@ -697,7 +697,7 @@ describe('AddParticipantComponent edit mode', () => {
                     AddParticipantComponent,
                     BreadcrumbStubComponent,
                     SearchEmailComponent,
-                    ParticipantsListComponent,
+                    ParticipantListComponent,
                     CancelPopupStubComponent,
                     ConfirmationPopupStubComponent,
                     RemovePopupStubComponent,
@@ -997,8 +997,7 @@ describe('AddParticipantComponent edit mode no participants added', () => {
                 bookingServiceSpy,
                 loggerSpy
             );
-            component.participantsListComponent = new ParticipantsListComponent(
-                bookingServiceSpy,
+            component.participantsListComponent = new ParticipantListComponent(
                 jasmine.createSpyObj<Router>(['navigate']),
                 loggerSpy
             );
@@ -1043,7 +1042,7 @@ describe('AddParticipantComponent edit mode no participants added', () => {
         component.ngAfterViewInit();
         tick(600);
         const partList = component.participantsListComponent;
-        partList.editParticipant('test2@hmcts.net');
+        partList.editParticipant({ email: 'test2@hmcts.net', is_exist_person: false, is_judge: false });
         partList.selectedParticipant.emit();
         tick(600);
 
@@ -1054,7 +1053,7 @@ describe('AddParticipantComponent edit mode no participants added', () => {
         component.ngAfterViewInit();
         tick(600);
         const partList = component.participantsListComponent;
-        partList.removeParticipant('test2@hmcts.net');
+        partList.removeParticipant({ email: 'test2@hmcts.net', is_exist_person: false, is_judge: false });
         component.selectedParticipantEmail = 'test2@hmcts.net';
         partList.selectedParticipantToRemove.emit();
         tick(600);

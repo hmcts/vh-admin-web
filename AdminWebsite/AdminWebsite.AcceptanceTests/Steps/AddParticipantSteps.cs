@@ -21,7 +21,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
     public class AddParticipantSteps : ISteps
     {
         private const int TimeoutToRetrieveUserFromAad = 60;
-        private const string RepresentingText = "Representing";
+        private const string RepresentingText = "Representative for";
         private const string InterpreterText = "Interpreting for";
         private readonly TestContext _c;
         private readonly Dictionary<User, UserBrowser> _browsers;
@@ -265,7 +265,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
                 if (participant.Role.ToLower().Equals("judge") || participant.Role.ToLower().Equals("judge")) continue;
 
                 var fullNameTitle = $"{title} {participant.Firstname} {participant.Lastname}";
-                var expectedParticipant = $"{fullNameTitle} {participant.CaseRoleName}";
+                var expectedParticipant = $"{fullNameTitle} {participant.HearingRoleName} {participant.CaseRoleName}";
 
                 if (participant.HearingRoleName == PartyRole.Representative.Name)
                 {
