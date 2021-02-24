@@ -50,7 +50,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             AddNewDefendantIndividual(PartyRole.LitigantInPerson);
             AddNewDefendantIndividual(PartyRole.Interpreter);
-            AddNewDefendantRep();
+            AddExistingClaimantIndividual();
             VerifyUsersAreAddedToTheParticipantsList();
             ClickNext();
         }
@@ -273,7 +273,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
                 }
                 if (participant.HearingRoleName == PartyRole.Interpreter.Name)
                 {
-                    expectedParticipant = $"{fullNameTitle} {InterpreterText} {participant.Interpretee}";
+                    expectedParticipant = $"{fullNameTitle} {InterpreterText} {participant.Interpretee} {participant.CaseRoleName}";
                 }
 
                 actualResult.Any(x => x.Replace(Environment.NewLine, " ").Equals(expectedParticipant)).Should()
@@ -300,8 +300,13 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void EditAnInterpreter(string alternativeEmail)
         {
             var user = GetParticipantByEmailAndUpdateDisplayName(alternativeEmail);
+            
             _browsers[_c.CurrentUser].Clear(AddParticipantsPage.DisplayNameTextfield);
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AddParticipantsPage.DisplayNameTextfield).SendKeys(user.DisplayName);
+            var citizen = _c.Test.HearingParticipants.FirstOrDefault(p => p.DisplayName != user.Interpretee && p.HearingRoleName == PartyRole.LitigantInPerson.Name);
+            _commonSharedSteps.WhenTheUserSelectsTheOptionFromTheDropdown(_browsers[_c.CurrentUser].Driver,
+                AddParticipantsPage.InterpreteeDropdown, citizen.DisplayName);
+            user.Interpretee = citizen.DisplayName;
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AddParticipantsPage.NextButton);
             _browsers[_c.CurrentUser].ScrollTo(AddParticipantsPage.NextButton);
             _browsers[_c.CurrentUser].Click(AddParticipantsPage.NextButton);
@@ -309,8 +314,9 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         private UserAccount GetParticipantByEmailAndUpdateDisplayName(string alternativeEmail)
         {
-            return _c.Test.HearingParticipants.First(x => x.AlternativeEmail.ToLower().Equals(alternativeEmail.ToLower()));
-            // user.DisplayName = $"{_c.Test.AddParticipant.Participant.NewUserPrefix}Updated display name";
+            var user = _c.Test.HearingParticipants.First(x => x.AlternativeEmail.ToLower().Equals(alternativeEmail.ToLower()));
+            user.DisplayName = $"{_c.Test.AddParticipant.Participant.NewUserPrefix}Updated display name";
+            return user;
         }
 
         [When(@"the user attempts to add a participant with a reform email")]
