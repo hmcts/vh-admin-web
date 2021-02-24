@@ -130,13 +130,11 @@ describe('AssignJudgeComponent', () => {
 
     it('is valid and has updated selected judge after selecting judge in dropdown', () => {
         const dropDown = fixture.debugElement.query(By.css('#judgeName')).nativeElement;
-        const dropDownOption = dropDown.options[2];
-        const value = dropDownOption.value;
-        (dropDown as FormGroup).patchValue({dropDownOption: value});
+        dropDown.value = dropDown.options[2].value;
+        dropDown.dispatchEvent(new Event('change'));
         fixture.detectChanges();
-        const otherInformation = OtherInformationModel.init(component.hearing.other_information);
 
-        expect(otherInformation.judgeEmail).toBe('John2.Doe@hmcts.net');
+        expect(component.hearing.other_information).toBe('John2.Doe@hmcts.net');
         expect(component.form.valid).toBeTruthy();
     });
     it('should initialize form and create judgeDisplayName control', () => {
