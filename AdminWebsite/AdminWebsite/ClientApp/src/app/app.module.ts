@@ -40,6 +40,7 @@ import { ChangePasswordComponent } from './change-password/change-password.compo
 import { GetAudioFileModule } from './get-audio-file/get-audio-file.module';
 import { DeleteParticipantModule } from './delete-participant/delete-participant.module';
 import { EditParticipantModule } from './edit-participant/edit-participant.module';
+import { ParticipantsListComponent } from './booking/participants-list/participants-list.component';
 
 export function getSettings(configService: ConfigService) {
     return () => configService.loadConfig();
@@ -54,7 +55,8 @@ export function getSettings(configService: ConfigService) {
         UnauthorisedComponent,
         ErrorComponent,
         UnsupportedBrowserComponent,
-        ChangePasswordComponent
+        ChangePasswordComponent,
+        ParticipantsListComponent
     ],
     imports: [
         MomentModule,
