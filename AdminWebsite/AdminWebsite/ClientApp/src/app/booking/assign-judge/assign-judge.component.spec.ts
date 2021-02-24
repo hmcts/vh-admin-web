@@ -19,6 +19,8 @@ import { BreadcrumbStubComponent } from '../../testing/stubs/breadcrumb-stub';
 import { ParticipantsListStubComponent } from '../../testing/stubs/participant-list-stub';
 import { JudgeDataService } from '../services/judge-data.service';
 import { AssignJudgeComponent } from './assign-judge.component';
+import { OtherInformationModel } from '../../common/model/other-information.model';
+import { FormGroup } from '@angular/forms';
 
 function initHearingRequest(): HearingModel {
     const participants: ParticipantModel[] = [];
@@ -50,6 +52,7 @@ function initHearingRequest(): HearingModel {
     newHearing.scheduled_date_time = null;
     newHearing.scheduled_duration = 0;
     newHearing.audio_recording_required = true;
+
     return newHearing;
 }
 
@@ -127,11 +130,13 @@ describe('AssignJudgeComponent', () => {
 
     it('is valid and has updated selected judge after selecting judge in dropdown', () => {
         const dropDown = fixture.debugElement.query(By.css('#judgeName')).nativeElement;
-        dropDown.value = dropDown.options[2].value;
-        dropDown.dispatchEvent(new Event('change'));
+        const dropDownOption = dropDown.options[2];
+        const value = dropDownOption.value;
+        (dropDown as FormGroup).patchValue({dropDownOption: value});
         fixture.detectChanges();
+        const otherInformation = OtherInformationModel.init(component.hearing.other_information);
 
-        expect(component.judge.email).toBe('John2.Doe@hmcts.net');
+        expect(otherInformation.judgeEmail).toBe('John2.Doe@hmcts.net');
         expect(component.form.valid).toBeTruthy();
     });
     it('should initialize form and create judgeDisplayName control', () => {
@@ -140,7 +145,7 @@ describe('AssignJudgeComponent', () => {
         expect(component.judgeDisplayNameFld.updateOn).toBe('blur');
     });
     it('judge display name field validity required', () => {
-        let errors = {};
+        let errors: {};
         component.form.controls['judgeDisplayNameFld'].setValue('');
         const judge_display_name = component.form.controls['judgeDisplayNameFld'];
         errors = judge_display_name.errors || {};
@@ -325,7 +330,8 @@ describe('AssignJudgeComponent', () => {
         const judgePhone = '01234567890';
         component.judgePhoneFld.setValue(judgePhone);
         component.changeTelephone();
-        expect(component.hearing.participants[0].phone).toBe(judgePhone);
+        const otherInformationDetails = OtherInformationModel.init(component.hearing.other_information);
+        expect(otherInformationDetails.judgePhone).toBe(judgePhone);
     });
     it('should display error when telephone address is not valid', () => {
         component.ngOnInit();

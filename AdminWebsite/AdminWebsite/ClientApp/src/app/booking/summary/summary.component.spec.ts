@@ -153,7 +153,7 @@ describe('SummaryComponent with valid request', () => {
     it('should display summary data from existing hearing', () => {
         expect(component.caseNumber).toEqual(existingRequest.cases[0].number);
         expect(component.caseName).toEqual(existingRequest.cases[0].name);
-        expect(component.otherInformation).toEqual(existingRequest.other_information);
+        expect(component.otherInformation.otherInformation).toEqual(existingRequest.other_information);
         const hearingstring = MockValues.HearingTypesList.find(c => c.id === existingRequest.hearing_type_id).name;
         expect(component.caseHearingType).toEqual(hearingstring);
         expect(component.hearingDate).toEqual(existingRequest.scheduled_date_time);

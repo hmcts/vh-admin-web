@@ -8,6 +8,7 @@ import { Logger } from 'src/app/services/logger';
 import { ParticipantModel } from '../../common/model/participant.model';
 import { BookingService } from '../../services/booking.service';
 import { ParticipantsListComponent } from './participants-list.component';
+import { HearingModel } from '../../common/model/hearing.model';
 
 const router = {
     navigate: jasmine.createSpy('navigate'),
@@ -139,6 +140,9 @@ describe('ParticipantsListComponent', () => {
         fixture = TestBed.createComponent(ParticipantsListComponent);
         debugElement = fixture.debugElement;
         component = debugElement.componentInstance;
+        component.hearing = {
+            participants: participants
+        } as HearingModel;
 
         fixture.detectChanges();
     });

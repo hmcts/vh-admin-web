@@ -41,7 +41,7 @@ export class ParticipantsListComponent implements OnInit, OnChanges {
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-       (changes.participants?.currentValue as (ParticipantModel & { isRepresentative: boolean })[])?.forEach(p => {
+       (changes?.participants?.currentValue as (ParticipantModel & { isRepresentative: boolean })[])?.forEach(p => {
             p.isRepresentative = !!p.representee;
        });
     }

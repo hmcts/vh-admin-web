@@ -185,9 +185,9 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         return this.judgePhoneFld.invalid && (this.judgePhoneFld.dirty || this.judgePhoneFld.touched || this.failedSubmission);
     }
 
-    public addJudge(judgeId: string) {
-        if (judgeId) {
-            const selectedJudge = this.availableJudges.find(j => j.display_name === judgeId);
+    public addJudge(judgeUserName: string) {
+        if (judgeUserName) {
+            const selectedJudge = this.availableJudges.find(j => j.email === judgeUserName);
             this.judge.first_name = selectedJudge.first_name;
             this.judge.last_name = selectedJudge.last_name;
             this.judge.email = selectedJudge.email;
@@ -217,9 +217,9 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
 
     changeDisplayName() {
         if (this.judge && this.judge.display_name) {
-            const indexOfJudge = this.hearing.participants.findIndex(x => x.is_judge);
-            if (indexOfJudge !== -1) {
-                this.hearing.participants[indexOfJudge].display_name = this.judge.display_name;
+            const judge = this.hearing.participants.find(x => x.is_judge);
+            if (judge) {
+                this.hearing.participants.find(x => x.is_judge).display_name = this.judge.display_name;
             }
         }
         const text = SanitizeInputText(this.judgeDisplayNameFld.value);
@@ -227,8 +227,8 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     }
 
     changeEmail() {
-        const indexOfJudge = this.hearing.participants.findIndex(x => x.is_judge);
-        if (indexOfJudge !== -1) {
+        const judge = this.hearing.participants.find(x => x.is_judge);
+        if (judge) {
             this.hearing.other_information = JSON.stringify(this.otherInformationDetails);
         }
         const text = SanitizeInputText(this.judgeEmailFld.value);
@@ -236,8 +236,8 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     }
 
     changeTelephone() {
-        const indexOfJudge = this.hearing.participants.findIndex(x => x.is_judge);
-        if (indexOfJudge !== -1) {
+        const judge = this.hearing.participants.find(x => x.is_judge);
+        if (judge) {
             if (this.otherInformationDetails.judgePhone) {
                 this.hearing.other_information = JSON.stringify(this.otherInformationDetails);
             }
