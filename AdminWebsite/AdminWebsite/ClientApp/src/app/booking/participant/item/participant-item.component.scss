@@ -16,11 +16,14 @@
       flex: 1 1 auto;
     }
 
-    > div:last-child {
+    &__actions {
       flex: 1 0 auto;
-      padding-right: 15px;
       display: flex;
       justify-content: flex-end;
+    }
+
+    > div:last-child {
+      padding-right: 15px;
     }
   }
 

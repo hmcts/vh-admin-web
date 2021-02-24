@@ -18,7 +18,7 @@
       <div class="judge-row__email" id="judge-name">{{ participant.email }}</div>
     </div>
 
-    <div *ngIf="isSummaryPage">
+    <div *ngIf="isSummaryPage" class="judge-row__actions">
       <a [routerLink]="['/assign-judge']" class="vhlink" (click)="editJudge()">Change</a>
     </div>
   </div>
@@ -46,7 +46,7 @@
         </div>
       </ng-template>
     </div>
-    <div *ngIf="canEdit">
+    <div *ngIf="canEdit" class="participant-row__actions">
       <a class="vhlink" href="javascript:void(0)" (click)="editParticipant(participant)">Edit</a>
       <a class="vhlink" href="javascript:void(0)" (click)="removeParticipant(participant)">Remove</a>
     </div>
