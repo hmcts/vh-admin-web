@@ -50,7 +50,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             AddNewDefendantIndividual(PartyRole.LitigantInPerson);
             AddNewDefendantIndividual(PartyRole.Interpreter);
-            AddExistingClaimantIndividual();
+            AddNewDefendantIndividual(PartyRole.LitigantInPerson);
             VerifyUsersAreAddedToTheParticipantsList();
             ClickNext();
         }
@@ -301,11 +301,11 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             var user = GetParticipantByEmailAndUpdateDisplayName(alternativeEmail);
             
-            _browsers[_c.CurrentUser].Clear(AddParticipantsPage.DisplayNameTextfield);
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AddParticipantsPage.DisplayNameTextfield).SendKeys(user.DisplayName);
             var citizen = _c.Test.HearingParticipants.FirstOrDefault(p => p.DisplayName != user.Interpretee && p.HearingRoleName == PartyRole.LitigantInPerson.Name);
             _commonSharedSteps.WhenTheUserSelectsTheOptionFromTheDropdown(_browsers[_c.CurrentUser].Driver,
                 AddParticipantsPage.InterpreteeDropdown, citizen.DisplayName);
+            _browsers[_c.CurrentUser].Clear(AddParticipantsPage.DisplayNameTextfield);
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AddParticipantsPage.DisplayNameTextfield).SendKeys(user.DisplayName);
             user.Interpretee = citizen.DisplayName;
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AddParticipantsPage.NextButton);
             _browsers[_c.CurrentUser].ScrollTo(AddParticipantsPage.NextButton);
