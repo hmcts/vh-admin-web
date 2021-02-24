@@ -2,7 +2,7 @@ import { Component, Input, EventEmitter } from '@angular/core';
 import { ParticipantRequest } from 'src/app/services/clients/api-client';
 import { HearingModel } from '../../common/model/hearing.model';
 
-@Component({ selector: 'app-participants-list', template: '<div></div>' })
+@Component({ selector: 'app-participant-list', template: '<div></div>' })
 export class ParticipantsListStubComponent {
     @Input()
     hearing: HearingModel;

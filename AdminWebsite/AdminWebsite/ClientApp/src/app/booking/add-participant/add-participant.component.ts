@@ -15,9 +15,9 @@ import { Logger } from '../../services/logger';
 import { SearchService } from '../../services/search.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { BookingBaseComponentDirective as BookingBaseComponent } from '../booking-base/booking-base.component';
-import { ParticipantsListComponent } from '../participants-list/participants-list.component';
 import { SearchEmailComponent } from '../search-email/search-email.component';
 import { ParticipantService } from '../services/participant.service';
+import { ParticipantListComponent } from '../participant';
 import { HearingRoles } from '../../common/model/hearing-roles.model';
 import { LinkedParticipantModel, LinkedParticipantType } from 'src/app/common/model/linked-participant.model';
 
@@ -82,8 +82,8 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
     @ViewChild(SearchEmailComponent) searchEmail: SearchEmailComponent;
 
-    @ViewChild(ParticipantsListComponent, { static: true })
-    participantsListComponent: ParticipantsListComponent;
+    @ViewChild(ParticipantListComponent, { static: true })
+    participantsListComponent: ParticipantListComponent;
 
     constructor(
         private searchService: SearchService,
@@ -508,9 +508,11 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
             const newParticipant = new ParticipantModel();
             this.mapParticipant(newParticipant);
             if (!this.participantService.checkDuplication(newParticipant.email, this.hearing.participants)) {
-                (newParticipant as ParticipantModel & { isRepresentative: boolean }).isRepresentative = !!newParticipant.representee;
                 this.addLinkedParticipant(newParticipant);
+
                 this.hearing.participants.push(newParticipant);
+                this.hearing.participants = [...this.hearing.participants];
+
                 this.populateInterpretedForList();
                 this.videoHearingService.updateHearingRequest(this.hearing);
                 this.logger.debug(`${this.loggerPrefix} Saved participant to booking. Clearing form.`, {

@@ -16,7 +16,7 @@ import { Logger } from '../../services/logger';
 import { RecordingGuardService } from '../../services/recording-guard.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { PageUrls } from '../../shared/page-url.constants';
-import { ParticipantsListComponent } from '../participants-list/participants-list.component';
+import { ParticipantListComponent } from '../participant';
 import { ParticipantService } from '../services/participant.service';
 import { OtherInformationModel } from '../../common/model/other-information.model';
 
@@ -60,10 +60,9 @@ export class SummaryComponent implements OnInit, OnDestroy {
     multiDays: boolean;
     endHearingDate: Date;
 
+    @ViewChild(ParticipantListComponent, { static: true })
+    participantsListComponent: ParticipantListComponent;
     showConfirmRemoveInterpretee = false;
-
-    @ViewChild(ParticipantsListComponent, { static: true })
-    participantsListComponent: ParticipantsListComponent;
 
     @ViewChild(RemovePopupComponent) removePopupComponent: RemovePopupComponent;
     @ViewChild(RemoveInterpreterPopupComponent) removeInterpreterPopupComponent: RemoveInterpreterPopupComponent;
@@ -152,7 +151,11 @@ export class SummaryComponent implements OnInit, OnDestroy {
                 });
             }
             this.hearing.participants.splice(indexOfParticipant, 1);
+
             this.removeLinkedParticipant(this.selectedParticipantEmail);
+
+            this.hearing.participants = [...this.hearing.participants];
+
             this.hearingService.updateHearingRequest(this.hearing);
             this.hearingService.setBookingHasChanged(true);
             this.bookingService.removeParticipantEmail();

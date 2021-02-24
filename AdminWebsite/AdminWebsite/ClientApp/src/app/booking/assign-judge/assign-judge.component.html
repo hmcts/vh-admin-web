@@ -30,7 +30,7 @@
       <div [ngClass]="judgeNameInvalid || !isJudgeSelected ? 'govuk-form-group--error' : 'govuk-form-group'">
         <label class="govuk-label govuk-!-width-one-half" for="judgeName"> Courtroom account </label>
         <select class="govuk-select" id="judgeName" formControlName="judgeName">
-          <option *ngFor="let judge of availableJudges" [ngValue]="judge.display_name">{{ judge.email }}</option>
+          <option *ngFor="let judge of availableJudges" [ngValue]="judge.email">{{ judge.email }}</option>
         </select>
         <div *ngIf="judgeNameInvalid || !isJudgeSelected" class="alert alert-danger">
           <span id="judgeName-error" class="govuk-error-message"> Please assign a courtroom account to this hearing </span>
@@ -117,8 +117,8 @@
       </div>
     </form>
   </div>
-  <div class="govuk-grid-column-one-half" style="margin: 0">
-    <app-participants-list [hearing]="hearing"></app-participants-list>
+  <div class="govuk-grid-column-one-half" *ngIf="hearing.participants.length">
+    <app-participant-list [participants]="hearing.participants"></app-participant-list>
   </div>
 </div>
 

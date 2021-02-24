@@ -22,7 +22,7 @@ import { VideoHearingsService } from '../../services/video-hearings.service';
 import { MockValues } from '../../testing/data/test-objects';
 import { BookingEditStubComponent } from '../../testing/stubs/booking-edit-stub';
 import { ParticipantsListStubComponent } from '../../testing/stubs/participant-list-stub';
-import { ParticipantsListComponent } from '../participants-list/participants-list.component';
+import { ParticipantListComponent } from '../participant';
 import { ParticipantService } from '../services/participant.service';
 import { SummaryComponent } from './summary.component';
 
@@ -557,8 +557,7 @@ describe('SummaryComponent  with multi days request', () => {
         recordingGuardServiceSpy,
         participantServiceSpy
     );
-    component.participantsListComponent = new ParticipantsListComponent(
-        bookingServiceSpy,
+    component.participantsListComponent = new ParticipantListComponent(
         jasmine.createSpyObj<Router>(['navigate']),
         loggerSpy
     );
@@ -621,12 +620,11 @@ describe('SummaryComponent  with multi days request', () => {
         component.hearing.participants = participants;
 
         const participantList = component.participantsListComponent;
-        participantList.removeParticipant('firstname.lastname@email.com');
+        participantList.removeParticipant({ email: 'firstname.lastname@email.com', is_exist_person: false, is_judge: false });
         participantList.selectedParticipant.emit();
         tick(600);
         expect(component.showConfirmRemoveInterpretee).toBe(true);
-
-        participantList.removeParticipant('firstname1.lastname1@email.com');
+        participantList.removeParticipant({ email: 'firstname1.lastname1@email.com', is_exist_person: false, is_judge: false });
         participantList.selectedParticipant.emit();
         tick(600);
         expect(component.showConfirmationRemoveParticipant).toBe(true);
