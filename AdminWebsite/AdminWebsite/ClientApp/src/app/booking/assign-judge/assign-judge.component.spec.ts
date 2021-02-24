@@ -20,7 +20,6 @@ import { ParticipantsListStubComponent } from '../../testing/stubs/participant-l
 import { JudgeDataService } from '../services/judge-data.service';
 import { AssignJudgeComponent } from './assign-judge.component';
 import { OtherInformationModel } from '../../common/model/other-information.model';
-import { FormGroup } from '@angular/forms';
 
 function initHearingRequest(): HearingModel {
     const participants: ParticipantModel[] = [];
@@ -255,7 +254,7 @@ describe('AssignJudgeComponent', () => {
         component.hearing = new HearingModel();
         component.hearing.participants = [];
         component.availableJudges = [new JudgeResponse({ display_name: 'New Name Set', email: 'email@hmcts.net' })];
-        component.addJudge('email@hmcts.net');
+        component.addJudge('New Name Set');
         expect(component.hearing.participants.length).toBeGreaterThan(0);
     });
     it('should sanitize display name of the judge if it was entered', () => {

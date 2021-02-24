@@ -186,24 +186,24 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     }
 
     public addJudge(judgeUserName: string) {
-        if (judgeUserName) {
-            const selectedJudge = this.availableJudges.find(j => j.display_name === judgeUserName);
-            this.judge.first_name = selectedJudge.first_name;
-            this.judge.last_name = selectedJudge.last_name;
-            this.judge.email = selectedJudge.email;
-            this.courtAccountJudgeEmail = selectedJudge.email;
-            if (!this.isJudgeDisplayNameSet()) {
-                this.judge.display_name = selectedJudge.display_name;
-            }
-            this.judgeDisplayNameFld.setValue(this.judge.display_name);
-            const newJudge = AssignJudgeComponent.mapJudgeToModel(this.judge);
-
-            const indexOfJudge = this.hearing.participants.findIndex(x => x.is_judge === true);
-            if (indexOfJudge > -1) {
-                this.hearing.participants.splice(indexOfJudge, 1);
-            }
-            this.hearing.participants.unshift(newJudge);
+        if (!judgeUserName) {
+            return;
         }
+        const selectedJudge = this.availableJudges.find(j => j.display_name === judgeUserName);
+        if (!selectedJudge) {
+            return;
+        }
+        this.judge.first_name = selectedJudge.first_name;
+        this.judge.last_name = selectedJudge.last_name;
+        this.judge.email = selectedJudge.email;
+        this.courtAccountJudgeEmail = selectedJudge.email;
+        if (!this.isJudgeDisplayNameSet()) {
+            this.judge.display_name = selectedJudge.display_name;
+        }
+        this.judgeDisplayNameFld.setValue(this.judge.display_name);
+        const newJudge = AssignJudgeComponent.mapJudgeToModel(this.judge);
+        this.hearing.participants = this.hearing.participants.filter(x => !x.is_judge);
+        this.hearing.participants.unshift(newJudge);
     }
 
     isJudgeDisplayNameSet(): boolean {
