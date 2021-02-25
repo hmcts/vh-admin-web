@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, OnChanges, OnInit } from '@angular/core
 import { Router } from '@angular/router';
 import { ParticipantModel } from 'src/app/common/model/participant.model';
 import { Logger } from 'src/app/services/logger';
+import { HearingModel } from '../../../common/model/hearing.model';
 
 @Component({
     selector: 'app-participant-list',
@@ -10,8 +11,7 @@ import { Logger } from 'src/app/services/logger';
 })
 export class ParticipantListComponent implements OnInit, OnChanges {
     private readonly loggerPrefix = '[ParticipantList] -';
-    @Input()
-    participants: ParticipantModel[] = [];
+    @Input() hearing: HearingModel;
 
     sortedParticipants: ParticipantModel[] = [];
 
@@ -54,14 +54,14 @@ export class ParticipantListComponent implements OnInit, OnChanges {
     }
 
     private sortParticipants() {
-        const judges = this.participants.filter(participant => participant.is_judge);
-        const panelMembersAndWingers = this.participants.filter(participant =>
+        const judges = this.hearing.participants.filter(participant => participant.is_judge);
+        const panelMembersAndWingers = this.hearing.participants.filter(participant =>
             ['Panel Member', 'Winger'].includes(participant.hearing_role_name)
         );
-        const others = this.participants.filter(
+        const others = this.hearing.participants.filter(
             participant => !participant.is_judge && !['Observer', 'Panel Member', 'Winger'].includes(participant.hearing_role_name)
         );
-        const observers = this.participants.filter(participant => participant.hearing_role_name === 'Observer');
+        const observers = this.hearing.participants.filter(participant => participant.hearing_role_name === 'Observer');
 
         this.sortedParticipants = [...judges, ...panelMembersAndWingers, ...others, ...observers];
     }

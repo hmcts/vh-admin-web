@@ -3,6 +3,7 @@
   <app-participant-item
     class="participant-item"
     *ngFor="let p of sortedParticipants"
+    [hearing]="hearing"
     [participant]="p"
     [canEdit]="isEditRemoveVisible"
     [isSummaryPage]="isSummaryPage"

@@ -48,7 +48,7 @@ describe('ParticipantListComponent', () => {
     });
 
     it('should display participants', done => {
-        component.participants = participants;
+        component.hearing.participants = participants;
         component.ngOnInit();
         fixture.whenStable().then(() => {
             fixture.detectChanges();
@@ -83,7 +83,7 @@ describe('ParticipantListComponent', () => {
         ];
 
         participantsArr.forEach((p, i) => {
-            component.participants.push({
+            component.hearing.participants.push({
                 is_exist_person: true,
                 is_judge: p.is_judge,
                 hearing_role_name: p.hearing_role_name,

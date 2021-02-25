@@ -103,4 +103,14 @@ describe('ParticipantItemComponent', () => {
         fixture.detectChanges();
         expect(component.displayCaseRole).toBeTruthy();
     });
+    it('should get judge email', () => {
+        component.participant = { hearing_role_name: 'Judge', case_role_name: 'Judge', is_judge: true, is_exist_person: false };
+        const email = component.getJudgeEmail(component.participant);
+        expect(email).toBe('James.Doe@email.com');
+    });
+    it('should get judge phone', () => {
+        component.participant = { hearing_role_name: 'Judge', case_role_name: 'Judge', is_judge: true, is_exist_person: false };
+        const phone = component.getJudgePhone(component.participant);
+        expect(phone).toBe('123456789');
+    });
 });

@@ -13,8 +13,7 @@ import { SearchEmailComponent } from './search-email/search-email.component';
 import { SummaryComponent } from './summary/summary.component';
 import { RemovePopupComponent } from '../popups/remove-popup/remove-popup.component';
 import { EndpointsComponent } from './endpoints/endpoints.component';
-import { ParticipantItemComponent } from './participant';
-import { ParticipantsListComponent } from './participants-list/participants-list.component';
+import { ParticipantItemComponent, ParticipantListComponent } from './participant';
 
 export const Components: Type<any>[] = [
     CreateHearingComponent,
@@ -27,7 +26,7 @@ export const Components: Type<any>[] = [
     BookingConfirmationComponent,
     BreadcrumbComponent,
     SearchEmailComponent,
-    ParticipantsListComponent,
+    ParticipantListComponent,
     ParticipantItemComponent,
     EndpointsComponent
 ];
