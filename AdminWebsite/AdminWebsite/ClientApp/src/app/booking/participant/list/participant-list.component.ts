@@ -59,7 +59,7 @@ export class ParticipantListComponent implements OnInit {
             ['Panel Member', 'Winger'].includes(participant.hearing_role_name)
         );
         const others = this.participants.filter(
-            participant => !participant.is_judge && !['Observer', 'Panel Member'].includes(participant.hearing_role_name)
+            participant => !participant.is_judge && !['Observer', 'Panel Member', 'Winger'].includes(participant.hearing_role_name)
         );
         const observers = this.participants.filter(participant => participant.hearing_role_name === 'Observer');
 
