@@ -17,6 +17,7 @@ export class ParticipantsListComponent implements OnInit, OnChanges {
     private readonly loggerPrefix = '[ParticipantsList] -';
     @Input()
     hearing: HearingModel;
+    @Input()
     participants: (ParticipantModel & { isRepresentative: boolean })[];
 
     $selectedForEdit: EventEmitter<string>;
