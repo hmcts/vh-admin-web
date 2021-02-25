@@ -21,7 +21,8 @@ namespace AdminWebsite.AcceptanceTests.Steps
     public class AddParticipantSteps : ISteps
     {
         private const int TimeoutToRetrieveUserFromAad = 60;
-        private const string RepresentingText = "Representing";
+        private const string RepresentingText = "Representative for";
+        private const string InterpreterText = "Interpreting for";
         private readonly TestContext _c;
         private readonly Dictionary<User, UserBrowser> _browsers;
         private string _individualDisplayName = RepresentingText;
@@ -49,6 +50,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             AddNewDefendantIndividual(PartyRole.LitigantInPerson);
             AddNewDefendantIndividual(PartyRole.Interpreter);
+            AddNewDefendantIndividual(PartyRole.LitigantInPerson);
             VerifyUsersAreAddedToTheParticipantsList();
             ClickNext();
         }
@@ -145,6 +147,13 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AddParticipantsPage.IndividualOrganisationTextfield).SendKeys(organisation);
             var telephone = _c.Test.TestData.AddParticipant.Participant.Phone;
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AddParticipantsPage.PhoneTextfield).SendKeys(telephone);
+            if (user.HearingRoleName == PartyRole.Interpreter.Name)
+            {
+                var citizen = _c.Test.HearingParticipants.First(p => p.HearingRoleName == PartyRole.LitigantInPerson.Name);
+                _commonSharedSteps.WhenTheUserSelectsTheOptionFromTheDropdown(_browsers[_c.CurrentUser].Driver,
+                    AddParticipantsPage.InterpreteeDropdown, citizen.DisplayName);
+                user.Interpretee = citizen.DisplayName;
+            }
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AddParticipantsPage.DisplayNameTextfield).SendKeys(user.DisplayName);
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AddParticipantsPage.AddParticipantLink);
             _browsers[_c.CurrentUser].ScrollTo(AddParticipantsPage.AddParticipantLink);
@@ -256,11 +265,15 @@ namespace AdminWebsite.AcceptanceTests.Steps
                 if (participant.Role.ToLower().Equals("judge") || participant.Role.ToLower().Equals("judge")) continue;
 
                 var fullNameTitle = $"{title} {participant.Firstname} {participant.Lastname}";
-                var expectedParticipant = $"{fullNameTitle} {participant.CaseRoleName}";
+                var expectedParticipant = $"{fullNameTitle} {participant.HearingRoleName} {participant.CaseRoleName}";
 
                 if (participant.HearingRoleName == PartyRole.Representative.Name)
                 {
                     expectedParticipant = $"{fullNameTitle} {RepresentingText} {participant.Representee} {participant.CaseRoleName}";
+                }
+                if (participant.HearingRoleName == PartyRole.Interpreter.Name)
+                {
+                    expectedParticipant = $"{fullNameTitle} {InterpreterText} {participant.Interpretee} {participant.CaseRoleName}";
                 }
 
                 actualResult.Any(x => x.Replace(Environment.NewLine, " ").Equals(expectedParticipant)).Should()
@@ -276,12 +289,34 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         public void EditANewParticipant(string alternativeEmail)
         {
-            _c.Test.HearingParticipants.First(x => x.AlternativeEmail.ToLower().Equals(alternativeEmail.ToLower())).DisplayName = $"{_c.Test.AddParticipant.Participant.NewUserPrefix}Updated display name";
+            var user = GetParticipantByEmailAndUpdateDisplayName(alternativeEmail);
             _browsers[_c.CurrentUser].Clear(AddParticipantsPage.DisplayNameTextfield);
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AddParticipantsPage.DisplayNameTextfield).SendKeys(_c.Test.HearingParticipants.First(x => x.AlternativeEmail.ToLower().Equals(alternativeEmail.ToLower())).DisplayName);
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AddParticipantsPage.DisplayNameTextfield).SendKeys(user.DisplayName);
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AddParticipantsPage.NextButton);
             _browsers[_c.CurrentUser].ScrollTo(AddParticipantsPage.NextButton);
             _browsers[_c.CurrentUser].Click(AddParticipantsPage.NextButton);
+        }
+
+        public void EditAnInterpreter(string alternativeEmail)
+        {
+            var user = GetParticipantByEmailAndUpdateDisplayName(alternativeEmail);
+            
+            var citizen = _c.Test.HearingParticipants.FirstOrDefault(p => p.DisplayName != user.Interpretee && p.HearingRoleName == PartyRole.LitigantInPerson.Name);
+            _commonSharedSteps.WhenTheUserSelectsTheOptionFromTheDropdown(_browsers[_c.CurrentUser].Driver,
+                AddParticipantsPage.InterpreteeDropdown, citizen.DisplayName);
+            _browsers[_c.CurrentUser].Clear(AddParticipantsPage.DisplayNameTextfield);
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AddParticipantsPage.DisplayNameTextfield).SendKeys(user.DisplayName);
+            user.Interpretee = citizen.DisplayName;
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AddParticipantsPage.NextButton);
+            _browsers[_c.CurrentUser].ScrollTo(AddParticipantsPage.NextButton);
+            _browsers[_c.CurrentUser].Click(AddParticipantsPage.NextButton);
+        }
+
+        private UserAccount GetParticipantByEmailAndUpdateDisplayName(string alternativeEmail)
+        {
+            var user = _c.Test.HearingParticipants.First(x => x.AlternativeEmail.ToLower().Equals(alternativeEmail.ToLower()));
+            user.DisplayName = $"{_c.Test.AddParticipant.Participant.NewUserPrefix}Updated display name";
+            return user;
         }
 
         [When(@"the user attempts to add a participant with a reform email")]

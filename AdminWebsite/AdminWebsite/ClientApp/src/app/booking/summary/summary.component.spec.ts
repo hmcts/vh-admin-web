@@ -1,9 +1,11 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { of } from 'rxjs';
 import { EndpointModel } from 'src/app/common/model/endpoint.model';
+import { LinkedParticipantModel, LinkedParticipantType } from 'src/app/common/model/linked-participant.model';
 import { CancelPopupComponent } from 'src/app/popups/cancel-popup/cancel-popup.component';
+import { RemoveInterpreterPopupComponent } from 'src/app/popups/remove-interpreter-popup/remove-interpreter-popup.component';
 import { SaveFailedPopupComponent } from 'src/app/popups/save-failed-popup/save-failed-popup.component';
 import { BreadcrumbStubComponent } from 'src/app/testing/stubs/breadcrumb-stub';
 import { LongDatetimePipe } from '../../../app/shared/directives/date-time.pipe';
@@ -20,6 +22,8 @@ import { VideoHearingsService } from '../../services/video-hearings.service';
 import { MockValues } from '../../testing/data/test-objects';
 import { BookingEditStubComponent } from '../../testing/stubs/booking-edit-stub';
 import { ParticipantsListStubComponent } from '../../testing/stubs/participant-list-stub';
+import { ParticipantListComponent } from '../participant';
+import { ParticipantService } from '../services/participant.service';
 import { SummaryComponent } from './summary.component';
 
 function initExistingHearingRequest(): HearingModel {
@@ -128,7 +132,8 @@ describe('SummaryComponent with valid request', () => {
                     RemovePopupComponent,
                     WaitPopupComponent,
                     SaveFailedPopupComponent,
-                    LongDatetimePipe
+                    LongDatetimePipe,
+                    RemoveInterpreterPopupComponent
                 ],
                 imports: [RouterTestingModule]
             }).compileComponents();
@@ -207,6 +212,77 @@ describe('SummaryComponent with valid request', () => {
         fixture.detectChanges();
         expect(component.audioChoice).toBe('No');
     });
+    it('should remove interpretee and interpreter and clear the linked participant list on remove interpretee', () => {
+        component.ngOnInit();
+        component.hearing.participants = [];
+
+        const participants: ParticipantModel[] = [];
+        let participant = new ParticipantModel();
+        participant.first_name = 'firstname';
+        participant.last_name = 'lastname';
+        participant.email = 'firstname.lastname@email.com';
+        participant.case_role_name = 'Claimaint';
+        participant.hearing_role_name = 'Litigant in person';
+        participants.push(participant);
+
+        participant = new ParticipantModel();
+        participant.first_name = 'firstname1';
+        participant.last_name = 'lastname1';
+        participant.email = 'firstname1.lastname1@email.com';
+        participant.case_role_name = 'Claimaint';
+        participant.hearing_role_name = 'Interpreter';
+        participant.interpreterFor = 'firstname.lastname@email.com';
+        participants.push(participant);
+        component.hearing.participants = participants;
+
+        const lp = new LinkedParticipantModel();
+        lp.participantEmail = 'firstname.lastname@email.com';
+        lp.linkedParticipantEmail = 'firstname1.lastname1@email.com';
+        const lps: LinkedParticipantModel[] = [];
+        lps.push(lp);
+        component.hearing.linked_participants = lps;
+        component.selectedParticipantEmail = 'firstname.lastname@email.com';
+
+        component.handleContinueRemoveInterpreter();
+        expect(component.hearing.linked_participants).toEqual([]);
+        expect(component.hearing.participants).toEqual([]);
+    });
+    it('should remove interpreter and clear the linked participant list on remove interpreter', () => {
+        component.ngOnInit();
+        component.hearing.participants = [];
+
+        const participants: ParticipantModel[] = [];
+        let participant = new ParticipantModel();
+        participant.first_name = 'firstname';
+        participant.last_name = 'lastname';
+        participant.email = 'firstname.lastname@email.com';
+        participant.case_role_name = 'Claimaint';
+        participant.hearing_role_name = 'Litigant in person';
+        participants.push(participant);
+
+        participant = new ParticipantModel();
+        participant.first_name = 'firstname1';
+        participant.last_name = 'lastname1';
+        participant.email = 'firstname1.lastname1@email.com';
+        participant.case_role_name = 'Claimaint';
+        participant.hearing_role_name = 'Interpreter';
+        participant.interpreterFor = 'firstname.lastname@email.com';
+        participants.push(participant);
+        component.hearing.participants = participants;
+
+        const lp = new LinkedParticipantModel();
+        lp.participantEmail = 'firstname.lastname@email.com';
+        lp.linkedParticipantEmail = 'firstname1.lastname1@email.com';
+        const lps: LinkedParticipantModel[] = [];
+        lps.push(lp);
+        component.hearing.linked_participants = lps;
+
+        component.selectedParticipantEmail = 'firstname1.lastname1@email.com';
+        component.handleContinueRemoveInterpreter();
+        expect(component.hearing.linked_participants).toEqual([]);
+        expect(component.hearing.participants.length).toBe(1);
+        expect(component.hearing.participants[0].first_name).toBe('firstname');
+    });
     it('should save new booking with multi hearings', async () => {
         component.ngOnInit();
         component.hearing.multiDays = true;
@@ -261,7 +337,8 @@ describe('SummaryComponent  with invalid request', () => {
                     RemovePopupComponent,
                     WaitPopupComponent,
                     SaveFailedPopupComponent,
-                    LongDatetimePipe
+                    LongDatetimePipe,
+                    RemoveInterpreterPopupComponent
                 ]
             }).compileComponents();
         })
@@ -403,6 +480,56 @@ describe('SummaryComponent  with existing request', () => {
         const result = component.getParticipantInfo('123123-1231');
         expect(result).toBe('');
     });
+    it('should remove an existing interpretee and interpreter', () => {
+        component.hearing = initExistingHearingRequest();
+        component.hearing.participants = [];
+
+        const linkedParticipants: LinkedParticipantModel[] = [];
+        const lp = new LinkedParticipantModel();
+        lp.linkType = LinkedParticipantType.Interpreter;
+        lp.linkedParticipantId = '200';
+        linkedParticipants.push(lp);
+        const participants: ParticipantModel[] = [];
+        let participant = new ParticipantModel();
+        participant.first_name = 'firstname';
+        participant.last_name = 'lastname';
+        participant.email = 'firstname.lastname@email.com';
+        participant.case_role_name = 'Claimaint';
+        participant.hearing_role_name = 'Litigant in person';
+        participant.id = '100';
+        participant.linked_participants = linkedParticipants;
+        participants.push(participant);
+
+        const linkedParticipants1: LinkedParticipantModel[] = [];
+        const lp1 = new LinkedParticipantModel();
+        lp1.linkType = LinkedParticipantType.Interpreter;
+        lp1.linkedParticipantId = '100';
+        linkedParticipants1.push(lp1);
+        participant = new ParticipantModel();
+        participant.first_name = 'firstname1';
+        participant.last_name = 'lastname1';
+        participant.email = 'firstname1.lastname1@email.com';
+        participant.case_role_name = 'Claimaint';
+        participant.hearing_role_name = 'Interpreter';
+        participant.interpreterFor = '';
+        participant.id = '200';
+        participant.linked_participants = linkedParticipants1;
+        participants.push(participant);
+        component.hearing.participants = participants;
+
+        const lp3 = new LinkedParticipantModel();
+        lp3.participantEmail = 'firstname.lastname@email.com';
+        lp3.linkedParticipantEmail = 'firstname1.lastname1@email.com';
+        lp3.linkedParticipantId = '200';
+        const lps: LinkedParticipantModel[] = [];
+        lps.push(lp3);
+        component.hearing.linked_participants = lps;
+
+        component.selectedParticipantEmail = 'firstname1.lastname1@email.com';
+        component.handleContinueRemoveInterpreter();
+        expect(component.hearing.linked_participants).toEqual([]);
+        expect(component.hearing.participants.length).toBe(0);
+    });
 });
 
 describe('SummaryComponent  with multi days request', () => {
@@ -410,6 +537,7 @@ describe('SummaryComponent  with multi days request', () => {
     let existingRequest: HearingModel;
     let bookingServiceSpy: jasmine.SpyObj<BookingService>;
     let recordingGuardServiceSpy: jasmine.SpyObj<RecordingGuardService>;
+    let participantServiceSpy: jasmine.SpyObj<ParticipantService>;
 
     bookingServiceSpy = jasmine.createSpyObj<BookingService>('BookingService', ['removeParticipantEmail']);
     recordingGuardServiceSpy = jasmine.createSpyObj<RecordingGuardService>('RecordingGuardService', ['switchOffRecording']);
@@ -419,8 +547,24 @@ describe('SummaryComponent  with multi days request', () => {
     videoHearingsServiceSpy.getCurrentRequest.and.returnValue(existingRequest);
     videoHearingsServiceSpy.getHearingTypes.and.returnValue(of(MockValues.HearingTypesList));
     videoHearingsServiceSpy.updateHearing.and.returnValue(of(new HearingDetailsResponse()));
+    participantServiceSpy = jasmine.createSpyObj<ParticipantService>('ParticipantService', ['removeParticipant']);
 
-    component = new SummaryComponent(videoHearingsServiceSpy, routerSpy, bookingServiceSpy, loggerSpy, recordingGuardServiceSpy);
+    component = new SummaryComponent(
+        videoHearingsServiceSpy,
+        routerSpy,
+        bookingServiceSpy,
+        loggerSpy,
+        recordingGuardServiceSpy,
+        participantServiceSpy
+    );
+    component.participantsListComponent = new ParticipantListComponent(
+        jasmine.createSpyObj<Router>(['navigate']),
+        loggerSpy
+    );
+    component.removeInterpreterPopupComponent = new RemoveInterpreterPopupComponent();
+    component.removeInterpreterPopupComponent.isLastParticipant = false;
+    component.removePopupComponent = new RemovePopupComponent();
+    component.removePopupComponent.isLastParticipant = false;
 
     it('should display summary data from existing hearing with multi days', () => {
         component.hearing = existingRequest;
@@ -438,4 +582,51 @@ describe('SummaryComponent  with multi days request', () => {
         expect(new Date(component.hearingDate).getFullYear()).toEqual(new Date(existingRequest.scheduled_date_time).getFullYear());
         expect(new Date(component.endHearingDate).getFullYear()).toEqual(new Date(existingRequest.end_hearing_date_time).getFullYear());
     });
+
+    it('should confirm remove participant', fakeAsync(() => {
+        component.ngOnInit();
+
+        const linkedParticipants: LinkedParticipantModel[] = [];
+        const lp = new LinkedParticipantModel();
+        lp.linkType = LinkedParticipantType.Interpreter;
+        lp.linkedParticipantId = '200';
+        linkedParticipants.push(lp);
+        const participants: ParticipantModel[] = [];
+        let participant = new ParticipantModel();
+        participant.first_name = 'firstname';
+        participant.last_name = 'lastname';
+        participant.email = 'firstname.lastname@email.com';
+        participant.case_role_name = 'Claimaint';
+        participant.hearing_role_name = 'Litigant in person';
+        participant.id = '100';
+        participant.linked_participants = linkedParticipants;
+        participants.push(participant);
+
+        const linkedParticipants1: LinkedParticipantModel[] = [];
+        const lp1 = new LinkedParticipantModel();
+        lp1.linkType = LinkedParticipantType.Interpreter;
+        lp1.linkedParticipantId = '100';
+        linkedParticipants1.push(lp1);
+        participant = new ParticipantModel();
+        participant.first_name = 'firstname1';
+        participant.last_name = 'lastname1';
+        participant.email = 'firstname1.lastname1@email.com';
+        participant.case_role_name = 'Claimaint';
+        participant.hearing_role_name = 'Interpreter';
+        participant.interpreterFor = '';
+        participant.id = '200';
+        participant.linked_participants = linkedParticipants1;
+        participants.push(participant);
+        component.hearing.participants = participants;
+
+        const participantList = component.participantsListComponent;
+        participantList.removeParticipant({ email: 'firstname.lastname@email.com', is_exist_person: false, is_judge: false });
+        participantList.selectedParticipant.emit();
+        tick(600);
+        expect(component.showConfirmRemoveInterpretee).toBe(true);
+        participantList.removeParticipant({ email: 'firstname1.lastname1@email.com', is_exist_person: false, is_judge: false });
+        participantList.selectedParticipant.emit();
+        tick(600);
+        expect(component.showConfirmationRemoveParticipant).toBe(true);
+    }));
 });

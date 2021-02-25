@@ -49,6 +49,7 @@ export class ParticipantService {
                 });
             }
             hearing.participants.splice(indexOfParticipant, 1);
+            hearing.participants = [...hearing.participants];
         }
     }
 }

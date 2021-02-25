@@ -162,4 +162,42 @@ describe('participant details model', () => {
         );
         expect(model.showCaseRole()).toBeTruthy();
     });
+    it('should return true when hearing role is interpreter', () => {
+        const model = new ParticipantDetailsModel(
+            'id',
+            'title',
+            'first_name',
+            'last_name',
+            'user_role_name',
+            'username',
+            'contact_email',
+            'Citizen',
+            'Interpreter',
+            'display_name',
+            'middle_names',
+            'organisation',
+            'representee',
+            '007867678678'
+        );
+        expect(model.isInterpreter).toBeTruthy();
+    });
+    it('should return true when hearing role is interpreter', () => {
+        const model = new ParticipantDetailsModel(
+            'id',
+            'title',
+            'first_name',
+            'last_name',
+            'user_role_name',
+            'username',
+            'contact_email',
+            'Citizen',
+            'Interpreter',
+            'display_name',
+            'middle_names',
+            'organisation',
+            'representee',
+            '007867678678'
+        );
+        expect(model.isRepOrInterpreter).toBeTruthy();
+    });
 });

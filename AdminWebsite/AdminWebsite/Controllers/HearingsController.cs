@@ -16,8 +16,10 @@ using AdminWebsite.Services.Models;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System.Collections;
 using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Annotations;
+using LinkedParticipantRequest = AdminWebsite.BookingsAPI.Client.LinkedParticipantRequest;
 using VideoApi.Client;
 
 namespace AdminWebsite.Controllers
@@ -256,6 +258,7 @@ namespace AdminWebsite.Controllers
                 await _hearingsService.ProcessEndpoints(hearingId, request, originalHearing, newParticipantList);
 
                 var updatedHearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
+                await _hearingsService.AddParticipantLinks(hearingId, request, updatedHearing);
                 _logger.LogDebug("Attempting assign participants to the correct group");
                 await _hearingsService.AssignParticipantToCorrectGroups(updatedHearing, usernameAdIdDict);
                 _logger.LogDebug("Successfully assigned participants to the correct group");
