@@ -87,7 +87,9 @@ export class BookingDetailsTestData {
             '',
             'ABC Solicitors',
             'Respondent',
-            '12345678'
+            '12345678',
+            'interpretee',
+            false
         );
         const p2 = new ParticipantDetailsModel(
             '2',
@@ -103,7 +105,9 @@ export class BookingDetailsTestData {
             '',
             'ABC Solicitors',
             'Respondent',
-            '12345678'
+            '12345678',
+            'interpretee',
+            false
         );
         const p3 = new ParticipantDetailsModel(
             '2',
@@ -119,7 +123,9 @@ export class BookingDetailsTestData {
             '',
             'ABC Solicitors',
             'Respondent',
-            '12345678'
+            '12345678',
+            'interpretee',
+            false
         );
         participants.push(p2);
         participants.push(p3);

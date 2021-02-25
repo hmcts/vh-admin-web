@@ -107,9 +107,6 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         this.$subscriptions.push(
             this.participantsListComponent.selectedParticipant.subscribe(participantEmail => {
                 this.selectedParticipantEmail = participantEmail;
-                /*                 this.interpreterSelected = this.hearing.participants.some(
-                    p => p.email === this.selectedParticipantEmail && p.hearing_role_name.toLowerCase() === HearingRoles.INTERPRETER
-                ); */
                 this.showDetails = true;
                 setTimeout(() => {
                     this.repopulateParticipantToEdit();
@@ -262,8 +259,8 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
     private repopulateParticipantToEdit() {
         const selectedParticipant = this.hearing.participants.find(s => s.email === this.selectedParticipantEmail);
-        this.interpreterSelected = selectedParticipant.hearing_role_name.toLowerCase() === HearingRoles.INTERPRETER;
-        if (selectedParticipant) {
+        if (selectedParticipant) { console.log(selectedParticipant.hearing_role_name);
+            this.interpreterSelected = selectedParticipant.hearing_role_name.toLowerCase() === HearingRoles.INTERPRETER;
             this.logger.debug(`${this.loggerPrefix} Repopulating participant to edit.`, {
                 hearing: this.hearing.hearing_id,
                 participant: selectedParticipant.id
