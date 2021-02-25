@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ParticipantModel } from 'src/app/common/model/participant.model';
 import { Logger } from 'src/app/services/logger';
@@ -8,7 +8,7 @@ import { Logger } from 'src/app/services/logger';
     templateUrl: './participant-list.component.html',
     styleUrls: ['./participant-list.component.scss']
 })
-export class ParticipantListComponent implements OnInit {
+export class ParticipantListComponent implements OnInit, OnChanges {
     private readonly loggerPrefix = '[ParticipantList] -';
     @Input()
     participants: ParticipantModel[] = [];
@@ -59,7 +59,7 @@ export class ParticipantListComponent implements OnInit {
             ['Panel Member', 'Winger'].includes(participant.hearing_role_name)
         );
         const others = this.participants.filter(
-            participant => !participant.is_judge && !['Observer', 'Panel Member'].includes(participant.hearing_role_name)
+            participant => !participant.is_judge && !['Observer', 'Panel Member', 'Winger'].includes(participant.hearing_role_name)
         );
         const observers = this.participants.filter(participant => participant.hearing_role_name === 'Observer');
 
