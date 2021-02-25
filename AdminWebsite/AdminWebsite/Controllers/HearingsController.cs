@@ -396,17 +396,21 @@ namespace AdminWebsite.Controllers
                 try
                 {
                     _logger.LogDebug("Hearing {Hearing} is confirmed. Polling for Conference in VideoApi", hearingId);
-                    var conferenceDetailsResponse = await _hearingsService.GetConferenceDetailsByHearingIdWithRetry(hearingId, errorMessage);
+                    var conferenceDetailsResponse =
+                        await _hearingsService.GetConferenceDetailsByHearingIdWithRetry(hearingId, errorMessage);
                     _logger.LogInformation("Found conference for hearing {Hearing}", hearingId);
                     if (conferenceDetailsResponse.HasValidMeetingRoom())
                     {
                         var hearing = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
-                        if (!hearing.IsAClone())
+
+                        _logger.LogInformation("Sending a reminder email for hearing {Hearing}", hearingId);
+                        await _hearingsService.SendHearingReminderEmail(hearing);
+
+                        return Ok(new UpdateBookingStatusResponse
                         {
-                            _logger.LogInformation("Sending a reminder email for hearing {Hearing}", hearingId);
-                            await _hearingsService.SendHearingReminderEmail(hearing);
-                        }
-                        return Ok(new UpdateBookingStatusResponse { Success = true, TelephoneConferenceId = conferenceDetailsResponse.MeetingRoom.TelephoneConferenceId });
+                            Success = true,
+                            TelephoneConferenceId = conferenceDetailsResponse.MeetingRoom.TelephoneConferenceId
+                        });
                     }
                 }
                 catch (VideoApiException ex)
