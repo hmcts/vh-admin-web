@@ -149,7 +149,7 @@ describe('AssignJudgeComponent', () => {
         expect(errors['required']).toBeTruthy();
     });
     it('judge display name field validity pattern', () => {
-        let errors = {};
+        let errors: {};
         component.form.controls['judgeDisplayNameFld'].setValue('%');
         const judge_display_name = component.form.controls['judgeDisplayNameFld'];
         errors = judge_display_name.errors || {};
@@ -335,5 +335,16 @@ describe('AssignJudgeComponent', () => {
         component.judgePhoneFld.setValue('+123456ABCD');
         component.failedSubmission = true;
         expect(component.judgePhoneInvalid).toBeTruthy();
+    });
+    it('should create a new judge if one does not already exist', () => {
+        component.ngOnInit();
+        component.populateFormFields(null);
+        expect(component.judge).toBeTruthy();
+        expect(component.judge).not.toBeNull();
+    });
+    it('should return nothing if judge is not available', () => {
+        component.ngOnInit();
+        component.addJudge('fakejudge@notavailable.com');
+        expect().nothing();
     });
 });

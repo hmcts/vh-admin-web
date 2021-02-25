@@ -243,4 +243,19 @@ describe('ParticipantsListComponent', () => {
         const result = component.getInterpreteeDisplayName(currentParticipant);
         expect(result).toBe('John Doe');
     });
+    it('should get judge email', () => {
+        component.ngOnInit();
+        component.participants = existingParticipants();
+        component.participants[1].is_judge = true;
+        const email = component.getJudgeEmail(component.participants[1]);
+        expect(email).toBe('James.Doe@email.com');
+    });
+    it('should get judge phone', () => {
+        component.ngOnInit();
+        component.participants = existingParticipants();
+        component.participants[1].is_judge = true;
+        component.participants[1].phone = '123456789';
+        const phone = component.getJudgePhone(component.participants[1]);
+        expect(phone).toBe('123456789');
+    });
 });
