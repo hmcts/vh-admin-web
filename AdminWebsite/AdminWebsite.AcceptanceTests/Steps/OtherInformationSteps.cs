@@ -25,10 +25,11 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [When(@"the user completes the other information form")]
         public void ProgressToNextPage()
         {
-                Thread.Sleep(TimeSpan.FromSeconds(1));
+            Thread.Sleep(TimeSpan.FromSeconds(1));
             SetOtherInformation();
             _browsers[_c.CurrentUser].Clear(OtherInformationPage.OtherInformationTextfield);
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(OtherInformationPage.OtherInformationTextfield).SendKeys(_c.Test.OtherInformation);
+            
             ClickNext();
         }
 
