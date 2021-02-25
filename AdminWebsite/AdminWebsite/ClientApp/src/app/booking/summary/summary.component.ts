@@ -173,7 +173,6 @@ export class SummaryComponent implements OnInit, OnDestroy {
         this.caseName = this.hearing.cases.length > 0 ? this.hearing.cases[0].name : '';
         this.caseHearingType = this.hearing.hearing_type_name;
         this.hearingDate = this.hearing.scheduled_date_time;
-        this.otherInformation.otherInformation = this.hearing.other_information;
         this.hearingDuration = `listed for ${FormatShortDuration(this.hearing.scheduled_duration)}`;
         this.courtRoomAddress = this.formatCourtRoom(this.hearing.court_name, this.hearing.court_room);
         this.audioChoice = this.hearing.audio_recording_required ? 'Yes' : 'No';
