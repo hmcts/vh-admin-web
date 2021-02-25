@@ -1,5 +1,4 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { EndpointModel } from 'src/app/common/model/endpoint.model';
@@ -11,7 +10,7 @@ import { FormatShortDuration } from '../../common/formatters/format-short-durati
 import { HearingModel } from '../../common/model/hearing.model';
 import { RemovePopupComponent } from '../../popups/remove-popup/remove-popup.component';
 import { BookingService } from '../../services/booking.service';
-import { HearingDetailsResponse, HearingTypeResponse, MultiHearingRequest } from '../../services/clients/api-client';
+import { HearingDetailsResponse, MultiHearingRequest } from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
 import { RecordingGuardService } from '../../services/recording-guard.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
@@ -80,6 +79,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.logger.debug(`${this.loggerPrefix} On step Summary`, { step: 'Summary' });
         this.checkForExistingRequest();
+        this.otherInformation = OtherInformationModel.init(this.hearing.other_information);
         this.retrieveHearingSummary();
         this.switchOffRecording = this.recordingGuardService.switchOffRecording(this.hearing.case_type);
         if (this.participantsListComponent) {
@@ -173,7 +173,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
         this.caseName = this.hearing.cases.length > 0 ? this.hearing.cases[0].name : '';
         this.caseHearingType = this.hearing.hearing_type_name;
         this.hearingDate = this.hearing.scheduled_date_time;
-        this.otherInformation = JSON.parse(this.hearing.other_information).otherInformation;
+        this.otherInformation.otherInformation = this.hearing.other_information;
         this.hearingDuration = `listed for ${FormatShortDuration(this.hearing.scheduled_duration)}`;
         this.courtRoomAddress = this.formatCourtRoom(this.hearing.court_name, this.hearing.court_room);
         this.audioChoice = this.hearing.audio_recording_required ? 'Yes' : 'No';
