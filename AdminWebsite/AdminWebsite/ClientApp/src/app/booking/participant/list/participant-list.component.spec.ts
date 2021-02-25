@@ -69,7 +69,7 @@ describe('ParticipantListComponent', () => {
         expect(component.$selectedForRemove.emit).toHaveBeenCalled();
     });
     it('should produce a sorted list with no duplicates', () => {
-        const participants = [
+        const participantsArr = [
             { is_judge: true, hearing_role_name: 'Judge' },
             { is_judge: true, hearing_role_name: 'Judge' },
             { is_judge: false, hearing_role_name: 'Winger' },
@@ -82,7 +82,7 @@ describe('ParticipantListComponent', () => {
             { is_judge: false, hearing_role_name: 'Interpreter' }
         ];
 
-        participants.forEach((p, i) => {
+        participantsArr.forEach((p, i) => {
             component.participants.push({
                 is_exist_person: true,
                 is_judge: p.is_judge,
