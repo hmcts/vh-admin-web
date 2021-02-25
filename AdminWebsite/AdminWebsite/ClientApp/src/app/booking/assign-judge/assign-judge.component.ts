@@ -185,11 +185,11 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         return this.judgePhoneFld.invalid && (this.judgePhoneFld.dirty || this.judgePhoneFld.touched || this.failedSubmission);
     }
 
-    public addJudge(judgeUserName: string) {
-        if (!judgeUserName) {
+    public addJudge(judgeEmail: string) {
+        if (!judgeEmail) {
             return;
         }
-        const selectedJudge = this.availableJudges.find(j => j.display_name === judgeUserName);
+        const selectedJudge = this.availableJudges.find(j => j.email === judgeEmail);
         if (!selectedJudge) {
             return;
         }

@@ -31,7 +31,6 @@ export class SummaryComponent implements OnInit, OnDestroy {
     hearing: HearingModel;
     attemptingCancellation: boolean;
     canNavigate = true;
-    hearingForm: FormGroup;
     failedSubmission: boolean;
     bookingsSaving = false;
     caseNumber: string;
@@ -43,7 +42,6 @@ export class SummaryComponent implements OnInit, OnDestroy {
     otherInformation: OtherInformationModel;
     audioChoice: string;
     errors: any;
-    selectedHearingType: HearingTypeResponse[];
     showConfirmationRemoveParticipant = false;
     selectedParticipantEmail: string;
     removerFullName: string;
@@ -175,9 +173,9 @@ export class SummaryComponent implements OnInit, OnDestroy {
         this.caseName = this.hearing.cases.length > 0 ? this.hearing.cases[0].name : '';
         this.caseHearingType = this.hearing.hearing_type_name;
         this.hearingDate = this.hearing.scheduled_date_time;
+        this.otherInformation = JSON.parse(this.hearing.other_information).otherInformation;
         this.hearingDuration = `listed for ${FormatShortDuration(this.hearing.scheduled_duration)}`;
         this.courtRoomAddress = this.formatCourtRoom(this.hearing.court_name, this.hearing.court_room);
-        this.otherInformation = OtherInformationModel.init(this.hearing.other_information);
         this.audioChoice = this.hearing.audio_recording_required ? 'Yes' : 'No';
         this.caseType = this.hearing.case_type;
         this.endpoints = this.hearing.endpoints;

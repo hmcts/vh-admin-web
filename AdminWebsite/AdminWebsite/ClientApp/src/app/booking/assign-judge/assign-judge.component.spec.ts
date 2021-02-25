@@ -254,7 +254,7 @@ describe('AssignJudgeComponent', () => {
         component.hearing = new HearingModel();
         component.hearing.participants = [];
         component.availableJudges = [new JudgeResponse({ display_name: 'New Name Set', email: 'email@hmcts.net' })];
-        component.addJudge('New Name Set');
+        component.addJudge('email@hmcts.net');
         expect(component.hearing.participants.length).toBeGreaterThan(0);
     });
     it('should sanitize display name of the judge if it was entered', () => {
