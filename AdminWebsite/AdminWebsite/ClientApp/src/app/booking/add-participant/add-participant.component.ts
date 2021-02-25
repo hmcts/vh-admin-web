@@ -259,7 +259,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
     private repopulateParticipantToEdit() {
         const selectedParticipant = this.hearing.participants.find(s => s.email === this.selectedParticipantEmail);
-        if (selectedParticipant) { console.log(selectedParticipant.hearing_role_name);
+        if (selectedParticipant) {
             this.interpreterSelected = selectedParticipant.hearing_role_name.toLowerCase() === HearingRoles.INTERPRETER;
             this.logger.debug(`${this.loggerPrefix} Repopulating participant to edit.`, {
                 hearing: this.hearing.hearing_id,
