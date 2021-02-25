@@ -79,18 +79,16 @@ describe('ParticipantListComponent', () => {
             { is_judge: false, hearing_role_name: 'Litigant in Person' },
             { is_judge: false, hearing_role_name: 'Litigant in Person' },
             { is_judge: false, hearing_role_name: 'Litigant in Person' },
-            { is_judge: false, hearing_role_name: 'Interpreter' },
+            { is_judge: false, hearing_role_name: 'Interpreter' }
         ];
 
-        participants.forEach((p,i) => {
-            component.participants.push(
-                {
-                    is_exist_person: true,
-                    is_judge: p.is_judge,
-                    hearing_role_name: p.hearing_role_name,
-                    id: `${i + 1}`
-                }
-            )
+        participants.forEach((p, i) => {
+            component.participants.push({
+                is_exist_person: true,
+                is_judge: p.is_judge,
+                hearing_role_name: p.hearing_role_name,
+                id: `${i + 1}`
+            });
         });
 
         component.ngOnInit();
