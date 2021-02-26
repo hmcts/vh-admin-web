@@ -6,6 +6,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { ParticipantModel } from 'src/app/common/model/participant.model';
 import { Logger } from 'src/app/services/logger';
 import { ParticipantListComponent } from './participant-list.component';
+import { ParticipantItemComponent } from '../item/participant-item.component';
 
 const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
 const router = {
@@ -25,7 +26,7 @@ describe('ParticipantListComponent', () => {
     beforeEach(
         waitForAsync(() => {
             TestBed.configureTestingModule({
-                declarations: [ParticipantListComponent],
+                declarations: [ParticipantListComponent, ParticipantItemComponent],
                 providers: [
                     { provide: Logger, useValue: loggerSpy },
                     { provide: Router, useValue: router }
@@ -39,7 +40,7 @@ describe('ParticipantListComponent', () => {
         fixture = TestBed.createComponent(ParticipantListComponent);
         debugElement = fixture.debugElement;
         component = debugElement.componentInstance;
-
+        component.hearing = { updated_date: new Date(), questionnaire_not_required: true, participants };
         fixture.detectChanges();
     });
 
@@ -93,7 +94,7 @@ describe('ParticipantListComponent', () => {
 
         component.ngOnInit();
 
-        expect(component.sortedParticipants.length).toBe(10);
+        expect(component.sortedParticipants.length).toBe(12);
         expect(component.sortedParticipants.filter(p => p.hearing_role_name === 'Judge').length).toBe(2);
         expect(component.sortedParticipants.filter(p => p.hearing_role_name === 'Winger').length).toBe(2);
         expect(component.sortedParticipants.filter(p => p.hearing_role_name === 'Panel Member').length).toBe(1);

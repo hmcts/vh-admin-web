@@ -45,6 +45,12 @@ describe('ParticipantItemComponent', () => {
         fixture = TestBed.createComponent(ParticipantItemComponent);
         debugElement = fixture.debugElement;
         component = debugElement.componentInstance;
+        const other_information = { judgeEmail: 'James.Doe@email.com', judgePhone: '123456789' };
+        component.hearing = {
+            updated_date: new Date(),
+            questionnaire_not_required: true,
+            other_information: JSON.stringify(other_information)
+        };
 
         fixture.detectChanges();
     });
@@ -75,7 +81,9 @@ describe('ParticipantItemComponent', () => {
     });
 
     it('should return true if participant is a judge', () => {
-        component.participant = { is_judge: true, is_exist_person: false };
+        participant.is_judge = true;
+        participant.is_exist_person = true;
+        component.participant = participant;
         fixture.detectChanges();
         expect(component.isJudge).toBeTruthy();
     });

@@ -10,7 +10,6 @@ import { HearingModel } from '../../../common/model/hearing.model';
     styleUrls: ['./participant-list.component.scss']
 })
 export class ParticipantListComponent implements OnInit, OnChanges {
-    private readonly loggerPrefix = '[ParticipantList] -';
     @Input() hearing: HearingModel;
 
     sortedParticipants: ParticipantModel[] = [];
