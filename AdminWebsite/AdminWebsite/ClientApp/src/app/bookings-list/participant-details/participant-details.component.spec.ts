@@ -40,7 +40,9 @@ describe('ParticipantDetailsComponent', () => {
             '',
             'ABC Solicitors',
             'Respondent',
-            '12345678'
+            '12345678',
+            'interpretee',
+            false
         );
         pr.IndexInList = 0;
         component.participant = pr;

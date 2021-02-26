@@ -27,3 +27,10 @@
 .vh-margin-bottom {
     margin-bottom: 1px;
 }
+.vh-flex {
+    display: flex;
+    justify-content: flex-start;
+}
+.vh-spacing {
+    margin-right: 0.4em;
+}

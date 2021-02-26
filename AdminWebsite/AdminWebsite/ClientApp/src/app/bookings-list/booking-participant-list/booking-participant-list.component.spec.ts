@@ -56,7 +56,9 @@ describe('BookingParticipantListComponent', () => {
             '',
             'ABC Solicitors',
             'Respondent',
-            '12345678'
+            '12345678',
+            'interpretee',
+            false
         );
         const participantsList: Array<ParticipantDetailsModel> = [];
         participantsList.push(pr1);
@@ -88,7 +90,9 @@ describe('BookingParticipantListComponent', () => {
             '',
             'ABC Solicitors',
             'Respondent',
-            '12345678'
+            '12345678',
+            'interpretee',
+            false
         );
         const participantsList: Array<ParticipantDetailsModel> = [];
         participantsList.push(pr1);
@@ -119,7 +123,9 @@ describe('BookingParticipantListComponent', () => {
             '',
             'ABC Solicitors',
             'Respondent',
-            '12345678'
+            '12345678',
+            'interpretee',
+            false
         );
         const participantsList: Array<ParticipantDetailsModel> = [];
         participantsList.push(pr1);

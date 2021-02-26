@@ -18,25 +18,36 @@
   </div>
 
   <div class="govuk-grid-column-full">
-    <div id="participant-{{ participant?.ParticipantId }}-name" *ngIf="participant?.HearingRoleName !== 'Judge'">
-      {{ participant?.fullName }}
-      <div id="participant-{{ participant?.ParticipantId }}-hearing-role-name" class="govuk-hint" *ngIf="!participant.isRepOrInterpreter">
-        {{ participant?.HearingRoleName }}
+    <div id="participant-{{ participant?.ParticipantId }}-name" *ngIf="participant?.HearingRoleName !== 'Judge'" class="vh-flex">
+      <div class="govuk-grid-column-one-third vh-image-15 vh-spacing" *ngIf="participant.isInterpreter || participant.isInterpretee">
+        <img
+          src="/assets/images/interpreter.png"
+          height="35"
+          width="35"
+          class="govuk-header__logotype-crest"
+          alt="HM Courts &amp; Tribunals Service crest"
+        />
       </div>
-      <div class="govuk-hint vh-margin-bottom" *ngIf="participant.isRepresenting">
-        <span>Representing</span>
-        <div id="participant-{{ participant?.ParticipantId }}-representee" class="vh-text-color-black">
-          {{ participant.Representee }}
+      <div>
+        {{ participant?.fullName }}
+        <div id="participant-{{ participant?.ParticipantId }}-hearing-role-name" class="govuk-hint" *ngIf="!participant.isRepOrInterpreter">
+          {{ participant?.HearingRoleName }}
         </div>
-      </div>
-      <div class="govuk-hint vh-margin-bottom" *ngIf="participant.isInterpreter">
-        <span>Interpreting for</span>
-        <div id="participant-{{ participant?.ParticipantId }}-representee" class="vh-text-color-black">
-          {{ participant?.Interpretee }}
+        <div class="govuk-hint vh-margin-bottom" *ngIf="participant.isRepresenting">
+          <span>Representing</span>
+          <div id="participant-{{ participant?.ParticipantId }}-representee" class="vh-text-color-black">
+            {{ participant.Representee }}
+          </div>
         </div>
-      </div>
-      <div id="participant-{{ participant?.ParticipantId }}-case-role-name" class="govuk-hint" *ngIf="participant.showCaseRole()">
-        {{ participant?.CaseRoleName }}
+        <div class="govuk-hint vh-margin-bottom" *ngIf="participant.isInterpreter">
+          <span>Interpreting for</span>
+          <div id="participant-{{ participant?.ParticipantId }}-representee" class="vh-text-color-black">
+            {{ participant?.Interpretee }}
+          </div>
+        </div>
+        <div id="participant-{{ participant?.ParticipantId }}-case-role-name" class="govuk-hint" *ngIf="participant.showCaseRole()">
+          {{ participant?.CaseRoleName }}
+        </div>
       </div>
     </div>
 
