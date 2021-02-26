@@ -16,7 +16,9 @@ export class ParticipantDetailsModel {
         middleNames: string,
         organisation: string,
         representee: string,
-        phone: string
+        phone: string,
+        interpretee: string,
+        isInterpretee: boolean
     ) {
         this.ParticipantId = participantId;
         this.FirstName = firstName;
@@ -33,6 +35,8 @@ export class ParticipantDetailsModel {
         this.Representee = representee;
         this.Company = organisation;
         this.Phone = phone;
+        this.Interpretee = interpretee;
+        this.IsInterpretee = isInterpretee;
     }
 
     ParticipantId: string;
@@ -50,6 +54,7 @@ export class ParticipantDetailsModel {
     Company: string;
     Phone: string;
     Interpretee: string;
+    IsInterpretee: boolean;
 
     // flag to indicate if participant is the last in the list and don't need decoration bottom line
     Flag: boolean;
@@ -77,7 +82,7 @@ export class ParticipantDetailsModel {
             : true;
     }
 
-    get isInterpreter() {
+    get isInterpreter(): boolean {
         return this.HearingRoleName && this.HearingRoleName.toLowerCase().trim() === HearingRoles.INTERPRETER;
     }
 
@@ -87,5 +92,9 @@ export class ParticipantDetailsModel {
             (this.HearingRoleName.toLowerCase().trim() === HearingRoles.INTERPRETER ||
                 this.HearingRoleName.toLowerCase().trim() === HearingRoles.REPRESENTATIVE)
         );
+    }
+
+    get isInterpretee(): boolean {
+        return this.IsInterpretee;
     }
 }

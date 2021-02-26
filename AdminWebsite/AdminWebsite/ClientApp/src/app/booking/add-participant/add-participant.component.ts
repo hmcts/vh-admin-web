@@ -107,9 +107,6 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         this.$subscriptions.push(
             this.participantsListComponent.selectedParticipant.subscribe(participantEmail => {
                 this.selectedParticipantEmail = participantEmail;
-                this.interpreterSelected = this.hearing.participants.some(
-                    p => p.email === this.selectedParticipantEmail && p.hearing_role_name.toLowerCase() === HearingRoles.INTERPRETER
-                );
                 this.showDetails = true;
                 setTimeout(() => {
                     this.repopulateParticipantToEdit();
@@ -263,6 +260,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     private repopulateParticipantToEdit() {
         const selectedParticipant = this.hearing.participants.find(s => s.email === this.selectedParticipantEmail);
         if (selectedParticipant) {
+            this.interpreterSelected = selectedParticipant.hearing_role_name.toLowerCase() === HearingRoles.INTERPRETER;
             this.logger.debug(`${this.loggerPrefix} Repopulating participant to edit.`, {
                 hearing: this.hearing.hearing_id,
                 participant: selectedParticipant.id
@@ -936,9 +934,9 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     private updateHearingRoleList(hearingRoleList: string[]) {
         // hide the interpreter value if participant list is empty or participant list has an interpreter.
         if (this.hearingHasAnInterpreter() || !this.hearingHasInterpretees()) {
-            // if (!this.interpreterSelected) {
-            this.hearingRoleList = this.hearingRoleList.filter(item => item.toLowerCase() !== HearingRoles.INTERPRETER);
-            // }
+            if (!this.interpreterSelected) {
+                this.hearingRoleList = this.hearingRoleList.filter(item => item.toLowerCase() !== HearingRoles.INTERPRETER);
+            }
         }
     }
     private removeInterpreteeAndInterpreter() {
