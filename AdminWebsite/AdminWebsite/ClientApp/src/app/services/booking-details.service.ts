@@ -60,9 +60,11 @@ export class BookingDetailsService {
                     p.middle_names,
                     p.organisation,
                     p.representee,
-                    p.telephone_number
+                    p.telephone_number,
+                    this.getInterpretee(hearingResponse, p),
+                    this.isInterpretee(p)
                 );
-                model.Interpretee = this.getInterpretee(hearingResponse, p);
+                // model.Interpretee = this.getInterpretee(hearingResponse, p);
                 if (p.user_role_name === this.JUDGE) {
                     judges.push(model);
                 } else {
@@ -102,5 +104,13 @@ export class BookingDetailsService {
             interpreteeDisplayName = interpretee?.display_name;
         }
         return interpreteeDisplayName;
+    }
+
+    private isInterpretee(participant: ParticipantResponse): boolean {
+        return (
+            participant.hearing_role_name.toLowerCase().trim() !== HearingRoles.INTERPRETER &&
+            participant.linked_participants &&
+            participant.linked_participants.length > 0
+        );
     }
 }
