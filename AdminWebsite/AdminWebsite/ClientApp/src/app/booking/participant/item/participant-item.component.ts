@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { ParticipantModel } from 'src/app/common/model/participant.model';
 import { BookingService } from 'src/app/services/booking.service';
@@ -12,7 +12,7 @@ import { HearingModel } from '../../../common/model/hearing.model';
     templateUrl: './participant-item.component.html',
     styleUrls: ['./participant-item.component.scss']
 })
-export class ParticipantItemComponent implements OnInit {
+export class ParticipantItemComponent {
     private readonly loggerPrefix = '[ParticipantList - Item] -';
 
     @Input() participant: ParticipantModel;
@@ -24,8 +24,6 @@ export class ParticipantItemComponent implements OnInit {
     @Output() remove = new EventEmitter<ParticipantModel>();
 
     constructor(private bookingService: BookingService, private logger: Logger, private router: Router) {}
-
-    ngOnInit() {}
 
     getJudgeEmail(participant: ParticipantModel): string {
         const otherInformation = OtherInformationModel.init(this.hearing.other_information);
