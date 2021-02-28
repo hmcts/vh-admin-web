@@ -72,13 +72,13 @@ describe('ParticipantListComponent', () => {
     });
     it('should produce a sorted list with no duplicates', () => {
         const linked_participantList: LinkedParticipantModel[] = [];
-        let linked_participant = new LinkedParticipantModel();
+        const linked_participant = new LinkedParticipantModel();
         linked_participant.linkType = LinkedParticipantType.Interpreter;
         linked_participant.linkedParticipantId = '7';
         linked_participantList.push(linked_participant);
 
         const linked_participantList1: LinkedParticipantModel[] = [];
-        let linked_participant1 = new LinkedParticipantModel();
+        const linked_participant1 = new LinkedParticipantModel();
         linked_participant1.linkType = LinkedParticipantType.Interpreter;
         linked_participant1.linkedParticipantId = '9';
         linked_participantList1.push(linked_participant1);
