@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { BookingService } from 'src/app/services/booking.service';
 import { Logger } from 'src/app/services/logger';
+import { ParticipantListComponent } from '../list/participant-list.component';
 import { ParticipantItemComponent } from './participant-item.component';
 
 const router = {

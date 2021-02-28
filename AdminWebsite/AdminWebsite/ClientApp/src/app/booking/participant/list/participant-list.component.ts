@@ -75,9 +75,7 @@ export class ParticipantListComponent implements OnInit, OnChanges {
         const interpreterInterpreteeList: ParticipantModel[] = [];
         // get the interpreter and the corresponding interpretee names.
         this.clearInterpreteeList();
-        const interpreter = this.participants.filter(
-            participant => participant.hearing_role_name.toLowerCase() === HearingRoles.INTERPRETER
-        );
+        const interpreter = this.participants.filter(participant => participant.hearing_role_name === 'Interpreter');
         interpreter.forEach(interpreterParticipant => {
             let interpretee: ParticipantModel;
             if (interpreterParticipant.interpreterFor) {

@@ -64,7 +64,7 @@ export class ParticipantItemComponent {
     }
 
     get isInterpreter() {
-        return this.participant.hearing_role_name.toLowerCase() === HearingRoles.INTERPRETER;
+        return this.participant.hearing_role_name === 'Interpreter';
     }
 
     get isInterpretee() {
