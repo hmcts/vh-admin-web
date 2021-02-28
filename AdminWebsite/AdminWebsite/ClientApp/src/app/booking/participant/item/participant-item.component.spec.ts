@@ -103,4 +103,10 @@ describe('ParticipantItemComponent', () => {
         fixture.detectChanges();
         expect(component.displayCaseRole).toBeTruthy();
     });
+
+    it('should return true if participant is an interpreter', () => {
+        component.participant = { hearing_role_name: 'Interpreter', is_judge: true, is_exist_person: false };
+        fixture.detectChanges();
+        expect(component.isInterpreter).toBeTruthy();
+    });
 });

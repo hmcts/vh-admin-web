@@ -39,9 +39,15 @@
   }
 
   .participant-row {
+    > div:first-child {
+      flex: 0 0 auto;
+    }
+    .interpreter-icon:empty {
+      margin-left: 40px;
+    }
     justify-content: space-between;
     // image width + padding-left
-    margin-left: 55px;
+    // margin-left: 55px;
 
     &__name {
       font-weight: bold;

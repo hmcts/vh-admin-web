@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { HearingRoles } from 'src/app/common/model/hearing-roles.model';
 import { ParticipantModel } from 'src/app/common/model/participant.model';
 import { Logger } from 'src/app/services/logger';
 
@@ -58,11 +59,48 @@ export class ParticipantListComponent implements OnInit, OnChanges {
         const panelMembersAndWingers = this.participants.filter(participant =>
             ['Panel Member', 'Winger'].includes(participant.hearing_role_name)
         );
+        const interpretersAndInterpretees = this.getInterpreterAndInterpretees();
         const others = this.participants.filter(
-            participant => !participant.is_judge && !['Observer', 'Panel Member', 'Winger'].includes(participant.hearing_role_name)
+            participant =>
+                !participant.is_judge &&
+                !['Observer', 'Panel Member', 'Winger'].includes(participant.hearing_role_name) &&
+                !interpretersAndInterpretees.includes(participant)
         );
         const observers = this.participants.filter(participant => participant.hearing_role_name === 'Observer');
 
-        this.sortedParticipants = [...judges, ...panelMembersAndWingers, ...others, ...observers];
+        this.sortedParticipants = [...judges, ...panelMembersAndWingers, ...others, ...interpretersAndInterpretees, ...observers];
+    }
+
+    private getInterpreterAndInterpretees(): ParticipantModel[] {
+        const interpreterInterpreteeList: ParticipantModel[] = [];
+        // get the interpreter and the corresponding interpretee names.
+        this.clearInterpreteeList();
+        const interpreter = this.participants.filter(
+            participant => participant.hearing_role_name.toLowerCase() === HearingRoles.INTERPRETER
+        );
+        interpreter.forEach(interpreterParticipant => {
+            let interpretee: ParticipantModel;
+            if (interpreterParticipant.interpreterFor) {
+                interpretee = this.participants.find(p => p.email === interpreterParticipant.interpreterFor);
+            } else if (interpreterParticipant.linked_participants) {
+                const linkedParticipants = interpreterParticipant.linked_participants;
+                linkedParticipants.forEach(linkedParticipant => {
+                    interpretee = this.participants.find(p => p.id === linkedParticipant.linkedParticipantId);
+                });
+            }
+            interpreterParticipant.interpretee_name = interpretee?.display_name;
+            interpreterInterpreteeList.push(interpreterParticipant);
+
+            interpretee.is_interpretee = true;
+            interpreterInterpreteeList.push(interpretee);
+        });
+        return interpreterInterpreteeList;
+    }
+
+    private clearInterpreteeList(): void {
+        const interpreteeList: ParticipantModel[] = this.participants.filter(participant => participant.is_interpretee);
+        interpreteeList.forEach(i => {
+            i.is_interpretee = false;
+        });
     }
 }
