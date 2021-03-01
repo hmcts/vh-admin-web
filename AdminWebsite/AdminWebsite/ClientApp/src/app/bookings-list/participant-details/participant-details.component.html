@@ -17,69 +17,71 @@
     </div>
   </div>
 
-  <div id="participant-{{ participant?.ParticipantId }}-name" *ngIf="participant?.HearingRoleName !== 'Judge'" class="participant-row">
-    <div class="participant-row__detail">
-      <div>
+  <div>
+    <div id="participant-{{ participant?.ParticipantId }}-name" *ngIf="participant?.HearingRoleName !== 'Judge'" class="participant-row">
+      <div class="participant-row__detail">
         <div>
-          <strong>
-            {{ participant?.fullName }}
-          </strong>
-        </div>
-
-        <ng-container *ngIf="!participant.isInterpreter; else interpreter">
-          <div *ngIf="participant.isRepresenting; else individual">
-            {{ participant?.HearingRoleName }} for
-            <div id="participant-{{ participant?.ParticipantId }}-representee" class="vh-text-color-black">
-              <strong>{{ participant.Representee }}</strong>
-            </div>
-          </div>
-          <ng-template #individual>
-            <div id="participant-{{ participant?.ParticipantId }}-hearing-role-name">
-              {{ participant?.HearingRoleName }}
-            </div>
-          </ng-template>
-        </ng-container>
-
-        <ng-template #interpreter>
-          <span>Interpreting for</span>
-          <div id="participant-{{ participant?.ParticipantId }}-representee">
+          <div>
             <strong>
-              {{ participant?.Interpretee }}
+              {{ participant?.fullName }}
             </strong>
           </div>
-        </ng-template>
 
-        <div id="participant-{{ participant?.ParticipantId }}-case-role-name" *ngIf="participant.showCaseRole()">
-          {{ participant?.CaseRoleName }}
+          <ng-container *ngIf="!participant.isInterpreter; else interpreter">
+            <div *ngIf="participant.isRepresenting; else individual">
+              {{ participant?.HearingRoleName }} for
+              <div id="participant-{{ participant?.ParticipantId }}-representee" class="vh-text-color-black">
+                <strong>{{ participant.Representee }}</strong>
+              </div>
+            </div>
+            <ng-template #individual>
+              <div id="participant-{{ participant?.ParticipantId }}-hearing-role-name">
+                {{ participant?.HearingRoleName }}
+              </div>
+            </ng-template>
+          </ng-container>
+
+          <ng-template #interpreter>
+            <span>Interpreting for</span>
+            <div id="participant-{{ participant?.ParticipantId }}-representee">
+              <strong>
+                {{ participant?.Interpretee }}
+              </strong>
+            </div>
+          </ng-template>
+
+          <div id="participant-{{ participant?.ParticipantId }}-case-role-name" *ngIf="participant.showCaseRole()">
+            {{ participant?.CaseRoleName }}
+          </div>
         </div>
-      </div>
-      <div class="participant-row__icon" *ngIf="participant.isInterpreter || participant.isInterpretee">
-        <img
-          src="/assets/images/interpreter.png"
-          height="30"
-          width="30"
-          class="govuk-header__logotype-crest"
-          alt="HM Courts &amp; Tribunals Service crest"
-        />
+        <div class="participant-row__icon" *ngIf="participant.isInterpreter || participant.isInterpretee">
+          <img
+            src="/assets/images/interpreter.png"
+            height="30"
+            width="30"
+            class="govuk-header__logotype-crest"
+            alt="HM Courts &amp; Tribunals Service crest"
+          />
+        </div>
       </div>
     </div>
 
-    <div *ngIf="vh_officer_admin" class="participant-row__contact">
+    <div *ngIf="vh_officer_admin" class="contact">
       <div class="govuk-grid-row">
-        <div class="govuk-grid-column-one-third participant-row__contact-label">Email</div>
+        <div class="govuk-grid-column-one-third contact-label">Email</div>
         <div id="participant-{{ participant?.ParticipantId }}-email" class="govuk-grid-column-two-thirds wrap">
           {{ participant?.Email }}
         </div>
       </div>
       <div class="govuk-grid-row vh-mtop">
-        <div class="govuk-grid-column-one-third participant-row__contact-label">Username</div>
+        <div class="govuk-grid-column-one-third contact-label">Username</div>
         <div id="participant-{{ participant?.ParticipantId }}-username" class="govuk-grid-column-two-thirds wrap">
           {{ participant?.UserName }}
         </div>
       </div>
 
       <div class="govuk-grid-row vh-mtop" *ngIf="participant?.HearingRoleName !== 'Judge'">
-        <div class="govuk-grid-column-one-third participant-row__contact-label">Telephone</div>
+        <div class="govuk-grid-column-one-third contact-label">Telephone</div>
         <div id="participant-{{ participant?.ParticipantId }}-phone" class="govuk-grid-column-two-thirds wrap">
           {{ participant?.Phone }}
         </div>
