@@ -41,17 +41,19 @@
       }
 
       > div {
-        flex: 1 1 auto;
+        flex: 0 0 auto;
         padding-left: 15px;
       }
 
-      .participant-row__icon {
-        flex: 0 0 auto;
-      }
+      // .participant-row__icon {
+      //   flex: 0 0 auto;
+      // }
     }
 
     &__contact {
-      margin-top: 0.5em;
+      margin-top: 0.75em;
+      padding-top: 0.75em;
+      border-top: 1px solid rgba(0, 0, 0, 0.06);
       &-label {
         font-weight: bold;
       }

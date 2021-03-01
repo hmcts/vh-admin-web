@@ -19,15 +19,6 @@
 
   <div id="participant-{{ participant?.ParticipantId }}-name" *ngIf="participant?.HearingRoleName !== 'Judge'" class="participant-row">
     <div class="participant-row__detail">
-      <div class="participant-row__icon" *ngIf="participant.isInterpreter || participant.isInterpretee">
-        <img
-          src="/assets/images/interpreter.png"
-          height="40"
-          width="40"
-          class="govuk-header__logotype-crest"
-          alt="HM Courts &amp; Tribunals Service crest"
-        />
-      </div>
       <div>
         <div>
           <strong>
@@ -59,6 +50,15 @@
         <div id="participant-{{ participant?.ParticipantId }}-case-role-name" *ngIf="participant.showCaseRole()">
           {{ participant?.CaseRoleName }}
         </div>
+      </div>
+      <div class="participant-row__icon" *ngIf="participant.isInterpreter || participant.isInterpretee">
+        <img
+          src="/assets/images/interpreter.png"
+          height="30"
+          width="30"
+          class="govuk-header__logotype-crest"
+          alt="HM Courts &amp; Tribunals Service crest"
+        />
       </div>
     </div>
 
