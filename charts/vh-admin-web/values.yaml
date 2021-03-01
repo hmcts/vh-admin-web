@@ -19,6 +19,8 @@ java:
         - applicationinsights--instrumentationkey
         - notifyconfiguration--apikey
         - wowzaconfiguration--storageaccountkey
+        - azuread--temporarypassword
+        - testusersecrets--testuserpassword
     vh-admin-web:
       excludeEnvironmentSuffix: false
       resourceGroup: vh-infra-core-{{ .Values.global.environment }}
@@ -26,8 +28,6 @@ java:
       secrets:
         - azuread--clientsecret
         - azuread--clientid
-        - azuread--temporarypassword
-        - testusersecrets--testuserpassword
   environment:
     ASPNETCORE_URLS: http://+:8080
     AZUREAD__TENANTID: "fb6e0e22-0da3-4c35-972a-9d61eb256508"
