@@ -540,6 +540,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         } else {
             this.isShowErrorSummary = true;
         }
+        this.interpreterSelected = false;
     }
 
     updateParticipantAction() {
@@ -547,6 +548,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         this.videoHearingService.updateHearingRequest(this.hearing);
         this.displayNext();
         this.localEditMode = false;
+        this.interpreterSelected = false;
     }
 
     updateParticipant() {
