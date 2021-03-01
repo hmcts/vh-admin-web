@@ -642,22 +642,13 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         const _linkedParticipants: LinkedParticipantModel[] = [];
         if (newParticipant.hearing_role_name.toLowerCase() === HearingRoles.INTERPRETER) {
             if (this.editMode) {
-                // edit mode - update the linked participant by id or email
-                // if (newParticipant.linked_participants && newParticipant.linked_participants.length > 0) {
-                const existingLinkedParticipant = newParticipant.linked_participants[0];
-
-                console.log(`find participant by email ` + newParticipant.interpreterFor);
-                // newly added in ui, not yet in db
-                let newLinkedParticipant = this.hearing.participants.find(p => p.email === newParticipant.interpreterFor);
-                if (!newLinkedParticipant) {
-                    console.log(`find participant by id ` + existingLinkedParticipant.linkedParticipantId); // participant exists in db
-                    newLinkedParticipant = this.hearing.participants.find(p => p.id === existingLinkedParticipant.linkedParticipantId);
-                }
-                existingLinkedParticipant.linkedParticipantId = newLinkedParticipant?.id;
-                _linkedParticipants.push(existingLinkedParticipant);
-                // }
+                const linkedParticipant = newParticipant.linked_participants[0];
+                const interpretee = this.hearing.participants.find(p => p.id === linkedParticipant.linkedParticipantId);
+                interpretee.linked_participants = [];
+                linkedParticipant.linkedParticipantId = this.getInterpreteeId(newParticipant.interpreterFor);
+                linkedParticipant.participantId = newParticipant.id;
+                _linkedParticipants.push(linkedParticipant);
             } else {
-                console.log(`adding a new participant-interpreter to an exisitng hearing!`);
                 const linkedParticipant = new LinkedParticipantModel();
                 linkedParticipant.linkType = LinkedParticipantType.Interpreter;
                 linkedParticipant.participantEmail = newParticipant.email;
@@ -666,6 +657,11 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
             }
         }
         return _linkedParticipants;
+    }
+    private getInterpreteeId(email: string): string {
+        const participantList = this.hearing.participants;
+        const interpretee = participantList.find(p => p.email === email);
+        return interpretee?.id;
     }
 
     addParticipantCancel() {
