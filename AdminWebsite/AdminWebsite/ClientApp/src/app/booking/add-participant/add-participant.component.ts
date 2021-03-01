@@ -855,9 +855,6 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         });
     }
     isRoleRepresentative(hearingRole: string, party: string): boolean {
-        // console.log('*** ' + party + ' : ' + hearingRole);
-        // console.log(JSON.stringify(this.caseAndHearingRoles));
-
         const partyHearingRoles = this.caseAndHearingRoles.find(
             x => x.name === party && x.name !== 'Judge' && x.hearingRoles.find(y => y.name === hearingRole)
         );
