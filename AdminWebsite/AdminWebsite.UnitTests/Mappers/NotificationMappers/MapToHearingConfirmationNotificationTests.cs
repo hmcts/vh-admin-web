@@ -138,7 +138,8 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             {
                 Id = Guid.NewGuid(),
                 Cases = new List<CaseResponse> {@case},
-                Scheduled_date_time = new DateTime(2020, 10, 12, 13, 10, 0)
+                Scheduled_date_time = new DateTime(2020, 10, 12, 13, 10, 0),
+                // TODO: add judge contact email in other info
             };
         }
 
