@@ -5,6 +5,7 @@ using AcceptanceTests.Common.Configuration.Users;
 using AcceptanceTests.Common.Model.Participant;
 using AdminWebsite.TestAPI.Client;
 using FluentAssertions;
+using RestSharp.Serialization.Json;
 
 namespace AdminWebsite.AcceptanceTests.Data
 {
@@ -25,7 +26,8 @@ namespace AdminWebsite.AcceptanceTests.Data
             hearing.Hearing_room_name.Should().Be(testData.HearingSchedule.Room);
             hearing.Hearing_type_name.Should().Be(testData.HearingDetails.HearingType.Name);
             hearing.Hearing_venue_name.Should().Be(testData.HearingSchedule.HearingVenue);
-            hearing.Other_information.Should().Be(testData.OtherInformation);
+            var deserializedObject = Newtonsoft.Json.JsonConvert.DeserializeObject<TestData.OtherInformationDetails>(hearing.Other_information);
+            deserializedObject.OtherInformation.Should().Be(testData.TestData.OtherInformationDetails.OtherInformation);
         }
 
         private static void AssertCreatedDate(DateTime actual, DateTime expected)

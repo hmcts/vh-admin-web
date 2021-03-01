@@ -13,7 +13,6 @@ namespace AdminWebsite.AcceptanceTests.Data
         public HearingDetails HearingDetails { get; set; }
         public HearingSchedule HearingSchedule { get; set; }
         public AssignJudge AssignJudge { get; set; }
-        public string OtherInformation { get; set; }
         public AddParticipant AddParticipant { get; set; }
         public bool SubmittedAndCreatedNewAadUsers { get; set; } = false;
         public CommonData CommonData { get; set; }
