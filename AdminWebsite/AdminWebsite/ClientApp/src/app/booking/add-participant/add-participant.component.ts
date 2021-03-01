@@ -642,17 +642,22 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         const _linkedParticipants: LinkedParticipantModel[] = [];
         if (newParticipant.hearing_role_name.toLowerCase() === HearingRoles.INTERPRETER) {
             if (this.editMode) {
-                // edit mode - update the linked participant
+                // edit mode - update the linked participant by id or email
+                // if (newParticipant.linked_participants && newParticipant.linked_participants.length > 0) {
                 const existingLinkedParticipant = newParticipant.linked_participants[0];
+
+                console.log(`find participant by email ` + newParticipant.interpreterFor);
+                // newly added in ui, not yet in db
                 let newLinkedParticipant = this.hearing.participants.find(p => p.email === newParticipant.interpreterFor);
                 if (!newLinkedParticipant) {
+                    console.log(`find participant by id ` + existingLinkedParticipant.linkedParticipantId); // participant exists in db
                     newLinkedParticipant = this.hearing.participants.find(p => p.id === existingLinkedParticipant.linkedParticipantId);
                 }
                 existingLinkedParticipant.linkedParticipantId = newLinkedParticipant?.id;
                 _linkedParticipants.push(existingLinkedParticipant);
+                // }
             } else {
                 console.log(`adding a new participant-interpreter to an exisitng hearing!`);
-                // clear lp for the exisiting lp if any....
                 const linkedParticipant = new LinkedParticipantModel();
                 linkedParticipant.linkType = LinkedParticipantType.Interpreter;
                 linkedParticipant.participantEmail = newParticipant.email;
@@ -852,8 +857,8 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         });
     }
     isRoleRepresentative(hearingRole: string, party: string): boolean {
-        console.log('*** ' + party + ' : ' + hearingRole);
-        console.log(JSON.stringify(this.caseAndHearingRoles));
+        // console.log('*** ' + party + ' : ' + hearingRole);
+        // console.log(JSON.stringify(this.caseAndHearingRoles));
 
         const partyHearingRoles = this.caseAndHearingRoles.find(
             x => x.name === party && x.name !== 'Judge' && x.hearingRoles.find(y => y.name === hearingRole)
