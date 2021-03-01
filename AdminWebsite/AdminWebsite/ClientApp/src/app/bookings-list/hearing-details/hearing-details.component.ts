@@ -48,4 +48,8 @@ export class HearingDetailsComponent {
         const dateParts = datePhone.split('-');
         return new Date(+dateParts[0], +dateParts[1] - 1, +dateParts[2]);
     }
+
+    getOtherInformationText(): string {
+        return JSON.parse(this.hearing?.OtherInformation).otherInformation;
+    }
 }
