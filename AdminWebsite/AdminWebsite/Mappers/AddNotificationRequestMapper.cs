@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using AdminWebsite.BookingsAPI.Client;
+using AdminWebsite.Extensions;
 using NotificationApi.Contract;
 using NotificationApi.Contract.Requests;
 
@@ -110,7 +111,7 @@ namespace AdminWebsite.Mappers
             var @case = hearing.Cases.First();
             var time = hearing.Scheduled_date_time.ToString("h:mm tt");
             var date = hearing.Scheduled_date_time.ToString("d MMMM yyyy");
-            
+            var contactEmail = participant.Contact_email;
             var parameters = new Dictionary<string, string>
             {
                 {"case name", @case.Name},
@@ -125,6 +126,7 @@ namespace AdminWebsite.Mappers
                 notificationType = NotificationType.HearingConfirmationJudge;
                 parameters.Add("judge", participant.Display_name);
                 parameters.Add("courtroom account username", participant.Username);
+                contactEmail = hearing.GetJudgeContactEmail();
             }
             else if (participant.User_role_name.Contains("Judicial Office Holder", StringComparison.InvariantCultureIgnoreCase))
             {
@@ -147,7 +149,7 @@ namespace AdminWebsite.Mappers
             {
                 HearingId = hearing.Id,
                 MessageType = MessageType.Email,
-                ContactEmail = participant.Contact_email,
+                ContactEmail = contactEmail,
                 NotificationType = notificationType,
                 ParticipantId = participant.Id,
                 PhoneNumber = participant.Telephone_number,

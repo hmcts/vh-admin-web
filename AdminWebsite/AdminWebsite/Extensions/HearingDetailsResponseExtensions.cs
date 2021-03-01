@@ -19,5 +19,15 @@ namespace AdminWebsite.Extensions
         {
             return hearing.Id != hearing.Group_id;
         }
+
+        public static bool DoesJudgeEmailExist(this HearingDetailsResponse hearing)
+        {
+            throw new NotImplementedException();
+        }
+        
+        public static string GetJudgeContactEmail(this HearingDetailsResponse hearing)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

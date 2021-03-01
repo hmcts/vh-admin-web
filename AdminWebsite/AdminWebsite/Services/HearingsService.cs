@@ -156,6 +156,14 @@ namespace AdminWebsite.Services
             {
                 await _notificationApiClient.CreateNewNotificationAsync(request);
             }
+
+            if (updatedHearing.DoesJudgeEmailExist())
+            {
+                // TODO: implement judge mapping
+                // get judge
+                // map judge to amendment notification
+                // call notification api
+            }
         }
 
         public async Task SendHearingConfirmationEmail(HearingDetailsResponse hearing, List<ParticipantResponse> participants = null)
@@ -172,6 +180,14 @@ namespace AdminWebsite.Services
             foreach (var request in requests)
             {
                 await _notificationApiClient.CreateNewNotificationAsync(request);
+            }
+            
+            if (hearing.DoesJudgeEmailExist())
+            {
+                // TODO: implement judge mapping
+                // get judge
+                // map judge to amendment notification
+                // call notification api
             }
         }
 
@@ -190,6 +206,14 @@ namespace AdminWebsite.Services
             foreach (var request in requests)
             {
                 await _notificationApiClient.CreateNewNotificationAsync(request);
+            }
+            
+            if (hearing.DoesJudgeEmailExist())
+            {
+                // TODO: implement judge mapping
+                // get judge
+                // map judge to amendment notification
+                // call notification api
             }
         }
 
