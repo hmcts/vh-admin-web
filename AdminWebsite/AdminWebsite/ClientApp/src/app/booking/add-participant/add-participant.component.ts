@@ -641,30 +641,26 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     private addUpdateLinkedParticipant(newParticipant: ParticipantModel): LinkedParticipantModel[] {
         const _linkedParticipants: LinkedParticipantModel[] = [];
         if (newParticipant.hearing_role_name.toLowerCase() === HearingRoles.INTERPRETER) {
-            // new participant
-            if (!this.editMode) {
+            if (this.editMode) {
+                // edit mode - update the linked participant
+                const existingLinkedParticipant = newParticipant.linked_participants[0];
+                let newLinkedParticipant = this.hearing.participants.find(p => p.email === newParticipant.interpreterFor);
+                if (!newLinkedParticipant) {
+                    newLinkedParticipant = this.hearing.participants.find(p => p.id === existingLinkedParticipant.linkedParticipantId);
+                }
+                existingLinkedParticipant.linkedParticipantId = newLinkedParticipant?.id;
+                _linkedParticipants.push(existingLinkedParticipant);
+            } else {
                 console.log(`adding a new participant-interpreter to an exisitng hearing!`);
+                // clear lp for the exisiting lp if any....
                 const linkedParticipant = new LinkedParticipantModel();
                 linkedParticipant.linkType = LinkedParticipantType.Interpreter;
                 linkedParticipant.participantEmail = newParticipant.email;
                 linkedParticipant.linkedParticipantEmail = newParticipant.interpreterFor;
                 _linkedParticipants.push(linkedParticipant);
-            } else {
-                // edit mode - update the linked participant
-                console.log(`edit mode - update the linked participant!`);
-                const existingLinkedParticipant = newParticipant.linked_participants[0];
-                const newLinkedParticipant = this.hearing.participants.find(p => p.email === newParticipant.interpreterFor);
-
-                existingLinkedParticipant.linkedParticipantId = newLinkedParticipant?.id;
-                _linkedParticipants.push(existingLinkedParticipant);
             }
         }
         return _linkedParticipants;
-    }
-    private getInterpreteeId(email: string): string {
-        const participantList = this.hearing.participants;
-        const interpretee = participantList.find(p => p.email === email);
-        return interpretee?.id;
     }
 
     addParticipantCancel() {
