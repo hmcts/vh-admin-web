@@ -91,6 +91,7 @@ export class OtherInformationComponent extends BookingBaseComponent implements O
     private checkForExistingRequest() {
         this.hearing = this.videoHearingService.getCurrentRequest();
         this.otherInformationDetails = OtherInformationModel.init(this.hearing.other_information);
+        this.otherInformationText = this.otherInformationDetails.otherInformation;
     }
 
     next() {
