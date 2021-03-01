@@ -89,8 +89,10 @@ export class ParticipantListComponent implements OnInit, OnChanges {
             interpreterParticipant.interpretee_name = interpretee?.display_name;
             interpreterInterpreteeList.push(interpreterParticipant);
 
-            interpretee.is_interpretee = true;
-            interpreterInterpreteeList.push(interpretee);
+            if (interpretee) {
+                interpretee.is_interpretee = true;
+                interpreterInterpreteeList.push(interpretee);
+            }
         });
         return interpreterInterpreteeList;
     }

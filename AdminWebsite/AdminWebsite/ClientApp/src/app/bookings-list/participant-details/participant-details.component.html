@@ -33,8 +33,10 @@
               <strong>{{ participant.Representee }}</strong>
             </div>
           </div>
-          <ng-template #individual id="participant-{{ participant?.ParticipantId }}-hearing-role-name">
-            {{ participant?.HearingRoleName }}
+          <ng-template #individual>
+            <div id="participant-{{ participant?.ParticipantId }}-hearing-role-name">
+              {{ participant?.HearingRoleName }}
+            </div>
           </ng-template>
         </ng-container>
 
