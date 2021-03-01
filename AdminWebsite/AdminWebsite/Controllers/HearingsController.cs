@@ -263,6 +263,20 @@ namespace AdminWebsite.Controllers
                 await _hearingsService.AssignParticipantToCorrectGroups(updatedHearing, usernameAdIdDict);
                 _logger.LogDebug("Successfully assigned participants to the correct group");
 
+                var judge = updatedHearing.Participants.FirstOrDefault(
+                    x => x.Case_role_name.ToLower() == "judge");
+                if (judge != null)
+                {
+                    await _hearingsService.SendHearingUpdateEmail(originalHearing, updatedHearing, 
+                        new List<ParticipantResponse> {judge});
+                    _logger.LogDebug("Email notification to judge sent successfully");
+                }
+                else
+                {
+                    _logger.LogCritical("Judge was not found. The judge has not been " +
+                                        "notified of the amendment made on hearing {hearingId}", updatedHearing.Id);
+                }
+                
                 // Send a notification email to newly created participants
                 var newParticipantEmails = newParticipantList.Select(p => p.Contact_email);
                 if (newParticipantList.Any())
