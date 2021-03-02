@@ -69,41 +69,9 @@ describe('BookingParticipantListComponent', () => {
 
         fixture.whenStable().then(() => {
             fixture.detectChanges();
-            const divElementRole = debugElement.queryAll(By.css('#participants-list > div'));
+            const divElementRole = debugElement.queryAll(By.css('.participant-detail'));
             expect(divElementRole.length).toBeGreaterThan(0);
             expect(divElementRole.length).toBe(3);
-            done();
-        });
-    });
-    it('should detect last item in the participants list', done => {
-        const pr1 = new ParticipantDetailsModel(
-            '1',
-            'Mrs',
-            'Alan',
-            'Brake',
-            'Citizen',
-            'email.p1@hmcts.net',
-            'email1@hmcts.net',
-            'Respondent',
-            'Litigant in person',
-            'Alan Brake',
-            '',
-            'ABC Solicitors',
-            'Respondent',
-            '12345678',
-            'interpretee',
-            false
-        );
-        const participantsList: Array<ParticipantDetailsModel> = [];
-        participantsList.push(pr1);
-        participantsList.push(pr1);
-        participantsList.push(pr1);
-
-        component.participants = participantsList;
-
-        fixture.whenStable().then(() => {
-            fixture.detectChanges();
-            expect(component.participants[2].Flag).toBeTruthy();
             done();
         });
     });
@@ -135,7 +103,7 @@ describe('BookingParticipantListComponent', () => {
 
         fixture.whenStable().then(() => {
             fixture.detectChanges();
-            const divElementRole = debugElement.queryAll(By.css('#judges-list > div'));
+            const divElementRole = debugElement.queryAll(By.css('.judge-detail'));
             expect(divElementRole.length).toBeGreaterThan(0);
             expect(divElementRole.length).toBe(2);
             done();
