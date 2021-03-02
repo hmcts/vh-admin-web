@@ -655,6 +655,11 @@ describe('AddParticipantComponent', () => {
         expect(component.hearing.linked_participants.length).toBe(0);
         expect(participantServiceSpy.removeParticipant).toHaveBeenCalled();
     });
+    it('should call the update hearing service on udpdate click', () => {
+        component.updateParticipantAction();
+        expect(videoHearingsServiceSpy.getCurrentRequest).toHaveBeenCalled();
+        expect(component.interpreterSelected).toBe(false);
+    });
 });
 describe('AddParticipantComponent edit mode', () => {
     beforeEach(
