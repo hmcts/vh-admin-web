@@ -4,7 +4,7 @@ import { ParticipantDetailsModel } from '../../common/model/participant-details.
 @Component({
     selector: 'app-booking-participant-list',
     templateUrl: 'booking-participant-list.component.html',
-    styleUrls: ['booking-participant-list.component.css']
+    styleUrls: ['booking-participant-list.component.scss']
 })
 export class BookingParticipantListComponent {
     private _participants: Array<ParticipantDetailsModel> = [];
@@ -23,10 +23,6 @@ export class BookingParticipantListComponent {
     constructor() {}
 
     get participants(): Array<ParticipantDetailsModel> {
-        // transform for display last item without bottom line.
-        if (this._participants && this._participants.length > 0) {
-            this._participants[this._participants.length - 1].Flag = true;
-        }
         let indexItem = 0;
         this._participants.forEach(x => {
             x.IndexInList = indexItem;

@@ -82,6 +82,7 @@ describe('ParticipantListComponent', () => {
         linked_participant1.linkType = LinkedParticipantType.Interpreter;
         linked_participant1.linkedParticipantId = '9';
         linked_participantList1.push(linked_participant1);
+
         const participantsArr = [
             { is_judge: true, hearing_role_name: 'Judge', display_name: 'Judge1', linked_participant: null },
             { is_judge: true, hearing_role_name: 'Judge', display_name: 'Judge2', linked_participant: null },

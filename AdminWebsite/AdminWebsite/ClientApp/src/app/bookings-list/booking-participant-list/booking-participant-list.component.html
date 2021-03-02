@@ -1,16 +1,17 @@
-<div id="roundedborder">
-  <h3 class="govuk-heading-m">Participants</h3>
-  <div class="vhtable">
-    <div id="judges-list">
-      <div *ngFor="let judge of judges">
-        <app-booking-participant-details [participant]="judge" [vh_officer_admin]="vh_officer_admin"> </app-booking-participant-details>
-      </div>
-    </div>
-    <div id="participants-list">
-      <div *ngFor="let participant of participants">
-        <app-booking-participant-details [participant]="participant" [vh_officer_admin]="vh_officer_admin">
-        </app-booking-participant-details>
-      </div>
-    </div>
-  </div>
+<h3 class="govuk-heading-m">Participants</h3>
+<div class="participant-details">
+  <app-booking-participant-details
+    *ngFor="let judge of judges"
+    [participant]="judge"
+    [vh_officer_admin]="vh_officer_admin"
+    class="participant-detail judge-detail"
+  >
+  </app-booking-participant-details>
+  <app-booking-participant-details
+    *ngFor="let participant of participants"
+    [participant]="participant"
+    [vh_officer_admin]="vh_officer_admin"
+    class="participant-detail"
+  >
+  </app-booking-participant-details>
 </div>

@@ -59,6 +59,7 @@ export class ParticipantListComponent implements OnInit, OnChanges {
         const panelMembersAndWingers = this.participants.filter(participant =>
             ['Panel Member', 'Winger'].includes(participant.hearing_role_name)
         );
+
         const interpretersAndInterpretees = this.getInterpreterAndInterpretees();
         const others = this.participants.filter(
             participant =>
@@ -89,8 +90,10 @@ export class ParticipantListComponent implements OnInit, OnChanges {
             interpreterParticipant.interpretee_name = interpretee?.display_name;
             interpreterInterpreteeList.push(interpreterParticipant);
 
-            interpretee.is_interpretee = true;
-            interpreterInterpreteeList.push(interpretee);
+            if (interpretee) {
+                interpretee.is_interpretee = true;
+                interpreterInterpreteeList.push(interpretee);
+            }
         });
         return interpreterInterpreteeList;
     }
