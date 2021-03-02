@@ -74,4 +74,12 @@ export class ParticipantItemComponent {
     get displayCaseRole() {
         return this.hasCaseRole && !this.isObserverOrPanelMember;
     }
+
+    get isInterpreter() {
+        return this.participant.hearing_role_name === 'Interpreter';
+    }
+
+    get isInterpretee() {
+        return this.participant.is_interpretee;
+    }
 }
