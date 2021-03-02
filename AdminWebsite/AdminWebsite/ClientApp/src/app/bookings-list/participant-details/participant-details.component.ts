@@ -4,7 +4,7 @@ import { ParticipantDetailsModel } from '../../common/model/participant-details.
 @Component({
     selector: 'app-booking-participant-details',
     templateUrl: 'participant-details.component.html',
-    styleUrls: ['participant-details.component.css']
+    styleUrls: ['participant-details.component.scss']
 })
 export class ParticipantDetailsComponent {
     @Input()
