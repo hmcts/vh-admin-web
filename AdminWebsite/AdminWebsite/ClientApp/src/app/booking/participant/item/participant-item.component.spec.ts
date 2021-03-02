@@ -121,4 +121,10 @@ describe('ParticipantItemComponent', () => {
         const phone = component.getJudgePhone(component.participant);
         expect(phone).toBe('123456789');
     });
+
+    it('should return true if participant is an interpreter', () => {
+        component.participant = { hearing_role_name: 'Interpreter', is_judge: true, is_exist_person: false };
+        fixture.detectChanges();
+        expect(component.isInterpreter).toBeTruthy();
+    });
 });
