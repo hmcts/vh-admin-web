@@ -69,12 +69,14 @@ namespace AdminWebsite.Mappers
                 {"New Day Month Year",newDate}
             };
         
+
             NotificationType notificationType;
             if (participant.User_role_name.Contains("Judge", StringComparison.InvariantCultureIgnoreCase))
             {
                 notificationType = NotificationType.HearingAmendmentJudge;
                 parameters.Add("judge", participant.Display_name);
                 parameters.Add("courtroom account username", participant.Username);
+                //TODO: Update mapping to support judge email from other information. Do the same for other mappers
             }
             else if (participant.User_role_name.Contains("Judicial Office Holder", StringComparison.InvariantCultureIgnoreCase))
             {

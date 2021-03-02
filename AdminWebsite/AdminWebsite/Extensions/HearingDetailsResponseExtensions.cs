@@ -1,5 +1,7 @@
 using System;
 using AdminWebsite.BookingsAPI.Client;
+using AdminWebsite.Models;
+using Newtonsoft.Json;
 
 namespace AdminWebsite.Extensions
 {
@@ -22,12 +24,25 @@ namespace AdminWebsite.Extensions
 
         public static bool DoesJudgeEmailExist(this HearingDetailsResponse hearing)
         {
-            throw new NotImplementedException();
+            if (hearing.Other_information != null)
+            {
+                var otherInformationDetails = GetOtherInformationObjectFromString(hearing.Other_information);
+                if (otherInformationDetails.JudgeEmail != null)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
         
         public static string GetJudgeContactEmail(this HearingDetailsResponse hearing)
         {
-            throw new NotImplementedException();
+            return GetOtherInformationObjectFromString(hearing.Other_information).JudgeEmail;
+        }
+
+        private static OtherInformationDetails GetOtherInformationObjectFromString(string otherInformation)
+        {
+            return JsonConvert.DeserializeObject<OtherInformationDetails>(otherInformation);
         }
     }
 }

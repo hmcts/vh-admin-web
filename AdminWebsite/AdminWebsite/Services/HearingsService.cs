@@ -9,6 +9,7 @@ using AdminWebsite.Models;
 using AdminWebsite.Services.Models;
 using Microsoft.Extensions.Logging;
 using NotificationApi.Client;
+using NotificationApi.Contract.Requests;
 using VideoApi.Client;
 using VideoApi.Contract.Responses;
 using AddEndpointRequest = AdminWebsite.BookingsAPI.Client.AddEndpointRequest;
@@ -142,27 +143,34 @@ namespace AdminWebsite.Services
             {
                 return;
             }
+
+            List<AddNotificationRequest> requests;
             var @case = updatedHearing.Cases.First();
             var caseName = @case.Name;
             var caseNumber = @case.Number;
             var participantsToEmail = participants ?? updatedHearing.Participants;
-            var requests = participantsToEmail
-                .Where(x => !x.User_role_name.Contains("Judge", StringComparison.CurrentCultureIgnoreCase))
-                .Select(participant =>
-                    AddNotificationRequestMapper.MapToHearingAmendmentNotification(updatedHearing.Id, participant,
-                        caseName, caseNumber, originalHearing.Scheduled_date_time, updatedHearing.Scheduled_date_time))
-                .ToList();
-            foreach (var request in requests)
-            {
-                await _notificationApiClient.CreateNewNotificationAsync(request);
-            }
 
             if (updatedHearing.DoesJudgeEmailExist())
             {
-                // TODO: implement judge mapping
-                // get judge
-                // map judge to amendment notification
-                // call notification api
+                requests = participantsToEmail
+                    .Select(participant =>
+                        AddNotificationRequestMapper.MapToHearingAmendmentNotification(updatedHearing.Id, participant,
+                            caseName, caseNumber, originalHearing.Scheduled_date_time, updatedHearing.Scheduled_date_time))
+                    .ToList();
+            }
+            else
+            {
+                requests = participantsToEmail
+                    .Where(x => !x.User_role_name.Contains("Judge", StringComparison.CurrentCultureIgnoreCase))
+                    .Select(participant =>
+                        AddNotificationRequestMapper.MapToHearingAmendmentNotification(updatedHearing.Id, participant,
+                            caseName, caseNumber, originalHearing.Scheduled_date_time, updatedHearing.Scheduled_date_time))
+                    .ToList();   
+            }
+
+            foreach (var request in requests)
+            {
+                await _notificationApiClient.CreateNewNotificationAsync(request);
             }
         }
 
@@ -172,22 +180,27 @@ namespace AdminWebsite.Services
             {
                 return;
             }
+            
+            List<AddNotificationRequest> requests;
             var participantsToEmail = participants ?? hearing.Participants;
-            var requests = participantsToEmail
-                .Where(x => !x.User_role_name.Contains("Judge", StringComparison.CurrentCultureIgnoreCase))
-                .Select(participant => AddNotificationRequestMapper.MapToHearingConfirmationNotification(hearing, participant))
-                .ToList();
+
+            if (hearing.DoesJudgeEmailExist())
+            {
+                requests = participantsToEmail
+                    .Select(participant => AddNotificationRequestMapper.MapToHearingConfirmationNotification(hearing, participant))
+                    .ToList();
+            }
+            else
+            {
+                requests = participantsToEmail
+                    .Where(x => !x.User_role_name.Contains("Judge", StringComparison.CurrentCultureIgnoreCase))
+                    .Select(participant => AddNotificationRequestMapper.MapToHearingConfirmationNotification(hearing, participant))
+                    .ToList();   
+            }
+            
             foreach (var request in requests)
             {
                 await _notificationApiClient.CreateNewNotificationAsync(request);
-            }
-            
-            if (hearing.DoesJudgeEmailExist())
-            {
-                // TODO: implement judge mapping
-                // get judge
-                // map judge to amendment notification
-                // call notification api
             }
         }
 
@@ -197,23 +210,26 @@ namespace AdminWebsite.Services
             {
                 return;
             }
-            
-            var requests = hearing.Participants
-                .Where(x => !x.User_role_name.Contains("Judge", StringComparison.CurrentCultureIgnoreCase))
-                .Select(participant => AddNotificationRequestMapper.MapToMultiDayHearingConfirmationNotification(hearing, participant, days))
-                .ToList();
-            
+           
+            List<AddNotificationRequest> requests;
+
+            if (hearing.DoesJudgeEmailExist())
+            {
+                requests = hearing.Participants
+                    .Select(participant => AddNotificationRequestMapper.MapToMultiDayHearingConfirmationNotification(hearing, participant, days))
+                    .ToList();
+            }
+            else
+            {
+                requests = hearing.Participants
+                    .Where(x => !x.User_role_name.Contains("Judge", StringComparison.CurrentCultureIgnoreCase))
+                    .Select(participant => AddNotificationRequestMapper.MapToMultiDayHearingConfirmationNotification(hearing, participant, days))
+                    .ToList(); 
+            }
+
             foreach (var request in requests)
             {
                 await _notificationApiClient.CreateNewNotificationAsync(request);
-            }
-            
-            if (hearing.DoesJudgeEmailExist())
-            {
-                // TODO: implement judge mapping
-                // get judge
-                // map judge to amendment notification
-                // call notification api
             }
         }
 
