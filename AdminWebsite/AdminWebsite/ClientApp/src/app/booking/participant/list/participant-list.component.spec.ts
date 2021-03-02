@@ -72,7 +72,6 @@ describe('ParticipantListComponent', () => {
     });
 });
 
-
 describe('ParticipantListComponent-SortParticipants', () => {
     let component: ParticipantListComponent;
     let fixture: ComponentFixture<ParticipantListComponent>;
