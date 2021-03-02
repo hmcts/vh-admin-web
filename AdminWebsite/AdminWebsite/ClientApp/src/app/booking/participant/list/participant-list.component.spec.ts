@@ -192,7 +192,7 @@ describe('ParticipantListComponent-SortParticipants', () => {
         });
         component.ngOnInit();
 
-        expect(component.sortedParticipants.length).toBe(5);
+        expect(component.sortedParticipants.length).toBe(3);
         expect(component.sortedParticipants.filter(p => p.hearing_role_name === 'Judge').length).toBe(1);
         expect(component.sortedParticipants.filter(p => p.hearing_role_name === 'Litigant in Person').length).toBe(1);
         expect(component.sortedParticipants.filter(p => p.hearing_role_name === 'Interpreter').length).toBe(1);

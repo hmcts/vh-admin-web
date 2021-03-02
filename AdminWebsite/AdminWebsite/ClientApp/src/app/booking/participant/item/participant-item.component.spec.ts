@@ -45,7 +45,7 @@ describe('ParticipantItemComponent', () => {
         fixture = TestBed.createComponent(ParticipantItemComponent);
         debugElement = fixture.debugElement;
         component = debugElement.componentInstance;
-        const other_information = { judgeEmail: 'James.Doe@email.com', judgePhone: '123456789' };
+        const other_information = { judgeEmail: 'James.Doe@hmcts.net', judgePhone: '123456789' };
         component.hearing = {
             updated_date: new Date(),
             questionnaire_not_required: true,
@@ -114,7 +114,7 @@ describe('ParticipantItemComponent', () => {
     it('should get judge email', () => {
         component.participant = { hearing_role_name: 'Judge', case_role_name: 'Judge', is_judge: true, is_exist_person: false };
         const email = component.getJudgeEmail(component.participant);
-        expect(email).toBe('James.Doe@email.com');
+        expect(email).toBe('James.Doe@hmcts.net');
     });
     it('should get judge phone', () => {
         component.participant = { hearing_role_name: 'Judge', case_role_name: 'Judge', is_judge: true, is_exist_person: false };
