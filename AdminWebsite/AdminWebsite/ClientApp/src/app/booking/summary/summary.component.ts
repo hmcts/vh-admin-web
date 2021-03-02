@@ -224,12 +224,26 @@ export class SummaryComponent implements OnInit, OnDestroy {
         this.showWaitSaving = true;
         this.showErrorSaving = false;
         if (this.hearing.hearing_id && this.hearing.hearing_id.length > 0) {
+            this.logger.info(`${this.loggerPrefix} Attempting to update an existing hearing.`, {
+                hearingId: this.hearing.hearing_id,
+                caseName: this.hearing.cases[0].name,
+                caseNumber: this.hearing.cases[0].number
+            });
             this.updateHearing();
         } else {
             this.setDurationOfMultiHearing();
             try {
+                this.logger.info(`${this.loggerPrefix} Attempting to book a new hearing.`, {
+                    caseName: this.hearing.cases[0].name,
+                    caseNumber: this.hearing.cases[0].number
+                });
                 const hearingDetailsResponse = await this.hearingService.saveHearing(this.hearing);
                 if (this.hearing.multiDays) {
+                    this.logger.info(`${this.loggerPrefix} Hearing is a multi-day. Booking remaining days`, {
+                        hearingId: hearingDetailsResponse.id,
+                        caseName: this.hearing.cases[0].name,
+                        caseNumber: this.hearing.cases[0].number
+                    });
                     await this.hearingService.cloneMultiHearings(
                         hearingDetailsResponse.id,
                         new MultiHearingRequest({
