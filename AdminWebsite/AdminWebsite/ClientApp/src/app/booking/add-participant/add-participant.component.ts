@@ -540,6 +540,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         } else {
             this.isShowErrorSummary = true;
         }
+        this.interpreterSelected = false;
     }
 
     updateParticipantAction() {
@@ -547,6 +548,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         this.videoHearingService.updateHearingRequest(this.hearing);
         this.displayNext();
         this.localEditMode = false;
+        this.interpreterSelected = false;
     }
 
     updateParticipant() {
@@ -564,6 +566,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
                         this.updateLinkedParticipant(newParticipant);
                     }
                 });
+                this.hearing.participants = [...this.hearing.participants];
                 this.clearForm();
                 this.participantDetails = null;
                 this.form.markAsPristine();
@@ -852,9 +855,6 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         });
     }
     isRoleRepresentative(hearingRole: string, party: string): boolean {
-        console.log('*** ' + party + ' : ' + hearingRole);
-        console.log(JSON.stringify(this.caseAndHearingRoles));
-
         const partyHearingRoles = this.caseAndHearingRoles.find(
             x => x.name === party && x.name !== 'Judge' && x.hearingRoles.find(y => y.name === hearingRole)
         );

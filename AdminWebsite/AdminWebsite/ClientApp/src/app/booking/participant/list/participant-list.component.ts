@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { HearingRoles } from 'src/app/common/model/hearing-roles.model';
 import { ParticipantModel } from 'src/app/common/model/participant.model';
 import { Logger } from 'src/app/services/logger';
 

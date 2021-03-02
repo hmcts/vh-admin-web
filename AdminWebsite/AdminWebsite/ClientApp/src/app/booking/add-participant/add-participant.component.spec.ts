@@ -655,29 +655,10 @@ describe('AddParticipantComponent', () => {
         expect(component.hearing.linked_participants.length).toBe(0);
         expect(participantServiceSpy.removeParticipant).toHaveBeenCalled();
     });
-
-    it('should create a linked participant', () => {
-        component.ngOnInit();
-
-        component.showDetails = true;
-        spyOn(component.searchEmail, 'validateEmail').and.returnValue(true);
-        component.searchEmail.email = 'mock@hmcts.net';
-        role.setValue('Applicant');
-        party.setValue('Interpreter');
-        firstName.setValue('Sam');
-        lastName.setValue('Green');
-        title.setValue('Mrs');
-        phone.setValue('12345');
-        displayName.setValue('Sam Green');
-        companyName.setValue('CC');
-        interpretee.setValue('mock1@hmcts.net');
-
-        component.isRoleSelected = true;
-        component.isPartySelected = true;
-        component.isTitleSelected = true;
-
-        component.saveParticipant();
-        expect();
+    it('should call the update hearing service on udpdate click', () => {
+        component.updateParticipantAction();
+        expect(videoHearingsServiceSpy.getCurrentRequest).toHaveBeenCalled();
+        expect(component.interpreterSelected).toBe(false);
     });
 });
 describe('AddParticipantComponent edit mode', () => {
