@@ -57,8 +57,6 @@ export class ParticipantListComponent implements OnInit, OnChanges {
         const panelMembersAndWingers = this.hearing.participants.filter(participant =>
             ['Panel Member', 'Winger'].includes(participant.hearing_role_name)
         );
-        const others = this.hearing.participants.filter(
-            participant => !participant.is_judge && !['Observer', 'Panel Member', 'Winger'].includes(participant.hearing_role_name)
 
         const interpretersAndInterpretees = this.getInterpreterAndInterpretees();
         const others = this.hearing.participants.filter(
