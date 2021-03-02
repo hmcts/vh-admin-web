@@ -35,22 +35,22 @@ java:
     Logging__LogLevel__Default: debug
     Logging__LogLevel__System: debug
     Logging__LogLevel__Microsoft: debug
-    AZUREAD__AUTHORITY:	https://login.microsoftonline.com/fb6e0e22-0da3-4c35-972a-9d61eb256508
-    AZUREAD__POSTLOGOUTREDIRECTURI:	https://localhost:5400/logout
-    AZUREAD__REDIRECTURI:	https://localhost:5400/home
+    AZUREAD__AUTHORITY:	http://login.microsoftonline.com/fb6e0e22-0da3-4c35-972a-9d61eb256508
+    AZUREAD__POSTLOGOUTREDIRECTURI:	http://localhost:5400/logout
+    AZUREAD__REDIRECTURI:	http://localhost:5400/home
     TESTUSERSECRETS__TESTUSERNAMESTEM:	"@hearings.reform.hmcts.net"
-    VHSERVICES__ADMINWEBRESOURCEID:	https://vh-admin-web.{{ .Values.global.environment }}.platform.hmcts.net
-    VHSERVICES__ADMINWEBURL:	https://localhost:5400/"
-    VHSERVICES__BOOKINGSAPIRESOURCEID:	https://vh-bookings-api.{{ .Values.global.environment }}.platform.hmcts.net
-    VHSERVICES__BOOKINGSAPIURL:	https://vh-bookings-api.{{ .Values.global.environment }}.platform.hmcts.net/
-    VHSERVICES__TESTAPIRESOURCEID:	https://vh-test-api.{{ .Values.global.environment }}.platform.hmcts.net
-    VHSERVICES__TESTAPIURL:	https://vh-test-api.{{ .Values.global.environment }}.platform.hmcts.net/
-    VHSERVICES__USERAPIRESOURCEID:	https://vh-user-api.{{ .Values.global.environment }}.platform.hmcts.net
-    VHSERVICES__USERAPIURL:	https://vh-user-api.{{ .Values.global.environment }}.platform.hmcts.net/
-    VHSERVICES__VIDEOAPIRESOURCEID:	https://vh-video-api.{{ .Values.global.environment }}.platform.hmcts.net
-    VHSERVICES__VIDEOAPIURL:	https://vh-video-api.{{ .Values.global.environment }}.platform.hmcts.net/
-    VHSERVICES__NOTIFICATIONAPIRESOURCEID:	https://vh-notification-api.{{ .Values.global.environment }}.platform.hmcts.net
-    VHSERVICES__NOTIFICATIONAPIURL:	https://vh-notification-api.{{ .Values.global.environment }}.platform.hmcts.net/
+    VHSERVICES__ADMINWEBRESOURCEID:	http://vh-admin-web.{{ .Values.global.environment }}.platform.hmcts.net
+    VHSERVICES__ADMINWEBURL:	http://localhost:5400/"
+    VHSERVICES__BOOKINGSAPIRESOURCEID:	http://vh-bookings-api.{{ .Values.global.environment }}.platform.hmcts.net
+    VHSERVICES__BOOKINGSAPIURL:	http://vh-bookings-api.{{ .Values.global.environment }}.platform.hmcts.net/
+    VHSERVICES__TESTAPIRESOURCEID:	http://vh-test-api.{{ .Values.global.environment }}.platform.hmcts.net
+    VHSERVICES__TESTAPIURL:	http://vh-test-api.{{ .Values.global.environment }}.platform.hmcts.net/
+    VHSERVICES__USERAPIRESOURCEID:	http://vh-user-api.{{ .Values.global.environment }}.platform.hmcts.net
+    VHSERVICES__USERAPIURL:	http://vh-user-api.{{ .Values.global.environment }}.platform.hmcts.net/
+    VHSERVICES__VIDEOAPIRESOURCEID:	http://vh-video-api.{{ .Values.global.environment }}.platform.hmcts.net
+    VHSERVICES__VIDEOAPIURL:	http://vh-video-api.{{ .Values.global.environment }}.platform.hmcts.net/
+    VHSERVICES__NOTIFICATIONAPIRESOURCEID:	http://vh-notification-api.{{ .Values.global.environment }}.platform.hmcts.net
+    VHSERVICES__NOTIFICATIONAPIURL:	http://vh-notification-api.{{ .Values.global.environment }}.platform.hmcts.net/
     KINLYCONFIGURATION__CONFERENCEPHONENUMBER:	"01234567890"
     KINLYCONFIGURATION__JOINBYPHONEFROMDATE:	""
     WOWZACONFIGURATION__STORAGEACCOUNTNAME:	vhwowza{{ .Values.global.environment }}
