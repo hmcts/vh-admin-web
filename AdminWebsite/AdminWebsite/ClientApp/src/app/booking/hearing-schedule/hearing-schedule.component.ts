@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Constants } from 'src/app/common/constants';
@@ -128,6 +128,8 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
             this.durationMinuteControl = new FormControl(durationMinute, [Validators.required, Validators.min(0), Validators.max(59)]);
         }
 
+        this.hearingDates = new FormArray([new FormControl(new FormControl(new Date()))]);
+
         this.form = this.fb.group({
             hearingDate: [hearingDateParsed, Validators.required],
             hearingStartTimeHour: [startTimeHour, [Validators.required, Validators.min(0), Validators.max(23)]],
@@ -137,10 +139,19 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
             courtAddress: [this.hearing.hearing_venue_id, [Validators.required, Validators.min(1)]],
             courtRoom: [room, [Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)]],
             multiDays: [this.multiDaysHearing],
-            endHearingDate: [endHearingDateParsed]
+            endHearingDate: [endHearingDateParsed],
+            hearingDates: this.hearingDates
         });
     }
 
+    addHearingDate(){
+        this.hearingDates.push(new FormControl(new Date()))
+    }
+
+    removeHearingDate(index: number) {
+        this.hearingDates.removeAt(index);
+    }
+    
     ngAfterViewInit() {
         if (this.courtAddress) {
             this.$subscriptions.push(
