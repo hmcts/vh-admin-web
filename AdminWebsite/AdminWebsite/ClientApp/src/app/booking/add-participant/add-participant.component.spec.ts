@@ -469,7 +469,7 @@ describe('AddParticipantComponent', () => {
         expect(component.roleList[0]).toEqual(Constants.PleaseSelect);
 
         console.log(JSON.stringify(component.hearingRoleList));
-        expect(component.hearingRoleList.length).toBe(5);
+        expect(component.hearingRoleList.length).toBe(4);
         expect(component.hearingRoleList[0]).toEqual(Constants.PleaseSelect);
     });
     it('party selected will reset hearing roles', () => {
@@ -524,11 +524,10 @@ describe('AddParticipantComponent', () => {
         component.handleContinueBooking();
         expect(component.showCancelPopup).toBeFalsy();
     });
-    it('should not list an interpreter in hearing roles if there are not interpretees in the participant list', fakeAsync(() => {
+    it('should not list an interpreter in hearing roles if there are no interpretees in the participant list', fakeAsync(() => {
         component.ngOnInit();
         component.ngAfterViewInit();
         tick(600);
-        expect(component.hearingRoleList).toContain('Interpreter');
         component.hearing.participants = [];
         component.setupHearingRoles('Claimant');
         tick(600);
