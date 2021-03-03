@@ -510,6 +510,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
                 this.hearing.participants.push(newParticipant);
                 this.hearing.participants = [...this.hearing.participants];
+                this.hearing = Object.assign({}, this.hearing);
 
                 this.populateInterpretedForList();
                 this.videoHearingService.updateHearingRequest(this.hearing);
@@ -615,6 +616,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         }
         this.participantService.removeParticipant(this.hearing, this.selectedParticipantEmail);
         this.removeLinkedParticipant(this.selectedParticipantEmail);
+        this.hearing = Object.assign({}, this.hearing);
         this.videoHearingService.updateHearingRequest(this.hearing);
         this.videoHearingService.setBookingHasChanged(true);
     }

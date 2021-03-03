@@ -1,10 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Router } from '@angular/router';
-import { HearingRoles } from 'src/app/common/model/hearing-roles.model';
 import { ParticipantModel } from 'src/app/common/model/participant.model';
 import { BookingService } from 'src/app/services/booking.service';
 import { Logger } from 'src/app/services/logger';
 import { PageUrls } from 'src/app/shared/page-url.constants';
+import { HearingModel } from '../../../common/model/hearing.model';
+import { OtherInformationModel } from '../../../common/model/other-information.model';
 
 @Component({
     selector: 'app-participant-item',
@@ -13,7 +14,7 @@ import { PageUrls } from 'src/app/shared/page-url.constants';
 })
 export class ParticipantItemComponent {
     private readonly loggerPrefix = '[ParticipantList - Item] -';
-
+    @Input() hearing: HearingModel;
     @Input() participant: ParticipantModel;
     @Input() canEdit = false;
     @Input() isSummaryPage = false;
@@ -27,8 +28,19 @@ export class ParticipantItemComponent {
         this.bookingService.setEditMode();
     }
 
+    getJudgeEmail(participant: ParticipantModel): string {
+        const otherInformation = OtherInformationModel.init(this.hearing.other_information);
+        return otherInformation.judgeEmail ?? participant.email;
+    }
+
+    getJudgePhone(participant: ParticipantModel): string {
+        const otherInformation = OtherInformationModel.init(this.hearing.other_information);
+        return otherInformation.judgePhone ?? participant.phone;
+    }
+
     editParticipant(participant: ParticipantModel) {
         this.bookingService.setEditMode();
+        this.editJudge();
         if (this.isSummaryPage) {
             this.bookingService.setParticipantEmail(participant.email);
             this.logger.debug(`${this.loggerPrefix} Navigating back to participants to edit`, { participant: participant.email });

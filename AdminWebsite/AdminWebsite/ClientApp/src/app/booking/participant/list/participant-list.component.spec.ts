@@ -27,7 +27,7 @@ describe('ParticipantListComponent', () => {
     beforeEach(
         waitForAsync(() => {
             TestBed.configureTestingModule({
-                declarations: [ParticipantListComponent],
+                declarations: [ParticipantListComponent, ParticipantItemComponent],
                 providers: [
                     { provide: Logger, useValue: loggerSpy },
                     { provide: Router, useValue: router }
@@ -41,6 +41,7 @@ describe('ParticipantListComponent', () => {
         fixture = TestBed.createComponent(ParticipantListComponent);
         debugElement = fixture.debugElement;
         component = debugElement.componentInstance;
+        component.hearing = { updated_date: new Date(), questionnaire_not_required: true, participants };
 
         fixture.detectChanges();
     });
@@ -50,7 +51,7 @@ describe('ParticipantListComponent', () => {
     });
 
     it('should display participants', done => {
-        component.participants = participants;
+        // component.hearing.participants = participants;
         component.ngOnInit();
         fixture.whenStable().then(() => {
             fixture.detectChanges();
@@ -70,6 +71,34 @@ describe('ParticipantListComponent', () => {
         component.removeParticipant({ email: 'email@hmcts.net', is_exist_person: false, is_judge: false });
         expect(component.$selectedForRemove.emit).toHaveBeenCalled();
     });
+});
+
+describe('ParticipantListComponent-SortParticipants', () => {
+    let component: ParticipantListComponent;
+    let fixture: ComponentFixture<ParticipantListComponent>;
+    let debugElement: DebugElement;
+
+    beforeEach(
+        waitForAsync(() => {
+            TestBed.configureTestingModule({
+                declarations: [ParticipantListComponent, ParticipantItemComponent],
+                providers: [
+                    { provide: Logger, useValue: loggerSpy },
+                    { provide: Router, useValue: router }
+                ],
+                imports: [RouterTestingModule]
+            }).compileComponents();
+        })
+    );
+
+    beforeEach(() => {
+        fixture = TestBed.createComponent(ParticipantListComponent);
+        debugElement = fixture.debugElement;
+        component = debugElement.componentInstance;
+        component.hearing = { updated_date: new Date(), questionnaire_not_required: true };
+        fixture.detectChanges();
+    });
+
     it('should produce a sorted list with no duplicates', () => {
         const linked_participantList: LinkedParticipantModel[] = [];
         const linked_participant = new LinkedParticipantModel();
@@ -101,8 +130,11 @@ describe('ParticipantListComponent', () => {
             { is_judge: false, hearing_role_name: 'Interpreter', display_name: 'Interpreter1', linked_participant: linked_participantList }
         ];
 
+        if (!component.hearing.participants) {
+            component.hearing.participants = [];
+        }
         participantsArr.forEach((p, i) => {
-            component.participants.push({
+            component.hearing.participants.push({
                 is_exist_person: true,
                 is_judge: p.is_judge,
                 hearing_role_name: p.hearing_role_name,
@@ -146,8 +178,11 @@ describe('ParticipantListComponent', () => {
             }
         ];
 
+        if (!component.hearing.participants) {
+            component.hearing.participants = [];
+        }
         participantsArr.forEach((p, i) => {
-            component.participants.push({
+            component.hearing.participants.push({
                 is_exist_person: true,
                 is_judge: p.is_judge,
                 hearing_role_name: p.hearing_role_name,

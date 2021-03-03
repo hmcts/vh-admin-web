@@ -46,6 +46,12 @@ describe('ParticipantItemComponent', () => {
         fixture = TestBed.createComponent(ParticipantItemComponent);
         debugElement = fixture.debugElement;
         component = debugElement.componentInstance;
+        const other_information = { judgeEmail: 'James.Doe@hmcts.net', judgePhone: '123456789' };
+        component.hearing = {
+            updated_date: new Date(),
+            questionnaire_not_required: true,
+            other_information: JSON.stringify(other_information)
+        };
 
         fixture.detectChanges();
     });
@@ -76,9 +82,23 @@ describe('ParticipantItemComponent', () => {
     });
 
     it('should return true if participant is a judge', () => {
-        component.participant = { is_judge: true, is_exist_person: false };
+        participant.is_judge = true;
+        participant.is_exist_person = true;
+        component.participant = participant;
         fixture.detectChanges();
         expect(component.isJudge).toBeTruthy();
+    });
+
+    it('should get judge email', () => {
+        component.participant = { hearing_role_name: 'Judge', case_role_name: 'Judge', is_judge: true, is_exist_person: false };
+        const email = component.getJudgeEmail(component.participant);
+        expect(email).toBe('James.Doe@hmcts.net');
+    });
+
+    it('should get judge phone', () => {
+        component.participant = { hearing_role_name: 'Judge', case_role_name: 'Judge', is_judge: true, is_exist_person: false };
+        const phone = component.getJudgePhone(component.participant);
+        expect(phone).toBe('123456789');
     });
 
     it('should return false if participant`s case role is None', () => {
