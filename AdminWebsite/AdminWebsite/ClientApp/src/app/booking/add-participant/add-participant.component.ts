@@ -887,15 +887,6 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         return this.interpreterFor.invalid && (this.interpreterFor.dirty || this.interpreterFor.touched || this.isShowErrorSummary);
     }
     private populateInterpretedForList() {
-        /*         const interpreteeHearingRolesList: Array<string> = [
-            HearingRoles.LITIGANT_IN_PERSON,
-            HearingRoles.WITNESS,
-            HearingRoles.APP,
-            HearingRoles.MACKENZIE_FRIEND
-        ];
-        this.interpreteeList = this.hearing.participants.filter(item =>
-            interpreteeHearingRolesList.includes(item.hearing_role_name.toLowerCase())
-        ); */
         this.interpreteeList = this.hearing.participants.filter(
             p => p.user_role_name === 'Individual' && p.hearing_role_name !== 'Interpreter'
         );
@@ -931,15 +922,6 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         return hearingHasInterpreter;
     }
     private hearingHasInterpretees(): boolean {
-        /*         const interpreteeHearingRolesList: Array<string> = [
-            HearingRoles.LITIGANT_IN_PERSON,
-            HearingRoles.WITNESS,
-            HearingRoles.APP,
-            HearingRoles.MACKENZIE_FRIEND
-        ];
-        const hearingHasInterpretees = this.hearing.participants.some(item =>
-            interpreteeHearingRolesList.includes(item.hearing_role_name.toLowerCase())
-        ); */
         const hearingHasInterpretees = this.hearing.participants.some(
             p => p.user_role_name === 'Individual' && p.hearing_role_name !== 'Interpreter'
         );
