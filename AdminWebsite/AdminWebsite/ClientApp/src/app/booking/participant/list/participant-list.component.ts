@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { HearingRoles } from 'src/app/common/model/hearing-roles.model';
 import { ParticipantModel } from 'src/app/common/model/participant.model';
+import { LinkedParticipantType } from 'src/app/services/clients/api-client';
 import { Logger } from 'src/app/services/logger';
 
 @Component({
@@ -83,9 +83,9 @@ export class ParticipantListComponent implements OnInit, OnChanges {
                 interpretee = this.participants.find(p => p.email === interpreterParticipant.interpreterFor);
             } else if (interpreterParticipant.linked_participants) {
                 const linkedParticipants = interpreterParticipant.linked_participants;
-                linkedParticipants.forEach(linkedParticipant => {
-                    interpretee = this.participants.find(p => p.id === linkedParticipant.linkedParticipantId);
-                });
+                interpretee = this.participants.find(p =>
+                    linkedParticipants.some(lp => lp.linkedParticipantId === p.id && lp.linkType === LinkedParticipantType.Interpreter)
+                );
             }
             interpreterParticipant.interpretee_name = interpretee?.display_name;
             interpreterInterpreteeList.push(interpreterParticipant);
