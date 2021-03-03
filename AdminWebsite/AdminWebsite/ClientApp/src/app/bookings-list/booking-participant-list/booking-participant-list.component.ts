@@ -8,10 +8,12 @@ import { ParticipantDetailsModel } from '../../common/model/participant-details.
 })
 export class BookingParticipantListComponent {
     private _participants: Array<ParticipantDetailsModel> = [];
+    sortedParticipants: ParticipantDetailsModel[] = [];
 
     @Input()
     set participants(participants: Array<ParticipantDetailsModel>) {
         this._participants = participants;
+        this.sortParticipants();
     }
 
     @Input()
@@ -29,5 +31,24 @@ export class BookingParticipantListComponent {
             indexItem++;
         });
         return this._participants;
+    }
+
+    private sortParticipants() {
+        const judges = this.participants.filter(participant => participant.HearingRoleName === 'Judge');
+        const panelMembersAndWingers = this.participants.filter(participant =>
+            ['Panel Member', 'Winger'].includes(participant.HearingRoleName)
+        );
+        const interpretersAndInterpretees = this.participants.filter(
+            participant => participant.HearingRoleName === 'Interpreter' || participant.isInterpretee
+        );
+        const observers = this.participants.filter(participant => participant.HearingRoleName === 'Observer');
+        const others = this.participants.filter(
+            participant =>
+                !judges.includes(participant) &&
+                !panelMembersAndWingers.includes(participant) &&
+                !interpretersAndInterpretees.includes(participant) &&
+                !observers.includes(participant)
+        );
+        this.sortedParticipants = [...judges, ...panelMembersAndWingers, ...others, ...interpretersAndInterpretees, ...observers];
     }
 }
