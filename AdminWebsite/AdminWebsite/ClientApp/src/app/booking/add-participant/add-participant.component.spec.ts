@@ -3,28 +3,26 @@ import { AbstractControl, Validators } from '@angular/forms';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { of, Subscription } from 'rxjs';
 import { SharedModule } from 'src/app/shared/shared.module';
-import { BreadcrumbStubComponent } from 'src/app/testing/stubs/breadcrumb-stub';
-import { CancelPopupStubComponent } from 'src/app/testing/stubs/cancel-popup-stub';
-import { ConfirmationPopupStubComponent } from 'src/app/testing/stubs/confirmation-popup-stub';
 import { SearchServiceStub } from 'src/app/testing/stubs/service-service-stub';
 import { Constants } from '../../common/constants';
 import { HearingModel } from '../../common/model/hearing.model';
 import { ParticipantModel } from '../../common/model/participant.model';
 import { PartyModel } from '../../common/model/party.model';
-import { DiscardConfirmPopupComponent } from '../../popups/discard-confirm-popup/discard-confirm-popup.component';
 import { BookingService } from '../../services/booking.service';
 import { CaseAndHearingRolesResponse, ClientSettingsResponse, HearingRole } from '../../services/clients/api-client';
 import { ConfigService } from '../../services/config.service';
 import { Logger } from '../../services/logger';
 import { SearchService } from '../../services/search.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
-import { RemovePopupStubComponent } from '../../testing/stubs/remove-popup-stub';
 import { SearchEmailComponent } from '../search-email/search-email.component';
 import { ParticipantService } from '../services/participant.service';
 import { AddParticipantComponent } from './add-participant.component';
 import { HearingRoleModel } from '../../common/model/hearing-role.model';
 import { ParticipantListComponent } from '../participant';
-import { LinkedParticipantModel, LinkedParticipantType } from 'src/app/common/model/linked-participant.model';
+import { LinkedParticipantModel } from 'src/app/common/model/linked-participant.model';
+import { BookingModule } from '../booking.module';
+import { PopupModule } from 'src/app/popups/popup.module';
+import { TestingModule } from 'src/app/testing/testing.module';
 
 let component: AddParticipantComponent;
 let fixture: ComponentFixture<AddParticipantComponent>;
@@ -674,17 +672,7 @@ describe('AddParticipantComponent edit mode', () => {
             bookingServiceSpy = jasmine.createSpyObj<BookingService>(['isEditMode', 'getParticipantEmail', 'resetEditMode']);
 
             TestBed.configureTestingModule({
-                declarations: [
-                    AddParticipantComponent,
-                    BreadcrumbStubComponent,
-                    SearchEmailComponent,
-                    ParticipantListComponent,
-                    CancelPopupStubComponent,
-                    ConfirmationPopupStubComponent,
-                    RemovePopupStubComponent,
-                    DiscardConfirmPopupComponent
-                ],
-                imports: [SharedModule, RouterModule.forChild([])],
+                imports: [SharedModule, RouterModule.forChild([]), BookingModule, PopupModule, TestingModule],
                 providers: [
                     { provide: SearchService, useClass: SearchServiceStub },
                     { provide: Router, useValue: routerSpy },

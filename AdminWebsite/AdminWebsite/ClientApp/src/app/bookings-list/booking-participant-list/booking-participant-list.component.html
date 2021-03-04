@@ -8,7 +8,7 @@
   >
   </app-booking-participant-details>
   <app-booking-participant-details
-    *ngFor="let participant of participants"
+    *ngFor="let participant of sortedParticipants"
     [participant]="participant"
     [vh_officer_admin]="vh_officer_admin"
     class="participant-detail"
