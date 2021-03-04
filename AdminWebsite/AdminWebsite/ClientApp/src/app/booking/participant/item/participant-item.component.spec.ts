@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { BookingService } from 'src/app/services/booking.service';
 import { Logger } from 'src/app/services/logger';
+import { ParticipantListComponent } from '../list/participant-list.component';
 import { ParticipantItemComponent } from './participant-item.component';
 
 const router = {
@@ -120,5 +121,11 @@ describe('ParticipantItemComponent', () => {
         component.participant = { hearing_role_name: 'Judge', case_role_name: 'Judge', is_judge: true, is_exist_person: false };
         const phone = component.getJudgePhone(component.participant);
         expect(phone).toBe('123456789');
+    });
+
+    it('should return true if participant is an interpreter', () => {
+        component.participant = { hearing_role_name: 'Interpreter', is_judge: true, is_exist_person: false };
+        fixture.detectChanges();
+        expect(component.isInterpreter).toBeTruthy();
     });
 });

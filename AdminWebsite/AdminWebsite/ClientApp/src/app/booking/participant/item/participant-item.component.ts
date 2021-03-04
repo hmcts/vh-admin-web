@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Router } from '@angular/router';
+import { HearingRoles } from 'src/app/common/model/hearing-roles.model';
 import { ParticipantModel } from 'src/app/common/model/participant.model';
 import { BookingService } from 'src/app/services/booking.service';
 import { Logger } from 'src/app/services/logger';
@@ -73,5 +74,13 @@ export class ParticipantItemComponent {
 
     get displayCaseRole() {
         return this.hasCaseRole && !this.isObserverOrPanelMember;
+    }
+
+    get isInterpreter() {
+        return this.participant.hearing_role_name === 'Interpreter';
+    }
+
+    get isInterpretee() {
+        return this.participant.is_interpretee;
     }
 }

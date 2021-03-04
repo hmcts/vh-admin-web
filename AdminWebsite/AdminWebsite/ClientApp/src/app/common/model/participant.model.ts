@@ -18,4 +18,6 @@ export class ParticipantModel {
     is_exist_person: boolean;
     interpreterFor?: string;
     linked_participants?: LinkedParticipantModel[];
+    interpretee_name?: string | undefined;
+    is_interpretee?: boolean | undefined;
 }
