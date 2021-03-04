@@ -154,7 +154,7 @@ namespace AdminWebsite.Services
             {
                 requests = participantsToEmail
                     .Select(participant =>
-                        AddNotificationRequestMapper.MapToHearingAmendmentNotification(updatedHearing.Id, participant,
+                        AddNotificationRequestMapper.MapToHearingAmendmentNotification(updatedHearing, participant,
                             caseName, caseNumber, originalHearing.Scheduled_date_time, updatedHearing.Scheduled_date_time))
                     .ToList();
             }
@@ -163,7 +163,7 @@ namespace AdminWebsite.Services
                 requests = participantsToEmail
                     .Where(x => !x.User_role_name.Contains("Judge", StringComparison.CurrentCultureIgnoreCase))
                     .Select(participant =>
-                        AddNotificationRequestMapper.MapToHearingAmendmentNotification(updatedHearing.Id, participant,
+                        AddNotificationRequestMapper.MapToHearingAmendmentNotification(updatedHearing, participant,
                             caseName, caseNumber, originalHearing.Scheduled_date_time, updatedHearing.Scheduled_date_time))
                     .ToList();   
             }

@@ -51,7 +51,7 @@ namespace AdminWebsite.Mappers
             return addNotificationRequest;
         }
 
-        public static AddNotificationRequest MapToHearingAmendmentNotification(Guid hearingId,
+        public static AddNotificationRequest MapToHearingAmendmentNotification(HearingDetailsResponse hearing,
             ParticipantResponse participant, string caseName, string caseNumber, DateTime originalDateTime, DateTime newDateTime)
         {
             var originalTime = originalDateTime.ToString("h:mm tt");
@@ -63,12 +63,11 @@ namespace AdminWebsite.Mappers
             {
                 {"case name", caseName},
                 {"case number", caseNumber},
-                {"Old time",originalTime},
-                {"New time",newTime},
-                {"Old Day Month Year",originalDate},
-                {"New Day Month Year",newDate}
+                {"Old time", originalTime},
+                {"New time", newTime},
+                {"Old Day Month Year", originalDate},
+                {"New Day Month Year", newDate}
             };
-        
 
             NotificationType notificationType;
             if (participant.User_role_name.Contains("Judge", StringComparison.InvariantCultureIgnoreCase))
@@ -76,7 +75,15 @@ namespace AdminWebsite.Mappers
                 notificationType = NotificationType.HearingAmendmentJudge;
                 parameters.Add("judge", participant.Display_name);
                 parameters.Add("courtroom account username", participant.Username);
-                //TODO: Update mapping to support judge email from other information. Do the same for other mappers
+                if (hearing.DoesJudgeEmailExist())
+                {
+                    participant.Contact_email = hearing.GetJudgeContactEmail();
+                }
+
+                if (hearing.DoesJudgePhoneExist())
+                {
+                    participant.Telephone_number = hearing.GetJudgePhone();
+                }
             }
             else if (participant.User_role_name.Contains("Judicial Office Holder", StringComparison.InvariantCultureIgnoreCase))
             {
@@ -97,7 +104,7 @@ namespace AdminWebsite.Mappers
             
             return new AddNotificationRequest
             {
-                HearingId = hearingId,
+                HearingId = hearing.Id,
                 MessageType = MessageType.Email,
                 ContactEmail = participant.Contact_email,
                 NotificationType = notificationType,
@@ -113,7 +120,6 @@ namespace AdminWebsite.Mappers
             var @case = hearing.Cases.First();
             var time = hearing.Scheduled_date_time.ToString("h:mm tt");
             var date = hearing.Scheduled_date_time.ToString("d MMMM yyyy");
-            var contactEmail = participant.Contact_email;
             var parameters = new Dictionary<string, string>
             {
                 {"case name", @case.Name},
@@ -128,7 +134,15 @@ namespace AdminWebsite.Mappers
                 notificationType = NotificationType.HearingConfirmationJudge;
                 parameters.Add("judge", participant.Display_name);
                 parameters.Add("courtroom account username", participant.Username);
-                contactEmail = hearing.GetJudgeContactEmail();
+                if (hearing.DoesJudgeEmailExist())
+                {
+                    participant.Contact_email = hearing.GetJudgeContactEmail();
+                }
+
+                if (hearing.DoesJudgePhoneExist())
+                {
+                    participant.Telephone_number = hearing.GetJudgePhone();
+                }
             }
             else if (participant.User_role_name.Contains("Judicial Office Holder", StringComparison.InvariantCultureIgnoreCase))
             {
@@ -151,7 +165,7 @@ namespace AdminWebsite.Mappers
             {
                 HearingId = hearing.Id,
                 MessageType = MessageType.Email,
-                ContactEmail = contactEmail,
+                ContactEmail = participant.Contact_email,
                 NotificationType = notificationType,
                 ParticipantId = participant.Id,
                 PhoneNumber = participant.Telephone_number,
@@ -180,6 +194,15 @@ namespace AdminWebsite.Mappers
                 notificationType = NotificationType.HearingConfirmationJudgeMultiDay;
                 parameters.Add("judge", participant.Display_name);
                 parameters.Add("courtroom account username", participant.Username);
+                if (hearing.DoesJudgeEmailExist())
+                {
+                    participant.Contact_email = hearing.GetJudgeContactEmail();
+                }
+
+                if (hearing.DoesJudgePhoneExist())
+                {
+                    participant.Telephone_number = hearing.GetJudgePhone();
+                }
             }
             else if (participant.User_role_name.Contains("Judicial Office Holder",
                 StringComparison.InvariantCultureIgnoreCase))

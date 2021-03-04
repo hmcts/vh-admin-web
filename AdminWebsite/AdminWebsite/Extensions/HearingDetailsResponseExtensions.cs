@@ -35,9 +35,27 @@ namespace AdminWebsite.Extensions
             return false;
         }
         
+        public static bool DoesJudgePhoneExist(this HearingDetailsResponse hearing)
+        {
+            if (hearing.Other_information != null)
+            {
+                var otherInformationDetails = GetOtherInformationObjectFromString(hearing.Other_information);
+                if (otherInformationDetails.JudgePhone != null)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public static string GetJudgeContactEmail(this HearingDetailsResponse hearing)
         {
             return GetOtherInformationObjectFromString(hearing.Other_information).JudgeEmail;
+        }
+        
+        public static string GetJudgePhone(this HearingDetailsResponse hearing)
+        {
+            return GetOtherInformationObjectFromString(hearing.Other_information).JudgePhone;
         }
 
         private static OtherInformationDetails GetOtherInformationObjectFromString(string otherInformation)
