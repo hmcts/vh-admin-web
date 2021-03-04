@@ -10,6 +10,7 @@ import { BookingService } from '../../services/booking.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { BookingBaseComponentDirective as BookingBaseComponent } from '../booking-base/booking-base.component';
 import { RecordingGuardService } from '../../services/recording-guard.service';
+import { OtherInformationModel } from '../../common/model/other-information.model';
 
 @Component({
     selector: 'app-other-information',
@@ -23,6 +24,7 @@ export class OtherInformationComponent extends BookingBaseComponent implements O
     attemptingDiscardChanges = false;
     canNavigate = true;
     audioChoice: FormControl;
+    otherInformationDetails: OtherInformationModel;
 
     audioRecording = true;
     switchOffRecording = false;
@@ -44,6 +46,8 @@ export class OtherInformationComponent extends BookingBaseComponent implements O
 
     ngOnInit() {
         this.checkForExistingRequest();
+        this.otherInformationDetails = OtherInformationModel.init(this.hearing.other_information);
+        this.otherInformationText = this.otherInformationDetails.otherInformation;
         this.switchOffRecording = this.recordingGuard.switchOffRecording(this.hearing.case_type);
         this.interpreterPresent = this.recordingGuard.mandatoryRecordingForHearingRole(this.hearing.participants);
         this.initForm();
@@ -92,7 +96,8 @@ export class OtherInformationComponent extends BookingBaseComponent implements O
 
     next() {
         this.hearing.audio_recording_required = this.audioChoice.value;
-        this.hearing.other_information = this.otherInformation.value;
+        this.otherInformationOnBlur();
+        this.hearing.other_information = JSON.stringify(this.otherInformationDetails);
         this.videoHearingService.updateHearingRequest(this.hearing);
         this.logger.debug(`${this.loggerPrefix} Updated audio recording status and hearing other information.`, { hearing: this.hearing });
         this.form.markAsPristine();
@@ -140,6 +145,7 @@ export class OtherInformationComponent extends BookingBaseComponent implements O
     }
 
     otherInformationOnBlur() {
+        this.otherInformationDetails.otherInformation = this.otherInformation.value;
         const text = SanitizeInputText(this.otherInformation.value);
         this.otherInformation.setValue(text);
     }

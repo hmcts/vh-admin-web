@@ -18,6 +18,7 @@ import { VideoHearingsService } from '../../services/video-hearings.service';
 import { PageUrls } from '../../shared/page-url.constants';
 import { ParticipantListComponent } from '../participant';
 import { ParticipantService } from '../services/participant.service';
+import { OtherInformationModel } from '../../common/model/other-information.model';
 
 @Component({
     selector: 'app-summary',
@@ -39,7 +40,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
     hearingDate: Date;
     courtRoomAddress: string;
     hearingDuration: string;
-    otherInformation: string;
+    otherInformation: OtherInformationModel;
     audioChoice: string;
     errors: any;
     selectedHearingType: HearingTypeResponse[];
@@ -81,6 +82,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.logger.debug(`${this.loggerPrefix} On step Summary`, { step: 'Summary' });
         this.checkForExistingRequest();
+        this.otherInformation = OtherInformationModel.init(this.hearing.other_information);
         this.retrieveHearingSummary();
         this.switchOffRecording = this.recordingGuardService.switchOffRecording(this.hearing.case_type);
         if (this.participantsListComponent) {
@@ -176,7 +178,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
         this.hearingDate = this.hearing.scheduled_date_time;
         this.hearingDuration = `listed for ${FormatShortDuration(this.hearing.scheduled_duration)}`;
         this.courtRoomAddress = this.formatCourtRoom(this.hearing.court_name, this.hearing.court_room);
-        this.otherInformation = this.hearing.other_information;
+        this.otherInformation = OtherInformationModel.init(this.hearing.other_information);
         this.audioChoice = this.hearing.audio_recording_required ? 'Yes' : 'No';
         this.caseType = this.hearing.case_type;
         this.endpoints = this.hearing.endpoints;

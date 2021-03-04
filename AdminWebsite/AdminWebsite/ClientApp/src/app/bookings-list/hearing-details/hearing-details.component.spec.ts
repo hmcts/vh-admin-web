@@ -9,11 +9,37 @@ import { HearingDetailsComponent } from './hearing-details.component';
 import { ActivatedRoute } from '@angular/router';
 import { ClientSettingsResponse } from 'src/app/services/clients/api-client';
 import { Logger } from '../../services/logger';
+import { OtherInformationModel } from '../../common/model/other-information.model';
 
 describe('HearingDetailsComponent', () => {
     let component: HearingDetailsComponent;
     let fixture: ComponentFixture<HearingDetailsComponent>;
     let debugElement: DebugElement;
+
+    const h1 = new BookingsDetailsModel(
+        '1',
+        new Date('2019-10-22 13:58:40.3730067'),
+        120,
+        'XX3456234565',
+        'Smith vs Donner',
+        'Tax',
+        'JadgeGreen',
+        '33A',
+        'Coronation Street',
+        'Jhon Smith',
+        new Date('2018-10-22 13:58:40.3730067'),
+        'Roy Ben',
+        new Date('2018-10-22 13:58:40.3730067'),
+        null,
+        null,
+        'Booked',
+        false,
+        true,
+        'reason1',
+        'Financial Remedy',
+        'judge.green@hmcts.net',
+        '1234567'
+    );
 
     beforeEach(
         waitForAsync(() => {
@@ -29,7 +55,8 @@ describe('HearingDetailsComponent', () => {
         fixture = TestBed.createComponent(HearingDetailsComponent);
         debugElement = fixture.debugElement;
         component = debugElement.componentInstance;
-
+        component.hearing = h1;
+        component.hearing.OtherInformation = JSON.stringify(OtherInformationModel.init(component.hearing.OtherInformation));
         fixture.detectChanges();
     });
 
@@ -38,32 +65,6 @@ describe('HearingDetailsComponent', () => {
     });
 
     it('should display hearing details', done => {
-        const h1 = new BookingsDetailsModel(
-            '1',
-            new Date('2019-10-22 13:58:40.3730067'),
-            120,
-            'XX3456234565',
-            'Smith vs Donner',
-            'Tax',
-            'JadgeGreen',
-            '33A',
-            'Coronation Street',
-            'Jhon Smith',
-            new Date('2018-10-22 13:58:40.3730067'),
-            'Roy Ben',
-            new Date('2018-10-22 13:58:40.3730067'),
-            null,
-            null,
-            'Booked',
-            false,
-            true,
-            'reason1',
-            'Financial Remedy',
-            'judge.green@hmcts.net',
-            '1234567'
-        );
-
-        component.hearing = h1;
         const phoneDetails = '11111 (ID: 1234567)';
         fixture.whenStable().then(() => {
             fixture.detectChanges();

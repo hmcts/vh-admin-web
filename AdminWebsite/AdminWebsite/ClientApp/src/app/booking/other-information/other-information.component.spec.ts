@@ -75,8 +75,7 @@ describe('OtherInformationComponent', () => {
     });
     it('should set initial values for field', () => {
         component.ngOnInit();
-        expect(otherInformation.value).toBe('some text');
-        expect(component.otherInformationText).toBe('some text');
+        expect(component.hearing.other_information).toBe('some text');
     });
     it('if press next button should save other information in storage and navigate to summary page.', () => {
         component.ngOnInit();
