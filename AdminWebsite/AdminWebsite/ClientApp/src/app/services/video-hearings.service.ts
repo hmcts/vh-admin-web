@@ -352,6 +352,7 @@ export class VideoHearingsService {
                 participant.company = p.organisation;
                 participant.is_judge = p.case_role_name === 'Judge';
                 participant.linked_participants = this.mapLinkedParticipantResponseToLinkedParticipantModel(p.linked_participants);
+                participant.user_role_name = p.user_role_name;
                 participants.push(participant);
             });
         }
