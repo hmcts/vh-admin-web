@@ -36,11 +36,11 @@ java:
     Logging__LogLevel__System: debug
     Logging__LogLevel__Microsoft: debug
     AZUREAD__AUTHORITY: https://login.microsoftonline.com/fb6e0e22-0da3-4c35-972a-9d61eb256508
-    AZUREAD__POSTLOGOUTREDIRECTURI: "http://localhost:5400/logout"
+    AZUREAD__POSTLOGOUTREDIRECTURI: http://localhost:5400/logout
     AZUREAD__REDIRECTURI: http://localhost:5400/home
     TESTUSERSECRETS__TESTUSERNAMESTEM: "@hearings.reform.hmcts.net"
     VHSERVICES__ADMINWEBRESOURCEID: https://vh-admin-web.{{ .Values.global.environment }}.platform.hmcts.net
-    VHSERVICES__ADMINWEBURL: http://localhost:5400/"
+    VHSERVICES__ADMINWEBURL: http://localhost:5400/
     VHSERVICES__BOOKINGSAPIRESOURCEID: https://vh-bookings-api.{{ .Values.global.environment }}.platform.hmcts.net
     VHSERVICES__BOOKINGSAPIURL: https://vh-bookings-api.{{ .Values.global.environment }}.platform.hmcts.net/
     VHSERVICES__TESTAPIRESOURCEID: https://vh-test-api.{{ .Values.global.environment }}.platform.hmcts.net
@@ -54,4 +54,4 @@ java:
     KINLYCONFIGURATION__CONFERENCEPHONENUMBER: "01234567890"
     KINLYCONFIGURATION__JOINBYPHONEFROMDATE: ""
     WOWZACONFIGURATION__STORAGEACCOUNTNAME: vhwowza{{ .Values.global.environment }}
-    WOWZACONFIGURATION__STORAGECONTAINERNAME: "recordings"
+    WOWZACONFIGURATION__STORAGECONTAINERNAME: recordings
