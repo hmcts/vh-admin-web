@@ -36,8 +36,8 @@ java:
     Logging__LogLevel__System: debug
     Logging__LogLevel__Microsoft: debug
     AZUREAD__AUTHORITY: https://login.microsoftonline.com/fb6e0e22-0da3-4c35-972a-9d61eb256508
-    AZUREAD__POSTLOGOUTREDIRECTURI: http://localhost:5400/logout
-    AZUREAD__REDIRECTURI: http://localhost:5400/home
+    AZUREAD__POSTLOGOUTREDIRECTURI: https://vh-admin-web.{{ .Values.global.environment }}.platform.hmcts.net/logout
+    AZUREAD__REDIRECTURI: https://vh-admin-web.{{ .Values.global.environment }}.platform.hmcts.net/home
     TESTUSERSECRETS__TESTUSERNAMESTEM: "@hearings.reform.hmcts.net"
     VHSERVICES__ADMINWEBRESOURCEID: https://vh-admin-web.{{ .Values.global.environment }}.platform.hmcts.net
     VHSERVICES__ADMINWEBURL: https://vh-admin-web.{{ .Values.global.environment }}.platform.hmcts.net
