@@ -204,6 +204,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         const newJudge = AssignJudgeComponent.mapJudgeToModel(this.judge);
         this.hearing.participants = this.hearing.participants.filter(x => !x.is_judge);
         this.hearing.participants.unshift(newJudge);
+        this.hearing = Object.assign({}, this.hearing);
     }
 
     isJudgeDisplayNameSet(): boolean {

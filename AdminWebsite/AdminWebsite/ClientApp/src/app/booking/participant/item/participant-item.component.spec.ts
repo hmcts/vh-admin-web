@@ -113,7 +113,7 @@ describe('ParticipantItemComponent', () => {
     });
     it('should get judge email', () => {
         component.participant = { hearing_role_name: 'Judge', case_role_name: 'Judge', is_judge: true, is_exist_person: false };
-        const email = component.getJudgeEmail(component.participant);
+        const email = component.getJudgeEmail();
         expect(email).toBe('James.Doe@hmcts.net');
     });
     it('should get judge phone', () => {

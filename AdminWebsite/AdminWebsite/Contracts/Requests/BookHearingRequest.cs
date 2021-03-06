@@ -8,5 +8,6 @@ namespace AdminWebsite.Contracts.Requests
         public BookNewHearingRequest BookingDetails { get; set; }
         public bool IsMultiDay { get; set; }
         public MultiHearingRequest MultiHearingDetails { get; set; }
+        public OtherInformationDetails OtherInformationDetails { get; set; }
     }
 }

@@ -26,9 +26,13 @@ export class ParticipantItemComponent {
 
     constructor(private bookingService: BookingService, private logger: Logger, private router: Router) {}
 
-    getJudgeEmail(participant: ParticipantModel): string {
+    getJudgeUser(participant: ParticipantModel): string {
+        return participant.email;
+    }
+
+    getJudgeEmail(): string {
         const otherInformation = OtherInformationModel.init(this.hearing.other_information);
-        return otherInformation.judgeEmail ?? participant.email;
+        return otherInformation.judgeEmail;
     }
 
     getJudgePhone(participant: ParticipantModel): string {

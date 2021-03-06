@@ -50,6 +50,10 @@ export class HearingDetailsComponent {
     }
 
     getOtherInformationText(): string {
-        return JSON.parse(this.hearing?.OtherInformation).otherInformation;
+        try {
+            return JSON.parse(this.hearing?.OtherInformation).OtherInformation;
+        } catch (e) {
+            return this.hearing?.OtherInformation;
+        }
     }
 }
