@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { ParticipantModel } from 'src/app/common/model/participant.model';
 import { LinkedParticipantType } from 'src/app/services/clients/api-client';
 import { Logger } from 'src/app/services/logger';
+import { HearingModel } from '../../../common/model/hearing.model';
 
 @Component({
     selector: 'app-participant-list',
@@ -10,9 +11,7 @@ import { Logger } from 'src/app/services/logger';
     styleUrls: ['./participant-list.component.scss']
 })
 export class ParticipantListComponent implements OnInit, OnChanges {
-    private readonly loggerPrefix = '[ParticipantList] -';
-    @Input()
-    participants: ParticipantModel[] = [];
+    @Input() hearing: HearingModel;
 
     sortedParticipants: ParticipantModel[] = [];
 
@@ -55,19 +54,23 @@ export class ParticipantListComponent implements OnInit, OnChanges {
     }
 
     private sortParticipants() {
-        const judges = this.participants.filter(participant => participant.is_judge);
-        const panelMembersAndWingers = this.participants.filter(participant =>
+        if (!this.hearing.participants) {
+            this.sortedParticipants = [];
+            return;
+        }
+        const judges = this.hearing.participants.filter(participant => participant.is_judge);
+        const panelMembersAndWingers = this.hearing.participants.filter(participant =>
             ['Panel Member', 'Winger'].includes(participant.hearing_role_name)
         );
 
         const interpretersAndInterpretees = this.getInterpreterAndInterpretees();
-        const others = this.participants.filter(
+        const others = this.hearing.participants.filter(
             participant =>
                 !participant.is_judge &&
                 !['Observer', 'Panel Member', 'Winger'].includes(participant.hearing_role_name) &&
                 !interpretersAndInterpretees.includes(participant)
         );
-        const observers = this.participants.filter(participant => participant.hearing_role_name === 'Observer');
+        const observers = this.hearing.participants.filter(participant => participant.hearing_role_name === 'Observer');
 
         this.sortedParticipants = [...judges, ...panelMembersAndWingers, ...others, ...interpretersAndInterpretees, ...observers];
     }
@@ -76,14 +79,14 @@ export class ParticipantListComponent implements OnInit, OnChanges {
         const interpreterInterpreteeList: ParticipantModel[] = [];
         // get the interpreter and the corresponding interpretee names.
         this.clearInterpreteeList();
-        const interpreter = this.participants.filter(participant => participant.hearing_role_name === 'Interpreter');
+        const interpreter = this.hearing.participants.filter(participant => participant.hearing_role_name === 'Interpreter');
         interpreter.forEach(interpreterParticipant => {
             let interpretee: ParticipantModel;
             if (interpreterParticipant.interpreterFor) {
-                interpretee = this.participants.find(p => p.email === interpreterParticipant.interpreterFor);
+                interpretee = this.hearing.participants.find(p => p.email === interpreterParticipant.interpreterFor);
             } else if (interpreterParticipant.linked_participants) {
                 const linkedParticipants = interpreterParticipant.linked_participants;
-                interpretee = this.participants.find(p =>
+                interpretee = this.hearing.participants.find(p =>
                     linkedParticipants.some(lp => lp.linkedParticipantId === p.id && lp.linkType === LinkedParticipantType.Interpreter)
                 );
             }
@@ -99,7 +102,7 @@ export class ParticipantListComponent implements OnInit, OnChanges {
     }
 
     private clearInterpreteeList(): void {
-        const interpreteeList: ParticipantModel[] = this.participants.filter(participant => participant.is_interpretee);
+        const interpreteeList: ParticipantModel[] = this.hearing.participants.filter(participant => participant.is_interpretee);
         interpreteeList.forEach(i => {
             i.is_interpretee = false;
         });

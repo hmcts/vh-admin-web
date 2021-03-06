@@ -8,7 +8,7 @@ namespace AdminWebsite.AcceptanceTests.Data.TestData
         public HearingSchedule HearingSchedule { get; set; }
         public AssignJudge AssignJudge { get; set; }
         public AddParticipant AddParticipant { get; set; }
-        public OtherInformation OtherInformation { get; set; }
+        public OtherInformationDetails OtherInformationDetails { get; set; }
         public Questionnaire Questionnaire { get; set; }
         public BookingDetailsPage BookingDetailsPage { get; set; }
         public VideoAccessPoints VideoAccessPoints { get; set; }
@@ -51,9 +51,11 @@ namespace AdminWebsite.AcceptanceTests.Data.TestData
         public string Organisation { get; set; }
     }
 
-    public class OtherInformation
+    public class OtherInformationDetails
     {
-        public string Other { get; set; }
+        public string OtherInformation { get; set; }
+        public string JudgeEmail { get; set; }
+        public string JudgePhone { get; set; }
     }
 
     public class Questionnaire

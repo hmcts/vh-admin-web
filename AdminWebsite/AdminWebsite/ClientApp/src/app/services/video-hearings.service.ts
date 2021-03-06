@@ -23,13 +23,15 @@ import {
     BookHearingRequest,
     LinkedParticipantRequest,
     LinkedParticipantResponse,
-    LinkedParticipant
+    LinkedParticipant,
+    OtherInformationDetails
 } from './clients/api-client';
 import { HearingModel } from '../common/model/hearing.model';
 import { CaseModel } from '../common/model/case.model';
 import { ParticipantModel } from '../common/model/participant.model';
 import { EndpointModel } from '../common/model/endpoint.model';
 import { LinkedParticipantModel } from '../common/model/linked-participant.model';
+import { OtherInformationModel } from '../common/model/other-information.model';
 
 @Injectable({
     providedIn: 'root'
@@ -124,6 +126,13 @@ export class VideoHearingsService {
         const hearingRequest = this.mapHearing(newRequest);
         const bookingRequest = new BookHearingRequest({
             booking_details: hearingRequest
+        });
+        const otherInformationModel = OtherInformationModel.init(hearingRequest.other_information);
+        bookingRequest.booking_details.other_information = null;
+        bookingRequest.other_information_details = new OtherInformationDetails({
+            judge_email: otherInformationModel.judgeEmail,
+            judge_phone: otherInformationModel.judgePhone,
+            other_information: otherInformationModel.otherInformation
         });
 
         if (newRequest.multiDays) {

@@ -5,4 +5,4 @@ services:
     image: ${DOCKER_REGISTRY-}adminweb:latest
     build:
       context: .
-      dockerfile: AdminWebsite/AdminWebsite/Dockerfile
+      dockerfile: AdminWebsite/Dockerfile
