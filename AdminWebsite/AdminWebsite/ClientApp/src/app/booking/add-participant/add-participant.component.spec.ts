@@ -74,6 +74,7 @@ p1.hearing_role_name = 'Representative';
 p1.case_role_name = 'Applicant';
 p1.company = 'CN';
 p1.representee = 'representee';
+p1.user_role_name = 'Representative';
 
 const p2 = new ParticipantModel();
 p2.first_name = 'Jane';
@@ -87,6 +88,7 @@ p2.hearing_role_name = 'Representative';
 p2.case_role_name = 'Applicant';
 p2.company = 'CN';
 p2.representee = 'representee';
+p2.user_role_name = 'Representative';
 
 const p3 = new ParticipantModel();
 p3.first_name = 'Chris';
@@ -102,6 +104,7 @@ p3.company = 'CN';
 
 p3.id = '1234';
 p3.representee = 'representee';
+p3.user_role_name = 'Representative';
 
 const p4 = new ParticipantModel();
 p4.first_name = 'Test';
@@ -115,6 +118,7 @@ p4.hearing_role_name = 'Litigant in person';
 p4.case_role_name = 'Applicant';
 p4.company = 'CN';
 p4.id = '1234';
+p1.user_role_name = 'Individual';
 
 participants.push(p1);
 participants.push(p2);
@@ -522,7 +526,7 @@ describe('AddParticipantComponent', () => {
         component.handleContinueBooking();
         expect(component.showCancelPopup).toBeFalsy();
     });
-    it('should not list an interpreter in hearing roles if there are not interpretees in the participant list', fakeAsync(() => {
+    it('should not list an interpreter in hearing roles if there are no interpretees in the participant list', fakeAsync(() => {
         component.ngOnInit();
         component.ngAfterViewInit();
         tick(600);
@@ -551,11 +555,13 @@ describe('AddParticipantComponent', () => {
         participant01.first_name = 'firstName';
         participant01.last_name = 'lastName';
         participant01.hearing_role_name = 'Witness';
+        participant01.user_role_name = 'Individual';
         component.hearing.participants.push(participant01);
         participant01 = new ParticipantModel();
         participant01.first_name = 'firstName';
         participant01.last_name = 'lastName';
         participant01.hearing_role_name = 'Interpreter';
+        participant01.user_role_name = 'Individual';
         component.hearing.participants.push(participant01);
         component.setupHearingRoles('Claimant');
         tick(600);
