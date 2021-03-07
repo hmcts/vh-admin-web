@@ -26,9 +26,9 @@
   <VideoAccessPoints>
     <DisplayName>Endpoint 001 - CourtRoom1</DisplayName>
   </VideoAccessPoints>
-  <OtherInformation>
-    <Other>Other Info</Other>
-  </OtherInformation>
+  <OtherInformationDetails>
+    <OtherInformation>Other Info</OtherInformation>
+  </OtherInformationDetails>
   <Questionnaire>
     <SelfTestQuestion1>Could you see yourself on the screen in the camera window?</SelfTestQuestion1>
     <SelfTestQuestion2>Could you see the bar moving when you spoke?</SelfTestQuestion2>

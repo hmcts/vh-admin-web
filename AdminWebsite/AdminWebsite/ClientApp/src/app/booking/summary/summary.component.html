@@ -79,7 +79,7 @@
     ></app-booking-edit>
 
     <div class="govuk-form-group vhtable">
-      <div class="vh-text-break" id="otherInformation">{{ otherInformation }}</div>
+      <div class="vh-text-break" id="otherInformation">{{ otherInformation.otherInformation }}</div>
     </div>
 
     <div class="sk-top">
@@ -106,7 +106,7 @@
   </div>
 
   <div class="govuk-grid-column-one-half">
-    <app-participant-list [participants]="hearing.participants"></app-participant-list>
+    <app-participant-list [hearing]="hearing"></app-participant-list>
   </div>
 </div>
 

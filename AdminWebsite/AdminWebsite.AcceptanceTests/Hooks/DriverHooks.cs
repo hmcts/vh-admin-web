@@ -54,7 +54,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
 
             var sauceLabsOptions = new SauceLabsOptions()
             {
-                EnableLogging = EnableLogging(),
+                EnableLogging = false,
                 Name = scenario.ScenarioInfo.Title
             };
 
@@ -65,11 +65,6 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         public void SetTimeZone(TestContext context)
         {
             context.TimeZone = new TimeZone(context.WebConfig.SauceLabsConfiguration.RunningOnSauceLabs(), context.WebConfig.TestConfig.TargetOS);
-        }
-
-        private static bool EnableLogging()
-        {
-            return false;
         }
 
         [AfterScenario(Order = (int)HooksSequence.LogResultHooks)]
