@@ -10,7 +10,7 @@ import { SanitizeInputText } from '../../common/formatters/sanitize-input-text';
 import { HearingModel } from '../../common/model/hearing.model';
 import { ParticipantModel } from '../../common/model/participant.model';
 import { BookingService } from '../../services/booking.service';
-import { JudgeResponse } from '../../services/clients/api-client';
+import { HearingRole, JudgeResponse } from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
 import { BookingBaseComponentDirective as BookingBaseComponent } from '../booking-base/booking-base.component';
 
@@ -35,6 +35,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     isJudgeSelected = true;
     expanded = false;
     $subscriptions: Subscription[] = [];
+    isJudgeParticipantError = false;
 
     constructor(
         private fb: FormBuilder,
@@ -191,6 +192,15 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
             return;
         }
 
+        if (!this.validateJudgeAndJohMembers()) {
+            this.logger.warn(`${this.loggerPrefix} Judge could not be a panel member or winger in the same hearing.`);
+            this.isJudgeParticipantError = true;
+            this.failedSubmission = true;
+
+            return;
+
+        }
+
         if (this.form.valid) {
             this.logger.debug(`${this.loggerPrefix} Judge selection valid.`);
             this.failedSubmission = false;
@@ -278,6 +288,17 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
 
     toggle() {
         this.expanded = !this.expanded;
+    }
+
+    validateJudgeAndJohMembers(): boolean {
+        if (this.hearing?.participants.length > 0 && this.judgeName.value) {
+            const johMembers = this.hearing.participants.filter(x => x.hearing_role_name === 'Panel Member' || x.hearing_role_name === 'Winger');
+            if (johMembers?.length > 0) {
+                return johMembers.findIndex(x => x.username === this.judgeName.value) === -1;
+            }
+        }
+
+        return true;
     }
 
     ngOnDestroy() {
