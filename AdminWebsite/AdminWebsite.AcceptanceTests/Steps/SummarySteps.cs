@@ -140,6 +140,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void WhenTheUserRemovesInterpreter()
         {
             _browsers[_c.CurrentUser].Click(SummaryPage.RemoveParticipantLink(GetParticipantBy("Interpreter").Firstname));
+            Thread.Sleep(TimeSpan.FromSeconds(1));
             _browsers[_c.CurrentUser].Click(SummaryPage.RemoveParticipant);
             RemoveParticipant("Interpreter");
         }
