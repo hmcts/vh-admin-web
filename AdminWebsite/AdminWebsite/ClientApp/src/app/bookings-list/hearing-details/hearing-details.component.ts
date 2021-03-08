@@ -3,6 +3,7 @@ import { ParticipantDetailsModel } from 'src/app/common/model/participant-detail
 import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
 import { ActivatedRoute } from '@angular/router';
 import { Logger } from '../../services/logger';
+import { OtherInformationModel } from '../../common/model/other-information.model';
 
 @Component({
     selector: 'app-hearing-details',
@@ -51,7 +52,8 @@ export class HearingDetailsComponent {
 
     getOtherInformationText(): string {
         try {
-            return JSON.parse(this.hearing?.OtherInformation).OtherInformation;
+            const otherInfo = OtherInformationModel.init(this.hearing?.OtherInformation);
+            return otherInfo.otherInformation;
         } catch (e) {
             return this.hearing?.OtherInformation;
         }

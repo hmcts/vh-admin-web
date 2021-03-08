@@ -64,8 +64,8 @@
 
       <p class="govuk-body govuk-!-margin-bottom-5"></p>
 
-      <div [ngClass]="{ 'govuk-form-group--error': judgeEmailInvalid }">
-        <legend id="judgeEmail-error" *ngIf="judgeEmailInvalid">
+      <div [ngClass]="{ 'govuk-form-group--error': judgeEmailInvalid || !isValidEmail }">
+        <legend id="judgeEmail-error" *ngIf="judgeEmailInvalid || !isValidEmail">
           <span class="govuk-error-message">
             {{ constants.Error.EmailErrorMsg }}
           </span>

@@ -14,6 +14,7 @@ import { BookingService } from '../../services/booking.service';
 import { HearingRole, JudgeResponse } from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
 import { BookingBaseComponentDirective as BookingBaseComponent } from '../booking-base/booking-base.component';
+import { EmailValidationService } from 'src/app/booking/services/email-validation.service';
 
 @Component({
     selector: 'app-assign-judge',
@@ -44,13 +45,17 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     $subscriptions: Subscription[] = [];
     isJudgeParticipantError = false;
 
+    invalidPattern: string;
+    isValidEmail = true;
+
     constructor(
         private fb: FormBuilder,
         protected router: Router,
         protected hearingService: VideoHearingsService,
         private judgeService: JudgeDataService,
         protected bookingService: BookingService,
-        protected logger: Logger
+        protected logger: Logger,
+        private emailValidationService: EmailValidationService
     ) {
         super(bookingService, router, hearingService, logger);
     }
@@ -77,6 +82,9 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         this.checkForExistingRequest();
         this.loadJudges();
         this.initForm();
+
+        this.emailValidationService.getEmailPattern().then(x => (this.invalidPattern = x));
+
         super.ngOnInit();
     }
 
@@ -92,7 +100,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         this.populateFormFields(existingJudge);
 
         this.form = this.fb.group({
-            judgeName: [this.judge.display_name, Validators.required],
+            judgeName: [this.judge.email, Validators.required],
             judgeDisplayNameFld: this.judgeDisplayNameFld,
             judgeEmailFld: this.judgeEmailFld,
             judgePhoneFld: this.judgePhoneFld
@@ -141,8 +149,10 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         } else {
             this.logger.debug(`${this.loggerPrefix} Found judge in hearing. Populating existing selection.`);
             this.judge = new JudgeResponse(existingJudge);
+            this.otherInformationDetails = OtherInformationModel.init(this.hearing.other_information);
             this.canNavigate = true;
         }
+
         this.judgeDisplayNameFld = new FormControl(this.judge.display_name, {
             validators: [Validators.required, Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)],
             updateOn: 'blur'
@@ -235,6 +245,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         }
         const text = SanitizeInputText(this.judgeEmailFld.value);
         this.judgeEmailFld.setValue(text);
+        this.isValidEmail = text ? this.emailValidationService.validateEmail(this.judgeEmailFld.value, this.invalidPattern) : true;
     }
 
     changeTelephone() {
@@ -267,15 +278,16 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
             this.failedSubmission = true;
 
             return;
-
         }
 
-        if (this.form.valid) {
+        if (this.form.valid && this.isValidEmail) {
             this.logger.debug(`${this.loggerPrefix} Judge selection valid.`);
             this.failedSubmission = false;
             this.form.markAsPristine();
             this.hasSaved = true;
             this.changeDisplayName();
+            this.changeEmail();
+            this.changeTelephone();
             this.hearingService.updateHearingRequest(this.hearing);
             this.logger.debug(`${this.loggerPrefix} Updated hearing judge and recording selection`, { hearing: this.hearing });
             if (this.editMode) {
@@ -361,7 +373,9 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
 
     validateJudgeAndJohMembers(): boolean {
         if (this.hearing?.participants.length > 0 && this.judgeName.value) {
-            const johMembers = this.hearing.participants.filter(x => x.hearing_role_name === 'Panel Member' || x.hearing_role_name === 'Winger');
+            const johMembers = this.hearing.participants.filter(
+                x => x.hearing_role_name === 'Panel Member' || x.hearing_role_name === 'Winger'
+            );
             if (johMembers?.length > 0) {
                 return johMembers.findIndex(x => x.username === this.judgeName.value) === -1;
             }

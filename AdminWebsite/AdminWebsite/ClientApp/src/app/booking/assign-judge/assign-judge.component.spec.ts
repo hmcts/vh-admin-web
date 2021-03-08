@@ -20,6 +20,7 @@ import { ParticipantsListStubComponent } from '../../testing/stubs/participant-l
 import { JudgeDataService } from '../services/judge-data.service';
 import { AssignJudgeComponent } from './assign-judge.component';
 import { OtherInformationModel } from '../../common/model/other-information.model';
+import { EmailValidationService } from 'src/app/booking/services/email-validation.service';
 
 function initHearingRequest(): HearingModel {
     const participants: ParticipantModel[] = [];
@@ -94,13 +95,17 @@ let judgeDataServiceSpy: jasmine.SpyObj<JudgeDataService>;
 let routerSpy: jasmine.SpyObj<Router>;
 let bookingServiseSpy: jasmine.SpyObj<BookingService>;
 let loggerSpy: jasmine.SpyObj<Logger>;
+let emailValidationServiceSpy: jasmine.SpyObj<EmailValidationService>;
 
 describe('AssignJudgeComponent', () => {
     beforeEach(
         waitForAsync(() => {
             const newHearing = initHearingRequest();
             loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
-
+            emailValidationServiceSpy = jasmine.createSpyObj<EmailValidationService>('EmailValidationService', [
+                'getEmailPattern',
+                'validateEmail'
+            ]);
             videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
                 'getHearingTypes',
                 'getCurrentRequest',
@@ -109,6 +114,8 @@ describe('AssignJudgeComponent', () => {
                 'setBookingHasChanged'
             ]);
             videoHearingsServiceSpy.getCurrentRequest.and.returnValue(newHearing);
+            emailValidationServiceSpy.validateEmail.and.returnValue(true);
+            emailValidationServiceSpy.getEmailPattern.and.returnValue(Promise.resolve('hearing.net'));
 
             bookingServiseSpy = jasmine.createSpyObj<BookingService>('BookingService', ['resetEditMode', 'isEditMode', 'removeEditMode']);
 
@@ -120,6 +127,7 @@ describe('AssignJudgeComponent', () => {
                 providers: [
                     { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
                     { provide: JudgeDataService, useValue: judgeDataServiceSpy },
+                    { provide: EmailValidationService, useValue: emailValidationServiceSpy },
                     {
                         provide: Router,
                         useValue: {
@@ -377,9 +385,9 @@ describe('AssignJudgeComponent', () => {
         component.ngOnInit();
         component.addJudge('fakejudge@notavailable.com');
         expect().nothing();
-        expect(component.isJudgeParticipantError).toBe(false)
+        expect(component.isJudgeParticipantError).toBe(false);
     });
-     it('should set validation error to true if judge account has the same account as panel member', () => {
+    it('should set validation error to true if judge account has the same account as panel member', () => {
         const savedHearing = initHearingWithJOH();
         const panelMember = savedHearing.participants.find(x => x.hearing_role_name === 'Panel Member');
         const judge = savedHearing.participants.find(x => x.is_judge);
@@ -390,7 +398,7 @@ describe('AssignJudgeComponent', () => {
 
         component.saveJudge();
 
-        expect(component.isJudgeParticipantError).toBe(true)
+        expect(component.isJudgeParticipantError).toBe(true);
     });
     it('should set validation error to true if judge account has the same account as winger', () => {
         const savedHearing = initHearingWithJOH();
@@ -403,7 +411,7 @@ describe('AssignJudgeComponent', () => {
 
         component.saveJudge();
 
-        expect(component.isJudgeParticipantError).toBe(true)
+        expect(component.isJudgeParticipantError).toBe(true);
     });
     it('should set validation error to false if judge account has not the same account with winger or panel member', () => {
         const savedHearing = initHearingWithJOH();
@@ -413,7 +421,6 @@ describe('AssignJudgeComponent', () => {
 
         component.saveJudge();
 
-        expect(component.isJudgeParticipantError).toBe(false)
+        expect(component.isJudgeParticipantError).toBe(false);
     });
 });
-
