@@ -11,37 +11,39 @@
   tabindex="-1"
   data-module="error-summary"
 >
-    <h2 class="govuk-error-summary__title" id="error-summary-title">{{ isJudgeParticipantError ? 'There is a problem' : 'Please complete the missing information'}}</h2>
+  <h2 class="govuk-error-summary__title" id="error-summary-title">
+    {{ isJudgeParticipantError ? 'There is a problem' : 'Please complete the missing information' }}
+  </h2>
   <div class="govuk-error-summary__body">
-      <ul class="govuk-list govuk-error-summary__list">
-          <li *ngIf="judgeName.invalid">
-              <a (click)="goToDiv('judgeName-error')">Please select a courtroom account</a>
-          </li>
-          <li *ngIf="judgeDisplayNameInvalid">
-              <a (click)="goToDiv('judgeDisplayName-error')">{{ constants.Error.JudgeDisplayNameErrorMsg }}</a>
-          </li>
-          <li *ngIf="isJudgeParticipantError">
-              <a (click)="goToDiv('judgeDisplayName-error')">{{ constants.Error.JudgeParticipantErrorMsg }}</a>
-          </li>
-      </ul>
+    <ul class="govuk-list govuk-error-summary__list">
+      <li *ngIf="judgeName.invalid">
+        <a (click)="goToDiv('judgeName-error')">Please select a courtroom account</a>
+      </li>
+      <li *ngIf="judgeDisplayNameInvalid">
+        <a (click)="goToDiv('judgeDisplayName-error')">{{ constants.Error.JudgeDisplayNameErrorMsg }}</a>
+      </li>
+      <li *ngIf="isJudgeParticipantError">
+        <a (click)="goToDiv('judgeDisplayName-error')">{{ constants.Error.JudgeParticipantErrorMsg }}</a>
+      </li>
+    </ul>
   </div>
 </div>
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-one-half">
     <form [formGroup]="form" class="govuk-form-group" (ngSubmit)="saveJudge()">
-        <div [ngClass]="judgeNameInvalid || !isJudgeSelected || isJudgeParticipantError ? 'govuk-form-group--error' : 'govuk-form-group'">
-            <label class="govuk-label" for="judgeName"> Judge or courtroom account </label>
-            <select class="govuk-select" id="judgeName" formControlName="judgeName">
-                <option *ngFor="let judge of availableJudges" [ngValue]="judge.email">{{ judge.email }}</option>
-            </select>
-            <div *ngIf="judgeNameInvalid || !isJudgeSelected" class="alert alert-danger">
-                <span id="judgeName-error" class="govuk-error-message"> Please assign a courtroom account to this hearing </span>
-            </div>
-            <div *ngIf="isJudgeParticipantError" class="alert alert-danger">
-                <span id="judgeName-error" class="govuk-error-message"> Please select an alternative account</span>
-            </div>
+      <div [ngClass]="judgeNameInvalid || !isJudgeSelected || isJudgeParticipantError ? 'govuk-form-group--error' : 'govuk-form-group'">
+        <label class="govuk-label" for="judgeName"> Judge or courtroom account </label>
+        <select class="govuk-select" id="judgeName" formControlName="judgeName">
+          <option *ngFor="let judge of availableJudges" [ngValue]="judge.email">{{ judge.email }}</option>
+        </select>
+        <div *ngIf="judgeNameInvalid || !isJudgeSelected" class="alert alert-danger">
+          <span id="judgeName-error" class="govuk-error-message"> Please assign a courtroom account to this hearing </span>
         </div>
+        <div *ngIf="isJudgeParticipantError" class="alert alert-danger">
+          <span id="judgeName-error" class="govuk-error-message"> Please select an alternative account</span>
+        </div>
+      </div>
 
       <p class="govuk-body govuk-!-margin-bottom-5"></p>
 
@@ -64,7 +66,7 @@
 
       <p class="govuk-body govuk-!-margin-bottom-5"></p>
 
-      <div [ngClass]="{ 'govuk-form-group--error': judgeEmailInvalid || !isValidEmail }">
+      <div [ngClass]="{ 'govuk-form-group--error': judgeEmailInvalid || !isValidEmail }" *ngIf="!isCourtroomAccount">
         <legend id="judgeEmail-error" *ngIf="judgeEmailInvalid || !isValidEmail">
           <span class="govuk-error-message">
             {{ constants.Error.EmailErrorMsg }}

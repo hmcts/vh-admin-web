@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { JudgeDataService } from 'src/app/booking/services/judge-data.service';
 import { Constants } from 'src/app/common/constants';
@@ -55,7 +55,8 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         private judgeService: JudgeDataService,
         protected bookingService: BookingService,
         protected logger: Logger,
-        private emailValidationService: EmailValidationService
+        private emailValidationService: EmailValidationService,
+        private route: ActivatedRoute
     ) {
         super(bookingService, router, hearingService, logger);
     }
@@ -83,7 +84,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         this.loadJudges();
         this.initForm();
 
-        this.emailValidationService.getEmailPattern().then(x => (this.invalidPattern = x));
+        this.invalidPattern = this.route.snapshot.data['emailPattern'];
 
         super.ngOnInit();
     }
@@ -194,6 +195,10 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
 
     get judgePhoneInvalid() {
         return this.judgePhoneFld.invalid && (this.judgePhoneFld.dirty || this.judgePhoneFld.touched || this.failedSubmission);
+    }
+
+    get isCourtroomAccount() {
+        return !this.emailValidationService.hasCourtroomAccountPattern(this.judgeName.value, this.invalidPattern);
     }
 
     public addJudge(judgeEmail: string) {

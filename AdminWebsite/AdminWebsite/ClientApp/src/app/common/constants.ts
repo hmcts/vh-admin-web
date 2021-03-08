@@ -27,7 +27,8 @@ export const Constants = {
         CompanyNameErrorMsg: 'Please enter a valid company name',
         OtherInformationErrorMsg: 'Please enter a valid other information text',
         InterpreterForErrorMsg: 'Please select a participant',
-        JudgeParticipantErrorMsg: 'The judge or courtroom account that you have entered cannot be the same as the panel member email address. Please enter an alternative account.'
+        JudgeParticipantErrorMsg:
+            'The judge or courtroom account that you have entered cannot be the same as the panel member email address. Please enter an alternative account.'
     },
     Contact: {
         phone: '0300 303 0655',

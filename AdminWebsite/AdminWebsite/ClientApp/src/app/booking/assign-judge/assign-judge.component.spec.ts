@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
-import { Router } from '@angular/router';
+import { ActivatedRouteSnapshot, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { of } from 'rxjs';
 import { Constants } from 'src/app/common/constants';
@@ -21,6 +21,7 @@ import { JudgeDataService } from '../services/judge-data.service';
 import { AssignJudgeComponent } from './assign-judge.component';
 import { OtherInformationModel } from '../../common/model/other-information.model';
 import { EmailValidationService } from 'src/app/booking/services/email-validation.service';
+import { ActivatedRoute } from '@angular/router';
 
 function initHearingRequest(): HearingModel {
     const participants: ParticipantModel[] = [];
@@ -103,7 +104,7 @@ describe('AssignJudgeComponent', () => {
             const newHearing = initHearingRequest();
             loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
             emailValidationServiceSpy = jasmine.createSpyObj<EmailValidationService>('EmailValidationService', [
-                'getEmailPattern',
+                'hasCourtroomAccountPattern',
                 'validateEmail'
             ]);
             videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
@@ -115,7 +116,7 @@ describe('AssignJudgeComponent', () => {
             ]);
             videoHearingsServiceSpy.getCurrentRequest.and.returnValue(newHearing);
             emailValidationServiceSpy.validateEmail.and.returnValue(true);
-            emailValidationServiceSpy.getEmailPattern.and.returnValue(Promise.resolve('hearing.net'));
+            emailValidationServiceSpy.hasCourtroomAccountPattern.and.returnValue(true);
 
             bookingServiseSpy = jasmine.createSpyObj<BookingService>('BookingService', ['resetEditMode', 'isEditMode', 'removeEditMode']);
 
@@ -137,8 +138,35 @@ describe('AssignJudgeComponent', () => {
                     },
                     { provide: BookingService, useValue: bookingServiseSpy },
                     { provide: Logger, useValue: loggerSpy },
-                    RecordingGuardService
+                    RecordingGuardService,
+                    // { provide: ActivatedRoute, userClass: activatedRoute }
+                    {
+                        provide: ActivatedRoute,
+                        useValue: {
+                            data: {
+                                subscribe: (fn: (value) => void) =>
+                                    fn({
+                                        some: ''
+                                    })
+                            },
+                            params: {
+                                subscribe: (fn: (value) => void) =>
+                                    fn({
+                                        some: 0
+                                    })
+                            },
+                            snapshot: {
+                                data: { emailPattern: 'courtroom.test' },
+                                url: [
+                                    {
+                                        path: 'fake'
+                                    }
+                                ]
+                            }
+                        }
+                    }
                 ],
+
                 declarations: [
                     AssignJudgeComponent,
                     BreadcrumbStubComponent,
