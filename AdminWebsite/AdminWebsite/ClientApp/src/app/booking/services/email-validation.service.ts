@@ -4,7 +4,6 @@ import { Injectable } from '@angular/core';
     providedIn: 'root'
 })
 export class EmailValidationService {
-
     constructor() {}
 
     validateEmail(email: string, invalidPattern: string): boolean {

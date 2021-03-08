@@ -5,7 +5,7 @@ import { ConfigService } from 'src/app/services/config.service';
 
 @Injectable()
 export class EmailPatternResolver implements Resolve<string> {
-    constructor(private configService: ConfigService) { }
+    constructor(private configService: ConfigService) {}
 
     resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<string> {
         return from(this.getData());
