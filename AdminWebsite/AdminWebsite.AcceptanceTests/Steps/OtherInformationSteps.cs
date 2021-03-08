@@ -4,6 +4,7 @@ using System.Threading;
 using AcceptanceTests.Common.Driver.Drivers;
 using AcceptanceTests.Common.Driver.Helpers;
 using AcceptanceTests.Common.Test.Steps;
+using AdminWebsite.AcceptanceTests.Data.TestData;
 using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.AcceptanceTests.Pages;
 using AdminWebsite.TestAPI.Client;
@@ -25,10 +26,11 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [When(@"the user completes the other information form")]
         public void ProgressToNextPage()
         {
-                Thread.Sleep(TimeSpan.FromSeconds(1));
+            Thread.Sleep(TimeSpan.FromSeconds(1));
             SetOtherInformation();
             _browsers[_c.CurrentUser].Clear(OtherInformationPage.OtherInformationTextfield);
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(OtherInformationPage.OtherInformationTextfield).SendKeys(_c.Test.OtherInformation);
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(OtherInformationPage.OtherInformationTextfield).SendKeys(_c.Test.TestData.OtherInformationDetails.OtherInformation);
+            
             ClickNext();
         }
 
@@ -42,10 +44,12 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         private void SetOtherInformation()
         {
-            _c.Test.OtherInformation = _c.Test.OtherInformation != null ? "Updated other information" : _c.Test.TestData.OtherInformation.Other;
+            var otherInformationText = "Updated other information";
+            _c.Test.TestData.OtherInformationDetails ??= new OtherInformationDetails() { OtherInformation = otherInformationText};
+            _c.Test.TestData.OtherInformationDetails.OtherInformation ??= otherInformationText;
         }
 
-        public void ClickNext()
+        private void ClickNext()
         {
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(OtherInformationPage.NextButton);
             _browsers[_c.CurrentUser].Click(OtherInformationPage.NextButton);

@@ -15,7 +15,9 @@
       <div>
         <strong>Judge</strong>
       </div>
-      <div class="judge-row__email" id="judge-name">{{ participant.email }}</div>
+      <div class="judge-row__email" id="judge-user">{{ getJudgeUser(participant) }}</div>
+      <div class="judge-row__email" id="judge-email">{{ getJudgeEmail() }}</div>
+      <div class="judge-row__phone" id="judge-phone">{{ getJudgePhone(participant) }}</div>
     </div>
 
     <div *ngIf="isSummaryPage" class="judge-row__actions">

@@ -1,10 +1,12 @@
-import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { HearingRoles } from 'src/app/common/model/hearing-roles.model';
 import { ParticipantModel } from 'src/app/common/model/participant.model';
 import { BookingService } from 'src/app/services/booking.service';
 import { Logger } from 'src/app/services/logger';
 import { PageUrls } from 'src/app/shared/page-url.constants';
+import { OtherInformationModel } from '../../../common/model/other-information.model';
+import { HearingModel } from '../../../common/model/hearing.model';
 
 @Component({
     selector: 'app-participant-item',
@@ -15,6 +17,7 @@ export class ParticipantItemComponent {
     private readonly loggerPrefix = '[ParticipantList - Item] -';
 
     @Input() participant: ParticipantModel;
+    @Input() hearing: HearingModel;
     @Input() canEdit = false;
     @Input() isSummaryPage = false;
 
@@ -23,12 +26,26 @@ export class ParticipantItemComponent {
 
     constructor(private bookingService: BookingService, private logger: Logger, private router: Router) {}
 
+    getJudgeUser(participant: ParticipantModel): string {
+        return participant.email;
+    }
+
+    getJudgeEmail(): string {
+        const otherInformation = OtherInformationModel.init(this.hearing.other_information);
+        return otherInformation.judgeEmail;
+    }
+
+    getJudgePhone(participant: ParticipantModel): string {
+        const otherInformation = OtherInformationModel.init(this.hearing.other_information);
+        return otherInformation.judgePhone ?? participant.phone;
+    }
+
     editJudge() {
         this.bookingService.setEditMode();
     }
 
     editParticipant(participant: ParticipantModel) {
-        this.bookingService.setEditMode();
+        this.editJudge();
         if (this.isSummaryPage) {
             this.bookingService.setParticipantEmail(participant.email);
             this.logger.debug(`${this.loggerPrefix} Navigating back to participants to edit`, { participant: participant.email });

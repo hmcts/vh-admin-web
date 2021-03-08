@@ -21,6 +21,7 @@ namespace AdminWebsite
         }
 
         public IConfiguration Configuration { get; }
+        private Settings Settings { get; set; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -43,6 +44,9 @@ namespace AdminWebsite
 
         private void RegisterSettings(IServiceCollection services)
         {
+            Settings = Configuration.Get<Settings>();
+            services.AddSingleton(Settings);
+
             services.Configure<SecuritySettings>(options => Configuration.Bind("AzureAd", options));
             services.Configure<ServiceSettings>(options => Configuration.Bind("VhServices", options));
             services.Configure<TestUserSecrets>(options => Configuration.Bind("TestUserSecrets", options));
@@ -71,7 +75,11 @@ namespace AdminWebsite
             }
 
             app.UseRouting();
-            app.UseHttpsRedirection();
+            if (!Settings.DisableHttpsRedirection)
+            {
+                app.UseHttpsRedirection();
+            }
+
             app.UseStaticFiles();
             if (!env.IsDevelopment())
             {

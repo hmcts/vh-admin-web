@@ -3,28 +3,26 @@ import { AbstractControl, Validators } from '@angular/forms';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { of, Subscription } from 'rxjs';
 import { SharedModule } from 'src/app/shared/shared.module';
-import { BreadcrumbStubComponent } from 'src/app/testing/stubs/breadcrumb-stub';
-import { CancelPopupStubComponent } from 'src/app/testing/stubs/cancel-popup-stub';
-import { ConfirmationPopupStubComponent } from 'src/app/testing/stubs/confirmation-popup-stub';
 import { SearchServiceStub } from 'src/app/testing/stubs/service-service-stub';
 import { Constants } from '../../common/constants';
 import { HearingModel } from '../../common/model/hearing.model';
 import { ParticipantModel } from '../../common/model/participant.model';
 import { PartyModel } from '../../common/model/party.model';
-import { DiscardConfirmPopupComponent } from '../../popups/discard-confirm-popup/discard-confirm-popup.component';
 import { BookingService } from '../../services/booking.service';
 import { CaseAndHearingRolesResponse, ClientSettingsResponse, HearingRole } from '../../services/clients/api-client';
 import { ConfigService } from '../../services/config.service';
 import { Logger } from '../../services/logger';
 import { SearchService } from '../../services/search.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
-import { RemovePopupStubComponent } from '../../testing/stubs/remove-popup-stub';
 import { SearchEmailComponent } from '../search-email/search-email.component';
 import { ParticipantService } from '../services/participant.service';
 import { AddParticipantComponent } from './add-participant.component';
 import { HearingRoleModel } from '../../common/model/hearing-role.model';
 import { ParticipantListComponent } from '../participant';
-import { LinkedParticipantModel, LinkedParticipantType } from 'src/app/common/model/linked-participant.model';
+import { LinkedParticipantModel } from 'src/app/common/model/linked-participant.model';
+import { BookingModule } from '../booking.module';
+import { PopupModule } from 'src/app/popups/popup.module';
+import { TestingModule } from 'src/app/testing/testing.module';
 
 let component: AddParticipantComponent;
 let fixture: ComponentFixture<AddParticipantComponent>;
@@ -76,6 +74,7 @@ p1.hearing_role_name = 'Representative';
 p1.case_role_name = 'Applicant';
 p1.company = 'CN';
 p1.representee = 'representee';
+p1.user_role_name = 'Representative';
 
 const p2 = new ParticipantModel();
 p2.first_name = 'Jane';
@@ -89,6 +88,7 @@ p2.hearing_role_name = 'Representative';
 p2.case_role_name = 'Applicant';
 p2.company = 'CN';
 p2.representee = 'representee';
+p2.user_role_name = 'Representative';
 
 const p3 = new ParticipantModel();
 p3.first_name = 'Chris';
@@ -104,6 +104,7 @@ p3.company = 'CN';
 
 p3.id = '1234';
 p3.representee = 'representee';
+p3.user_role_name = 'Representative';
 
 const p4 = new ParticipantModel();
 p4.first_name = 'Test';
@@ -117,6 +118,7 @@ p4.hearing_role_name = 'Litigant in person';
 p4.case_role_name = 'Applicant';
 p4.company = 'CN';
 p4.id = '1234';
+p1.user_role_name = 'Individual';
 
 participants.push(p1);
 participants.push(p2);
@@ -524,7 +526,7 @@ describe('AddParticipantComponent', () => {
         component.handleContinueBooking();
         expect(component.showCancelPopup).toBeFalsy();
     });
-    it('should not list an interpreter in hearing roles if there are not interpretees in the participant list', fakeAsync(() => {
+    it('should not list an interpreter in hearing roles if there are no interpretees in the participant list', fakeAsync(() => {
         component.ngOnInit();
         component.ngAfterViewInit();
         tick(600);
@@ -553,11 +555,13 @@ describe('AddParticipantComponent', () => {
         participant01.first_name = 'firstName';
         participant01.last_name = 'lastName';
         participant01.hearing_role_name = 'Witness';
+        participant01.user_role_name = 'Individual';
         component.hearing.participants.push(participant01);
         participant01 = new ParticipantModel();
         participant01.first_name = 'firstName';
         participant01.last_name = 'lastName';
         participant01.hearing_role_name = 'Interpreter';
+        participant01.user_role_name = 'Individual';
         component.hearing.participants.push(participant01);
         component.setupHearingRoles('Claimant');
         tick(600);
@@ -674,17 +678,7 @@ describe('AddParticipantComponent edit mode', () => {
             bookingServiceSpy = jasmine.createSpyObj<BookingService>(['isEditMode', 'getParticipantEmail', 'resetEditMode']);
 
             TestBed.configureTestingModule({
-                declarations: [
-                    AddParticipantComponent,
-                    BreadcrumbStubComponent,
-                    SearchEmailComponent,
-                    ParticipantListComponent,
-                    CancelPopupStubComponent,
-                    ConfirmationPopupStubComponent,
-                    RemovePopupStubComponent,
-                    DiscardConfirmPopupComponent
-                ],
-                imports: [SharedModule, RouterModule.forChild([])],
+                imports: [SharedModule, RouterModule.forChild([]), BookingModule, PopupModule, TestingModule],
                 providers: [
                     { provide: SearchService, useClass: SearchServiceStub },
                     { provide: Router, useValue: routerSpy },
