@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
-import { ActivatedRouteSnapshot, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { of } from 'rxjs';
 import { Constants } from 'src/app/common/constants';
@@ -139,7 +139,6 @@ describe('AssignJudgeComponent', () => {
                     { provide: BookingService, useValue: bookingServiseSpy },
                     { provide: Logger, useValue: loggerSpy },
                     RecordingGuardService,
-                    // { provide: ActivatedRoute, userClass: activatedRoute }
                     {
                         provide: ActivatedRoute,
                         useValue: {
