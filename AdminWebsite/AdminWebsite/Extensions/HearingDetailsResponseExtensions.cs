@@ -26,7 +26,7 @@ namespace AdminWebsite.Extensions
         {
             if (hearing.Other_information != null)
             {
-                var otherInformationDetails = GetOtherInformationObjectFromString(hearing.Other_information);
+                var otherInformationDetails = GetOtherInformationObject(hearing.Other_information);
                 if (otherInformationDetails.JudgeEmail != null)
                 {
                     return true;
@@ -39,7 +39,7 @@ namespace AdminWebsite.Extensions
         {
             if (hearing.Other_information != null)
             {
-                var otherInformationDetails = GetOtherInformationObjectFromString(hearing.Other_information);
+                var otherInformationDetails = GetOtherInformationObject(hearing.Other_information);
                 if (otherInformationDetails.JudgePhone != null)
                 {
                     return true;
@@ -50,17 +50,24 @@ namespace AdminWebsite.Extensions
 
         public static string GetJudgeContactEmail(this HearingDetailsResponse hearing)
         {
-            return GetOtherInformationObjectFromString(hearing.Other_information).JudgeEmail;
+            return GetOtherInformationObject(hearing.Other_information).JudgeEmail;
         }
         
         public static string GetJudgePhone(this HearingDetailsResponse hearing)
         {
-            return GetOtherInformationObjectFromString(hearing.Other_information).JudgePhone;
+            return GetOtherInformationObject(hearing.Other_information).JudgePhone;
         }
 
-        private static OtherInformationDetails GetOtherInformationObjectFromString(string otherInformation)
+        private static OtherInformationDetails GetOtherInformationObject(string otherInformation)
         {
-            return JsonConvert.DeserializeObject<OtherInformationDetails>(otherInformation);
+            try
+            {
+                return JsonConvert.DeserializeObject<OtherInformationDetails>(otherInformation);
+            }
+            catch (Exception e)
+            {
+                return new OtherInformationDetails {OtherInformation = otherInformation};
+            }
         }
     }
 }
