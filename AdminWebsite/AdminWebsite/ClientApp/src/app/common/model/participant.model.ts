@@ -20,4 +20,5 @@ export class ParticipantModel {
     linked_participants?: LinkedParticipantModel[];
     interpretee_name?: string | undefined;
     is_interpretee?: boolean | undefined;
+    user_role_name?: string | undefined;
 }

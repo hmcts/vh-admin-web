@@ -91,10 +91,12 @@ export class OtherInformationComponent extends BookingBaseComponent implements O
     private checkForExistingRequest() {
         this.hearing = this.videoHearingService.getCurrentRequest();
         this.otherInformationDetails = OtherInformationModel.init(this.hearing.other_information);
+        this.otherInformationText = this.otherInformationDetails.otherInformation;
     }
 
     next() {
         this.hearing.audio_recording_required = this.audioChoice.value;
+        this.otherInformationOnBlur();
         this.hearing.other_information = JSON.stringify(this.otherInformationDetails);
         this.videoHearingService.updateHearingRequest(this.hearing);
         this.logger.debug(`${this.loggerPrefix} Updated audio recording status and hearing other information.`, { hearing: this.hearing });

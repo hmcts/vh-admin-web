@@ -4,7 +4,6 @@ import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { BookingService } from 'src/app/services/booking.service';
 import { Logger } from 'src/app/services/logger';
-import { ParticipantListComponent } from '../list/participant-list.component';
 import { ParticipantItemComponent } from './participant-item.component';
 
 const router = {
@@ -46,7 +45,7 @@ describe('ParticipantItemComponent', () => {
         fixture = TestBed.createComponent(ParticipantItemComponent);
         debugElement = fixture.debugElement;
         component = debugElement.componentInstance;
-        const other_information = { judgeEmail: 'James.Doe@email.com', judgePhone: '123456789' };
+        const other_information = { judgeEmail: 'James.Doe@hmcts.net', judgePhone: '123456789' };
         component.hearing = {
             updated_date: new Date(),
             questionnaire_not_required: true,
@@ -114,8 +113,8 @@ describe('ParticipantItemComponent', () => {
     });
     it('should get judge email', () => {
         component.participant = { hearing_role_name: 'Judge', case_role_name: 'Judge', is_judge: true, is_exist_person: false };
-        const email = component.getJudgeEmail(component.participant);
-        expect(email).toBe('James.Doe@email.com');
+        const email = component.getJudgeEmail();
+        expect(email).toBe('James.Doe@hmcts.net');
     });
     it('should get judge phone', () => {
         component.participant = { hearing_role_name: 'Judge', case_role_name: 'Judge', is_judge: true, is_exist_person: false };

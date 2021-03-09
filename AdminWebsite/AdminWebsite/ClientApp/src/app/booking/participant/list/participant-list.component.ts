@@ -1,9 +1,9 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ParticipantModel } from 'src/app/common/model/participant.model';
+import { LinkedParticipantType } from 'src/app/services/clients/api-client';
 import { Logger } from 'src/app/services/logger';
 import { HearingModel } from '../../../common/model/hearing.model';
-import { LinkedParticipantType } from '../../../common/model/linked-participant.model';
 
 @Component({
     selector: 'app-participant-list',
@@ -54,6 +54,10 @@ export class ParticipantListComponent implements OnInit, OnChanges {
     }
 
     private sortParticipants() {
+        if (!this.hearing.participants) {
+            this.sortedParticipants = [];
+            return;
+        }
         const judges = this.hearing.participants.filter(participant => participant.is_judge);
         const panelMembersAndWingers = this.hearing.participants.filter(participant =>
             ['Panel Member', 'Winger'].includes(participant.hearing_role_name)
