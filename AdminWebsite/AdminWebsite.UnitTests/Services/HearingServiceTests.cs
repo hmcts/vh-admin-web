@@ -95,6 +95,18 @@ namespace AdminWebsite.UnitTests.Services
                     x => x.CreateNewNotificationAsync(It.IsAny<AddNotificationRequest>()),
                     Times.Exactly(4));
         }
+        
+        [Test]
+        public async Task should_send_multiday_confirmation_email_to_all_participants()
+        {
+            _hearing.Other_information = JsonConvert.SerializeObject(new OtherInformationDetails {JudgeEmail = "judge@hmcts.net"}); 
+            await _service.SendMultiDayHearingConfirmationEmail(_hearing, 2);
+
+            _mocker.Mock<INotificationApiClient>()
+                .Verify(
+                    x => x.CreateNewNotificationAsync(It.IsAny<AddNotificationRequest>()),
+                    Times.Exactly(4));
+        }
 
         [Test]
         public async Task should_not_send_amendment_email_when_hearing_is_generic_case_type()
