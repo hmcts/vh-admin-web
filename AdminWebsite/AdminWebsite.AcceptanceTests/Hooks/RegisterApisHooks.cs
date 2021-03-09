@@ -16,6 +16,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             context.Api = new TestApiManager(context.WebConfig.VhServices.TestApiUrl, context.Token);
             ConfigurationManager.VerifyConfigValuesSet(context.Api);
             context.NotifyClient = new NotificationClient(context.WebConfig.NotifyConfiguration.ApiKey);
+            context.NotificationApi = new NotificationApiManager(context.WebConfig.VhServices.NotificationApiUrl, context.NotificationToken);
         }
     }
 }

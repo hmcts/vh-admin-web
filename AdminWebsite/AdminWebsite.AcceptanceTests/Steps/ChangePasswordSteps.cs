@@ -7,6 +7,7 @@ using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.AcceptanceTests.Pages;
 using AdminWebsite.TestAPI.Client;
 using FluentAssertions;
+using NotificationApi.Contract;
 using TechTalk.SpecFlow;
 
 namespace AdminWebsite.AcceptanceTests.Steps
@@ -32,6 +33,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void WhenTheUserResetsTheParticipantsPassword()
         {
             _participant = Users.GetIndividualUser(_c.Users);
+            _c.Test.PasswordResetNotificationCount = _c.NotificationApi.PollForPasswordResetNotificationCount(_participant.Contact_email);
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(ChangePasswordPage.UsernameTextfield).SendKeys(_participant.Username);
             _browsers[_c.CurrentUser].Click(ChangePasswordPage.UpdateButton);
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(ChangePasswordPage.PasswordHasBeenChangedMessage).Displayed.Should().BeTrue();
@@ -51,11 +53,13 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(LoginPage.CurrentPassword).Displayed.Should().BeTrue();
         }
 
-        [Then(@"the changed password message can be dismissed")]
+        [Then(@"the changed password message can be dismissed and notification sent")]
         public void ThenTheChangedPasswordMessageCanBeDismissed()
         {
             _browsers[_c.CurrentUser].Click(ChangePasswordPage.OkButton);
             _browsers[_c.CurrentUser].Driver.WaitUntilElementNotVisible(ChangePasswordPage.PasswordHasBeenChangedMessage);
+            var count = _c.NotificationApi.PollForPasswordResetNotificationCount(_participant.Contact_email);
+            count.Should().Be(_c.Test.PasswordResetNotificationCount + 1);
         }
 
         [When(@"the user changes their password")]

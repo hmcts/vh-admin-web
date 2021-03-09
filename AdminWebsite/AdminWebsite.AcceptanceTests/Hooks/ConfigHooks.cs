@@ -146,6 +146,9 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             context.Token = await ConfigurationManager.GetBearerToken(
                 context.WebConfig.AzureAdConfiguration, context.WebConfig.VhServices.TestApiResourceId);
             context.Token.Should().NotBeNullOrEmpty();
+            context.NotificationToken = await ConfigurationManager.GetBearerToken(
+                context.WebConfig.AzureAdConfiguration, context.WebConfig.VhServices.NotificationApiResourceId);
+            context.NotificationToken.Should().NotBeNullOrEmpty();
         }
     }
 }

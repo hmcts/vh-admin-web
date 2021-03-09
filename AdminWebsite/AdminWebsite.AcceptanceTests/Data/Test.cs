@@ -20,5 +20,6 @@ namespace AdminWebsite.AcceptanceTests.Data
         public ConferenceDetailsResponse ConferenceResponse { get; set; }
         public HearingDetailsResponse HearingResponse { get; set; }
         public VideoAccessPoints VideoAccessPoints { get; set; }
+        public int PasswordResetNotificationCount { get; set; }
     }
 }
