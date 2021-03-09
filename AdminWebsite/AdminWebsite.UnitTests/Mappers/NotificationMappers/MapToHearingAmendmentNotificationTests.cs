@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Mappers;
+using AdminWebsite.Models;
 using FluentAssertions;
+using Newtonsoft.Json;
 using NotificationApi.Contract;
 using NUnit.Framework;
 
@@ -30,6 +32,8 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             var caseName = "cse test";
             var caseNumber = "MBFY/17364";
             var participant = InitParticipant("Judge");
+            _hearing.Other_information = JsonConvert.SerializeObject(new OtherInformationDetails
+                {JudgeEmail = "judge@hmcts.net", JudgePhone = "123456789"});
 
             var expectedParameters = new Dictionary<string, string>
             {

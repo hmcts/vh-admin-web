@@ -20,6 +20,8 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             var expectedNotificationType = NotificationType.HearingConfirmationJudge;
             var participant = InitParticipant("Judge");
             var hearing = InitHearing();
+            hearing.Other_information = JsonConvert.SerializeObject(new OtherInformationDetails
+                {JudgeEmail = "judge@hmcts.net", JudgePhone = "123456789"});
             
             var expectedParameters = new Dictionary<string, string>
             {

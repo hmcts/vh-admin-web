@@ -3,13 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AdminWebsite.BookingsAPI.Client;
+using AdminWebsite.Models;
 using AdminWebsite.Services;
 using Autofac.Extras.Moq;
 using FizzWare.NBuilder;
 using Moq;
+using Newtonsoft.Json;
 using NotificationApi.Client;
 using NotificationApi.Contract.Requests;
 using NUnit.Framework;
+using CaseResponse = AdminWebsite.BookingsAPI.Client.CaseResponse;
 
 namespace AdminWebsite.UnitTests.Services
 {
@@ -28,48 +31,74 @@ namespace AdminWebsite.UnitTests.Services
         }
 
         [Test]
-        public async Task should_send_confirmation_email_to_all_participants_except_a_judge()
+        public async Task should_send_confirmation_email_to_all_participants_except_a_judge_if_no_judge_email_exists()
         {
             var judge = _hearing.Participants.First(x => x.User_role_name == "Judge");
+            _hearing.Other_information = JsonConvert.SerializeObject(new OtherInformationDetails {JudgeEmail = null});
             await _service.SendHearingConfirmationEmail(_hearing);
 
             _mocker.Mock<INotificationApiClient>()
                 .Verify(
                     x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.ParticipantId != judge.Id)),
                     Times.Exactly(3));
+        }
+        
+        [Test]
+        public async Task should_send_confirmation_email_to_all_participants()
+        {
+            _hearing.Other_information = JsonConvert.SerializeObject(new OtherInformationDetails {JudgeEmail = "judge@hmcts.net"});
+            await _service.SendHearingConfirmationEmail(_hearing);
+
+            _mocker.Mock<INotificationApiClient>()
+                .Verify(
+                    x => x.CreateNewNotificationAsync(It.IsAny<AddNotificationRequest>()),
+                    Times.Exactly(4));
         }
 
         [Test]
         public async Task should_not_send_confirmation_email_when_hearing_is_generic_case_type()
         {
             _hearing.Case_type_name = "Generic";
-            var judge = _hearing.Participants.First(x => x.User_role_name == "Judge");
             await _service.SendHearingConfirmationEmail(_hearing);
 
             _mocker.Mock<INotificationApiClient>()
                 .Verify(
-                    x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.ParticipantId != judge.Id)),
+                    x => x.CreateNewNotificationAsync(It.IsAny<AddNotificationRequest>()),
                     Times.Never);
         }
         
         [Test]
-        public async Task should_send_amendment_email_to_all_participants_except_a_judge()
+        public async Task should_send_amendment_email_to_all_participants_except_a_judge_if_no_email_exists()
         {
-            var judge = _hearing.Participants.First(x => x.User_role_name == "Judge");
+            _hearing.Other_information = JsonConvert.SerializeObject(new OtherInformationDetails {JudgeEmail = null});
+
             var secondHearing = InitHearing();
             secondHearing.Scheduled_date_time = _hearing.Scheduled_date_time.AddDays(1).AddHours(3).AddMinutes(20);
             await _service.SendHearingUpdateEmail(_hearing, secondHearing);
 
             _mocker.Mock<INotificationApiClient>()
                 .Verify(
-                    x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.ParticipantId != judge.Id)),
+                    x => x.CreateNewNotificationAsync(It.IsAny<AddNotificationRequest>()),
                     Times.Exactly(3));
+        }
+        
+        [Test]
+        public async Task should_send_amendment_email_to_all_participants()
+        {
+            var secondHearing = InitHearing();
+            secondHearing.Other_information = JsonConvert.SerializeObject(new OtherInformationDetails {JudgeEmail = "judge@hmcts.net"});
+            secondHearing.Scheduled_date_time = _hearing.Scheduled_date_time.AddDays(1).AddHours(3).AddMinutes(20);
+            await _service.SendHearingUpdateEmail(_hearing, secondHearing);
+
+            _mocker.Mock<INotificationApiClient>()
+                .Verify(
+                    x => x.CreateNewNotificationAsync(It.IsAny<AddNotificationRequest>()),
+                    Times.Exactly(4));
         }
 
         [Test]
         public async Task should_not_send_amendment_email_when_hearing_is_generic_case_type()
         {
-            var judge = _hearing.Participants.First(x => x.User_role_name == "Judge");
             var secondHearing = InitHearing();
             _hearing.Case_type_name = "Generic";
             secondHearing.Case_type_name = "Generic";
@@ -78,7 +107,7 @@ namespace AdminWebsite.UnitTests.Services
 
             _mocker.Mock<INotificationApiClient>()
                 .Verify(
-                    x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.ParticipantId != judge.Id)),
+                    x => x.CreateNewNotificationAsync(It.IsAny<AddNotificationRequest>()),
                     Times.Never);
         }
         
