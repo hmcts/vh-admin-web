@@ -7,7 +7,7 @@ using AcceptanceTests.Common.Test.Steps;
 using AdminWebsite.AcceptanceTests.Data.TestData;
 using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.AcceptanceTests.Pages;
-using AdminWebsite.TestAPI.Client;
+using TestApi.Contract.Dtos;
 using TechTalk.SpecFlow;
 
 namespace AdminWebsite.AcceptanceTests.Steps
@@ -16,8 +16,8 @@ namespace AdminWebsite.AcceptanceTests.Steps
     public class OtherInformationSteps : ISteps
     {
         private readonly TestContext _c;
-        private readonly Dictionary<User, UserBrowser> _browsers;
-        public OtherInformationSteps(TestContext testContext, Dictionary<User, UserBrowser> browsers)
+        private readonly Dictionary<UserDto, UserBrowser> _browsers;
+        public OtherInformationSteps(TestContext testContext, Dictionary<UserDto, UserBrowser> browsers)
         {
             _c = testContext;
             _browsers = browsers;
