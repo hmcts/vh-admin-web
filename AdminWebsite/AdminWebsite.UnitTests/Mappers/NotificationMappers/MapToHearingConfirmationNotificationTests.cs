@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Mappers;
+using AdminWebsite.Models;
 using FluentAssertions;
+using Newtonsoft.Json;
 using NotificationApi.Contract;
 using NUnit.Framework;
+using CaseResponse = AdminWebsite.BookingsAPI.Client.CaseResponse;
 
 namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
 {
@@ -139,7 +142,7 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
                 Id = Guid.NewGuid(),
                 Cases = new List<CaseResponse> {@case},
                 Scheduled_date_time = new DateTime(2020, 10, 12, 13, 10, 0),
-                // TODO: add judge contact email in other info
+                Other_information = JsonConvert.SerializeObject(new OtherInformationDetails {JudgeEmail = "judge@hmcts.net"})
             };
         }
 
