@@ -3,7 +3,7 @@ using AcceptanceTests.Common.Driver.Drivers;
 using AcceptanceTests.Common.Driver.Helpers;
 using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.AcceptanceTests.Pages;
-using AdminWebsite.TestAPI.Client;
+using TestApi.Contract.Dtos;
 using FluentAssertions;
 using TechTalk.SpecFlow;
 
@@ -13,8 +13,8 @@ namespace AdminWebsite.AcceptanceTests.Steps
     public sealed class CommonSteps
     {
         private readonly TestContext _c;
-        private readonly Dictionary<User, UserBrowser> _browsers;
-        public CommonSteps(TestContext testContext, Dictionary<User, UserBrowser> browsers)
+        private readonly Dictionary<UserDto, UserBrowser> _browsers;
+        public CommonSteps(TestContext testContext, Dictionary<UserDto, UserBrowser> browsers)
         {
             _c = testContext;
             _browsers = browsers;
