@@ -136,7 +136,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
                 {Journey.Questionnaire, new QuestionnaireJourney()},
                 {Journey.EditParticipantName, new EditParticipantNameJourney()}
             };
-            journeys[userJourney].VerifyUserIsApplicableToJourney(_c.CurrentUser.User_type);
+            journeys[userJourney].VerifyUserIsApplicableToJourney(_c.CurrentUser.UserType);
             journeys[userJourney].VerifyDestinationIsInThatJourney(endPage);
             _c.Route = journeys[userJourney].GetNextPage(GetRouteBasedOn(userJourney));
             var journey = journeys[userJourney].Journey();

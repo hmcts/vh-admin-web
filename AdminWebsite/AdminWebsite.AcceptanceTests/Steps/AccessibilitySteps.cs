@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using AcceptanceTests.Common.Driver.Drivers;
 using AdminWebsite.AcceptanceTests.Helpers;
-using AdminWebsite.TestAPI.Client;
+using TestApi.Contract.Dtos;
 using FluentAssertions;
 using Selenium.Axe;
 using TechTalk.SpecFlow;
@@ -12,9 +12,9 @@ namespace AdminWebsite.AcceptanceTests.Steps
     public class AccessibilitySteps
     {
         private readonly TestContext _c;
-        private readonly Dictionary<User, UserBrowser> _browsers;
+        private readonly Dictionary<UserDto, UserBrowser> _browsers;
 
-        public AccessibilitySteps(TestContext testContext, Dictionary<User, UserBrowser> browsers)
+        public AccessibilitySteps(TestContext testContext, Dictionary<UserDto, UserBrowser> browsers)
         {
             _c = testContext;
             _browsers = browsers;

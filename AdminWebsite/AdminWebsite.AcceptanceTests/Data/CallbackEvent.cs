@@ -1,5 +1,5 @@
 ﻿using System;
-using AdminWebsite.TestAPI.Client;
+using VideoApi.Contract.Enums;
 
 
 namespace AdminWebsite.AcceptanceTests.Data
