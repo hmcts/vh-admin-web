@@ -2,34 +2,32 @@
 	As a registered video hearings user
 	I would like to login and Logout
 	So that I can access and sign out of the application
-
+	
 @Ignore
 Scenario: Case Admin login
-	Given a new browser is open for a Case Admin
-	When the user logs in with valid credentials
-	Then the user is on the Dashboard page
-	When the user attempts to logout
-	Then the user should be navigated to sign in screen
+	Given a Case Admin is on the login page
+	When they attempt to login with valid credentials
+	Then they should be on the Dashboard page
+	And they should be able to logout
 
 Scenario: Video Hearings Officer login
-	Given a new browser is open for a Video Hearings Officer
-	When the user logs in with valid credentials
-	Then the user is on the Dashboard page
-	When the user attempts to logout
-	Then the user should be navigated to sign in screen
+	Given a Video Hearings Officer is on the login page
+	When they attempt to login with valid credentials
+	Then they should be on the Dashboard page
+	And they should be able to logout
 
 Scenario: Judge login denied
-	Given a new browser is open for a Judge
-	When the user logs in with valid credentials
-	Then the user is on the Unauthorised page
+	Given a Judge is on the login page
+	When they attempt to login with valid credentials
+	Then they should be on the Unauthorised page
 
 Scenario: Panel member login denied
-	Given a new browser is open for a Panel Member
-	When the user logs in with valid credentials
-	Then the user is on the Unauthorised page
+	Given a Panel Member is on the login page
+	When they attempt to login with valid credentials
+	Then they should be on the Unauthorised page
 
 @Winger
 Scenario: Winger login denied
-	Given a new browser is open for a Winger
-	When the user logs in with valid credentials
-	Then the user is on the Unauthorised page
+	Given a Winger is on the login page
+	When they attempt to login with valid credentials
+	Then they should be on the Unauthorised page

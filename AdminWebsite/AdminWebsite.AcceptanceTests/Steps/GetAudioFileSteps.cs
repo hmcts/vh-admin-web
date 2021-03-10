@@ -60,16 +60,11 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(GetAudioFilePage.ResultsVenue(hearing.Id)).Text.Trim().Should().Be($"{hearing.HearingVenueName} {hearing.HearingRoomName}");
         }
 
-        [When(@"I attempt to get the link")]
-        public void WhenIAttemptToGetTheLink()
+        [Then(@"the link can be retrieved")]
+        public void ThenTheLinkCanBeRetrieved()
         {
             _browsers[_c.CurrentUser].Click(GetAudioFilePage.GetLinkButton);
             _browsers[_c.CurrentUser].Click(GetAudioFilePage.CopyLinkButton(0));
-        }
-
-        [Then(@"the link is retrieved")]
-        public void ThenTheLinkIsRetrieved()
-        {
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(GetAudioFilePage.LinkCopiedSuccessMessage(0)).Displayed.Should().BeTrue();
         }
     }
