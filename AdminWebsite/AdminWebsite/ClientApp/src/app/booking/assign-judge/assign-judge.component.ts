@@ -335,6 +335,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
                     userResponse.email = this.constants.PleaseSelect;
                     userResponse.display_name = '';
                     this.availableJudges.unshift(userResponse);
+                    this.initForm();
                 },
                 error => this.onErrorLoadJudges(error)
             )
