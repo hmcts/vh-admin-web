@@ -4,9 +4,10 @@ using AcceptanceTests.Common.Driver.Helpers;
 using AcceptanceTests.Common.Test.Steps;
 using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.AcceptanceTests.Pages;
-using AdminWebsite.TestAPI.Client;
+using TestApi.Contract.Dtos;
 using FluentAssertions;
 using TechTalk.SpecFlow;
+using TestApi.Contract.Enums;
 
 namespace AdminWebsite.AcceptanceTests.Steps
 {
@@ -14,8 +15,8 @@ namespace AdminWebsite.AcceptanceTests.Steps
     public class DashboardSteps : ISteps
     {
         private readonly TestContext _c;
-        private readonly Dictionary<User, UserBrowser> _browsers;
-        public DashboardSteps(TestContext testContext, Dictionary<User, UserBrowser> browsers)
+        private readonly Dictionary<UserDto, UserBrowser> _browsers;
+        public DashboardSteps(TestContext testContext, Dictionary<UserDto, UserBrowser> browsers)
         {
             _c = testContext;
             _browsers = browsers;
@@ -72,7 +73,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         private void OnlyVhosCanSeeTheQuestionnaireResults()
         {
-            if (_c.CurrentUser.User_type == UserType.VideoHearingsOfficer)
+            if (_c.CurrentUser.UserType == UserType.VideoHearingsOfficer)
             {
                 _browsers[_c.CurrentUser].Driver.WaitUntilVisible(DashboardPage.QuestionnaireResultsPanel).Displayed.Should().BeTrue();
             }
@@ -84,7 +85,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         private void OnlyVhosCanSeeThePasswordReset()
         {
-            if (_c.CurrentUser.User_type == UserType.VideoHearingsOfficer)
+            if (_c.CurrentUser.UserType == UserType.VideoHearingsOfficer)
             {
                 _browsers[_c.CurrentUser].Driver.WaitUntilVisible(DashboardPage.ChangePasswordPanel).Displayed.Should().BeTrue();
             }
@@ -96,7 +97,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         private void OnlyVhosCanSeeTheGetAudioFile()
         {
-            if (_c.CurrentUser.User_type == UserType.VideoHearingsOfficer)
+            if (_c.CurrentUser.UserType == UserType.VideoHearingsOfficer)
             {
                 _browsers[_c.CurrentUser].Driver.WaitUntilVisible(DashboardPage.GetAudioFilePanel).Displayed.Should().BeTrue();
             }

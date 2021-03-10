@@ -8,9 +8,10 @@ using AcceptanceTests.Common.Driver.Helpers;
 using AdminWebsite.AcceptanceTests.Data;
 using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.AcceptanceTests.Pages;
-using AdminWebsite.TestAPI.Client;
+using TestApi.Contract.Dtos;
 using FluentAssertions;
 using TechTalk.SpecFlow;
+using VideoApi.Contract.Responses;
 
 namespace AdminWebsite.AcceptanceTests.Steps
 {
@@ -18,9 +19,9 @@ namespace AdminWebsite.AcceptanceTests.Steps
     public class GetAudioFileSteps
     {
         private readonly TestContext _c;
-        private readonly Dictionary<User, UserBrowser> _browsers;
+        private readonly Dictionary<UserDto, UserBrowser> _browsers;
 
-        public GetAudioFileSteps(TestContext c, Dictionary<User, UserBrowser> browsers)
+        public GetAudioFileSteps(TestContext c, Dictionary<UserDto, UserBrowser> browsers)
         {
             _c = c;
             _browsers = browsers;
@@ -34,8 +35,8 @@ namespace AdminWebsite.AcceptanceTests.Steps
             var response = _c.Api.GetConferenceByConferenceId(_c.Test.ConferenceResponse.Id);
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             var conference = RequestHelper.Deserialise<ConferenceDetailsResponse>(response.Content);
-            conference.Started_date_time.Should().NotBeNull();
-            conference.Closed_date_time.Should().NotBeNull();
+            conference.StartedDateTime.Should().NotBeNull();
+            conference.ClosedDateTime.Should().NotBeNull();
             _c.Test.ConferenceResponse = conference;
         }
 
@@ -52,23 +53,18 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             var hearing = _c.Test.HearingResponse;
             var caseDetails = hearing.Cases.First();
-            var date = _c.TimeZone.Adjust(hearing.Scheduled_date_time).Date.ToString(DateFormats.AudioScheduledDate);
+            var date = _c.TimeZone.Adjust(hearing.ScheduledDateTime).Date.ToString(DateFormats.AudioScheduledDate);
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(GetAudioFilePage.ResultsCaseNumber(hearing.Id)).Text.Trim().Should().Be(caseDetails.Number);
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(GetAudioFilePage.ResultsScheduledTime(hearing.Id)).Text.Trim().Should().Be(date);
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(GetAudioFilePage.ResultsCaseName(hearing.Id)).Text.Trim().Should().Be(caseDetails.Name);
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(GetAudioFilePage.ResultsVenue(hearing.Id)).Text.Trim().Should().Be($"{hearing.Hearing_venue_name} {hearing.Hearing_room_name}");
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(GetAudioFilePage.ResultsVenue(hearing.Id)).Text.Trim().Should().Be($"{hearing.HearingVenueName} {hearing.HearingRoomName}");
         }
 
-        [When(@"I attempt to get the link")]
-        public void WhenIAttemptToGetTheLink()
+        [Then(@"the link can be retrieved")]
+        public void ThenTheLinkCanBeRetrieved()
         {
             _browsers[_c.CurrentUser].Click(GetAudioFilePage.GetLinkButton);
             _browsers[_c.CurrentUser].Click(GetAudioFilePage.CopyLinkButton(0));
-        }
-
-        [Then(@"the link is retrieved")]
-        public void ThenTheLinkIsRetrieved()
-        {
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(GetAudioFilePage.LinkCopiedSuccessMessage(0)).Displayed.Should().BeTrue();
         }
     }

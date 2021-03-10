@@ -10,10 +10,11 @@ using AcceptanceTests.Common.Test.Steps;
 using AdminWebsite.AcceptanceTests.Data;
 using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.AcceptanceTests.Pages;
-using AdminWebsite.TestAPI.Client;
+using TestApi.Contract.Dtos;
 using FluentAssertions;
 using OpenQA.Selenium;
 using TechTalk.SpecFlow;
+using TestApi.Contract.Enums;
 
 namespace AdminWebsite.AcceptanceTests.Steps
 {
@@ -24,12 +25,12 @@ namespace AdminWebsite.AcceptanceTests.Steps
         private const string RepresentingText = "Representative for";
         private const string InterpreterText = "Interpreting for";
         private readonly TestContext _c;
-        private readonly Dictionary<User, UserBrowser> _browsers;
+        private readonly Dictionary<UserDto, UserBrowser> _browsers;
         private string _individualDisplayName = RepresentingText;
         private readonly CommonSharedSteps _commonSharedSteps;
         private readonly BookingDetailsSteps _bookingDetailsSteps;
 
-        public AddParticipantSteps(TestContext testContext, Dictionary<User, UserBrowser> browsers, 
+        public AddParticipantSteps(TestContext testContext, Dictionary<UserDto, UserBrowser> browsers, 
             CommonSharedSteps commonSharedSteps, BookingDetailsSteps bookingDetailsSteps)
         {
             _c = testContext;
@@ -103,7 +104,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             var rep = UserToUserAccountMapper.Map(repUser);
             rep.CaseRoleName = Party.Claimant.Name;
             rep.HearingRoleName = PartyRole.Representative.Name;
-            rep.Representee = _c.Users.First(x => x.User_type == UserType.Individual).Display_name;
+            rep.Representee = _c.Users.First(x => x.UserType == UserType.Individual).DisplayName;
             _c.Test.HearingParticipants.Add(rep);
             SetParty(rep.CaseRoleName);
             SetRole(rep.HearingRoleName);

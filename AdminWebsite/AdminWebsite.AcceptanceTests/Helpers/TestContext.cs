@@ -6,7 +6,7 @@ using AcceptanceTests.Common.Driver.Drivers;
 using AdminWebsite.AcceptanceTests.Configuration;
 using AdminWebsite.AcceptanceTests.Data;
 using AdminWebsite.AcceptanceTests.Pages;
-using AdminWebsite.TestAPI.Client;
+using TestApi.Contract.Dtos;
 using Notify.Interfaces;
 
 namespace AdminWebsite.AcceptanceTests.Helpers
@@ -15,13 +15,13 @@ namespace AdminWebsite.AcceptanceTests.Helpers
     {
         public TestApiManager Api { get; set; }
         public AzureStorageManager AzureStorage { get; set; }
-        public User CurrentUser { get; set; }
+        public UserDto CurrentUser { get; set; }
         public DriverSetup Driver { get; set; }
         public Page Route { get; set; }
         public Test Test { get; set; }
         public TimeZone TimeZone { get; set; }
         public string Token { get; set; }
-        public List<User> Users { get; set; }
+        public List<UserDto> Users { get; set; }
         public AdminWebConfig WebConfig { get; set; }
         public IAsyncNotificationClient NotifyClient { get; set; }
     }
