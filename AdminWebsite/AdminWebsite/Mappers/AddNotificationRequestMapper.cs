@@ -75,15 +75,8 @@ namespace AdminWebsite.Mappers
                 notificationType = NotificationType.HearingAmendmentJudge;
                 parameters.Add("judge", participant.Display_name);
                 parameters.Add("courtroom account username", participant.Username);
-                if (hearing.DoesJudgeEmailExist())
-                {
-                    participant.Contact_email = hearing.GetJudgeContactEmail();
-                }
-
-                if (hearing.DoesJudgePhoneExist())
-                {
-                    participant.Telephone_number = hearing.GetJudgePhone();
-                }
+                participant.Contact_email = hearing.GetJudgeContactEmail();
+                participant.Telephone_number = hearing.GetJudgePhone();
             }
             else if (participant.User_role_name.Contains("Judicial Office Holder", StringComparison.InvariantCultureIgnoreCase))
             {
@@ -134,15 +127,8 @@ namespace AdminWebsite.Mappers
                 notificationType = NotificationType.HearingConfirmationJudge;
                 parameters.Add("judge", participant.Display_name);
                 parameters.Add("courtroom account username", participant.Username);
-                if (hearing.DoesJudgeEmailExist())
-                {
-                    participant.Contact_email = hearing.GetJudgeContactEmail();
-                }
-
-                if (hearing.DoesJudgePhoneExist())
-                {
-                    participant.Telephone_number = hearing.GetJudgePhone();
-                }
+                participant.Contact_email = hearing.GetJudgeContactEmail();
+                participant.Telephone_number = hearing.GetJudgePhone();
             }
             else if (participant.User_role_name.Contains("Judicial Office Holder", StringComparison.InvariantCultureIgnoreCase))
             {
@@ -194,15 +180,6 @@ namespace AdminWebsite.Mappers
                 notificationType = NotificationType.HearingConfirmationJudgeMultiDay;
                 parameters.Add("judge", participant.Display_name);
                 parameters.Add("courtroom account username", participant.Username);
-                if (hearing.DoesJudgeEmailExist())
-                {
-                    participant.Contact_email = hearing.GetJudgeContactEmail();
-                }
-
-                if (hearing.DoesJudgePhoneExist())
-                {
-                    participant.Telephone_number = hearing.GetJudgePhone();
-                }
             }
             else if (participant.User_role_name.Contains("Judicial Office Holder",
                 StringComparison.InvariantCultureIgnoreCase))
