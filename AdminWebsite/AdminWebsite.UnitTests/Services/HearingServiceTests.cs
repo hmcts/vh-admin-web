@@ -31,28 +31,15 @@ namespace AdminWebsite.UnitTests.Services
         }
 
         [Test]
-        public async Task should_send_confirmation_email_to_all_participants_except_a_judge_if_no_judge_email_exists()
+        public async Task should_send_confirmation_email_to_all_participants_except_judge()
         {
             var judge = _hearing.Participants.First(x => x.User_role_name == "Judge");
-            _hearing.Other_information = JsonConvert.SerializeObject(new OtherInformationDetails {JudgeEmail = null});
             await _service.SendHearingConfirmationEmail(_hearing);
 
             _mocker.Mock<INotificationApiClient>()
                 .Verify(
                     x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.ParticipantId != judge.Id)),
                     Times.Exactly(3));
-        }
-        
-        [Test]
-        public async Task should_send_confirmation_email_to_all_participants()
-        {
-            _hearing.Other_information = JsonConvert.SerializeObject(new OtherInformationDetails {JudgeEmail = "judge@hmcts.net"});
-            await _service.SendHearingConfirmationEmail(_hearing);
-
-            _mocker.Mock<INotificationApiClient>()
-                .Verify(
-                    x => x.CreateNewNotificationAsync(It.IsAny<AddNotificationRequest>()),
-                    Times.Exactly(4));
         }
 
         [Test]
@@ -99,13 +86,13 @@ namespace AdminWebsite.UnitTests.Services
         [Test]
         public async Task should_send_multiday_confirmation_email_to_all_participants()
         {
-            _hearing.Other_information = JsonConvert.SerializeObject(new OtherInformationDetails {JudgeEmail = "judge@hmcts.net"}); 
+            var judge = _hearing.Participants.First(x => x.User_role_name == "Judge");
             await _service.SendMultiDayHearingConfirmationEmail(_hearing, 2);
 
             _mocker.Mock<INotificationApiClient>()
                 .Verify(
-                    x => x.CreateNewNotificationAsync(It.IsAny<AddNotificationRequest>()),
-                    Times.Exactly(4));
+                    x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.ParticipantId != judge.Id)),
+                    Times.Exactly(3));
         }
 
         [Test]
@@ -133,6 +120,32 @@ namespace AdminWebsite.UnitTests.Services
                 .Verify(
                     x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.ParticipantId != judge.Id)),
                     Times.Exactly(3));
+        }
+        
+        [Test]
+        public async Task should_send_confirmation_email_to_judge_when_reminder_is_sent_to_participants()
+        {
+            var judge = _hearing.Participants.First(x => x.User_role_name == "Judge");
+            _hearing.Other_information = JsonConvert.SerializeObject(new OtherInformationDetails {JudgeEmail = "judge@hmcts.net"});
+            await _service.SendHearingReminderEmail(_hearing);
+
+            _mocker.Mock<INotificationApiClient>()
+                .Verify(
+                    x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.ParticipantId == judge.Id)),
+                    Times.Exactly(1));
+        }
+        
+        [Test]
+        public async Task should_not_send_confirmation_email_to_judge_when_reminder_is_sent_to_participants_if_no_judge_email_exists()
+        {
+            var judge = _hearing.Participants.First(x => x.User_role_name == "Judge");
+            _hearing.Other_information = JsonConvert.SerializeObject(new OtherInformationDetails {JudgeEmail = null});
+            await _service.SendHearingReminderEmail(_hearing);
+
+            _mocker.Mock<INotificationApiClient>()
+                .Verify(
+                    x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.ParticipantId == judge.Id)),
+                    Times.Exactly(0));
         }
 
         [Test]

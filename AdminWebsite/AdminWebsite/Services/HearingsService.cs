@@ -180,23 +180,13 @@ namespace AdminWebsite.Services
             {
                 return;
             }
-            
-            List<AddNotificationRequest> requests;
-            var participantsToEmail = participants ?? hearing.Participants;
 
-            if (hearing.DoesJudgeEmailExist())
-            {
-                requests = participantsToEmail
-                    .Select(participant => AddNotificationRequestMapper.MapToHearingConfirmationNotification(hearing, participant))
-                    .ToList();
-            }
-            else
-            {
-                requests = participantsToEmail
-                    .Where(x => !x.User_role_name.Contains("Judge", StringComparison.CurrentCultureIgnoreCase))
-                    .Select(participant => AddNotificationRequestMapper.MapToHearingConfirmationNotification(hearing, participant))
-                    .ToList();   
-            }
+            var participantsToEmail = participants ?? hearing.Participants;
+            
+            var requests = participantsToEmail
+                .Where(x => !x.User_role_name.Contains("Judge", StringComparison.CurrentCultureIgnoreCase))
+                .Select(participant => AddNotificationRequestMapper.MapToHearingConfirmationNotification(hearing, participant))
+                .ToList();   
             
             foreach (var request in requests)
             {
@@ -210,23 +200,12 @@ namespace AdminWebsite.Services
             {
                 return;
             }
-           
-            List<AddNotificationRequest> requests;
-
-            if (hearing.DoesJudgeEmailExist())
-            {
-                requests = hearing.Participants
-                    .Select(participant => AddNotificationRequestMapper.MapToMultiDayHearingConfirmationNotification(hearing, participant, days))
-                    .ToList();
-            }
-            else
-            {
-                requests = hearing.Participants
-                    .Where(x => !x.User_role_name.Contains("Judge", StringComparison.CurrentCultureIgnoreCase))
-                    .Select(participant => AddNotificationRequestMapper.MapToMultiDayHearingConfirmationNotification(hearing, participant, days))
-                    .ToList(); 
-            }
-
+     
+            var requests = hearing.Participants
+                .Where(x => !x.User_role_name.Contains("Judge", StringComparison.CurrentCultureIgnoreCase))
+                .Select(participant => AddNotificationRequestMapper.MapToMultiDayHearingConfirmationNotification(hearing, participant, days))
+                .ToList(); 
+            
             foreach (var request in requests)
             {
                 await _notificationApiClient.CreateNewNotificationAsync(request);
@@ -240,6 +219,21 @@ namespace AdminWebsite.Services
                 return;
             }
             
+            var participantsToEmail = hearing.Participants;
+            
+            if (hearing.DoesJudgeEmailExist())
+            {
+                var judgeConfirmationRequest = participantsToEmail
+                    .Where(x => x.User_role_name.Contains("Judge", StringComparison.CurrentCultureIgnoreCase))
+                    .Select(participant => AddNotificationRequestMapper.MapToHearingConfirmationNotification(hearing, participant))
+                    .ToList();   
+                
+                foreach (var request in judgeConfirmationRequest)
+                {
+                    await _notificationApiClient.CreateNewNotificationAsync(request);
+                }
+            }
+
             var requests = hearing.Participants
                 .Where(x => !x.User_role_name.Contains("Judge", StringComparison.CurrentCultureIgnoreCase))
                 .Select(participant => AddNotificationRequestMapper.MapToHearingReminderNotification(hearing, participant))
