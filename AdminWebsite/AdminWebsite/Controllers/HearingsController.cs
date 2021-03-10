@@ -97,9 +97,21 @@ namespace AdminWebsite.Controllers
 
                 if (request.IsMultiDay)
                 {
-                    var listOfDates = DateListMapper.GetListOfWorkingDates(request.MultiHearingDetails.StartDate,
-                        request.MultiHearingDetails.EndDate);
-                    var totalDays = listOfDates.Select(x => x.DayOfYear).Distinct().Count() + 1; // include start date
+                    IList<DateTime> listOfDates;
+                    int totalDays;
+                    
+                    if (request.MultiHearingDetails.HearingDates != null && request.MultiHearingDetails.HearingDates.Any())
+                    {
+                        listOfDates = request.MultiHearingDetails.HearingDates;
+                        totalDays = listOfDates.Select(x => x.DayOfYear).Distinct().Count();
+                    }
+                    else
+                    {
+                        listOfDates = DateListMapper.GetListOfWorkingDates(request.MultiHearingDetails.StartDate,
+                            request.MultiHearingDetails.EndDate);   
+                        totalDays = listOfDates.Select(x => x.DayOfYear).Distinct().Count() + 1; // include start date
+                    }
+                    
                     await _hearingsService.SendMultiDayHearingConfirmationEmail(hearingDetailsResponse, totalDays);
                 }
                 else
@@ -140,13 +152,14 @@ namespace AdminWebsite.Controllers
         public async Task<IActionResult> CloneHearing(Guid hearingId, MultiHearingRequest hearingRequest)
         {
             _logger.LogDebug("Attempting to clone hearing {Hearing}", hearingId);
-            var listOfDates = DateListMapper.GetListOfWorkingDates(hearingRequest.StartDate, hearingRequest.EndDate);
-            if (listOfDates.Count == 0)
+            var hearingDates = hearingRequest.HearingDates != null && hearingRequest.HearingDates.Any() ? hearingRequest.HearingDates.Skip(1).ToList() : DateListMapper.GetListOfWorkingDates(hearingRequest.StartDate, hearingRequest.EndDate);
+
+            if (!hearingDates.Any())
             {
                 _logger.LogWarning("No working dates provided to clone to");
                 return BadRequest();
             }
-            var cloneHearingRequest = new CloneHearingRequest { Dates = listOfDates };
+            var cloneHearingRequest = new CloneHearingRequest { Dates = hearingDates };
             try
             {
                 _logger.LogDebug("Sending request to clone hearing to Bookings API");

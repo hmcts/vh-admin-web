@@ -14,7 +14,6 @@ export abstract class BookingBaseComponentDirective implements OnInit {
     buttonAction: string;
     editMode = false;
     form: FormGroup;
-    hearingDates: FormArray;
     
     protected constructor(
         protected bookingService: BookingService,

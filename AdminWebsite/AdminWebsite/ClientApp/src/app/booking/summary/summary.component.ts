@@ -59,6 +59,8 @@ export class SummaryComponent implements OnInit, OnDestroy {
     multiDays: boolean;
     endHearingDate: Date;
 
+    groupedHearingDates = {};
+
     @ViewChild(ParticipantListComponent, { static: true })
     participantsListComponent: ParticipantListComponent;
     showConfirmRemoveInterpretee = false;
@@ -92,6 +94,29 @@ export class SummaryComponent implements OnInit, OnDestroy {
                 })
             );
         }
+
+        const hearingDates = this.hearing.hearing_dates.map(x => new Date(x));
+        const months = ["January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ];
+        this.groupedHearingDates = hearingDates.reduce((a, c) => {
+            const monthIndex = c.getMonth();
+            const year = c.getFullYear();
+            const monthName = months[monthIndex];
+            const monthYear = `${monthName} ${year}`;
+            if (!a[monthYear]) {
+                a[monthYear] = hearingDates.filter(date => date.getMonth() === monthIndex && date.getFullYear() === year);
+            }
+            return a;
+        }, {});
+    }
+
+    get groupedHearingDateMonthsYears() {
+        return Object.keys(this.groupedHearingDates);
+    }
+
+    hearingDatesForMonth(key: string) {
+        return this.groupedHearingDates[key];
     }
 
     private checkForExistingRequest() {
@@ -232,13 +257,22 @@ export class SummaryComponent implements OnInit, OnDestroy {
             try {
                 const hearingDetailsResponse = await this.hearingService.saveHearing(this.hearing);
                 if (this.hearing.multiDays) {
-                    await this.hearingService.cloneMultiHearings(
-                        hearingDetailsResponse.id,
-                        new MultiHearingRequest({
-                            start_date: new Date(this.hearing.scheduled_date_time),
-                            end_date: new Date(this.hearing.end_hearing_date_time)
-                        })
-                    );
+                    if (this.hearing.hearing_dates) {
+                        await this.hearingService.cloneMultiHearings(
+                            hearingDetailsResponse.id,
+                            new MultiHearingRequest({
+                                hearing_dates: this.hearing.hearing_dates.map(date => new Date(date))
+                            })
+                        );
+                    } else {
+                        await this.hearingService.cloneMultiHearings(
+                            hearingDetailsResponse.id,
+                            new MultiHearingRequest({
+                                start_date: new Date(this.hearing.scheduled_date_time),
+                                end_date: new Date(this.hearing.end_hearing_date_time)
+                            })
+                        );
+                    }
                 }
 
                 sessionStorage.setItem(this.newHearingSessionKey, hearingDetailsResponse.id);

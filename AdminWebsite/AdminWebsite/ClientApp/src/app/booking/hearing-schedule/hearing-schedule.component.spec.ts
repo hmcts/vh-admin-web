@@ -1,7 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { AbstractControl, ReactiveFormsModule } from '@angular/forms';
+import { AbstractControl, FormArray, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { of } from 'rxjs';
@@ -109,12 +109,12 @@ describe('HearingScheduleComponent first visit', () => {
 
     it('should create and initialize to blank form', () => {
         expect(component).toBeTruthy();
-        expect(component.hearingDate.value).toBeNull();
-        expect(component.hearingStartTimeHour.value).toBeNull();
-        expect(component.hearingStartTimeMinute.value).toBeNull();
-        expect(component.hearingDurationHour.value).toBeNull();
-        expect(component.hearingDurationMinute.value).toBeNull();
-        expect(component.courtAddress.value).toBe(-1);
+        expect(component.hearingDateControl.value).toBeNull();
+        expect(component.hearingStartTimeHourControl.value).toBeNull();
+        expect(component.hearingStartTimeMinuteControl.value).toBeNull();
+        expect(component.hearingDurationHourControl.value).toBeNull();
+        expect(component.hearingDurationMinuteControl.value).toBeNull();
+        expect(component.courtAddressControl.value).toBe(-1);
         expect(component.multiDaysHearing).toBeFalsy();
     });
     it('should set controls for duration', () => {
@@ -129,7 +129,7 @@ describe('HearingScheduleComponent first visit', () => {
 
     it('should fail submission when form is invalid', () => {
         expect(component.failedSubmission).toBeFalsy();
-        component.saveScheduleAndLocation();
+        component.save();
         expect(component.failedSubmission).toBeTruthy();
         expect(component.hasSaved).toBeFalsy();
     });
@@ -251,7 +251,7 @@ describe('HearingScheduleComponent first visit', () => {
 
         expect(component.form.valid).toBeTruthy();
 
-        component.saveScheduleAndLocation();
+        component.save();
 
         expect(component.hasSaved).toBeTruthy();
     });
@@ -269,7 +269,7 @@ describe('HearingScheduleComponent first visit', () => {
         multiDaysControl.setValue(false);
 
         expect(component.form.valid).toBeTruthy();
-        component.saveScheduleAndLocation();
+        component.save();
 
         expect(component.failedSubmission).toBeTruthy();
         expect(component.hasSaved).toBeFalsy();
@@ -306,6 +306,13 @@ describe('HearingScheduleComponent first visit', () => {
         expect(result).toBeTruthy();
         expect(component.isStartMinutesInPast).toBeFalsy();
         expect(component.isStartHoursInPast).toBeFalsy();
+    });
+
+
+    it('should add a hearing date', () => {
+        const length = component.hearingDates.length;
+        component.addValidHearingDate('2021-03-03');
+        expect(component.hearingDates.length).toBe(length + 1);
     });
 });
 
@@ -370,12 +377,12 @@ describe('HearingScheduleComponent returning to page', () => {
         const expectedDurationHour = dateTransfomer.transform(durationDate, 'HH');
         const expectedDurationMinute = dateTransfomer.transform(durationDate, 'mm');
 
-        expect(component.hearingDate.value).toBe(dateString);
-        expect(component.hearingStartTimeHour.value).toBe(expectedStartHour);
-        expect(component.hearingStartTimeMinute.value).toBe(expectedStartMinute);
-        expect(component.hearingDurationHour.value).toBe(expectedDurationHour);
-        expect(component.hearingDurationMinute.value).toBe(expectedDurationMinute);
-        expect(component.courtAddress.value).toBe(existingRequest.hearing_venue_id);
+        expect(component.hearingDateControl.value).toBe(dateString);
+        expect(component.hearingStartTimeHourControl.value).toBe(expectedStartHour);
+        expect(component.hearingStartTimeMinuteControl.value).toBe(expectedStartMinute);
+        expect(component.hearingDurationHourControl.value).toBe(expectedDurationHour);
+        expect(component.hearingDurationMinuteControl.value).toBe(expectedDurationMinute);
+        expect(component.courtAddressControl.value).toBe(existingRequest.hearing_venue_id);
         expect(component.multiDaysHearing).toBe(existingRequest.multiDays);
     });
     it('should hide cancel and discard pop up confirmation', () => {
@@ -437,20 +444,10 @@ describe('HearingScheduleComponent returning to page', () => {
     });
 
     it('should sanitize text for court room', () => {
-        component.courtRoom.setValue('<script>text</script>');
+        component.courtRoomControl.setValue('<script>text</script>');
         component.courtRoomOnBlur();
         fixture.detectChanges();
-        expect(component.courtRoom.value).toBe('text');
-    });
-    it('should unsibscribe subcription on destroy', () => {
-        component.ngOnDestroy();
-        expect(component.$subscriptions[0].closed).toBe(true);
-        expect(component.$subscriptions[1].closed).toBe(true);
-    });
-    it('should subcribe for change event the courtRoom', () => {
-        const subcriptions = component.$subscriptions.length;
-        component.ngAfterViewInit();
-        expect(component.$subscriptions.length).toBe(subcriptions + 1);
+        expect(component.courtRoomControl.value).toBe('text');
     });
 });
 
@@ -512,25 +509,24 @@ describe('HearingScheduleComponent multi days hearing', () => {
 
     it('should set multi days flag to true', () => {
         component.hearing = existingRequest;
-        component.multiDaysChanged(true);
+        component.multiDaysControl.setValue(true);
         expect(component.multiDaysHearing).toBe(true);
     });
     it('should validate end date to true', () => {
         const startDateValue = new Date(addDays(Date.now(), 1));
         const endDateValue = new Date(addDays(Date.now(), 3));
-
-        component.multiDaysChanged(true);
+        component.multiDaysControl.setValue(true);
         dateControl.setValue(startDateValue);
-        component.endHearingDate.markAsTouched();
+        component.endHearingDateControl.markAsTouched();
         endDateControl.setValue(endDateValue);
         expect(component.endHearingDateInvalid).toBeFalsy();
     });
     it('should validate end date to fase if it is matched the start day', () => {
         const startDateValue = new Date(addDays(Date.now(), 1));
         const endDateValue = new Date(addDays(Date.now(), 1));
-        component.multiDaysChanged(true);
+        component.multiDaysControl.setValue(true);
         dateControl.setValue(startDateValue);
-        component.endHearingDate.markAsTouched();
+        component.endHearingDateControl.markAsTouched();
 
         endDateControl.setValue(endDateValue);
         expect(component.endHearingDateInvalid).toBeTruthy();
@@ -539,9 +535,9 @@ describe('HearingScheduleComponent multi days hearing', () => {
         const startDateValue = new Date(addDays(Date.now(), 1));
         const endDateValue = new Date(Date.now());
 
-        component.multiDaysChanged(true);
+        component.multiDaysControl.setValue(true);
         dateControl.setValue(startDateValue);
-        component.endHearingDate.markAsTouched();
+        component.endHearingDateControl.markAsTouched();
 
         endDateControl.setValue(endDateValue);
         expect(component.endHearingDateInvalid).toBeTruthy();
@@ -557,23 +553,23 @@ describe('HearingScheduleComponent multi days hearing', () => {
 
         const expectedStartHour = dateTransfomer.transform(existingRequest.scheduled_date_time, 'HH');
         const expectedStartMinute = dateTransfomer.transform(existingRequest.scheduled_date_time, 'mm');
-        component.multiDaysChanged(true);
-
-        expect(component.hearingDate.value).toBe(dateString);
-        expect(component.hearingStartTimeHour.value).toBe(expectedStartHour);
-        expect(component.hearingStartTimeMinute.value).toBe(expectedStartMinute);
-        expect(component.courtAddress.value).toBe(existingRequest.hearing_venue_id);
+        component.multiDaysControl.setValue(true);
+        
+        expect(component.hearingDateControl.value).toBe(dateString);
+        expect(component.hearingStartTimeHourControl.value).toBe(expectedStartHour);
+        expect(component.hearingStartTimeMinuteControl.value).toBe(expectedStartMinute);
+        expect(component.courtAddressControl.value).toBe(existingRequest.hearing_venue_id);
         expect(component.multiDaysHearing).toBe(true);
-        expect(component.endHearingDate.value).toBe(endDateString);
+        expect(component.endHearingDateControl.value).toBe(endDateString);
     });
     it('should duration set to untoched if multi days hearing', () => {
-        component.multiDaysChanged(true);
-        expect(component.hearingDurationHour.touched).toBe(false);
-        expect(component.hearingDurationMinute.touched).toBe(false);
+        component.multiDaysControl.setValue(true);
+        expect(component.hearingDurationHourControl.touched).toBe(false);
+        expect(component.hearingDurationMinuteControl.touched).toBe(false);
     });
     it('should end date set to null if multi days hearing is off', () => {
-        component.multiDaysChanged(false);
-        expect(component.endHearingDate.value).toBe(null);
+        component.multiDaysControl.setValue(false);
+        expect(component.endHearingDateControl.value).toBe(null);
     });
     it('should hide multi days checkbox if the hearing is booked', () => {
         component.hearing.hearing_id = '123455555900';

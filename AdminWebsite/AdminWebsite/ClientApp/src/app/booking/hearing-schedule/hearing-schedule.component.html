@@ -6,7 +6,7 @@
 
 <form [formGroup]="form"
   class="govuk-form-group"
-  (ngSubmit)="saveScheduleAndLocation()">
+  (ngSubmit)="save()">
   <div class="govuk-form-group govuk-!-width-one-quarter"
     *ngIf="!isBookedHearing">
     <div class="govuk-checkboxes__item">
@@ -15,8 +15,7 @@
         id="multiDaysHearing"
         name="multiDaysHearing"
         type="checkbox"
-        formControlName="multiDays"
-        (change)="multiDaysChanged(checkBoxMulti.checked)" />
+        formControlName="multiDays" />
       <label class="govuk-label govuk-checkboxes__label"
         for="multiDaysHearing"> Multi-day hearing </label>
     </div>
@@ -47,65 +46,126 @@
 
   <div *ngIf="multiDaysHearing"
     class="vh-bottom-m">
+    <div class="govuk-radios__item">
+      <input formControlName="multiDaysRange"
+        class="govuk-radios__input"
+        id="multiDaysRange-choice-no"
+        type="radio"
+        [value]="true" />
+      <label class="govuk-label govuk-radios__label"
+        for="audio-choice-yes"> Select start and end dates </label>
+    </div>
 
-    <span class="govuk-label">Select hearing dates</span>
-    <div *ngFor="let control of hearingDates.controls; index as i">
-      <div [ngClass]="hearingDateInvalid ? 'govuk-form-group--error' : 'govuk-form-group'"
-        style="display: flex; align-items: center;">
+    <div class="multi-date-select range"
+      *ngIf="form.get('multiDaysRange').value">
+      <div [ngClass]="hearingDateInvalid ? 'govuk-form-group--error' : 'govuk-form-group'">
+        <label class="govuk-label govuk-!-width-one-quarter"
+          for="hearingDate">
+          Start of hearing
+        </label>
         <input id="hearingDate"
           class="govuk-input govuk-!-width-one-quarter"
           type="date"
-          [formControl]="hearingDates.controls[i]"
+          formControlName="hearingDate"
           required
           placeholder="e.g. 30/02/2018"
           min="{{ today | date: 'yyyy-MM-dd' }}"
           (blur)="resetPastTimeOnBlur()" />
-        <a class="vhlink"
-          href="javascript:void(0)"
-          (click)="removeHearingDate(i)">Remove</a>
+        <div *ngIf="hearingDateInvalid"
+          class="alert alert-danger">
+          <span id="hearingDate-error"
+            class="govuk-error-message"> Please enter a date in the future </span>
+        </div>
+      </div>
+
+      <div [ngClass]="endHearingDateInvalid ? 'govuk-form-group--error' : 'govuk-form-group'">
+        <label class="govuk-label govuk-!-width-one-quarter"
+          for="endHearingDate"> End of hearing </label>
+        <input id="endHearingDate"
+          class="govuk-input govuk-!-width-one-quarter"
+          type="date"
+          formControlName="endHearingDate"
+          required
+          placeholder="e.g. 30/02/2018"
+          min="{{ today | date: 'yyyy-MM-dd' }}" />
+        <div *ngIf="endHearingDateInvalid"
+          class="alert alert-danger">
+          <span id="endHearingDate-error"
+            class="govuk-error-message"> Please enter a date at least 1 day later than the start date </span>
+        </div>
       </div>
     </div>
 
-    <button class="govuk-button vh-mr25"
-      (click)="addHearingDate()"
-      type="button">Add</button>
 
-    <!-- <div [ngClass]="hearingDateInvalid ? 'govuk-form-group--error' : 'govuk-form-group'">
-      <label class="govuk-label govuk-!-width-one-quarter"
-        for="hearingDate">
-        Start date of hearing
-      </label>
-      <input id="hearingDate"
-        class="govuk-input govuk-!-width-one-quarter"
-        type="date"
-        formControlName="hearingDate"
-        required
-        placeholder="e.g. 30/02/2018"
-        min="{{ today | date: 'yyyy-MM-dd' }}"
-        (blur)="resetPastTimeOnBlur()" />
-      <div *ngIf="hearingDateInvalid"
-        class="alert alert-danger">
-        <span id="hearingDate-error"
-          class="govuk-error-message"> Please enter a date in the future </span>
-      </div>
-    </div> -->
+    <div class="govuk-radios__item individual-date-radio">
+      <input formControlName="multiDaysRange"
+        class="govuk-radios__input"
+        id="multiDaysRange-choice-yes"
+        type="radio"
+        [value]="false" />
+      <label class="govuk-label govuk-radios__label"
+        for="audio-choice-no"> Select individual dates </label>
+    </div>
 
-    <!-- <div [ngClass]="endHearingDateInvalid ? 'govuk-form-group--error' : 'govuk-form-group'">
-      <label class="govuk-label govuk-!-width-one-quarter"
-        for="endHearingDate"> End date of hearing </label>
-      <input id="endHearingDate"
-        class="govuk-input govuk-!-width-one-quarter"
-        type="date"
-        formControlName="endHearingDate"
-        required
-        placeholder="e.g. 30/02/2018"
-        min="{{ today | date: 'yyyy-MM-dd' }}" />
-      <div *ngIf="endHearingDateInvalid"
-        class="alert alert-danger">
-        <span id="endHearingDate-error"
-          class="govuk-error-message"> Please enter a date at least 1 day later than the start date </span>
+
+    <div class="multi-date-selection"
+      *ngIf="!form.get('multiDaysRange').value">
+      <div *ngIf="hearingDates.length > 0" class="multi-date-selection__list govuk-!-width-one-half">
+        <div class="multi-date-selection__list-item"
+          *ngFor="let date of hearingDates; index as i">
+          <div class="multi-date-selection__date">
+            {{ date | date: 'EEEE dd MMMM yyyy' }}
+          </div>
+          <a class="vhlink"
+            href="javascript:void(0)"
+            (click)="removeHearingDate(i)">Remove</a>
+        </div>
       </div>
-    </div> -->
+
+      <div *ngIf="addHearingDateControl"
+        class="govuk-form-group multi-date-selection__input"
+        [class.govuk-form-group--error]="!isAddHearingControlValid()">
+        <input id="hearingDate"
+          class="govuk-input govuk-!-width-one-quarter"
+          type="date"
+          [formControl]="addHearingDateControl"
+          placeholder="e.g. 30/02/2018"
+          min="{{ today | date: 'yyyy-MM-dd' }}"
+          (blur)="resetPastTimeOnBlur()" />
+
+        <div *ngIf="addHearingDateControl.errors?.required"
+          class="alert alert-danger">
+          <span id="hearingDateWeekend-error"
+            class="govuk-error-message"> Select a date </span>
+        </div>
+
+        <div *ngIf="addHearingDateControl.errors?.weekend"
+          class="alert alert-danger">
+          <span id="hearingDateWeekend-error"
+            class="govuk-error-message"> Select a day from Monday to Friday </span>
+        </div>
+
+        <div *ngIf="addHearingDateControl.errors?.pastdate"
+          class="alert alert-danger">
+          <span id="hearingDateWeekend-error"
+            class="govuk-error-message"> Select a date in the future </span>
+        </div>
+
+        <div *ngIf="isDateAlreadySelected()"
+          class="alert alert-danger">
+          <span id="hearingDateWeekend-error"
+            class="govuk-error-message"> Date already selected </span>
+        </div>
+
+      </div>
+
+      <div *ngIf="!addHearingDateControl"
+        class="multi-date-selection__add-button">
+        <button class="govuk-button vh-mr25"
+          (click)="addHearingDate()"
+          type="button">Add hearing date</button>
+      </div>
+    </div>
   </div>
 
   <div [ngClass]="
@@ -271,7 +331,8 @@
     <button id="nextButton"
       class="govuk-button vh-mr25"
       data-module="govuk-button"
-      (click)="saveScheduleAndLocation()"
+      (click)="save()"
+      type="button"
       alt="Save hearing schedule and location details and go to judge assignment">
       {{ buttonAction }}
     </button>

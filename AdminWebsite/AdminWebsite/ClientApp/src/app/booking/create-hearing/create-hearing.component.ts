@@ -31,7 +31,6 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
     filteredHearingTypes: HearingTypeResponse[] = [];
     hasSaved: boolean;
     isExistingHearing: boolean;
-    $subscriptions: Subscription[] = [];
 
     constructor(
         protected hearingService: VideoHearingsService,
@@ -208,31 +207,28 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
 
     private retrieveHearingTypes() {
         this.logger.debug(`${this.loggerPrefix} Retrieving hearing type`);
-        this.$subscriptions.push(
-            this.hearingService.getHearingTypes().subscribe(
-                (data: HearingTypeResponse[]) => {
-                    this.setupCaseTypeAndHearingTypes(data);
-                    this.filterHearingTypes();
-                    this.setHearingTypeForExistingHearing();
-                },
-                error => this.errorService.handleError(error)
-            )
-        );
+        this.hearingService.getHearingTypes().subscribe(
+            (data: HearingTypeResponse[]) => {
+                this.setupCaseTypeAndHearingTypes(data);
+                this.filterHearingTypes();
+                this.setHearingTypeForExistingHearing();
+            },
+            error => this.errorService.handleError(error)
+        )
     }
 
     private setupCaseTypeAndHearingTypes(hearingTypes: HearingTypeResponse[]) {
         this.logger.debug(`${this.loggerPrefix} Setting up hearing types`, {
             hearingTypes: hearingTypes.length
         });
-        this.$subscriptions.push(
-            this.caseType.valueChanges.subscribe(val => {
-                this.selectedCaseType = val;
-                this.logger.debug(`${this.loggerPrefix} Updating selected case type`, {
-                    caseType: this.selectedCaseType
-                });
-                this.filterHearingTypes();
-            })
-        );
+
+        this.caseType.valueChanges.subscribe(val => {
+            this.selectedCaseType = val;
+            this.logger.debug(`${this.loggerPrefix} Updating selected case type`, {
+                caseType: this.selectedCaseType
+            });
+            this.filterHearingTypes();
+        })
 
         this.availableHearingTypes = hearingTypes;
         this.availableHearingTypes.sort(this.dynamicSort('name'));
@@ -290,10 +286,5 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
 
     ngOnDestroy() {
         this.bookingService.removeEditMode();
-        this.$subscriptions.forEach(subscription => {
-            if (subscription) {
-                subscription.unsubscribe();
-            }
-        });
     }
 }
