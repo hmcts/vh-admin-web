@@ -66,7 +66,7 @@ namespace AdminWebsite.UnitTests.Services
             _mocker.Mock<INotificationApiClient>()
                 .Verify(
                     x => x.CreateNewNotificationAsync(It.IsAny<AddNotificationRequest>()),
-                    Times.Exactly(3));
+                    Times.Exactly(secondHearing.Participants.Count(x => x.User_role_name.ToLower() != "judge")));
         }
         
         [Test]
@@ -80,11 +80,11 @@ namespace AdminWebsite.UnitTests.Services
             _mocker.Mock<INotificationApiClient>()
                 .Verify(
                     x => x.CreateNewNotificationAsync(It.IsAny<AddNotificationRequest>()),
-                    Times.Exactly(4));
+                    Times.Exactly(secondHearing.Participants.Count));
         }
         
         [Test]
-        public async Task should_send_multiday_confirmation_email_to_all_participants()
+        public async Task should_send_multiday_confirmation_email_to_all_participants_except_judge()
         {
             var judge = _hearing.Participants.First(x => x.User_role_name == "Judge");
             await _service.SendMultiDayHearingConfirmationEmail(_hearing, 2);
@@ -92,7 +92,7 @@ namespace AdminWebsite.UnitTests.Services
             _mocker.Mock<INotificationApiClient>()
                 .Verify(
                     x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.ParticipantId != judge.Id)),
-                    Times.Exactly(3));
+                    Times.Exactly(_hearing.Participants.Count(x => x.User_role_name.ToLower() != "judge")));
         }
 
         [Test]

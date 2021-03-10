@@ -64,7 +64,7 @@ namespace AdminWebsite.Extensions
             {
                 return JsonConvert.DeserializeObject<OtherInformationDetails>(otherInformation);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return new OtherInformationDetails {OtherInformation = otherInformation};
             }
