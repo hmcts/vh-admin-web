@@ -1,27 +1,27 @@
 ﻿using System.Collections.Generic;
 using AcceptanceTests.Common.Configuration.Users;
-using AdminWebsite.TestAPI.Client;
+using TestApi.Contract.Dtos;
 
 namespace AdminWebsite.AcceptanceTests.Data
 {
     public static class UserToUserAccountMapper
     {
-        public static UserAccount Map(User user)
+        public static UserAccount Map(UserDto user)
         {
             return new UserAccount()
             {
-                AlternativeEmail = user.Contact_email,
+                AlternativeEmail = user.ContactEmail,
                 CaseRoleName = null,
                 DefaultParticipant = false,
-                DisplayName = user.Display_name,
-                Firstname = user.First_name,
+                DisplayName = user.DisplayName,
+                Firstname = user.FirstName,
                 HearingRoleName = null,
                 HearingTypes = new List<string>(),
-                Key = user.Last_name,
-                Lastname = user.Last_name,
+                Key = user.LastName,
+                Lastname = user.LastName,
                 Representee = null,
                 Reference = null,
-                Role = user.User_type.ToString(),
+                Role = user.UserType.ToString(),
                 Username = user.Username
             };
         }

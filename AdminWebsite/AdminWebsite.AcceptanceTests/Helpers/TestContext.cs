@@ -6,7 +6,7 @@ using AcceptanceTests.Common.Driver.Drivers;
 using AdminWebsite.AcceptanceTests.Configuration;
 using AdminWebsite.AcceptanceTests.Data;
 using AdminWebsite.AcceptanceTests.Pages;
-using AdminWebsite.TestAPI.Client;
+using TestApi.Contract.Dtos;
 using Notify.Interfaces;
 
 namespace AdminWebsite.AcceptanceTests.Helpers
@@ -16,7 +16,7 @@ namespace AdminWebsite.AcceptanceTests.Helpers
         public TestApiManager Api { get; set; }
         public NotificationApiManager NotificationApi { get; set; }
         public AzureStorageManager AzureStorage { get; set; }
-        public User CurrentUser { get; set; }
+        public UserDto CurrentUser { get; set; }
         public DriverSetup Driver { get; set; }
         public Page Route { get; set; }
         public Test Test { get; set; }

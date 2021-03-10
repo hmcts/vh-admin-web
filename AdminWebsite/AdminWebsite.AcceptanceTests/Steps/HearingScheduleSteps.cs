@@ -7,9 +7,9 @@ using AcceptanceTests.Common.Test.Steps;
 using AdminWebsite.AcceptanceTests.Data;
 using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.AcceptanceTests.Pages;
-using AdminWebsite.TestAPI.Client;
 using FluentAssertions;
 using TechTalk.SpecFlow;
+using TestApi.Contract.Dtos;
 
 namespace AdminWebsite.AcceptanceTests.Steps
 {
@@ -17,10 +17,10 @@ namespace AdminWebsite.AcceptanceTests.Steps
     public class HearingScheduleSteps : ISteps
     {
         private readonly TestContext _c;
-        private readonly Dictionary<User, UserBrowser> _browsers;
+        private readonly Dictionary<UserDto, UserBrowser> _browsers;
         private readonly CommonSharedSteps _commonSharedSteps;
 
-        public HearingScheduleSteps(TestContext testContext, Dictionary<User, UserBrowser> browsers, CommonSharedSteps commonSharedSteps)
+        public HearingScheduleSteps(TestContext testContext, Dictionary<UserDto, UserBrowser> browsers, CommonSharedSteps commonSharedSteps)
         {
             _c = testContext;
             _browsers = browsers;

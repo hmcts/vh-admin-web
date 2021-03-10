@@ -5,9 +5,10 @@ using System.Net;
 using AcceptanceTests.Common.Api.Hearings;
 using AcceptanceTests.Common.Api.Helpers;
 using AdminWebsite.AcceptanceTests.Helpers;
-using AdminWebsite.TestAPI.Client;
+using BookingsApi.Contract.Responses;
 using FluentAssertions;
 using TechTalk.SpecFlow;
+using VideoApi.Contract.Responses;
 
 namespace AdminWebsite.AcceptanceTests.Hooks
 {
@@ -32,7 +33,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             var hearings = RequestHelper.Deserialise<List<HearingDetailsResponse>>(response.Content);
             if (hearings == null) return;
 
-            var ids =  hearings.Select(x => x.Group_id).Distinct().ToList();
+            var ids =  hearings.Select(x => x.GroupId).Distinct().ToList();
             foreach (var id in ids.Where(x=> x.HasValue))
             {
                 DeleteTheHearing(api, id.Value);
@@ -68,7 +69,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             var response = api.GetConferenceByConferenceId(conferenceId);
             if (!response.IsSuccessful) return Guid.Empty;
             var conference = RequestHelper.Deserialise<ConferenceDetailsResponse>(response.Content);
-            return conference.Hearing_id;
+            return conference.HearingId;
         }
 
         private static bool HearingHasNotBeenDeletedAlready(TestApiManager api, Guid hearingId)

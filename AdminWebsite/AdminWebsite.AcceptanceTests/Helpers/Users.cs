@@ -1,54 +1,55 @@
 ﻿using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using AdminWebsite.TestAPI.Client;
+using TestApi.Contract.Dtos;
+using TestApi.Contract.Enums;
 
 namespace AdminWebsite.AcceptanceTests.Helpers
 {
     public static class Users
     {
-        public static User GetDefaultParticipantUser(List<User> users)
+        public static UserDto GetDefaultParticipantUser(List<UserDto> users)
         {
-            return users.FirstOrDefault(x => x.User_type == UserType.Individual);
+            return users.FirstOrDefault(x => x.UserType == UserType.Individual);
         }
 
-        public static User GetJudgeUser(List<User> users)
+        public static UserDto GetJudgeUser(List<UserDto> users)
         {
-            return users.FirstOrDefault(x => x.User_type == UserType.Judge);
+            return users.FirstOrDefault(x => x.UserType == UserType.Judge);
         }
 
-        public static User GetIndividualUser(List<User> users)
+        public static UserDto GetIndividualUser(List<UserDto> users)
         {
-            return users.FirstOrDefault(x => x.User_type == UserType.Individual);
+            return users.FirstOrDefault(x => x.UserType == UserType.Individual);
         }
 
-        public static User GetRepresentativeUser(List<User> users)
+        public static UserDto GetRepresentativeUser(List<UserDto> users)
         {
-            return users.FirstOrDefault(x => x.User_type == UserType.Representative);
+            return users.FirstOrDefault(x => x.UserType == UserType.Representative);
         }
 
-        public static User GetPanelMemberUser(List<User> users)
+        public static UserDto GetPanelMemberUser(List<UserDto> users)
         {
-            return users.FirstOrDefault(x => x.User_type == UserType.PanelMember);
+            return users.FirstOrDefault(x => x.UserType == UserType.PanelMember);
         }
 
-        public static User GetWingerUser(List<User> users)
+        public static UserDto GetWingerUser(List<UserDto> users)
         {
-            return users.FirstOrDefault(x => x.User_type == UserType.Winger);
+            return users.FirstOrDefault(x => x.UserType == UserType.Winger);
         }
 
-        public static User GetUserFromDisplayName(List<User> users, string displayName)
+        public static UserDto GetUserFromDisplayName(List<UserDto> users, string displayName)
         {
-            return users.FirstOrDefault(x => x.Display_name.ToLower().Contains(displayName.ToLower().Replace(" ", "")));
+            return users.FirstOrDefault(x => x.DisplayName.ToLower().Contains(displayName.ToLower().Replace(" ", "")));
         }
 
-        public static User GetUser(List<User> users, string numberString, string user)
+        public static UserDto GetUser(List<UserDto> users, string numberString, string user)
         {
             var number = GetNumberFromWords(numberString);
 
             if (user.ToLowerInvariant().Contains("judge"))
             {
-                return users.First(x => x.User_type == UserType.Judge);
+                return users.First(x => x.UserType == UserType.Judge);
             }
 
             if (user.ToLowerInvariant().Contains("individual"))
@@ -75,7 +76,7 @@ namespace AdminWebsite.AcceptanceTests.Helpers
             if (user.ToLowerInvariant().Contains("video hearings officer") ||
                 user.ToLowerInvariant().Contains("videohearingsofficer"))
             {
-                return users.First(x => x.User_type == UserType.VideoHearingsOfficer);
+                return users.First(x => x.UserType == UserType.VideoHearingsOfficer);
             }
 
             throw new DataException($"No matching user could be found from '{user}'");
@@ -94,9 +95,9 @@ namespace AdminWebsite.AcceptanceTests.Helpers
             return numberTable[text];
         }
 
-        private static List<User> GetAllUsersOfType(List<User> users, UserType userType)
+        private static List<UserDto> GetAllUsersOfType(List<UserDto> users, UserType userType)
         {
-            return users.FindAll(x => x.User_type == userType);
+            return users.FindAll(x => x.UserType == userType);
         }
     }
 }
