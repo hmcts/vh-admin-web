@@ -74,7 +74,6 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     }
 
     private initForm() {
-
         let hearingDateParsed = null;
         let startTimeHour = null;
         let startTimeMinute = null;
@@ -324,7 +323,10 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     }
 
     get courtAddressInvalid() {
-        return this.courtAddressControl.invalid && (this.courtAddressControl.dirty || this.courtAddressControl.touched || this.failedSubmission);
+        return (
+            this.courtAddressControl.invalid &&
+            (this.courtAddressControl.dirty || this.courtAddressControl.touched || this.failedSubmission)
+        );
     }
 
     get courtRoomInvalid() {
@@ -369,7 +371,12 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     finalCheckStartDateTimeInPast(): boolean {
         const todayDate = new Date(Date.now());
         const realDate = new Date(
-            new Date(this.hearingDateControl.value).setHours(this.hearingStartTimeHourControl.value, this.hearingStartTimeMinuteControl.value, 0, 0)
+            new Date(this.hearingDateControl.value).setHours(
+                this.hearingStartTimeHourControl.value,
+                this.hearingStartTimeMinuteControl.value,
+                0,
+                0
+            )
         );
         if (realDate < todayDate) {
             this.isStartHoursInPast = true;
@@ -396,7 +403,6 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
             this.hasSaved = true;
 
             this.continue();
-
         } else {
             this.logger.debug(`${this.loggerPrefix} Failed to update booking schedule and location. Form is not valid.`);
             this.failedSubmission = true;
@@ -420,7 +426,6 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
             this.hasSaved = true;
 
             this.continue();
-
         } else {
             this.logger.debug(`${this.loggerPrefix} Failed to update booking schedule and location. Form is not valid.`);
             this.failedSubmission = true;
@@ -475,7 +480,6 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
         this.hearingService.updateHearingRequest(this.hearing);
         this.logger.info(`${this.loggerPrefix} Updated hearing request schedule and location`, { hearing: this.hearing });
     }
-
 
     private setHearingDuration() {
         let hearingDuration = 0;

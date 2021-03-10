@@ -96,8 +96,19 @@ export class SummaryComponent implements OnInit, OnDestroy {
         }
 
         const hearingDates = this.hearing.hearing_dates.map(x => new Date(x));
-        const months = ["January", "February", "March", "April", "May", "June",
-            "July", "August", "September", "October", "November", "December"
+        const months = [
+            'January',
+            'February',
+            'March',
+            'April',
+            'May',
+            'June',
+            'July',
+            'August',
+            'September',
+            'October',
+            'November',
+            'December'
         ];
         this.groupedHearingDates = hearingDates.reduce((a, c) => {
             const monthIndex = c.getMonth();

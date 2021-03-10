@@ -128,7 +128,7 @@ export class VideoHearingsService {
 
         if (newRequest.multiDays) {
             bookingRequest.is_multi_day = true;
-            if(newRequest.hearing_dates.length) {
+            if (newRequest.hearing_dates.length) {
                 bookingRequest.multi_hearing_details = new MultiHearingRequest({
                     hearing_dates: newRequest.hearing_dates.map(hearingDate => new Date(hearingDate))
                 });

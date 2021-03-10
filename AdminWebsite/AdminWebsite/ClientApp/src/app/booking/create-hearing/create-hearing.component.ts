@@ -214,7 +214,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
                 this.setHearingTypeForExistingHearing();
             },
             error => this.errorService.handleError(error)
-        )
+        );
     }
 
     private setupCaseTypeAndHearingTypes(hearingTypes: HearingTypeResponse[]) {
@@ -228,7 +228,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
                 caseType: this.selectedCaseType
             });
             this.filterHearingTypes();
-        })
+        });
 
         this.availableHearingTypes = hearingTypes;
         this.availableHearingTypes.sort(this.dynamicSort('name'));

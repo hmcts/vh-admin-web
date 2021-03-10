@@ -308,7 +308,6 @@ describe('HearingScheduleComponent first visit', () => {
         expect(component.isStartHoursInPast).toBeFalsy();
     });
 
-
     it('should add a hearing date', () => {
         const length = component.hearingDates.length;
         component.addValidHearingDate('2021-03-03');
@@ -554,7 +553,7 @@ describe('HearingScheduleComponent multi days hearing', () => {
         const expectedStartHour = dateTransfomer.transform(existingRequest.scheduled_date_time, 'HH');
         const expectedStartMinute = dateTransfomer.transform(existingRequest.scheduled_date_time, 'mm');
         component.multiDaysControl.setValue(true);
-        
+
         expect(component.hearingDateControl.value).toBe(dateString);
         expect(component.hearingStartTimeHourControl.value).toBe(expectedStartHour);
         expect(component.hearingStartTimeMinuteControl.value).toBe(expectedStartMinute);

@@ -1,40 +1,38 @@
 @media screen and (-webkit-min-device-pixel-ratio: 0) {
-    .minutes {
-        width: 5.2ex;
-    }
+  .minutes {
+    width: 5.2ex;
+  }
 }
 
 .vh-bottom-m {
-    margin-bottom: 30px;
+  margin-bottom: 30px;
 }
 
 .individual-date-radio {
-    margin-top: 0.5em;
+  margin-top: 0.5em;
 }
 
 .multi-date-selection {
-    &__list {
-        border: 1px solid #ccc;
-        border-radius: 11px;
-        margin-bottom: 0.5em;
-        padding: 0.5em;
-        &-item {
-            display: flex;
-            margin: 0.5em 0;
-            font-size: 18px;
-            align-items: center;
-            padding: 0.5em;
-            justify-content: space-between;
-        }
+  &__list {
+    border: 1px solid #ccc;
+    border-radius: 11px;
+    margin-bottom: 0.5em;
+    padding: 0.5em;
+    &-item {
+      display: flex;
+      margin: 0.5em 0;
+      font-size: 18px;
+      align-items: center;
+      padding: 0.5em;
+      justify-content: space-between;
     }
+  }
 
-    &__date {
-        margin-right: 1em;
-    }
+  &__date {
+    margin-right: 1em;
+  }
 
-    &__input {
-        margin-top: 1em;
-    }
-
+  &__input {
+    margin-top: 1em;
+  }
 }
-
