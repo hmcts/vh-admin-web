@@ -11,7 +11,5 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public static By AudioRecordYesRadioButton = By.Id("audio-choice-yes");
         public static By AudioRecordNoRadioButton = By.Id("audio-choice-no");
         public static By AudioRecordingInterpreterMessage = CommonLocators.ElementContainingText("(mandatory for hearings with interpreters)");
-
-
     }
 }

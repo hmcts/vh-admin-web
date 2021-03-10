@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using AcceptanceTests.Common.Configuration.Users;
 using AcceptanceTests.Common.Model.Participant;
-using AdminWebsite.TestAPI.Client;
+using BookingsApi.Contract.Responses;
 using FluentAssertions;
 
 namespace AdminWebsite.AcceptanceTests.Data
@@ -13,7 +13,7 @@ namespace AdminWebsite.AcceptanceTests.Data
         public static void AssertHearingDetails(HearingDetailsResponse hearing, Test testData)
         {
             AssertDetails(hearing, testData);
-            AssertCreatedDate(hearing.Created_date, DateTime.UtcNow);
+            AssertCreatedDate(hearing.CreatedDate, DateTime.UtcNow);
             AssertQuestionnaire(hearing, testData);
         }
 
@@ -21,11 +21,12 @@ namespace AdminWebsite.AcceptanceTests.Data
         {
             hearing.Cases.First().Name.Should().Contain(testData.HearingDetails.CaseName);
             hearing.Cases.First().Number.Should().Contain(testData.HearingDetails.CaseNumber);
-            hearing.Case_type_name.Should().Be(testData.HearingDetails.CaseType.Name);
-            hearing.Hearing_room_name.Should().Be(testData.HearingSchedule.Room);
-            hearing.Hearing_type_name.Should().Be(testData.HearingDetails.HearingType.Name);
-            hearing.Hearing_venue_name.Should().Be(testData.HearingSchedule.HearingVenue);
-            hearing.Other_information.Should().Be(testData.OtherInformation);
+            hearing.CaseTypeName.Should().Be(testData.HearingDetails.CaseType.Name);
+            hearing.HearingRoomName.Should().Be(testData.HearingSchedule.Room);
+            hearing.HearingTypeName.Should().Be(testData.HearingDetails.HearingType.Name);
+            hearing.HearingVenueName.Should().Be(testData.HearingSchedule.HearingVenue);
+            var deserializedObject = Newtonsoft.Json.JsonConvert.DeserializeObject<TestData.OtherInformationDetails>(hearing.OtherInformation);
+            deserializedObject.OtherInformation.Should().Be(testData.TestData.OtherInformationDetails.OtherInformation);
         }
 
         private static void AssertCreatedDate(DateTime actual, DateTime expected)
@@ -42,11 +43,11 @@ namespace AdminWebsite.AcceptanceTests.Data
         {
             if (!hearing.Cases.First().Name.Contains("Day") || hearing.Cases.First().Name.Contains("Day 1 of"))
             {
-                hearing.Questionnaire_not_required.Should().BeFalse();
+                hearing.QuestionnaireNotRequired.Should().BeFalse();
             }
             else
             {
-                hearing.Questionnaire_not_required.Should().BeTrue();
+                hearing.QuestionnaireNotRequired.Should().BeTrue();
             }
         }
 
@@ -91,26 +92,26 @@ namespace AdminWebsite.AcceptanceTests.Data
             participants.Count.Should().Be(testHearingParticipants.Count);
             foreach (var actualParticipant in participants)
             {
-                var expectedParticipant = testHearingParticipants.First(x => x.Lastname.ToLower().Equals(actualParticipant.Last_name.ToLower()));
+                var expectedParticipant = testHearingParticipants.First(x => x.Lastname.ToLower().Equals(actualParticipant.LastName.ToLower()));
                 if (expectedParticipant.Role.ToLower() != "judge")
                 {
-                    actualParticipant.Contact_email.Should().Be(expectedParticipant.AlternativeEmail);
+                    actualParticipant.ContactEmail.Should().Be(expectedParticipant.AlternativeEmail);
                 }
 
                 if (!string.IsNullOrEmpty(expectedParticipant.Interpretee))
                 {
-                    var interpertee = participants.FirstOrDefault(p => p.Display_name == expectedParticipant.Interpretee);
-                    actualParticipant.Linked_participants.Single(p => p.Linked_id == interpertee.Id).Should().NotBeNull();
-                    interpertee.Linked_participants.Single(p => p.Linked_id == actualParticipant.Id).Should().NotBeNull();
+                    var interpretee = participants.FirstOrDefault(p => p.DisplayName == expectedParticipant.Interpretee);
+                    actualParticipant.LinkedParticipants.Single(p => p.LinkedId == interpretee.Id).Should().NotBeNull();
+                    interpretee.LinkedParticipants.Single(p => p.LinkedId == actualParticipant.Id).Should().NotBeNull();
                 }
 
-                actualParticipant.Case_role_name.Should().Be(expectedParticipant.CaseRoleName);
+                actualParticipant.CaseRoleName.Should().Be(expectedParticipant.CaseRoleName);
                 // actualParticipant.Display_name.Should().Be($"{expectedParticipant.Firstname} {expectedParticipant.Role}"); TODO: removed as workaround for new user naming conventions
-                actualParticipant.First_name.Should().Be(expectedParticipant.Firstname);
-                actualParticipant.Hearing_role_name.Should().Be(expectedParticipant.HearingRoleName);
-                actualParticipant.Last_name.Should().Be(expectedParticipant.Lastname);
+                actualParticipant.FirstName.Should().Be(expectedParticipant.Firstname);
+                actualParticipant.HearingRoleName.Should().Be(expectedParticipant.HearingRoleName);
+                actualParticipant.LastName.Should().Be(expectedParticipant.Lastname);
                 var role = expectedParticipant.Role.ToLower().Equals("judge") ? "Judge" : expectedParticipant.Role;
-                actualParticipant.User_role_name.Should().Be(role);
+                actualParticipant.UserRoleName.Should().Be(role);
                 if (!expectedParticipant.HearingRoleName.Equals(PartyRole.Representative.Name)) continue;
                 actualParticipant.Organisation.Should().Be(organisation);
                 actualParticipant.Representee.Should().Be(expectedParticipant.Representee);
@@ -119,8 +120,8 @@ namespace AdminWebsite.AcceptanceTests.Data
 
         public static void AssertUpdatedStatus(HearingDetailsResponse hearing, string updatedBy, DateTime updatedDate)
         {
-            hearing.Updated_by.Should().Be(updatedBy);
-            hearing.Updated_date.ToLocalTime().ToShortTimeString().Should().BeOneOf(updatedDate.ToLocalTime().AddMinutes(-1).ToShortTimeString(), updatedDate.ToLocalTime().ToShortTimeString(), updatedDate.ToLocalTime().AddMinutes(1).ToShortTimeString());
+            hearing.UpdatedBy.Should().Be(updatedBy);
+            hearing.UpdatedDate.ToLocalTime().ToShortTimeString().Should().BeOneOf(updatedDate.ToLocalTime().AddMinutes(-1).ToShortTimeString(), updatedDate.ToLocalTime().ToShortTimeString(), updatedDate.ToLocalTime().AddMinutes(1).ToShortTimeString());
         }
     }
 }

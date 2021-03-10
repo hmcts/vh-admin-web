@@ -7,10 +7,18 @@ using AcceptanceTests.Common.Api.Helpers;
 using AcceptanceTests.Common.AudioRecordings;
 using AdminWebsite.AcceptanceTests.Data;
 using AdminWebsite.AcceptanceTests.Helpers;
-using AdminWebsite.TestAPI.Client;
-using AdminWebsite.Testing.Common.Data;
+using TestApi.Contract.Dtos;
+using BookingsApi.Contract.Requests;
+using BookingsApi.Contract.Requests.Enums;
+using BookingsApi.Contract.Responses;
 using FluentAssertions;
 using TechTalk.SpecFlow;
+using TestApi.Contract.Enums;
+using TestApi.Contract.Requests;
+using TestApi.Contract.Responses;
+using VideoApi.Contract.Enums;
+using VideoApi.Contract.Responses;
+using RoomType = AdminWebsite.Testing.Common.Data.RoomType;
 
 namespace AdminWebsite.AcceptanceTests.Hooks
 {
@@ -63,10 +71,10 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             var request = new AllocateUsersRequest()
             {
                 Application = Application.AdminWeb,
-                Expiry_in_minutes = ALLOCATE_USERS_FOR_MINUTES,
-                Is_prod_user = _c.WebConfig.IsLive,
-                Test_type = TestType.Automated,
-                User_types = userTypes
+                ExpiryInMinutes = ALLOCATE_USERS_FOR_MINUTES,
+                IsProdUser = _c.WebConfig.IsLive,
+                TestType = TestType.Automated,
+                UserTypes = userTypes
             };
 
             var response = _c.Api.AllocateUsers(request);
@@ -105,7 +113,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             var exist = false;
 
             foreach (var response in from user in _c.Users
-                where user.User_type != UserType.CaseAdmin && user.User_type != UserType.VideoHearingsOfficer
+                where user.UserType != UserType.CaseAdmin && user.UserType != UserType.VideoHearingsOfficer
                 select _c.Api.GetPersonByUsername(user.Username))
             {
                 exist = response.StatusCode == HttpStatusCode.OK;
@@ -116,7 +124,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
 
         private HearingDetailsResponse CreateHearing(bool withAudioRecording = false)
         {
-            var isWinger = _c.Users.Any(x => x.User_type == UserType.Winger);
+            var isWinger = _c.Users.Any(x => x.UserType == UserType.Winger);
 
             var hearingRequest = isWinger
                 ? CreateHearingForWinger()
@@ -145,12 +153,12 @@ namespace AdminWebsite.AcceptanceTests.Hooks
 
         private ConferenceDetailsResponse CreateConference()
         {
-            var vho = _c.Users.First(x => x.User_type == UserType.VideoHearingsOfficer);
+            var vho = _c.Users.First(x => x.UserType == UserType.VideoHearingsOfficer);
 
             var request = new UpdateBookingStatusRequest()
             {
-                Updated_by = vho.Username,
-                Cancel_reason = null,
+                UpdatedBy = vho.Username,
+                CancelReason = null,
                 Status = UpdateBookingStatus.Created
             };
 
@@ -167,15 +175,15 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             var hearing = RequestHelper.Deserialise<HearingDetailsResponse>(hearingResponse.Content);
             hearing.Should().NotBeNull();
             foreach (var user in _c.Users.Where(user =>
-                user.User_type != UserType.CaseAdmin && user.User_type != UserType.VideoHearingsOfficer))
+                user.UserType != UserType.CaseAdmin && user.UserType != UserType.VideoHearingsOfficer))
             {
-                hearing.Participants.Any(x => x.Last_name.Equals(user.Last_name)).Should().BeTrue();
+                hearing.Participants.Any(x => x.LastName.Equals(user.LastName)).Should().BeTrue();
             }
         }
 
         private void StartTheHearing()
         {
-            var judge = _c.Test.ConferenceResponse.Participants.First(x => x.User_role == UserRole.Judge);
+            var judge = _c.Test.ConferenceResponse.Participants.First(x => x.UserRole == UserRole.Judge);
 
             var request = new ConferenceEventRequestBuilder()
                 .WithConferenceId(_c.Test.ConferenceResponse.Id)
@@ -190,7 +198,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
 
         private void CloseTheConference()
         {
-            var judge = _c.Test.ConferenceResponse.Participants.First(x => x.User_role == UserRole.Judge);
+            var judge = _c.Test.ConferenceResponse.Participants.First(x => x.UserRole == UserRole.Judge);
 
             var request = new ConferenceEventRequestBuilder()
                 .WithConferenceId(_c.Test.ConferenceResponse.Id)

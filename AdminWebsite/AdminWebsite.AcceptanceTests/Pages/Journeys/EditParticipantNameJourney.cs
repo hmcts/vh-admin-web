@@ -1,8 +1,6 @@
-﻿using AdminWebsite.TestAPI.Client;
-using FluentAssertions;
-using System;
+﻿using FluentAssertions;
 using System.Collections.Generic;
-using System.Text;
+using TestApi.Contract.Enums;
 
 namespace AdminWebsite.AcceptanceTests.Pages.Journeys
 {

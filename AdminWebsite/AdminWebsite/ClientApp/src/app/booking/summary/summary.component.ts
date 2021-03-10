@@ -1,5 +1,4 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { EndpointModel } from 'src/app/common/model/endpoint.model';
@@ -11,13 +10,14 @@ import { FormatShortDuration } from '../../common/formatters/format-short-durati
 import { HearingModel } from '../../common/model/hearing.model';
 import { RemovePopupComponent } from '../../popups/remove-popup/remove-popup.component';
 import { BookingService } from '../../services/booking.service';
-import { HearingDetailsResponse, HearingTypeResponse, MultiHearingRequest } from '../../services/clients/api-client';
+import { HearingDetailsResponse, MultiHearingRequest } from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
 import { RecordingGuardService } from '../../services/recording-guard.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { PageUrls } from '../../shared/page-url.constants';
 import { ParticipantListComponent } from '../participant';
 import { ParticipantService } from '../services/participant.service';
+import { OtherInformationModel } from '../../common/model/other-information.model';
 
 @Component({
     selector: 'app-summary',
@@ -30,7 +30,6 @@ export class SummaryComponent implements OnInit, OnDestroy {
     hearing: HearingModel;
     attemptingCancellation: boolean;
     canNavigate = true;
-    hearingForm: FormGroup;
     failedSubmission: boolean;
     bookingsSaving = false;
     caseNumber: string;
@@ -39,10 +38,9 @@ export class SummaryComponent implements OnInit, OnDestroy {
     hearingDate: Date;
     courtRoomAddress: string;
     hearingDuration: string;
-    otherInformation: string;
+    otherInformation: OtherInformationModel;
     audioChoice: string;
     errors: any;
-    selectedHearingType: HearingTypeResponse[];
     showConfirmationRemoveParticipant = false;
     selectedParticipantEmail: string;
     removerFullName: string;
@@ -83,6 +81,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.logger.debug(`${this.loggerPrefix} On step Summary`, { step: 'Summary' });
         this.checkForExistingRequest();
+        this.otherInformation = OtherInformationModel.init(this.hearing.other_information);
         this.retrieveHearingSummary();
         this.switchOffRecording = this.recordingGuardService.switchOffRecording(this.hearing.case_type);
         if (this.participantsListComponent) {
@@ -212,7 +211,6 @@ export class SummaryComponent implements OnInit, OnDestroy {
         this.hearingDate = this.hearing.scheduled_date_time;
         this.hearingDuration = `listed for ${FormatShortDuration(this.hearing.scheduled_duration)}`;
         this.courtRoomAddress = this.formatCourtRoom(this.hearing.court_name, this.hearing.court_room);
-        this.otherInformation = this.hearing.other_information;
         this.audioChoice = this.hearing.audio_recording_required ? 'Yes' : 'No';
         this.caseType = this.hearing.case_type;
         this.endpoints = this.hearing.endpoints;
@@ -262,12 +260,26 @@ export class SummaryComponent implements OnInit, OnDestroy {
         this.showWaitSaving = true;
         this.showErrorSaving = false;
         if (this.hearing.hearing_id && this.hearing.hearing_id.length > 0) {
+            this.logger.info(`${this.loggerPrefix} Attempting to update an existing hearing.`, {
+                hearingId: this.hearing.hearing_id,
+                caseName: this.hearing.cases[0].name,
+                caseNumber: this.hearing.cases[0].number
+            });
             this.updateHearing();
         } else {
             this.setDurationOfMultiHearing();
             try {
+                this.logger.info(`${this.loggerPrefix} Attempting to book a new hearing.`, {
+                    caseName: this.hearing.cases[0].name,
+                    caseNumber: this.hearing.cases[0].number
+                });
                 const hearingDetailsResponse = await this.hearingService.saveHearing(this.hearing);
                 if (this.hearing.multiDays) {
+                    this.logger.info(`${this.loggerPrefix} Hearing is a multi-day. Booking remaining days`, {
+                        hearingId: hearingDetailsResponse.id,
+                        caseName: this.hearing.cases[0].name,
+                        caseNumber: this.hearing.cases[0].number
+                    });
                     if (this.hearing.hearing_dates) {
                         await this.hearingService.cloneMultiHearings(
                             hearingDetailsResponse.id,
