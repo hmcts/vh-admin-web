@@ -10,6 +10,7 @@ using FizzWare.NBuilder;
 using Moq;
 using Newtonsoft.Json;
 using NotificationApi.Client;
+using NotificationApi.Contract;
 using NotificationApi.Contract.Requests;
 using NUnit.Framework;
 using CaseResponse = AdminWebsite.BookingsAPI.Client.CaseResponse;
@@ -131,7 +132,8 @@ namespace AdminWebsite.UnitTests.Services
 
             _mocker.Mock<INotificationApiClient>()
                 .Verify(
-                    x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.ParticipantId == judge.Id)),
+                    x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(
+                        r => r.ParticipantId == judge.Id && r.NotificationType == NotificationType.HearingConfirmationJudge)),
                     Times.Exactly(1));
         }
         
