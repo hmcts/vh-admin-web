@@ -105,11 +105,11 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
             this.judgeName.valueChanges.subscribe(judgeUserId => {
                 this.addJudge(judgeUserId);
                 this.isJudgeSelected = judgeUserId !== null;
-                this.otherInformationDetails.judgeEmail = '';
-                this.judgeEmailFld.setValue('');
-                this.otherInformationDetails.judgePhone = '';
-                this.judgePhoneFld.setValue('');
-                this.canNavigate = this.isJudgeSelected;
+                if (this.isJudgeSelected) {
+                    this.judgeEmailFld.setValue(this.otherInformationDetails.judgeEmail);
+                    this.judgePhoneFld.setValue(this.otherInformationDetails.judgePhone);
+                    this.canNavigate = this.isJudgeSelected;
+                }
             })
         );
 
@@ -147,7 +147,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
             updateOn: 'blur'
         });
         this.judgeEmailFld = new FormControl(this.otherInformationDetails.judgeEmail, {
-            validators: [Validators.email],
+            validators: [Validators.pattern(Constants.EmailPattern), Validators.maxLength(255)],
             updateOn: 'blur'
         });
         this.judgePhoneFld = new FormControl(this.otherInformationDetails.judgePhone, {
