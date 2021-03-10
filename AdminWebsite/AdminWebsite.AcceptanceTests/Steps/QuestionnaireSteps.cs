@@ -7,7 +7,8 @@ using AcceptanceTests.Common.Driver.Helpers;
 using AcceptanceTests.Common.Test.Steps;
 using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.AcceptanceTests.Pages;
-using AdminWebsite.TestAPI.Client;
+using BookingsApi.Contract.Responses;
+using TestApi.Contract.Dtos;
 using FluentAssertions;
 using TechTalk.SpecFlow;
 
@@ -17,9 +18,9 @@ namespace AdminWebsite.AcceptanceTests.Steps
     public class QuestionnaireSteps : ISteps
     {
         private readonly TestContext _c;
-        private readonly Dictionary<User, UserBrowser> _browsers;
+        private readonly Dictionary<UserDto, UserBrowser> _browsers;
         private ParticipantResponse _participantResponse;
-        public QuestionnaireSteps(TestContext testContext, Dictionary<User, UserBrowser> browsers)
+        public QuestionnaireSteps(TestContext testContext, Dictionary<UserDto, UserBrowser> browsers)
         {
             _c = testContext;
             _browsers = browsers;
@@ -33,14 +34,14 @@ namespace AdminWebsite.AcceptanceTests.Steps
         [Given(@"there is a hearing where an (.*) participant has completed some questionnaire answers")]
         public void GivenThereIsAHearingWithQuestionnaireAnswers(string role)
         {
-            _participantResponse = _c.Test.HearingResponse.Participants.First(x => x.User_role_name.ToLower().Equals(role.ToLower()));
+            _participantResponse = _c.Test.HearingResponse.Participants.First(x => x.UserRoleName.ToLower().Equals(role.ToLower()));
             AddSuitabilityAnswers(_c.Test.HearingResponse.Id, _participantResponse.Id, role.ToLower());
         }
 
         [Then(@"the user can see a list of answers including the (.*) specific answer")]
         public void ThenTheUserCanSeeAListOfAnswers(string role)
         {
-            _browsers[_c.CurrentUser].Click(QuestionnairePage.QuestionnaireLink(_participantResponse.Last_name));
+            _browsers[_c.CurrentUser].Click(QuestionnairePage.QuestionnaireLink(_participantResponse.LastName));
             var allQuestionsAndAnswers = GetQuestionsAndAnswers();
             CheckQuestionHasBeenAnswered(_c.Test.TestData.Questionnaire.SelfTestQuestion1, "Yes", allQuestionsAndAnswers);
             CheckQuestionHasBeenAnswered(_c.Test.TestData.Questionnaire.SelfTestQuestion2, "Yes", allQuestionsAndAnswers);

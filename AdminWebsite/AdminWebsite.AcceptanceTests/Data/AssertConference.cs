@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using AdminWebsite.TestAPI.Client;
+using BookingsApi.Contract.Responses;
 using FluentAssertions;
+using VideoApi.Contract.Enums;
+using VideoApi.Contract.Responses;
 
 namespace AdminWebsite.AcceptanceTests.Data
 {
@@ -17,46 +19,45 @@ namespace AdminWebsite.AcceptanceTests.Data
 
         private static void AssertConferenceDetails(HearingDetailsResponse hearing, ConferenceDetailsResponse conference)
         {
-            conference.Audio_recording_required.Should().Be(hearing.Audio_recording_required);
-            conference.Case_name.Should().Be(hearing.Cases.First().Name);
-            conference.Case_number.Should().Be(hearing.Cases.First().Number);
-            conference.Case_type.Should().Be(hearing.Case_type_name);
-            conference.Closed_date_time.Should().BeNull();
-            conference.Current_status.Should().Be(ConferenceState.NotStarted);
-            conference.Hearing_id.Should().Be(hearing.Id);
-            conference.Hearing_venue_name.Should().Be(hearing.Hearing_venue_name);
+            conference.AudioRecordingRequired.Should().Be(hearing.AudioRecordingRequired);
+            conference.CaseName.Should().Be(hearing.Cases.First().Name);
+            conference.CaseNumber.Should().Be(hearing.Cases.First().Number);
+            conference.CaseType.Should().Be(hearing.CaseTypeName);
+            conference.ClosedDateTime.Should().BeNull();
+            conference.CurrentStatus.Should().Be(ConferenceState.NotStarted);
+            conference.HearingId.Should().Be(hearing.Id);
+            conference.HearingVenueName.Should().Be(hearing.HearingVenueName);
             conference.Id.Should().NotBeEmpty();
-            conference.Meeting_room.Admin_uri.Should().NotBeNullOrEmpty();
-            conference.Meeting_room.Judge_uri.Should().NotBeNullOrEmpty();
-            conference.Meeting_room.Participant_uri.Should().NotBeNullOrEmpty();
-            conference.Meeting_room.Pexip_node.Should().NotBeNullOrEmpty();
-            conference.Meeting_room.Pexip_self_test_node.Should().NotBeNullOrEmpty();
-            conference.Scheduled_date_time.Should().Be(hearing.Scheduled_date_time);
-            conference.Scheduled_duration.Should().Be(hearing.Scheduled_duration);
-            conference.Started_date_time.Should().BeNull();
-            conference.Meeting_room.Telephone_conference_id.Should().NotBeNullOrWhiteSpace();
+            conference.MeetingRoom.AdminUri.Should().NotBeNullOrEmpty();
+            conference.MeetingRoom.JudgeUri.Should().NotBeNullOrEmpty();
+            conference.MeetingRoom.ParticipantUri.Should().NotBeNullOrEmpty();
+            conference.MeetingRoom.PexipNode.Should().NotBeNullOrEmpty();
+            conference.MeetingRoom.PexipSelfTestNode.Should().NotBeNullOrEmpty();
+            conference.ScheduledDateTime.Should().Be(hearing.ScheduledDateTime);
+            conference.ScheduledDuration.Should().Be(hearing.ScheduledDuration);
+            conference.StartedDateTime.Should().BeNull();
+            conference.MeetingRoom.TelephoneConferenceId.Should().NotBeNullOrWhiteSpace();
         }
 
-        private static void AssertEndpoints(IReadOnlyCollection<EndpointResponse2> hearingEndpoints,
-            IEnumerable<EndpointResponse> conferenceEndpoints, List<ParticipantResponse> hearingParticipants)
+        private static void AssertEndpoints(IReadOnlyCollection<BookingsApi.Contract.Responses.EndpointResponse> hearingEndpoints,
+            IEnumerable<VideoApi.Contract.Responses.EndpointResponse> conferenceEndpoints, IReadOnlyCollection<ParticipantResponse> hearingParticipants)
         {
             foreach (var conferenceEndpoint in conferenceEndpoints)
             {
-                var hearingEndpoint = hearingEndpoints.First(x => x.Sip.Equals(conferenceEndpoint.Sip_address));
+                var hearingEndpoint = hearingEndpoints.First(x => x.Sip.Equals(conferenceEndpoint.SipAddress));
  
-                if (conferenceEndpoint.Defence_advocate == null)
+                if (conferenceEndpoint.DefenceAdvocate == null)
                 {
-                    hearingEndpoint.Defence_advocate_id.Should().BeNull();
+                    hearingEndpoint.DefenceAdvocateId.Should().BeNull();
                 }
                 else
                 {
-                    hearingParticipants.Any(x => x.Username.Equals(conferenceEndpoint.Defence_advocate, StringComparison.CurrentCultureIgnoreCase)).Should().BeTrue();
+                    hearingParticipants.Any(x => x.Username.Equals(conferenceEndpoint.DefenceAdvocate, StringComparison.CurrentCultureIgnoreCase)).Should().BeTrue();
                 }
 
-                conferenceEndpoint.Display_name.Should().Be(hearingEndpoint.Display_name);
+                conferenceEndpoint.DisplayName.Should().Be(hearingEndpoint.DisplayName);
                 conferenceEndpoint.Id.Should().NotBeEmpty();
                 conferenceEndpoint.Pin.Should().Be(hearingEndpoint.Pin);
-                conferenceEndpoint.Status.Should().Be(EndpointState.NotYetJoined);
             }
         }
 
@@ -64,22 +65,22 @@ namespace AdminWebsite.AcceptanceTests.Data
         {
             foreach (var conferenceParticipant in conferenceParticipants)
             {
-                var hearingParticipant = hearingParticipants.First(x => x.Contact_email.Equals(conferenceParticipant.Contact_email));
-                conferenceParticipant.Case_type_group.Should().Be(hearingParticipant.Case_role_name);
-                if (conferenceParticipant.User_role != UserRole.Judge)
+                var hearingParticipant = hearingParticipants.First(x => x.ContactEmail.Equals(conferenceParticipant.ContactEmail));
+                conferenceParticipant.CaseTypeGroup.Should().Be(hearingParticipant.CaseRoleName);
+                if (conferenceParticipant.UserRole != UserRole.Judge)
                 {
-                    conferenceParticipant.Contact_email.Should().Be(hearingParticipant.Contact_email);
+                    conferenceParticipant.ContactEmail.Should().Be(hearingParticipant.ContactEmail);
                 }
-                conferenceParticipant.Contact_telephone.Should().Be(hearingParticipant.Telephone_number);
-                conferenceParticipant.Current_status.Should().Be(ParticipantState.NotSignedIn);
-                conferenceParticipant.Display_name.Should().Be(hearingParticipant.Display_name);
-                conferenceParticipant.First_name.Should().Be(hearingParticipant.First_name);
-                conferenceParticipant.Hearing_role.Should().Be(hearingParticipant.Hearing_role_name);
+                conferenceParticipant.ContactTelephone.Should().Be(hearingParticipant.TelephoneNumber);
+                conferenceParticipant.CurrentStatus.Should().Be(ParticipantState.NotSignedIn);
+                conferenceParticipant.DisplayName.Should().Be(hearingParticipant.DisplayName);
+                conferenceParticipant.FirstName.Should().Be(hearingParticipant.FirstName);
+                conferenceParticipant.HearingRole.Should().Be(hearingParticipant.HearingRoleName);
                 conferenceParticipant.Id.Should().NotBeEmpty();
-                conferenceParticipant.Last_name.Should().Be(hearingParticipant.Last_name);
-                conferenceParticipant.Name.Should().Be($"{hearingParticipant.Title} {hearingParticipant.First_name} {hearingParticipant.Last_name}");
-                conferenceParticipant.Ref_id.Should().Be(hearingParticipant.Id);
-                conferenceParticipant.User_role.ToString().Should().Be(hearingParticipant.User_role_name);
+                conferenceParticipant.LastName.Should().Be(hearingParticipant.LastName);
+                conferenceParticipant.Name.Should().Be($"{hearingParticipant.Title} {hearingParticipant.FirstName} {hearingParticipant.LastName}");
+                conferenceParticipant.RefId.Should().Be(hearingParticipant.Id);
+                conferenceParticipant.UserRole.ToString().Should().Be(hearingParticipant.UserRoleName);
                 conferenceParticipant.Username.Should().Be(hearingParticipant.Username);
             }
         }

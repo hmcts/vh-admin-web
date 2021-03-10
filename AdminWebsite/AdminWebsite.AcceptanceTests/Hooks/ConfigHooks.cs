@@ -8,7 +8,8 @@ using AdminWebsite.AcceptanceTests.Configuration;
 using AdminWebsite.AcceptanceTests.Data;
 using AdminWebsite.AcceptanceTests.Data.TestData;
 using AdminWebsite.AcceptanceTests.Helpers;
-using AdminWebsite.TestAPI.Client;
+using BookingsApi.Contract.Responses;
+using TestApi.Contract.Dtos;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
@@ -27,7 +28,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         {
             _configRoot = ConfigurationManager.BuildConfig("f99a3fe8-cf72-486a-b90f-b65c27da84ee", "ef943d1a-7506-483b-92b7-dc6e6b41270a");
             context.WebConfig = new AdminWebConfig();
-            context.Users = new List<User>();
+            context.Users = new List<UserDto>();
         }
 
         [BeforeScenario(Order = (int)HooksSequence.ConfigHooks)]

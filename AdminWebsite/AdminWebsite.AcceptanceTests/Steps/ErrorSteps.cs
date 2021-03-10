@@ -3,7 +3,7 @@ using AcceptanceTests.Common.Driver.Drivers;
 using AcceptanceTests.Common.Driver.Helpers;
 using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.AcceptanceTests.Pages;
-using AdminWebsite.TestAPI.Client;
+using TestApi.Contract.Dtos;
 using FluentAssertions;
 using TechTalk.SpecFlow;
 
@@ -13,9 +13,9 @@ namespace AdminWebsite.AcceptanceTests.Steps
     public class ErrorSteps
     {
         private readonly TestContext _c;
-        private readonly Dictionary<User, UserBrowser> _browsers;
+        private readonly Dictionary<UserDto, UserBrowser> _browsers;
         private readonly LoginSteps _loginSteps;
-        public ErrorSteps(TestContext testContext, Dictionary<User, UserBrowser> browsers, LoginSteps loginSteps)
+        public ErrorSteps(TestContext testContext, Dictionary<UserDto, UserBrowser> browsers, LoginSteps loginSteps)
         {
             _c = testContext;
             _browsers = browsers;
