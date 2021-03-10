@@ -23,7 +23,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _c = testContext;
         }
 
-        [When(@"the user logs in with valid credentials")]
+        [When(@"they attempt to login with valid credentials")]
         public void ProgressToNextPage()
         {
             _loginSharedSteps = new LoginSharedSteps(_browsers[_c.CurrentUser], _c.CurrentUser.Username, _c.WebConfig.TestConfig.TestUserPassword);
@@ -47,6 +47,13 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void ThenTheUserShouldBeNavigatedToSignInScreen()
         {
             _browsers[_c.CurrentUser].Retry(() => _browsers[_c.CurrentUser].Driver.Title.Trim().Should().Be(LoginPage.SignInTitle), ReachedThePageRetries);
+        }
+
+        [Then(@"they should be able to logout")]
+        public void ThenTheyShouldBeAbleToLogout()
+        {
+            WhenTheUserAttemptsToLogout();
+            ThenTheUserShouldBeNavigatedToSignInScreen();
         }
     }
 }
