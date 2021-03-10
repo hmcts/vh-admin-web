@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
-using AcceptanceTests.Common.Configuration.Users;
 using AcceptanceTests.Common.Driver.Drivers;
 using AcceptanceTests.Common.Driver.Helpers;
 using AcceptanceTests.Common.Test.Steps;
 using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.AcceptanceTests.Pages;
-using AdminWebsite.TestAPI.Client;
+using TestApi.Contract.Dtos;
 using FluentAssertions;
 using TechTalk.SpecFlow;
 
@@ -16,9 +15,9 @@ namespace AdminWebsite.AcceptanceTests.Steps
     {
         private const int RETRIES = 10;
         private readonly TestContext _c;
-        private readonly Dictionary<User, UserBrowser> _browsers;
+        private readonly Dictionary<UserDto, UserBrowser> _browsers;
         private string _rowId;
-        public BookingsListSteps(TestContext testContext, Dictionary<User, UserBrowser> browsers)
+        public BookingsListSteps(TestContext testContext, Dictionary<UserDto, UserBrowser> browsers)
         {
             _c = testContext;
             _browsers = browsers;
@@ -57,7 +56,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingsListPage.CaseType(_rowId, _c.Test.HearingDetails.CaseType.Name)).Displayed.Should().BeTrue();
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingsListPage.HearingType(_rowId, _c.Test.HearingDetails.HearingType.Name)).Displayed.Should().BeTrue();
             var judge = Users.GetJudgeUser(_c.Users);
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingsListPage.Judge(_rowId, judge.Display_name)).Displayed.Should().BeTrue();
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingsListPage.Judge(_rowId, judge.DisplayName)).Displayed.Should().BeTrue();
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingsListPage.Venue(_rowId, _c.Test.TestData.HearingSchedule.HearingVenue)).Displayed.Should().BeTrue();
         }
 
