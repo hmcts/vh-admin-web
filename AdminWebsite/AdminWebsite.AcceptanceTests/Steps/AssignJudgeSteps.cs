@@ -10,7 +10,7 @@ using AcceptanceTests.Common.Test.Steps;
 using AdminWebsite.AcceptanceTests.Data;
 using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.AcceptanceTests.Pages;
-using AdminWebsite.TestAPI.Client;
+using TestApi.Contract.Dtos;
 using FluentAssertions;
 using TechTalk.SpecFlow;
 
@@ -20,13 +20,13 @@ namespace AdminWebsite.AcceptanceTests.Steps
     public class AssignJudgeSteps : ISteps
     {
         private readonly TestContext _c;
-        private readonly Dictionary<User, UserBrowser> _browsers;
+        private readonly Dictionary<UserDto, UserBrowser> _browsers;
         private readonly CommonSharedSteps _commonSharedSteps;
 
         private UserAccount Judge => _c.Test.HearingParticipants.FirstOrDefault(c => c.HearingRoleName == "Judge");
         private string JudgePhone => "01234567890";
 
-        public AssignJudgeSteps(TestContext testContext, Dictionary<User, UserBrowser> browsers, CommonSharedSteps commonSharedSteps)
+        public AssignJudgeSteps(TestContext testContext, Dictionary<UserDto, UserBrowser> browsers, CommonSharedSteps commonSharedSteps)
         {
             _c = testContext;
             _browsers = browsers;
