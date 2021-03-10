@@ -103,9 +103,9 @@
       },
       "NotificationApi.Client": {
         "type": "Direct",
-        "requested": "[1.24.7, )",
-        "resolved": "1.24.7",
-        "contentHash": "Nxoc9aYEJYADm5B2d1zzlKkewq0B/pghI+AGqfxnY7UPBGZrHqeIrFMPqNYpl669R35z5Ph0dx3cId9amB047w==",
+        "requested": "[1.24.9, )",
+        "resolved": "1.24.9",
+        "contentHash": "njU3nAaJ6uyDa58UNyion5G0oGp14exrYamGEuNVU0DsCd3O2gz/Yvn+RbP/7xbXn1mwg4o7UDZVQpCgBjIFWg==",
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.Core": "2.2.5",
           "Newtonsoft.Json": "12.0.3"
@@ -270,9 +270,9 @@
       },
       "VH.AcceptanceTests.Common": {
         "type": "Direct",
-        "requested": "[1.21.21, )",
-        "resolved": "1.21.21",
-        "contentHash": "bGTAj9PVMYMxSdcDQKfFAaaF+t3oeus9+lcSAiW+JcCV2HkhZXpMIpOT47pleNGZ6WjRrJEy5ejMQDw8LjiLPA==",
+        "requested": "[1.21.22, )",
+        "resolved": "1.21.22",
+        "contentHash": "FxV7ntnAzNd0Ex86PKgcns9he45Q2JQcGObwyahSMzvlcXbjy7FCNCmuZDxZaM0WiP9/r2NzZ2lyJio3ks+xIw==",
         "dependencies": {
           "Appium.WebDriver": "4.2.1",
           "Azure.Storage.Blobs": "12.7.0",
