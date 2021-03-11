@@ -25,6 +25,7 @@
     <PackageReference Include="TestApi.Client" Version="1.24.9" />
     <PackageReference Include="VH.AcceptanceTests.Common" Version="1.21.26-pullrequest0039-0006">
       <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>compile; runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
 
