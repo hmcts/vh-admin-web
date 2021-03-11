@@ -120,7 +120,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
             if (isInterpretee) {
                 if (this.removeInterpreterPopupComponent) {
                     this.removeInterpreterPopupComponent.isLastParticipant = !isNotLast;
-                }                
+                }
             } else {
                 this.removePopupComponent.isLastParticipant = !isNotLast;
             }
@@ -359,7 +359,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
         this.removeLinkedParticipant(this.selectedParticipantEmail);
 
         this.hearing.participants = [...this.hearing.participants];
-        
+
         this.hearingService.updateHearingRequest(this.hearing);
         this.hearingService.setBookingHasChanged(true);
         this.bookingService.removeParticipantEmail();
