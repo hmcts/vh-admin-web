@@ -266,6 +266,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             });
             _bookingsApiClient.SetupSequence(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(_updatedExistingParticipantHearingOriginal)
+                .ReturnsAsync(updatedHearing)
                 .ReturnsAsync(updatedHearing);
 
             _addNewParticipantRequest.Participants[0].FirstName = "New user firstname";
@@ -298,6 +299,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             });
             _bookingsApiClient.SetupSequence(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(_updatedExistingParticipantHearingOriginal)
+                .ReturnsAsync(updatedHearing)
                 .ReturnsAsync(updatedHearing);
 
             _userAccountService
@@ -352,6 +354,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             _bookingsApiClient.SetupSequence(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(_updatedExistingParticipantHearingOriginal)
+                .ReturnsAsync(updatedHearing)
                 .ReturnsAsync(updatedHearing);
 
             _userAccountService
@@ -585,6 +588,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             _bookingsApiClient.SetupSequence(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(_updatedExistingParticipantHearingOriginal)
+                .ReturnsAsync(updatedHearing)
                 .ReturnsAsync(updatedHearing);
 
             var result = await _controller.EditHearing(_validId, _addNewParticipantRequest);
@@ -615,6 +619,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             });
             _bookingsApiClient.SetupSequence(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(_updatedExistingParticipantHearingOriginal)
+                .ReturnsAsync(updatedHearing)
                 .ReturnsAsync(updatedHearing);
 
 
@@ -646,6 +651,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             _bookingsApiClient.SetupSequence(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(_updatedExistingParticipantHearingOriginal)
+                .ReturnsAsync(updatedHearing)
                 .ReturnsAsync(updatedHearing);
 
 
@@ -745,6 +751,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             _bookingsApiClient.SetupSequence(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(_updatedExistingParticipantHearingOriginal)
+                .ReturnsAsync(updatedHearing)
                 .ReturnsAsync(updatedHearing);
             var result = await _controller.EditHearing(_validId, _addNewParticipantRequest);
             var hearing = (HearingDetailsResponse)((OkObjectResult)result.Result).Value;
@@ -821,6 +828,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             _bookingsApiClient.SetupSequence(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(_updatedExistingParticipantHearingOriginal)
+                .ReturnsAsync(updatedHearing)
                 .ReturnsAsync(updatedHearing);
 
             var response = await _controller.EditHearing(_validId, _addNewParticipantRequest);
@@ -905,6 +913,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             _bookingsApiClient.SetupSequence(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(_updatedExistingParticipantHearingOriginal)
+                .ReturnsAsync(updatedHearing)
                 .ReturnsAsync(updatedHearing);
 
             var addParticipantLinksToHearingRequest = new EditHearingRequest
@@ -966,6 +975,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             _bookingsApiClient.SetupSequence(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(_updatedExistingParticipantHearingOriginal)
+                .ReturnsAsync(updatedHearing)
                 .ReturnsAsync(updatedHearing);
 
             var addParticipantLinksToHearingRequest = new EditHearingRequest
@@ -1029,6 +1039,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             _bookingsApiClient.SetupSequence(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(_updatedExistingParticipantHearingOriginal)
+                .ReturnsAsync(updatedHearing)
                 .ReturnsAsync(updatedHearing);
 
             var result = await _controller.EditHearing(_validId, _addNewParticipantRequest);
@@ -1042,6 +1053,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         {
             _bookingsApiClient.SetupSequence(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(_existingHearingWithoutLinkedParticipants)
+                .ReturnsAsync(_existingHearingWithLinkedParticipants)
                 .ReturnsAsync(_existingHearingWithLinkedParticipants);
             var interpreter = _existingHearingWithLinkedParticipants.Participants.First(p => p.Hearing_role_name.ToLower() == "interpreter");
 
