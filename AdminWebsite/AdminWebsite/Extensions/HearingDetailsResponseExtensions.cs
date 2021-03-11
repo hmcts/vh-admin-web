@@ -1,5 +1,7 @@
 using System;
 using AdminWebsite.BookingsAPI.Client;
+using AdminWebsite.Models;
+using Newtonsoft.Json;
 
 namespace AdminWebsite.Extensions
 {
@@ -18,6 +20,54 @@ namespace AdminWebsite.Extensions
         public static bool IsAClone(this HearingDetailsResponse hearing)
         {
             return hearing.Id != hearing.Group_id;
+        }
+
+        public static bool DoesJudgeEmailExist(this HearingDetailsResponse hearing)
+        {
+            if (hearing.Other_information != null)
+            {
+                var otherInformationDetails = GetOtherInformationObject(hearing.Other_information);
+                if (otherInformationDetails.JudgeEmail != null)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        
+        public static bool DoesJudgePhoneExist(this HearingDetailsResponse hearing)
+        {
+            if (hearing.Other_information != null)
+            {
+                var otherInformationDetails = GetOtherInformationObject(hearing.Other_information);
+                if (otherInformationDetails.JudgePhone != null)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public static string GetJudgeContactEmail(this HearingDetailsResponse hearing)
+        {
+            return GetOtherInformationObject(hearing.Other_information).JudgeEmail;
+        }
+        
+        public static string GetJudgePhone(this HearingDetailsResponse hearing)
+        {
+            return GetOtherInformationObject(hearing.Other_information).JudgePhone;
+        }
+
+        private static OtherInformationDetails GetOtherInformationObject(string otherInformation)
+        {
+            try
+            {
+                return JsonConvert.DeserializeObject<OtherInformationDetails>(otherInformation);
+            }
+            catch (Exception)
+            {
+                return new OtherInformationDetails {OtherInformation = otherInformation};
+            }
         }
     }
 }

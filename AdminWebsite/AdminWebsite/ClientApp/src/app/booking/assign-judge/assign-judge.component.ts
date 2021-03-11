@@ -116,8 +116,8 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
                 this.addJudge(judgeUserId);
                 this.isJudgeSelected = judgeUserId !== null;
                 if (this.isJudgeSelected) {
-                    this.judgeEmailFld.setValue(this.otherInformationDetails.judgeEmail);
-                    this.judgePhoneFld.setValue(this.otherInformationDetails.judgePhone);
+                    this.judgeEmailFld.setValue(this.otherInformationDetails.JudgeEmail);
+                    this.judgePhoneFld.setValue(this.otherInformationDetails.JudgePhone);
                     this.canNavigate = this.isJudgeSelected;
                 }
             })
@@ -131,14 +131,14 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
                 if (email === '') {
                     email = null;
                 }
-                this.otherInformationDetails.judgeEmail = email;
+                this.otherInformationDetails.JudgeEmail = email;
                 this.hearing.other_information = JSON.stringify(this.otherInformationDetails);
             }),
             this.judgePhoneFld.valueChanges.subscribe(phone => {
                 if (phone === '') {
                     phone = null;
                 }
-                this.otherInformationDetails.judgePhone = phone;
+                this.otherInformationDetails.JudgePhone = phone;
                 this.hearing.other_information = JSON.stringify(this.otherInformationDetails);
             })
         );
@@ -158,11 +158,11 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
             validators: [Validators.required, Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)],
             updateOn: 'blur'
         });
-        this.judgeEmailFld = new FormControl(this.otherInformationDetails.judgeEmail, {
+        this.judgeEmailFld = new FormControl(this.otherInformationDetails.JudgeEmail, {
             validators: [Validators.pattern(Constants.EmailPattern), Validators.maxLength(255)],
             updateOn: 'blur'
         });
-        this.judgePhoneFld = new FormControl(this.otherInformationDetails.judgePhone, {
+        this.judgePhoneFld = new FormControl(this.otherInformationDetails.JudgePhone, {
             validators: [Validators.pattern(Constants.PhonePattern)],
             updateOn: 'blur'
         });
@@ -256,7 +256,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     changeTelephone() {
         const judge = this.hearing.participants.find(x => x.is_judge);
         if (judge) {
-            if (this.otherInformationDetails.judgePhone) {
+            if (this.otherInformationDetails.JudgePhone) {
                 this.hearing.other_information = JSON.stringify(this.otherInformationDetails);
             }
         }
@@ -362,6 +362,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
                     userResponse.email = this.constants.PleaseSelect;
                     userResponse.display_name = '';
                     this.availableJudges.unshift(userResponse);
+                    this.initForm();
                 },
                 error => this.onErrorLoadJudges(error)
             )

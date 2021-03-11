@@ -1,6 +1,6 @@
 export class OtherInformationModel {
-    judgeEmail?: string;
-    judgePhone?: string;
+    JudgeEmail?: string;
+    JudgePhone?: string;
     otherInformation?: string;
 
     static init(otherInformation: string): OtherInformationModel {
@@ -9,8 +9,8 @@ export class OtherInformationModel {
         try {
             otherInfo = this.toCamel(JSON.parse(otherInformation));
         } catch (error) {
-            otherInfo.judgeEmail = null;
-            otherInfo.judgePhone = null;
+            otherInfo.JudgeEmail = null;
+            otherInfo.JudgePhone = null;
             otherInfo.otherInformation = otherInformation;
         }
         return otherInfo;
