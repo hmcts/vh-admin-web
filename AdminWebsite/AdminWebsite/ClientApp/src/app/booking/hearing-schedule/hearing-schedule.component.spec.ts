@@ -314,7 +314,7 @@ describe('HearingScheduleComponent first visit', () => {
     });
 
     it('should trigger add hearing date & add a valid hearing date', () => {
-        spyOn(component, 'addValidHearingDate')
+        spyOn(component, 'addValidHearingDate');
         component.addHearingDate();
         const nextYear = new Date();
         nextYear.setFullYear(nextYear.getFullYear() + 1);
