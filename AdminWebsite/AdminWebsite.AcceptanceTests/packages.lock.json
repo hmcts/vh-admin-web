@@ -11,16 +11,6 @@
           "NETStandard.Library": "1.6.0"
         }
       },
-      "Microsoft.NET.Test.Sdk": {
-        "type": "Direct",
-        "requested": "[16.8.3, )",
-        "resolved": "16.8.3",
-        "contentHash": "E2hDEEHIUmDpGm0LIjVenWhXWWd5lWylzuujz0iPwwxPYUA2Ua6jrxfMNdoKombDSk9hpDDA0M3xnFz6TLh/KQ==",
-        "dependencies": {
-          "Microsoft.CodeCoverage": "16.8.3",
-          "Microsoft.TestPlatform.TestHost": "16.8.3"
-        }
-      },
       "NBuilder": {
         "type": "Direct",
         "requested": "[6.1.0, )",
@@ -83,6 +73,41 @@
           "HtmlAgilityPack": "1.11.30",
           "Newtonsoft.Json": "12.0.3",
           "Selenium.WebDriver": "3.141.0"
+        }
+      },
+      "SpecFlow": {
+        "type": "Direct",
+        "requested": "[3.6.23, )",
+        "resolved": "3.6.23",
+        "contentHash": "gJJnagVXe+P5Ysx3ndfxuar4x5edR9OSogR+LSfzJvGYH03ujWTEyfFq2vLQaqpc8uabfFrvc2bQfw/ukGm3mA==",
+        "dependencies": {
+          "BoDi": "1.4.1",
+          "Cucumber.Messages": "[6.0.1, 7.0.0)",
+          "Gherkin": "6.0.0",
+          "System.Configuration.ConfigurationManager": "4.5.0",
+          "System.Net.Http": "4.3.4",
+          "System.ValueTuple": "4.4.0",
+          "Utf8Json": "1.3.7"
+        }
+      },
+      "SpecFlow.NUnit": {
+        "type": "Direct",
+        "requested": "[3.6.23, )",
+        "resolved": "3.6.23",
+        "contentHash": "R0hHReaOhVHq1vqBBivLQPndiYLwbWq0tWsCzdhI6L2D4rYELeazq6NK8VGdtzpf+b5mahtFvC2xFhbe/uIRjg==",
+        "dependencies": {
+          "NUnit": "3.11.0",
+          "SpecFlow": "[3.6.23]",
+          "SpecFlow.Tools.MsBuild.Generation": "[3.6.23]"
+        }
+      },
+      "SpecFlow.Tools.MsBuild.Generation": {
+        "type": "Direct",
+        "requested": "[3.6.23, )",
+        "resolved": "3.6.23",
+        "contentHash": "MPmeTco83xRx+JpFmSCtpTD32+38vEh4jgi/fYy0B3luGxcwUB6LO0WcdFf853dWiaa5x9un+n/DKcNK7AFAoQ==",
+        "dependencies": {
+          "SpecFlow": "[3.6.23]"
         }
       },
       "TestApi.Client": {
@@ -698,6 +723,15 @@
           "System.Buffers": "4.5.0"
         }
       },
+      "Microsoft.NET.Test.Sdk": {
+        "type": "Transitive",
+        "resolved": "16.8.3",
+        "contentHash": "E2hDEEHIUmDpGm0LIjVenWhXWWd5lWylzuujz0iPwwxPYUA2Ua6jrxfMNdoKombDSk9hpDDA0M3xnFz6TLh/KQ==",
+        "dependencies": {
+          "Microsoft.CodeCoverage": "16.8.3",
+          "Microsoft.TestPlatform.TestHost": "16.8.3"
+        }
+      },
       "Microsoft.NETCore.Platforms": {
         "type": "Transitive",
         "resolved": "5.0.0",
@@ -894,38 +928,6 @@
         "type": "Transitive",
         "resolved": "17.17134.0",
         "contentHash": "22tIqQPNbFqWx32YO9XNKvWOcBu3Y98a+qb98xo3k37TkV/qPz7AbohsfaHBtizQtAqbQ5GHNM7re30uvF+amw=="
-      },
-      "SpecFlow": {
-        "type": "Transitive",
-        "resolved": "3.6.23",
-        "contentHash": "gJJnagVXe+P5Ysx3ndfxuar4x5edR9OSogR+LSfzJvGYH03ujWTEyfFq2vLQaqpc8uabfFrvc2bQfw/ukGm3mA==",
-        "dependencies": {
-          "BoDi": "1.4.1",
-          "Cucumber.Messages": "[6.0.1, 7.0.0)",
-          "Gherkin": "6.0.0",
-          "System.Configuration.ConfigurationManager": "4.5.0",
-          "System.Net.Http": "4.3.4",
-          "System.ValueTuple": "4.4.0",
-          "Utf8Json": "1.3.7"
-        }
-      },
-      "SpecFlow.NUnit": {
-        "type": "Transitive",
-        "resolved": "3.6.23",
-        "contentHash": "R0hHReaOhVHq1vqBBivLQPndiYLwbWq0tWsCzdhI6L2D4rYELeazq6NK8VGdtzpf+b5mahtFvC2xFhbe/uIRjg==",
-        "dependencies": {
-          "NUnit": "3.11.0",
-          "SpecFlow": "[3.6.23]",
-          "SpecFlow.Tools.MsBuild.Generation": "[3.6.23]"
-        }
-      },
-      "SpecFlow.Tools.MsBuild.Generation": {
-        "type": "Transitive",
-        "resolved": "3.6.23",
-        "contentHash": "MPmeTco83xRx+JpFmSCtpTD32+38vEh4jgi/fYy0B3luGxcwUB6LO0WcdFf853dWiaa5x9un+n/DKcNK7AFAoQ==",
-        "dependencies": {
-          "SpecFlow": "[3.6.23]"
-        }
       },
       "System.AppContext": {
         "type": "Transitive",
