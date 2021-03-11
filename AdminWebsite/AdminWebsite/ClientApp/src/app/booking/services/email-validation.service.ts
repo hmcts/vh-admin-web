@@ -11,11 +11,7 @@ export class EmailValidationService {
         const pattern = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.(?:[a-zA-Z0-9](?:\.[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
 
         const isValidEmail =
-            email &&
-            email.length > 0 &&
-            email.length < 256 &&
-            pattern.test(email.toLowerCase()) &&
-            email.indexOf(invalidPattern) < 0;
+            email && email.length > 0 && email.length < 256 && pattern.test(email.toLowerCase()) && email.indexOf(invalidPattern) < 0;
         return isValidEmail;
     }
 
