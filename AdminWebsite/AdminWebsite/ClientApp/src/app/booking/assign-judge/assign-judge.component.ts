@@ -381,7 +381,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
             const johMembers = this.hearing.participants.filter(
                 x => x.hearing_role_name === 'Panel Member' || x.hearing_role_name === 'Winger'
             );
-            if (johMembers?.length > 0) {
+            if (johMembers?.some) {
                 return johMembers.findIndex(x => x.username === this.judgeName.value) === -1;
             }
         }

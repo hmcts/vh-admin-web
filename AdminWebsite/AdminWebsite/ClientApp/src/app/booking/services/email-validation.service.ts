@@ -15,7 +15,7 @@ export class EmailValidationService {
             email.length > 0 &&
             email.length < 256 &&
             pattern.test(email.toLowerCase()) &&
-            email.toLowerCase().indexOf(invalidPattern) < 0;
+            email.indexOf(invalidPattern) < 0;
         return isValidEmail;
     }
 
