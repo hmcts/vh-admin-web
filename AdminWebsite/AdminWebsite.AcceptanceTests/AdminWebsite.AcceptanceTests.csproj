@@ -19,13 +19,15 @@
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="NotificationApi.Client" Version="1.24.9" />
     <PackageReference Include="Notify" Version="4.0.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.17.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Polly" Version="7.2.1" />
     <PackageReference Include="Protractor" Version="0.13.0" />
     <PackageReference Include="Selenium.Axe" Version="2.0.3" />
     <PackageReference Include="TestApi.Client" Version="1.24.9" />
-    <PackageReference Include="VH.AcceptanceTests.Common" Version="1.21.26-pullrequest0039-0006">
-      <IncludeAssets>all</IncludeAssets>
-    </PackageReference>
+    <PackageReference Include="VH.AcceptanceTests.Common" Version="1.21.26-pullrequest0039-0006" />
   </ItemGroup>
 
   <ItemGroup>
