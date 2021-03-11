@@ -328,7 +328,7 @@ describe('AssignJudgeComponent', () => {
         component.judgePhoneFld.setValue(judgePhone);
         component.changeTelephone();
         const otherInformationDetails = OtherInformationModel.init(component.hearing.other_information);
-        expect(otherInformationDetails.judgePhone).toBe(judgePhone);
+        expect(otherInformationDetails.JudgePhone).toBe(judgePhone);
     });
     it('should display error when telephone address is not valid', () => {
         component.ngOnInit();

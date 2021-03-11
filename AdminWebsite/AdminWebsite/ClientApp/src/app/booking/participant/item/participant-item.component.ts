@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Router } from '@angular/router';
-import { HearingRoles } from 'src/app/common/model/hearing-roles.model';
 import { ParticipantModel } from 'src/app/common/model/participant.model';
 import { BookingService } from 'src/app/services/booking.service';
 import { Logger } from 'src/app/services/logger';
@@ -32,12 +31,12 @@ export class ParticipantItemComponent {
 
     getJudgeEmail(): string {
         const otherInformation = OtherInformationModel.init(this.hearing.other_information);
-        return otherInformation.judgeEmail;
+        return otherInformation.JudgeEmail;
     }
 
     getJudgePhone(participant: ParticipantModel): string {
         const otherInformation = OtherInformationModel.init(this.hearing.other_information);
-        return otherInformation.judgePhone ?? participant.phone;
+        return otherInformation.JudgePhone ?? participant.phone;
     }
 
     editJudge() {
