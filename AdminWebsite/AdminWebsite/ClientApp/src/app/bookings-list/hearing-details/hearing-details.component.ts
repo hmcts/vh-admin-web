@@ -53,7 +53,7 @@ export class HearingDetailsComponent {
     getOtherInformationText(): string {
         try {
             const otherInfo = OtherInformationModel.init(this.hearing?.OtherInformation);
-            return otherInfo.otherInformation;
+            return otherInfo.OtherInformation;
         } catch (e) {
             return this.hearing?.OtherInformation;
         }
