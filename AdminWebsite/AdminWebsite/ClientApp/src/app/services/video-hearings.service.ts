@@ -130,8 +130,8 @@ export class VideoHearingsService {
         const otherInformationModel = OtherInformationModel.init(hearingRequest.other_information);
         bookingRequest.booking_details.other_information = null;
         bookingRequest.other_information_details = new OtherInformationDetails({
-            judge_email: otherInformationModel.judgeEmail,
-            judge_phone: otherInformationModel.judgePhone,
+            judge_email: otherInformationModel.JudgeEmail,
+            judge_phone: otherInformationModel.JudgePhone,
             other_information: otherInformationModel.otherInformation
         });
 
