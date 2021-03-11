@@ -16,6 +16,6 @@ export class EmailValidationService {
     }
 
     hasCourtroomAccountPattern(email: string, invalidPattern: string): boolean {
-        return email?.toLowerCase().indexOf(invalidPattern) > -1;
+        return email?.indexOf(invalidPattern) > -1;
     }
 }
