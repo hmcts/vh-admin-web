@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -931,6 +932,60 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                                 Id = Guid.NewGuid(),
                                 ParticipantId = _updatedExistingParticipantHearingOriginal.Participants[0].Id,
                                 LinkedId = _updatedExistingParticipantHearingOriginal.Participants[1].Id,
+                                Type = LinkedParticipantType.Interpreter
+                            }
+                        }
+                    }
+                }
+            };
+
+            var result = await _controller.EditHearing(_validId, addParticipantLinksToHearingRequest);
+            ((OkObjectResult)result.Result).StatusCode.Should().Be(200);
+            _bookingsApiClient.Verify(x => x.UpdateParticipantDetailsAsync(
+                _validId, individual.Id,
+                It.IsAny<UpdateParticipantRequest>()), Times.AtLeastOnce);
+        }
+
+        [Test]
+        public async Task Should_Update_LinkedParticipants_From_Request_with_new_participant()
+        {
+            _updatedExistingParticipantHearingOriginal.Participants.Add(new ParticipantResponse
+            {
+                Id = Guid.NewGuid(),
+                User_role_name = "Individual",
+                Contact_email = "link@hmcts.net",
+                Username = "link@hmcts.net"
+            });
+            var updatedHearing = new HearingDetailsResponse
+            {
+                Participants = _updatedExistingParticipantHearingOriginal.Participants,
+                Cases = _updatedExistingParticipantHearingOriginal.Cases,
+                Case_type_name = "Unit Test"
+            };
+            var individual =
+                _updatedExistingParticipantHearingOriginal.Participants.First(x =>
+                    x.User_role_name.ToLower() == "individual");
+
+            _bookingsApiClient.SetupSequence(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
+                .ReturnsAsync(_updatedExistingParticipantHearingOriginal)
+                .ReturnsAsync(updatedHearing)
+                .ReturnsAsync(updatedHearing);
+
+            var addParticipantLinksToHearingRequest = new EditHearingRequest
+            {
+                Case = new EditCaseRequest { Name = "Case", Number = "123" },
+                Participants = new List<EditParticipantRequest>
+                {
+                    new EditParticipantRequest
+                    {
+                        Id = individual.Id,
+                        LinkedParticipants = new List<LinkedParticipant>
+                        {
+                            new LinkedParticipant
+                            {
+                                Id = Guid.NewGuid(),
+                                ParticipantContactEmail = "test.user1@hmcts.net",
+                                LinkedParticipantContactEmail = "test.user2@hmcts.net",
                                 Type = LinkedParticipantType.Interpreter
                             }
                         }
