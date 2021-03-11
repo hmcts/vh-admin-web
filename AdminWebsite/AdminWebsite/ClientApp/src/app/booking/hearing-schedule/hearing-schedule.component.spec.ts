@@ -308,10 +308,49 @@ describe('HearingScheduleComponent first visit', () => {
         expect(component.isStartHoursInPast).toBeFalsy();
     });
 
-    it('should add a hearing date', () => {
-        const length = component.hearingDates.length;
-        component.addValidHearingDate('2021-03-03');
-        expect(component.hearingDates.length).toBe(length + 1);
+    it('should set-up the hearing date control', () => {
+        component.addHearingDate();
+        expect(component.hearingDateControl).not.toBe(null);
+    });
+
+    it('should trigger add hearing date & add a valid hearing date', () => {
+        spyOn(component, 'addValidHearingDate')
+        component.addHearingDate();
+        const nextYear = new Date();
+        nextYear.setFullYear(nextYear.getFullYear() + 1);
+        while (nextYear.getDay() !== 1) {
+            nextYear.setDate(nextYear.getDate() + 1);
+        }
+        component.addHearingDateControl.setValue(nextYear);
+        expect(component.addValidHearingDate).toHaveBeenCalled();
+        setTimeout(() => {
+            expect(component.hearingDates[0]).toBe(nextYear);
+        }, 1000);
+    });
+
+    it('should return invalid for hearing date in the past', () => {
+        component.addHearingDate();
+        component.addHearingDateControl.setValue('2021-03-01');
+        expect(component.isAddHearingControlValid()).toBe(false);
+    });
+
+    it('should return invalid for hearing date on a weekend', () => {
+        component.addHearingDate();
+        component.addHearingDateControl.setValue('2021-03-06');
+        expect(component.isAddHearingControlValid()).toBe(false);
+    });
+
+    it('should return true if a date is already selected', () => {
+        component.hearingDates = [new Date()];
+        component.addHearingDate();
+        component.addHearingDateControl.setValue(new Date());
+        expect(component.isDateAlreadySelected()).toBe(true);
+    });
+
+    it('should remove hearing date', () => {
+        component.hearingDates = [new Date()];
+        component.removeHearingDate(0);
+        expect(component.hearingDates.length).toBe(0);
     });
 });
 
@@ -510,6 +549,11 @@ describe('HearingScheduleComponent multi days hearing', () => {
         component.hearing = existingRequest;
         component.multiDaysControl.setValue(true);
         expect(component.multiDaysHearing).toBe(true);
+    });
+    it('should populate hearing dates', () => {
+        component.hearing.hearing_dates = [new Date(), new Date(), new Date()];
+        component.ngOnInit();
+        expect(component.hearingDates.length).toBe(3);
     });
     it('should validate end date to true', () => {
         const startDateValue = new Date(addDays(Date.now(), 1));

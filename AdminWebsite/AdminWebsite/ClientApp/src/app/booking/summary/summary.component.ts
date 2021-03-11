@@ -199,7 +199,6 @@ export class SummaryComponent implements OnInit, OnDestroy {
     isLastParticipanRemoved() {
         const filteredParticipants = this.hearing.participants.filter(x => !x.is_judge);
         if (!filteredParticipants || filteredParticipants.length === 0) {
-            // the last participant was removed, go to 'add participant' screen
             this.router.navigate([PageUrls.AddParticipants]);
         }
     }
