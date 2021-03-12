@@ -8,7 +8,7 @@ export class PipeStringifierService {
 
     encode<T>(input: T): string {
         let output = '';
-        for (var property in input) {
+        for (const property in input) {
             if (Object.prototype.hasOwnProperty.call(input, property)) {
                 output += `|${property}|${input[property]}`;
             }
@@ -17,7 +17,7 @@ export class PipeStringifierService {
     }
 
     decode<T>(input: string): T {
-        let output = {};
+        const output = {};
         const keyValuePairs = input.match(/[^|]+\|[^|]+/g);
         keyValuePairs.forEach(property => {
             const pair = property.split('|');
