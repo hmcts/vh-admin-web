@@ -132,7 +132,7 @@ export class VideoHearingsService {
         bookingRequest.other_information_details = new OtherInformationDetails({
             judge_email: otherInformationModel.JudgeEmail,
             judge_phone: otherInformationModel.JudgePhone,
-            other_information: otherInformationModel.otherInformation
+            other_information: otherInformationModel.OtherInformation
         });
 
         if (newRequest.multiDays) {

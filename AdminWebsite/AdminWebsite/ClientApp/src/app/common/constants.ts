@@ -6,7 +6,7 @@ export const Constants = {
     TextInputPattern: /^[^%{}~|]+$/,
     TextInputPatternName: /^([-A-Za-z0-9 ',._])*$/,
     PostCodePattern: /^([a-zA-Z]{1,2}([0-9]{1,2}|[0-9][a-zA-Z])\s*[0-9][a-zA-Z]{2})$/,
-    EmailPattern: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
+    EmailPattern: /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.(?:[a-zA-Z0-9](?:\.[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
     PhonePattern: /^([0-9() +-.])*$/,
     Judge: 'Judge',
     Citizen: 'Citizen',
@@ -27,7 +27,9 @@ export const Constants = {
         DisplayNameErrorMsg: 'Please enter a display name',
         CompanyNameErrorMsg: 'Please enter a valid company name',
         OtherInformationErrorMsg: 'Please enter a valid other information text',
-        InterpreterForErrorMsg: 'Please select a participant'
+        InterpreterForErrorMsg: 'Please select a participant',
+        JudgeParticipantErrorMsg:
+            'The judge or courtroom account that you have entered cannot be the same as the panel member email address. Please enter an alternative account.'
     },
     Contact: {
         phone: '0300 303 0655',
