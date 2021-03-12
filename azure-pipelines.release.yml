@@ -86,7 +86,7 @@ stages:
         devOpsResource: vh_admin_web
         appName: vh-admin-web-$(environment)
         resourceGroup: vh-admin-web-$(environment)
-        testCaseFilter: TestCategory=smoketest
+        testCaseFilter: TestCategory=Smoketest
         dependentApps:
         - name: vh-user-api-$(environment)
           resourceGroup: vh-user-api-$(environment)
