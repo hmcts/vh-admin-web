@@ -1,8 +1,8 @@
 import { PipeStringifierService } from "src/app/services/pipe-stringifier.service";
 
 export class OtherInformationModel {
-    judgeEmail?: string;
-    judgePhone?: string;
+    JudgeEmail?: string;
+    JudgePhone?: string;
     otherInformation?: string;
 
     static init(otherInformation: string): OtherInformationModel {
@@ -11,8 +11,8 @@ export class OtherInformationModel {
         try {
             otherInfo = stringifier.decode(otherInformation);
         } catch (error) {
-            otherInfo.judgeEmail = null;
-            otherInfo.judgePhone = null;
+            otherInfo.JudgeEmail = null;
+            otherInfo.JudgePhone = null;
             otherInfo.otherInformation = otherInformation;
         }
         return otherInfo;
