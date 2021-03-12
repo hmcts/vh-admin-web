@@ -477,7 +477,7 @@ namespace AdminWebsite.Services
         {
             await _pollyRetryService.WaitAndRetryAsync<Exception, Task>
             (
-                3, _ => TimeSpan.FromSeconds(3),
+                4, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)),
                 retryAttempt => _logger.LogDebug($"{nameof(AssignParticipantToCorrectGroups)} - Failed to add username: {username} userId {userId} to role: {userRoleName} on AAD for hearingId: {hearingId}. Retrying attempt {retryAttempt}"),
                 result => result.IsFaulted,
                 async () =>

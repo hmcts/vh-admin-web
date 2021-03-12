@@ -79,6 +79,10 @@ namespace AdminWebsite.UnitTests.Services
                 x => x.AddUserToGroupAsync(It.Is<AddUserToGroupRequest>(y =>
                     y.GroupName == UserAccountService.VirtualRoomProfessionalUser)),
                 Times.Never);
+            _userApiClient.Verify(
+                x => x.AddUserToGroupAsync(It.Is<AddUserToGroupRequest>(y =>
+                    y.GroupName == UserAccountService.JudicialOfficeHolder)),
+                Times.Never);
         }
 
         [Test]
@@ -363,5 +367,17 @@ namespace AdminWebsite.UnitTests.Services
             Assert.ThrowsAsync<UserApiException>(() =>
                 _service.GetAdUserIdForUsername("123"));
         }
+        
+        [Test]
+        public void Should_throw_exception_when_add_user_to_group_has_null_user_name()
+        {
+            _userApiClient.Setup(x => x.AddUserToGroupAsync(It.IsAny<AddUserToGroupRequest>()))
+                .Throws(ClientException.ForUserService(HttpStatusCode.InternalServerError));
+
+            Assert.ThrowsAsync<UserApiException>(() =>
+                _service.AssignParticipantToGroup(null,"Individual"));
+        }
+        
+        
     }
 }
