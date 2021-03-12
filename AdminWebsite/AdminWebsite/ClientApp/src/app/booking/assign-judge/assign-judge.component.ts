@@ -379,7 +379,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     }
 
     validateJudgeAndJohMembers(): boolean {
-        if (this.hearing?.participants.length > 0 && this.judgeName.value) {
+        if (this.hearing?.participants.length && this.judgeName.value) {
             return this.hearing.participants.some(x => 
                 (x.hearing_role_name === 'Panel Member' || 
                 x.hearing_role_name === 'Winger') && 
