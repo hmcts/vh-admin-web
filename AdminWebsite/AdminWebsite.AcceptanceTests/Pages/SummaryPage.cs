@@ -30,5 +30,6 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public static By VideoAccessPoints(int i) => By.Id($"displayName{i.ToString()}");
         public static By HearingStartDateMultiDays = By.Id("hearingStartDate");
         public static By HearingEndDateMultiDays = By.Id("hearingEndDateTime");
+        public static By WaitPopUp = By.Id("waitPopup");
     }
 }
