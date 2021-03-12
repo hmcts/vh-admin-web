@@ -48,7 +48,7 @@ describe('ParticipantItemComponent', () => {
         component.hearing = {
             updated_date: new Date(),
             questionnaire_not_required: true,
-            other_information: '|judgeEmail|James.Doe@hmcts.net|judgePhone|123456789'
+            other_information: '|JudgeEmail|James.Doe@hmcts.net|JudgePhone|123456789'
         };
 
         fixture.detectChanges();
