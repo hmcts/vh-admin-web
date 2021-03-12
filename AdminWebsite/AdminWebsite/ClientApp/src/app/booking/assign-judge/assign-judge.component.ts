@@ -251,7 +251,9 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         const text = SanitizeInputText(this.judgeEmailFld.value);
         this.judgeEmailFld.setValue(text);
 
-        this.isValidEmail = text ? this.emailValidationService.validateEmail(this.judgeEmailFld.value, this.invalidPattern) && this.judgeEmailFld.valid : true;
+        this.isValidEmail = text
+            ? this.emailValidationService.validateEmail(this.judgeEmailFld.value, this.invalidPattern) && this.judgeEmailFld.valid
+            : true;
     }
 
     changeTelephone() {
@@ -380,10 +382,9 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
 
     validateJudgeAndJohMembers(): boolean {
         if (this.hearing?.participants.length && this.judgeName.value) {
-            return this.hearing.participants.some(x => 
-                (x.hearing_role_name === 'Panel Member' || 
-                x.hearing_role_name === 'Winger') && 
-                x.username === this.judgeName.value);
+            return !this.hearing.participants.some(
+                x => (x.hearing_role_name === 'Panel Member' || x.hearing_role_name === 'Winger') && x.username === this.judgeName.value
+            );
         }
 
         return true;
