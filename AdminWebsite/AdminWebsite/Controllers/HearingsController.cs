@@ -278,7 +278,7 @@ namespace AdminWebsite.Controllers
                 _logger.LogDebug("Attempting assign participants to the correct group");
                 await _hearingsService.AssignParticipantToCorrectGroups(updatedHearing, usernameAdIdDict);
                 _logger.LogDebug("Successfully assigned participants to the correct group");
-
+                
                 // Send a notification email to newly created participants
                 var newParticipantEmails = newParticipantList.Select(p => p.Contact_email);
                 if (newParticipantList.Any())

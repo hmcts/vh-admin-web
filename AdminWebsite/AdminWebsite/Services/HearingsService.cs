@@ -9,6 +9,7 @@ using AdminWebsite.Models;
 using AdminWebsite.Services.Models;
 using Microsoft.Extensions.Logging;
 using NotificationApi.Client;
+using NotificationApi.Contract.Requests;
 using VideoApi.Client;
 using VideoApi.Contract.Responses;
 using AddEndpointRequest = AdminWebsite.BookingsAPI.Client.AddEndpointRequest;
@@ -142,16 +143,24 @@ namespace AdminWebsite.Services
             {
                 return;
             }
+
             var @case = updatedHearing.Cases.First();
             var caseName = @case.Name;
             var caseNumber = @case.Number;
+
             var participantsToEmail = participants ?? updatedHearing.Participants;
+            if(!updatedHearing.DoesJudgeEmailExist())
+            {
+                participantsToEmail = participantsToEmail
+                    .Where(x => !x.User_role_name.Contains("Judge", StringComparison.CurrentCultureIgnoreCase))
+                    .ToList();
+            }
             var requests = participantsToEmail
-                .Where(x => !x.User_role_name.Contains("Judge", StringComparison.CurrentCultureIgnoreCase))
                 .Select(participant =>
-                    AddNotificationRequestMapper.MapToHearingAmendmentNotification(updatedHearing.Id, participant,
+                    AddNotificationRequestMapper.MapToHearingAmendmentNotification(updatedHearing, participant,
                         caseName, caseNumber, originalHearing.Scheduled_date_time, updatedHearing.Scheduled_date_time))
                 .ToList();
+
             foreach (var request in requests)
             {
                 await _notificationApiClient.CreateNewNotificationAsync(request);
@@ -164,11 +173,14 @@ namespace AdminWebsite.Services
             {
                 return;
             }
+
             var participantsToEmail = participants ?? hearing.Participants;
+            
             var requests = participantsToEmail
                 .Where(x => !x.User_role_name.Contains("Judge", StringComparison.CurrentCultureIgnoreCase))
                 .Select(participant => AddNotificationRequestMapper.MapToHearingConfirmationNotification(hearing, participant))
-                .ToList();
+                .ToList();   
+            
             foreach (var request in requests)
             {
                 await _notificationApiClient.CreateNewNotificationAsync(request);
@@ -181,11 +193,11 @@ namespace AdminWebsite.Services
             {
                 return;
             }
-            
+     
             var requests = hearing.Participants
                 .Where(x => !x.User_role_name.Contains("Judge", StringComparison.CurrentCultureIgnoreCase))
                 .Select(participant => AddNotificationRequestMapper.MapToMultiDayHearingConfirmationNotification(hearing, participant, days))
-                .ToList();
+                .ToList(); 
             
             foreach (var request in requests)
             {
@@ -200,6 +212,21 @@ namespace AdminWebsite.Services
                 return;
             }
             
+            var participantsToEmail = hearing.Participants;
+            
+            if (hearing.DoesJudgeEmailExist())
+            {
+                var judgeConfirmationRequest = participantsToEmail
+                    .Where(x => x.User_role_name.Contains("Judge", StringComparison.CurrentCultureIgnoreCase))
+                    .Select(participant => AddNotificationRequestMapper.MapToHearingConfirmationNotification(hearing, participant))
+                    .ToList();   
+                
+                foreach (var request in judgeConfirmationRequest)
+                {
+                    await _notificationApiClient.CreateNewNotificationAsync(request);
+                }
+            }
+
             var requests = hearing.Participants
                 .Where(x => !x.User_role_name.Contains("Judge", StringComparison.CurrentCultureIgnoreCase))
                 .Select(participant => AddNotificationRequestMapper.MapToHearingReminderNotification(hearing, participant))
@@ -439,7 +466,7 @@ namespace AdminWebsite.Services
         {
             await _pollyRetryService.WaitAndRetryAsync<Exception, Task>
             (
-                3, _ => TimeSpan.FromSeconds(3),
+                4, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)),
                 retryAttempt => _logger.LogDebug($"{nameof(AssignParticipantToCorrectGroups)} - Failed to add username: {username} userId {userId} to role: {userRoleName} on AAD for hearingId: {hearingId}. Retrying attempt {retryAttempt}"),
                 result => result.IsFaulted,
                 async () =>

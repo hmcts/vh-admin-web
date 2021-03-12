@@ -20,6 +20,8 @@ import { ParticipantsListStubComponent } from '../../testing/stubs/participant-l
 import { JudgeDataService } from '../services/judge-data.service';
 import { AssignJudgeComponent } from './assign-judge.component';
 import { OtherInformationModel } from '../../common/model/other-information.model';
+import { EmailValidationService } from 'src/app/booking/services/email-validation.service';
+import { ActivatedRoute } from '@angular/router';
 
 function initHearingRequest(): HearingModel {
     const participants: ParticipantModel[] = [];
@@ -30,6 +32,8 @@ function initHearingRequest(): HearingModel {
     p1.last_name = 'last';
     p1.is_judge = true;
     p1.title = 'Mr.';
+    p1.username = 'test1@hmcts.net';
+    p1.hearing_role_name = 'Judge';
 
     const p2 = new ParticipantModel();
     p2.display_name = 'display name2';
@@ -38,6 +42,8 @@ function initHearingRequest(): HearingModel {
     p2.last_name = 'last2';
     p2.is_judge = false;
     p2.title = 'Mr.';
+    p2.username = 'test2@hmcts.net';
+    p2.hearing_role_name = 'Applicant';
 
     participants.push(p1);
     participants.push(p2);
@@ -55,6 +61,33 @@ function initHearingRequest(): HearingModel {
     return newHearing;
 }
 
+function initHearingWithJOH() {
+    const newHearing = initHearingRequest();
+    const p1 = new ParticipantModel();
+    p1.display_name = 'display name_pm';
+    p1.email = 'testpm@hmcts.net';
+    p1.first_name = 'firstpm';
+    p1.last_name = 'lastpm';
+    p1.is_judge = false;
+    p1.title = 'Mr.';
+    p1.username = 'testpm@hmcts.net';
+    p1.hearing_role_name = 'Panel Member';
+
+    const p2 = new ParticipantModel();
+    p2.display_name = 'display name_w';
+    p2.email = 'testw@hmcts.net';
+    p2.first_name = 'firstw';
+    p2.last_name = 'lastw';
+    p2.is_judge = false;
+    p2.title = 'Mr.';
+    p2.username = 'testw@hmcts.net';
+    p2.hearing_role_name = 'Winger';
+
+    newHearing.participants.push(p1);
+    newHearing.participants.push(p2);
+    return newHearing;
+}
+
 let component: AssignJudgeComponent;
 let fixture: ComponentFixture<AssignJudgeComponent>;
 
@@ -63,13 +96,17 @@ let judgeDataServiceSpy: jasmine.SpyObj<JudgeDataService>;
 let routerSpy: jasmine.SpyObj<Router>;
 let bookingServiseSpy: jasmine.SpyObj<BookingService>;
 let loggerSpy: jasmine.SpyObj<Logger>;
+let emailValidationServiceSpy: jasmine.SpyObj<EmailValidationService>;
 
 describe('AssignJudgeComponent', () => {
     beforeEach(
         waitForAsync(() => {
             const newHearing = initHearingRequest();
             loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
-
+            emailValidationServiceSpy = jasmine.createSpyObj<EmailValidationService>('EmailValidationService', [
+                'hasCourtroomAccountPattern',
+                'validateEmail'
+            ]);
             videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
                 'getHearingTypes',
                 'getCurrentRequest',
@@ -78,6 +115,8 @@ describe('AssignJudgeComponent', () => {
                 'setBookingHasChanged'
             ]);
             videoHearingsServiceSpy.getCurrentRequest.and.returnValue(newHearing);
+            emailValidationServiceSpy.validateEmail.and.returnValue(true);
+            emailValidationServiceSpy.hasCourtroomAccountPattern.and.returnValue(true);
 
             bookingServiseSpy = jasmine.createSpyObj<BookingService>('BookingService', ['resetEditMode', 'isEditMode', 'removeEditMode']);
 
@@ -89,6 +128,7 @@ describe('AssignJudgeComponent', () => {
                 providers: [
                     { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
                     { provide: JudgeDataService, useValue: judgeDataServiceSpy },
+                    { provide: EmailValidationService, useValue: emailValidationServiceSpy },
                     {
                         provide: Router,
                         useValue: {
@@ -98,8 +138,34 @@ describe('AssignJudgeComponent', () => {
                     },
                     { provide: BookingService, useValue: bookingServiseSpy },
                     { provide: Logger, useValue: loggerSpy },
-                    RecordingGuardService
+                    RecordingGuardService,
+                    {
+                        provide: ActivatedRoute,
+                        useValue: {
+                            data: {
+                                subscribe: (fn: (value) => void) =>
+                                    fn({
+                                        some: ''
+                                    })
+                            },
+                            params: {
+                                subscribe: (fn: (value) => void) =>
+                                    fn({
+                                        some: 0
+                                    })
+                            },
+                            snapshot: {
+                                data: { emailPattern: 'courtroom.test' },
+                                url: [
+                                    {
+                                        path: 'fake'
+                                    }
+                                ]
+                            }
+                        }
+                    }
                 ],
+
                 declarations: [
                     AssignJudgeComponent,
                     BreadcrumbStubComponent,
@@ -328,7 +394,7 @@ describe('AssignJudgeComponent', () => {
         component.judgePhoneFld.setValue(judgePhone);
         component.changeTelephone();
         const otherInformationDetails = OtherInformationModel.init(component.hearing.other_information);
-        expect(otherInformationDetails.judgePhone).toBe(judgePhone);
+        expect(otherInformationDetails.JudgePhone).toBe(judgePhone);
     });
     it('should display error when telephone address is not valid', () => {
         component.ngOnInit();
@@ -346,5 +412,42 @@ describe('AssignJudgeComponent', () => {
         component.ngOnInit();
         component.addJudge('fakejudge@notavailable.com');
         expect().nothing();
+        expect(component.isJudgeParticipantError).toBe(false);
+    });
+    it('should set validation error to true if judge account has the same account as panel member', () => {
+        const savedHearing = initHearingWithJOH();
+        const panelMember = savedHearing.participants.find(x => x.hearing_role_name === 'Panel Member');
+        const judge = savedHearing.participants.find(x => x.is_judge);
+        panelMember.username = judge.username;
+        component.hearing = savedHearing;
+
+        expect(component.isJudgeParticipantError).toBe(false);
+
+        component.saveJudge();
+
+        expect(component.isJudgeParticipantError).toBe(true);
+    });
+    it('should set validation error to true if judge account has the same account as winger', () => {
+        const savedHearing = initHearingWithJOH();
+        const panelMember = savedHearing.participants.find(x => x.hearing_role_name === 'Winger');
+        const judge = savedHearing.participants.find(x => x.is_judge);
+        panelMember.username = judge.username;
+        component.hearing = savedHearing;
+
+        expect(component.isJudgeParticipantError).toBe(false);
+
+        component.saveJudge();
+
+        expect(component.isJudgeParticipantError).toBe(true);
+    });
+    it('should set validation error to false if judge account has not the same account with winger or panel member', () => {
+        const savedHearing = initHearingWithJOH();
+        component.hearing = savedHearing;
+
+        expect(component.isJudgeParticipantError).toBe(false);
+
+        component.saveJudge();
+
+        expect(component.isJudgeParticipantError).toBe(false);
     });
 });

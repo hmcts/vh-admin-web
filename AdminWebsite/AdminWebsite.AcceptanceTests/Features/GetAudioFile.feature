@@ -9,5 +9,4 @@ Scenario: Get Audio File
 	And the Video Hearings Officer user has progressed to the Get Audio File page
 	When I search for the audio recording by case number
 	Then the audio recording is retrieved
-	When I attempt to get the link
-	Then the link is retrieved
+	And the link can be retrieved

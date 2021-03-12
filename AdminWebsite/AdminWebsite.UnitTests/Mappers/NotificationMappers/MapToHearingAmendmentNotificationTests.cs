@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Mappers;
+using AdminWebsite.Models;
 using FluentAssertions;
+using Newtonsoft.Json;
 using NotificationApi.Contract;
 using NUnit.Framework;
 
@@ -10,16 +12,28 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
 {
     public class MapToHearingAmendmentNotificationTests
     {
+        private HearingDetailsResponse _hearing;
+        
+        [SetUp]
+        public void Setup()
+        {
+            _hearing = new HearingDetailsResponse
+            {
+                Id = Guid.NewGuid()
+            };
+        }
+        
         [Test]
         public void should_map_to_judge_hearing_amendment_notification()
         {
             var expectedNotificationType = NotificationType.HearingAmendmentJudge;
-            var hearingId = Guid.NewGuid();
             var oldDate = new DateTime(2020, 2, 10, 11, 30, 0);
             var newDate = new DateTime(2020, 10, 12, 13, 10, 0);
             var caseName = "cse test";
             var caseNumber = "MBFY/17364";
             var participant = InitParticipant("Judge");
+            _hearing.Other_information = JsonConvert.SerializeObject(new OtherInformationDetails
+                {JudgeEmail = "judge@hmcts.net", JudgePhone = "123456789"});
 
             var expectedParameters = new Dictionary<string, string>
             {
@@ -34,11 +48,11 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             };
 
             var result =
-                AddNotificationRequestMapper.MapToHearingAmendmentNotification(hearingId, participant, caseName,
+                AddNotificationRequestMapper.MapToHearingAmendmentNotification(_hearing, participant, caseName,
                     caseNumber, oldDate, newDate);
 
             result.Should().NotBeNull();
-            result.HearingId.Should().Be(hearingId);
+            result.HearingId.Should().Be(_hearing.Id);
             result.ParticipantId.Should().Be(participant.Id);
             result.ContactEmail.Should().Be(participant.Contact_email);
             result.NotificationType.Should().Be(expectedNotificationType);
@@ -51,7 +65,6 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
         public void should_map_to_lip_hearing_amendment_notification()
         {
             var expectedNotificationType = NotificationType.HearingAmendmentLip;
-            var hearingId = Guid.NewGuid();
             var oldDate = new DateTime(2020, 2, 10, 11, 30, 0);
             var newDate = new DateTime(2020, 10, 12, 13, 10, 0);
             var caseName = "cse test";
@@ -70,11 +83,11 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             };
 
             var result =
-                AddNotificationRequestMapper.MapToHearingAmendmentNotification(hearingId, participant, caseName,
+                AddNotificationRequestMapper.MapToHearingAmendmentNotification(_hearing, participant, caseName,
                     caseNumber, oldDate, newDate);
 
             result.Should().NotBeNull();
-            result.HearingId.Should().Be(hearingId);
+            result.HearingId.Should().Be(_hearing.Id);
             result.ParticipantId.Should().Be(participant.Id);
             result.ContactEmail.Should().Be(participant.Contact_email);
             result.NotificationType.Should().Be(expectedNotificationType);
@@ -87,7 +100,6 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
         public void should_map_to_representative_hearing_amendment_notification()
         {
             var expectedNotificationType = NotificationType.HearingAmendmentRepresentative;
-            var hearingId = Guid.NewGuid();
             var oldDate = new DateTime(2020, 2, 10, 11, 30, 0);
             var newDate = new DateTime(2020, 10, 12, 13, 10, 0);
             var caseName = "cse test";
@@ -107,11 +119,11 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             };
 
             var result =
-                AddNotificationRequestMapper.MapToHearingAmendmentNotification(hearingId, participant, caseName,
+                AddNotificationRequestMapper.MapToHearingAmendmentNotification(_hearing, participant, caseName,
                     caseNumber, oldDate, newDate);
 
             result.Should().NotBeNull();
-            result.HearingId.Should().Be(hearingId);
+            result.HearingId.Should().Be(_hearing.Id);
             result.ParticipantId.Should().Be(participant.Id);
             result.ContactEmail.Should().Be(participant.Contact_email);
             result.NotificationType.Should().Be(expectedNotificationType);
@@ -124,7 +136,6 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
         public void should_map_to_joh_hearing_amendment_notification()
         {
             var expectedNotificationType = NotificationType.HearingAmendmentJoh;
-            var hearingId = Guid.NewGuid();
             var oldDate = new DateTime(2020, 2, 10, 11, 30, 0);
             var newDate = new DateTime(2020, 10, 12, 13, 10, 0);
             var caseName = "cse test";
@@ -143,11 +154,11 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             };
 
             var result =
-                AddNotificationRequestMapper.MapToHearingAmendmentNotification(hearingId, participant, caseName,
+                AddNotificationRequestMapper.MapToHearingAmendmentNotification(_hearing, participant, caseName,
                     caseNumber, oldDate, newDate);
 
             result.Should().NotBeNull();
-            result.HearingId.Should().Be(hearingId);
+            result.HearingId.Should().Be(_hearing.Id);
             result.ParticipantId.Should().Be(participant.Id);
             result.ContactEmail.Should().Be(participant.Contact_email);
             result.NotificationType.Should().Be(expectedNotificationType);
@@ -173,6 +184,5 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
                 Representee = representee
             };
         }
-
     }
 }

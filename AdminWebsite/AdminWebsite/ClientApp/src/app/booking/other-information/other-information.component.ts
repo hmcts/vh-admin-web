@@ -91,7 +91,7 @@ export class OtherInformationComponent extends BookingBaseComponent implements O
     private checkForExistingRequest() {
         this.hearing = this.videoHearingService.getCurrentRequest();
         this.otherInformationDetails = OtherInformationModel.init(this.hearing.other_information);
-        this.otherInformationText = this.otherInformationDetails.otherInformation;
+        this.otherInformationText = this.otherInformationDetails.OtherInformation;
     }
 
     next() {
@@ -145,7 +145,7 @@ export class OtherInformationComponent extends BookingBaseComponent implements O
     }
 
     otherInformationOnBlur() {
-        this.otherInformationDetails.otherInformation = this.otherInformation.value;
+        this.otherInformationDetails.OtherInformation = this.otherInformation.value;
         const text = SanitizeInputText(this.otherInformation.value);
         this.otherInformation.setValue(text);
     }
