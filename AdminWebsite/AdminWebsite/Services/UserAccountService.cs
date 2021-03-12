@@ -77,7 +77,11 @@ namespace AdminWebsite.Services
         /// <param name="bookingsApiClient"></param>
         /// <param name="notificationApiClient"></param>
         /// <param name="logger"></param>
-        public UserAccountService(IUserApiClient userApiClient, IBookingsApiClient bookingsApiClient, INotificationApiClient notificationApiClient, ILogger<UserAccountService> logger)
+        public UserAccountService(
+            IUserApiClient userApiClient, 
+            IBookingsApiClient bookingsApiClient, 
+            INotificationApiClient notificationApiClient, 
+            ILogger<UserAccountService> logger)
         {
             _userApiClient = userApiClient;
             _bookingsApiClient = bookingsApiClient;
@@ -272,17 +276,26 @@ namespace AdminWebsite.Services
             };
             return _userApiClient.UpdateUserAccountAsync(userId, request);
         }
-        
+
         private async Task AddGroup(string username, string groupName)
         {
-            var addUserToGroupRequest = new AddUserToGroupRequest
+            try
             {
-                UserId = username,
-                GroupName = groupName
-            };
-
-            await _userApiClient.AddUserToGroupAsync(addUserToGroupRequest);
-            _logger.LogDebug("{username} to group {group}.", username, addUserToGroupRequest.GroupName);
+                var addUserToGroupRequest = new AddUserToGroupRequest
+                {
+                    UserId = username,
+                    GroupName = groupName
+                };
+                await _userApiClient.AddUserToGroupAsync(addUserToGroupRequest);
+                _logger.LogDebug("{username} to group {group}.", username, addUserToGroupRequest.GroupName);
+            }
+            catch (UserApiException e)
+            {
+                _logger.LogError(e,
+                    $"Failed to add user {username} to {groupName} in User API. " +
+                    $"Status Code {e.StatusCode} - Message {e.Message}");
+                throw;
+            }
         }
 
         private async Task<bool> CheckUsernameExistsInAdAsync(string username)
