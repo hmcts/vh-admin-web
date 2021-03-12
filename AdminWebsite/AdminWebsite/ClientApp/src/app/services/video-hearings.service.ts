@@ -23,8 +23,7 @@ import {
     BookHearingRequest,
     LinkedParticipantRequest,
     LinkedParticipantResponse,
-    LinkedParticipant,
-    OtherInformationDetails,
+    LinkedParticipant
 } from './clients/api-client';
 import { HearingModel } from '../common/model/hearing.model';
 import { CaseModel } from '../common/model/case.model';
