@@ -563,11 +563,9 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
         } else {
             this.multiDaysHearing = false;
 
-            if (this.multiDaysRangeControl.value) {
-                this.endHearingDateControl.clearValidators();
-                this.endHearingDateControl.updateValueAndValidity();
-                this.endHearingDateControl.setValue(null);
-            }
+            this.endHearingDateControl.clearValidators();
+            this.endHearingDateControl.updateValueAndValidity();
+            this.endHearingDateControl.setValue(null);
 
             this.hearingDurationHourControl.setValidators([Validators.required, Validators.min(0), Validators.max(23)]);
             this.hearingDurationHourControl.updateValueAndValidity();

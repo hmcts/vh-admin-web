@@ -610,7 +610,7 @@ describe('HearingScheduleComponent multi days hearing', () => {
         expect(component.hearingDurationHourControl.touched).toBe(false);
         expect(component.hearingDurationMinuteControl.touched).toBe(false);
     });
-    it('should end date set to null if multi days hearing is off', () => {
+    it('should set end date to null if multi days hearing is off', () => {
         component.multiDaysControl.setValue(false);
         expect(component.endHearingDateControl.value).toBe(null);
     });
