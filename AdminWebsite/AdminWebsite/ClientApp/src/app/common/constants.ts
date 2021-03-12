@@ -6,7 +6,7 @@ export const Constants = {
     TextInputPattern: /^[^%{}~|]+$/,
     TextInputPatternName: /^([-A-Za-z0-9 ',._])*$/,
     PostCodePattern: /^([a-zA-Z]{1,2}([0-9]{1,2}|[0-9][a-zA-Z])\s*[0-9][a-zA-Z]{2})$/,
-    EmailPattern: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
+    EmailPattern: /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.(?:[a-zA-Z0-9](?:\.[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
     PhonePattern: /^([0-9() +-.])*$/,
     Judge: 'Judge',
     Citizen: 'Citizen',
