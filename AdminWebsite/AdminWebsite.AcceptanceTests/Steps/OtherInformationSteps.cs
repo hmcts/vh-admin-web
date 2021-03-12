@@ -66,7 +66,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         public static string GetOtherInfo(string otherInformation)
         {
-            string otherInformationKey = "|otherInformation|";
+            string otherInformationKey = "|OtherInformation|";
             return otherInformation.Substring(otherInformation.IndexOf(otherInformationKey) + otherInformationKey.Length);
         }
     }

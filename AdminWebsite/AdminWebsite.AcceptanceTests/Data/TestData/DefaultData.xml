@@ -27,7 +27,7 @@
     <DisplayName>Endpoint 001 - CourtRoom1</DisplayName>
   </VideoAccessPoints>
   <OtherInformationDetails>
-    <OtherInformation>|JudgeEmail|null|JudgePhone|null|otherInformation|Other Info</OtherInformation>
+    <OtherInformation>|JudgeEmail|null|JudgePhone|null|OtherInformation|Other Info</OtherInformation>
   </OtherInformationDetails>
   <Questionnaire>
     <SelfTestQuestion1>Could you see yourself on the screen in the camera window?</SelfTestQuestion1>
