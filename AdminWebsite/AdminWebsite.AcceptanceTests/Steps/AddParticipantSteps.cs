@@ -329,6 +329,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             var citizen = _c.Test.HearingParticipants.FirstOrDefault(p => p.DisplayName != user.Interpretee && p.HearingRoleName == PartyRole.LitigantInPerson.Name);
             _commonSharedSteps.WhenTheUserSelectsTheOptionFromTheDropdown(_browsers[_c.CurrentUser].Driver,
                 AddParticipantsPage.InterpreteeDropdown, citizen.DisplayName);
+            user.Interpretee = citizen.DisplayName;
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AddParticipantsPage.UpdateParticipantLink);
             _browsers[_c.CurrentUser].ScrollTo(AddParticipantsPage.UpdateParticipantLink);
             _browsers[_c.CurrentUser].Click(AddParticipantsPage.UpdateParticipantLink);

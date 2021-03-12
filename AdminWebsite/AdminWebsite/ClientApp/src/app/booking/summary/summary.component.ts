@@ -357,9 +357,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
         }
         this.participantService.removeParticipant(this.hearing, this.selectedParticipantEmail);
         this.removeLinkedParticipant(this.selectedParticipantEmail);
-
         this.hearing.participants = [...this.hearing.participants];
-
         this.hearingService.updateHearingRequest(this.hearing);
         this.hearingService.setBookingHasChanged(true);
         this.bookingService.removeParticipantEmail();
