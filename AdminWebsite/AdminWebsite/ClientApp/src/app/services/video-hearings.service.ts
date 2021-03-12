@@ -127,7 +127,7 @@ export class VideoHearingsService {
         });
         bookingRequest.booking_details.other_information = hearingRequest.other_information;
         bookingRequest.other_information_details = hearingRequest.other_information;
-        
+
         if (newRequest.multiDays) {
             bookingRequest.is_multi_day = true;
             bookingRequest.multi_hearing_details = new MultiHearingRequest({

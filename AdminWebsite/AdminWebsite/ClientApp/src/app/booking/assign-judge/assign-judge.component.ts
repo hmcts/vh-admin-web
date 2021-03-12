@@ -14,7 +14,7 @@ import { BookingService } from '../../services/booking.service';
 import { HearingRole, JudgeResponse } from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
 import { BookingBaseComponentDirective as BookingBaseComponent } from '../booking-base/booking-base.component';
-import { PipeStringifierService } from '../../services/pipe-stringifier.service'
+import { PipeStringifierService } from '../../services/pipe-stringifier.service';
 import { EmailValidationService } from 'src/app/booking/services/email-validation.service';
 
 @Component({

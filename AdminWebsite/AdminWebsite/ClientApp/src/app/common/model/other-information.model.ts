@@ -1,4 +1,4 @@
-import { PipeStringifierService } from "src/app/services/pipe-stringifier.service";
+import { PipeStringifierService } from 'src/app/services/pipe-stringifier.service';
 
 export class OtherInformationModel {
     JudgeEmail?: string;
