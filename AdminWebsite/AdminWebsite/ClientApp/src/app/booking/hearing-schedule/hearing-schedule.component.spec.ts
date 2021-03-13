@@ -332,6 +332,23 @@ describe('HearingScheduleComponent first visit', () => {
         expect(component.isDateAlreadySelected()).toBe(true);
     });
 
+    it('should add a new hearing date', () => {
+        const hearingDates = component.hearingDates.length;
+        component.addValidHearingDate('2020-01-01');
+        expect(component.hearingDates.length).toBe(hearingDates + 1);
+    });
+
+    it('should nullify hearing date control once date is added', () => {
+        component.addValidHearingDate('2020-01-01');
+        expect(component.addHearingDateControl).toBe(null);
+    });
+
+    it('should return false if a date is not already selected', () => {
+        component.addHearingDate();
+        component.addHearingDateControl.setValue(new Date());
+        expect(component.isDateAlreadySelected()).toBe(false);
+    });
+
     it('should remove hearing date', () => {
         component.hearingDates = [new Date()];
         component.removeHearingDate(0);
