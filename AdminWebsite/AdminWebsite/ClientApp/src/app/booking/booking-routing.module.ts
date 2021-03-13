@@ -11,11 +11,17 @@ import { HearingScheduleComponent } from './hearing-schedule/hearing-schedule.co
 import { OtherInformationComponent } from './other-information/other-information.component';
 import { SummaryComponent } from './summary/summary.component';
 import { EndpointsComponent } from './endpoints/endpoints.component';
+import { EmailPatternResolver } from 'src/app/booking/services/email-pattern-resolver';
 
 export const routes: Routes = [
     { path: 'book-hearing', component: CreateHearingComponent, canActivate: [AuthGuard, AdminGuard] },
     { path: 'hearing-schedule', component: HearingScheduleComponent, canActivate: [AuthGuard, AdminGuard] },
-    { path: 'assign-judge', component: AssignJudgeComponent, canActivate: [AuthGuard, AdminGuard] },
+    {
+        path: 'assign-judge',
+        component: AssignJudgeComponent,
+        canActivate: [AuthGuard, AdminGuard],
+        resolve: { emailPattern: EmailPatternResolver }
+    },
     { path: 'add-participants', component: AddParticipantComponent, canActivate: [AuthGuard, AdminGuard] },
     { path: 'video-access-points', component: EndpointsComponent, canActivate: [AuthGuard, AdminGuard] },
     { path: 'other-information', component: OtherInformationComponent, canActivate: [AuthGuard, AdminGuard] },
