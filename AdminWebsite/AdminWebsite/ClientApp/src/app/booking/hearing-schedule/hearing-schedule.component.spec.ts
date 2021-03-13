@@ -313,21 +313,6 @@ describe('HearingScheduleComponent first visit', () => {
         expect(component.hearingDateControl).not.toBe(null);
     });
 
-    it('should trigger add hearing date & add a valid hearing date', () => {
-        spyOn(component, 'addValidHearingDate');
-        component.addHearingDate();
-        const nextYear = new Date();
-        nextYear.setFullYear(nextYear.getFullYear() + 1);
-        while (nextYear.getDay() !== 1) {
-            nextYear.setDate(nextYear.getDate() + 1);
-        }
-        component.addHearingDateControl.setValue(nextYear);
-        expect(component.addValidHearingDate).toHaveBeenCalled();
-        setTimeout(() => {
-            expect(component.hearingDates[0]).toBe(nextYear);
-        }, 1000);
-    });
-
     it('should return invalid for hearing date in the past', () => {
         component.addHearingDate();
         component.addHearingDateControl.setValue('2021-03-01');
@@ -486,6 +471,10 @@ describe('HearingScheduleComponent returning to page', () => {
         component.courtRoomOnBlur();
         fixture.detectChanges();
         expect(component.courtRoomControl.value).toBe('text');
+    });
+
+    it('should unsibscribe subcription on destroy', () => {
+        component.ngOnDestroy();
     });
 });
 

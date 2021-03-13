@@ -339,4 +339,7 @@ describe('CreateHearingComponent with existing request in session', () => {
         fixture.detectChanges();
         expect(component.caseName.value).toBe('text');
     });
+    it('should unsibscribe subcription on destroy', () => {
+        component.ngOnDestroy();
+    });
 });
