@@ -354,6 +354,34 @@ describe('HearingScheduleComponent first visit', () => {
         component.removeHearingDate(0);
         expect(component.hearingDates.length).toBe(0);
     });
+
+    it('should save individual day hearing', () => {
+        spyOn(component, 'saveMultiIndividualDayHearing');
+        component.multiDaysControl.setValue(true);
+        component.multiDaysRangeControl.setValue(false);
+        component.hearingDates = [new Date()];
+        component.save();
+        expect(component.saveMultiIndividualDayHearing).toHaveBeenCalled();
+    });
+
+    it('should update multi day individual hearing request when form is valid', () => {
+        component.multiDaysControl.setValue(true);
+        component.multiDaysRangeControl.setValue(false);
+        dateControl.setValue('9999-12-30');
+        endDateControl.setValue('0001-01-01');
+        startTimeHourControl.setValue(10);
+        startTimeMinuteControl.setValue(30);
+        durationHourControl.setValue(1);
+        durationMinuteControl.setValue(30);
+        courtControl.setValue(1);
+        multiDaysControl.setValue(true);
+        component.isStartHoursInPast = false;
+        component.isStartMinutesInPast = false;
+        component.hearingDates = [new Date()];
+        expect(component.form.valid).toBeTruthy();
+        component.save();
+        expect(component.hasSaved).toBeTruthy();
+    });
 });
 
 describe('HearingScheduleComponent returning to page', () => {

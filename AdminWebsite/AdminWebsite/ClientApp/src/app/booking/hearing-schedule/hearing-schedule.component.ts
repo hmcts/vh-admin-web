@@ -386,7 +386,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     }
 
     save() {
-        if (this.form.get('multiDays').value && !this.form.get('multiDaysRange').value) {
+        if (this.form.get('multiDays').value && !this.form.get('multiDaysRange').value && this.hearingDates.length) {
             this.form.get('hearingDate').setValue(this.hearingDates[0]);
             this.saveMultiIndividualDayHearing();
         } else {
