@@ -1,0 +1,9 @@
+<div *ngFor="let group of groupedHearingDates">
+    <span class="govuk-caption-m">{{ group.label }}</span>
+    <div class="dates">
+        <div class="date"
+            *ngFor="let date of group.hearingDates">
+            {{ date | date: 'd' }}
+        </div>
+    </div>
+</div>

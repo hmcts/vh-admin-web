@@ -37,16 +37,7 @@
       <ng-template #multiDaysHearing>
         <ng-container *ngIf="hearing.hearing_dates.length; else dateRange">
           {{ hearing.hearing_dates[0] | date: 'h:mma' | lowercase }}
-          <div style="margin-top: 0.5em"
-            *ngFor="let month of groupedHearingDateMonthsYears">
-            <span class="govuk-caption-m">{{ month }}</span>
-            <div style="display: flex; flex-flow: wrap; font-size: 90%">
-              <div style="padding: 0.3em"
-                *ngFor="let date of hearingDatesForMonth(month)">
-                {{ date | date: 'd' }}
-              </div>
-            </div>
-          </div>
+          <app-multi-day-hearing-schedule [hearingDates]="hearing.hearing_dates"></app-multi-day-hearing-schedule>
         </ng-container>
         <ng-template #dateRange>
           <div id="hearingStartDate">{{ hearingDate | date: 'EEEE dd MMMM yyyy' }} -</div>

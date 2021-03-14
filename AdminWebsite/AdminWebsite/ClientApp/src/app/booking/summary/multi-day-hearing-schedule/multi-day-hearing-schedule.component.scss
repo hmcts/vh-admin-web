@@ -1,0 +1,14 @@
+:host {
+    display: block;
+    margin-top: .75em;
+}
+
+.dates {
+    display: flex; 
+    flex-flow: wrap; 
+    font-size: 90%;
+
+    .date {
+        padding: .3em;
+    }
+}
