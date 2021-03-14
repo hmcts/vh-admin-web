@@ -1,29 +1,16 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 interface HearingDateGroup {
     label: string;
     hearingDates: Date[];
 }
 
-const months = [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December'
-];
+const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 @Component({
     selector: 'app-multi-day-hearing-schedule',
     templateUrl: './multi-day-hearing-schedule.component.html',
     styleUrls: ['./multi-day-hearing-schedule.component.scss']
 })
-export class MultiDayHearingScheduleComponent {
+export class MultiDayHearingScheduleComponent implements OnInit {
     @Input() hearingDates = [];
     groupedHearingDates: HearingDateGroup[] = [];
 
@@ -57,6 +44,6 @@ export class MultiDayHearingScheduleComponent {
     hearingDatesForGroup(date: Date, hearingDates: Date[]) {
         const monthIndex = date.getMonth();
         const year = date.getFullYear();
-        return hearingDates.filter(date => date.getMonth() === monthIndex && date.getFullYear() === year);
+        return hearingDates.filter(d => d.getMonth() === monthIndex && d.getFullYear() === year);
     }
 }

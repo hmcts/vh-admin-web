@@ -7,31 +7,22 @@
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-one-half">
-    <h2 class="govuk-heading-m"
-      id="hearingSummary">
+    <h2 class="govuk-heading-m" id="hearingSummary">
       {{ isExistingBooking ? 'Booking details' : 'Hearing summary' }}
     </h2>
-    <app-booking-edit [title]="'Hearing details'"
-      [editLink]="'book-hearing'"
-      [elementId]="'hearing-details-id'"> </app-booking-edit>
+    <app-booking-edit [title]="'Hearing details'" [editLink]="'book-hearing'" [elementId]="'hearing-details-id'"> </app-booking-edit>
     <div class="govuk-form-group vhtable">
-      <div id="caseNumber"
-        class="vh-text-break">{{ caseNumber }}</div>
-      <div id="caseName"
-        class="vh-text-break">{{ caseName }}</div>
+      <div id="caseNumber" class="vh-text-break">{{ caseNumber }}</div>
+      <div id="caseName" class="vh-text-break">{{ caseName }}</div>
       <div id="caseType">{{ caseType }}</div>
       <div id="caseHearingType">{{ caseHearingType }}</div>
     </div>
 
-    <app-booking-edit [title]="'Hearing schedule'"
-      [editLink]="'hearing-schedule'"
-      [elementId]="'hearing-schedule-id'"> </app-booking-edit>
+    <app-booking-edit [title]="'Hearing schedule'" [editLink]="'hearing-schedule'" [elementId]="'hearing-schedule-id'"> </app-booking-edit>
     <div class="govuk-form-group vhtable">
-      <div id="courtAddress"
-        class="vh-text-break">{{ courtRoomAddress }}</div>
+      <div id="courtAddress" class="vh-text-break">{{ courtRoomAddress }}</div>
 
-      <div id="hearingDate"
-        *ngIf="!multiDays; else multiDaysHearing">
+      <div id="hearingDate" *ngIf="!multiDays; else multiDaysHearing">
         {{ hearingDate | appLongDatetime }}
       </div>
       <ng-template #multiDaysHearing>
@@ -41,56 +32,47 @@
         </ng-container>
         <ng-template #dateRange>
           <div id="hearingStartDate">{{ hearingDate | date: 'EEEE dd MMMM yyyy' }} -</div>
-          <div id="hearingEndDateTime">{{ endHearingDate | date: 'EEEE dd MMMM yyyy' }}, {{ hearingDate | date: 'h:mma'
-            | lowercase }}</div>
+          <div id="hearingEndDateTime">{{ endHearingDate | date: 'EEEE dd MMMM yyyy' }}, {{ hearingDate | date: 'h:mma' | lowercase }}</div>
         </ng-template>
       </ng-template>
 
-      <div *ngIf="!multiDays"
-        id="hearingDuration">{{ hearingDuration }}</div>
+      <div *ngIf="!multiDays" id="hearingDuration">{{ hearingDuration }}</div>
     </div>
 
     <div *ngIf="switchOffRecording; else switchOnRecording">
       <span class="govuk-heading-s remove-header-padding">Audio to be recorded</span>
     </div>
     <ng-template #switchOnRecording>
-      <app-booking-edit [title]="'Audio to be recorded'"
+      <app-booking-edit
+        [title]="'Audio to be recorded'"
         [editLink]="'other-information'"
-        [elementId]="'audio-recording-id'"></app-booking-edit>
+        [elementId]="'audio-recording-id'"
+      ></app-booking-edit>
     </ng-template>
     <div class="govuk-form-group vhtable">
-      <div class="vh-text-break"
-        id="audioRecording">{{ audioChoice }}</div>
+      <div class="vh-text-break" id="audioRecording">{{ audioChoice }}</div>
     </div>
 
     <div *ngIf="hasEndpoints">
-      <app-booking-edit [title]="'Video access points'"
+      <app-booking-edit
+        [title]="'Video access points'"
         [editLink]="'video-access-points'"
-        [elementId]="'video-access-points-id'"></app-booking-edit>
+        [elementId]="'video-access-points-id'"
+      ></app-booking-edit>
 
       <div class="govuk-form-group vhtable">
-        <div *ngFor="let endpoint of endpoints; let i = index"
-          id="endpointtext{{ +i }}"
-          class="vh-text-break">
+        <div *ngFor="let endpoint of endpoints; let i = index" id="endpointtext{{ +i }}" class="vh-text-break">
           <div class="govuk-grid-row govuk-!-padding-bottom-1">
-            <div class="govuk-grid-column-one-half"
-              id="displayName{{ +i }}">
+            <div class="govuk-grid-column-one-half" id="displayName{{ +i }}">
               {{ endpoint.displayName }}
             </div>
             <div class="govuk-grid-column-one-half">
-              <a class="vhlink"
-                href="javascript:void(0)"
-                [attr.id]="'remove-link' + i"
-                (click)="removeEndpoint(i)">Remove</a>
+              <a class="vhlink" href="javascript:void(0)" [attr.id]="'remove-link' + i" (click)="removeEndpoint(i)">Remove</a>
             </div>
           </div>
-          <div *ngIf="getParticipantInfo(endpoint.defenceAdvocate)"
-            class="govuk-grid-row govuk-!-padding-bottom-3">
-            <div class="govuk-grid-column-full vh-representee"
-              id="defenceAdvocateRep{{ +i }}">
-              <img src="/assets/images/link.png"
-                class="icon"
-                alt="link to endpoint" />
+          <div *ngIf="getParticipantInfo(endpoint.defenceAdvocate)" class="govuk-grid-row govuk-!-padding-bottom-3">
+            <div class="govuk-grid-column-full vh-representee" id="defenceAdvocateRep{{ +i }}">
+              <img src="/assets/images/link.png" class="icon" alt="link to endpoint" />
               {{ getParticipantInfo(endpoint.defenceAdvocate) }}
             </div>
           </div>
@@ -98,29 +80,34 @@
       </div>
     </div>
 
-    <app-booking-edit [title]="'Other information'"
+    <app-booking-edit
+      [title]="'Other information'"
       [editLink]="'other-information'"
-      [elementId]="'other-information-id'"></app-booking-edit>
+      [elementId]="'other-information-id'"
+    ></app-booking-edit>
 
     <div class="govuk-form-group vhtable">
-      <div class="vh-text-break"
-        id="otherInformation">{{ otherInformation.OtherInformation }}</div>
+      <div class="vh-text-break" id="otherInformation">{{ otherInformation.OtherInformation }}</div>
     </div>
 
     <div class="sk-top">
-      <button id="bookButton"
+      <button
+        id="bookButton"
         class="govuk-button vh-mr25"
         data-module="govuk-button"
         (click)="bookHearing()"
         alt="Book a Hearing"
-        [disabled]="bookingsSaving">
+        [disabled]="bookingsSaving"
+      >
         {{ isExistingBooking ? 'Save' : 'Book' }}
       </button>
-      <button id="cancelButton"
+      <button
+        id="cancelButton"
         class="govuk-button hmcts-button--secondary"
         data-module="govuk-button"
         (click)="confirmCancelBooking()"
-        alt="Confirm cancellation of new booking and return to dashboard">
+        alt="Confirm cancellation of new booking and return to dashboard"
+      >
         Cancel
       </button>
     </div>
@@ -132,14 +119,15 @@
 </div>
 
 <div *ngIf="attemptingCancellation">
-  <app-cancel-popup (continueBooking)="continueBooking($event)"
-    (cancelBooking)="cancelBooking($event)"> </app-cancel-popup>
+  <app-cancel-popup (continueBooking)="continueBooking($event)" (cancelBooking)="cancelBooking($event)"> </app-cancel-popup>
 </div>
 
 <div *ngIf="showConfirmationRemoveParticipant">
-  <app-remove-popup (continueRemove)="handleContinueRemove()"
+  <app-remove-popup
+    (continueRemove)="handleContinueRemove()"
     (cancelRemove)="handleCancelRemove()"
-    [fullName]="removerFullName"></app-remove-popup>
+    [fullName]="removerFullName"
+  ></app-remove-popup>
 </div>
 
 <div *ngIf="showWaitSaving">
@@ -147,11 +135,12 @@
 </div>
 
 <div *ngIf="showErrorSaving">
-  <app-save-failed-popup (tryAgain)="tryAgain($event)"
-    (cancel)="cancel($event)"> </app-save-failed-popup>
+  <app-save-failed-popup (tryAgain)="tryAgain($event)" (cancel)="cancel($event)"> </app-save-failed-popup>
 </div>
 <div *ngIf="showConfirmRemoveInterpretee">
-  <app-remove-interpreter-popup (continueRemove)="handleContinueRemoveInterpreter($event)"
-    (cancelRemove)="handleCancelRemoveInterpreter($event)">
+  <app-remove-interpreter-popup
+    (continueRemove)="handleContinueRemoveInterpreter($event)"
+    (cancelRemove)="handleCancelRemoveInterpreter($event)"
+  >
   </app-remove-interpreter-popup>
 </div>
