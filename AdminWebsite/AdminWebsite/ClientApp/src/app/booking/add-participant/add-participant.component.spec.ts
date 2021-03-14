@@ -75,12 +75,13 @@ p1.case_role_name = 'Applicant';
 p1.company = 'CN';
 p1.representee = 'representee';
 p1.user_role_name = 'Representative';
+p1.username = 'judge@user.name';
 
 const p2 = new ParticipantModel();
 p2.first_name = 'Jane';
 p2.last_name = 'Doe';
 p2.display_name = 'Jane Doe';
-p2.is_judge = true;
+p2.is_judge = false;
 p2.title = 'Mr.';
 p2.email = 'test2@hmcts.net';
 p2.phone = '32332';
@@ -101,11 +102,10 @@ p3.phone = '32332';
 p3.hearing_role_name = 'Representative';
 p3.case_role_name = 'Applicant';
 p3.company = 'CN';
-
+p3.is_exist_person = true;
 p3.id = '1234';
 p3.representee = 'representee';
 p3.user_role_name = 'Representative';
-
 const p4 = new ParticipantModel();
 p4.first_name = 'Test';
 p4.last_name = 'Participant';
@@ -211,6 +211,11 @@ participantServiceSpy = jasmine.createSpyObj<ParticipantService>('ParticipantSer
     'mapParticipantsRoles'
 ]);
 
+const searchService = {
+    ...new SearchServiceStub(),
+    ...jasmine.createSpyObj<SearchService>(['search'])
+} as jasmine.SpyObj<SearchService>;
+
 describe('AddParticipantComponent', () => {
     beforeEach(
         waitForAsync(() => {
@@ -232,11 +237,6 @@ describe('AddParticipantComponent', () => {
             participantServiceSpy.mapParticipantsRoles.and.returnValue(partyList);
             bookingServiceSpy = jasmine.createSpyObj<BookingService>(['isEditMode', 'resetEditMode']);
             bookingServiceSpy.isEditMode.and.returnValue(false);
-
-            const searchService = {
-                ...new SearchServiceStub(),
-                ...jasmine.createSpyObj<SearchService>(['search'])
-            } as jasmine.SpyObj<SearchService>;
 
             component = new AddParticipantComponent(
                 searchService,
@@ -772,10 +772,15 @@ describe('AddParticipantComponent edit mode', () => {
         expect(bookingServiceSpy.resetEditMode).toHaveBeenCalled();
     });
 
-    it('should set edit mode and populate participant data', fakeAsync(() => {
+    it('should set edit mode and populate participant data', fakeAsync(async () => {
+        component.searchEmail = new SearchEmailComponent(searchService, configServiceSpy, loggerSpy);
+        component.searchEmail.email = 'test3@hmcts.net';
+
+        component.ngOnInit();
+        component.ngAfterViewInit();
+        tick(1500);
         fixture.detectChanges();
-        tick(1000);
-        fixture.detectChanges();
+
         fixture.whenStable().then(() => {
             expect(videoHearingsServiceSpy.getCurrentRequest).toHaveBeenCalled();
             expect(component.hearing).toBeTruthy();
@@ -788,6 +793,7 @@ describe('AddParticipantComponent edit mode', () => {
             expect(component.displayAddButton).toBeFalsy();
             expect(component.displayUpdateButton).toBeFalsy();
         });
+        tick(100);
         fixture.detectChanges();
     }));
 
@@ -795,7 +801,7 @@ describe('AddParticipantComponent edit mode', () => {
         component.showDetails = true;
         fixture.detectChanges();
         spyOn(component.searchEmail, 'validateEmail').and.returnValue(true);
-        component.searchEmail.email = 'test3@hmcts.net';
+        component.searchEmail.email = 'mock@hmcts.net';
 
         role.setValue('Representative');
         party.setValue('Applicant');
@@ -803,15 +809,14 @@ describe('AddParticipantComponent edit mode', () => {
         lastName.setValue('Green');
         title.setValue('Mrs');
         phone.setValue('12345');
-        displayName.setValue('Sam');
+        displayName.setValue('Sam Green');
         companyName.setValue('CC');
         component.isRoleSelected = true;
         component.isPartySelected = true;
         interpretee.setValue('test4@email.com');
         component.updateParticipant();
-        const updatedParticipant = component.hearing.participants.find(x => x.email === 'test3@hmcts.net');
-        expect(updatedParticipant.display_name).toBe('Sam');
-        expect(displayName.value).toBe('');
+        const updatedParticipant = component.hearing.participants.find(x => x.email === 'mock@hmcts.net');
+        expect(updatedParticipant.display_name).toBe('Sam Green');
     });
     it('should before save booking check if all fields available', () => {
         component.actionsBeforeSave();
@@ -1028,6 +1033,8 @@ describe('AddParticipantComponent edit mode no participants added', () => {
                 jasmine.createSpyObj<Router>(['navigate']),
                 loggerSpy
             );
+            component.searchEmail = new SearchEmailComponent(searchService, configServiceSpy, loggerSpy);
+
             component.editMode = true;
             component.ngOnInit();
 
@@ -1065,6 +1072,7 @@ describe('AddParticipantComponent edit mode no participants added', () => {
         })
     );
     it('should show all fields if the participant selected for edit', fakeAsync(() => {
+        component.participantDetails = participant;
         component.ngAfterContentInit();
         component.ngAfterViewInit();
         tick(600);
@@ -1182,6 +1190,8 @@ describe('AddParticipantComponent set representer', () => {
                 bookingServiceSpy,
                 loggerSpy
             );
+            component.searchEmail = new SearchEmailComponent(searchServiceStab, configServiceSpy, loggerSpy);
+
             component.ngOnInit();
 
             role = component.form.controls['role'];
@@ -1304,13 +1314,17 @@ describe('AddParticipantComponent set representer', () => {
         component.hearing = initHearingRequest();
         expect(component.canNavigate).toBe(true);
     });
-});
+    it('should show an error if panel member who has the same eJudiciary account as a judge', () => {
+        const hearing = initHearingRequest();
+        const judge = hearing.participants.find(x => x.is_judge);
+        participant.hearing_role_name = 'Panel Member';
+        participant.username = judge.username;
+        component.hearing = hearing;
+        component.participantDetails = participant;
+        component.searchEmail.email = judge.username;
 
-function isAddressControlValid(control: AbstractControl, controlValue: string) {
-    party.setValue('Applicant');
-    role.setValue('Litigant in person');
-    control.setValidators([Validators.required]);
-    control.updateValueAndValidity();
-    control.setValue(controlValue);
-    expect(control.valid).toBeTruthy();
-}
+        component.getParticipant(participant);
+        expect(component.searchEmail.isErrorEmailAssignedToJudge).toBe(true);
+        expect(component.errorAlternativeEmail).toBe(true);
+    });
+});

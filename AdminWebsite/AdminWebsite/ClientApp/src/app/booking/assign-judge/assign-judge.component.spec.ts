@@ -106,6 +106,7 @@ describe('AssignJudgeComponent', () => {
         waitForAsync(() => {
             const newHearing = initHearingRequest();
             loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
+            configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettings']);
             emailValidationServiceSpy = jasmine.createSpyObj<EmailValidationService>('EmailValidationService', [
                 'hasCourtroomAccountPattern',
                 'validateEmail'
@@ -144,7 +145,56 @@ describe('AssignJudgeComponent', () => {
                     },
                     { provide: BookingService, useValue: bookingServiseSpy },
                     { provide: Logger, useValue: loggerSpy },
-                    RecordingGuardService
+                    RecordingGuardService,
+                    {
+                        provide: ActivatedRoute,
+                        useValue: {
+                            data: {
+                                subscribe: (fn: (value) => void) =>
+                                    fn({
+                                        some: ''
+                                    })
+                            },
+                            params: {
+                                subscribe: (fn: (value) => void) =>
+                                    fn({
+                                        some: 0
+                                    })
+                            },
+                            snapshot: {
+                                data: { emailPattern: 'courtroom.test' },
+                                url: [
+                                    {
+                                        path: 'fake'
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                        provide: ActivatedRoute,
+                        useValue: {
+                            data: {
+                                subscribe: (fn: (value) => void) =>
+                                    fn({
+                                        some: ''
+                                    })
+                            },
+                            params: {
+                                subscribe: (fn: (value) => void) =>
+                                    fn({
+                                        some: 0
+                                    })
+                            },
+                            snapshot: {
+                                data: { emailPattern: 'courtroom.test' },
+                                url: [
+                                    {
+                                        path: 'fake'
+                                    }
+                                ]
+                            }
+                        }
+                    }
                 ],
                 declarations: [
                     AssignJudgeComponent,

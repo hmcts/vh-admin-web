@@ -91,7 +91,9 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         this.configService
             .getClientSettings()
             .pipe(map(x => x.test_username_stem))
-            .subscribe(x => (this.invalidPattern = x));
+            .subscribe(x => {
+                this.invalidPattern = x;
+            });
 
         super.ngOnInit();
     }
@@ -368,6 +370,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
                 (data: JudgeResponse[]) => {
                     this.availableJudges = data.filter(x => x.first_name && x.last_name);
                     this.logger.debug(`${this.loggerPrefix} Got list of judges`, { availableJudges: this.availableJudges.length });
+
                     const userResponse = new JudgeResponse();
                     userResponse.email = this.constants.PleaseSelect;
                     userResponse.display_name = '';
