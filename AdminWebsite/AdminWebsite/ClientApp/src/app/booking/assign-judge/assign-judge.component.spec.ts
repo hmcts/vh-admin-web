@@ -146,6 +146,56 @@ describe('AssignJudgeComponent', () => {
                     { provide: BookingService, useValue: bookingServiseSpy },
                     { provide: Logger, useValue: loggerSpy },
                     RecordingGuardService,
+                    {
+                        provide: ActivatedRoute,
+                        useValue: {
+                            data: {
+                                subscribe: (fn: (value) => void) =>
+                                    fn({
+                                        some: ''
+                                    })
+                            },
+                            params: {
+                                subscribe: (fn: (value) => void) =>
+                                    fn({
+                                        some: 0
+                                    })
+                            },
+                            snapshot: {
+                                data: { emailPattern: 'courtroom.test' },
+                                url: [
+                                    {
+                                        path: 'fake'
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                        provide: ActivatedRoute,
+                        useValue: {
+                            data: {
+                                subscribe: (fn: (value) => void) =>
+                                    fn({
+                                        some: ''
+                                    })
+                            },
+                            params: {
+                                subscribe: (fn: (value) => void) =>
+                                    fn({
+                                        some: 0
+                                    })
+                            },
+                            snapshot: {
+                                data: { emailPattern: 'courtroom.test' },
+                                url: [
+                                    {
+                                        path: 'fake'
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                    RecordingGuardService,
                     { provide: ConfigService, useValue: configServiceSpy }
                 ],
                 declarations: [
