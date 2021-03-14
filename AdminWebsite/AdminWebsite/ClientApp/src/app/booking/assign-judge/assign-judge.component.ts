@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { JudgeDataService } from 'src/app/booking/services/judge-data.service';
 import { Constants } from 'src/app/common/constants';
@@ -15,7 +15,8 @@ import { HearingRole, JudgeResponse } from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
 import { BookingBaseComponentDirective as BookingBaseComponent } from '../booking-base/booking-base.component';
 import { EmailValidationService } from 'src/app/booking/services/email-validation.service';
-
+import { ConfigService } from '../../services/config.service';
+import { map } from 'rxjs/operators';
 @Component({
     selector: 'app-assign-judge',
     templateUrl: './assign-judge.component.html',
@@ -56,7 +57,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         protected bookingService: BookingService,
         protected logger: Logger,
         private emailValidationService: EmailValidationService,
-        private route: ActivatedRoute
+        private configService: ConfigService
     ) {
         super(bookingService, router, hearingService, logger);
     }
@@ -84,7 +85,12 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         this.loadJudges();
         this.initForm();
 
-        this.invalidPattern = this.route.snapshot.data['emailPattern'];
+        this.configService
+            .getClientSettings()
+            .pipe(map(x => x.test_username_stem))
+            .subscribe(x => {
+                this.invalidPattern = x;
+            });
 
         super.ngOnInit();
     }
@@ -361,6 +367,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
                 (data: JudgeResponse[]) => {
                     this.availableJudges = data.filter(x => x.first_name && x.last_name);
                     this.logger.debug(`${this.loggerPrefix} Got list of judges`, { availableJudges: this.availableJudges.length });
+
                     const userResponse = new JudgeResponse();
                     userResponse.email = this.constants.PleaseSelect;
                     userResponse.display_name = '';

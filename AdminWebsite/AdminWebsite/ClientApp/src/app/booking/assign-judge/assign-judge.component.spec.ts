@@ -9,7 +9,7 @@ import { ParticipantModel } from '../../common/model/participant.model';
 import { CancelPopupComponent } from '../../popups/cancel-popup/cancel-popup.component';
 import { DiscardConfirmPopupComponent } from '../../popups/discard-confirm-popup/discard-confirm-popup.component';
 import { BookingService } from '../../services/booking.service';
-import { JudgeResponse } from '../../services/clients/api-client';
+import { ClientSettingsResponse, JudgeResponse } from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
 import { RecordingGuardService } from '../../services/recording-guard.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
@@ -21,7 +21,7 @@ import { JudgeDataService } from '../services/judge-data.service';
 import { AssignJudgeComponent } from './assign-judge.component';
 import { OtherInformationModel } from '../../common/model/other-information.model';
 import { EmailValidationService } from 'src/app/booking/services/email-validation.service';
-import { ActivatedRoute } from '@angular/router';
+import { ConfigService } from '../../services/config.service';
 
 function initHearingRequest(): HearingModel {
     const participants: ParticipantModel[] = [];
@@ -97,12 +97,14 @@ let routerSpy: jasmine.SpyObj<Router>;
 let bookingServiseSpy: jasmine.SpyObj<BookingService>;
 let loggerSpy: jasmine.SpyObj<Logger>;
 let emailValidationServiceSpy: jasmine.SpyObj<EmailValidationService>;
+let configServiceSpy: jasmine.SpyObj<ConfigService>;
 
 describe('AssignJudgeComponent', () => {
     beforeEach(
         waitForAsync(() => {
             const newHearing = initHearingRequest();
             loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
+            configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettings']);
             emailValidationServiceSpy = jasmine.createSpyObj<EmailValidationService>('EmailValidationService', [
                 'hasCourtroomAccountPattern',
                 'validateEmail'
@@ -122,6 +124,8 @@ describe('AssignJudgeComponent', () => {
 
             judgeDataServiceSpy = jasmine.createSpyObj<JudgeDataService>(['JudgeDataService', 'getJudges']);
             judgeDataServiceSpy.getJudges.and.returnValue(of(MockValues.Judges));
+            const conf = new ClientSettingsResponse({ test_username_stem: 'courtroom.test' });
+            configServiceSpy.getClientSettings.and.returnValue(of(conf));
 
             TestBed.configureTestingModule({
                 imports: [SharedModule, RouterTestingModule],
@@ -138,32 +142,8 @@ describe('AssignJudgeComponent', () => {
                     },
                     { provide: BookingService, useValue: bookingServiseSpy },
                     { provide: Logger, useValue: loggerSpy },
-                    RecordingGuardService,
-                    {
-                        provide: ActivatedRoute,
-                        useValue: {
-                            data: {
-                                subscribe: (fn: (value) => void) =>
-                                    fn({
-                                        some: ''
-                                    })
-                            },
-                            params: {
-                                subscribe: (fn: (value) => void) =>
-                                    fn({
-                                        some: 0
-                                    })
-                            },
-                            snapshot: {
-                                data: { emailPattern: 'courtroom.test' },
-                                url: [
-                                    {
-                                        path: 'fake'
-                                    }
-                                ]
-                            }
-                        }
-                    }
+                    { provide: ConfigService, useValue: configServiceSpy },
+                    RecordingGuardService
                 ],
 
                 declarations: [

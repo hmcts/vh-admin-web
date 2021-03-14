@@ -6,6 +6,7 @@ import { ParticipantModel } from '../../common/model/participant.model';
 import { SearchService } from '../../services/search.service';
 import { ConfigService } from 'src/app/services/config.service';
 import { Logger } from '../../services/logger';
+import { map } from 'rxjs/operators';
 
 @Component({
     selector: 'app-search-email',
@@ -25,12 +26,16 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
     isValidEmail = true;
     $subscriptions: Subscription[] = [];
     invalidPattern: string;
+    isErrorEmailAssignedToJudge = false;
+    isJoh = false;
+    notFoundEmailEvent = new Subject<boolean>();
+    notFoundEmailEvent$ = this.notFoundEmailEvent.asObservable();
 
     @Input() disabled = true;
 
-    @Output() findParticipant = new EventEmitter<ParticipantModel>();
+    @Input() hearingRoleParticipant = '';
 
-    @Output() participantsNotFound = new EventEmitter();
+    @Output() findParticipant = new EventEmitter<ParticipantModel>();
 
     @Output() emailChanged = new EventEmitter<string>();
 
@@ -58,13 +63,19 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
     }
 
     async getEmailPattern() {
-        const settings = await this.configService.getClientSettings().toPromise();
-        this.invalidPattern = settings.test_username_stem;
-        if (!this.invalidPattern || this.invalidPattern.length === 0) {
-            this.logger.error(`${this.loggerPrefix} Pattern to validate email is not set`, new Error('Email validation error'));
-        } else {
-            this.logger.info(`${this.loggerPrefix} Pattern to validate email is set with length ${this.invalidPattern.length}`);
-        }
+        this.$subscriptions.push(
+            this.configService
+                .getClientSettings()
+                .pipe(map(x => x.test_username_stem))
+                .subscribe(x => {
+                    this.invalidPattern = x;
+                    if (!this.invalidPattern || this.invalidPattern.length === 0) {
+                        this.logger.error(`${this.loggerPrefix} Pattern to validate email is not set`, new Error('Email validation error'));
+                    } else {
+                        this.logger.info(`${this.loggerPrefix} Pattern to validate email is set with length ${this.invalidPattern.length}`);
+                    }
+                })
+        );
     }
 
     getData(data: PersonResponse[]) {
@@ -72,17 +83,20 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
         this.isShowResult = true;
         this.isValidEmail = true;
         this.notFoundParticipant = false;
+        this.notFoundEmailEvent.next(false);
     }
 
     noDataFound() {
+        this.isErrorEmailAssignedToJudge = this.hearingRoleParticipant === 'Panel Member' || this.hearingRoleParticipant === 'Winger';
         this.isShowResult = false;
-        this.notFoundParticipant = true;
-        this.participantsNotFound.emit();
+        this.notFoundParticipant = !this.isErrorEmailAssignedToJudge;
+        this.notFoundEmailEvent.next(true);
     }
 
     lessThanThreeLetters() {
         this.isShowResult = false;
         this.notFoundParticipant = false;
+        this.notFoundEmailEvent.next(false);
     }
 
     selectItemClick(result: ParticipantModel) {
@@ -109,8 +123,9 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
             this.email &&
             this.email.length > 0 &&
             this.email.length < 256 &&
-            pattern.test(this.email.toLowerCase()) &&
-            this.email.toLowerCase().indexOf(this.invalidPattern) < 0;
+            pattern.test(this.email) &&
+            this.email.indexOf(this.invalidPattern) < 0;
+
         return this.isValidEmail;
     }
 
@@ -129,6 +144,10 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
             this.validateEmail();
             this.emailChanged.emit(this.email);
         }
+    }
+
+    onChange() {
+        this.isErrorEmailAssignedToJudge = false;
     }
 
     mapPersonResponseToParticipantModel(p: PersonResponse): ParticipantModel {

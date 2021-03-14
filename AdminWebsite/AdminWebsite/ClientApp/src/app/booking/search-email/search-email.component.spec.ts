@@ -96,6 +96,7 @@ describe('SeachEmailComponent', () => {
         expect(component.results.length).toEqual(0);
     });
     it('should validate email', () => {
+        component.invalidPattern = 'courtroom.net';
         component.email = 'email@hmcts.net';
         component.validateEmail();
         expect(component.isValidEmail).toBeTruthy();
@@ -113,6 +114,7 @@ describe('SeachEmailComponent', () => {
         expect(component.notFoundParticipant).toBeFalsy();
     });
     it('should validate input email if email was not found in the list', () => {
+        component.invalidPattern = 'courtroom.net';
         component.email = 'email@hmcts.net';
         fixture.detectChanges();
         component.blurEmail();
@@ -236,11 +238,11 @@ describe('SeachEmailComponent', () => {
         expect(component.notFoundParticipant).toBeFalsy();
     });
     it('should set notFoundParticipant to true', () => {
-        spyOn(component.participantsNotFound, 'emit');
+        spyOn(component.notFoundEmailEvent, 'next');
         component.noDataFound();
         expect(component.isShowResult).toBeFalsy();
         expect(component.notFoundParticipant).toBeTruthy();
-        expect(component.participantsNotFound.emit).toHaveBeenCalled();
+        expect(component.notFoundEmailEvent.next).toHaveBeenCalled();
     });
     it('should set notFoundParticipant to false if less that 3 letters input', () => {
         component.lessThanThreeLetters();
