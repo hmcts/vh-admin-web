@@ -14,6 +14,7 @@ import { BookingService } from '../../services/booking.service';
 import { HearingRole, JudgeResponse } from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
 import { BookingBaseComponentDirective as BookingBaseComponent } from '../booking-base/booking-base.component';
+import { PipeStringifierService } from '../../services/pipe-stringifier.service';
 import { EmailValidationService } from 'src/app/booking/services/email-validation.service';
 
 @Component({
@@ -54,6 +55,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         protected hearingService: VideoHearingsService,
         private judgeService: JudgeDataService,
         protected bookingService: BookingService,
+        private pipeStringifier: PipeStringifierService,
         protected logger: Logger,
         private emailValidationService: EmailValidationService,
         private route: ActivatedRoute
@@ -132,14 +134,14 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
                     email = null;
                 }
                 this.otherInformationDetails.JudgeEmail = email;
-                this.hearing.other_information = JSON.stringify(this.otherInformationDetails);
+                this.hearing.other_information = this.pipeStringifier.encode(this.otherInformationDetails);
             }),
             this.judgePhoneFld.valueChanges.subscribe(phone => {
                 if (phone === '') {
                     phone = null;
                 }
                 this.otherInformationDetails.JudgePhone = phone;
-                this.hearing.other_information = JSON.stringify(this.otherInformationDetails);
+                this.hearing.other_information = this.pipeStringifier.encode(this.otherInformationDetails);
             })
         );
     }
@@ -246,7 +248,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     changeEmail() {
         const judge = this.hearing.participants.find(x => x.is_judge);
         if (judge) {
-            this.hearing.other_information = JSON.stringify(this.otherInformationDetails);
+            this.hearing.other_information = this.pipeStringifier.encode(this.otherInformationDetails);
         }
         const text = SanitizeInputText(this.judgeEmailFld.value);
         this.judgeEmailFld.setValue(text);
@@ -260,7 +262,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         const judge = this.hearing.participants.find(x => x.is_judge);
         if (judge) {
             if (this.otherInformationDetails.JudgePhone) {
-                this.hearing.other_information = JSON.stringify(this.otherInformationDetails);
+                this.hearing.other_information = this.pipeStringifier.encode(this.otherInformationDetails);
             }
         }
         const text = SanitizeInputText(this.judgePhoneFld.value);
