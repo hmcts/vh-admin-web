@@ -67,8 +67,6 @@ namespace AdminWebsite.Controllers
         public async Task<ActionResult<HearingDetailsResponse>> Post([FromBody] BookHearingRequest request)
         {
             var newBookingRequest = request.BookingDetails;
-            var otherDetailsJson = JsonConvert.SerializeObject(request.OtherInformationDetails);
-            newBookingRequest.Other_information = otherDetailsJson;
 
             var usernameAdIdDict = new Dictionary<string, User>();
             try

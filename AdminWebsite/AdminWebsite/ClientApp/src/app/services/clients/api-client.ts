@@ -3087,54 +3087,11 @@ export interface IMultiHearingRequest {
     end_date?: Date;
 }
 
-export class OtherInformationDetails implements IOtherInformationDetails {
-    other_information?: string | undefined;
-    judge_email?: string | undefined;
-    judge_phone?: string | undefined;
-
-    constructor(data?: IOtherInformationDetails) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property)) (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.other_information = _data['other_information'];
-            this.judge_email = _data['judge_email'];
-            this.judge_phone = _data['judge_phone'];
-        }
-    }
-
-    static fromJS(data: any): OtherInformationDetails {
-        data = typeof data === 'object' ? data : {};
-        let result = new OtherInformationDetails();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data['other_information'] = this.other_information;
-        data['judge_email'] = this.judge_email;
-        data['judge_phone'] = this.judge_phone;
-        return data;
-    }
-}
-
-export interface IOtherInformationDetails {
-    other_information?: string | undefined;
-    judge_email?: string | undefined;
-    judge_phone?: string | undefined;
-}
-
 export class BookHearingRequest implements IBookHearingRequest {
     booking_details?: BookNewHearingRequest;
     is_multi_day?: boolean;
     multi_hearing_details?: MultiHearingRequest;
-    other_information_details?: OtherInformationDetails;
+    other_information_details?: string | undefined;
 
     constructor(data?: IBookHearingRequest) {
         if (data) {
@@ -3151,9 +3108,7 @@ export class BookHearingRequest implements IBookHearingRequest {
             this.multi_hearing_details = _data['multi_hearing_details']
                 ? MultiHearingRequest.fromJS(_data['multi_hearing_details'])
                 : <any>undefined;
-            this.other_information_details = _data['other_information_details']
-                ? OtherInformationDetails.fromJS(_data['other_information_details'])
-                : <any>undefined;
+            this.other_information_details = _data['other_information_details'];
         }
     }
 
@@ -3169,7 +3124,7 @@ export class BookHearingRequest implements IBookHearingRequest {
         data['booking_details'] = this.booking_details ? this.booking_details.toJSON() : <any>undefined;
         data['is_multi_day'] = this.is_multi_day;
         data['multi_hearing_details'] = this.multi_hearing_details ? this.multi_hearing_details.toJSON() : <any>undefined;
-        data['other_information_details'] = this.other_information_details ? this.other_information_details.toJSON() : <any>undefined;
+        data['other_information_details'] = this.other_information_details;
         return data;
     }
 }
@@ -3178,7 +3133,7 @@ export interface IBookHearingRequest {
     booking_details?: BookNewHearingRequest;
     is_multi_day?: boolean;
     multi_hearing_details?: MultiHearingRequest;
-    other_information_details?: OtherInformationDetails;
+    other_information_details?: string | undefined;
 }
 
 export class CaseResponse implements ICaseResponse {
