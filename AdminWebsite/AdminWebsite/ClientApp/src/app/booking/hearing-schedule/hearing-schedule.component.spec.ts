@@ -343,10 +343,11 @@ describe('HearingScheduleComponent first visit', () => {
         expect(component.addHearingDateControl).toBe(null);
     });
 
-    it('should return false if a date is not already selected', () => {
+    it('should add a valid hearing date', () => {
+        spyOn(component, 'addValidHearingDate');
         component.addHearingDate();
         component.addHearingDateControl.setValue(new Date());
-        expect(component.isDateAlreadySelected()).toBe(false);
+        expect(component.addValidHearingDate).toHaveBeenCalled();
     });
 
     it('should remove hearing date', () => {
