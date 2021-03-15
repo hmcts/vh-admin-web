@@ -216,15 +216,7 @@ namespace AdminWebsite.Services
             
             if (hearing.DoesJudgeEmailExist())
             {
-                var judgeConfirmationRequest = participantsToEmail
-                    .Where(x => x.User_role_name.Contains("Judge", StringComparison.CurrentCultureIgnoreCase))
-                    .Select(participant => AddNotificationRequestMapper.MapToHearingConfirmationNotification(hearing, participant))
-                    .ToList();   
-                
-                foreach (var request in judgeConfirmationRequest)
-                {
-                    await _notificationApiClient.CreateNewNotificationAsync(request);
-                }
+                SendJudgeConfirmationEmail(hearing);
             }
 
             var requests = hearing.Participants
@@ -233,6 +225,27 @@ namespace AdminWebsite.Services
                 .ToList();
 
             await Task.WhenAll(requests.Select(_notificationApiClient.CreateNewNotificationAsync));
+        }
+
+        private async Task SendJudgeConfirmationEmail(HearingDetailsResponse hearing)
+        {
+            var hearings = new List<HearingDetailsResponse>();
+            AddNotificationRequest request;
+            //TODO: Call bookingsApi, get hearings by groupId, order by sourceid
+            if (hearings.Count == 1)
+            {
+                var judge = hearing.Participants
+                    .First(x => x.User_role_name.Contains("Judge", StringComparison.CurrentCultureIgnoreCase));
+                request = AddNotificationRequestMapper.MapToHearingConfirmationNotification(hearing, judge);
+            }
+            else
+            {
+                var singleHearing = hearings.First();
+                var judge = singleHearing.Participants.First(x => x.User_role_name.Contains("Judge", StringComparison.CurrentCultureIgnoreCase));
+                request = AddNotificationRequestMapper.MapToMultiDayHearingConfirmationNotification(singleHearing, judge, hearings.Count);
+            }
+            
+            await _notificationApiClient.CreateNewNotificationAsync(request);
         }
 
         public async Task<ConferenceDetailsResponse> GetConferenceDetailsByHearingIdWithRetry(Guid hearingId, string errorMessage)

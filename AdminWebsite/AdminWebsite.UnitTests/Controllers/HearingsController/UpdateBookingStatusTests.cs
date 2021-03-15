@@ -112,6 +112,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             };
             var hearingId = Guid.NewGuid();
             var hearing = InitBookingForResponse(hearingId);
+            hearing.Other_information = "{\"OtherInformation\":null,\"JudgeEmail\":\"email@gmail.com\",\"JudgePhone\":\"123456\"}";
             _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(hearing);
             
@@ -170,6 +171,10 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _notificationApiMock.Verify(
                 x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(notification =>
                     notification.NotificationType == NotificationType.HearingReminderRepresentative)), Times.AtLeast(1));
+            
+            _notificationApiMock.Verify(
+                x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(notification =>
+                    notification.NotificationType == NotificationType.HearingConfirmationJudge)), Times.AtLeast(1));
         }
         
         [Test]

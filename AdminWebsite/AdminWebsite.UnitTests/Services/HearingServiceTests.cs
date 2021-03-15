@@ -124,7 +124,21 @@ namespace AdminWebsite.UnitTests.Services
         }
         
         [Test]
-        public async Task should_send_confirmation_email_to_judge_when_reminder_is_sent_to_participants()
+        public async Task should_send_confirmation_email_to_judge_when_reminder_is_sent_to_participants_for_single_day_hearing()
+        {
+            var judge = _hearing.Participants.First(x => x.User_role_name == "Judge");
+            _hearing.Other_information = JsonConvert.SerializeObject(new OtherInformationDetails {JudgeEmail = "judge@hmcts.net"});
+            await _service.SendHearingReminderEmail(_hearing);
+
+            _mocker.Mock<INotificationApiClient>()
+                .Verify(
+                    x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(
+                        r => r.ParticipantId == judge.Id && r.NotificationType == NotificationType.HearingConfirmationJudge)),
+                    Times.Exactly(1));
+        }
+        
+        [Test]
+        public async Task should_send_confirmation_email_to_judge_when_reminder_is_sent_to_participants_for_multi_day_hearing()
         {
             var judge = _hearing.Participants.First(x => x.User_role_name == "Judge");
             _hearing.Other_information = JsonConvert.SerializeObject(new OtherInformationDetails {JudgeEmail = "judge@hmcts.net"});
