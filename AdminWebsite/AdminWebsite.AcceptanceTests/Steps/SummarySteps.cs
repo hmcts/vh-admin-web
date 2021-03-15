@@ -235,7 +235,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         private void VerifyOtherInformation()
         {
-            var otherInformation = _c.Test.TestData.OtherInformationDetails.OtherInformation;
+            var otherInformation = OtherInformationSteps.GetOtherInfo(_c.Test.TestData.OtherInformationDetails.OtherInformation);
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(SummaryPage.OtherInformation).Text.Should().Be(otherInformation);
         }
 

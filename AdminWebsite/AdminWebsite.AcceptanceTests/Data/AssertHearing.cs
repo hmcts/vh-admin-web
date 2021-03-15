@@ -25,8 +25,7 @@ namespace AdminWebsite.AcceptanceTests.Data
             hearing.HearingRoomName.Should().Be(testData.HearingSchedule.Room);
             hearing.HearingTypeName.Should().Be(testData.HearingDetails.HearingType.Name);
             hearing.HearingVenueName.Should().Be(testData.HearingSchedule.HearingVenue);
-            var deserializedObject = Newtonsoft.Json.JsonConvert.DeserializeObject<TestData.OtherInformationDetails>(hearing.OtherInformation);
-            deserializedObject.OtherInformation.Should().Be(testData.TestData.OtherInformationDetails.OtherInformation);
+            hearing.OtherInformation.Should().Be(testData.TestData.OtherInformationDetails.OtherInformation);
         }
 
         private static void AssertCreatedDate(DateTime actual, DateTime expected)
