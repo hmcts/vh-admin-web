@@ -80,6 +80,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(SummaryPage.BookButton);
             _browsers[_c.CurrentUser].Click(SummaryPage.BookButton);
+            _browsers[_c.CurrentUser].Driver.WaitUntilElementNotVisible(SummaryPage.WaitPopUp).Should().BeTrue();
             _c.Test.CreatedBy = _c.CurrentUser.Username;
         }
 
