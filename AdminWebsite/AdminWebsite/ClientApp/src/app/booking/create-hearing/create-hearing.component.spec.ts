@@ -339,6 +339,23 @@ describe('CreateHearingComponent with existing request in session', () => {
         fixture.detectChanges();
         expect(component.caseName.value).toBe('text');
     });
+    it('should return true if participants have been added', () => {
+        component.hearing.participants = [
+            { is_judge: false, is_exist_person: true },
+            { is_judge: true, is_exist_person: true }
+        ];
+        expect(component.isExistingHearingOrParticipantsAdded).toBe(true);
+    });
+    it('should return false if participants have not been added', () => {
+        component.hearing.participants = [];
+        expect(component.isExistingHearingOrParticipantsAdded).toBe(false);
+        component.hearing.participants = [{ is_judge: true, is_exist_person: true }];
+        expect(component.isExistingHearingOrParticipantsAdded).toBe(false);
+    });
+    it('should return false if hearing is undefined', () => {
+        component.hearing = null;
+        expect(component.isExistingHearingOrParticipantsAdded).toBe(false);
+    });
     it('should unsibscribe subcription on destroy', () => {
         component.ngOnDestroy();
         expect(component.$subscriptions[0].closed).toBe(true);
