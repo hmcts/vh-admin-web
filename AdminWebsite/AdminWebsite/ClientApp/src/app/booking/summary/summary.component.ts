@@ -245,7 +245,7 @@ export class SummaryComponent implements OnInit, OnDestroy {
                         caseName: this.hearing.cases[0].name,
                         caseNumber: this.hearing.cases[0].number
                     });
-                    if (this.hearing.hearing_dates) {
+                    if (this.hearing.hearing_dates?.length) {
                         await this.hearingService.cloneMultiHearings(
                             hearingDetailsResponse.id,
                             new MultiHearingRequest({
