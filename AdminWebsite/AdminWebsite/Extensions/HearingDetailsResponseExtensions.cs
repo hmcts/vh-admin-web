@@ -50,19 +50,43 @@ namespace AdminWebsite.Extensions
 
         public static string GetJudgeContactEmail(this HearingDetailsResponse hearing)
         {
-            return GetOtherInformationObject(hearing.Other_information).JudgeEmail;
+            var email = GetOtherInformationObject(hearing.Other_information).JudgeEmail;
+            if (email == "")
+            {
+                return null;
+            }
+            return email;
         }
         
         public static string GetJudgePhone(this HearingDetailsResponse hearing)
         {
-            return GetOtherInformationObject(hearing.Other_information).JudgePhone;
+            var phone = GetOtherInformationObject(hearing.Other_information).JudgePhone;
+            if (phone == "")
+            {
+                return null;
+            }
+            return phone;
+        }
+
+        public static string ToOtherInformationString(this OtherInformationDetails otherInformationDetailsObject)
+        {
+            return
+                $"|JudgeEmail|{otherInformationDetailsObject.JudgeEmail}" +
+                $"|JudgePhone|{otherInformationDetailsObject.JudgePhone}" +
+                $"|OtherInformation|{otherInformationDetailsObject.OtherInformation}";
         }
 
         private static OtherInformationDetails GetOtherInformationObject(string otherInformation)
         {
             try
             {
-                return JsonConvert.DeserializeObject<OtherInformationDetails>(otherInformation);
+                var properties = otherInformation.Split("|");
+                return new OtherInformationDetails
+                {
+                    JudgeEmail = properties[2],
+                    JudgePhone = properties[4],
+                    OtherInformation = properties[6]
+                };
             }
             catch (Exception)
             {
