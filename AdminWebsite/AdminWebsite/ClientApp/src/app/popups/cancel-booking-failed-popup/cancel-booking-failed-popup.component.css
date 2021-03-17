@@ -1,5 +1,5 @@
 .vh-box {
-    box-shadow:  0 0 0 2px rgb(255,255,255), 0.3em 0.3em 1em rgba(0,0,0,0.3);
+    box-shadow: 0 0 0 2px rgb(255, 255, 255), 0.3em 0.3em 1em rgba(0, 0, 0, 0.3);
 }
 
 .vh-popup-overlay {
@@ -11,5 +11,5 @@
     background: rgba(0, 0, 0, 0);
     transition: opacity 500ms;
     z-index: 999;
-    margin-top:5%;
+    margin-top: 5%;
 }
