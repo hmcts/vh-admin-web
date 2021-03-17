@@ -97,22 +97,6 @@ namespace AdminWebsite.UnitTests.Services
         }
         
         [Test]
-        public async Task should_not_create_notification_for_judge_email_when_groupid_is_null()
-        {
-            var judge = _hearing.Participants.First(x => x.User_role_name == "Judge");
-            _hearing.Other_information = JsonConvert.SerializeObject(new OtherInformationDetails {JudgeEmail = "judge@hmcts.net"});
-            _hearing.Group_id = null;
-            
-            await _service.SendHearingReminderEmail(_hearing);
-
-            _mocker.Mock<INotificationApiClient>()
-                .Verify(
-                    x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(
-                        r => r.ParticipantId == judge.Id && r.NotificationType == NotificationType.HearingConfirmationJudge)),
-                    Times.Exactly(0));
-        }
-
-        [Test]
         public async Task should_not_send_amendment_email_when_hearing_is_generic_case_type()
         {
             var secondHearing = InitHearing();

@@ -227,11 +227,6 @@ namespace AdminWebsite.Services
 
         private async Task SendJudgeConfirmationEmail(HearingDetailsResponse hearing)
         {
-            if (!hearing.Group_id.HasValue)
-            {
-                return;
-            }
-
             var hearings = await _bookingsApiClient.GetHearingsByGroupIdAsync(hearing.Group_id.Value);
             AddNotificationRequest request;
 
