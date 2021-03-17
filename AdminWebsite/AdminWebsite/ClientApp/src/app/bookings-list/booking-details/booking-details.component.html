@@ -75,3 +75,7 @@
 <div *ngIf="showCancelBooking">
   <app-cancel-booking-popup (cancelBooking)="cancelBooking($event)" (keepBooking)="keepBooking($event)"> </app-cancel-booking-popup>
 </div>
+
+<div *ngIf="showCancelBookingFailed">
+    <app-cancel-booking-failed-popup (popupClose)="closeCancelFailed()"></app-cancel-booking-failed-popup>
+</div>
