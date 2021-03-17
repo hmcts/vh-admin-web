@@ -1,17 +1,19 @@
+import { PipeStringifierService } from 'src/app/services/pipe-stringifier.service';
+
 export class OtherInformationModel {
     JudgeEmail?: string;
     JudgePhone?: string;
-    otherInformation?: string;
+    OtherInformation?: string;
 
     static init(otherInformation: string): OtherInformationModel {
         let otherInfo: OtherInformationModel = {};
-
+        const stringifier = new PipeStringifierService();
         try {
-            otherInfo = JSON.parse(otherInformation);
+            otherInfo = stringifier.decode(otherInformation);
         } catch (error) {
             otherInfo.JudgeEmail = null;
             otherInfo.JudgePhone = null;
-            otherInfo.otherInformation = otherInformation;
+            otherInfo.OtherInformation = otherInformation;
         }
         return otherInfo;
     }

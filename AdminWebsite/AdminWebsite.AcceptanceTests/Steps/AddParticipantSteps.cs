@@ -28,10 +28,14 @@ namespace AdminWebsite.AcceptanceTests.Steps
         private readonly Dictionary<UserDto, UserBrowser> _browsers;
         private string _individualDisplayName = RepresentingText;
         private readonly CommonSharedSteps _commonSharedSteps;
-        public AddParticipantSteps(TestContext testContext, Dictionary<UserDto, UserBrowser> browsers, CommonSharedSteps commonSharedSteps)
+        private readonly BookingDetailsSteps _bookingDetailsSteps;
+
+        public AddParticipantSteps(TestContext testContext, Dictionary<UserDto, UserBrowser> browsers, 
+            CommonSharedSteps commonSharedSteps, BookingDetailsSteps bookingDetailsSteps)
         {
             _c = testContext;
             _browsers = browsers;
+            _bookingDetailsSteps = bookingDetailsSteps;
             _commonSharedSteps = commonSharedSteps;
         }
 
@@ -46,14 +50,34 @@ namespace AdminWebsite.AcceptanceTests.Steps
             ClickNext();
         }
 
-        [When(@"the user completes the add participants form with an Interpreter")]
-        public void WhenTheUserCompletesTheAddParticipantsFormWithAnInterpreter()
+        [When(@"the user completes the add participants form with an Interpreter And Litigant In Person")]
+        public void WhenTheUserCompletesTheAddParticipantsFormWithAnInterpreterAndLitigantInPerson()
         {
             AddNewDefendantIndividual(PartyRole.LitigantInPerson);
             AddNewDefendantIndividual(PartyRole.Interpreter);
             AddNewDefendantIndividual(PartyRole.LitigantInPerson);
             VerifyUsersAreAddedToTheParticipantsList();
             ClickNext();
+        }
+
+        [When(@"the user completes the add participants form with an Interpreter")]
+        [Given(@"the user completes the add participants form with an Interpreter")]
+        public void WhenTheUserCompletesTheAddParticipantsFormWithAnInterpreter()
+        {
+            AddNewDefendantIndividual(PartyRole.LitigantInPerson);
+            AddNewDefendantIndividual(PartyRole.Interpreter);
+            VerifyUsersAreAddedToTheParticipantsList();
+            ClickNext();
+        }
+
+        [When(@"the user edits booking and adds a Litigant in person")]
+        public void WhenTheUserEditsBookingAndAddsALitigantInPerson()
+        {
+            _browsers[_c.CurrentUser].ClickLink(BookingConfirmationPage.ViewThisBookingLink);
+            _bookingDetailsSteps.ClickEdit();
+            _browsers[_c.CurrentUser].ClickLink(SummaryPage.ParticipantsLink);
+            AddNewDefendantIndividual(PartyRole.LitigantInPerson);
+            VerifyUsersAreAddedToTheParticipantsList();
         }
 
         public void ClickNext()
@@ -305,12 +329,11 @@ namespace AdminWebsite.AcceptanceTests.Steps
             var citizen = _c.Test.HearingParticipants.FirstOrDefault(p => p.DisplayName != user.Interpretee && p.HearingRoleName == PartyRole.LitigantInPerson.Name);
             _commonSharedSteps.WhenTheUserSelectsTheOptionFromTheDropdown(_browsers[_c.CurrentUser].Driver,
                 AddParticipantsPage.InterpreteeDropdown, citizen.DisplayName);
-            _browsers[_c.CurrentUser].Clear(AddParticipantsPage.DisplayNameTextfield);
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AddParticipantsPage.DisplayNameTextfield).SendKeys(user.DisplayName);
             user.Interpretee = citizen.DisplayName;
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AddParticipantsPage.NextButton);
-            _browsers[_c.CurrentUser].ScrollTo(AddParticipantsPage.NextButton);
-            _browsers[_c.CurrentUser].Click(AddParticipantsPage.NextButton);
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AddParticipantsPage.UpdateParticipantLink);
+            _browsers[_c.CurrentUser].ScrollTo(AddParticipantsPage.UpdateParticipantLink);
+            _browsers[_c.CurrentUser].Click(AddParticipantsPage.UpdateParticipantLink);
+            ClickNext();
         }
 
         private UserAccount GetParticipantByEmailAndUpdateDisplayName(string alternativeEmail)

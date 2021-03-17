@@ -60,7 +60,6 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
 
     private checkForExistingRequestOrCreateNew() {
         this.hearing = this.hearingService.getCurrentRequest();
-
         this.isExistingHearing = this.hearing?.hearing_id && this.hearing?.hearing_id?.length > 0;
         this.logger.debug(`${this.loggerPrefix} Checking for existing hearing.`);
         if (!!this.hearing.hearing_type_name && !!this.hearing.case_type) {
@@ -72,6 +71,10 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
         } else {
             this.selectedCaseType = Constants.PleaseSelect;
         }
+    }
+
+    get isExistingHearingOrParticipantsAdded() {
+        return !!this.hearing && (!!this.isExistingHearing || this.hearing.participants.some(p => !p.is_judge));
     }
 
     private setHearingTypeForExistingHearing() {

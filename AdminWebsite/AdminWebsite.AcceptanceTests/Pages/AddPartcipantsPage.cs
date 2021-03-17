@@ -17,6 +17,7 @@ namespace AdminWebsite.AcceptanceTests.Pages
         public static By DisplayNameTextfield = By.Id("displayName");
         public static By RepresentingTextfield = By.Id("representing");
         public static By AddParticipantLink = By.Id("addParticipantBtn");
+        public static By UpdateParticipantLink = By.Id("updateParticipantBtn");        
         public static By ClearDetailsLink = By.PartialLinkText("Clear details");
         public static By NextButton = By.Id(("nextButton"));
         public static By CancelButton = By.Id("cancelButton");

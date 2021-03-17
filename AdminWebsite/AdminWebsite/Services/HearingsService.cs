@@ -429,23 +429,34 @@ namespace AdminWebsite.Services
 
                     foreach (var linkedParticipantInRequest in linkedParticipantsInRequest)
                     {
-                        var linkedId = linkedParticipantInRequest.LinkedId;
-                        var existingLink = false;
-
-                        if (participant.Linked_participants != null)
+                        if (linkedParticipantInRequest.LinkedId == Guid.Empty)
                         {
-                            existingLink = participant.Linked_participants.Exists(x => x.Linked_id == linkedId);
-                        }
-
-                        if (!existingLink)
-                        {
-                            var linkedParticipant =
-                                hearing.Participants.First(x => x.Id == linkedParticipantInRequest.LinkedId);
                             requests.Add(new LinkedParticipantRequest
                             {
-                                Participant_contact_email = participant.Contact_email,
-                                Linked_participant_contact_email = linkedParticipant.Contact_email
+                                Participant_contact_email = linkedParticipantInRequest.ParticipantContactEmail,
+                                Linked_participant_contact_email = linkedParticipantInRequest.LinkedParticipantContactEmail
                             });
+                        }
+                        else
+                        {
+                            var linkedId = linkedParticipantInRequest.LinkedId;
+                            var existingLink = false;
+
+                            if (participant.Linked_participants != null)
+                            {
+                                existingLink = participant.Linked_participants.Exists(x => x.Linked_id == linkedId);
+                            }
+
+                            if (!existingLink)
+                            {
+                                var linkedParticipant =
+                                    hearing.Participants.First(x => x.Id == linkedParticipantInRequest.LinkedId);
+                                requests.Add(new LinkedParticipantRequest
+                                {
+                                    Participant_contact_email = participant.Contact_email,
+                                    Linked_participant_contact_email = linkedParticipant.Contact_email
+                                });
+                            }
                         }
                     }
 
@@ -482,7 +493,7 @@ namespace AdminWebsite.Services
         {
             await _pollyRetryService.WaitAndRetryAsync<Exception, Task>
             (
-                3, _ => TimeSpan.FromSeconds(3),
+                4, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)),
                 retryAttempt => _logger.LogDebug($"{nameof(AssignParticipantToCorrectGroups)} - Failed to add username: {username} userId {userId} to role: {userRoleName} on AAD for hearingId: {hearingId}. Retrying attempt {retryAttempt}"),
                 result => result.IsFaulted,
                 async () =>

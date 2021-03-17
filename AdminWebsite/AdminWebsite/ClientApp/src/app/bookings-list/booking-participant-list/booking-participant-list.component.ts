@@ -41,7 +41,7 @@ export class BookingParticipantListComponent {
         const interpretersAndInterpretees = this.participants.filter(
             participant => participant.HearingRoleName === 'Interpreter' || participant.isInterpretee
         );
-        const observers = this.participants.filter(participant => participant.HearingRoleName === 'Observer');
+        const observers = this.participants.filter(participant => participant.HearingRoleName === 'Observer' && !participant.IsInterpretee);
         const others = this.participants.filter(
             participant =>
                 !judges.includes(participant) &&
