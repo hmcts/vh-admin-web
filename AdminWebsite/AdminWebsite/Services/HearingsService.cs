@@ -242,8 +242,11 @@ namespace AdminWebsite.Services
                 var judge = singleHearing.Participants.First(x => x.User_role_name.Contains("Judge", StringComparison.CurrentCultureIgnoreCase));
                 request = AddNotificationRequestMapper.MapToMultiDayHearingConfirmationNotification(singleHearing, judge, hearings.Count);
             }
-            
-            await _notificationApiClient.CreateNewNotificationAsync(request);
+
+            if (request.ContactEmail != null)
+            {
+                await _notificationApiClient.CreateNewNotificationAsync(request);   
+            }
         }
 
         public async Task<ConferenceDetailsResponse> GetConferenceDetailsByHearingIdWithRetry(Guid hearingId, string errorMessage)
