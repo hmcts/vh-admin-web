@@ -888,9 +888,12 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     get interpreterForInvalid() {
         return this.interpreterFor.invalid && (this.interpreterFor.dirty || this.interpreterFor.touched || this.isShowErrorSummary);
     }
+
     private populateInterpretedForList() {
+        const NotAllowedInterpreter: string[] = [HearingRoles.INTERPRETER.toLowerCase(), HearingRoles.OBSERVER.toLowerCase()];
+
         this.interpreteeList = this.hearing.participants.filter(
-            p => p.user_role_name === 'Individual' && p.hearing_role_name !== 'Interpreter'
+            p => p.user_role_name === 'Individual' && !NotAllowedInterpreter.includes(p.hearing_role_name.toLowerCase())
         );
         const interpreteeModel: ParticipantModel = {
             id: this.constants.PleaseSelect,

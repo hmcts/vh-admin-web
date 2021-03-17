@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AdminWebsite.BookingsAPI.Client;
+using AdminWebsite.Extensions;
 using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
@@ -113,7 +114,13 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             };
             var hearingId = Guid.NewGuid();
             var hearing = InitBookingForResponse(hearingId);
-            hearing.Other_information = "{\"OtherInformation\":null,\"JudgeEmail\":\"email@gmail.com\",\"JudgePhone\":\"123456\"}";
+            hearing.Other_information = new OtherInformationDetails
+            {
+                JudgeEmail = "judge@hmcts.net",
+                JudgePhone = "12345789",
+                OtherInformation = "info"
+            }.ToOtherInformationString();
+            
             _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(hearing);
             
