@@ -1,4 +1,3 @@
-import { Location } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { Component, Input } from '@angular/core';
 import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
@@ -24,14 +23,14 @@ import {
     UpdateBookingStatusRequest,
     UpdateBookingStatusResponse,
     UserProfileResponse,
-    PhoneConferenceResponse,
-    ClientSettingsResponse
+    PhoneConferenceResponse
 } from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
 import { UserIdentityService } from '../../services/user-identity.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { PageUrls } from '../../shared/page-url.constants';
 import { BookingDetailsComponent } from './booking-details.component';
+import { CancelBookingFailedPopupComponent } from '../../popups/cancel-booking-failed-popup/cancel-booking-failed-popup.component';
 
 let component: BookingDetailsComponent;
 let fixture: ComponentFixture<BookingDetailsComponent>;
@@ -240,7 +239,8 @@ describe('BookingDetailsComponent', () => {
                     HearingDetailsMockComponent,
                     CancelBookingPopupComponent,
                     WaitPopupComponent,
-                    ConfirmBookingFailedPopupComponent
+                    ConfirmBookingFailedPopupComponent,
+                    CancelBookingFailedPopupComponent
                 ],
                 imports: [HttpClientModule, ReactiveFormsModule, RouterTestingModule],
                 providers: [
