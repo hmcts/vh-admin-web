@@ -95,7 +95,7 @@ namespace AdminWebsite.UnitTests.Services
                     x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.ParticipantId != judge.Id)),
                     Times.Exactly(_hearing.Participants.Count(x => x.User_role_name.ToLower() != "judge")));
         }
-
+        
         [Test]
         public async Task should_not_send_amendment_email_when_hearing_is_generic_case_type()
         {
@@ -128,12 +128,31 @@ namespace AdminWebsite.UnitTests.Services
         {
             var judge = _hearing.Participants.First(x => x.User_role_name == "Judge");
             _hearing.Other_information = JsonConvert.SerializeObject(new OtherInformationDetails {JudgeEmail = "judge@hmcts.net"});
+            _mocker.Mock<IBookingsApiClient>().Setup(x => x.GetHearingsByGroupIdAsync(_hearing.Group_id.Value)).ReturnsAsync(new List<HearingDetailsResponse> {_hearing});
             await _service.SendHearingReminderEmail(_hearing);
 
             _mocker.Mock<INotificationApiClient>()
                 .Verify(
                     x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(
                         r => r.ParticipantId == judge.Id && r.NotificationType == NotificationType.HearingConfirmationJudge)),
+                    Times.Exactly(1));
+        }
+        
+        [Test]
+        public async Task should_send_confirmation_email_to_judge_when_reminder_is_sent_to_participants_for_multi_day_hearing()
+        {
+            var judge = _hearing.Participants.First(x => x.User_role_name == "Judge");
+            _hearing.Other_information = JsonConvert.SerializeObject(new OtherInformationDetails {JudgeEmail = "judge@hmcts.net"});
+            var hearing2 = InitHearing();
+            hearing2.Group_id = _hearing.Group_id;
+            _mocker.Mock<IBookingsApiClient>().Setup(x => x.GetHearingsByGroupIdAsync(_hearing.Group_id.Value)).ReturnsAsync(new List<HearingDetailsResponse> {_hearing, hearing2});
+
+            await _service.SendHearingReminderEmail(_hearing);
+
+            _mocker.Mock<INotificationApiClient>()
+                .Verify(
+                    x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(
+                        r => r.ParticipantId == judge.Id && r.NotificationType == NotificationType.HearingConfirmationJudgeMultiDay)),
                     Times.Exactly(1));
         }
         
@@ -162,7 +181,7 @@ namespace AdminWebsite.UnitTests.Services
                     x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.ParticipantId != judge.Id)),
                     Times.Never);
         }
-        
+
         private HearingDetailsResponse InitHearing()
         {
             var cases = new List<CaseResponse>
