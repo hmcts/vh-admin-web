@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { JudgeDataService } from 'src/app/booking/services/judge-data.service';
 import { Constants } from 'src/app/common/constants';
@@ -11,11 +11,13 @@ import { SanitizeInputText } from '../../common/formatters/sanitize-input-text';
 import { HearingModel } from '../../common/model/hearing.model';
 import { ParticipantModel } from '../../common/model/participant.model';
 import { BookingService } from '../../services/booking.service';
-import { HearingRole, JudgeResponse } from '../../services/clients/api-client';
+import { JudgeResponse } from '../../services/clients/api-client';
 import { Logger } from '../../services/logger';
 import { BookingBaseComponentDirective as BookingBaseComponent } from '../booking-base/booking-base.component';
 import { PipeStringifierService } from '../../services/pipe-stringifier.service';
 import { EmailValidationService } from 'src/app/booking/services/email-validation.service';
+import { ConfigService } from '../../services/config.service';
+import { map } from 'rxjs/operators';
 
 @Component({
     selector: 'app-assign-judge',
@@ -58,7 +60,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         private pipeStringifier: PipeStringifierService,
         protected logger: Logger,
         private emailValidationService: EmailValidationService,
-        private route: ActivatedRoute
+        private configService: ConfigService
     ) {
         super(bookingService, router, hearingService, logger);
     }
@@ -86,7 +88,12 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         this.loadJudges();
         this.initForm();
 
-        this.invalidPattern = this.route.snapshot.data['emailPattern'];
+        this.$subscriptions.push(
+            this.configService
+                .getClientSettings()
+                .pipe(map(x => x.test_username_stem))
+                .subscribe(x => (this.invalidPattern = x))
+        );
 
         super.ngOnInit();
     }
