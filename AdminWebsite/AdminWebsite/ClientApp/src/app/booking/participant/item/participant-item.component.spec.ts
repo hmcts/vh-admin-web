@@ -45,11 +45,10 @@ describe('ParticipantItemComponent', () => {
         fixture = TestBed.createComponent(ParticipantItemComponent);
         debugElement = fixture.debugElement;
         component = debugElement.componentInstance;
-        const other_information = { JudgeEmail: 'James.Doe@hmcts.net', JudgePhone: '123456789' };
         component.hearing = {
             updated_date: new Date(),
             questionnaire_not_required: true,
-            other_information: JSON.stringify(other_information)
+            other_information: '|JudgeEmail|James.Doe@hmcts.net|JudgePhone|123456789'
         };
 
         fixture.detectChanges();

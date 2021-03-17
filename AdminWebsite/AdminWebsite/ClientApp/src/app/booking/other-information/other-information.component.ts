@@ -11,6 +11,7 @@ import { VideoHearingsService } from '../../services/video-hearings.service';
 import { BookingBaseComponentDirective as BookingBaseComponent } from '../booking-base/booking-base.component';
 import { RecordingGuardService } from '../../services/recording-guard.service';
 import { OtherInformationModel } from '../../common/model/other-information.model';
+import { PipeStringifierService } from 'src/app/services/pipe-stringifier.service';
 
 @Component({
     selector: 'app-other-information',
@@ -40,7 +41,8 @@ export class OtherInformationComponent extends BookingBaseComponent implements O
         protected router: Router,
         protected bookingService: BookingService,
         protected logger: Logger,
-        private recordingGuard: RecordingGuardService
+        private recordingGuard: RecordingGuardService,
+        private pipeStringifier: PipeStringifierService
     ) {
         super(bookingService, router, videoHearingService, logger);
     }
@@ -97,7 +99,7 @@ export class OtherInformationComponent extends BookingBaseComponent implements O
     next() {
         this.hearing.audio_recording_required = this.audioChoice.value;
         this.otherInformationOnBlur();
-        this.hearing.other_information = JSON.stringify(this.otherInformationDetails);
+        this.hearing.other_information = this.pipeStringifier.encode(this.otherInformationDetails);
         this.videoHearingService.updateHearingRequest(this.hearing);
         this.logger.debug(`${this.loggerPrefix} Updated audio recording status and hearing other information.`, { hearing: this.hearing });
         this.form.markAsPristine();

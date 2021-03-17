@@ -68,6 +68,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
         }
 
         [When(@"the user has progressed to the (.*) page")]
+        [Given(@"the user has progressed to the (.*) page")]
         public void WhenIHaveContinuedToThePage(string page)
         {
             Progression(FromString("Video Access Points"), "Video Access Points", page);
