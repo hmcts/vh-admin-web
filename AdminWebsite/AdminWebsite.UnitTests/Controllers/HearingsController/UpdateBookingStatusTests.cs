@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Models;
@@ -145,6 +146,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                     await executeFunction();
                 })
                 .ReturnsAsync(expectedConferenceDetailsResponse);
+            _bookingsApiClient.Setup(x => x.GetHearingsByGroupIdAsync(hearing.Group_id.Value)).ReturnsAsync(new List<HearingDetailsResponse> {hearing});
 
             var response = await _controller.UpdateBookingStatus(hearingId, request);
 

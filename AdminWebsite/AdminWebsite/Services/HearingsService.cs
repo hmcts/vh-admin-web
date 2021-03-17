@@ -212,11 +212,9 @@ namespace AdminWebsite.Services
                 return;
             }
             
-            var participantsToEmail = hearing.Participants;
-            
             if (hearing.DoesJudgeEmailExist())
             {
-                SendJudgeConfirmationEmail(hearing);
+                await SendJudgeConfirmationEmail(hearing);
             }
 
             var requests = hearing.Participants
@@ -229,9 +227,14 @@ namespace AdminWebsite.Services
 
         private async Task SendJudgeConfirmationEmail(HearingDetailsResponse hearing)
         {
-            var hearings = new List<HearingDetailsResponse>();
+            if (!hearing.Group_id.HasValue)
+            {
+                return;
+            }
+
+            var hearings = await _bookingsApiClient.GetHearingsByGroupIdAsync(hearing.Group_id.Value);
             AddNotificationRequest request;
-            //TODO: Call bookingsApi, get hearings by groupId, order by sourceid
+
             if (hearings.Count == 1)
             {
                 var judge = hearing.Participants
