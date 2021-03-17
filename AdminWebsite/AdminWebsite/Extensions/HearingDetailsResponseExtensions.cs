@@ -51,7 +51,7 @@ namespace AdminWebsite.Extensions
         public static string GetJudgeContactEmail(this HearingDetailsResponse hearing)
         {
             var email = GetOtherInformationObject(hearing.Other_information).JudgeEmail;
-            if (email == "")
+            if (email == string.Empty)
             {
                 return null;
             }
@@ -61,7 +61,7 @@ namespace AdminWebsite.Extensions
         public static string GetJudgePhone(this HearingDetailsResponse hearing)
         {
             var phone = GetOtherInformationObject(hearing.Other_information).JudgePhone;
-            if (phone == "")
+            if (phone == string.Empty)
             {
                 return null;
             }
