@@ -21,11 +21,7 @@ export class PipeStringifierService {
         const keyValuePairs = input.match(/[^|]+\|[^|]+/g);
         keyValuePairs?.forEach(property => {
             const pair = property.split('|');
-            if (pair[1]) {
-                output[pair[0]] = pair[1];
-            } else {
-                output[pair[0]] = '';
-            }
+            output[pair[0]] = pair[1] ?? '';
         });
         return output as T;
     }
