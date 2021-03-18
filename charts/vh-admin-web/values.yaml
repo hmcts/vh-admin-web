@@ -53,5 +53,5 @@ java:
     VHSERVICES__NOTIFICATIONAPIURL: https://vh-notification-api.{{ .Values.global.environment }}.platform.hmcts.net/
     KINLYCONFIGURATION__CONFERENCEPHONENUMBER: "01234567890"
     KINLYCONFIGURATION__JOINBYPHONEFROMDATE: ""
-    WOWZACONFIGURATION__STORAGEACCOUNTNAME: vhwowza{{ .Values.global.environment }}
+    WOWZACONFIGURATION__STORAGEACCOUNTNAME: vhinfrawowza{{ .Values.global.environment }}
     WOWZACONFIGURATION__STORAGECONTAINERNAME: recordings
