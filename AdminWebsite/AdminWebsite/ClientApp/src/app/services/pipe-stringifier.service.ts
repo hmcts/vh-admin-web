@@ -10,7 +10,7 @@ export class PipeStringifierService {
         let output = '';
         for (const property in input) {
             if (Object.prototype.hasOwnProperty.call(input, property)) {
-                output += `|${property}|${input[property]}`;
+                output += `|${property}|${input[property] ? input[property] : ''}`;
             }
         }
         return output;
@@ -19,9 +19,13 @@ export class PipeStringifierService {
     decode<T>(input: string): T {
         const output = {};
         const keyValuePairs = input.match(/[^|]+\|[^|]+/g);
-        keyValuePairs.forEach(property => {
+        keyValuePairs?.forEach(property => {
             const pair = property.split('|');
-            output[pair[0]] = pair[1];
+            if (pair[1]) {
+                output[pair[0]] = pair[1];
+            } else {
+                output[pair[0]] = '';
+            }
         });
         return output as T;
     }
