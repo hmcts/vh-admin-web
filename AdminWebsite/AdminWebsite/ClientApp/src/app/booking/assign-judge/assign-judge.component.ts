@@ -88,12 +88,10 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         this.loadJudges();
         this.initForm();
 
-        this.$subscriptions.push(
-            this.configService
-                .getClientSettings()
-                .pipe(map(x => x.test_username_stem))
-                .subscribe(x => (this.invalidPattern = x))
-        );
+        this.configService
+            .getClientSettings()
+            .pipe(map(x => x.test_username_stem))
+            .subscribe(x => (this.invalidPattern = x));
 
         super.ngOnInit();
     }
