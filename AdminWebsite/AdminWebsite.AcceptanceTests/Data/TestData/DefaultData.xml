@@ -28,6 +28,7 @@
   </VideoAccessPoints>
   <OtherInformationDetails>
     <OtherInformation>|JudgeEmail|null|JudgePhone|null|OtherInformation|Other Info</OtherInformation>
+    <OtherInformationText>Other Info</OtherInformationText>
   </OtherInformationDetails>
   <Questionnaire>
     <SelfTestQuestion1>Could you see yourself on the screen in the camera window?</SelfTestQuestion1>

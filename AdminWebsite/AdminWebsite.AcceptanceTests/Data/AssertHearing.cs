@@ -25,7 +25,7 @@ namespace AdminWebsite.AcceptanceTests.Data
             hearing.HearingRoomName.Should().Be(testData.HearingSchedule.Room);
             hearing.HearingTypeName.Should().Be(testData.HearingDetails.HearingType.Name);
             hearing.HearingVenueName.Should().Be(testData.HearingSchedule.HearingVenue);
-            hearing.OtherInformation.Should().Be(testData.TestData.OtherInformationDetails.OtherInformation);
+            hearing.OtherInformation.Should().Contain(testData.TestData.OtherInformationDetails.OtherInformationText);
         }
 
         private static void AssertCreatedDate(DateTime actual, DateTime expected)

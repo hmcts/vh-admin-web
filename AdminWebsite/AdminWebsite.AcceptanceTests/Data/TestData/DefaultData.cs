@@ -54,6 +54,7 @@ namespace AdminWebsite.AcceptanceTests.Data.TestData
     public class OtherInformationDetails
     {
         public string OtherInformation { get; set; }
+        public string OtherInformationText { get; set; }
     }
 
     public class Questionnaire

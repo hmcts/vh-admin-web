@@ -30,7 +30,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             SetOtherInformation();
             _browsers[_c.CurrentUser].Clear(OtherInformationPage.OtherInformationTextfield);
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(OtherInformationPage.OtherInformationTextfield)
-                .SendKeys(GetOtherInfo(_c.Test.TestData.OtherInformationDetails.OtherInformation));
+                .SendKeys(_c.Test.TestData.OtherInformationDetails.OtherInformationText);
 
             ClickNext();
         }
@@ -45,9 +45,10 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         private void SetOtherInformation()
         {
-            var otherInformationText = "Updated other information";
+            const string otherInformationText = "Updated other information";
             _c.Test.TestData.OtherInformationDetails ??= new OtherInformationDetails() { OtherInformation = otherInformationText };
             _c.Test.TestData.OtherInformationDetails.OtherInformation ??= otherInformationText;
+            _c.Test.TestData.OtherInformationDetails.OtherInformationText ??= otherInformationText;
         }
 
         private void ClickNext()
@@ -62,12 +63,6 @@ namespace AdminWebsite.AcceptanceTests.Steps
                 ? OtherInformationPage.AudioRecordYesRadioButton
                 : OtherInformationPage.AudioRecordNoRadioButton);
             _c.Test.AssignJudge.AudioRecord = audioRecord;
-        }
-
-        public static string GetOtherInfo(string otherInformation)
-        {
-            string otherInformationKey = "|OtherInformation|";
-            return otherInformation.Substring(otherInformation.IndexOf(otherInformationKey) + otherInformationKey.Length);
         }
     }
 }
