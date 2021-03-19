@@ -15,14 +15,7 @@ import { ClipboardModule } from 'ngx-clipboard';
 
 @NgModule({
     imports: [CommonModule, FormsModule, ReactiveFormsModule, HttpClientModule, SharedRoutingModule, ClipboardModule],
-    declarations: [
-        HeaderComponent,
-        FooterComponent,
-        PaginationComponent,
-        ScrollTriggerDirective,
-        BookingEditComponent,
-        LongDatetimePipe
-    ],
+    declarations: [HeaderComponent, FooterComponent, PaginationComponent, ScrollTriggerDirective, BookingEditComponent, LongDatetimePipe],
     providers: [WindowRef, WindowScrolling],
     exports: [
         HeaderComponent,

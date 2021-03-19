@@ -16,11 +16,7 @@ describe('FooterComponent', () => {
         waitForAsync(() => {
             TestBed.configureTestingModule({
                 declarations: [FooterComponent, DashboardStubComponent],
-                imports: [
-                    RouterTestingModule.withRoutes([
-                        { path: 'dashboard', component: DashboardStubComponent }
-                    ])
-                ],
+                imports: [RouterTestingModule.withRoutes([{ path: 'dashboard', component: DashboardStubComponent }])],
                 schemas: [NO_ERRORS_SCHEMA]
             }).compileComponents();
         })
