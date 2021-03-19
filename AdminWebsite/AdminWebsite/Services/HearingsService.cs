@@ -212,19 +212,9 @@ namespace AdminWebsite.Services
                 return;
             }
             
-            var participantsToEmail = hearing.Participants;
-            
             if (hearing.DoesJudgeEmailExist())
             {
-                var judgeConfirmationRequest = participantsToEmail
-                    .Where(x => x.User_role_name.Contains("Judge", StringComparison.CurrentCultureIgnoreCase))
-                    .Select(participant => AddNotificationRequestMapper.MapToHearingConfirmationNotification(hearing, participant))
-                    .ToList();   
-                
-                foreach (var request in judgeConfirmationRequest)
-                {
-                    await _notificationApiClient.CreateNewNotificationAsync(request);
-                }
+                await SendJudgeConfirmationEmail(hearing);
             }
 
             var requests = hearing.Participants
@@ -233,6 +223,30 @@ namespace AdminWebsite.Services
                 .ToList();
 
             await Task.WhenAll(requests.Select(_notificationApiClient.CreateNewNotificationAsync));
+        }
+
+        private async Task SendJudgeConfirmationEmail(HearingDetailsResponse hearing)
+        {
+            var hearings = await _bookingsApiClient.GetHearingsByGroupIdAsync(hearing.Group_id.Value);
+            AddNotificationRequest request;
+
+            if (hearings.Count == 1)
+            {
+                var judge = hearing.Participants
+                    .First(x => x.User_role_name.Contains("Judge", StringComparison.CurrentCultureIgnoreCase));
+                request = AddNotificationRequestMapper.MapToHearingConfirmationNotification(hearing, judge);
+            }
+            else
+            {
+                var singleHearing = hearings.First();
+                var judge = singleHearing.Participants.First(x => x.User_role_name.Contains("Judge", StringComparison.CurrentCultureIgnoreCase));
+                request = AddNotificationRequestMapper.MapToMultiDayHearingConfirmationNotification(singleHearing, judge, hearings.Count);
+            }
+
+            if (request.ContactEmail != null)
+            {
+                await _notificationApiClient.CreateNewNotificationAsync(request);   
+            }
         }
 
         public async Task<ConferenceDetailsResponse> GetConferenceDetailsByHearingIdWithRetry(Guid hearingId, string errorMessage)
@@ -413,23 +427,34 @@ namespace AdminWebsite.Services
 
                     foreach (var linkedParticipantInRequest in linkedParticipantsInRequest)
                     {
-                        var linkedId = linkedParticipantInRequest.LinkedId;
-                        var existingLink = false;
-
-                        if (participant.Linked_participants != null)
+                        if (linkedParticipantInRequest.LinkedId == Guid.Empty)
                         {
-                            existingLink = participant.Linked_participants.Exists(x => x.Linked_id == linkedId);
-                        }
-
-                        if (!existingLink)
-                        {
-                            var linkedParticipant =
-                                hearing.Participants.First(x => x.Id == linkedParticipantInRequest.LinkedId);
                             requests.Add(new LinkedParticipantRequest
                             {
-                                Participant_contact_email = participant.Contact_email,
-                                Linked_participant_contact_email = linkedParticipant.Contact_email
+                                Participant_contact_email = linkedParticipantInRequest.ParticipantContactEmail,
+                                Linked_participant_contact_email = linkedParticipantInRequest.LinkedParticipantContactEmail
                             });
+                        }
+                        else
+                        {
+                            var linkedId = linkedParticipantInRequest.LinkedId;
+                            var existingLink = false;
+
+                            if (participant.Linked_participants != null)
+                            {
+                                existingLink = participant.Linked_participants.Exists(x => x.Linked_id == linkedId);
+                            }
+
+                            if (!existingLink)
+                            {
+                                var linkedParticipant =
+                                    hearing.Participants.First(x => x.Id == linkedParticipantInRequest.LinkedId);
+                                requests.Add(new LinkedParticipantRequest
+                                {
+                                    Participant_contact_email = participant.Contact_email,
+                                    Linked_participant_contact_email = linkedParticipant.Contact_email
+                                });
+                            }
                         }
                     }
 

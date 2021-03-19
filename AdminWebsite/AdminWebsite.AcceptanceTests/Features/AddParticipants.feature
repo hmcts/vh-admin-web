@@ -46,7 +46,7 @@ Scenario: Edit Audio Recording option
 
 Scenario: Removing Participant and Interpreter
 	Given the Video Hearings Officer user has progressed to the Add Participants page
-	When the user completes the add participants form with an Interpreter
+	When the user completes the add participants form with an Interpreter And Litigant In Person
 	And the user has progressed to the Summary page
 	And the user removes participant
 	Then the user views the information on the summary form
@@ -60,7 +60,9 @@ Scenario: Removing Interpreter
 
 Scenario: Edit Interpreter
 	Given the Video Hearings Officer user has progressed to the Add Participants page
-	When the user completes the add participants form with an Interpreter
-	And the user has progressed to the Summary page
-	When the user edits an Interpreter
+	And the user completes the add participants form with an Interpreter
+	And the user has progressed to the Booking Confirmation page
+	When the user edits booking and adds a Litigant in person 
+	And the user edits an Interpreter
+	And the user has progressed to the summary page
 	Then the user views the information on the summary form

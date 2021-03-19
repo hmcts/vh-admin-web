@@ -4,9 +4,11 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { of } from 'rxjs';
 import { EndpointModel } from 'src/app/common/model/endpoint.model';
 import { LinkedParticipantModel, LinkedParticipantType } from 'src/app/common/model/linked-participant.model';
+import { OtherInformationModel } from 'src/app/common/model/other-information.model';
 import { CancelPopupComponent } from 'src/app/popups/cancel-popup/cancel-popup.component';
 import { RemoveInterpreterPopupComponent } from 'src/app/popups/remove-interpreter-popup/remove-interpreter-popup.component';
 import { SaveFailedPopupComponent } from 'src/app/popups/save-failed-popup/save-failed-popup.component';
+import { PipeStringifierService } from 'src/app/services/pipe-stringifier.service';
 import { BreadcrumbStubComponent } from 'src/app/testing/stubs/breadcrumb-stub';
 import { LongDatetimePipe } from '../../../app/shared/directives/date-time.pipe';
 import { CaseModel } from '../../common/model/case.model';
@@ -46,7 +48,7 @@ function initExistingHearingRequest(): HearingModel {
     existingRequest.hearing_venue_id = 2;
     existingRequest.scheduled_date_time = today;
     existingRequest.scheduled_duration = 80;
-    existingRequest.other_information = 'some notes';
+    existingRequest.other_information = '|OtherInformation|some notes';
     existingRequest.audio_recording_required = true;
     existingRequest.court_room = '123W';
     const hearingTypeName = MockValues.HearingTypesList.find(c => c.id === existingRequest.hearing_type_id).name;
@@ -87,6 +89,7 @@ function initBadHearingRequest(): HearingModel {
 let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
 let routerSpy: jasmine.SpyObj<Router>;
 let loggerSpy: jasmine.SpyObj<Logger>;
+const stringifier = new PipeStringifierService();
 
 routerSpy = jasmine.createSpyObj('Router', ['navigate', 'url']);
 loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'info', 'warn', 'debug']);
@@ -153,7 +156,9 @@ describe('SummaryComponent with valid request', () => {
     it('should display summary data from existing hearing', () => {
         expect(component.caseNumber).toEqual(existingRequest.cases[0].number);
         expect(component.caseName).toEqual(existingRequest.cases[0].name);
-        expect(component.otherInformation.OtherInformation).toEqual(existingRequest.other_information);
+        expect(component.otherInformation.OtherInformation).toEqual(
+            stringifier.decode<OtherInformationModel>(existingRequest.other_information).OtherInformation
+        );
         const hearingstring = MockValues.HearingTypesList.find(c => c.id === existingRequest.hearing_type_id).name;
         expect(component.caseHearingType).toEqual(hearingstring);
         expect(component.hearingDate).toEqual(existingRequest.scheduled_date_time);

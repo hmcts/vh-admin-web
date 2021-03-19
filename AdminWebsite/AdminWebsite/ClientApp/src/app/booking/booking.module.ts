@@ -36,7 +36,6 @@ export const Components: Type<any>[] = [
 
 @NgModule({
     imports: [SharedModule, BookingRoutingModule, PopupModule],
-    providers: [EmailPatternResolver],
     declarations: Components,
     exports: Components
 })
