@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using AcceptanceTests.Common.Configuration.Users;
 using AcceptanceTests.Common.Model.Participant;
+using AdminWebsite.AcceptanceTests.Steps;
 using BookingsApi.Contract.Responses;
 using FluentAssertions;
 
@@ -25,7 +26,7 @@ namespace AdminWebsite.AcceptanceTests.Data
             hearing.HearingRoomName.Should().Be(testData.HearingSchedule.Room);
             hearing.HearingTypeName.Should().Be(testData.HearingDetails.HearingType.Name);
             hearing.HearingVenueName.Should().Be(testData.HearingSchedule.HearingVenue);
-            hearing.OtherInformation.Should().Contain(testData.TestData.OtherInformationDetails.OtherInformationText);
+            OtherInformationSteps.GetOtherInfo(hearing.OtherInformation).Should().Be(OtherInformationSteps.GetOtherInfo(testData.TestData.OtherInformationDetails.OtherInformation));
         }
 
         private static void AssertCreatedDate(DateTime actual, DateTime expected)

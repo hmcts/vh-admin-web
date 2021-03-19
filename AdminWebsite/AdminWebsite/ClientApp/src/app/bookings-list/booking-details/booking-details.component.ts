@@ -46,6 +46,7 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
     telephoneConferenceId: string;
     previousUrl: string = null;
     phoneDetails = '';
+    showCancelBookingFailed = false;
 
     constructor(
         private videoHearingService: VideoHearingsService,
@@ -79,6 +80,10 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
                 this.getUserRole(userProfile);
             })
         );
+    }
+
+    closeCancelFailed() {
+        this.showCancelBookingFailed = false;
     }
 
     getUserRole(userProfile: UserProfileResponse) {
@@ -180,6 +185,13 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
             this.logger.info(`${this.loggerPrefix} Hearing status changed`, { hearingId: this.hearingId, status: status });
             this.logger.event(`${this.loggerPrefix} Hearing status changed`, { hearingId: this.hearingId, status: status });
         } catch (error) {
+            if (status === UpdateBookingStatus.Cancelled) {
+                this.showCancelBooking = false;
+                this.showConfirming = false;
+                this.showCancelBookingFailed = true;
+                this.logger.error(`${this.loggerPrefix} Error to update to Cancelled hearing status`, error);
+                return;
+            }
             this.errorHandler(error, status);
             this.updateStatusHandler(UpdateBookingStatus.Failed);
         }
