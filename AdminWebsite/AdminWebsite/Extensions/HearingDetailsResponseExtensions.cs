@@ -91,7 +91,7 @@ namespace AdminWebsite.Extensions
             catch (Exception)
             {
                 var properties = otherInformation.Split("|");
-                if (properties.Length > 1)
+                if (properties.Length > 2)
                 {
                     return new OtherInformationDetails {OtherInformation = properties[2]};
                 }

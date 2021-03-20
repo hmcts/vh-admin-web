@@ -135,7 +135,12 @@ namespace AdminWebsite.AcceptanceTests.Steps
             catch (Exception)
             {
                 var properties = otherInformation.Split("|");
-                return new OtherInformationDetails {OtherInformation = properties[2]};
+                if (properties.Length > 2)
+                {
+                    return new OtherInformationDetails {OtherInformation = properties[2]};
+                }
+
+                return new OtherInformationDetails {OtherInformation = properties[0]};
             }
         }
 
