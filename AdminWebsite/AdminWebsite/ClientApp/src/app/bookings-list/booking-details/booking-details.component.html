@@ -22,7 +22,12 @@
       <app-hearing-details [hearing]="hearing" [participants]="participants" [phoneDetails]="phoneDetails"></app-hearing-details>
     </div>
     <div class="govuk-grid-column-one-half vh-top">
-      <app-booking-participant-list [hearing]="hearing" [participants]="participants" [judges]="judges" [vh_officer_admin]="isVhOfficerAdmin">
+      <app-booking-participant-list
+        [hearing]="hearing"
+        [participants]="participants"
+        [judges]="judges"
+        [vh_officer_admin]="isVhOfficerAdmin"
+      >
       </app-booking-participant-list>
     </div>
   </div>

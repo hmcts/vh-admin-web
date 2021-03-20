@@ -72,9 +72,13 @@
         <div *ngIf="isJudge(participant)" id="participant-judge-email" class="govuk-grid-column-two-thirds wrap">
           {{ getJudgeEmail() }}
         </div>
-          <div *ngIf="!isJudge(participant)" id="participant-{{ participant?.ParticipantId }}-email" class="govuk-grid-column-two-thirds wrap">
-              {{ participant?.Email }}
-          </div>
+        <div
+          *ngIf="!isJudge(participant)"
+          id="participant-{{ participant?.ParticipantId }}-email"
+          class="govuk-grid-column-two-thirds wrap"
+        >
+          {{ participant?.Email }}
+        </div>
       </div>
       <div class="govuk-grid-row vh-mtop">
         <div class="govuk-grid-column-one-third contact-label">Username</div>
@@ -87,9 +91,13 @@
         <div *ngIf="isJudge(participant)" id="participant-judge-phone" class="govuk-grid-column-two-thirds wrap">
           {{ getJudgePhone() }}
         </div>
-          <div *ngIf="!isJudge(participant)" id="participant-{{ participant?.ParticipantId }}-phone" class="govuk-grid-column-two-thirds wrap">
-              {{ participant?.Phone }}
-          </div>
+        <div
+          *ngIf="!isJudge(participant)"
+          id="participant-{{ participant?.ParticipantId }}-phone"
+          class="govuk-grid-column-two-thirds wrap"
+        >
+          {{ participant?.Phone }}
+        </div>
       </div>
     </div>
   </div>
