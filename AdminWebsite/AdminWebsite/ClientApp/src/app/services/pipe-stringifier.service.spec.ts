@@ -6,7 +6,8 @@ describe('PipeStringifierService', () => {
     let service: PipeStringifierService;
     const testString = '|name|test|height|100';
     const testObject = { name: 'test', height: '100' };
-    const testEmptyString = '|name||height|100';
+    const testDecodeEmptyString = '|name||height|100';
+    const testEncodeEmptyString = '|height|100';
     const testEmptyObject = { height: '100' };
     const testThreePropsString = '|name|test|height|100';
     const testThreePropsObject = { name: 'test', height: '100' };
@@ -32,7 +33,11 @@ describe('PipeStringifierService', () => {
     });
 
     it('should decode a string with an empty value into an object', () => {
-        expect(service.decode(testEmptyString)).toEqual(testEmptyObject);
+        expect(service.decode(testDecodeEmptyString)).toEqual(testEmptyObject);
+    });
+
+    it('should encode an object with an empty property to a string', () => {
+        expect(service.encode(testEmptyObject)).toEqual(testEncodeEmptyString);
     });
 
     it('should decode a string with three values into an object', () => {
