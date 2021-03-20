@@ -11,6 +11,7 @@ using AcceptanceTests.Common.Test.Steps;
 using AdminWebsite.AcceptanceTests.Data;
 using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.AcceptanceTests.Pages;
+using AdminWebsite.Models;
 using BookingsApi.Contract.Enums;
 using BookingsApi.Contract.Responses;
 using TestApi.Contract.Dtos;
@@ -98,8 +99,44 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingDetailsPage.JudgeName).Text.Should().Contain(judge.DisplayName);
 
             if (!OnlyDisplayEmailAndUsernameIfCurrentUserMadeTheBooking()) return;
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingDetailsPage.ParticipantEmail(hearingJudge.Id)).Text.Should().Be(judge.AlternativeEmail);
+            if (GetJudgeEmail(hearing) != null)
+            {
+                _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingDetailsPage.ParticipantEmail(hearingJudge.Id)).Text.Should().Be(judge.AlternativeEmail);
+            }
+            else
+            {
+                _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingDetailsPage.ParticipantEmail(hearingJudge.Id)).Text.Should().Be("TBC");
+            }
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingDetailsPage.ParticipantUsername(hearingJudge.Id)).Text.Should().Be(judge.Username);
+        }
+
+        private string GetJudgeEmail(HearingDetailsResponse hearing)
+        {
+            var email = GetOtherInformationObject(hearing.OtherInformation).JudgeEmail;
+            if (email == string.Empty)
+            {
+                return null;
+            }
+            return email;
+        }
+        
+        private static OtherInformationDetails GetOtherInformationObject(string otherInformation)
+        {
+            try
+            {
+                var properties = otherInformation.Split("|");
+                return new OtherInformationDetails
+                {
+                    JudgeEmail = properties[2],
+                    JudgePhone = properties[4],
+                    OtherInformation = properties[6]
+                };
+            }
+            catch (Exception)
+            {
+                var properties = otherInformation.Split("|");
+                return new OtherInformationDetails {OtherInformation = properties[2]};
+            }
         }
 
         private static HearingDetailsResponse GetTheFirstHearing(IReadOnlyCollection<HearingDetailsResponse> hearings)
@@ -129,7 +166,14 @@ namespace AdminWebsite.AcceptanceTests.Steps
                 }
 
                 if (!OnlyDisplayEmailAndUsernameIfCurrentUserMadeTheBooking()) continue;
-                _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingDetailsPage.ParticipantEmail(participant.Id)).Text.Trim().Should().Be(participant.ContactEmail);
+                if (participant.HearingRoleName.ToLower() == "judge" && GetJudgeEmail(hearing) == null)
+                {
+                    _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingDetailsPage.ParticipantEmail(participant.Id)).Text.Trim().Should().Be("TBC");
+                }
+                else
+                {
+                    _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingDetailsPage.ParticipantEmail(participant.Id)).Text.Trim().Should().Be(participant.ContactEmail);
+                }
                 _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingDetailsPage.ParticipantUsername(participant.Id)).Text.Trim().Should().Be(participant.Username);
             }
         }
