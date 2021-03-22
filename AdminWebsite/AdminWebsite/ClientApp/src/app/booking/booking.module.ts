@@ -14,7 +14,6 @@ import { SummaryComponent } from './summary/summary.component';
 import { RemovePopupComponent } from '../popups/remove-popup/remove-popup.component';
 import { EndpointsComponent } from './endpoints/endpoints.component';
 import { ParticipantItemComponent, ParticipantListComponent } from './participant';
-import { EmailPatternResolver } from 'src/app/booking/services/email-pattern-resolver';
 
 export const Components: Type<any>[] = [
     CreateHearingComponent,
@@ -34,7 +33,6 @@ export const Components: Type<any>[] = [
 
 @NgModule({
     imports: [SharedModule, BookingRoutingModule, PopupModule],
-    providers: [EmailPatternResolver],
     declarations: Components,
     exports: Components
 })

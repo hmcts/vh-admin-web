@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using AdminWebsite.BookingsAPI.Client;
+using AdminWebsite.Extensions;
 using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
@@ -112,6 +114,13 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             };
             var hearingId = Guid.NewGuid();
             var hearing = InitBookingForResponse(hearingId);
+            hearing.Other_information = new OtherInformationDetails
+            {
+                JudgeEmail = "judge@hmcts.net",
+                JudgePhone = "12345789",
+                OtherInformation = "info"
+            }.ToOtherInformationString();
+            
             _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(hearing);
             
@@ -144,6 +153,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                     await executeFunction();
                 })
                 .ReturnsAsync(expectedConferenceDetailsResponse);
+            _bookingsApiClient.Setup(x => x.GetHearingsByGroupIdAsync(hearing.Group_id.Value)).ReturnsAsync(new List<HearingDetailsResponse> {hearing});
 
             var response = await _controller.UpdateBookingStatus(hearingId, request);
 
@@ -170,6 +180,10 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _notificationApiMock.Verify(
                 x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(notification =>
                     notification.NotificationType == NotificationType.HearingReminderRepresentative)), Times.AtLeast(1));
+            
+            _notificationApiMock.Verify(
+                x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(notification =>
+                    notification.NotificationType == NotificationType.HearingConfirmationJudge)), Times.AtLeast(1));
         }
         
         [Test]
