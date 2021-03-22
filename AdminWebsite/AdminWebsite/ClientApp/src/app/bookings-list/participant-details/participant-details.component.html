@@ -70,13 +70,22 @@
       <div class="govuk-grid-row">
         <div class="govuk-grid-column-one-third contact-label">Email</div>
         <div id="participant-{{ participant?.ParticipantId }}-email" class="govuk-grid-column-two-thirds wrap">
-          <div *ngIf="!isJudge(participant)">{{ participant?.Email }}</div>
-          <div *ngIf="isJudge(participant) && (getJudgeEmail() !== '' || getJudgeEmail() === undefined || getJudgeEmail() !== null)">
-            {{ getJudgeEmail() }}
-          </div>
-          <div *ngIf="isJudge(participant) && (getJudgeEmail() === '' || getJudgeEmail() === undefined || getJudgeEmail() === null)">
-            TBC
-          </div>
+            <div *ngIf="participant.isJudge; else participantEmail">
+                <div *ngIf="JudgeEmail(); else judgeNoEmail">
+                    {{ JudgeEmail() }}
+                </div>
+                <ng-template #judgeNoEmail>
+                    <div>
+                        TBC
+                    </div>
+                </ng-template>
+            </div>
+
+            <ng-template #participantEmail>
+                <div>
+                    {{ participant.Email }}
+                </div>
+            </ng-template>
         </div>
       </div>
       <div class="govuk-grid-row vh-mtop">
@@ -88,13 +97,22 @@
       <div class="govuk-grid-row vh-mtop">
         <div class="govuk-grid-column-one-third contact-label">Telephone</div>
         <div id="participant-{{ participant?.ParticipantId }}-phone" class="govuk-grid-column-two-thirds wrap">
-          <div *ngIf="!isJudge(participant)">{{ participant?.Phone }}</div>
-          <div *ngIf="isJudge(participant) && (getJudgePhone() !== '' || getJudgeEmail() !== undefined || getJudgeEmail() !== null)">
-            {{ getJudgePhone() }}
-          </div>
-          <div *ngIf="isJudge(participant) && (getJudgePhone() === '' || getJudgeEmail() === undefined || getJudgeEmail() === null)">
-            TBC
-          </div>
+            <div *ngIf="participant.isJudge; else participantPhone">
+                <div *ngIf="JudgePhone(); else judgeNoPhone">
+                    {{ JudgePhone() }}
+                </div>
+                <ng-template #judgeNoPhone>
+                    <div>
+                        TBC
+                    </div>
+                </ng-template>
+            </div>
+
+            <ng-template #participantPhone>
+                <div>
+                    {{ participant.Phone }}
+                </div>
+            </ng-template>
         </div>
       </div>
     </div>

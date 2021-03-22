@@ -85,14 +85,14 @@ describe('ParticipantDetailsComponent', () => {
     it('should get judge email from hearing', () => {
         component.hearing = hearing;
 
-        const email = component.getJudgeEmail();
+        const email = component.JudgeEmail();
         expect(email).toBe('judge@hmcts.net');
     });
 
     it('should get judge phone from hearing', () => {
         component.hearing = hearing;
 
-        const phone = component.getJudgePhone();
+        const phone = component.JudgePhone();
         expect(phone).toBe('123456789');
     });
 
@@ -120,7 +120,6 @@ describe('ParticipantDetailsComponent', () => {
         component.participant = pr;
         component.hearing = hearing;
         fixture.detectChanges();
-        const isJudge = component.isJudge(component.participant);
-        expect(isJudge).toBe(true);
+        expect(component.participant.isJudge).toBe(true);
     });
 });
