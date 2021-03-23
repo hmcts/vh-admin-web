@@ -86,6 +86,10 @@ export class ParticipantDetailsModel {
         return this.HearingRoleName && this.HearingRoleName.toLowerCase().trim() === HearingRoles.INTERPRETER;
     }
 
+    get isJudge(): boolean {
+        return this.HearingRoleName && this.HearingRoleName.toLowerCase().trim() === HearingRoles.JUDGE;
+    }
+
     get isRepOrInterpreter(): boolean {
         return (
             this.HearingRoleName &&
