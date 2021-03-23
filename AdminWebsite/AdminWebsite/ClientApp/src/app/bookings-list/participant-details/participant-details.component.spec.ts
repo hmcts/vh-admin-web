@@ -85,14 +85,14 @@ describe('ParticipantDetailsComponent', () => {
     it('should get judge email from hearing', () => {
         component.hearing = hearing;
 
-        const email = component.JudgeEmail();
+        const email = component.judgeEmail;
         expect(email).toBe('judge@hmcts.net');
     });
 
     it('should get judge phone from hearing', () => {
         component.hearing = hearing;
 
-        const phone = component.JudgePhone();
+        const phone = component.judgePhone;
         expect(phone).toBe('123456789');
     });
 
