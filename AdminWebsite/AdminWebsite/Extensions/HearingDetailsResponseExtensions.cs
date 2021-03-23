@@ -48,7 +48,7 @@ namespace AdminWebsite.Extensions
             return false;
         }
 
-        public static string GetJudgeContactEmail(this HearingDetailsResponse hearing)
+        public static string GetJudgeEmail(this HearingDetailsResponse hearing)
         {
             var email = GetOtherInformationObject(hearing.Other_information).JudgeEmail;
             if (email == string.Empty)
@@ -90,6 +90,12 @@ namespace AdminWebsite.Extensions
             }
             catch (Exception)
             {
+                var properties = otherInformation.Split("|");
+                if (properties.Length > 2)
+                {
+                    return new OtherInformationDetails {OtherInformation = properties[2]};
+                }
+
                 return new OtherInformationDetails {OtherInformation = otherInformation};
             }
         }
