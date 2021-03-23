@@ -96,7 +96,7 @@ namespace AdminWebsite.Extensions
                     return new OtherInformationDetails {OtherInformation = properties[2]};
                 }
 
-                return new OtherInformationDetails {OtherInformation = properties[0]};
+                return new OtherInformationDetails {OtherInformation = otherInformation};
             }
         }
     }
