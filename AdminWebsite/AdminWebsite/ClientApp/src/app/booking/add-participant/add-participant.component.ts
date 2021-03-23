@@ -927,8 +927,9 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         return hearingHasInterpreter;
     }
     private hearingHasInterpretees(): boolean {
+        const notAllowedInterpreter = [HearingRoles.INTERPRETER.toLowerCase(), HearingRoles.OBSERVER.toLowerCase()];
         const hearingHasInterpretees = this.hearing.participants.some(
-            p => p.user_role_name === 'Individual' && p.hearing_role_name !== 'Interpreter'
+            p => p.user_role_name === 'Individual' && !notAllowedInterpreter.includes(p.hearing_role_name.toLowerCase())
         );
         return hearingHasInterpretees;
     }
