@@ -249,12 +249,10 @@ describe('AddParticipantComponent', () => {
         expect(component.titleList).toBeTruthy();
         expect(component.titleList.length).toBe(2);
     }));
-
     it('considers the email valid if the field is not displayed', () => {
         component.searchEmail = null;
         expect(component.validEmail()).toBe(true);
     });
-
     it('considers email valid if an email with valid format is assigned', () => {
         component.showDetails = true;
         component.searchEmail.email = 'valid@hmcts.net';
@@ -470,7 +468,6 @@ describe('AddParticipantComponent', () => {
         expect(component.roleList.length).toBe(2);
         expect(component.roleList[0]).toEqual(Constants.PleaseSelect);
 
-        console.log(JSON.stringify(component.hearingRoleList));
         expect(component.hearingRoleList.length).toBe(5);
         expect(component.hearingRoleList[0]).toEqual(Constants.PleaseSelect);
     });
