@@ -18,11 +18,11 @@ export class ParticipantDetailsComponent {
 
     constructor() {}
 
-    JudgeEmail() {
+    get judgeEmail() {
         return OtherInformationModel.init(this.hearing.OtherInformation).JudgeEmail;
     }
 
-    JudgePhone() {
+    get judgePhone() {
         return OtherInformationModel.init(this.hearing.OtherInformation).JudgePhone;
     }
 }

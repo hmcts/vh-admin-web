@@ -71,8 +71,8 @@
         <div class="govuk-grid-column-one-third contact-label">Email</div>
         <div id="participant-{{ participant?.ParticipantId }}-email" class="govuk-grid-column-two-thirds wrap">
           <div *ngIf="participant.isJudge; else participantEmail">
-            <div *ngIf="JudgeEmail(); else judgeNoEmail">
-              {{ JudgeEmail() }}
+            <div *ngIf="judgeEmail; else judgeNoEmail">
+              {{ judgeEmail }}
             </div>
             <ng-template #judgeNoEmail>
               <div>TBC</div>
@@ -96,8 +96,8 @@
         <div class="govuk-grid-column-one-third contact-label">Telephone</div>
         <div id="participant-{{ participant?.ParticipantId }}-phone" class="govuk-grid-column-two-thirds wrap">
           <div *ngIf="participant.isJudge; else participantPhone">
-            <div *ngIf="JudgePhone(); else judgeNoPhone">
-              {{ JudgePhone() }}
+            <div *ngIf="judgePhone; else judgeNoPhone">
+              {{ judgePhone }}
             </div>
             <ng-template #judgeNoPhone>
               <div>TBC</div>
