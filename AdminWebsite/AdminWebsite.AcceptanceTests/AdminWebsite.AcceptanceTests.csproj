@@ -17,7 +17,7 @@
     <PackageReference Include="NotificationApi.Client" Version="1.24.9" />
     <PackageReference Include="Notify" Version="4.0.0" />
     <PackageReference Include="TestApi.Client" Version="1.24.9" />
-    <PackageReference Include="VH.AcceptanceTests.Common" Version="1.21.28" />
+    <PackageReference Include="VH.AcceptanceTests.Common" Version="1.21.29" />
   </ItemGroup>
 
   <ItemGroup>
