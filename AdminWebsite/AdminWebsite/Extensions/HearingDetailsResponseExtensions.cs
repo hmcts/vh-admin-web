@@ -27,7 +27,7 @@ namespace AdminWebsite.Extensions
             if (hearing.Other_information != null)
             {
                 var otherInformationDetails = GetOtherInformationObject(hearing.Other_information);
-                if (otherInformationDetails.JudgeEmail != null)
+                if (otherInformationDetails.JudgeEmail != "")
                 {
                     return true;
                 }
