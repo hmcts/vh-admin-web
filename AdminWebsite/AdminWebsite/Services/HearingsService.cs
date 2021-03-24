@@ -149,7 +149,7 @@ namespace AdminWebsite.Services
             var caseNumber = @case.Number;
 
             var participantsToEmail = participants ?? updatedHearing.Participants;
-            if (!updatedHearing.DoesJudgeEmailExist() || originalHearing.Confirmed_date == null)
+            if (!updatedHearing.DoesJudgeEmailExist() || originalHearing.Confirmed_date == null || originalHearing.Group_id != originalHearing.Id)
             {
                 participantsToEmail = participantsToEmail
                     .Where(x => !x.User_role_name.Contains("Judge", StringComparison.CurrentCultureIgnoreCase))
