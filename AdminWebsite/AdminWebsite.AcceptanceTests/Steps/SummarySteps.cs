@@ -78,7 +78,6 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         public void ClickBook()
         {
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(SummaryPage.BookButton);
             _browsers[_c.CurrentUser].Click(SummaryPage.BookButton);
             if(_browsers[_c.CurrentUser].Driver.WaitUntilVisible(SummaryPage.WaitPopUp).Displayed)
                 _browsers[_c.CurrentUser].Driver.WaitUntilElementNotVisible(SummaryPage.WaitPopUp).Should().BeTrue();
