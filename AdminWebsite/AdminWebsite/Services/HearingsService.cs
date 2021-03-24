@@ -453,40 +453,38 @@ namespace AdminWebsite.Services
         {
             var requests = new List<LinkedParticipantRequest>();
 
-            foreach (var linkedParticipantInRequest in linkedParticipantsInRequest)
+            var newLinks = linkedParticipantsInRequest.Where(x => x.LinkedId == Guid.Empty)
+                .Select(lp => new LinkedParticipantRequest
+                {
+                    Participant_contact_email = lp.ParticipantContactEmail,
+                    Linked_participant_contact_email = lp.LinkedParticipantContactEmail
+                });
+            requests.AddRange(newLinks);
+
+            var existingLinksToUpdate = linkedParticipantsInRequest.Where(x => x.LinkedId != Guid.Empty && !HasExistingLink(x, participant));
+
+            var existingLinks = existingLinksToUpdate.Select(linkedParticipantInRequest => 
+                hearing.Participants.First(x => x.Id == linkedParticipantInRequest.LinkedId))
+                .Select(linkedParticipant => new LinkedParticipantRequest
+                {
+                    Participant_contact_email = participant.Contact_email, Linked_participant_contact_email = linkedParticipant.Contact_email
+                });
+
+            requests.AddRange(existingLinks);
+            return requests;
+        }
+
+        private bool HasExistingLink(LinkedParticipant linkedParticipantInRequest, ParticipantResponse participant)
+        {
+            var linkedId = linkedParticipantInRequest.LinkedId;
+            var existingLink = false;
+
+            if (participant.Linked_participants != null)
             {
-                if (linkedParticipantInRequest.LinkedId == Guid.Empty)
-                {
-                    requests.Add(new LinkedParticipantRequest
-                    {
-                        Participant_contact_email = linkedParticipantInRequest.ParticipantContactEmail,
-                        Linked_participant_contact_email = linkedParticipantInRequest.LinkedParticipantContactEmail
-                    });
-                }
-                else
-                {
-                    var linkedId = linkedParticipantInRequest.LinkedId;
-                    var existingLink = false;
-
-                    if (participant.Linked_participants != null)
-                    {
-                        existingLink = participant.Linked_participants.Exists(x => x.Linked_id == linkedId);
-                    }
-
-                    if (existingLink) continue;
-                    {
-                        var linkedParticipant =
-                            hearing.Participants.First(x => x.Id == linkedParticipantInRequest.LinkedId);
-                        requests.Add(new LinkedParticipantRequest
-                        {
-                            Participant_contact_email = participant.Contact_email,
-                            Linked_participant_contact_email = linkedParticipant.Contact_email
-                        });
-                    }
-                }
+                existingLink = participant.Linked_participants.Exists(x => x.Linked_id == linkedId);
             }
 
-            return requests;
+            return existingLink;
         }
 
         public async Task SaveNewParticipants(Guid hearingId, List<ParticipantRequest> newParticipantList)
