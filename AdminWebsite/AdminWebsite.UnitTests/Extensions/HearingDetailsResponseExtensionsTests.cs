@@ -49,5 +49,21 @@ namespace AdminWebsite.UnitTests.Extensions
         {
             _hearing.DoesJudgeEmailExist().Should().BeFalse();
         }
+
+        [Test]
+        public void Should_Return_False_If_Judge_Email_is_empty()
+        {
+            var otherInfo = new OtherInformationDetails { JudgeEmail = "" };
+            _hearing.Other_information = otherInfo.ToOtherInformationString();
+            _hearing.DoesJudgeEmailExist().Should().BeFalse();
+        }
+
+        [Test]
+        public void Should_Return_False_If_Judge_Email_is_null()
+        {
+            var otherInfo = new OtherInformationDetails { JudgeEmail = null };
+            _hearing.Other_information = otherInfo.ToOtherInformationString();
+            _hearing.DoesJudgeEmailExist().Should().BeFalse();
+        }
     }
 }
