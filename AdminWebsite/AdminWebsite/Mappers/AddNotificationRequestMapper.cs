@@ -180,6 +180,8 @@ namespace AdminWebsite.Mappers
                 notificationType = NotificationType.HearingConfirmationJudgeMultiDay;
                 parameters.Add("judge", participant.Display_name);
                 parameters.Add("courtroom account username", participant.Username);
+                participant.Contact_email = hearing.GetJudgeEmail();
+                participant.Telephone_number = hearing.GetJudgePhone();
             }
             else if (participant.User_role_name.Contains("Judicial Office Holder",
                 StringComparison.InvariantCultureIgnoreCase))
