@@ -953,12 +953,12 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         } else {
             interpreter = this.hearing.participants.find(i => i.interpreterFor === this.selectedParticipantEmail);
         }
-        // const interpreter = this.hearing.participants.find(i => i.interpreterFor === this.selectedParticipantEmail);
         if (interpreter) {
             this.participantService.removeParticipant(this.hearing, interpreter.email);
         }
         this.participantService.removeParticipant(this.hearing, this.selectedParticipantEmail);
         this.removeLinkedParticipant(this.selectedParticipantEmail);
+        this.hearing = Object.assign({}, this.hearing);
         this.videoHearingService.updateHearingRequest(this.hearing);
         this.videoHearingService.setBookingHasChanged(true);
     }

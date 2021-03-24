@@ -80,7 +80,8 @@ namespace AdminWebsite.AcceptanceTests.Steps
         {
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(SummaryPage.BookButton);
             _browsers[_c.CurrentUser].Click(SummaryPage.BookButton);
-            _browsers[_c.CurrentUser].Driver.WaitUntilElementNotVisible(SummaryPage.WaitPopUp).Should().BeTrue();
+            if(_browsers[_c.CurrentUser].Driver.WaitUntilVisible(SummaryPage.WaitPopUp).Displayed)
+                _browsers[_c.CurrentUser].Driver.WaitUntilElementNotVisible(SummaryPage.WaitPopUp).Should().BeTrue();
             _c.Test.CreatedBy = _c.CurrentUser.Username;
         }
 
@@ -133,22 +134,29 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _browsers[_c.CurrentUser].Click(SummaryPage.RemoveParticipantLink(participant.Firstname));
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(SummaryPage.RemoveInterpreterMessage).Displayed.Should().BeTrue();
             _browsers[_c.CurrentUser].Click(SummaryPage.RemoveInterpreter);
-            _c.Test.HearingParticipants.Remove(participant);
-            _c.Test.HearingParticipants.Remove(GetParticipantBy("Interpreter"));
-
+            RemoveParticipant(participant);
+            RemoveParticipant(GetParticipantBy("Interpreter"));
         }
 
         [When(@"the user removes Interpreter")]
         public void WhenTheUserRemovesInterpreter()
         {
-            _browsers[_c.CurrentUser].Click(SummaryPage.RemoveParticipantLink(GetParticipantBy("Interpreter").Firstname));
+            var role = "Interpreter";
+            _browsers[_c.CurrentUser].Click(SummaryPage.RemoveParticipantLink(GetParticipantBy(role).Firstname));
             _browsers[_c.CurrentUser].Click(SummaryPage.RemoveParticipant);
-            RemoveParticipant("Interpreter");
+            RemoveParticipant(GetParticipantBy(role));
         }
 
-        private void RemoveParticipant(string role)
+        private void RemoveParticipant(UserAccount user)
+        { 
+            _c.Test.HearingParticipants.Remove(user);
+            ParticipantListContains(user).Should().BeFalse();
+        }
+
+        private bool ParticipantListContains(UserAccount interpreter)
         {
-            _c.Test.HearingParticipants.Remove(_c.Test.HearingParticipants.Where(h => h.HearingRoleName == role).FirstOrDefault());
+            var participantDetails = _addParticipantSteps.GetAllParticipantsDetails();
+            return participantDetails.Any(p => p.Contains(interpreter.Firstname));
         }
 
         private UserAccount GetParticipantBy(string role)
