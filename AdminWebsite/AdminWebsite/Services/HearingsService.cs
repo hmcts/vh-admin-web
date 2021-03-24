@@ -155,12 +155,17 @@ namespace AdminWebsite.Services
                     .Where(x => !x.User_role_name.Contains("Judge", StringComparison.CurrentCultureIgnoreCase))
                     .ToList();
             }
-            var requests = participantsToEmail
-                .Select(participant =>
-                    AddNotificationRequestMapper.MapToHearingAmendmentNotification(updatedHearing, participant,
-                        caseName, caseNumber, originalHearing.Scheduled_date_time, updatedHearing.Scheduled_date_time))
-                .ToList();
 
+            var requests = new List<AddNotificationRequest>();
+            if (originalHearing.Confirmed_date != null)
+            {
+                requests = participantsToEmail
+                    .Select(participant =>
+                        AddNotificationRequestMapper.MapToHearingAmendmentNotification(updatedHearing, participant,
+                            caseName, caseNumber, originalHearing.Scheduled_date_time, updatedHearing.Scheduled_date_time))
+                    .ToList();
+            }
+            
             foreach (var request in requests)
             {
                 await _notificationApiClient.CreateNewNotificationAsync(request);
