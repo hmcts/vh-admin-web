@@ -8,6 +8,12 @@ namespace AdminWebsite.Models
     /// </summary>
     public class EditHearingRequest
     {
+        public EditHearingRequest()
+        {
+            Participants = new List<EditParticipantRequest>();
+            Endpoints = new List<EditEndpointRequest>();
+        }
+        
         /// <summary>
         ///     The date and time for a hearing
         /// </summary>
