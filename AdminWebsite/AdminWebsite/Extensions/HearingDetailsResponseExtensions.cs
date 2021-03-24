@@ -27,7 +27,7 @@ namespace AdminWebsite.Extensions
             if (hearing.Other_information != null)
             {
                 var otherInformationDetails = GetOtherInformationObject(hearing.Other_information);
-                if (otherInformationDetails.JudgeEmail != null)
+                if (otherInformationDetails.JudgeEmail != "")
                 {
                     return true;
                 }
@@ -81,12 +81,19 @@ namespace AdminWebsite.Extensions
             try
             {
                 var properties = otherInformation.Split("|");
-                return new OtherInformationDetails
+                var otherInfo = new OtherInformationDetails
                 {
-                    JudgeEmail = properties[2],
-                    JudgePhone = properties[4],
-                    OtherInformation = properties[6]
+                    JudgeEmail = Array.IndexOf(properties, "JudgeEmail") > -1
+                        ? properties[Array.IndexOf(properties, "JudgeEmail") + 1]
+                        : "",
+                    JudgePhone = Array.IndexOf(properties, "JudgePhone") > -1
+                        ? properties[Array.IndexOf(properties, "JudgePhone") + 1]
+                        : "",
+                    OtherInformation = Array.IndexOf(properties, "OtherInformation") > -1
+                        ? properties[Array.IndexOf(properties, "OtherInformation") + 1]
+                        : ""
                 };
+                return otherInfo;
             }
             catch (Exception)
             {
