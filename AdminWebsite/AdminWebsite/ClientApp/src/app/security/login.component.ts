@@ -1,8 +1,7 @@
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 import { OnInit, Component, Injectable } from '@angular/core';
 import { ReturnUrlService } from '../services/return-url.service';
 import { LoggerService } from '../services/logger.service';
-import { WindowRef } from '../shared/window-ref';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { catchError } from 'rxjs/operators';
 import { NEVER } from 'rxjs';
@@ -18,16 +17,14 @@ export class LoginComponent implements OnInit {
 
     constructor(
         private oidcSecurityService: OidcSecurityService,
-        private route: ActivatedRoute,
         private router: Router,
         private logger: LoggerService,
         private returnUrlService: ReturnUrlService,
-        private window: WindowRef,
         private configService: ConfigService
     ) { }
 
     ngOnInit() {
-        this.configService.getClientSettingsObservable().subscribe(clientSettings => {
+        this.configService.getClientSettingsObservable().subscribe(() => {
             this.oidcSecurityService
             .isAuthenticated$
             .pipe(
