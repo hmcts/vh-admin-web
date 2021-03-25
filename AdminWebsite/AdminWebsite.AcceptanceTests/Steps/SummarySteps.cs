@@ -122,8 +122,17 @@ namespace AdminWebsite.AcceptanceTests.Steps
         { 
             var user = GetParticipantBy("Interpreter");
             _browsers[_c.CurrentUser].Click(SummaryPage.EditParticipantLink(user.Firstname));
+            _addParticipantSteps.EditAnInterpreter(user.AlternativeEmail,false);
+        }
+
+        [When(@"the user edits a saved Interpreter")]
+        public void WhenTheUserEditsASavedInterpreter()
+        {
+            var user = GetParticipantBy("Interpreter");
+            _browsers[_c.CurrentUser].Click(SummaryPage.EditParticipantLink(user.Firstname));
             _addParticipantSteps.EditAnInterpreter(user.AlternativeEmail);
         }
+
 
 
         [When(@"the user removes participant")]
