@@ -34,7 +34,7 @@
     "@hmcts/frontend": "0.0.39-alpha",
     "@microsoft/applicationinsights-web": "^2.5.9",
     "@rxjs/rx": "^4.1.0",
-    "adal-angular4": "^3.0.16",
+    "angular-auth-oidc-client": "^11.6.4",
     "classlist.js": "^1.1.20150312",
     "core-js": "^3.6.5",
     "fsevents": "^2.1.3",
@@ -86,6 +86,5 @@
   "optionalDependencies": {
     "fsevents": "^2.1.3"
   },
-
   "snyk": true
 }

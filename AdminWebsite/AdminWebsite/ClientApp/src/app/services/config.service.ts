@@ -1,61 +1,56 @@
 import { Injectable } from '@angular/core';
 import { ClientSettingsResponse } from '../services/clients/api-client';
-import { Observable, of } from 'rxjs';
-import { HttpClient, HttpBackend } from '@angular/common/http';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { HttpBackend, HttpClient } from '@angular/common/http';
 import { Config } from '../common/model/config';
+import { filter, map } from 'rxjs/operators';
+import {SessionStorage} from './session-storage';
 
 export let ENVIRONMENT_CONFIG: Config = new Config();
 
 @Injectable()
 export class ConfigService {
-    clientSettings: ClientSettingsResponse;
-    private settingsSessionKey = 'clientSettings';
-    private httpClient: HttpClient;
+    clientSettingsLoaded$ = new BehaviorSubject(false);
+    private SETTINGS_KEY = 'vh.client.settings';
+    private readonly clientSettingCache: SessionStorage<ClientSettingsResponse>;
+    private httpClient: HttpClient; 
 
     constructor(handler: HttpBackend) {
         this.httpClient = new HttpClient(handler);
-    }
-
-    getClientSettings(): Observable<ClientSettingsResponse> {
-        const settings = sessionStorage.getItem(this.settingsSessionKey);
-        if (!settings) {
-            return this.retrieveConfigFromApi();
-        } else {
-            return of(JSON.parse(settings));
-        }
+        this.clientSettingCache = new SessionStorage<ClientSettingsResponse>(this.SETTINGS_KEY);
     }
 
     loadConfig() {
-        return new Promise((resolve, reject) => {
-            this.getClientSettings().subscribe(
-                (data: ClientSettingsResponse) => {
-                    this.clientSettings = data;
-                    this.parse(data);
-                    sessionStorage.setItem(this.settingsSessionKey, JSON.stringify(data));
-                    resolve(true);
-                },
-                err => {
-                    console.log('Cannot get configuration settings.', err);
-                    reject(err);
-                }
-            );
-        });
+        if (this.getConfig()) {
+            this.clientSettingsLoaded$.next(true);
+            return;
+        }
+
+        try {
+            this.retrieveConfigFromApi().subscribe(result => {
+                this.clientSettingCache.set(result);
+                this.clientSettingsLoaded$.next(true);
+            });
+        } catch (err) {
+            console.error(`failed to read configuration: ${err}`);
+            throw err;
+        }
+    }
+
+    getClientSettingsObservable(): Observable<ClientSettingsResponse> {
+        return this.clientSettingsLoaded$.pipe(
+            filter(Boolean),
+            map(() => this.getConfig())
+        );
+    }
+
+    getConfig(): ClientSettingsResponse {
+        return this.clientSettingCache.get();
     }
 
     private retrieveConfigFromApi(): Observable<ClientSettingsResponse> {
         let url = '/api/config';
         url = url.replace(/[?&]$/, '');
         return this.httpClient.get<ClientSettingsResponse>(url);
-    }
-
-    private parse(result: any): Promise<Config> {
-        ENVIRONMENT_CONFIG = new Config();
-        ENVIRONMENT_CONFIG.tenantId = result.tenant_id;
-        ENVIRONMENT_CONFIG.clientId = result.client_id;
-        ENVIRONMENT_CONFIG.redirectUri = result.redirect_uri;
-        ENVIRONMENT_CONFIG.postLogoutRedirectUri = result.post_logout_redirect_uri;
-        ENVIRONMENT_CONFIG.appInsightsInstrumentationKey = result.instrumentation_key;
-        ENVIRONMENT_CONFIG.testUsernameStem = result.test_username_stem;
-        return Promise.resolve(ENVIRONMENT_CONFIG);
     }
 }

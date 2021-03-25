@@ -171,7 +171,7 @@ let participantServiceSpy: jasmine.SpyObj<ParticipantService>;
 let bookingServiceSpy: jasmine.SpyObj<BookingService>;
 let loggerSpy: jasmine.SpyObj<Logger>;
 
-const configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettings']);
+const configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettingsObservable']);
 
 loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
 participantServiceSpy = jasmine.createSpyObj<ParticipantService>('ParticipantService', [
@@ -696,7 +696,7 @@ describe('AddParticipantComponent edit mode', () => {
             participantServiceSpy.mapParticipantsRoles.and.returnValue(partyList);
             bookingServiceSpy.isEditMode.and.returnValue(true);
             bookingServiceSpy.getParticipantEmail.and.returnValue('test3@hmcts.net');
-            configServiceSpy.getClientSettings.and.returnValue(of(ClientSettingsResponse));
+            configServiceSpy.getClientSettingsObservable.and.returnValue(of(ClientSettingsResponse));
             fixture = TestBed.createComponent(AddParticipantComponent);
             fixture.detectChanges();
             component = fixture.componentInstance;

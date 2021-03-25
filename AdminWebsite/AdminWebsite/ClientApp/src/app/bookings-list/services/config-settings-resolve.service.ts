@@ -9,6 +9,6 @@ export class ConfigSettingsResolveService implements Resolve<ClientSettingsRespo
     constructor(private configService: ConfigService) {}
 
     resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<ClientSettingsResponse> {
-        return this.configService.getClientSettings();
+        return this.configService.getClientSettingsObservable();
     }
 }

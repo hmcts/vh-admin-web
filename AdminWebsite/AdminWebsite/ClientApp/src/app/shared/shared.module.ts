@@ -14,6 +14,7 @@ import { WindowRef } from './window-ref';
 import { LongDatetimePipe } from './directives/date-time.pipe';
 import { WindowScrolling } from './window-scrolling';
 import { ClipboardModule } from 'ngx-clipboard';
+import { OidcSecurityService } from 'angular-auth-oidc-client';
 
 @NgModule({
     imports: [CommonModule, FormsModule, ReactiveFormsModule, HttpClientModule, SharedRoutingModule, ClipboardModule],

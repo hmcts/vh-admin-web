@@ -9,6 +9,6 @@ export class EmailPatternResolver implements Resolve<string> {
     constructor(private configService: ConfigService) {}
 
     resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<string> {
-        return this.configService.getClientSettings().pipe(map(x => x.test_username_stem));
+        return this.configService.getClientSettingsObservable().pipe(map(x => x.test_username_stem));
     }
 }

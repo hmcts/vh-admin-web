@@ -1,18 +1,20 @@
 import { waitForAsync } from '@angular/core/testing';
 import { Router } from '@angular/router';
-import { AdalService } from 'adal-angular4';
 import { ReturnUrlService } from 'src/app/services/return-url.service';
+import { ConfigService } from '../services/config.service';
 import { LoggerService } from '../services/logger.service';
 import { WindowRef } from '../shared/window-ref';
+import { MockOidcSecurityService } from '../testing/mocks/MockOidcSecurityService';
 import { LoginComponent } from './login.component';
 
 describe('LoginComponent', () => {
     let component: LoginComponent;
     let router: jasmine.SpyObj<Router>;
-    let adalService: jasmine.SpyObj<AdalService>;
+    let oidcService: MockOidcSecurityService;
     let returnUrl: jasmine.SpyObj<ReturnUrlService>;
     let logger: jasmine.SpyObj<LoggerService>;
     let window: jasmine.SpyObj<WindowRef>;
+    let configService: jasmine.SpyObj<ConfigService>;
     let route: any;
 
     beforeEach(
@@ -24,17 +26,18 @@ describe('LoginComponent', () => {
             };
 
             logger = jasmine.createSpyObj<LoggerService>(['error', 'debug']);
-            adalService = jasmine.createSpyObj<AdalService>(['setAuthenticated', 'login', 'userInfo']);
+            oidcService = new MockOidcSecurityService();
             router = jasmine.createSpyObj<Router>(['navigate', 'navigateByUrl']);
             returnUrl = jasmine.createSpyObj<ReturnUrlService>(['popUrl', 'setUrl']);
             window = jasmine.createSpyObj<WindowRef>(['getLocation']);
+            configService = jasmine.createSpyObj<ConfigService>(['getClientSettingsObservable']);
 
-            component = new LoginComponent(adalService, route, router, logger, returnUrl, window);
+            component = new LoginComponent(oidcService as any, route, router, logger, returnUrl, window, configService);
         })
     );
 
     const givenAuthenticated = (authenticated: boolean) => {
-        adalService.userInfo.authenticated = authenticated;
+        oidcService.setAuthenticated(authenticated);
     };
 
     const whenInitializingComponent = async (): Promise<void> => {
@@ -42,12 +45,10 @@ describe('LoginComponent', () => {
         await component.ngOnInit();
     };
 
-    it('should store root url if no return url is set and call login if not authenticated', async () => {
+    it('should store root url if no return url is set', async () => {
         givenAuthenticated(false);
 
         await whenInitializingComponent();
-
-        expect(adalService.login).toHaveBeenCalled();
         expect(returnUrl.setUrl).toHaveBeenCalledWith('/');
     });
 

@@ -60,8 +60,8 @@ describe('SeachEmailComponent', () => {
 
     beforeEach(() => {
         searchServiceSpy = jasmine.createSpyObj<SearchService>('SearchService', ['search']);
-        configServiceSpy = jasmine.createSpyObj<ConfigService>('CongigService', ['getClientSettings']);
-        configServiceSpy.getClientSettings.and.returnValue(of(configSettings));
+        configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettingsObservable']);
+        configServiceSpy.getClientSettingsObservable.and.returnValue(of(configSettings));
         loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['info', 'error']);
 
         TestBed.configureTestingModule({
@@ -264,13 +264,13 @@ describe('SearchEmailComponent email validate', () => {
     let loggerSpy: jasmine.SpyObj<Logger>;
 
     searchServiceSpy = jasmine.createSpyObj<SearchService>('SearchService', ['search']);
-    configServiceSpy = jasmine.createSpyObj<ConfigService>('CongigService', ['getClientSettings']);
-    configServiceSpy.getClientSettings.and.returnValue(of(configSettings));
+    configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettingsObservable']);
+    configServiceSpy.getClientSettingsObservable.and.returnValue(of(configSettings));
     loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['info', 'error']);
 
     component = new SearchEmailComponent(searchServiceSpy, configServiceSpy, loggerSpy);
     it('should config service return email pattern for validation', fakeAsync(() => {
-        configServiceSpy.getClientSettings.and.returnValue(of(configSettings));
+        configServiceSpy.getClientSettingsObservable.and.returnValue(of(configSettings));
         component.getEmailPattern();
         tick();
         expect(component.invalidPattern).toBe('@hmcts.net');
@@ -278,7 +278,7 @@ describe('SearchEmailComponent email validate', () => {
     }));
     it('should log error if config service return no email pattern for validation', fakeAsync(() => {
         configSettings.test_username_stem = '';
-        configServiceSpy.getClientSettings.and.returnValue(of(configSettings));
+        configServiceSpy.getClientSettingsObservable.and.returnValue(of(configSettings));
         component.getEmailPattern();
         tick();
         expect(component.invalidPattern).toBe('');

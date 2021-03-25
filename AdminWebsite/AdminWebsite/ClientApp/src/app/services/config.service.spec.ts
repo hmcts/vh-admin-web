@@ -32,7 +32,7 @@ describe('config service', () => {
 
     it('should not have called method on bh client', () => {
         sessionStorage.setItem('clientSettings', JSON.stringify(clientSettings));
-        configService.getClientSettings();
+        configService.getClientSettingsObservable();
         expect(bhClientSpy.getConfigSettings).not.toHaveBeenCalled();
     });
 });

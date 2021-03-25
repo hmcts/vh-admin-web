@@ -4,18 +4,16 @@ import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testin
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { AdalService } from 'adal-angular4';
 
 import { routes } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ChangesGuard } from './common/guards/changes.guard';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { AuthGuard } from './security/auth.gaurd';
+import { AuthGuard } from './security/auth.guard';
 import { AdminGuard } from './security/admin.guard';
 
 import { LoginComponent } from './security/login.component';
 import { LogoutComponent } from './security/logout.component';
-import { MockAdalService } from './testing/mocks/MockAdalService';
 import { MockChangesGuard } from './testing/mocks/MockChangesGuard';
 import { ContactUsStubComponent } from './testing/stubs/contact-us-stub';
 import { FooterStubComponent } from './testing/stubs/footer-stub';
@@ -38,12 +36,13 @@ import { GetAudioLinkButtonComponent } from './get-audio-file/get-audio-link-but
 import { HearingSearchDateTimePipe } from './shared/directives/hearing-search-date-time.pipe';
 import { HearingSearchResultsComponent } from './get-audio-file/hearing-search-results/hearing-search-results.component';
 import { ConfirmBookingFailedPopupComponent } from './popups/confirm-booking-failed-popup/confirm-booking-failed-popup.component';
+import { MockOidcSecurityService } from './testing/mocks/MockOidcSecurityService';
 
 describe('app routing', () => {
     let location: Location;
     let router: Router;
     let fixture: ComponentFixture<DashboardComponent>;
-    let adalSvc;
+    let oidcSecurityService: MockOidcSecurityService;
     const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
 
     beforeEach(() => {
@@ -77,7 +76,6 @@ describe('app routing', () => {
             providers: [
                 AuthGuard,
                 AdminGuard,
-                { provide: AdalService, useClass: MockAdalService },
                 { provide: ChangesGuard, useClass: MockChangesGuard },
                 HttpClient,
                 HttpHandler,
@@ -90,11 +88,11 @@ describe('app routing', () => {
 
         router = TestBed.inject(Router);
         location = TestBed.inject(Location);
-        adalSvc = TestBed.inject(AdalService);
+        oidcSecurityService = new MockOidcSecurityService();
     });
 
     it('it should navigate to login', fakeAsync(() => {
-        adalSvc.setAuthenticated(false);
+        oidcSecurityService.setAuthenticated(false);
         router.navigate(['/dashboard']);
         tick();
         expect(location.path()).toBe('/unauthorised');

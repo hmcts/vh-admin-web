@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ApplicationInsights, ITelemetryItem, SeverityLevel } from '@microsoft/applicationinsights-web';
-import { AdalService } from 'adal-angular4';
-import { Config } from '../common/model/config';
+import { OidcSecurityService } from 'angular-auth-oidc-client';
+import { ConfigService } from './config.service';
 import { LogAdapter } from './log-adapter';
 
 @Injectable()
@@ -9,17 +9,20 @@ export class AppInsightsLogger implements LogAdapter {
     errorInfo: any;
     appInsights: ApplicationInsights;
 
-    constructor(config: Config, adalService: AdalService) {
-        this.appInsights = new ApplicationInsights({
-            config: {
-                instrumentationKey: config.appInsightsInstrumentationKey
-            }
-        });
-
-        this.appInsights.loadAppInsights();
-        this.appInsights.addTelemetryInitializer((envelope: ITelemetryItem) => {
-            envelope.tags['ai.cloud.role'] = 'vh-admin-web';
-            envelope.tags['ai.user.id'] = adalService.userInfo.userName.toLowerCase();
+    constructor(private configService: ConfigService, private oidcService: OidcSecurityService) {
+        this.configService.getClientSettingsObservable().subscribe(settings => {
+            this.appInsights = new ApplicationInsights({
+                config: {
+                    instrumentationKey: settings.instrumentation_key
+                }
+            });
+            this.appInsights.loadAppInsights();
+            this.oidcService.userData$.subscribe(ud => {
+                this.appInsights.addTelemetryInitializer((envelope: ITelemetryItem) => {
+                    envelope.tags['ai.cloud.role'] = 'vh-admin-web';
+                    envelope.tags['ai.user.id'] = ud.userName.toLowerCase();
+                });
+            });
         });
     }
 

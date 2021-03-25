@@ -35,27 +35,28 @@ namespace AdminWebsite.Extensions
                 .AddPolicyScheme(JwtBearerDefaults.AuthenticationScheme, SchemeName, options => options.ForwardDefaultSelector = context => SchemeName)
                 .AddJwtBearer(SchemeName, options =>
                 {
-                    options.Authority = securitySettings.Authority;
+                    options.Authority = $"{securitySettings.Authority}{securitySettings.TenantId}/v2.0";
                     options.TokenValidationParameters.ValidateLifetime = true;
                     options.Audience = securitySettings.ClientId;
                     options.TokenValidationParameters.ClockSkew = TimeSpan.Zero;
+                    options.TokenValidationParameters.NameClaimType = "preferred_username";
                     options.Events = new JwtBearerEvents { OnTokenValidated = OnTokenValidated };
                 });
 
             serviceCollection.AddAuthorization();
-            
+
             serviceCollection.AddAuthPolicies();
         }
-        
+
         private static void AddAuthPolicies(this IServiceCollection serviceCollection)
         {
             serviceCollection.AddAuthorization(AddPolicies);
             serviceCollection.AddMvc(AddMvcPolicies);
         }
-        
+
         private static void AddPolicies(AuthorizationOptions options)
         {
-            var allRoles = new[] {AppRoles.CaseAdminRole, AppRoles.VhOfficerRole};
+            var allRoles = new[] { AppRoles.CaseAdminRole, AppRoles.VhOfficerRole };
             options.AddPolicy(SchemeName, new AuthorizationPolicyBuilder()
                 .RequireAuthenticatedUser()
                 .RequireRole(allRoles)
@@ -65,12 +66,12 @@ namespace AdminWebsite.Extensions
 
         private static void AddMvcPolicies(MvcOptions options)
         {
-            var allRoles = new[] {AppRoles.CaseAdminRole, AppRoles.VhOfficerRole};
+            var allRoles = new[] { AppRoles.CaseAdminRole, AppRoles.VhOfficerRole };
             options.Filters.Add(new AuthorizeFilter(new AuthorizationPolicyBuilder()
                 .RequireAuthenticatedUser()
                 .RequireRole(allRoles).Build()));
         }
-        
+
         private static async Task OnTokenValidated(TokenValidatedContext ctx)
         {
             if (ctx.SecurityToken is JwtSecurityToken jwtToken)

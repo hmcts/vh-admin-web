@@ -58,7 +58,7 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
     }
 
     async getEmailPattern() {
-        const settings = await this.configService.getClientSettings().toPromise();
+        const settings = await this.configService.getClientSettingsObservable().toPromise();
         this.invalidPattern = settings.test_username_stem;
         if (!this.invalidPattern || this.invalidPattern.length === 0) {
             this.logger.error(`${this.loggerPrefix} Pattern to validate email is not set`, new Error('Email validation error'));
