@@ -16,9 +16,9 @@ namespace AdminWebsite.UnitTests
         {
             var securitySettings = new SecuritySettings
             {
-                ClientIdV2 = "ClientId", 
+                ClientId = "ClientId", 
                 TenantId = "TenantId",
-                ClientSecretV2 = "ClientSecret",
+                ClientSecret = "ClientSecret",
                 Authority = "Authority",
                 RedirectUri = "https://vh-admin-web.com",
                 PostLogoutRedirectUri = "https://vh-admin-web.com/"
