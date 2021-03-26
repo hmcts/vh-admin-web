@@ -1,6 +1,6 @@
 ---
 java:
-  image: 'sdshmctspublic.azurecr.io/vh/admin-web:20210306.7'
+  image: 'sdshmctspublic.azurecr.io/vh/admin-web:20210326.8'
   applicationPort: 8080
   replicas: 2
   ingressHost: vh-admin-web.{{ .Values.global.environment }}.platform.hmcts.net
