@@ -88,20 +88,6 @@ namespace AdminWebsite.Controllers
         {
             try
             {
-                await _bookingsApiClient.GetPersonByUsernameAsync(username);
-            }
-            catch (BookingsApiException e)
-            {
-                if (e.StatusCode == (int) HttpStatusCode.NotFound)
-                {
-                    return NotFound();
-                }
-
-                throw;
-            }
-            
-            try
-            {
                 var response = await _bookingsApiClient.GetHearingsByUsernameForDeletionAsync(username);
                 return Ok(response);
             }
@@ -109,6 +95,8 @@ namespace AdminWebsite.Controllers
             {
                 switch (e.StatusCode)
                 {
+                    case (int)HttpStatusCode.NotFound:
+                        return NotFound();
                     case (int)HttpStatusCode.Unauthorized:
                         return Unauthorized();
                     default:
