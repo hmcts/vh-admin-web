@@ -186,6 +186,12 @@ stages:
           - name: AzureAd:ClientSecret
             value: vh-admin-web-key
             secret: true
+          - name: AzureAd:ClientIdV2
+            value: vh-admin-web-appid-v2
+            secret: true
+          - name: AzureAd:ClientSecretV2
+            value: vh-admin-web-key-v2
+            secret: true
           - name: AzureAd:PostLogoutRedirectUri
             slot:
               deployment:
@@ -286,6 +292,12 @@ stages:
             secret: true
           - name: AzureAd:ClientSecret
             value: vh-video-web-key
+            secret: true
+          - name: AzureAd:ClientIdV2
+            value: vh-video-web-appid-v2
+            secret: true
+          - name: AzureAd:ClientSecretV2
+            value: vh-video-web-key-v2
             secret: true
           - name: AzureAd:PostLogoutRedirectUri
             slot: true

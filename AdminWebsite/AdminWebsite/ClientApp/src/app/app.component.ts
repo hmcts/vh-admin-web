@@ -58,7 +58,7 @@ export class AppComponent implements OnInit {
     ngOnInit() {
         this.checkBrowser();
         const currentUrl = this.window.getLocation().href;
-        this.configService.getClientSettingsObservable().subscribe(clientSettings => {
+        this.configService.getClientSettings().subscribe(clientSettings => {
             this.oidcSecurityService.checkAuth().subscribe(loggedIn => {
                 this.loggedIn = loggedIn;
                 if (!this.loggedIn) {
@@ -66,7 +66,6 @@ export class AppComponent implements OnInit {
                 }
             });
         });
-
 
         this.headerComponent.confirmLogout.subscribe(() => {
             this.showConfirmation();

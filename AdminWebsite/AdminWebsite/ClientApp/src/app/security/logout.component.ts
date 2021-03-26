@@ -7,7 +7,7 @@ import { OidcSecurityService } from 'angular-auth-oidc-client';
 })
 @Injectable()
 export class LogoutComponent implements OnInit {
-    constructor(private oidcSecurityService: OidcSecurityService) { }
+    constructor(private oidcSecurityService: OidcSecurityService) {}
 
     ngOnInit() {
         this.oidcSecurityService.isAuthenticated$.subscribe(auth => {

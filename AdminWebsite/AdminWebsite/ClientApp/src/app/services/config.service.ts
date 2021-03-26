@@ -4,7 +4,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { HttpBackend, HttpClient } from '@angular/common/http';
 import { Config } from '../common/model/config';
 import { filter, map } from 'rxjs/operators';
-import {SessionStorage} from './session-storage';
+import { SessionStorage } from './session-storage';
 
 export let ENVIRONMENT_CONFIG: Config = new Config();
 
@@ -13,7 +13,7 @@ export class ConfigService {
     clientSettingsLoaded$ = new BehaviorSubject(false);
     private SETTINGS_KEY = 'vh.client.settings';
     private readonly clientSettingCache: SessionStorage<ClientSettingsResponse>;
-    private httpClient: HttpClient; 
+    private httpClient: HttpClient;
 
     constructor(handler: HttpBackend) {
         this.httpClient = new HttpClient(handler);
@@ -28,7 +28,6 @@ export class ConfigService {
 
         try {
             this.retrieveConfigFromApi().subscribe(result => {
-                this.clientSettingCache.set(result);
                 this.clientSettingsLoaded$.next(true);
             });
         } catch (err) {
@@ -37,7 +36,7 @@ export class ConfigService {
         }
     }
 
-    getClientSettingsObservable(): Observable<ClientSettingsResponse> {
+    getClientSettings(): Observable<ClientSettingsResponse> {
         return this.clientSettingsLoaded$.pipe(
             filter(Boolean),
             map(() => this.getConfig())

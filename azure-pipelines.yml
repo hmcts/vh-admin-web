@@ -90,6 +90,12 @@ parameters:
   - name: AzureAd:ClientSecret
     value: vh-video-web-key
     secret: true
+  - name: AzureAd:ClientIdV2
+    value: vh-video-web-appid-v2
+    secret: true
+  - name: AzureAd:ClientSecretV2
+    value: vh-video-web-key-v2
+    secret: true
   - name: AzureAd:PostLogoutRedirectUri
     slot: true
   - name: AzureAd:RedirectUri

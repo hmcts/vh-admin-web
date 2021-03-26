@@ -10,7 +10,7 @@ export class AppInsightsLogger implements LogAdapter {
     appInsights: ApplicationInsights;
 
     constructor(private configService: ConfigService, private oidcService: OidcSecurityService) {
-        this.configService.getClientSettingsObservable().subscribe(settings => {
+        this.configService.getClientSettings().subscribe(settings => {
             this.appInsights = new ApplicationInsights({
                 config: {
                     instrumentationKey: settings.instrumentation_key

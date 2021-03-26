@@ -32,8 +32,8 @@ describe('AppComponent', () => {
     let pageTracker: jasmine.SpyObj<PageTrackerService>;
     let window: jasmine.SpyObj<WindowRef>;
     let deviceTypeServiceSpy: jasmine.SpyObj<DeviceType>;
-    let mockOidcSecurityService: MockOidcSecurityService;
-
+    const mockOidcSecurityService = new MockOidcSecurityService();
+    let oidcSecurityService;
     const clientSettings = new ClientSettingsResponse({
         tenant_id: 'tenantid',
         client_id: 'clientid',
@@ -52,7 +52,9 @@ describe('AppComponent', () => {
 
     beforeEach(
         waitForAsync(() => {
-            configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettingsObservable', 'loadConfig']);
+            configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettings', 'loadConfig']);
+            configServiceSpy.getClientSettings.and.returnValue(of(clientSettings));
+            oidcSecurityService = mockOidcSecurityService;
 
             window = jasmine.createSpyObj('WindowRef', ['getLocation']);
             window.getLocation.and.returnValue(new WindowLocation('/url'));
@@ -62,7 +64,6 @@ describe('AppComponent', () => {
             deviceTypeServiceSpy = jasmine.createSpyObj<DeviceType>(['isSupportedBrowser']);
 
             httpClient = jasmine.createSpyObj<HttpClient>(['head']);
-            mockOidcSecurityService = new MockOidcSecurityService();
             TestBed.configureTestingModule({
                 imports: [HttpClientModule, RouterTestingModule],
                 declarations: [
@@ -115,7 +116,6 @@ describe('AppComponent', () => {
         const fixture = TestBed.createComponent(AppComponent);
         const component = fixture.componentInstance;
         fixture.detectChanges();
-        OidcSecurityService
         mockOidcSecurityService.setAuthenticated(false);
         window.getLocation.and.returnValue(new WindowLocation('/url', '?search', '#hash'));
 
@@ -163,7 +163,7 @@ describe('AppComponent - ConnectionService', () => {
 
     beforeEach(
         waitForAsync(() => {
-            configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettingsObservable', 'loadConfig']);
+            configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettings', 'loadConfig']);
             mockOidcSecurityService = new MockOidcSecurityService();
 
             window = jasmine.createSpyObj('WindowRef', ['getLocation']);

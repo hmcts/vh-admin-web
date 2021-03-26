@@ -13,7 +13,11 @@ describe('authguard', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            providers: [AuthGuard, { provide: OidcSecurityService, useClass: MockOidcSecurityService }, { provide: Router, useValue: router }]
+            providers: [
+                AuthGuard,
+                { provide: OidcSecurityService, useClass: MockOidcSecurityService },
+                { provide: Router, useValue: router }
+            ]
         }).compileComponents();
         oidcSecurityService = TestBed.inject(OidcSecurityService);
         authGuard = TestBed.inject(AuthGuard);
@@ -22,18 +26,14 @@ describe('authguard', () => {
     describe('when logged in with successful authentication', () => {
         it('canActivate should return true', () => {
             oidcSecurityService.setAuthenticated(true);
-            authGuard.canActivate().subscribe(result =>
-                expect(result).toBeTruthy()
-            );
+            authGuard.canActivate().subscribe(result => expect(result).toBeTruthy());
         });
     });
 
     describe('when login failed with unsuccessful authentication', () => {
         it('canActivate should return false', fakeAsync(() => {
             oidcSecurityService.setAuthenticated(false);
-            authGuard.canActivate().subscribe(result =>
-                expect(result).toBeFalsy()
-            );
+            authGuard.canActivate().subscribe(result => expect(result).toBeFalsy());
         }));
     });
 });

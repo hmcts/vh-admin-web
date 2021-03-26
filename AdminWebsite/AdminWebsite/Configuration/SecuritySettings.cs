@@ -8,12 +8,22 @@
         /// <summary>
         /// Id for app registration of this application
         /// </summary>
-        public string ClientId { get; set; }
+        public string ClientIdV2 { get; set; }
 
         /// <summary>
         /// Secret used to authenticate as the <see cref="ClientId"/>
         /// </summary>
-        public string ClientSecret { get; set; }
+        public string ClientSecretV2 { get; set; }
+
+        /// <summary>
+        /// Id for app registration of this application
+        /// </summary>
+        public string ClientId => ClientIdV2;
+
+        /// <summary>
+        /// Secret used to authenticate as the <see cref="ClientId"/>
+        /// </summary>
+        public string ClientSecret => ClientSecretV2;
 
         /// <summary>
         /// The authority to generate and validate Adal tokens against

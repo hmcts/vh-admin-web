@@ -21,46 +21,46 @@ export class LoginComponent implements OnInit {
         private logger: LoggerService,
         private returnUrlService: ReturnUrlService,
         private configService: ConfigService
-    ) { }
+    ) {}
 
     ngOnInit() {
-        this.configService.getClientSettingsObservable().subscribe(() => {
-            this.oidcSecurityService
-            .isAuthenticated$
-            .pipe(
-                catchError(err => {
-                    this.logger.error(`${this.loggerPrefix} Check Auth Error`, err);
-                    this.router.navigate(['/']);
-                    return NEVER;
-                })
-            )
-            .subscribe(loggedIn => {
-                this.logger.debug(`${this.loggerPrefix} isLoggedIn ` + loggedIn);
-                this.logger.debug(`${this.loggerPrefix} TOKEN` + this.oidcSecurityService.getToken());
-                if (loggedIn) {
-                    const returnUrl = this.returnUrlService.popUrl() || '/';
-                    try {
-                        this.logger.debug(`${this.loggerPrefix} Return url = ${returnUrl}`);
-                        this.router.navigateByUrl(returnUrl);
-                    } catch (err) {
-                        this.logger.error(`${this.loggerPrefix} Failed to navigate to redirect url, possibly stored url is invalid`, err, {
-                            returnUrl
-                        });
+        this.configService.getClientSettings().subscribe(() => {
+            this.oidcSecurityService.isAuthenticated$
+                .pipe(
+                    catchError(err => {
+                        this.logger.error(`${this.loggerPrefix} Check Auth Error`, err);
                         this.router.navigate(['/']);
-                    }
-                } else {
-                    this.logger.debug(`${this.loggerPrefix} User not authenticated. Logging in`);
-                    try {
-                        let dontSkip = true;
-                        debugger;
-                        if (dontSkip) {
+                        return NEVER;
+                    })
+                )
+                .subscribe(loggedIn => {
+                    this.logger.debug(`${this.loggerPrefix} isLoggedIn ` + loggedIn);
+                    this.logger.debug(`${this.loggerPrefix} TOKEN` + this.oidcSecurityService.getToken());
+                    const returnUrl = this.returnUrlService.popUrl() || '/';
+                    if (loggedIn) {
+                        try {
+                            this.logger.debug(`${this.loggerPrefix} Return url = ${returnUrl}`);
+                            this.router.navigateByUrl(returnUrl);
+                        } catch (err) {
+                            this.logger.error(
+                                `${this.loggerPrefix} Failed to navigate to redirect url, possibly stored url is invalid`,
+                                err,
+                                {
+                                    returnUrl
+                                }
+                            );
+                            this.router.navigate(['/']);
+                        }
+                    } else {
+                        this.logger.debug(`${this.loggerPrefix} User not authenticated. Logging in`);
+                        try {
+                            this.returnUrlService.setUrl(returnUrl);
                             this.oidcSecurityService.authorize();
-                        };
-                    } catch (err) {
-                        this.logger.error(`${this.loggerPrefix} - Authorize Failed`, err);
+                        } catch (err) {
+                            this.logger.error(`${this.loggerPrefix} - Authorize Failed`, err);
+                        }
                     }
-                }
-            });
+                });
         });
     }
 }

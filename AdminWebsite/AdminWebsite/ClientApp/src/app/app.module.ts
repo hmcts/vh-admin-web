@@ -38,7 +38,6 @@ import { GetAudioFileModule } from './get-audio-file/get-audio-file.module';
 import { DeleteParticipantModule } from './delete-participant/delete-participant.module';
 import { EditParticipantModule } from './edit-participant/edit-participant.module';
 import { AuthConfigModule } from './security/auth-config.module';
-//import { OidcAuthInterceptor } from './security/oidc-auth.interceptor';
 
 export function loadConfig(configService: ConfigService) {
     return () => configService.loadConfig();
