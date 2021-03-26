@@ -15,7 +15,6 @@ import { AdminGuard } from './security/admin.guard';
 import { LoginComponent } from './security/login.component';
 import { LogoutComponent } from './security/logout.component';
 import { MockChangesGuard } from './testing/mocks/MockChangesGuard';
-import { ContactUsStubComponent } from './testing/stubs/contact-us-stub';
 import { FooterStubComponent } from './testing/stubs/footer-stub';
 import { HeaderStubComponent } from './testing/stubs/header-stub';
 import { PaginationStubComponent } from './testing/stubs/pagination-stub';
@@ -55,7 +54,6 @@ describe('app routing', () => {
                 LogoutComponent,
                 HeaderStubComponent,
                 FooterStubComponent,
-                ContactUsStubComponent,
                 PaginationStubComponent,
                 UnauthorisedComponent,
                 ErrorComponent,

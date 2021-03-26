@@ -7,11 +7,3 @@ Scenario: Video Hearings Officer Dashboard
 	Given the Video Hearings Officer user has progressed to the Dashboard page
 	Then there are various dashboard options available
 	And they can navigate to the Open Government licence
-	And they can navigate to Contact us
-
-@Ignore
-Scenario: Case Admin Dashboard
-	Given the Case Admin user has progressed to the Dashboard page
-	Then there are various dashboard options available
-	And they can navigate to the Open Government licence
-	And they can navigate to Contact us

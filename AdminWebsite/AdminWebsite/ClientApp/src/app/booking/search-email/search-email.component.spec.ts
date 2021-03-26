@@ -96,12 +96,15 @@ describe('SeachEmailComponent', () => {
         expect(component.results.length).toEqual(0);
     });
     it('should validate email', () => {
-        component.email = 'email@hmcts.net';
+        component.email = 'email@hmcts.tt.net';
+        component.invalidPattern = '@hmcts.net';
         component.validateEmail();
         expect(component.isValidEmail).toBeTruthy();
     });
     it('should validate email and return false for invalid email', () => {
         component.email = 'email.aa.aa';
+        component.invalidPattern = '@hmcts.net';
+
         component.validateEmail();
         expect(component.isValidEmail).toBeFalsy();
     });
@@ -113,7 +116,7 @@ describe('SeachEmailComponent', () => {
         expect(component.notFoundParticipant).toBeFalsy();
     });
     it('should validate input email if email was not found in the list', () => {
-        component.email = 'email@hmcts.net';
+        component.email = 'email@hmcts.tt.net';
         fixture.detectChanges();
         component.blurEmail();
         expect(component.isValidEmail).toBeTruthy();

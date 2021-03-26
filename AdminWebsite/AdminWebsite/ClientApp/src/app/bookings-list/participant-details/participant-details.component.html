@@ -70,7 +70,20 @@
       <div class="govuk-grid-row">
         <div class="govuk-grid-column-one-third contact-label">Email</div>
         <div id="participant-{{ participant?.ParticipantId }}-email" class="govuk-grid-column-two-thirds wrap">
-          {{ participant?.Email }}
+          <div *ngIf="participant.isJudge; else participantEmail">
+            <div *ngIf="judgeEmail; else judgeNoEmail">
+              {{ judgeEmail }}
+            </div>
+            <ng-template #judgeNoEmail>
+              <div>TBC</div>
+            </ng-template>
+          </div>
+
+          <ng-template #participantEmail>
+            <div>
+              {{ participant.Email }}
+            </div>
+          </ng-template>
         </div>
       </div>
       <div class="govuk-grid-row vh-mtop">
@@ -79,11 +92,23 @@
           {{ participant?.UserName }}
         </div>
       </div>
-
-      <div class="govuk-grid-row vh-mtop" *ngIf="participant?.HearingRoleName !== 'Judge'">
+      <div class="govuk-grid-row vh-mtop">
         <div class="govuk-grid-column-one-third contact-label">Telephone</div>
         <div id="participant-{{ participant?.ParticipantId }}-phone" class="govuk-grid-column-two-thirds wrap">
-          {{ participant?.Phone }}
+          <div *ngIf="participant.isJudge; else participantPhone">
+            <div *ngIf="judgePhone; else judgeNoPhone">
+              {{ judgePhone }}
+            </div>
+            <ng-template #judgeNoPhone>
+              <div>TBC</div>
+            </ng-template>
+          </div>
+
+          <ng-template #participantPhone>
+            <div>
+              {{ participant.Phone }}
+            </div>
+          </ng-template>
         </div>
       </div>
     </div>
