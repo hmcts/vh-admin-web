@@ -17,9 +17,8 @@ namespace AdminWebsite.IntegrationTests.Controllers
             var getResponse = await SendGetRequestAsync(_configSettingsEndpoints.GetConfigSettings);
             getResponse.StatusCode.Should().Be(HttpStatusCode.OK);
 
-            var clientSettingsResponseModel =
-                ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<ClientSettingsResponse>(getResponse.Content
-                    .ReadAsStringAsync().Result);
+            var resonpseString = await getResponse.Content.ReadAsStringAsync();
+            var clientSettingsResponseModel = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<ClientSettingsResponse>(resonpseString);
             clientSettingsResponseModel.Should().NotBeNull();
             clientSettingsResponseModel.ClientId.Should().NotBeNull();
             clientSettingsResponseModel.TenantId.Should().NotBeNull();

@@ -39,7 +39,7 @@ namespace AdminWebsite.Testing.Common.Builders
         
         public ClaimsPrincipal Build()
         {
-            var identity = new ClaimsIdentity(_claims, "TestAuthType");
+            var identity = new ClaimsIdentity(_claims, "TestAuthType", "preferred_username", ClaimTypes.Role);
             var claimsPrincipal = new ClaimsPrincipal(identity);
             return claimsPrincipal;
         }
