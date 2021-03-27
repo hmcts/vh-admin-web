@@ -11,11 +11,26 @@
   "end_session_endpoint": "https://inmemory.microsoft.com/common/oauth2/logout",
   "response_types_supported": ["code", "id_token", "code id_token", "token id_token", "token"],
   "scopes_supported": ["openid"],
-  "issuer": "https://sts.windows.net/{tenantid}/",
-  "claims_supported":
-  [
-    "sub", "iss", "cloud_instance_name", "cloud_instance_host_name", "cloud_graph_host_name", "msgraph_host", "aud",
-    "exp", "iat", "auth_time", "acr", "amr", "nonce", "email", "given_name", "family_name", "nickname"
+  "issuer": "https://login.microsoftonline.com/{tenantid}/",
+  "claims_supported": [
+    "sub",
+    "iss",
+    "cloud_instance_name",
+    "cloud_instance_host_name",
+    "cloud_graph_host_name",
+    "msgraph_host",
+    "aud",
+    "exp",
+    "iat",
+    "auth_time",
+    "acr",
+    "amr",
+    "nonce",
+    "email",
+    "given_name",
+    "family_name",
+    "nickname",
+    "preferred_username"
   ],
   "microsoft_multi_refresh_token": true,
   "check_session_iframe": "https://inmemory.microsoft.com/common/oauth2/checksession",
