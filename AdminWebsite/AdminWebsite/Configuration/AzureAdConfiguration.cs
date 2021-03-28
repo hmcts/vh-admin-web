@@ -3,7 +3,7 @@
     /// <summary>
     ///     Security Settings
     /// </summary>
-    public class SecuritySettings
+    public class AzureAdConfiguration
     {
         /// <summary>
         /// Id for app registration of this application

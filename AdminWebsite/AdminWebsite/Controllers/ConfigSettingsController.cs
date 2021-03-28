@@ -13,18 +13,18 @@ namespace AdminWebsite.Controllers
     [Route("api/config")]
     public class ConfigSettingsController : ControllerBase
     {
-        private readonly SecuritySettings _securitySettings;
-        private readonly TestUserSecrets _testSettings;
-        private readonly ServiceSettings _serviceSettings;
+        private readonly AzureAdConfiguration _azureAdConfiguration;
+        private readonly KinlyConfiguration _kinlyConfiguration;
+        private readonly TestUserSecrets _testUserSecrets;
 
         public ConfigSettingsController(
-            IOptions<SecuritySettings> securitySettings, 
-            IOptions<TestUserSecrets> testSettings,
-            IOptions<ServiceSettings> serviceSettings)
+            IOptions<AzureAdConfiguration> azureAdConfiguration,
+            IOptions<KinlyConfiguration> kinlyConfiguration,
+            IOptions<TestUserSecrets> testSettings)
         {
-            _securitySettings = securitySettings.Value;
-            _testSettings = testSettings.Value;
-            _serviceSettings = serviceSettings.Value;
+            _azureAdConfiguration = azureAdConfiguration.Value;
+            _kinlyConfiguration = kinlyConfiguration.Value;
+            _testUserSecrets = testSettings.Value;
         }
 
         /// <summary>
@@ -39,14 +39,14 @@ namespace AdminWebsite.Controllers
         {
             var clientSettings = new ClientSettingsResponse
             {
-                ClientId = _securitySettings.ClientId,
-                TenantId = _securitySettings.TenantId,
-                RedirectUri = _securitySettings.RedirectUri,
-                PostLogoutRedirectUri = _securitySettings.PostLogoutRedirectUri,
-                InstrumentationKey = _securitySettings.InstrumentationKey,
-                TestUsernameStem = _testSettings.TestUsernameStem,
-                ConferencePhoneNumber = _serviceSettings.ConferencePhoneNumber,
-                JoinByPhoneFromDate = _serviceSettings.JoinByPhoneFromDate
+                ClientId = _azureAdConfiguration.ClientId,
+                TenantId = _azureAdConfiguration.TenantId,
+                RedirectUri = _azureAdConfiguration.RedirectUri,
+                PostLogoutRedirectUri = _azureAdConfiguration.PostLogoutRedirectUri,
+                InstrumentationKey = _azureAdConfiguration.InstrumentationKey,
+                TestUsernameStem = _testUserSecrets.TestUsernameStem,
+                ConferencePhoneNumber = _kinlyConfiguration.ConferencePhoneNumber,
+                JoinByPhoneFromDate = _kinlyConfiguration.JoinByPhoneFromDate
             };
 
             return Ok(clientSettings);

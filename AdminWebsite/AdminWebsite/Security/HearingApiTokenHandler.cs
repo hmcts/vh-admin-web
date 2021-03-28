@@ -6,15 +6,15 @@ namespace AdminWebsite.Security
 {
     public class HearingApiTokenHandler : BaseServiceTokenHandler
     {
-        public HearingApiTokenHandler(IOptions<SecuritySettings> securitySettings,
-            IOptions<ServiceSettings> serviceSettings,
+        public HearingApiTokenHandler(IOptions<AzureAdConfiguration> azureAdConfiguration,
+            IOptions<ServiceConfiguration> serviceConfiguration,
             IMemoryCache memoryCache,
             ITokenProvider tokenProvider) : base(
-            securitySettings, serviceSettings, memoryCache, tokenProvider)
+            azureAdConfiguration, serviceConfiguration, memoryCache, tokenProvider)
         {
         }
 
         protected override string TokenCacheKey => "HearingApiServiceToken";
-        protected override string ClientResource => ServiceSettings.BookingsApiResourceId;
+        protected override string ClientResource => ServiceConfiguration.BookingsApiResourceId;
     }
 }

@@ -6,15 +6,15 @@ namespace AdminWebsite.Security
 {
     public class UserApiTokenHandler : BaseServiceTokenHandler
     {
-        public UserApiTokenHandler(IOptions<SecuritySettings> securitySettings,
-            IOptions<ServiceSettings> serviceSettings,
+        public UserApiTokenHandler(IOptions<AzureAdConfiguration> azureAdConfiguration,
+            IOptions<ServiceConfiguration> serviceSettings,
             IMemoryCache memoryCache,
             ITokenProvider tokenProvider)
-            : base(securitySettings, serviceSettings, memoryCache, tokenProvider)
+            : base(azureAdConfiguration, serviceSettings, memoryCache, tokenProvider)
         {
         }
 
         protected override string TokenCacheKey => "UserApiServiceToken";
-        protected override string ClientResource => ServiceSettings.UserApiResourceId;
+        protected override string ClientResource => ServiceConfiguration.UserApiResourceId;
     }
 }
