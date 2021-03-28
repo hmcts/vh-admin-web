@@ -20,7 +20,7 @@ export class AppInsightsLogger implements LogAdapter {
             this.oidcService.userData$.subscribe(ud => {
                 this.appInsights.addTelemetryInitializer((envelope: ITelemetryItem) => {
                     envelope.tags['ai.cloud.role'] = 'vh-admin-web';
-                    envelope.tags['ai.user.id'] = ud.userName.toLowerCase();
+                    envelope.tags['ai.user.id'] = ud.preferred_username.toLowerCase();
                 });
             });
         });

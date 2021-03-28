@@ -34,12 +34,11 @@ export class LoginComponent implements OnInit {
                     })
                 )
                 .subscribe(loggedIn => {
-                    this.logger.debug(`${this.loggerPrefix} isLoggedIn ` + loggedIn);
-                    this.logger.debug(`${this.loggerPrefix} TOKEN` + this.oidcSecurityService.getToken());
+                    this.logger.debug(`${this.loggerPrefix} isLoggedIn: ` + loggedIn);
                     const returnUrl = this.returnUrlService.popUrl() || '/';
                     if (loggedIn) {
                         try {
-                            this.logger.debug(`${this.loggerPrefix} Return url = ${returnUrl}`);
+                            this.logger.debug(`${this.loggerPrefix} Return url: ${returnUrl}`);
                             this.router.navigateByUrl(returnUrl);
                         } catch (err) {
                             this.logger.error(
@@ -57,7 +56,7 @@ export class LoginComponent implements OnInit {
                             this.returnUrlService.setUrl(returnUrl);
                             this.oidcSecurityService.authorize();
                         } catch (err) {
-                            this.logger.error(`${this.loggerPrefix} - Authorize Failed`, err);
+                            this.logger.error(`${this.loggerPrefix} Authorize Failed`, err);
                         }
                     }
                 });
