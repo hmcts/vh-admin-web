@@ -28,6 +28,7 @@ export class ConfigService {
 
         try {
             this.retrieveConfigFromApi().subscribe(result => {
+                this.clientSettingCache.set(result);
                 this.clientSettingsLoaded$.next(true);
             });
         } catch (err) {
