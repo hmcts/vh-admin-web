@@ -15,15 +15,18 @@ namespace AdminWebsite.Controllers
     {
         private readonly AzureAdConfiguration _azureAdConfiguration;
         private readonly KinlyConfiguration _kinlyConfiguration;
+        private readonly ApplicationInsightsConfiguration _applicationInsightsConfiguration;
         private readonly TestUserSecrets _testUserSecrets;
 
         public ConfigSettingsController(
             IOptions<AzureAdConfiguration> azureAdConfiguration,
             IOptions<KinlyConfiguration> kinlyConfiguration,
+            IOptions<ApplicationInsightsConfiguration> applicationInsightsConfiguration,
             IOptions<TestUserSecrets> testSettings)
         {
             _azureAdConfiguration = azureAdConfiguration.Value;
             _kinlyConfiguration = kinlyConfiguration.Value;
+            _applicationInsightsConfiguration = applicationInsightsConfiguration.Value;
             _testUserSecrets = testSettings.Value;
         }
 
@@ -43,7 +46,7 @@ namespace AdminWebsite.Controllers
                 TenantId = _azureAdConfiguration.TenantId,
                 RedirectUri = _azureAdConfiguration.RedirectUri,
                 PostLogoutRedirectUri = _azureAdConfiguration.PostLogoutRedirectUri,
-                InstrumentationKey = _azureAdConfiguration.InstrumentationKey,
+                InstrumentationKey = _applicationInsightsConfiguration.InstrumentationKey,
                 TestUsernameStem = _testUserSecrets.TestUsernameStem,
                 ConferencePhoneNumber = _kinlyConfiguration.ConferencePhoneNumber,
                 JoinByPhoneFromDate = _kinlyConfiguration.JoinByPhoneFromDate

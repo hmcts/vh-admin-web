@@ -144,9 +144,6 @@ parameters:
   - name: AzureAd:ClientSecret
     value: vh-admin-web-key-v2
     secret: true
-  - name: AzureAd:InstrumentationKey
-    value: vh-core-infra-AppInsightsKey
-    secret: true
   - name: AzureAd:PostLogoutRedirectUri
     slot:
       deployment:

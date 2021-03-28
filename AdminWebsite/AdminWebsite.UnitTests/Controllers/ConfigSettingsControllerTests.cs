@@ -30,6 +30,7 @@ namespace AdminWebsite.UnitTests
             };
 
             var kinlyConfiguration = new KinlyConfiguration { ConferencePhoneNumber = "1111111", JoinByPhoneFromDate= "2021-02-03" };
+            var applicationInsightsConfiguration = new ApplicationInsightsConfiguration();
 
             var httpContext = new DefaultHttpContext();
             httpContext.Request.Scheme = "https";
@@ -43,6 +44,7 @@ namespace AdminWebsite.UnitTests
             var configSettingsController = new ConfigSettingsController(
                 Options.Create(azureAdConfiguration),
                 Options.Create(kinlyConfiguration),
+                Options.Create(applicationInsightsConfiguration),
                 Options.Create(testSettings)) {
 
                 ControllerContext = controllerContext
