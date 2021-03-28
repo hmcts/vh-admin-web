@@ -258,8 +258,6 @@ stages:
           - name: AzureAd:TenantId
             value: tenantid
             secret: true
-          - name: AzureAd:Authority
-            value: $(Authority)
             
           # Testing
           - name: TestUserSecrets:TestUsernameStem
@@ -334,8 +332,6 @@ stages:
             value: $(notification_api_url)
           
           # AzureAd
-          - name: AzureAd:Authority
-            value: $(Authority)
           - name: AzureAd:TenantId
             value: tenantid
             secret: true

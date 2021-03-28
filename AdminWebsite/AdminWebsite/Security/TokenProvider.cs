@@ -37,7 +37,7 @@ namespace AdminWebsite.Security
             }
             catch (AdalException)
             {
-                throw new UnauthorizedAccessException();
+                throw new UnauthorizedAccessException("Failed to acquire token");
             }
         }
     }
