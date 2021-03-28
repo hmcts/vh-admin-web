@@ -8,6 +8,8 @@ using AdminWebsite.AcceptanceTests.Configuration;
 using AdminWebsite.AcceptanceTests.Data;
 using AdminWebsite.AcceptanceTests.Data.TestData;
 using AdminWebsite.AcceptanceTests.Helpers;
+using AdminWebsite.Configuration;
+using AdminWebsite.Security;
 using BookingsApi.Contract.Responses;
 using TestApi.Contract.Dtos;
 using FluentAssertions;
@@ -16,6 +18,7 @@ using Microsoft.Extensions.Options;
 using TechTalk.SpecFlow;
 using ConfigurationManager = AcceptanceTests.Common.Configuration.ConfigurationManager;
 using HearingDetails = AdminWebsite.AcceptanceTests.Data.HearingDetails;
+using KinlyConfiguration = AdminWebsite.AcceptanceTests.Configuration.KinlyConfiguration;
 
 namespace AdminWebsite.AcceptanceTests.Hooks
 {
@@ -49,8 +52,12 @@ namespace AdminWebsite.AcceptanceTests.Hooks
 
         private void RegisterAzureSecrets(TestContext context)
         {
-            context.WebConfig.AzureAdConfiguration = Options.Create(_configRoot.GetSection("AzureAd").Get<AdminWebSecurityConfiguration>()).Value;
-            ConfigurationManager.VerifyConfigValuesSet(context.WebConfig.AzureAdConfiguration);
+            context.WebConfig.AzureAdConfiguration = Options.Create(_configRoot.GetSection("AzureAd").Get<AzureAdConfiguration>()).Value;
+            context.WebConfig.AzureAdConfiguration.ClientId.Should().NotBeNull();
+            context.WebConfig.AzureAdConfiguration.ClientSecret.Should().NotBeNull();
+            context.WebConfig.AzureAdConfiguration.Authority.Should().NotBeNull();
+            context.WebConfig.AzureAdConfiguration.TenantId.Should().NotBeNull();
+            context.WebConfig.AzureAdConfiguration.TemporaryPassword.Should().NotBeNull();
         }
 
         private void RegisterTestUserSecrets(TestContext context)
@@ -144,8 +151,10 @@ namespace AdminWebsite.AcceptanceTests.Hooks
 
         private static async Task GenerateBearerTokens(TestContext context)
         {
-            context.Token = await ConfigurationManager.GetBearerToken(
-                context.WebConfig.AzureAdConfiguration, context.WebConfig.VhServices.TestApiResourceId);
+            var azureAdConfigurationOptions = Options.Create(context.WebConfig.AzureAdConfiguration);
+            var tokenProvider = new TokenProvider(azureAdConfigurationOptions);
+            context.Token = await tokenProvider.GetClientAccessToken(context.WebConfig.AzureAdConfiguration.ClientId,
+                context.WebConfig.AzureAdConfiguration.ClientSecret, context.WebConfig.VhServices.TestApiResourceId);
             context.Token.Should().NotBeNullOrEmpty();
         }
     }
