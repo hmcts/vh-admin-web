@@ -27,8 +27,8 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
         public void should_map_to_judge_hearing_amendment_notification()
         {
             var expectedNotificationType = NotificationType.HearingAmendmentJudge;
-            var oldDate = new DateTime(2020, 2, 10, 11, 30, 0);
-            var newDate = new DateTime(2020, 10, 12, 13, 10, 0);
+            var oldDate = new DateTime(2020, 2, 10, 11, 30, 0).ToUniversalTime();
+            var newDate = new DateTime(2020, 10, 12, 13, 10, 0).ToUniversalTime();
             var caseName = "cse test";
             var caseNumber = "MBFY/17364";
             var participant = InitParticipant("Judge");
@@ -65,8 +65,8 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
         public void should_map_to_lip_hearing_amendment_notification()
         {
             var expectedNotificationType = NotificationType.HearingAmendmentLip;
-            var oldDate = new DateTime(2020, 2, 10, 11, 30, 0);
-            var newDate = new DateTime(2020, 10, 12, 13, 10, 0);
+            var oldDate = new DateTime(2020, 2, 10, 11, 30, 0).ToUniversalTime();
+            var newDate = new DateTime(2020, 10, 12, 13, 10, 0).ToUniversalTime();
             var caseName = "cse test";
             var caseNumber = "MBFY/17364";
             var participant = InitParticipant("Individual");
@@ -100,8 +100,8 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
         public void should_map_to_representative_hearing_amendment_notification()
         {
             var expectedNotificationType = NotificationType.HearingAmendmentRepresentative;
-            var oldDate = new DateTime(2020, 2, 10, 11, 30, 0);
-            var newDate = new DateTime(2020, 10, 12, 13, 10, 0);
+            var oldDate = new DateTime(2020, 2, 10, 11, 30, 0).ToUniversalTime();
+            var newDate = new DateTime(2020, 10, 12, 13, 10, 0).ToUniversalTime();
             var caseName = "cse test";
             var caseNumber = "MBFY/17364";
             var participant = InitParticipant("Representative", "Random Person");
@@ -136,8 +136,8 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
         public void should_map_to_joh_hearing_amendment_notification()
         {
             var expectedNotificationType = NotificationType.HearingAmendmentJoh;
-            var oldDate = new DateTime(2020, 2, 10, 11, 30, 0);
-            var newDate = new DateTime(2020, 10, 12, 13, 10, 0);
+            var oldDate = new DateTime(2020, 2, 10, 11, 30, 0).ToUniversalTime();
+            var newDate = new DateTime(2020, 10, 12, 13, 10, 0).ToUniversalTime();
             var caseName = "cse test";
             var caseNumber = "MBFY/17364";
             var participant = InitParticipant("Judicial Office Holder");
