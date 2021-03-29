@@ -22,7 +22,7 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             {
                 {"case name", hearing.Cases.First().Name},
                 {"case number", hearing.Cases.First().Number},
-                {"time", "1:10 PM"},
+                {"time", "2:10 PM"},
                 {"day month year", "12 October 2020"},
                 {"name", $"{participant.First_name} {participant.Last_name}"},
                 {"username", participant.Username}
@@ -51,7 +51,7 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             {
                 {"case name", hearing.Cases.First().Name},
                 {"case number", hearing.Cases.First().Number},
-                {"time", "1:10 PM"},
+                {"time", "2:10 PM"},
                 {"day month year", "12 October 2020"},
                 {"solicitor name", $"{participant.First_name} {participant.Last_name}"},
                 {"client name", $"{participant.Representee}"},
@@ -81,7 +81,7 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             {
                 {"case name", hearing.Cases.First().Name},
                 {"case number", hearing.Cases.First().Number},
-                {"time", "1:10 PM"},
+                {"time", "2:10 PM"},
                 {"day month year", "12 October 2020"},
                 {"judicial office holder", $"{participant.First_name} {participant.Last_name}"},
                 {"username", participant.Username}
@@ -112,7 +112,7 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             {
                 Id = Guid.NewGuid(),
                 Cases = new List<CaseResponse> {@case},
-                Scheduled_date_time = new DateTime(2020, 10, 12, 13, 10, 0)
+                Scheduled_date_time = new DateTime(2020, 10, 12, 13, 10, 0, DateTimeKind.Utc)
             };
         }
 
