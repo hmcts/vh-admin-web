@@ -24,7 +24,7 @@ namespace AdminWebsite.Extensions
 
         public static bool HasJudgeEmailChanged(this HearingDetailsResponse hearing, HearingDetailsResponse anotherHearing)
         {
-            if (anotherHearing.Other_information == null)
+            if (string.IsNullOrWhiteSpace(anotherHearing.Other_information) && string.IsNullOrWhiteSpace(hearing.Other_information))
             {
                 return false;
             }
@@ -59,7 +59,7 @@ namespace AdminWebsite.Extensions
 
         public static string GetJudgeEmail(this HearingDetailsResponse hearing)
         {
-            var email = GetOtherInformationObject(hearing.Other_information).JudgeEmail;
+            var email = GetOtherInformationObject(hearing.Other_information)?.JudgeEmail;
             if (email == string.Empty)
             {
                 return null;
@@ -85,6 +85,12 @@ namespace AdminWebsite.Extensions
                 $"|OtherInformation|{otherInformationDetailsObject.OtherInformation}";
         }
 
+        public static HearingDetailsResponse Duplicate(this HearingDetailsResponse hearingDetailsResponse)
+        {
+            var json = JsonConvert.SerializeObject(hearingDetailsResponse);
+            return JsonConvert.DeserializeObject<HearingDetailsResponse>(json);
+        }
+
         private static OtherInformationDetails GetOtherInformationObject(string otherInformation)
         {
             try
@@ -106,6 +112,10 @@ namespace AdminWebsite.Extensions
             }
             catch (Exception)
             {
+                if(string.IsNullOrWhiteSpace(otherInformation)){
+                {
+                    return new OtherInformationDetails {OtherInformation = otherInformation};
+                }}
                 var properties = otherInformation.Split("|");
                 if (properties.Length > 2)
                 {
