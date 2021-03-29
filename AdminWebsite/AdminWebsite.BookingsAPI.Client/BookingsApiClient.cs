@@ -3638,27 +3638,36 @@ namespace AdminWebsite.BookingsAPI.Client
             }
         }
     
+        /// <summary>Find persons with the email matching a search term.</summary>
+        /// <param name="term">Partial string to match email with, case-insensitive.</param>
+        /// <returns>Person list</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public System.Threading.Tasks.Task<BulkJudiciaryPersonResponse> BulkJudiciaryPersonsAsync(System.Collections.Generic.IEnumerable<JudiciaryPersonRequest> request)
+        public System.Threading.Tasks.Task<System.Collections.Generic.List<PersonResponse>> PostJudiciaryPersonBySearchTermAsync(SearchTermRequest term)
         {
-            return BulkJudiciaryPersonsAsync(request, System.Threading.CancellationToken.None);
+            return PostJudiciaryPersonBySearchTermAsync(term, System.Threading.CancellationToken.None);
         }
     
+        /// <summary>Find persons with the email matching a search term.</summary>
+        /// <param name="term">Partial string to match email with, case-insensitive.</param>
+        /// <returns>Person list</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public BulkJudiciaryPersonResponse BulkJudiciaryPersons(System.Collections.Generic.IEnumerable<JudiciaryPersonRequest> request)
+        public System.Collections.Generic.List<PersonResponse> PostJudiciaryPersonBySearchTerm(SearchTermRequest term)
         {
-            return System.Threading.Tasks.Task.Run(async () => await BulkJudiciaryPersonsAsync(request, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
+            return System.Threading.Tasks.Task.Run(async () => await PostJudiciaryPersonBySearchTermAsync(term, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
         }
     
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Find persons with the email matching a search term.</summary>
+        /// <param name="term">Partial string to match email with, case-insensitive.</param>
+        /// <returns>Person list</returns>
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
-        public async System.Threading.Tasks.Task<BulkJudiciaryPersonResponse> BulkJudiciaryPersonsAsync(System.Collections.Generic.IEnumerable<JudiciaryPersonRequest> request, System.Threading.CancellationToken cancellationToken)
+        public async System.Threading.Tasks.Task<System.Collections.Generic.List<PersonResponse>> PostJudiciaryPersonBySearchTermAsync(SearchTermRequest term, System.Threading.CancellationToken cancellationToken)
         {
-            if (request == null)
-                throw new System.ArgumentNullException("request");
+            if (term == null)
+                throw new System.ArgumentNullException("term");
     
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/judiciaryperson");
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/judiciaryperson/search");
     
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -3666,7 +3675,7 @@ namespace AdminWebsite.BookingsAPI.Client
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-                    var content_ = new System.Net.Http.StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(request, _settings.Value));
+                    var content_ = new System.Net.Http.StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(term, _settings.Value));
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
                     request_.Content = content_;
                     request_.Method = new System.Net.Http.HttpMethod("POST");
@@ -3689,6 +3698,48 @@ namespace AdminWebsite.BookingsAPI.Client
                             foreach (var item_ in response_.Content.Headers)
                                 headers_[item_.Key] = item_.Value;
                         }
+    
+                        ProcessResponse(client_, response_);
+    
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.List<PersonResponse>>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 400)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new BookingsApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new BookingsApiException<ProblemDetails>("A server side error occurred.", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false); 
+                            throw new BookingsApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
     
         /// <summary>Get a participants by username</summary>
         /// <param name="username">The username of the participant</param>
@@ -5988,6 +6039,9 @@ namespace AdminWebsite.BookingsAPI.Client
     
         [Newtonsoft.Json.JsonProperty("email", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Email { get; set; }
+    
+        [Newtonsoft.Json.JsonProperty("has_left", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool Has_left { get; set; }
     
     
     }
