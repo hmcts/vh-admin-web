@@ -111,14 +111,8 @@ namespace AdminWebsite.Mappers
         public static AddNotificationRequest MapToHearingConfirmationNotification(HearingDetailsResponse hearing,
             ParticipantResponse participant)
         {
-            var @case = hearing.Cases.First();
-            var parameters = new Dictionary<string, string>
-            {
-                {"case name", @case.Name},
-                {"case number", @case.Number},
-                {"time", hearing.Scheduled_date_time.ToEmailTimeGbLocale()},
-                {"day month year", hearing.Scheduled_date_time.ToEmailDateGbLocale()}
-            };
+            // var @case = hearing.Cases.First();
+            var parameters = InitConfirmReminderParams(hearing);
 
             NotificationType notificationType;
             if (participant.User_role_name.Contains("Judge", StringComparison.InvariantCultureIgnoreCase))
@@ -214,15 +208,8 @@ namespace AdminWebsite.Mappers
         public static AddNotificationRequest MapToHearingReminderNotification(HearingDetailsResponse hearing,
             ParticipantResponse participant)
         {
-            var @case = hearing.Cases.First();
-            var parameters = new Dictionary<string, string>
-            {
-                {"case name", @case.Name},
-                {"case number", @case.Number},
-                {"time", hearing.Scheduled_date_time.ToEmailTimeGbLocale()},
-                {"day month year", hearing.Scheduled_date_time.ToEmailDateGbLocale()},
-                {"username", participant.Username.ToLower()}
-            };
+            var parameters = InitConfirmReminderParams(hearing);
+            parameters.Add("username", participant.Username.ToLower());
 
             NotificationType notificationType;
             if (participant.User_role_name.Contains("Judicial Office Holder",
@@ -252,6 +239,18 @@ namespace AdminWebsite.Mappers
                 ParticipantId = participant.Id,
                 PhoneNumber = participant.Telephone_number,
                 Parameters = parameters
+            };
+        }
+
+        private static Dictionary<string, string> InitConfirmReminderParams(HearingDetailsResponse hearing)
+        {
+            var @case = hearing.Cases.First();
+            return new Dictionary<string, string>
+            {
+                {"case name", @case.Name},
+                {"case number", @case.Number},
+                {"time", hearing.Scheduled_date_time.ToEmailTimeGbLocale()},
+                {"day month year", hearing.Scheduled_date_time.ToEmailDateGbLocale()}
             };
         }
     }
