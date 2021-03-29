@@ -54,10 +54,10 @@ namespace AdminWebsite.AcceptanceTests.Steps
             var hearing = _c.Test.HearingResponse;
             var caseDetails = hearing.Cases.First();
             var date = _c.TimeZone.Adjust(hearing.ScheduledDateTime).Date.ToString(DateFormats.AudioScheduledDate);
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(GetAudioFilePage.ResultsCaseNumber(hearing.Id)).Text.Trim().Should().Be(caseDetails.Number);
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(GetAudioFilePage.ResultsScheduledTime(hearing.Id)).Text.Trim().Should().Be(date);
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(GetAudioFilePage.ResultsCaseName(hearing.Id)).Text.Trim().Should().Be(caseDetails.Name);
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(GetAudioFilePage.ResultsVenue(hearing.Id)).Text.Trim().Should().Be($"{hearing.HearingVenueName} {hearing.HearingRoomName}");
+            _browsers[_c.CurrentUser].TextOf(GetAudioFilePage.ResultsCaseNumber(hearing.Id)).Should().Be(caseDetails.Number);
+            _browsers[_c.CurrentUser].TextOf(GetAudioFilePage.ResultsScheduledTime(hearing.Id)).Should().Be(date);
+            _browsers[_c.CurrentUser].TextOf(GetAudioFilePage.ResultsCaseName(hearing.Id)).Should().Be(caseDetails.Name);
+            _browsers[_c.CurrentUser].TextOf(GetAudioFilePage.ResultsVenue(hearing.Id)).Should().Be($"{hearing.HearingVenueName} {hearing.HearingRoomName}");
         }
 
         [Then(@"the link can be retrieved")]

@@ -3,7 +3,6 @@ using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Extensions;
 using AdminWebsite.Models;
 using FluentAssertions;
-using Newtonsoft.Json;
 using NUnit.Framework;
 
 namespace AdminWebsite.UnitTests.Extensions
@@ -24,8 +23,8 @@ namespace AdminWebsite.UnitTests.Extensions
         [Test]
         public void Should_Return_True_If_Judge_Phone_Exists()
         {
-            _hearing.Other_information =
-                JsonConvert.SerializeObject(new OtherInformationDetails {JudgePhone = "123456789"});
+            var otherInfo = new OtherInformationDetails {JudgePhone = "1234564978"};
+            _hearing.Other_information = otherInfo.ToOtherInformationString();
 
             _hearing.DoesJudgePhoneExist().Should().BeTrue();
         }
@@ -39,8 +38,8 @@ namespace AdminWebsite.UnitTests.Extensions
         [Test]
         public void Should_Return_True_If_Judge_Email_Exists()
         {
-            _hearing.Other_information =
-                JsonConvert.SerializeObject(new OtherInformationDetails {JudgeEmail = "judge@hmcts.net"});
+            var otherInfo = new OtherInformationDetails {JudgeEmail = "judge@hmcts.net"};
+            _hearing.Other_information = otherInfo.ToOtherInformationString();
 
             _hearing.DoesJudgeEmailExist().Should().BeTrue();
         }
@@ -48,6 +47,22 @@ namespace AdminWebsite.UnitTests.Extensions
         [Test]
         public void Should_Return_False_If_Judge_Email_Does_Not_Exist()
         {
+            _hearing.DoesJudgeEmailExist().Should().BeFalse();
+        }
+
+        [Test]
+        public void Should_Return_False_If_Judge_Email_is_empty()
+        {
+            var otherInfo = new OtherInformationDetails { JudgeEmail = "" };
+            _hearing.Other_information = otherInfo.ToOtherInformationString();
+            _hearing.DoesJudgeEmailExist().Should().BeFalse();
+        }
+
+        [Test]
+        public void Should_Return_False_If_Judge_Email_is_null()
+        {
+            var otherInfo = new OtherInformationDetails { JudgeEmail = null };
+            _hearing.Other_information = otherInfo.ToOtherInformationString();
             _hearing.DoesJudgeEmailExist().Should().BeFalse();
         }
     }

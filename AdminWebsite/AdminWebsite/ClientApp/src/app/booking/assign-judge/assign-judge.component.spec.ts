@@ -97,6 +97,8 @@ let routerSpy: jasmine.SpyObj<Router>;
 let bookingServiseSpy: jasmine.SpyObj<BookingService>;
 let loggerSpy: jasmine.SpyObj<Logger>;
 let emailValidationServiceSpy: jasmine.SpyObj<EmailValidationService>;
+const configSettings = new ClientSettingsResponse();
+configSettings.test_username_stem = '@hmcts.net';
 let configServiceSpy: jasmine.SpyObj<ConfigService>;
 
 describe('AssignJudgeComponent', () => {
@@ -124,8 +126,8 @@ describe('AssignJudgeComponent', () => {
 
             judgeDataServiceSpy = jasmine.createSpyObj<JudgeDataService>(['JudgeDataService', 'getJudges']);
             judgeDataServiceSpy.getJudges.and.returnValue(of(MockValues.Judges));
-            const conf = new ClientSettingsResponse({ test_username_stem: 'courtroom.test' });
-            configServiceSpy.getClientSettings.and.returnValue(of(conf));
+            configServiceSpy = jasmine.createSpyObj<ConfigService>('CongigService', ['getClientSettings']);
+            configServiceSpy.getClientSettings.and.returnValue(of(configSettings));
 
             TestBed.configureTestingModule({
                 imports: [SharedModule, RouterTestingModule],
@@ -133,6 +135,7 @@ describe('AssignJudgeComponent', () => {
                     { provide: VideoHearingsService, useValue: videoHearingsServiceSpy },
                     { provide: JudgeDataService, useValue: judgeDataServiceSpy },
                     { provide: EmailValidationService, useValue: emailValidationServiceSpy },
+                    { provide: ConfigService, useValue: configServiceSpy },
                     {
                         provide: Router,
                         useValue: {
@@ -145,7 +148,6 @@ describe('AssignJudgeComponent', () => {
                     { provide: ConfigService, useValue: configServiceSpy },
                     RecordingGuardService
                 ],
-
                 declarations: [
                     AssignJudgeComponent,
                     BreadcrumbStubComponent,

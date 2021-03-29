@@ -63,18 +63,18 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
     }
 
     async getEmailPattern() {
-        this.$subscriptions.push(
-            this.configService
-                .getClientSettings()
-                .pipe(map(x => x.test_username_stem))
-                .subscribe(x => {
+        this.configService
+            .getClientSettings()
+            .pipe(map(x => x.test_username_stem))
+            .subscribe(x => {
+                this.invalidPattern = x;
                     this.invalidPattern = x;
-                    if (!this.invalidPattern || this.invalidPattern.length === 0) {
-                        this.logger.error(`${this.loggerPrefix} Pattern to validate email is not set`, new Error('Email validation error'));
-                    } else {
-                        this.logger.info(`${this.loggerPrefix} Pattern to validate email is set with length ${this.invalidPattern.length}`);
-                    }
-                })
+                if (!this.invalidPattern || this.invalidPattern.length === 0) {
+                    this.logger.error(`${this.loggerPrefix} Pattern to validate email is not set`, new Error('Email validation error'));
+                } else {
+                    this.logger.info(`${this.loggerPrefix} Pattern to validate email is set with length ${this.invalidPattern.length}`);
+                }
+            });
         );
     }
 
@@ -116,9 +116,7 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
     }
 
     validateEmail() {
-        /* tslint:disable: max-line-length */
-        const pattern = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.(?:[a-zA-Z0-9](?:\.[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
-
+        const pattern = Constants.EmailPattern;
         this.isValidEmail =
             this.email &&
             this.email.length > 0 &&

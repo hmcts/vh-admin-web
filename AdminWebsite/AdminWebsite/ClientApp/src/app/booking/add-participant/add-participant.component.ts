@@ -937,9 +937,12 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     get interpreterForInvalid() {
         return this.interpreterFor.invalid && (this.interpreterFor.dirty || this.interpreterFor.touched || this.isShowErrorSummary);
     }
+
     private populateInterpretedForList() {
+        const NotAllowedInterpreter: string[] = [HearingRoles.INTERPRETER.toLowerCase(), HearingRoles.OBSERVER.toLowerCase()];
+
         this.interpreteeList = this.hearing.participants.filter(
-            p => p.user_role_name === 'Individual' && p.hearing_role_name !== 'Interpreter'
+            p => p.user_role_name === 'Individual' && !NotAllowedInterpreter.includes(p.hearing_role_name.toLowerCase())
         );
         const interpreteeModel: ParticipantModel = {
             id: this.constants.PleaseSelect,
@@ -973,8 +976,9 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         return hearingHasInterpreter;
     }
     private hearingHasInterpretees(): boolean {
+        const notAllowedInterpreter = [HearingRoles.INTERPRETER.toLowerCase(), HearingRoles.OBSERVER.toLowerCase()];
         const hearingHasInterpretees = this.hearing.participants.some(
-            p => p.user_role_name === 'Individual' && p.hearing_role_name !== 'Interpreter'
+            p => p.user_role_name === 'Individual' && !notAllowedInterpreter.includes(p.hearing_role_name.toLowerCase())
         );
         return hearingHasInterpretees;
     }
@@ -998,12 +1002,12 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         } else {
             interpreter = this.hearing.participants.find(i => i.interpreterFor === this.selectedParticipantEmail);
         }
-        // const interpreter = this.hearing.participants.find(i => i.interpreterFor === this.selectedParticipantEmail);
         if (interpreter) {
             this.participantService.removeParticipant(this.hearing, interpreter.email);
         }
         this.participantService.removeParticipant(this.hearing, this.selectedParticipantEmail);
         this.removeLinkedParticipant(this.selectedParticipantEmail);
+        this.hearing = Object.assign({}, this.hearing);
         this.videoHearingService.updateHearingRequest(this.hearing);
         this.videoHearingService.setBookingHasChanged(true);
     }

@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { ParticipantDetailsModel } from '../../common/model/participant-details.model';
+import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
 
 @Component({
     selector: 'app-booking-participant-list',
@@ -15,7 +16,8 @@ export class BookingParticipantListComponent {
         this._participants = participants;
         this.sortParticipants();
     }
-
+    @Input()
+    hearing: BookingsDetailsModel;
     @Input()
     judges: Array<ParticipantDetailsModel> = [];
 
@@ -41,7 +43,7 @@ export class BookingParticipantListComponent {
         const interpretersAndInterpretees = this.participants.filter(
             participant => participant.HearingRoleName === 'Interpreter' || participant.isInterpretee
         );
-        const observers = this.participants.filter(participant => participant.HearingRoleName === 'Observer');
+        const observers = this.participants.filter(participant => participant.HearingRoleName === 'Observer' && !participant.IsInterpretee);
         const others = this.participants.filter(
             participant =>
                 !judges.includes(participant) &&

@@ -76,10 +76,10 @@ namespace AdminWebsite.AcceptanceTests.Steps
             VerifyNewUsersCreatedInAad();
         }
 
-        public void ClickBook()
+        private void ClickBook()
         {
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(SummaryPage.BookButton);
             _browsers[_c.CurrentUser].Click(SummaryPage.BookButton);
+            _browsers[_c.CurrentUser].Driver.WaitUntilElementNotVisible(SummaryPage.WaitPopUp);
             _c.Test.CreatedBy = _c.CurrentUser.Username;
         }
 
@@ -132,22 +132,29 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _browsers[_c.CurrentUser].Click(SummaryPage.RemoveParticipantLink(participant.Firstname));
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(SummaryPage.RemoveInterpreterMessage).Displayed.Should().BeTrue();
             _browsers[_c.CurrentUser].Click(SummaryPage.RemoveInterpreter);
-            _c.Test.HearingParticipants.Remove(participant);
-            _c.Test.HearingParticipants.Remove(GetParticipantBy("Interpreter"));
-
+            RemoveParticipant(participant);
+            RemoveParticipant(GetParticipantBy("Interpreter"));
         }
 
         [When(@"the user removes Interpreter")]
         public void WhenTheUserRemovesInterpreter()
         {
-            _browsers[_c.CurrentUser].Click(SummaryPage.RemoveParticipantLink(GetParticipantBy("Interpreter").Firstname));
+            var role = "Interpreter";
+            _browsers[_c.CurrentUser].Click(SummaryPage.RemoveParticipantLink(GetParticipantBy(role).Firstname));
             _browsers[_c.CurrentUser].Click(SummaryPage.RemoveParticipant);
-            RemoveParticipant("Interpreter");
+            RemoveParticipant(GetParticipantBy(role));
         }
 
-        private void RemoveParticipant(string role)
+        private void RemoveParticipant(UserAccount user)
+        { 
+            _c.Test.HearingParticipants.Remove(user);
+            ParticipantListContains(user).Should().BeFalse();
+        }
+
+        private bool ParticipantListContains(UserAccount interpreter)
         {
-            _c.Test.HearingParticipants.Remove(_c.Test.HearingParticipants.Where(h => h.HearingRoleName == role).FirstOrDefault());
+            var participantDetails = _addParticipantSteps.GetAllParticipantsDetails();
+            return participantDetails.Any(p => p.Contains(interpreter.Firstname));
         }
 
         private UserAccount GetParticipantBy(string role)
@@ -197,10 +204,10 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         private void VerifyHearingDetails()
         {
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(SummaryPage.CaseNumber).Text.Should().Be(_c.Test.HearingDetails.CaseNumber);
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(SummaryPage.CaseName).Text.Should().Be(_c.Test.HearingDetails.CaseName);
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(SummaryPage.CaseType).Text.Should().Be(_c.Test.HearingDetails.CaseType.Name);
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(SummaryPage.HearingType).Text.Should().Be(_c.Test.HearingDetails.HearingType.Name);
+            _browsers[_c.CurrentUser].TextOf(SummaryPage.CaseNumber).Should().Be(_c.Test.HearingDetails.CaseNumber);
+            _browsers[_c.CurrentUser].TextOf(SummaryPage.CaseName).Should().Be(_c.Test.HearingDetails.CaseName);
+            _browsers[_c.CurrentUser].TextOf(SummaryPage.CaseType).Should().Be(_c.Test.HearingDetails.CaseType.Name);
+            _browsers[_c.CurrentUser].TextOf(SummaryPage.HearingType).Should().Be(_c.Test.HearingDetails.HearingType.Name);
         }
 
         private void VerifyHearingSchedule()
@@ -208,9 +215,9 @@ namespace AdminWebsite.AcceptanceTests.Steps
             if (!_c.Test.HearingSchedule.MultiDays)
             {
                 var scheduleDate = _c.Test.HearingSchedule.ScheduledDate.ToString(DateFormats.HearingSummaryDate);
-                _browsers[_c.CurrentUser].Driver.WaitUntilVisible(SummaryPage.HearingDate).Text.ToLower().Should().Be(scheduleDate.ToLower());
+                _browsers[_c.CurrentUser].TextOf(SummaryPage.HearingDate).ToLower().Should().Be(scheduleDate.ToLower());
                 var listedFor = $"listed for {_c.Test.HearingSchedule.DurationMinutes} minutes";
-                _browsers[_c.CurrentUser].Driver.WaitUntilVisible(SummaryPage.HearingDuration).Text.Should().Be(listedFor);
+                _browsers[_c.CurrentUser].TextOf(SummaryPage.HearingDuration).Should().Be(listedFor);
             }
             else
             {
@@ -220,29 +227,29 @@ namespace AdminWebsite.AcceptanceTests.Steps
                 var textDateStart = $"{startDate.ToLower()} -";
                 var textDateEnd = $"{endDate.ToLower()}, {startTime.ToLower()}";
 
-                _browsers[_c.CurrentUser].Driver.WaitUntilVisible(SummaryPage.HearingStartDateMultiDays).Text.ToLower().Should().Be(textDateStart);
-                _browsers[_c.CurrentUser].Driver.WaitUntilVisible(SummaryPage.HearingEndDateMultiDays).Text.ToLower().Should().Be(textDateEnd);
+                _browsers[_c.CurrentUser].TextOf(SummaryPage.HearingStartDateMultiDays).ToLower().Should().Be(textDateStart);
+                _browsers[_c.CurrentUser].TextOf(SummaryPage.HearingEndDateMultiDays).ToLower().Should().Be(textDateEnd);
             }
 
             var courtAddress = $"{_c.Test.HearingSchedule.HearingVenue}, {_c.Test.HearingSchedule.Room}";
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(SummaryPage.CourtAddress).Text.Should().Be(courtAddress);
+            _browsers[_c.CurrentUser].TextOf(SummaryPage.CourtAddress).Should().Be(courtAddress);
         }
 
         private void VerifyAudioRecording(bool audioFlag=true)
         {
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(SummaryPage.AudioRecording).Text.Should().Be(audioFlag ? "Yes":"No");
+            _browsers[_c.CurrentUser].TextOf(SummaryPage.AudioRecording).Should().Be(audioFlag ? "Yes":"No");
         }
 
         private void VerifyOtherInformation()
         {
-            var otherInformation = _c.Test.TestData.OtherInformationDetails.OtherInformation;
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(SummaryPage.OtherInformation).Text.Should().Be(otherInformation);
+            var otherInformation = OtherInformationSteps.GetOtherInfo(_c.Test.TestData.OtherInformationDetails.OtherInformation);
+            _browsers[_c.CurrentUser].TextOf(SummaryPage.OtherInformation).Should().Be(otherInformation);
         }
 
         private void VerifyVideoAccessPoints()
         {
             var videoAccessPoints = _c.Test.VideoAccessPoints.DisplayName;
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(SummaryPage.VideoAccessPoints(0)).Text.Should().Be(videoAccessPoints);
+            _browsers[_c.CurrentUser].TextOf(SummaryPage.VideoAccessPoints(0)).Should().Be(videoAccessPoints);
         }
 
         private void VerifyBookingsCreated()

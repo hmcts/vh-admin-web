@@ -26,7 +26,7 @@ export class ParticipantItemComponent {
     constructor(private bookingService: BookingService, private logger: Logger, private router: Router) {}
 
     getJudgeUser(participant: ParticipantModel): string {
-        return participant.email;
+        return participant.username;
     }
 
     getJudgeEmail(): string {
