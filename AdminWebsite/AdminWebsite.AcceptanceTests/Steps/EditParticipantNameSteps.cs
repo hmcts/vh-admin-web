@@ -42,10 +42,10 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _browsers[_c.CurrentUser].Click(EditParticipantNamePage.SaveButton);
         }
 
-        [Then(@"the pariticpant's details are updated")]
-        public void ThenThePariticpantSDetailsAreUpdated()
+        [Then(@"the participant's details are updated")]
+        public void ThenTheParticipantSDetailsAreUpdated()
         {
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(EditParticipantNamePage.CompleteSignField).Text.ToLower().Trim().Should().Be(EditParticipantNamePage.CompleteSignText);
+            _browsers[_c.CurrentUser].TextOf(EditParticipantNamePage.CompleteSignField).ToLower().Should().Be(EditParticipantNamePage.CompleteSignText);
         }
 
         [Then(@"the user does not exists message is displayed")]
