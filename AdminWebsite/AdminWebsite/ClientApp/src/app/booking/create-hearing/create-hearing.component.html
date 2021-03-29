@@ -68,7 +68,6 @@
       class="govuk-select govuk-!-width-one-half"
       id="caseType"
       formControlName="caseType"
-      [disabled]="isExistingHearingOrParticipantsAdded"
     >
       <option *ngFor="let availableCaseType of availableCaseTypes" [ngValue]="availableCaseType">
         {{ availableCaseType }}
@@ -85,7 +84,6 @@
       class="govuk-select govuk-!-width-one-half"
       id="hearingType"
       formControlName="hearingType"
-      [disabled]="isExistingHearingOrParticipantsAdded"
     >
       <option *ngFor="let availableHearingType of filteredHearingTypes" [ngValue]="availableHearingType.id">
         {{ availableHearingType.name }}
