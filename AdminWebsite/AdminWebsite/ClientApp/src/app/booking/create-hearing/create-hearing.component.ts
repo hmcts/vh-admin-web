@@ -105,7 +105,7 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
         if (this.isExistingHearingOrParticipantsAdded()) {
             ['caseType', 'hearingType'].forEach(k => {
                 this.form.get(k).disable();
-            })
+            });
         }
     }
 
