@@ -654,12 +654,20 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         const _linkedParticipants: LinkedParticipantModel[] = [];
         if (newParticipant.hearing_role_name.toLowerCase() === HearingRoles.INTERPRETER) {
             if (this.editMode) {
-                const linkedParticipant = newParticipant.linked_participants[0];
-                const interpretee = this.hearing.participants.find(p => p.id === linkedParticipant.linkedParticipantId);
-                interpretee.linked_participants = [];
-                linkedParticipant.linkedParticipantId = this.getInterpreteeId(newParticipant.interpreterFor);
-                linkedParticipant.participantId = newParticipant.id;
-                _linkedParticipants.push(linkedParticipant);
+                if (this.localEditMode) {                                        
+                    const linkedParticipant = newParticipant.linked_participants[0];
+                    const interpretee = this.hearing.participants.find(p => p.id === linkedParticipant.linkedParticipantId);
+                    interpretee.linked_participants = [];
+                    linkedParticipant.linkedParticipantId = this.getInterpreteeId(newParticipant.interpreterFor);
+                    linkedParticipant.participantId = newParticipant.id;
+                    _linkedParticipants.push(linkedParticipant);
+                } else {
+                    const linkedParticipant = new LinkedParticipantModel();
+                    linkedParticipant.linkType = LinkedParticipantType.Interpreter;
+                    linkedParticipant.participantEmail = newParticipant.email;
+                    linkedParticipant.linkedParticipantEmail = newParticipant.interpreterFor;
+                    _linkedParticipants.push(linkedParticipant);
+                }
             } else {
                 const linkedParticipant = new LinkedParticipantModel();
                 linkedParticipant.linkType = LinkedParticipantType.Interpreter;
