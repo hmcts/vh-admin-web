@@ -26,7 +26,6 @@ export class RefreshTokenParameterIntercepter implements HttpInterceptor {
 export function loadConfig(configService: ConfigService, oidcConfigService: OidcConfigService): Function {
     return () => {
         configService.getClientSettings().subscribe(clientSettings => {
-            console.error(clientSettings);
             // https://github.com/damienbod/angular-auth-oidc-client/blob/8b66484755ad815948d5bc0711e8d9c69ac6661f/docs/configuration.md
             oidcConfigService.withConfig({
                 stsServer: `https://login.microsoftonline.com/${clientSettings.tenant_id}/v2.0`,
