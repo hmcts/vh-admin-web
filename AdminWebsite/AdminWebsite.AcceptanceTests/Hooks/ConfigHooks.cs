@@ -108,7 +108,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         private void RegisterKinlySettings(TestContext context)
         {
             context.WebConfig.KinlyConfiguration = Options.Create(_configRoot.GetSection("KinlyConfiguration").Get<KinlyConfiguration>()).Value;
-            ConfigurationManager.VerifyConfigValuesSet(context.WebConfig.KinlyConfiguration);
+            context.WebConfig.KinlyConfiguration.ConferencePhoneNumber.Should().NotBeNullOrWhiteSpace();
         }
 
         private void RegisterSauceLabsSettings(TestContext context)
