@@ -111,7 +111,6 @@ namespace AdminWebsite.Mappers
         public static AddNotificationRequest MapToHearingConfirmationNotification(HearingDetailsResponse hearing,
             ParticipantResponse participant)
         {
-            // var @case = hearing.Cases.First();
             var parameters = InitConfirmReminderParams(hearing);
 
             NotificationType notificationType;
