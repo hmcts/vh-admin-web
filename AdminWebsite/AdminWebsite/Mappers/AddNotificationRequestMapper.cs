@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Extensions;
@@ -60,19 +59,14 @@ namespace AdminWebsite.Mappers
             ParticipantResponse participant, string caseName, string caseNumber, DateTime originalDateTime,
             DateTime newDateTime)
         {
-            var originalTime = originalDateTime.ToLocalTime().ToString("h:mm tt", new CultureInfo("en-GB")).ToUpper();
-            var originalDate = originalDateTime.ToLocalTime().ToString("d MMMM yyyy", new CultureInfo("en-GB"));
-            var newTime = newDateTime.ToLocalTime().ToString("h:mm tt", new CultureInfo("en-GB")).ToUpper();
-            var newDate = newDateTime.ToLocalTime().ToString("d MMMM yyyy", new CultureInfo("en-GB"));
-
             var parameters = new Dictionary<string, string>
             {
                 {"case name", caseName},
                 {"case number", caseNumber},
-                {"Old time", originalTime},
-                {"New time", newTime},
-                {"Old Day Month Year", originalDate},
-                {"New Day Month Year", newDate}
+                {"Old time", originalDateTime.ToEmailTimeGbLocale()},
+                {"New time", newDateTime.ToEmailTimeGbLocale()},
+                {"Old Day Month Year", originalDateTime.ToEmailDateGbLocale()},
+                {"New Day Month Year", newDateTime.ToEmailDateGbLocale()}
             };
 
             NotificationType notificationType;
@@ -118,14 +112,12 @@ namespace AdminWebsite.Mappers
             ParticipantResponse participant)
         {
             var @case = hearing.Cases.First();
-            var time = hearing.Scheduled_date_time.ToLocalTime().ToString("h:mm tt", new CultureInfo("en-GB")).ToUpper();
-            var date = hearing.Scheduled_date_time.ToLocalTime().ToString("d MMMM yyyy", new CultureInfo("en-GB"));
             var parameters = new Dictionary<string, string>
             {
                 {"case name", @case.Name},
                 {"case number", @case.Number},
-                {"time", time},
-                {"day month year", date},
+                {"time", hearing.Scheduled_date_time.ToEmailTimeGbLocale()},
+                {"day month year", hearing.Scheduled_date_time.ToEmailDateGbLocale()}
             };
 
             NotificationType notificationType;
@@ -172,14 +164,12 @@ namespace AdminWebsite.Mappers
             ParticipantResponse participant, int days)
         {
             var @case = hearing.Cases.First();
-            var time = hearing.Scheduled_date_time.ToLocalTime().ToString("h:mm tt", new CultureInfo("en-GB")).ToUpper();
-            var date = hearing.Scheduled_date_time.ToLocalTime().ToString("d MMMM yyyy", new CultureInfo("en-GB"));
             var parameters = new Dictionary<string, string>
             {
                 {"case name", @case.Name},
                 {"case number", @case.Number},
-                {"time", time},
-                {"Start Day Month Year", date},
+                {"time", hearing.Scheduled_date_time.ToEmailTimeGbLocale()},
+                {"Start Day Month Year", hearing.Scheduled_date_time.ToEmailDateGbLocale()},
                 {"number of days", days.ToString()}
             };
             NotificationType notificationType;
@@ -225,15 +215,12 @@ namespace AdminWebsite.Mappers
             ParticipantResponse participant)
         {
             var @case = hearing.Cases.First();
-            var time = hearing.Scheduled_date_time.ToLocalTime().ToString("h:mm tt", new CultureInfo("en-GB")).ToUpper();
-            var date = hearing.Scheduled_date_time.ToLocalTime().ToString("d MMMM yyyy", new CultureInfo("en-GB"));
-
             var parameters = new Dictionary<string, string>
             {
                 {"case name", @case.Name},
                 {"case number", @case.Number},
-                {"time", time},
-                {"day month year", date},
+                {"time", hearing.Scheduled_date_time.ToEmailTimeGbLocale()},
+                {"day month year", hearing.Scheduled_date_time.ToEmailDateGbLocale()},
                 {"username", participant.Username.ToLower()}
             };
 
