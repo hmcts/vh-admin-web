@@ -25,7 +25,7 @@ namespace AdminWebsite.Extensions
 
             serviceCollection.AddMvc(options => { options.Filters.Add(new AuthorizeFilter(policy)); });
 
-            var securitySettings = configuration.GetSection("AzureAd").Get<SecuritySettings>();
+            var securitySettings = configuration.GetSection("AzureAd").Get<AzureAdConfiguration>();
 
             serviceCollection.AddAuthentication(options =>
                 {

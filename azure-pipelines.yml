@@ -79,8 +79,6 @@ parameters:
     value: $(notify-api-key)
     
   # AzureAd
-  - name: AzureAd:Authority
-    value: $(Authority)
   - name: AzureAd:TenantId
     value: tenantid
     secret: true
@@ -159,8 +157,6 @@ parameters:
   - name: AzureAd:TenantId
     value: tenantid
     secret: true
-  - name: AzureAd:Authority
-    value: $(Authority)
     
   # Testing
   - name: TestUserSecrets:TestUsernameStem

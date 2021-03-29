@@ -25,7 +25,7 @@ export class AdminGuard implements CanActivate {
                 }
             }),
             catchError(err => {
-                this.logger.error(`${this.loggerPrefix}Failed to get user identity. Navigating to unauthorised.`, err);
+                this.logger.error(`${this.loggerPrefix} Failed to get user identity. Navigating to unauthorised.`, err);
                 this.router.navigate(['/unauthorised']);
                 return of(false);
             })
