@@ -76,11 +76,10 @@ namespace AdminWebsite.AcceptanceTests.Steps
             VerifyNewUsersCreatedInAad();
         }
 
-        public void ClickBook()
+        private void ClickBook()
         {
             _browsers[_c.CurrentUser].Click(SummaryPage.BookButton);
-            if(_browsers[_c.CurrentUser].Driver.WaitUntilVisible(SummaryPage.WaitPopUp).Displayed)
-                _browsers[_c.CurrentUser].Driver.WaitUntilElementNotVisible(SummaryPage.WaitPopUp).Should().BeTrue();
+            _browsers[_c.CurrentUser].Driver.WaitUntilElementNotVisible(SummaryPage.WaitPopUp);
             _c.Test.CreatedBy = _c.CurrentUser.Username;
         }
 
