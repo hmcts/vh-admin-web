@@ -22,6 +22,15 @@ namespace AdminWebsite.Extensions
             return hearing.Id != hearing.Group_id;
         }
 
+        public static bool HasJudgeEmailChanged(this HearingDetailsResponse hearing, HearingDetailsResponse anotherHearing)
+        {
+            if (anotherHearing.Other_information == null)
+            {
+                return false;
+            }
+            return hearing.GetJudgeEmail() != anotherHearing.GetJudgeEmail();
+        }
+
         public static bool DoesJudgeEmailExist(this HearingDetailsResponse hearing)
         {
             if (hearing.Other_information != null)
