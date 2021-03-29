@@ -9,6 +9,11 @@ namespace AdminWebsite.Models
     /// </summary>
     public class EditParticipantRequest
     {
+        public EditParticipantRequest()
+        {
+            LinkedParticipants = new List<LinkedParticipant>();
+        }
+        
         /// <summary>
         ///     Participant Id.
         /// </summary>

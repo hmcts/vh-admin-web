@@ -49,8 +49,8 @@ namespace AdminWebsite.AcceptanceTests.Steps
         public void WhenTheUserViewsTheBookingsList()
         {
             _rowId = GetRowId(_c.Test.HearingDetails.CaseNumber);
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingsListPage.ScheduledTime(_rowId)).Text.ToLower().Should().Be(_c.Test.HearingSchedule.ScheduledDate.ToShortTimeString().ToLower());
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingsListPage.ScheduledDuration(_rowId)).Text.Should().Contain($"listed for {_c.Test.TestData.HearingSchedule.DurationMinutes} minutes");
+            _browsers[_c.CurrentUser].TextOf(BookingsListPage.ScheduledTime(_rowId)).ToLower().Should().Be(_c.Test.HearingSchedule.ScheduledDate.ToShortTimeString().ToLower());
+            _browsers[_c.CurrentUser].TextOf(BookingsListPage.ScheduledDuration(_rowId)).Should().Contain($"listed for {_c.Test.TestData.HearingSchedule.DurationMinutes} minutes");
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingsListPage.CaseName(_rowId, _c.Test.HearingDetails.CaseName)).Displayed.Should().BeTrue();
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingsListPage.CaseNumber(_rowId, _c.Test.HearingDetails.CaseNumber)).Displayed.Should().BeTrue();
             _browsers[_c.CurrentUser].Driver.WaitUntilVisible(BookingsListPage.CaseType(_rowId, _c.Test.HearingDetails.CaseType.Name)).Displayed.Should().BeTrue();
