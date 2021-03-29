@@ -57,23 +57,21 @@ namespace AdminWebsite.UnitTests.Controllers.PersonController
         {
             _bookingsApiClient.Setup(x => x.GetHearingsByUsernameForDeletionAsync(It.IsAny<string>()))
                 .ThrowsAsync(ClientException.ForBookingsAPI(HttpStatusCode.NotFound));
-            var result = await _controller.GetHearingsByUsernameForDeletionAsync("does_not_exist@hmcts.net");
+            var result = await _controller.GetHearingsByUsernameForDeletionAsync("alice.carter2@hearings.reform.hmcts.net");
             var notFoundResult = (NotFoundResult) result.Result;
             notFoundResult.Should().NotBeNull();
         }
         
         [Test]
-        public async Task Should_return_ok_when_bookings_api_returns_not_found_but_account_exist_in_ad()
+        public async Task Should_return_notfound_when_bookings_api_returns_not_found_but_account_exist_in_ad()
         {
             _bookingsApiClient.Setup(x => x.GetHearingsByUsernameForDeletionAsync(It.IsAny<string>()))
                 .ThrowsAsync(ClientException.ForBookingsAPI(HttpStatusCode.NotFound));
             _userAccountService.Setup(x => x.GetAdUserIdForUsername(It.IsAny<string>()))
                 .ReturnsAsync(Guid.NewGuid().ToString);
             var result = await _controller.GetHearingsByUsernameForDeletionAsync("onlyinad@hmcts.net");
-            var okResult = (OkObjectResult) result.Result;
-            okResult.Should().NotBeNull();
-
-            okResult.Value.As<List<HearingsByUsernameForDeletionResponse>>().Should().BeEmpty();
+            var notFoundResult = (NotFoundResult) result.Result;
+            notFoundResult.Should().NotBeNull();
         }
         
         [Test]

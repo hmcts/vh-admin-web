@@ -528,6 +528,25 @@ namespace AdminWebsite.BookingsAPI.Client
         /// <exception cref="BookingsApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<BulkJudiciaryPersonResponse> BulkJudiciaryPersonsAsync(System.Collections.Generic.IEnumerable<JudiciaryPersonRequest> request, System.Threading.CancellationToken cancellationToken);
     
+        /// <summary>Find persons with the email matching a search term.</summary>
+        /// <param name="term">Partial string to match email with, case-insensitive.</param>
+        /// <returns>Person list</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<System.Collections.Generic.List<PersonResponse>> PostJudiciaryPersonBySearchTermAsync(SearchTermRequest term);
+    
+        /// <summary>Find persons with the email matching a search term.</summary>
+        /// <param name="term">Partial string to match email with, case-insensitive.</param>
+        /// <returns>Person list</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        System.Collections.Generic.List<PersonResponse> PostJudiciaryPersonBySearchTerm(SearchTermRequest term);
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>Find persons with the email matching a search term.</summary>
+        /// <param name="term">Partial string to match email with, case-insensitive.</param>
+        /// <returns>Person list</returns>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<System.Collections.Generic.List<PersonResponse>> PostJudiciaryPersonBySearchTermAsync(SearchTermRequest term, System.Threading.CancellationToken cancellationToken);
+    
         /// <summary>Get a participants by username</summary>
         /// <param name="username">The username of the participant</param>
         /// <returns>Participant</returns>
@@ -3619,6 +3638,58 @@ namespace AdminWebsite.BookingsAPI.Client
             }
         }
     
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public System.Threading.Tasks.Task<BulkJudiciaryPersonResponse> BulkJudiciaryPersonsAsync(System.Collections.Generic.IEnumerable<JudiciaryPersonRequest> request)
+        {
+            return BulkJudiciaryPersonsAsync(request, System.Threading.CancellationToken.None);
+        }
+    
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public BulkJudiciaryPersonResponse BulkJudiciaryPersons(System.Collections.Generic.IEnumerable<JudiciaryPersonRequest> request)
+        {
+            return System.Threading.Tasks.Task.Run(async () => await BulkJudiciaryPersonsAsync(request, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
+        }
+    
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <exception cref="BookingsApiException">A server side error occurred.</exception>
+        public async System.Threading.Tasks.Task<BulkJudiciaryPersonResponse> BulkJudiciaryPersonsAsync(System.Collections.Generic.IEnumerable<JudiciaryPersonRequest> request, System.Threading.CancellationToken cancellationToken)
+        {
+            if (request == null)
+                throw new System.ArgumentNullException("request");
+    
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/judiciaryperson");
+    
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var content_ = new System.Net.Http.StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(request, _settings.Value));
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+    
+                    PrepareRequest(client_, request_, urlBuilder_);
+                    
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+    
+                    PrepareRequest(client_, request_, url_);
+    
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+    
         /// <summary>Get a participants by username</summary>
         /// <param name="username">The username of the participant</param>
         /// <returns>Participant</returns>
@@ -5973,6 +6044,15 @@ namespace AdminWebsite.BookingsAPI.Client
     }
     
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.3.4.0 (Newtonsoft.Json v12.0.0.0)")]
+    public partial class SearchTermRequest 
+    {
+        [Newtonsoft.Json.JsonProperty("term", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Term { get; set; }
+    
+    
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.3.4.0 (Newtonsoft.Json v12.0.0.0)")]
     public partial class HearingsByUsernameForDeletionResponse 
     {
         [Newtonsoft.Json.JsonProperty("hearing_id", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -5989,15 +6069,6 @@ namespace AdminWebsite.BookingsAPI.Client
     
         [Newtonsoft.Json.JsonProperty("venue", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Venue { get; set; }
-    
-    
-    }
-    
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.3.4.0 (Newtonsoft.Json v12.0.0.0)")]
-    public partial class SearchTermRequest 
-    {
-        [Newtonsoft.Json.JsonProperty("term", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string Term { get; set; }
     
     
     }
