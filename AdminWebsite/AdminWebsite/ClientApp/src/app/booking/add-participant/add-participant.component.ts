@@ -654,7 +654,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         const _linkedParticipants: LinkedParticipantModel[] = [];
         if (newParticipant.hearing_role_name.toLowerCase() === HearingRoles.INTERPRETER) {
             if (this.editMode) {
-                if (this.localEditMode) {                                        
+                if (this.localEditMode) {
                     const linkedParticipant = newParticipant.linked_participants[0];
                     const interpretee = this.hearing.participants.find(p => p.id === linkedParticipant.linkedParticipantId);
                     interpretee.linked_participants = [];
