@@ -43,7 +43,7 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.$subscriptions.push(
-            this.searchService.search(this.searchTerm).subscribe(data => {
+            this.searchService.search(this.searchTerm, this.hearingRoleParticipant).subscribe(data => {
                 if (data && data.length > 0) {
                     this.getData(data);
                 } else {
@@ -158,7 +158,7 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
             participant.middle_names = p.middle_names;
             participant.last_name = p.last_name;
             participant.username = p.username;
-            participant.email = p.contact_email;
+            participant.email = p.contact_email ?? p.username;
             participant.phone = p.telephone_number;
             participant.representee = '';
             participant.company = p.organisation;
