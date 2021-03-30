@@ -923,8 +923,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task Should_pass_on_not_found_request_from_bookings_api()
         {
-            GivenApiThrowsExceptionOnUpdate(HttpStatusCode.NotFound);
-
+            _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
+                .ThrowsAsync(ClientException.ForBookingsAPI(HttpStatusCode.NotFound));
+        
             var response = await _controller.EditHearing(_validId, _addNewParticipantRequest);
             response.Result.Should().BeOfType<NotFoundObjectResult>();
         }
