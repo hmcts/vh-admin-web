@@ -64,12 +64,7 @@
 
   <div *ngIf="availableCaseTypes.length > 1" [ngClass]="caseTypeInvalid ? 'govuk-form-group--error' : 'govuk-form-group'">
     <label class="govuk-label govuk-!-width-one-half" for="caseType"> Case type </label>
-    <select
-      class="govuk-select govuk-!-width-one-half"
-      id="caseType"
-      formControlName="caseType"
-      [disabled]="isExistingHearingOrParticipantsAdded"
-    >
+    <select class="govuk-select govuk-!-width-one-half" id="caseType" formControlName="caseType">
       <option *ngFor="let availableCaseType of availableCaseTypes" [ngValue]="availableCaseType">
         {{ availableCaseType }}
       </option>
@@ -81,12 +76,7 @@
 
   <div [ngClass]="hearingTypeInvalid ? 'govuk-form-group--error' : 'govuk-form-group'">
     <label class="govuk-label govuk-!-width-one-half" for="hearingType"> Hearing type </label>
-    <select
-      class="govuk-select govuk-!-width-one-half"
-      id="hearingType"
-      formControlName="hearingType"
-      [disabled]="isExistingHearingOrParticipantsAdded"
-    >
+    <select class="govuk-select govuk-!-width-one-half" id="hearingType" formControlName="hearingType">
       <option *ngFor="let availableHearingType of filteredHearingTypes" [ngValue]="availableHearingType.id">
         {{ availableHearingType.name }}
       </option>
