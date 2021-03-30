@@ -43,7 +43,7 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.$subscriptions.push(
-            this.searchService.search(this.searchTerm).subscribe(data => {
+            this.searchService.search(this.searchTerm, this.hearingRoleParticipant).subscribe(data => {
                 if (data && data.length > 0) {
                     this.getData(data);
                 } else {
@@ -68,14 +68,12 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
             .pipe(map(x => x.test_username_stem))
             .subscribe(x => {
                 this.invalidPattern = x;
-                    this.invalidPattern = x;
                 if (!this.invalidPattern || this.invalidPattern.length === 0) {
                     this.logger.error(`${this.loggerPrefix} Pattern to validate email is not set`, new Error('Email validation error'));
                 } else {
                     this.logger.info(`${this.loggerPrefix} Pattern to validate email is set with length ${this.invalidPattern.length}`);
                 }
             });
-        );
     }
 
     getData(data: PersonResponse[]) {
@@ -158,7 +156,7 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
             participant.middle_names = p.middle_names;
             participant.last_name = p.last_name;
             participant.username = p.username;
-            participant.email = p.contact_email;
+            participant.email = p.contact_email ?? p.username;
             participant.phone = p.telephone_number;
             participant.representee = '';
             participant.company = p.organisation;

@@ -60,17 +60,31 @@ export class SearchService {
 
     constructor(private bhClient: BHClient) {}
 
-    search(terms: Observable<string>) {
+    search(terms: Observable<string>, role: string) {
         return terms
             .pipe(debounceTime(500))
             .pipe(distinctUntilChanged())
-            .pipe(switchMap(term => this.searchEntries(term)));
+            .pipe(switchMap(term => {
+                if (role === 'Panel Member' || role === 'Winger') {
+                    return this.searchJudiciaryEntries(term);
+                } else {
+                    return this.searchEntries(term);
+                }
+            }));
     }
 
     searchEntries(term): Observable<Array<PersonResponse>> {
         const allResults: PersonResponse[] = [];
         if (term.length > 2) {
             return this.bhClient.postPersonBySearchTerm(term);
+        }
+        return of(allResults);
+    }
+
+    searchJudiciaryEntries(term): Observable<Array<PersonResponse>> {
+        const allResults: PersonResponse[] = [];
+        if (term.length > 2) {
+            return this.bhClient.postJudiciaryPersonBySearchTerm(term);
         }
         return of(allResults);
     }

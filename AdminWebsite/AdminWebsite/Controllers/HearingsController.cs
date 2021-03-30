@@ -71,7 +71,9 @@ namespace AdminWebsite.Controllers
             var usernameAdIdDict = new Dictionary<string, User>();
             try
             {
-                var nonJudgeParticipants = newBookingRequest.Participants.Where(p => p.Case_role_name != "Judge").ToList();
+                var nonJudgeParticipants = newBookingRequest.Participants
+                    .Where(p => p.Case_role_name != "Judge" && p.Hearing_role_name != "Panel Member" && p.Hearing_role_name != "Winger")
+                    .ToList();
                 await PopulateUserIdsAndUsernames(nonJudgeParticipants, usernameAdIdDict);
 
                 if (newBookingRequest.Endpoints != null && newBookingRequest.Endpoints.Any())
