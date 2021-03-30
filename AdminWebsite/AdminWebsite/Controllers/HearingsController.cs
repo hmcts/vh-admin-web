@@ -16,16 +16,14 @@ using AdminWebsite.Services.Models;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System.Collections;
 using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Annotations;
-using LinkedParticipantRequest = AdminWebsite.BookingsAPI.Client.LinkedParticipantRequest;
 using VideoApi.Client;
 
 namespace AdminWebsite.Controllers
 {
     /// <summary>
-    /// Responsible for retrieving and storing hearing information
+    ///     Responsible for retrieving and storing hearing information
     /// </summary>
     [Produces("application/json")]
     [Route("api/hearings")]
@@ -33,14 +31,14 @@ namespace AdminWebsite.Controllers
     public class HearingsController : ControllerBase
     {
         private readonly IBookingsApiClient _bookingsApiClient;
-        private readonly IUserIdentity _userIdentity;
-        private readonly IUserAccountService _userAccountService;
         private readonly IValidator<EditHearingRequest> _editHearingRequestValidator;
-        private readonly ILogger<HearingsController> _logger;
         private readonly IHearingsService _hearingsService;
+        private readonly ILogger<HearingsController> _logger;
+        private readonly IUserAccountService _userAccountService;
+        private readonly IUserIdentity _userIdentity;
 
         /// <summary>
-        /// Instantiates the controller
+        ///     Instantiates the controller
         /// </summary>
         public HearingsController(IBookingsApiClient bookingsApiClient, IUserIdentity userIdentity,
             IUserAccountService userAccountService, IValidator<EditHearingRequest> editHearingRequestValidator,
@@ -55,14 +53,14 @@ namespace AdminWebsite.Controllers
         }
 
         /// <summary>
-        /// Create a hearing
+        ///     Create a hearing
         /// </summary>
         /// <param name="request">Hearing Request object</param>
         /// <returns>VideoHearingId</returns>
         [HttpPost]
         [SwaggerOperation(OperationId = "BookNewHearing")]
-        [ProducesResponseType(typeof(HearingDetailsResponse), (int)HttpStatusCode.Created)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(HearingDetailsResponse), (int) HttpStatusCode.Created)]
+        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         [HearingInputSanitizer]
         public async Task<ActionResult<HearingDetailsResponse>> Post([FromBody] BookHearingRequest request)
         {
@@ -71,15 +69,16 @@ namespace AdminWebsite.Controllers
             var usernameAdIdDict = new Dictionary<string, User>();
             try
             {
-                var nonJudgeParticipants = newBookingRequest.Participants.Where(p => p.Case_role_name != "Judge").ToList();
+                var nonJudgeParticipants =
+                    newBookingRequest.Participants.Where(p => p.Case_role_name != "Judge").ToList();
                 await PopulateUserIdsAndUsernames(nonJudgeParticipants, usernameAdIdDict);
 
                 if (newBookingRequest.Endpoints != null && newBookingRequest.Endpoints.Any())
                 {
                     var endpointsWithDa = newBookingRequest.Endpoints
                         .Where(x => !string.IsNullOrWhiteSpace(x.Defence_advocate_username)).ToList();
-                    _hearingsService.AssignEndpointDefenceAdvocates(endpointsWithDa, newBookingRequest.Participants.AsReadOnly());
-
+                    _hearingsService.AssignEndpointDefenceAdvocates(endpointsWithDa,
+                        newBookingRequest.Participants.AsReadOnly());
                 }
 
                 newBookingRequest.Created_by = _userIdentity.GetUserIdentityName();
@@ -94,7 +93,8 @@ namespace AdminWebsite.Controllers
 
                 _logger.LogDebug("BookNewHearing - Sending email notification to the participants");
                 await _hearingsService.SendNewUserEmailParticipants(hearingDetailsResponse, usernameAdIdDict);
-                _logger.LogDebug("BookNewHearing - Successfully sent emails to participants- {Hearing}", hearingDetailsResponse.Id);
+                _logger.LogDebug("BookNewHearing - Successfully sent emails to participants- {Hearing}",
+                    hearingDetailsResponse.Id);
 
                 if (request.IsMultiDay)
                 {
@@ -112,11 +112,10 @@ namespace AdminWebsite.Controllers
             }
             catch (BookingsApiException e)
             {
-                _logger.LogError(e, "BookNewHearing - There was a problem saving the booking. Status Code {StatusCode} - Message {Message}", e.StatusCode, e.Response);
-                if (e.StatusCode == (int)HttpStatusCode.BadRequest)
-                {
-                    return BadRequest(e.Response);
-                }
+                _logger.LogError(e,
+                    "BookNewHearing - There was a problem saving the booking. Status Code {StatusCode} - Message {Message}",
+                    e.StatusCode, e.Response);
+                if (e.StatusCode == (int) HttpStatusCode.BadRequest) return BadRequest(e.Response);
 
                 throw;
             }
@@ -129,15 +128,15 @@ namespace AdminWebsite.Controllers
         }
 
         /// <summary>
-        /// Clone hearings with the details of a given hearing on given dates
+        ///     Clone hearings with the details of a given hearing on given dates
         /// </summary>
         /// <param name="hearingId">Original hearing to clone</param>
         /// <param name="hearingRequest">The dates range to create the new hearings on</param>
         /// <returns></returns>
         [HttpPost("{hearingId}/clone")]
         [SwaggerOperation(OperationId = "CloneHearing")]
-        [ProducesResponseType((int)HttpStatusCode.NoContent)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int) HttpStatusCode.NoContent)]
+        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         public async Task<IActionResult> CloneHearing(Guid hearingId, MultiHearingRequest hearingRequest)
         {
             _logger.LogDebug("Attempting to clone hearing {Hearing}", hearingId);
@@ -147,7 +146,8 @@ namespace AdminWebsite.Controllers
                 _logger.LogWarning("No working dates provided to clone to");
                 return BadRequest();
             }
-            var cloneHearingRequest = new CloneHearingRequest { Dates = listOfDates };
+
+            var cloneHearingRequest = new CloneHearingRequest {Dates = listOfDates};
             try
             {
                 _logger.LogDebug("Sending request to clone hearing to Bookings API");
@@ -160,28 +160,26 @@ namespace AdminWebsite.Controllers
                 _logger.LogError(e,
                     "There was a problem cloning the booking. Status Code {StatusCode} - Message {Message}",
                     e.StatusCode, e.Response);
-                if (e.StatusCode == (int)HttpStatusCode.BadRequest)
-                {
-                    return BadRequest(e.Response);
-                }
+                if (e.StatusCode == (int) HttpStatusCode.BadRequest) return BadRequest(e.Response);
                 throw;
             }
         }
 
         /// <summary>
-        /// Edit a hearing
+        ///     Edit a hearing
         /// </summary>
         /// <param name="hearingId">The id of the hearing to update</param>
         /// <param name="request">Hearing Request object for edit operation</param>
         /// <returns>VideoHearingId</returns>
         [HttpPut("{hearingId}")]
         [SwaggerOperation(OperationId = "EditHearing")]
-        [ProducesResponseType(typeof(HearingDetailsResponse), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType(typeof(HearingDetailsResponse), (int) HttpStatusCode.OK)]
+        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int) HttpStatusCode.NoContent)]
         [HearingInputSanitizer]
-        public async Task<ActionResult<HearingDetailsResponse>> EditHearing(Guid hearingId, [FromBody] EditHearingRequest request)
+        public async Task<ActionResult<HearingDetailsResponse>> EditHearing(Guid hearingId,
+            [FromBody] EditHearingRequest request)
         {
             var usernameAdIdDict = new Dictionary<string, User>();
             if (hearingId == Guid.Empty)
@@ -190,6 +188,7 @@ namespace AdminWebsite.Controllers
                 ModelState.AddModelError(nameof(hearingId), $"Please provide a valid {nameof(hearingId)}");
                 return BadRequest(ModelState);
             }
+
             _logger.LogDebug("Attempting to edit hearing {Hearing}", hearingId);
 
             var result = _editHearingRequestValidator.Validate(request);
@@ -211,7 +210,7 @@ namespace AdminWebsite.Controllers
                 _logger.LogError(e,
                     "Failed to get hearing {Hearing}. Status Code {StatusCode} - Message {Message}",
                     hearingId, e.StatusCode, e.Response);
-                if (e.StatusCode != (int)HttpStatusCode.NotFound)
+                if (e.StatusCode != (int) HttpStatusCode.NotFound)
                     throw;
 
                 return NotFound($"No hearing with id found [{hearingId}]");
@@ -227,28 +226,15 @@ namespace AdminWebsite.Controllers
                 var newParticipantList = new List<ParticipantRequest>();
 
                 foreach (var participant in request.Participants)
-                {
                     if (!participant.Id.HasValue)
-                    {
                         await _hearingsService.ProcessNewParticipants(hearingId, participant, originalHearing,
                             usernameAdIdDict, newParticipantList);
-                    }
                     else
-                    {
                         await _hearingsService.ProcessExistingParticipants(hearingId, originalHearing, participant);
-                    }
-                }
 
                 // Delete existing participants if the request doesn't contain any update information
                 originalHearing.Participants ??= new List<ParticipantResponse>();
-                var deleteParticipantList =
-                    originalHearing.Participants.Where(p => request.Participants.All(rp => rp.Id != p.Id));
-                foreach (var participantToDelete in deleteParticipantList)
-                {
-                    _logger.LogDebug("Removing existing participant {Participant} from hearing {Hearing}",
-                        participantToDelete.Id, hearingId);
-                    await _bookingsApiClient.RemoveParticipantFromHearingAsync(hearingId, participantToDelete.Id);
-                }
+                await RemoveParticipantsFromHearing(hearingId, request, originalHearing);
 
                 // Add new participants
                 await _hearingsService.SaveNewParticipants(hearingId, newParticipantList);
@@ -263,26 +249,14 @@ namespace AdminWebsite.Controllers
                 _logger.LogDebug("Attempting assign participants to the correct group");
                 await _hearingsService.AssignParticipantToCorrectGroups(updatedHearing, usernameAdIdDict);
                 _logger.LogDebug("Successfully assigned participants to the correct group");
-                
+
                 // Send a notification email to newly created participants
-                var newParticipantEmails = newParticipantList.Select(p => p.Contact_email);
-                if (newParticipantList.Any())
-                {
-                    _logger.LogDebug("Sending email notification to the participants");
-                    await _hearingsService.SendNewUserEmailParticipants(updatedHearing, usernameAdIdDict);
+                var newParticipantEmails = newParticipantList.Select(p => p.Contact_email).ToList();
+                await SendEmailsToParticipantsAddedToHearing(newParticipantList, updatedHearing, usernameAdIdDict, newParticipantEmails);
 
-                    var participantsForConfirmation = updatedHearing.Participants
-                        .Where(p => newParticipantEmails.Contains(p.Contact_email)).ToList();
-                    await _hearingsService.SendHearingConfirmationEmail(updatedHearing, participantsForConfirmation);
-                    _logger.LogDebug("Successfully sent emails to participants - {Hearing}", updatedHearing.Id);
-                }
-
-                if (updatedHearing.HasJudgeEmailChanged(originalHearing))
-                {
-                    await _hearingsService.SendJudgeConfirmationEmail(updatedHearing);
-                }
+                await SendJudgeEmailIfNeeded(updatedHearing, originalHearing);
                 if (!updatedHearing.HasScheduleAmended(originalHearing)) return Ok(updatedHearing);
-               
+
 
                 var participantsForAmendment = updatedHearing.Participants
                     .Where(p => !newParticipantEmails.Contains(p.Contact_email)).ToList();
@@ -297,32 +271,58 @@ namespace AdminWebsite.Controllers
                 _logger.LogError(e,
                     "Failed to edit hearing {Hearing}. Status Code {StatusCode} - Message {Message}",
                     hearingId, e.StatusCode, e.Response);
-                if (e.StatusCode == (int)HttpStatusCode.BadRequest)
-                {
-                    return BadRequest(e.Response);
-                }
-
-                if (e.StatusCode == (int)HttpStatusCode.NotFound)
-                {
-                    return NotFound(e.Response);
-                }
+                if (e.StatusCode == (int) HttpStatusCode.BadRequest) return BadRequest(e.Response);
 
                 throw;
             }
         }
 
+        private async Task RemoveParticipantsFromHearing(Guid hearingId, EditHearingRequest request,
+            HearingDetailsResponse originalHearing)
+        {
+            var deleteParticipantList =
+                originalHearing.Participants.Where(p => request.Participants.All(rp => rp.Id != p.Id));
+            foreach (var participantToDelete in deleteParticipantList)
+            {
+                _logger.LogDebug("Removing existing participant {Participant} from hearing {Hearing}",
+                    participantToDelete.Id, hearingId);
+                await _bookingsApiClient.RemoveParticipantFromHearingAsync(hearingId, participantToDelete.Id);
+            }
+        }
+
+        private async Task SendJudgeEmailIfNeeded(HearingDetailsResponse updatedHearing, HearingDetailsResponse originalHearing)
+        {
+            if (updatedHearing.HasJudgeEmailChanged(originalHearing) &&
+                updatedHearing.Status == BookingStatus.Created)
+                await _hearingsService.SendJudgeConfirmationEmail(updatedHearing);
+        }
+
+        private async Task SendEmailsToParticipantsAddedToHearing(List<ParticipantRequest> newParticipantList,
+            HearingDetailsResponse updatedHearing, Dictionary<string, User> usernameAdIdDict, IEnumerable<string> newParticipantEmails)
+        {
+            if (newParticipantList.Any())
+            {
+                _logger.LogDebug("Sending email notification to the participants");
+                await _hearingsService.SendNewUserEmailParticipants(updatedHearing, usernameAdIdDict);
+
+                var participantsForConfirmation = updatedHearing.Participants
+                    .Where(p => newParticipantEmails.Contains(p.Contact_email)).ToList();
+                await _hearingsService.SendHearingConfirmationEmail(updatedHearing, participantsForConfirmation);
+                _logger.LogDebug("Successfully sent emails to participants - {Hearing}", updatedHearing.Id);
+            }
+        }
 
 
         /// <summary>
-        /// Gets bookings hearing by Id.
+        ///     Gets bookings hearing by Id.
         /// </summary>
         /// <param name="hearingId">The unique sequential value of hearing ID.</param>
         /// <returns> The hearing</returns>
         [HttpGet("{hearingId}")]
         [SwaggerOperation(OperationId = "GetHearingById")]
-        [ProducesResponseType(typeof(HearingDetailsResponse), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(HearingDetailsResponse), (int) HttpStatusCode.OK)]
+        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         public ActionResult GetHearingById(Guid hearingId)
         {
             try
@@ -332,26 +332,24 @@ namespace AdminWebsite.Controllers
             }
             catch (BookingsApiException e)
             {
-                if (e.StatusCode == (int)HttpStatusCode.BadRequest)
-                {
-                    return BadRequest(e.Response);
-                }
+                if (e.StatusCode == (int) HttpStatusCode.BadRequest) return BadRequest(e.Response);
 
                 throw;
             }
         }
 
         /// <summary>
-        /// Get hearings by case number.
+        ///     Get hearings by case number.
         /// </summary>
         /// <param name="caseNumber">The case number.</param>
         /// <param name="date">The date to filter by</param>
         /// <returns> The hearing</returns>
         [HttpGet("audiorecording/search")]
         [SwaggerOperation(OperationId = "SearchForAudioRecordedHearings")]
-        [ProducesResponseType(typeof(List<HearingsForAudioFileSearchResponse>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> SearchForAudioRecordedHearingsAsync([FromQuery] string caseNumber, [FromQuery] DateTime? date = null)
+        [ProducesResponseType(typeof(List<HearingsForAudioFileSearchResponse>), (int) HttpStatusCode.OK)]
+        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> SearchForAudioRecordedHearingsAsync([FromQuery] string caseNumber,
+            [FromQuery] DateTime? date = null)
         {
             try
             {
@@ -362,10 +360,7 @@ namespace AdminWebsite.Controllers
             }
             catch (BookingsApiException ex)
             {
-                if (ex.StatusCode == (int)HttpStatusCode.BadRequest)
-                {
-                    return BadRequest(ex.Response);
-                }
+                if (ex.StatusCode == (int) HttpStatusCode.BadRequest) return BadRequest(ex.Response);
 
                 throw;
             }
@@ -379,12 +374,14 @@ namespace AdminWebsite.Controllers
         /// <returns>Success status</returns>
         [HttpPatch("{hearingId}")]
         [SwaggerOperation(OperationId = "UpdateBookingStatus")]
-        [ProducesResponseType(typeof(UpdateBookingStatusResponse), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> UpdateBookingStatus(Guid hearingId, UpdateBookingStatusRequest updateBookingStatusRequest)
+        [ProducesResponseType(typeof(UpdateBookingStatusResponse), (int) HttpStatusCode.OK)]
+        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> UpdateBookingStatus(Guid hearingId,
+            UpdateBookingStatusRequest updateBookingStatusRequest)
         {
-            var errorMessage = $"Failed to get the conference from video api, possibly the conference was not created or the kinly meeting room is null - hearingId: {hearingId}";
+            var errorMessage =
+                $"Failed to get the conference from video api, possibly the conference was not created or the kinly meeting room is null - hearingId: {hearingId}";
 
             try
             {
@@ -395,9 +392,7 @@ namespace AdminWebsite.Controllers
                 _logger.LogDebug("Updated hearing {Hearing} to booking status {BookingStatus}", hearingId,
                     updateBookingStatusRequest.Status);
                 if (updateBookingStatusRequest.Status != BookingsAPI.Client.UpdateBookingStatus.Created)
-                {
-                    return Ok(new UpdateBookingStatusResponse { Success = true });
-                }
+                    return Ok(new UpdateBookingStatusResponse {Success = true});
 
                 try
                 {
@@ -434,19 +429,13 @@ namespace AdminWebsite.Controllers
                     Cancel_reason = string.Empty
                 });
 
-                return Ok(new UpdateBookingStatusResponse { Success = false, Message = errorMessage });
+                return Ok(new UpdateBookingStatusResponse {Success = false, Message = errorMessage});
             }
             catch (BookingsApiException e)
             {
-                if (e.StatusCode == (int)HttpStatusCode.BadRequest)
-                {
-                    return BadRequest(e.Response);
-                }
+                if (e.StatusCode == (int) HttpStatusCode.BadRequest) return BadRequest(e.Response);
 
-                if (e.StatusCode == (int)HttpStatusCode.NotFound)
-                {
-                    return NotFound(e.Response);
-                }
+                if (e.StatusCode == (int) HttpStatusCode.NotFound) return NotFound(e.Response);
 
                 _logger.LogError(e, "There was an unknown error updating status for hearing {Hearing}", hearingId);
                 throw;
@@ -454,15 +443,15 @@ namespace AdminWebsite.Controllers
         }
 
         /// <summary>
-        /// Gets for confirmed booking the telephone conference Id by hearing Id.
+        ///     Gets for confirmed booking the telephone conference Id by hearing Id.
         /// </summary>
         /// <param name="hearingId">The unique sequential value of hearing ID.</param>
         /// <returns> The telephone conference Id</returns>
         [HttpGet("{hearingId}/telephoneConferenceId")]
         [SwaggerOperation(OperationId = "GetTelephoneConferenceIdById")]
-        [ProducesResponseType(typeof(PhoneConferenceResponse), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(PhoneConferenceResponse), (int) HttpStatusCode.OK)]
+        [ProducesResponseType((int) HttpStatusCode.NotFound)]
+        [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         public async Task<ActionResult> GetTelephoneConferenceIdById(Guid hearingId)
         {
             try
@@ -470,23 +459,16 @@ namespace AdminWebsite.Controllers
                 var conferenceDetailsResponse = await _hearingsService.GetConferenceDetailsByHearingId(hearingId);
 
                 if (conferenceDetailsResponse.HasValidMeetingRoom())
-                {
-                    return Ok(new PhoneConferenceResponse { TelephoneConferenceId = conferenceDetailsResponse.MeetingRoom.TelephoneConferenceId });
-                }
+                    return Ok(new PhoneConferenceResponse
+                        {TelephoneConferenceId = conferenceDetailsResponse.MeetingRoom.TelephoneConferenceId});
 
                 return NotFound();
             }
             catch (VideoApiException e)
             {
-                if (e.StatusCode == (int)HttpStatusCode.NotFound)
-                {
-                    return NotFound();
-                }
+                if (e.StatusCode == (int) HttpStatusCode.NotFound) return NotFound();
 
-                if (e.StatusCode == (int)HttpStatusCode.BadRequest)
-                {
-                    return BadRequest(e.Response);
-                }
+                if (e.StatusCode == (int) HttpStatusCode.BadRequest) return BadRequest(e.Response);
 
                 throw;
             }
@@ -502,7 +484,8 @@ namespace AdminWebsite.Controllers
                 User user;
                 if (string.IsNullOrWhiteSpace(participant.Username))
                 {
-                    _logger.LogDebug("No username provided in booking for participant {Email}. Checking AD by contact email",
+                    _logger.LogDebug(
+                        "No username provided in booking for participant {Email}. Checking AD by contact email",
                         participant.Contact_email);
                     user = await _userAccountService.UpdateParticipantUsername(participant);
                 }
@@ -513,8 +496,9 @@ namespace AdminWebsite.Controllers
                         "Username provided in booking for participant {Email}. Getting id for username {Username}",
                         participant.Contact_email, participant.Username);
                     var adUserId = await _userAccountService.GetAdUserIdForUsername(participant.Username);
-                    user = new User { UserName = adUserId };
+                    user = new User {UserName = adUserId};
                 }
+
                 // username's participant will be set by this point
                 usernameAdIdDict[participant.Username!] = user;
             }
