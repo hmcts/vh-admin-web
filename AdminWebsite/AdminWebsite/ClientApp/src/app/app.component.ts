@@ -1,15 +1,15 @@
-import {Component, ElementRef, HostListener, OnInit, Renderer2, ViewChild} from '@angular/core';
-import {Router} from '@angular/router';
-import {AdalService} from 'adal-angular4';
-import {ConfigService} from './services/config.service';
-import {PageTrackerService} from './services/page-tracker.service';
-import {WindowRef} from './security/window-ref';
-import {HeaderComponent} from './shared/header/header.component';
-import {VideoHearingsService} from './services/video-hearings.service';
-import {BookingService} from './services/booking.service';
-import {DeviceType} from './services/device-type';
-import {ConnectionService} from './services/connection/connection.service';
-import {ReferenceDataService} from './services/reference-data.service';
+import { Component, ElementRef, HostListener, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
+import { AdalService } from 'adal-angular4';
+import { ConfigService } from './services/config.service';
+import { PageTrackerService } from './services/page-tracker.service';
+import { WindowRef } from './security/window-ref';
+import { HeaderComponent } from './shared/header/header.component';
+import { VideoHearingsService } from './services/video-hearings.service';
+import { BookingService } from './services/booking.service';
+import { DeviceType } from './services/device-type';
+import { ConnectionService } from './services/connection/connection.service';
+import { ReferenceDataService } from './services/reference-data.service';
 
 @Component({
     selector: 'app-root',

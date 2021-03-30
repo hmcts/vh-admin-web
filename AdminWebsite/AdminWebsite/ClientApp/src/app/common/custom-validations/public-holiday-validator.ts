@@ -1,4 +1,4 @@
-import {AbstractControl, ValidatorFn} from '@angular/forms';
+import { AbstractControl, ValidatorFn } from '@angular/forms';
 
 export function notPublicHolidayDateValidator(publicHolidays: Date[]): ValidatorFn {
     return (ctrl: AbstractControl) => {

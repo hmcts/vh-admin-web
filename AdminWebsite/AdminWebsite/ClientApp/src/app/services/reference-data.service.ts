@@ -1,6 +1,6 @@
-import {Injectable} from '@angular/core';
-import {BHClient, HearingVenueResponse, PublicHolidayResponse} from './clients/api-client';
-import {Observable} from 'rxjs';
+import { Injectable } from '@angular/core';
+import { BHClient, HearingVenueResponse, PublicHolidayResponse } from './clients/api-client';
+import { Observable } from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
