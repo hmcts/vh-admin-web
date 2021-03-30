@@ -5,9 +5,10 @@ export function notPublicHolidayDateValidator(publicHolidays: Date[]): Validator
         if (!publicHolidays.length) {
             return null;
         }
+        var pbTimes = publicHolidays.map(x => x.getTime());
         if (ctrl.value) {
             const date = new Date(ctrl.value);
-            if (!publicHolidays.includes(date)) {
+            if (pbTimes.includes(date.getTime())) {
                 return { publicHoliday: true };
             }
         }
