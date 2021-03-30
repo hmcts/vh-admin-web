@@ -33,6 +33,7 @@ export class HearingDetailsComponent {
 
     isJoinByPhone(): boolean {
         const config = this.configService.getConfig();
+        console.log(config.join_by_phone_from_date);
         const datePhone = config.join_by_phone_from_date;
 
         if (!datePhone || datePhone.length === 0) {
