@@ -1,14 +1,15 @@
-import { Component, OnInit, ViewChild, HostListener, ElementRef, Renderer2 } from '@angular/core';
-import { Router } from '@angular/router';
-import { AdalService } from 'adal-angular4';
-import { ConfigService } from './services/config.service';
-import { PageTrackerService } from './services/page-tracker.service';
-import { WindowRef } from './security/window-ref';
-import { HeaderComponent } from './shared/header/header.component';
-import { VideoHearingsService } from './services/video-hearings.service';
-import { BookingService } from './services/booking.service';
-import { DeviceType } from './services/device-type';
-import { ConnectionService } from './services/connection/connection.service';
+import {Component, ElementRef, HostListener, OnInit, Renderer2, ViewChild} from '@angular/core';
+import {Router} from '@angular/router';
+import {AdalService} from 'adal-angular4';
+import {ConfigService} from './services/config.service';
+import {PageTrackerService} from './services/page-tracker.service';
+import {WindowRef} from './security/window-ref';
+import {HeaderComponent} from './shared/header/header.component';
+import {VideoHearingsService} from './services/video-hearings.service';
+import {BookingService} from './services/booking.service';
+import {DeviceType} from './services/device-type';
+import {ConnectionService} from './services/connection/connection.service';
+import {ReferenceDataService} from './services/reference-data.service';
 
 @Component({
     selector: 'app-root',
@@ -44,7 +45,8 @@ export class AppComponent implements OnInit {
         private bookingService: BookingService,
         private deviceTypeService: DeviceType,
         private renderer: Renderer2,
-        private connection: ConnectionService
+        private connection: ConnectionService,
+        private refDataService: ReferenceDataService
     ) {
         this.config.tenant = this.configService.clientSettings.tenant_id;
         this.config.clientId = this.configService.clientSettings.client_id;
@@ -71,6 +73,7 @@ export class AppComponent implements OnInit {
         if (!this.loggedIn) {
             this.router.navigate(['/login'], { queryParams: { returnUrl: currentUrl } });
         }
+        this.refDataService.fetchPublicHolidays();
         this.headerComponent.confirmLogout.subscribe(() => {
             this.showConfirmation();
         });

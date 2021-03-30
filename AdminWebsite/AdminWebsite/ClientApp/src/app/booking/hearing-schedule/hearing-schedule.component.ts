@@ -1,19 +1,20 @@
-import { DatePipe } from '@angular/common';
-import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
-import { Constants } from 'src/app/common/constants';
-import { ErrorService } from 'src/app/services/error.service';
-import { Logger } from 'src/app/services/logger';
-import { PageUrls } from 'src/app/shared/page-url.constants';
-import { SanitizeInputText } from '../../common/formatters/sanitize-input-text';
-import { HearingModel } from '../../common/model/hearing.model';
-import { BookingService } from '../../services/booking.service';
-import { HearingVenueResponse } from '../../services/clients/api-client';
-import { ReferenceDataService } from '../../services/reference-data.service';
-import { VideoHearingsService } from '../../services/video-hearings.service';
-import { BookingBaseComponentDirective as BookingBaseComponent } from '../booking-base/booking-base.component';
+import {DatePipe} from '@angular/common';
+import {AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
+import {FormBuilder, FormControl, Validators} from '@angular/forms';
+import {Router} from '@angular/router';
+import {Subscription} from 'rxjs';
+import {Constants} from 'src/app/common/constants';
+import {ErrorService} from 'src/app/services/error.service';
+import {Logger} from 'src/app/services/logger';
+import {PageUrls} from 'src/app/shared/page-url.constants';
+import {SanitizeInputText} from '../../common/formatters/sanitize-input-text';
+import {HearingModel} from '../../common/model/hearing.model';
+import {BookingService} from '../../services/booking.service';
+import {HearingVenueResponse} from '../../services/clients/api-client';
+import {ReferenceDataService} from '../../services/reference-data.service';
+import {VideoHearingsService} from '../../services/video-hearings.service';
+import {BookingBaseComponentDirective as BookingBaseComponent} from '../booking-base/booking-base.component';
+import {notPublicHolidayDateValidator} from '../../common/custom-validations/public-holiday-validator';
 
 @Component({
     selector: 'app-hearing-schedule',
@@ -38,6 +39,8 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     durationHourControl: FormControl;
     durationMinuteControl: FormControl;
     isBookedHearing = false;
+
+    publicHolidays: Date[];
     constructor(
         private refDataService: ReferenceDataService,
         protected hearingService: VideoHearingsService,
@@ -52,6 +55,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     }
 
     ngOnInit() {
+        this.publicHolidays = this.refDataService.getPublicHolidays().map(x => x.date);
         this.failedSubmission = false;
         this.checkForExistingRequest();
         this.retrieveCourts();
@@ -129,7 +133,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
         }
 
         this.form = this.fb.group({
-            hearingDate: [hearingDateParsed, Validators.required],
+            hearingDate: [hearingDateParsed, [Validators.required, notPublicHolidayDateValidator(this.publicHolidays)]],
             hearingStartTimeHour: [startTimeHour, [Validators.required, Validators.min(0), Validators.max(23)]],
             hearingStartTimeMinute: [startTimeMinute, [Validators.required, Validators.min(0), Validators.max(59)]],
             hearingDurationHour: this.durationHourControl,
@@ -186,11 +190,16 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
         return this.form.get('courtRoom');
     }
 
+    get hearingDateIsPublicHoliday(): boolean {
+        return this.hearingDate.errors?.publicHoliday;
+    }
+
     get hearingDateInvalid() {
         const todayDate = new Date(new Date().setHours(0, 0, 0, 0));
         return (
             (this.hearingDate.invalid || new Date(this.hearingDate.value) < todayDate) &&
-            (this.hearingDate.dirty || this.hearingDate.touched || this.failedSubmission)
+            (this.hearingDate.dirty || this.hearingDate.touched || this.failedSubmission) &&
+            !this.hearingDateIsPublicHoliday
         );
     }
 

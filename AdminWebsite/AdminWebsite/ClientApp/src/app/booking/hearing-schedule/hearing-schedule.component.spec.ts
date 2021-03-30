@@ -1,22 +1,22 @@
-import { DatePipe } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { AbstractControl, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-import { RouterTestingModule } from '@angular/router/testing';
-import { of } from 'rxjs';
-import { HearingVenueResponse } from 'src/app/services/clients/api-client';
-import { Logger } from 'src/app/services/logger';
-import { HearingModel } from '../../common/model/hearing.model';
-import { CancelPopupComponent } from '../../popups/cancel-popup/cancel-popup.component';
-import { DiscardConfirmPopupComponent } from '../../popups/discard-confirm-popup/discard-confirm-popup.component';
-import { ErrorService } from '../../services/error.service';
-import { ReferenceDataService } from '../../services/reference-data.service';
-import { VideoHearingsService } from '../../services/video-hearings.service';
-import { SharedModule } from '../../shared/shared.module';
-import { MockValues } from '../../testing/data/test-objects';
-import { BreadcrumbStubComponent } from '../../testing/stubs/breadcrumb-stub';
-import { HearingScheduleComponent } from './hearing-schedule.component';
+import {DatePipe} from '@angular/common';
+import {HttpClientModule} from '@angular/common/http';
+import {ComponentFixture, TestBed, waitForAsync} from '@angular/core/testing';
+import {AbstractControl, ReactiveFormsModule} from '@angular/forms';
+import {Router} from '@angular/router';
+import {RouterTestingModule} from '@angular/router/testing';
+import {of} from 'rxjs';
+import {HearingVenueResponse} from 'src/app/services/clients/api-client';
+import {Logger} from 'src/app/services/logger';
+import {HearingModel} from '../../common/model/hearing.model';
+import {CancelPopupComponent} from '../../popups/cancel-popup/cancel-popup.component';
+import {DiscardConfirmPopupComponent} from '../../popups/discard-confirm-popup/discard-confirm-popup.component';
+import {ErrorService} from '../../services/error.service';
+import {ReferenceDataService} from '../../services/reference-data.service';
+import {VideoHearingsService} from '../../services/video-hearings.service';
+import {SharedModule} from '../../shared/shared.module';
+import {MockValues} from '../../testing/data/test-objects';
+import {BreadcrumbStubComponent} from '../../testing/stubs/breadcrumb-stub';
+import {HearingScheduleComponent} from './hearing-schedule.component';
 
 const newHearing = new HearingModel();
 
@@ -72,8 +72,12 @@ describe('HearingScheduleComponent first visit', () => {
         waitForAsync(() => {
             routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
-            referenceDataServiceServiceSpy = jasmine.createSpyObj<ReferenceDataService>('ReferenceDataService', ['getCourts']);
+            referenceDataServiceServiceSpy = jasmine.createSpyObj<ReferenceDataService>('ReferenceDataService', [
+                'getCourts',
+                'getPublicHolidays'
+            ]);
             referenceDataServiceServiceSpy.getCourts.and.returnValue(of(MockValues.Courts));
+            referenceDataServiceServiceSpy.getPublicHolidays.and.returnValue([]);
             videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
                 'getHearingTypes',
                 'getCurrentRequest',
@@ -324,8 +328,12 @@ describe('HearingScheduleComponent returning to page', () => {
         waitForAsync(() => {
             routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
-            referenceDataServiceServiceSpy = jasmine.createSpyObj<ReferenceDataService>('ReferenceDataService', ['getCourts']);
+            referenceDataServiceServiceSpy = jasmine.createSpyObj<ReferenceDataService>('ReferenceDataService', [
+                'getCourts',
+                'getPublicHolidays'
+            ]);
             referenceDataServiceServiceSpy.getCourts.and.returnValue(of(MockValues.Courts));
+            referenceDataServiceServiceSpy.getPublicHolidays.and.returnValue([]);
             videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
                 'getHearingTypes',
                 'getCurrentRequest',
@@ -469,8 +477,12 @@ describe('HearingScheduleComponent multi days hearing', () => {
         waitForAsync(() => {
             routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
-            referenceDataServiceServiceSpy = jasmine.createSpyObj<ReferenceDataService>('ReferenceDataService', ['getCourts']);
+            referenceDataServiceServiceSpy = jasmine.createSpyObj<ReferenceDataService>('ReferenceDataService', [
+                'getCourts',
+                'getPublicHolidays'
+            ]);
             referenceDataServiceServiceSpy.getCourts.and.returnValue(of(MockValues.Courts));
+            referenceDataServiceServiceSpy.getPublicHolidays.and.returnValue([]);
             videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
                 'getHearingTypes',
                 'getCurrentRequest',
