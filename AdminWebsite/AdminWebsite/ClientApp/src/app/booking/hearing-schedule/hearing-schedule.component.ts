@@ -1,20 +1,20 @@
-import {DatePipe} from '@angular/common';
-import {AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
-import {FormBuilder, FormControl, Validators} from '@angular/forms';
-import {Router} from '@angular/router';
-import {Subscription} from 'rxjs';
-import {Constants} from 'src/app/common/constants';
-import {ErrorService} from 'src/app/services/error.service';
-import {Logger} from 'src/app/services/logger';
-import {PageUrls} from 'src/app/shared/page-url.constants';
-import {SanitizeInputText} from '../../common/formatters/sanitize-input-text';
-import {HearingModel} from '../../common/model/hearing.model';
-import {BookingService} from '../../services/booking.service';
-import {HearingVenueResponse} from '../../services/clients/api-client';
-import {ReferenceDataService} from '../../services/reference-data.service';
-import {VideoHearingsService} from '../../services/video-hearings.service';
-import {BookingBaseComponentDirective as BookingBaseComponent} from '../booking-base/booking-base.component';
-import {notPublicHolidayDateValidator} from '../../common/custom-validations/public-holiday-validator';
+import { DatePipe } from '@angular/common';
+import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { Constants } from 'src/app/common/constants';
+import { ErrorService } from 'src/app/services/error.service';
+import { Logger } from 'src/app/services/logger';
+import { PageUrls } from 'src/app/shared/page-url.constants';
+import { SanitizeInputText } from '../../common/formatters/sanitize-input-text';
+import { HearingModel } from '../../common/model/hearing.model';
+import { BookingService } from '../../services/booking.service';
+import { HearingVenueResponse } from '../../services/clients/api-client';
+import { ReferenceDataService } from '../../services/reference-data.service';
+import { VideoHearingsService } from '../../services/video-hearings.service';
+import { BookingBaseComponentDirective as BookingBaseComponent } from '../booking-base/booking-base.component';
+import { notPublicHolidayDateValidator } from '../../common/custom-validations/public-holiday-validator';
 
 @Component({
     selector: 'app-hearing-schedule',
