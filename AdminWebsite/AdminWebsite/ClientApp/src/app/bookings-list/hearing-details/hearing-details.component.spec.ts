@@ -150,7 +150,7 @@ describe('HearingDetailsComponent join by phone', () => {
         redirect_uri: '/dashboard',
         join_by_phone_from_date: ''
     });
-    let activatedRoute: ActivatedRoute;
+    const activatedRoute = new ActivatedRoute();
     configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getConfig']);
     configServiceSpy.getConfig.and.returnValue(clientSettings);
     const loggerSpy: jasmine.SpyObj<Logger> = jasmine.createSpyObj('Logger', ['error', 'event', 'debug', 'info', 'warn']);
