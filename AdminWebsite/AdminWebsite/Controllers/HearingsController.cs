@@ -277,7 +277,12 @@ namespace AdminWebsite.Controllers
                     _logger.LogDebug("Successfully sent emails to participants - {Hearing}", updatedHearing.Id);
                 }
 
+                if (updatedHearing.HasJudgeEmailChanged(originalHearing))
+                {
+                    await _hearingsService.SendJudgeConfirmationEmail(updatedHearing);
+                }
                 if (!updatedHearing.HasScheduleAmended(originalHearing)) return Ok(updatedHearing);
+               
 
                 var participantsForAmendment = updatedHearing.Participants
                     .Where(p => !newParticipantEmails.Contains(p.Contact_email)).ToList();
