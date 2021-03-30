@@ -4,6 +4,7 @@ import { BookingsDetailsModel } from '../../common/model/bookings-list.model';
 import { ActivatedRoute } from '@angular/router';
 import { Logger } from '../../services/logger';
 import { OtherInformationModel } from '../../common/model/other-information.model';
+import { ConfigService } from 'src/app/services/config.service';
 
 @Component({
     selector: 'app-hearing-details',
@@ -19,7 +20,7 @@ export class HearingDetailsComponent {
 
     private readonly loggerPrefix = '[HearingDetails] -';
     phoneConferenceDetails = '';
-    constructor(private route: ActivatedRoute, private logger: Logger) {}
+    constructor(private route: ActivatedRoute, private logger: Logger, private configService: ConfigService) {}
 
     getParticipantInfo(participantId: string): string {
         let represents = '';
@@ -31,7 +32,7 @@ export class HearingDetailsComponent {
     }
 
     isJoinByPhone(): boolean {
-        const config = this.route.snapshot.data['configSettings'];
+        const config = this.configService.getConfig();
         const datePhone = config.join_by_phone_from_date;
 
         if (!datePhone || datePhone.length === 0) {
