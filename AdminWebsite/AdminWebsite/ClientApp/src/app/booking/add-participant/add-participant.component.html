@@ -7,7 +7,7 @@
 
 
 
-<div *ngIf="errorAlternativeEmail || errorJohAccountNotFound"
+<div *ngIf="errorAlternativeEmail || errorJohAccountNotFound || errorJudiciaryAccount"
      class="govuk-error-summary govuk-!-width-full"
      aria-labelledby="error-summary-title"
      role="alert"
@@ -23,6 +23,9 @@
             </li>
             <li *ngIf="errorJohAccountNotFound">
                 <a (click)="goToDiv('search-email-component')">{{ constants.Error.NotFoundJohEmail }}</a>
+            </li>
+            <li *ngIf="errorJudiciaryAccount">
+                <a (click)="goToDiv('search-email-component')">{{ constants.Error.JohEmailErrorMsg }}</a>
             </li>
         </ul>
     </div>
