@@ -81,7 +81,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     interpreterSelected = false;
     errorAlternativeEmail = false;
     errorJohAccountNotFound = false;
-
+    errorJudiciaryAccount = false;
     @ViewChild(SearchEmailComponent) searchEmail: SearchEmailComponent;
 
     @ViewChild(ParticipantListComponent, { static: true })
@@ -404,6 +404,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         this.errorJohAccountNotFound = false;
 
         if (this.form.valid && this.validEmail()) {
+            this.disableCaseAndHearingRoles();
             if (this.editMode) {
                 this.displayNext();
             } else {
@@ -486,6 +487,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     onRoleSelected($event) {
         $event.stopImmediatePropagation();
         this.roleSelected();
+        this.validateJudiciaryEmailAndRole();
     }
 
     roleSelected() {
@@ -536,6 +538,29 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
             return this.searchEmail.email !== judge?.username;
         }
         return true;
+    }
+
+    validateJudiciaryEmailAndRole() {
+        if (this.searchEmail && this.searchEmail.email.length) {
+            this.searchService.searchJudiciaryEntries(this.searchEmail.email).subscribe(x => {
+                this.errorJudiciaryAccount = false;
+                if (x && x.length) {
+                    if (this.role.value !== 'Panel Member' && this.role.value !== 'Winger') {
+                        this.setErrorForJudiciaryAccount(); 
+                    }
+                } else {
+                    if (this.role.value === 'Panel Member' || this.role.value === 'Winger') {
+                        this.setErrorForJudiciaryAccount(); 
+                    }
+                }
+            });
+        }
+    }
+
+    private setErrorForJudiciaryAccount() {
+        this.role.setErrors({ 'invalid': true });
+        this.party.setErrors({ 'invalid': true });
+        this.errorJudiciaryAccount = true;
     }
 
     saveParticipant() {
@@ -804,7 +829,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         this.isShowErrorSummary = false;
         this.isRoleSelected = true;
         this.isPartySelected = true;
-
+        this.errorJudiciaryAccount = false;
         if (this.hearing.participants.length > 1) {
             this.displayNext();
         }
