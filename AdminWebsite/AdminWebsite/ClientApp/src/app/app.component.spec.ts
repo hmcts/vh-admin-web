@@ -1,5 +1,5 @@
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { fakeAsync, TestBed, waitForAsync, inject, tick } from '@angular/core/testing';
+import { fakeAsync, inject, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
@@ -12,6 +12,7 @@ import { ConnectionServiceConfigToken } from './services/connection/connection';
 import { ConnectionService } from './services/connection/connection.service';
 import { DeviceType } from './services/device-type';
 import { PageTrackerService } from './services/page-tracker.service';
+import { ReferenceDataService } from './services/reference-data.service';
 import { VideoHearingsService } from './services/video-hearings.service';
 import { HeaderComponent } from './shared/header/header.component';
 import { UnsupportedBrowserComponent } from './shared/unsupported-browser/unsupported-browser.component';
@@ -34,6 +35,8 @@ describe('AppComponent', () => {
     let deviceTypeServiceSpy: jasmine.SpyObj<DeviceType>;
     const mockOidcSecurityService = new MockOidcSecurityService();
     let oidcSecurityService;
+    let referenceDataServiceServiceSpy: jasmine.SpyObj<ReferenceDataService>;
+
     const clientSettings = new ClientSettingsResponse({
         tenant_id: 'tenantid',
         client_id: 'clientid',
@@ -55,6 +58,8 @@ describe('AppComponent', () => {
             configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettings', 'loadConfig']);
             configServiceSpy.getClientSettings.and.returnValue(of(clientSettings));
             oidcSecurityService = mockOidcSecurityService;
+
+            referenceDataServiceServiceSpy = jasmine.createSpyObj<ReferenceDataService>('ReferenceDataService', ['fetchPublicHolidays']);
 
             window = jasmine.createSpyObj('WindowRef', ['getLocation']);
             window.getLocation.and.returnValue(new WindowLocation('/url'));
@@ -81,6 +86,7 @@ describe('AppComponent', () => {
                     { provide: PageTrackerService, useValue: pageTracker },
                     { provide: WindowRef, useValue: window },
                     { provide: VideoHearingsService, useValue: videoHearingServiceSpy },
+                    { provide: ReferenceDataService, useValue: referenceDataServiceServiceSpy },
                     { provide: DeviceType, useValue: deviceTypeServiceSpy },
                     { provide: ConnectionService, useFactory: () => mockConnectionService }
                 ]

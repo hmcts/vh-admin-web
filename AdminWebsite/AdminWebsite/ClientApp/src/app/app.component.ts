@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, HostListener, ElementRef, Renderer2 } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { ConfigService } from './services/config.service';
 import { PageTrackerService } from './services/page-tracker.service';
@@ -9,6 +9,7 @@ import { BookingService } from './services/booking.service';
 import { DeviceType } from './services/device-type';
 import { ConnectionService } from './services/connection/connection.service';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
+import { ReferenceDataService } from './services/reference-data.service';
 
 @Component({
     selector: 'app-root',
@@ -43,7 +44,8 @@ export class AppComponent implements OnInit {
         private videoHearingsService: VideoHearingsService,
         private bookingService: BookingService,
         private deviceTypeService: DeviceType,
-        connection: ConnectionService
+        connection: ConnectionService,
+        private refDataService: ReferenceDataService
     ) {
         pageTracker.trackNavigation(router);
         pageTracker.trackPreviousPage(router);
@@ -67,6 +69,10 @@ export class AppComponent implements OnInit {
             });
         });
 
+        if (!this.loggedIn) {
+            this.router.navigate(['/login'], { queryParams: { returnUrl: currentUrl } });
+        }
+        this.refDataService.fetchPublicHolidays();
         this.headerComponent.confirmLogout.subscribe(() => {
             this.showConfirmation();
         });

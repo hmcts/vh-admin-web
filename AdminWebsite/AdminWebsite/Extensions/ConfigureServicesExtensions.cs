@@ -126,6 +126,7 @@ namespace AdminWebsite.Extensions
 
                 });
 
+            serviceCollection.AddHttpClient<IPublicHolidayRetriever, UkPublicHolidayRetriever>();
             serviceCollection.AddTransient<IUserIdentity, UserIdentity>((ctx) =>
             {
                 var userPrincipal = ctx.GetService<IHttpContextAccessor>().HttpContext.User;
