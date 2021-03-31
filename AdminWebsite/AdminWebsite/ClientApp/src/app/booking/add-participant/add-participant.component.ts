@@ -651,31 +651,42 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     }
 
     private addUpdateLinkedParticipant(newParticipant: ParticipantModel): LinkedParticipantModel[] {
-        const _linkedParticipants: LinkedParticipantModel[] = [];
+        let _linkedParticipants: LinkedParticipantModel[] = [];
         if (newParticipant.hearing_role_name.toLowerCase() === HearingRoles.INTERPRETER) {
-            if (this.editMode) {
-                if (this.localEditMode) {
-                    const linkedParticipant = newParticipant.linked_participants[0];
-                    const interpretee = this.hearing.participants.find(p => p.id === linkedParticipant.linkedParticipantId);
-                    interpretee.linked_participants = [];
-                    linkedParticipant.linkedParticipantId = this.getInterpreteeId(newParticipant.interpreterFor);
-                    linkedParticipant.participantId = newParticipant.id;
-                    _linkedParticipants.push(linkedParticipant);
-                } else {
-                    const linkedParticipant = new LinkedParticipantModel();
-                    linkedParticipant.linkType = LinkedParticipantType.Interpreter;
-                    linkedParticipant.participantEmail = newParticipant.email;
-                    linkedParticipant.linkedParticipantEmail = newParticipant.interpreterFor;
-                    _linkedParticipants.push(linkedParticipant);
-                }
-            } else {
-                const linkedParticipant = new LinkedParticipantModel();
-                linkedParticipant.linkType = LinkedParticipantType.Interpreter;
-                linkedParticipant.participantEmail = newParticipant.email;
-                linkedParticipant.linkedParticipantEmail = newParticipant.interpreterFor;
-                _linkedParticipants.push(linkedParticipant);
-            }
+            _linkedParticipants = this.updateLinkedParticipantList(newParticipant);
         }
+        return _linkedParticipants;
+    }
+    private updateLinkedParticipantList(newParticipant: ParticipantModel): LinkedParticipantModel[] {
+        let _linkedParticipants: LinkedParticipantModel[] = [];
+        if (this.editMode) {
+            _linkedParticipants = this.updateNewParticipantToLinkedParticipant(newParticipant);
+        } else {
+            _linkedParticipants = this.addNewParticipantToLinkedParticipant(newParticipant);
+        }
+        return _linkedParticipants;
+    }
+    private updateNewParticipantToLinkedParticipant(newParticipant: ParticipantModel): LinkedParticipantModel[] {
+        let _linkedParticipants: LinkedParticipantModel[] = [];
+        if (this.localEditMode) {
+            const linkedParticipant = newParticipant.linked_participants[0];
+            const interpretee = this.hearing.participants.find(p => p.id === linkedParticipant.linkedParticipantId);
+            interpretee.linked_participants = [];
+            linkedParticipant.linkedParticipantId = this.getInterpreteeId(newParticipant.interpreterFor);
+            linkedParticipant.participantId = newParticipant.id;
+            _linkedParticipants.push(linkedParticipant);
+        } else {
+            _linkedParticipants = this.addNewParticipantToLinkedParticipant(newParticipant);
+        }
+        return _linkedParticipants;
+    }
+    private addNewParticipantToLinkedParticipant(newParticipant: ParticipantModel): LinkedParticipantModel[] {
+        const _linkedParticipants: LinkedParticipantModel[] = [];
+        const linkedParticipant = new LinkedParticipantModel();
+        linkedParticipant.linkType = LinkedParticipantType.Interpreter;
+        linkedParticipant.participantEmail = newParticipant.email;
+        linkedParticipant.linkedParticipantEmail = newParticipant.interpreterFor;
+        _linkedParticipants.push(linkedParticipant);
         return _linkedParticipants;
     }
     private getInterpreteeId(email: string): string {
