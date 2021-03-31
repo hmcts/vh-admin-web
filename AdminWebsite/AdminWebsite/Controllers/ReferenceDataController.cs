@@ -6,6 +6,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using AdminWebsite.Contracts.Responses;
+using AdminWebsite.Mappers;
+using AdminWebsite.Services;
 using HearingTypeResponse = AdminWebsite.Contracts.Responses.HearingTypeResponse;
 
 namespace AdminWebsite.Controllers
@@ -19,15 +22,17 @@ namespace AdminWebsite.Controllers
     public class ReferenceDataController : ControllerBase
     {
         private readonly IBookingsApiClient _bookingsApiClient;
+        private readonly IPublicHolidayRetriever _publicHolidayRetriever;
         private readonly IUserIdentity _identity;
 
         /// <summary>
         /// Instantiate the controller
         /// </summary>
-        public ReferenceDataController(IBookingsApiClient bookingsApiClient, IUserIdentity identity)
+        public ReferenceDataController(IBookingsApiClient bookingsApiClient, IUserIdentity identity, IPublicHolidayRetriever publicHolidayRetriever)
         {
             _bookingsApiClient = bookingsApiClient;
             _identity = identity;
+            _publicHolidayRetriever = publicHolidayRetriever;
         }
 
         /// <summary>
@@ -89,6 +94,20 @@ namespace AdminWebsite.Controllers
         public async Task<ActionResult<IList<HearingVenueResponse>>> GetCourts()
         {
             var response = await _bookingsApiClient.GetHearingVenuesAsync();
+            return Ok(response);
+        }
+
+        /// <summary>
+        ///     Get upcoming public holidays in England and Wales
+        /// </summary>
+        /// <returns>List upcoming public holidays</returns>
+        [HttpGet("public-holidays")]
+        [ProducesResponseType(typeof(IList<PublicHolidayResponse>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        public async Task<ActionResult<IList<PublicHolidayResponse>>> PublicHolidays()
+        {
+            var holidays = await _publicHolidayRetriever.RetrieveUpcomingHolidays();
+            var response = holidays.Select(PublicHolidayResponseMapper.MapFrom).ToList();
             return Ok(response);
         }
     }

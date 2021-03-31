@@ -36,13 +36,14 @@ namespace AdminWebsite.Controllers
         private readonly ILogger<HearingsController> _logger;
         private readonly IUserAccountService _userAccountService;
         private readonly IUserIdentity _userIdentity;
+        private readonly IPublicHolidayRetriever _publicHolidayRetriever;
 
         /// <summary>
         ///     Instantiates the controller
         /// </summary>
         public HearingsController(IBookingsApiClient bookingsApiClient, IUserIdentity userIdentity,
             IUserAccountService userAccountService, IValidator<EditHearingRequest> editHearingRequestValidator,
-            ILogger<HearingsController> logger, IHearingsService hearingsService)
+            ILogger<HearingsController> logger, IHearingsService hearingsService, IPublicHolidayRetriever publicHolidayRetriever)
         {
             _bookingsApiClient = bookingsApiClient;
             _userIdentity = userIdentity;
@@ -50,6 +51,7 @@ namespace AdminWebsite.Controllers
             _editHearingRequestValidator = editHearingRequestValidator;
             _logger = logger;
             _hearingsService = hearingsService;
+            _publicHolidayRetriever = publicHolidayRetriever;
         }
 
         /// <summary>
@@ -98,8 +100,9 @@ namespace AdminWebsite.Controllers
 
                 if (request.IsMultiDay)
                 {
+                    var publicHolidays = await _publicHolidayRetriever.RetrieveUpcomingHolidays();
                     var listOfDates = DateListMapper.GetListOfWorkingDates(request.MultiHearingDetails.StartDate,
-                        request.MultiHearingDetails.EndDate);
+                        request.MultiHearingDetails.EndDate, publicHolidays);
                     var totalDays = listOfDates.Select(x => x.DayOfYear).Distinct().Count() + 1; // include start date
                     await _hearingsService.SendMultiDayHearingConfirmationEmail(hearingDetailsResponse, totalDays);
                 }
@@ -140,7 +143,8 @@ namespace AdminWebsite.Controllers
         public async Task<IActionResult> CloneHearing(Guid hearingId, MultiHearingRequest hearingRequest)
         {
             _logger.LogDebug("Attempting to clone hearing {Hearing}", hearingId);
-            var listOfDates = DateListMapper.GetListOfWorkingDates(hearingRequest.StartDate, hearingRequest.EndDate);
+            var publicHolidays = await _publicHolidayRetriever.RetrieveUpcomingHolidays();
+            var listOfDates = DateListMapper.GetListOfWorkingDates(hearingRequest.StartDate, hearingRequest.EndDate, publicHolidays);
             if (listOfDates.Count == 0)
             {
                 _logger.LogWarning("No working dates provided to clone to");

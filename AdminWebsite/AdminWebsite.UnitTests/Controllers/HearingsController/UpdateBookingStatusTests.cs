@@ -53,7 +53,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 userAccountService.Object,
                 editHearingRequestValidator.Object,
                 new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>().Object,
-                _hearingsService);
+                _hearingsService,
+                Mock.Of<IPublicHolidayRetriever>());
         }
 
         [Test]
