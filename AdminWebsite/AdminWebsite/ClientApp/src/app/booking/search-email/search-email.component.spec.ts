@@ -121,7 +121,6 @@ describe('SeachEmailComponent', () => {
         fixture.detectChanges();
         component.blurEmail();
         expect(component.isValidEmail).toBeTruthy();
-        expect(component.notFoundParticipant).toBeFalsy();
     });
     it('should close drop down on the click outside', () => {
         component.isShowResult = true;

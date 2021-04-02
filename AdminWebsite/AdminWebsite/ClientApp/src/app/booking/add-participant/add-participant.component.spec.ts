@@ -9,7 +9,7 @@ import { HearingModel } from '../../common/model/hearing.model';
 import { ParticipantModel } from '../../common/model/participant.model';
 import { PartyModel } from '../../common/model/party.model';
 import { BookingService } from '../../services/booking.service';
-import { CaseAndHearingRolesResponse, ClientSettingsResponse, HearingRole } from '../../services/clients/api-client';
+import { CaseAndHearingRolesResponse, ClientSettingsResponse, HearingRole, PersonResponse } from '../../services/clients/api-client';
 import { ConfigService } from '../../services/config.service';
 import { Logger } from '../../services/logger';
 import { SearchService } from '../../services/search.service';
@@ -90,6 +90,7 @@ p2.case_role_name = 'Applicant';
 p2.company = 'CN';
 p2.representee = 'representee';
 p2.user_role_name = 'Representative';
+p1.username = 'judge@user.name';
 
 const p3 = new ParticipantModel();
 p3.first_name = 'Chris';
@@ -200,6 +201,7 @@ const routerSpy: jasmine.SpyObj<Router> = {
 let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
 let participantServiceSpy: jasmine.SpyObj<ParticipantService>;
 let bookingServiceSpy: jasmine.SpyObj<BookingService>;
+let searchServiceSpy: jasmine.SpyObj<SearchService>;
 let loggerSpy: jasmine.SpyObj<Logger>;
 
 const configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettings']);
@@ -238,8 +240,21 @@ describe('AddParticipantComponent', () => {
             bookingServiceSpy = jasmine.createSpyObj<BookingService>(['isEditMode', 'resetEditMode']);
             bookingServiceSpy.isEditMode.and.returnValue(false);
 
+            searchServiceSpy = jasmine.createSpyObj<SearchService>(['search', 'searchEntries', 'searchJudiciaryEntries']);
+            
+            searchServiceSpy.searchJudiciaryEntries.and.returnValue(of([new PersonResponse()]));
+            
+            searchServiceSpy.TitleList = [
+                {
+                    value: 'Mrs'
+                },
+                {
+                    value: 'Miss'
+                }
+            ];
+
             component = new AddParticipantComponent(
-                searchService,
+                searchServiceSpy,
                 videoHearingsServiceSpy,
                 participantServiceSpy,
                 routerSpy,
@@ -692,7 +707,132 @@ describe('AddParticipantComponent', () => {
         expect(videoHearingsServiceSpy.getCurrentRequest).toHaveBeenCalled();
         expect(component.interpreterSelected).toBe(false);
     });
+
+    describe('validateJudiciaryEmailAndRole', () => {
+        it('should not call search service if searchEmail component is null', () => {
+            component.searchEmail = null;
+            component.validateJudiciaryEmailAndRole();
+            expect(searchServiceSpy.searchJudiciaryEntries).toHaveBeenCalledTimes(0);
+        });
+
+        it('should not call search service if email is empty', () => {
+            component.searchEmail.email = '';
+            component.validateJudiciaryEmailAndRole();
+            expect(searchServiceSpy.searchJudiciaryEntries).toHaveBeenCalledTimes(0);
+        });
+
+        describe('with email set', () => {
+            const email = 'email@hmcts.net';
+            const emptyPersonResponse = [];
+            const populatedPersonResponse = [new PersonResponse()];
+
+            const testCases = [
+                { searchJudiciaryEntriesValue: null, role: "", expectError: false },
+                { searchJudiciaryEntriesValue: null, role: "Other", expectError: false },
+                { searchJudiciaryEntriesValue: null, role: "Panel Member", expectError: true },
+                { searchJudiciaryEntriesValue: null, role: "Winger", expectError: true },
+                { searchJudiciaryEntriesValue: emptyPersonResponse, role: "", expectError: false },
+                { searchJudiciaryEntriesValue: emptyPersonResponse, role: "Other", expectError: false },
+                { searchJudiciaryEntriesValue: emptyPersonResponse, role: "Panel Member", expectError: true },
+                { searchJudiciaryEntriesValue: emptyPersonResponse, role: "Winger", expectError: true },
+                { searchJudiciaryEntriesValue: populatedPersonResponse, role: "", expectError: true },
+                { searchJudiciaryEntriesValue: populatedPersonResponse, role: "Other", expectError: true },
+                { searchJudiciaryEntriesValue: populatedPersonResponse, role: "Panel Member", expectError: false },
+                { searchJudiciaryEntriesValue: populatedPersonResponse, role: "Winger", expectError: false },                
+            ];
+
+            beforeEach(
+                waitForAsync(() => {
+                    component.searchEmail.email = email;
+                })
+            );
+            
+            for(let testCase of testCases) {
+                it(`should ${testCase.expectError === false ? 'not' : ''} have errors when response is 
+                    ${testCase.searchJudiciaryEntriesValue ? 'length: ' + testCase.searchJudiciaryEntriesValue.length : 'null'} 
+                    and role is '${testCase.role}'`, () => {                
+                        searchServiceSpy.searchJudiciaryEntries.and.returnValue(of(testCase.searchJudiciaryEntriesValue));
+                        role.setValue(testCase.role);
+                        component.validateJudiciaryEmailAndRole();                    
+                        expect(searchServiceSpy.searchJudiciaryEntries).toHaveBeenCalledTimes(1);
+                        expect(searchServiceSpy.searchJudiciaryEntries).toHaveBeenCalledWith(email);
+                        expect(component.errorJudiciaryAccount).toBe(testCase.expectError);
+                });
+            };
+
+            // it('should call search service if email is not empty', () => {                
+            //     searchServiceSpy.searchJudiciaryEntries.and.returnValue(of(null));
+            //     component.validateJudiciaryEmailAndRole();
+            //     expect(searchServiceSpy.searchJudiciaryEntries).toHaveBeenCalledTimes(1);
+            //     expect(searchServiceSpy.searchJudiciaryEntries).toHaveBeenCalledWith(email);
+            // });
+
+            // it('should have errorJudiciaryAccount set to false if search service returns null and role is not Panel Member or Winger', () => {
+            //     searchServiceSpy.searchJudiciaryEntries.and.returnValue(of(null))                
+            //     component.validateJudiciaryEmailAndRole();
+            //     expect(component.errorJudiciaryAccount).toBeFalsy();
+            // });
+
+            // it('should have errorJudiciaryAccount set to true if search service returns null and role is Panel Member', () => {
+            //     searchServiceSpy.searchJudiciaryEntries.and.returnValue(of(null))                
+            //     role.setValue('Panel Member') // TODO fix magic string
+            //     component.validateJudiciaryEmailAndRole();
+            //     expect(component.errorJudiciaryAccount).toBeTruthy();
+            // });
+
+            // it('should have errorJudiciaryAccount set to true if search service returns null and role is Winger', () => {
+            //     searchServiceSpy.searchJudiciaryEntries.and.returnValue(of(null));
+            //     role.setValue('Winger'); // TODO fix magic string
+            //     component.validateJudiciaryEmailAndRole();
+            //     expect(component.errorJudiciaryAccount).toBeTruthy();
+            // });
+        });
+    });
+    describe('validateJudgeAndJohMembers', () => {
+        it('should return true if hearing is null', () => {
+            component.hearing = null;
+            expect(component.validateJudgeAndJohMembers()).toBeTruthy();
+        });
+        describe('when hearing is not null', () => {
+            beforeEach(
+                waitForAsync(() => {
+                    component.hearing.participants = [];
+                })
+            );
+            it('should return true if participants is empty', () => {
+                expect(component.validateJudgeAndJohMembers()).toBeTruthy();
+            });
+            it('should return true if sole participant role is judge and does not equal search email', () => {
+                component.hearing.participants.push(p1);
+                component.searchEmail.email = 'judge1@user.name';
+                expect(component.validateJudgeAndJohMembers()).toBeTruthy();
+            });
+            it('should return false if sole participant role is judge and does equal search email', () => {
+                component.hearing.participants.push(p1);
+                component.searchEmail.email = 'judge@user.name';
+                expect(component.validateJudgeAndJohMembers()).toBeFalsy();
+            });
+            it('should return true if sole participant role is not judge', () => {
+                component.hearing.participants.push(p2);
+                component.searchEmail.email = 'judge@user.name';
+                expect(component.validateJudgeAndJohMembers()).toBeTruthy();
+            });
+            it('should return true if a participant role is judge and does not equal search email', () => {
+                component.hearing.participants.push(p2);
+                component.hearing.participants.push(p1);
+                component.searchEmail.email = 'judge1@user.name';
+                expect(component.validateJudgeAndJohMembers()).toBeTruthy();
+            });
+            it('should return false if a participant role is judge and does equal search email', () => {
+                component.hearing.participants.push(p2);
+                component.hearing.participants.push(p1);
+                component.searchEmail.email = 'judge@user.name';
+                expect(component.validateJudgeAndJohMembers()).toBeFalsy();
+            });
+        });
+    });
 });
+
 describe('AddParticipantComponent edit mode', () => {
     beforeEach(
         waitForAsync(() => {
@@ -704,6 +844,8 @@ describe('AddParticipantComponent edit mode', () => {
                 'cancelRequest'
             ]);
             bookingServiceSpy = jasmine.createSpyObj<BookingService>(['isEditMode', 'getParticipantEmail', 'resetEditMode']);
+
+
 
             TestBed.configureTestingModule({
                 imports: [SharedModule, RouterModule.forChild([]), BookingModule, PopupModule, TestingModule],
