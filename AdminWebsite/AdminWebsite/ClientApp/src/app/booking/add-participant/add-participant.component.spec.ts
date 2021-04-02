@@ -218,7 +218,7 @@ const searchService = {
     ...jasmine.createSpyObj<SearchService>(['search'])
 } as jasmine.SpyObj<SearchService>;
 
-fdescribe('AddParticipantComponent', () => {
+describe('AddParticipantComponent', () => {
     beforeEach(
         waitForAsync(() => {
             const hearing = initHearingRequest();
@@ -1077,7 +1077,7 @@ fdescribe('AddParticipantComponent edit mode', () => {
         expect(updatedParticipant.display_name).toBe('Test Participant8');
     });
 });
-fdescribe('AddParticipantComponent edit mode no participants added', () => {
+describe('AddParticipantComponent edit mode no participants added', () => {
     beforeEach(
         waitForAsync(() => {
             const hearing = initExistHearingRequest();
