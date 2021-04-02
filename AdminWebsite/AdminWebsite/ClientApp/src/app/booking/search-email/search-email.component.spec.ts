@@ -117,10 +117,10 @@ describe('SeachEmailComponent', () => {
     });
     it('should validate input email if email was not found in the list', () => {
         component.invalidPattern = 'courtroom.net';
+        component.email = 'email@hmcts.net';
         fixture.detectChanges();
         component.blurEmail();
         expect(component.isValidEmail).toBeTruthy();
-        expect(component.notFoundParticipant).toBeFalsy();
     });
     it('should close drop down on the click outside', () => {
         component.isShowResult = true;
