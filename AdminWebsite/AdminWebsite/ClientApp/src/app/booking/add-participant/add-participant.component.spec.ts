@@ -9,7 +9,7 @@ import { HearingModel } from '../../common/model/hearing.model';
 import { ParticipantModel } from '../../common/model/participant.model';
 import { PartyModel } from '../../common/model/party.model';
 import { BookingService } from '../../services/booking.service';
-import { CaseAndHearingRolesResponse, ClientSettingsResponse, HearingRole } from '../../services/clients/api-client';
+import { CaseAndHearingRolesResponse, ClientSettingsResponse, HearingRole, PersonResponse } from '../../services/clients/api-client';
 import { ConfigService } from '../../services/config.service';
 import { Logger } from '../../services/logger';
 import { SearchService } from '../../services/search.service';
@@ -169,6 +169,7 @@ const routerSpy: jasmine.SpyObj<Router> = {
 let videoHearingsServiceSpy: jasmine.SpyObj<VideoHearingsService>;
 let participantServiceSpy: jasmine.SpyObj<ParticipantService>;
 let bookingServiceSpy: jasmine.SpyObj<BookingService>;
+let searchServiceSpy: jasmine.SpyObj<SearchService>;
 let loggerSpy: jasmine.SpyObj<Logger>;
 
 const configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettings']);
@@ -185,7 +186,7 @@ const searchService = {
     ...jasmine.createSpyObj<SearchService>(['search'])
 } as jasmine.SpyObj<SearchService>;
 
-describe('AddParticipantComponent', () => {
+fdescribe('AddParticipantComponent', () => {
     beforeEach(
         waitForAsync(() => {
             const hearing = initHearingRequest();
@@ -207,8 +208,21 @@ describe('AddParticipantComponent', () => {
             bookingServiceSpy = jasmine.createSpyObj<BookingService>(['isEditMode', 'resetEditMode']);
             bookingServiceSpy.isEditMode.and.returnValue(false);
 
+            searchServiceSpy = jasmine.createSpyObj<SearchService>(['search', 'searchEntries', 'searchJudiciaryEntries']);
+            
+            searchServiceSpy.searchJudiciaryEntries.and.returnValue(of([new PersonResponse()]));
+            
+            searchServiceSpy.TitleList = [
+                {
+                    value: 'Mrs'
+                },
+                {
+                    value: 'Miss'
+                }
+            ];
+
             component = new AddParticipantComponent(
-                searchService,
+                searchServiceSpy,
                 videoHearingsServiceSpy,
                 participantServiceSpy,
                 routerSpy,
@@ -661,8 +675,63 @@ describe('AddParticipantComponent', () => {
         expect(videoHearingsServiceSpy.getCurrentRequest).toHaveBeenCalled();
         expect(component.interpreterSelected).toBe(false);
     });
+
+    describe('validateJudiciaryEmailAndRole', () => {
+        it('should not call search service if searchEmail component is null', () => {
+            component.searchEmail = null;
+            component.validateJudiciaryEmailAndRole();
+            expect(searchServiceSpy.searchJudiciaryEntries).toHaveBeenCalledTimes(0);
+        });
+
+        it('should not call search service if email is empty', () => {
+            component.searchEmail.email = '';
+            component.validateJudiciaryEmailAndRole();
+            expect(searchServiceSpy.searchJudiciaryEntries).toHaveBeenCalledTimes(0);
+        });
+
+        describe('with email set', () => {
+            const email = 'email@hmcts.net';
+            const emptyPersonResponse = [];
+            const populatedPersonResponse = [new PersonResponse()];
+
+            const testCases = [
+                { searchJudiciaryEntriesValue: null, role: "", expectError: false },
+                { searchJudiciaryEntriesValue: null, role: "Other", expectError: false },
+                { searchJudiciaryEntriesValue: null, role: "Panel Member", expectError: true },
+                { searchJudiciaryEntriesValue: null, role: "Winger", expectError: true },
+                { searchJudiciaryEntriesValue: emptyPersonResponse, role: "", expectError: false },
+                { searchJudiciaryEntriesValue: emptyPersonResponse, role: "Other", expectError: false },
+                { searchJudiciaryEntriesValue: emptyPersonResponse, role: "Panel Member", expectError: true },
+                { searchJudiciaryEntriesValue: emptyPersonResponse, role: "Winger", expectError: true },
+                { searchJudiciaryEntriesValue: populatedPersonResponse, role: "", expectError: true },
+                { searchJudiciaryEntriesValue: populatedPersonResponse, role: "Other", expectError: true },
+                { searchJudiciaryEntriesValue: populatedPersonResponse, role: "Panel Member", expectError: false },
+                { searchJudiciaryEntriesValue: populatedPersonResponse, role: "Winger", expectError: false },                
+            ];
+
+            beforeEach(
+                waitForAsync(() => {
+                    component.searchEmail.email = email;
+                })
+            );
+            
+            for(let testCase of testCases) {
+                it(`should ${testCase.expectError === false ? 'not' : ''} have errors when response is 
+                    ${testCase.searchJudiciaryEntriesValue ? 'length: ' + testCase.searchJudiciaryEntriesValue.length : 'null'} 
+                    and role is '${testCase.role}'`, () => {                
+                        searchServiceSpy.searchJudiciaryEntries.and.returnValue(of(testCase.searchJudiciaryEntriesValue));
+                        role.setValue(testCase.role);
+                        component.validateJudiciaryEmailAndRole();                    
+                        expect(searchServiceSpy.searchJudiciaryEntries).toHaveBeenCalledTimes(1);
+                        expect(searchServiceSpy.searchJudiciaryEntries).toHaveBeenCalledWith(email);
+                        expect(component.errorJudiciaryAccount).toBe(testCase.expectError);
+                });
+            };
+        });
+    });
 });
-describe('AddParticipantComponent edit mode', () => {
+
+fdescribe('AddParticipantComponent edit mode', () => {
     beforeEach(
         waitForAsync(() => {
             videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>([
@@ -673,6 +742,8 @@ describe('AddParticipantComponent edit mode', () => {
                 'cancelRequest'
             ]);
             bookingServiceSpy = jasmine.createSpyObj<BookingService>(['isEditMode', 'getParticipantEmail', 'resetEditMode']);
+
+
 
             TestBed.configureTestingModule({
                 imports: [SharedModule, RouterModule.forChild([]), BookingModule, PopupModule, TestingModule],
@@ -950,7 +1021,7 @@ describe('AddParticipantComponent edit mode', () => {
         expect(participantServiceSpy.removeParticipant).toHaveBeenCalled();
     });
 });
-describe('AddParticipantComponent edit mode no participants added', () => {
+fdescribe('AddParticipantComponent edit mode no participants added', () => {
     beforeEach(
         waitForAsync(() => {
             const hearing = initExistHearingRequest();
