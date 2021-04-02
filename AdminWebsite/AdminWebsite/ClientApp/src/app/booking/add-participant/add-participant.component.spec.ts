@@ -90,6 +90,7 @@ p2.case_role_name = 'Applicant';
 p2.company = 'CN';
 p2.representee = 'representee';
 p2.user_role_name = 'Representative';
+p1.username = 'judge@user.name';
 
 const p3 = new ParticipantModel();
 p3.first_name = 'Chris';
@@ -729,9 +730,52 @@ fdescribe('AddParticipantComponent', () => {
             };
         });
     });
+    describe('validateJudgeAndJohMembers', () => {
+        it('should return true if hearing is null', () => {
+            component.hearing = null;
+            expect(component.validateJudgeAndJohMembers()).toBeTruthy();
+        });
+        describe('when hearing is not null', () => {
+            beforeEach(
+                waitForAsync(() => {
+                    component.hearing.participants = [];
+                })
+            );
+            it('should return true if participants is empty', () => {
+                expect(component.validateJudgeAndJohMembers()).toBeTruthy();
+            });
+            it('should return true if sole participant role is judge and does not equal search email', () => {
+                component.hearing.participants.push(p1);
+                component.searchEmail.email = 'judge1@user.name';
+                expect(component.validateJudgeAndJohMembers()).toBeTruthy();
+            });
+            it('should return false if sole participant role is judge and does equal search email', () => {
+                component.hearing.participants.push(p1);
+                component.searchEmail.email = 'judge@user.name';
+                expect(component.validateJudgeAndJohMembers()).toBeFalsy();
+            });
+            it('should return true if sole participant role is not judge', () => {
+                component.hearing.participants.push(p2);
+                component.searchEmail.email = 'judge@user.name';
+                expect(component.validateJudgeAndJohMembers()).toBeTruthy();
+            });
+            it('should return true if a participant role is judge and does not equal search email', () => {
+                component.hearing.participants.push(p2);
+                component.hearing.participants.push(p1);
+                component.searchEmail.email = 'judge1@user.name';
+                expect(component.validateJudgeAndJohMembers()).toBeTruthy();
+            });
+            it('should return false if a participant role is judge and does equal search email', () => {
+                component.hearing.participants.push(p2);
+                component.hearing.participants.push(p1);
+                component.searchEmail.email = 'judge@user.name';
+                expect(component.validateJudgeAndJohMembers()).toBeFalsy();
+            });
+        });
+    });
 });
 
-fdescribe('AddParticipantComponent edit mode', () => {
+describe('AddParticipantComponent edit mode', () => {
     beforeEach(
         waitForAsync(() => {
             videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>([
