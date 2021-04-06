@@ -546,11 +546,11 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
                 this.errorJudiciaryAccount = false;
                 if (x && x.length) {
                     if (this.role.value !== 'Panel Member' && this.role.value !== 'Winger') {
-                        this.setErrorForJudiciaryAccount(); 
+                        this.setErrorForJudiciaryAccount();
                     }
                 } else {
                     if (this.role.value === 'Panel Member' || this.role.value === 'Winger') {
-                        this.setErrorForJudiciaryAccount(); 
+                        this.setErrorForJudiciaryAccount();
                     }
                 }
             });
