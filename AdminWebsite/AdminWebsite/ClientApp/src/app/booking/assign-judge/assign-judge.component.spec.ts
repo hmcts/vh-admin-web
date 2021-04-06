@@ -145,8 +145,8 @@ describe('AssignJudgeComponent', () => {
                     },
                     { provide: BookingService, useValue: bookingServiseSpy },
                     { provide: Logger, useValue: loggerSpy },
-                    { provide: ConfigService, useValue: configServiceSpy },
-                    RecordingGuardService
+                    RecordingGuardService,
+                    { provide: ConfigService, useValue: configServiceSpy }
                 ],
                 declarations: [
                     AssignJudgeComponent,

@@ -96,8 +96,8 @@ describe('SeachEmailComponent', () => {
         expect(component.results.length).toEqual(0);
     });
     it('should validate email', () => {
-        component.email = 'email@hmcts.tt.net';
-        component.invalidPattern = '@hmcts.net';
+        component.invalidPattern = 'courtroom.net';
+        component.email = 'email@hmcts.net';
         component.validateEmail();
         expect(component.isValidEmail).toBeTruthy();
     });

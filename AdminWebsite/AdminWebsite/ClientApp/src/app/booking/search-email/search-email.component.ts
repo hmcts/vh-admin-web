@@ -63,17 +63,19 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
     }
 
     async getEmailPattern() {
-        this.configService
-            .getClientSettings()
-            .pipe(map(x => x.test_username_stem))
-            .subscribe(x => {
-                this.invalidPattern = x;
-                if (!this.invalidPattern || this.invalidPattern.length === 0) {
-                    this.logger.error(`${this.loggerPrefix} Pattern to validate email is not set`, new Error('Email validation error'));
-                } else {
-                    this.logger.info(`${this.loggerPrefix} Pattern to validate email is set with length ${this.invalidPattern.length}`);
-                }
-            });
+        this.$subscriptions.push(
+            this.configService
+                .getClientSettings()
+                .pipe(map(x => x.test_username_stem))
+                .subscribe(x => {
+                    this.invalidPattern = x;
+                    if (!this.invalidPattern || this.invalidPattern.length === 0) {
+                        this.logger.error(`${this.loggerPrefix} Pattern to validate email is not set`, new Error('Email validation error'));
+                    } else {
+                        this.logger.info(`${this.loggerPrefix} Pattern to validate email is set with length ${this.invalidPattern.length}`);
+                    }
+                })
+        );
     }
 
     getData(data: PersonResponse[]) {

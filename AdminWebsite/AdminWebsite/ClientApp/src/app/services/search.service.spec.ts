@@ -46,7 +46,7 @@ describe('SearchService', () => {
     it('should return result', inject([SearchService], (service: SearchService) => {
         const terms = 'abc';
         clientApiSpy.postPersonBySearchTerm.and.returnValue(of(participantList));
-        service.search(of(terms),"Appellant").subscribe(x => expect(x).toBeTruthy());
+        service.search(of(terms), 'Appellant').subscribe(x => expect(x).toBeTruthy());
     }));
     it('should method searchEntries not call api and return empty array', inject([SearchService], (service: SearchService) => {
         const terms = 'ab';

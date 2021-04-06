@@ -60,9 +60,17 @@ Scenario: Removing Interpreter
 
 Scenario: Edit Interpreter
 	Given the Video Hearings Officer user has progressed to the Add Participants page
+	And the user completes the add participants form with an Interpreter	
+	When the user adds a Litigant in person 
+	And the user edits an Interpreter
+	And the user has progressed to the summary page
+	Then the user views the information on the summary form
+
+Scenario: Edit Interpreter After Saving Booking
+	Given the Video Hearings Officer user has progressed to the Add Participants page
 	And the user completes the add participants form with an Interpreter
 	And the user has progressed to the Booking Confirmation page
 	When the user edits booking and adds a Litigant in person 
-	And the user edits an Interpreter
 	And the user has progressed to the summary page
+	And the user edits a saved Interpreter	
 	Then the user views the information on the summary form

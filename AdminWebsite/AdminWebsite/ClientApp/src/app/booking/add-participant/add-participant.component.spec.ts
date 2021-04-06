@@ -119,7 +119,36 @@ p4.hearing_role_name = 'Litigant in person';
 p4.case_role_name = 'Applicant';
 p4.company = 'CN';
 p4.id = '1234';
-p1.user_role_name = 'Individual';
+p4.user_role_name = 'Individual';
+
+const p5 = new ParticipantModel();
+p5.first_name = 'Test7';
+p5.last_name = 'Participant7';
+p5.display_name = 'Test Participant7';
+p5.is_judge = false;
+p5.title = 'Mr.';
+p5.email = 'test7@hmcts.net';
+p5.phone = '32332';
+p5.hearing_role_name = 'Interpreter';
+p5.case_role_name = 'Applicant';
+p5.company = 'CN';
+p5.id = '1234666';
+p5.user_role_name = 'Individual';
+p5.interpreterFor = 'test4@hmcts.net';
+
+const p6 = new ParticipantModel();
+p6.first_name = 'Test8';
+p6.last_name = 'Participant8';
+p6.display_name = 'Test Participant8';
+p6.is_judge = false;
+p6.title = 'Mr.';
+p6.email = 'test8@hmcts.net';
+p6.phone = '32332';
+p6.hearing_role_name = 'Litigant in Person';
+p6.case_role_name = 'Applicant';
+p6.company = 'CN';
+p6.id = '1234555';
+p6.user_role_name = 'Individual';
 
 participants.push(p1);
 participants.push(p2);
@@ -146,6 +175,8 @@ function initExistHearingRequest(): HearingModel {
     newHearing.hearing_venue_id = 1;
     newHearing.scheduled_duration = 20;
     newHearing.participants = participants;
+    newHearing.participants.push(p5);
+    newHearing.participants.push(p6);
     return newHearing;
 }
 
@@ -210,9 +241,9 @@ describe('AddParticipantComponent', () => {
             bookingServiceSpy.isEditMode.and.returnValue(false);
 
             searchServiceSpy = jasmine.createSpyObj<SearchService>(['search', 'searchEntries', 'searchJudiciaryEntries']);
-            
+
             searchServiceSpy.searchJudiciaryEntries.and.returnValue(of([new PersonResponse()]));
-            
+
             searchServiceSpy.TitleList = [
                 {
                     value: 'Mrs'
@@ -696,18 +727,18 @@ describe('AddParticipantComponent', () => {
             const populatedPersonResponse = [new PersonResponse()];
 
             const testCases = [
-                { searchJudiciaryEntriesValue: null, role: "", expectError: false },
-                { searchJudiciaryEntriesValue: null, role: "Other", expectError: false },
-                { searchJudiciaryEntriesValue: null, role: "Panel Member", expectError: true },
-                { searchJudiciaryEntriesValue: null, role: "Winger", expectError: true },
-                { searchJudiciaryEntriesValue: emptyPersonResponse, role: "", expectError: false },
-                { searchJudiciaryEntriesValue: emptyPersonResponse, role: "Other", expectError: false },
-                { searchJudiciaryEntriesValue: emptyPersonResponse, role: "Panel Member", expectError: true },
-                { searchJudiciaryEntriesValue: emptyPersonResponse, role: "Winger", expectError: true },
-                { searchJudiciaryEntriesValue: populatedPersonResponse, role: "", expectError: true },
-                { searchJudiciaryEntriesValue: populatedPersonResponse, role: "Other", expectError: true },
-                { searchJudiciaryEntriesValue: populatedPersonResponse, role: "Panel Member", expectError: false },
-                { searchJudiciaryEntriesValue: populatedPersonResponse, role: "Winger", expectError: false },                
+                { searchJudiciaryEntriesValue: null, role: '', expectError: false },
+                { searchJudiciaryEntriesValue: null, role: 'Other', expectError: false },
+                { searchJudiciaryEntriesValue: null, role: 'Panel Member', expectError: true },
+                { searchJudiciaryEntriesValue: null, role: 'Winger', expectError: true },
+                { searchJudiciaryEntriesValue: emptyPersonResponse, role: '', expectError: false },
+                { searchJudiciaryEntriesValue: emptyPersonResponse, role: 'Other', expectError: false },
+                { searchJudiciaryEntriesValue: emptyPersonResponse, role: 'Panel Member', expectError: true },
+                { searchJudiciaryEntriesValue: emptyPersonResponse, role: 'Winger', expectError: true },
+                { searchJudiciaryEntriesValue: populatedPersonResponse, role: '', expectError: true },
+                { searchJudiciaryEntriesValue: populatedPersonResponse, role: 'Other', expectError: true },
+                { searchJudiciaryEntriesValue: populatedPersonResponse, role: 'Panel Member', expectError: false },
+                { searchJudiciaryEntriesValue: populatedPersonResponse, role: 'Winger', expectError: false },
             ];
 
             beforeEach(
@@ -715,19 +746,47 @@ describe('AddParticipantComponent', () => {
                     component.searchEmail.email = email;
                 })
             );
-            
-            for(let testCase of testCases) {
-                it(`should ${testCase.expectError === false ? 'not' : ''} have errors when response is 
-                    ${testCase.searchJudiciaryEntriesValue ? 'length: ' + testCase.searchJudiciaryEntriesValue.length : 'null'} 
-                    and role is '${testCase.role}'`, () => {                
+
+            for (const testCase of testCases) {
+                it(`should ${testCase.expectError === false ? 'not' : ''} have errors when response is
+                    ${testCase.searchJudiciaryEntriesValue ? 'length: ' + testCase.searchJudiciaryEntriesValue.length : 'null'}
+                    and role is '${testCase.role}'`, () => {
                         searchServiceSpy.searchJudiciaryEntries.and.returnValue(of(testCase.searchJudiciaryEntriesValue));
                         role.setValue(testCase.role);
-                        component.validateJudiciaryEmailAndRole();                    
+                        component.validateJudiciaryEmailAndRole();
                         expect(searchServiceSpy.searchJudiciaryEntries).toHaveBeenCalledTimes(1);
                         expect(searchServiceSpy.searchJudiciaryEntries).toHaveBeenCalledWith(email);
                         expect(component.errorJudiciaryAccount).toBe(testCase.expectError);
                 });
-            };
+            }
+
+            it('should call search service if email is not empty', () => {
+                searchServiceSpy.searchJudiciaryEntries.and.returnValue(of(null));
+                component.validateJudiciaryEmailAndRole();
+                expect(searchServiceSpy.searchJudiciaryEntries).toHaveBeenCalledTimes(1);
+                expect(searchServiceSpy.searchJudiciaryEntries).toHaveBeenCalledWith(email);
+            });
+
+            it('should have errorJudiciaryAccount set to false if search service returns null and role is not Panel Member or Winger',
+            () => {
+                searchServiceSpy.searchJudiciaryEntries.and.returnValue(of(null));
+                component.validateJudiciaryEmailAndRole();
+                expect(component.errorJudiciaryAccount).toBeFalsy();
+            });
+
+            it('should have errorJudiciaryAccount set to true if search service returns null and role is Panel Member', () => {
+                searchServiceSpy.searchJudiciaryEntries.and.returnValue(of(null));
+                role.setValue('Panel Member'); // TODO fix magic string
+                component.validateJudiciaryEmailAndRole();
+                expect(component.errorJudiciaryAccount).toBeTruthy();
+            });
+
+            it('should have errorJudiciaryAccount set to true if search service returns null and role is Winger', () => {
+                searchServiceSpy.searchJudiciaryEntries.and.returnValue(of(null));
+                role.setValue('Winger'); // TODO fix magic string
+                component.validateJudiciaryEmailAndRole();
+                expect(component.errorJudiciaryAccount).toBeTruthy();
+            });
         });
     });
     describe('validateJudgeAndJohMembers', () => {
@@ -1063,6 +1122,30 @@ describe('AddParticipantComponent edit mode', () => {
         component.handleContinueRemoveInterpreter();
         expect(component.hearing.linked_participants.length).toBe(0);
         expect(participantServiceSpy.removeParticipant).toHaveBeenCalled();
+    });
+
+    it('should update interpreter with exiting participant', () => {
+        component.editMode = true;
+        console.log(component.hearing.participants);
+        component.showDetails = true;
+        fixture.detectChanges();
+        spyOn(component.searchEmail, 'validateEmail').and.returnValue(true);
+        component.searchEmail.email = 'test7@hmcts.net';
+        role.setValue('Interpreter');
+        party.setValue('Applicant');
+        firstName.setValue('Test');
+        lastName.setValue('Participant8');
+        title.setValue('Mr');
+        phone.setValue('12345');
+        displayName.setValue('Test Participant8');
+        companyName.setValue('CC8');
+        component.isRoleSelected = true;
+        component.isPartySelected = true;
+        interpretee.setValue('test8@email.com');
+        component.updateParticipant();
+        const updatedParticipant = component.hearing.participants.find(x => x.email === 'test8@hmcts.net');
+        console.log(updatedParticipant);
+        expect(updatedParticipant.display_name).toBe('Test Participant8');
     });
 });
 describe('AddParticipantComponent edit mode no participants added', () => {

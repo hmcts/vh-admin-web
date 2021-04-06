@@ -65,7 +65,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 _userAccountService.Object,
                 _editHearingRequestValidator.Object,
                 new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>().Object,
-                _hearingsService);
+                _hearingsService,
+                Mock.Of<IPublicHolidayRetriever>());
 
             _userAccountService
                 .Setup(x => x.UpdateParticipantUsername(It.IsAny<AdminWebsite.BookingsAPI.Client.ParticipantRequest>()))

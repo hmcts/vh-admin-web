@@ -86,6 +86,21 @@ namespace AdminWebsite.UnitTests.Services
         }
         
         [Test]
+        public async Task should_send_confirmation_email_to_new_judge_when_amending_judge_email()
+        {
+            var secondHearing = InitHearing();
+            secondHearing.Other_information = new OtherInformationDetails {JudgeEmail = "judge@hmcts.net"}.ToOtherInformationString();
+            _mocker.Mock<IBookingsApiClient>().Setup(x => x.GetHearingsByGroupIdAsync(_hearing.Group_id.Value)).ReturnsAsync(new List<HearingDetailsResponse> {_hearing});
+            
+            await _service.SendJudgeConfirmationEmail(secondHearing);
+
+            _mocker.Mock<INotificationApiClient>()
+                .Verify(
+                    x => x.CreateNewNotificationAsync(It.IsAny<AddNotificationRequest>()),
+                    Times.Exactly(1));
+        }
+
+        [Test]
         public async Task should_send_multiday_confirmation_email_to_all_participants_except_judge()
         {
             var judge = _hearing.Participants.First(x => x.User_role_name == "Judge");

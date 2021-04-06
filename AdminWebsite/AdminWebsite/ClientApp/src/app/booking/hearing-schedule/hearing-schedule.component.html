@@ -37,6 +37,10 @@
     <div *ngIf="hearingDateInvalid" class="alert alert-danger">
       <span id="hearingDate-error" class="govuk-error-message"> Please enter a date in the future </span>
     </div>
+
+    <div *ngIf="hearingDateIsPublicHoliday" class="alert alert-danger">
+      <span id="hearingDate-error" class="govuk-error-message"> Please enter a date that is not a public holiday </span>
+    </div>
   </div>
 
   <div *ngIf="multiDaysHearing" class="vh-bottom-m">
