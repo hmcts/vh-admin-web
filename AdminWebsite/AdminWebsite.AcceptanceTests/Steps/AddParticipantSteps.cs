@@ -78,7 +78,17 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _browsers[_c.CurrentUser].ClickLink(SummaryPage.ParticipantsLink);
             AddNewDefendantIndividual(PartyRole.LitigantInPerson);
             VerifyUsersAreAddedToTheParticipantsList();
+            ClickNext();
         }
+
+        [When(@"the user adds a Litigant in person")]
+        public void WhenTheUserAddsALitigantInPerson()
+        {
+            _browsers[_c.CurrentUser].ClickLink(SummaryPage.ParticipantsLink);
+            AddNewDefendantIndividual(PartyRole.LitigantInPerson);
+            VerifyUsersAreAddedToTheParticipantsList();
+        }
+
 
         public void ClickNext()
         {
@@ -322,7 +332,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _browsers[_c.CurrentUser].Click(AddParticipantsPage.NextButton);
         }
 
-        public void EditAnInterpreter(string alternativeEmail)
+        public void EditAnInterpreter(string alternativeEmail,bool saved = true)
         {
             var user = GetParticipantByEmailAndUpdateDisplayName(alternativeEmail);
             
@@ -330,10 +340,15 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _commonSharedSteps.WhenTheUserSelectsTheOptionFromTheDropdown(_browsers[_c.CurrentUser].Driver,
                 AddParticipantsPage.InterpreteeDropdown, citizen.DisplayName);
             user.Interpretee = citizen.DisplayName;
-            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AddParticipantsPage.UpdateParticipantLink);
-            _browsers[_c.CurrentUser].ScrollTo(AddParticipantsPage.UpdateParticipantLink);
-            _browsers[_c.CurrentUser].Click(AddParticipantsPage.UpdateParticipantLink);
+            if(!saved)
+            {
+                _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AddParticipantsPage.UpdateParticipantLink);
+                _browsers[_c.CurrentUser].ScrollTo(AddParticipantsPage.UpdateParticipantLink);
+                _browsers[_c.CurrentUser].Click(AddParticipantsPage.UpdateParticipantLink);
+            } 
+            
             ClickNext();
+            
         }
 
         private UserAccount GetParticipantByEmailAndUpdateDisplayName(string alternativeEmail)
