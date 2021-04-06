@@ -18,7 +18,6 @@ import { PipeStringifierService } from '../../services/pipe-stringifier.service'
 import { EmailValidationService } from 'src/app/booking/services/email-validation.service';
 import { ConfigService } from '../../services/config.service';
 import { map } from 'rxjs/operators';
-
 @Component({
     selector: 'app-assign-judge',
     templateUrl: './assign-judge.component.html',

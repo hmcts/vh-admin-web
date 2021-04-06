@@ -195,6 +195,7 @@ describe('AssignJudgeComponent', () => {
                             }
                         }
                     }
+                    { provide: ConfigService, useValue: configServiceSpy }
                 ],
                 declarations: [
                     AssignJudgeComponent,
