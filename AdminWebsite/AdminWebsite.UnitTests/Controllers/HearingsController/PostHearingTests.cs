@@ -255,7 +255,6 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             _userAccountService.Verify(x => x.UpdateParticipantUsername(participant), Times.Never);
             _userAccountService.Verify(x => x.GetAdUserIdForUsername(participant.Username), Times.Never);
-            // _userAccountService.Verify(x => x.AssignParticipantToGroup(It.IsAny<string>(), It.IsAny<string>()), Times.Never); // This is never called in the Controller under test
         }
 
         [Test]
@@ -277,8 +276,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             await PostWithParticipants(participant);
 
             _userAccountService.Verify(x => x.UpdateParticipantUsername(participant), Times.Never);
-            _userAccountService.Verify(x => x.GetAdUserIdForUsername(participant.Username), Times.Never);
-            // _userAccountService.Verify(x => x.AssignParticipantToGroup(It.IsAny<string>(), It.IsAny<string>()), Times.Never); // This is never called in the Controller under test
+            _userAccountService.Verify(x => x.GetAdUserIdForUsername(participant.Username), Times.Never);            
         }
 
         [Test]
