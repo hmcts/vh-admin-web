@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Constants } from 'src/app/common/constants';
@@ -14,6 +14,7 @@ import { ReferenceDataService } from '../../services/reference-data.service';
 import { VideoHearingsService } from '../../services/video-hearings.service';
 import { BookingBaseComponentDirective as BookingBaseComponent } from '../booking-base/booking-base.component';
 import { weekendValidator, pastDateValidator } from '../../common';
+import { notPublicHolidayDateValidator } from '../../common/custom-validations/public-holiday-validator';
 @Component({
     selector: 'app-hearing-schedule',
     templateUrl: './hearing-schedule.component.html',
@@ -36,9 +37,9 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     durationHourControl: FormControl;
     durationMinuteControl: FormControl;
     isBookedHearing = false;
-
     addHearingDateControl: FormControl = null;
     hearingDates: Date[] = [];
+    publicHolidays: Date[];
 
     constructor(
         private refDataService: ReferenceDataService,
@@ -54,6 +55,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
     }
 
     ngOnInit() {
+        this.publicHolidays = this.refDataService.getPublicHolidays().map(x => x.date);
         this.failedSubmission = false;
         this.checkForExistingRequest();
         this.retrieveCourts();
@@ -138,7 +140,7 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
         }
 
         this.form = this.fb.group({
-            hearingDate: [hearingDateParsed, Validators.required],
+            hearingDate: [hearingDateParsed, [Validators.required, notPublicHolidayDateValidator(this.publicHolidays)]],
             hearingStartTimeHour: [startTimeHour, [Validators.required, Validators.min(0), Validators.max(23)]],
             hearingStartTimeMinute: [startTimeMinute, [Validators.required, Validators.min(0), Validators.max(59)]],
             hearingDurationHour: this.durationHourControl,
@@ -239,11 +241,16 @@ export class HearingScheduleComponent extends BookingBaseComponent implements On
         return this.form.get('multiDays');
     }
 
+    get hearingDateIsPublicHoliday(): boolean {
+        return this.hearingDateControl.errors?.publicHoliday;
+    }
+
     get hearingDateInvalid() {
         const todayDate = new Date(new Date().setHours(0, 0, 0, 0));
         return (
             (this.hearingDateControl.invalid || new Date(this.hearingDateControl.value) < todayDate) &&
-            (this.hearingDateControl.dirty || this.hearingDateControl.touched || this.failedSubmission)
+            (this.hearingDateControl.dirty || this.hearingDateControl.touched || this.failedSubmission) &&
+            !this.hearingDateIsPublicHoliday
         );
     }
 

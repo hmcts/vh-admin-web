@@ -57,6 +57,10 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
         window.document.getElementById(fragment).parentElement.parentElement.scrollIntoView();
     }
 
+    isExistingHearingOrParticipantsAdded(): boolean {
+        return !!this.hearing && (!!this.isExistingHearing || this.hearing.participants.some(p => !p.is_judge));
+    }
+
     private checkForExistingRequestOrCreateNew() {
         this.hearing = this.hearingService.getCurrentRequest();
         this.isExistingHearing = this.hearing?.hearing_id && this.hearing?.hearing_id?.length > 0;
@@ -70,10 +74,6 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
         } else {
             this.selectedCaseType = Constants.PleaseSelect;
         }
-    }
-
-    get isExistingHearingOrParticipantsAdded() {
-        return !!this.hearing && (!!this.isExistingHearing || this.hearing.participants.some(p => !p.is_judge));
     }
 
     private setHearingTypeForExistingHearing() {
@@ -100,6 +100,12 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
             caseType: [this.selectedCaseType, [Validators.required, Validators.pattern('^((?!Please select).)*$')]],
             hearingType: [this.hearing.hearing_type_id, [Validators.required, Validators.min(1)]]
         });
+
+        if (this.isExistingHearingOrParticipantsAdded()) {
+            ['caseType', 'hearingType'].forEach(k => {
+                this.form.get(k).disable();
+            });
+        }
     }
 
     get caseName() {

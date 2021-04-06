@@ -44,7 +44,7 @@
       <label class="govuk-label govuk-radios__label" for="audio-choice-yes"> Select start and end dates </label>
     </div>
 
-    <div class="multi-date-select range" *ngIf="form.get('multiDaysRange').value">
+    <div class="multi-date-select range" *ngIf="multiDaysRangeControl.value">
       <div [ngClass]="hearingDateInvalid ? 'govuk-form-group--error' : 'govuk-form-group'">
         <label class="govuk-label govuk-!-width-one-quarter" for="hearingDate"> Start of hearing </label>
         <input
@@ -84,7 +84,7 @@
       <label class="govuk-label govuk-radios__label" for="audio-choice-no"> Select individual dates </label>
     </div>
 
-    <div class="multi-date-selection" *ngIf="!form.get('multiDaysRange').value">
+    <div class="multi-date-selection" *ngIf="!multiDaysRangeControl.value">
       <div *ngIf="hearingDates.length > 0" class="multi-date-selection__list govuk-!-width-one-half">
         <div class="multi-date-selection__list-item" *ngFor="let date of hearingDates; index as i">
           <div class="multi-date-selection__date">

@@ -42,8 +42,10 @@ namespace AdminWebsite.Services
         /// <returns></returns>
         Task SendHearingConfirmationEmail(HearingDetailsResponse hearing, List<ParticipantResponse> participants = null);
         Task SendMultiDayHearingConfirmationEmail(HearingDetailsResponse hearing, int days);
-        
+
         Task SendHearingReminderEmail(HearingDetailsResponse hearing);
+        
+        Task SendJudgeConfirmationEmail(HearingDetailsResponse hearing);
 
         Task ProcessNewParticipants(Guid hearingId, EditParticipantRequest participant, HearingDetailsResponse hearing,
             Dictionary<string, User> usernameAdIdDict, List<ParticipantRequest> newParticipantList);
@@ -149,12 +151,13 @@ namespace AdminWebsite.Services
             var caseNumber = @case.Number;
 
             var participantsToEmail = participants ?? updatedHearing.Participants;
-            if(!updatedHearing.DoesJudgeEmailExist())
+            if (!updatedHearing.DoesJudgeEmailExist() || originalHearing.Confirmed_date == null || originalHearing.Group_id != originalHearing.Id)
             {
                 participantsToEmail = participantsToEmail
                     .Where(x => !x.User_role_name.Contains("Judge", StringComparison.CurrentCultureIgnoreCase))
                     .ToList();
             }
+
             var requests = participantsToEmail
                 .Select(participant =>
                     AddNotificationRequestMapper.MapToHearingAmendmentNotification(updatedHearing, participant,
@@ -175,12 +178,12 @@ namespace AdminWebsite.Services
             }
 
             var participantsToEmail = participants ?? hearing.Participants;
-            
+
             var requests = participantsToEmail
                 .Where(x => !x.User_role_name.Contains("Judge", StringComparison.CurrentCultureIgnoreCase))
                 .Select(participant => AddNotificationRequestMapper.MapToHearingConfirmationNotification(hearing, participant))
-                .ToList();   
-            
+                .ToList();
+
             foreach (var request in requests)
             {
                 await _notificationApiClient.CreateNewNotificationAsync(request);
@@ -193,12 +196,12 @@ namespace AdminWebsite.Services
             {
                 return;
             }
-     
+
             var requests = hearing.Participants
                 .Where(x => !x.User_role_name.Contains("Judge", StringComparison.CurrentCultureIgnoreCase))
                 .Select(participant => AddNotificationRequestMapper.MapToMultiDayHearingConfirmationNotification(hearing, participant, days))
-                .ToList(); 
-            
+                .ToList();
+
             foreach (var request in requests)
             {
                 await _notificationApiClient.CreateNewNotificationAsync(request);
@@ -211,7 +214,7 @@ namespace AdminWebsite.Services
             {
                 return;
             }
-            
+
             if (hearing.DoesJudgeEmailExist())
             {
                 await SendJudgeConfirmationEmail(hearing);
@@ -225,7 +228,7 @@ namespace AdminWebsite.Services
             await Task.WhenAll(requests.Select(_notificationApiClient.CreateNewNotificationAsync));
         }
 
-        private async Task SendJudgeConfirmationEmail(HearingDetailsResponse hearing)
+        public async Task SendJudgeConfirmationEmail(HearingDetailsResponse hearing)
         {
             var hearings = await _bookingsApiClient.GetHearingsByGroupIdAsync(hearing.Group_id.Value);
             AddNotificationRequest request;
@@ -245,7 +248,7 @@ namespace AdminWebsite.Services
 
             if (request.ContactEmail != null)
             {
-                await _notificationApiClient.CreateNewNotificationAsync(request);   
+                await _notificationApiClient.CreateNewNotificationAsync(request);
             }
         }
 
@@ -368,7 +371,7 @@ namespace AdminWebsite.Services
                 }
             }
         }
-        
+
         private async Task RemoveEndpointsFromHearing(HearingDetailsResponse hearing, IEnumerable<EndpointResponse> listOfEndpointsToDelete)
         {
             foreach (var endpointToDelete in listOfEndpointsToDelete)
@@ -378,7 +381,7 @@ namespace AdminWebsite.Services
                 await _bookingsApiClient.RemoveEndPointFromHearingAsync(hearing.Id, endpointToDelete.Id);
             }
         }
-        
+
         private async Task AddEndpointToHearing(Guid hearingId, HearingDetailsResponse hearing,
             EditEndpointRequest endpoint)
         {
@@ -391,7 +394,7 @@ namespace AdminWebsite.Services
             };
             await _bookingsApiClient.AddEndPointToHearingAsync(hearing.Id, addEndpointRequest);
         }
-        
+
         private async Task UpdateEndpointInHearing(Guid hearingId, HearingDetailsResponse hearing,
             EditEndpointRequest endpoint)
         {
@@ -414,64 +417,77 @@ namespace AdminWebsite.Services
 
         public async Task UpdateParticipantLinks(Guid hearingId, EditHearingRequest request, HearingDetailsResponse hearing)
         {
-            if (request.Participants.Any(x => x.LinkedParticipants != null && x.LinkedParticipants.Count > 0))
+            if (!request.Participants.SelectMany(x => x.LinkedParticipants).Any())
             {
-                foreach (var requestParticipant in request.Participants.Where(x => x.LinkedParticipants.Any()))
-                {
-                    if (requestParticipant.Id == null) continue;
-                    var participant = hearing.Participants.First(x => x.Id == requestParticipant.Id);
-                    var linkedParticipantsInRequest = request.Participants.First(x => x.Id == participant.Id)
-                        .LinkedParticipants.ToList();
-
-                    var requests = new List<LinkedParticipantRequest>();
-
-                    foreach (var linkedParticipantInRequest in linkedParticipantsInRequest)
-                    {
-                        if (linkedParticipantInRequest.LinkedId == Guid.Empty)
-                        {
-                            requests.Add(new LinkedParticipantRequest
-                            {
-                                Participant_contact_email = linkedParticipantInRequest.ParticipantContactEmail,
-                                Linked_participant_contact_email = linkedParticipantInRequest.LinkedParticipantContactEmail
-                            });
-                        }
-                        else
-                        {
-                            var linkedId = linkedParticipantInRequest.LinkedId;
-                            var existingLink = false;
-
-                            if (participant.Linked_participants != null)
-                            {
-                                existingLink = participant.Linked_participants.Exists(x => x.Linked_id == linkedId);
-                            }
-
-                            if (!existingLink)
-                            {
-                                var linkedParticipant =
-                                    hearing.Participants.First(x => x.Id == linkedParticipantInRequest.LinkedId);
-                                requests.Add(new LinkedParticipantRequest
-                                {
-                                    Participant_contact_email = participant.Contact_email,
-                                    Linked_participant_contact_email = linkedParticipant.Contact_email
-                                });
-                            }
-                        }
-                    }
-
-                    var updateParticipantRequest = new UpdateParticipantRequest
-                    {
-                        Linked_participants = requests,
-                        Display_name = requestParticipant.DisplayName,
-                        Organisation_name = requestParticipant.OrganisationName,
-                        Representee = requestParticipant.Representee,
-                        Telephone_number = requestParticipant.TelephoneNumber,
-                        Title = requestParticipant.Title
-                    };
-
-                    await _bookingsApiClient.UpdateParticipantDetailsAsync(hearingId, participant.Id,
-                        updateParticipantRequest);
-                }
+                return;
             }
+
+            var existingParticipantWithLinks = request.Participants.Where(x => x.LinkedParticipants.Any() && x.Id.HasValue);
+            foreach (var participantRequest in existingParticipantWithLinks)
+            {
+                await UpdateLinksForExistingParticipant(request, hearing, participantRequest);
+            }
+        }
+
+        private async Task UpdateLinksForExistingParticipant(EditHearingRequest request, HearingDetailsResponse hearing, EditParticipantRequest requestParticipant)
+        {
+            var participant = hearing.Participants.First(x => x.Id == requestParticipant.Id);
+            var linkedParticipantsInRequest = request.Participants.First(x => x.Id == participant.Id)
+                .LinkedParticipants.ToList();
+
+            var requests =
+                BuildLinkedParticipantRequestForExistingParticipant(hearing, participant, linkedParticipantsInRequest);
+
+            var updateParticipantRequest = new UpdateParticipantRequest
+            {
+                Linked_participants = requests,
+                Display_name = requestParticipant.DisplayName,
+                Organisation_name = requestParticipant.OrganisationName,
+                Representee = requestParticipant.Representee,
+                Telephone_number = requestParticipant.TelephoneNumber,
+                Title = requestParticipant.Title
+            };
+
+            await _bookingsApiClient.UpdateParticipantDetailsAsync(hearing.Id, participant.Id,
+                updateParticipantRequest);
+        }
+
+        private List<LinkedParticipantRequest> BuildLinkedParticipantRequestForExistingParticipant(HearingDetailsResponse hearing, ParticipantResponse participant, List<LinkedParticipant> linkedParticipantsInRequest)
+        {
+            var requests = new List<LinkedParticipantRequest>();
+
+            var newLinks = linkedParticipantsInRequest.Where(x => x.LinkedId == Guid.Empty)
+                .Select(lp => new LinkedParticipantRequest
+                {
+                    Participant_contact_email = lp.ParticipantContactEmail,
+                    Linked_participant_contact_email = lp.LinkedParticipantContactEmail
+                });
+            requests.AddRange(newLinks);
+
+            var existingLinksToUpdate = linkedParticipantsInRequest.Where(x => x.LinkedId != Guid.Empty && !HasExistingLink(x, participant));
+
+            var existingLinks = existingLinksToUpdate.Select(linkedParticipantInRequest => 
+                hearing.Participants.First(x => x.Id == linkedParticipantInRequest.LinkedId))
+                .Select(linkedParticipant => new LinkedParticipantRequest
+                {
+                    Participant_contact_email = participant.Contact_email, Linked_participant_contact_email = linkedParticipant.Contact_email
+                });
+
+            requests.AddRange(existingLinks);
+            return requests;
+        }
+
+        private bool HasExistingLink(LinkedParticipant linkedParticipantInRequest, ParticipantResponse participant)
+        {
+            var linkedId = linkedParticipantInRequest.LinkedId;
+            var existingLink = false;
+
+            if (participant.Linked_participants != null)
+            {
+                existingLink = participant.Linked_participants.Exists(x => x.Linked_id == linkedId);
+            }
+
+            return existingLink;
         }
 
         public async Task SaveNewParticipants(Guid hearingId, List<ParticipantRequest> newParticipantList)

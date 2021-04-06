@@ -22,12 +22,21 @@ namespace AdminWebsite.Extensions
             return hearing.Id != hearing.Group_id;
         }
 
+        public static bool HasJudgeEmailChanged(this HearingDetailsResponse hearing, HearingDetailsResponse anotherHearing)
+        {
+            if (string.IsNullOrWhiteSpace(anotherHearing.Other_information) && string.IsNullOrWhiteSpace(hearing.Other_information))
+            {
+                return false;
+            }
+            return hearing.GetJudgeEmail() != anotherHearing.GetJudgeEmail();
+        }
+
         public static bool DoesJudgeEmailExist(this HearingDetailsResponse hearing)
         {
             if (hearing.Other_information != null)
             {
                 var otherInformationDetails = GetOtherInformationObject(hearing.Other_information);
-                if (otherInformationDetails.JudgeEmail != null)
+                if (otherInformationDetails.JudgeEmail != "")
                 {
                     return true;
                 }
@@ -48,9 +57,9 @@ namespace AdminWebsite.Extensions
             return false;
         }
 
-        public static string GetJudgeContactEmail(this HearingDetailsResponse hearing)
+        public static string GetJudgeEmail(this HearingDetailsResponse hearing)
         {
-            var email = GetOtherInformationObject(hearing.Other_information).JudgeEmail;
+            var email = GetOtherInformationObject(hearing.Other_information)?.JudgeEmail;
             if (email == string.Empty)
             {
                 return null;
@@ -76,20 +85,43 @@ namespace AdminWebsite.Extensions
                 $"|OtherInformation|{otherInformationDetailsObject.OtherInformation}";
         }
 
+        public static HearingDetailsResponse Duplicate(this HearingDetailsResponse hearingDetailsResponse)
+        {
+            var json = JsonConvert.SerializeObject(hearingDetailsResponse);
+            return JsonConvert.DeserializeObject<HearingDetailsResponse>(json);
+        }
+
         private static OtherInformationDetails GetOtherInformationObject(string otherInformation)
         {
             try
             {
                 var properties = otherInformation.Split("|");
-                return new OtherInformationDetails
+                var otherInfo = new OtherInformationDetails
                 {
-                    JudgeEmail = properties[2],
-                    JudgePhone = properties[4],
-                    OtherInformation = properties[6]
+                    JudgeEmail = Array.IndexOf(properties, "JudgeEmail") > -1
+                        ? properties[Array.IndexOf(properties, "JudgeEmail") + 1]
+                        : "",
+                    JudgePhone = Array.IndexOf(properties, "JudgePhone") > -1
+                        ? properties[Array.IndexOf(properties, "JudgePhone") + 1]
+                        : "",
+                    OtherInformation = Array.IndexOf(properties, "OtherInformation") > -1
+                        ? properties[Array.IndexOf(properties, "OtherInformation") + 1]
+                        : ""
                 };
+                return otherInfo;
             }
             catch (Exception)
             {
+                if(string.IsNullOrWhiteSpace(otherInformation)){
+                {
+                    return new OtherInformationDetails {OtherInformation = otherInformation};
+                }}
+                var properties = otherInformation.Split("|");
+                if (properties.Length > 2)
+                {
+                    return new OtherInformationDetails {OtherInformation = properties[2]};
+                }
+
                 return new OtherInformationDetails {OtherInformation = otherInformation};
             }
         }

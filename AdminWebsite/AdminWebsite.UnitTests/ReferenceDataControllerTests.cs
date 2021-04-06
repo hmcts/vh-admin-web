@@ -10,6 +10,11 @@ using NUnit.Framework;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AdminWebsite.Contracts.Responses;
+using AdminWebsite.Services;
+using AdminWebsite.Services.Models;
+using Autofac.Extras.Moq;
+using HearingTypeResponse = AdminWebsite.BookingsAPI.Client.HearingTypeResponse;
 
 namespace AdminWebsite.UnitTests
 {
@@ -18,13 +23,15 @@ namespace AdminWebsite.UnitTests
         private Mock<IBookingsApiClient> _bookingsApiClientMock;
         private Mock<IUserIdentity> _userIdentityMock;
         private ReferenceDataController _controller;
+        private AutoMock _mocker;
 
         [SetUp]
         public void Setup()
         {
-            _bookingsApiClientMock = new Mock<IBookingsApiClient>();
-            _userIdentityMock = new Mock<IUserIdentity>();
-            _controller = new ReferenceDataController(_bookingsApiClientMock.Object, _userIdentityMock.Object);
+            _mocker = AutoMock.GetLoose();
+            _bookingsApiClientMock = _mocker.Mock<IBookingsApiClient>();
+            _userIdentityMock = _mocker.Mock<IUserIdentity>();
+            _controller = _mocker.Create<ReferenceDataController>();
         }
 
         [Test]
@@ -104,6 +111,19 @@ namespace AdminWebsite.UnitTests
             caseRoles.Count.Should().Be(0);
         }
 
+        [Test]
+        public async Task should_return_list_of_upcoming_public_holidays()
+        {
+            var publicHolidays = Builder<PublicHoliday>.CreateListOfSize(10).Build().ToList();
+            _mocker.Mock<IPublicHolidayRetriever>().Setup(x => x.RetrieveUpcomingHolidays())
+                .ReturnsAsync(publicHolidays);
+
+            var response = await _controller.PublicHolidays();
+            response.Result.Should().BeOfType<OkObjectResult>().Which.Value.Should().BeOfType<List<PublicHolidayResponse>>();
+            var responseHolidays = response.Result.As<OkObjectResult>().Value.As<List<PublicHolidayResponse>>();
+            responseHolidays.Should().HaveCount(publicHolidays.Count);
+        }
+        
         private void SetTestCase(List<CaseRoleResponse> listTypes)
         {
             var listHearingRoles = new List<HearingRoleResponse> { new HearingRoleResponse { Name = "type1", User_role = "role1"} };
@@ -111,7 +131,6 @@ namespace AdminWebsite.UnitTests
             _userIdentityMock.Setup(x => x.GetAdministratorCaseTypes()).Returns(new List<string> { "type1", "type2" });
             _bookingsApiClientMock.Setup(x => x.GetCaseRolesForCaseTypeAsync(It.IsAny<string>())).ReturnsAsync(listTypes);
             _bookingsApiClientMock.Setup(x => x.GetHearingRolesForCaseRoleAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(listHearingRoles);
-
         }
     }
 }

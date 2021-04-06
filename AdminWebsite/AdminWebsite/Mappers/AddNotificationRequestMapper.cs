@@ -12,7 +12,8 @@ namespace AdminWebsite.Mappers
     {
         private const string Individual = "INDIVIDUAL";
 
-        public static AddNotificationRequest MapToNewUserNotification(Guid hearingId, ParticipantResponse participant, string password)
+        public static AddNotificationRequest MapToNewUserNotification(Guid hearingId, ParticipantResponse participant,
+            string password)
         {
             var parameters = new Dictionary<string, string>
             {
@@ -25,7 +26,9 @@ namespace AdminWebsite.Mappers
                 HearingId = hearingId,
                 MessageType = MessageType.Email,
                 ContactEmail = participant.Contact_email,
-                NotificationType = participant.User_role_name.ToUpper() == Individual ? NotificationType.CreateIndividual : NotificationType.CreateRepresentative,
+                NotificationType = participant.User_role_name.ToUpper() == Individual
+                    ? NotificationType.CreateIndividual
+                    : NotificationType.CreateRepresentative,
                 ParticipantId = participant.Id,
                 PhoneNumber = participant.Telephone_number,
                 Parameters = parameters
@@ -33,14 +36,15 @@ namespace AdminWebsite.Mappers
             return addNotificationRequest;
         }
 
-        public static AddNotificationRequest MapToPasswordResetNotification(string name, string newPassword, string contactEmail)
+        public static AddNotificationRequest MapToPasswordResetNotification(string name, string newPassword,
+            string contactEmail)
         {
             var parameters = new Dictionary<string, string>
             {
                 {"name", name},
                 {"password", newPassword}
             };
-            
+
             var addNotificationRequest = new AddNotificationRequest
             {
                 MessageType = MessageType.Email,
@@ -52,21 +56,17 @@ namespace AdminWebsite.Mappers
         }
 
         public static AddNotificationRequest MapToHearingAmendmentNotification(HearingDetailsResponse hearing,
-            ParticipantResponse participant, string caseName, string caseNumber, DateTime originalDateTime, DateTime newDateTime)
+            ParticipantResponse participant, string caseName, string caseNumber, DateTime originalDateTime,
+            DateTime newDateTime)
         {
-            var originalTime = originalDateTime.ToString("h:mm tt");
-            var originalDate = originalDateTime.ToString("d MMMM yyyy");
-            var newTime = newDateTime.ToString("h:mm tt");
-            var newDate = newDateTime.ToString("d MMMM yyyy");
-
             var parameters = new Dictionary<string, string>
             {
                 {"case name", caseName},
                 {"case number", caseNumber},
-                {"Old time", originalTime},
-                {"New time", newTime},
-                {"Old Day Month Year", originalDate},
-                {"New Day Month Year", newDate}
+                {"Old time", originalDateTime.ToEmailTimeGbLocale()},
+                {"New time", newDateTime.ToEmailTimeGbLocale()},
+                {"Old Day Month Year", originalDateTime.ToEmailDateGbLocale()},
+                {"New Day Month Year", newDateTime.ToEmailDateGbLocale()}
             };
 
             NotificationType notificationType;
@@ -75,10 +75,11 @@ namespace AdminWebsite.Mappers
                 notificationType = NotificationType.HearingAmendmentJudge;
                 parameters.Add("judge", participant.Display_name);
                 parameters.Add("courtroom account username", participant.Username);
-                participant.Contact_email = hearing.GetJudgeContactEmail();
+                participant.Contact_email = hearing.GetJudgeEmail();
                 participant.Telephone_number = hearing.GetJudgePhone();
             }
-            else if (participant.User_role_name.Contains("Judicial Office Holder", StringComparison.InvariantCultureIgnoreCase))
+            else if (participant.User_role_name.Contains("Judicial Office Holder",
+                StringComparison.InvariantCultureIgnoreCase))
             {
                 notificationType = NotificationType.HearingAmendmentJoh;
                 parameters.Add("judicial office holder", $"{participant.First_name} {participant.Last_name}");
@@ -94,7 +95,7 @@ namespace AdminWebsite.Mappers
                 notificationType = NotificationType.HearingAmendmentLip;
                 parameters.Add("name", $"{participant.First_name} {participant.Last_name}");
             }
-            
+
             return new AddNotificationRequest
             {
                 HearingId = hearing.Id,
@@ -110,27 +111,19 @@ namespace AdminWebsite.Mappers
         public static AddNotificationRequest MapToHearingConfirmationNotification(HearingDetailsResponse hearing,
             ParticipantResponse participant)
         {
-            var @case = hearing.Cases.First();
-            var time = hearing.Scheduled_date_time.ToString("h:mm tt");
-            var date = hearing.Scheduled_date_time.ToString("d MMMM yyyy");
-            var parameters = new Dictionary<string, string>
-            {
-                {"case name", @case.Name},
-                {"case number", @case.Number},
-                {"time",time},
-                {"day month year",date},
-            };
-            
+            var parameters = InitConfirmReminderParams(hearing);
+
             NotificationType notificationType;
             if (participant.User_role_name.Contains("Judge", StringComparison.InvariantCultureIgnoreCase))
             {
                 notificationType = NotificationType.HearingConfirmationJudge;
                 parameters.Add("judge", participant.Display_name);
                 parameters.Add("courtroom account username", participant.Username);
-                participant.Contact_email = hearing.GetJudgeContactEmail();
+                participant.Contact_email = hearing.GetJudgeEmail();
                 participant.Telephone_number = hearing.GetJudgePhone();
             }
-            else if (participant.User_role_name.Contains("Judicial Office Holder", StringComparison.InvariantCultureIgnoreCase))
+            else if (participant.User_role_name.Contains("Judicial Office Holder",
+                StringComparison.InvariantCultureIgnoreCase))
             {
                 notificationType = NotificationType.HearingConfirmationJoh;
                 parameters.Add("judicial office holder", $"{participant.First_name} {participant.Last_name}");
@@ -156,7 +149,7 @@ namespace AdminWebsite.Mappers
                 ParticipantId = participant.Id,
                 PhoneNumber = participant.Telephone_number,
                 Parameters = parameters
-            };   
+            };
         }
 
         public static AddNotificationRequest MapToMultiDayHearingConfirmationNotification(
@@ -164,14 +157,12 @@ namespace AdminWebsite.Mappers
             ParticipantResponse participant, int days)
         {
             var @case = hearing.Cases.First();
-            var time = hearing.Scheduled_date_time.ToString("h:mm tt");
-            var date = hearing.Scheduled_date_time.ToString("d MMMM yyyy");
             var parameters = new Dictionary<string, string>
             {
                 {"case name", @case.Name},
                 {"case number", @case.Number},
-                {"time", time},
-                {"Start Day Month Year", date},
+                {"time", hearing.Scheduled_date_time.ToEmailTimeGbLocale()},
+                {"Start Day Month Year", hearing.Scheduled_date_time.ToEmailDateGbLocale()},
                 {"number of days", days.ToString()}
             };
             NotificationType notificationType;
@@ -180,6 +171,8 @@ namespace AdminWebsite.Mappers
                 notificationType = NotificationType.HearingConfirmationJudgeMultiDay;
                 parameters.Add("judge", participant.Display_name);
                 parameters.Add("courtroom account username", participant.Username);
+                participant.Contact_email = hearing.GetJudgeEmail();
+                participant.Telephone_number = hearing.GetJudgePhone();
             }
             else if (participant.User_role_name.Contains("Judicial Office Holder",
                 StringComparison.InvariantCultureIgnoreCase))
@@ -214,21 +207,12 @@ namespace AdminWebsite.Mappers
         public static AddNotificationRequest MapToHearingReminderNotification(HearingDetailsResponse hearing,
             ParticipantResponse participant)
         {
-            var @case = hearing.Cases.First();
-            var time = hearing.Scheduled_date_time.ToString("h:mm tt");
-            var date = hearing.Scheduled_date_time.ToString("d MMMM yyyy");
-            
-            var parameters = new Dictionary<string, string>
-            {
-                {"case name", @case.Name},
-                {"case number", @case.Number},
-                {"time",time},
-                {"day month year",date},
-                {"username",participant.Username.ToLower()}
-            };
-            
+            var parameters = InitConfirmReminderParams(hearing);
+            parameters.Add("username", participant.Username.ToLower());
+
             NotificationType notificationType;
-             if (participant.User_role_name.Contains("Judicial Office Holder", StringComparison.InvariantCultureIgnoreCase))
+            if (participant.User_role_name.Contains("Judicial Office Holder",
+                StringComparison.InvariantCultureIgnoreCase))
             {
                 notificationType = NotificationType.HearingReminderJoh;
                 parameters.Add("judicial office holder", $"{participant.First_name} {participant.Last_name}");
@@ -254,7 +238,19 @@ namespace AdminWebsite.Mappers
                 ParticipantId = participant.Id,
                 PhoneNumber = participant.Telephone_number,
                 Parameters = parameters
-            };  
+            };
+        }
+
+        private static Dictionary<string, string> InitConfirmReminderParams(HearingDetailsResponse hearing)
+        {
+            var @case = hearing.Cases.First();
+            return new Dictionary<string, string>
+            {
+                {"case name", @case.Name},
+                {"case number", @case.Number},
+                {"time", hearing.Scheduled_date_time.ToEmailTimeGbLocale()},
+                {"day month year", hearing.Scheduled_date_time.ToEmailDateGbLocale()}
+            };
         }
     }
 }

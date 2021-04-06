@@ -54,7 +54,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 _userAccountService.Object,
                 _editHearingRequestValidator.Object,
                 new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>().Object,
-                _hearingsService);
+                _hearingsService,
+                Mock.Of<IPublicHolidayRetriever>());
 
             _vhExistingHearing = new HearingDetailsResponse
             {
