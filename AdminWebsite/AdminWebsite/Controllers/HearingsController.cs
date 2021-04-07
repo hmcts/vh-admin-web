@@ -85,17 +85,17 @@ namespace AdminWebsite.Controllers
 
                 newBookingRequest.Created_by = _userIdentity.GetUserIdentityName();
 
-                _logger.LogDebug("BookNewHearing - Attempting to send booking request to Booking API");
+                _logger.LogInformation("BookNewHearing - Attempting to send booking request to Booking API");
                 var hearingDetailsResponse = await _bookingsApiClient.BookNewHearingAsync(newBookingRequest);
-                _logger.LogDebug("BookNewHearing - Successfully booked hearing {Hearing}", hearingDetailsResponse.Id);
+                _logger.LogInformation("BookNewHearing - Successfully booked hearing {Hearing}", hearingDetailsResponse.Id);
 
-                _logger.LogDebug("BookNewHearing - Attempting assign participants to the correct group");
+                _logger.LogInformation("BookNewHearing - Attempting assign participants to the correct group");
                 await _hearingsService.AssignParticipantToCorrectGroups(hearingDetailsResponse, usernameAdIdDict);
-                _logger.LogDebug("BookNewHearing - Successfully assigned participants to the correct group");
+                _logger.LogInformation("BookNewHearing - Successfully assigned participants to the correct group");
 
-                _logger.LogDebug("BookNewHearing - Sending email notification to the participants");
+                _logger.LogInformation("BookNewHearing - Sending email notification to the participants");
                 await _hearingsService.SendNewUserEmailParticipants(hearingDetailsResponse, usernameAdIdDict);
-                _logger.LogDebug("BookNewHearing - Successfully sent emails to participants- {Hearing}",
+                _logger.LogInformation("BookNewHearing - Successfully sent emails to participants- {Hearing}",
                     hearingDetailsResponse.Id);
 
                 if (request.IsMultiDay)
@@ -306,13 +306,13 @@ namespace AdminWebsite.Controllers
         {
             if (newParticipantList.Any())
             {
-                _logger.LogDebug("Sending email notification to the participants");
+                _logger.LogInformation("Sending email notification to the participants");
                 await _hearingsService.SendNewUserEmailParticipants(updatedHearing, usernameAdIdDict);
 
                 var participantsForConfirmation = updatedHearing.Participants
                     .Where(p => newParticipantEmails.Contains(p.Contact_email)).ToList();
                 await _hearingsService.SendHearingConfirmationEmail(updatedHearing, participantsForConfirmation);
-                _logger.LogDebug("Successfully sent emails to participants - {Hearing}", updatedHearing.Id);
+                _logger.LogInformation("Successfully sent emails to participants - {Hearing}", updatedHearing.Id);
             }
         }
 
