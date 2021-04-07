@@ -66,18 +66,15 @@ export class AppComponent implements OnInit {
                 if (!this.loggedIn) {
                     this.router.navigate(['/login'], { queryParams: { returnUrl: currentUrl } });
                 }
+                this.refDataService.fetchPublicHolidays();
             });
-        });
 
-        if (!this.loggedIn) {
-            this.router.navigate(['/login'], { queryParams: { returnUrl: currentUrl } });
-        }
-        this.refDataService.fetchPublicHolidays();
-        this.headerComponent.confirmLogout.subscribe(() => {
-            this.showConfirmation();
-        });
-        this.headerComponent.confirmSaveBooking.subscribe(menuItemIndex => {
-            this.showConfirmationSaveBooking(menuItemIndex);
+            this.headerComponent.confirmLogout.subscribe(() => {
+                this.showConfirmation();
+            });
+            this.headerComponent.confirmSaveBooking.subscribe(menuItemIndex => {
+                this.showConfirmationSaveBooking(menuItemIndex);
+            });
         });
     }
 
