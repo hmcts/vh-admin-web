@@ -72,8 +72,12 @@ describe('HearingScheduleComponent first visit', () => {
         waitForAsync(() => {
             routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
-            referenceDataServiceServiceSpy = jasmine.createSpyObj<ReferenceDataService>('ReferenceDataService', ['getCourts']);
+            referenceDataServiceServiceSpy = jasmine.createSpyObj<ReferenceDataService>('ReferenceDataService', [
+                'getCourts',
+                'getPublicHolidays'
+            ]);
             referenceDataServiceServiceSpy.getCourts.and.returnValue(of(MockValues.Courts));
+            referenceDataServiceServiceSpy.getPublicHolidays.and.returnValue([]);
             videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
                 'getHearingTypes',
                 'getCurrentRequest',
@@ -324,8 +328,12 @@ describe('HearingScheduleComponent returning to page', () => {
         waitForAsync(() => {
             routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
-            referenceDataServiceServiceSpy = jasmine.createSpyObj<ReferenceDataService>('ReferenceDataService', ['getCourts']);
+            referenceDataServiceServiceSpy = jasmine.createSpyObj<ReferenceDataService>('ReferenceDataService', [
+                'getCourts',
+                'getPublicHolidays'
+            ]);
             referenceDataServiceServiceSpy.getCourts.and.returnValue(of(MockValues.Courts));
+            referenceDataServiceServiceSpy.getPublicHolidays.and.returnValue([]);
             videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
                 'getHearingTypes',
                 'getCurrentRequest',
@@ -469,8 +477,12 @@ describe('HearingScheduleComponent multi days hearing', () => {
         waitForAsync(() => {
             routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
-            referenceDataServiceServiceSpy = jasmine.createSpyObj<ReferenceDataService>('ReferenceDataService', ['getCourts']);
+            referenceDataServiceServiceSpy = jasmine.createSpyObj<ReferenceDataService>('ReferenceDataService', [
+                'getCourts',
+                'getPublicHolidays'
+            ]);
             referenceDataServiceServiceSpy.getCourts.and.returnValue(of(MockValues.Courts));
+            referenceDataServiceServiceSpy.getPublicHolidays.and.returnValue([]);
             videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>('VideoHearingsService', [
                 'getHearingTypes',
                 'getCurrentRequest',

@@ -2,6 +2,8 @@
 using FluentAssertions;
 using NUnit.Framework;
 using System;
+using System.Collections.Generic;
+using AdminWebsite.Services.Models;
 
 
 namespace AdminWebsite.UnitTests.Helper
@@ -28,6 +30,24 @@ namespace AdminWebsite.UnitTests.Helper
             var expectDays = 0;
 
             var result = DateListMapper.GetListOfWorkingDates(startDate, endDate);
+
+            result.Count.Should().Be(expectDays);
+        }
+        
+        [Test]
+        public void Should_return_range_of_dates_not_included_weekends_and_public_holidays()
+        {
+            var startDate = new DateTime(2020, 10, 1, 4, 30, 0, 0);
+            var endDate = new DateTime(2020, 10, 6, 4, 35, 0, 0);
+            var pb = new PublicHoliday
+            {
+                Title = "Test Holidays",
+                Date = new DateTime(2020, 10, 5, 0, 0, 0, 0)
+            };
+            var publicHolidays = new List<PublicHoliday> {pb};
+            var expectDays = 2;
+
+            var result = DateListMapper.GetListOfWorkingDates(startDate, endDate, publicHolidays);
 
             result.Count.Should().Be(expectDays);
         }

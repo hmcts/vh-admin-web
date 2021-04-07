@@ -2452,6 +2452,11 @@
           "System.Xml.XmlDocument": "4.3.0"
         }
       },
+      "TimeZoneConverter": {
+        "type": "Transitive",
+        "resolved": "3.4.0",
+        "contentHash": "4rqXd06uLqaLPGpO+whrZnSTJyG3SG5DEbeldMTvaGit0+gI6XLVb9YMnfM+5wtV0DDM1QPd/QhbE6j5vJCWDw=="
+      },
       "UserApi.Client": {
         "type": "Transitive",
         "resolved": "1.23.9",
@@ -2497,6 +2502,7 @@
           "Swashbuckle.AspNetCore.Annotations": "5.6.3",
           "Swashbuckle.AspNetCore.Newtonsoft": "5.6.3",
           "Swashbuckle.AspNetCore.Swagger": "5.6.3",
+          "TimeZoneConverter": "3.4.0",
           "UserApi.Client": "1.23.9",
           "VH.Core.Configuration": "0.1.12",
           "VideoApi.Client": "1.23.28"

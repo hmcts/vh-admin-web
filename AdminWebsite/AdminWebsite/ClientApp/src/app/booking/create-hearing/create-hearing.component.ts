@@ -58,6 +58,10 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
         window.document.getElementById(fragment).parentElement.parentElement.scrollIntoView();
     }
 
+    isExistingHearingOrParticipantsAdded(): boolean {
+        return !!this.hearing && (!!this.isExistingHearing || this.hearing.participants.some(p => !p.is_judge));
+    }
+
     private checkForExistingRequestOrCreateNew() {
         this.hearing = this.hearingService.getCurrentRequest();
         this.isExistingHearing = this.hearing?.hearing_id && this.hearing?.hearing_id?.length > 0;
@@ -71,10 +75,6 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
         } else {
             this.selectedCaseType = Constants.PleaseSelect;
         }
-    }
-
-    get isExistingHearingOrParticipantsAdded() {
-        return !!this.hearing && (!!this.isExistingHearing || this.hearing.participants.some(p => !p.is_judge));
     }
 
     private setHearingTypeForExistingHearing() {
@@ -101,6 +101,12 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
             caseType: [this.selectedCaseType, [Validators.required, Validators.pattern('^((?!Please select).)*$')]],
             hearingType: [this.hearing.hearing_type_id, [Validators.required, Validators.min(1)]]
         });
+
+        if (this.isExistingHearingOrParticipantsAdded()) {
+            ['caseType', 'hearingType'].forEach(k => {
+                this.form.get(k).disable();
+            });
+        }
     }
 
     get caseName() {
@@ -200,11 +206,10 @@ export class CreateHearingComponent extends BookingBaseComponent implements OnIn
         hearingCase.name = this.form.value.caseName;
         hearingCase.number = this.form.value.caseNumber;
         this.hearing.cases[0] = hearingCase;
-        this.hearing.case_type_id = this.form.value.caseType;
-        this.hearing.hearing_type_id = this.form.value.hearingType;
+        this.hearing.case_type_id = this.isExistingHearing ? this.hearing.case_type_id : this.form.value.caseType;
+        this.hearing.hearing_type_id = this.isExistingHearing ? this.hearing.hearing_type_id : this.form.value.hearingType;
         this.hearing.hearing_type_name = this.availableHearingTypes.find(c => c.id === this.hearing.hearing_type_id).name;
         this.hearing.questionnaire_not_required = false;
-
         this.hearingService.updateHearingRequest(this.hearing);
         this.logger.debug(`${this.loggerPrefix} Updated hearing request details`, { hearing: this.hearing });
     }
