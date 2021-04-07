@@ -212,6 +212,12 @@
           "Microsoft.OpenApi": "1.2.3"
         }
       },
+      "TimeZoneConverter": {
+        "type": "Direct",
+        "requested": "[3.4.0, )",
+        "resolved": "3.4.0",
+        "contentHash": "4rqXd06uLqaLPGpO+whrZnSTJyG3SG5DEbeldMTvaGit0+gI6XLVb9YMnfM+5wtV0DDM1QPd/QhbE6j5vJCWDw=="
+      },
       "UserApi.Client": {
         "type": "Direct",
         "requested": "[1.23.9, )",

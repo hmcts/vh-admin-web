@@ -100,13 +100,25 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
 
     setTimeObserver() {
         if (this.booking) {
-            let current = new Date();
-            current.setMinutes(current.getMinutes() + 30);
-            current = new Date(current);
-            this.isConfirmationTimeValid = this.booking.scheduled_date_time.valueOf() >= current.valueOf();
+            const current = new Date();
+            current.setHours(23, 59);
+            this.isConfirmationTimeValid = this.booking.scheduled_date_time.valueOf() <= current.valueOf();
             if (!this.isConfirmationTimeValid && this.timeSubscription) {
                 this.timeSubscription.unsubscribe();
             }
+        }
+    }
+
+    get timeForEditing(): boolean {
+        if (this.booking) {
+            let withinTimeFrame: boolean;
+            const current = new Date();
+            current.setMinutes(current.getMinutes() + 30);
+            withinTimeFrame = this.booking.scheduled_date_time.valueOf() >= current.valueOf();
+            if (!withinTimeFrame && this.timeSubscription) {
+                this.timeSubscription.unsubscribe();
+            }
+            return withinTimeFrame;
         }
     }
 
