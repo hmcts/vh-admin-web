@@ -65,6 +65,7 @@ export class AppComponent implements OnInit {
                 this.loggedIn = loggedIn;
                 if (!this.loggedIn) {
                     this.router.navigate(['/login'], { queryParams: { returnUrl: currentUrl } });
+                    return;
                 }
 
                 this.refDataService.fetchPublicHolidays();
