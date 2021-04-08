@@ -746,22 +746,39 @@ describe('AddParticipantComponent', () => {
                     component.searchEmail.email = email;
                 })
             );
-            
-            for(let testCase of testCases) {
-                it(`should ${testCase.expectError === false ? 'not' : ''} have errors when response is 
-                    ${testCase.searchJudiciaryEntriesValue ? 'length: ' + testCase.searchJudiciaryEntriesValue.length : 'null'} 
-                    and role is '${testCase.role}'`, () => {                
-                        searchServiceSpy.searchJudiciaryEntries.and.returnValue(of(testCase.searchJudiciaryEntriesValue));
-                        role.setValue(testCase.role);
-                        component.validateJudiciaryEmailAndRole();                    
-                        expect(searchServiceSpy.searchJudiciaryEntries).toHaveBeenCalledTimes(1);
-                        expect(searchServiceSpy.searchJudiciaryEntries).toHaveBeenCalledWith(email);
-                        expect(component.errorJudiciaryAccount).toBe(testCase.expectError);
+
+            for (const testCase of testCases) {
+                it(`should ${testCase.expectError === false ? 'not' : ''} have errors when response is
+                    ${testCase.searchJudiciaryEntriesValue ? 'length: ' + testCase.searchJudiciaryEntriesValue.length : 'null'}
+                    and role is '${testCase.role}'`, () => {
+                    searchServiceSpy.searchJudiciaryEntries.and.returnValue(of(testCase.searchJudiciaryEntriesValue));
+                    role.setValue(testCase.role);
+                    component.validateJudiciaryEmailAndRole();
+                    expect(searchServiceSpy.searchJudiciaryEntries).toHaveBeenCalledTimes(1);
+                    expect(searchServiceSpy.searchJudiciaryEntries).toHaveBeenCalledWith(email);
+                    expect(component.errorJudiciaryAccount).toBe(testCase.expectError);
                 });
-            };
-        });
-    });
-});
+            }
+
+            it('should call search service if email is not empty', () => {
+                searchServiceSpy.searchJudiciaryEntries.and.returnValue(of(null));
+                component.validateJudiciaryEmailAndRole();
+                expect(searchServiceSpy.searchJudiciaryEntries).toHaveBeenCalledTimes(1);
+                expect(searchServiceSpy.searchJudiciaryEntries).toHaveBeenCalledWith(email);
+            });
+
+            it('should have errorJudiciaryAccount set to false if search service returns null and role is not Panel Member or Winger', () => {
+                searchServiceSpy.searchJudiciaryEntries.and.returnValue(of(null));
+                component.validateJudiciaryEmailAndRole();
+                expect(component.errorJudiciaryAccount).toBeFalsy();
+            });
+
+            it('should have errorJudiciaryAccount set to true if search service returns null and role is Panel Member', () => {
+                searchServiceSpy.searchJudiciaryEntries.and.returnValue(of(null));
+                role.setValue('Panel Member'); // TODO fix magic string
+                component.validateJudiciaryEmailAndRole();
+                expect(component.errorJudiciaryAccount).toBeTruthy();
+            });
 
 fdescribe('AddParticipantComponent edit mode', () => {
     beforeEach(
@@ -774,8 +791,6 @@ fdescribe('AddParticipantComponent edit mode', () => {
                 'cancelRequest'
             ]);
             bookingServiceSpy = jasmine.createSpyObj<BookingService>(['isEditMode', 'getParticipantEmail', 'resetEditMode']);
-
-
 
             TestBed.configureTestingModule({
                 imports: [SharedModule, RouterModule.forChild([]), BookingModule, PopupModule, TestingModule],
