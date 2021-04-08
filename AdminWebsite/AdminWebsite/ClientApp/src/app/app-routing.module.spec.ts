@@ -36,6 +36,10 @@ import { HearingSearchDateTimePipe } from './shared/directives/hearing-search-da
 import { HearingSearchResultsComponent } from './get-audio-file/hearing-search-results/hearing-search-results.component';
 import { ConfirmBookingFailedPopupComponent } from './popups/confirm-booking-failed-popup/confirm-booking-failed-popup.component';
 import { MockOidcSecurityService } from './testing/mocks/MockOidcSecurityService';
+import { ConfigService } from './services/config.service';
+import { ClientSettingsResponse } from './services/clients/api-client';
+import { of } from 'rxjs';
+import { OidcSecurityService } from 'angular-auth-oidc-client';
 
 describe('app routing', () => {
     let location: Location;
@@ -43,7 +47,15 @@ describe('app routing', () => {
     let fixture: ComponentFixture<DashboardComponent>;
     let oidcSecurityService: MockOidcSecurityService;
     const loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
-
+    const clientSettings = new ClientSettingsResponse({
+        tenant_id: 'tenantid',
+        client_id: 'clientid',
+        post_logout_redirect_uri: '/dashboard',
+        redirect_uri: '/dashboard'
+    });
+    let configServiceSpy: jasmine.SpyObj<ConfigService>;
+    configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettings', 'loadConfig']);
+    configServiceSpy.getClientSettings.and.returnValue(of(clientSettings));
     beforeEach(() => {
         TestBed.configureTestingModule({
             imports: [ReactiveFormsModule, RouterTestingModule.withRoutes(routes), FormsModule],
@@ -75,8 +87,10 @@ describe('app routing', () => {
                 AuthGuard,
                 AdminGuard,
                 { provide: ChangesGuard, useClass: MockChangesGuard },
+                { provide: OidcSecurityService, useClass: MockOidcSecurityService },
                 HttpClient,
                 HttpHandler,
+                { provide: ConfigService, useValue: configServiceSpy },
                 ErrorService,
                 { provide: Logger, useValue: loggerSpy }
             ]
