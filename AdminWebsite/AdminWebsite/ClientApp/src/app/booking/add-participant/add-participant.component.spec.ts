@@ -738,7 +738,7 @@ describe('AddParticipantComponent', () => {
                 { searchJudiciaryEntriesValue: populatedPersonResponse, role: '', expectError: true },
                 { searchJudiciaryEntriesValue: populatedPersonResponse, role: 'Other', expectError: true },
                 { searchJudiciaryEntriesValue: populatedPersonResponse, role: 'Panel Member', expectError: false },
-                { searchJudiciaryEntriesValue: populatedPersonResponse, role: 'Winger', expectError: false },
+                { searchJudiciaryEntriesValue: populatedPersonResponse, role: 'Winger', expectError: false }
             ];
 
             beforeEach(
@@ -751,12 +751,12 @@ describe('AddParticipantComponent', () => {
                 it(`should ${testCase.expectError === false ? 'not' : ''} have errors when response is
                     ${testCase.searchJudiciaryEntriesValue ? 'length: ' + testCase.searchJudiciaryEntriesValue.length : 'null'}
                     and role is '${testCase.role}'`, () => {
-                        searchServiceSpy.searchJudiciaryEntries.and.returnValue(of(testCase.searchJudiciaryEntriesValue));
-                        role.setValue(testCase.role);
-                        component.validateJudiciaryEmailAndRole();
-                        expect(searchServiceSpy.searchJudiciaryEntries).toHaveBeenCalledTimes(1);
-                        expect(searchServiceSpy.searchJudiciaryEntries).toHaveBeenCalledWith(email);
-                        expect(component.errorJudiciaryAccount).toBe(testCase.expectError);
+                    searchServiceSpy.searchJudiciaryEntries.and.returnValue(of(testCase.searchJudiciaryEntriesValue));
+                    role.setValue(testCase.role);
+                    component.validateJudiciaryEmailAndRole();
+                    expect(searchServiceSpy.searchJudiciaryEntries).toHaveBeenCalledTimes(1);
+                    expect(searchServiceSpy.searchJudiciaryEntries).toHaveBeenCalledWith(email);
+                    expect(component.errorJudiciaryAccount).toBe(testCase.expectError);
                 });
             }
 
@@ -767,8 +767,7 @@ describe('AddParticipantComponent', () => {
                 expect(searchServiceSpy.searchJudiciaryEntries).toHaveBeenCalledWith(email);
             });
 
-            it('should have errorJudiciaryAccount set to false if search service returns null and role is not Panel Member or Winger',
-            () => {
+            it('should have errorJudiciaryAccount set to false if search service returns null and role is not Panel Member or Winger', () => {
                 searchServiceSpy.searchJudiciaryEntries.and.returnValue(of(null));
                 component.validateJudiciaryEmailAndRole();
                 expect(component.errorJudiciaryAccount).toBeFalsy();
@@ -845,8 +844,6 @@ describe('AddParticipantComponent edit mode', () => {
                 'cancelRequest'
             ]);
             bookingServiceSpy = jasmine.createSpyObj<BookingService>(['isEditMode', 'getParticipantEmail', 'resetEditMode']);
-
-
 
             TestBed.configureTestingModule({
                 imports: [SharedModule, RouterModule.forChild([]), BookingModule, PopupModule, TestingModule],

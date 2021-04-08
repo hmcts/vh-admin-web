@@ -5,34 +5,31 @@
   </div>
 </div>
 
-
-
-<div *ngIf="errorAlternativeEmail || errorJohAccountNotFound || errorJudiciaryAccount"
-     class="govuk-error-summary govuk-!-width-full"
-     aria-labelledby="error-summary-title"
-     role="alert"
-     tabindex="-1"
-     data-module="error-summary">
-    <h2 class="govuk-error-summary__title" id="error-summary-title">
-        {{'There is a problem'}}
-    </h2>
-    <div class="govuk-error-summary__body">
-        <ul class="govuk-list govuk-error-summary__list">
-            <li *ngIf="errorAlternativeEmail">
-                <a (click)="goToDiv('search-email-component')">{{ constants.Error.JohJudgeErrorMsg }}</a>
-            </li>
-            <li *ngIf="errorJohAccountNotFound">
-                <a (click)="goToDiv('search-email-component')">{{ constants.Error.NotFoundJohEmail }}</a>
-            </li>
-            <li *ngIf="errorJudiciaryAccount">
-                <a (click)="goToDiv('search-email-component')">{{ constants.Error.JohEmailErrorMsg }}</a>
-            </li>
-        </ul>
-    </div>
+<div
+  *ngIf="errorAlternativeEmail || errorJohAccountNotFound || errorJudiciaryAccount"
+  class="govuk-error-summary govuk-!-width-full"
+  aria-labelledby="error-summary-title"
+  role="alert"
+  tabindex="-1"
+  data-module="error-summary"
+>
+  <h2 class="govuk-error-summary__title" id="error-summary-title">
+    {{ 'There is a problem' }}
+  </h2>
+  <div class="govuk-error-summary__body">
+    <ul class="govuk-list govuk-error-summary__list">
+      <li *ngIf="errorAlternativeEmail">
+        <a (click)="goToDiv('search-email-component')">{{ constants.Error.JohJudgeErrorMsg }}</a>
+      </li>
+      <li *ngIf="errorJohAccountNotFound">
+        <a (click)="goToDiv('search-email-component')">{{ constants.Error.NotFoundJohEmail }}</a>
+      </li>
+      <li *ngIf="errorJudiciaryAccount">
+        <a (click)="goToDiv('search-email-component')">{{ constants.Error.JohEmailErrorMsg }}</a>
+      </li>
+    </ul>
+  </div>
 </div>
-
-
-
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-one-half">
