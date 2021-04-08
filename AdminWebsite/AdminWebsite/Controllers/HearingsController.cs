@@ -89,14 +89,15 @@ namespace AdminWebsite.Controllers
                 var hearingDetailsResponse = await _bookingsApiClient.BookNewHearingAsync(newBookingRequest);
                 _logger.LogInformation("BookNewHearing - Successfully booked hearing {Hearing}", hearingDetailsResponse.Id);
 
-                _logger.LogInformation("BookNewHearing - Attempting assign participants to the correct group");
-                await _hearingsService.AssignParticipantToCorrectGroups(hearingDetailsResponse, usernameAdIdDict);
-                _logger.LogInformation("BookNewHearing - Successfully assigned participants to the correct group");
-
                 _logger.LogInformation("BookNewHearing - Sending email notification to the participants");
                 await _hearingsService.SendNewUserEmailParticipants(hearingDetailsResponse, usernameAdIdDict);
                 _logger.LogInformation("BookNewHearing - Successfully sent emails to participants- {Hearing}",
                     hearingDetailsResponse.Id);
+
+                _logger.LogInformation("BookNewHearing - Attempting assign participants to the correct group");
+                await _hearingsService.AssignParticipantToCorrectGroups(hearingDetailsResponse, usernameAdIdDict);
+                _logger.LogInformation("BookNewHearing - Successfully assigned participants to the correct group");
+
 
                 if (request.IsMultiDay)
                 {
