@@ -17,7 +17,7 @@ export class AdminGuard implements CanActivate {
         private oidcSecurityService: OidcSecurityService,
         private router: Router,
         private logger: Logger
-    ) { }
+    ) {}
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
         this.logger.debug(`${this.loggerPrefix} Checking if user is vho or case admin.`);
@@ -32,7 +32,9 @@ export class AdminGuard implements CanActivate {
                                         this.logger.debug(`${this.loggerPrefix} Success! User is vho or case admin.`);
                                         return true;
                                     } else {
-                                        this.logger.warn(`${this.loggerPrefix} User is not in administrator role. Navigating to unauthorised.`);
+                                        this.logger.warn(
+                                            `${this.loggerPrefix} User is not in administrator role. Navigating to unauthorised.`
+                                        );
                                         this.router.navigate(['/unauthorised']);
                                         return false;
                                     }
@@ -42,9 +44,9 @@ export class AdminGuard implements CanActivate {
                             this.router.navigate(['/unauthorised']);
                             return of(false);
                         }
-                    }));
+                    })
+                );
             })
         );
-
     }
 }
