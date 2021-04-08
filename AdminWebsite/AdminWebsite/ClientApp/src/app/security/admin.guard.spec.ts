@@ -10,7 +10,7 @@ import { MockOidcSecurityService } from '../testing/mocks/MockOidcSecurityServic
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 
 const userProfileResponse: UserProfileResponse = new UserProfileResponse();
-
+const mockOidcSecurityService: MockOidcSecurityService = new MockOidcSecurityService();
 class UserIdentityServiceSpy {
     getUserInformation() {
         userProfileResponse.is_case_administrator = true;
@@ -40,7 +40,7 @@ describe('admin-guard', () => {
                 AdminGuard,
                 { provide: Router, useValue: router },
                 { provide: UserIdentityService, useClass: UserIdentityServiceSpy },
-                { provide: OidcSecurityService, useClass: MockOidcSecurityService },
+                { provide: OidcSecurityService, useValue: mockOidcSecurityService },
                 { provide: ConfigService, useValue: configServiceSpy },
                 { provide: Logger, useValue: loggerSpy }
             ]
@@ -50,13 +50,22 @@ describe('admin-guard', () => {
 
     describe('when logged in with vh office admin role', () => {
         it('canActivate should return true', () => {
-            expect(adminGuard.canActivate(null, null)).toBeTruthy();
+            mockOidcSecurityService.setAuthenticated(true);
+            adminGuard.canActivate(null, null).subscribe(result => expect(result).toBeTruthy());
         });
     });
 
     describe('when login with case admin or vh officer admin role', () => {
         it('canActivate should return true', () => {
-            expect(adminGuard.canActivate(null, null)).toBeTruthy();
+            mockOidcSecurityService.setAuthenticated(true);
+            adminGuard.canActivate(null, null).subscribe(result => expect(result).toBeTruthy());
+        });
+    });
+
+    describe('when not logged in', () => {
+        it('canActivate should return false', () => {
+            mockOidcSecurityService.setAuthenticated(false);
+            adminGuard.canActivate(null, null).subscribe(result => expect(result).toBeFalsy());
         });
     });
 });
