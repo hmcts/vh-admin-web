@@ -558,8 +558,8 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     }
 
     private setErrorForJudiciaryAccount() {
-        this.role.setErrors({ 'invalid': true });
-        this.party.setErrors({ 'invalid': true });
+        this.role.setErrors({ invalid: true });
+        this.party.setErrors({ invalid: true });
         this.errorJudiciaryAccount = true;
     }
 

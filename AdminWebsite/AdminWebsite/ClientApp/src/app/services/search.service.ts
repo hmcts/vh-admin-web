@@ -64,13 +64,15 @@ export class SearchService {
         return terms
             .pipe(debounceTime(500))
             .pipe(distinctUntilChanged())
-            .pipe(switchMap(term => {
-                if (role === 'Panel Member' || role === 'Winger') {
-                    return this.searchJudiciaryEntries(term);
-                } else {
-                    return this.searchEntries(term);
-                }
-            }));
+            .pipe(
+                switchMap(term => {
+                    if (role === 'Panel Member' || role === 'Winger') {
+                        return this.searchJudiciaryEntries(term);
+                    } else {
+                        return this.searchEntries(term);
+                    }
+                })
+            );
     }
 
     searchEntries(term): Observable<Array<PersonResponse>> {
