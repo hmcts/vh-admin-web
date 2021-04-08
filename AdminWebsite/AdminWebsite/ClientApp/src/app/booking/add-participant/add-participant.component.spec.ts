@@ -767,7 +767,7 @@ describe('AddParticipantComponent', () => {
                 expect(searchServiceSpy.searchJudiciaryEntries).toHaveBeenCalledWith(email);
             });
 
-            it('should have errorJudiciaryAccount set to false if search service returns null and role is not Panel Member or Winger', () => {
+            it('should have errorJudiciaryAccount as false if search service returns null and role is not Panel Member/Winger', () => {
                 searchServiceSpy.searchJudiciaryEntries.and.returnValue(of(null));
                 component.validateJudiciaryEmailAndRole();
                 expect(component.errorJudiciaryAccount).toBeFalsy();
