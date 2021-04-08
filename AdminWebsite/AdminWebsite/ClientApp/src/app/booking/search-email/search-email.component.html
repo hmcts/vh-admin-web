@@ -24,12 +24,12 @@
       type="email"
     />
 
-        <ul *ngIf="isShowResult" class="vh-li-email">
-            <li *ngFor="let result of results | slice: 0:9" class="vk-showlist-m30">
-                <a class="govuk-body vh-a-email" href="javascript: void(0)" (click)="selectItemClick(result)">{{ result.email }}</a>
-            </li>
-        </ul>
-    </div>
+    <ul *ngIf="isShowResult" class="vh-li-email">
+      <li *ngFor="let result of results | slice: 0:9" class="vk-showlist-m30">
+        <a class="govuk-body vh-a-email" href="javascript: void(0)" (click)="selectItemClick(result)">{{ result.email }}</a>
+      </li>
+    </ul>
+  </div>
 
   <div class="govuk-warning-text" *ngIf="notFoundParticipant">
     <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
