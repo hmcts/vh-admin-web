@@ -83,18 +83,19 @@ namespace AdminWebsite.Controllers
 
                 newBookingRequest.Created_by = _userIdentity.GetUserIdentityName();
 
-                _logger.LogDebug("BookNewHearing - Attempting to send booking request to Booking API");
+                _logger.LogInformation("BookNewHearing - Attempting to send booking request to Booking API");
                 var hearingDetailsResponse = await _bookingsApiClient.BookNewHearingAsync(newBookingRequest);
-                _logger.LogDebug("BookNewHearing - Successfully booked hearing {Hearing}", hearingDetailsResponse.Id);
+                _logger.LogInformation("BookNewHearing - Successfully booked hearing {Hearing}", hearingDetailsResponse.Id);
 
-                _logger.LogDebug("BookNewHearing - Attempting assign participants to the correct group");
-                await _hearingsService.AssignParticipantToCorrectGroups(hearingDetailsResponse, usernameAdIdDict);
-                _logger.LogDebug("BookNewHearing - Successfully assigned participants to the correct group");
-
-                _logger.LogDebug("BookNewHearing - Sending email notification to the participants");
+                _logger.LogInformation("BookNewHearing - Sending email notification to the participants");
                 await _hearingsService.SendNewUserEmailParticipants(hearingDetailsResponse, usernameAdIdDict);
-                _logger.LogDebug("BookNewHearing - Successfully sent emails to participants- {Hearing}",
+                _logger.LogInformation("BookNewHearing - Successfully sent emails to participants- {Hearing}",
                     hearingDetailsResponse.Id);
+
+                _logger.LogInformation("BookNewHearing - Attempting assign participants to the correct group");
+                await _hearingsService.AssignParticipantToCorrectGroups(hearingDetailsResponse, usernameAdIdDict);
+                _logger.LogInformation("BookNewHearing - Successfully assigned participants to the correct group");
+
 
                 if (request.IsMultiDay)
                 {
@@ -234,14 +235,7 @@ namespace AdminWebsite.Controllers
 
                 // Delete existing participants if the request doesn't contain any update information
                 originalHearing.Participants ??= new List<ParticipantResponse>();
-                var deleteParticipantList =
-                    originalHearing.Participants.Where(p => request.Participants.All(rp => rp.Id != p.Id));
-                foreach (var participantToDelete in deleteParticipantList)
-                {
-                    _logger.LogDebug("Removing existing participant {Participant} from hearing {Hearing}",
-                        participantToDelete.Id, hearingId);
-                    await _bookingsApiClient.RemoveParticipantFromHearingAsync(hearingId, participantToDelete.Id);
-                }
+                await RemoveParticipantsFromHearing(hearingId, request, originalHearing);
 
                 // Add new participants
                 await _hearingsService.SaveNewParticipants(hearingId, newParticipantList);
@@ -258,21 +252,10 @@ namespace AdminWebsite.Controllers
                 _logger.LogDebug("Successfully assigned participants to the correct group");
 
                 // Send a notification email to newly created participants
-                var newParticipantEmails = newParticipantList.Select(p => p.Contact_email);
-                if (newParticipantList.Any())
-                {
-                    _logger.LogDebug("Sending email notification to the participants");
-                    await _hearingsService.SendNewUserEmailParticipants(updatedHearing, usernameAdIdDict);
+                var newParticipantEmails = newParticipantList.Select(p => p.Contact_email).ToList();
+                await SendEmailsToParticipantsAddedToHearing(newParticipantList, updatedHearing, usernameAdIdDict, newParticipantEmails);
 
-                    var participantsForConfirmation = updatedHearing.Participants
-                        .Where(p => newParticipantEmails.Contains(p.Contact_email)).ToList();
-                    await _hearingsService.SendHearingConfirmationEmail(updatedHearing, participantsForConfirmation);
-                    _logger.LogDebug("Successfully sent emails to participants - {Hearing}", updatedHearing.Id);
-                }
-
-                if (updatedHearing.HasJudgeEmailChanged(originalHearing) &&
-                    updatedHearing.Status == BookingStatus.Created)
-                    await _hearingsService.SendJudgeConfirmationEmail(updatedHearing);
+                await SendJudgeEmailIfNeeded(updatedHearing, originalHearing);
                 if (!updatedHearing.HasScheduleAmended(originalHearing)) return Ok(updatedHearing);
 
 
@@ -294,6 +277,41 @@ namespace AdminWebsite.Controllers
                 if (e.StatusCode == (int) HttpStatusCode.NotFound) return NotFound(e.Response);
 
                 throw;
+            }
+        }
+
+        private async Task RemoveParticipantsFromHearing(Guid hearingId, EditHearingRequest request,
+            HearingDetailsResponse originalHearing)
+        {
+            var deleteParticipantList =
+                originalHearing.Participants.Where(p => request.Participants.All(rp => rp.Id != p.Id));
+            foreach (var participantToDelete in deleteParticipantList)
+            {
+                _logger.LogDebug("Removing existing participant {Participant} from hearing {Hearing}",
+                    participantToDelete.Id, hearingId);
+                await _bookingsApiClient.RemoveParticipantFromHearingAsync(hearingId, participantToDelete.Id);
+            }
+        }
+
+        private async Task SendJudgeEmailIfNeeded(HearingDetailsResponse updatedHearing, HearingDetailsResponse originalHearing)
+        {
+            if (updatedHearing.HasJudgeEmailChanged(originalHearing) &&
+                updatedHearing.Status == BookingStatus.Created)
+                await _hearingsService.SendJudgeConfirmationEmail(updatedHearing);
+        }
+
+        private async Task SendEmailsToParticipantsAddedToHearing(List<ParticipantRequest> newParticipantList,
+            HearingDetailsResponse updatedHearing, Dictionary<string, User> usernameAdIdDict, IEnumerable<string> newParticipantEmails)
+        {
+            if (newParticipantList.Any())
+            {
+                _logger.LogInformation("Sending email notification to the participants");
+                await _hearingsService.SendNewUserEmailParticipants(updatedHearing, usernameAdIdDict);
+
+                var participantsForConfirmation = updatedHearing.Participants
+                    .Where(p => newParticipantEmails.Contains(p.Contact_email)).ToList();
+                await _hearingsService.SendHearingConfirmationEmail(updatedHearing, participantsForConfirmation);
+                _logger.LogInformation("Successfully sent emails to participants - {Hearing}", updatedHearing.Id);
             }
         }
 
