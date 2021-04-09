@@ -78,7 +78,7 @@ describe('LoginComponent', () => {
         expect(router.navigateByUrl).toHaveBeenCalledWith('testurl');
     });
 
-    it('should redirect to root url when authenticated if no return  url has been set', async () => {
+    it('should redirect to root url when authenticated if no return url has been set', async () => {
         givenAuthenticated(true);
 
         await whenInitializingComponent();
@@ -94,6 +94,13 @@ describe('LoginComponent', () => {
 
         await whenInitializingComponent();
 
+        expect(router.navigate).toHaveBeenCalledWith(['/']);
+    });
+
+    it('should redirect to root if auth error', async () => {
+        givenAuthenticated(true);
+        mockOidcSecurityService.setThrowErrorOnIsAuth(true);
+        await whenInitializingComponent();
         expect(router.navigate).toHaveBeenCalledWith(['/']);
     });
 });

@@ -1,5 +1,5 @@
 import { PublicConfiguration } from 'angular-auth-oidc-client';
-import { Observable, of } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 interface UserData {
     preferred_username?: string;
     name?: string;
@@ -13,6 +13,7 @@ interface UserData {
 export class MockOidcSecurityService {
     userData: UserData;
     authenticated: boolean;
+    throwsError: boolean;
     configuration = {
         configuration: {
             scope: 'openid profile offline_access'
@@ -22,8 +23,13 @@ export class MockOidcSecurityService {
     setAuthenticated(authenticated: boolean) {
         this.authenticated = authenticated;
     }
+
     setUserData(userData: UserData) {
         this.userData = userData;
+    }
+
+    setThrowErrorOnIsAuth(throwsError: boolean) {
+        this.throwsError = throwsError;
     }
 
     get userData$(): Observable<UserData> {
@@ -31,6 +37,9 @@ export class MockOidcSecurityService {
     }
 
     get isAuthenticated$(): Observable<boolean> {
+        if (this.throwsError) {
+            return throwError('error');
+        }
         return of(this.authenticated);
     }
 
