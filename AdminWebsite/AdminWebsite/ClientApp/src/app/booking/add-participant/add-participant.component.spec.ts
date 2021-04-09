@@ -780,7 +780,103 @@ describe('AddParticipantComponent', () => {
                 expect(component.errorJudiciaryAccount).toBeTruthy();
             });
 
-fdescribe('AddParticipantComponent edit mode', () => {
+            it('should have errorJudiciaryAccount set to true if search service returns null and role is Winger', () => {
+                searchServiceSpy.searchJudiciaryEntries.and.returnValue(of(null));
+                role.setValue('Winger'); // TODO fix magic string
+                component.validateJudiciaryEmailAndRole();
+                expect(component.errorJudiciaryAccount).toBeTruthy();
+            });
+        });
+    });
+    describe('validateJudgeAndJohMembers', () => {
+        it('should return true if hearing is null', () => {
+            component.hearing = null;
+            expect(component.validateJudgeAndJohMembers()).toBeTruthy();
+        });
+        describe('when hearing is not null', () => {
+            beforeEach(
+                waitForAsync(() => {
+                    component.hearing.participants = [];
+                })
+            );
+            it('should return true if participants is empty', () => {
+                expect(component.validateJudgeAndJohMembers()).toBeTruthy();
+            });
+            it('should return true if sole participant role is judge and does not equal search email', () => {
+                component.hearing.participants.push(p1);
+                component.searchEmail.email = 'judge1@user.name';
+                expect(component.validateJudgeAndJohMembers()).toBeTruthy();
+            });
+            it('should return false if sole participant role is judge and does equal search email', () => {
+                component.hearing.participants.push(p1);
+                component.searchEmail.email = 'judge@user.name';
+                expect(component.validateJudgeAndJohMembers()).toBeFalsy();
+            });
+            it('should return true if sole participant role is not judge', () => {
+                component.hearing.participants.push(p2);
+                component.searchEmail.email = 'judge@user.name';
+                expect(component.validateJudgeAndJohMembers()).toBeTruthy();
+            });
+            it('should return true if a participant role is judge and does not equal search email', () => {
+                component.hearing.participants.push(p2);
+                component.hearing.participants.push(p1);
+                component.searchEmail.email = 'judge1@user.name';
+                expect(component.validateJudgeAndJohMembers()).toBeTruthy();
+            });
+            it('should return false if a participant role is judge and does equal search email', () => {
+                component.hearing.participants.push(p2);
+                component.hearing.participants.push(p1);
+                component.searchEmail.email = 'judge@user.name';
+                expect(component.validateJudgeAndJohMembers()).toBeFalsy();
+            });
+        });
+    });
+
+    fdescribe('emailChanged', () => {
+        describe('add judge/JOH', () => {
+            beforeEach(
+                waitForAsync(() => {
+                    component.hearing.participants = [];
+                })
+            );
+
+            it('should turn values true if a participant role is judge and does not equal search email', () => {
+                component.hearing.participants.push(p1);
+                component.searchEmail.email = 'judge@user.name';
+                component.emailChanged();
+                expect(component.searchEmail.isErrorEmailAssignedToJudge).toBeTruthy();
+                expect(component.errorAlternativeEmail).toBeTruthy();
+                expect(component.errorJohAccountNotFound).toBeFalsy();
+            });
+            it('should turn values true if a participant role is judge and does not equal search email', () => {
+                component.hearing.participants.push(p1);
+                component.searchEmail.email = 'judge1@user.name';
+                component.validateJudgeAndJohMembers();
+                expect(component.errorAlternativeEmail).toBeFalsy();
+                expect(component.errorJohAccountNotFound).toBeFalsy();
+            });
+        });
+    });
+
+    describe('subcribeForSeachEmailEvents', () => {
+        it('should return errorAlternativeEmail & errorJohAccountNotFound as false if called with notFoundEmailEvent as false', () => {
+            component.errorAlternativeEmail = true;
+            component.errorJohAccountNotFound = true;
+            component.subcribeForSeachEmailEvents();
+            component.searchEmail.notFoundEmailEvent.next(false);
+            expect(component.errorAlternativeEmail).toBeFalsy();
+            expect(component.errorJohAccountNotFound).toBeFalsy();
+        });
+        it('should return ', () => {
+            spyOn(component, 'notFoundParticipant');
+            component.subcribeForSeachEmailEvents();
+            component.searchEmail.notFoundEmailEvent.next(true);
+            expect(component.notFoundParticipant).toHaveBeenCalledTimes(1);
+        });
+    });
+});
+
+describe('AddParticipantComponent edit mode', () => {
     beforeEach(
         waitForAsync(() => {
             videoHearingsServiceSpy = jasmine.createSpyObj<VideoHearingsService>([
