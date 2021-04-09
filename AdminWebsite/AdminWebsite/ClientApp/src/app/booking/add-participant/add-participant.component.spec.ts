@@ -1,7 +1,7 @@
 import { ComponentFixture, fakeAsync, flushMicrotasks, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import { AbstractControl, Validators } from '@angular/forms';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
-import { of, Subscription } from 'rxjs';
+import { Observable, of, Subject, Subscription } from 'rxjs';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { SearchServiceStub } from 'src/app/testing/stubs/service-service-stub';
 import { Constants } from '../../common/constants';
@@ -831,6 +831,49 @@ describe('AddParticipantComponent', () => {
             });
         });
     });
+
+    fdescribe('emailChanged', () => {
+        describe('add judge/JOH', () => {
+            beforeEach(
+                waitForAsync(() => {
+                    component.hearing.participants = [];
+                })
+            );
+
+            it('should turn values true if a participant role is judge and does not equal search email', () => {
+                component.hearing.participants.push(p1);
+                component.searchEmail.email = 'judge@user.name';
+                component.emailChanged();
+                expect(component.searchEmail.isErrorEmailAssignedToJudge).toBeTruthy();
+                expect(component.errorAlternativeEmail).toBeTruthy();
+                expect(component.errorJohAccountNotFound).toBeFalsy();
+            });
+            it('should turn values true if a participant role is judge and does not equal search email', () => {
+                component.hearing.participants.push(p1);
+                component.searchEmail.email = 'judge1@user.name';
+                component.validateJudgeAndJohMembers();
+                expect(component.errorAlternativeEmail).toBeFalsy();
+                expect(component.errorJohAccountNotFound).toBeFalsy();
+            });
+        });
+    });
+
+    describe('subcribeForSeachEmailEvents', () => {
+        it('should return errorAlternativeEmail & errorJohAccountNotFound as false if called with notFoundEmailEvent as false', () => {
+            component.errorAlternativeEmail = true;
+            component.errorJohAccountNotFound = true;
+            component.subcribeForSeachEmailEvents();
+            component.searchEmail.notFoundEmailEvent.next(false);
+            expect(component.errorAlternativeEmail).toBeFalsy();
+            expect(component.errorJohAccountNotFound).toBeFalsy();
+        });
+        it('should return ', () => {
+            spyOn(component, 'notFoundParticipant');
+            component.subcribeForSeachEmailEvents();
+            component.searchEmail.notFoundEmailEvent.next(true);
+            expect(component.notFoundParticipant).toHaveBeenCalledTimes(1);
+        });
+    });
 });
 
 describe('AddParticipantComponent edit mode', () => {
@@ -1308,6 +1351,11 @@ describe('AddParticipantComponent edit mode no participants added', () => {
         expect(component.displayUpdateButton).toBeFalsy();
         expect(component.participantDetails).not.toBeNull();
         expect(component.participantDetails.username).toBeNull();
+    });
+    it('should return JOH not found when role is Panel Member/Winger', () => {
+        role.setValue('Panel Member');
+        component.notFoundParticipant();
+        expect(component.errorJohAccountNotFound).toBeTruthy();
     });
 });
 describe('AddParticipantComponent set representer', () => {
