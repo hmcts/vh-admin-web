@@ -832,7 +832,7 @@ describe('AddParticipantComponent', () => {
         });
     });
 
-    fdescribe('emailChanged', () => {
+    describe('danged', () => {
         describe('add judge/JOH', () => {
             beforeEach(
                 waitForAsync(() => {
@@ -840,7 +840,7 @@ describe('AddParticipantComponent', () => {
                 })
             );
 
-            it('should turn values true if a participant role is judge and does not equal search email', () => {
+            it('should return values true/false if a participant role is judge and does equal search email', () => {
                 component.hearing.participants.push(p1);
                 component.searchEmail.email = 'judge@user.name';
                 component.emailChanged();
@@ -848,7 +848,7 @@ describe('AddParticipantComponent', () => {
                 expect(component.errorAlternativeEmail).toBeTruthy();
                 expect(component.errorJohAccountNotFound).toBeFalsy();
             });
-            it('should turn values true if a participant role is judge and does not equal search email', () => {
+            it('should return values false if a participant role is judge and does not equal search email', () => {
                 component.hearing.participants.push(p1);
                 component.searchEmail.email = 'judge1@user.name';
                 component.validateJudgeAndJohMembers();
@@ -867,7 +867,7 @@ describe('AddParticipantComponent', () => {
             expect(component.errorAlternativeEmail).toBeFalsy();
             expect(component.errorJohAccountNotFound).toBeFalsy();
         });
-        it('should return ', () => {
+        it('should have called Not Found Participant if Not Found Email Event has been called', () => {
             spyOn(component, 'notFoundParticipant');
             component.subcribeForSeachEmailEvents();
             component.searchEmail.notFoundEmailEvent.next(true);
