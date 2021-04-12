@@ -5,6 +5,7 @@ import { IDropDownModel } from '../common/model/drop-down.model';
 import { ParticipantModel } from '../common/model/participant.model';
 import { BHClient, PersonResponse } from '../services/clients/api-client';
 import { Constants } from '../common/constants';
+import { JudgeDataService } from '../booking/services/judge-data.service';
 
 @Injectable({
     providedIn: 'root'
@@ -12,6 +13,9 @@ import { Constants } from '../common/constants';
 export class SearchService {
     // empty since the functionality is yet to be implemented
     ParticipantList: ParticipantModel[] = [];
+
+    private judiciaryRoles = ['Panel Member', 'Winger', 'Judge']; // TODO store somewhere more central as these are frequently used
+    private minimumSearchLength = 3;
 
     TitleList: IDropDownModel[] = [
         {
@@ -58,36 +62,38 @@ export class SearchService {
         }
     ];
 
-    constructor(private bhClient: BHClient) {}
+    constructor(
+        private bhClient: BHClient,
+        private judgeDataService: JudgeDataService,
+    ) {}
 
-    search(terms: Observable<string>, role: string) {
-        return terms
-            .pipe(debounceTime(500))
-            .pipe(distinctUntilChanged())
-            .pipe(
-                switchMap(term => {
-                    if (role === 'Panel Member' || role === 'Winger') {
-                        return this.searchJudiciaryEntries(term);
-                    } else {
-                        return this.searchEntries(term);
-                    }
-                })
-            );
+    search(term: string, role: string): Observable<Array<PersonResponse>> {
+        if (this.judiciaryRoles.includes(role)) {
+            return this.searchJudiciaryEntries(term);
+        } else {
+            return this.searchEntries(term);
+        }
     }
 
     searchEntries(term): Observable<Array<PersonResponse>> {
         const allResults: PersonResponse[] = [];
-        if (term.length > 2) {
+        if (term.length >= this.minimumSearchLength) {
             return this.bhClient.postPersonBySearchTerm(term);
+        } else {
+            return of(allResults);
         }
-        return of(allResults);
     }
 
     searchJudiciaryEntries(term): Observable<Array<PersonResponse>> {
         const allResults: PersonResponse[] = [];
-        if (term.length > 2) {
+        if (term.length >= this.minimumSearchLength) {
             return this.bhClient.postJudiciaryPersonBySearchTerm(term);
+        } else {
+            return of(allResults);
         }
-        return of(allResults);
+    }
+
+    searchJudges(term): Observable<Array<PersonResponse>> {
+        this.judgeDataService.getJudges();
     }
 }
