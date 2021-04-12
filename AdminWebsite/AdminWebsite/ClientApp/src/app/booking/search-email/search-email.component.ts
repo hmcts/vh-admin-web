@@ -6,7 +6,8 @@ import { ParticipantModel } from '../../common/model/participant.model';
 import { SearchService } from '../../services/search.service';
 import { ConfigService } from 'src/app/services/config.service';
 import { Logger } from '../../services/logger';
-import { map } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, map, switchMap } from 'rxjs/operators';
+import { JudgeDataService } from '../services/judge-data.service';
 
 @Component({
     selector: 'app-search-email',
@@ -39,13 +40,25 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
 
     @Output() emailChanged = new EventEmitter<string>();
 
-    constructor(private searchService: SearchService, private configService: ConfigService, private logger: Logger) {}
+    @Input() includeJudges = false;
+
+    constructor(
+        private searchService: SearchService,
+        private configService: ConfigService,
+        private logger: Logger
+    ) {}
 
     ngOnInit() {
         this.$subscriptions.push(
-            this.searchService.search(this.searchTerm, this.hearingRoleParticipant).subscribe(data => {
-                if (data && data.length > 0) {
-                    this.getData(data);
+            this.searchTerm
+            .pipe(debounceTime(500))
+            .pipe(distinctUntilChanged())
+            .pipe(switchMap(term => {
+                return this.searchService.search(term, this.hearingRoleParticipant);
+            })
+            ).subscribe(personsFound => {
+                if (personsFound && personsFound.length > 0) {
+                    this.getData(personsFound);
                 } else {
                     if (this.email.length > 2) {
                         this.noDataFound();
