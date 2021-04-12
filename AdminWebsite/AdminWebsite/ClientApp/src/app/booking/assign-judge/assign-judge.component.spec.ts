@@ -106,6 +106,7 @@ describe('AssignJudgeComponent', () => {
         waitForAsync(() => {
             const newHearing = initHearingRequest();
             loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['error', 'debug', 'warn']);
+            configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettings']);
             emailValidationServiceSpy = jasmine.createSpyObj<EmailValidationService>('EmailValidationService', [
                 'hasCourtroomAccountPattern',
                 'validateEmail'
@@ -144,7 +145,8 @@ describe('AssignJudgeComponent', () => {
                     },
                     { provide: BookingService, useValue: bookingServiseSpy },
                     { provide: Logger, useValue: loggerSpy },
-                    RecordingGuardService
+                    RecordingGuardService,
+                    { provide: ConfigService, useValue: configServiceSpy }
                 ],
                 declarations: [
                     AssignJudgeComponent,
