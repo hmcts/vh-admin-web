@@ -1,6 +1,15 @@
 import { HttpClientModule } from '@angular/common/http';
 import { Component, Input } from '@angular/core';
-import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
+import {
+    ComponentFixture,
+    discardPeriodicTasks,
+    fakeAsync,
+    flush,
+    flushMicrotasks,
+    TestBed,
+    tick,
+    waitForAsync
+} from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -223,7 +232,7 @@ describe('BookingDetailsComponent', () => {
     returnUrlServiceSpy = jasmine.createSpyObj<ReturnUrlService>('ReturnUrlService', ['popUrl', 'setUrl']);
 
     beforeEach(
-        waitForAsync(() => {
+        fakeAsync(() => {
             videoHearingServiceSpy.getHearingById.and.returnValue(of(hearingResponse));
             videoHearingServiceSpy.updateBookingStatus.and.returnValue(of());
             videoHearingServiceSpy.mapHearingDetailsResponseToHearingModel.and.returnValue(hearingModel);
@@ -258,12 +267,9 @@ describe('BookingDetailsComponent', () => {
             component = fixture.componentInstance;
             component.hearingId = '1';
             fixture.detectChanges();
+            discardPeriodicTasks();
         })
     );
-
-    it('should create component', fakeAsync(() => {
-        expect(component).toBeTruthy();
-    }));
 
     it('should get hearings details', fakeAsync(() => {
         component.ngOnInit();

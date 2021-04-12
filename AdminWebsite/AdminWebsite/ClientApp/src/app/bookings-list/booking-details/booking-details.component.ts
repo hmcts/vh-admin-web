@@ -63,17 +63,19 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
         this.showConfirmingFailed = false;
     }
 
-    async ngOnInit() {
+    ngOnInit() {
         this.hearingId = this.bookingPersistService.selectedHearingId;
         if (this.hearingId) {
-            const hearingDetailsResponse = await this.videoHearingService.getHearingById(this.hearingId).toPromise();
-            this.mapHearing(hearingDetailsResponse);
-            this.getConferencePhoneDetails();
-            // mapping to Hearing model for edit on summary page
-            this.booking = this.videoHearingService.mapHearingDetailsResponseToHearingModel(hearingDetailsResponse);
-            this.setBookingInStorage();
-            this.setTimeObserver();
-            this.setSubscribers();
+            this.videoHearingService.getHearingById(this.hearingId).toPromise()
+                .then(hearingDetailsResponse => {
+                    this.mapHearing(hearingDetailsResponse);
+                    this.getConferencePhoneDetails();
+                    // mapping to Hearing model for edit on summary page
+                    this.booking = this.videoHearingService.mapHearingDetailsResponseToHearingModel(hearingDetailsResponse);
+                    this.setBookingInStorage();
+                    this.setTimeObserver();
+                    this.setSubscribers();
+                });
         }
         this.$subscriptions.push(
             this.userIdentityService.getUserInformation().subscribe(userProfile => {
