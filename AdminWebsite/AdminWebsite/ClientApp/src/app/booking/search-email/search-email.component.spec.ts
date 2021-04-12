@@ -60,7 +60,7 @@ describe('SeachEmailComponent', () => {
 
     beforeEach(() => {
         searchServiceSpy = jasmine.createSpyObj<SearchService>('SearchService', ['search']);
-        configServiceSpy = jasmine.createSpyObj<ConfigService>('CongigService', ['getClientSettings']);
+        configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettings']);
         configServiceSpy.getClientSettings.and.returnValue(of(configSettings));
         loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['info', 'error']);
 
@@ -267,7 +267,7 @@ describe('SearchEmailComponent email validate', () => {
     let loggerSpy: jasmine.SpyObj<Logger>;
 
     searchServiceSpy = jasmine.createSpyObj<SearchService>('SearchService', ['search']);
-    configServiceSpy = jasmine.createSpyObj<ConfigService>('CongigService', ['getClientSettings']);
+    configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettings']);
     configServiceSpy.getClientSettings.and.returnValue(of(configSettings));
     loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['info', 'error']);
 

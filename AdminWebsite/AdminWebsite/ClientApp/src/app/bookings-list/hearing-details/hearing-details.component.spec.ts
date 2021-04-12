@@ -10,12 +10,23 @@ import { ActivatedRoute } from '@angular/router';
 import { ClientSettingsResponse } from 'src/app/services/clients/api-client';
 import { Logger } from '../../services/logger';
 import { OtherInformationModel } from '../../common/model/other-information.model';
+import { ConfigService } from 'src/app/services/config.service';
+import { of } from 'rxjs';
 
 describe('HearingDetailsComponent', () => {
     let component: HearingDetailsComponent;
     let fixture: ComponentFixture<HearingDetailsComponent>;
     let debugElement: DebugElement;
-
+    let configServiceSpy: jasmine.SpyObj<ConfigService>;
+    const clientSettings = new ClientSettingsResponse({
+        tenant_id: 'tenantid',
+        client_id: 'clientid',
+        post_logout_redirect_uri: '/dashboard',
+        redirect_uri: '/dashboard',
+        join_by_phone_from_date: '2019-10-22 13:58:40.3730067'
+    });
+    configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettings', 'getConfig']);
+    configServiceSpy.getConfig.and.returnValue(of(clientSettings));
     const h1 = new BookingsDetailsModel(
         '1',
         new Date('2019-10-22 13:58:40.3730067'),
@@ -45,7 +56,7 @@ describe('HearingDetailsComponent', () => {
             TestBed.configureTestingModule({
                 declarations: [HearingDetailsComponent, LongDatetimePipe],
                 imports: [RouterTestingModule],
-                providers: [Logger]
+                providers: [Logger, { provide: ConfigService, useValue: configServiceSpy }]
             }).compileComponents();
         })
     );
@@ -131,7 +142,17 @@ describe('HearingDetailsComponent', () => {
     });
 });
 describe('HearingDetailsComponent join by phone', () => {
-    let activatedRoute: ActivatedRoute;
+    let configServiceSpy: jasmine.SpyObj<ConfigService>;
+    const clientSettings = new ClientSettingsResponse({
+        tenant_id: 'tenantid',
+        client_id: 'clientid',
+        post_logout_redirect_uri: '/dashboard',
+        redirect_uri: '/dashboard',
+        join_by_phone_from_date: ''
+    });
+    const activatedRoute = new ActivatedRoute();
+    configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getConfig']);
+    configServiceSpy.getConfig.and.returnValue(clientSettings);
     const loggerSpy: jasmine.SpyObj<Logger> = jasmine.createSpyObj('Logger', ['error', 'event', 'debug', 'info', 'warn']);
     const hearing = new BookingsDetailsModel(
         '1',
@@ -158,56 +179,31 @@ describe('HearingDetailsComponent join by phone', () => {
         '1234567'
     );
     it('should display option to join by phone if config has not the set date', () => {
-        const config = new ClientSettingsResponse({ join_by_phone_from_date: '' });
-        activatedRoute = <any>{
-            snapshot: {
-                data: { configSettings: config }
-            }
-        };
-        const component = new HearingDetailsComponent(activatedRoute, loggerSpy);
+        const component = new HearingDetailsComponent(activatedRoute, loggerSpy, configServiceSpy);
         component.hearing = hearing;
         const result = component.isJoinByPhone();
         expect(result).toBe(true);
     });
     it('should not display option to join by phone if booking has not confirmation date', () => {
-        const config = new ClientSettingsResponse({ join_by_phone_from_date: '2020-10-22' });
-        activatedRoute = <any>{
-            snapshot: {
-                data: { configSettings: config }
-            }
-        };
+        clientSettings.join_by_phone_from_date = '2020-10-22';
         hearing.ConfirmedDate = null;
-        const component = new HearingDetailsComponent(activatedRoute, loggerSpy);
+        const component = new HearingDetailsComponent(activatedRoute, loggerSpy, configServiceSpy);
         component.hearing = hearing;
         const result = component.isJoinByPhone();
         expect(result).toBe(false);
     });
     it('should not display option to join by phone if booking confirmation date less than config date', () => {
-        const config = new ClientSettingsResponse({
-            join_by_phone_from_date: '2020-10-22'
-        });
-        activatedRoute = <any>{
-            snapshot: {
-                data: { configSettings: config }
-            }
-        };
+        clientSettings.join_by_phone_from_date = '2020-10-22';
         hearing.ConfirmedDate = new Date('2020-10-21');
-        const component = new HearingDetailsComponent(activatedRoute, loggerSpy);
+        const component = new HearingDetailsComponent(activatedRoute, loggerSpy, configServiceSpy);
         component.hearing = hearing;
         const result = component.isJoinByPhone();
         expect(result).toBe(false);
     });
     it('should display option to join by phone if booking confirmation date greater than config date', () => {
-        const config = new ClientSettingsResponse({
-            join_by_phone_from_date: '2020-10-22'
-        });
-        activatedRoute = <any>{
-            snapshot: {
-                data: { configSettings: config }
-            }
-        };
+        clientSettings.join_by_phone_from_date = '2020-10-22';
         hearing.ConfirmedDate = new Date('2020-10-23');
-        const component = new HearingDetailsComponent(activatedRoute, loggerSpy);
+        const component = new HearingDetailsComponent(activatedRoute, loggerSpy, configServiceSpy);
         component.hearing = hearing;
         const result = component.isJoinByPhone();
         expect(result).toBe(true);

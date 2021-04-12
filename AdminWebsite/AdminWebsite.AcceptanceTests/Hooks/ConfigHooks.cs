@@ -16,6 +16,8 @@ using Microsoft.Extensions.Options;
 using TechTalk.SpecFlow;
 using ConfigurationManager = AcceptanceTests.Common.Configuration.ConfigurationManager;
 using HearingDetails = AdminWebsite.AcceptanceTests.Data.HearingDetails;
+using AdminWebsite.Security;
+using AdminWebsite.Configuration;
 
 namespace AdminWebsite.AcceptanceTests.Hooks
 {
@@ -49,7 +51,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
 
         private void RegisterAzureSecrets(TestContext context)
         {
-            context.WebConfig.AzureAdConfiguration = Options.Create(_configRoot.GetSection("AzureAd").Get<AdminWebSecurityConfiguration>()).Value;
+            context.WebConfig.AzureAdConfiguration = Options.Create(_configRoot.GetSection("AzureAd").Get<AzureAdConfiguration>()).Value;
             ConfigurationManager.VerifyConfigValuesSet(context.WebConfig.AzureAdConfiguration);
         }
 
@@ -106,7 +108,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         private void RegisterKinlySettings(TestContext context)
         {
             context.WebConfig.KinlyConfiguration = Options.Create(_configRoot.GetSection("KinlyConfiguration").Get<KinlyConfiguration>()).Value;
-            ConfigurationManager.VerifyConfigValuesSet(context.WebConfig.KinlyConfiguration);
+            context.WebConfig.KinlyConfiguration.ConferencePhoneNumber.Should().NotBeNullOrWhiteSpace();
         }
 
         private void RegisterSauceLabsSettings(TestContext context)
@@ -120,12 +122,12 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             context.WebConfig.SauceLabsConfiguration.RealDeviceApiKey.Should().NotBeNullOrWhiteSpace();
         }
 
-        private static string GetTargetTestEnvironment()
+        private string GetTargetTestEnvironment()
         {
             return NUnit.Framework.TestContext.Parameters["TargetTestEnvironment"] ?? string.Empty;
         }
 
-        private static bool RunOnSauceLabsFromLocal()
+        private bool RunOnSauceLabsFromLocal()
         {
             return NUnit.Framework.TestContext.Parameters["RunOnSauceLabs"] != null &&
                    NUnit.Framework.TestContext.Parameters["RunOnSauceLabs"].Equals("true");
@@ -137,15 +139,15 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             ConfigurationManager.VerifyConfigValuesSet(context.WebConfig.NotifyConfiguration);
         }
 
-        private static void RunningAdminWebLocally(TestContext context)
+        private void RunningAdminWebLocally(TestContext context)
         {
             context.WebConfig.VhServices.RunningAdminWebLocally = context.WebConfig.VhServices.AdminWebUrl.Contains("localhost");
         }
 
-        private static async Task GenerateBearerTokens(TestContext context)
+        private async Task GenerateBearerTokens(TestContext context)
         {
-            context.Token = await ConfigurationManager.GetBearerToken(
-                context.WebConfig.AzureAdConfiguration, context.WebConfig.VhServices.TestApiResourceId);
+            var tokenProvider = new TokenProvider(Options.Create(context.WebConfig.AzureAdConfiguration));
+            context.Token = await tokenProvider.GetClientAccessToken(context.WebConfig.AzureAdConfiguration.ClientId, context.WebConfig.AzureAdConfiguration.ClientSecret, context.WebConfig.VhServices.TestApiResourceId);
             context.Token.Should().NotBeNullOrEmpty();
         }
     }
