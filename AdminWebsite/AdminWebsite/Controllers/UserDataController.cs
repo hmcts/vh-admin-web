@@ -33,6 +33,20 @@ namespace AdminWebsite.Controllers
         }
 
         /// <summary>
+        ///     Search Judges by email
+        /// </summary>
+        /// <param name="term"></param>
+        /// <returns>A list of judges</returns>
+        [HttpGet("judges/search/email", Name = "SearchJudges")]
+        [ProducesResponseType(typeof(IList<JudgeResponse>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        public async Task<ActionResult<IList<JudgeResponse>>> GetJudgesByEmail(string term)
+        {
+            var response = await _userAccountService.GetJudgesByEmail(term);
+            return Ok(response);
+        }
+
+        /// <summary>
         ///     Updates the users AAD password.
         /// </summary>
         /// <param name="userName"></param>

@@ -27,6 +27,16 @@ namespace AdminWebsite.Services
         /// Filters test accounts if configured to run as live environment 
         /// </remarks>
         Task<IEnumerable<JudgeResponse>> GetJudgeUsers();
+
+
+        /// <summary>
+        ///     Returns a list of judges filtered by email in the active directory
+        /// </summary>
+        /// <remarks>
+        /// Filters test accounts if configured to run as live environment 
+        /// </remarks>
+        Task<IEnumerable<JudgeResponse>> GetJudgesByEmail(string term);
+
         /// <summary>
         /// Creates a user based on the participant information or updates the participant username if it already exists
         /// </summary>
@@ -195,6 +205,19 @@ namespace AdminWebsite.Services
             _logger.LogDebug("Attempting to get all judge accounts.");
             var judgesList = await _userApiClient.GetJudgesAsync();
             return judgesList.Select(x => new JudgeResponse
+            {
+                FirstName = x.FirstName,
+                LastName = x.LastName,
+                DisplayName = x.DisplayName,
+                Email = x.Email
+            }).ToList();
+        }
+
+        public async Task<IEnumerable<JudgeResponse>> GetJudgesByEmail(string term) // TODO edit userApiClient instead?
+        {
+            _logger.LogDebug("Attempting to get all judge accounts.");
+            var judgesList = await _userApiClient.GetJudgesAsync();
+            return judgesList.Where(x => x.Email.ToLower().Contains(term.ToLower())).Select(x => new JudgeResponse
             {
                 FirstName = x.FirstName,
                 LastName = x.LastName,
