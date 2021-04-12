@@ -11,12 +11,12 @@ namespace AdminWebsite.IntegrationTests.Helper
                 .AddJsonFile("appsettings.json")
                 .AddUserSecrets("f99a3fe8-cf72-486a-b90f-b65c27da84ee");
 
-            Security = new SecuritySettings();
+            Security = new AzureAdConfiguration();
 
             var config = configRootBuilder.Build();
             config.Bind("AzureAd", Security);
         }
         
-        public SecuritySettings Security { get; }
+        public AzureAdConfiguration Security { get; }
     }
 }

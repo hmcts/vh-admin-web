@@ -15,5 +15,6 @@ export let PageUrls = {
     BookingDetails: '/booking-details',
     DeleteParticipant: '/delete-participant',
     EditParticipantSearch: '/edit-participant-search',
-    EditParticipant: '/edit-participant'
+    EditParticipant: '/edit-participant',
+    Login: '/login'
 };

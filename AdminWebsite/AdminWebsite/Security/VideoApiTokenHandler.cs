@@ -6,15 +6,15 @@ namespace AdminWebsite.Security
 {
     public class VideoApiTokenHandler : BaseServiceTokenHandler
     {
-        public VideoApiTokenHandler(IOptions<SecuritySettings> securitySettings,
-            IOptions<ServiceSettings> serviceSettings,
+        public VideoApiTokenHandler(IOptions<AzureAdConfiguration> azureAdConfiguration,
+            IOptions<ServiceConfiguration> serviceConfiguration,
             IMemoryCache memoryCache,
             ITokenProvider tokenProvider) : base(
-            securitySettings, serviceSettings, memoryCache, tokenProvider)
+            azureAdConfiguration, serviceConfiguration, memoryCache, tokenProvider)
         {
         }
 
         protected override string TokenCacheKey => "VideoApiServiceToken";
-        protected override string ClientResource => ServiceSettings.VideoApiResourceId;
+        protected override string ClientResource => ServiceConfiguration.VideoApiResourceId;
     }
 }

@@ -10,7 +10,7 @@ namespace AdminWebsite.IntegrationTests.Helper
     public class BearerTokenBuilder
     {
         private X509Certificate2 _signingCertificate;
-        private const string Issuer = "https://sts.windows.net/{tenantid}/";
+        private const string Issuer = "https://login.microsoftonline.com/{tenantid}/";
         private const string Audience = "https://test";
         private readonly TimeSpan _life = TimeSpan.FromHours(1);
         private readonly DateTime _notBefore = DateTime.UtcNow;

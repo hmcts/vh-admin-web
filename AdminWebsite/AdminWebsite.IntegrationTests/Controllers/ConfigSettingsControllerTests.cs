@@ -15,11 +15,10 @@ namespace AdminWebsite.IntegrationTests.Controllers
         public async Task Should_retrieve_the_client_config_settings()
         {
             var getResponse = await SendGetRequestAsync(_configSettingsEndpoints.GetConfigSettings);
-            getResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+            var resonpseString = await getResponse.Content.ReadAsStringAsync();
 
-            var clientSettingsResponseModel =
-                ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<ClientSettingsResponse>(getResponse.Content
-                    .ReadAsStringAsync().Result);
+            getResponse.StatusCode.Should().Be(HttpStatusCode.OK, resonpseString);
+            var clientSettingsResponseModel = ApiRequestHelper.DeserialiseSnakeCaseJsonToResponse<ClientSettingsResponse>(resonpseString);
             clientSettingsResponseModel.Should().NotBeNull();
             clientSettingsResponseModel.ClientId.Should().NotBeNull();
             clientSettingsResponseModel.TenantId.Should().NotBeNull();

@@ -25,11 +25,10 @@ namespace AdminWebsite.UnitTests.Services
 {
     public class UserAccountServiceTests
     {
-        private Mock<IOptions<AppConfigSettings>> _appSettings;
         private Mock<IUserApiClient> _userApiClient;
         private Mock<IBookingsApiClient> _bookingsApiClient;
         private Mock<INotificationApiClient> _notificationApiClient;
-        private Mock<IOptions<SecuritySettings>> _securitySettings;
+        private Mock<IOptions<AzureAdConfiguration>> _azureAdConfiguration;
         private Mock<ILogger<UserAccountService>> _logger;
 
         private UserAccountService _service;
@@ -41,13 +40,10 @@ namespace AdminWebsite.UnitTests.Services
             _bookingsApiClient = new Mock<IBookingsApiClient>();
             _notificationApiClient = new Mock<INotificationApiClient>();
             _logger = new Mock<ILogger<UserAccountService>>();
-            _appSettings = new Mock<IOptions<AppConfigSettings>>();
-            _appSettings.Setup(x => x.Value)
-                .Returns(new AppConfigSettings());
 
-            _securitySettings = new Mock<IOptions<SecuritySettings>>();
-            _securitySettings.Setup(x => x.Value)
-                .Returns(new SecuritySettings());
+            _azureAdConfiguration = new Mock<IOptions<AzureAdConfiguration>>();
+            _azureAdConfiguration.Setup(x => x.Value)
+                .Returns(new AzureAdConfiguration());
 
             _service = new UserAccountService(_userApiClient.Object, _bookingsApiClient.Object,
                 _notificationApiClient.Object, _logger.Object);
