@@ -14,19 +14,19 @@ namespace AdminWebsite.Security
     {
         private readonly ITokenProvider _tokenProvider;
         private readonly IMemoryCache _memoryCache;
-        private readonly SecuritySettings _securitySettings;
-        protected readonly ServiceSettings ServiceSettings;
+        private readonly AzureAdConfiguration _azureAdConfiguration;
+        protected readonly ServiceConfiguration ServiceConfiguration;
 
         protected abstract string TokenCacheKey { get; }
         protected abstract string ClientResource { get; }
 
-        protected BaseServiceTokenHandler(IOptions<SecuritySettings> securitySettings,
-            IOptions<ServiceSettings> serviceSettings,
+        protected BaseServiceTokenHandler(IOptions<AzureAdConfiguration> azureAdConfiguration,
+            IOptions<ServiceConfiguration> serviceConfiguration,
             IMemoryCache memoryCache,
             ITokenProvider tokenProvider)
         {
-            _securitySettings = securitySettings.Value;
-            ServiceSettings = serviceSettings.Value;
+            _azureAdConfiguration = azureAdConfiguration.Value;
+            ServiceConfiguration = serviceConfiguration.Value;
             _memoryCache = memoryCache;
             _tokenProvider = tokenProvider;
         }
@@ -43,7 +43,7 @@ namespace AdminWebsite.Security
             var token = _memoryCache.Get<string>(TokenCacheKey);
             if (string.IsNullOrEmpty(token))
             {
-                var authenticationResult = _tokenProvider.GetAuthorisationResult(_securitySettings.ClientId, _securitySettings.ClientSecret, ClientResource);
+                var authenticationResult = await _tokenProvider.GetAuthorisationResult(_azureAdConfiguration.ClientId, _azureAdConfiguration.ClientSecret, ClientResource);
                 token = authenticationResult.AccessToken;
                 var tokenExpireDateTime = authenticationResult.ExpiresOn.DateTime.AddMinutes(MINUTES);
                 _memoryCache.Set(TokenCacheKey, token, tokenExpireDateTime);

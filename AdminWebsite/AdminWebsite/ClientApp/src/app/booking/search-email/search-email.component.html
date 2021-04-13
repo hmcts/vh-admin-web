@@ -1,8 +1,13 @@
 <div (blur)="blur()">
-  <div class="govuk-form-group" [ngClass]="{ 'govuk-form-group--error': !isValidEmail }">
+  <div class="govuk-form-group" [ngClass]="{ 'govuk-form-group--error': !isValidEmail || isErrorEmailAssignedToJudge }">
     <div *ngIf="!isValidEmail">
       <span class="govuk-error-message">
         {{ constants.Error.EmailErrorMsg }}
+      </span>
+    </div>
+    <div *ngIf="isErrorEmailAssignedToJudge">
+      <span class="govuk-error-message">
+        {{ constants.Error.JohEmailErrorMsg }}
       </span>
     </div>
     <label class="govuk-label" for="participantEmail"> Email </label>
@@ -15,6 +20,7 @@
       (blur)="blurEmail(); populateParticipantInfo($event.target.value)"
       class="govuk-input govuk-input--width-20"
       (keyup)="searchTerm.next($event.target.value)"
+      (input)="onChange()"
       type="email"
     />
 

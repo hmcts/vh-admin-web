@@ -81,15 +81,14 @@ namespace AdminWebsite.Extensions
             serviceCollection.AddTransient<IHearingsService, HearingsService>();
             serviceCollection.AddScoped<ITokenProvider, TokenProvider>();
             serviceCollection.AddScoped<IUserAccountService, UserAccountService>();
-            serviceCollection.AddScoped<SecuritySettings>();
-            serviceCollection.AddScoped<AppConfigSettings>();
+            serviceCollection.AddScoped<AzureAdConfiguration>();
             serviceCollection.AddSingleton<IClaimsCacheProvider, MemoryClaimsCacheProvider>();
             serviceCollection.AddScoped<ICachedUserClaimBuilder, CachedUserClaimBuilder>();
             serviceCollection.AddSingleton<IPollyRetryService, PollyRetryService>();
 
             // Build the hearings api client using a reusable HttpClient factory and predefined base url
             var container = serviceCollection.BuildServiceProvider();
-            var settings = container.GetService<IOptions<ServiceSettings>>().Value;
+            var settings = container.GetService<IOptions<ServiceConfiguration>>().Value;
 
             serviceCollection.AddHttpClient<IBookingsApiClient, BookingsApiClient>()
                 .AddHttpMessageHandler(() => container.GetService<HearingApiTokenHandler>())

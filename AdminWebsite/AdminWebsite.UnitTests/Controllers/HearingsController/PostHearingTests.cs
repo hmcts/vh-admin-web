@@ -254,8 +254,97 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             await PostWithParticipants(participant);
 
             _userAccountService.Verify(x => x.UpdateParticipantUsername(participant), Times.Never);
-            _userAccountService.Verify(x => x.AssignParticipantToGroup(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+            _userAccountService.Verify(x => x.GetAdUserIdForUsername(participant.Username), Times.Never);
         }
+
+        [Test]
+        public async Task Should_not_update_user_details_for_panel_member()
+        {
+            var participant = new BookingsAPI.Client.ParticipantRequest
+            {
+                Username = "username",
+                Case_role_name = "",
+                Hearing_role_name = "Panel Member"
+            };
+
+            // setup  response
+            var hearingDetailsResponse = HearingResponseBuilder.Build()
+                                            .WithParticipant("");
+            _bookingsApiClient.Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
+                .ReturnsAsync(hearingDetailsResponse);
+
+            await PostWithParticipants(participant);
+
+            _userAccountService.Verify(x => x.UpdateParticipantUsername(participant), Times.Never);
+            _userAccountService.Verify(x => x.GetAdUserIdForUsername(participant.Username), Times.Never);            
+        }
+
+        [Test]
+        public async Task Should_not_update_user_details_for_winger()
+        {
+            var participant = new BookingsAPI.Client.ParticipantRequest
+            {
+                Username = "username",
+                Case_role_name = "",
+                Hearing_role_name = "Winger"
+            };
+
+            // setup  response
+            var hearingDetailsResponse = HearingResponseBuilder.Build()
+                                            .WithParticipant("");
+            _bookingsApiClient.Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
+                .ReturnsAsync(hearingDetailsResponse);
+
+            await PostWithParticipants(participant);
+
+            _userAccountService.Verify(x => x.UpdateParticipantUsername(participant), Times.Never);
+            _userAccountService.Verify(x => x.GetAdUserIdForUsername(participant.Username), Times.Never);
+        }
+
+        [Test]
+        public async Task Should_update_user_details_for_other_user_without_username()
+        {
+            var participant = new BookingsAPI.Client.ParticipantRequest
+            {
+                Username = "",
+                Case_role_name = "",
+                Hearing_role_name = ""
+            };
+
+            // setup  response
+            var hearingDetailsResponse = HearingResponseBuilder.Build()
+                                            .WithParticipant("");
+            _bookingsApiClient.Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
+                .ReturnsAsync(hearingDetailsResponse);
+
+            await PostWithParticipants(participant);
+
+            _userAccountService.Verify(x => x.UpdateParticipantUsername(participant), Times.Once);
+            _userAccountService.Verify(x => x.GetAdUserIdForUsername(participant.Username), Times.Never);
+        }
+
+        [Test]
+        public async Task Should_get_user_details_for_other_user_with_username()
+        {
+            var participant = new BookingsAPI.Client.ParticipantRequest
+            {
+                Username = "username",
+                Case_role_name = "",
+                Hearing_role_name = ""
+            };
+
+            // setup  response
+            var hearingDetailsResponse = HearingResponseBuilder.Build()
+                                            .WithParticipant("");
+            _bookingsApiClient.Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
+                .ReturnsAsync(hearingDetailsResponse);
+
+            await PostWithParticipants(participant);
+
+            _userAccountService.Verify(x => x.UpdateParticipantUsername(participant), Times.Never);
+            _userAccountService.Verify(x => x.GetAdUserIdForUsername(participant.Username), Times.Once);
+        }
+
 
         [Test]
         public async Task Should_pass_bad_request_from_bookings_api()

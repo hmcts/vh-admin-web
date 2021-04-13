@@ -1,19 +1,29 @@
 import { waitForAsync } from '@angular/core/testing';
 import { Router } from '@angular/router';
-import { AdalService } from 'adal-angular4';
+import { of } from 'rxjs';
 import { ReturnUrlService } from 'src/app/services/return-url.service';
+import { ConfigService } from '../services/config.service';
 import { LoggerService } from '../services/logger.service';
 import { WindowRef } from '../shared/window-ref';
+import { MockOidcSecurityService } from '../testing/mocks/MockOidcSecurityService';
 import { LoginComponent } from './login.component';
 
 describe('LoginComponent', () => {
     let component: LoginComponent;
     let router: jasmine.SpyObj<Router>;
-    let adalService: jasmine.SpyObj<AdalService>;
+    const mockOidcSecurityService = new MockOidcSecurityService();
+    let oidcSecurityService;
     let returnUrl: jasmine.SpyObj<ReturnUrlService>;
     let logger: jasmine.SpyObj<LoggerService>;
     let window: jasmine.SpyObj<WindowRef>;
+    let configService: jasmine.SpyObj<ConfigService>;
     let route: any;
+
+    beforeAll(() => {
+        oidcSecurityService = mockOidcSecurityService;
+        router = jasmine.createSpyObj<Router>('Router', ['navigate', 'navigateByUrl']);
+        configService = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettings']);
+    });
 
     beforeEach(
         waitForAsync(() => {
@@ -24,17 +34,18 @@ describe('LoginComponent', () => {
             };
 
             logger = jasmine.createSpyObj<LoggerService>(['error', 'debug']);
-            adalService = jasmine.createSpyObj<AdalService>(['setAuthenticated', 'login', 'userInfo']);
             router = jasmine.createSpyObj<Router>(['navigate', 'navigateByUrl']);
             returnUrl = jasmine.createSpyObj<ReturnUrlService>(['popUrl', 'setUrl']);
             window = jasmine.createSpyObj<WindowRef>(['getLocation']);
+            configService = jasmine.createSpyObj<ConfigService>(['getClientSettings']);
 
-            component = new LoginComponent(adalService, route, router, logger, returnUrl, window);
+            component = new LoginComponent(oidcSecurityService, router, logger, returnUrl, configService);
+            configService.getClientSettings.and.returnValue(of(null));
         })
     );
 
     const givenAuthenticated = (authenticated: boolean) => {
-        adalService.userInfo.authenticated = authenticated;
+        oidcSecurityService.setAuthenticated(authenticated);
     };
 
     const whenInitializingComponent = async (): Promise<void> => {
@@ -42,12 +53,9 @@ describe('LoginComponent', () => {
         await component.ngOnInit();
     };
 
-    it('should store root url if no return url is set and call login if not authenticated', async () => {
+    it('should store root url if no return url is set', async () => {
         givenAuthenticated(false);
-
         await whenInitializingComponent();
-
-        expect(adalService.login).toHaveBeenCalled();
         expect(returnUrl.setUrl).toHaveBeenCalledWith('/');
     });
 
@@ -55,22 +63,10 @@ describe('LoginComponent', () => {
         givenAuthenticated(false);
 
         // and we have a return url set in the query param
-        route.snapshot.queryParams['returnUrl'] = 'returnto';
-
+        returnUrl.popUrl.and.returnValue('returnto');
         await whenInitializingComponent();
 
         expect(returnUrl.setUrl).toHaveBeenCalledWith('returnto');
-    });
-
-    it('should not set url when current pathname is same as return url when not authenticated', async () => {
-        givenAuthenticated(false);
-
-        // and we have a return url set in the query param
-        route.snapshot.queryParams['returnUrl'] = '/login?returnUrl=%2Flogin';
-
-        await whenInitializingComponent();
-
-        expect(returnUrl.setUrl).not.toHaveBeenCalled();
     });
 
     it('should redirect to remembered return url if authenticated', async () => {
@@ -82,7 +78,7 @@ describe('LoginComponent', () => {
         expect(router.navigateByUrl).toHaveBeenCalledWith('testurl');
     });
 
-    it('should redirect to root url when authenticated if no return  url has been set', async () => {
+    it('should redirect to root url when authenticated if no return url has been set', async () => {
         givenAuthenticated(true);
 
         await whenInitializingComponent();
@@ -98,6 +94,13 @@ describe('LoginComponent', () => {
 
         await whenInitializingComponent();
 
+        expect(router.navigate).toHaveBeenCalledWith(['/']);
+    });
+
+    it('should redirect to root if auth error', async () => {
+        givenAuthenticated(true);
+        mockOidcSecurityService.setThrowErrorOnIsAuth(true);
+        await whenInitializingComponent();
         expect(router.navigate).toHaveBeenCalledWith(['/']);
     });
 });
