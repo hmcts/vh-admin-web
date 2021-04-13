@@ -41,6 +41,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
             RegisterDefaultData(context);
             RegisterHearingServices(context);
             RegisterIsLive(context);
+            RegisterUsingEjud(context);
             RegisterWowzaSettings(context);
             RegisterSauceLabsSettings(context);
             RegisterKinlySettings(context);
@@ -97,6 +98,11 @@ namespace AdminWebsite.AcceptanceTests.Hooks
         {
             context.WebConfig.IsLive = _configRoot.GetValue<bool>("IsLive");
             context.WebConfig.Should().NotBeNull();
+        }
+
+        private void RegisterUsingEjud(TestContext context)
+        {
+            context.WebConfig.UsingEjud = _configRoot.GetValue<bool>("UsingEjud");
         }
 
         private void RegisterWowzaSettings(TestContext context)
