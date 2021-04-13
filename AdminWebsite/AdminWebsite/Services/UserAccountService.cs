@@ -35,7 +35,7 @@ namespace AdminWebsite.Services
         /// <remarks>
         /// Filters test accounts if configured to run as live environment 
         /// </remarks>
-        Task<IEnumerable<JudgeResponse>> GetJudgesByEmail(string term);
+        Task<IEnumerable<JudgeResponse>> SearchJudgesByEmail(string term);
 
         /// <summary>
         /// Creates a user based on the participant information or updates the participant username if it already exists
@@ -213,7 +213,7 @@ namespace AdminWebsite.Services
             }).ToList();
         }
 
-        public async Task<IEnumerable<JudgeResponse>> GetJudgesByEmail(string term) // TODO edit userApiClient instead?
+        public async Task<IEnumerable<JudgeResponse>> SearchJudgesByEmail(string term) // TODO edit UserApi instead?
         {
             _logger.LogDebug("Attempting to get all judge accounts.");
             var judgesList = await _userApiClient.GetJudgesAsync();

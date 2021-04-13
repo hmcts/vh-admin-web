@@ -34,11 +34,7 @@
     <form [formGroup]="form" class="govuk-form-group" (ngSubmit)="saveJudge()">
       <div [ngClass]="judgeNameInvalid || !isJudgeSelected || isJudgeParticipantError ? 'govuk-form-group--error' : 'govuk-form-group'">
         <label class="govuk-label" for="judgeName"> Judge or courtroom account </label>
-        <app-search-email
-          [disabled]="false"
-          hearingRoleParticipant="Judge"
-        >
-        </app-search-email>
+        <app-search-email [disabled]="false" hearingRoleParticipant="Judge"> </app-search-email>
         <!-- <select class="govuk-select" id="judgeName" formControlName="judgeName">
           <option *ngFor="let judge of availableJudges" [ngValue]="judge.email">{{ judge.email }}</option>
         </select> -->

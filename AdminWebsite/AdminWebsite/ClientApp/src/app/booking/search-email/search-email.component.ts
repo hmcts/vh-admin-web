@@ -42,33 +42,31 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
 
     @Input() includeJudges = false;
 
-    constructor(
-        private searchService: SearchService,
-        private configService: ConfigService,
-        private logger: Logger
-    ) {}
+    constructor(private searchService: SearchService, private configService: ConfigService, private logger: Logger) {}
 
     ngOnInit() {
         this.$subscriptions.push(
             this.searchTerm
-            .pipe(debounceTime(500))
-            .pipe(distinctUntilChanged())
-            .pipe(switchMap(term => {
-                return this.searchService.search(term, this.hearingRoleParticipant);
-            })
-            ).subscribe(personsFound => {
-                if (personsFound && personsFound.length > 0) {
-                    this.getData(personsFound);
-                } else {
-                    if (this.email.length > 2) {
-                        this.noDataFound();
+                .pipe(debounceTime(500))
+                .pipe(distinctUntilChanged())
+                .pipe(
+                    switchMap(term => {
+                        return this.searchService.search(term, this.hearingRoleParticipant);
+                    })
+                )
+                .subscribe(personsFound => {
+                    if (personsFound && personsFound.length > 0) {
+                        this.getData(personsFound);
                     } else {
-                        this.lessThanThreeLetters();
+                        if (this.email.length > 2) {
+                            this.noDataFound();
+                        } else {
+                            this.lessThanThreeLetters();
+                        }
+                        this.isShowResult = false;
+                        this.results = undefined;
                     }
-                    this.isShowResult = false;
-                    this.results = undefined;
-                }
-            })
+                })
         );
 
         this.$subscriptions.push(this.searchTerm.subscribe(s => (this.email = s)));
