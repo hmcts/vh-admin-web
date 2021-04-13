@@ -73,6 +73,7 @@ namespace AdminWebsite.AcceptanceTests.Hooks
                 Application = Application.AdminWeb,
                 ExpiryInMinutes = ALLOCATE_USERS_FOR_MINUTES,
                 IsProdUser = _c.WebConfig.IsLive,
+                IsEjud = _c.WebConfig.UsingEjud,
                 TestType = TestType.Automated,
                 UserTypes = userTypes
             };

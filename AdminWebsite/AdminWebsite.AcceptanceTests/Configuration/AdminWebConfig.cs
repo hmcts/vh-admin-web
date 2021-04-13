@@ -14,5 +14,6 @@ namespace AdminWebsite.AcceptanceTests.Configuration
 
         public KinlyConfiguration KinlyConfiguration { get; set; }
         public NotifyConfiguration NotifyConfiguration { get; set; }
+        public bool UsingEjud { get; set; }
     }
 }
