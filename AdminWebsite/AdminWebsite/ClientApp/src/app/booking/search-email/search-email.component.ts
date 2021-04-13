@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Output, OnInit, Input, OnDestroy } from '@angular/core';
 import { Subject, Subscription } from 'rxjs';
-import { PersonResponse } from '../../services/clients/api-client';
+import { JudgeResponse, PersonResponse } from '../../services/clients/api-client';
 import { Constants } from '../../common/constants';
 import { ParticipantModel } from '../../common/model/participant.model';
 import { SearchService } from '../../services/search.service';
@@ -51,7 +51,7 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
                 .pipe(distinctUntilChanged())
                 .pipe(
                     switchMap(term => {
-                        return this.searchService.search(term, this.hearingRoleParticipant);
+                        return this.searchService.participantSearch(term, this.hearingRoleParticipant);
                     })
                 )
                 .subscribe(personsFound => {
@@ -89,8 +89,8 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
         );
     }
 
-    getData(data: PersonResponse[]) {
-        this.results = data.map(x => this.mapPersonResponseToParticipantModel(x));
+    getData(data: ParticipantModel[]) {
+        this.results = data;
         this.isShowResult = true;
         this.isValidEmail = true;
         this.notFoundParticipant = false;
@@ -157,25 +157,6 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
 
     onChange() {
         this.isErrorEmailAssignedToJudge = false;
-    }
-
-    mapPersonResponseToParticipantModel(p: PersonResponse): ParticipantModel {
-        let participant: ParticipantModel;
-        if (p) {
-            participant = new ParticipantModel();
-            participant.id = p.id;
-            participant.title = p.title;
-            participant.first_name = p.first_name;
-            participant.middle_names = p.middle_names;
-            participant.last_name = p.last_name;
-            participant.username = p.username;
-            participant.email = p.contact_email ?? p.username;
-            participant.phone = p.telephone_number;
-            participant.representee = '';
-            participant.company = p.organisation;
-        }
-
-        return participant;
     }
 
     ngOnDestroy() {

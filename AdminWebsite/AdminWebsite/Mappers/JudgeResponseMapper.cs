@@ -1,4 +1,5 @@
 ﻿using AdminWebsite.BookingsAPI.Client;
+using AdminWebsite.Contracts.Enums;
 using AdminWebsite.Contracts.Responses;
 
 namespace AdminWebsite.Mappers
@@ -11,7 +12,8 @@ namespace AdminWebsite.Mappers
             {
                 FirstName = personResponse.First_name,
                 LastName = personResponse.Last_name,
-                Email = personResponse.Username
+                Email = personResponse.Username,
+                AccountType = JudgeAccountType.Judiciary
             };
 
         }

@@ -86,7 +86,7 @@ describe('SeachEmailComponent', () => {
         })
     );
     it('should search service return list of person and map it to result list', done => {
-        searchServiceSpy.search.and.returnValue(of(participantList));
+        searchServiceSpy.participantSearch.and.returnValue(of(participantList));
         component.ngOnInit();
         fixture.detectChanges();
 
