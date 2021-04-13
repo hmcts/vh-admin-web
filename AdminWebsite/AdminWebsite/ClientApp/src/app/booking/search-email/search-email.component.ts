@@ -26,12 +26,16 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
     isValidEmail = true;
     $subscriptions: Subscription[] = [];
     invalidPattern: string;
+    isErrorEmailAssignedToJudge = false;
+    isJoh = false;
+    notFoundEmailEvent = new Subject<boolean>();
+    notFoundEmailEvent$ = this.notFoundEmailEvent.asObservable();
 
     @Input() disabled = true;
 
-    @Output() findParticipant = new EventEmitter<ParticipantModel>();
+    @Input() hearingRoleParticipant = '';
 
-    @Output() participantsNotFound = new EventEmitter();
+    @Output() findParticipant = new EventEmitter<ParticipantModel>();
 
     @Output() emailChanged = new EventEmitter<string>();
 
@@ -39,7 +43,7 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.$subscriptions.push(
-            this.searchService.search(this.searchTerm).subscribe(data => {
+            this.searchService.search(this.searchTerm, this.hearingRoleParticipant).subscribe(data => {
                 if (data && data.length > 0) {
                     this.getData(data);
                 } else {
@@ -59,17 +63,19 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
     }
 
     async getEmailPattern() {
-        this.configService
-            .getClientSettings()
-            .pipe(map(x => x.test_username_stem))
-            .subscribe(x => {
-                this.invalidPattern = x;
-                if (!this.invalidPattern || this.invalidPattern.length === 0) {
-                    this.logger.error(`${this.loggerPrefix} Pattern to validate email is not set`, new Error('Email validation error'));
-                } else {
-                    this.logger.info(`${this.loggerPrefix} Pattern to validate email is set with length ${this.invalidPattern.length}`);
-                }
-            });
+        this.$subscriptions.push(
+            this.configService
+                .getClientSettings()
+                .pipe(map(x => x.test_username_stem))
+                .subscribe(x => {
+                    this.invalidPattern = x;
+                    if (!this.invalidPattern || this.invalidPattern.length === 0) {
+                        this.logger.error(`${this.loggerPrefix} Pattern to validate email is not set`, new Error('Email validation error'));
+                    } else {
+                        this.logger.info(`${this.loggerPrefix} Pattern to validate email is set with length ${this.invalidPattern.length}`);
+                    }
+                })
+        );
     }
 
     getData(data: PersonResponse[]) {
@@ -77,17 +83,20 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
         this.isShowResult = true;
         this.isValidEmail = true;
         this.notFoundParticipant = false;
+        this.notFoundEmailEvent.next(false);
     }
 
     noDataFound() {
+        this.isErrorEmailAssignedToJudge = this.hearingRoleParticipant === 'Panel Member' || this.hearingRoleParticipant === 'Winger';
         this.isShowResult = false;
-        this.notFoundParticipant = true;
-        this.participantsNotFound.emit();
+        this.notFoundParticipant = !this.isErrorEmailAssignedToJudge;
+        this.notFoundEmailEvent.next(true);
     }
 
     lessThanThreeLetters() {
         this.isShowResult = false;
         this.notFoundParticipant = false;
+        this.notFoundEmailEvent.next(false);
     }
 
     selectItemClick(result: ParticipantModel) {
@@ -114,6 +123,7 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
             this.email.length < 256 &&
             pattern.test(this.email) &&
             this.email.indexOf(this.invalidPattern) < 0;
+
         return this.isValidEmail;
     }
 
@@ -134,6 +144,10 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
         }
     }
 
+    onChange() {
+        this.isErrorEmailAssignedToJudge = false;
+    }
+
     mapPersonResponseToParticipantModel(p: PersonResponse): ParticipantModel {
         let participant: ParticipantModel;
         if (p) {
@@ -144,7 +158,7 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
             participant.middle_names = p.middle_names;
             participant.last_name = p.last_name;
             participant.username = p.username;
-            participant.email = p.contact_email;
+            participant.email = p.contact_email ?? p.username;
             participant.phone = p.telephone_number;
             participant.representee = '';
             participant.company = p.organisation;

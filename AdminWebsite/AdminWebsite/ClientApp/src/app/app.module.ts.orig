@@ -1,10 +1,14 @@
 import { MomentModule } from 'ngx-moment';
 import { SuitabilityModule } from './suitability/suitability.module';
 import { DatePipe } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { APP_INITIALIZER, NgModule, ErrorHandler } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
+<<<<<<< HEAD
+=======
+import { AdalGuard, AdalInterceptor, AdalService } from 'adal-angular4';
+>>>>>>> origin
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BookingModule } from './booking/booking.module';

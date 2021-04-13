@@ -1,9 +1,11 @@
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 import { OnInit, Component, Injectable } from '@angular/core';
-import { AdalService } from 'adal-angular4';
 import { ReturnUrlService } from '../services/return-url.service';
 import { LoggerService } from '../services/logger.service';
-import { WindowRef } from '../shared/window-ref';
+import { OidcSecurityService } from 'angular-auth-oidc-client';
+import { catchError } from 'rxjs/operators';
+import { NEVER } from 'rxjs';
+import { ConfigService } from '../services/config.service';
 
 @Component({
     selector: 'app-login',
@@ -12,36 +14,52 @@ import { WindowRef } from '../shared/window-ref';
 @Injectable()
 export class LoginComponent implements OnInit {
     private readonly loggerPrefix = '[Login] -';
+
     constructor(
-        private adalSvc: AdalService,
-        private route: ActivatedRoute,
+        private oidcSecurityService: OidcSecurityService,
         private router: Router,
         private logger: LoggerService,
         private returnUrlService: ReturnUrlService,
-        private window: WindowRef
+        private configService: ConfigService
     ) {}
 
-    async ngOnInit() {
-        if (this.adalSvc.userInfo.authenticated) {
-            const returnUrl = this.returnUrlService.popUrl() || '/';
-            try {
-                this.logger.debug(`${this.loggerPrefix} Return url = ${returnUrl}`);
-                await this.router.navigateByUrl(returnUrl);
-            } catch (err) {
-                this.logger.error(`${this.loggerPrefix} Failed to navigate to redirect url, possibly stored url is invalid`, err, {
-                    returnUrl
+    ngOnInit() {
+        this.configService.getClientSettings().subscribe(() => {
+            this.oidcSecurityService.isAuthenticated$
+                .pipe(
+                    catchError(err => {
+                        this.logger.error(`${this.loggerPrefix} Check Auth Error`, err);
+                        this.router.navigate(['/']);
+                        return NEVER;
+                    })
+                )
+                .subscribe(loggedIn => {
+                    this.logger.debug(`${this.loggerPrefix} isLoggedIn: ` + loggedIn);
+                    const returnUrl = this.returnUrlService.popUrl() || '/';
+                    if (loggedIn) {
+                        try {
+                            this.logger.debug(`${this.loggerPrefix} Return url: ${returnUrl}`);
+                            this.router.navigateByUrl(returnUrl);
+                        } catch (err) {
+                            this.logger.error(
+                                `${this.loggerPrefix} Failed to navigate to redirect url, possibly stored url is invalid`,
+                                err,
+                                {
+                                    returnUrl
+                                }
+                            );
+                            this.router.navigate(['/']);
+                        }
+                    } else {
+                        this.logger.debug(`${this.loggerPrefix} User not authenticated. Logging in`);
+                        try {
+                            this.returnUrlService.setUrl(returnUrl);
+                            this.oidcSecurityService.authorize();
+                        } catch (err) {
+                            this.logger.error(`${this.loggerPrefix} Authorize Failed`, err);
+                        }
+                    }
                 });
-                await this.router.navigate(['/']);
-            }
-        } else {
-            const currentPathname = this.window.getLocation().pathname;
-            const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
-
-            if (!returnUrl.startsWith(currentPathname)) {
-                this.returnUrlService.setUrl(returnUrl);
-            }
-
-            this.adalSvc.login();
-        }
+        });
     }
 }

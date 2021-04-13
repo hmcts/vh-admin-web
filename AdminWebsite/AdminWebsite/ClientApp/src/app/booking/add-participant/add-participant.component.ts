@@ -79,7 +79,9 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     isInterpreter = false;
     showConfirmRemoveInterpretee = false;
     interpreterSelected = false;
-
+    errorAlternativeEmail = false;
+    errorJohAccountNotFound = false;
+    errorJudiciaryAccount = false;
     @ViewChild(SearchEmailComponent) searchEmail: SearchEmailComponent;
 
     @ViewChild(ParticipantListComponent, { static: true })
@@ -161,8 +163,20 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         if (this.editMode) {
             if (this.searchEmail && this.participantDetails) {
                 this.setParticipantEmail();
+                this.subcribeForSeachEmailEvents();
             }
         }
+    }
+
+    subcribeForSeachEmailEvents() {
+        this.searchEmail.notFoundEmailEvent$.subscribe(notFound => {
+            if (notFound) {
+                this.notFoundParticipant();
+            } else {
+                this.errorAlternativeEmail = false;
+                this.errorJohAccountNotFound = false;
+            }
+        });
     }
 
     private setParticipantEmail() {
@@ -300,6 +314,13 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     }
 
     public getParticipant(participantDetails: ParticipantModel) {
+        if (!this.validateJudgeAndJohMembers()) {
+            this.searchEmail.isErrorEmailAssignedToJudge = true;
+            this.errorAlternativeEmail = true;
+            return;
+        }
+        this.errorAlternativeEmail = false;
+        this.errorJohAccountNotFound = false;
         this.displayErrorNoParticipants = false;
         this.displayAdd();
         this.enableFields();
@@ -362,6 +383,9 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
     notFoundParticipant() {
         this.logger.warn(`${this.loggerPrefix} Participant not found.`);
+        if (this.role.value === 'Panel Member' || this.role.value === 'Winger') {
+            this.errorJohAccountNotFound = true;
+        }
         this.displayErrorNoParticipants = false;
         this.displayClear();
         if (this.participantDetails) {
@@ -370,7 +394,17 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     }
 
     emailChanged() {
+        if (!this.validateJudgeAndJohMembers()) {
+            this.searchEmail.isErrorEmailAssignedToJudge = true;
+            this.errorAlternativeEmail = true;
+            this.errorJohAccountNotFound = false;
+            return;
+        }
+        this.errorAlternativeEmail = false;
+        this.errorJohAccountNotFound = false;
+
         if (this.form.valid && this.validEmail()) {
+            this.disableCaseAndHearingRoles();
             if (this.editMode) {
                 this.displayNext();
             } else {
@@ -453,6 +487,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     onRoleSelected($event) {
         $event.stopImmediatePropagation();
         this.roleSelected();
+        this.validateJudiciaryEmailAndRole();
     }
 
     roleSelected() {
@@ -496,9 +531,48 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         return this.showDetails && this.searchEmail ? this.searchEmail.validateEmail() : true;
     }
 
+    validateJudgeAndJohMembers(): boolean {
+        if (this.hearing?.participants.length) {
+            const judge = this.hearing.participants.find(x => x.is_judge);
+
+            return this.searchEmail.email !== judge?.username;
+        }
+        return true;
+    }
+
+    validateJudiciaryEmailAndRole() {
+        if (this.searchEmail && this.searchEmail.email.length) {
+            this.searchService.searchJudiciaryEntries(this.searchEmail.email).subscribe(x => {
+                this.errorJudiciaryAccount = false;
+                if (x && x.length) {
+                    if (this.role.value !== 'Panel Member' && this.role.value !== 'Winger') {
+                        this.setErrorForJudiciaryAccount();
+                    }
+                } else {
+                    if (this.role.value === 'Panel Member' || this.role.value === 'Winger') {
+                        this.setErrorForJudiciaryAccount();
+                    }
+                }
+            });
+        }
+    }
+
+    private setErrorForJudiciaryAccount() {
+        this.role.setErrors({ invalid: true });
+        this.party.setErrors({ invalid: true });
+        this.errorJudiciaryAccount = true;
+    }
+
     saveParticipant() {
         this.actionsBeforeSave();
-        if (this.form.valid && this.validEmail() && this.isRoleSelected && this.isPartySelected && this.isTitleSelected) {
+        if (
+            this.form.valid &&
+            this.validEmail() &&
+            this.isRoleSelected &&
+            this.isPartySelected &&
+            this.isTitleSelected &&
+            !this.errorAlternativeEmail
+        ) {
             this.isShowErrorSummary = false;
             this.form.markAsUntouched();
             this.form.markAsPristine();
@@ -559,7 +633,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
             this.bookingHasParticipants = true;
         } else {
             this.actionsBeforeSave();
-            if (this.form.valid && this.validEmail() && this.isRoleSelected && this.isTitleSelected) {
+            if (this.form.valid && this.validEmail() && this.isRoleSelected && this.isTitleSelected && !this.errorAlternativeEmail) {
                 this.isShowErrorSummary = false;
                 this.hearing.participants.forEach(newParticipant => {
                     if (newParticipant.email === this.selectedParticipantEmail) {
@@ -766,7 +840,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         this.isShowErrorSummary = false;
         this.isRoleSelected = true;
         this.isPartySelected = true;
-
+        this.errorJudiciaryAccount = false;
         if (this.hearing.participants.length > 1) {
             this.displayNext();
         }

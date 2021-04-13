@@ -26,7 +26,7 @@ export const routes: Routes = [
     { path: 'delete-participant', component: DeleteParticipantSearchComponent, canActivate: [AdminGuard] },
     { path: 'edit-participant-search', component: EditParticipantSearchComponent, canActivate: [AdminGuard] },
     { path: 'edit-participant', component: EditParticipantComponent, canActivate: [AdminGuard] },
-    { path: '**', redirectTo: 'dashboard', pathMatch: 'full', canActivate: [AdminGuard] }
+    { path: '**', redirectTo: 'dashboard', pathMatch: 'full' }
 ];
 
 @NgModule({

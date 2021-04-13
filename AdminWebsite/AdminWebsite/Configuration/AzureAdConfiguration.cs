@@ -3,7 +3,7 @@
     /// <summary>
     ///     Security Settings
     /// </summary>
-    public class SecuritySettings
+    public class AzureAdConfiguration
     {
         /// <summary>
         /// Id for app registration of this application
@@ -34,11 +34,6 @@
         ///     Temporary Password for newly created user accounts.
         /// </summary>
         public string TemporaryPassword { get; set; }
-
-        /// <summary>
-        /// Application insights instrumentation key to specify target of logging
-        /// </summary>
-        public string InstrumentationKey { get; set; }
 
         /// <summary>
         /// The redirect uri on successful login
