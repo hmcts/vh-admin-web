@@ -4,7 +4,7 @@ import { debounceTime, distinctUntilChanged, map, switchMap } from 'rxjs/operato
 
 import { IDropDownModel } from '../common/model/drop-down.model';
 import { ParticipantModel } from '../common/model/participant.model';
-import { BHClient, PersonResponse } from '../services/clients/api-client';
+import { BHClient, JudgeResponse, PersonResponse } from '../services/clients/api-client';
 import { Constants } from '../common/constants';
 import { JudgeDataService } from '../booking/services/judge-data.service';
 
@@ -12,9 +12,6 @@ import { JudgeDataService } from '../booking/services/judge-data.service';
     providedIn: 'root'
 })
 export class SearchService {
-    // empty since the functionality is yet to be implemented
-    ParticipantList: ParticipantModel[] = [];
-
     private judgeRole = 'Judge';
     private judiciaryRoles = ['Panel Member', 'Winger']; // TODO store somewhere more central as these are frequently used
     private minimumSearchLength = 3;
@@ -64,22 +61,29 @@ export class SearchService {
         }
     ];
 
-    constructor(private bhClient: BHClient, private judgeDataService: JudgeDataService) {}
+    constructor(private bhClient: BHClient) {}
 
-    search(term: string, role: string): Observable<Array<PersonResponse>> {
-        if (this.judgeRole === role) {
-            return zip(this.searchJudiciaryEntries(term), this.searchJudges(term)).pipe(map(([judicaryEntries, judges]) => {
-                console.log('judicary', judicaryEntries);
-                console.log('judges', judges);
-                const combined = [...judicaryEntries, ...judges].sort((a, b) => a.username.localeCompare(b.username));
-                console.log(combined);
-                return combined;
+    participantSearch(term: string, role: string): Observable<Array<ParticipantModel>> {
+        console.log('Role', role);
+        if (role = this.judgeRole) {
+            console.log('Judge', role);
+            return this.searchJudgeAccounts(term).pipe(map(judges => {
+                return judges.map(judge => {
+                    return this.mapJudgeResponseToParticipantModel(judge);
+                })
             }));
-        }
-        if (this.judiciaryRoles.includes(role)) {
-            return this.searchJudiciaryEntries(term);
         } else {
-            return this.searchEntries(term);
+            let persons$: Observable<Array<PersonResponse>>;
+            if (this.judiciaryRoles.includes(role)) {
+                persons$ = this.searchJudiciaryEntries(term);
+            } else {
+               persons$ = this.searchEntries(term);
+            }
+            return persons$.pipe(map(persons => {
+                return persons.map(person => {
+                    return this.mapPersonResponseToParticipantModel(person);
+                });
+            }));
         }
     }
 
@@ -101,16 +105,44 @@ export class SearchService {
         }
     }
 
-    searchJudges(term): Observable<PersonResponse[]> {
-        return this.judgeDataService.searchJudgesByEmail(term).pipe(map(judges => {
-            return judges.map(judge => {
-                const judgeAsPerson = new PersonResponse();
-                judgeAsPerson.first_name = judge.first_name;
-                judgeAsPerson.last_name = judge.last_name;
-                // judgeAsPerson.contact_email = judge.email;
-                judgeAsPerson.username = judge.email ? judge.email : null; // TODO confirm
-                return judgeAsPerson;
-            });
-        }));
+    searchJudgeAccounts(term): Observable<Array<JudgeResponse>> {
+        if (term.length >= this.minimumSearchLength) {
+            return this.bhClient.postJudgesBySearchTerm(term);
+        } else {
+            return of([]);
+        }
+    }
+
+    private mapPersonResponseToParticipantModel(p: PersonResponse): ParticipantModel { // TODO move somewhere else
+        let participant: ParticipantModel;
+        if (p) {
+            participant = new ParticipantModel();
+            participant.id = p.id;
+            participant.title = p.title;
+            participant.first_name = p.first_name;
+            participant.middle_names = p.middle_names;
+            participant.last_name = p.last_name;
+            participant.username = p.username;
+            participant.email = p.contact_email ?? p.username;
+            participant.phone = p.telephone_number;
+            participant.representee = '';
+            participant.company = p.organisation;
+        }
+
+        return participant;
+    }
+
+    private mapJudgeResponseToParticipantModel(judge: JudgeResponse): ParticipantModel { // TODO move somewhere else
+        let participant: ParticipantModel;
+        if (judge) {
+            participant = new ParticipantModel();
+            participant.first_name = judge.first_name;
+            participant.last_name = judge.last_name;
+            participant.username = judge.email;
+            participant.email = judge.email;
+            participant.display_name = judge.display_name;
+        }
+
+        return participant;
     }
 }
