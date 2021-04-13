@@ -37,12 +37,12 @@ namespace AdminWebsite.Controllers
         /// </summary>
         /// <param name="term"></param>
         /// <returns>A list of judges</returns>
-        [HttpGet("judges/search/email", Name = "SearchJudges")]
+        [HttpGet("judges/search/email", Name = "SearchJudgesByEmail")]
         [ProducesResponseType(typeof(IList<JudgeResponse>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        public async Task<ActionResult<IList<JudgeResponse>>> GetJudgesByEmail(string term)
+        public async Task<ActionResult<IList<JudgeResponse>>> SearchJudgesByEmail(string term)
         {
-            var response = await _userAccountService.GetJudgesByEmail(term);
+            var response = await _userAccountService.SearchJudgesByEmail(term);
             return Ok(response);
         }
 

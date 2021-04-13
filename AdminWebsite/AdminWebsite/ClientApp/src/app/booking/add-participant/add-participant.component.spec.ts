@@ -241,9 +241,9 @@ describe('AddParticipantComponent', () => {
             bookingServiceSpy.isEditMode.and.returnValue(false);
 
             searchServiceSpy = jasmine.createSpyObj<SearchService>(['search', 'searchEntries', 'searchJudiciaryEntries']);
-            
+
             searchServiceSpy.searchJudiciaryEntries.and.returnValue(of([new PersonResponse()]));
-            
+
             searchServiceSpy.TitleList = [
                 {
                     value: 'Mrs'

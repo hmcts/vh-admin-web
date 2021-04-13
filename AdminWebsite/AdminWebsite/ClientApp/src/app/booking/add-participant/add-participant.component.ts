@@ -314,6 +314,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     }
 
     public getParticipant(participantDetails: ParticipantModel) {
+        console.log(participantDetails);
         if (!this.validateJudgeAndJohMembers()) {
             this.searchEmail.isErrorEmailAssignedToJudge = true;
             this.errorAlternativeEmail = true;
