@@ -66,7 +66,9 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.hearingId = this.bookingPersistService.selectedHearingId;
         if (this.hearingId) {
-            this.videoHearingService.getHearingById(this.hearingId).toPromise()
+            this.videoHearingService
+                .getHearingById(this.hearingId)
+                .toPromise()
                 .then(hearingDetailsResponse => {
                     this.mapHearing(hearingDetailsResponse);
                     this.getConferencePhoneDetails();
@@ -264,13 +266,19 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
         });
     }
 
-    async getConferencePhoneDetails() {
+    getConferencePhoneDetails() {
         if (this.hearing.Status === 'Created') {
             try {
-                const phoneResponse = await this.videoHearingService.getTelephoneConferenceId(this.hearingId).toPromise();
-                this.telephoneConferenceId = phoneResponse.telephone_conference_id;
-                this.conferencePhoneNumber = await this.videoHearingService.getConferencePhoneNumber();
-                this.updateWithConferencePhoneDetails();
+                this.videoHearingService
+                    .getTelephoneConferenceId(this.hearingId)
+                    .toPromise()
+                    .then(phoneResponse => {
+                        this.telephoneConferenceId = phoneResponse.telephone_conference_id;
+                        this.videoHearingService.getConferencePhoneNumber().then(conferencePhoneNumber => {
+                            this.conferencePhoneNumber = conferencePhoneNumber;
+                            this.updateWithConferencePhoneDetails();
+                        });
+                    });
             } catch (error) {
                 this.logger.warn(
                     `${this.loggerPrefix} Could not get conference phone Id , the hearing ${this.hearingId} is closed`,
