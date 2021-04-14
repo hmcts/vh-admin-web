@@ -240,7 +240,7 @@ resources:
 extends:
   template: stages\dotnet-package.yml@templates
   parameters:
-    useNugetConfig: true
+    useNugetConfig: false
     nugetConfigPath: AdminWebsite
     coreProjectPath: AdminWebsite/AdminWebsite
     nodeProjectPath: AdminWebsite/AdminWebsite/ClientApp
@@ -248,7 +248,7 @@ extends:
     PackageAcceptanceTests: ${{ parameters.PackageACTests }}
     Test: ${{ or(parameters.RunUnitTests, parameters.RunIntegTests, parameters.RunMutationTests) }}
     testParameters:
-      useNugetConfig: true
+      useNugetConfig: false
       nugetConfigPath: AdminWebsite
       coreProjectPath: AdminWebsite/AdminWebsite
       nodeProjectPath: AdminWebsite/AdminWebsite/ClientApp
