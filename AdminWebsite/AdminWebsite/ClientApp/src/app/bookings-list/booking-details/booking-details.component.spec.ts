@@ -487,4 +487,14 @@ describe('BookingDetailsComponent', () => {
         expect(component.timeSubscription).toBeFalsy();
         component.$subscriptions.forEach(s => expect(s.closed).toBeTruthy());
     }));
+    it('should show edit button if 30min or more remain to start of hearing', fakeAsync(() => {
+        component.ngOnInit();
+        tick(1000);
+        const futureDate = new Date();
+        futureDate.setHours(futureDate.getHours() + 1);
+        component.booking.scheduled_date_time = futureDate;
+        const timeframe = component.timeForEditing;
+        expect(timeframe).toBe(true);
+        discardPeriodicTasks();
+    }));
 });
