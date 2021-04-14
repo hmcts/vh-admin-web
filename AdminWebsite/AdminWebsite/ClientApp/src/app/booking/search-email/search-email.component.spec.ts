@@ -12,34 +12,57 @@ import { SearchEmailComponent } from './search-email.component';
 describe('SeachEmailComponent', () => {
     let component: SearchEmailComponent;
     let fixture: ComponentFixture<SearchEmailComponent>;
-    const participantList: PersonResponse[] = JSON.parse(
-        `
-    [
-      {
-        "id": 1,
-        "contact_email": "vb.email1@hmcts.net",
-        "role": "Appellant",
-        "title": "Mrs",
-        "first_name": "Alisa",
-        "middle_names":"No",
-        "last_name": "Smith",
-        "photelephone_numberne": "1111222222",
-        "username": "vb.email1@hmcts.net"
-      },
-      {
-        "id": 2,
-        "contact_email": "vb.email2@hmcts.net",
-        "role": "Appellant",
-        "title": "Mrs",
-        "first_name": "Alisa",
-        "middle_names":"No",
-        "last_name": "Smith",
-        "telephone_number": "1111222222",
-        "username": "vb.email2@hmcts.net"
-      }
-    ]
-    `
-    );
+    // const participantList: PersonResponse[] = JSON.parse(
+    //     `
+    // [
+    //   {
+    //     "id": 1,
+    //     "contact_email": "vb.email1@hmcts.net",
+    //     "role": "Appellant",
+    //     "title": "Mrs",
+    //     "first_name": "Alisa",
+    //     "middle_names":"No",
+    //     "last_name": "Smith",
+    //     "photelephone_numberne": "1111222222",
+    //     "username": "vb.email1@hmcts.net"
+    //   },
+    //   {
+    //     "id": 2,
+    //     "contact_email": "vb.email2@hmcts.net",
+    //     "role": "Appellant",
+    //     "title": "Mrs",
+    //     "first_name": "Alisa",
+    //     "middle_names":"No",
+    //     "last_name": "Smith",
+    //     "telephone_number": "1111222222",
+    //     "username": "vb.email2@hmcts.net"
+    //   }
+    // ]
+    // `
+    // );
+
+
+    let participant1 = new ParticipantModel();
+    participant1.first_name = 'FirstName1';
+    participant1.last_name = 'LastName1';
+    participant1.display_name = 'DisplayName1';
+    participant1.email = 'Email1';
+    participant1.username = 'Username1';
+    participant1.title = 'Title1';
+    
+    
+    let participant2 = new ParticipantModel();
+    participant2.first_name = 'FirstName2';
+    participant2.last_name = 'LastName2';
+    participant2.display_name = 'DisplayName2';
+    participant2.email = 'Email2';
+    participant2.username = 'Username2';
+    participant2.title = 'Title2';
+
+    const participantList: ParticipantModel[] = [
+        participant1,
+        participant2,
+    ];
 
     const participantModel = new ParticipantModel();
     participantModel.email = 'aa@hmcts.net';
@@ -59,7 +82,7 @@ describe('SeachEmailComponent', () => {
     let loggerSpy: jasmine.SpyObj<Logger>;
 
     beforeEach(() => {
-        searchServiceSpy = jasmine.createSpyObj<SearchService>('SearchService', ['search']);
+        searchServiceSpy = jasmine.createSpyObj<SearchService>('SearchService', ['participantSearch']);
         configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettings']);
         configServiceSpy.getClientSettings.and.returnValue(of(configSettings));
         loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['info', 'error']);
@@ -204,34 +227,34 @@ describe('SeachEmailComponent', () => {
         expect(component.notFoundParticipant).toBeFalsy();
         expect(component.emailChanged.emit).toHaveBeenCalled();
     });
-    it('should map PersonResponse to ParticipantModel', () => {
-        const person = new PersonResponse({
-            contact_email: 'aa@hmcts.net',
-            first_name: 'Sam',
-            last_name: 'Green',
-            title: 'Ms',
-            middle_names: 'No',
-            telephone_number: '11111111',
-            username: 'aa@hmcts.net',
-            organisation: 'Name of a company'
-        });
+    // it('should map PersonResponse to ParticipantModel', () => {
+    //     const person = new PersonResponse({
+    //         contact_email: 'aa@hmcts.net',
+    //         first_name: 'Sam',
+    //         last_name: 'Green',
+    //         title: 'Ms',
+    //         middle_names: 'No',
+    //         telephone_number: '11111111',
+    //         username: 'aa@hmcts.net',
+    //         organisation: 'Name of a company'
+    //     });
 
-        const model = component.mapPersonResponseToParticipantModel(person);
+    //     const model = component.mapPersonResponseToParticipantModel(person);
 
-        expect(model.email).toEqual(person.contact_email);
-        expect(model.first_name).toEqual(person.first_name);
-        expect(model.last_name).toEqual(person.last_name);
-        expect(model.middle_names).toEqual(person.middle_names);
-        expect(model.title).toEqual(person.title);
-        expect(model.phone).toEqual(person.telephone_number);
-        expect(model.username).toEqual(person.username);
-        expect(model.company).toEqual(person.organisation);
-    });
-    it('should mapping return empty ParticipantModel if  PersonResponse is null', () => {
-        const person = null;
-        const model = component.mapPersonResponseToParticipantModel(person);
-        expect(model).toEqual(undefined);
-    });
+    //     expect(model.email).toEqual(person.contact_email);
+    //     expect(model.first_name).toEqual(person.first_name);
+    //     expect(model.last_name).toEqual(person.last_name);
+    //     expect(model.middle_names).toEqual(person.middle_names);
+    //     expect(model.title).toEqual(person.title);
+    //     expect(model.phone).toEqual(person.telephone_number);
+    //     expect(model.username).toEqual(person.username);
+    //     expect(model.company).toEqual(person.organisation);
+    // });
+    // it('should mapping return empty ParticipantModel if  PersonResponse is null', () => {
+    //     const person = null;
+    //     const model = component.mapPersonResponseToParticipantModel(person);
+    //     expect(model).toEqual(undefined);
+    // });
     it('should find data and set notFoundParticipant to false', () => {
         component.getData(participantList);
         expect(component.isShowResult).toBeTruthy();
@@ -266,7 +289,7 @@ describe('SearchEmailComponent email validate', () => {
     let configServiceSpy: jasmine.SpyObj<ConfigService>;
     let loggerSpy: jasmine.SpyObj<Logger>;
 
-    searchServiceSpy = jasmine.createSpyObj<SearchService>('SearchService', ['search']);
+    searchServiceSpy = jasmine.createSpyObj<SearchService>('SearchService', ['participantSearch']);
     configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettings']);
     configServiceSpy.getClientSettings.and.returnValue(of(configSettings));
     loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['info', 'error']);
