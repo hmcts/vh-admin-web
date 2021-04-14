@@ -1,9 +1,10 @@
 import { Component, EventEmitter, Output, OnInit, Input, OnDestroy } from '@angular/core';
-import { Subject, Subscription } from 'rxjs';
+import { Observable, Subject, Subscription } from 'rxjs';
 import { JudgeResponse, PersonResponse } from '../../services/clients/api-client';
 import { Constants } from '../../common/constants';
 import { ParticipantModel } from '../../common/model/participant.model';
 import { SearchService } from '../../services/search.service';
+import { ParticipantMapperService } from '../services/participant-mapper.service';
 import { ConfigService } from 'src/app/services/config.service';
 import { Logger } from '../../services/logger';
 import { debounceTime, distinctUntilChanged, map, switchMap } from 'rxjs/operators';
@@ -40,9 +41,11 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
 
     @Output() emailChanged = new EventEmitter<string>();
 
-    @Input() includeJudges = false;
-
-    constructor(private searchService: SearchService, private configService: ConfigService, private logger: Logger) {}
+    constructor(
+        private searchService: SearchService,
+        private configService: ConfigService,
+        private logger: Logger
+    ) {}
 
     ngOnInit() {
         this.$subscriptions.push(
