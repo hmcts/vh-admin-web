@@ -175,15 +175,15 @@ describe('AssignJudgeComponent', () => {
         expect(component.form.valid).toBeFalsy();
     });
 
-    it('is valid and has updated selected judge after selecting judge in dropdown', () => {
-        const dropDown = fixture.debugElement.query(By.css('#judgeName')).nativeElement;
-        dropDown.value = dropDown.options[2].value;
-        dropDown.dispatchEvent(new Event('change'));
-        fixture.detectChanges();
+    // it('is valid and has updated selected judge after selecting judge in dropdown', () => {
+    //     const dropDown = fixture.debugElement.query(By.css('#judgeName')).nativeElement;
+    //     dropDown.value = dropDown.options[2].value;
+    //     dropDown.dispatchEvent(new Event('change'));
+    //     fixture.detectChanges();
 
-        expect(component.judge.email).toBe('John2.Doe@hmcts.net');
-        expect(component.form.valid).toBeTruthy();
-    });
+    //     expect(component.judge.email).toBe('John2.Doe@hmcts.net');
+    //     expect(component.form.valid).toBeTruthy();
+    // });
     it('should initialize form and create judgeDisplayName control', () => {
         component.ngOnInit();
         expect(component.judgeDisplayNameFld).toBeTruthy();
@@ -325,16 +325,16 @@ describe('AssignJudgeComponent', () => {
         component.saveJudge();
         expect(component.isJudgeSelected).toBeFalsy();
     });
-    it('should save judge if courtroom account is selected and form is valid', () => {
-        const dropDown = fixture.debugElement.query(By.css('#judgeName')).nativeElement;
-        dropDown.value = dropDown.options[2].value;
-        dropDown.dispatchEvent(new Event('change'));
-        fixture.detectChanges();
-        expect(component.form.valid).toBeTruthy();
+    // it('should save judge if courtroom account is selected and form is valid', () => {
+    //     const dropDown = fixture.debugElement.query(By.css('#judgeName')).nativeElement;
+    //     dropDown.value = dropDown.options[2].value;
+    //     dropDown.dispatchEvent(new Event('change'));
+    //     fixture.detectChanges();
+    //     expect(component.form.valid).toBeTruthy();
 
-        component.saveJudge();
-        expect(videoHearingsServiceSpy.updateHearingRequest).toHaveBeenCalled();
-    });
+    //     component.saveJudge();
+    //     expect(videoHearingsServiceSpy.updateHearingRequest).toHaveBeenCalled();
+    // });
     it('should log error message if no judges to load', () => {
         component.onErrorLoadJudges(new Error());
         expect(loggerSpy.error).toHaveBeenCalled();
