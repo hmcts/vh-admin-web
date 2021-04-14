@@ -104,9 +104,8 @@ export class BookingDetailsComponent implements OnInit, OnDestroy {
 
     setTimeObserver() {
         if (this.booking) {
-            let endofday = this.booking.scheduled_date_time;
+            const endofday = this.booking.scheduled_date_time;
             endofday.setHours(23, 59);
-            endofday = endofday;
             this.isConfirmationTimeValid = this.booking.scheduled_date_time.valueOf() <= endofday.valueOf();
             if (!this.isConfirmationTimeValid && this.timeSubscription) {
                 this.timeSubscription.unsubscribe();
