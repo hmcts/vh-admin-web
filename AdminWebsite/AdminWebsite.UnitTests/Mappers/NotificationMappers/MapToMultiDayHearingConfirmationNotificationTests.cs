@@ -14,6 +14,8 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
 {
     public class MapToMultiDayHearingConfirmationNotificationTests
     {
+        private string CaseName => "Mapping Test";
+        
         [Test]
         public void should_map_to_judge_confirmation_notification()
         {
@@ -25,7 +27,7 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
 
             var expectedParameters = new Dictionary<string, string>
             {
-                {"case name", hearing.Cases.First().Name},
+                {"case name", CaseName},
                 {"case number", hearing.Cases.First().Number},
                 {"time", "2:10 PM"},
                 {"Start Day Month Year", "12 October 2020"},
@@ -55,7 +57,7 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
 
             var expectedParameters = new Dictionary<string, string>
             {
-                {"case name", hearing.Cases.First().Name},
+                {"case name", CaseName},
                 {"case number", hearing.Cases.First().Number},
                 {"time", "2:10 PM"},
                 {"Start Day Month Year", "12 October 2020"},
@@ -84,7 +86,7 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
 
             var expectedParameters = new Dictionary<string, string>
             {
-                {"case name", hearing.Cases.First().Name},
+                {"case name", CaseName},
                 {"case number", hearing.Cases.First().Number},
                 {"time", "2:10 PM"},
                 {"Start Day Month Year", "12 October 2020"},
@@ -114,7 +116,7 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
 
             var expectedParameters = new Dictionary<string, string>
             {
-                {"case name", hearing.Cases.First().Name},
+                {"case name", CaseName},
                 {"case number", hearing.Cases.First().Number},
                 {"time", "2:10 PM"},
                 {"Start Day Month Year", "12 October 2020"},
@@ -139,16 +141,18 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             var @case = new CaseResponse
             {
                 Is_lead_case = true,
-                Name = "Mapping test",
+                Name = $"Day 1 of 4 {CaseName}",
                 Number = "12345678 MT"
             };
 
-            return new HearingDetailsResponse
+            var h = new HearingDetailsResponse
             {
                 Id = Guid.NewGuid(),
                 Cases = new List<CaseResponse> {@case},
                 Scheduled_date_time = new DateTime(2020, 10, 12, 13, 10, 0, DateTimeKind.Utc)
             };
+            h.Group_id = h.Id;
+            return h;
         }
 
         private ParticipantResponse InitParticipant(string userRole, string representee = null)
