@@ -21,7 +21,7 @@ module.exports = function (config) {
                 random: false
             }
         },
-        coverageIstanbulReporter: {
+        coverageReporter: {
             dir: require('path').join(__dirname, '../coverage'),
             subdir: '.',
             reporters: [{ type: 'html' }, { type: 'lcovonly' }, { type: 'cobertura' }],
