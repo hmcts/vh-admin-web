@@ -87,6 +87,28 @@ namespace AdminWebsite.UnitTests.Services
                     x => x.CreateNewNotificationAsync(It.IsAny<AddNotificationRequest>()),
                     Times.Exactly(secondHearing.Participants.Count));
         }
+        
+        [Test]
+        public async Task should_send_amendment_email_to_all_participants_except_judge_when_not_the_first_hearing()
+        {
+            var secondHearing = InitHearing();
+            _hearing.Group_id = secondHearing.Group_id = _hearing.Id;
+
+            secondHearing.Other_information =
+                new OtherInformationDetails {JudgeEmail = "judge@hmcts.net"}.ToOtherInformationString();
+            secondHearing.Scheduled_date_time = _hearing.Scheduled_date_time.AddDays(1).AddHours(3).AddMinutes(20);
+            await _service.SendHearingUpdateEmail(secondHearing, secondHearing);
+
+            _mocker.Mock<INotificationApiClient>()
+                .Verify(
+                    x => x.CreateNewNotificationAsync(It.IsAny<AddNotificationRequest>()),
+                    Times.Exactly(secondHearing.Participants.Count -1));
+            
+            _mocker.Mock<INotificationApiClient>()
+                .Verify(
+                    x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.NotificationType == NotificationType.HearingConfirmationJudgeMultiDay)),
+                    Times.Never);
+        }
 
         [Test]
         public async Task should_send_confirmation_email_to_new_judge_when_amending_judge_email()
@@ -101,6 +123,23 @@ namespace AdminWebsite.UnitTests.Services
                 .Verify(
                     x => x.CreateNewNotificationAsync(It.IsAny<AddNotificationRequest>()),
                     Times.Exactly(1));
+        }
+        
+        [Test]
+        public async Task should_not_send_confirmation_email_when_hearing_is_not_the_first_hearing_of_a_mdh()
+        {
+            var secondHearing = InitHearing();
+            _hearing.Group_id = secondHearing.Group_id = _hearing.Id;
+            secondHearing.Scheduled_date_time = _hearing.Scheduled_date_time.AddDays(1).AddHours(3).AddMinutes(20);
+            
+            _mocker.Mock<IBookingsApiClient>().Setup(x => x.GetHearingsByGroupIdAsync(_hearing.Group_id.Value)).ReturnsAsync(new List<HearingDetailsResponse> {_hearing, secondHearing});
+            
+            await _service.SendJudgeConfirmationEmail(secondHearing);
+
+            _mocker.Mock<INotificationApiClient>()
+                .Verify(
+                    x => x.CreateNewNotificationAsync(It.IsAny<AddNotificationRequest>()),
+                    Times.Never);
         }
 
         [Test]
