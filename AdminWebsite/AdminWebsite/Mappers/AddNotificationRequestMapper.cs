@@ -157,9 +157,10 @@ namespace AdminWebsite.Mappers
             ParticipantResponse participant, int days)
         {
             var @case = hearing.Cases.First();
+            var cleanedCaseName = @case.Name.Replace($"Day 1 of {days}", string.Empty).Trim();
             var parameters = new Dictionary<string, string>
             {
-                {"case name", @case.Name},
+                {"case name", cleanedCaseName},
                 {"case number", @case.Number},
                 {"time", hearing.Scheduled_date_time.ToEmailTimeGbLocale()},
                 {"Start Day Month Year", hearing.Scheduled_date_time.ToEmailDateGbLocale()},

@@ -241,9 +241,13 @@ namespace AdminWebsite.Services
             }
             else
             {
-                var singleHearing = hearings.First();
-                var judge = singleHearing.Participants.First(x => x.User_role_name.Contains("Judge", StringComparison.CurrentCultureIgnoreCase));
-                request = AddNotificationRequestMapper.MapToMultiDayHearingConfirmationNotification(singleHearing, judge, hearings.Count);
+                var firstHearingForGroup = hearings.First();
+                if (firstHearingForGroup.Id != hearing.Id)
+                {
+                    return;
+                }
+                var judge = firstHearingForGroup.Participants.First(x => x.User_role_name.Contains("Judge", StringComparison.CurrentCultureIgnoreCase));
+                request = AddNotificationRequestMapper.MapToMultiDayHearingConfirmationNotification(firstHearingForGroup, judge, hearings.Count);
             }
 
             if (request.ContactEmail != null)
