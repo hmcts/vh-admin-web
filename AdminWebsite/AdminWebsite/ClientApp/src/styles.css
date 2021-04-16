@@ -13,7 +13,7 @@
 }
 
 .vh-mr25 {
-  margin-right: 25px;
+  margin-right: 25px !important;
 }
 
 .vh-mr15 {
