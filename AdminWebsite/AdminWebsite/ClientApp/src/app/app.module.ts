@@ -32,7 +32,6 @@ import { ConsoleLogger } from './services/console-logger';
 import { Config } from './common/model/config';
 import { WindowRef } from './security/window-ref';
 import { UnsupportedBrowserComponent } from './shared/unsupported-browser/unsupported-browser.component';
-import { DeviceDetectorModule } from 'ngx-device-detector';
 import { ChangePasswordComponent } from './change-password/change-password.component';
 import { GetAudioFileModule } from './get-audio-file/get-audio-file.module';
 import { DeleteParticipantModule } from './delete-participant/delete-participant.module';
@@ -63,7 +62,6 @@ export function loadConfig(configService: ConfigService) {
         AppRoutingModule,
         SharedModule,
         PopupModule,
-        DeviceDetectorModule.forRoot(),
         GetAudioFileModule,
         DeleteParticipantModule,
         EditParticipantModule,
