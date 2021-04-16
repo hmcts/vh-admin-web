@@ -535,7 +535,6 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     validateJudgeAndJohMembers(): boolean {
         if (this.hearing?.participants.length) {
             const judge = this.hearing.participants.find(x => x.is_judge);
-
             return this.searchEmail.email !== judge?.username;
         }
         return true;
@@ -987,7 +986,8 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
             last_name: '',
             email: this.constants.PleaseSelect,
             is_exist_person: false,
-            is_judge: false
+            is_judge: false,
+            is_courtroom_account: false,
         };
         this.interpreteeList.unshift(interpreteeModel);
     }
@@ -1007,8 +1007,10 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         return hearingRole.toLowerCase() === HearingRoles.INTERPRETER.toLowerCase();
     }
     private hearingHasAnInterpreter(): boolean {
+        console.log(this.hearing.participants);
+        console.log(HearingRoles.INTERPRETER);
         const hearingHasInterpreter = this.hearing.participants.some(
-            p => p.hearing_role_name.toLowerCase() === HearingRoles.INTERPRETER.toLowerCase()
+            p => p.hearing_role_name?.toLowerCase() === HearingRoles.INTERPRETER.toLowerCase()
         );
         return hearingHasInterpreter;
     }

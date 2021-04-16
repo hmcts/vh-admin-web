@@ -41,6 +41,7 @@ export class VideoHearingsService {
 
     private modelHearing: HearingModel;
     private participantRoles = new Map<string, CaseAndHearingRolesResponse[]>();
+    private judiciaryRoles = ['Panel Member', 'Winger']; // TODO centralize
 
     constructor(private bhClient: BHClient) {
         this.newRequestKey = 'bh-newRequest';
@@ -427,5 +428,31 @@ export class VideoHearingsService {
 
     getTelephoneConferenceId(hearingId: string): Observable<PhoneConferenceResponse> {
         return this.bhClient.getTelephoneConferenceIdById(hearingId);
+    }
+
+
+    canAddUser(username: string): boolean {
+        const userPresent = this.modelHearing.participants.find(x => x.username.toLowerCase() === username.toLowerCase());
+        if (!userPresent) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    canAddJudge(username: string): boolean {
+        console.log(this.modelHearing.participants);
+        const userPresent = this.modelHearing.participants.find(x =>
+            x.username?.toLowerCase() === username.toLowerCase() &&
+            (this.judiciaryRoles.includes(x.hearing_role_name)));
+        if (!userPresent) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    getJudge(): ParticipantModel {
+        return this.modelHearing.participants.find(x => x.is_judge);
     }
 }
