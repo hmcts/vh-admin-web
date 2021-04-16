@@ -21,4 +21,5 @@ export class ParticipantModel {
     interpretee_name?: string | undefined;
     is_interpretee?: boolean | undefined;
     user_role_name?: string | undefined;
+    is_courtroom_account?: boolean;
 }

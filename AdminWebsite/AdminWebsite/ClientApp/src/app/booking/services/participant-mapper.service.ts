@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ParticipantModel } from 'src/app/common/model/participant.model';
-import { JudgeResponse, PersonResponse } from 'src/app/services/clients/api-client';
+import { JudgeAccountType, JudgeResponse, PersonResponse } from 'src/app/services/clients/api-client';
 
 @Injectable({
   providedIn: 'root'
@@ -31,6 +31,7 @@ export class ParticipantMapperService {
 
 mapJudgeResponseToParticipantModel(judge: JudgeResponse): ParticipantModel {
     let participant: ParticipantModel;
+    console.log('map', judge);
     if (judge) {
         participant = new ParticipantModel();
         participant.first_name = judge.first_name;
@@ -38,8 +39,9 @@ mapJudgeResponseToParticipantModel(judge: JudgeResponse): ParticipantModel {
         participant.username = judge.email;
         participant.email = judge.email;
         participant.display_name = judge.display_name;
+        participant.is_courtroom_account = judge.account_type === JudgeAccountType.Courtroom;
     }
-
+    console.log('map', participant);
     return participant;
 }
 }

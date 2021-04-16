@@ -227,34 +227,7 @@ describe('SeachEmailComponent', () => {
         expect(component.notFoundParticipant).toBeFalsy();
         expect(component.emailChanged.emit).toHaveBeenCalled();
     });
-    // it('should map PersonResponse to ParticipantModel', () => {
-    //     const person = new PersonResponse({
-    //         contact_email: 'aa@hmcts.net',
-    //         first_name: 'Sam',
-    //         last_name: 'Green',
-    //         title: 'Ms',
-    //         middle_names: 'No',
-    //         telephone_number: '11111111',
-    //         username: 'aa@hmcts.net',
-    //         organisation: 'Name of a company'
-    //     });
-
-    //     const model = component.mapPersonResponseToParticipantModel(person);
-
-    //     expect(model.email).toEqual(person.contact_email);
-    //     expect(model.first_name).toEqual(person.first_name);
-    //     expect(model.last_name).toEqual(person.last_name);
-    //     expect(model.middle_names).toEqual(person.middle_names);
-    //     expect(model.title).toEqual(person.title);
-    //     expect(model.phone).toEqual(person.telephone_number);
-    //     expect(model.username).toEqual(person.username);
-    //     expect(model.company).toEqual(person.organisation);
-    // });
-    // it('should mapping return empty ParticipantModel if  PersonResponse is null', () => {
-    //     const person = null;
-    //     const model = component.mapPersonResponseToParticipantModel(person);
-    //     expect(model).toEqual(undefined);
-    // });
+    
     it('should find data and set notFoundParticipant to false', () => {
         component.getData(participantList);
         expect(component.isShowResult).toBeTruthy();
