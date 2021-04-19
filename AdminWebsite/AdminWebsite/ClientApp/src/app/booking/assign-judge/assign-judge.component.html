@@ -16,13 +16,13 @@
   </h2>
   <div class="govuk-error-summary__body">
     <ul class="govuk-list govuk-error-summary__list">
-      <!-- <li *ngIf="!judge">
-        <a (click)="goToDiv('judgeName-error')">Please select a judge or courtroom account</a>
-      </li> -->
-      <li *ngIf="judgeDisplayNameInvalid">
+      <li *ngIf="!judge">
+        <a (click)="goToDiv('judgeEmail-error')">{{ constants.Error.JudgeEmailErrorMsg }}</a>
+      </li>
+      <li *ngIf="judge && judgeDisplayNameInvalid">
         <a (click)="goToDiv('judgeDisplayName-error')">{{ constants.Error.JudgeDisplayNameErrorMsg }}</a>
       </li>
-      <li *ngIf="isJudgeParticipantError">
+      <li *ngIf="judge && isJudgeParticipantError">
         <a (click)="goToDiv('judgeDisplayName-error')">{{ constants.Error.JudgeParticipantErrorMsg }}</a>
       </li>
     </ul>
@@ -33,11 +33,8 @@
   <div class="govuk-grid-column-one-half">
     <form [formGroup]="form" class="govuk-form-group" (ngSubmit)="saveJudge()">
       <div [ngClass]="!isJudgeSelected || isJudgeParticipantError ? 'govuk-form-group--error' : 'govuk-form-group'">
-        <label class="govuk-label" for="judgeName"> Judge or courtroom account </label>
+        <label class="govuk-label" for="judgeName" id="judgeEmail-error"> Judge or courtroom account </label>
         <app-search-email [disabled]="false" hearingRoleParticipant="Judge" (findParticipant)="updateJudge($event)"> </app-search-email>
-        <!-- <select class="govuk-select" id="judgeName" formControlName="judgeName">
-          <option *ngFor="let judge of availableJudges" [ngValue]="judge.email">{{ judge.email }}</option>
-        </select> -->
         <div *ngIf="!isJudgeSelected" class="alert alert-danger">
           <span id="judgeName-error" class="govuk-error-message"> Please assign a judge to this hearing </span>
         </div>
@@ -48,7 +45,7 @@
 
       <p class="govuk-body govuk-!-margin-bottom-5"></p>
 
-      <div [ngClass]="{ 'govuk-form-group--error': judgeDisplayNameInvalid }"  *ngIf="judge">
+      <div [ngClass]="{ 'govuk-form-group--error': judgeDisplayNameInvalid }" *ngIf="judge">
         <legend id="judgeDisplayName-error" *ngIf="judgeDisplayNameInvalid">
           <span class="govuk-error-message">
             {{ constants.Error.JudgeDisplayNameErrorMsg }}

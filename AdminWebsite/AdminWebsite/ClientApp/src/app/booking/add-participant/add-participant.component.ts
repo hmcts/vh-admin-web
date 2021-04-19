@@ -314,7 +314,6 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     }
 
     public getParticipant(participantDetails: ParticipantModel) {
-        console.log(participantDetails);
         if (!this.validateJudgeAndJohMembers()) {
             this.searchEmail.isErrorEmailAssignedToJudge = true;
             this.errorAlternativeEmail = true;
@@ -1007,8 +1006,6 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         return hearingRole.toLowerCase() === HearingRoles.INTERPRETER.toLowerCase();
     }
     private hearingHasAnInterpreter(): boolean {
-        console.log(this.hearing.participants);
-        console.log(HearingRoles.INTERPRETER);
         const hearingHasInterpreter = this.hearing.participants.some(
             p => p.hearing_role_name?.toLowerCase() === HearingRoles.INTERPRETER.toLowerCase()
         );

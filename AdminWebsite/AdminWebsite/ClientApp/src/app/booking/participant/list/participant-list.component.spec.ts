@@ -139,7 +139,7 @@ describe('ParticipantListComponent-SortParticipants', () => {
                 display_name: p.display_name,
                 linked_participants: p.linked_participant,
                 id: `${i + 1}`,
-                is_courtroom_account: false,
+                is_courtroom_account: false
             });
         });
 
@@ -188,7 +188,7 @@ describe('ParticipantListComponent-SortParticipants', () => {
                 interpreterFor: p.interpreterFor,
                 email: p.email,
                 id: `${i + 1},`,
-                is_courtroom_account: false,
+                is_courtroom_account: false
             });
         });
         component.ngOnInit();
