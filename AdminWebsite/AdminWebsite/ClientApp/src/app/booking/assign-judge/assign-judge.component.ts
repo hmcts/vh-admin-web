@@ -232,7 +232,6 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     isJudgeDisplayNameSet(): boolean {
         let result = false;
         if (this.judge && this.judge.display_name) {
-            // const enteredJudge = this.availableJudges.find(j => j.display_name === this.judge.display_name);
             result = true;
         }
         return result;
@@ -362,18 +361,8 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     }
 
     toggle() {
-        this.expanded = !this.expanded; // TODO does this do anything?
+        this.expanded = !this.expanded; // ? does this do anything?
     }
-
-    // validateJudgeAndJohMembers(): boolean {
-    //     if (this.hearing?.participants.length && this.judgeName.value) {
-    //         return !this.hearing.participants.some(
-    //             x => (x.hearing_role_name === 'Panel Member' || x.hearing_role_name === 'Winger') && x.username === this.judgeName.value
-    //         );
-    //     }
-
-    //     return true;
-    // }
 
     ngOnDestroy() {
         this.bookingService.removeEditMode();
