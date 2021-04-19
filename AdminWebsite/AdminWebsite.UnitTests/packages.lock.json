@@ -2510,7 +2510,6 @@
       "adminwebsite": {
         "type": "Project",
         "dependencies": {
-          "AdminWebsite.BookingsAPI.Client": "1.0.0",
           "BookingsApi.Client": "1.25.3",
           "FluentValidation.AspNetCore": "8.6.1",
           "GovukNotify": "4.0.0",
@@ -2537,12 +2536,6 @@
           "UserApi.Client": "1.23.9",
           "VH.Core.Configuration": "0.1.12",
           "VideoApi.Client": "1.23.28"
-        }
-      },
-      "adminwebsite.bookingsapi.client": {
-        "type": "Project",
-        "dependencies": {
-          "Newtonsoft.Json": "12.0.3"
         }
       },
       "adminwebsite.testing.common": {
