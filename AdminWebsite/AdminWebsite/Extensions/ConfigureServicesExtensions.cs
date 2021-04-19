@@ -1,6 +1,4 @@
-﻿using AdminWebsite.BookingsAPI.Client;
-using AdminWebsite.Configuration;
-using AdminWebsite.Helper;
+﻿using AdminWebsite.Configuration;
 using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
@@ -18,6 +16,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using AdminWebsite.Contracts.Responses;
+using BookingsApi.Client;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using NotificationApi.Client;

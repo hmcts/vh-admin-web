@@ -1,5 +1,5 @@
-﻿using AdminWebsite.BookingsAPI.Client;
-using AdminWebsite.Models;
+﻿using AdminWebsite.Models;
+using BookingsApi.Contract.Requests;
 
 namespace AdminWebsite.Mappers
 {
@@ -10,9 +10,9 @@ namespace AdminWebsite.Mappers
             var updateParticipantRequest = new UpdateParticipantRequest
             {
                 Title = participant.Title,
-                Display_name = participant.DisplayName,
-                Organisation_name = participant.OrganisationName,
-                Telephone_number = participant.TelephoneNumber,
+                DisplayName = participant.DisplayName,
+                OrganisationName = participant.OrganisationName,
+                TelephoneNumber = participant.TelephoneNumber,
                 Representee = participant.Representee,
             };
             return updateParticipantRequest;

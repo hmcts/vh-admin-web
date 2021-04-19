@@ -13,7 +13,7 @@ namespace AdminWebsite.UnitTests.Security
     public class UserIdentityTests
     {
         [Test]
-        public void Should_return_the_display_names_of_assigned_case_types()
+        public void Should_return_the_DisplayNames_of_assigned_case_types()
         {
             var administratorRoleClaims = new AdministratorRoleClaims(new UserRole
             {
@@ -30,7 +30,7 @@ namespace AdminWebsite.UnitTests.Security
         }
 
         [Test]
-        public void Should_return_group_display_names()
+        public void Should_return_group_DisplayNames()
         {
             var administratorRoleClaims = new AdministratorRoleClaims(new UserRole
             {

@@ -1,4 +1,3 @@
-using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Controllers;
 using FizzWare.NBuilder;
 using FluentAssertions;
@@ -9,6 +8,7 @@ using System;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using BookingsApi.Client;
 using HealthCheckResponse = AdminWebsite.Models.HealthCheckResponse;
 using NotificationApi.Client;
 using NotificationApi.Contract;

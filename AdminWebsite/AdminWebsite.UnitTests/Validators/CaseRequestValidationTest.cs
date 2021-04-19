@@ -1,8 +1,8 @@
-﻿using AdminWebsite.BookingsAPI.Client;
-using AdminWebsite.Validators;
+﻿using AdminWebsite.Validators;
 using NUnit.Framework;
 using System;
 using System.Linq;
+using BookingsApi.Contract.Requests;
 
 namespace AdminWebsite.UnitTests.Validators
 {
@@ -17,20 +17,20 @@ namespace AdminWebsite.UnitTests.Validators
         }
 
         [Test]
-        public void Should_validate_case_number_and_name_with_length_greater_then_255_as_error()
+        public void Should_validate_CaseNumber_and_name_with_length_greater_then_255_as_error()
         {
-        const string CASE_NUMBER_MESSAGE = "Case number is required between 1 - 255 characters";
-         const string CASE_NAME_MESSAGE = "Case name is required between 1 - 255 characters";
+        const string CaseNumber_MESSAGE = "Case number is required between 1 - 255 characters";
+         const string CaseName_MESSAGE = "Case name is required between 1 - 255 characters";
 
         var longString = new String('a', 257);
             var testRequest = new CaseRequest { Number = longString, Name=longString };
             var result = _validator.Validate(testRequest);
-            Assert.That(result.Errors.Any(o => o.PropertyName == "Number" && o.ErrorMessage == CASE_NUMBER_MESSAGE));
-            Assert.That(result.Errors.Any(o => o.PropertyName == "Name" && o.ErrorMessage == CASE_NAME_MESSAGE));
+            Assert.That(result.Errors.Any(o => o.PropertyName == "Number" && o.ErrorMessage == CaseNumber_MESSAGE));
+            Assert.That(result.Errors.Any(o => o.PropertyName == "Name" && o.ErrorMessage == CaseName_MESSAGE));
         }
 
         [Test]
-        public void Should_validate_case_number_and_name_with_length_zero_as_error()
+        public void Should_validate_CaseNumber_and_name_with_length_zero_as_error()
         {
             var shortString = "";
             var testRequest = new CaseRequest { Number = shortString, Name = shortString };
