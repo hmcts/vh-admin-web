@@ -441,7 +441,6 @@ export class VideoHearingsService {
     }
 
     canAddJudge(username: string): boolean {
-        console.log(this.modelHearing.participants);
         const userPresent = this.modelHearing.participants.find(x =>
             x.username?.toLowerCase() === username.toLowerCase() &&
             (this.judiciaryRoles.includes(x.hearing_role_name)));

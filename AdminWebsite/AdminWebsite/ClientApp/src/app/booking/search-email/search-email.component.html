@@ -35,7 +35,7 @@
     <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
     <strong class="govuk-warning-text__text">
       <span class="govuk-warning-text__assistive">Warning</span>
-      No existing user account found - this will create a new one
+      No existing user account found<span *ngIf="hearingRoleParticipant !== judgeHearingRole"> - this will create a new one</span>
     </strong>
   </div>
   <p></p>

@@ -41,17 +41,15 @@ describe('SeachEmailComponent', () => {
     // `
     // );
 
-
-    let participant1 = new ParticipantModel();
+    const participant1 = new ParticipantModel();
     participant1.first_name = 'FirstName1';
     participant1.last_name = 'LastName1';
     participant1.display_name = 'DisplayName1';
     participant1.email = 'Email1';
     participant1.username = 'Username1';
     participant1.title = 'Title1';
-    
-    
-    let participant2 = new ParticipantModel();
+
+    const participant2 = new ParticipantModel();
     participant2.first_name = 'FirstName2';
     participant2.last_name = 'LastName2';
     participant2.display_name = 'DisplayName2';
@@ -59,10 +57,7 @@ describe('SeachEmailComponent', () => {
     participant2.username = 'Username2';
     participant2.title = 'Title2';
 
-    const participantList: ParticipantModel[] = [
-        participant1,
-        participant2,
-    ];
+    const participantList: ParticipantModel[] = [participant1, participant2];
 
     const participantModel = new ParticipantModel();
     participantModel.email = 'aa@hmcts.net';
@@ -227,7 +222,7 @@ describe('SeachEmailComponent', () => {
         expect(component.notFoundParticipant).toBeFalsy();
         expect(component.emailChanged.emit).toHaveBeenCalled();
     });
-    
+
     it('should find data and set notFoundParticipant to false', () => {
         component.getData(participantList);
         expect(component.isShowResult).toBeTruthy();

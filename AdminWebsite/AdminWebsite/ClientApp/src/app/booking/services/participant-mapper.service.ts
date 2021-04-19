@@ -31,7 +31,6 @@ export class ParticipantMapperService {
 
 mapJudgeResponseToParticipantModel(judge: JudgeResponse): ParticipantModel {
     let participant: ParticipantModel;
-    console.log('map', judge);
     if (judge) {
         participant = new ParticipantModel();
         participant.first_name = judge.first_name;
@@ -41,7 +40,6 @@ mapJudgeResponseToParticipantModel(judge: JudgeResponse): ParticipantModel {
         participant.display_name = judge.display_name;
         participant.is_courtroom_account = judge.account_type === JudgeAccountType.Courtroom;
     }
-    console.log('map', participant);
     return participant;
 }
 }

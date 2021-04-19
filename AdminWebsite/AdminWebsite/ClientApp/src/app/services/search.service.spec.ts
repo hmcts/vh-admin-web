@@ -121,7 +121,7 @@ describe('SearchService', () => {
     beforeEach(() => {
         clientApiSpy = jasmine.createSpyObj<BHClient>('BHClient', ['postPersonBySearchTerm', 'postJudiciaryPersonBySearchTerm', 'postJudgesBySearchTerm']);
         participantMapperSpy = jasmine.createSpyObj<ParticipantMapperService>('ParticipantMapperService', ['mapPersonResponseToParticipantModel', 'mapJudgeResponseToParticipantModel']);
-        console.log(clientApiSpy);
+
         clientApiSpy.postPersonBySearchTerm.and.returnValue(of(personList));
         clientApiSpy.postJudiciaryPersonBySearchTerm.and.returnValue(of(judiciaryPersonList));
         clientApiSpy.postJudgesBySearchTerm.and.returnValue(of(judgeList));
@@ -143,7 +143,6 @@ describe('SearchService', () => {
     describe('participantSearch', () => {
         beforeEach(() => {
             clientApiSpy = jasmine.createSpyObj<BHClient>('BHClient', ['postPersonBySearchTerm', 'postJudiciaryPersonBySearchTerm', 'postJudgesBySearchTerm']);
-            console.log(clientApiSpy);
 
             spyOn(service, 'searchEntries').and.returnValue(of(personList));
             spyOn(service, 'searchJudiciaryEntries').and.returnValue(of(judiciaryPersonList));

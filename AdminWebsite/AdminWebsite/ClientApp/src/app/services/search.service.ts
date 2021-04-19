@@ -66,24 +66,28 @@ export class SearchService {
 
     participantSearch(term: string, role: string): Observable<Array<ParticipantModel>> {
         if (role === this.judgeRole) {
-            return this.searchJudgeAccounts(term).pipe(map(judges => {
-                return judges.map(judge => {
-                    return this.participantMapperService.mapJudgeResponseToParticipantModel(judge);
-                });
-            }));
+            return this.searchJudgeAccounts(term).pipe(
+                map(judges => {
+                    return judges.map(judge => {
+                        return this.participantMapperService.mapJudgeResponseToParticipantModel(judge);
+                    });
+                })
+            );
         } else {
             let persons$: Observable<Array<PersonResponse>>;
             if (this.judiciaryRoles.includes(role)) {
                 persons$ = this.searchJudiciaryEntries(term);
             } else {
-               persons$ = this.searchEntries(term);
+                persons$ = this.searchEntries(term);
             }
 
-            return persons$.pipe(map(persons => {
-                return persons.map(person => {
-                    return this.participantMapperService.mapPersonResponseToParticipantModel(person);
-                });
-            }));
+            return persons$.pipe(
+                map(persons => {
+                    return persons.map(person => {
+                        return this.participantMapperService.mapPersonResponseToParticipantModel(person);
+                    });
+                })
+            );
         }
     }
 

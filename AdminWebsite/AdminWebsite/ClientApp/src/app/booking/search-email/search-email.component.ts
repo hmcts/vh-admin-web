@@ -7,7 +7,7 @@ import { SearchService } from '../../services/search.service';
 import { ParticipantMapperService } from '../services/participant-mapper.service';
 import { ConfigService } from 'src/app/services/config.service';
 import { Logger } from '../../services/logger';
-import { debounceTime, distinctUntilChanged, map, switchMap } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
 import { JudgeDataService } from '../services/judge-data.service';
 
 @Component({
@@ -32,7 +32,9 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
     isJoh = false;
     notFoundEmailEvent = new Subject<boolean>();
     notFoundEmailEvent$ = this.notFoundEmailEvent.asObservable();
-    results$ = new BehaviorSubject<ParticipantModel[]>(null);
+    searchPending = new BehaviorSubject<boolean>(false);
+    private judgeHearingRole = 'Judge';
+    blurSubscription = new Subscription();
 
     @Input() disabled = true;
 
@@ -42,21 +44,22 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
 
     @Output() emailChanged = new EventEmitter<string>();
 
-    constructor(
-        private searchService: SearchService,
-        private configService: ConfigService,
-        private logger: Logger
-    ) {}
+    constructor(private searchService: SearchService, private configService: ConfigService, private logger: Logger) {}
 
     ngOnInit() {
-        this.$subscriptions.push(this.searchTerm
-                .pipe(debounceTime(500))
-                .pipe(distinctUntilChanged())
+        this.$subscriptions.push(
+            this.searchTerm
                 .pipe(
+                    debounceTime(500),
+                    distinctUntilChanged(),
+                    tap(() => {
+                        this.searchPending.next(true);
+                    }),
                     switchMap(term => {
                         return this.searchService.participantSearch(term, this.hearingRoleParticipant);
                     })
                 )
+
                 .subscribe(personsFound => {
                     if (personsFound && personsFound.length > 0) {
                         this.getData(personsFound);
@@ -69,12 +72,13 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
                         this.isShowResult = false;
                         this.results = undefined;
                     }
-                    console.log('personsFound', personsFound);
+                    this.searchPending.next(false);
                 })
         );
 
         this.$subscriptions.push(this.searchTerm.subscribe(s => (this.email = s)));
         this.getEmailPattern();
+        this.$subscriptions.push(this.blurSubscription);
     }
 
     async getEmailPattern() {
@@ -126,7 +130,8 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
         selectedResult.company = result.company;
         selectedResult.is_exist_person = true;
         selectedResult.username = result.username;
-        selectedResult.is_courtroom_account = result.is_courtroom_account; // TODO Why not just return result?
+        selectedResult.display_name = result.display_name;
+        selectedResult.is_courtroom_account = result.is_courtroom_account; // ? Why not just return result?
         this.isShowResult = false;
         this.findParticipant.emit(selectedResult);
     }
@@ -135,15 +140,13 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
         const pattern = Constants.EmailPattern;
         this.isValidEmail =
             this.email &&
-            this.email.length > 0 &&
+            this.email.length > 2 &&
             this.email.length < 256 &&
             pattern.test(this.email) &&
             this.email.indexOf(this.invalidPattern) < 0;
 
-        if (this.hearingRoleParticipant === 'Judge' && this.isValidEmail) {
-            this.isValidEmail =
-                this.results.length === 1 &&
-                this.results[0].username === this.email;
+        if (this.hearingRoleParticipant === this.judgeHearingRole && this.isValidEmail) {
+            this.isValidEmail = this.results != null && this.results.length === 1 && this.results[0].username === this.email;
         }
 
         return this.isValidEmail;
@@ -165,17 +168,22 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
             this.emailChanged.emit(this.email);
         }
 
-        console.log('here');
-        if (this.hearingRoleParticipant === 'Judge') {
-            let judgeFound: ParticipantModel;
-            if (this.isValidEmail) {
-                judgeFound = this.results.find(result => result.email.toLowerCase() === this.email.toLowerCase());
-            }
-            if (judgeFound){
-                this.selectItemClick(judgeFound);
-            } else {
-                this.findParticipant.emit(null);
-            }
+        if (this.hearingRoleParticipant === this.judgeHearingRole) {
+            this.blurSubscription.unsubscribe();
+            this.blurSubscription = this.searchPending.subscribe(pending => {
+                if (!pending) {
+                    let judgeFound: ParticipantModel;
+                    if (this.isValidEmail && this.results && this.results.length > 0) {
+                        judgeFound = this.results.find(result => result.email.toLowerCase() === this.email.toLowerCase());
+                    }
+                    if (judgeFound) {
+                        this.selectItemClick(judgeFound);
+                    } else {
+                        this.findParticipant.emit(null);
+                    }
+                    this.blurSubscription.unsubscribe();
+                }
+            });
         }
     }
 

@@ -81,8 +81,14 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
 
     ngOnInit() {
         this.failedSubmission = false;
+
         this.checkForExistingRequest();
         this.initForm();
+
+        const existingJudge = this.hearing.participants.find(x => x.is_judge);
+        if (existingJudge != null) {
+            this.updateJudge(existingJudge);
+        }
 
         this.configService
             .getClientSettings()
@@ -101,7 +107,6 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     }
 
     private initForm() {
-
         this.initFormFields();
 
         this.form = this.fb.group({
@@ -109,11 +114,6 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
             judgeEmailFld: this.judgeEmailFld,
             judgePhoneFld: this.judgePhoneFld
         });
-
-        const existingJudge = this.hearing.participants.find(x => x.is_judge);
-        if (existingJudge != null) {
-            this.updateJudge(existingJudge);
-        }
 
         this.setFieldSubscription();
     }
@@ -135,18 +135,17 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
 
     updateJudge(judge: ParticipantModel) {
         this.judge = judge;
-        console.log('update', judge);
+        this.canNavigate = false;
+        this.isJudgeParticipantError = false;
         if (judge) {
             if (this.hearingService.canAddJudge(judge.username)) {
                 judge.is_judge = true;
                 this.courtAccountJudgeEmail = judge.email;
-                if (!this.isJudgeDisplayNameSet()) {
-                    this.judge.display_name = judge.display_name;
-                }
                 this.judgeDisplayNameFld.setValue(this.judge.display_name);
                 this.hearing.participants = this.hearing.participants.filter(x => !x.is_judge);
                 this.hearing.participants.unshift(judge);
                 this.hearing = Object.assign({}, this.hearing);
+                this.canNavigate = true;
             } else {
                 this.isJudgeParticipantError = true;
             }
@@ -159,11 +158,11 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
             this.judgeDisplayNameFld.setValue(judge.display_name);
             this.judgeEmailFld.setValue(this.otherInformationDetails.JudgeEmail);
             this.judgePhoneFld.setValue(this.otherInformationDetails.JudgePhone);
-            this.canNavigate = this.isJudgeSelected;
         }
     }
 
-    setFieldSubscription() { // Does not update Judge summary. Sets subscription
+    setFieldSubscription() {
+        // Does not update Judge summary. Sets subscription
 
         this.$subscriptions.push(
             this.judgeDisplayNameFld.valueChanges.subscribe(name => {
@@ -186,12 +185,12 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         );
     }
 
-    populateFormFields(existingJudge: ParticipantModel) { // Does not populate, gets existing judge.
+    populateFormFields(existingJudge: ParticipantModel) {
+        // Does not populate, gets existing judge.
         this.logger.debug(`${this.loggerPrefix} Found judge in hearing. Populating existing selection.`);
         this.judge = existingJudge;
         this.otherInformationDetails = OtherInformationModel.init(this.hearing.other_information);
     }
-
 
     get canNavigateNext() {
         // should not navigate to next page if judge data is not saved in cache.
@@ -223,37 +222,12 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     }
 
     get displayEmailField() {
-        console.log('display', this.judge);
         if (this.judge != null && this.judge.is_courtroom_account) {
-            console.log('true');
             return true;
         } else {
-            console.log('false');
             return false;
         }
     }
-
-    // public addJudge(judgeEmail: string) {
-    //     if (!judgeEmail) {
-    //         return;
-    //     }
-    //     const selectedJudge = this.availableJudges.find(j => j.email === judgeEmail);
-    //     if (!selectedJudge) {
-    //         return;
-    //     }
-    //     this.judge.first_name = selectedJudge.first_name;
-    //     this.judge.last_name = selectedJudge.last_name;
-    //     this.judge.email = selectedJudge.email;
-    //     this.courtAccountJudgeEmail = selectedJudge.email;
-    //     if (!this.isJudgeDisplayNameSet()) {
-    //         this.judge.display_name = selectedJudge.display_name;
-    //     }
-    //     this.judgeDisplayNameFld.setValue(this.judge.display_name);
-    //     const newJudge = AssignJudgeComponent.mapJudgeToModel(this.judge);
-    //     this.hearing.participants = this.hearing.participants.filter(x => !x.is_judge);
-    //     this.hearing.participants.unshift(newJudge);
-    //     this.hearing = Object.assign({}, this.hearing);
-    // }
 
     isJudgeDisplayNameSet(): boolean {
         let result = false;
@@ -265,14 +239,17 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     }
 
     changeDisplayName() {
+        const text = SanitizeInputText(this.judgeDisplayNameFld.value);
+        this.judgeDisplayNameFld.setValue(text);
+
         if (this.judge && this.judge.display_name) {
+            // TODO confirm if this is redundant as set value will trigger these changes anyway
             const judge = this.hearing.participants.find(x => x.is_judge);
             if (judge) {
                 this.hearing.participants.find(x => x.is_judge).display_name = this.judge.display_name;
+                // ? should this be done here. Should this not only be done on update?
             }
         }
-        const text = SanitizeInputText(this.judgeDisplayNameFld.value);
-        this.judgeDisplayNameFld.setValue(text);
     }
 
     changeEmail() {
@@ -301,31 +278,26 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
 
     saveJudge() {
         this.logger.debug(`${this.loggerPrefix} Attempting to save judge.`);
-        console.log('Save judge');
-        if (!this.judge.email || this.judge.email === this.constants.PleaseSelect) {
-            console.log('email');
+
+        if (!this.judge || !this.judge.email) {
             this.logger.warn(`${this.loggerPrefix} No judge selected. Email not found`);
+            this.failedSubmission = true;
             this.isJudgeSelected = false;
             return;
         }
         if (!this.judge.display_name) {
-            console.log('name');
             this.logger.warn(`${this.loggerPrefix} No judge selected. Display name not set.`);
             this.failedSubmission = true;
             return;
         }
 
         if (!this.hearingService.canAddJudge(this.judge.display_name)) {
-            console.log('can add');
             this.logger.warn(`${this.loggerPrefix} Judge could not be a panel member or winger in the same hearing.`);
             this.isJudgeParticipantError = true;
             this.failedSubmission = true;
-
             return;
         }
 
-        console.log(this.form);
-        console.log(this.isValidEmail);
         if (this.form.valid && this.isValidEmail) {
             this.logger.debug(`${this.loggerPrefix} Judge selection valid.`);
             this.failedSubmission = false;
@@ -387,7 +359,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
 
     goToDiv(fragment: string): void {
         window.document.getElementById(fragment).parentElement.parentElement.scrollIntoView();
-     }
+    }
 
     toggle() {
         this.expanded = !this.expanded; // TODO does this do anything?
@@ -413,7 +385,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     }
 
     private removeJudge() {
-        const judgeIndex = this.hearing.participants.findIndex(x => !x.is_judge);
+        const judgeIndex = this.hearing.participants.findIndex(x => x.is_judge);
         if (judgeIndex !== -1) {
             this.hearing.participants.splice(judgeIndex, 1);
         }
