@@ -5,7 +5,6 @@ import { HttpClientModule } from '@angular/common/http';
 import { APP_INITIALIZER, NgModule, ErrorHandler } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
-import { AdalGuard, AdalInterceptor, AdalService } from 'adal-angular4';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BookingModule } from './booking/booking.module';

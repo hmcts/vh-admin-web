@@ -57,23 +57,23 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
                     }),
                     switchMap(term => {
                         return this.searchService.participantSearch(term, this.hearingRoleParticipant);
+                    }),
+                    tap(personsFound => {
+                        if (personsFound && personsFound.length > 0) {
+                            this.getData(personsFound);
+                        } else {
+                            if (this.email.length > 2) {
+                                this.noDataFound();
+                            } else {
+                                this.lessThanThreeLetters();
+                            }
+                            this.isShowResult = false;
+                            this.results = undefined;
+                        }
+                        this.searchPending.next(false);
                     })
                 )
-
-                .subscribe(personsFound => {
-                    if (personsFound && personsFound.length > 0) {
-                        this.getData(personsFound);
-                    } else {
-                        if (this.email.length > 2) {
-                            this.noDataFound();
-                        } else {
-                            this.lessThanThreeLetters();
-                        }
-                        this.isShowResult = false;
-                        this.results = undefined;
-                    }
-                    this.searchPending.next(false);
-                })
+                .subscribe()
         );
 
         this.$subscriptions.push(this.searchTerm.subscribe(s => (this.email = s)));

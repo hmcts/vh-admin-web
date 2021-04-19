@@ -1,3 +1,4 @@
+import { JudgeAccountType, JudgeResponse, PersonResponse } from 'src/app/services/clients/api-client';
 import { LinkedParticipantModel } from './linked-participant.model';
 
 export class ParticipantModel {
@@ -22,4 +23,37 @@ export class ParticipantModel {
     is_interpretee?: boolean | undefined;
     user_role_name?: string | undefined;
     is_courtroom_account?: boolean;
+
+    static mapPersonResponseToParticipantModel(person: PersonResponse): ParticipantModel {
+        let participant: ParticipantModel;
+        if (person) {
+            participant = new ParticipantModel();
+            participant.id = person.id;
+            participant.title = person.title;
+            participant.first_name = person.first_name;
+            participant.middle_names = person.middle_names;
+            participant.last_name = person.last_name;
+            participant.username = person.username;
+            participant.email = person.contact_email ?? person.username;
+            participant.phone = person.telephone_number;
+            participant.representee = '';
+            participant.company = person.organisation;
+        }
+
+        return participant;
+    }
+
+    static mapJudgeResponseToParticipantModel(judge: JudgeResponse): ParticipantModel {
+        let participant: ParticipantModel;
+        if (judge) {
+            participant = new ParticipantModel();
+            participant.first_name = judge.first_name;
+            participant.last_name = judge.last_name;
+            participant.username = judge.email;
+            participant.email = judge.email;
+            participant.display_name = judge.display_name;
+            participant.is_courtroom_account = judge.account_type === JudgeAccountType.Courtroom;
+        }
+        return participant;
+    }
 }

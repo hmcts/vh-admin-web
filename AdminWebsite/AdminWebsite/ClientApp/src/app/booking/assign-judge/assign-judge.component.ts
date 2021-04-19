@@ -41,7 +41,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     canNavigate = false;
 
     constants = Constants;
-    isJudgeSelected = true;
+    
     expanded = false;
     $subscriptions: Subscription[] = [];
     isJudgeParticipantError = false;
@@ -142,9 +142,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
                 judge.is_judge = true;
                 this.courtAccountJudgeEmail = judge.email;
                 this.judgeDisplayNameFld.setValue(this.judge.display_name);
-                this.hearing.participants = this.hearing.participants.filter(x => !x.is_judge);
-                this.hearing.participants.unshift(judge);
-                this.hearing = Object.assign({}, this.hearing);
+                this.hearing.participants = {...judge, ...this.hearing.participants.filter(x => !x.is_judge)};
                 this.canNavigate = true;
             } else {
                 this.isJudgeParticipantError = true;
@@ -153,7 +151,6 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
             this.removeJudge();
         }
 
-        this.isJudgeSelected = judge != null;
         if (this.isJudgeSelected) {
             this.judgeDisplayNameFld.setValue(judge.display_name);
             this.judgeEmailFld.setValue(this.otherInformationDetails.JudgeEmail);
@@ -202,6 +199,10 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         return this.form.get('judgeName');
     }
 
+    get isJudgeSelected() {
+        return !!this.judge && !!this.judge.email && this.judge.email !== '';
+    }
+
     get judgeDisplayNameInvalid() {
         return (
             this.judgeDisplayNameFld.invalid &&
@@ -222,19 +223,11 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     }
 
     get displayEmailField() {
-        if (this.judge != null && this.judge.is_courtroom_account) {
-            return true;
-        } else {
-            return false;
-        }
+        return !!this.judge && this.judge.is_courtroom_account;
     }
 
     isJudgeDisplayNameSet(): boolean {
-        let result = false;
-        if (this.judge && this.judge.display_name) {
-            result = true;
-        }
-        return result;
+        return !!this.judge && !!this.judge.display_name && this.judge.display_name !== '';
     }
 
     changeDisplayName() {
@@ -281,7 +274,6 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         if (!this.judge || !this.judge.email) {
             this.logger.warn(`${this.loggerPrefix} No judge selected. Email not found`);
             this.failedSubmission = true;
-            this.isJudgeSelected = false;
             return;
         }
         if (!this.judge.display_name) {

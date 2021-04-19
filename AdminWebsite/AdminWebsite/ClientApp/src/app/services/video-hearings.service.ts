@@ -433,22 +433,14 @@ export class VideoHearingsService {
 
     canAddUser(username: string): boolean {
         const userPresent = this.modelHearing.participants.find(x => x.username.toLowerCase() === username.toLowerCase());
-        if (!userPresent) {
-            return true;
-        } else {
-            return false;
-        }
+        return !userPresent;
     }
 
     canAddJudge(username: string): boolean {
         const userPresent = this.modelHearing.participants.find(x =>
             x.username?.toLowerCase() === username.toLowerCase() &&
             (this.judiciaryRoles.includes(x.hearing_role_name)));
-        if (!userPresent) {
-            return true;
-        } else {
-            return false;
-        }
+        return !userPresent;
     }
 
     getJudge(): ParticipantModel {
