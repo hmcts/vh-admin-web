@@ -4,7 +4,6 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using AdminWebsite.Attributes;
-using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Contracts.Requests;
 using AdminWebsite.Extensions;
 using AdminWebsite.Helper;
@@ -13,6 +12,10 @@ using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
 using AdminWebsite.Services.Models;
+using BookingsApi.Client;
+using BookingsApi.Contract.Enums;
+using BookingsApi.Contract.Requests;
+using BookingsApi.Contract.Responses;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -72,19 +75,19 @@ namespace AdminWebsite.Controllers
             try
             {
                 var nonJudgeParticipants = newBookingRequest.Participants
-                    .Where(p => p.Case_role_name != "Judge" && p.Hearing_role_name != "Panel Member" && p.Hearing_role_name != "Winger")
+                    .Where(p => p.CaseRoleName != "Judge" && p.HearingRoleName != "Panel Member" && p.HearingRoleName != "Winger")
                     .ToList();
                 await PopulateUserIdsAndUsernames(nonJudgeParticipants, usernameAdIdDict);
 
                 if (newBookingRequest.Endpoints != null && newBookingRequest.Endpoints.Any())
                 {
                     var endpointsWithDa = newBookingRequest.Endpoints
-                        .Where(x => !string.IsNullOrWhiteSpace(x.Defence_advocate_username)).ToList();
+                        .Where(x => !string.IsNullOrWhiteSpace(x.DefenceAdvocateUsername)).ToList();
                     _hearingsService.AssignEndpointDefenceAdvocates(endpointsWithDa,
                         newBookingRequest.Participants.AsReadOnly());
                 }
 
-                newBookingRequest.Created_by = _userIdentity.GetUserIdentityName();
+                newBookingRequest.CreatedBy = _userIdentity.GetUserIdentityName();
 
                 _logger.LogInformation("BookNewHearing - Attempting to send booking request to Booking API");
                 var hearingDetailsResponse = await _bookingsApiClient.BookNewHearingAsync(newBookingRequest);
@@ -257,7 +260,7 @@ namespace AdminWebsite.Controllers
                 _logger.LogDebug("Successfully assigned participants to the correct group");
 
                 // Send a notification email to newly created participants
-                var newParticipantEmails = newParticipantList.Select(p => p.Contact_email).ToList();
+                var newParticipantEmails = newParticipantList.Select(p => p.ContactEmail).ToList();
                 await SendEmailsToParticipantsAddedToHearing(newParticipantList, updatedHearing, usernameAdIdDict, newParticipantEmails);
 
                 await SendJudgeEmailIfNeeded(updatedHearing, originalHearing);
@@ -265,7 +268,7 @@ namespace AdminWebsite.Controllers
 
 
                 var participantsForAmendment = updatedHearing.Participants
-                    .Where(p => !newParticipantEmails.Contains(p.Contact_email)).ToList();
+                    .Where(p => !newParticipantEmails.Contains(p.ContactEmail)).ToList();
                 await _hearingsService.SendHearingUpdateEmail(originalHearing, updatedHearing,
                     participantsForAmendment);
 
@@ -312,7 +315,7 @@ namespace AdminWebsite.Controllers
                 await _hearingsService.SendNewUserEmailParticipants(updatedHearing, usernameAdIdDict);
 
                 var participantsForConfirmation = updatedHearing.Participants
-                    .Where(p => newParticipantEmails.Contains(p.Contact_email)).ToList();
+                    .Where(p => newParticipantEmails.Contains(p.ContactEmail)).ToList();
                 await _hearingsService.SendHearingConfirmationEmail(updatedHearing, participantsForConfirmation);
                 _logger.LogInformation("Successfully sent emails to participants - {Hearing}", updatedHearing.Id);
             }
@@ -329,11 +332,11 @@ namespace AdminWebsite.Controllers
         [ProducesResponseType(typeof(HearingDetailsResponse), (int) HttpStatusCode.OK)]
         [ProducesResponseType((int) HttpStatusCode.NotFound)]
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
-        public ActionResult GetHearingById(Guid hearingId)
+        public async Task<ActionResult> GetHearingById(Guid hearingId)
         {
             try
             {
-                var hearingResponse = _bookingsApiClient.GetHearingDetailsById(hearingId);
+                var hearingResponse = await _bookingsApiClient.GetHearingDetailsByIdAsync(hearingId);
                 return Ok(hearingResponse);
             }
             catch (BookingsApiException e)
@@ -393,11 +396,11 @@ namespace AdminWebsite.Controllers
             {
                 _logger.LogDebug("Attempting to update hearing {Hearing} to booking status {BookingStatus}", hearingId,
                     updateBookingStatusRequest.Status);
-                updateBookingStatusRequest.Updated_by = _userIdentity.GetUserIdentityName();
+                updateBookingStatusRequest.UpdatedBy = _userIdentity.GetUserIdentityName();
                 await _bookingsApiClient.UpdateBookingStatusAsync(hearingId, updateBookingStatusRequest);
                 _logger.LogDebug("Updated hearing {Hearing} to booking status {BookingStatus}", hearingId,
                     updateBookingStatusRequest.Status);
-                if (updateBookingStatusRequest.Status != BookingsAPI.Client.UpdateBookingStatus.Created)
+                if (updateBookingStatusRequest.Status != BookingsApi.Contract.Requests.Enums.UpdateBookingStatus.Created)
                     return Ok(new UpdateBookingStatusResponse {Success = true});
 
                 try
@@ -430,9 +433,9 @@ namespace AdminWebsite.Controllers
                 // Set the booking status to failed as the video api failed
                 await _bookingsApiClient.UpdateBookingStatusAsync(hearingId, new UpdateBookingStatusRequest
                 {
-                    Status = BookingsAPI.Client.UpdateBookingStatus.Failed,
-                    Updated_by = "System",
-                    Cancel_reason = string.Empty
+                    Status = BookingsApi.Contract.Requests.Enums.UpdateBookingStatus.Failed,
+                    UpdatedBy = "System",
+                    CancelReason = string.Empty
                 });
 
                 return Ok(new UpdateBookingStatusResponse {Success = false, Message = errorMessage});
@@ -492,7 +495,7 @@ namespace AdminWebsite.Controllers
                 {
                     _logger.LogDebug(
                         "No username provided in booking for participant {Email}. Checking AD by contact email",
-                        participant.Contact_email);
+                        participant.ContactEmail);
                     user = await _userAccountService.UpdateParticipantUsername(participant);
                 }
                 else
@@ -500,7 +503,7 @@ namespace AdminWebsite.Controllers
                     // get user
                     _logger.LogDebug(
                         "Username provided in booking for participant {Email}. Getting id for username {Username}",
-                        participant.Contact_email, participant.Username);
+                        participant.ContactEmail, participant.Username);
                     var adUserId = await _userAccountService.GetAdUserIdForUsername(participant.Username);
                     user = new User {UserName = adUserId};
                 }

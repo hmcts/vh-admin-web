@@ -1,6 +1,6 @@
 using System;
-using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Models;
+using BookingsApi.Contract.Responses;
 using Newtonsoft.Json;
 
 namespace AdminWebsite.Extensions
@@ -9,22 +9,17 @@ namespace AdminWebsite.Extensions
     {
         public static bool IsGenericHearing(this HearingDetailsResponse hearing)
         {
-            return hearing.Case_type_name.Equals("Generic", StringComparison.CurrentCultureIgnoreCase);
+            return hearing.CaseTypeName.Equals("Generic", StringComparison.CurrentCultureIgnoreCase);
         }
         
         public static bool HasScheduleAmended(this HearingDetailsResponse hearing, HearingDetailsResponse anotherHearing)
         {
-            return hearing.Scheduled_date_time.Ticks != anotherHearing.Scheduled_date_time.Ticks;
+            return hearing.ScheduledDateTime.Ticks != anotherHearing.ScheduledDateTime.Ticks;
         }
         
-        public static bool IsAClone(this HearingDetailsResponse hearing)
-        {
-            return hearing.Id != hearing.Group_id;
-        }
-
         public static bool HasJudgeEmailChanged(this HearingDetailsResponse hearing, HearingDetailsResponse anotherHearing)
         {
-            if (string.IsNullOrWhiteSpace(anotherHearing.Other_information) && string.IsNullOrWhiteSpace(hearing.Other_information))
+            if (string.IsNullOrWhiteSpace(anotherHearing.OtherInformation) && string.IsNullOrWhiteSpace(hearing.OtherInformation))
             {
                 return false;
             }
@@ -33,9 +28,9 @@ namespace AdminWebsite.Extensions
 
         public static bool DoesJudgeEmailExist(this HearingDetailsResponse hearing)
         {
-            if (hearing.Other_information != null)
+            if (hearing.OtherInformation != null)
             {
-                var otherInformationDetails = GetOtherInformationObject(hearing.Other_information);
+                var otherInformationDetails = GetOtherInformationObject(hearing.OtherInformation);
                 if (otherInformationDetails.JudgeEmail != "")
                 {
                     return true;
@@ -46,9 +41,9 @@ namespace AdminWebsite.Extensions
         
         public static bool DoesJudgePhoneExist(this HearingDetailsResponse hearing)
         {
-            if (hearing.Other_information != null)
+            if (hearing.OtherInformation != null)
             {
-                var otherInformationDetails = GetOtherInformationObject(hearing.Other_information);
+                var otherInformationDetails = GetOtherInformationObject(hearing.OtherInformation);
                 if (otherInformationDetails.JudgePhone != null)
                 {
                     return true;
@@ -59,7 +54,7 @@ namespace AdminWebsite.Extensions
 
         public static string GetJudgeEmail(this HearingDetailsResponse hearing)
         {
-            var email = GetOtherInformationObject(hearing.Other_information)?.JudgeEmail;
+            var email = GetOtherInformationObject(hearing.OtherInformation)?.JudgeEmail;
             if (email == string.Empty)
             {
                 return null;
@@ -69,7 +64,7 @@ namespace AdminWebsite.Extensions
         
         public static string GetJudgePhone(this HearingDetailsResponse hearing)
         {
-            var phone = GetOtherInformationObject(hearing.Other_information).JudgePhone;
+            var phone = GetOtherInformationObject(hearing.OtherInformation).JudgePhone;
             if (phone == string.Empty)
             {
                 return null;

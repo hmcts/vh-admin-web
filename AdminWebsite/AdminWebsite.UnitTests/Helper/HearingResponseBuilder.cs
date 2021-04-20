@@ -1,8 +1,8 @@
-﻿using AdminWebsite.BookingsAPI.Client;
-using FizzWare.NBuilder;
+﻿using FizzWare.NBuilder;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using BookingsApi.Contract.Responses;
 
 namespace AdminWebsite.UnitTests.Helpers
 {
@@ -29,7 +29,7 @@ namespace AdminWebsite.UnitTests.Helpers
         {
             var participant = Builder<ParticipantResponse>.CreateNew()
                .With(x => x.Id = Guid.NewGuid())
-               .With(x => x.User_role_name = userRoleName);
+               .With(x => x.UserRoleName = userRoleName);
 
             if(!string.IsNullOrEmpty(userName))
             {

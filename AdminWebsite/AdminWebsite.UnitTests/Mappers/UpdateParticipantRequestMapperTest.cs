@@ -20,9 +20,9 @@ namespace AdminWebsite.UnitTests.Mappers
             var result = UpdateParticipantRequestMapper.MapTo(source);
 
             result.Title.Should().Be(source.Title);
-            result.Display_name.Should().Be(source.DisplayName);
-            result.Organisation_name.Should().Be(source.OrganisationName);
-            result.Telephone_number.Should().Be(source.TelephoneNumber);
+            result.DisplayName.Should().Be(source.DisplayName);
+            result.OrganisationName.Should().Be(source.OrganisationName);
+            result.TelephoneNumber.Should().Be(source.TelephoneNumber);
             result.Representee.Should().Be(source.Representee);
         }
     }

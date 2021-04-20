@@ -1,7 +1,7 @@
-﻿using AdminWebsite.BookingsAPI.Client;
-using AdminWebsite.Models;
+﻿using AdminWebsite.Models;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Text.RegularExpressions;
+using BookingsApi.Contract.Requests;
 
 namespace AdminWebsite.Attributes
 {
@@ -14,9 +14,9 @@ namespace AdminWebsite.Attributes
                 switch (context.ActionArguments["request"])
                 {
                     case BookNewHearingRequest newHearingRequest:
-                        newHearingRequest.Hearing_room_name = Sanitize(newHearingRequest.Hearing_room_name);
-                        newHearingRequest.Hearing_venue_name = Sanitize(newHearingRequest.Hearing_venue_name);
-                        newHearingRequest.Other_information = Sanitize(newHearingRequest.Other_information);
+                        newHearingRequest.HearingRoomName = Sanitize(newHearingRequest.HearingRoomName);
+                        newHearingRequest.HearingVenueName = Sanitize(newHearingRequest.HearingVenueName);
+                        newHearingRequest.OtherInformation = Sanitize(newHearingRequest.OtherInformation);
 
                         newHearingRequest.Cases?.ForEach(x =>
                         {
@@ -27,13 +27,13 @@ namespace AdminWebsite.Attributes
                         newHearingRequest.Participants?.ForEach(x =>
                         {
                             x.Title = Sanitize(x.Title);
-                            x.First_name = Sanitize(x.First_name);
-                            x.Middle_names = Sanitize(x.Middle_names);
-                            x.Last_name = Sanitize(x.Last_name);
-                            x.Display_name = Sanitize(x.Display_name);
-                            x.Telephone_number = Sanitize(x.Telephone_number);
+                            x.FirstName = Sanitize(x.FirstName);
+                            x.MiddleNames = Sanitize(x.MiddleNames);
+                            x.LastName = Sanitize(x.LastName);
+                            x.DisplayName = Sanitize(x.DisplayName);
+                            x.TelephoneNumber = Sanitize(x.TelephoneNumber);
                             x.Representee = Sanitize(x.Representee);
-                            x.Organisation_name = Sanitize(x.Organisation_name);
+                            x.OrganisationName = Sanitize(x.OrganisationName);
                         });
                         break;
                     case EditHearingRequest editHearingRequest:

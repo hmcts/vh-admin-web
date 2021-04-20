@@ -1,5 +1,4 @@
-﻿using AdminWebsite.BookingsAPI.Client;
-using AdminWebsite.Models;
+﻿using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
 using FluentAssertions;
@@ -10,6 +9,7 @@ using Moq;
 using NotificationApi.Client;
 using NUnit.Framework;
 using System;
+using BookingsApi.Client;
 using VideoApi.Client;
 using VideoApi.Contract.Responses;
 

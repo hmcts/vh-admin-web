@@ -1,5 +1,5 @@
-﻿using AdminWebsite.BookingsAPI.Client;
-using System;
+﻿using System;
+using BookingsApi.Contract.Requests;
 
 namespace Testing.Common
 {

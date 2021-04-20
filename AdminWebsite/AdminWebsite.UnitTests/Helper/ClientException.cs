@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
-using AdminWebsite.BookingsAPI.Client;
+using BookingsApi.Client;
 using UserApi.Client;
 
 namespace AdminWebsite.UnitTests.Helper

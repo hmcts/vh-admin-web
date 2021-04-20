@@ -1,5 +1,5 @@
-﻿using AdminWebsite.BookingsAPI.Client;
-using AdminWebsite.Contracts.Responses;
+﻿using AdminWebsite.Contracts.Responses;
+using BookingsApi.Contract.Responses;
 
 namespace AdminWebsite.Mappers
 {
@@ -9,8 +9,8 @@ namespace AdminWebsite.Mappers
         {
             return new JudgeResponse
             {
-                FirstName = personResponse.First_name,
-                LastName = personResponse.Last_name,
+                FirstName = personResponse.FirstName,
+                LastName = personResponse.LastName,
                 Email = personResponse.Username
             };
 
