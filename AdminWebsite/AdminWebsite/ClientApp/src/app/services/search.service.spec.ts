@@ -43,7 +43,6 @@ const personList: PersonResponse[] = JSON.parse(
     `
 );
 
-
 const judiciaryPerson1 = new PersonResponse();
 judiciaryPerson1.first_name = 'JudiciaryPerson1Name';
 judiciaryPerson1.last_name = 'JudiciaryPerson1LastName';
@@ -54,11 +53,7 @@ judiciaryPerson2.first_name = 'JudiciaryPerson2Name';
 judiciaryPerson2.last_name = 'JudiciaryPerson2LastName';
 judiciaryPerson2.contact_email = 'JudiciaryPerson2ContactEmail';
 
-
-const judiciaryPersonList: PersonResponse[] = [
-    judiciaryPerson1,
-    judiciaryPerson2
-];
+const judiciaryPersonList: PersonResponse[] = [judiciaryPerson1, judiciaryPerson2];
 
 const judge1 = new JudgeResponse();
 judge1.first_name = 'JudgeFirstName1';
@@ -72,12 +67,7 @@ judge2.last_name = 'JudgeLastName2';
 judge2.display_name = 'JudgeDisplayName2';
 judge2.email = 'JudgeEmail2';
 
-
-const judgeList: JudgeResponse[] = [
-    judge1,
-    judge2
-];
-
+const judgeList: JudgeResponse[] = [judge1, judge2];
 
 const judgeParticipant1 = new ParticipantModel();
 judgeParticipant1.first_name = 'judgeParticipant1FirstName';
@@ -91,10 +81,7 @@ judgeParticipant2.last_name = 'judgeParticipant2LastName';
 judgeParticipant2.display_name = 'judgeParticipant2DisplayName';
 judgeParticipant2.email = 'judgeParticipant2Email';
 
-const judgeParticipantList: ParticipantModel[] = [
-    judgeParticipant1,
-    judgeParticipant2
-];
+const judgeParticipantList: ParticipantModel[] = [judgeParticipant1, judgeParticipant2];
 
 const participant1 = new ParticipantModel();
 participant1.first_name = 'participant1FirstName';
@@ -108,17 +95,18 @@ participant2.last_name = 'participant2LastName';
 participant2.display_name = 'participant2DisplayName';
 participant2.email = 'participant2Email';
 
-const participantList: ParticipantModel[] = [
-    participant1,
-    participant2
-];
+const participantList: ParticipantModel[] = [participant1, participant2];
 
 let clientApiSpy: jasmine.SpyObj<BHClient>;
 
 describe('SearchService', () => {
     beforeEach(() => {
-        clientApiSpy = jasmine.createSpyObj<BHClient>('BHClient', ['postPersonBySearchTerm', 'postJudiciaryPersonBySearchTerm', 'postJudgesBySearchTerm']);
-        
+        clientApiSpy = jasmine.createSpyObj<BHClient>('BHClient', [
+            'postPersonBySearchTerm',
+            'postJudiciaryPersonBySearchTerm',
+            'postJudgesBySearchTerm'
+        ]);
+
         clientApiSpy.postPersonBySearchTerm.and.returnValue(of(personList));
         clientApiSpy.postJudiciaryPersonBySearchTerm.and.returnValue(of(judiciaryPersonList));
         clientApiSpy.postJudgesBySearchTerm.and.returnValue(of(judgeList));
@@ -128,9 +116,7 @@ describe('SearchService', () => {
 
         TestBed.configureTestingModule({
             imports: [HttpClientModule],
-            providers: [
-                { provide: BHClient, useValue: clientApiSpy },
-            ]
+            providers: [{ provide: BHClient, useValue: clientApiSpy }]
         });
 
         service = TestBed.inject(SearchService);
@@ -138,7 +124,11 @@ describe('SearchService', () => {
 
     describe('participantSearch', () => {
         beforeEach(() => {
-            clientApiSpy = jasmine.createSpyObj<BHClient>('BHClient', ['postPersonBySearchTerm', 'postJudiciaryPersonBySearchTerm', 'postJudgesBySearchTerm']);
+            clientApiSpy = jasmine.createSpyObj<BHClient>('BHClient', [
+                'postPersonBySearchTerm',
+                'postJudiciaryPersonBySearchTerm',
+                'postJudgesBySearchTerm'
+            ]);
 
             spyOn(service, 'searchEntries').and.returnValue(of(personList));
             spyOn(service, 'searchJudiciaryEntries').and.returnValue(of(judiciaryPersonList));

@@ -45,7 +45,6 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
 
     @Output() emailChanged = new EventEmitter<string>();
 
-
     constructor(private searchService: SearchService, private configService: ConfigService, private logger: Logger) {}
 
     ngOnInit() {

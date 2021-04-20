@@ -638,10 +638,8 @@ describe('AssignJudgeComponent', () => {
                 afterEach(() => {
                     component.updateJudge(judge);
                     expect(videoHearingsServiceSpy.canAddJudge).toHaveBeenCalledWith(judge.username);
-                    console.log(component.hearing.participants);
                     const updatedJudges = component.hearing.participants.filter(participant => participant.is_judge);
 
-                    console.log(updatedJudges);
                     expect(updatedJudges.length).toBe(1);
                     expect(component.courtAccountJudgeEmail).toEqual(judge.email);
                     expect(component.judgeDisplayNameFld.value).toEqual(judge.display_name);

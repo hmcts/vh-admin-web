@@ -988,7 +988,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
             email: this.constants.PleaseSelect,
             is_exist_person: false,
             is_judge: false,
-            is_courtroom_account: false,
+            is_courtroom_account: false
         };
         this.interpreteeList.unshift(interpreteeModel);
     }
