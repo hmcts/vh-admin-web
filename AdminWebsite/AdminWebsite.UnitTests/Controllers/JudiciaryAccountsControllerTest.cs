@@ -99,7 +99,7 @@ namespace AdminWebsite.UnitTests.Controllers
         }
 
         [Test]
-        public async Task Should_return_judiciary_andcourtroom_accounts_if_match_to_search_term()
+        public async Task Should_return_judiciary_and_courtroom_accounts_if_match_to_search_term()
         {
             _response.Add(new PersonResponse
             {
@@ -114,7 +114,7 @@ namespace AdminWebsite.UnitTests.Controllers
             });
             _bookingsApiClient.Setup(x => x.PostJudiciaryPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
                               .ReturnsAsync(_response);
-            _userAccountService.Setup(x => x.GetJudgeUsers())
+            _userAccountService.Setup(x => x.SearchJudgesByEmail(It.IsAny<string>()))
                 .ReturnsAsync(new List<JudgeResponse>
                 {
                     new JudgeResponse
