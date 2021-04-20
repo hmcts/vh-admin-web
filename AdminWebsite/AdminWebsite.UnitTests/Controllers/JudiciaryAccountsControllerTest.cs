@@ -117,7 +117,7 @@ namespace AdminWebsite.UnitTests.Controllers
                 Username = "jackman@judiciary.net"
             });
             _bookingsApiClient.Setup(x => x.PostJudiciaryPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
-                              .ReturnsAsync(withJudiciary ? _judiciaryResponse : null);
+                              .ReturnsAsync(withJudiciary ? _judiciaryResponse : new List<PersonResponse>());
 
             var _courtRoomResponse = new List<JudgeResponse>
                 {
@@ -130,7 +130,7 @@ namespace AdminWebsite.UnitTests.Controllers
                 };
 
             _userAccountService.Setup(x => x.SearchJudgesByEmail(It.IsAny<string>()))
-                .ReturnsAsync(_courtRoomResponse);
+                .ReturnsAsync(withCourtroom ? _courtRoomResponse : new List<JudgeResponse>());
 
 
             var searchTerm = "judici";
@@ -139,8 +139,13 @@ namespace AdminWebsite.UnitTests.Controllers
             var okRequestResult = (OkObjectResult)result.Result;
             okRequestResult.StatusCode.Should().NotBeNull();
             var personRespList = (List<JudgeResponse>)okRequestResult.Value;
-            personRespList.Count.Should().Be(3);
-            personRespList[0].Email.Should().Be(_judiciaryResponse[0].Username);
+
+            var expectedJudiciaryCount = withJudiciary ? _judiciaryResponse.Count : 0;
+            var expectedCourtRoomCount = withCourtroom ? _courtRoomResponse.Count : 0;
+
+            var expectedTotal = expectedJudiciaryCount + expectedCourtRoomCount;
+
+            personRespList.Count.Should().Be(expectedTotal);
         }
 
         [Test]
