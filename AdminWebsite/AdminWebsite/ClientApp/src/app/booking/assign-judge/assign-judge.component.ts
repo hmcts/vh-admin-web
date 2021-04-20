@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Constants } from 'src/app/common/constants';
@@ -197,39 +197,31 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         return this.canNavigate && savedInCacheHearing.participants.length > 0;
     }
 
-    get judgeName() {
-        return this.form.get('judgeName');
+    get isJudgeSelected(): boolean {
+        return !!this.judge && !!this.judge.email;
     }
 
-    get isJudgeSelected() {
-        return this.judge && this.judge.email;
-    }
-
-    get judgeDisplayNameInvalid() {
+    get judgeDisplayNameInvalid(): boolean {
         return (
             this.judgeDisplayNameFld.invalid &&
             (this.judgeDisplayNameFld.dirty || this.judgeDisplayNameFld.touched || this.failedSubmission)
         );
     }
 
-    get judgeEmailInvalid() {
+    get judgeEmailInvalid(): boolean {
         return this.judgeEmailFld.invalid && (this.judgeEmailFld.dirty || this.judgeEmailFld.touched || this.failedSubmission);
     }
 
-    get judgePhoneInvalid() {
+    get judgePhoneInvalid(): boolean {
         return this.judgePhoneFld.invalid && (this.judgePhoneFld.dirty || this.judgePhoneFld.touched || this.failedSubmission);
     }
 
-    get isCourtroomAccount() {
+    get isCourtroomAccount(): boolean {
         return this.judge.is_courtroom_account;
     }
 
-    get displayEmailField() {
+    get displayEmailField(): boolean {
         return !!this.judge && this.judge.is_courtroom_account;
-    }
-
-    isJudgeDisplayNameSet() {
-        return (this.judge && this.judge.display_name);
     }
 
     changeDisplayName() {
@@ -352,10 +344,6 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
 
     goToDiv(fragment: string): void {
         window.document.getElementById(fragment).parentElement.parentElement.scrollIntoView();
-    }
-
-    toggle() {
-        this.expanded = !this.expanded; // ? does this do anything?
     }
 
     ngOnDestroy() {
