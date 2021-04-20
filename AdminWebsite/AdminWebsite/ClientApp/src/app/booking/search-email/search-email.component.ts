@@ -1,13 +1,11 @@
 import { Component, EventEmitter, Output, OnInit, Input, OnDestroy } from '@angular/core';
-import { BehaviorSubject, Observable, Subject, Subscription } from 'rxjs';
-import { JudgeResponse, PersonResponse } from '../../services/clients/api-client';
+import { BehaviorSubject, Subject, Subscription } from 'rxjs';
 import { Constants } from '../../common/constants';
 import { ParticipantModel } from '../../common/model/participant.model';
 import { SearchService } from '../../services/search.service';
 import { ConfigService } from 'src/app/services/config.service';
 import { Logger } from '../../services/logger';
 import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
-import { JudgeDataService } from '../services/judge-data.service';
 
 @Component({
     selector: 'app-search-email',

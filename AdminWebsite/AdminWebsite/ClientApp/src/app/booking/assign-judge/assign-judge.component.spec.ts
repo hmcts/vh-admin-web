@@ -207,16 +207,6 @@ describe('AssignJudgeComponent', () => {
             component.saveJudge();
             expect(component.form.valid).toBeFalsy();
         });
-
-        // it('is valid and has updated selected judge after selecting judge in dropdown', () => {
-        //     const dropDown = fixture.debugElement.query(By.css('#judgeName')).nativeElement;
-        //     dropDown.value = dropDown.options[2].value;
-        //     dropDown.dispatchEvent(new Event('change'));
-        //     fixture.detectChanges();
-
-        //     expect(component.judge.email).toBe('John2.Doe@hmcts.net');
-        //     expect(component.form.valid).toBeTruthy();
-        // });
         it('should initialize form and create judgeDisplayName control', () => {
             component.ngOnInit();
             expect(component.judgeDisplayNameFld).toBeTruthy();
@@ -273,12 +263,6 @@ describe('AssignJudgeComponent', () => {
 
             expect(component.updateJudge).toHaveBeenCalledTimes(1);
         });
-        // it('should get available judges', () => {
-        //     component.ngOnInit();
-        //     expect(component.availableJudges.length).toBeGreaterThan(1);
-        //     expect(component.availableJudges[0].email).toBe(Constants.PleaseSelect);
-        //     expect(component.availableJudges[0].display_name).toBe('');
-        // });
         it('should hide cancel and discard pop up confirmation', () => {
             component.attemptingCancellation = true;
             component.attemptingDiscardChanges = true;
@@ -320,29 +304,7 @@ describe('AssignJudgeComponent', () => {
             expect(component.attemptingDiscardChanges).toBeFalsy();
             expect(routerSpy.navigate).toHaveBeenCalled();
         });
-        it('should check if the judge display name was entered and return true', () => {
-            component.judge.display_name = 'New Name Set';
-            const result = component.isJudgeDisplayNameSet();
-            expect(result).toBeTruthy();
-        });
-        it('should check if the judge display name was entered and return false when judge is not set', () => {
-            component.judge = null;
-            const result = component.isJudgeDisplayNameSet();
-            expect(result).toBeFalsy();
-        });
-        it('should check if the judge display name was entered and return false when display name is not set', () => {
-            component.judge.display_name = null;
-            const result = component.isJudgeDisplayNameSet();
-            expect(result).toBeFalsy();
-        });
-        // it('should add judge with display name was entered', () => {
-        //     component.judge.display_name = 'New Name Set';
-        //     component.hearing = new HearingModel();
-        //     component.hearing.participants = [];
-        //     component.availableJudges = [new JudgeResponse({ display_name: 'New Name Set', email: 'email@hmcts.net' })];
-        //     component.addJudge('email@hmcts.net');
-        //     expect(component.hearing.participants.length).toBeGreaterThan(0);
-        // });
+        
         it('should sanitize display name of the judge if it was entered', () => {
             const displayNameSanitized = 'DisplayNameSanitized';
 
@@ -398,35 +360,6 @@ describe('AssignJudgeComponent', () => {
             component.failedSubmission = true;
             expect(component.judgePhoneInvalid).toBeTruthy();
         });
-
-        // it('should return nothing if judge is not available', () => {
-        //     component.ngOnInit();
-        //     component.addJudge('fakejudge@notavailable.com');
-        //     expect().nothing();
-        //     expect(component.isJudgeParticipantError).toBe(false);
-        // });
-
-        // it('should set validation error to true if judge account has the same account as winger', () => {
-        //     const panelMember = savedHearing.participants.find(x => x.hearing_role_name === 'Winger');
-        //     const judge = savedHearing.participants.find(x => x.is_judge);
-        //     panelMember.username = judge.username;
-        //     component.hearing = savedHearing;
-
-        //     expect(component.isJudgeParticipantError).toBe(false);
-
-        //     component.updateJudge(judge);
-
-        //     expect(component.isJudgeParticipantError).toBe(true);
-        // });
-        // it('should set validation error to false if judge account has not the same account with winger or panel member', () => {
-        //     component.hearing = savedHearing;
-
-        //     expect(component.isJudgeParticipantError).toBe(false);
-
-        //     component.saveJudge();
-
-        //     expect(component.isJudgeParticipantError).toBe(false);
-        // });
     });
 
     const judge = new ParticipantModel();

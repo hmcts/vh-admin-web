@@ -1,6 +1,6 @@
 import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
-import { of } from 'rxjs';
+import { of, Subscription } from 'rxjs';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { ParticipantModel } from '../../common/model/participant.model';
 import { ClientSettingsResponse, PersonResponse } from '../../services/clients/api-client';
@@ -75,6 +75,14 @@ describe('SeachEmailComponent', () => {
             expect(component.results.length).toBe(0);
         })
     );
+    it('should set email to initialEmail', () => {
+        const emailValue = 'email@value.com';
+        component.initialValue = emailValue;
+        component.ngOnInit();
+        fixture.detectChanges();
+
+        expect(component.email).toEqual(emailValue);
+    });
     it('should search service return list of person and map it to result list', done => {
         searchServiceSpy.participantSearch.and.returnValue(of(participantList));
         component.ngOnInit();
@@ -197,6 +205,7 @@ describe('SeachEmailComponent', () => {
 
     it('should find data and set notFoundParticipant to false', () => {
         component.getData(participantList);
+        expect(component.results).toEqual(participantList);
         expect(component.isShowResult).toBeTruthy();
         expect(component.isValidEmail).toBeTruthy();
         expect(component.notFoundParticipant).toBeFalsy();
@@ -213,10 +222,19 @@ describe('SeachEmailComponent', () => {
         expect(component.isShowResult).toBeFalsy();
         expect(component.notFoundParticipant).toBeFalsy();
     });
+    it('should set isErrorEmailAssignedToJudge  to false if onChange is called', () => {
+        component.isErrorEmailAssignedToJudge = true;
+        component.onChange();
+        expect(component.isErrorEmailAssignedToJudge).toBe(false);
+    });
     it('should unsubscribe subscription on destroy', () => {
         component.ngOnDestroy();
         expect(component.$subscriptions[0].closed).toBe(true);
         expect(component.$subscriptions[1].closed).toBe(true);
+    });
+
+    describe('getData', () => {
+
     });
 });
 

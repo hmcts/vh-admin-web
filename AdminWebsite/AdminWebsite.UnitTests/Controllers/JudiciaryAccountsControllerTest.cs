@@ -21,7 +21,7 @@ namespace AdminWebsite.UnitTests.Controllers
         private AdminWebsite.Controllers.JudiciaryAccountsController _controller;
         private Mock<IBookingsApiClient> _bookingsApiClient;
         private Mock<IUserAccountService> _userAccountService;
-        private List<PersonResponse> _response;
+        private List<PersonResponse> _judiciaryResponse;
 
 
         [SetUp]
@@ -37,7 +37,7 @@ namespace AdminWebsite.UnitTests.Controllers
             _controller = new AdminWebsite.Controllers.JudiciaryAccountsController(_userAccountService.Object,
                 JavaScriptEncoder.Default, _bookingsApiClient.Object, Options.Create(testSettings));
 
-            _response = new List<PersonResponse>
+            _judiciaryResponse = new List<PersonResponse>
             {
                 new PersonResponse
                 {
@@ -56,7 +56,7 @@ namespace AdminWebsite.UnitTests.Controllers
         [Test]
         public async Task Should_return_request_if_match_to_search_term()
         {
-            _response.Add(new PersonResponse
+            _judiciaryResponse.Add(new PersonResponse
             {
                 Id = Guid.NewGuid(),
                 Contact_email = "",
@@ -68,7 +68,7 @@ namespace AdminWebsite.UnitTests.Controllers
                 Username = "jackman@judiciary.net"
             });
             _bookingsApiClient.Setup(x => x.PostJudiciaryPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
-                              .ReturnsAsync(_response);
+                              .ReturnsAsync(_judiciaryResponse);
 
             var searchTerm = "ado";
             var result = await _controller.PostJudiciaryPersonBySearchTermAsync(searchTerm);
@@ -77,7 +77,7 @@ namespace AdminWebsite.UnitTests.Controllers
             okRequestResult.StatusCode.Should().NotBeNull();
             var personRespList = (List<PersonResponse>)okRequestResult.Value;
             personRespList.Count.Should().Be(1);
-            personRespList[0].Username.Should().Be(_response[1].Username);
+            personRespList[0].Username.Should().Be(_judiciaryResponse[1].Username);
         }
 
         [Test]
@@ -99,9 +99,13 @@ namespace AdminWebsite.UnitTests.Controllers
         }
 
         [Test]
-        public async Task Should_return_judiciary_and_courtroom_accounts_if_match_to_search_term()
+        [TestCase(false, false)]
+        [TestCase(false, true)]
+        [TestCase(true, false)]
+        [TestCase(true, true)]
+        public async Task Should_return_judiciary_and_courtroom_accounts_if_match_to_search_term(bool withJudiciary, bool withCourtroom)
         {
-            _response.Add(new PersonResponse
+            _judiciaryResponse.Add(new PersonResponse
             {
                 Id = Guid.NewGuid(),
                 Contact_email = "",
@@ -113,9 +117,9 @@ namespace AdminWebsite.UnitTests.Controllers
                 Username = "jackman@judiciary.net"
             });
             _bookingsApiClient.Setup(x => x.PostJudiciaryPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
-                              .ReturnsAsync(_response);
-            _userAccountService.Setup(x => x.SearchJudgesByEmail(It.IsAny<string>()))
-                .ReturnsAsync(new List<JudgeResponse>
+                              .ReturnsAsync(withJudiciary ? _judiciaryResponse : null);
+
+            var _courtRoomResponse = new List<JudgeResponse>
                 {
                     new JudgeResponse
                     {
@@ -123,7 +127,10 @@ namespace AdminWebsite.UnitTests.Controllers
                         LastName = "Smith",
                         Email = "judge.sam@judiciary.net"
                     }
-                });
+                };
+
+            _userAccountService.Setup(x => x.SearchJudgesByEmail(It.IsAny<string>()))
+                .ReturnsAsync(_courtRoomResponse);
 
 
             var searchTerm = "judici";
@@ -133,7 +140,7 @@ namespace AdminWebsite.UnitTests.Controllers
             okRequestResult.StatusCode.Should().NotBeNull();
             var personRespList = (List<JudgeResponse>)okRequestResult.Value;
             personRespList.Count.Should().Be(3);
-            personRespList[0].Email.Should().Be(_response[0].Username);
+            personRespList[0].Email.Should().Be(_judiciaryResponse[0].Username);
         }
 
         [Test]
