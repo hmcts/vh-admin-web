@@ -2,7 +2,6 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { JudgeDataService } from 'src/app/booking/services/judge-data.service';
 import { Constants } from 'src/app/common/constants';
 import { OtherInformationModel } from 'src/app/common/model/other-information.model';
 import { VideoHearingsService } from 'src/app/services/video-hearings.service';
@@ -203,7 +202,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     }
 
     get isJudgeSelected() {
-        return !!this.judge && !!this.judge.email && this.judge.email !== '';
+        return this.judge && this.judge.email;
     }
 
     get judgeDisplayNameInvalid() {
@@ -229,8 +228,8 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         return !!this.judge && this.judge.is_courtroom_account;
     }
 
-    isJudgeDisplayNameSet(): boolean {
-        return !!this.judge && !!this.judge.display_name && this.judge.display_name !== '';
+    isJudgeDisplayNameSet() {
+        return (this.judge && this.judge.display_name);
     }
 
     changeDisplayName() {
