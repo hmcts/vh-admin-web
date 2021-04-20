@@ -1,18 +1,16 @@
 import { TestBed } from '@angular/core/testing';
 import { JudgeAccountType, JudgeResponse, PersonResponse } from 'src/app/services/clients/api-client';
+import { ParticipantModel } from './participant.model'
 
-import { ParticipantMapperService } from './participant-mapper.service';
-
-describe('ParticipantMapperService', () => {
-    let service: ParticipantMapperService;
+describe('ParticipantModel', () => {
+    let participant: ParticipantModel;
 
     beforeEach(() => {
-        TestBed.configureTestingModule({});
-        service = TestBed.inject(ParticipantMapperService);
+        participant = new ParticipantModel();
     });
 
     it('should be created', () => {
-        expect(service).toBeTruthy();
+        expect(participant).toBeTruthy();
     });
 
     it('should map PersonResponse to ParticipantModel', () => {
@@ -27,7 +25,7 @@ describe('ParticipantMapperService', () => {
             organisation: 'Name of a company'
         });
 
-        const participant = service.mapPersonResponseToParticipantModel(person);
+        const participant = ParticipantModel.fromPersonResponse(person);
 
         expect(participant.email).toEqual(person.contact_email);
         expect(participant.first_name).toEqual(person.first_name);
@@ -40,7 +38,7 @@ describe('ParticipantMapperService', () => {
     });
     it('should mapping return empty ParticipantModel if  PersonResponse is null', () => {
         const person = null;
-        const model = service.mapPersonResponseToParticipantModel(person);
+        const model = ParticipantModel.fromPersonResponse(person);
         expect(model).toEqual(undefined);
     });
 
@@ -52,7 +50,7 @@ describe('ParticipantMapperService', () => {
             last_name: 'JudgeLastName'
         });
 
-        const participant = service.mapJudgeResponseToParticipantModel(judge);
+        const participant = ParticipantModel.fromJudgeResponse(judge);
 
         expect(participant.display_name).toEqual(judge.display_name);
         expect(participant.first_name).toEqual(judge.first_name);
@@ -70,7 +68,7 @@ describe('ParticipantMapperService', () => {
             account_type: JudgeAccountType.Courtroom
         });
 
-        const participant = service.mapJudgeResponseToParticipantModel(judge);
+        const participant = ParticipantModel.fromJudgeResponse(judge);
 
         expect(participant.is_courtroom_account).toBeTruthy();
     });
@@ -84,14 +82,14 @@ describe('ParticipantMapperService', () => {
             account_type: JudgeAccountType.Judiciary
         });
 
-        const participant = service.mapJudgeResponseToParticipantModel(judge);
+        const participant = ParticipantModel.fromJudgeResponse(judge);
 
         expect(participant.is_courtroom_account).toBeFalsy();
     });
 
     it('should mapping return empty ParticipantModel if  JudgeResponse is null', () => {
         const judge = null;
-        const model = service.mapJudgeResponseToParticipantModel(judge);
+        const model = ParticipantModel.fromJudgeResponse(judge);
         expect(model).toEqual(undefined);
     });
 });

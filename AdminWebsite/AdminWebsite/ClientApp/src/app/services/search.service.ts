@@ -7,14 +7,13 @@ import { ParticipantModel } from '../common/model/participant.model';
 import { BHClient, JudgeResponse, PersonResponse } from '../services/clients/api-client';
 import { Constants } from '../common/constants';
 import { JudgeDataService } from '../booking/services/judge-data.service';
-import { ParticipantMapperService } from '../booking/services/participant-mapper.service';
 
 @Injectable({
     providedIn: 'root'
 })
 export class SearchService {
-    private judgeRole = 'Judge';
-    private judiciaryRoles = ['Panel Member', 'Winger']; // TODO store somewhere more central as these are frequently used
+    private judgeRole = Constants.Judge;
+    private judiciaryRoles = Constants.JudiciaryRoles;
     private minimumSearchLength = 3;
 
     TitleList: IDropDownModel[] = [
@@ -62,14 +61,14 @@ export class SearchService {
         }
     ];
 
-    constructor(private bhClient: BHClient, private participantMapperService: ParticipantMapperService) {}
+    constructor(private bhClient: BHClient) {}
 
     participantSearch(term: string, role: string): Observable<Array<ParticipantModel>> {
         if (role === this.judgeRole) {
             return this.searchJudgeAccounts(term).pipe(
                 map(judges => {
                     return judges.map(judge => {
-                        return this.participantMapperService.mapJudgeResponseToParticipantModel(judge);
+                        return ParticipantModel.fromJudgeResponse(judge);
                     });
                 })
             );
@@ -84,7 +83,7 @@ export class SearchService {
             return persons$.pipe(
                 map(persons => {
                     return persons.map(person => {
-                        return this.participantMapperService.mapPersonResponseToParticipantModel(person);
+                        return ParticipantModel.fromPersonResponse(person);
                     });
                 })
             );

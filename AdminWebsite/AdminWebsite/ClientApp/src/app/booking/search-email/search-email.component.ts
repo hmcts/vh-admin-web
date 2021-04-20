@@ -4,7 +4,6 @@ import { JudgeResponse, PersonResponse } from '../../services/clients/api-client
 import { Constants } from '../../common/constants';
 import { ParticipantModel } from '../../common/model/participant.model';
 import { SearchService } from '../../services/search.service';
-import { ParticipantMapperService } from '../services/participant-mapper.service';
 import { ConfigService } from 'src/app/services/config.service';
 import { Logger } from '../../services/logger';
 import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
@@ -24,7 +23,7 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
     results: ParticipantModel[] = [];
     isShowResult = false;
     notFoundParticipant = false;
-    email = '';
+    email: string;
     isValidEmail = true;
     $subscriptions: Subscription[] = [];
     invalidPattern: string;
@@ -40,13 +39,17 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
 
     @Input() hearingRoleParticipant = '';
 
+    @Input() initialValue = '';
+
     @Output() findParticipant = new EventEmitter<ParticipantModel>();
 
     @Output() emailChanged = new EventEmitter<string>();
 
+
     constructor(private searchService: SearchService, private configService: ConfigService, private logger: Logger) {}
 
     ngOnInit() {
+        this.email = this.initialValue;
         this.$subscriptions.push(
             this.searchTerm
                 .pipe(

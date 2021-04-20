@@ -87,6 +87,8 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     @ViewChild(ParticipantListComponent, { static: true })
     participantsListComponent: ParticipantListComponent;
 
+    private judiciaryRoles = Constants.JudiciaryRoles;
+
     constructor(
         private searchService: SearchService,
         protected videoHearingService: VideoHearingsService,
@@ -383,7 +385,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
     notFoundParticipant() {
         this.logger.warn(`${this.loggerPrefix} Participant not found.`);
-        if (this.role.value === 'Panel Member' || this.role.value === 'Winger') {
+        if (this.judiciaryRoles.includes(this.role.value)) {
             this.errorJohAccountNotFound = true;
         }
         this.displayErrorNoParticipants = false;
@@ -541,14 +543,14 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
     validateJudiciaryEmailAndRole() {
         if (this.searchEmail && this.searchEmail.email.length) {
-            this.searchService.searchJudiciaryEntries(this.searchEmail.email).subscribe(x => {
+            this.searchService.searchJudiciaryEntries(this.searchEmail.email).subscribe(judiciaryEntries => {
                 this.errorJudiciaryAccount = false;
-                if (x && x.length) {
-                    if (this.role.value !== 'Panel Member' && this.role.value !== 'Winger') {
+                if (judiciaryEntries && judiciaryEntries.length) {
+                    if (!this.judiciaryRoles.includes(this.role.value)) {
                         this.setErrorForJudiciaryAccount();
                     }
                 } else {
-                    if (this.role.value === 'Panel Member' || this.role.value === 'Winger') {
+                    if (this.judiciaryRoles.includes(this.role.value)) {
                         this.setErrorForJudiciaryAccount();
                     }
                 }

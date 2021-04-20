@@ -24,7 +24,7 @@ export class ParticipantModel {
     user_role_name?: string | undefined;
     is_courtroom_account?: boolean;
 
-    static mapPersonResponseToParticipantModel(person: PersonResponse): ParticipantModel {
+    static fromPersonResponse(person: PersonResponse): ParticipantModel {
         let participant: ParticipantModel;
         if (person) {
             participant = new ParticipantModel();
@@ -43,7 +43,7 @@ export class ParticipantModel {
         return participant;
     }
 
-    static mapJudgeResponseToParticipantModel(judge: JudgeResponse): ParticipantModel {
+    static fromJudgeResponse(judge: JudgeResponse): ParticipantModel {
         let participant: ParticipantModel;
         if (judge) {
             participant = new ParticipantModel();

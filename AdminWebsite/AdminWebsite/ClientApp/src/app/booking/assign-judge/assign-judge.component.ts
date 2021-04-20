@@ -41,13 +41,15 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     canNavigate = false;
 
     constants = Constants;
-    
+    updateJudgeAttempted = false;
+
     expanded = false;
     $subscriptions: Subscription[] = [];
     isJudgeParticipantError = false;
 
     invalidPattern: string;
     isValidEmail = true;
+
 
     constructor(
         private fb: FormBuilder,
@@ -134,6 +136,8 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     }
 
     updateJudge(judge: ParticipantModel) {
+        console.log('judge', judge);
+        this.updateJudgeAttempted = true;
         this.judge = judge;
         this.canNavigate = false;
         this.isJudgeParticipantError = false;
@@ -142,7 +146,8 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
                 judge.is_judge = true;
                 this.courtAccountJudgeEmail = judge.email;
                 this.judgeDisplayNameFld.setValue(this.judge.display_name);
-                this.hearing.participants = {...judge, ...this.hearing.participants.filter(x => !x.is_judge)};
+                this.hearing.participants = this.hearing.participants.filter(x => !x.is_judge);
+                this.hearing.participants.unshift(judge);
                 this.canNavigate = true;
             } else {
                 this.isJudgeParticipantError = true;
@@ -184,7 +189,8 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
 
     populateFormFields(existingJudge: ParticipantModel) {
         // Does not populate, gets existing judge.
-        this.logger.debug(`${this.loggerPrefix} Found judge in hearing. Populating existing selection.`);
+        this.logger.debug(`${this.loggerPrefix} Found judge in hearing. Populating existing selection.`)
+        console.log('existingJudge', existingJudge);
         this.judge = existingJudge;
         this.otherInformationDetails = OtherInformationModel.init(this.hearing.other_information);
     }

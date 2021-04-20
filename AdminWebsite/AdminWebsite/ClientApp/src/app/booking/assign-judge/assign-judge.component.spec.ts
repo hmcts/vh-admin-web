@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { of } from 'rxjs';
 import { Constants } from 'src/app/common/constants';
@@ -173,32 +173,7 @@ describe('AssignJudgeComponent', () => {
                                 ]
                             }
                         }
-                    }
-                        provide: ActivatedRoute,
-                        useValue: {
-                            data: {
-                                subscribe: (fn: (value) => void) =>
-                                    fn({
-                                        some: ''
-                                    })
-                            },
-                            params: {
-                                subscribe: (fn: (value) => void) =>
-                                    fn({
-                                        some: 0
-                                    })
-                            },
-                            snapshot: {
-                                data: { emailPattern: 'courtroom.test' },
-                                url: [
-                                    {
-                                        path: 'fake'
-                                    }
-                                ]
-                            }
-                        }
-                    }
-                    RecordingGuardService,
+                    },
                     { provide: ConfigService, useValue: configServiceSpy }
                 ],
                 declarations: [
@@ -480,7 +455,7 @@ describe('AssignJudgeComponent', () => {
             testJudge = Object.assign({}, judge);
             component.isJudgeParticipantError = false;
             component.failedSubmission = false;
-            component.isJudgeSelected = true;
+            spyOn(component, 'isJudgeSelected').and.returnValue(true);
             component.judge = testJudge;
         });
 
@@ -515,7 +490,8 @@ describe('AssignJudgeComponent', () => {
 
         it('should set correct validation errors if cannot add judge', () => {
             videoHearingsServiceSpy.canAddJudge.and.returnValue(false);
-
+        });
+        
         it('should set correct validation errors if display name is null', () => {
             component.judge.display_name = null;
 
@@ -662,9 +638,10 @@ describe('AssignJudgeComponent', () => {
                 afterEach(() => {
                     component.updateJudge(judge);
                     expect(videoHearingsServiceSpy.canAddJudge).toHaveBeenCalledWith(judge.username);
-
+                    console.log(component.hearing.participants);
                     const updatedJudges = component.hearing.participants.filter(participant => participant.is_judge);
 
+                    console.log(updatedJudges);
                     expect(updatedJudges.length).toBe(1);
                     expect(component.courtAccountJudgeEmail).toEqual(judge.email);
                     expect(component.judgeDisplayNameFld.value).toEqual(judge.display_name);

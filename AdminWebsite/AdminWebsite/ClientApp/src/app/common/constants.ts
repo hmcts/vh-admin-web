@@ -42,5 +42,6 @@ export const Constants = {
     IndividualRoles: ['Claimant LIP', 'Defendant LIP', 'Applicant LIP', 'Respondent LIP', 'Litigant in person'],
     DefenceAdvocate: 'App Advocate',
     None: 'None',
-    RespondentAdvocate: 'Respondent Advocate'
+    RespondentAdvocate: 'Respondent Advocate',
+    JudiciaryRoles: ['Panel Member', 'Winger'],
 };

@@ -3,7 +3,6 @@ import { TestBed, inject } from '@angular/core/testing';
 import { HttpClientModule } from '@angular/common/http';
 import { of } from 'rxjs';
 import { BHClient, JudgeResponse, PersonResponse } from './clients/api-client';
-import { ParticipantMapperService } from '../booking/services/participant-mapper.service';
 import { ParticipantModel } from '../common/model/participant.model';
 
 let service: SearchService;
@@ -115,25 +114,22 @@ const participantList: ParticipantModel[] = [
 ];
 
 let clientApiSpy: jasmine.SpyObj<BHClient>;
-let participantMapperSpy: jasmine.SpyObj<ParticipantMapperService>;
 
 describe('SearchService', () => {
     beforeEach(() => {
         clientApiSpy = jasmine.createSpyObj<BHClient>('BHClient', ['postPersonBySearchTerm', 'postJudiciaryPersonBySearchTerm', 'postJudgesBySearchTerm']);
-        participantMapperSpy = jasmine.createSpyObj<ParticipantMapperService>('ParticipantMapperService', ['mapPersonResponseToParticipantModel', 'mapJudgeResponseToParticipantModel']);
-
+        
         clientApiSpy.postPersonBySearchTerm.and.returnValue(of(personList));
         clientApiSpy.postJudiciaryPersonBySearchTerm.and.returnValue(of(judiciaryPersonList));
         clientApiSpy.postJudgesBySearchTerm.and.returnValue(of(judgeList));
 
-        participantMapperSpy.mapPersonResponseToParticipantModel.and.returnValue(participant1);
-        participantMapperSpy.mapJudgeResponseToParticipantModel.and.returnValue(judgeParticipant1);
+        spyOn(ParticipantModel, 'fromPersonResponse').and.returnValue(participant1);
+        spyOn(ParticipantModel, 'fromJudgeResponse').and.returnValue(judgeParticipant1);
 
         TestBed.configureTestingModule({
             imports: [HttpClientModule],
             providers: [
                 { provide: BHClient, useValue: clientApiSpy },
-                { provide: ParticipantMapperService, useValue: participantMapperSpy }
             ]
         });
 
@@ -160,9 +156,9 @@ describe('SearchService', () => {
             expect(service.searchJudiciaryEntries).toHaveBeenCalledTimes(0);
             expect(service.searchJudgeAccounts).toHaveBeenCalledTimes(0);
 
-            expect(participantMapperSpy.mapPersonResponseToParticipantModel).toHaveBeenCalledTimes(personList.length);
+            expect(ParticipantModel.fromPersonResponse).toHaveBeenCalledTimes(personList.length);
             personList.forEach(person => {
-                expect(participantMapperSpy.mapPersonResponseToParticipantModel).toHaveBeenCalledWith(person);
+                expect(ParticipantModel.fromPersonResponse).toHaveBeenCalledWith(person);
             });
         });
 
@@ -177,9 +173,9 @@ describe('SearchService', () => {
             expect(service.searchEntries).toHaveBeenCalledTimes(0);
             expect(service.searchJudgeAccounts).toHaveBeenCalledTimes(0);
 
-            expect(participantMapperSpy.mapPersonResponseToParticipantModel).toHaveBeenCalledTimes(judiciaryPersonList.length);
+            expect(ParticipantModel.fromPersonResponse).toHaveBeenCalledTimes(judiciaryPersonList.length);
             judiciaryPersonList.forEach(person => {
-                expect(participantMapperSpy.mapPersonResponseToParticipantModel).toHaveBeenCalledWith(person);
+                expect(ParticipantModel.fromPersonResponse).toHaveBeenCalledWith(person);
             });
         });
 
@@ -195,9 +191,9 @@ describe('SearchService', () => {
             expect(service.searchEntries).toHaveBeenCalledTimes(0);
             expect(service.searchJudiciaryEntries).toHaveBeenCalledTimes(0);
 
-            expect(participantMapperSpy.mapJudgeResponseToParticipantModel).toHaveBeenCalledTimes(judgeList.length);
+            expect(ParticipantModel.fromJudgeResponse).toHaveBeenCalledTimes(judgeList.length);
             judgeList.forEach(judge => {
-                expect(participantMapperSpy.mapJudgeResponseToParticipantModel).toHaveBeenCalledWith(judge);
+                expect(ParticipantModel.fromJudgeResponse).toHaveBeenCalledWith(judge);
             });
         });
     });
