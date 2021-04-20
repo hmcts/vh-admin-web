@@ -17,11 +17,6 @@ namespace AdminWebsite.Extensions
             return hearing.ScheduledDateTime.Ticks != anotherHearing.ScheduledDateTime.Ticks;
         }
         
-        public static bool IsAClone(this HearingDetailsResponse hearing)
-        {
-            return hearing.Id != hearing.GroupId;
-        }
-
         public static bool HasJudgeEmailChanged(this HearingDetailsResponse hearing, HearingDetailsResponse anotherHearing)
         {
             if (string.IsNullOrWhiteSpace(anotherHearing.OtherInformation) && string.IsNullOrWhiteSpace(hearing.OtherInformation))
