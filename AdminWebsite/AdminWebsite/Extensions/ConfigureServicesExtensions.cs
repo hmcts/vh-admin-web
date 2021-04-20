@@ -1,25 +1,25 @@
-﻿using AdminWebsite.Configuration;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
+using AdminWebsite.Configuration;
+using AdminWebsite.Contracts.Responses;
 using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
 using AdminWebsite.Swagger;
 using AdminWebsite.Validators;
+using BookingsApi.Client;
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Serialization;
-using Swashbuckle.AspNetCore.Swagger;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
-using AdminWebsite.Contracts.Responses;
-using BookingsApi.Client;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 using NotificationApi.Client;
+using Swashbuckle.AspNetCore.Swagger;
 using UserApi.Client;
 using VideoApi.Client;
 
@@ -91,8 +91,13 @@ namespace AdminWebsite.Extensions
 
             serviceCollection.AddHttpClient<IBookingsApiClient, BookingsApiClient>()
                 .AddHttpMessageHandler(() => container.GetService<HearingApiTokenHandler>())
-                .AddTypedClient(httpClient => (IBookingsApiClient) new BookingsApiClient(httpClient)
-                    {BaseUrl = settings.BookingsApiUrl, ReadResponseAsString = true});
+                .AddTypedClient(httpClient =>
+                {
+                    var client = BookingsApiClient.GetClient(httpClient);
+                    client.BaseUrl = settings.BookingsApiUrl;
+                    client.ReadResponseAsString = true;
+                    return (IBookingsApiClient)client;
+                });
 
             serviceCollection.AddHttpClient<IUserApiClient, UserApiClient>()
                 .AddHttpMessageHandler(() => container.GetService<UserApiTokenHandler>())
