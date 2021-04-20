@@ -50,7 +50,6 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     invalidPattern: string;
     isValidEmail = true;
 
-
     constructor(
         private fb: FormBuilder,
         protected router: Router,
@@ -189,7 +188,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
 
     populateFormFields(existingJudge: ParticipantModel) {
         // Does not populate, gets existing judge.
-        this.logger.debug(`${this.loggerPrefix} Found judge in hearing. Populating existing selection.`)
+        this.logger.debug(`${this.loggerPrefix} Found judge in hearing. Populating existing selection.`);
         console.log('existingJudge', existingJudge);
         this.judge = existingJudge;
         this.otherInformationDetails = OtherInformationModel.init(this.hearing.other_information);
