@@ -10,6 +10,11 @@
         {{ constants.Error.JohEmailErrorMsg }}
       </span>
     </div>
+    <div *ngIf="errorNotFoundJohEmail">
+      <span class="govuk-error-message">
+        {{ constants.Error.NotFoundJohEmail }}
+      </span>
+    </div>
     <label class="govuk-label" for="participantEmail"> Email </label>
     <input
       #emailInput
@@ -31,7 +36,7 @@
     </ul>
   </div>
 
-  <div class="govuk-warning-text" *ngIf="notFoundParticipant">
+  <div class="govuk-warning-text" *ngIf="showNotFoundError">
     <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
     <strong class="govuk-warning-text__text">
       <span class="govuk-warning-text__assistive">Warning</span>

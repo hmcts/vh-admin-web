@@ -27,6 +27,7 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
     $subscriptions: Subscription[] = [];
     invalidPattern: string;
     isErrorEmailAssignedToJudge = false;
+    errorNotFoundJohEmail = false;
     isJoh = false;
     notFoundEmailEvent = new Subject<boolean>();
     notFoundEmailEvent$ = this.notFoundEmailEvent.asObservable();
@@ -46,7 +47,7 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
             this.searchService.search(this.searchTerm, this.hearingRoleParticipant).subscribe(data => {
                 if (data && data.length > 0) {
                     this.getData(data);
-                } else {
+                } else { 
                     if (this.email.length > 2) {
                         this.noDataFound();
                     } else {
@@ -87,7 +88,7 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
     }
 
     noDataFound() {
-        this.isErrorEmailAssignedToJudge = this.hearingRoleParticipant === 'Panel Member' || this.hearingRoleParticipant === 'Winger';
+        this.errorNotFoundJohEmail = this.hearingRoleParticipant === 'Panel Member' || this.hearingRoleParticipant === 'Winger';
         this.isShowResult = false;
         this.notFoundParticipant = !this.isErrorEmailAssignedToJudge;
         this.notFoundEmailEvent.next(true);
@@ -119,7 +120,7 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
         const pattern = Constants.EmailPattern;
         this.isValidEmail =
             this.email &&
-            this.email.length > 0 &&
+            this.email.length > 2 &&
             this.email.length < 256 &&
             pattern.test(this.email) &&
             this.email.indexOf(this.invalidPattern) < 0;
@@ -146,6 +147,7 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
 
     onChange() {
         this.isErrorEmailAssignedToJudge = false;
+        this.errorNotFoundJohEmail = false;
     }
 
     mapPersonResponseToParticipantModel(p: PersonResponse): ParticipantModel {
@@ -182,5 +184,9 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
                 this.selectItemClick(participant);
             }
         }
+    }
+
+    get showNotFoundError() {
+        return this.notFoundParticipant && !(this.hearingRoleParticipant === 'Panel Member' || this.hearingRoleParticipant === 'Winger');
     }
 }

@@ -82,6 +82,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     errorAlternativeEmail = false;
     errorJohAccountNotFound = false;
     errorJudiciaryAccount = false;
+    errorNotFoundJohEmail = false;
     @ViewChild(SearchEmailComponent) searchEmail: SearchEmailComponent;
 
     @ViewChild(ParticipantListComponent, { static: true })
@@ -257,7 +258,8 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
                         self.party.value === self.constants.PleaseSelect
                     ) {
                         self.displayNext();
-                    } else if (self.showDetails && self.form.valid && self.searchEmail && self.searchEmail.validateEmail()) {
+                    } else if (self.showDetails && self.form.valid && self.searchEmail && self.searchEmail.validateEmail() &&
+                    !self.searchEmail.errorNotFoundJohEmail) {
                         if (self.localEditMode) {
                             self.displayUpdate();
                         } else {
@@ -571,7 +573,9 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
             this.isRoleSelected &&
             this.isPartySelected &&
             this.isTitleSelected &&
-            !this.errorAlternativeEmail
+            !this.errorAlternativeEmail &&
+            !this.errorJohAccountNotFound &&
+            !this.errorJudiciaryAccount
         ) {
             this.isShowErrorSummary = false;
             this.form.markAsUntouched();
