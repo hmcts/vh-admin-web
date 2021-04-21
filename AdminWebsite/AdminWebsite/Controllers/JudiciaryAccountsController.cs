@@ -62,7 +62,6 @@ namespace AdminWebsite.Controllers
                 var courtRoomJudges = courtRooms.Where(x => x.Email.ToLower().Contains(searchTerm.Term.ToLower()));
                 var eJudiciaryJudges = persons.Select(JudgeResponseMapper.MapTo);
 
-                var allJudges = courtRoomJudges.Concat(eJudiciaryJudges)
                 var allJudges = (courtRooms ?? Enumerable.Empty<JudgeResponse>()).Concat(eJudiciaryJudges ?? Enumerable.Empty<JudgeResponse>())
                     .OrderBy(x => x.Email).Take(20).ToList();
 

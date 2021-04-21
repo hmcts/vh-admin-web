@@ -1,4 +1,4 @@
-﻿using AdminWebsite.BookingsAPI.Client;
+﻿using AdminWebsite.Contracts.Enums;
 using AdminWebsite.Contracts.Responses;
 using BookingsApi.Contract.Responses;
 
