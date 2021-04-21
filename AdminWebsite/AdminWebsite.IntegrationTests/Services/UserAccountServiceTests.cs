@@ -4,7 +4,7 @@ using Moq;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using AdminWebsite.BookingsAPI.Client;
+using BookingsApi.Client;
 using Microsoft.Extensions.Logging;
 using NotificationApi.Client;
 using UserApi.Client;

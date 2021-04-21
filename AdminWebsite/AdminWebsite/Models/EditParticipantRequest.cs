@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using AdminWebsite.BookingsAPI.Client;
 
 namespace AdminWebsite.Models
 {

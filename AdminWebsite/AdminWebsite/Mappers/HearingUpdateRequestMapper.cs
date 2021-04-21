@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Models;
+using BookingsApi.Contract.Requests;
 
 namespace AdminWebsite.Mappers
 {
@@ -10,12 +10,12 @@ namespace AdminWebsite.Mappers
         {
             var updateHearingRequest = new UpdateHearingRequest
             {
-                Hearing_room_name = editHearingRequest.HearingRoomName,
-                Hearing_venue_name = editHearingRequest.HearingVenueName,
-                Other_information = editHearingRequest.OtherInformation,
-                Scheduled_date_time = editHearingRequest.ScheduledDateTime,
-                Scheduled_duration = editHearingRequest.ScheduledDuration,
-                Updated_by = userName,
+                HearingRoomName = editHearingRequest.HearingRoomName,
+                HearingVenueName = editHearingRequest.HearingVenueName,
+                OtherInformation = editHearingRequest.OtherInformation,
+                ScheduledDateTime = editHearingRequest.ScheduledDateTime,
+                ScheduledDuration = editHearingRequest.ScheduledDuration,
+                UpdatedBy = userName,
                 Cases = new List<CaseRequest>
                 {
                     new CaseRequest
@@ -24,8 +24,8 @@ namespace AdminWebsite.Mappers
                         Number = editHearingRequest.Case.Number
                     }
                 },
-                Questionnaire_not_required = false,
-                Audio_recording_required = editHearingRequest.AudioRecordingRequired
+                QuestionnaireNotRequired = false,
+                AudioRecordingRequired = editHearingRequest.AudioRecordingRequired
             };
             return updateHearingRequest;
         }

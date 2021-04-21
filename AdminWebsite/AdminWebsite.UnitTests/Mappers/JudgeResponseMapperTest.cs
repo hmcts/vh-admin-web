@@ -1,5 +1,5 @@
-﻿using AdminWebsite.BookingsAPI.Client;
-using AdminWebsite.Mappers;
+﻿using AdminWebsite.Mappers;
+using BookingsApi.Contract.Responses;
 using FluentAssertions;
 using NUnit.Framework;
 
@@ -12,16 +12,16 @@ namespace AdminWebsite.UnitTests.Mappers
         {
             var personResponse = new PersonResponse
             {
-                First_name = "Sam",
-                Last_name = "Smith",
+                FirstName = "Sam",
+                LastName = "Smith",
                 Title = "Mr",
                 Username = "email.sam@judiciary.net"
             };
 
             var judgeResponse = JudgeResponseMapper.MapTo(personResponse);
 
-            judgeResponse.FirstName.Should().Be(personResponse.First_name);
-            judgeResponse.LastName.Should().Be(personResponse.Last_name);
+            judgeResponse.FirstName.Should().Be(personResponse.FirstName);
+            judgeResponse.LastName.Should().Be(personResponse.LastName);
             judgeResponse.Email.Should().Be(personResponse.Username);
         }
     }

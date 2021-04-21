@@ -1,13 +1,13 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
-using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Configuration;
 using AdminWebsite.Services;
 using AdminWebsite.UnitTests.Helper;
+using BookingsApi.Client;
+using BookingsApi.Contract.Responses;
 using FizzWare.NBuilder;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
@@ -41,7 +41,7 @@ namespace AdminWebsite.UnitTests.Controllers.PersonController
         public async Task Should_return_ok_with_list_of_hearings_for_username()
         {
             var responseMock = Builder<HearingsByUsernameForDeletionResponse>.CreateListOfSize(3).All()
-                .With(x => x.Hearing_id = Guid.NewGuid()).Build().ToList();
+                .With(x => x.HearingId = Guid.NewGuid()).Build().ToList();
             _bookingsApiClient.Setup(x => x.GetHearingsByUsernameForDeletionAsync(It.IsAny<string>()))
                 .ReturnsAsync(responseMock);
             

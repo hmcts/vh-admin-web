@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Extensions;
+using BookingsApi.Contract.Responses;
 using NotificationApi.Contract;
 using NotificationApi.Contract.Requests;
 
@@ -17,7 +17,7 @@ namespace AdminWebsite.Mappers
         {
             var parameters = new Dictionary<string, string>
             {
-                {"name", $"{participant.First_name} {participant.Last_name}"},
+                {"name", $"{participant.FirstName} {participant.LastName}"},
                 {"username", $"{participant.Username}"},
                 {"random password", $"{password}"}
             };
@@ -25,12 +25,12 @@ namespace AdminWebsite.Mappers
             {
                 HearingId = hearingId,
                 MessageType = MessageType.Email,
-                ContactEmail = participant.Contact_email,
-                NotificationType = participant.User_role_name.ToUpper() == Individual
+                ContactEmail = participant.ContactEmail,
+                NotificationType = participant.UserRoleName.ToUpper() == Individual
                     ? NotificationType.CreateIndividual
                     : NotificationType.CreateRepresentative,
                 ParticipantId = participant.Id,
-                PhoneNumber = participant.Telephone_number,
+                PhoneNumber = participant.TelephoneNumber,
                 Parameters = parameters
             };
             return addNotificationRequest;
@@ -70,40 +70,40 @@ namespace AdminWebsite.Mappers
             };
 
             NotificationType notificationType;
-            if (participant.User_role_name.Contains("Judge", StringComparison.InvariantCultureIgnoreCase))
+            if (participant.UserRoleName.Contains("Judge", StringComparison.InvariantCultureIgnoreCase))
             {
                 notificationType = NotificationType.HearingAmendmentJudge;
-                parameters.Add("judge", participant.Display_name);
+                parameters.Add("judge", participant.DisplayName);
                 parameters.Add("courtroom account username", participant.Username);
-                participant.Contact_email = hearing.GetJudgeEmail();
-                participant.Telephone_number = hearing.GetJudgePhone();
+                participant.ContactEmail = hearing.GetJudgeEmail();
+                participant.TelephoneNumber = hearing.GetJudgePhone();
             }
-            else if (participant.User_role_name.Contains("Judicial Office Holder",
+            else if (participant.UserRoleName.Contains("Judicial Office Holder",
                 StringComparison.InvariantCultureIgnoreCase))
             {
                 notificationType = NotificationType.HearingAmendmentJoh;
-                parameters.Add("judicial office holder", $"{participant.First_name} {participant.Last_name}");
+                parameters.Add("judicial office holder", $"{participant.FirstName} {participant.LastName}");
             }
-            else if (participant.User_role_name.Contains("Representative", StringComparison.InvariantCultureIgnoreCase))
+            else if (participant.UserRoleName.Contains("Representative", StringComparison.InvariantCultureIgnoreCase))
             {
                 notificationType = NotificationType.HearingAmendmentRepresentative;
                 parameters.Add("client name", participant.Representee);
-                parameters.Add("solicitor name", $"{participant.First_name} {participant.Last_name}");
+                parameters.Add("solicitor name", $"{participant.FirstName} {participant.LastName}");
             }
             else
             {
                 notificationType = NotificationType.HearingAmendmentLip;
-                parameters.Add("name", $"{participant.First_name} {participant.Last_name}");
+                parameters.Add("name", $"{participant.FirstName} {participant.LastName}");
             }
 
             return new AddNotificationRequest
             {
                 HearingId = hearing.Id,
                 MessageType = MessageType.Email,
-                ContactEmail = participant.Contact_email,
+                ContactEmail = participant.ContactEmail,
                 NotificationType = notificationType,
                 ParticipantId = participant.Id,
-                PhoneNumber = participant.Telephone_number,
+                PhoneNumber = participant.TelephoneNumber,
                 Parameters = parameters
             };
         }
@@ -114,40 +114,40 @@ namespace AdminWebsite.Mappers
             var parameters = InitConfirmReminderParams(hearing);
 
             NotificationType notificationType;
-            if (participant.User_role_name.Contains("Judge", StringComparison.InvariantCultureIgnoreCase))
+            if (participant.UserRoleName.Contains("Judge", StringComparison.InvariantCultureIgnoreCase))
             {
                 notificationType = NotificationType.HearingConfirmationJudge;
-                parameters.Add("judge", participant.Display_name);
+                parameters.Add("judge", participant.DisplayName);
                 parameters.Add("courtroom account username", participant.Username);
-                participant.Contact_email = hearing.GetJudgeEmail();
-                participant.Telephone_number = hearing.GetJudgePhone();
+                participant.ContactEmail = hearing.GetJudgeEmail();
+                participant.TelephoneNumber = hearing.GetJudgePhone();
             }
-            else if (participant.User_role_name.Contains("Judicial Office Holder",
+            else if (participant.UserRoleName.Contains("Judicial Office Holder",
                 StringComparison.InvariantCultureIgnoreCase))
             {
                 notificationType = NotificationType.HearingConfirmationJoh;
-                parameters.Add("judicial office holder", $"{participant.First_name} {participant.Last_name}");
+                parameters.Add("judicial office holder", $"{participant.FirstName} {participant.LastName}");
             }
-            else if (participant.User_role_name.Contains("Representative", StringComparison.InvariantCultureIgnoreCase))
+            else if (participant.UserRoleName.Contains("Representative", StringComparison.InvariantCultureIgnoreCase))
             {
                 notificationType = NotificationType.HearingConfirmationRepresentative;
                 parameters.Add("client name", participant.Representee);
-                parameters.Add("solicitor name", $"{participant.First_name} {participant.Last_name}");
+                parameters.Add("solicitor name", $"{participant.FirstName} {participant.LastName}");
             }
             else
             {
                 notificationType = NotificationType.HearingConfirmationLip;
-                parameters.Add("name", $"{participant.First_name} {participant.Last_name}");
+                parameters.Add("name", $"{participant.FirstName} {participant.LastName}");
             }
 
             return new AddNotificationRequest
             {
                 HearingId = hearing.Id,
                 MessageType = MessageType.Email,
-                ContactEmail = participant.Contact_email,
+                ContactEmail = participant.ContactEmail,
                 NotificationType = notificationType,
                 ParticipantId = participant.Id,
-                PhoneNumber = participant.Telephone_number,
+                PhoneNumber = participant.TelephoneNumber,
                 Parameters = parameters
             };
         }
@@ -157,49 +157,50 @@ namespace AdminWebsite.Mappers
             ParticipantResponse participant, int days)
         {
             var @case = hearing.Cases.First();
+            var cleanedCaseName = @case.Name.Replace($"Day 1 of {days}", string.Empty).Trim();
             var parameters = new Dictionary<string, string>
             {
-                {"case name", @case.Name},
+                {"case name", cleanedCaseName},
                 {"case number", @case.Number},
-                {"time", hearing.Scheduled_date_time.ToEmailTimeGbLocale()},
-                {"Start Day Month Year", hearing.Scheduled_date_time.ToEmailDateGbLocale()},
+                {"time", hearing.ScheduledDateTime.ToEmailTimeGbLocale()},
+                {"Start Day Month Year", hearing.ScheduledDateTime.ToEmailDateGbLocale()},
                 {"number of days", days.ToString()}
             };
             NotificationType notificationType;
-            if (participant.User_role_name.Contains("Judge", StringComparison.InvariantCultureIgnoreCase))
+            if (participant.UserRoleName.Contains("Judge", StringComparison.InvariantCultureIgnoreCase))
             {
                 notificationType = NotificationType.HearingConfirmationJudgeMultiDay;
-                parameters.Add("judge", participant.Display_name);
+                parameters.Add("judge", participant.DisplayName);
                 parameters.Add("courtroom account username", participant.Username);
-                participant.Contact_email = hearing.GetJudgeEmail();
-                participant.Telephone_number = hearing.GetJudgePhone();
+                participant.ContactEmail = hearing.GetJudgeEmail();
+                participant.TelephoneNumber = hearing.GetJudgePhone();
             }
-            else if (participant.User_role_name.Contains("Judicial Office Holder",
+            else if (participant.UserRoleName.Contains("Judicial Office Holder",
                 StringComparison.InvariantCultureIgnoreCase))
             {
                 notificationType = NotificationType.HearingConfirmationJohMultiDay;
-                parameters.Add("judicial office holder", $"{participant.First_name} {participant.Last_name}");
+                parameters.Add("judicial office holder", $"{participant.FirstName} {participant.LastName}");
             }
-            else if (participant.User_role_name.Contains("Representative", StringComparison.InvariantCultureIgnoreCase))
+            else if (participant.UserRoleName.Contains("Representative", StringComparison.InvariantCultureIgnoreCase))
             {
                 notificationType = NotificationType.HearingConfirmationRepresentativeMultiDay;
                 parameters.Add("client name", participant.Representee);
-                parameters.Add("solicitor name", $"{participant.First_name} {participant.Last_name}");
+                parameters.Add("solicitor name", $"{participant.FirstName} {participant.LastName}");
             }
             else
             {
                 notificationType = NotificationType.HearingConfirmationLipMultiDay;
-                parameters.Add("name", $"{participant.First_name} {participant.Last_name}");
+                parameters.Add("name", $"{participant.FirstName} {participant.LastName}");
             }
 
             return new AddNotificationRequest
             {
                 HearingId = hearing.Id,
                 MessageType = MessageType.Email,
-                ContactEmail = participant.Contact_email,
+                ContactEmail = participant.ContactEmail,
                 NotificationType = notificationType,
                 ParticipantId = participant.Id,
-                PhoneNumber = participant.Telephone_number,
+                PhoneNumber = participant.TelephoneNumber,
                 Parameters = parameters
             };
         }
@@ -211,32 +212,32 @@ namespace AdminWebsite.Mappers
             parameters.Add("username", participant.Username.ToLower());
 
             NotificationType notificationType;
-            if (participant.User_role_name.Contains("Judicial Office Holder",
+            if (participant.UserRoleName.Contains("Judicial Office Holder",
                 StringComparison.InvariantCultureIgnoreCase))
             {
                 notificationType = NotificationType.HearingReminderJoh;
-                parameters.Add("judicial office holder", $"{participant.First_name} {participant.Last_name}");
+                parameters.Add("judicial office holder", $"{participant.FirstName} {participant.LastName}");
             }
-            else if (participant.User_role_name.Contains("Representative", StringComparison.InvariantCultureIgnoreCase))
+            else if (participant.UserRoleName.Contains("Representative", StringComparison.InvariantCultureIgnoreCase))
             {
                 notificationType = NotificationType.HearingReminderRepresentative;
                 parameters.Add("client name", participant.Representee);
-                parameters.Add("solicitor name", $"{participant.First_name} {participant.Last_name}");
+                parameters.Add("solicitor name", $"{participant.FirstName} {participant.LastName}");
             }
             else
             {
                 notificationType = NotificationType.HearingReminderLip;
-                parameters.Add("name", $"{participant.First_name} {participant.Last_name}");
+                parameters.Add("name", $"{participant.FirstName} {participant.LastName}");
             }
 
             return new AddNotificationRequest
             {
                 HearingId = hearing.Id,
                 MessageType = MessageType.Email,
-                ContactEmail = participant.Contact_email,
+                ContactEmail = participant.ContactEmail,
                 NotificationType = notificationType,
                 ParticipantId = participant.Id,
-                PhoneNumber = participant.Telephone_number,
+                PhoneNumber = participant.TelephoneNumber,
                 Parameters = parameters
             };
         }
@@ -248,8 +249,8 @@ namespace AdminWebsite.Mappers
             {
                 {"case name", @case.Name},
                 {"case number", @case.Number},
-                {"time", hearing.Scheduled_date_time.ToEmailTimeGbLocale()},
-                {"day month year", hearing.Scheduled_date_time.ToEmailDateGbLocale()}
+                {"time", hearing.ScheduledDateTime.ToEmailTimeGbLocale()},
+                {"day month year", hearing.ScheduledDateTime.ToEmailDateGbLocale()}
             };
         }
     }

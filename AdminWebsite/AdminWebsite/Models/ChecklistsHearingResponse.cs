@@ -16,7 +16,7 @@ namespace AdminWebsite.Models
         /// <summary>
         /// Which date and time the hearing is booked for
         /// </summary>
-        public DateTime? Scheduled_date_time { get; set; }
+        public DateTime? ScheduledDateTime { get; set; }
 
         /// <summary>
         /// The status of the hearing

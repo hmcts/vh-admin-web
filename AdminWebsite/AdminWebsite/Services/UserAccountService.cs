@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Contracts.Responses;
 using AdminWebsite.Extensions;
 using AdminWebsite.Mappers;
 using AdminWebsite.Security;
 using AdminWebsite.Services.Models;
+using BookingsApi.Client;
+using BookingsApi.Contract.Requests;
 using Microsoft.Extensions.Logging;
 using NotificationApi.Client;
-using NotificationApi.Contract.Requests;
 using UserApi.Client;
 using UserApi.Contract.Requests;
 using UserApi.Contract.Responses;
@@ -93,11 +93,11 @@ namespace AdminWebsite.Services
         public async Task<User> UpdateParticipantUsername(ParticipantRequest participant)
         {
             // create user in AD if users email does not exist in AD.
-            _logger.LogDebug("Checking for username with contact email {contactEmail}.", participant.Contact_email);
-            var userProfile = await GetUserByContactEmail(participant.Contact_email);
+            _logger.LogDebug("Checking for username with contact email {contactEmail}.", participant.ContactEmail);
+            var userProfile = await GetUserByContactEmail(participant.ContactEmail);
             if (userProfile == null)
             {
-                _logger.LogDebug("User with contact email {contactEmail} does not exist. Creating an account.", participant.Contact_email);
+                _logger.LogDebug("User with contact email {contactEmail} does not exist. Creating an account.", participant.ContactEmail);
                 // create the user in AD.
                 var newUser = await CreateNewUserInAD(participant);
                 return new User
@@ -174,17 +174,17 @@ namespace AdminWebsite.Services
         private async Task<NewUserResponse> CreateNewUserInAD(ParticipantRequest participant)
         {
             const string BLANK = " ";
-            _logger.LogDebug("Attempting to create an AD user with contact email {contactEmail}.", participant.Contact_email);
+            _logger.LogDebug("Attempting to create an AD user with contact email {contactEmail}.", participant.ContactEmail);
             var createUserRequest = new CreateUserRequest
             {
-                FirstName = participant.First_name?.Replace(BLANK, string.Empty),
-                LastName = participant.Last_name?.Replace(BLANK, string.Empty),
-                RecoveryEmail = participant.Contact_email,
+                FirstName = participant.FirstName?.Replace(BLANK, string.Empty),
+                LastName = participant.LastName?.Replace(BLANK, string.Empty),
+                RecoveryEmail = participant.ContactEmail,
                 IsTestUser = false
             };
 
             var newUserResponse = await _userApiClient.CreateUserAsync(createUserRequest);
-            _logger.LogDebug("Successfully created an AD user with contact email {contactEmail}.", participant.Contact_email);
+            _logger.LogDebug("Successfully created an AD user with contact email {contactEmail}.", participant.ContactEmail);
             participant.Username = newUserResponse.Username;
             return newUserResponse;
         }

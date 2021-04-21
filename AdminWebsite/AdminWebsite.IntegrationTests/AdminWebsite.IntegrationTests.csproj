@@ -15,7 +15,6 @@
     <None Remove="Helper\AzureAdMockData\microsoft-openid-config.json" />
     <None Remove="Helper\AzureAdMockData\microsoft-wellknown-keys.json" />
     <None Remove="Helper\localhost.pfx" />
-    <None Remove="packages.lock.json.orig" />
   </ItemGroup>
 
   <ItemGroup>
