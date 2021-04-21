@@ -32,7 +32,7 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
     searchPending = new BehaviorSubject<boolean>(false);
     private judgeHearingRole = 'Judge';
     private judiciaryRoles = this.constants.JudiciaryRoles;
-    private cannotAddNewUsersRoles = [this.judgeHearingRole, ...this.judiciaryRoles]
+    private cannotAddNewUsersRoles = [this.judgeHearingRole, ...this.judiciaryRoles];
     blurSubscription = new Subscription();
 
     @Input() disabled = true;
