@@ -304,7 +304,7 @@ describe('AssignJudgeComponent', () => {
             expect(component.attemptingDiscardChanges).toBeFalsy();
             expect(routerSpy.navigate).toHaveBeenCalled();
         });
-        
+
         it('should sanitize display name of the judge if it was entered', () => {
             const displayNameSanitized = 'DisplayNameSanitized';
 

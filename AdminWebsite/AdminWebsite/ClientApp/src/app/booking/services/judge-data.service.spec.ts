@@ -17,7 +17,6 @@ describe('JudgeDataService', () => {
         expect(service).toBeTruthy();
     }));
 
-
     it('should call getJudges', inject([JudgeDataService], (service: JudgeDataService) => {
         service.getJudges();
         expect(bhClientSpy.getJudges).toHaveBeenCalledTimes(1);

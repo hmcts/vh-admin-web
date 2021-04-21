@@ -233,9 +233,7 @@ describe('SeachEmailComponent', () => {
         expect(component.$subscriptions[1].closed).toBe(true);
     });
 
-    describe('getData', () => {
-
-    });
+    describe('getData', () => {});
 });
 
 describe('SearchEmailComponent email validate', () => {

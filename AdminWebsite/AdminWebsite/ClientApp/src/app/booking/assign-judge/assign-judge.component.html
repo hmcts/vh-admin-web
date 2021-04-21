@@ -16,19 +16,19 @@
   </h2>
   <div class="govuk-error-summary__body">
     <ul class="govuk-list govuk-error-summary__list">
-    <ng-container *ngIf="judge; else nonJudge">
-      <li *ngIf="judgeDisplayNameInvalid">
-        <a (click)="goToDiv('judgeDisplayName-error')">{{ constants.Error.JudgeDisplayNameErrorMsg }}</a>
-      </li>
-      <li *ngIf="isJudgeParticipantError">
-        <a (click)="goToDiv('judgeDisplayName-error')">{{ constants.Error.JudgeParticipantErrorMsg }}</a>
-      </li>
-    </ng-container>
-    <ng-template #nonJudge>
-      <li>
-        <a (click)="goToDiv('judgeEmail-error')">{{ constants.Error.JudgeEmailErrorMsg }}</a>
-      </li>
-    </ng-template>
+      <ng-container *ngIf="judge; else nonJudge">
+        <li *ngIf="judgeDisplayNameInvalid">
+          <a (click)="goToDiv('judgeDisplayName-error')">{{ constants.Error.JudgeDisplayNameErrorMsg }}</a>
+        </li>
+        <li *ngIf="isJudgeParticipantError">
+          <a (click)="goToDiv('judgeDisplayName-error')">{{ constants.Error.JudgeParticipantErrorMsg }}</a>
+        </li>
+      </ng-container>
+      <ng-template #nonJudge>
+        <li>
+          <a (click)="goToDiv('judgeEmail-error')">{{ constants.Error.JudgeEmailErrorMsg }}</a>
+        </li>
+      </ng-template>
     </ul>
   </div>
 </div>
