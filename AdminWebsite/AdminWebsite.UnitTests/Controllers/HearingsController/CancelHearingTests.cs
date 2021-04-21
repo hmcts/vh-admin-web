@@ -1,5 +1,4 @@
-﻿using AdminWebsite.BookingsAPI.Client;
-using AdminWebsite.Models;
+﻿using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
 using FluentAssertions;
@@ -12,6 +11,9 @@ using NotificationApi.Client;
 using NUnit.Framework;
 using System;
 using System.Threading.Tasks;
+using BookingsApi.Client;
+using BookingsApi.Contract.Requests;
+using BookingsApi.Contract.Requests.Enums;
 using VideoApi.Client;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
@@ -44,7 +46,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             _participantGroupLogger = new Mock<ILogger<HearingsService>>();
             _hearingsService = new HearingsService(_pollyRetryServiceMock.Object,
-                _userAccountService.Object, _notificationApiMock.Object, _videoApiMock.Object, _bookingsApiClient.Object, _participantGroupLogger.Object);
+                _userAccountService.Object, _notificationApiMock.Object, _videoApiMock.Object,
+                _bookingsApiClient.Object, _participantGroupLogger.Object);
 
             _controller = new AdminWebsite.Controllers.HearingsController(_bookingsApiClient.Object,
                 _userIdentity.Object,
@@ -53,10 +56,11 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>().Object,
                 _hearingsService,
                 Mock.Of<IPublicHolidayRetriever>());
-                
+
             _guid = Guid.NewGuid();
 
-            _updateBookingStatusRequest = new UpdateBookingStatusRequest() { Status = UpdateBookingStatus.Cancelled, Updated_by = "admin user" };
+            _updateBookingStatusRequest = new UpdateBookingStatusRequest()
+                {Status = UpdateBookingStatus.Cancelled, UpdatedBy = "admin user"};
         }
 
         [Test]
@@ -65,7 +69,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             var response = await _controller.UpdateBookingStatus(_guid, _updateBookingStatusRequest);
             var result = (OkObjectResult) response;
             result.StatusCode.Should().Be(StatusCodes.Status200OK);
-            result.Value.Should().NotBeNull().And.BeAssignableTo<UpdateBookingStatusResponse>().Subject.Success.Should().BeTrue();
+            result.Value.Should().NotBeNull().And.BeAssignableTo<UpdateBookingStatusResponse>().Subject.Success.Should()
+                .BeTrue();
         }
     }
 }

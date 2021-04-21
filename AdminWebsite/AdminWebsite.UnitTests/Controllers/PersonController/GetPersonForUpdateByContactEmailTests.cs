@@ -1,10 +1,11 @@
 using System.Net;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
-using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Configuration;
 using AdminWebsite.Services;
 using AdminWebsite.UnitTests.Helper;
+using BookingsApi.Client;
+using BookingsApi.Contract.Responses;
 using FizzWare.NBuilder;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;

@@ -1,8 +1,8 @@
-﻿using AdminWebsite.BookingsAPI.Client;
-using AdminWebsite.Security;
+﻿using AdminWebsite.Security;
 using NUnit.Framework;
 using System;
 using System.Runtime.Serialization;
+using BookingsApi.Contract.Requests;
 
 namespace AdminWebsite.UnitTests.Security
 {

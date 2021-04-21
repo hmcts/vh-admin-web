@@ -1,4 +1,4 @@
-﻿using AdminWebsite.BookingsAPI.Client;
+﻿using BookingsApi.Contract.Requests;
 using AdminWebsite.Models;
 
 namespace AdminWebsite.Mappers
@@ -9,17 +9,17 @@ namespace AdminWebsite.Mappers
         {
             var newParticipant = new ParticipantRequest()
             {
-                Case_role_name = participant.CaseRoleName,
-                Contact_email = participant.ContactEmail,
-                Display_name = participant.DisplayName,
-                First_name = participant.FirstName,
-                Last_name = participant.LastName,
-                Hearing_role_name = participant.HearingRoleName,
-                Middle_names = participant.MiddleNames,
+                CaseRoleName = participant.CaseRoleName,
+                ContactEmail = participant.ContactEmail,
+                DisplayName = participant.DisplayName,
+                FirstName = participant.FirstName,
+                LastName = participant.LastName,
+                HearingRoleName = participant.HearingRoleName,
+                MiddleNames = participant.MiddleNames,
                 Representee = participant.Representee,
-                Telephone_number = participant.TelephoneNumber,
+                TelephoneNumber = participant.TelephoneNumber,
                 Title = participant.Title,
-                Organisation_name = participant.OrganisationName,
+                OrganisationName = participant.OrganisationName,
             };
             return newParticipant;
         }
