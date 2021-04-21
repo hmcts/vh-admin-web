@@ -423,11 +423,6 @@ namespace AdminWebsite.Services
 
         public async Task UpdateParticipantLinks(Guid hearingId, EditHearingRequest request, HearingDetailsResponse hearing)
         {
-            if (!request.Participants.SelectMany(x => x.LinkedParticipants).Any())
-            {
-                return;
-            }
-
             var existingParticipantWithLinks = request.Participants.Where(x => x.LinkedParticipants.Any() && x.Id.HasValue);
             foreach (var participantRequest in existingParticipantWithLinks)
             {
@@ -463,23 +458,17 @@ namespace AdminWebsite.Services
             var requests = new List<LinkedParticipantRequest>();
 
             var newLinks = GetNewLinkedParticipants(linkedParticipantsInRequest);
-            
-            if (newLinks.Any())
-            {
-                requests.AddRange(newLinks);   
-            }
+        
+            requests.AddRange(newLinks);
 
             var existingLinks = GetExistingLinkedParticipants(linkedParticipantsInRequest, hearing, participant);
-
-            if (existingLinks.Any())
-            {
-                requests.AddRange(existingLinks);   
-            }
+            
+            requests.AddRange(existingLinks);   
 
             return requests;
         }
 
-        private static List<LinkedParticipantRequest> GetNewLinkedParticipants(IEnumerable<LinkedParticipant> linkedParticipantsInRequest)
+        private static IEnumerable<LinkedParticipantRequest> GetNewLinkedParticipants(IEnumerable<LinkedParticipant> linkedParticipantsInRequest)
         {
             return linkedParticipantsInRequest.Where(x => x.LinkedId == Guid.Empty)
                 .Select(lp => new LinkedParticipantRequest
@@ -489,12 +478,12 @@ namespace AdminWebsite.Services
                 }).ToList();
         }
         
-        private static List<LinkedParticipantRequest> GetExistingLinkedParticipants(IEnumerable<LinkedParticipant> linkedParticipantsInRequest, HearingDetailsResponse hearing, ParticipantResponse participant)
+        private static IEnumerable<LinkedParticipantRequest> GetExistingLinkedParticipants(IEnumerable<LinkedParticipant> linkedParticipantsInRequest, HearingDetailsResponse hearing, ParticipantResponse participant)
         {
             var existingLinksToUpdate = linkedParticipantsInRequest.Where(x => x.LinkedId != Guid.Empty && !HasExistingLink(x, participant) && LinkedParticipantExists(hearing, x)).ToList();
             
             var existingLinks = existingLinksToUpdate.Select(linkedParticipantInRequest => 
-                hearing.Participants.First(x => x.Id == linkedParticipantInRequest.LinkedId)).ToList();
+                hearing.Participants.Find(x => x.Id == linkedParticipantInRequest.LinkedId)).ToList();
 
             if (!existingLinks.Any()) return new List<LinkedParticipantRequest>();
         
