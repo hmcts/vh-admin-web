@@ -42,7 +42,7 @@
         <label class="govuk-label" for="judgeName" id="judgeEmail-error"> Judge or courtroom account </label>
         <app-search-email
           [disabled]="false"
-          hearingRoleParticipant="Judge"
+          participantHearingRole="Judge"
           (findParticipant)="updateJudge($event)"
           [initialValue]="courtAccountJudgeEmail"
         >

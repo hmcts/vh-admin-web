@@ -1,42 +1,46 @@
-<div (blur)="blur()">
-  <div class="govuk-form-group" [ngClass]="{ 'govuk-form-group--error': !isValidEmail || isErrorEmailAssignedToJudge }">
-    <div *ngIf="!isValidEmail">
-      <span class="govuk-error-message">
-        {{ constants.Error.EmailErrorMsg }}
-      </span>
-    </div>
-    <div *ngIf="isErrorEmailAssignedToJudge">
-      <span class="govuk-error-message">
-        {{ constants.Error.JohEmailErrorMsg }}
-      </span>
-    </div>
-    <label class="govuk-label" for="participantEmail"> Email </label>
-    <input
-      #emailInput
-      [attr.disabled]="disabled ? true : null"
-      id="participantEmail"
-      name="participantEmail"
-      [(ngModel)]="email"
-      (blur)="blurEmail(); populateParticipantInfo($event.target.value)"
-      class="govuk-input govuk-input--width-20"
-      (keyup)="searchTerm.next($event.target.value)"
-      (input)="onChange()"
-      type="email"
-    />
+<div class="govuk-form-group"
+  [class.govuk-form-group--error]="!emailControl.valid || isErrorEmailAssignedToJudge">
+  <div *ngIf="!emailControl.valid">
+    <span class="govuk-error-message">
+      {{ constants.Error.EmailErrorMsg }}
+    </span>
+  </div>
+  <div *ngIf="isErrorEmailAssignedToJudge">
+    <span class="govuk-error-message">
+      {{ constants.Error.JohEmailErrorMsg }}
+    </span>
+  </div>
+  <label class="govuk-label"
+    for="participantEmail"> Email </label>
+  <input [attr.disabled]="disabled ? true : null"
+    id="participantEmail"
+    [formControl]="emailControl"
+    (keyup)="searchTerm.next($event.target.value)"
+    (blur)="hideSearchResults()"
+    name="participantEmail"
+    class="govuk-input govuk-input--width-20"
+    type="email" />
 
-    <ul *ngIf="isShowResult" class="vh-li-email">
-      <li *ngFor="let result of results | slice: 0:9" class="vk-showlist-m30">
-        <a class="govuk-body vh-a-email" href="javascript: void(0)" (click)="selectItemClick(result)">{{ result.email }}</a>
+  <ng-container *ngIf="results$ | async as results">
+    <ul *ngIf="showSearchResults$ | async"
+      class="vh-li-email">
+      <li *ngFor="let user of results | slice: 0:9"
+        class="vk-showlist-m30">
+        <a class="govuk-body vh-a-email"
+          href="javascript: void(0)"
+          (click)="selectUser(user)">{{ user.email }}</a>
       </li>
     </ul>
-  </div>
+  </ng-container>
+</div>
 
-  <div class="govuk-warning-text" *ngIf="notFoundParticipant">
-    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-    <strong class="govuk-warning-text__text">
-      <span class="govuk-warning-text__assistive">Warning</span>
-      No existing user account found<span *ngIf="hearingRoleParticipant !== judgeHearingRole"> - this will create a new one</span>
-    </strong>
-  </div>
-  <p></p>
+<div class="govuk-warning-text"
+  *ngIf="notFoundParticipant">
+  <span class="govuk-warning-text__icon"
+    aria-hidden="true">!</span>
+  <strong class="govuk-warning-text__text">
+    <span class="govuk-warning-text__assistive">Warning</span>
+    No existing user account found<span *ngIf="participantHearingRole !== judgeHearingRole"> - this will create a new
+      one</span>
+  </strong>
 </div>
