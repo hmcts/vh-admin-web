@@ -31,11 +31,11 @@
     </ul>
   </div>
 
-  <div class="govuk-warning-text" *ngIf="notFoundParticipant">
+  <div class="govuk-warning-text" *ngIf="showCreateNewUserWarning">
     <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
     <strong class="govuk-warning-text__text">
       <span class="govuk-warning-text__assistive">Warning</span>
-      No existing user account found<span *ngIf="hearingRoleParticipant !== judgeHearingRole"> - this will create a new one</span>
+      No existing user account found - this will create a new one
     </strong>
   </div>
   <p></p>

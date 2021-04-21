@@ -31,6 +31,8 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
     notFoundEmailEvent$ = this.notFoundEmailEvent.asObservable();
     searchPending = new BehaviorSubject<boolean>(false);
     private judgeHearingRole = 'Judge';
+    private judiciaryRoles = this.constants.JudiciaryRoles;
+    private cannotAddNewUsersRoles = [this.judgeHearingRole, ...this.judiciaryRoles]
     blurSubscription = new Subscription();
 
     @Input() disabled = true;
@@ -132,6 +134,8 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
         selectedResult.username = result.username;
         selectedResult.display_name = result.display_name;
         selectedResult.is_courtroom_account = result.is_courtroom_account; // ? Why not just return result?
+        selectedResult.case_role_name = this.hearingRoleParticipant;
+        selectedResult.hearing_role_name = this.hearingRoleParticipant;
         this.isShowResult = false;
         this.findParticipant.emit(selectedResult);
     }
@@ -184,7 +188,7 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
                     this.blurSubscription.unsubscribe();
                 }
             });
-        }           
+        }
     }
 
     onChange() {
@@ -206,5 +210,9 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
                 this.selectItemClick(participant);
             }
         }
+    }
+
+    get showCreateNewUserWarning() {
+        return this.notFoundParticipant && !this.cannotAddNewUsersRoles.includes(this.hearingRoleParticipant);
     }
 }
