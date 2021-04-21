@@ -184,7 +184,7 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
                     this.blurSubscription.unsubscribe();
                 }
             });
-        }
+        }           
     }
 
     onChange() {

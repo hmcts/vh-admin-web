@@ -24,7 +24,7 @@
       type="email"
     />
 
-    <ul *ngIf="isShowResult" class="vh-li-email">
+    <ul id="search-results-list" *ngIf="isShowResult" class="vh-li-email">
       <li *ngFor="let result of results | slice: 0:9" class="vk-showlist-m30">
         <a class="govuk-body vh-a-email" href="javascript: void(0)" (click)="selectItemClick(result)">{{ result.email }}</a>
       </li>
