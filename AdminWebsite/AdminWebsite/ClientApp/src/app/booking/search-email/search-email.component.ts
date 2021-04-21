@@ -47,7 +47,7 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
             this.searchService.search(this.searchTerm, this.hearingRoleParticipant).subscribe(data => {
                 if (data && data.length > 0) {
                     this.getData(data);
-                } else { 
+                } else {
                     if (this.email.length > 2) {
                         this.noDataFound();
                     } else {

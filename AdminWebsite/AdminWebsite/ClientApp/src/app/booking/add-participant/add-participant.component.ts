@@ -258,8 +258,13 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
                         self.party.value === self.constants.PleaseSelect
                     ) {
                         self.displayNext();
-                    } else if (self.showDetails && self.form.valid && self.searchEmail && self.searchEmail.validateEmail() &&
-                    !self.searchEmail.errorNotFoundJohEmail) {
+                    } else if (
+                        self.showDetails &&
+                        self.form.valid &&
+                        self.searchEmail &&
+                        self.searchEmail.validateEmail() &&
+                        !self.searchEmail.errorNotFoundJohEmail
+                    ) {
                         if (self.localEditMode) {
                             self.displayUpdate();
                         } else {
