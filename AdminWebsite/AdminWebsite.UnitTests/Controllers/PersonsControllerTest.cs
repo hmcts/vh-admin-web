@@ -1,5 +1,4 @@
-﻿using AdminWebsite.BookingsAPI.Client;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
@@ -11,6 +10,9 @@ using System.Text.Encodings.Web;
 using AdminWebsite.UnitTests.Helper;
 using AdminWebsite.Configuration;
 using AdminWebsite.Services;
+using BookingsApi.Client;
+using BookingsApi.Contract.Requests;
+using BookingsApi.Contract.Responses;
 using Microsoft.Extensions.Options;
 
 namespace AdminWebsite.UnitTests.Controllers
@@ -41,12 +43,12 @@ namespace AdminWebsite.UnitTests.Controllers
                 new PersonResponse
                 {
                   Id = Guid.NewGuid(),
-                  Contact_email = "adoman@hmcts.net",
-                  First_name = "Adam",
-                  Last_name = "Mann",
-                  Telephone_number ="111222333",
+                  ContactEmail = "adoman@hmcts.net",
+                  FirstName = "Adam",
+                  LastName = "Mann",
+                  TelephoneNumber ="111222333",
                   Title = "Ms",
-                  Middle_names = "No",
+                  MiddleNames = "No",
                   Username = "adoman@hmcts.net"
                 }
             };
@@ -58,12 +60,12 @@ namespace AdminWebsite.UnitTests.Controllers
             _response.Add(new PersonResponse
                             {
                                 Id = Guid.NewGuid(),
-                                Contact_email = "jackman@hmcts.net1",
-                                First_name = "Jack",
-                                Last_name = "Mann",
-                                Telephone_number = "111222333",
+                                ContactEmail = "jackman@hmcts.net1",
+                                FirstName = "Jack",
+                                LastName = "Mann",
+                                TelephoneNumber = "111222333",
                                 Title = "Mr",
-                                Middle_names = "No",
+                                MiddleNames = "No",
                                 Username = "jackman@hmcts.net"
             });
             _bookingsApiClient.Setup(x => x.PostPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
@@ -76,7 +78,7 @@ namespace AdminWebsite.UnitTests.Controllers
             okRequestResult.StatusCode.Should().NotBeNull();
             var personRespList = (List<PersonResponse>)okRequestResult.Value;
             personRespList.Count.Should().Be(1);
-            personRespList[0].Contact_email.Should().Be(_response[0].Contact_email);
+            personRespList[0].ContactEmail.Should().Be(_response[0].ContactEmail);
         }
 
         [Test]

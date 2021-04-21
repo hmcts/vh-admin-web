@@ -1,5 +1,4 @@
-﻿using AdminWebsite.BookingsAPI.Client;
-using AdminWebsite.Controllers;
+﻿using AdminWebsite.Controllers;
 using AdminWebsite.Security;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
@@ -10,6 +9,8 @@ using System.Collections.Generic;
 using System.Net;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using BookingsApi.Client;
+using BookingsApi.Contract.Responses;
 
 namespace AdminWebsite.UnitTests.Controllers
 {

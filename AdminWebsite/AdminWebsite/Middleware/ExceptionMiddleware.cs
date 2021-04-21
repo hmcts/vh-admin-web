@@ -1,10 +1,10 @@
-﻿using AdminWebsite.BookingsAPI.Client;
-using AdminWebsite.Services;
+﻿using AdminWebsite.Services;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
+using BookingsApi.Client;
 
 namespace AdminWebsite.Middleware
 {

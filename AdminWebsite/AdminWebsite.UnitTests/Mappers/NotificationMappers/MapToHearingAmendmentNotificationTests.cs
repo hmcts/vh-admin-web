@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Mappers;
 using AdminWebsite.Models;
+using BookingsApi.Contract.Responses;
 using FluentAssertions;
 using Newtonsoft.Json;
 using NotificationApi.Contract;
@@ -32,14 +32,14 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             var caseName = "cse test";
             var caseNumber = "MBFY/17364";
             var participant = InitParticipant("Judge");
-            _hearing.Other_information = JsonConvert.SerializeObject(new OtherInformationDetails
+            _hearing.OtherInformation = JsonConvert.SerializeObject(new OtherInformationDetails
                 {JudgeEmail = "judge@hmcts.net", JudgePhone = "123456789"});
 
             var expectedParameters = new Dictionary<string, string>
             {
                 {"case name", caseName},
                 {"case number", caseNumber},
-                {"judge", participant.Display_name},
+                {"judge", participant.DisplayName},
                 {"courtroom account username", participant.Username},
                 {"Old time", "11:30 AM"},
                 {"New time", "2:10 PM"},
@@ -54,10 +54,10 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             result.Should().NotBeNull();
             result.HearingId.Should().Be(_hearing.Id);
             result.ParticipantId.Should().Be(participant.Id);
-            result.ContactEmail.Should().Be(participant.Contact_email);
+            result.ContactEmail.Should().Be(participant.ContactEmail);
             result.NotificationType.Should().Be(expectedNotificationType);
             result.MessageType.Should().Be(MessageType.Email);
-            result.PhoneNumber.Should().Be(participant.Telephone_number);
+            result.PhoneNumber.Should().Be(participant.TelephoneNumber);
             result.Parameters.Should().BeEquivalentTo(expectedParameters);
         }
 
@@ -75,7 +75,7 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             {
                 {"case name", caseName},
                 {"case number", caseNumber},
-                {"name", $"{participant.First_name} {participant.Last_name}"},
+                {"name", $"{participant.FirstName} {participant.LastName}"},
                 {"Old time", "11:30 AM"},
                 {"New time", "2:10 PM"},
                 {"Old Day Month Year", "10 February 2020"},
@@ -89,10 +89,10 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             result.Should().NotBeNull();
             result.HearingId.Should().Be(_hearing.Id);
             result.ParticipantId.Should().Be(participant.Id);
-            result.ContactEmail.Should().Be(participant.Contact_email);
+            result.ContactEmail.Should().Be(participant.ContactEmail);
             result.NotificationType.Should().Be(expectedNotificationType);
             result.MessageType.Should().Be(MessageType.Email);
-            result.PhoneNumber.Should().Be(participant.Telephone_number);
+            result.PhoneNumber.Should().Be(participant.TelephoneNumber);
             result.Parameters.Should().BeEquivalentTo(expectedParameters);
         }
 
@@ -110,7 +110,7 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             {
                 {"case name", caseName},
                 {"case number", caseNumber},
-                {"solicitor name", $"{participant.First_name} {participant.Last_name}"},
+                {"solicitor name", $"{participant.FirstName} {participant.LastName}"},
                 {"client name", $"{participant.Representee}"},
                 {"Old time", "11:30 AM"},
                 {"New time", "2:10 PM"},
@@ -125,10 +125,10 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             result.Should().NotBeNull();
             result.HearingId.Should().Be(_hearing.Id);
             result.ParticipantId.Should().Be(participant.Id);
-            result.ContactEmail.Should().Be(participant.Contact_email);
+            result.ContactEmail.Should().Be(participant.ContactEmail);
             result.NotificationType.Should().Be(expectedNotificationType);
             result.MessageType.Should().Be(MessageType.Email);
-            result.PhoneNumber.Should().Be(participant.Telephone_number);
+            result.PhoneNumber.Should().Be(participant.TelephoneNumber);
             result.Parameters.Should().BeEquivalentTo(expectedParameters);
         }
 
@@ -146,7 +146,7 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             {
                 {"case name", caseName},
                 {"case number", caseNumber},
-                {"judicial office holder", $"{participant.First_name} {participant.Last_name}"},
+                {"judicial office holder", $"{participant.FirstName} {participant.LastName}"},
                 {"Old time", "11:30 AM"},
                 {"New time", "2:10 PM"},
                 {"Old Day Month Year", "10 February 2020"},
@@ -160,10 +160,10 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             result.Should().NotBeNull();
             result.HearingId.Should().Be(_hearing.Id);
             result.ParticipantId.Should().Be(participant.Id);
-            result.ContactEmail.Should().Be(participant.Contact_email);
+            result.ContactEmail.Should().Be(participant.ContactEmail);
             result.NotificationType.Should().Be(expectedNotificationType);
             result.MessageType.Should().Be(MessageType.Email);
-            result.PhoneNumber.Should().Be(participant.Telephone_number);
+            result.PhoneNumber.Should().Be(participant.TelephoneNumber);
             result.Parameters.Should().BeEquivalentTo(expectedParameters);
         }
 
@@ -173,14 +173,14 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             {
                 Id = Guid.NewGuid(),
                 Username = "testusername@hmcts.net",
-                Case_role_name = "caserolename",
-                Contact_email = "contact@hmcts.net",
-                First_name = "John",
-                Hearing_role_name = "hearingrolename",
-                Last_name = "Doe",
-                Telephone_number = "0123456789",
-                User_role_name = userRole,
-                Display_name = "Johnny",
+                CaseRoleName = "caserolename",
+                ContactEmail = "contact@hmcts.net",
+                FirstName = "John",
+                HearingRoleName = "hearingrolename",
+                LastName = "Doe",
+                TelephoneNumber = "0123456789",
+                UserRoleName = userRole,
+                DisplayName = "Johnny",
                 Representee = representee
             };
         }

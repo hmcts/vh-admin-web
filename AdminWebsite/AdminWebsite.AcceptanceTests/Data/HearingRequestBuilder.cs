@@ -10,7 +10,7 @@ namespace AdminWebsite.AcceptanceTests.Data
     {
         private readonly CreateHearingRequest _request;
         private const string DEFAULT_VENUE = "Birmingham Civil and Family Justice Centre";
-        private const string CACD_CASE_TYPE_NAME = "Court of Appeal Criminal Division";
+        private const string CACD_CaseTypeName = "Court of Appeal Criminal Division";
 
         public HearingRequestBuilder()
         {
@@ -45,7 +45,7 @@ namespace AdminWebsite.AcceptanceTests.Data
 
         public HearingRequestBuilder WithCACDCaseType()
         {
-            _request.CaseType = CACD_CASE_TYPE_NAME;
+            _request.CaseType = CACD_CaseTypeName;
             return this;
         }
     }

@@ -1,5 +1,4 @@
-﻿using AdminWebsite.BookingsAPI.Client;
-using AdminWebsite.Configuration;
+﻿using AdminWebsite.Configuration;
 using AdminWebsite.Contracts.Responses;
 using AdminWebsite.Services;
 using AdminWebsite.UnitTests.Helper;
@@ -13,6 +12,9 @@ using System.Collections.Generic;
 using System.Net;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using BookingsApi.Client;
+using BookingsApi.Contract.Requests;
+using BookingsApi.Contract.Responses;
 
 namespace AdminWebsite.UnitTests.Controllers
 {
@@ -42,12 +44,12 @@ namespace AdminWebsite.UnitTests.Controllers
                 new PersonResponse
                 {
                   Id = Guid.NewGuid(),
-                  Contact_email = "",
-                  First_name = "Adam",
-                  Last_name = "Mann",
-                  Telephone_number ="",
+                  ContactEmail = "",
+                  FirstName = "Adam",
+                  LastName = "Mann",
+                  TelephoneNumber ="",
                   Title = "Ms",
-                  Middle_names = "No",
+                  MiddleNames = "No",
                   Username = "adoman@hmcts.net"
                 }
             };
@@ -59,12 +61,12 @@ namespace AdminWebsite.UnitTests.Controllers
             _response.Add(new PersonResponse
             {
                 Id = Guid.NewGuid(),
-                Contact_email = "",
-                First_name = "Jack",
-                Last_name = "Mann",
-                Telephone_number = "",
+                ContactEmail = "",
+                FirstName = "Jack",
+                LastName = "Mann",
+                TelephoneNumber = "",
                 Title = "Mr",
-                Middle_names = "No",
+                MiddleNames = "No",
                 Username = "jackman@judiciary.net"
             });
             _bookingsApiClient.Setup(x => x.PostJudiciaryPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
@@ -99,17 +101,17 @@ namespace AdminWebsite.UnitTests.Controllers
         }
 
         [Test]
-        public async Task Should_return_judiciary_andcourtroom_accounts_if_match_to_search_term()
+        public async Task Should_return_judiciary_andCourtroomAccounts_if_match_to_search_term()
         {
             _response.Add(new PersonResponse
             {
                 Id = Guid.NewGuid(),
-                Contact_email = "",
-                First_name = "Jack",
-                Last_name = "Mann",
-                Telephone_number = "",
+                ContactEmail = "",
+                FirstName = "Jack",
+                LastName = "Mann",
+                TelephoneNumber = "",
                 Title = "Mr",
-                Middle_names = "No",
+                MiddleNames = "No",
                 Username = "jackman@judiciary.net"
             });
             _bookingsApiClient.Setup(x => x.PostJudiciaryPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))

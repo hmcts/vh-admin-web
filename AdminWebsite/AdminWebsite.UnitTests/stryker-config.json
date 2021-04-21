@@ -36,7 +36,8 @@
         "!Security/*TokenHandler.cs",
         "!Security/TokenProvider.cs",
         "!Security/UserServiceException.cs",
-        "!Services/ApplicationLogger.cs"
+        "!Services/ApplicationLogger.cs",
+        "!Services/UkPublicHolidayRetriever.cs"
       ]
     }
 }
