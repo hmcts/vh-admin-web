@@ -484,8 +484,8 @@ namespace AdminWebsite.Services
             return linkedParticipantsInRequest.Where(x => x.LinkedId == Guid.Empty)
                 .Select(lp => new LinkedParticipantRequest
                 {
-                    Participant_contact_email = lp.ParticipantContactEmail,
-                    Linked_participant_contact_email = lp.LinkedParticipantContactEmail
+                    ParticipantContactEmail = lp.ParticipantContactEmail,
+                    LinkedParticipantContactEmail = lp.LinkedParticipantContactEmail
                 }).ToList();
         }
         
@@ -500,7 +500,7 @@ namespace AdminWebsite.Services
         
             return existingLinks.Select(linkedParticipant => new LinkedParticipantRequest
                 {
-                    Participant_contact_email = participant.Contact_email, Linked_participant_contact_email = linkedParticipant.Contact_email
+                    ParticipantContactEmail = participant.ContactEmail, LinkedParticipantContactEmail = linkedParticipant.ContactEmail
                 }).ToList();
         }
 
