@@ -13,6 +13,7 @@ using AdminWebsite.AcceptanceTests.Pages;
 using TestApi.Contract.Dtos;
 using FluentAssertions;
 using TechTalk.SpecFlow;
+using OpenQA.Selenium;
 
 namespace AdminWebsite.AcceptanceTests.Steps
 {
@@ -52,7 +53,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
             if (updatePhoneAndEmail)
             {
                 SetJudgeEmailAndPhone();
-            } 
+            }
             ClickNext();
         }
 
@@ -69,8 +70,8 @@ namespace AdminWebsite.AcceptanceTests.Steps
             var judge = UserToUserAccountMapper.Map(judgeUser);
             judge.CaseRoleName = Party.Judge.Name;
             judge.HearingRoleName = PartyRole.Judge.Name;
-            _browsers[_c.CurrentUser].Driver.WaitForListToBePopulated(AssignJudgePage.JudgeNameDropdown);
-            _commonSharedSteps.WhenTheUserSelectsTheOptionFromTheDropdown(_browsers[_c.CurrentUser].Driver, AssignJudgePage.JudgeNameDropdown, judge.Username);
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AssignJudgePage.JudgeSearchField).SendKeys(judge.Username);
+            _browsers[_c.CurrentUser].Driver.WaitUntilVisible(AssignJudgePage.SearchResults).FindElements(By.TagName("li")).FirstOrDefault().Click();
             _c.Test.HearingParticipants.Add(judge);
         }
 

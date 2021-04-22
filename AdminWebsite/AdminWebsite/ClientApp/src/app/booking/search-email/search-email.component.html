@@ -29,14 +29,14 @@
       type="email"
     />
 
-    <ul *ngIf="isShowResult" class="vh-li-email">
+    <ul id="search-results-list" *ngIf="isShowResult" class="vh-li-email">
       <li *ngFor="let result of results | slice: 0:9" class="vk-showlist-m30">
         <a class="govuk-body vh-a-email" href="javascript: void(0)" (click)="selectItemClick(result)">{{ result.email }}</a>
       </li>
     </ul>
   </div>
 
-  <div class="govuk-warning-text" *ngIf="showNotFoundError">
+  <div class="govuk-warning-text" *ngIf="showCreateNewUserWarning">
     <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
     <strong class="govuk-warning-text__text">
       <span class="govuk-warning-text__assistive">Warning</span>

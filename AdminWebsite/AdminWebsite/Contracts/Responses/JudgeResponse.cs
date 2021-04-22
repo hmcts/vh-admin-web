@@ -1,3 +1,5 @@
+using AdminWebsite.Contracts.Enums;
+
 namespace AdminWebsite.Contracts.Responses
 {
     /// <summary>
@@ -24,5 +26,8 @@ namespace AdminWebsite.Contracts.Responses
         /// Judge username/email
         /// </summary>
         public string Email { get; set; }
+
+        public JudgeAccountType AccountType { get; set; }
     }
 }
+
