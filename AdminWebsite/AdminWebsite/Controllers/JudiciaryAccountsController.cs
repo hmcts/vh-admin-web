@@ -52,17 +52,17 @@ namespace AdminWebsite.Controllers
                 var searchTerm = new SearchTermRequest(term);
 
                 var personsResponse =  _bookingsApiClient.PostJudiciaryPersonBySearchTermAsync(searchTerm);
-                var courtRoomsResponse =  _userAccountService.GetJudgeUsers();
+                var courtRoomsResponse =  _userAccountService.SearchJudgesByEmail(searchTerm.Term);
 
                 await Task.WhenAll(personsResponse, courtRoomsResponse);
 
                 var persons = await personsResponse;
                 var courtRooms = await courtRoomsResponse;
 
-                var rooms = courtRooms.Where(x => x.Email.ToLower().Contains(searchTerm.Term.ToLower()));
-                var judges = persons.Select(JudgeResponseMapper.MapTo);
+                var courtRoomJudges = courtRooms.Where(x => x.Email.ToLower().Contains(searchTerm.Term.ToLower()));
+                var eJudiciaryJudges = persons.Select(x => JudgeResponseMapper.MapTo(x));
 
-                var allJudges = rooms.Concat(judges)
+                var allJudges = (courtRoomJudges ?? Enumerable.Empty<JudgeResponse>()).Concat(eJudiciaryJudges ?? Enumerable.Empty<JudgeResponse>())
                     .OrderBy(x => x.Email).Take(20).ToList();
 
                 return Ok(allJudges);

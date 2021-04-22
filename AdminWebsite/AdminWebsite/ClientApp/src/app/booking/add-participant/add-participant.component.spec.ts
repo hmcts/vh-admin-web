@@ -1166,7 +1166,6 @@ describe('AddParticipantComponent edit mode', () => {
 
     it('should update interpreter with exiting participant', () => {
         component.editMode = true;
-        console.log(component.hearing.participants);
         component.showDetails = true;
         fixture.detectChanges();
         spyOn(component.searchEmail, 'validateEmail').and.returnValue(true);
@@ -1184,7 +1183,6 @@ describe('AddParticipantComponent edit mode', () => {
         interpretee.setValue('test8@email.com');
         component.updateParticipant();
         const updatedParticipant = component.hearing.participants.find(x => x.email === 'test8@hmcts.net');
-        console.log(updatedParticipant);
         expect(updatedParticipant.display_name).toBe('Test Participant8');
     });
 });

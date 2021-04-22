@@ -23,6 +23,7 @@ export const Constants = {
         CompanyErrorMsg: 'Please enter an organisation name',
         ReferenceMsg: 'Please enter a reference',
         RepresenteeErrorMsg: 'Please enter a representee',
+        JudgeEmailErrorMsg: 'Please enter a valid judge email',
         JudgeDisplayNameErrorMsg: 'Please enter a judge name',
         DisplayNameErrorMsg: 'Please enter a display name',
         CompanyNameErrorMsg: 'Please enter a valid company name',
@@ -41,5 +42,6 @@ export const Constants = {
     IndividualRoles: ['Claimant LIP', 'Defendant LIP', 'Applicant LIP', 'Respondent LIP', 'Litigant in person'],
     DefenceAdvocate: 'App Advocate',
     None: 'None',
-    RespondentAdvocate: 'Respondent Advocate'
+    RespondentAdvocate: 'Respondent Advocate',
+    JudiciaryRoles: ['Panel Member', 'Winger']
 };
