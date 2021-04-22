@@ -213,7 +213,7 @@ namespace AdminWebsite.Services
             }).ToList();
         }
 
-        public async Task<IEnumerable<JudgeResponse>> SearchJudgesByEmail(string term) // TODO edit UserApi instead?
+        public async Task<IEnumerable<JudgeResponse>> SearchJudgesByEmail(string term)
         {
             _logger.LogDebug("Attempting to get all judge accounts.");
             var judgesList = await _userApiClient.GetJudgesAsync();

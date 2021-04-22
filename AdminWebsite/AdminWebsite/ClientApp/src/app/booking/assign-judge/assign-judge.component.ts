@@ -164,8 +164,6 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     }
 
     setFieldSubscription() {
-        // Does not update Judge summary. Sets subscription
-
         this.$subscriptions.push(
             this.judgeDisplayNameFld.valueChanges.subscribe(name => {
                 this.judge.display_name = name;
@@ -188,14 +186,12 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     }
 
     populateFormFields(existingJudge: ParticipantModel) {
-        // Does not populate, gets existing judge.
         this.logger.debug(`${this.loggerPrefix} Found judge in hearing. Populating existing selection.`);
         this.judge = existingJudge;
         this.otherInformationDetails = OtherInformationModel.init(this.hearing.other_information);
     }
 
     get canNavigateNext() {
-        // should not navigate to next page if judge data is not saved in cache.
         const savedInCacheHearing = this.hearingService.getCurrentRequest();
         return this.canNavigate && savedInCacheHearing.participants.length > 0;
     }
@@ -232,11 +228,9 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         this.judgeDisplayNameFld.setValue(text);
 
         if (this.judge && this.judge.display_name) {
-            // TODO confirm if this is redundant as set value will trigger these changes anyway
             const judge = this.hearing.participants.find(x => x.is_judge);
             if (judge) {
                 this.hearing.participants.find(x => x.is_judge).display_name = this.judge.display_name;
-                // ? should this be done here. Should this not only be done on update?
             }
         }
     }

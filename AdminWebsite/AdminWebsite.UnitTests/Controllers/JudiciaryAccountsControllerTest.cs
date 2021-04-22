@@ -155,10 +155,6 @@ namespace AdminWebsite.UnitTests.Controllers
             okRequestResult.StatusCode.Should().NotBeNull();
             var personRespList = (List<JudgeResponse>)okRequestResult.Value;
 
-            List<JudgeResponse> expectedList;
-
-
-
             var expectedJudiciaryCount = withJudiciary ? _judiciaryResponse.Count : 0;
             var expectedCourtRoomCount = withCourtroom ? _courtRoomResponse.Count : 0;
 
