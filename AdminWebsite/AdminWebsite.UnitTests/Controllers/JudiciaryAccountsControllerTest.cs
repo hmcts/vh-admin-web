@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using BookingsApi.Client;
 using BookingsApi.Contract.Requests;
 using BookingsApi.Contract.Responses;
+using System.Linq;
 
 namespace AdminWebsite.UnitTests.Controllers
 {
@@ -168,6 +169,7 @@ namespace AdminWebsite.UnitTests.Controllers
             {
                 Assert.That(personRespList, Is.EquivalentTo(_courtRoomResponse));
                 Assert.That(personRespList, Is.Not.EqualTo(_courtRoomResponse));
+                Assert.That(personRespList, Is.EqualTo(_courtRoomResponse.OrderBy(x => x.Email)));
             }
         }
 
