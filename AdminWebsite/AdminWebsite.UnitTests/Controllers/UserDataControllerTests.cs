@@ -80,10 +80,11 @@ namespace AdminWebsite.UnitTests.Controllers
         [Test]
         public void Should_return_a_list_of_judges_with_correct_search_term()
         {
-            _userAccountService.Setup(x => x.GetJudgeUsers()).ReturnsAsync(_judgeResponse);
+            var term = "SearchTerm";
+            _userAccountService.Setup(x => x.SearchJudgesByEmail(term)).ReturnsAsync(_judgeResponse);
 
             _controller = new UserDataController(_userAccountService.Object);
-            var result = _controller.GetJudges().Result;
+            var result = _controller.SearchJudgesByEmail(term).Result;
             var okObjectResult = (OkObjectResult)result.Result;
             okObjectResult.StatusCode.Should().Be(200);
 
