@@ -142,6 +142,9 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
             console.log('judge', judge);
             if (this.hearingService.canAddJudge(judge.username)) {
                 judge.is_judge = true;
+                judge.case_role_name = 'Judge';
+                judge.hearing_role_name = 'Judge';
+
                 this.courtAccountJudgeEmail = judge.email;
                 this.judgeDisplayNameFld.setValue(this.judge.display_name);
                 this.hearing.participants = this.hearing.participants.filter(x => !x.is_judge);
