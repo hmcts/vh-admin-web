@@ -109,10 +109,6 @@ export class SearchService {
     }
 
     searchJudgeAccounts(term): Observable<Array<JudgeResponse>> {
-        if (term.length >= this.minimumSearchLength) {
-            return this.bhClient.postJudgesBySearchTerm(term);
-        } else {
-            return of([]);
-        }
+        return this.bhClient.postJudgesBySearchTerm(term);
     }
 }

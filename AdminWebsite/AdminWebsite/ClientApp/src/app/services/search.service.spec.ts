@@ -211,10 +211,6 @@ describe('SearchService', () => {
     });
 
     describe('searchJudgeAccounts', () => {
-        it('should method searchEntries not call api and return empty array when term is invalid', () => {
-            const terms = invalidSearchTerms;
-            service.searchJudgeAccounts(terms).subscribe(x => expect(x.length).toBe(0));
-        });
         it('should method searchEntries call api and return persons response array when term is valid', () => {
             const terms = validSearchTerms;
             service.searchJudgeAccounts(terms).subscribe(x => expect(x).toBe(judgeList));

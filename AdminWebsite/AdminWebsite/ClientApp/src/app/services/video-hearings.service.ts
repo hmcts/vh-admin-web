@@ -432,15 +432,7 @@ export class VideoHearingsService {
     }
 
     canAddUser(username: string): boolean {
-        const userPresent = this.modelHearing.participants.find(x => x.username.toLowerCase() === username.toLowerCase());
-        return !userPresent;
-    }
-
-    canAddJudge(username: string): boolean {
-        const userPresent = this.modelHearing.participants.find(
-            x => x.username?.toLowerCase() === username.toLowerCase() && this.judiciaryRoles.includes(x.hearing_role_name)
-        );
-        return !userPresent;
+        return this.modelHearing.participants.every(x => x.username.toLowerCase() !== username.toLowerCase());
     }
 
     getJudge(): ParticipantModel {

@@ -1,11 +1,11 @@
 import { Component, EventEmitter, Output, OnInit, Input, OnDestroy } from '@angular/core';
-import { BehaviorSubject, Subject, Subscription } from 'rxjs';
+import { BehaviorSubject, Observable, of, Subject, Subscription } from 'rxjs';
 import { Constants } from '../../common/constants';
 import { ParticipantModel } from '../../common/model/participant.model';
 import { SearchService } from '../../services/search.service';
 import { ConfigService } from 'src/app/services/config.service';
 import { Logger } from '../../services/logger';
-import { debounceTime, distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, filter, map, switchMap, tap } from 'rxjs/operators';
 
 @Component({
     selector: 'app-search-email',
@@ -58,7 +58,11 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
                         this.searchPending.next(true);
                     }),
                     switchMap(term => {
-                        return this.searchService.participantSearch(term, this.hearingRoleParticipant);
+                        if (term.length > 2) {
+                            return this.searchService.participantSearch(term, this.hearingRoleParticipant);
+                        } else {
+                            return of([]);
+                        }
                     }),
                     tap(personsFound => {
                         if (personsFound && personsFound.length > 0) {

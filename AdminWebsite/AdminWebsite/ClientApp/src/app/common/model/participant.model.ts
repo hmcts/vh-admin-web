@@ -15,8 +15,8 @@ export class ParticipantModel {
     phone?: string | undefined;
     representee?: string | undefined;
     company?: string | undefined;
-    is_judge: boolean;
-    is_exist_person: boolean;
+    is_judge?: boolean;
+    is_exist_person?: boolean;
     interpreterFor?: string;
     linked_participants?: LinkedParticipantModel[];
     interpretee_name?: string | undefined;
@@ -25,35 +25,24 @@ export class ParticipantModel {
     is_courtroom_account?: boolean;
 
     static fromPersonResponse(person: PersonResponse): ParticipantModel {
-        let participant: ParticipantModel;
-        if (person) {
-            participant = new ParticipantModel();
-            participant.id = person.id;
-            participant.title = person.title;
-            participant.first_name = person.first_name;
-            participant.middle_names = person.middle_names;
-            participant.last_name = person.last_name;
-            participant.username = person.username;
-            participant.email = person.contact_email ?? person.username;
-            participant.phone = person.telephone_number;
-            participant.representee = '';
-            participant.company = person.organisation;
-        }
-
-        return participant;
+        return person
+            ? {
+                  ...person,
+                  email: person.contact_email ?? person.username,
+                  phone: person.telephone_number,
+                  representee: '',
+                  company: person.organisation
+              }
+            : null;
     }
 
     static fromJudgeResponse(judge: JudgeResponse): ParticipantModel {
-        let participant: ParticipantModel;
-        if (judge) {
-            participant = new ParticipantModel();
-            participant.first_name = judge.first_name;
-            participant.last_name = judge.last_name;
-            participant.username = judge.email;
-            participant.email = judge.email;
-            participant.display_name = judge.display_name;
-            participant.is_courtroom_account = judge.account_type === JudgeAccountType.Courtroom;
-        }
-        return participant;
+        return judge
+            ? {
+                  ...judge,
+                  username: judge.email,
+                  is_courtroom_account: judge.account_type === JudgeAccountType.Courtroom
+              }
+            : null;
     }
 }

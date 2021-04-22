@@ -119,7 +119,7 @@ describe('AssignJudgeComponent', () => {
                 'updateHearingRequest',
                 'cancelRequest',
                 'setBookingHasChanged',
-                'canAddJudge'
+                'canAddUser'
             ]);
             videoHearingsServiceSpy.getCurrentRequest.and.returnValue(newHearing);
             emailValidationServiceSpy.validateEmail.and.returnValue(true);
@@ -254,7 +254,7 @@ describe('AssignJudgeComponent', () => {
         });
 
         it('should get current booking and judge details', () => {
-            videoHearingsServiceSpy.canAddJudge.and.returnValue(true);
+            videoHearingsServiceSpy.canAddUser.and.returnValue(true);
             spyOn(component, 'updateJudge');
 
             component.ngOnInit();
@@ -422,7 +422,7 @@ describe('AssignJudgeComponent', () => {
         });
 
         it('should set correct validation errors if cannot add judge', () => {
-            videoHearingsServiceSpy.canAddJudge.and.returnValue(false);
+            videoHearingsServiceSpy.canAddUser.and.returnValue(false);
         });
 
         it('should set correct validation errors if display name is null', () => {
@@ -435,7 +435,7 @@ describe('AssignJudgeComponent', () => {
         });
 
         it('should set correct validation errors if cannot add judge', () => {
-            videoHearingsServiceSpy.canAddJudge.and.returnValue(false);
+            videoHearingsServiceSpy.canAddUser.and.returnValue(false);
 
             component.saveJudge();
 
@@ -445,7 +445,7 @@ describe('AssignJudgeComponent', () => {
         });
 
         it('should set correct validation errors if can add judge but form is invalid', () => {
-            videoHearingsServiceSpy.canAddJudge.and.returnValue(true);
+            videoHearingsServiceSpy.canAddUser.and.returnValue(true);
             component.form.setErrors({ incorrect: true });
             component.saveJudge();
 
@@ -455,7 +455,7 @@ describe('AssignJudgeComponent', () => {
         });
 
         it('should set correct validation errors if can add judge but email is invalid', () => {
-            videoHearingsServiceSpy.canAddJudge.and.returnValue(true);
+            videoHearingsServiceSpy.canAddUser.and.returnValue(true);
             component.isValidEmail = false;
             component.saveJudge();
 
@@ -465,7 +465,7 @@ describe('AssignJudgeComponent', () => {
         });
 
         it('should update hearing if valid', () => {
-            videoHearingsServiceSpy.canAddJudge.and.returnValue(true);
+            videoHearingsServiceSpy.canAddUser.and.returnValue(true);
 
             spyOn(component, 'changeDisplayName');
             spyOn(component, 'changeEmail');
@@ -489,7 +489,7 @@ describe('AssignJudgeComponent', () => {
             let routeExpected;
 
             beforeEach(() => {
-                videoHearingsServiceSpy.canAddJudge.and.returnValue(true);
+                videoHearingsServiceSpy.canAddUser.and.returnValue(true);
 
                 spyOn(component, 'changeDisplayName');
                 spyOn(component, 'changeEmail');
@@ -543,13 +543,13 @@ describe('AssignJudgeComponent', () => {
             it('should set validation error to true if judge account can not be added', () => {
                 component.isJudgeParticipantError = false;
 
-                videoHearingsServiceSpy.canAddJudge.and.returnValue(false);
+                videoHearingsServiceSpy.canAddUser.and.returnValue(false);
                 component.updateJudge(judge);
 
                 // expect(videoHearingsServiceSpy.canAddJudge).toHaveBeenCalledTimes(1);
                 // TODO refactor to allow better unit testing such as this
 
-                expect(videoHearingsServiceSpy.canAddJudge).toHaveBeenCalledWith(judge.username);
+                expect(videoHearingsServiceSpy.canAddUser).toHaveBeenCalledWith(judge.username);
                 expect(component.isJudgeParticipantError).toBe(true);
                 expect(component.canNavigate).toBe(false);
             });
@@ -557,7 +557,7 @@ describe('AssignJudgeComponent', () => {
             describe('when judge account can be added', () => {
                 beforeEach(() => {
                     const updatedJudgeDisplayName = 'UpdatedJudgeDisplayName';
-                    videoHearingsServiceSpy.canAddJudge.and.returnValue(true);
+                    videoHearingsServiceSpy.canAddUser.and.returnValue(true);
                     component.judge.display_name = updatedJudgeDisplayName;
                 });
 
@@ -570,7 +570,7 @@ describe('AssignJudgeComponent', () => {
                 });
                 afterEach(() => {
                     component.updateJudge(judge);
-                    expect(videoHearingsServiceSpy.canAddJudge).toHaveBeenCalledWith(judge.username);
+                    expect(videoHearingsServiceSpy.canAddUser).toHaveBeenCalledWith(judge.username);
                     const updatedJudges = component.hearing.participants.filter(participant => participant.is_judge);
 
                     expect(updatedJudges.length).toBe(1);

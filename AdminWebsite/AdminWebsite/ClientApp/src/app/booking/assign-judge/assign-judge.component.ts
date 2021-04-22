@@ -139,8 +139,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         this.canNavigate = false;
         this.isJudgeParticipantError = false;
         if (judge) {
-            console.log('judge', judge);
-            if (this.hearingService.canAddJudge(judge.username)) {
+            if (this.hearingService.canAddUser(judge.username)) {
                 judge.is_judge = true;
                 judge.case_role_name = 'Judge';
                 judge.hearing_role_name = 'Judge';
@@ -280,7 +279,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
             return;
         }
 
-        if (!this.hearingService.canAddJudge(this.judge.display_name)) {
+        if (!this.hearingService.canAddUser(this.judge.display_name)) {
             this.logger.warn(`${this.loggerPrefix} Judge could not be a panel member or winger in the same hearing.`);
             this.isJudgeParticipantError = true;
             this.failedSubmission = true;

@@ -39,7 +39,7 @@ describe('ParticipantModel', () => {
     it('should mapping return empty ParticipantModel if  PersonResponse is null', () => {
         const person = null;
         participant = ParticipantModel.fromPersonResponse(person);
-        expect(participant).toEqual(undefined);
+        expect(participant).toBeNull();
     });
 
     it('should map JudgeResponse to ParticipantModel', () => {
@@ -89,7 +89,10 @@ describe('ParticipantModel', () => {
 
     it('should mapping return empty ParticipantModel if  JudgeResponse is null', () => {
         const judge = null;
+        console.log('here');
         participant = ParticipantModel.fromJudgeResponse(judge);
-        expect(participant).toEqual(undefined);
+        console.log('here');
+        console.log(participant);
+        expect(participant).toBeNull();
     });
 });
