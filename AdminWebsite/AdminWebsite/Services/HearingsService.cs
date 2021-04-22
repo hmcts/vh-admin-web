@@ -423,11 +423,6 @@ namespace AdminWebsite.Services
 
         public async Task UpdateParticipantLinks(Guid hearingId, EditHearingRequest request, HearingDetailsResponse hearing)
         {
-            if (!request.Participants.SelectMany(x => x.LinkedParticipants).Any())
-            {
-                return;
-            }
-
             var existingParticipantWithLinks = request.Participants.Where(x => x.LinkedParticipants.Any() && x.Id.HasValue);
             foreach (var participantRequest in existingParticipantWithLinks)
             {
@@ -458,32 +453,52 @@ namespace AdminWebsite.Services
                 updateParticipantRequest);
         }
 
-        private List<LinkedParticipantRequest> BuildLinkedParticipantRequestForExistingParticipant(HearingDetailsResponse hearing, ParticipantResponse participant, List<LinkedParticipant> linkedParticipantsInRequest)
+        private List<LinkedParticipantRequest> BuildLinkedParticipantRequestForExistingParticipant(HearingDetailsResponse hearing, ParticipantResponse participant, IList<LinkedParticipant> linkedParticipantsInRequest)
         {
             var requests = new List<LinkedParticipantRequest>();
 
-            var newLinks = linkedParticipantsInRequest.Where(x => x.LinkedId == Guid.Empty)
+            var newLinks = GetNewLinkedParticipants(linkedParticipantsInRequest);
+        
+            requests.AddRange(newLinks);
+
+            var existingLinks = GetExistingLinkedParticipants(linkedParticipantsInRequest, hearing, participant);
+            
+            requests.AddRange(existingLinks);   
+
+            return requests;
+        }
+
+        private static IEnumerable<LinkedParticipantRequest> GetNewLinkedParticipants(IEnumerable<LinkedParticipant> linkedParticipantsInRequest)
+        {
+            return linkedParticipantsInRequest.Where(x => x.LinkedId == Guid.Empty)
                 .Select(lp => new LinkedParticipantRequest
                 {
                     ParticipantContactEmail = lp.ParticipantContactEmail,
                     LinkedParticipantContactEmail = lp.LinkedParticipantContactEmail
-                });
-            requests.AddRange(newLinks);
-
-            var existingLinksToUpdate = linkedParticipantsInRequest.Where(x => x.LinkedId != Guid.Empty && !HasExistingLink(x, participant));
-
+                }).ToList();
+        }
+        
+        private static IEnumerable<LinkedParticipantRequest> GetExistingLinkedParticipants(IEnumerable<LinkedParticipant> linkedParticipantsInRequest, HearingDetailsResponse hearing, ParticipantResponse participant)
+        {
+            var existingLinksToUpdate = linkedParticipantsInRequest.Where(x => x.LinkedId != Guid.Empty && !HasExistingLink(x, participant) && LinkedParticipantExists(hearing, x)).ToList();
+            
             var existingLinks = existingLinksToUpdate.Select(linkedParticipantInRequest => 
-                hearing.Participants.First(x => x.Id == linkedParticipantInRequest.LinkedId))
-                .Select(linkedParticipant => new LinkedParticipantRequest
+                hearing.Participants.Find(x => x.Id == linkedParticipantInRequest.LinkedId)).ToList();
+
+            if (!existingLinks.Any()) return new List<LinkedParticipantRequest>();
+        
+            return existingLinks.Select(linkedParticipant => new LinkedParticipantRequest
                 {
                     ParticipantContactEmail = participant.ContactEmail, LinkedParticipantContactEmail = linkedParticipant.ContactEmail
-                });
-
-            requests.AddRange(existingLinks);
-            return requests;
+                }).ToList();
         }
 
-        private bool HasExistingLink(LinkedParticipant linkedParticipantInRequest, ParticipantResponse participant)
+        private static bool LinkedParticipantExists(HearingDetailsResponse hearing, LinkedParticipant linkedParticipant)
+        {
+            return hearing.Participants.Any(participant => participant.Id == linkedParticipant.LinkedId);
+        }
+        
+        private static bool HasExistingLink(LinkedParticipant linkedParticipantInRequest, ParticipantResponse participant)
         {
             var linkedId = linkedParticipantInRequest.LinkedId;
             var existingLink = false;
