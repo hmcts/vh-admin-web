@@ -125,9 +125,21 @@ namespace AdminWebsite.UnitTests.Controllers
                 {
                     new JudgeResponse
                     {
-                        FirstName = "Sam",
-                        LastName = "Smith",
-                        Email = "judge.sam@judiciary.net"
+                        FirstName = "FirstName1",
+                        LastName = "FirstName2",
+                        Email = "judge.1@judiciary.net"
+                    },
+                    new JudgeResponse
+                    {
+                        FirstName = "FirstName3",
+                        LastName = "LastName3",
+                        Email = "judge.3@judiciary.net"
+                    },
+                    new JudgeResponse
+                    {
+                        FirstName = "FirstName2",
+                        LastName = "LastName2",
+                        Email = "judge.2@judiciary.net" // Out of order to test order
                     }
                 };
 
@@ -142,12 +154,21 @@ namespace AdminWebsite.UnitTests.Controllers
             okRequestResult.StatusCode.Should().NotBeNull();
             var personRespList = (List<JudgeResponse>)okRequestResult.Value;
 
+            List<JudgeResponse> expectedList;
+
+
+
             var expectedJudiciaryCount = withJudiciary ? _judiciaryResponse.Count : 0;
             var expectedCourtRoomCount = withCourtroom ? _courtRoomResponse.Count : 0;
 
             var expectedTotal = expectedJudiciaryCount + expectedCourtRoomCount;
 
             personRespList.Count.Should().Be(expectedTotal);
+            if(!withJudiciary && withCourtroom) // Only courtroom is set up to test order
+            {
+                Assert.That(personRespList, Is.EquivalentTo(_courtRoomResponse));
+                Assert.That(personRespList, Is.Not.EqualTo(_courtRoomResponse));
+            }
         }
 
         [Test]
