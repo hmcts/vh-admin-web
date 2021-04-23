@@ -30,6 +30,7 @@ import { CaseModel } from '../common/model/case.model';
 import { ParticipantModel } from '../common/model/participant.model';
 import { EndpointModel } from '../common/model/endpoint.model';
 import { LinkedParticipantModel } from '../common/model/linked-participant.model';
+import { Constants } from '../common/constants';
 
 @Injectable({
     providedIn: 'root'
@@ -41,6 +42,7 @@ export class VideoHearingsService {
 
     private modelHearing: HearingModel;
     private participantRoles = new Map<string, CaseAndHearingRolesResponse[]>();
+    private judiciaryRoles = Constants.JudiciaryRoles;
 
     constructor(private bhClient: BHClient) {
         this.newRequestKey = 'bh-newRequest';
@@ -433,5 +435,13 @@ export class VideoHearingsService {
 
     getTelephoneConferenceId(hearingId: string): Observable<PhoneConferenceResponse> {
         return this.bhClient.getTelephoneConferenceIdById(hearingId);
+    }
+
+    canAddUser(username: string): boolean {
+        return this.modelHearing.participants.every(x => x.username.toLowerCase() !== username.toLowerCase());
+    }
+
+    getJudge(): ParticipantModel {
+        return this.modelHearing.participants.find(x => x.is_judge);
     }
 }

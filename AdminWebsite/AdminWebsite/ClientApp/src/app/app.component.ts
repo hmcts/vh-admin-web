@@ -1,6 +1,5 @@
 import { Component, ElementRef, HostListener, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { AdalService } from 'adal-angular4';
 import { ConfigService } from './services/config.service';
 import { PageTrackerService } from './services/page-tracker.service';
 import { WindowRef } from './security/window-ref';
@@ -9,6 +8,7 @@ import { VideoHearingsService } from './services/video-hearings.service';
 import { BookingService } from './services/booking.service';
 import { DeviceType } from './services/device-type';
 import { ConnectionService } from './services/connection/connection.service';
+import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { ReferenceDataService } from './services/reference-data.service';
 
 @Component({
@@ -36,7 +36,7 @@ export class AppComponent implements OnInit {
     loggedIn: boolean;
     menuItemIndex: number;
     constructor(
-        private adalSvc: AdalService,
+        private oidcSecurityService: OidcSecurityService,
         private configService: ConfigService,
         private router: Router,
         private window: WindowRef,
@@ -44,16 +44,9 @@ export class AppComponent implements OnInit {
         private videoHearingsService: VideoHearingsService,
         private bookingService: BookingService,
         private deviceTypeService: DeviceType,
-        private renderer: Renderer2,
-        private connection: ConnectionService,
+        connection: ConnectionService,
         private refDataService: ReferenceDataService
     ) {
-        this.config.tenant = this.configService.clientSettings.tenant_id;
-        this.config.clientId = this.configService.clientSettings.client_id;
-        this.config.redirectUri = this.configService.clientSettings.redirect_uri;
-        this.config.postLogoutRedirectUri = this.configService.clientSettings.post_logout_redirect_uri;
-        this.adalSvc.init(this.config);
-
         pageTracker.trackNavigation(router);
         pageTracker.trackPreviousPage(router);
 
@@ -67,18 +60,22 @@ export class AppComponent implements OnInit {
     ngOnInit() {
         this.checkBrowser();
         const currentUrl = this.window.getLocation().href;
-        this.adalSvc.handleWindowCallback();
-        this.loggedIn = this.adalSvc.userInfo.authenticated;
+        this.configService.getClientSettings().subscribe(clientSettings => {
+            this.oidcSecurityService.checkAuth().subscribe(loggedIn => {
+                this.loggedIn = loggedIn;
+                if (!this.loggedIn) {
+                    this.router.navigate(['/login'], { queryParams: { returnUrl: currentUrl } });
+                    return;
+                }
 
-        if (!this.loggedIn) {
-            this.router.navigate(['/login'], { queryParams: { returnUrl: currentUrl } });
-        }
-        this.refDataService.fetchPublicHolidays();
-        this.headerComponent.confirmLogout.subscribe(() => {
-            this.showConfirmation();
-        });
-        this.headerComponent.confirmSaveBooking.subscribe(menuItemIndex => {
-            this.showConfirmationSaveBooking(menuItemIndex);
+                this.refDataService.fetchPublicHolidays();
+                this.headerComponent.confirmLogout.subscribe(() => {
+                    this.showConfirmation();
+                });
+                this.headerComponent.confirmSaveBooking.subscribe(menuItemIndex => {
+                    this.showConfirmationSaveBooking(menuItemIndex);
+                });
+            });
         });
     }
 

@@ -1,17 +1,20 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
+import { Observable, of, zip } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map, switchMap } from 'rxjs/operators';
+
 import { IDropDownModel } from '../common/model/drop-down.model';
 import { ParticipantModel } from '../common/model/participant.model';
-import { BHClient, PersonResponse } from '../services/clients/api-client';
+import { BHClient, JudgeResponse, PersonResponse } from '../services/clients/api-client';
 import { Constants } from '../common/constants';
+import { JudgeDataService } from '../booking/services/judge-data.service';
 
 @Injectable({
     providedIn: 'root'
 })
 export class SearchService {
-    // empty since the functionality is yet to be implemented
-    ParticipantList: ParticipantModel[] = [];
+    private judgeRole = Constants.Judge;
+    private judiciaryRoles = Constants.JudiciaryRoles;
+    private minimumSearchLength = 3;
 
     TitleList: IDropDownModel[] = [
         {
@@ -60,18 +63,52 @@ export class SearchService {
 
     constructor(private bhClient: BHClient) {}
 
-    search(terms: Observable<string>) {
-        return terms
-            .pipe(debounceTime(500))
-            .pipe(distinctUntilChanged())
-            .pipe(switchMap(term => this.searchEntries(term)));
+    participantSearch(term: string, role: string): Observable<Array<ParticipantModel>> {
+        if (role === this.judgeRole) {
+            return this.searchJudgeAccounts(term).pipe(
+                map(judges => {
+                    return judges.map(judge => {
+                        return ParticipantModel.fromJudgeResponse(judge);
+                    });
+                })
+            );
+        } else {
+            let persons$: Observable<Array<PersonResponse>>;
+            if (this.judiciaryRoles.includes(role)) {
+                persons$ = this.searchJudiciaryEntries(term);
+            } else {
+                persons$ = this.searchEntries(term);
+            }
+
+            return persons$.pipe(
+                map(persons => {
+                    return persons.map(person => {
+                        return ParticipantModel.fromPersonResponse(person);
+                    });
+                })
+            );
+        }
     }
 
     searchEntries(term): Observable<Array<PersonResponse>> {
         const allResults: PersonResponse[] = [];
-        if (term.length > 2) {
+        if (term.length >= this.minimumSearchLength) {
             return this.bhClient.postPersonBySearchTerm(term);
+        } else {
+            return of(allResults);
         }
-        return of(allResults);
+    }
+
+    searchJudiciaryEntries(term): Observable<Array<PersonResponse>> {
+        const allResults: PersonResponse[] = [];
+        if (term.length >= this.minimumSearchLength) {
+            return this.bhClient.postJudiciaryPersonBySearchTerm(term);
+        } else {
+            return of(allResults);
+        }
+    }
+
+    searchJudgeAccounts(term): Observable<Array<JudgeResponse>> {
+        return this.bhClient.postJudgesBySearchTerm(term);
     }
 }

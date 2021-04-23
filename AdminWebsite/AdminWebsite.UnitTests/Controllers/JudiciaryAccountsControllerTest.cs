@@ -1,5 +1,4 @@
-﻿using AdminWebsite.BookingsAPI.Client;
-using AdminWebsite.Configuration;
+﻿using AdminWebsite.Configuration;
 using AdminWebsite.Contracts.Responses;
 using AdminWebsite.Services;
 using AdminWebsite.UnitTests.Helper;
@@ -13,6 +12,10 @@ using System.Collections.Generic;
 using System.Net;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using BookingsApi.Client;
+using BookingsApi.Contract.Requests;
+using BookingsApi.Contract.Responses;
+using System.Linq;
 
 namespace AdminWebsite.UnitTests.Controllers
 {
@@ -21,7 +24,7 @@ namespace AdminWebsite.UnitTests.Controllers
         private AdminWebsite.Controllers.JudiciaryAccountsController _controller;
         private Mock<IBookingsApiClient> _bookingsApiClient;
         private Mock<IUserAccountService> _userAccountService;
-        private List<PersonResponse> _response;
+        private List<PersonResponse> _judiciaryResponse;
 
 
         [SetUp]
@@ -37,17 +40,17 @@ namespace AdminWebsite.UnitTests.Controllers
             _controller = new AdminWebsite.Controllers.JudiciaryAccountsController(_userAccountService.Object,
                 JavaScriptEncoder.Default, _bookingsApiClient.Object, Options.Create(testSettings));
 
-            _response = new List<PersonResponse>
+            _judiciaryResponse = new List<PersonResponse>
             {
                 new PersonResponse
                 {
                   Id = Guid.NewGuid(),
-                  Contact_email = "",
-                  First_name = "Adam",
-                  Last_name = "Mann",
-                  Telephone_number ="",
+                  ContactEmail = "",
+                  FirstName = "Adam",
+                  LastName = "Mann",
+                  TelephoneNumber ="",
                   Title = "Ms",
-                  Middle_names = "No",
+                  MiddleNames = "No",
                   Username = "adoman@hmcts.net"
                 }
             };
@@ -56,19 +59,19 @@ namespace AdminWebsite.UnitTests.Controllers
         [Test]
         public async Task Should_return_request_if_match_to_search_term()
         {
-            _response.Add(new PersonResponse
+            _judiciaryResponse.Add(new PersonResponse
             {
                 Id = Guid.NewGuid(),
-                Contact_email = "",
-                First_name = "Jack",
-                Last_name = "Mann",
-                Telephone_number = "",
+                ContactEmail = "",
+                FirstName = "Jack",
+                LastName = "Mann",
+                TelephoneNumber = "",
                 Title = "Mr",
-                Middle_names = "No",
+                MiddleNames = "No",
                 Username = "jackman@judiciary.net"
             });
             _bookingsApiClient.Setup(x => x.PostJudiciaryPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
-                              .ReturnsAsync(_response);
+                              .ReturnsAsync(_judiciaryResponse);
 
             var searchTerm = "ado";
             var result = await _controller.PostJudiciaryPersonBySearchTermAsync(searchTerm);
@@ -77,7 +80,7 @@ namespace AdminWebsite.UnitTests.Controllers
             okRequestResult.StatusCode.Should().NotBeNull();
             var personRespList = (List<PersonResponse>)okRequestResult.Value;
             personRespList.Count.Should().Be(1);
-            personRespList[0].Username.Should().Be(_response[1].Username);
+            personRespList[0].Username.Should().Be(_judiciaryResponse[1].Username);
         }
 
         [Test]
@@ -99,31 +102,50 @@ namespace AdminWebsite.UnitTests.Controllers
         }
 
         [Test]
-        public async Task Should_return_judiciary_andcourtroom_accounts_if_match_to_search_term()
+        [TestCase(false, false)]
+        [TestCase(false, true)]
+        [TestCase(true, false)]
+        [TestCase(true, true)]
+        public async Task Should_return_judiciary_and_courtroom_accounts_if_match_to_search_term(bool withJudiciary, bool withCourtroom)
         {
-            _response.Add(new PersonResponse
+            _judiciaryResponse.Add(new PersonResponse
             {
                 Id = Guid.NewGuid(),
-                Contact_email = "",
-                First_name = "Jack",
-                Last_name = "Mann",
-                Telephone_number = "",
+                ContactEmail = "",
+                FirstName = "Jack",
+                LastName = "Mann",
+                TelephoneNumber = "",
                 Title = "Mr",
-                Middle_names = "No",
+                MiddleNames = "No",
                 Username = "jackman@judiciary.net"
             });
             _bookingsApiClient.Setup(x => x.PostJudiciaryPersonBySearchTermAsync(It.IsAny<SearchTermRequest>()))
-                              .ReturnsAsync(_response);
-            _userAccountService.Setup(x => x.GetJudgeUsers())
-                .ReturnsAsync(new List<JudgeResponse>
+                              .ReturnsAsync(withJudiciary ? _judiciaryResponse : new List<PersonResponse>());
+
+            var _courtRoomResponse = new List<JudgeResponse>
                 {
                     new JudgeResponse
                     {
-                        FirstName = "Sam",
-                        LastName = "Smith",
-                        Email = "judge.sam@judiciary.net"
+                        FirstName = "FirstName1",
+                        LastName = "FirstName2",
+                        Email = "judge.1@judiciary.net"
+                    },
+                    new JudgeResponse
+                    {
+                        FirstName = "FirstName3",
+                        LastName = "LastName3",
+                        Email = "judge.3@judiciary.net"
+                    },
+                    new JudgeResponse
+                    {
+                        FirstName = "FirstName2",
+                        LastName = "LastName2",
+                        Email = "judge.2@judiciary.net" // Out of order to test order
                     }
-                });
+                };
+
+            _userAccountService.Setup(x => x.SearchJudgesByEmail(It.IsAny<string>()))
+                .ReturnsAsync(withCourtroom ? _courtRoomResponse : new List<JudgeResponse>());
 
 
             var searchTerm = "judici";
@@ -132,8 +154,19 @@ namespace AdminWebsite.UnitTests.Controllers
             var okRequestResult = (OkObjectResult)result.Result;
             okRequestResult.StatusCode.Should().NotBeNull();
             var personRespList = (List<JudgeResponse>)okRequestResult.Value;
-            personRespList.Count.Should().Be(3);
-            personRespList[0].Email.Should().Be(_response[0].Username);
+
+            var expectedJudiciaryCount = withJudiciary ? _judiciaryResponse.Count : 0;
+            var expectedCourtRoomCount = withCourtroom ? _courtRoomResponse.Count : 0;
+
+            var expectedTotal = expectedJudiciaryCount + expectedCourtRoomCount;
+
+            personRespList.Count.Should().Be(expectedTotal);
+            if(!withJudiciary && withCourtroom) // Only courtroom is set up to test order
+            {
+                Assert.That(personRespList, Is.EquivalentTo(_courtRoomResponse));
+                Assert.That(personRespList, Is.Not.EqualTo(_courtRoomResponse));
+                Assert.That(personRespList, Is.EqualTo(_courtRoomResponse.OrderBy(x => x.Email)));
+            }
         }
 
         [Test]

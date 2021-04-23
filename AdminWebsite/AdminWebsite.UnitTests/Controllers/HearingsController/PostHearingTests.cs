@@ -1,4 +1,3 @@
-using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
@@ -20,13 +19,17 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using AdminWebsite.Contracts.Requests;
+using BookingsApi.Client;
+using BookingsApi.Contract.Requests;
+using BookingsApi.Contract.Requests.Enums;
+using BookingsApi.Contract.Responses;
 using NotificationApi.Contract;
 using VideoApi.Client;
-using EndpointResponse = AdminWebsite.BookingsAPI.Client.EndpointResponse;
-using LinkedParticipantRequest = AdminWebsite.BookingsAPI.Client.LinkedParticipantRequest;
-using LinkedParticipantResponse = AdminWebsite.BookingsAPI.Client.LinkedParticipantResponse;
-using LinkedParticipantType = AdminWebsite.BookingsAPI.Client.LinkedParticipantType;
-using CaseResponse = AdminWebsite.BookingsAPI.Client.CaseResponse;
+using LinkedParticipantRequest = BookingsApi.Contract.Requests.LinkedParticipantRequest;
+using EndpointResponse = BookingsApi.Contract.Responses.EndpointResponse;
+using LinkedParticipantResponse = BookingsApi.Contract.Responses.LinkedParticipantResponse;
+using CaseResponse = BookingsApi.Contract.Responses.CaseResponse;
+using LinkedParticipantType = BookingsApi.Contract.Enums.LinkedParticipantType;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {
@@ -69,19 +72,19 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 Mock.Of<IPublicHolidayRetriever>());
 
             _userAccountService
-                .Setup(x => x.UpdateParticipantUsername(It.IsAny<AdminWebsite.BookingsAPI.Client.ParticipantRequest>()))
-                .Callback<AdminWebsite.BookingsAPI.Client.ParticipantRequest>(p => { p.Username ??= p.Contact_email; })
+                .Setup(x => x.UpdateParticipantUsername(It.IsAny<BookingsApi.Contract.Requests.ParticipantRequest>()))
+                .Callback<BookingsApi.Contract.Requests.ParticipantRequest>(p => { p.Username ??= p.ContactEmail; })
                 .ReturnsAsync(new User());
         }
 
         [Test]
         public async Task Should_update_participant_user_details()
         {
-            var participant = new BookingsAPI.Client.ParticipantRequest
+            var participant = new BookingsApi.Contract.Requests.ParticipantRequest
             {
                 Username = "username",
-                Case_role_name = "Applicant",
-                Hearing_role_name = "Representative"
+                CaseRoleName = "Applicant",
+                HearingRoleName = "Representative"
             };
 
             // setup response
@@ -98,17 +101,17 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task Should_update_participant_username_to_aad_email_id()
         {
-            var participant = new BookingsAPI.Client.ParticipantRequest
+            var participant = new BookingsApi.Contract.Requests.ParticipantRequest
             {
                 Username = "username@hmcts.net",
-                Case_role_name = "Applicant",
-                Hearing_role_name = "Representative",
-                Contact_email = "username@hmcts.net"
+                CaseRoleName = "Applicant",
+                HearingRoleName = "Representative",
+                ContactEmail = "username@hmcts.net"
             };
-            var participantList = new List<BookingsAPI.Client.ParticipantRequest> { participant };
+            var participantList = new List<BookingsApi.Contract.Requests.ParticipantRequest> { participant };
 
             const string da = "username@hmcts.net";
-            var endpoints = new EndpointRequest { Display_name = "displayname", Defence_advocate_username = da };
+            var endpoints = new EndpointRequest { DisplayName = "displayname", DefenceAdvocateUsername = da };
             var endpointList = new List<EndpointRequest> {endpoints};
 
             var hearing = new BookNewHearingRequest
@@ -137,30 +140,30 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         {
             var newHearingRequest = new BookNewHearingRequest
             {
-                Participants = new List<BookingsAPI.Client.ParticipantRequest>
+                Participants = new List<BookingsApi.Contract.Requests.ParticipantRequest>
                 {
-                    new BookingsAPI.Client.ParticipantRequest
+                    new BookingsApi.Contract.Requests.ParticipantRequest
                     {
-                        Case_role_name = "CaseRole", Contact_email = "contact1@hmcts.net",
-                        Hearing_role_name = "HearingRole", Display_name = "display name1",
-                        First_name = "fname", Middle_names = "", Last_name = "lname1", Username = "username1@hmcts.net",
-                        Organisation_name = "", Representee = "", Telephone_number = ""
+                        CaseRoleName = "CaseRole", ContactEmail = "contact1@hmcts.net",
+                        HearingRoleName = "HearingRole", DisplayName = "display name1",
+                        FirstName = "fname", MiddleNames = "", LastName = "lname1", Username = "username1@hmcts.net",
+                        OrganisationName = "", Representee = "", TelephoneNumber = ""
                     },
-                    new BookingsAPI.Client.ParticipantRequest
+                    new BookingsApi.Contract.Requests.ParticipantRequest
                     {
-                        Case_role_name = "CaseRole", Contact_email = "contact2@hmcts.net",
-                        Hearing_role_name = "HearingRole", Display_name = "display name2",
-                        First_name = "fname2", Middle_names = "", Last_name = "lname2",
-                        Username = "username2@hmcts.net", Organisation_name = "", Representee = "",
-                        Telephone_number = ""
+                        CaseRoleName = "CaseRole", ContactEmail = "contact2@hmcts.net",
+                        HearingRoleName = "HearingRole", DisplayName = "display name2",
+                        FirstName = "fname2", MiddleNames = "", LastName = "lname2",
+                        Username = "username2@hmcts.net", OrganisationName = "", Representee = "",
+                        TelephoneNumber = ""
                     },
                 },
                 Endpoints = new List<EndpointRequest>
                 {
                     new EndpointRequest
-                        {Display_name = "displayname1", Defence_advocate_username = "username1@hmcts.net"},
+                        {DisplayName = "displayname1", DefenceAdvocateUsername = "username1@hmcts.net"},
                     new EndpointRequest
-                        {Display_name = "displayname2", Defence_advocate_username = "username2@hmcts.net"},
+                        {DisplayName = "displayname2", DefenceAdvocateUsername = "username2@hmcts.net"},
                 }
             };
             
@@ -185,27 +188,27 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
 
         [Test]
-        public async Task Should_create_a_hearing_with_linked_participants()
+        public async Task Should_create_a_hearing_with_LinkedParticipants()
         {
             // request.
             var newHearingRequest = new BookNewHearingRequest()
             {
-                Participants = new List<BookingsAPI.Client.ParticipantRequest>
+                Participants = new List<BookingsApi.Contract.Requests.ParticipantRequest>
                 {
-                    new BookingsAPI.Client.ParticipantRequest { Case_role_name = "CaseRole", Contact_email = "firstName1.lastName1@email.com",
-                        Display_name = "firstName1 lastName1", First_name = "firstName1", Hearing_role_name = "Litigant in person", Last_name = "lastName1", Middle_names = "",
-                        Organisation_name = "", Representee = "", Telephone_number = "1234567890", Title = "Mr.", Username = "firstName1.lastName1@email.net" },
-                    new BookingsAPI.Client.ParticipantRequest { Case_role_name = "CaseRole", Contact_email = "firstName2.lastName2@email.com",
-                        Display_name = "firstName2 lastName2", First_name = "firstName2", Hearing_role_name = "Interpreter", Last_name = "lastName2", Middle_names = "",
-                        Organisation_name = "", Representee = "", Telephone_number = "1234567890", Title = "Mr.", Username = "firstName2.lastName2@email.net" },
+                    new BookingsApi.Contract.Requests.ParticipantRequest { CaseRoleName = "CaseRole", ContactEmail = "firstName1.lastName1@email.com",
+                        DisplayName = "firstName1 lastName1", FirstName = "firstName1", HearingRoleName = "Litigant in person", LastName = "lastName1", MiddleNames = "",
+                        OrganisationName = "", Representee = "", TelephoneNumber = "1234567890", Title = "Mr.", Username = "firstName1.lastName1@email.net" },
+                    new BookingsApi.Contract.Requests.ParticipantRequest { CaseRoleName = "CaseRole", ContactEmail = "firstName2.lastName2@email.com",
+                        DisplayName = "firstName2 lastName2", FirstName = "firstName2", HearingRoleName = "Interpreter", LastName = "lastName2", MiddleNames = "",
+                        OrganisationName = "", Representee = "", TelephoneNumber = "1234567890", Title = "Mr.", Username = "firstName2.lastName2@email.net" },
 
                 },
-                Linked_participants = new List<LinkedParticipantRequest>
+                LinkedParticipants = new List<LinkedParticipantRequest>
                     {
-                        new LinkedParticipantRequest { Participant_contact_email = "firstName1.lastName1@email.com",
-                            Linked_participant_contact_email = "firstName2.lastName2@email.com", Type = LinkedParticipantType.Interpreter },
-                        new LinkedParticipantRequest { Participant_contact_email = "firstName2.lastName2@email.com",
-                            Linked_participant_contact_email = "firstName1.lastName1@email.com", Type = LinkedParticipantType.Interpreter }
+                        new LinkedParticipantRequest { ParticipantContactEmail = "firstName1.lastName1@email.com",
+                            LinkedParticipantContactEmail = "firstName2.lastName2@email.com", Type = LinkedParticipantType.Interpreter },
+                        new LinkedParticipantRequest { ParticipantContactEmail = "firstName2.lastName2@email.com",
+                            LinkedParticipantContactEmail = "firstName1.lastName1@email.com", Type = LinkedParticipantType.Interpreter }
                     }
             };
             var bookingRequest = new BookHearingRequest
@@ -213,15 +216,15 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 BookingDetails = newHearingRequest
             };
             // set response.
-            var linkedParticipant1 = new List<LinkedParticipantResponse>() { new LinkedParticipantResponse() { Linked_id = Guid.NewGuid(), Type = LinkedParticipantType.Interpreter } };
+            var linkedParticipant1 = new List<LinkedParticipantResponse>() { new LinkedParticipantResponse() { LinkedId = Guid.NewGuid(), Type = LinkedParticipantType.Interpreter } };
             var participant1 = Builder<ParticipantResponse>.CreateNew().With(x => x.Id = Guid.NewGuid())
-                .With(x => x.User_role_name = "Individual").With(x => x.Username = "firstName1.lastName1@email.net")
-                .With(x => x.Linked_participants = linkedParticipant1)
+                .With(x => x.UserRoleName = "Individual").With(x => x.Username = "firstName1.lastName1@email.net")
+                .With(x => x.LinkedParticipants = linkedParticipant1)
                 .Build();
-            var linkedParticipant2 = new List<LinkedParticipantResponse>() { new LinkedParticipantResponse() { Linked_id = Guid.NewGuid(), Type = LinkedParticipantType.Interpreter } };
+            var linkedParticipant2 = new List<LinkedParticipantResponse>() { new LinkedParticipantResponse() { LinkedId = Guid.NewGuid(), Type = LinkedParticipantType.Interpreter } };
             var participant2 = Builder<ParticipantResponse>.CreateNew().With(x => x.Id = Guid.NewGuid())
-                .With(x => x.User_role_name = "Individual").With(x => x.Username = "firstName1.lastName1@email.net")
-                .With(x => x.Linked_participants = linkedParticipant2)
+                .With(x => x.UserRoleName = "Individual").With(x => x.Username = "firstName1.lastName1@email.net")
+                .With(x => x.LinkedParticipants = linkedParticipant2)
                 .Build();
             var hearingDetailsResponse = Builder<HearingDetailsResponse>.CreateNew()
                 .With(x => x.Cases = Builder<CaseResponse>.CreateListOfSize(2).Build().ToList())
@@ -238,11 +241,11 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task Should_not_update_user_details_for_judge()
         {
-            var participant = new BookingsAPI.Client.ParticipantRequest
+            var participant = new BookingsApi.Contract.Requests.ParticipantRequest
             {
                 Username = "username",
-                Case_role_name = "Judge",
-                Hearing_role_name = "Judge"
+                CaseRoleName = "Judge",
+                HearingRoleName = "Judge"
             };
 
             // setup  response
@@ -254,15 +257,104 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             await PostWithParticipants(participant);
 
             _userAccountService.Verify(x => x.UpdateParticipantUsername(participant), Times.Never);
-            _userAccountService.Verify(x => x.AssignParticipantToGroup(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+            _userAccountService.Verify(x => x.GetAdUserIdForUsername(participant.Username), Times.Never);
         }
+
+        [Test]
+        public async Task Should_not_update_user_details_for_panel_member()
+        {
+            var participant = new BookingsApi.Contract.Requests.ParticipantRequest
+            {
+                Username = "username",
+                CaseRoleName = "",
+                HearingRoleName = "Panel Member"
+            };
+
+            // setup  response
+            var hearingDetailsResponse = HearingResponseBuilder.Build()
+                                            .WithParticipant("");
+            _bookingsApiClient.Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
+                .ReturnsAsync(hearingDetailsResponse);
+
+            await PostWithParticipants(participant);
+
+            _userAccountService.Verify(x => x.UpdateParticipantUsername(participant), Times.Never);
+            _userAccountService.Verify(x => x.GetAdUserIdForUsername(participant.Username), Times.Never);            
+        }
+
+        [Test]
+        public async Task Should_not_update_user_details_for_winger()
+        {
+            var participant = new BookingsApi.Contract.Requests.ParticipantRequest
+            {
+                Username = "username",
+                CaseRoleName = "",
+                HearingRoleName = "Winger"
+            };
+
+            // setup  response
+            var hearingDetailsResponse = HearingResponseBuilder.Build()
+                                            .WithParticipant("");
+            _bookingsApiClient.Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
+                .ReturnsAsync(hearingDetailsResponse);
+
+            await PostWithParticipants(participant);
+
+            _userAccountService.Verify(x => x.UpdateParticipantUsername(participant), Times.Never);
+            _userAccountService.Verify(x => x.GetAdUserIdForUsername(participant.Username), Times.Never);
+        }
+
+        [Test]
+        public async Task Should_update_user_details_for_other_user_without_username()
+        {
+            var participant = new BookingsApi.Contract.Requests.ParticipantRequest
+            {
+                Username = "",
+                CaseRoleName = "",
+                HearingRoleName = ""
+            };
+
+            // setup  response
+            var hearingDetailsResponse = HearingResponseBuilder.Build()
+                                            .WithParticipant("");
+            _bookingsApiClient.Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
+                .ReturnsAsync(hearingDetailsResponse);
+
+            await PostWithParticipants(participant);
+
+            _userAccountService.Verify(x => x.UpdateParticipantUsername(participant), Times.Once);
+            _userAccountService.Verify(x => x.GetAdUserIdForUsername(participant.Username), Times.Never);
+        }
+
+        [Test]
+        public async Task Should_get_user_details_for_other_user_with_username()
+        {
+            var participant = new BookingsApi.Contract.Requests.ParticipantRequest
+            {
+                Username = "username",
+                CaseRoleName = "",
+                HearingRoleName = ""
+            };
+
+            // setup  response
+            var hearingDetailsResponse = HearingResponseBuilder.Build()
+                                            .WithParticipant("");
+            _bookingsApiClient.Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
+                .ReturnsAsync(hearingDetailsResponse);
+
+            await PostWithParticipants(participant);
+
+            _userAccountService.Verify(x => x.UpdateParticipantUsername(participant), Times.Never);
+            _userAccountService.Verify(x => x.GetAdUserIdForUsername(participant.Username), Times.Once);
+        }
+
 
         [Test]
         public async Task Should_pass_bad_request_from_bookings_api()
         {
             var hearing = new BookNewHearingRequest
             {
-                Participants = new List<BookingsAPI.Client.ParticipantRequest>()
+                Participants = new List<BookingsApi.Contract.Requests.ParticipantRequest>()
             };
             
             var bookingRequest = new BookHearingRequest
@@ -282,7 +374,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         {
             var hearing = new BookNewHearingRequest
             {
-                Participants = new List<BookingsAPI.Client.ParticipantRequest>()
+                Participants = new List<BookingsApi.Contract.Requests.ParticipantRequest>()
             };
 
             var bookingRequest = new BookHearingRequest
@@ -301,7 +393,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         {
             var hearing = new BookNewHearingRequest
             {
-                Participants = new List<BookingsAPI.Client.ParticipantRequest>()
+                Participants = new List<BookingsApi.Contract.Requests.ParticipantRequest>()
             };
             
             var bookingRequest = new BookHearingRequest
@@ -335,7 +427,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             createdResult.Location.Should().Be("");
 
             _bookingsApiClient.Verify(x => x.BookNewHearingAsync(It.Is<BookNewHearingRequest>(
-                request => request.Created_by == CURRENT_USERNAME)), Times.Once);
+                request => request.CreatedBy == CURRENT_USERNAME)), Times.Once);
             _userAccountService.Verify(x => x.AssignParticipantToGroup(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
         }
 
@@ -349,13 +441,13 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             var vhExistingHearing = new HearingDetailsResponse
             {
-                Case_type_name = "Generic"
+                CaseTypeName = "Generic"
             };
 
             _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
                 .ReturnsAsync(vhExistingHearing);
 
-            var response = await _controller.UpdateBookingStatus(Guid.NewGuid(), new UpdateBookingStatusRequest());
+            var response = await _controller.UpdateBookingStatus(Guid.NewGuid(), new UpdateBookingStatusRequest{Status = UpdateBookingStatus.Created});
 
             response.Should().BeOfType<OkObjectResult>();
 
@@ -436,11 +528,11 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task Should_send_email_for_new_representative_participant_added()
         {
-            var participant = new BookingsAPI.Client.ParticipantRequest
+            var participant = new BookingsApi.Contract.Requests.ParticipantRequest
             {
                 Username = string.Empty, // New participant
-                Case_role_name = "Applicant",
-                Hearing_role_name = "Representative"
+                CaseRoleName = "Applicant",
+                HearingRoleName = "Representative"
             };
 
             var newUserName = "some_new_user@hmcts.net";
@@ -450,8 +542,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _bookingsApiClient.Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
                 .ReturnsAsync(hearingDetailsResponse);
             _userAccountService
-                .Setup(x => x.UpdateParticipantUsername(It.IsAny<AdminWebsite.BookingsAPI.Client.ParticipantRequest>()))
-                .Callback<AdminWebsite.BookingsAPI.Client.ParticipantRequest>(p => { p.Username = newUserName; })
+                .Setup(x => x.UpdateParticipantUsername(It.IsAny<BookingsApi.Contract.Requests.ParticipantRequest>()))
+                .Callback<BookingsApi.Contract.Requests.ParticipantRequest>(p => { p.Username = newUserName; })
                 .ReturnsAsync(new User() { UserName = newUserName, Password = "test123" });
 
             await PostWithParticipants(participant);
@@ -463,11 +555,11 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task Should_send_email_for_new_individual_participant_added()
         {
-            var participant = new BookingsAPI.Client.ParticipantRequest
+            var participant = new BookingsApi.Contract.Requests.ParticipantRequest
             {
                 Username = string.Empty, // New participant
-                Case_role_name = "Applicant",
-                Hearing_role_name = "Individual"
+                CaseRoleName = "Applicant",
+                HearingRoleName = "Individual"
             };
 
             var newUserName = "some_new_user@hmcts.net";
@@ -477,8 +569,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _bookingsApiClient.Setup(x => x.BookNewHearingAsync(It.IsAny<BookNewHearingRequest>()))
                 .ReturnsAsync(hearingDetailsResponse);
             _userAccountService
-                .Setup(x => x.UpdateParticipantUsername(It.IsAny<AdminWebsite.BookingsAPI.Client.ParticipantRequest>()))
-                .Callback<AdminWebsite.BookingsAPI.Client.ParticipantRequest>(p => { p.Username = newUserName; })
+                .Setup(x => x.UpdateParticipantUsername(It.IsAny<BookingsApi.Contract.Requests.ParticipantRequest>()))
+                .Callback<BookingsApi.Contract.Requests.ParticipantRequest>(p => { p.Username = newUserName; })
                 .ReturnsAsync(new User { UserName = newUserName, Password = "test123" });
 
             await PostWithParticipants(participant);
@@ -491,11 +583,11 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         public async Task Should_not_send_email_for_existing_participant_added()
         {
             var existingUserName = "some_new_user@hmcts.net";
-            var participant = new BookingsAPI.Client.ParticipantRequest
+            var participant = new BookingsApi.Contract.Requests.ParticipantRequest
             {
                 Username = existingUserName,
-                Case_role_name = "Applicant",
-                Hearing_role_name = "Representative"
+                CaseRoleName = "Applicant",
+                HearingRoleName = "Representative"
             };
 
             // setup response
@@ -525,11 +617,11 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         }
 
         private async Task<ActionResult<HearingDetailsResponse>> PostWithParticipants(
-            params BookingsAPI.Client.ParticipantRequest[] participants)
+            params BookingsApi.Contract.Requests.ParticipantRequest[] participants)
         {
             var hearing = new BookNewHearingRequest
             {
-                Participants = new List<BookingsAPI.Client.ParticipantRequest>(participants)
+                Participants = new List<BookingsApi.Contract.Requests.ParticipantRequest>(participants)
             };
             
             var bookingRequest = new BookHearingRequest

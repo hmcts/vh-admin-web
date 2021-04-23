@@ -1,5 +1,4 @@
-﻿using AdminWebsite.BookingsAPI.Client;
-using AdminWebsite.Controllers;
+﻿using AdminWebsite.Controllers;
 using AdminWebsite.Models;
 using AdminWebsite.Security;
 using FizzWare.NBuilder;
@@ -14,7 +13,9 @@ using AdminWebsite.Contracts.Responses;
 using AdminWebsite.Services;
 using AdminWebsite.Services.Models;
 using Autofac.Extras.Moq;
-using HearingTypeResponse = AdminWebsite.BookingsAPI.Client.HearingTypeResponse;
+using BookingsApi.Client;
+using BookingsApi.Contract.Responses;
+using HearingTypeResponse = BookingsApi.Contract.Responses.HearingTypeResponse;
 
 namespace AdminWebsite.UnitTests
 {
@@ -51,7 +52,7 @@ namespace AdminWebsite.UnitTests
             _userIdentityMock.Setup(x => x.GetAdministratorCaseTypes()).Returns(new List<string> { "type1", "type2" });
 
             var listTypes = new List<CaseTypeResponse> { new CaseTypeResponse { Id = 1, Name = "type1",
-                Hearing_types = new List<HearingTypeResponse>
+                HearingTypes = new List<HearingTypeResponse>
                 {
                    new HearingTypeResponse{Id=1, Name="type1"},
                 } } };
@@ -126,7 +127,7 @@ namespace AdminWebsite.UnitTests
         
         private void SetTestCase(List<CaseRoleResponse> listTypes)
         {
-            var listHearingRoles = new List<HearingRoleResponse> { new HearingRoleResponse { Name = "type1", User_role = "role1"} };
+            var listHearingRoles = new List<HearingRoleResponse> { new HearingRoleResponse { Name = "type1", UserRole = "role1"} };
 
             _userIdentityMock.Setup(x => x.GetAdministratorCaseTypes()).Returns(new List<string> { "type1", "type2" });
             _bookingsApiClientMock.Setup(x => x.GetCaseRolesForCaseTypeAsync(It.IsAny<string>())).ReturnsAsync(listTypes);

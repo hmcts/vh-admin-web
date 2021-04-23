@@ -23,13 +23,17 @@ export const Constants = {
         CompanyErrorMsg: 'Please enter an organisation name',
         ReferenceMsg: 'Please enter a reference',
         RepresenteeErrorMsg: 'Please enter a representee',
+        JudgeEmailErrorMsg: 'Please enter a valid judge email',
         JudgeDisplayNameErrorMsg: 'Please enter a judge name',
         DisplayNameErrorMsg: 'Please enter a display name',
         CompanyNameErrorMsg: 'Please enter a valid company name',
         OtherInformationErrorMsg: 'Please enter a valid other information text',
         InterpreterForErrorMsg: 'Please select a participant',
         JudgeParticipantErrorMsg:
-            'The judge or courtroom account that you have entered cannot be the same as the panel member email address. Please enter an alternative account.'
+            'The judge or courtroom account that you have entered cannot be the same as the panel member email address. Please enter an alternative account.',
+        JohJudgeErrorMsg: 'The email address you have provided cannot be the same as the judge. Please enter an alternative.',
+        JohEmailErrorMsg: 'Please enter an alternative email address',
+        NotFoundJohEmail: 'The email address you have entered is not recognised. Please enter an alternative.'
     },
     Contact: {
         phone: '0300 303 0655',
@@ -38,5 +42,6 @@ export const Constants = {
     IndividualRoles: ['Claimant LIP', 'Defendant LIP', 'Applicant LIP', 'Respondent LIP', 'Litigant in person'],
     DefenceAdvocate: 'App Advocate',
     None: 'None',
-    RespondentAdvocate: 'Respondent Advocate'
+    RespondentAdvocate: 'Respondent Advocate',
+    JudiciaryRoles: ['Panel Member', 'Winger']
 };

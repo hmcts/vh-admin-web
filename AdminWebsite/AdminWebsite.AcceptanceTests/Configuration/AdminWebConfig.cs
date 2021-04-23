@@ -1,10 +1,11 @@
 ﻿using AcceptanceTests.Common.Configuration;
+using AdminWebsite.Configuration;
 
 namespace AdminWebsite.AcceptanceTests.Configuration
 {
     public class AdminWebConfig
     {
-        public AdminWebSecurityConfiguration AzureAdConfiguration { get; set; }
+        public AzureAdConfiguration AzureAdConfiguration { get; set; }
         public bool IsLive { get; set; }
         public AdminWebTestConfig TestConfig { get; set; }
         public AdminWebVhServiceConfig VhServices { get; set; }
@@ -13,5 +14,6 @@ namespace AdminWebsite.AcceptanceTests.Configuration
 
         public KinlyConfiguration KinlyConfiguration { get; set; }
         public NotifyConfiguration NotifyConfiguration { get; set; }
+        public bool UsingEjud { get; set; }
     }
 }

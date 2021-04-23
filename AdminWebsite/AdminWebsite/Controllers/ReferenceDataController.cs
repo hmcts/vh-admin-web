@@ -1,4 +1,3 @@
-using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Models;
 using AdminWebsite.Security;
 using Microsoft.AspNetCore.Mvc;
@@ -9,6 +8,8 @@ using System.Threading.Tasks;
 using AdminWebsite.Contracts.Responses;
 using AdminWebsite.Mappers;
 using AdminWebsite.Services;
+using BookingsApi.Client;
+using BookingsApi.Contract.Responses;
 using HearingTypeResponse = AdminWebsite.Contracts.Responses.HearingTypeResponse;
 
 namespace AdminWebsite.Controllers
@@ -47,7 +48,7 @@ namespace AdminWebsite.Controllers
             var allowedTypes = _identity.GetAdministratorCaseTypes();
             var caseTypes = await _bookingsApiClient.GetCaseTypesAsync();
             caseTypes = caseTypes.Where(c => allowedTypes.Contains(c.Name)).ToList();
-            return caseTypes.SelectMany(caseType => caseType.Hearing_types.Select(hearingType => new HearingTypeResponse
+            return caseTypes.SelectMany(caseType => caseType.HearingTypes.Select(hearingType => new HearingTypeResponse
             {
                 Group = caseType.Name,
                 Code = string.Empty, // not used anymore
@@ -74,8 +75,8 @@ namespace AdminWebsite.Controllers
                 {
                     var caseRole = new CaseAndHearingRolesResponse { Name = item.Name };
                     var hearingRoles = await _bookingsApiClient.GetHearingRolesForCaseRoleAsync(caseTypeName, item.Name);
-
-                    caseRole.HearingRoles = hearingRoles.ConvertAll(x => new HearingRole(x.Name, x.User_role));
+                    
+                    caseRole.HearingRoles = hearingRoles.ToList().ConvertAll(x => new HearingRole(x.Name, x.UserRole));
 
                     response.Add(caseRole);
                 }

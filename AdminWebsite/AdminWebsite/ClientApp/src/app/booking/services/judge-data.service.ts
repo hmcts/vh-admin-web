@@ -11,4 +11,8 @@ export class JudgeDataService {
     getJudges(): Observable<JudgeResponse[]> {
         return this.bhClient.getJudges();
     }
+
+    searchJudgesByEmail(term: string): Observable<JudgeResponse[]> {
+        return this.bhClient.searchJudgesByEmail(term);
+    }
 }

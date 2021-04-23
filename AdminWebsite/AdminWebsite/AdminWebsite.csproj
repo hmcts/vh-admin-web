@@ -34,6 +34,8 @@
   </Target>
 
   <ItemGroup>
+	<PackageReference Include="BookingsApi.Client" Version="1.25.3" />
+	<PackageReference Include="GovukNotify" Version="4.0.0" />
 	<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="8.6.1" />
     <PackageReference Include="MicroElements.Swashbuckle.FluentValidation" Version="4.1.0" />
@@ -75,31 +77,10 @@
     <None Remove="$(SpaRoot)**" />
     <None Remove="ClientApp\e2e\features\**" />
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
-    <None Remove="packages.lock.json.orig" />
-    <None Remove="AdminWebsite.csproj.orig" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Remove="Contracts\Requests\AddUserToGroupRequest.cs" />
-    <Compile Remove="Contracts\Requests\CreateUserRequest.cs" />
-    <Compile Remove="Contracts\Responses\GroupsResponse.cs" />
-    <Compile Remove="Contracts\Responses\NewUserResponse.cs" />
-    <Compile Remove="Contracts\Responses\UserDetailsResponse.cs" />
-    <Compile Remove="Security\ActiveDirectoryGroup.cs" />
-    <Compile Remove="Services\HearingApiClient.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <None Remove="ClientApp\src\app\common\formatters\sanitize-input-text.ts" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\AdminWebsite.BookingsAPI.Client\AdminWebsite.BookingsAPI.Client.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <TypeScriptCompile Include="ClientApp\src\app\common\formatters\sanitize-input-text.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\common\model\case-request.model.ts" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

@@ -35,7 +35,7 @@
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
       <div *ngIf="!hearing.isCancelled">
-        <span *ngIf="!hearing.isCreated || (hearing.isCreated && isConfirmationTimeValid)">
+        <span *ngIf="!hearing.isCreated || (hearing.isCreated && timeForEditing)">
           <button
             *ngIf="!hearing.hasBookingConfirmationFailed"
             class="govuk-button vh-mt20 vh-mr-25"

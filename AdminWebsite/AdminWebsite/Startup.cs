@@ -45,14 +45,13 @@ namespace AdminWebsite
         private void RegisterSettings(IServiceCollection services)
         {
             Settings = Configuration.Get<Settings>();
-            services.AddSingleton(Settings);
 
-            services.Configure<SecuritySettings>(options => Configuration.Bind("AzureAd", options));
-            services.Configure<ServiceSettings>(options => Configuration.Bind("VhServices", options));
+            services.Configure<AzureAdConfiguration>(options => Configuration.Bind("AzureAd", options));
+            services.Configure<ServiceConfiguration>(options => Configuration.Bind("VhServices", options));
+            services.Configure<KinlyConfiguration>(options => Configuration.Bind("KinlyConfiguration", options));
+            services.Configure<ApplicationInsightsConfiguration>(options => Configuration.Bind("ApplicationInsights", options));            
+
             services.Configure<TestUserSecrets>(options => Configuration.Bind("TestUserSecrets", options));
-            services.Configure<AppConfigSettings>(options => Configuration.Bind(options));
-            services.Configure<SecuritySettings>(options => Configuration.Bind("ApplicationInsights", options));
-            services.Configure<ServiceSettings>(options => Configuration.Bind("KinlyConfiguration", options));
         }
         
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

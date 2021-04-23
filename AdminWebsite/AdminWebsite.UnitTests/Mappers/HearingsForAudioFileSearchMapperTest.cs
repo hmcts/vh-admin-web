@@ -1,6 +1,6 @@
 ﻿using System;
-using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Mappers;
+using BookingsApi.Contract.Responses;
 using FluentAssertions;
 using NUnit.Framework;
 
@@ -13,27 +13,27 @@ namespace AdminWebsite.UnitTests.Mappers
         {
             var source = new AudioRecordedHearingsBySearchResponse
             {
-                Case_name = "Case_name",
-                Case_number = "Case_number",
-                Courtroom_account = "Courtroom_account",
-                Courtroom_account_name = "Courtroom_account_name",
-                Hearing_room_name = "Hearing_room_name",
-                Hearing_venue_name = "Hearing_venue_name",
+                CaseName = "CaseName",
+                CaseNumber = "CaseNumber",
+                CourtroomAccount = "CourtroomAccount",
+                CourtroomAccountName = "CourtroomAccountName",
+                HearingRoomName = "HearingRoomName",
+                HearingVenueName = "HearingVenueName",
                 Id = Guid.NewGuid(),
-                Scheduled_date_time = DateTime.Now
+                ScheduledDateTime = DateTime.Now
             };
 
             var result = HearingsForAudioFileSearchMapper.MapFrom(source);
 
             result.Should().NotBeNull();
-            result.CaseName.Should().Be(source.Case_name);
-            result.CaseNumber.Should().Be(source.Case_number);
-            result.CourtroomAccount.Should().Be(source.Courtroom_account);
-            result.CourtroomAccountName.Should().Be(source.Courtroom_account_name);
-            result.HearingRoomName.Should().Be(source.Hearing_room_name);
-            result.HearingVenueName.Should().Be(source.Hearing_venue_name);
+            result.CaseName.Should().Be(source.CaseName);
+            result.CaseNumber.Should().Be(source.CaseNumber);
+            result.CourtroomAccount.Should().Be(source.CourtroomAccount);
+            result.CourtroomAccountName.Should().Be(source.CourtroomAccountName);
+            result.HearingRoomName.Should().Be(source.HearingRoomName);
+            result.HearingVenueName.Should().Be(source.HearingVenueName);
             result.Id.Should().Be(source.Id);
-            result.ScheduledDateTime.Should().Be(source.Scheduled_date_time);
+            result.ScheduledDateTime.Should().Be(source.ScheduledDateTime);
         }
     }
 }

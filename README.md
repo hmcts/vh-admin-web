@@ -29,10 +29,6 @@ In the `AdmniWebsite/ClientApp` folder:
 npx nswag run api-ts.nswag
 ```
 
-In the `AdminWebsite.BookingsAPI.Client` project:
-```
-npx nswag run booking-api-csharp.nswag 
-```
 # Running accessibility linting
 In the `ClientApp` folder run `node acessability_lint.js`. Will output a json with any issues.
 

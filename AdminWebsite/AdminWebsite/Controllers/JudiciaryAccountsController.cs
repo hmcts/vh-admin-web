@@ -1,17 +1,18 @@
-﻿using AdminWebsite.BookingsAPI.Client;
-using AdminWebsite.Configuration;
+﻿using AdminWebsite.Configuration;
 using AdminWebsite.Contracts.Responses;
 using AdminWebsite.Mappers;
 using AdminWebsite.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Annotations;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using BookingsApi.Client;
+using BookingsApi.Contract.Requests;
+using BookingsApi.Contract.Responses;
 
 namespace AdminWebsite.Controllers
 {
@@ -48,23 +49,20 @@ namespace AdminWebsite.Controllers
             try
             {
                 term = _encoder.Encode(term);
-                var searchTerm = new SearchTermRequest
-                {
-                    Term = term
-                };
+                var searchTerm = new SearchTermRequest(term);
 
                 var personsResponse =  _bookingsApiClient.PostJudiciaryPersonBySearchTermAsync(searchTerm);
-                var courtRoomsResponse =  _userAccountService.GetJudgeUsers();
+                var courtRoomsResponse =  _userAccountService.SearchJudgesByEmail(searchTerm.Term);
 
                 await Task.WhenAll(personsResponse, courtRoomsResponse);
 
                 var persons = await personsResponse;
                 var courtRooms = await courtRoomsResponse;
 
-                var rooms = courtRooms.Where(x => x.Email.ToLower().Contains(searchTerm.Term.ToLower()));
-                var judges = persons.Select(x => JudgeResponseMapper.MapTo(x));
+                var courtRoomJudges = courtRooms.Where(x => x.Email.ToLower().Contains(searchTerm.Term.ToLower()));
+                var eJudiciaryJudges = persons.Select(x => JudgeResponseMapper.MapTo(x));
 
-                var allJudges = (rooms ?? Enumerable.Empty<JudgeResponse>()).Concat(judges ?? Enumerable.Empty<JudgeResponse>())
+                var allJudges = (courtRoomJudges ?? Enumerable.Empty<JudgeResponse>()).Concat(eJudiciaryJudges ?? Enumerable.Empty<JudgeResponse>())
                     .OrderBy(x => x.Email).Take(20).ToList();
 
                 return Ok(allJudges);
@@ -95,10 +93,7 @@ namespace AdminWebsite.Controllers
             try
             {
                 term = _encoder.Encode(term);
-                var searchTerm = new SearchTermRequest
-                {
-                    Term = term
-                };
+                var searchTerm = new SearchTermRequest(term);
 
                 var personsResponse = await _bookingsApiClient.PostJudiciaryPersonBySearchTermAsync(searchTerm);
                 personsResponse = personsResponse?.Where(p => !p.Username.Contains(_testSettings.TestUsernameStem)).ToList();

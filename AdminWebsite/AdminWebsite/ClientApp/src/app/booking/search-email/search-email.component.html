@@ -1,8 +1,13 @@
 <div (blur)="blur()">
-  <div class="govuk-form-group" [ngClass]="{ 'govuk-form-group--error': !isValidEmail }">
+  <div class="govuk-form-group" [ngClass]="{ 'govuk-form-group--error': !isValidEmail || isErrorEmailAssignedToJudge }">
     <div *ngIf="!isValidEmail">
       <span class="govuk-error-message">
         {{ constants.Error.EmailErrorMsg }}
+      </span>
+    </div>
+    <div *ngIf="isErrorEmailAssignedToJudge">
+      <span class="govuk-error-message">
+        {{ constants.Error.JohEmailErrorMsg }}
       </span>
     </div>
     <label class="govuk-label" for="participantEmail"> Email </label>
@@ -15,17 +20,18 @@
       (blur)="blurEmail(); populateParticipantInfo($event.target.value)"
       class="govuk-input govuk-input--width-20"
       (keyup)="searchTerm.next($event.target.value)"
+      (input)="onChange()"
       type="email"
     />
 
-    <ul *ngIf="isShowResult" class="vh-li-email">
+    <ul id="search-results-list" *ngIf="isShowResult" class="vh-li-email">
       <li *ngFor="let result of results | slice: 0:9" class="vk-showlist-m30">
         <a class="govuk-body vh-a-email" href="javascript: void(0)" (click)="selectItemClick(result)">{{ result.email }}</a>
       </li>
     </ul>
   </div>
 
-  <div class="govuk-warning-text" *ngIf="notFoundParticipant">
+  <div class="govuk-warning-text" *ngIf="showCreateNewUserWarning">
     <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
     <strong class="govuk-warning-text__text">
       <span class="govuk-warning-text__assistive">Warning</span>

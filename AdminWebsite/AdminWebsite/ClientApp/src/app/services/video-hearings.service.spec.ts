@@ -466,7 +466,6 @@ describe('Video hearing service', () => {
         linkedParticipantModel.participantEmail = 'interpretee@email.com';
         linkedParticipantModel.linkedParticipantEmail = 'interpreter@email.com';
         linkedParticipantModelList.push(linkedParticipantModel);
-        console.log(linkedParticipantModelList);
 
         const model = service.mapLinkedParticipants(linkedParticipantModelList);
         expect(model[0].participant_contact_email).toEqual(linkedParticipantModelList[0].participantEmail);

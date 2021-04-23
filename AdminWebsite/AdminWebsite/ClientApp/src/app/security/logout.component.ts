@@ -1,5 +1,5 @@
 import { OnInit, Component, Injectable } from '@angular/core';
-import { AdalService } from 'adal-angular4';
+import { OidcSecurityService } from 'angular-auth-oidc-client';
 
 @Component({
     selector: 'app-logout',
@@ -7,11 +7,13 @@ import { AdalService } from 'adal-angular4';
 })
 @Injectable()
 export class LogoutComponent implements OnInit {
-    constructor(private adalSvc: AdalService) {}
+    constructor(private oidcSecurityService: OidcSecurityService) {}
 
     ngOnInit() {
-        if (this.adalSvc.userInfo.authenticated) {
-            this.adalSvc.logOut();
-        }
+        this.oidcSecurityService.isAuthenticated$.subscribe(auth => {
+            if (auth) {
+                this.oidcSecurityService.logoffAndRevokeTokens();
+            }
+        });
     }
 }

@@ -1,5 +1,4 @@
-﻿using AdminWebsite.BookingsAPI.Client;
-using AdminWebsite.Models;
+﻿using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
 using AdminWebsite.UnitTests.Helper;
@@ -15,6 +14,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using BookingsApi.Client;
+using BookingsApi.Contract.Enums;
+using BookingsApi.Contract.Responses;
 using VideoApi.Client;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
@@ -61,48 +63,48 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             _vhExistingHearing = new HearingDetailsResponse
             {
-                Cases = new List<BookingsAPI.Client.CaseResponse>()
+                Cases = new List<BookingsApi.Contract.Responses.CaseResponse>()
                 {
-                    new BookingsAPI.Client.CaseResponse()
-                        {Name = "BBC vs ITV", Number = "TX/12345/2019", Is_lead_case = false}
+                    new BookingsApi.Contract.Responses.CaseResponse()
+                        {Name = "BBC vs ITV", Number = "TX/12345/2019", IsLeadCase = false}
                 },
-                Case_type_name = "Generic",
-                Created_by = "CaseAdministrator",
-                Created_date = DateTime.UtcNow,
-                Hearing_room_name = "Room 6.41D",
-                Hearing_type_name = "Automated Test",
-                Hearing_venue_name = "Manchester Civil and Family Justice Centre",
+                CaseTypeName = "Generic",
+                CreatedBy = "CaseAdministrator",
+                CreatedDate = DateTime.UtcNow,
+                HearingRoomName = "Room 6.41D",
+                HearingTypeName = "Automated Test",
+                HearingVenueName = "Manchester Civil and Family Justice Centre",
                 Id = _guid,
-                Other_information = "Any other information about the hearing",
+                OtherInformation = "Any other information about the hearing",
                 Participants = new List<ParticipantResponse>()
                 {
                     new ParticipantResponse()
                     {
-                        Case_role_name = "Judge", Contact_email = "Judge.Lumb@hmcts.net",
-                        Display_name = "Judge Lumb", First_name = "Judge", Hearing_role_name = "Judge",
-                        Last_name = "Lumb", Middle_names = string.Empty, Telephone_number = string.Empty,
+                        CaseRoleName = "Judge", ContactEmail = "Judge.Lumb@hmcts.net",
+                        DisplayName = "Judge Lumb", FirstName = "Judge", HearingRoleName = "Judge",
+                        LastName = "Lumb", MiddleNames = string.Empty, TelephoneNumber = string.Empty,
                         Title = "Judge", Username = "Judge.Lumb@hmcts.net"
                     },
                     new ParticipantResponse()
                     {
-                        Case_role_name = "Applicant", Contact_email = "test.Applicant@hmcts.net",
-                        Display_name = "Test Applicant", First_name = "Test", Hearing_role_name = "Litigant in person",
-                        Last_name = "Applicant", Middle_names = string.Empty, Telephone_number = string.Empty,
+                        CaseRoleName = "Applicant", ContactEmail = "test.Applicant@hmcts.net",
+                        DisplayName = "Test Applicant", FirstName = "Test", HearingRoleName = "Litigant in person",
+                        LastName = "Applicant", MiddleNames = string.Empty, TelephoneNumber = string.Empty,
                         Title = "Mr", Username = "Test.Applicant@hmcts.net"
                     },
                     new ParticipantResponse()
                     {
-                        Case_role_name = "Respondent", Contact_email = "test.respondent@hmcts.net",
-                        Display_name = "Test Respondent", First_name = "Test", Hearing_role_name = "Representative",
-                        Last_name = "Respondent", Middle_names = string.Empty, Telephone_number = string.Empty,
+                        CaseRoleName = "Respondent", ContactEmail = "test.respondent@hmcts.net",
+                        DisplayName = "Test Respondent", FirstName = "Test", HearingRoleName = "Representative",
+                        LastName = "Respondent", MiddleNames = string.Empty, TelephoneNumber = string.Empty,
                         Title = "Mr", Username = "Test.Respondent@hmcts.net"
                     },
                 },
-                Scheduled_date_time = DateTime.UtcNow.AddDays(10),
-                Scheduled_duration = 60,
+                ScheduledDateTime = DateTime.UtcNow.AddDays(10),
+                ScheduledDuration = 60,
                 Status = BookingStatus.Booked,
-                Updated_by = string.Empty,
-                Updated_date = DateTime.UtcNow
+                UpdatedBy = string.Empty,
+                UpdatedDate = DateTime.UtcNow
             };
 
             _bookingsApiClient.Setup(x => x.GetHearingDetailsByIdAsync(It.IsAny<Guid>()))
@@ -112,8 +114,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public async Task Should_return_bad_request_when_booking_api_throws()
         {
-            _bookingsApiClient.Setup(x => x.SearchForHearingsAsync(It.IsAny<string>(), It.IsAny<DateTime?>()))
-                .Throws(ClientException.ForBookingsAPI(HttpStatusCode.BadRequest));
+            _bookingsApiClient.Setup(x => x.SearchForHearingsAsync(It.IsAny<string>(), It.IsAny<DateTimeOffset>()))
+                .ThrowsAsync(ClientException.ForBookingsAPI(HttpStatusCode.BadRequest));
 
             var result = await _controller.SearchForAudioRecordedHearingsAsync("bad", DateTime.Today);
             var badRequestResult = (BadRequestObjectResult) result;
@@ -123,8 +125,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         [Test]
         public void Should_return_throw_when_booking_api_throws()
         {
-            _bookingsApiClient.Setup(x => x.SearchForHearingsAsync(It.IsAny<string>(), It.IsAny<DateTime?>()))
-                .Throws(ClientException.ForBookingsAPI(HttpStatusCode.InternalServerError));
+            _bookingsApiClient.Setup(x => x.SearchForHearingsAsync(It.IsAny<string>(), It.IsAny<DateTimeOffset>()))
+                .ThrowsAsync(ClientException.ForBookingsAPI(HttpStatusCode.InternalServerError));
 
             Assert.ThrowsAsync<BookingsApiException>(() =>
                 _controller.SearchForAudioRecordedHearingsAsync("bad", DateTime.Today));
@@ -144,7 +146,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 new AudioRecordedHearingsBySearchResponse {Id = Guid.NewGuid()}
             };
 
-            _bookingsApiClient.Setup(x => x.SearchForHearingsAsync(caseNumberDecoded, It.IsAny<DateTime?>()))
+            _bookingsApiClient.Setup(x => x.SearchForHearingsAsync(caseNumberDecoded, It.IsAny<DateTimeOffset>()))
                 .ReturnsAsync(bookingApiResponse);
 
             var result = await _controller.SearchForAudioRecordedHearingsAsync(caseNumberEncoded, DateTime.Today);

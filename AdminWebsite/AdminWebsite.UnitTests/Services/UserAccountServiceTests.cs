@@ -1,6 +1,5 @@
 using System;
 using AdminWebsite.Configuration;
-using AdminWebsite.Helper;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
 using FluentAssertions;
@@ -10,8 +9,9 @@ using NUnit.Framework;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
-using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.UnitTests.Helper;
+using BookingsApi.Client;
+using BookingsApi.Contract.Responses;
 using Microsoft.Extensions.Logging;
 using NotificationApi.Client;
 using NotificationApi.Contract;
@@ -25,11 +25,10 @@ namespace AdminWebsite.UnitTests.Services
 {
     public class UserAccountServiceTests
     {
-        private Mock<IOptions<AppConfigSettings>> _appSettings;
         private Mock<IUserApiClient> _userApiClient;
         private Mock<IBookingsApiClient> _bookingsApiClient;
         private Mock<INotificationApiClient> _notificationApiClient;
-        private Mock<IOptions<SecuritySettings>> _securitySettings;
+        private Mock<IOptions<AzureAdConfiguration>> _azureAdConfiguration;
         private Mock<ILogger<UserAccountService>> _logger;
 
         private UserAccountService _service;
@@ -41,13 +40,10 @@ namespace AdminWebsite.UnitTests.Services
             _bookingsApiClient = new Mock<IBookingsApiClient>();
             _notificationApiClient = new Mock<INotificationApiClient>();
             _logger = new Mock<ILogger<UserAccountService>>();
-            _appSettings = new Mock<IOptions<AppConfigSettings>>();
-            _appSettings.Setup(x => x.Value)
-                .Returns(new AppConfigSettings());
 
-            _securitySettings = new Mock<IOptions<SecuritySettings>>();
-            _securitySettings.Setup(x => x.Value)
-                .Returns(new SecuritySettings());
+            _azureAdConfiguration = new Mock<IOptions<AzureAdConfiguration>>();
+            _azureAdConfiguration.Setup(x => x.Value)
+                .Returns(new AzureAdConfiguration());
 
             _service = new UserAccountService(_userApiClient.Object, _bookingsApiClient.Object,
                 _notificationApiClient.Object, _logger.Object);
@@ -63,7 +59,7 @@ namespace AdminWebsite.UnitTests.Services
                 .Throws(ClientException.ForUserService(HttpStatusCode.InternalServerError));
 
             Assert.ThrowsAsync<UserApiException>(() =>
-                _service.UpdateParticipantUsername(new BookingsAPI.Client.ParticipantRequest()));
+                _service.UpdateParticipantUsername(new BookingsApi.Contract.Requests.ParticipantRequest()));
         }
 
         [Test]
@@ -118,7 +114,7 @@ namespace AdminWebsite.UnitTests.Services
         [Test]
         public async Task Should_not_create_users_that_already_exists()
         {
-            var participant = new BookingsAPI.Client.ParticipantRequest
+            var participant = new BookingsApi.Contract.Requests.ParticipantRequest
             {
                 Username = "existin@hmcts.net"
             };
@@ -134,10 +130,10 @@ namespace AdminWebsite.UnitTests.Services
         [Test]
         public async Task Should_create_users_if_not_exists()
         {
-            var participant = new BookingsAPI.Client.ParticipantRequest
+            var participant = new BookingsApi.Contract.Requests.ParticipantRequest
             {
-                First_name = "First Name Space",
-                Last_name = "Last Name Space",
+                FirstName = "First Name Space",
+                LastName = "Last Name Space",
                 Username = "notexistin@hmcts.net"
             };
 
@@ -149,8 +145,8 @@ namespace AdminWebsite.UnitTests.Services
             await _service.UpdateParticipantUsername(participant);
 
             _userApiClient.Verify(x => x.CreateUserAsync(It.Is<CreateUserRequest>(c =>
-                c.FirstName == participant.First_name.Replace(" ", string.Empty)
-                && c.LastName == participant.Last_name.Replace(" ", string.Empty)
+                c.FirstName == participant.FirstName.Replace(" ", string.Empty)
+                && c.LastName == participant.LastName.Replace(" ", string.Empty)
                 && !c.IsTestUser
             )), Times.Once);
         }

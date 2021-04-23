@@ -106,7 +106,7 @@ namespace AdminWebsite.AcceptanceTests.Data
                 }
 
                 actualParticipant.CaseRoleName.Should().Be(expectedParticipant.CaseRoleName);
-                // actualParticipant.Display_name.Should().Be($"{expectedParticipant.Firstname} {expectedParticipant.Role}"); TODO: removed as workaround for new user naming conventions
+                // actualParticipant.DisplayName.Should().Be($"{expectedParticipant.Firstname} {expectedParticipant.Role}"); TODO: removed as workaround for new user naming conventions
                 actualParticipant.FirstName.Should().Be(expectedParticipant.Firstname);
                 actualParticipant.HearingRoleName.Should().Be(expectedParticipant.HearingRoleName);
                 actualParticipant.LastName.Should().Be(expectedParticipant.Lastname);

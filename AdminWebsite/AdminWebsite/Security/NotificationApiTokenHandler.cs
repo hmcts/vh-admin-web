@@ -6,15 +6,15 @@ namespace AdminWebsite.Security
 {
     public class NotificationApiTokenHandler : BaseServiceTokenHandler
     {
-        public NotificationApiTokenHandler(IOptions<SecuritySettings> securitySettings,
-            IOptions<ServiceSettings> serviceSettings,
+        public NotificationApiTokenHandler(IOptions<AzureAdConfiguration> azureAdConfiguration,
+            IOptions<ServiceConfiguration> serviceConfiguration,
             IMemoryCache memoryCache,
             ITokenProvider tokenProvider) : base(
-            securitySettings, serviceSettings, memoryCache, tokenProvider)
+            azureAdConfiguration, serviceConfiguration, memoryCache, tokenProvider)
         {
         }
 
         protected override string TokenCacheKey => "NotificationApiServiceToken";
-        protected override string ClientResource => ServiceSettings.NotificationApiResourceId;
+        protected override string ClientResource => ServiceConfiguration.NotificationApiResourceId;
     }
 }

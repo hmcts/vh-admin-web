@@ -1,12 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using AdminWebsite.BookingsAPI.Client;
 using AdminWebsite.Extensions;
 using AdminWebsite.Models;
 using AdminWebsite.Security;
 using AdminWebsite.Services;
 using AdminWebsite.UnitTests.Helpers;
+using BookingsApi.Client;
+using BookingsApi.Contract.Requests;
+using BookingsApi.Contract.Requests.Enums;
+using BookingsApi.Contract.Responses;
 using FluentAssertions;
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
@@ -63,8 +66,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _userIdentity.Setup(x => x.GetUserIdentityName()).Returns("test");
             var request = new UpdateBookingStatusRequest
             {
-                Updated_by = "test",
-                Cancel_reason = "",
+                UpdatedBy = "test",
+                CancelReason = "",
                 Status = UpdateBookingStatus.Cancelled
             };
             var hearingId = Guid.NewGuid();
@@ -86,8 +89,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _userIdentity.Setup(x => x.GetUserIdentityName()).Returns("test");
             var request = new UpdateBookingStatusRequest
             {
-                Updated_by = "test",
-                Cancel_reason = "",
+                UpdatedBy = "test",
+                CancelReason = "",
                 Status = UpdateBookingStatus.Failed
             };
             var hearingId = Guid.NewGuid();
@@ -109,13 +112,13 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _userIdentity.Setup(x => x.GetUserIdentityName()).Returns("test");
             var request = new UpdateBookingStatusRequest
             {
-                Updated_by = "test",
-                Cancel_reason = "",
+                UpdatedBy = "test",
+                CancelReason = "",
                 Status = UpdateBookingStatus.Created
             };
             var hearingId = Guid.NewGuid();
             var hearing = InitBookingForResponse(hearingId);
-            hearing.Other_information = new OtherInformationDetails
+            hearing.OtherInformation = new OtherInformationDetails
             {
                 JudgeEmail = "judge@hmcts.net",
                 JudgePhone = "12345789",
@@ -154,7 +157,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                     await executeFunction();
                 })
                 .ReturnsAsync(expectedConferenceDetailsResponse);
-            _bookingsApiClient.Setup(x => x.GetHearingsByGroupIdAsync(hearing.Group_id.Value)).ReturnsAsync(new List<HearingDetailsResponse> {hearing});
+            _bookingsApiClient.Setup(x => x.GetHearingsByGroupIdAsync(hearing.GroupId.Value)).ReturnsAsync(new List<HearingDetailsResponse> {hearing});
 
             var response = await _controller.UpdateBookingStatus(hearingId, request);
 
@@ -193,8 +196,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _userIdentity.Setup(x => x.GetUserIdentityName()).Returns("test");
             var updateCreatedStatus = new UpdateBookingStatusRequest
             {
-                Updated_by = "test",
-                Cancel_reason = "",
+                UpdatedBy = "test",
+                CancelReason = "",
                 Status = UpdateBookingStatus.Created
             };
 
@@ -246,8 +249,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _userIdentity.Setup(x => x.GetUserIdentityName()).Returns("test");
             var updateCreatedStatus = new UpdateBookingStatusRequest
             {
-                Updated_by = "test",
-                Cancel_reason = "",
+                UpdatedBy = "test",
+                CancelReason = "",
                 Status = UpdateBookingStatus.Created
             };
 
@@ -292,8 +295,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _userIdentity.Setup(x => x.GetUserIdentityName()).Returns("test");
             var updateCreatedStatus = new UpdateBookingStatusRequest
             {
-                Updated_by = "test",
-                Cancel_reason = "",
+                UpdatedBy = "test",
+                CancelReason = "",
                 Status = UpdateBookingStatus.Created
             };
 
@@ -339,8 +342,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
 
             _bookingsApiClient.Verify(x => x.UpdateBookingStatusAsync(hearingId, updateCreatedStatus), Times.Once);
             _bookingsApiClient.Verify(x => x.UpdateBookingStatusAsync(hearingId, It.Is<UpdateBookingStatusRequest>(b => b.Status == UpdateBookingStatus.Failed
-                                                                                                                     && b.Updated_by == "System"
-                                                                                                                     && b.Cancel_reason == string.Empty
+                                                                                                                     && b.UpdatedBy == "System"
+                                                                                                                     && b.CancelReason == string.Empty
                                                                                                                                 )), Times.Once);
             _pollyRetryServiceMock.Verify(x => x.WaitAndRetryAsync<VideoApiException, ConferenceDetailsResponse>
                (
@@ -355,8 +358,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _userIdentity.Setup(x => x.GetUserIdentityName()).Returns("test");
             var updateCreatedStatus = new UpdateBookingStatusRequest
             {
-                Updated_by = "test",
-                Cancel_reason = "",
+                UpdatedBy = "test",
+                CancelReason = "",
                 Status = UpdateBookingStatus.Created
             };
 
@@ -407,8 +410,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _userIdentity.Setup(x => x.GetUserIdentityName()).Returns("test");
             var updateCreatedStatus = new UpdateBookingStatusRequest
             {
-                Updated_by = "test",
-                Cancel_reason = "",
+                UpdatedBy = "test",
+                CancelReason = "",
                 Status = UpdateBookingStatus.Created
             };
 
@@ -459,8 +462,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _userIdentity.Setup(x => x.GetUserIdentityName()).Returns("test");
             var updateCreatedStatus = new UpdateBookingStatusRequest
             {
-                Updated_by = "test",
-                Cancel_reason = "",
+                UpdatedBy = "test",
+                CancelReason = "",
                 Status = UpdateBookingStatus.Created
             };
 
@@ -511,8 +514,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _userIdentity.Setup(x => x.GetUserIdentityName()).Returns("test");
             var request = new UpdateBookingStatusRequest
             {
-                Updated_by = "test",
-                Cancel_reason = "",
+                UpdatedBy = "test",
+                CancelReason = "",
                 Status = UpdateBookingStatus.Cancelled
             };
 
@@ -532,7 +535,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 .WithParticipant("Judicial Office Holder", "fname3.lname3@hmcts.net")
                 .WithParticipant("Judge", "judge.fudge@hmcts.net");
             hearing.Id = hearingId;
-            hearing.Group_id = hearingId;
+            hearing.GroupId = hearingId;
             return hearing;
         }
     }

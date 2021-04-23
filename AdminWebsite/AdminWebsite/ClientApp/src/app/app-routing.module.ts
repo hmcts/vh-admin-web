@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { LoginComponent } from './security/login.component';
 import { LogoutComponent } from './security/logout.component';
@@ -27,7 +26,7 @@ export const routes: Routes = [
     { path: 'delete-participant', component: DeleteParticipantSearchComponent, canActivate: [AdminGuard] },
     { path: 'edit-participant-search', component: EditParticipantSearchComponent, canActivate: [AdminGuard] },
     { path: 'edit-participant', component: EditParticipantComponent, canActivate: [AdminGuard] },
-    { path: '**', redirectTo: 'dashboard', pathMatch: 'full', canActivate: [AdminGuard] }
+    { path: '**', redirectTo: 'dashboard', pathMatch: 'full' }
 ];
 
 @NgModule({

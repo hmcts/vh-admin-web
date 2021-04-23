@@ -1,6 +1,6 @@
 import { ComponentFixture, fakeAsync, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
-import { of } from 'rxjs';
+import { of, Subscription } from 'rxjs';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { ParticipantModel } from '../../common/model/participant.model';
 import { ClientSettingsResponse, PersonResponse } from '../../services/clients/api-client';
@@ -12,34 +12,24 @@ import { SearchEmailComponent } from './search-email.component';
 describe('SeachEmailComponent', () => {
     let component: SearchEmailComponent;
     let fixture: ComponentFixture<SearchEmailComponent>;
-    const participantList: PersonResponse[] = JSON.parse(
-        `
-    [
-      {
-        "id": 1,
-        "contact_email": "vb.email1@hmcts.net",
-        "role": "Appellant",
-        "title": "Mrs",
-        "first_name": "Alisa",
-        "middle_names":"No",
-        "last_name": "Smith",
-        "photelephone_numberne": "1111222222",
-        "username": "vb.email1@hmcts.net"
-      },
-      {
-        "id": 2,
-        "contact_email": "vb.email2@hmcts.net",
-        "role": "Appellant",
-        "title": "Mrs",
-        "first_name": "Alisa",
-        "middle_names":"No",
-        "last_name": "Smith",
-        "telephone_number": "1111222222",
-        "username": "vb.email2@hmcts.net"
-      }
-    ]
-    `
-    );
+
+    const participant1 = new ParticipantModel();
+    participant1.first_name = 'FirstName1';
+    participant1.last_name = 'LastName1';
+    participant1.display_name = 'DisplayName1';
+    participant1.email = 'Email1';
+    participant1.username = 'Username1';
+    participant1.title = 'Title1';
+
+    const participant2 = new ParticipantModel();
+    participant2.first_name = 'FirstName2';
+    participant2.last_name = 'LastName2';
+    participant2.display_name = 'DisplayName2';
+    participant2.email = 'Email2';
+    participant2.username = 'Username2';
+    participant2.title = 'Title2';
+
+    const participantList: ParticipantModel[] = [participant1, participant2];
 
     const participantModel = new ParticipantModel();
     participantModel.email = 'aa@hmcts.net';
@@ -59,8 +49,8 @@ describe('SeachEmailComponent', () => {
     let loggerSpy: jasmine.SpyObj<Logger>;
 
     beforeEach(() => {
-        searchServiceSpy = jasmine.createSpyObj<SearchService>('SearchService', ['search']);
-        configServiceSpy = jasmine.createSpyObj<ConfigService>('CongigService', ['getClientSettings']);
+        searchServiceSpy = jasmine.createSpyObj<SearchService>('SearchService', ['participantSearch']);
+        configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettings']);
         configServiceSpy.getClientSettings.and.returnValue(of(configSettings));
         loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['info', 'error']);
 
@@ -85,8 +75,16 @@ describe('SeachEmailComponent', () => {
             expect(component.results.length).toBe(0);
         })
     );
+    it('should set email to initialEmail', () => {
+        const emailValue = 'email@value.com';
+        component.initialValue = emailValue;
+        component.ngOnInit();
+        fixture.detectChanges();
+
+        expect(component.email).toEqual(emailValue);
+    });
     it('should search service return list of person and map it to result list', done => {
-        searchServiceSpy.search.and.returnValue(of(participantList));
+        searchServiceSpy.participantSearch.and.returnValue(of(participantList));
         component.ngOnInit();
         fixture.detectChanges();
 
@@ -96,8 +94,8 @@ describe('SeachEmailComponent', () => {
         expect(component.results.length).toEqual(0);
     });
     it('should validate email', () => {
-        component.email = 'email@hmcts.tt.net';
-        component.invalidPattern = '@hmcts.net';
+        component.invalidPattern = 'courtroom.net';
+        component.email = 'email@hmcts.net';
         component.validateEmail();
         expect(component.isValidEmail).toBeTruthy();
     });
@@ -116,11 +114,11 @@ describe('SeachEmailComponent', () => {
         expect(component.notFoundParticipant).toBeFalsy();
     });
     it('should validate input email if email was not found in the list', () => {
-        component.email = 'email@hmcts.tt.net';
+        component.invalidPattern = 'courtroom.net';
+        component.email = 'email@hmcts.net';
         fixture.detectChanges();
         component.blurEmail();
         expect(component.isValidEmail).toBeTruthy();
-        expect(component.notFoundParticipant).toBeFalsy();
     });
     it('should close drop down on the click outside', () => {
         component.isShowResult = true;
@@ -204,57 +202,38 @@ describe('SeachEmailComponent', () => {
         expect(component.notFoundParticipant).toBeFalsy();
         expect(component.emailChanged.emit).toHaveBeenCalled();
     });
-    it('should map PersonResponse to ParticipantModel', () => {
-        const person = new PersonResponse({
-            contact_email: 'aa@hmcts.net',
-            first_name: 'Sam',
-            last_name: 'Green',
-            title: 'Ms',
-            middle_names: 'No',
-            telephone_number: '11111111',
-            username: 'aa@hmcts.net',
-            organisation: 'Name of a company'
-        });
 
-        const model = component.mapPersonResponseToParticipantModel(person);
-
-        expect(model.email).toEqual(person.contact_email);
-        expect(model.first_name).toEqual(person.first_name);
-        expect(model.last_name).toEqual(person.last_name);
-        expect(model.middle_names).toEqual(person.middle_names);
-        expect(model.title).toEqual(person.title);
-        expect(model.phone).toEqual(person.telephone_number);
-        expect(model.username).toEqual(person.username);
-        expect(model.company).toEqual(person.organisation);
-    });
-    it('should mapping return empty ParticipantModel if  PersonResponse is null', () => {
-        const person = null;
-        const model = component.mapPersonResponseToParticipantModel(person);
-        expect(model).toEqual(undefined);
-    });
     it('should find data and set notFoundParticipant to false', () => {
         component.getData(participantList);
+        expect(component.results).toEqual(participantList);
         expect(component.isShowResult).toBeTruthy();
         expect(component.isValidEmail).toBeTruthy();
         expect(component.notFoundParticipant).toBeFalsy();
     });
     it('should set notFoundParticipant to true', () => {
-        spyOn(component.participantsNotFound, 'emit');
+        spyOn(component.notFoundEmailEvent, 'next');
         component.noDataFound();
         expect(component.isShowResult).toBeFalsy();
         expect(component.notFoundParticipant).toBeTruthy();
-        expect(component.participantsNotFound.emit).toHaveBeenCalled();
+        expect(component.notFoundEmailEvent.next).toHaveBeenCalled();
     });
     it('should set notFoundParticipant to false if less that 3 letters input', () => {
         component.lessThanThreeLetters();
         expect(component.isShowResult).toBeFalsy();
         expect(component.notFoundParticipant).toBeFalsy();
     });
+    it('should set isErrorEmailAssignedToJudge  to false if onChange is called', () => {
+        component.isErrorEmailAssignedToJudge = true;
+        component.onChange();
+        expect(component.isErrorEmailAssignedToJudge).toBe(false);
+    });
     it('should unsubscribe subscription on destroy', () => {
         component.ngOnDestroy();
         expect(component.$subscriptions[0].closed).toBe(true);
         expect(component.$subscriptions[1].closed).toBe(true);
     });
+
+    describe('getData', () => {});
 });
 
 describe('SearchEmailComponent email validate', () => {
@@ -266,8 +245,8 @@ describe('SearchEmailComponent email validate', () => {
     let configServiceSpy: jasmine.SpyObj<ConfigService>;
     let loggerSpy: jasmine.SpyObj<Logger>;
 
-    searchServiceSpy = jasmine.createSpyObj<SearchService>('SearchService', ['search']);
-    configServiceSpy = jasmine.createSpyObj<ConfigService>('CongigService', ['getClientSettings']);
+    searchServiceSpy = jasmine.createSpyObj<SearchService>('SearchService', ['participantSearch']);
+    configServiceSpy = jasmine.createSpyObj<ConfigService>('ConfigService', ['getClientSettings']);
     configServiceSpy.getClientSettings.and.returnValue(of(configSettings));
     loggerSpy = jasmine.createSpyObj<Logger>('Logger', ['info', 'error']);
 

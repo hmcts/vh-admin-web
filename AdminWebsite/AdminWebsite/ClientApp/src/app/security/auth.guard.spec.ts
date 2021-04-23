@@ -1,35 +1,39 @@
-import { TestBed } from '@angular/core/testing';
-import { AuthGuard } from './auth.gaurd';
-import { MockAdalService } from '../testing/mocks/MockAdalService';
+import { fakeAsync, TestBed } from '@angular/core/testing';
+import { AuthGuard } from './auth.guard';
 import { Router } from '@angular/router';
-import { AdalService } from 'adal-angular4';
+import { MockOidcSecurityService } from '../testing/mocks/MockOidcSecurityService';
+import { OidcSecurityService } from 'angular-auth-oidc-client';
 
 describe('authguard', () => {
     let authGuard: AuthGuard;
-    let adalSvc;
+    let oidcSecurityService;
     const router = {
         navigate: jasmine.createSpy('navigate')
     };
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            providers: [AuthGuard, { provide: AdalService, useClass: MockAdalService }, { provide: Router, useValue: router }]
+            providers: [
+                AuthGuard,
+                { provide: OidcSecurityService, useClass: MockOidcSecurityService },
+                { provide: Router, useValue: router }
+            ]
         }).compileComponents();
-        adalSvc = TestBed.inject(AdalService);
+        oidcSecurityService = TestBed.inject(OidcSecurityService);
         authGuard = TestBed.inject(AuthGuard);
     });
 
     describe('when logged in with successful authentication', () => {
         it('canActivate should return true', () => {
-            adalSvc.setAuthenticated(true);
-            expect(authGuard.canActivate()).toBeTruthy();
+            oidcSecurityService.setAuthenticated(true);
+            authGuard.canActivate().subscribe(result => expect(result).toBeTruthy());
         });
     });
 
     describe('when login failed with unsuccessful authentication', () => {
-        it('canActivate should return false', () => {
-            adalSvc.setAuthenticated(false);
-            expect(authGuard.canActivate()).toBeFalsy();
-        });
+        it('canActivate should return false', fakeAsync(() => {
+            oidcSecurityService.setAuthenticated(false);
+            authGuard.canActivate().subscribe(result => expect(result).toBeFalsy());
+        }));
     });
 });
