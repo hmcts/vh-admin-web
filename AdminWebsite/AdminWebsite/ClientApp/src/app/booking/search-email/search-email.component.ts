@@ -113,7 +113,7 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
     }
 
     noDataFound() {
-        this.errorNotFoundJohEmail = this.hearingRoleParticipant === 'Panel Member' || this.hearingRoleParticipant === 'Winger';
+        this.errorNotFoundJohEmail = this.judiciaryRoles.includes(this.hearingRoleParticipant);
         this.isShowResult = false;
         this.notFoundParticipant = !this.isErrorEmailAssignedToJudge;
         this.notFoundEmailEvent.next(true);
