@@ -26,6 +26,7 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
     $subscriptions: Subscription[] = [];
     invalidPattern: string;
     isErrorEmailAssignedToJudge = false;
+    errorNotFoundJohEmail = false;
     isJoh = false;
     notFoundEmailEvent = new Subject<boolean>();
     notFoundEmailEvent$ = this.notFoundEmailEvent.asObservable();
@@ -112,7 +113,7 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
     }
 
     noDataFound() {
-        this.isErrorEmailAssignedToJudge = this.hearingRoleParticipant === 'Panel Member' || this.hearingRoleParticipant === 'Winger';
+        this.errorNotFoundJohEmail = this.judiciaryRoles.includes(this.hearingRoleParticipant);
         this.isShowResult = false;
         this.notFoundParticipant = !this.isErrorEmailAssignedToJudge;
         this.notFoundEmailEvent.next(true);
@@ -195,6 +196,7 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
 
     onChange() {
         this.isErrorEmailAssignedToJudge = false;
+        this.errorNotFoundJohEmail = false;
     }
 
     ngOnDestroy() {
