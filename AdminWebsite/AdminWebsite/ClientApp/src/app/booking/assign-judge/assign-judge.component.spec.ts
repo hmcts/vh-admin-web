@@ -103,7 +103,7 @@ const configSettings = new ClientSettingsResponse();
 configSettings.test_username_stem = '@hmcts.net';
 let configServiceSpy: jasmine.SpyObj<ConfigService>;
 
-fdescribe('AssignJudgeComponent', () => {
+describe('AssignJudgeComponent', () => {
     beforeEach(
         waitForAsync(() => {
             const newHearing = initHearingRequest();
