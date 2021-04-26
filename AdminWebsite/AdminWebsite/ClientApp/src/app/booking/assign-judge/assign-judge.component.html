@@ -76,6 +76,25 @@
 
       <p class="govuk-body govuk-!-margin-bottom-5"></p>
 
+      <div class="govuk-!-margin-bottom-9" [ngClass]="{ 'govuk-form-group--error': judgePhoneInvalid }">
+        <legend id="judgePhone-error" *ngIf="judgePhoneInvalid">
+          <span class="govuk-error-message">
+            {{ constants.Error.PhoneErrorMsg }}
+          </span>
+        </legend>
+        <label class="govuk-label" for="judgePhoneFld"> Judge telephone number </label>
+        <div class="govuk-body govuk-hint">(Optional) - Please enter the judge telephone number</div>
+        <input
+          (focusout)="changeTelephone()"
+          type="text"
+          formControlName="judgePhoneFld"
+          id="judgePhoneFld"
+          class="govuk-input govuk-input--width-20"
+        />
+      </div>
+      
+      <p class="govuk-body govuk-!-margin-bottom-5"></p>
+
       <div [ngClass]="{ 'govuk-form-group--error': judgeEmailInvalid || !isValidEmail }" *ngIf="displayEmailField">
         <legend id="judgeEmail-error" *ngIf="judgeEmailInvalid || !isValidEmail">
           <span class="govuk-error-message">
@@ -89,25 +108,6 @@
           type="text"
           formControlName="judgeEmailFld"
           id="judgeEmailFld"
-          class="govuk-input govuk-input--width-20"
-        />
-      </div>
-
-      <p class="govuk-body govuk-!-margin-bottom-5"></p>
-
-      <div class="govuk-!-margin-bottom-9" [ngClass]="{ 'govuk-form-group--error': judgePhoneInvalid }" *ngIf="judge">
-        <legend id="judgePhone-error" *ngIf="judgePhoneInvalid">
-          <span class="govuk-error-message">
-            {{ constants.Error.PhoneErrorMsg }}
-          </span>
-        </legend>
-        <label class="govuk-label" for="judgePhoneFld"> Judge telephone number </label>
-        <div class="govuk-body govuk-hint">(Optional) - Please enter the judge telephone number</div>
-        <input
-          (focusout)="changeTelephone()"
-          type="text"
-          formControlName="judgePhoneFld"
-          id="judgePhoneFld"
           class="govuk-input govuk-input--width-20"
         />
       </div>
