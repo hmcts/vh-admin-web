@@ -394,18 +394,15 @@ export class VideoHearingsService {
         return endpoints;
     }
 
-    mapLinkedParticipants(linkedParticipantModel: LinkedParticipantModel[]): LinkedParticipantRequest[] {
-        const linkedParticipantsRequest: LinkedParticipantRequest[] = [];
-        let linkedParticipantRequest: LinkedParticipantRequest;
-        if (linkedParticipantModel && linkedParticipantModel.length > 0) {
-            linkedParticipantModel.forEach(e => {
-                linkedParticipantRequest = new LinkedParticipantRequest();
-                linkedParticipantRequest.participant_contact_email = e.participantEmail;
-                linkedParticipantRequest.linked_participant_contact_email = e.linkedParticipantEmail;
-                linkedParticipantsRequest.push(linkedParticipantRequest);
-            });
-        }
-        return linkedParticipantsRequest;
+    mapLinkedParticipants(linkedParticipantModels: LinkedParticipantModel[] = []): LinkedParticipantRequest[] {
+        return linkedParticipantModels.reduce((acc: LinkedParticipantRequest[], model: LinkedParticipantModel) => {
+            const request = new LinkedParticipantRequest();
+            request.participant_contact_email = model.participantEmail;
+            request.linked_participant_contact_email = model.linkedParticipantEmail;
+            request.type = model.linkType;
+            acc.push(request);
+            return acc;
+        }, []);
     }
 
     getHearingById(hearingId: string): Observable<HearingDetailsResponse> {
