@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AdminWebsite.Configuration;
 using AdminWebsite.Extensions;
 using AdminWebsite.Mappers;
 using AdminWebsite.Models;
@@ -10,6 +11,7 @@ using BookingsApi.Client;
 using BookingsApi.Contract.Requests;
 using BookingsApi.Contract.Responses;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using NotificationApi.Client;
 using NotificationApi.Contract.Requests;
 using VideoApi.Client;
@@ -77,9 +79,11 @@ namespace AdminWebsite.Services
         private readonly IVideoApiClient _videoApiClient;
         private readonly IBookingsApiClient _bookingsApiClient;
         private readonly ILogger<HearingsService> _logger;
+        private readonly VideoWebConfiguration _videoWebCongiguration;
 
         public HearingsService(IPollyRetryService pollyRetryService, IUserAccountService userAccountService,
-            INotificationApiClient notificationApiClient, IVideoApiClient videoApiClient, IBookingsApiClient bookingsApiClient, ILogger<HearingsService> logger)
+            INotificationApiClient notificationApiClient, IVideoApiClient videoApiClient, IBookingsApiClient bookingsApiClient, ILogger<HearingsService> logger,
+            IOptions<VideoWebConfiguration> videoWebCongiguration)
         {
             _pollyRetryService = pollyRetryService;
             _userAccountService = userAccountService;
@@ -87,6 +91,7 @@ namespace AdminWebsite.Services
             _videoApiClient = videoApiClient;
             _bookingsApiClient = bookingsApiClient;
             _logger = logger;
+            _videoWebCongiguration = videoWebCongiguration.Value;
         }
 
         public async Task AssignParticipantToCorrectGroups(HearingDetailsResponse hearing, Dictionary<string, User> newUsernameAdIdDict)
@@ -134,7 +139,9 @@ namespace AdminWebsite.Services
 
                     if (participant == null) continue;
 
-                    var request = AddNotificationRequestMapper.MapToNewUserNotification(hearing.Id, participant, item.Value.Password);
+                    var request = AddNotificationRequestMapper.MapToNewUserNotification(hearing.Id, participant, 
+                                        item.Value.Password, _videoWebCongiguration.BaseUrl);
+
                     // Send a notification only for the newly created users
                     await _notificationApiClient.CreateNewNotificationAsync(request);
                 }

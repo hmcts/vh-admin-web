@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using AdminWebsite.Configuration;
 using AdminWebsite.Extensions;
 using BookingsApi.Contract.Responses;
+using Microsoft.Extensions.Options;
 using NotificationApi.Contract;
 using NotificationApi.Contract.Requests;
 
@@ -11,9 +13,11 @@ namespace AdminWebsite.Mappers
     public static class AddNotificationRequestMapper
     {
         private const string Individual = "INDIVIDUAL";
+        private const string SigninJudUrlSuffix = "/login&role=jud";
+        private const string SigninVihUrlSuffix = "/login&role=vih";
 
         public static AddNotificationRequest MapToNewUserNotification(Guid hearingId, ParticipantResponse participant,
-            string password)
+            string password, string baseVideoWebUrl)
         {
             var parameters = new Dictionary<string, string>
             {
@@ -21,6 +25,17 @@ namespace AdminWebsite.Mappers
                 {"username", $"{participant.Username}"},
                 {"random password", $"{password}"}
             };
+
+            // To Bypass IDP Selection Page and present direct login screen
+            if (new[] { "Judge", "judicial office holder" }.Any(x => participant.UserRoleName.Contains(x)))
+            {
+                parameters.Add("signinurl", $"{baseVideoWebUrl}{SigninJudUrlSuffix}");
+            }
+            else
+            {
+                parameters.Add("signinurl", $"{baseVideoWebUrl}{SigninVihUrlSuffix}"); 
+            }
+
             var addNotificationRequest = new AddNotificationRequest
             {
                 HearingId = hearingId,

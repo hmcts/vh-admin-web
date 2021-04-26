@@ -22,6 +22,8 @@ using UserApi.Client;
 using UserApi.Contract.Requests;
 using UserApi.Contract.Responses;
 using VideoApi.Client;
+using AdminWebsite.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {
@@ -37,6 +39,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private Mock<IPollyRetryService> _pollyRetryServiceMock;
         private Mock<INotificationApiClient> _notificationApiMock;
         private Mock<ILogger<HearingsService>> _participantGroupLogger;
+        private Mock<IOptions<VideoWebConfiguration>> _videoWebConfiguration;
         private IHearingsService _hearingsService;
 
         private AdminWebsite.Controllers.HearingsController _controller;
@@ -50,7 +53,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _userIdentity = new Mock<IUserIdentity>();
             _userAccountServiceLogger = new Mock<ILogger<UserAccountService>>();
             _notificationApiMock = new Mock<INotificationApiClient>();
-
+            _videoWebConfiguration = new Mock<IOptions<VideoWebConfiguration>>();
             _userAccountService = new UserAccountService(_userApiClient.Object, _bookingsApiClient.Object,
                 _notificationApiMock.Object, _userAccountServiceLogger.Object);
 
@@ -61,7 +64,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _participantGroupLogger = new Mock<ILogger<HearingsService>>();
             _hearingsService = new HearingsService(_pollyRetryServiceMock.Object,
                 _userAccountService, _notificationApiMock.Object, _videoApiMock.Object, _bookingsApiClient.Object,
-                _participantGroupLogger.Object);
+                _participantGroupLogger.Object, _videoWebConfiguration.Object);
 
             _controller = new AdminWebsite.Controllers.HearingsController(_bookingsApiClient.Object,
                 _userIdentity.Object,

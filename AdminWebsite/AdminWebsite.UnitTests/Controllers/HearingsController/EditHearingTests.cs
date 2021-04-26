@@ -47,6 +47,7 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private Mock<IPollyRetryService> _pollyRetryServiceMock;
         private HearingDetailsResponse _updatedExistingParticipantHearingOriginal;
         private Mock<IUserAccountService> _userAccountService;
+        private Mock<IOptions> _userAccountService;
         private Mock<IUserIdentity> _userIdentity;
 
         private Guid _validId;
