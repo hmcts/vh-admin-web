@@ -30,7 +30,7 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
     isJoh = false;
     notFoundEmailEvent = new Subject<boolean>();
     notFoundEmailEvent$ = this.notFoundEmailEvent.asObservable();
-    searchPending = new BehaviorSubject<boolean>(false);
+    searchPending = new BehaviorSubject<boolean>(true);
     private judgeHearingRole = 'Judge';
     private judiciaryRoles = this.constants.JudiciaryRoles;
     private cannotAddNewUsersRoles = [this.judgeHearingRole, ...this.judiciaryRoles];
@@ -53,11 +53,11 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
         this.$subscriptions.push(
             this.searchTerm
                 .pipe(
-                    debounceTime(500),
-                    distinctUntilChanged(),
                     tap(() => {
                         this.searchPending.next(true);
                     }),
+                    debounceTime(500),
+                    distinctUntilChanged(),
                     switchMap(term => {
                         if (term.length > 2) {
                             return this.searchService.participantSearch(term, this.hearingRoleParticipant);
@@ -151,11 +151,6 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
             this.email.length < 256 &&
             pattern.test(this.email) &&
             this.email.indexOf(this.invalidPattern) < 0;
-
-        if (this.hearingRoleParticipant === this.judgeHearingRole && this.isValidEmail) {
-            this.isValidEmail = this.results != null && this.results.length === 1 && this.results[0].username === this.email;
-        }
-
         return this.isValidEmail;
     }
 
@@ -173,24 +168,6 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
         if (!this.results || this.results.length === 0) {
             this.validateEmail();
             this.emailChanged.emit(this.email);
-        }
-
-        if (this.hearingRoleParticipant === this.judgeHearingRole) {
-            this.blurSubscription.unsubscribe();
-            this.blurSubscription = this.searchPending.subscribe(pending => {
-                if (!pending) {
-                    let judgeFound: ParticipantModel;
-                    if (this.isValidEmail && this.results && this.results.length > 0) {
-                        judgeFound = this.results.find(result => result.email.toLowerCase() === this.email.toLowerCase());
-                    }
-                    if (judgeFound) {
-                        this.selectItemClick(judgeFound);
-                    } else {
-                        this.findParticipant.emit(null);
-                    }
-                    this.blurSubscription.unsubscribe();
-                }
-            });
         }
     }
 

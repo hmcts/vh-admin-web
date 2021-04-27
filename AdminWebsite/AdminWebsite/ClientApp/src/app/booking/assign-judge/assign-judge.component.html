@@ -57,7 +57,7 @@
 
       <p class="govuk-body govuk-!-margin-bottom-5"></p>
 
-      <div [ngClass]="{ 'govuk-form-group--error': judgeDisplayNameInvalid }" *ngIf="judge">
+      <div [ngClass]="{ 'govuk-form-group--error': judgeDisplayNameInvalid }">
         <legend id="judgeDisplayName-error" *ngIf="judgeDisplayNameInvalid">
           <span class="govuk-error-message">
             {{ constants.Error.JudgeDisplayNameErrorMsg }}
@@ -76,26 +76,7 @@
 
       <p class="govuk-body govuk-!-margin-bottom-5"></p>
 
-      <div [ngClass]="{ 'govuk-form-group--error': judgeEmailInvalid || !isValidEmail }" *ngIf="displayEmailField">
-        <legend id="judgeEmail-error" *ngIf="judgeEmailInvalid || !isValidEmail">
-          <span class="govuk-error-message">
-            {{ constants.Error.EmailErrorMsg }}
-          </span>
-        </legend>
-        <label class="govuk-label" for="judgeEmailFld"> Judge email </label>
-        <div class="govuk-body govuk-hint">(Optional) - Please enter the judge email address</div>
-        <input
-          (focusout)="changeEmail()"
-          type="text"
-          formControlName="judgeEmailFld"
-          id="judgeEmailFld"
-          class="govuk-input govuk-input--width-20"
-        />
-      </div>
-
-      <p class="govuk-body govuk-!-margin-bottom-5"></p>
-
-      <div class="govuk-!-margin-bottom-9" [ngClass]="{ 'govuk-form-group--error': judgePhoneInvalid }" *ngIf="judge">
+      <div [ngClass]="{ 'govuk-form-group--error': judgePhoneInvalid }">
         <legend id="judgePhone-error" *ngIf="judgePhoneInvalid">
           <span class="govuk-error-message">
             {{ constants.Error.PhoneErrorMsg }}
@@ -108,6 +89,29 @@
           type="text"
           formControlName="judgePhoneFld"
           id="judgePhoneFld"
+          class="govuk-input govuk-input--width-20"
+        />
+      </div>
+
+      <p class="govuk-body govuk-!-margin-bottom-5"></p>
+
+      <div
+        class="govuk-!-margin-bottom-9"
+        [ngClass]="{ 'govuk-form-group--error': judgeEmailInvalid || !isValidEmail }"
+        *ngIf="displayEmailField"
+      >
+        <legend id="judgeEmail-error" *ngIf="judgeEmailInvalid || !isValidEmail">
+          <span class="govuk-error-message">
+            {{ constants.Error.EmailErrorMsg }}
+          </span>
+        </legend>
+        <label class="govuk-label" for="judgeEmailFld"> Judge email </label>
+        <div class="govuk-body govuk-hint">(Optional) - Please enter the judge email address</div>
+        <input
+          (focusout)="changeEmail()"
+          type="text"
+          formControlName="judgeEmailFld"
+          id="judgeEmailFld"
           class="govuk-input govuk-input--width-20"
         />
       </div>
