@@ -121,7 +121,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     private initFormFields() {
         this.judgeDisplayNameFld = new FormControl(this.judge?.display_name, {
             validators: [Validators.required, Validators.pattern(Constants.TextInputPattern), Validators.maxLength(255)],
-            updateOn: 'blur',
+            updateOn: 'blur'
         });
         this.judgeEmailFld = new FormControl(this.otherInformationDetails.JudgeEmail, {
             validators: [Validators.pattern(Constants.EmailPattern), Validators.maxLength(255)],
@@ -172,7 +172,7 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     setFieldSubscription() {
         this.$subscriptions.push(
             this.judgeDisplayNameFld.valueChanges.subscribe(name => {
-                if(this.judge) {
+                if (this.judge) {
                     this.judge.display_name = name;
                 }
             }),

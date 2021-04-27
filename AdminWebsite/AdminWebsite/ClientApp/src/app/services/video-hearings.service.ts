@@ -441,7 +441,6 @@ export class VideoHearingsService {
         );
     }
 
-
     getJudge(): ParticipantModel {
         return this.modelHearing.participants.find(x => x.is_judge);
     }

@@ -120,7 +120,7 @@ describe('AssignJudgeComponent', () => {
                 'cancelRequest',
                 'setBookingHasChanged',
                 'canAddJudge',
-                'canAddJudge',
+                'canAddJudge'
             ]);
             videoHearingsServiceSpy.getCurrentRequest.and.returnValue(newHearing);
             emailValidationServiceSpy.validateEmail.and.returnValue(true);
@@ -552,7 +552,7 @@ describe('AssignJudgeComponent', () => {
                 component.updateJudge(judge);
                 expect(videoHearingsServiceSpy.canAddJudge).toHaveBeenCalledTimes(canAddJudgeCalledCountBefore);
             });
-            
+
             it('should set validation error to true if judge account can not be added', () => {
                 component.isJudgeParticipantError = false;
 
