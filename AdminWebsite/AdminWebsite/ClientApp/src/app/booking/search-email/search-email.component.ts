@@ -1,11 +1,11 @@
 import { Component, EventEmitter, Output, OnInit, Input, OnDestroy } from '@angular/core';
-import { BehaviorSubject, Observable, of, Subject, Subscription } from 'rxjs';
+import { BehaviorSubject, combineLatest, NEVER, Observable, of, Subject, Subscription } from 'rxjs';
 import { Constants } from '../../common/constants';
-import { ParticipantModel } from '../../common/model/participant.model';
 import { SearchService } from '../../services/search.service';
 import { ConfigService } from 'src/app/services/config.service';
 import { Logger } from '../../services/logger';
-import { debounceTime, distinctUntilChanged, filter, map, switchMap, tap } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, filter, map, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { ParticipantModel } from 'src/app/common/model/participant.model';
 
 @Component({
     selector: 'app-search-email',
@@ -21,7 +21,9 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
     results: ParticipantModel[] = [];
     isShowResult = false;
     notFoundParticipant = false;
+
     email: string;
+
     isValidEmail = true;
     $subscriptions: Subscription[] = [];
     invalidPattern: string;
@@ -49,6 +51,7 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.email = this.initialValue;
+
         this.$subscriptions.push(
             this.searchTerm
                 .pipe(
@@ -58,18 +61,17 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
                         if (term.length > 2) {
                             return this.searchService.participantSearch(term, this.hearingRoleParticipant);
                         } else {
-                            return of([]);
+                            this.lessThanThreeLetters();
+                            return NEVER;
                         }
                     }),
                     tap(personsFound => {
+                        console.log(personsFound);
+
                         if (personsFound && personsFound.length > 0) {
                             this.getData(personsFound);
                         } else {
-                            if (this.email.length > 2) {
-                                this.noDataFound();
-                            } else {
-                                this.lessThanThreeLetters();
-                            }
+                            this.noDataFound();
                             this.isShowResult = false;
                             this.results = undefined;
                         }
@@ -140,12 +142,11 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
 
     validateEmail() {
         const pattern = Constants.EmailPattern;
-        this.isValidEmail =
-            this.email &&
-            this.email.length > 2 &&
-            this.email.length < 256 &&
-            pattern.test(this.email) &&
-            this.email.indexOf(this.invalidPattern) < 0;
+        this.isValidEmail = this.email && this.email.length > 2 && this.email.length < 256 && pattern.test(this.email);
+
+        if (!this.isJudge) {
+            this.isValidEmail = this.email.indexOf(this.invalidPattern) < 0;
+        }
         return this.isValidEmail;
     }
 
@@ -188,7 +189,7 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
             }
         }
 
-        if (this.isJudge) {
+        if (this.isJudge && email !== this.initialValue) {
             this.findParticipant.emit(null);
         }
     }

@@ -341,6 +341,9 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
     }
 
     private removeJudge() {
+        this.judgeDisplayNameFld.setValue('');
+        this.judgeEmailFld.setValue('');
+        this.judgePhoneFld.setValue('');
         this.hearing.participants = this.hearing.participants.filter(x => !x.is_judge);
     }
 
