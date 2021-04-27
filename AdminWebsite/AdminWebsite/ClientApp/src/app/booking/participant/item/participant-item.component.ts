@@ -23,7 +23,9 @@ export class ParticipantItemComponent {
     @Output() edit = new EventEmitter<ParticipantModel>();
     @Output() remove = new EventEmitter<ParticipantModel>();
 
-    constructor(private bookingService: BookingService, private logger: Logger, private router: Router) {}
+    constructor(private bookingService: BookingService, private logger: Logger, private router: Router) {
+        console.log("[ROB] - ParticipantItemComponent ctor")
+    }
 
     getJudgeUser(participant: ParticipantModel): string {
         return participant.username;
@@ -44,7 +46,9 @@ export class ParticipantItemComponent {
     }
 
     editParticipant(participant: ParticipantModel) {
+        console.log("[ROB] participant-item - edit", participant);
         this.editJudge();
+
         if (this.isSummaryPage) {
             this.bookingService.setParticipantEmail(participant.email);
             this.logger.debug(`${this.loggerPrefix} Navigating back to participants to edit`, { participant: participant.email });

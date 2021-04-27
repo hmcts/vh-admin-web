@@ -38,6 +38,7 @@ export class ParticipantListComponent implements OnInit, OnChanges {
     }
 
     editParticipant(participant: ParticipantModel) {
+        console.log("[ROB] - participant-list - editParticipant", participant);
         this.$selectedForEdit.emit(participant.email);
     }
 

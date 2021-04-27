@@ -108,21 +108,28 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         super.ngOnInit();
     }
 
+    onSelectedParticipant(participantEmail : string) {
+        console.log('[ROB] - add-participant - selected participant event', participantEmail);
+        this.selectedParticipantEmail = participantEmail;
+        this.showDetails = true;
+
+        setTimeout(() => {
+            console.log("[ROB] this.searchEmail", this.searchEmail);
+
+            if (this.searchEmail) {
+                this.repopulateParticipantToEdit();
+                this.displayUpdate();
+                this.localEditMode = true;
+                if (this.searchEmail) {
+                    this.setParticipantEmail();
+                }
+            }
+        }, 500);
+    }
+
     ngAfterViewInit() {
         this.$subscriptions.push(
-            this.participantsListComponent.selectedParticipant.subscribe(participantEmail => {
-                this.selectedParticipantEmail = participantEmail;
-                this.showDetails = true;
-                setTimeout(() => {
-                    this.repopulateParticipantToEdit();
-                    this.displayUpdate();
-                    this.localEditMode = true;
-                    if (this.searchEmail) {
-                        this.setParticipantEmail();
-                    }
-                }, 500);
-            })
-        );
+            this.participantsListComponent.selectedParticipant.subscribe((participantEmail) => this.onSelectedParticipant(participantEmail)));
 
         this.$subscriptions.push(
             this.participantsListComponent.selectedParticipantToRemove.subscribe(participantEmail => {
@@ -137,25 +144,28 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
             this.videoHearingService
                 .getParticipantRoles(this.hearing.case_type)
                 .then((data: CaseAndHearingRolesResponse[]) => {
+                    console.log("[ROB] - getParticipantRoles - recieved", data);
                     self.setupRoles(data);
                     if (self.editMode) {
+                        console.log("[ROB] - getParticipantRoles - is in edit mode", data);
+
                         self.selectedParticipantEmail = self.bookingService.getParticipantEmail();
+                        console.log("[ROB] - getParticipantRoles - got selected participant email", self.selectedParticipantEmail);
+
                         if (!self.selectedParticipantEmail || self.selectedParticipantEmail.length === 0) {
                             // no participants, we need to add one
+                            console.log("[ROB] - getParticipantRoles - no email set add new participant", self.selectedParticipantEmail);
                             self.showDetails = false;
                             self.displayAdd();
                         } else {
-                            self.showDetails = true;
-                            setTimeout(() => {
-                                if (this.searchEmail && this.participantDetails) {
-                                    this.setParticipantEmail();
-                                }
-                            }, 500);
-
+                            console.log("[ROB] - getParticipantRoles - email set show details", self.selectedParticipantEmail);
+                            self.onSelectedParticipant(self.selectedParticipantEmail)
                             self.displayNext();
                         }
-                        self.repopulateParticipantToEdit();
+                    } else {
+                        console.log("[ROB] - getParticipantRoles - not in edit mode", data);
                     }
+
                     self.populateInterpretedForList();
                 })
                 .catch(error => this.logger.error(`${this.loggerPrefix} Error to get participant case and hearing roles.`, error));
@@ -184,7 +194,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
     private setParticipantEmail() {
         this.searchEmail.email = this.participantDetails.email;
-        this.searchEmail.searchTerm.next(this.searchEmail.email);
+        this.searchEmail.participantDetails = this.participantDetails;
         this.searchEmail.isValidEmail = true;
         const participantHasId = this.participantDetails.id && this.participantDetails.id.length > 0;
         this.emailDisabled = participantHasId || this.participantDetails.is_exist_person;
@@ -281,13 +291,20 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     }
 
     private repopulateParticipantToEdit() {
+        console.log("[ROB] - repopulateParticipantToEdit");
         const selectedParticipant = this.hearing.participants.find(s => s.email === this.selectedParticipantEmail);
+        console.log("[ROB] - selectedParticipant =", selectedParticipant);
+
         if (selectedParticipant) {
             this.interpreterSelected = selectedParticipant.hearing_role_name.toLowerCase() === HearingRoles.INTERPRETER;
+            console.log("[ROB] - this.interpreterSelected =", this.interpreterSelected);
+
             this.logger.debug(`${this.loggerPrefix} Repopulating participant to edit.`, {
                 hearing: this.hearing.hearing_id,
                 participant: selectedParticipant.id
             });
+
+            console.log("[ROB] - this.selectedParticipant =", selectedParticipant);
             this.getParticipant(selectedParticipant);
         }
     }
@@ -541,8 +558,10 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     }
 
     validateJudgeAndJohMembers(): boolean {
+        console.log("[ROB] validateJudgeAndJohMembers", !!this.hearing, !!this.hearing?.participants, this.hearing?.participants.length);
         if (this.hearing?.participants.length) {
             const judge = this.hearing.participants.find(x => x.is_judge);
+            console.log("[ROB] judge", judge, this.searchEmail);
             return this.searchEmail.email !== judge?.username;
         }
         return true;
@@ -985,11 +1004,17 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
     }
 
     private populateInterpretedForList() {
+        console.log("[ROB] populate int lsit");
         const NotAllowedInterpreter: string[] = [HearingRoles.INTERPRETER.toLowerCase(), HearingRoles.OBSERVER.toLowerCase()];
+        console.log("[ROB] NotAllowedInterpreter =", NotAllowedInterpreter);
+
 
         this.interpreteeList = this.hearing.participants.filter(
             p => p.user_role_name === 'Individual' && !NotAllowedInterpreter.includes(p.hearing_role_name.toLowerCase())
         );
+
+        console.log("[ROB] this.interpreteeList =", this.interpreteeList);
+
         const interpreteeModel: ParticipantModel = {
             id: this.constants.PleaseSelect,
             first_name: this.constants.PleaseSelect,
@@ -999,8 +1024,13 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
             is_judge: false,
             is_courtroom_account: false
         };
+
         this.interpreteeList.unshift(interpreteeModel);
+
+        console.log("[ROB] this.interpreteeList =", this.interpreteeList);
+
     }
+
     private setInterpreterForValidation() {
         if (this.isRoleInterpreter(this.role.value)) {
             this.interpreterFor.setValidators([Validators.required, Validators.pattern(Constants.PleaseSelectPattern)]);
