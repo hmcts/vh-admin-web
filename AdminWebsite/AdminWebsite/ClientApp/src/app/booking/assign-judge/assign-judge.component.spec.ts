@@ -119,7 +119,7 @@ describe('AssignJudgeComponent', () => {
                 'updateHearingRequest',
                 'cancelRequest',
                 'setBookingHasChanged',
-                'canAddJudge',
+                'canAddUser',
                 'canAddJudge'
             ]);
             videoHearingsServiceSpy.getCurrentRequest.and.returnValue(newHearing);
