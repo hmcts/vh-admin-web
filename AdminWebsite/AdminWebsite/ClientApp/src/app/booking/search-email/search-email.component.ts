@@ -180,7 +180,7 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
     }
 
     populateParticipantInfo(email: string) {
-        if (this.results && this.results.length > 0) {
+        if (this.results && this.results.length) {
             const participant = this.results.find(p => p.email === email);
             if (participant) {
                 this.selectItemClick(participant);
@@ -188,12 +188,16 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
             }
         }
 
-        if (this.hearingRoleParticipant === this.judgeHearingRole) {
+        if (this.isJudge) {
             this.findParticipant.emit(null);
         }
     }
 
     get showCreateNewUserWarning() {
         return this.notFoundParticipant && !this.cannotAddNewUsersRoles.includes(this.hearingRoleParticipant);
+    }
+
+    get isJudge() {
+        return this.hearingRoleParticipant === this.judgeHearingRole;
     }
 }
