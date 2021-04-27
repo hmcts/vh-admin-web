@@ -139,34 +139,14 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
         this.canNavigate = false;
         this.isJudgeParticipantError = false;
         if (judge) {
-            this.courtAccountJudgeEmail = judge.email;
-            if (!this.isExistingJudge(judge)) {
-                if (this.hearingService.canAddJudge(judge.username)) {
-                    judge.is_judge = true;
-                    judge.case_role_name = 'Judge';
-                    judge.hearing_role_name = 'Judge';
-                    this.hearing.participants = this.hearing.participants.filter(x => !x.is_judge);
-                    this.hearing.participants.unshift(judge);
-                    this.canNavigate = true;
-                } else {
-                    this.isJudgeParticipantError = true;
-                }
-            }
+            this.updateWithNewJudge(judge);
         } else {
             this.removeJudge();
         }
 
         this.hearing = { ...this.hearing };
 
-        if (this.isJudgeSelected) {
-            this.judgeDisplayNameFld.setValue(judge.display_name);
-            this.judgeEmailFld.setValue(this.otherInformationDetails.JudgeEmail);
-            this.judgePhoneFld.setValue(this.otherInformationDetails.JudgePhone);
-        }
-    }
-
-    private isExistingJudge(judge: ParticipantModel) {
-        return this.hearing.participants.find(participant => participant.is_judge)?.email === judge.email;
+        this.setTextFieldValues();
     }
 
     setFieldSubscription() {
@@ -362,5 +342,37 @@ export class AssignJudgeComponent extends BookingBaseComponent implements OnInit
 
     private removeJudge() {
         this.hearing.participants = this.hearing.participants.filter(x => !x.is_judge);
+    }
+
+    private updateWithNewJudge(judge: ParticipantModel) {
+        this.courtAccountJudgeEmail = judge.email;
+        if (!this.isExistingJudge(judge)) {
+            if (this.hearingService.canAddJudge(judge.username)) {
+                judge.is_judge = true;
+                judge.case_role_name = 'Judge';
+                judge.hearing_role_name = 'Judge';
+                this.hearing.participants = this.hearing.participants.filter(x => !x.is_judge);
+                this.hearing.participants.unshift(judge);
+                this.canNavigate = true;
+            } else {
+                this.isJudgeParticipantError = true;
+            }
+        }
+    }
+
+    private isExistingJudge(judge: ParticipantModel) {
+        return this.hearing.participants.find(participant => participant.is_judge)?.email === judge.email;
+    }
+
+    private setTextFieldValues() {
+        if (this.isJudgeSelected) {
+            this.judgeDisplayNameFld.setValue(this.judge.display_name);
+            let judgeEmail = '';
+            if (this.displayEmailField) {
+                judgeEmail = this.otherInformationDetails.JudgeEmail;
+            }
+            this.judgeEmailFld.setValue(judgeEmail);
+            this.judgePhoneFld.setValue(this.otherInformationDetails.JudgePhone);
+        }
     }
 }
