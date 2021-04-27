@@ -259,6 +259,25 @@ describe('SeachEmailComponent', () => {
     });
 
     describe('getData', () => {});
+
+    fdescribe('searchTerm', () => {
+        it('should set correct errors when too few characters', fakeAsync(() => {
+            component.isShowResult = true;
+            component.notFoundParticipant = true;
+            component.notFoundEmailEvent.next(true);
+
+            const subscription = component.notFoundEmailEvent.subscribe(emailEvent => {
+                expect(emailEvent).toBe(false);
+                expect(component.isShowResult).toBe(false);
+                expect(component.notFoundParticipant).toBe(false);
+
+                subscription.unsubscribe();
+            });
+
+            component.searchTerm.next('a');
+            tick(500);
+        }));
+    });
 });
 
 describe('SearchEmailComponent email validate', () => {
