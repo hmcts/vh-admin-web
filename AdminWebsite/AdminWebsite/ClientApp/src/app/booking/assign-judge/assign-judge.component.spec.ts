@@ -368,6 +368,7 @@ describe('AssignJudgeComponent', () => {
     judge.email = 'JudgeEmail';
     judge.display_name = 'JudgeDisplayName';
     judge.phone = 'JudgePhone';
+    judge.is_courtroom_account = true;
 
     const alternateJudge = new ParticipantModel();
     alternateJudge.username = 'AlternateJudgeUserName';
@@ -559,9 +560,6 @@ describe('AssignJudgeComponent', () => {
                 videoHearingsServiceSpy.canAddJudge.and.returnValue(false);
                 component.updateJudge(judge);
 
-                // expect(videoHearingsServiceSpy.canAddJudge).toHaveBeenCalledTimes(1);
-                // TODO refactor to allow better unit testing such as this
-
                 expect(videoHearingsServiceSpy.canAddJudge).toHaveBeenCalledWith(judge.username);
                 expect(component.isJudgeParticipantError).toBe(true);
                 expect(component.canNavigate).toBe(false);
@@ -610,9 +608,9 @@ describe('AssignJudgeComponent', () => {
             expect(updatedJudges.length).toBe(0);
 
             expect(component.isJudgeParticipantError).toBe(false);
-            expect(component.judgeDisplayNameFld.value).toEqual(initialJudgeDisplayNameFld);
-            expect(component.judgeEmailFld.value).toEqual(initialJudgeEmailFld);
-            expect(component.judgePhoneFld.value).toEqual(initialJudgePhoneFld);
+            expect(component.judgeDisplayNameFld.value).toEqual('');
+            expect(component.judgeEmailFld.value).toEqual('');
+            expect(component.judgePhoneFld.value).toEqual('');
             expect(component.canNavigate).toBe(false);
         });
     });
