@@ -184,7 +184,12 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
             const participant = this.results.find(p => p.email === email);
             if (participant) {
                 this.selectItemClick(participant);
+                return;
             }
+        }
+
+        if (this.hearingRoleParticipant === this.judgeHearingRole) {
+            this.findParticipant.emit(null);
         }
     }
 
