@@ -66,8 +66,6 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
                         }
                     }),
                     tap(personsFound => {
-                        console.log(personsFound);
-
                         if (personsFound && personsFound.length > 0) {
                             this.getData(personsFound);
                         } else {
