@@ -143,9 +143,8 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
     validateEmail() {
         const pattern = Constants.EmailPattern;
         this.isValidEmail = this.email && this.email.length > 2 && this.email.length < 256 && pattern.test(this.email);
-
         if (!this.isJudge) {
-            this.isValidEmail = this.email.indexOf(this.invalidPattern) < 0;
+            this.isValidEmail = this.isValidEmail && this.email.indexOf(this.invalidPattern) < 0;
         }
         return this.isValidEmail;
     }
