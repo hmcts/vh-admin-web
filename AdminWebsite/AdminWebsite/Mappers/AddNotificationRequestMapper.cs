@@ -75,8 +75,6 @@ namespace AdminWebsite.Mappers
             {
                 notificationType = NotificationType.HearingAmendmentEJudJudge;
                 parameters.Add("judge", participant.DisplayName);
-                participant.ContactEmail = participant.ContactEmail;
-                participant.TelephoneNumber = participant.TelephoneNumber;
             }
             else if (participant.UserRoleName.Contains("Judge", StringComparison.InvariantCultureIgnoreCase) &&
                      hearing.GetJudgeEmail() != null)
@@ -128,8 +126,6 @@ namespace AdminWebsite.Mappers
             {
                 notificationType = NotificationType.HearingConfirmationEJudJudge;
                 parameters.Add("judge", participant.DisplayName);
-                participant.ContactEmail = participant.ContactEmail;
-                participant.TelephoneNumber = participant.TelephoneNumber;
             }
             else if (participant.UserRoleName.Contains("Judge", StringComparison.InvariantCultureIgnoreCase) &&
                       hearing.GetJudgeEmail() != null)
@@ -190,8 +186,6 @@ namespace AdminWebsite.Mappers
             {
                 notificationType = NotificationType.HearingConfirmationEJudJudgeMultiDay;
                 parameters.Add("judge", participant.DisplayName);
-                participant.ContactEmail = participant.ContactEmail;
-                participant.TelephoneNumber = participant.TelephoneNumber;
             }
             else if (participant.UserRoleName.Contains("Judge", StringComparison.InvariantCultureIgnoreCase) &&
                      hearing.GetJudgeEmail() != null)

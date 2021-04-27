@@ -17,13 +17,13 @@ namespace AdminWebsite.Extensions
             return hearing.ScheduledDateTime.Ticks != anotherHearing.ScheduledDateTime.Ticks;
         }
         
-        public static bool HasJudgeEmailChanged(this HearingDetailsResponse hearing, HearingDetailsResponse anotherHearing)
+        public static bool HasJudgeEmailChanged(this HearingDetailsResponse hearing, HearingDetailsResponse originalHearing)
         {
-            if (string.IsNullOrWhiteSpace(anotherHearing.OtherInformation) && string.IsNullOrWhiteSpace(hearing.OtherInformation))
+            if (string.IsNullOrWhiteSpace(originalHearing.OtherInformation) && string.IsNullOrWhiteSpace(hearing.OtherInformation))
             {
                 return false;
             }
-            return hearing.GetJudgeEmail() != anotherHearing.GetJudgeEmail();
+            return hearing.GetJudgeEmail() != originalHearing.GetJudgeEmail();
         }
 
         public static bool DoesJudgeEmailExist(this HearingDetailsResponse hearing)
