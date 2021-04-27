@@ -33,7 +33,8 @@ export const Constants = {
             'The judge or courtroom account that you have entered cannot be the same as the panel member email address. Please enter an alternative account.',
         JohJudgeErrorMsg: 'The email address you have provided cannot be the same as the judge. Please enter an alternative.',
         JohEmailErrorMsg: 'Please enter an alternative email address',
-        NotFoundJohEmail: 'The email address you have entered is not recognised. Please enter an alternative.'
+        NotFoundJohEmail: 'The email address you have entered is not recognised. Please enter an alternative.',
+        JudgeInvalidEmailErrorMsg: 'Please enter a valid judge or courtroom account',
     },
     Contact: {
         phone: '0300 303 0655',
