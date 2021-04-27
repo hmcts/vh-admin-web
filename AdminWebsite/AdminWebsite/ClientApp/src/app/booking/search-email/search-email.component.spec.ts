@@ -260,7 +260,7 @@ describe('SeachEmailComponent', () => {
 
     describe('getData', () => {});
 
-    fdescribe('searchTerm', () => {
+    describe('searchTerm', () => {
         it('should set correct errors when too few characters', fakeAsync(() => {
             component.isShowResult = true;
             component.notFoundParticipant = true;
