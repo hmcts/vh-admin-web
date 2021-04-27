@@ -118,9 +118,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
                     this.repopulateParticipantToEdit();
                     this.displayUpdate();
                     this.localEditMode = true;
-                    if (this.searchEmail) {
-                        this.setParticipantEmail();
-                    }
+                    this.setParticipantEmail();
                 }
             }, 500);
         }
