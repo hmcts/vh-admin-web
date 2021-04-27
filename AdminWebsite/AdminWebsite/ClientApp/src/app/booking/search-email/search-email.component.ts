@@ -53,11 +53,11 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
         this.$subscriptions.push(
             this.searchTerm
                 .pipe(
+                    debounceTime(500),
+                    distinctUntilChanged(),
                     tap(() => {
                         this.searchPending.next(true);
                     }),
-                    debounceTime(500),
-                    distinctUntilChanged(),
                     switchMap(term => {
                         if (term.length > 2) {
                             return this.searchService.participantSearch(term, this.hearingRoleParticipant);
