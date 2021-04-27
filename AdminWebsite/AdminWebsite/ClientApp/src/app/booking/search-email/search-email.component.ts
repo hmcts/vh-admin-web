@@ -30,7 +30,6 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
     isJoh = false;
     notFoundEmailEvent = new Subject<boolean>();
     notFoundEmailEvent$ = this.notFoundEmailEvent.asObservable();
-    searchPending = new BehaviorSubject<boolean>(true);
     private judgeHearingRole = 'Judge';
     private judiciaryRoles = this.constants.JudiciaryRoles;
     private cannotAddNewUsersRoles = [this.judgeHearingRole, ...this.judiciaryRoles];
@@ -55,9 +54,6 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
                 .pipe(
                     debounceTime(500),
                     distinctUntilChanged(),
-                    tap(() => {
-                        this.searchPending.next(true);
-                    }),
                     switchMap(term => {
                         if (term.length > 2) {
                             return this.searchService.participantSearch(term, this.hearingRoleParticipant);
@@ -77,7 +73,6 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
                             this.isShowResult = false;
                             this.results = undefined;
                         }
-                        this.searchPending.next(false);
                     })
                 )
                 .subscribe()
