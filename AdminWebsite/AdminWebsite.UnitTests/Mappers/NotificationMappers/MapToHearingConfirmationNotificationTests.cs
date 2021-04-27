@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using AdminWebsite.Extensions;
 using AdminWebsite.Mappers;
 using AdminWebsite.Models;
 using BookingsApi.Contract.Responses;
@@ -20,8 +21,8 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             var expectedNotificationType = NotificationType.HearingConfirmationJudge;
             var participant = InitParticipant("Judge");
             var hearing = InitHearing();
-            hearing.OtherInformation = JsonConvert.SerializeObject(new OtherInformationDetails
-                {JudgeEmail = "judge@hmcts.net", JudgePhone = "123456789"});
+            hearing.OtherInformation = new OtherInformationDetails
+                {JudgeEmail = "judge@hmcts.net", JudgePhone = "123456789"}.ToOtherInformationString();
             
             var expectedParameters = new Dictionary<string, string>
             {
@@ -31,6 +32,35 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
                 {"day month year", "12 October 2020"},
                 {"judge", participant.DisplayName},
                 {"courtroom account username", participant.Username}
+            };
+            
+            var result = AddNotificationRequestMapper.MapToHearingConfirmationNotification(hearing, participant);
+            
+            result.Should().NotBeNull();
+            result.HearingId.Should().Be(hearing.Id);
+            result.ParticipantId.Should().Be(participant.Id);
+            result.ContactEmail.Should().Be(participant.ContactEmail);
+            result.NotificationType.Should().Be(expectedNotificationType);
+            result.MessageType.Should().Be(MessageType.Email);
+            result.PhoneNumber.Should().Be(participant.TelephoneNumber);
+            result.Parameters.Should().BeEquivalentTo(expectedParameters);
+        }
+        
+        [Test]
+        public void should_map_to_ejud_judge_confirmation_notification()
+        {
+            var expectedNotificationType = NotificationType.HearingConfirmationEJudJudge;
+            var participant = InitParticipant("Judge");
+            var hearing = InitHearing();
+            hearing.OtherInformation = string.Empty;
+            
+            var expectedParameters = new Dictionary<string, string>
+            {
+                {"case name", hearing.Cases.First().Name},
+                {"case number", hearing.Cases.First().Number},
+                {"time", "2:10 PM"},
+                {"day month year", "12 October 2020"},
+                {"judge", participant.DisplayName}
             };
             
             var result = AddNotificationRequestMapper.MapToHearingConfirmationNotification(hearing, participant);

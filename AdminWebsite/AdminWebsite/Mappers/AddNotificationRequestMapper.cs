@@ -70,7 +70,16 @@ namespace AdminWebsite.Mappers
             };
 
             NotificationType notificationType;
-            if (participant.UserRoleName.Contains("Judge", StringComparison.InvariantCultureIgnoreCase))
+            if (participant.UserRoleName.Contains("Judge", StringComparison.InvariantCultureIgnoreCase) &&
+                hearing.GetJudgeEmail() == null)
+            {
+                notificationType = NotificationType.HearingAmendmentEJudJudge;
+                parameters.Add("judge", participant.DisplayName);
+                participant.ContactEmail = participant.ContactEmail;
+                participant.TelephoneNumber = participant.TelephoneNumber;
+            }
+            else if (participant.UserRoleName.Contains("Judge", StringComparison.InvariantCultureIgnoreCase) &&
+                     hearing.GetJudgeEmail() != null)
             {
                 notificationType = NotificationType.HearingAmendmentJudge;
                 parameters.Add("judge", participant.DisplayName);
@@ -114,7 +123,16 @@ namespace AdminWebsite.Mappers
             var parameters = InitConfirmReminderParams(hearing);
 
             NotificationType notificationType;
-            if (participant.UserRoleName.Contains("Judge", StringComparison.InvariantCultureIgnoreCase))
+            if (participant.UserRoleName.Contains("Judge", StringComparison.InvariantCultureIgnoreCase) &&
+                hearing.GetJudgeEmail() == null)
+            {
+                notificationType = NotificationType.HearingConfirmationEJudJudge;
+                parameters.Add("judge", participant.DisplayName);
+                participant.ContactEmail = participant.ContactEmail;
+                participant.TelephoneNumber = participant.TelephoneNumber;
+            }
+            else if (participant.UserRoleName.Contains("Judge", StringComparison.InvariantCultureIgnoreCase) &&
+                      hearing.GetJudgeEmail() != null)
             {
                 notificationType = NotificationType.HearingConfirmationJudge;
                 parameters.Add("judge", participant.DisplayName);
@@ -167,7 +185,16 @@ namespace AdminWebsite.Mappers
                 {"number of days", days.ToString()}
             };
             NotificationType notificationType;
-            if (participant.UserRoleName.Contains("Judge", StringComparison.InvariantCultureIgnoreCase))
+            if (participant.UserRoleName.Contains("Judge", StringComparison.InvariantCultureIgnoreCase) &&
+                hearing.GetJudgeEmail() == null)
+            {
+                notificationType = NotificationType.HearingConfirmationEJudJudgeMultiDay;
+                parameters.Add("judge", participant.DisplayName);
+                participant.ContactEmail = participant.ContactEmail;
+                participant.TelephoneNumber = participant.TelephoneNumber;
+            }
+            else if (participant.UserRoleName.Contains("Judge", StringComparison.InvariantCultureIgnoreCase) &&
+                     hearing.GetJudgeEmail() != null)
             {
                 notificationType = NotificationType.HearingConfirmationJudgeMultiDay;
                 parameters.Add("judge", participant.DisplayName);
