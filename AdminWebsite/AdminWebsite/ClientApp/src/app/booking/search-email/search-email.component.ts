@@ -219,4 +219,8 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
     get showCreateNewUserWarning() {
         return this.notFoundParticipant && !this.cannotAddNewUsersRoles.includes(this.hearingRoleParticipant);
     }
+
+    get isSomething() {
+        return this.notFoundEmailEvent && this.notFoundParticipant;
+    }
 }

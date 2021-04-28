@@ -87,4 +87,8 @@ export class ParticipantItemComponent {
     get isInterpretee() {
         return this.participant.is_interpretee;
     }
+
+    get isSomething() {
+        return this.participant.is_interpretee && this.participant.hearing_role_name === 'Interpreter';
+    }
 }
