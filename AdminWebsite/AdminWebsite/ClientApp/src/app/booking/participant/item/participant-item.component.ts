@@ -45,6 +45,7 @@ export class ParticipantItemComponent {
 
     editParticipant(participant: ParticipantModel) {
         this.editJudge();
+
         if (this.isSummaryPage) {
             this.bookingService.setParticipantEmail(participant.email);
             this.logger.debug(`${this.loggerPrefix} Navigating back to participants to edit`, { participant: participant.email });
