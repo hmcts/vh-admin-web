@@ -53,8 +53,10 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
         {
             var expectedNotificationType = NotificationType.HearingConfirmationEJudJudgeMultiDay;
             var participant = InitParticipant("Judge");
+            participant.ContactEmail = "user@judiciarytest.com";
             var hearing = InitHearing();
             hearing.OtherInformation = string.Empty;
+            hearing.Participants = new List<ParticipantResponse> {participant};
 
             var expectedParameters = new Dictionary<string, string>
             {
@@ -179,7 +181,8 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             {
                 Id = Guid.NewGuid(),
                 Cases = new List<CaseResponse> {@case},
-                ScheduledDateTime = new DateTime(2020, 10, 12, 13, 10, 0, DateTimeKind.Utc)
+                ScheduledDateTime = new DateTime(2020, 10, 12, 13, 10, 0, DateTimeKind.Utc),
+                Participants = new List<ParticipantResponse>()
             };
             h.GroupId = h.Id;
             return h;

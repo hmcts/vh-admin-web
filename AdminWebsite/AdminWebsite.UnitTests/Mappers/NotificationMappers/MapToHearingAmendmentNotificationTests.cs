@@ -19,7 +19,8 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
         {
             _hearing = new HearingDetailsResponse
             {
-                Id = Guid.NewGuid()
+                Id = Guid.NewGuid(),
+                Participants = new List<ParticipantResponse>()
             };
         }
         
@@ -70,6 +71,8 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             var caseName = "cse test";
             var caseNumber = "MBFY/17364";
             var participant = InitParticipant("Judge");
+            participant.ContactEmail = "user@judiciarytest.com";
+            _hearing.Participants = new List<ParticipantResponse> {participant};
             _hearing.OtherInformation = string.Empty;
             
             var expectedParameters = new Dictionary<string, string>

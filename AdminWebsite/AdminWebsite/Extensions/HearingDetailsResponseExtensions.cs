@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using AdminWebsite.Models;
 using BookingsApi.Contract.Responses;
 using Newtonsoft.Json;
@@ -28,38 +29,39 @@ namespace AdminWebsite.Extensions
 
         public static bool DoesJudgeEmailExist(this HearingDetailsResponse hearing)
         {
-            if (hearing.OtherInformation != null)
+            if (hearing.IsJudgeEmailEJud())
             {
-                var otherInformationDetails = GetOtherInformationObject(hearing.OtherInformation);
-                if (otherInformationDetails.JudgeEmail != "")
-                {
-                    return true;
-                }
+                return true;
             }
-            return false;
+
+            if (hearing.OtherInformation == null) return false;
+            var otherInformationDetails = GetOtherInformationObject(hearing.OtherInformation);
+            return !string.IsNullOrEmpty(otherInformationDetails.JudgeEmail);
         }
         
         public static bool DoesJudgePhoneExist(this HearingDetailsResponse hearing)
         {
-            if (hearing.OtherInformation != null)
-            {
-                var otherInformationDetails = GetOtherInformationObject(hearing.OtherInformation);
-                if (otherInformationDetails.JudgePhone != null)
-                {
-                    return true;
-                }
-            }
-            return false;
+            if (hearing.OtherInformation == null) return false;
+            var otherInformationDetails = GetOtherInformationObject(hearing.OtherInformation);
+            return !string.IsNullOrWhiteSpace(otherInformationDetails.JudgePhone);
         }
 
         public static string GetJudgeEmail(this HearingDetailsResponse hearing)
         {
+            
             var email = GetOtherInformationObject(hearing.OtherInformation)?.JudgeEmail;
             if (email == string.Empty)
             {
                 return null;
             }
             return email;
+        }
+
+        public static bool IsJudgeEmailEJud(this HearingDetailsResponse hearing)
+        {
+            var judge = hearing?.Participants.SingleOrDefault(x =>
+                x.UserRoleName.Contains("Judge", StringComparison.CurrentCultureIgnoreCase));
+            return judge?.ContactEmail != null && judge.ContactEmail.Contains("judiciary", StringComparison.CurrentCultureIgnoreCase);
         }
         
         public static string GetJudgePhone(this HearingDetailsResponse hearing)

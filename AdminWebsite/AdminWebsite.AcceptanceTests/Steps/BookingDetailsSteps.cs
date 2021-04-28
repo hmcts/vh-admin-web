@@ -14,9 +14,9 @@ using AdminWebsite.AcceptanceTests.Pages;
 using AdminWebsite.Models;
 using BookingsApi.Contract.Enums;
 using BookingsApi.Contract.Responses;
-using TestApi.Contract.Dtos;
 using FluentAssertions;
 using TechTalk.SpecFlow;
+using TestApi.Contract.Dtos;
 using VideoApi.Contract.Responses;
 
 namespace AdminWebsite.AcceptanceTests.Steps
@@ -100,12 +100,14 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         private string GetJudgeEmail(HearingDetailsResponse hearing)
         {
-            var email = GetOtherInformationObject(hearing.OtherInformation).JudgeEmail;
-            if (email == string.Empty)
+            var judge = hearing.Participants.SingleOrDefault(x =>
+                    x.UserRoleName.Contains("Judge", StringComparison.CurrentCultureIgnoreCase));
+            if (judge != null && judge.ContactEmail.Contains("judiciary", StringComparison.CurrentCultureIgnoreCase))
             {
-                return null;
+                return judge.ContactEmail;
             }
-            return email;
+            var email = GetOtherInformationObject(hearing.OtherInformation).JudgeEmail;
+            return email == string.Empty ? null : email;
         }
         
         private static OtherInformationDetails GetOtherInformationObject(string otherInformation)

@@ -51,8 +51,10 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
         {
             var expectedNotificationType = NotificationType.HearingConfirmationEJudJudge;
             var participant = InitParticipant("Judge");
+            participant.ContactEmail = "user@judiciarytest.com";
             var hearing = InitHearing();
             hearing.OtherInformation = string.Empty;
+            hearing.Participants = new List<ParticipantResponse> {participant};
             
             var expectedParameters = new Dictionary<string, string>
             {
@@ -174,7 +176,8 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
                 Id = Guid.NewGuid(),
                 Cases = new List<CaseResponse> {@case},
                 ScheduledDateTime = new DateTime(2020, 10, 12, 13, 10, 0, DateTimeKind.Utc),
-                OtherInformation = JsonConvert.SerializeObject(new OtherInformationDetails {JudgeEmail = "judge@hmcts.net"})
+                OtherInformation = JsonConvert.SerializeObject(new OtherInformationDetails {JudgeEmail = "judge@hmcts.net"}),
+                Participants = new List<ParticipantResponse>()
             };
         }
 
