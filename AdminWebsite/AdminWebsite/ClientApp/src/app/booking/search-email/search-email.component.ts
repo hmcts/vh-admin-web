@@ -67,7 +67,7 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
                     }),
                     tap(personsFound => {
                         if (personsFound && personsFound.length > 0) {
-                            this.getData(personsFound);
+                            this.setData(personsFound);
                         } else {
                             this.noDataFound();
                             this.isShowResult = false;
@@ -99,7 +99,7 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
         );
     }
 
-    getData(data: ParticipantModel[]) {
+    setData(data: ParticipantModel[]) {
         this.results = data;
         this.isShowResult = true;
         this.isValidEmail = true;

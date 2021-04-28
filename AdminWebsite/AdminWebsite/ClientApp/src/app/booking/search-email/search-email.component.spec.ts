@@ -75,6 +75,24 @@ describe('SeachEmailComponent', () => {
             expect(component.results.length).toBe(0);
         })
     );
+    it(
+        'should set up intial properties',
+        waitForAsync(() => {
+            expect(component.isValidEmail).toBeTruthy();
+            expect(component.$subscriptions.length).toBeGreaterThan(0);
+            expect(component.isErrorEmailAssignedToJudge).toBeFalsy();
+            expect(component.errorNotFoundJohEmail).toBeFalsy();
+            expect(component.isJoh).toBeFalsy();
+            expect(component.disabled).toBeTruthy();
+        })
+    );
+    it(
+        'should return true if participant is a judge',
+        waitForAsync(() => {
+            component.hearingRoleParticipant = 'Judge';
+            expect(component.isJudge).toBeTruthy();
+        })
+    );
     it('should set email to initialEmail', () => {
         const emailValue = 'email@value.com';
         component.initialValue = emailValue;
@@ -204,7 +222,7 @@ describe('SeachEmailComponent', () => {
     });
 
     it('should find data and set notFoundParticipant to false', () => {
-        component.getData(participantList);
+        component.setData(participantList);
         expect(component.results).toEqual(participantList);
         expect(component.isShowResult).toBeTruthy();
         expect(component.isValidEmail).toBeTruthy();
@@ -232,8 +250,6 @@ describe('SeachEmailComponent', () => {
         expect(component.$subscriptions[0].closed).toBe(true);
         expect(component.$subscriptions[1].closed).toBe(true);
     });
-
-    describe('getData', () => {});
 });
 
 describe('SearchEmailComponent email validate', () => {
