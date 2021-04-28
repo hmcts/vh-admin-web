@@ -70,7 +70,14 @@ namespace AdminWebsite.Mappers
             };
 
             NotificationType notificationType;
-            if (participant.UserRoleName.Contains("Judge", StringComparison.InvariantCultureIgnoreCase))
+            if (participant.UserRoleName.Contains("Judge", StringComparison.InvariantCultureIgnoreCase) &&
+                hearing.IsJudgeEmailEJud())
+            {
+                notificationType = NotificationType.HearingAmendmentEJudJudge;
+                parameters.Add("judge", participant.DisplayName);
+            }
+            else if (participant.UserRoleName.Contains("Judge", StringComparison.InvariantCultureIgnoreCase) &&
+                     !hearing.IsJudgeEmailEJud())
             {
                 notificationType = NotificationType.HearingAmendmentJudge;
                 parameters.Add("judge", participant.DisplayName);
@@ -114,7 +121,14 @@ namespace AdminWebsite.Mappers
             var parameters = InitConfirmReminderParams(hearing);
 
             NotificationType notificationType;
-            if (participant.UserRoleName.Contains("Judge", StringComparison.InvariantCultureIgnoreCase))
+            if (participant.UserRoleName.Contains("Judge", StringComparison.InvariantCultureIgnoreCase) &&
+                hearing.IsJudgeEmailEJud())
+            {
+                notificationType = NotificationType.HearingConfirmationEJudJudge;
+                parameters.Add("judge", participant.DisplayName);
+            }
+            else if (participant.UserRoleName.Contains("Judge", StringComparison.InvariantCultureIgnoreCase) &&
+                     !hearing.IsJudgeEmailEJud())
             {
                 notificationType = NotificationType.HearingConfirmationJudge;
                 parameters.Add("judge", participant.DisplayName);
@@ -167,7 +181,14 @@ namespace AdminWebsite.Mappers
                 {"number of days", days.ToString()}
             };
             NotificationType notificationType;
-            if (participant.UserRoleName.Contains("Judge", StringComparison.InvariantCultureIgnoreCase))
+            if (participant.UserRoleName.Contains("Judge", StringComparison.InvariantCultureIgnoreCase) &&
+                hearing.IsJudgeEmailEJud())
+            {
+                notificationType = NotificationType.HearingConfirmationEJudJudgeMultiDay;
+                parameters.Add("judge", participant.DisplayName);
+            }
+            else if (participant.UserRoleName.Contains("Judge", StringComparison.InvariantCultureIgnoreCase) &&
+                     !hearing.IsJudgeEmailEJud())
             {
                 notificationType = NotificationType.HearingConfirmationJudgeMultiDay;
                 parameters.Add("judge", participant.DisplayName);

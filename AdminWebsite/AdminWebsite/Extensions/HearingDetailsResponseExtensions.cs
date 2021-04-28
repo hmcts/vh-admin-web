@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using AdminWebsite.Models;
 using BookingsApi.Contract.Responses;
 using Newtonsoft.Json;
@@ -11,45 +12,42 @@ namespace AdminWebsite.Extensions
         {
             return hearing.CaseTypeName.Equals("Generic", StringComparison.CurrentCultureIgnoreCase);
         }
-        
-        public static bool HasScheduleAmended(this HearingDetailsResponse hearing, HearingDetailsResponse anotherHearing)
+
+        public static bool HasScheduleAmended(this HearingDetailsResponse hearing,
+            HearingDetailsResponse anotherHearing)
         {
             return hearing.ScheduledDateTime.Ticks != anotherHearing.ScheduledDateTime.Ticks;
         }
-        
-        public static bool HasJudgeEmailChanged(this HearingDetailsResponse hearing, HearingDetailsResponse anotherHearing)
+
+        public static bool HasJudgeEmailChanged(this HearingDetailsResponse hearing,
+            HearingDetailsResponse originalHearing)
         {
-            if (string.IsNullOrWhiteSpace(anotherHearing.OtherInformation) && string.IsNullOrWhiteSpace(hearing.OtherInformation))
+            if (string.IsNullOrWhiteSpace(originalHearing.OtherInformation) &&
+                string.IsNullOrWhiteSpace(hearing.OtherInformation))
             {
                 return false;
             }
-            return hearing.GetJudgeEmail() != anotherHearing.GetJudgeEmail();
+
+            return hearing.GetJudgeEmail() != originalHearing.GetJudgeEmail();
         }
 
         public static bool DoesJudgeEmailExist(this HearingDetailsResponse hearing)
         {
-            if (hearing.OtherInformation != null)
+            if (hearing.IsJudgeEmailEJud())
             {
-                var otherInformationDetails = GetOtherInformationObject(hearing.OtherInformation);
-                if (otherInformationDetails.JudgeEmail != "")
-                {
-                    return true;
-                }
+                return true;
             }
-            return false;
+
+            if (hearing.OtherInformation == null) return false;
+            var otherInformationDetails = GetOtherInformationObject(hearing.OtherInformation);
+            return !string.IsNullOrEmpty(otherInformationDetails.JudgeEmail);
         }
-        
+
         public static bool DoesJudgePhoneExist(this HearingDetailsResponse hearing)
         {
-            if (hearing.OtherInformation != null)
-            {
-                var otherInformationDetails = GetOtherInformationObject(hearing.OtherInformation);
-                if (otherInformationDetails.JudgePhone != null)
-                {
-                    return true;
-                }
-            }
-            return false;
+            if (hearing.OtherInformation == null) return false;
+            var otherInformationDetails = GetOtherInformationObject(hearing.OtherInformation);
+            return !string.IsNullOrWhiteSpace(otherInformationDetails.JudgePhone);
         }
 
         public static string GetJudgeEmail(this HearingDetailsResponse hearing)
@@ -59,9 +57,18 @@ namespace AdminWebsite.Extensions
             {
                 return null;
             }
+
             return email;
         }
-        
+
+        public static bool IsJudgeEmailEJud(this HearingDetailsResponse hearing)
+        {
+            var judge = hearing?.Participants.SingleOrDefault(x =>
+                x.UserRoleName.Contains("Judge", StringComparison.CurrentCultureIgnoreCase));
+            return judge?.ContactEmail != null &&
+                   judge.ContactEmail.Contains("judiciary", StringComparison.CurrentCultureIgnoreCase);
+        }
+
         public static string GetJudgePhone(this HearingDetailsResponse hearing)
         {
             var phone = GetOtherInformationObject(hearing.OtherInformation).JudgePhone;
@@ -69,6 +76,7 @@ namespace AdminWebsite.Extensions
             {
                 return null;
             }
+
             return phone;
         }
 
@@ -107,10 +115,12 @@ namespace AdminWebsite.Extensions
             }
             catch (Exception)
             {
-                if(string.IsNullOrWhiteSpace(otherInformation)){
+                if (string.IsNullOrWhiteSpace(otherInformation))
                 {
                     return new OtherInformationDetails {OtherInformation = otherInformation};
-                }}
+
+                }
+
                 var properties = otherInformation.Split("|");
                 if (properties.Length > 2)
                 {
