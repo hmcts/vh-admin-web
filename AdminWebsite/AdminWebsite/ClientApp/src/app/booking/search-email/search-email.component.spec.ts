@@ -75,6 +75,24 @@ describe('SeachEmailComponent', () => {
             expect(component.results.length).toBe(0);
         })
     );
+    it(
+        'should set up intial properties',
+        waitForAsync(() => {
+            expect(component.isValidEmail).toBeTruthy();
+            expect(component.$subscriptions.length).toBeGreaterThan(0);
+            expect(component.isErrorEmailAssignedToJudge).toBeFalsy();
+            expect(component.errorNotFoundJohEmail).toBeFalsy();
+            expect(component.isJoh).toBeFalsy();
+            expect(component.disabled).toBeTruthy();
+        })
+    );
+    it(
+        'should return true if participant is a judge',
+        waitForAsync(() => {
+            component.hearingRoleParticipant = 'Judge';
+            expect(component.isJudge).toBeTruthy();
+        })
+    );
     it('should set email to initialEmail', () => {
         const emailValue = 'email@value.com';
         component.initialValue = emailValue;
@@ -153,12 +171,64 @@ describe('SeachEmailComponent', () => {
         expect(component.isShowResult).toBeFalsy();
         expect(component.findParticipant.emit).toHaveBeenCalled();
     });
-    it('select item should emit event participant found on navigating away from email field', () => {
+    it('select item should not emit event participant found on navigating away from email field', () => {
         spyOn(component.findParticipant, 'emit');
         const participantsList: ParticipantModel[] = [];
         component.results = participantsList;
 
         component.populateParticipantInfo('citizen.one@hmcts.net');
+        fixture.detectChanges();
+        expect(component.isShowResult).toBeFalsy();
+        expect(component.findParticipant.emit).not.toHaveBeenCalled();
+    });
+    it('select item should emit null on navigating away from email field when hearing role is judge', () => {
+        spyOn(component.findParticipant, 'emit');
+        const participantsList: ParticipantModel[] = [];
+        component.results = participantsList;
+        component.hearingRoleParticipant = 'Judge';
+
+        component.populateParticipantInfo('citizen.one@hmcts.net');
+        fixture.detectChanges();
+        expect(component.isShowResult).toBeFalsy();
+        expect(component.findParticipant.emit).toHaveBeenCalled();
+        expect(component.findParticipant.emit).toHaveBeenCalledWith(null);
+    });
+    it('select item should not emit on navigating away from email field when hearing role is judge but email is unchanged', () => {
+        spyOn(component.findParticipant, 'emit');
+        const participantsList: ParticipantModel[] = [];
+        component.results = participantsList;
+        component.hearingRoleParticipant = 'Judge';
+        const email = 'citizen.one@hmcts.net';
+        component.initialValue = email;
+
+        component.populateParticipantInfo(email);
+        fixture.detectChanges();
+        expect(component.isShowResult).toBeFalsy();
+        expect(component.findParticipant.emit).not.toHaveBeenCalled();
+    });
+    it('select item should not emit on navigating away from email field when email is changed but role is not judge', () => {
+        spyOn(component.findParticipant, 'emit');
+        const participantsList: ParticipantModel[] = [];
+        component.results = participantsList;
+        component.hearingRoleParticipant = 'NotJudge';
+        const email = 'citizen.one@hmcts.net';
+        const changedEmail = 'citizen.two@hmcts.net';
+        component.initialValue = email;
+
+        component.populateParticipantInfo(changedEmail);
+        fixture.detectChanges();
+        expect(component.isShowResult).toBeFalsy();
+        expect(component.findParticipant.emit).not.toHaveBeenCalled();
+    });
+    it('select item should not emit on navigating away from email field when email is unchanged and role is not judge', () => {
+        spyOn(component.findParticipant, 'emit');
+        const participantsList: ParticipantModel[] = [];
+        component.results = participantsList;
+        component.hearingRoleParticipant = 'NotJudge';
+        const email = 'citizen.one@hmcts.net';
+        component.initialValue = email;
+
+        component.populateParticipantInfo(email);
         fixture.detectChanges();
         expect(component.isShowResult).toBeFalsy();
         expect(component.findParticipant.emit).not.toHaveBeenCalled();
@@ -204,7 +274,7 @@ describe('SeachEmailComponent', () => {
     });
 
     it('should find data and set notFoundParticipant to false', () => {
-        component.getData(participantList);
+        component.setData(participantList);
         expect(component.results).toEqual(participantList);
         expect(component.isShowResult).toBeTruthy();
         expect(component.isValidEmail).toBeTruthy();
@@ -233,7 +303,24 @@ describe('SeachEmailComponent', () => {
         expect(component.$subscriptions[1].closed).toBe(true);
     });
 
-    describe('getData', () => {});
+    describe('searchTerm', () => {
+        it('should set correct errors when too few characters', fakeAsync(() => {
+            component.isShowResult = true;
+            component.notFoundParticipant = true;
+            component.notFoundEmailEvent.next(true);
+
+            const subscription = component.notFoundEmailEvent.subscribe(emailEvent => {
+                expect(emailEvent).toBe(false);
+                expect(component.isShowResult).toBe(false);
+                expect(component.notFoundParticipant).toBe(false);
+
+                subscription.unsubscribe();
+            });
+
+            component.searchTerm.next('a');
+            tick(500);
+        }));
+    });
 });
 
 describe('SearchEmailComponent email validate', () => {
