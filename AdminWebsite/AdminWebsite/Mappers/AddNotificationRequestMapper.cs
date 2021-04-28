@@ -57,7 +57,7 @@ namespace AdminWebsite.Mappers
 
         public static AddNotificationRequest MapToHearingAmendmentNotification(HearingDetailsResponse hearing,
             ParticipantResponse participant, string caseName, string caseNumber, DateTime originalDateTime,
-            DateTime newDateTime)
+            DateTime newDateTime, string conferencePhoneNumber)
         {
             var parameters = new Dictionary<string, string>
             {
@@ -95,6 +95,9 @@ namespace AdminWebsite.Mappers
                 notificationType = NotificationType.HearingAmendmentLip;
                 parameters.Add("name", $"{participant.FirstName} {participant.LastName}");
             }
+            
+            parameters.Add("conference phone number", $"{conferencePhoneNumber}");
+
 
             return new AddNotificationRequest
             {
@@ -109,7 +112,7 @@ namespace AdminWebsite.Mappers
         }
 
         public static AddNotificationRequest MapToHearingConfirmationNotification(HearingDetailsResponse hearing,
-            ParticipantResponse participant)
+            ParticipantResponse participant, string conferencePhoneNumber)
         {
             var parameters = InitConfirmReminderParams(hearing);
 
@@ -140,6 +143,8 @@ namespace AdminWebsite.Mappers
                 parameters.Add("name", $"{participant.FirstName} {participant.LastName}");
             }
 
+            parameters.Add("conference phone number", $"{conferencePhoneNumber}");
+            
             return new AddNotificationRequest
             {
                 HearingId = hearing.Id,
@@ -154,7 +159,7 @@ namespace AdminWebsite.Mappers
 
         public static AddNotificationRequest MapToMultiDayHearingConfirmationNotification(
             HearingDetailsResponse hearing,
-            ParticipantResponse participant, int days)
+            ParticipantResponse participant, int days, string conferencePhoneNumber)
         {
             var @case = hearing.Cases.First();
             var cleanedCaseName = @case.Name.Replace($"Day 1 of {days}", string.Empty).Trim();
@@ -192,6 +197,8 @@ namespace AdminWebsite.Mappers
                 notificationType = NotificationType.HearingConfirmationLipMultiDay;
                 parameters.Add("name", $"{participant.FirstName} {participant.LastName}");
             }
+            
+            parameters.Add("conference phone number", $"{conferencePhoneNumber}");
 
             return new AddNotificationRequest
             {
@@ -206,7 +213,7 @@ namespace AdminWebsite.Mappers
         }
 
         public static AddNotificationRequest MapToHearingReminderNotification(HearingDetailsResponse hearing,
-            ParticipantResponse participant)
+            ParticipantResponse participant, string conferencePhoneNumber)
         {
             var parameters = InitConfirmReminderParams(hearing);
             parameters.Add("username", participant.Username.ToLower());
@@ -229,6 +236,8 @@ namespace AdminWebsite.Mappers
                 notificationType = NotificationType.HearingReminderLip;
                 parameters.Add("name", $"{participant.FirstName} {participant.LastName}");
             }
+            
+            parameters.Add("conference phone number", $"{conferencePhoneNumber}");
 
             return new AddNotificationRequest
             {

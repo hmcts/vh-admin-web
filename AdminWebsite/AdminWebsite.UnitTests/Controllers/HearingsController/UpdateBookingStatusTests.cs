@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using AdminWebsite.Configuration;
 using AdminWebsite.Extensions;
 using AdminWebsite.Models;
 using AdminWebsite.Security;
@@ -15,6 +16,7 @@ using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Moq;
 using NotificationApi.Client;
 using NotificationApi.Contract;
@@ -33,6 +35,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private readonly AdminWebsite.Controllers.HearingsController _controller;
         private readonly Mock<IPollyRetryService> _pollyRetryServiceMock;
         private readonly Mock<INotificationApiClient> _notificationApiMock;
+        private Mock<IOptions<KinlyConfiguration>> _kinlyOptionsMock;
+        private Mock<KinlyConfiguration> _kinlyConfigurationMock;
 
         private readonly Mock<ILogger<HearingsService>> _participantGroupLogger;
         private readonly IHearingsService _hearingsService;
@@ -51,13 +55,18 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _hearingsService = new HearingsService(_pollyRetryServiceMock.Object,
                 userAccountService.Object, _notificationApiMock.Object, _videoApiClient.Object, _bookingsApiClient.Object, _participantGroupLogger.Object);
 
+            _kinlyOptionsMock = new Mock<IOptions<KinlyConfiguration>>();
+            _kinlyConfigurationMock = new Mock<KinlyConfiguration>();
+            _kinlyOptionsMock.Setup((op) => op.Value).Returns(_kinlyConfigurationMock.Object);
+
             _controller = new AdminWebsite.Controllers.HearingsController(_bookingsApiClient.Object,
                 _userIdentity.Object,
                 userAccountService.Object,
                 editHearingRequestValidator.Object,
                 new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>().Object,
                 _hearingsService,
-                Mock.Of<IPublicHolidayRetriever>());
+                Mock.Of<IPublicHolidayRetriever>(),
+                _kinlyOptionsMock.Object);
         }
 
         [Test]

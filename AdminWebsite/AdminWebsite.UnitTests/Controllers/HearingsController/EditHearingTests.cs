@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using AdminWebsite.Configuration;
 using AdminWebsite.Extensions;
 using AdminWebsite.Models;
 using AdminWebsite.Security;
@@ -19,6 +20,7 @@ using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Moq;
 using NotificationApi.Client;
 using NotificationApi.Contract;
@@ -48,6 +50,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private HearingDetailsResponse _updatedExistingParticipantHearingOriginal;
         private Mock<IUserAccountService> _userAccountService;
         private Mock<IUserIdentity> _userIdentity;
+        private Mock<IOptions<KinlyConfiguration>> _kinlyOptionsMock;
+        private Mock<KinlyConfiguration> _kinlyConfigurationMock;
 
         private Guid _validId;
         private Mock<IVideoApiClient> _videoApiMock;
@@ -63,6 +67,10 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _notificationApiMock = new Mock<INotificationApiClient>();
             _pollyRetryServiceMock = new Mock<IPollyRetryService>();
 
+            _kinlyOptionsMock = new Mock<IOptions<KinlyConfiguration>>();
+            _kinlyConfigurationMock = new Mock<KinlyConfiguration>();
+            _kinlyOptionsMock.Setup((op) => op.Value).Returns(_kinlyConfigurationMock.Object);
+
             _participantGroupLogger = new Mock<ILogger<HearingsService>>();
             _hearingsService = new HearingsService(_pollyRetryServiceMock.Object,
                 _userAccountService.Object, _notificationApiMock.Object, _videoApiMock.Object,
@@ -74,7 +82,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 _editHearingRequestValidator.Object,
                 new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>().Object,
                 _hearingsService,
-                Mock.Of<IPublicHolidayRetriever>());
+                Mock.Of<IPublicHolidayRetriever>(),
+                _kinlyOptionsMock.Object);
 
             _validId = Guid.NewGuid();
             _addNewParticipantRequest = new EditHearingRequest

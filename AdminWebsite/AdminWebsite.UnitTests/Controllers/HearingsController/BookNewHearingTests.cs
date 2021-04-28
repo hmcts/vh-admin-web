@@ -22,6 +22,8 @@ using UserApi.Client;
 using UserApi.Contract.Requests;
 using UserApi.Contract.Responses;
 using VideoApi.Client;
+using Microsoft.Extensions.Options;
+using AdminWebsite.Configuration;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {
@@ -37,6 +39,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private Mock<IPollyRetryService> _pollyRetryServiceMock;
         private Mock<INotificationApiClient> _notificationApiMock;
         private Mock<ILogger<HearingsService>> _participantGroupLogger;
+        private Mock<IOptions<KinlyConfiguration>> _kinlyOptionsMock;
+        private Mock<KinlyConfiguration> _kinlyConfigurationMock;
+
         private IHearingsService _hearingsService;
 
         private AdminWebsite.Controllers.HearingsController _controller;
@@ -50,6 +55,10 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _userIdentity = new Mock<IUserIdentity>();
             _userAccountServiceLogger = new Mock<ILogger<UserAccountService>>();
             _notificationApiMock = new Mock<INotificationApiClient>();
+
+            _kinlyOptionsMock = new Mock<IOptions<KinlyConfiguration>>();
+            _kinlyConfigurationMock = new Mock<KinlyConfiguration>();
+            _kinlyOptionsMock.Setup((op) => op.Value).Returns(_kinlyConfigurationMock.Object);
 
             _userAccountService = new UserAccountService(_userApiClient.Object, _bookingsApiClient.Object,
                 _notificationApiMock.Object, _userAccountServiceLogger.Object);
@@ -69,7 +78,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 _editHearingRequestValidator.Object,
                 new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>().Object,
                 _hearingsService,
-                Mock.Of<IPublicHolidayRetriever>());
+                Mock.Of<IPublicHolidayRetriever>(),
+                _kinlyOptionsMock.Object);
 
             InitHearingForTest();
         }

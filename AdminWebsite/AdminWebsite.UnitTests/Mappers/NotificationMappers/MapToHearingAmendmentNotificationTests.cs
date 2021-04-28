@@ -34,7 +34,8 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             var participant = InitParticipant("Judge");
             _hearing.OtherInformation = JsonConvert.SerializeObject(new OtherInformationDetails
                 {JudgeEmail = "judge@hmcts.net", JudgePhone = "123456789"});
-
+            var expectedConferencePhoneNumber = "phone_number";
+            
             var expectedParameters = new Dictionary<string, string>
             {
                 {"case name", caseName},
@@ -44,12 +45,13 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
                 {"Old time", "11:30 AM"},
                 {"New time", "2:10 PM"},
                 {"Old Day Month Year", "10 February 2020"},
-                {"New Day Month Year", "12 October 2020"}
+                {"New Day Month Year", "12 October 2020"},
+                {"conference phone number", expectedConferencePhoneNumber}
             };
 
             var result =
                 AddNotificationRequestMapper.MapToHearingAmendmentNotification(_hearing, participant, caseName,
-                    caseNumber, oldDate, newDate);
+                    caseNumber, oldDate, newDate, expectedConferencePhoneNumber);
 
             result.Should().NotBeNull();
             result.HearingId.Should().Be(_hearing.Id);
@@ -70,6 +72,7 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             var caseName = "cse test";
             var caseNumber = "MBFY/17364";
             var participant = InitParticipant("Individual");
+            var expectedConferencePhoneNumber = "phone_number";
 
             var expectedParameters = new Dictionary<string, string>
             {
@@ -79,12 +82,13 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
                 {"Old time", "11:30 AM"},
                 {"New time", "2:10 PM"},
                 {"Old Day Month Year", "10 February 2020"},
-                {"New Day Month Year", "12 October 2020"}
+                {"New Day Month Year", "12 October 2020"},
+                {"conference phone number", expectedConferencePhoneNumber}
             };
 
             var result =
                 AddNotificationRequestMapper.MapToHearingAmendmentNotification(_hearing, participant, caseName,
-                    caseNumber, oldDate, newDate);
+                    caseNumber, oldDate, newDate, expectedConferencePhoneNumber);
 
             result.Should().NotBeNull();
             result.HearingId.Should().Be(_hearing.Id);
@@ -105,6 +109,7 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             var caseName = "cse test";
             var caseNumber = "MBFY/17364";
             var participant = InitParticipant("Representative", "Random Person");
+            var expectedConferencePhoneNumber = "phone_number";
 
             var expectedParameters = new Dictionary<string, string>
             {
@@ -115,12 +120,13 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
                 {"Old time", "11:30 AM"},
                 {"New time", "2:10 PM"},
                 {"Old Day Month Year", "10 February 2020"},
-                {"New Day Month Year", "12 October 2020"}
+                {"New Day Month Year", "12 October 2020"},
+                {"conference phone number", expectedConferencePhoneNumber}
             };
 
             var result =
                 AddNotificationRequestMapper.MapToHearingAmendmentNotification(_hearing, participant, caseName,
-                    caseNumber, oldDate, newDate);
+                    caseNumber, oldDate, newDate, expectedConferencePhoneNumber);
 
             result.Should().NotBeNull();
             result.HearingId.Should().Be(_hearing.Id);
@@ -141,6 +147,7 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             var caseName = "cse test";
             var caseNumber = "MBFY/17364";
             var participant = InitParticipant("Judicial Office Holder");
+            var expectedConferencePhoneNumber = "phone_number";
 
             var expectedParameters = new Dictionary<string, string>
             {
@@ -150,12 +157,13 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
                 {"Old time", "11:30 AM"},
                 {"New time", "2:10 PM"},
                 {"Old Day Month Year", "10 February 2020"},
-                {"New Day Month Year", "12 October 2020"}
+                {"New Day Month Year", "12 October 2020"},
+                {"conference phone number", expectedConferencePhoneNumber}
             };
 
             var result =
                 AddNotificationRequestMapper.MapToHearingAmendmentNotification(_hearing, participant, caseName,
-                    caseNumber, oldDate, newDate);
+                    caseNumber, oldDate, newDate, expectedConferencePhoneNumber);
 
             result.Should().NotBeNull();
             result.HearingId.Should().Be(_hearing.Id);

@@ -36,20 +36,23 @@ namespace AdminWebsite.UnitTests.Services
         [Test]
         public async Task should_send_confirmation_email_to_all_participants_except_judge()
         {
+            var expectedConferencePhoneNumber = "phone_number";
             var judge = _hearing.Participants.First(x => x.UserRoleName == "Judge");
-            await _service.SendHearingConfirmationEmail(_hearing);
+            await _service.SendHearingConfirmationEmail(_hearing, expectedConferencePhoneNumber);
 
             _mocker.Mock<INotificationApiClient>()
                 .Verify(
-                    x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.ParticipantId != judge.Id)),
+                    x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.ParticipantId != judge.Id &&
+                        r.Parameters["conference phone number"] == expectedConferencePhoneNumber)),
                     Times.Exactly(3));
         }
 
         [Test]
         public async Task should_not_send_confirmation_email_when_hearing_is_generic_case_type()
         {
+            var expectedConferencePhoneNumber = "phone_number";
             _hearing.CaseTypeName = "Generic";
-            await _service.SendHearingConfirmationEmail(_hearing);
+            await _service.SendHearingConfirmationEmail(_hearing, expectedConferencePhoneNumber);
 
             _mocker.Mock<INotificationApiClient>()
                 .Verify(
@@ -60,32 +63,34 @@ namespace AdminWebsite.UnitTests.Services
         [Test]
         public async Task should_send_amendment_email_to_all_participants_except_a_judge_if_no_email_exists()
         {
+            var expectedConferencePhoneNumber = "phone_number";
             _hearing.OtherInformation = JsonConvert.SerializeObject(new OtherInformationDetails {JudgeEmail = null});
 
             var secondHearing = InitHearing();
             secondHearing.ScheduledDateTime = _hearing.ScheduledDateTime.AddDays(1).AddHours(3).AddMinutes(20);
-            await _service.SendHearingUpdateEmail(_hearing, secondHearing);
+            await _service.SendHearingUpdateEmail(_hearing, secondHearing, "phone_number");
 
             _mocker.Mock<INotificationApiClient>()
                 .Verify(
-                    x => x.CreateNewNotificationAsync(It.IsAny<AddNotificationRequest>()),
+                    x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.Parameters["conference phone number"] == expectedConferencePhoneNumber)),
                     Times.Exactly(secondHearing.Participants.Count(x => x.UserRoleName.ToLower() != "judge")));
         }
 
         [Test]
         public async Task should_send_amendment_email_to_all_participants()
         {
+            var expectedConferencePhoneNumber = "phone_number";
             var secondHearing = InitHearing();
             _hearing.GroupId = secondHearing.GroupId = _hearing.Id;
 
             secondHearing.OtherInformation =
                 new OtherInformationDetails {JudgeEmail = "judge@hmcts.net"}.ToOtherInformationString();
             secondHearing.ScheduledDateTime = _hearing.ScheduledDateTime.AddDays(1).AddHours(3).AddMinutes(20);
-            await _service.SendHearingUpdateEmail(_hearing, secondHearing);
+            await _service.SendHearingUpdateEmail(_hearing, secondHearing, "phone_number");
 
             _mocker.Mock<INotificationApiClient>()
                 .Verify(
-                    x => x.CreateNewNotificationAsync(It.IsAny<AddNotificationRequest>()),
+                    x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.Parameters["conference phone number"] == expectedConferencePhoneNumber)),
                     Times.Exactly(secondHearing.Participants.Count));
         }
         
@@ -94,15 +99,16 @@ namespace AdminWebsite.UnitTests.Services
         {
             var secondHearing = InitHearing();
             _hearing.GroupId = secondHearing.GroupId = _hearing.Id;
+            var expectedConferencePhoneNumber = "phone_number";
 
             secondHearing.OtherInformation =
                 new OtherInformationDetails {JudgeEmail = "judge@hmcts.net"}.ToOtherInformationString();
             secondHearing.ScheduledDateTime = _hearing.ScheduledDateTime.AddDays(1).AddHours(3).AddMinutes(20);
-            await _service.SendHearingUpdateEmail(secondHearing, secondHearing);
+            await _service.SendHearingUpdateEmail(secondHearing, secondHearing, "phone_number");
 
             _mocker.Mock<INotificationApiClient>()
                 .Verify(
-                    x => x.CreateNewNotificationAsync(It.IsAny<AddNotificationRequest>()),
+                    x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.Parameters["conference phone number"] == expectedConferencePhoneNumber)),
                     Times.Exactly(secondHearing.Participants.Count -1));
             
             _mocker.Mock<INotificationApiClient>()
@@ -146,12 +152,14 @@ namespace AdminWebsite.UnitTests.Services
         [Test]
         public async Task should_send_multiday_confirmation_email_to_all_participants_except_judge()
         {
+            var expectedConferencePhoneNumber = "phone_number";
             var judge = _hearing.Participants.First(x => x.UserRoleName == "Judge");
-            await _service.SendMultiDayHearingConfirmationEmail(_hearing, 2);
-
+            
+            await _service.SendMultiDayHearingConfirmationEmail(_hearing, 2, expectedConferencePhoneNumber);
+            
             _mocker.Mock<INotificationApiClient>()
                 .Verify(
-                    x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.ParticipantId != judge.Id)),
+                    x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.ParticipantId != judge.Id && r.Parameters["conference phone number"] == expectedConferencePhoneNumber)),
                     Times.Exactly(_hearing.Participants.Count(x => x.UserRoleName.ToLower() != "judge")));
         }
         
@@ -162,7 +170,7 @@ namespace AdminWebsite.UnitTests.Services
             _hearing.CaseTypeName = "Generic";
             secondHearing.CaseTypeName = "Generic";
             secondHearing.ScheduledDateTime = _hearing.ScheduledDateTime.AddDays(1).AddHours(3).AddMinutes(20);
-            await _service.SendHearingUpdateEmail(_hearing, secondHearing);
+            await _service.SendHearingUpdateEmail(_hearing, secondHearing, "phone_number");
 
             _mocker.Mock<INotificationApiClient>()
                 .Verify(
@@ -173,12 +181,13 @@ namespace AdminWebsite.UnitTests.Services
         [Test]
         public async Task should_send_reminder_email_to_all_participants_except_a_judge()
         {
+            var expectedConferencePhoneNumber = "phone_number";
             var judge = _hearing.Participants.First(x => x.UserRoleName == "Judge");
-            await _service.SendHearingReminderEmail(_hearing);
+            await _service.SendHearingReminderEmail(_hearing, "phone_number");
 
             _mocker.Mock<INotificationApiClient>()
                 .Verify(
-                    x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.ParticipantId != judge.Id)),
+                    x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.ParticipantId != judge.Id && r.Parameters["conference phone number"] == expectedConferencePhoneNumber)),
                     Times.Exactly(3));
         }
         
@@ -188,7 +197,7 @@ namespace AdminWebsite.UnitTests.Services
             var judge = _hearing.Participants.First(x => x.UserRoleName == "Judge");
             _hearing.OtherInformation = new OtherInformationDetails {JudgeEmail = "judge@hmcts.net"}.ToOtherInformationString();
             _mocker.Mock<IBookingsApiClient>().Setup(x => x.GetHearingsByGroupIdAsync(_hearing.GroupId.Value)).ReturnsAsync(new List<HearingDetailsResponse> {_hearing});
-            await _service.SendHearingReminderEmail(_hearing);
+            await _service.SendHearingReminderEmail(_hearing, "phone_number");
 
             _mocker.Mock<INotificationApiClient>()
                 .Verify(
@@ -200,6 +209,7 @@ namespace AdminWebsite.UnitTests.Services
         [Test]
         public async Task should_send_confirmation_email_to_judge_when_reminder_is_sent_to_participants_for_multi_day_hearing()
         {
+            var expectedConferencePhoneNumber = "phone_number";
             var judge = _hearing.Participants.First(x => x.UserRoleName == "Judge");
             _hearing.OtherInformation = new OtherInformationDetails {JudgeEmail = "judge@hmcts.net"}.ToOtherInformationString();
             var hearing2 = InitHearing();
@@ -214,7 +224,7 @@ namespace AdminWebsite.UnitTests.Services
             _mocker.Mock<IBookingsApiClient>().Setup(x => x.GetHearingsByGroupIdAsync(_hearing.GroupId.Value))
                 .ReturnsAsync(listOfHearings);
 
-            await _service.SendHearingReminderEmail(_hearing);
+            await _service.SendHearingReminderEmail(_hearing, expectedConferencePhoneNumber);
 
             _mocker.Mock<INotificationApiClient>()
                 .Verify(
@@ -226,6 +236,7 @@ namespace AdminWebsite.UnitTests.Services
         [Test]
         public async Task should_not_send_confirmation_email_to_judge_when_reminder_is_sent_to_participants_for_multi_day_hearing_and_is_not_the_main_hearing()
         {
+            var expectedConferencePhoneNumber = "phone_number";
             var judge = _hearing.Participants.First(x => x.UserRoleName == "Judge");
             _hearing.OtherInformation = new OtherInformationDetails {JudgeEmail = "judge@hmcts.net"}.ToOtherInformationString();
             var hearing2 = InitHearing();
@@ -240,12 +251,13 @@ namespace AdminWebsite.UnitTests.Services
             _mocker.Mock<IBookingsApiClient>().Setup(x => x.GetHearingsByGroupIdAsync(_hearing.GroupId.Value))
                 .ReturnsAsync(listOfHearings);
 
-            await _service.SendHearingReminderEmail(hearing2);
+            await _service.SendHearingReminderEmail(hearing2, "phone_number");
 
             _mocker.Mock<INotificationApiClient>()
                 .Verify(
                     x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(
-                        r => r.ParticipantId == judge.Id && r.NotificationType == NotificationType.HearingConfirmationJudgeMultiDay)),
+                        r => r.ParticipantId == judge.Id && 
+                             r.NotificationType == NotificationType.HearingConfirmationJudgeMultiDay && r.Parameters["conference phone number"] == expectedConferencePhoneNumber)),
                     Times.Never);
         }
         
@@ -255,7 +267,7 @@ namespace AdminWebsite.UnitTests.Services
             var judge = _hearing.Participants.First(x => x.UserRoleName == "Judge");
             _hearing.OtherInformation = new OtherInformationDetails {JudgeEmail = null}.ToOtherInformationString();
             _mocker.Mock<IBookingsApiClient>().Setup(x => x.GetHearingsByGroupIdAsync(_hearing.GroupId.Value)).ReturnsAsync(new List<HearingDetailsResponse> {_hearing});
-            await _service.SendHearingReminderEmail(_hearing);
+            await _service.SendHearingReminderEmail(_hearing, "phone_number");
 
             _mocker.Mock<INotificationApiClient>()
                 .Verify(
@@ -266,13 +278,14 @@ namespace AdminWebsite.UnitTests.Services
         [Test]
         public async Task should_not_send_reminder_email_when_hearing_is_generic_case_type()
         {
+            var expectedConferencePhoneNumber = "phone_number";
             var judge = _hearing.Participants.First(x => x.UserRoleName == "Judge");
             _hearing.CaseTypeName = "Generic";
-            await _service.SendHearingReminderEmail(_hearing);
+            await _service.SendHearingReminderEmail(_hearing, "phone_number");
 
             _mocker.Mock<INotificationApiClient>()
                 .Verify(
-                    x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.ParticipantId != judge.Id)),
+                    x => x.CreateNewNotificationAsync(It.Is<AddNotificationRequest>(r => r.ParticipantId != judge.Id && r.Parameters["conference phone number"] == expectedConferencePhoneNumber)),
                     Times.Never);
         }
 

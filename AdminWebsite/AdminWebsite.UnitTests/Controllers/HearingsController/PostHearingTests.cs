@@ -30,6 +30,8 @@ using EndpointResponse = BookingsApi.Contract.Responses.EndpointResponse;
 using LinkedParticipantResponse = BookingsApi.Contract.Responses.LinkedParticipantResponse;
 using CaseResponse = BookingsApi.Contract.Responses.CaseResponse;
 using LinkedParticipantType = BookingsApi.Contract.Enums.LinkedParticipantType;
+using Microsoft.Extensions.Options;
+using AdminWebsite.Configuration;
 
 namespace AdminWebsite.UnitTests.Controllers.HearingsController
 {
@@ -46,6 +48,9 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
         private Mock<ILogger<HearingsService>> _participantGroupLogger;
         private IHearingsService _hearingsService;
 
+        private Mock<IOptions<KinlyConfiguration>> _kinlyOptionsMock;
+        private Mock<KinlyConfiguration> _kinlyConfigurationMock;
+
         private AdminWebsite.Controllers.HearingsController _controller;
 
         [SetUp]
@@ -59,6 +64,10 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
             _notificationApiMock = new Mock<INotificationApiClient>();
             _pollyRetryServiceMock = new Mock<IPollyRetryService>();
 
+            _kinlyOptionsMock = new Mock<IOptions<KinlyConfiguration>>();
+            _kinlyConfigurationMock = new Mock<KinlyConfiguration>();
+            _kinlyOptionsMock.Setup((op) => op.Value).Returns(_kinlyConfigurationMock.Object);
+
             _participantGroupLogger = new Mock<ILogger<HearingsService>>();
             _hearingsService = new HearingsService(_pollyRetryServiceMock.Object,
                 _userAccountService.Object, _notificationApiMock.Object, _videoApiMock.Object, _bookingsApiClient.Object, _participantGroupLogger.Object);
@@ -69,7 +78,8 @@ namespace AdminWebsite.UnitTests.Controllers.HearingsController
                 _editHearingRequestValidator.Object,
                 new Mock<ILogger<AdminWebsite.Controllers.HearingsController>>().Object,
                 _hearingsService,
-                Mock.Of<IPublicHolidayRetriever>());
+                Mock.Of<IPublicHolidayRetriever>(),
+                _kinlyOptionsMock.Object);
 
             _userAccountService
                 .Setup(x => x.UpdateParticipantUsername(It.IsAny<BookingsApi.Contract.Requests.ParticipantRequest>()))

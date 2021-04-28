@@ -22,6 +22,8 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             var expectedNotificationType = NotificationType.HearingConfirmationJudgeMultiDay;
             var participant = InitParticipant("Judge");
             var hearing = InitHearing();
+            var expectedConferencePhoneNumber = "07703123123";
+            
             hearing.OtherInformation = JsonConvert.SerializeObject(new OtherInformationDetails
                 {JudgeEmail = "judge@hmcts.net", JudgePhone = "123456789"});
 
@@ -33,10 +35,11 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
                 {"Start Day Month Year", "12 October 2020"},
                 {"judge", participant.DisplayName},
                 {"courtroom account username", participant.Username},
-                {"number of days", "4"}
+                {"number of days", "4"},
+                {"conference phone number", expectedConferencePhoneNumber }
             };
             
-            var result = AddNotificationRequestMapper.MapToMultiDayHearingConfirmationNotification(hearing, participant, 4);
+            var result = AddNotificationRequestMapper.MapToMultiDayHearingConfirmationNotification(hearing, participant, 4, expectedConferencePhoneNumber);
             
             result.Should().NotBeNull();
             result.HearingId.Should().Be(hearing.Id);
@@ -55,6 +58,8 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             var participant = InitParticipant("Individual");
             var hearing = InitHearing();
 
+            var expectedConferencePhoneNumber = "07703123123";
+            
             var expectedParameters = new Dictionary<string, string>
             {
                 {"case name", CaseName},
@@ -62,10 +67,11 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
                 {"time", "2:10 PM"},
                 {"Start Day Month Year", "12 October 2020"},
                 {"name", $"{participant.FirstName} {participant.LastName}"},
-                {"number of days", "4"}
+                {"number of days", "4"},
+                {"conference phone number", expectedConferencePhoneNumber }
             };
             
-            var result = AddNotificationRequestMapper.MapToMultiDayHearingConfirmationNotification(hearing, participant, 4);
+            var result = AddNotificationRequestMapper.MapToMultiDayHearingConfirmationNotification(hearing, participant, 4, expectedConferencePhoneNumber);
             
             result.Should().NotBeNull();
             result.HearingId.Should().Be(hearing.Id);
@@ -84,6 +90,8 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             var participant = InitParticipant("Representative", "Jane Doe");
             var hearing = InitHearing();
 
+            var expectedConferencePhoneNumber = "07703123123";
+            
             var expectedParameters = new Dictionary<string, string>
             {
                 {"case name", CaseName},
@@ -92,10 +100,11 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
                 {"Start Day Month Year", "12 October 2020"},
                 {"solicitor name", $"{participant.FirstName} {participant.LastName}"},
                 {"client name", $"{participant.Representee}"},
-                {"number of days", "4"}
+                {"number of days", "4"},
+                {"conference phone number", expectedConferencePhoneNumber }
             };
             
-            var result = AddNotificationRequestMapper.MapToMultiDayHearingConfirmationNotification(hearing, participant, 4);
+            var result = AddNotificationRequestMapper.MapToMultiDayHearingConfirmationNotification(hearing, participant, 4, expectedConferencePhoneNumber);
             
             result.Should().NotBeNull();
             result.HearingId.Should().Be(hearing.Id);
@@ -113,7 +122,8 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             var expectedNotificationType = NotificationType.HearingConfirmationJohMultiDay;
             var participant = InitParticipant("Judicial Office Holder");
             var hearing = InitHearing();
-
+            var expectedConferencePhoneNumber = "07703123123";
+            
             var expectedParameters = new Dictionary<string, string>
             {
                 {"case name", CaseName},
@@ -121,10 +131,11 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
                 {"time", "2:10 PM"},
                 {"Start Day Month Year", "12 October 2020"},
                 {"judicial office holder", $"{participant.FirstName} {participant.LastName}"},
-                {"number of days", "4"}
+                {"number of days", "4"},
+                {"conference phone number", expectedConferencePhoneNumber }
             };
             
-            var result = AddNotificationRequestMapper.MapToMultiDayHearingConfirmationNotification(hearing, participant, 4);
+            var result = AddNotificationRequestMapper.MapToMultiDayHearingConfirmationNotification(hearing, participant, 4, expectedConferencePhoneNumber);
             
             result.Should().NotBeNull();
             result.HearingId.Should().Be(hearing.Id);
