@@ -206,6 +206,33 @@ describe('SeachEmailComponent', () => {
         expect(component.isShowResult).toBeFalsy();
         expect(component.findParticipant.emit).not.toHaveBeenCalled();
     });
+    it('select item should not emit on navigating away from email field when email is changed but role is not judge', () => {
+        spyOn(component.findParticipant, 'emit');
+        const participantsList: ParticipantModel[] = [];
+        component.results = participantsList;
+        component.hearingRoleParticipant = 'NotJudge';
+        const email = 'citizen.one@hmcts.net';
+        const changedEmail = 'citizen.two@hmcts.net';
+        component.initialValue = email;
+
+        component.populateParticipantInfo(changedEmail);
+        fixture.detectChanges();
+        expect(component.isShowResult).toBeFalsy();
+        expect(component.findParticipant.emit).not.toHaveBeenCalled();
+    });
+    it('select item should not emit on navigating away from email field when email is unchanged and role is not judge', () => {
+        spyOn(component.findParticipant, 'emit');
+        const participantsList: ParticipantModel[] = [];
+        component.results = participantsList;
+        component.hearingRoleParticipant = 'NotJudge';
+        const email = 'citizen.one@hmcts.net';
+        component.initialValue = email;
+
+        component.populateParticipantInfo(email);
+        fixture.detectChanges();
+        expect(component.isShowResult).toBeFalsy();
+        expect(component.findParticipant.emit).not.toHaveBeenCalled();
+    });
     it('should disable email address', fakeAsync(() => {
         fixture.detectChanges();
 
