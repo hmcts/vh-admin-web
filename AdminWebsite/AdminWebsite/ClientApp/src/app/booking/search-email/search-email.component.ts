@@ -35,7 +35,6 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
     private judgeHearingRole = 'Judge';
     private judiciaryRoles = this.constants.JudiciaryRoles;
     private cannotAddNewUsersRoles = [this.judgeHearingRole, ...this.judiciaryRoles];
-    blurSubscription = new Subscription();
 
     @Input() disabled = true;
 
@@ -80,7 +79,6 @@ export class SearchEmailComponent implements OnInit, OnDestroy {
 
         this.$subscriptions.push(this.searchTerm.subscribe(s => (this.email = s)));
         this.getEmailPattern();
-        this.$subscriptions.push(this.blurSubscription);
     }
 
     async getEmailPattern() {
