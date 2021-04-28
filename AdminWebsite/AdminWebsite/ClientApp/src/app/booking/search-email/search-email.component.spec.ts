@@ -171,12 +171,37 @@ describe('SeachEmailComponent', () => {
         expect(component.isShowResult).toBeFalsy();
         expect(component.findParticipant.emit).toHaveBeenCalled();
     });
-    it('select item should emit event participant found on navigating away from email field', () => {
+    it('select item should not emit event participant found on navigating away from email field', () => {
         spyOn(component.findParticipant, 'emit');
         const participantsList: ParticipantModel[] = [];
         component.results = participantsList;
 
         component.populateParticipantInfo('citizen.one@hmcts.net');
+        fixture.detectChanges();
+        expect(component.isShowResult).toBeFalsy();
+        expect(component.findParticipant.emit).not.toHaveBeenCalled();
+    });
+    it('select item should emit null on navigating away from email field when hearing role is judge', () => {
+        spyOn(component.findParticipant, 'emit');
+        const participantsList: ParticipantModel[] = [];
+        component.results = participantsList;
+        component.hearingRoleParticipant = 'Judge';
+
+        component.populateParticipantInfo('citizen.one@hmcts.net');
+        fixture.detectChanges();
+        expect(component.isShowResult).toBeFalsy();
+        expect(component.findParticipant.emit).toHaveBeenCalled();
+        expect(component.findParticipant.emit).toHaveBeenCalledWith(null);
+    });
+    it('select item should not emit on navigating away from email field when hearing role is judge but email is unchanged', () => {
+        spyOn(component.findParticipant, 'emit');
+        const participantsList: ParticipantModel[] = [];
+        component.results = participantsList;
+        component.hearingRoleParticipant = 'Judge';
+        const email = 'citizen.one@hmcts.net';
+        component.initialValue = email;
+
+        component.populateParticipantInfo(email);
         fixture.detectChanges();
         expect(component.isShowResult).toBeFalsy();
         expect(component.findParticipant.emit).not.toHaveBeenCalled();
@@ -249,6 +274,25 @@ describe('SeachEmailComponent', () => {
         component.ngOnDestroy();
         expect(component.$subscriptions[0].closed).toBe(true);
         expect(component.$subscriptions[1].closed).toBe(true);
+    });
+
+    describe('searchTerm', () => {
+        it('should set correct errors when too few characters', fakeAsync(() => {
+            component.isShowResult = true;
+            component.notFoundParticipant = true;
+            component.notFoundEmailEvent.next(true);
+
+            const subscription = component.notFoundEmailEvent.subscribe(emailEvent => {
+                expect(emailEvent).toBe(false);
+                expect(component.isShowResult).toBe(false);
+                expect(component.notFoundParticipant).toBe(false);
+
+                subscription.unsubscribe();
+            });
+
+            component.searchTerm.next('a');
+            tick(500);
+        }));
     });
 });
 
