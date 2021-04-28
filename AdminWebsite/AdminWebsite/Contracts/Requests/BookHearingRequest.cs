@@ -9,6 +9,5 @@ namespace AdminWebsite.Contracts.Requests
         public bool IsMultiDay { get; set; }
         public MultiHearingRequest MultiHearingDetails { get; set; }
         public string OtherInformationDetails { get; set; }
-        public bool IsCourtroomAccount { get; set; }
     }
 }
