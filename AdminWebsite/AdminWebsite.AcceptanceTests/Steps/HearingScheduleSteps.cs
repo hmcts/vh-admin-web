@@ -98,31 +98,7 @@ namespace AdminWebsite.AcceptanceTests.Steps
 
         private DateTime AddExtraDaysIfDateIsOnAWeekend(DateTime date)
         {
-            return FallOnAWeekendOrPublicHoliday(date, out var daysToAdd) ? date.AddDays(daysToAdd) : date;
-        }
-        
-        private bool FallOnAWeekendOrPublicHoliday(DateTime date, out int days)
-        {
-            var isPublicHoliday = _c.PublicHolidays.Any(x => x.Date.Date == date.Date);
-            var isWeekendOrPublicHoliday = false;
-            days = 0;
-            
-            if (isPublicHoliday && date.DayOfWeek == DayOfWeek.Friday)
-            {
-                isWeekendOrPublicHoliday = true;
-                days = 3;
-            }
-            else if (isPublicHoliday)
-            {
-                isWeekendOrPublicHoliday = true;
-                days = 1;
-            }
-            else if (date.DayOfWeek == DayOfWeek.Saturday || date.DayOfWeek == DayOfWeek.Sunday)
-            {
-                isWeekendOrPublicHoliday = true;
-                days = 2;
-            }
-            return isWeekendOrPublicHoliday;
+            return DateHelper.GetNextIfNotAWorkingDay(date, _c.PublicHolidays);
         }
 
         private int NotCountingToday()
