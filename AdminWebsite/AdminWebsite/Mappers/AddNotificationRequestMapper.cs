@@ -103,8 +103,11 @@ namespace AdminWebsite.Mappers
                 parameters.Add("name", $"{participant.FirstName} {participant.LastName}");
             }
             
-            parameters.Add("conference phone number", $"{conferencePhoneNumber}");
-            parameters.Add("conference phone id", $"{conferencePhoneId}");
+            if (!string.IsNullOrWhiteSpace(conferencePhoneNumber) && !string.IsNullOrWhiteSpace(conferencePhoneId))
+            {
+                parameters.Add("conference phone number", $"{conferencePhoneNumber}");
+                parameters.Add("conference phone id", $"{conferencePhoneId}");
+            }
 
 
             return new AddNotificationRequest
@@ -158,9 +161,12 @@ namespace AdminWebsite.Mappers
                 parameters.Add("name", $"{participant.FirstName} {participant.LastName}");
             }
 
-            parameters.Add("conference phone number", $"{conferencePhoneNumber}");
-            parameters.Add("conference phone id", $"{conferencePhoneId}");
-            
+            if (!string.IsNullOrWhiteSpace(conferencePhoneNumber) && !string.IsNullOrWhiteSpace(conferencePhoneId))
+            {
+                parameters.Add("conference phone number", $"{conferencePhoneNumber}");
+                parameters.Add("conference phone id", $"{conferencePhoneId}");
+            }
+
             return new AddNotificationRequest
             {
                 HearingId = hearing.Id,
@@ -221,8 +227,11 @@ namespace AdminWebsite.Mappers
                 parameters.Add("name", $"{participant.FirstName} {participant.LastName}");
             }
             
-            parameters.Add("conference phone number", $"{conferencePhoneNumber}");
-            parameters.Add("conference phone id", $"{conferencePhoneId}");
+            if (!string.IsNullOrWhiteSpace(conferencePhoneNumber) && !string.IsNullOrWhiteSpace(conferencePhoneId))
+            {
+                parameters.Add("conference phone number", $"{conferencePhoneNumber}");
+                parameters.Add("conference phone id", $"{conferencePhoneId}");
+            }
 
             return new AddNotificationRequest
             {
@@ -261,8 +270,11 @@ namespace AdminWebsite.Mappers
                 parameters.Add("name", $"{participant.FirstName} {participant.LastName}");
             }
             
-            parameters.Add("conference phone number", $"{conferencePhoneNumber}");
-            parameters.Add("conference phone id", $"{conferencePhoneId}");
+            if (!string.IsNullOrWhiteSpace(conferencePhoneNumber) && !string.IsNullOrWhiteSpace(conferencePhoneId))
+            {
+                parameters.Add("conference phone number", $"{conferencePhoneNumber}");
+                parameters.Add("conference phone id", $"{conferencePhoneId}");
+            }
 
             return new AddNotificationRequest
             {

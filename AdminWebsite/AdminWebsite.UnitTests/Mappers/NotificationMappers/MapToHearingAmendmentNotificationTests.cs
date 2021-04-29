@@ -87,9 +87,7 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
                 {"Old time", "11:30 AM"},
                 {"New time", "2:10 PM"},
                 {"Old Day Month Year", "10 February 2020"},
-                {"New Day Month Year", "12 October 2020"},
-                {"conference phone number", null},
-                {"conference phone id", null}
+                {"New Day Month Year", "12 October 2020"}
             };
 
             var result =

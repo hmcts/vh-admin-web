@@ -69,9 +69,7 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
                 {"time", "2:10 PM"},
                 {"Start Day Month Year", "12 October 2020"},
                 {"judge", participant.DisplayName},
-                {"number of days", "4"},
-                {"conference phone number", null},
-                {"conference phone id", null}
+                {"number of days", "4"}
             };
             
             var result = AddNotificationRequestMapper.MapToMultiDayHearingConfirmationNotification(hearing, participant, 4, null, null);

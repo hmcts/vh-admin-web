@@ -67,9 +67,7 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
                 {"case number", hearing.Cases.First().Number},
                 {"time", "2:10 PM"},
                 {"day month year", "12 October 2020"},
-                {"judge", participant.DisplayName},
-                {"conference phone number", null },
-                {"conference phone id", null}
+                {"judge", participant.DisplayName}
             };
             
             var result = AddNotificationRequestMapper.MapToHearingConfirmationNotification(hearing, participant, null, null);
