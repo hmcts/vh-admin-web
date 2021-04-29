@@ -14,13 +14,16 @@ namespace AdminWebsite.Extensions
         }
 
         public static bool HasScheduleAmended(this HearingDetailsResponse hearing, HearingDetailsResponse anotherHearing)
+
         {
             return hearing.ScheduledDateTime.Ticks != anotherHearing.ScheduledDateTime.Ticks;
         }
 
-        public static bool HasJudgeEmailChanged(this HearingDetailsResponse hearing, HearingDetailsResponse originalHearing)
+        public static bool HasJudgeEmailChanged(this HearingDetailsResponse hearing,
+            HearingDetailsResponse originalHearing)
         {
-            if (string.IsNullOrWhiteSpace(originalHearing.OtherInformation) && string.IsNullOrWhiteSpace(hearing.OtherInformation))
+            if (string.IsNullOrWhiteSpace(originalHearing.OtherInformation) &&
+                string.IsNullOrWhiteSpace(hearing.OtherInformation))
             {
                 return false;
             }
@@ -54,6 +57,7 @@ namespace AdminWebsite.Extensions
             {
                 return null;
             }
+
             return email;
         }
 
@@ -79,6 +83,7 @@ namespace AdminWebsite.Extensions
             {
                 return null;
             }
+
             return phone;
         }
 
@@ -119,10 +124,9 @@ namespace AdminWebsite.Extensions
             {
                 if (string.IsNullOrWhiteSpace(otherInformation))
                 {
-                    {
-                        return new OtherInformationDetails { OtherInformation = otherInformation };
-                    }
+                    return new OtherInformationDetails {OtherInformation = otherInformation};
                 }
+
                 var properties = otherInformation.Split("|");
                 if (properties.Length > 2)
                 {

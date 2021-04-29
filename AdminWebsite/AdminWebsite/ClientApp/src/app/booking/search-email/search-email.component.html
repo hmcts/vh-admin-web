@@ -2,7 +2,12 @@
   <div class="govuk-form-group" [ngClass]="{ 'govuk-form-group--error': !isValidEmail || isErrorEmailAssignedToJudge }">
     <div *ngIf="!isValidEmail">
       <span class="govuk-error-message">
-        {{ constants.Error.EmailErrorMsg }}
+        <ng-container *ngIf="!isJudge; else judgeInvalidEmail">
+          {{ constants.Error.EmailErrorMsg }}
+        </ng-container>
+        <ng-template #judgeInvalidEmail>
+          {{ constants.Error.JudgeInvalidEmailErrorMsg }}
+        </ng-template>
       </span>
     </div>
     <div *ngIf="isErrorEmailAssignedToJudge">
@@ -15,7 +20,7 @@
         {{ constants.Error.NotFoundJohEmail }}
       </span>
     </div>
-    <label class="govuk-label" for="participantEmail"> Email </label>
+    <label class="govuk-label" for="participantEmail" *ngIf="!isJudge"> Email </label>
     <input
       #emailInput
       [attr.disabled]="disabled ? true : null"

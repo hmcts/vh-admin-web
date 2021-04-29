@@ -11,6 +11,7 @@ using AcceptanceTests.Common.Test.Steps;
 using AdminWebsite.AcceptanceTests.Data;
 using AdminWebsite.AcceptanceTests.Helpers;
 using AdminWebsite.AcceptanceTests.Pages;
+using AdminWebsite.Extensions;
 using AdminWebsite.Models;
 using BookingsApi.Contract.Enums;
 using BookingsApi.Contract.Responses;
@@ -106,6 +107,13 @@ namespace AdminWebsite.AcceptanceTests.Steps
             {
                 return judge.ContactEmail;
             }
+            if (hearing.IsJudgeEmailEJud())
+            {
+                var judge = hearing.Participants.Single(x =>
+                    x.UserRoleName.Contains("Judge", StringComparison.CurrentCultureIgnoreCase));
+                return judge.ContactEmail;
+            }
+
             var email = GetOtherInformationObject(hearing.OtherInformation).JudgeEmail;
             return email == string.Empty ? null : email;
         }

@@ -1,4 +1,4 @@
-import { ComponentFixture, fakeAsync, flushMicrotasks, TestBed, tick, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, flush, flushMicrotasks, TestBed, tick, waitForAsync } from '@angular/core/testing';
 import { AbstractControl, Validators } from '@angular/forms';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { Observable, of, Subject, Subscription } from 'rxjs';
@@ -961,7 +961,7 @@ describe('AddParticipantComponent edit mode', () => {
 
         component.ngOnInit();
         component.ngAfterViewInit();
-        tick(1500);
+        flush();
         fixture.detectChanges();
 
         fixture.whenStable().then(() => {

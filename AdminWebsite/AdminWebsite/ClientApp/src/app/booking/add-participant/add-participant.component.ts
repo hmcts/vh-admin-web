@@ -108,20 +108,27 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         super.ngOnInit();
     }
 
-    ngAfterViewInit() {
-        this.$subscriptions.push(
-            this.participantsListComponent.selectedParticipant.subscribe(participantEmail => {
-                this.selectedParticipantEmail = participantEmail;
-                this.showDetails = true;
-                setTimeout(() => {
+    onSelectedParticipantChangedWhenEditing(participantEmail: string) {
+        if (this.editMode) {
+            this.selectedParticipantEmail = participantEmail;
+            this.showDetails = true;
+
+            setTimeout(() => {
+                if (this.searchEmail) {
                     this.repopulateParticipantToEdit();
                     this.displayUpdate();
                     this.localEditMode = true;
-                    if (this.searchEmail) {
-                        this.setParticipantEmail();
-                    }
-                }, 500);
-            })
+                    this.setParticipantEmail();
+                }
+            }, 500);
+        }
+    }
+
+    ngAfterViewInit() {
+        this.$subscriptions.push(
+            this.participantsListComponent.selectedParticipant.subscribe(participantEmail =>
+                this.onSelectedParticipantChangedWhenEditing(participantEmail)
+            )
         );
 
         this.$subscriptions.push(
@@ -140,22 +147,17 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
                     self.setupRoles(data);
                     if (self.editMode) {
                         self.selectedParticipantEmail = self.bookingService.getParticipantEmail();
+
                         if (!self.selectedParticipantEmail || self.selectedParticipantEmail.length === 0) {
                             // no participants, we need to add one
                             self.showDetails = false;
                             self.displayAdd();
                         } else {
-                            self.showDetails = true;
-                            setTimeout(() => {
-                                if (this.searchEmail && this.participantDetails) {
-                                    this.setParticipantEmail();
-                                }
-                            }, 500);
-
+                            self.onSelectedParticipantChangedWhenEditing(self.selectedParticipantEmail);
                             self.displayNext();
                         }
-                        self.repopulateParticipantToEdit();
                     }
+
                     self.populateInterpretedForList();
                 })
                 .catch(error => this.logger.error(`${this.loggerPrefix} Error to get participant case and hearing roles.`, error));
@@ -184,7 +186,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
 
     private setParticipantEmail() {
         this.searchEmail.email = this.participantDetails.email;
-        this.searchEmail.searchTerm.next(this.searchEmail.email);
+        this.searchEmail.participantDetails = this.participantDetails;
         this.searchEmail.isValidEmail = true;
         const participantHasId = this.participantDetails.id && this.participantDetails.id.length > 0;
         this.emailDisabled = participantHasId || this.participantDetails.is_exist_person;
@@ -284,10 +286,12 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         const selectedParticipant = this.hearing.participants.find(s => s.email === this.selectedParticipantEmail);
         if (selectedParticipant) {
             this.interpreterSelected = selectedParticipant.hearing_role_name.toLowerCase() === HearingRoles.INTERPRETER;
+
             this.logger.debug(`${this.loggerPrefix} Repopulating participant to edit.`, {
                 hearing: this.hearing.hearing_id,
                 participant: selectedParticipant.id
             });
+
             this.getParticipant(selectedParticipant);
         }
     }
@@ -990,6 +994,7 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
         this.interpreteeList = this.hearing.participants.filter(
             p => p.user_role_name === 'Individual' && !NotAllowedInterpreter.includes(p.hearing_role_name.toLowerCase())
         );
+
         const interpreteeModel: ParticipantModel = {
             id: this.constants.PleaseSelect,
             first_name: this.constants.PleaseSelect,
@@ -999,8 +1004,10 @@ export class AddParticipantComponent extends BookingBaseComponent implements OnI
             is_judge: false,
             is_courtroom_account: false
         };
+
         this.interpreteeList.unshift(interpreteeModel);
     }
+
     private setInterpreterForValidation() {
         if (this.isRoleInterpreter(this.role.value)) {
             this.interpreterFor.setValidators([Validators.required, Validators.pattern(Constants.PleaseSelectPattern)]);
