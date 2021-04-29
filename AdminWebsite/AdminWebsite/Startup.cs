@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Logging;
 
 namespace AdminWebsite
 {
@@ -49,11 +50,11 @@ namespace AdminWebsite
             services.Configure<AzureAdConfiguration>(options => Configuration.Bind("AzureAd", options));
             services.Configure<ServiceConfiguration>(options => Configuration.Bind("VhServices", options));
             services.Configure<KinlyConfiguration>(options => Configuration.Bind("KinlyConfiguration", options));
-            services.Configure<ApplicationInsightsConfiguration>(options => Configuration.Bind("ApplicationInsights", options));            
+            services.Configure<ApplicationInsightsConfiguration>(options => Configuration.Bind("ApplicationInsights", options));
 
             services.Configure<TestUserSecrets>(options => Configuration.Bind("TestUserSecrets", options));
         }
-        
+
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
@@ -83,6 +84,12 @@ namespace AdminWebsite
             if (!env.IsDevelopment())
             {
                 app.UseSpaStaticFiles();
+            }
+
+            bool.TryParse(Configuration["ShowPII"], out var showPII);
+            if (showPII)
+            {
+                IdentityModelEventSource.ShowPII = true;
             }
 
             app.UseAuthentication();
