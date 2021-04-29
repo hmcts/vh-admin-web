@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using AcceptanceTests.Common.Driver.Drivers;
 using AcceptanceTests.Common.Driver.Helpers;
@@ -95,14 +96,33 @@ namespace AdminWebsite.AcceptanceTests.Steps
             _c.Test.HearingSchedule.NumberOfMultiDays = _c.Test.TestData.HearingSchedule.NumberOfMultiDays;
         }
 
-        private static DateTime AddExtraDaysIfDateIsOnAWeekend(DateTime date)
+        private DateTime AddExtraDaysIfDateIsOnAWeekend(DateTime date)
         {
-            return FallOnAWeekend(date) ? date.AddDays(2) : date;
+            return FallOnAWeekendOrPublicHoliday(date, out var daysToAdd) ? date.AddDays(daysToAdd) : date;
         }
-
-        private static bool FallOnAWeekend(DateTime date)
+        
+        private bool FallOnAWeekendOrPublicHoliday(DateTime date, out int days)
         {
-            return date.DayOfWeek == DayOfWeek.Saturday || date.DayOfWeek == DayOfWeek.Sunday;
+            var isPublicHoliday = _c.PublicHolidays.Any(x => x.Date.Date == date.Date);
+            var isWeekendOrPublicHoliday = false;
+            days = 0;
+            
+            if (isPublicHoliday && date.DayOfWeek == DayOfWeek.Friday)
+            {
+                isWeekendOrPublicHoliday = true;
+                days = 3;
+            }
+            else if (isPublicHoliday)
+            {
+                isWeekendOrPublicHoliday = true;
+                days = 1;
+            }
+            else if (date.DayOfWeek == DayOfWeek.Saturday || date.DayOfWeek == DayOfWeek.Sunday)
+            {
+                isWeekendOrPublicHoliday = true;
+                days = 2;
+            }
+            return isWeekendOrPublicHoliday;
         }
 
         private int NotCountingToday()
