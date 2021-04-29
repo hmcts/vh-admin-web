@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using AdminWebsite.Extensions;
 using AdminWebsite.Models;
 using BookingsApi.Contract.Responses;
@@ -16,7 +17,8 @@ namespace AdminWebsite.UnitTests.Extensions
         {
             _hearing = new HearingDetailsResponse
             {
-                Id = Guid.NewGuid()
+                Id = Guid.NewGuid(),
+                Participants = new List<ParticipantResponse>()
             };
         }
         

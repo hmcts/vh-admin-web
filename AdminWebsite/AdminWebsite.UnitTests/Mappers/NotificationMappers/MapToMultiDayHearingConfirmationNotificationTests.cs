@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using AdminWebsite.Extensions;
 using AdminWebsite.Mappers;
 using AdminWebsite.Models;
 using BookingsApi.Contract.Responses;
 using FluentAssertions;
-using Newtonsoft.Json;
 using NotificationApi.Contract;
 using NUnit.Framework;
 using CaseResponse = BookingsApi.Contract.Responses.CaseResponse;
@@ -24,9 +24,8 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             var hearing = InitHearing();
             var expectedConferencePhoneNumber = "07703123123";
             var expectedConferenceId = "id";
-            
-            hearing.OtherInformation = JsonConvert.SerializeObject(new OtherInformationDetails
-                {JudgeEmail = "judge@hmcts.net", JudgePhone = "123456789"});
+            hearing.OtherInformation = new OtherInformationDetails
+                {JudgeEmail = "judge@hmcts.net", JudgePhone = "123456789"}.ToOtherInformationString();
 
             var expectedParameters = new Dictionary<string, string>
             {
@@ -37,11 +36,45 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
                 {"judge", participant.DisplayName},
                 {"courtroom account username", participant.Username},
                 {"number of days", "4"},
-                {"conference phone number", expectedConferencePhoneNumber },
+                {"conference phone number", expectedConferencePhoneNumber},
                 {"conference phone id", expectedConferenceId}
             };
             
             var result = AddNotificationRequestMapper.MapToMultiDayHearingConfirmationNotification(hearing, participant, 4, expectedConferencePhoneNumber, expectedConferenceId);
+            
+            result.Should().NotBeNull();
+            result.HearingId.Should().Be(hearing.Id);
+            result.ParticipantId.Should().Be(participant.Id);
+            result.ContactEmail.Should().Be(participant.ContactEmail);
+            result.NotificationType.Should().Be(expectedNotificationType);
+            result.MessageType.Should().Be(MessageType.Email);
+            result.PhoneNumber.Should().Be(participant.TelephoneNumber);
+            result.Parameters.Should().BeEquivalentTo(expectedParameters);
+        }
+        
+        [Test]
+        public void should_map_to_ejud_judge_confirmation_notification()
+        {
+            var expectedNotificationType = NotificationType.HearingConfirmationEJudJudgeMultiDay;
+            var participant = InitParticipant("Judge");
+            participant.ContactEmail = "user@judiciarytest.com";
+            var hearing = InitHearing();
+            hearing.OtherInformation = string.Empty;
+            hearing.Participants = new List<ParticipantResponse> {participant};
+
+            var expectedParameters = new Dictionary<string, string>
+            {
+                {"case name", CaseName},
+                {"case number", hearing.Cases.First().Number},
+                {"time", "2:10 PM"},
+                {"Start Day Month Year", "12 October 2020"},
+                {"judge", participant.DisplayName},
+                {"number of days", "4"},
+                {"conference phone number", null},
+                {"conference phone id", null}
+            };
+            
+            var result = AddNotificationRequestMapper.MapToMultiDayHearingConfirmationNotification(hearing, participant, 4, null, null);
             
             result.Should().NotBeNull();
             result.HearingId.Should().Be(hearing.Id);
@@ -168,7 +201,8 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             {
                 Id = Guid.NewGuid(),
                 Cases = new List<CaseResponse> {@case},
-                ScheduledDateTime = new DateTime(2020, 10, 12, 13, 10, 0, DateTimeKind.Utc)
+                ScheduledDateTime = new DateTime(2020, 10, 12, 13, 10, 0, DateTimeKind.Utc),
+                Participants = new List<ParticipantResponse>()
             };
             h.GroupId = h.Id;
             return h;

@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
+using AdminWebsite.Extensions;
 using AdminWebsite.Mappers;
 using AdminWebsite.Models;
 using BookingsApi.Contract.Responses;
 using FluentAssertions;
-using Newtonsoft.Json;
 using NotificationApi.Contract;
 using NUnit.Framework;
 
@@ -19,7 +19,8 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
         {
             _hearing = new HearingDetailsResponse
             {
-                Id = Guid.NewGuid()
+                Id = Guid.NewGuid(),
+                Participants = new List<ParticipantResponse>()
             };
         }
         
@@ -31,12 +32,12 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             var newDate = new DateTime(2020, 10, 12, 13, 10, 0, DateTimeKind.Utc);
             var caseName = "cse test";
             var caseNumber = "MBFY/17364";
-            var participant = InitParticipant("Judge");
-            _hearing.OtherInformation = JsonConvert.SerializeObject(new OtherInformationDetails
-                {JudgeEmail = "judge@hmcts.net", JudgePhone = "123456789"});
+            var participant = InitParticipant("Judge");            
             var expectedConferencePhoneNumber = "phone_number";
             var expectedConferencePhoneId = "phone_id";
-            
+            _hearing.OtherInformation = new OtherInformationDetails
+                {JudgeEmail = "judge@hmcts.net", JudgePhone = "123456789"}.ToOtherInformationString();
+  
             var expectedParameters = new Dictionary<string, string>
             {
                 {"case name", caseName},
@@ -54,6 +55,46 @@ namespace AdminWebsite.UnitTests.Mappers.NotificationMappers
             var result =
                 AddNotificationRequestMapper.MapToHearingAmendmentNotification(_hearing, participant, caseName,
                     caseNumber, oldDate, newDate, expectedConferencePhoneNumber, expectedConferencePhoneId);
+
+            result.Should().NotBeNull();
+            result.HearingId.Should().Be(_hearing.Id);
+            result.ParticipantId.Should().Be(participant.Id);
+            result.ContactEmail.Should().Be(participant.ContactEmail);
+            result.NotificationType.Should().Be(expectedNotificationType);
+            result.MessageType.Should().Be(MessageType.Email);
+            result.PhoneNumber.Should().Be(participant.TelephoneNumber);
+            result.Parameters.Should().BeEquivalentTo(expectedParameters);
+        }
+        
+        [Test]
+        public void should_map_to_ejud_judge_hearing_amendment_notification()
+        {
+            var expectedNotificationType = NotificationType.HearingAmendmentEJudJudge;
+            var oldDate = new DateTime(2020, 2, 10, 11, 30, 0, DateTimeKind.Utc);
+            var newDate = new DateTime(2020, 10, 12, 13, 10, 0, DateTimeKind.Utc);
+            var caseName = "cse test";
+            var caseNumber = "MBFY/17364";
+            var participant = InitParticipant("Judge");
+            participant.ContactEmail = "user@judiciarytest.com";
+            _hearing.Participants = new List<ParticipantResponse> {participant};
+            _hearing.OtherInformation = string.Empty;
+            
+            var expectedParameters = new Dictionary<string, string>
+            {
+                {"case name", caseName},
+                {"case number", caseNumber},
+                {"judge", participant.DisplayName},
+                {"Old time", "11:30 AM"},
+                {"New time", "2:10 PM"},
+                {"Old Day Month Year", "10 February 2020"},
+                {"New Day Month Year", "12 October 2020"},
+                {"conference phone number", null},
+                {"conference phone id", null}
+            };
+
+            var result =
+                AddNotificationRequestMapper.MapToHearingAmendmentNotification(_hearing, participant, caseName,
+                    caseNumber, oldDate, newDate, null, null);
 
             result.Should().NotBeNull();
             result.HearingId.Should().Be(_hearing.Id);

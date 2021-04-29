@@ -432,6 +432,12 @@ export class VideoHearingsService {
         return this.modelHearing.participants.every(x => x.username.toLowerCase() !== username.toLowerCase());
     }
 
+    canAddJudge(username: string): boolean {
+        return !this.modelHearing.participants.some(
+            x => x.username?.toLowerCase() === username.toLowerCase() && this.judiciaryRoles.includes(x.hearing_role_name)
+        );
+    }
+
     getJudge(): ParticipantModel {
         return this.modelHearing.participants.find(x => x.is_judge);
     }
